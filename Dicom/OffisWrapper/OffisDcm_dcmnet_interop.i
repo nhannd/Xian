@@ -1,13 +1,15 @@
 %inline
 %{
+
 //-------------------------------------------
 // Structs for interop; these need to be here
 // so that C# code can access them
 //-------------------------------------------
+
 struct InteropStoreScpCallbackInfo
 {
-	char* FileName;
-	char* CallingAETitle;
+	const char* CallingAETitle;
+	const char* FileName;
 	DcmDataset* ImageDataset;
     T_DIMSE_StoreProgress *Progress;
     T_DIMSE_C_StoreRQ *Request;
@@ -17,6 +19,7 @@ struct InteropStoreScpCallbackInfo
 
 struct InteropStoreScuProgressInfo
 {
+	unsigned long StoreOperationIdentifier;
 	T_ASC_Association* Association;
 	const char* CurrentFile;
 	int TotalCount;
@@ -25,7 +28,8 @@ struct InteropStoreScuProgressInfo
 
 struct InteropStoreScuCallbackInfo
 {
-	char* CalledAETitle;
+	unsigned long StoreOperationIdentifier;
+	const char* CalledAETitle;
 	const char* CurrentFile;
     T_DIMSE_StoreProgress * Progress;
     T_DIMSE_C_StoreRQ * Request;
@@ -35,9 +39,7 @@ struct InteropStoreScuCallbackInfo
 
 struct InteropFindScpCallbackInfo
 {
-	char* CallingAETitle;
-	char* CallingPresentationAddress;
-	
+	unsigned long QueryRetrieveOperationIdentifier;
 	T_DIMSE_C_FindRQ *Request;
 	DcmDataset *RequestIdentifiers; 
 	// out 
@@ -46,17 +48,10 @@ struct InteropFindScpCallbackInfo
 	DcmDataset *StatusDetail;
 };
 
-struct InteropQueryRetrieveCallbackInfo 
-{
-    T_ASC_Association *assoc;
-    T_ASC_PresentationContextID presId;
-};
-
 struct InteropMoveScpCallbackInfo
 {
-	char* CallingAETitle;
-	char* CallingPresentationAddress;
-	
+	unsigned long QueryRetrieveOperationIdentifier;
+
 	OFBool Cancelled; 
 	T_DIMSE_C_MoveRQ *Request;
 	DcmDataset *RequestIdentifiers; 
@@ -66,8 +61,23 @@ struct InteropMoveScpCallbackInfo
 	DcmDataset *StatusDetail;
 };
 
+struct InteropQueryRetrieveCallbackInfo 
+{
+	unsigned long QueryRetrieveOperationIdentifier;
+};
+
+struct InteropFindScuProgressCallbackInfo
+{
+	unsigned long QueryRetrieveOperationIdentifier;
+    T_DIMSE_C_FindRQ *Request;
+    int ResponseCount;
+    T_DIMSE_C_FindRSP *Response;
+    DcmDataset *ResponseIdentifiers;
+};
+
 struct InteropRetrieveCallbackInfo
 {
+	unsigned long QueryRetrieveOperationIdentifier;
 	T_DIMSE_C_MoveRSP* CMoveResponse;
 };
 %}
@@ -100,11 +110,7 @@ SWIGEXPORT void SWIGSTDCALL RegisterRetrieveCallbackHelper_OffisDcm(RetrieveCall
 	CSharpRetrieveCallbackHelperCallback = callback;
 }
 //-------------------------------------------
-typedef void (SWIGSTDCALL* QueryCallbackHelperCallback)(void *, 
-														T_DIMSE_C_FindRQ *,
-														int,
-														T_DIMSE_C_FindRSP *,
-														DcmDataset *);
+typedef void (SWIGSTDCALL* QueryCallbackHelperCallback)(InteropFindScuProgressCallbackInfo*);
 static QueryCallbackHelperCallback CSharpQueryCallbackHelperCallback = NULL;
 
 #ifdef __cplusplus

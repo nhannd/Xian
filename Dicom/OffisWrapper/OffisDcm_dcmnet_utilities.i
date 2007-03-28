@@ -4,6 +4,7 @@
 // ---------------------------------------------
 struct StoreCallbackData
 {
+  unsigned long StoreOperationIdentifier;
   char* imageFileName;
   DcmFileFormat* dcmff;
   T_ASC_Association* assoc;
@@ -11,6 +12,7 @@ struct StoreCallbackData
 
 struct FindCallbackData
 {
+	unsigned long QueryRetrieveOperationIdentifier;
 	DIC_US priorStatus;
 	DIC_AE ourAETitle;
 	DIC_AE callingAETitle;
@@ -19,6 +21,7 @@ struct FindCallbackData
 
 struct MoveCallbackData
 {
+	unsigned long queryRetrieveOperationIdentifier;
 	DIC_US priorStatus;
     DIC_AE ourAETitle;  	/* our current title */
     DIC_AE dstAETitle;		/* destination title for move */

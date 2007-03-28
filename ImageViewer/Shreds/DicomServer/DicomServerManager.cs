@@ -12,10 +12,11 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.OffisWrapper;
-using ClearCanvas.ImageViewer.Shreds.ServerTree;
 using ClearCanvas.Server.ShredHost;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using ClearCanvas.ImageViewer.Shreds.DicomServer.ServerTree;
+using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -28,11 +29,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         private ClearCanvas.Dicom.Network.DicomServer _dicomServer;
 
         // Used by CFindScp
-        private Dictionary<DicomSessionKey, DicomQuerySession> _querySessionDictionary;
+        private Dictionary<uint, DicomQuerySession> _querySessionDictionary;
         private object _querySessionLock = new object();
 
         // Used by CMoveScp to keep track of the sub-CStore progerss
-        private Dictionary<DicomSessionKey, DicomMoveSession> _moveSessionDictionary;
+		private Dictionary<uint, DicomMoveSession> _moveSessionDictionary;
         private object _moveSessionLock = new object();
 
         public DicomServerManager()
@@ -40,8 +41,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             _myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
             _storageDirectory = DicomServerSettings.Instance.InterimStorageDirectory;
 
-            _querySessionDictionary = new Dictionary<DicomSessionKey, DicomQuerySession>();
-            _moveSessionDictionary = new Dictionary<DicomSessionKey, DicomMoveSession>();
+            _querySessionDictionary = new Dictionary<uint, DicomQuerySession>();
+			_moveSessionDictionary = new Dictionary<uint, DicomMoveSession>();
         }
 
 		public static DicomServerManager Instance
@@ -69,14 +70,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
                 _dicomServer = new ClearCanvas.Dicom.Network.DicomServer(_myApplicationEntity, _storageDirectory);
 
-                _dicomServer.FindScpEvent += OnFindScpEvent;
-                _dicomServer.FindScpProgressEvent += OnFindScpProgressEvent;
-                _dicomServer.StoreScpBeginEvent += OnStoreScpBeginEvent;
-                _dicomServer.StoreScpProgressEvent += OnStoreScpProgressEvent;
-                _dicomServer.StoreScpEndEvent += OnStoreScpEndEvent;
-                _dicomServer.MoveScpBeginEvent += OnMoveScpBeginEvent;
-                _dicomServer.MoveScpProgressEvent += OnMoveScpProgressEvent;
-				_dicomServer.StoreScuProgressEvent += OnStoreScuProgressEvent;
+                DicomEventManager.Instance.FindScpEvent += OnFindScpEvent;
+				DicomEventManager.Instance.FindScpProgressEvent += OnFindScpProgressEvent;
+				DicomEventManager.Instance.StoreScpBeginEvent += OnStoreScpBeginEvent;
+				DicomEventManager.Instance.StoreScpProgressEvent += OnStoreScpProgressEvent;
+				DicomEventManager.Instance.StoreScpEndEvent += OnStoreScpEndEvent;
+				DicomEventManager.Instance.MoveScpBeginEvent += OnMoveScpBeginEvent;
+				DicomEventManager.Instance.MoveScpProgressEvent += OnMoveScpProgressEvent;
+				DicomEventManager.Instance.StoreScuProgressEvent += OnStoreScuProgressEvent;
 
                 _dicomServer.Start();
             }
@@ -90,14 +91,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         {
             try
             {
-                _dicomServer.FindScpEvent -= OnFindScpEvent;
-                _dicomServer.FindScpProgressEvent -= OnFindScpProgressEvent;
-                _dicomServer.StoreScpBeginEvent -= OnStoreScpBeginEvent;
-                _dicomServer.StoreScpProgressEvent -= OnStoreScpProgressEvent;
-                _dicomServer.StoreScpEndEvent -= OnStoreScpEndEvent;
-                _dicomServer.MoveScpBeginEvent -= OnMoveScpBeginEvent;
-                _dicomServer.MoveScpProgressEvent -= OnMoveScpProgressEvent;
-				_dicomServer.StoreScuProgressEvent += OnStoreScuProgressEvent;
+                DicomEventManager.Instance.FindScpEvent -= OnFindScpEvent;
+                DicomEventManager.Instance.FindScpProgressEvent -= OnFindScpProgressEvent;
+                DicomEventManager.Instance.StoreScpBeginEvent -= OnStoreScpBeginEvent;
+                DicomEventManager.Instance.StoreScpProgressEvent -= OnStoreScpProgressEvent;
+                DicomEventManager.Instance.StoreScpEndEvent -= OnStoreScpEndEvent;
+                DicomEventManager.Instance.MoveScpBeginEvent -= OnMoveScpBeginEvent;
+                DicomEventManager.Instance.MoveScpProgressEvent -= OnMoveScpProgressEvent;
+				DicomEventManager.Instance.StoreScuProgressEvent += OnStoreScuProgressEvent;
 
                 _dicomServer.Stop();
                 _dicomServer = null;
@@ -142,81 +143,138 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
         #region DicomServer FindScp Event Handlers
 
-        private void OnFindScpEvent(object sender, DicomServerEventArgs e)
+        private void OnFindScpEvent(object sender, DicomEventArgs e)
         {
             InteropFindScpCallbackInfo info = new InteropFindScpCallbackInfo(e.CallbackInfoPointer, false);
             if (info == null)
                 return;
 
-            DicomSessionKey key = new DicomSessionKey(info.CallingAETitle, info.CallingPresentationAddress, info.Request.MessageID);
-            info.Response.DimseStatus = (ushort) QueryDB(key, info.RequestIdentifiers);
+            info.Response.DimseStatus = (ushort) QueryDB(info.QueryRetrieveOperationIdentifier, info.RequestIdentifiers);
         }
 
-        private void OnFindScpProgressEvent(object sender, DicomServerEventArgs e)
+        private void OnFindScpProgressEvent(object sender, DicomEventArgs e)
         {
             InteropFindScpCallbackInfo info = new InteropFindScpCallbackInfo(e.CallbackInfoPointer, false);
             if (info == null)
                 return;
 
-            DicomSessionKey key = new DicomSessionKey(info.CallingAETitle, info.CallingPresentationAddress, info.Request.MessageID);
-            info.Response.DimseStatus = (ushort)GetNextQueryResult(key, info.ResponseIdentifiers);
+			info.Response.DimseStatus = (ushort)GetNextQueryResult(info.QueryRetrieveOperationIdentifier, info.ResponseIdentifiers);
         }
 
         #endregion
 
         #region DicomServer MoveScp Event Handlers
 
-        private void OnMoveScpBeginEvent(object sender, DicomServerEventArgs e)
+        private void OnMoveScpBeginEvent(object sender, DicomEventArgs e)
         {
             InteropMoveScpCallbackInfo info = new InteropMoveScpCallbackInfo(e.CallbackInfoPointer, false);
             if (info == null)
                 return;
 
-            DicomSessionKey key = new DicomSessionKey(info.CallingAETitle, info.CallingPresentationAddress, info.Request.MessageID);
+			lock (_moveSessionLock)
+			{
+				if (_moveSessionDictionary.ContainsKey(info.QueryRetrieveOperationIdentifier))
+				{
+					//this should never happen.
+					info.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
+					return;
+				}
+			}
+			
+			// Start the Query
+			info.Response.DimseStatus = (ushort)QueryDB(info.QueryRetrieveOperationIdentifier, info.RequestIdentifiers);
 
-            // Start the Query
-            info.Response.DimseStatus = (ushort)QueryDB(key, info.RequestIdentifiers);
+			ApplicationEntity destinationAE = null;
 
-            // Move all return results
+			try
+			{
+				ClearCanvas.ImageViewer.Shreds.DicomServer.ServerTree.ServerTree serverTree = new ClearCanvas.ImageViewer.Shreds.DicomServer.ServerTree.ServerTree();
+				List<ClearCanvas.ImageViewer.Shreds.DicomServer.ServerTree.Server> servers = serverTree.RootNode.ServerGroupNode.ChildServers;
+				foreach (ClearCanvas.ImageViewer.Shreds.DicomServer.ServerTree.Server server in servers)
+				{
+					if (server.AETitle == info.Request.MoveDestination)
+					{
+						destinationAE = new ApplicationEntity(new HostName(server.Host), new AETitle(server.AETitle), new ListeningPort(server.Port));
+						break;
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Platform.Log(ex);
+				destinationAE = null;
+			}
+
+			if (destinationAE == null)
+			{
+				info.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_MoveDestinationUnknown;
+				return;
+			}
+
+			SendParcel sendParcel = new SendParcel(_myApplicationEntity, destinationAE, "");
+
+			// Move all return results
             while (info.Response.DimseStatus == (ushort) OffisDcm.STATUS_Pending)
             {
-                info.Response.DimseStatus = (ushort)GetNextQueryResult(key, info.ResponseIdentifiers);
+				info.Response.DimseStatus = (ushort)GetNextQueryResult(info.QueryRetrieveOperationIdentifier, info.ResponseIdentifiers);
                 if (info.Response.DimseStatus != (ushort)OffisDcm.STATUS_Pending)
                     break;
 
-                info.Response.DimseStatus = (ushort)StartMove(key, info);
+				String studyInstanceUID = GetTag(info.RequestIdentifiers, Dcm.StudyInstanceUID);
+				if (studyInstanceUID == null || studyInstanceUID.Length == 0)
+				{
+					info.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
+					return;
+				}
+
+				sendParcel.Include(new Uid(studyInstanceUID));
             }
+
+			BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context)
+			{
+				sendParcel.Send();
+
+			}, false);
+
+			lock (_moveSessionLock)
+			{
+				_moveSessionDictionary[info.QueryRetrieveOperationIdentifier] = new DicomMoveSession(sendParcel, task);
+			}
+
+			info.Response.NumberOfRemainingSubOperations = (ushort)sendParcel.GetToSendObjectCount();
+			task.Run();
+
+			info.Response.DimseStatus = (ushort)OffisDcm.STATUS_Pending;
         }
 
-        private void OnMoveScpProgressEvent(object sender, DicomServerEventArgs e)
+        private void OnMoveScpProgressEvent(object sender, DicomEventArgs e)
         {
             InteropMoveScpCallbackInfo info = new InteropMoveScpCallbackInfo(e.CallbackInfoPointer, false);
             if (info == null)
                 return;
 
-            DicomSessionKey key = new DicomSessionKey(info.CallingAETitle, info.CallingPresentationAddress, info.Request.MessageID);
-            info.Response.DimseStatus = (ushort)UpdateMoveProgress(key, info.Response);
+			info.Response.DimseStatus = (ushort)UpdateMoveProgress(info.QueryRetrieveOperationIdentifier, info.Response);
         }
 
 		#endregion
 
         #region DicomServer StoreScp Event Handlers
 
-        private void OnStoreScpBeginEvent(object sender, DicomServerEventArgs e)
+        private void OnStoreScpBeginEvent(object sender, DicomEventArgs e)
         {
             InteropStoreScpCallbackInfo info = new InteropStoreScpCallbackInfo(e.CallbackInfoPointer, false);
             if (info == null)
                 return;
         }
 
-        private void OnStoreScpProgressEvent(object sender, DicomServerEventArgs e)
+        private void OnStoreScpProgressEvent(object sender, DicomEventArgs e)
         {
             InteropStoreScpCallbackInfo info = new InteropStoreScpCallbackInfo(e.CallbackInfoPointer, false);
             if (info == null)
                 return;
         }
 
-        private void OnStoreScpEndEvent(object sender, DicomServerEventArgs e)
+        private void OnStoreScpEndEvent(object sender, DicomEventArgs e)
         {
             InteropStoreScpCallbackInfo info = new InteropStoreScpCallbackInfo(e.CallbackInfoPointer, false);
             if (info == null)
@@ -247,7 +305,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#region Store Scu Event Handlers
 
-		private void OnStoreScuProgressEvent(object sender, DicomServerEventArgs e)
+		private void OnStoreScuProgressEvent(object sender, DicomEventArgs e)
 		{
 			InteropStoreScuCallbackInfo info = new InteropStoreScuCallbackInfo(e.CallbackInfoPointer, false);
 			if (info == null)
@@ -322,7 +380,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             return queryKey;
         }
 
-        private int QueryDB(DicomSessionKey key, DcmDataset requestIdentifiers)
+        private int QueryDB(uint operationIdentifier, DcmDataset requestIdentifiers)
         {
             try
             {
@@ -334,7 +392,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 // Remember the query results for this session.  The DicomServer will call back to get query results
                 lock (_querySessionLock)
                 {
-                    _querySessionDictionary[key] = new DicomQuerySession(queryResults);
+					_querySessionDictionary[operationIdentifier] = new DicomQuerySession(queryResults);
                 }
             }
             catch (Exception exception)
@@ -346,7 +404,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             return OffisDcm.STATUS_Pending;
         }
 
-        private int GetNextQueryResult(DicomSessionKey key, DcmDataset responseIdentifiers)
+		private int GetNextQueryResult(uint operationIdentifier, DcmDataset responseIdentifiers)
         {
             QueryResult result;
             DicomQuerySession querySession;
@@ -355,11 +413,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             {
                 lock (_querySessionLock)
                 {
-                    querySession = _querySessionDictionary[key];
+					querySession = _querySessionDictionary[operationIdentifier];
                     if (querySession.CurrentIndex >= querySession.QueryResults.Count)
                     {
                         // If all the results had been retrieved, remove this query session from dictionary
-                        _querySessionDictionary.Remove(key);
+						_querySessionDictionary.Remove(operationIdentifier);
                         return OffisDcm.STATUS_Success;
                     }
                 }
@@ -399,130 +457,74 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
         #region MoveScp helper functions
 
-        private ApplicationEntity FindDestinationAE(string aeTitle, List<IDicomServer> listServer)
+        private int UpdateMoveProgress(uint moveOperationIdentifier, T_DIMSE_C_MoveRSP response)
         {
-            if (listServer == null)
-                return null;
-
-            ApplicationEntity ae = null;
-            foreach (IDicomServer ids in listServer)
-            {
-                if (ids.IsServer)
-                {
-					ClearCanvas.ImageViewer.Shreds.ServerTree.DicomServer dicomServer = ids as ClearCanvas.ImageViewer.Shreds.ServerTree.DicomServer;
-                    if (dicomServer != null && dicomServer.DicomAE.AE == aeTitle)
-                        return dicomServer.DicomAE;
-                }
-                else
-                {
-                    DicomServerGroup serverGroup = ids as DicomServerGroup;
-                    if (serverGroup != null)
-                    {
-                        ae = FindDestinationAE(aeTitle, serverGroup.ChildServers);
-                        if (ae != null)
-                            return ae;
-                    }
-                }
-            }
-
-            return null;
-        }
-
-        private int StartMove(DicomSessionKey key, InteropMoveScpCallbackInfo info)
-        {
-            lock (_moveSessionLock)
-            {
-                // Check if a duplicate move request is currently in progress
-                if (_moveSessionDictionary.ContainsKey(key))
-                {
-                    DicomMoveSession storeSession = _moveSessionDictionary[key];
-                    if (storeSession.Task != null && storeSession.Task.IsRunning)
-                        return OffisDcm.STATUS_Success;
-                }
-            }
-
-            DicomServerTree serverTree = new DicomServerTree();
-            ApplicationEntity destinationAE = FindDestinationAE(info.Request.MoveDestination, serverTree.MyServerGroup.ChildServers);
-            if (destinationAE == null)
-                return OffisDcm.STATUS_MOVE_Failed_MoveDestinationUnknown;
-
-            String studyInstanceUID = GetTag(info.RequestIdentifiers, Dcm.StudyInstanceUID);
-            String studyDescription = GetTag(info.RequestIdentifiers, Dcm.StudyDescription);
-            if (studyInstanceUID == null || studyInstanceUID.Length == 0)
-                return OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
-
-            SendParcel sendParcel = new SendParcel(_myApplicationEntity, destinationAE, studyDescription);
-            sendParcel.Include(new Uid(studyInstanceUID));
-
-			BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context) 
-			{
-				sendParcel.Send(); 
-
-			}, false);
+			int status = OffisDcm.STATUS_Pending;
+			DicomMoveSession session;
 
 			lock (_moveSessionLock)
 			{
-				_moveSessionDictionary[key] = new DicomMoveSession(sendParcel, task);
+				if (_moveSessionDictionary.ContainsKey(moveOperationIdentifier) == false)
+					return OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
+
+				session = _moveSessionDictionary[moveOperationIdentifier];
 			}
 
-            info.Response.NumberOfRemainingSubOperations = (ushort)sendParcel.GetToSendObjectCount();
-			task.Run();
+			// Keep the thread here and only return CMoveRSP when there's something different to report.
+            while (session.Progress == session.Parcel.CurrentProgressStep && session.Parcel.IsActive())
+			{
+				Thread.Sleep(1000);
+			};
 
-            return OffisDcm.STATUS_Pending;
-        }
+			ParcelTransferState transferState;
+			int currentProgressStep;
+			int totalSteps;
 
-        private int UpdateMoveProgress(DicomSessionKey key, T_DIMSE_C_MoveRSP response)
-        {
-            int status = OffisDcm.STATUS_Success;
-            if (_moveSessionDictionary.ContainsKey(key) == false)
-                return status;
+			session.Parcel.GetSafeStats(out transferState, out totalSteps, out currentProgressStep);
+			
+			session.Progress = currentProgressStep;
+			
+			response.NumberOfCompletedSubOperations = (ushort)currentProgressStep;
+			response.NumberOfRemainingSubOperations = (ushort)(totalSteps - currentProgressStep);
 
-            DicomMoveSession storeSession = _moveSessionDictionary[key];
+			switch (transferState)
+			{
+				case ParcelTransferState.Completed:
+					response.NumberOfCompletedSubOperations = (ushort)totalSteps;
+					response.NumberOfRemainingSubOperations = 0;
+					status = OffisDcm.STATUS_Success;
+					break;
+				case ParcelTransferState.Cancelled:
+				case ParcelTransferState.CancelRequested:
+					response.NumberOfWarningSubOperations++;
+					status = OffisDcm.STATUS_MOVE_Cancel_SubOperationsTerminatedDueToCancelIndication;
+					break;
+				case ParcelTransferState.Error:
+				case ParcelTransferState.Unknown:
+					response.NumberOfFailedSubOperations++;
+					status = OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
+					break;
+				case ParcelTransferState.InProgress:
+				case ParcelTransferState.Paused:
+				case ParcelTransferState.PauseRequested:
+				case ParcelTransferState.Pending:
+				default:
+					status = OffisDcm.STATUS_Pending;
+					break;
+			}
 
-            // Keep the thread here and only reutrn CMoveRSP when there's an error or progress update
-            while (storeSession.Progress == storeSession.Parcel.CurrentProgressStep)
+            if (status != OffisDcm.STATUS_Pending)
             {
-                switch (storeSession.Parcel.GetState())
-                {
-                    case ParcelTransferState.Completed:
-                        response.NumberOfCompletedSubOperations = (ushort)storeSession.Parcel.GetToSendObjectCount();
-                        response.NumberOfRemainingSubOperations = 0;
-                        status = OffisDcm.STATUS_Success;
-                        break;
-                    case ParcelTransferState.Cancelled:
-                    case ParcelTransferState.CancelRequested:
-                        response.NumberOfWarningSubOperations++;
-                        response.NumberOfRemainingSubOperations--;
-                        status = OffisDcm.STATUS_MOVE_Cancel_SubOperationsTerminatedDueToCancelIndication;
-                        break;
-                    case ParcelTransferState.Error:
-                    case ParcelTransferState.Unknown:
-                        response.NumberOfFailedSubOperations++;
-                        response.NumberOfRemainingSubOperations--;
-                        status = OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
-                        break;
-                    case ParcelTransferState.InProgress:
-                    case ParcelTransferState.Paused:
-                    case ParcelTransferState.PauseRequested:
-                    case ParcelTransferState.Pending:
-                    default:
-                        status = OffisDcm.STATUS_Pending;
-                        System.Threading.Thread.Sleep(1000);
-                        break;
-                }
-
-                if (status != OffisDcm.STATUS_Pending)
-                {
-                    _moveSessionDictionary.Remove(key);
-                    return status;
-                }
+				lock (_moveSessionLock)
+				{
+					_moveSessionDictionary.Remove(moveOperationIdentifier);
+				}
             }
 
-            response.NumberOfCompletedSubOperations++;
-            response.NumberOfRemainingSubOperations--;
-            storeSession.Progress = storeSession.Parcel.CurrentProgressStep;
-
-            return status;
+#if DEBUG 
+			Console.WriteLine("MOVE - Completed: {0} Remaining: {1}", response.NumberOfCompletedSubOperations, response.NumberOfRemainingSubOperations);
+#endif
+			return status;
         }
 
         #endregion
@@ -543,7 +545,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		public void Send(DicomSendRequest request)
 		{
-			DicomClient client = new DicomClient(_myApplicationEntity);
 			ApplicationEntity destinationAE = new ApplicationEntity(new HostName(request.DestinationHostName), new AETitle(request.DestinationAETitle), new ListeningPort(request.Port));
 
 			SendParcel parcel = new SendParcel(_myApplicationEntity, destinationAE, "");

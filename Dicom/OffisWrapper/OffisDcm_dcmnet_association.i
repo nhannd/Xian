@@ -77,7 +77,7 @@ struct T_ASC_Association
 		return true;
 	}
 
-	bool SendCStore(std::vector<string > fileNameList) throw (dicom_runtime_error)
+	bool SendCStore(std::vector<string > fileNameList, unsigned long storeOperationIdentifier) throw (dicom_runtime_error)
 	{
 		OFCondition cond = EC_Normal;
 		std::vector<string >::iterator iter = fileNameList.begin();
@@ -87,7 +87,7 @@ struct T_ASC_Association
 		int totalCount = fileNameList.size();
 		while ((iter != enditer) && (cond == EC_Normal)) // compare with EC_Normal since DUL_PEERREQUESTEDRELEASE is also good()
 		{
-			cond = StoreScu(self, (*iter).c_str(), currentCount++, totalCount);
+			cond = StoreScu(self, (*iter).c_str(), storeOperationIdentifier, currentCount++, totalCount);
 
 			// don't increment the iterator if cond is not EC_Normal so that we can get the file name
 			if (cond == EC_Normal)
@@ -119,7 +119,7 @@ struct T_ASC_Association
 		}
 	}
 
-	bool SendCMoveStudyRootQuery(DcmDataset* cMoveDataset, T_ASC_Network* network, int timeout, const char* saveDirectory) 
+	bool SendCMoveStudyRootQuery(DcmDataset* cMoveDataset, T_ASC_Network* network, int timeout, const char* saveDirectory, unsigned long queryRetrieveOperationIdentifier) 
 		throw (dicom_runtime_error)
 	{
 		T_ASC_PresentationContextID presId;
@@ -137,9 +137,8 @@ struct T_ASC_Association
 		if (presId == 0) 
 			throw dicom_runtime_error(DIMSE_NOVALIDPRESENTATIONCONTEXTID, "SendCMoveStudyRootQuery: No presentation context");
 
-		callbackData.assoc = self;
-		callbackData.presId = presId;
-
+		callbackData.QueryRetrieveOperationIdentifier = queryRetrieveOperationIdentifier;
+		
 		req.MessageID = msgId;
 		strcpy(req.AffectedSOPClassUID, sopClass);
 		req.Priority = DIMSE_PRIORITY_MEDIUM;
@@ -177,7 +176,7 @@ struct T_ASC_Association
 		}
 	}
 
-	bool SendCFindStudyRootQuery(DcmDataset* cFindDataset) throw (dicom_runtime_error)
+	bool SendCFindStudyRootQuery(DcmDataset* cFindDataset, unsigned long queryRetrieveOperationIdentifier) throw (dicom_runtime_error)
 	{
 		DIC_US msgId = self->nextMsgID++;
 		T_ASC_PresentationContextID presId;
@@ -199,9 +198,8 @@ struct T_ASC_Association
 		req.Priority = DIMSE_PRIORITY_LOW;
 
 		// prepare the callback 
-		callbackData.assoc = self;
-		callbackData.presId = presId;
-
+		callbackData.QueryRetrieveOperationIdentifier = queryRetrieveOperationIdentifier;
+		
 		// finally conduct transmission of data
 		OFCondition cond = DIMSE_findUser(self, presId, &req, cFindDataset,
 						  CFindProgressCallback, &callbackData,

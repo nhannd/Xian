@@ -27,6 +27,7 @@ CONTROLACCESSPUBLIC(InteropFindScpCallbackInfo)
 CONTROLACCESSPUBLIC(InteropMoveScpCallbackInfo)
 CONTROLACCESSPUBLIC(InteropStoreScuCallbackInfo)
 CONTROLACCESSPUBLIC(InteropRetrieveCallbackInfo)
+CONTROLACCESSPUBLIC(InteropFindScuProgressCallbackInfo)
 
 %{
 #include <string>
@@ -60,6 +61,12 @@ CONTROLACCESSPUBLIC(InteropRetrieveCallbackInfo)
 
 %inline
 %{
+
+unsigned long 
+GetNewOperationIdentifier()
+{
+	return NextOperationIdentifier();
+}
 
 //-------------------------------------------
 // Helper function to set the connection

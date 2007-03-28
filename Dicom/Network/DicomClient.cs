@@ -9,6 +9,7 @@ using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Dicom;
 using MySR = ClearCanvas.Dicom.SR;
 using System.IO;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.Network
 {
@@ -17,14 +18,21 @@ namespace ClearCanvas.Dicom.Network
     /// perform C-ECHO, C-FIND and C-MOVE commands. Both C-FIND and C-MOVE 
     /// implement the Study Root Query/Retrieve Information Model.
     /// </summary>
-    public partial class DicomClient : IDisposable
+    public class DicomClient : IDisposable
     {
-        /// <summary>
-        /// Fires when a new SOP Instance has arrived and has been successfully
-        /// written to the local filesystem.
-        /// </summary>
-        private event EventHandler<SopInstanceReceivedEventArgs> _sopInstanceReceivedEvent;
-        /// <summary>
+		private ApplicationEntity _myOwnAE;
+		private int _defaultPDUSize = 16384;
+		private int _cEchoRepeats = 7;
+
+		private const ushort STATUS_Success = 0x0000;
+		private const ushort STATUS_Pending = 0xff00;
+		private const ushort STATUS_Warning = 0xb000;
+
+		private static bool DICOM_PENDING_STATUS(ushort status) { return (((status) & STATUS_Pending) == 0xff00); }
+		private static bool DICOM_WARNING_STATUS(ushort status) { return (((status) & STATUS_Warning) == 0xb000); }
+		private static bool DICOM_SUCCESS_STATUS(ushort status) { return ((status) == STATUS_Success); }
+
+		/// <summary>
         /// Fires when a C-FIND result is received.
         /// </summary>
         private event EventHandler<QueryResultReceivedEventArgs> _queryResultReceivedEvent;
@@ -32,65 +40,49 @@ namespace ClearCanvas.Dicom.Network
         /// Fires when the C-FIND query has completed and all results received.
         /// </summary>
         private event EventHandler<QueryCompletedEventArgs> _queryCompletedEvent;
-        // TODO:
         /// <summary>
-        /// This event is not yet implemented.
+        /// Fires when a file has been sent during a C-STORE operation.
         /// </summary>
         private event EventHandler<SendProgressUpdatedEventArgs> _sendProgressUpdatedEvent;
-        /// <summary>
-        /// This event is not yet implemented.
-        /// </summary>
-        private event EventHandler<SeriesCompletedEventArgs> _seriesCompletedEvent;
-        /// <summary>
-        /// This event is not yet implemented.
-        /// </summary>
-        private event EventHandler<StudyCompletedEventArgs> _studyCompletedEvent;
+		/// <summary>
+		/// Fires when a retrieve operation has been updated.
+		/// </summary>
+		private event EventHandler<RetrieveProgressUpdatedEventArgs> _retrieveProgressUpdated;
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private event EventHandler<RetrieveProgressUpdatedEventArgs> _retrieveProgressUpdatedEvent;
-
-        /// <summary>
-        /// Event accessor.
-        /// </summary>
-        public event EventHandler<SopInstanceReceivedEventArgs> SopInstanceReceived
-        {
-            add { _sopInstanceReceivedEvent += value; }
-            remove { _sopInstanceReceivedEvent -= value; }
-        }
-
-        /// <summary>
-        /// Event accessor.
+		/// <summary>
+        /// Event accessor for query results received.
         /// </summary>
         public event EventHandler<QueryResultReceivedEventArgs> QueryResultReceived
         {
             add { _queryResultReceivedEvent += value; }
             remove { _queryResultReceivedEvent -= value; }
         }
-
-        /// <summary>
-        /// Event accessor.
-        /// </summary>
-        public event EventHandler<QueryCompletedEventArgs> QueryCompleted
+		/// <summary>
+		/// Event accessor for query completed.
+		/// </summary>
+		public event EventHandler<QueryCompletedEventArgs> QueryCompleted
         {
             add { _queryCompletedEvent += value; }
             remove { _queryCompletedEvent -= value; }
         }
-
+		/// <summary>
+		/// Event accessor send progress.
+		/// </summary>
         public event EventHandler<SendProgressUpdatedEventArgs> SendProgressUpdated
         {
             add { _sendProgressUpdatedEvent += value; }
             remove { _sendProgressUpdatedEvent -= value; }
         }
-
-        public event EventHandler<RetrieveProgressUpdatedEventArgs> RetrieveProgressUpdated
-        {
-            add { _retrieveProgressUpdatedEvent += value; }
-            remove { _retrieveProgressUpdatedEvent -= value; }
-        }
-
-        /// <summary>
+		/// <summary>
+		/// Event accessor retrieve progress.
+		/// </summary>
+		public event EventHandler<RetrieveProgressUpdatedEventArgs> RetrieveProgressUpdated
+		{
+			add { _retrieveProgressUpdated += value; }
+			remove { _retrieveProgressUpdated -= value; }
+		}
+		
+		/// <summary>
         /// Mandatory constructor.
         /// </summary>
         /// <param name="ownAEParameters">The AE parameters of the DICOM client. That is,
@@ -102,25 +94,6 @@ namespace ClearCanvas.Dicom.Network
             SocketManager.InitializeSockets();
 
             _myOwnAE = ownAEParameters;
-
-            // TODO:
-            // since we want the QueryCallbackHelper object to be able to 
-            // modifier data that is instance-related in nature, i.e. 
-            // query results, we need to make the callback install itself
-            // when this instance is created. This is not thread-safe
-            _queryCallbackHelper = new QueryCallbackHelper(this);
-
-            //// same goes for the store callback helper
-            // TODO: disable this, because it's competing for Callback with the DicomServer
-            //_storeCallbackHelper = new StoreCallbackHelper(this);
-
-            // same goes for the store scu callback helper
-			//_storeScuCallbackHelper = new StoreScuCallbackHelper(this);
-
-            // same goes for the retrieve callback helper
-			//_retrieveCallbackHelper = new RetrieveCallbackHelper(this);
-
-            _queryResults = new QueryResultList();
 
             SetGlobalConnectionTimeout(20);    // global timeout is 2 minutes
             SetReverseDnsLookupFlag(false);     // don't do reverse DNS lookup
@@ -567,15 +540,11 @@ namespace ClearCanvas.Dicom.Network
         /// there should be no duplicate entries.</param>
         public void Store(ApplicationEntity serverAE, IEnumerable<String> files, IEnumerable<String> sopClassUids, IEnumerable<String> transferSyntaxUids)
         {
-            // TODO:
-            if (null == files)
-            {
-                throw new System.ArgumentNullException("files cannot be null");
-            }
+			Platform.CheckForNullReference(files, "files");
 
-            try
+			try
             {
-                SetGlobalConnectionTimeout(serverAE.ConnectionTimeout);
+				SetGlobalConnectionTimeout(serverAE.ConnectionTimeout);
                 T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, serverAE.OperationTimeout);
 
                 using (network)
@@ -608,13 +577,46 @@ namespace ClearCanvas.Dicom.Network
                         #endregion
 
                         associationParameters.ConfigureForCStore(interopFilenameList, interopSopClassUid, interopTransferSyntaxUid);
+						T_ASC_Association association = network.CreateAssociation(associationParameters);
 
-                        T_ASC_Association association = network.CreateAssociation(associationParameters);
-
-                        using (association)
+						using (association)
                         {
-                            if (association.SendCStore(interopFilenameList))
-                                association.Release();
+							uint storeOperationIdentifier = OffisDcm.GetNewOperationIdentifier();
+
+							EventHandler<DicomEventArgs> progressHandler = delegate(object sender, DicomEventArgs e)
+							{
+								InteropStoreScuCallbackInfo info = new InteropStoreScuCallbackInfo(e.CallbackInfoPointer, false);
+								if (info == null)
+									return;
+
+								//not this operation, ignore.
+								if (info.StoreOperationIdentifier != storeOperationIdentifier)
+									return;
+
+								T_DIMSE_StoreProgress progress = info.Progress;
+
+								if (progress.state != T_DIMSE_StoreProgressState.DIMSE_StoreEnd)
+									return;
+
+								SendProgressUpdatedEventArgs args = new SendProgressUpdatedEventArgs(info.CurrentCount, info.TotalCount);
+								this.OnSendProgressUpdatedEvent(args);
+							};
+
+							DicomEventManager.Instance.StoreScuProgressEvent += progressHandler;
+
+							try
+							{
+								if (association.SendCStore(interopFilenameList, storeOperationIdentifier))
+									association.Release();
+							}
+							catch
+							{
+								throw;
+							}
+							finally
+							{
+								DicomEventManager.Instance.StoreScuProgressEvent -= progressHandler;
+							}
 
                             return;
                         }
@@ -684,8 +686,46 @@ namespace ClearCanvas.Dicom.Network
 
                         using (association)
                         {
-                            if (association.SendCMoveStudyRootQuery(cMoveDataset, network, serverAE.OperationTimeout, saveDirectory))
-                                association.Release();
+							uint queryRetrieveOperationIdentifier = OffisDcm.GetNewOperationIdentifier();
+
+							EventHandler<DicomEventArgs> updateHandler = delegate(object sender, DicomEventArgs e)
+							{
+								InteropRetrieveCallbackInfo callbackInfo = new InteropRetrieveCallbackInfo(e.CallbackInfoPointer, false);
+
+								//not this operation, ignore.
+								if (callbackInfo.QueryRetrieveOperationIdentifier != queryRetrieveOperationIdentifier)
+									return;
+
+								T_DIMSE_C_MoveRSP moveResponse = callbackInfo.CMoveResponse;
+
+								if ((moveResponse.opts & OffisDcm.O_MOVE_NUMBEROFCOMPLETEDSUBOPERATIONS) > 0 &&
+									(moveResponse.opts & OffisDcm.O_MOVE_NUMBEROFFAILEDSUBOPERATIONS) > 0 &&
+									(moveResponse.opts & OffisDcm.O_MOVE_NUMBEROFREMAININGSUBOPERATIONS) > 0)
+								{
+									int completedOperations = moveResponse.NumberOfCompletedSubOperations;
+									int failedOperations = moveResponse.NumberOfFailedSubOperations;
+									int remainingOperations = moveResponse.NumberOfRemainingSubOperations;
+
+									RetrieveProgressUpdatedEventArgs args = new RetrieveProgressUpdatedEventArgs(completedOperations, failedOperations, remainingOperations);
+									this.OnRetrieveProgressUpdated(args);
+								}
+							};
+
+							DicomEventManager.Instance.RetrieveProgressUpdatedEvent += updateHandler;
+
+							try
+							{
+								if (association.SendCMoveStudyRootQuery(cMoveDataset, network, serverAE.OperationTimeout, saveDirectory, queryRetrieveOperationIdentifier))
+									association.Release();
+							}
+							catch
+							{
+								throw;
+							}
+							finally
+							{
+								DicomEventManager.Instance.RetrieveProgressUpdatedEvent -= updateHandler;
+							}
                         }
                     }
                 }
@@ -707,8 +747,6 @@ namespace ClearCanvas.Dicom.Network
         /// <returns>A read-only collection of matching results from the server in response to our Query.</returns>
         protected ReadOnlyQueryResultCollection Query(ApplicationEntity serverAE, DcmDataset cFindDataset)
         {
-            InitializeQueryState();
-
             try
             {
                 SetGlobalConnectionTimeout(serverAE.ConnectionTimeout);
@@ -726,15 +764,75 @@ namespace ClearCanvas.Dicom.Network
 
                         using (association)
                         {
-                            if (association.SendCFindStudyRootQuery(cFindDataset))
-                            {
-                                association.Release();
-                                return new ReadOnlyQueryResultCollection(_queryResults);
-                            }
-                            else
-                            {
-                                return null;
-                            }
+							uint queryRetrieveOperationIdentifier = OffisDcm.GetNewOperationIdentifier();
+							QueryResultList queryResults = new QueryResultList();
+
+							EventHandler<DicomEventArgs> queryHandler = delegate(object sender, DicomEventArgs e)
+							{
+								InteropFindScuProgressCallbackInfo queryCallbackData = new InteropFindScuProgressCallbackInfo(e.CallbackInfoPointer, false);
+
+								//not this operation, ignore.
+								if (queryCallbackData.QueryRetrieveOperationIdentifier != queryRetrieveOperationIdentifier)
+									return;
+
+								T_DIMSE_C_FindRQ outboundRequest = queryCallbackData.Request;
+								T_DIMSE_C_FindRSP inboundResponse = queryCallbackData.Response;
+								DcmDataset responseData = queryCallbackData.ResponseIdentifiers;
+
+								if (DICOM_PENDING_STATUS(inboundResponse.DimseStatus) ||
+									DICOM_SUCCESS_STATUS(inboundResponse.DimseStatus))
+								{
+									QueryResult queryResult = null;
+									DcmObject item = responseData.nextInContainer(null);
+									bool tagAvailable = (item != null);
+
+									// there actually is a result
+									if (tagAvailable)
+									{
+										queryResult = new QueryResult();
+
+										while (tagAvailable)
+										{
+											DcmElement element = OffisDcm.castToDcmElement(item);
+											if (null != element)
+											{
+												queryResult.Add(new DicomTag(element.getGTag(), element.getETag()), element.ToString());
+											}
+
+											item = responseData.nextInContainer(item);
+											tagAvailable = (item != null);
+										}
+
+										queryResults.Add(queryResult);
+
+										QueryResultReceivedEventArgs args = new QueryResultReceivedEventArgs(queryResult);
+										this.OnQueryResultReceived(args);
+									}
+								}
+							};
+
+							DicomEventManager.Instance.QueryResultReceivedEvent += queryHandler;
+							
+							try
+							{
+								if (association.SendCFindStudyRootQuery(cFindDataset, queryRetrieveOperationIdentifier))
+								{
+									association.Release();
+									return new ReadOnlyQueryResultCollection(queryResults);
+								}
+								else
+								{
+									return null;
+								}
+							}
+							catch
+							{
+								throw;
+							}
+							finally
+							{
+								DicomEventManager.Instance.QueryResultReceivedEvent -= queryHandler;
+							}
                         }
                     }
                 }
@@ -836,15 +934,6 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
-        /// Instantiates a new list object, so that any old results will be left
-        /// available (as long as it hasn't be GC'd).
-        /// </summary>
-        protected void InitializeQueryState()
-        {
-            _queryResults = new QueryResultList();
-        }
-
-        /// <summary>
         /// Invoke the event firing helper 
         /// </summary>
         /// <param name="results">Collection of query results or null if no results.
@@ -852,74 +941,31 @@ namespace ClearCanvas.Dicom.Network
         protected void TriggerQueryCompletedEvent(ReadOnlyQueryResultCollection results)
         {
             QueryCompletedEventArgs args = new QueryCompletedEventArgs(results);
-            OnQueryCompletedEvent(args);
+            EventsHelper.Fire(_queryCompletedEvent, this, args);
         }
  
-        protected void OnSopInstanceReceivedEvent(SopInstanceReceivedEventArgs e)
-        {
-            EventsHelper.Fire(_sopInstanceReceivedEvent, this, e);
-        }
-
-        protected void OnStudyCompletedEvent(StudyCompletedEventArgs e)
-        {
-            EventsHelper.Fire(_studyCompletedEvent, this, e);
-        }
-
-        protected void OnSeriesCompletedEvent(SeriesCompletedEventArgs e)
-        {
-            EventsHelper.Fire(_seriesCompletedEvent, this, e);
-        }
-
-        protected void OnQueryResultReceivedEvent(QueryResultReceivedEventArgs e)
-        {
-            EventsHelper.Fire(_queryResultReceivedEvent, this, e);
-        }
-
-        protected void OnQueryCompletedEvent(QueryCompletedEventArgs e)
-        {
-            EventsHelper.Fire(_queryCompletedEvent, this, e);
-        }
-
         protected void OnSendProgressUpdatedEvent(SendProgressUpdatedEventArgs e)
         {
             EventsHelper.Fire(_sendProgressUpdatedEvent, this, e);
         }
 
-        protected void OnRetrieveProgressUpdatedEvent(RetrieveProgressUpdatedEventArgs e)
-        {
-            EventsHelper.Fire(_retrieveProgressUpdatedEvent, this, e);
-        }
+		protected void OnRetrieveProgressUpdated(RetrieveProgressUpdatedEventArgs args)
+		{
+			EventsHelper.Fire(_retrieveProgressUpdated, this, args);
+		}
 
-        #endregion
+		protected void OnQueryResultReceived(QueryResultReceivedEventArgs args)
+		{
+			EventsHelper.Fire(_queryResultReceivedEvent, this, args);
+		}
+		
+		#endregion
 
-        #region Private members
-        
-        private QueryCallbackHelper _queryCallbackHelper;
-        //private StoreCallbackHelper _storeCallbackHelper;
-        private StoreScuCallbackHelper _storeScuCallbackHelper;
-        private RetrieveCallbackHelper _retrieveCallbackHelper;
-        private QueryResultList _queryResults;
-        private ApplicationEntity _myOwnAE;
-        private int _defaultPDUSize = 16384;
-        private int _cEchoRepeats = 7;
-
-        private const ushort STATUS_Success = 0x0000;
-        private const ushort STATUS_Pending = 0xff00;
-        private const ushort STATUS_Warning = 0xb000;
-
-        private static bool DICOM_PENDING_STATUS(ushort status) { return (((status)&STATUS_Pending) == 0xff00); }
-        private static bool DICOM_WARNING_STATUS(ushort status) { return (((status)&STATUS_Warning) == 0xb000); }
-        private static bool DICOM_SUCCESS_STATUS(ushort status) { return ( (status) == STATUS_Success ); }
-        #endregion
-
-
-        #region IDisposable Members
+		#region IDisposable Members
 
         public void Dispose()
         {
             SocketManager.DeinitializeSockets();
-            _queryCallbackHelper.Dispose();
-            //_storeCallbackHelper.Dispose();
         }
 
         #endregion

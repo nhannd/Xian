@@ -23,12 +23,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		Error
 	}
 	
-    /// <summary>
-    /// Allows access to the DataStore in a way that's not specific to Study, Series or SopInstance
-    /// </summary>
 	internal class SendParcel : Parcel
     {
-        private Dictionary<string, string> _setTransferSyntaxes;
+		private object _statsLock = new object();
+
+		private Dictionary<string, string> _setTransferSyntaxes;
 		private Dictionary<string, string> _setSopClasses;
         private List<ISopInstance> _sopInstances;
 
@@ -185,16 +184,56 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             return afterIncludeObjectCount - currentObjectCount;
         }
 
-        public ParcelTransferState GetState()
+		public bool IsActive()
+		{ 
+			return (this.ParcelTransferState == ParcelTransferState.InProgress ||
+					this.ParcelTransferState == ParcelTransferState.Paused ||
+					this.ParcelTransferState == ParcelTransferState.PauseRequested ||
+					this.ParcelTransferState == ParcelTransferState.Pending);
+
+		}
+
+		public ParcelTransferState GetState()
         {
             return this.ParcelTransferState;
         }
 
+		//a tiny hack to allow the thread doing the move update to get a reliable snapshot of the progress on the store thread.
+		public void GetSafeStats(out ParcelTransferState state, out int totalSteps, out int currentStep)
+		{
+			lock (_statsLock)
+			{
+				state = this.ParcelTransferState;
+				totalSteps = this.TotalProgressSteps;
+				currentStep = this.CurrentProgressStep;
+			}
+		}
+
+		public int GetToSendObjectCount()
+		{
+			return _sopInstances.Count;
+		}
+
 		public void Send()
 		{
+			DicomClient client = new DicomClient(base.SourceAE);
+
+			EventHandler<SendProgressUpdatedEventArgs> updateDelegate = delegate(object source, SendProgressUpdatedEventArgs args)
+					{
+						lock (_statsLock)
+						{
+							if (args.TotalCount == args.CurrentCount)
+								this.ParcelTransferState = ParcelTransferState.Completed;
+
+							this.TotalProgressSteps = args.TotalCount;
+							this.CurrentProgressStep = args.CurrentCount;
+						}
+					};
+
+			client.SendProgressUpdated += updateDelegate;
+
 			try
 			{
-				DicomClient client = new DicomClient(base.SourceAE);
 				client.Store(this.DestinationAE, this.SopInstanceFilenamesList, this.SopClasses, this.TransferSyntaxes);
 				this.ParcelTransferState = ParcelTransferState.Completed;
 			}
@@ -203,23 +242,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				this.ParcelTransferState = ParcelTransferState.Error;
 				Platform.Log(e, LogLevel.Error);
 			}
+
+			client.SendProgressUpdated -= updateDelegate;
 		}
-
-		public int GetToSendObjectCount()
-        {
-            return _sopInstances.Count;
-        }
-
-        public int SentObjectCount()
-        {
-            // This may 'not' necessarily be the same as the CurrentProgressStep
-            return this.CurrentProgressStep;
-        }
-
-        public IEnumerable<string> GetReferencedSopInstanceFileNames()
-        {
-            return this.SopInstanceFilenamesList;
-        }
 
         #endregion
     }

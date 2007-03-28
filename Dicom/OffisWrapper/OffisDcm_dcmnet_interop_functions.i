@@ -25,11 +25,17 @@ static void CFindProgressCallback(
 {
 	if (NULL != CSharpQueryCallbackHelperCallback)
 	{
-		CSharpQueryCallbackHelperCallback(callbackData,
-											request,
-											responseCount,
-											rsp,
-											responseIdentifiers);
+		InteropQueryRetrieveCallbackInfo* cbdata = (InteropQueryRetrieveCallbackInfo*)callbackData;
+		InteropFindScuProgressCallbackInfo info;
+		bzero((char*)&info, sizeof(info));
+		
+		info.QueryRetrieveOperationIdentifier = cbdata->QueryRetrieveOperationIdentifier;
+		info.Request = request;
+		info.ResponseCount = responseCount;
+		info.Response = rsp;
+		info.ResponseIdentifiers = responseIdentifiers;
+
+		CSharpQueryCallbackHelperCallback(&info);
 	}
 }
 
@@ -50,6 +56,8 @@ static void FindScpCallback(
 	InteropFindScpCallbackInfo info;
 	bzero((char*)&info, sizeof(info));
 
+	info.QueryRetrieveOperationIdentifier = context->QueryRetrieveOperationIdentifier;
+
 	if (*responseIdentifiers == NULL)
 		*responseIdentifiers = new DcmDataset();
 
@@ -57,8 +65,6 @@ static void FindScpCallback(
 		*statusDetail = new DcmDataset();
 		
 	// prepare the transmission of data
-	info.CallingAETitle = context->callingAETitle;
-	info.CallingPresentationAddress = context->callingPresentationAddress;
 	info.Request = request;
 	info.Response = response;
 	info.RequestIdentifiers = requestIdentifiers; 
@@ -163,6 +169,7 @@ StoreScuProgressCallback(void * progressInfo,
 		InteropStoreScuCallbackInfo info;
 		// prepare the transmission of data 
 		bzero((char*)&info, sizeof(info));
+		info.StoreOperationIdentifier = pInfo->StoreOperationIdentifier;
 		info.CurrentFile = pInfo->CurrentFile;
 		info.CalledAETitle = calledTitle;
 		info.Progress = progress;
@@ -183,12 +190,14 @@ MoveProgressCallback(void *callbackData,
 	// should fire off image received event
 	if (NULL != CSharpRetrieveCallbackHelperCallback)
 	{
+		InteropQueryRetrieveCallbackInfo* cbinfo = (InteropQueryRetrieveCallbackInfo*)callbackData;;
 		InteropRetrieveCallbackInfo info;
 
 		// prepare the transmission of data 
 		bzero((char*)&info, sizeof(info));
 		info.CMoveResponse = response;
-
+		info.QueryRetrieveOperationIdentifier = cbinfo->QueryRetrieveOperationIdentifier;
+		
 		CSharpRetrieveCallbackHelperCallback(&info);
 	}
 }
@@ -310,6 +319,8 @@ static void MoveScpCallback(
 	InteropMoveScpCallbackInfo info;
 	bzero((char*)&info, sizeof(info));
 
+	info.QueryRetrieveOperationIdentifier = context->queryRetrieveOperationIdentifier;
+	
 	if (*responseIdentifiers == NULL)
 		*responseIdentifiers = new DcmDataset();
 
@@ -317,8 +328,6 @@ static void MoveScpCallback(
 		*statusDetail = new DcmDataset();
 
 	// prepare the transmission of data 
-	info.CallingAETitle = context->callingAETitle;
-	info.CallingPresentationAddress = context->callingPresentationAddress;
 	info.Cancelled = cancelled;
 	info.Request = request;
 	info.Response = response;

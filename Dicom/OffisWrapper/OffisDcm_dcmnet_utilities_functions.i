@@ -1,4 +1,18 @@
 %{
+
+static unsigned long nextOperationIdentifier = 0;
+static OFMutex nextOperationMutex;
+
+unsigned long 
+NextOperationIdentifier()
+{
+	unsigned long next;
+	nextOperationMutex.lock();
+	next = ++nextOperationIdentifier;
+	nextOperationMutex.unlock();
+	return next;
+}
+
 static void
 AddRetrieveAETitle(DcmDataset *rspIds, DIC_AE ourAETitle)
 {
@@ -227,7 +241,7 @@ static OFCondition EchoScp(
 // Helper function to send store
 // ----------------------------------------
 static OFCondition
-StoreScu(T_ASC_Association * assoc, const char *fname, int currentCount, int totalCount)
+StoreScu(T_ASC_Association * assoc, const char *fname, unsigned long storeOperationIdentifier, int currentCount, int totalCount)
     /*
      * This function will read all the information from the given file,
      * figure out a corresponding presentation context which will be used
@@ -289,6 +303,7 @@ StoreScu(T_ASC_Association * assoc, const char *fname, int currentCount, int tot
 
 	InteropStoreScuProgressInfo progressInfo;
 	progressInfo.Association = assoc;
+	progressInfo.StoreOperationIdentifier = storeOperationIdentifier;
 	progressInfo.CurrentFile = fname;
 	progressInfo.TotalCount = totalCount;
 	progressInfo.CurrentCount = currentCount;
@@ -494,7 +509,9 @@ static OFCondition FindScp(T_ASC_Association * assoc, T_DIMSE_C_FindRQ * request
 {
 	OFCondition cond = EC_Normal;
 	FindCallbackData context;
-
+	
+	context.QueryRetrieveOperationIdentifier = NextOperationIdentifier();
+	
 	context.priorStatus = STATUS_Pending;	
 	ASC_getAPTitles(assoc->params, context.callingAETitle, context.ourAETitle, NULL);
 	ASC_getPresentationAddresses(assoc->params, context.callingPresentationAddress, NULL);
@@ -511,7 +528,8 @@ static OFCondition MoveScp(T_ASC_Association * assoc, T_DIMSE_C_MoveRQ * request
 {
 	OFCondition cond = EC_Normal;
 	MoveCallbackData context;
-
+	context.queryRetrieveOperationIdentifier = NextOperationIdentifier();
+	
 	context.priorStatus = STATUS_Pending;
 	ASC_getAPTitles(assoc->params, context.callingAETitle, context.ourAETitle, NULL);
 	ASC_getPresentationAddresses(assoc->params, context.callingPresentationAddress, NULL);

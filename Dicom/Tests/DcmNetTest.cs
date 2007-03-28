@@ -297,37 +297,37 @@ namespace ClearCanvas.Dicom.Tests
         [Test]
         public void Retrieve()
         {
-            ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
-                new AETitle("CCNETTEST"), new ListeningPort(4000));
-            ApplicationEntity serverAE = new ApplicationEntity(new HostName("172.16.10.167"),
-                new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
+			ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
+				new AETitle("CCNETTEST"), new ListeningPort(4000));
+			ApplicationEntity serverAE = new ApplicationEntity(new HostName("172.16.10.167"),
+				new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
 
-            DicomClient dicomClient = new DicomClient(myOwnAEParameters);
+			DicomClient dicomClient = new DicomClient(myOwnAEParameters);
 
-            if (!dicomClient.Verify(serverAE))
-                throw new Exception("Target server is not running");
+			if (!dicomClient.Verify(serverAE))
+				throw new Exception("Target server is not running");
 
-            dicomClient.SopInstanceReceived += SopInstanceReceivedEventHandler;
-            dicomClient.Retrieve(serverAE, new Uid("1.2.804.114118.11.20060704.115022.339091099.19"), @"..\studies\");
-            dicomClient.SopInstanceReceived -= SopInstanceReceivedEventHandler;
+			dicomClient.RetrieveProgressUpdated += new EventHandler<RetrieveProgressUpdatedEventArgs>(RetrieveProgressUpdated);
+			dicomClient.Retrieve(serverAE, new Uid("1.2.804.114118.11.20060704.115022.339091099.19"), @"..\studies\");
+			dicomClient.RetrieveProgressUpdated += new EventHandler<RetrieveProgressUpdatedEventArgs>(RetrieveProgressUpdated);
         }
 
         [Test]
         public void RetrieveSeries()
         {
-            ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
-                new AETitle("CCNETTEST"), new ListeningPort(4000));
-            ApplicationEntity serverAE = new ApplicationEntity(new HostName("172.16.10.167"),
-                new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
+			ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
+				new AETitle("CCNETTEST"), new ListeningPort(4000));
+			ApplicationEntity serverAE = new ApplicationEntity(new HostName("172.16.10.167"),
+				new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
 
-            DicomClient dicomClient = new DicomClient(myOwnAEParameters);
+			DicomClient dicomClient = new DicomClient(myOwnAEParameters);
 
-            if (!dicomClient.Verify(serverAE))
-                throw new Exception("Target server is not running");
+			if (!dicomClient.Verify(serverAE))
+				throw new Exception("Target server is not running");
 
-            dicomClient.SopInstanceReceived += SopInstanceReceivedEventHandler;
-            dicomClient.RetrieveSeries(serverAE, new Uid("1.2.804.114118.11.20060704.115022.339091099.19.1"), @"..\studies\");
-            dicomClient.SopInstanceReceived -= SopInstanceReceivedEventHandler;
+			dicomClient.RetrieveProgressUpdated += new EventHandler<RetrieveProgressUpdatedEventArgs>(RetrieveProgressUpdated);
+			dicomClient.RetrieveSeries(serverAE, new Uid("1.2.804.114118.11.20060704.115022.339091099.19.1"), @"..\studies\");
+			dicomClient.RetrieveProgressUpdated += new EventHandler<RetrieveProgressUpdatedEventArgs>(RetrieveProgressUpdated);
         }
 
         [Test]
@@ -348,28 +348,28 @@ namespace ClearCanvas.Dicom.Tests
         [Test]
         public void SendTest()
         {
-            ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
-                new AETitle("CCNETTEST"), new ListeningPort(4000));
+			ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
+				new AETitle("CCNETTEST"), new ListeningPort(4000));
 
-            ApplicationEntity serverAE = new ApplicationEntity(new HostName("localhost"),
-                new AETitle("STORESCP"), new ListeningPort(12000));
+			ApplicationEntity serverAE = new ApplicationEntity(new HostName("localhost"),
+				new AETitle("STORESCP"), new ListeningPort(12000));
 
-            DicomClient dicomClient = new DicomClient(myOwnAEParameters);
+			DicomClient dicomClient = new DicomClient(myOwnAEParameters);
 
-            string[] files = Directory.GetFiles(@"c:\temp\UnitTestFiles\ClearCanvas.Dicom.Tests.DcmNetTest.SendTest\");
-            dicomClient.Store(serverAE, files);
+			string[] files = Directory.GetFiles(@"c:\temp\UnitTestFiles\ClearCanvas.Dicom.Tests.DcmNetTest.SendTest\");
+			dicomClient.Store(serverAE, files);
         }
 
         #region Non-test utility methods
 
-        public static void SopInstanceReceivedEventHandler(object source, SopInstanceReceivedEventArgs args)
-        {
-            Console.WriteLine("Beg of SopInstanceResultReceivedEventHandler-------------");
-            Console.WriteLine("       File name of SOP: {0}", args.SopFileName);
-            Console.WriteLine("End of SopInstanceResultReceivedEventHandler-------------");
-        }
-
-        public static void QueryResultReceivedEventHandler(object source, QueryResultReceivedEventArgs args)
+		public void RetrieveProgressUpdated(object sender, RetrieveProgressUpdatedEventArgs e)
+		{
+			Console.WriteLine("Beg of RetrieveProgressUpdated-------------");
+			Console.WriteLine("       Completed: {0}, Failed: {1}, Remaining: {2}", e.CompletedSuboperations, e.FailedSuboperations, e.RemainingSuboperations);
+			Console.WriteLine("End of RetrieveProgressUpdated-------------");
+		}
+		
+	   public static void QueryResultReceivedEventHandler(object source, QueryResultReceivedEventArgs args)
         {
             Console.WriteLine("Beg of QueryResultReceivedEventHandler-------------");
             foreach (DicomTag tag in args.Result.DicomTags)

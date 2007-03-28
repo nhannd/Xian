@@ -29,11 +29,6 @@ namespace ClearCanvas.Dicom.Network
             _state = ServerState.STOPPED;
             _stopRequestedFlag = false;
             _saveDirectory = DicomHelper.NormalizeDirectory(saveDirectory);
-
-            _findScpCallbackHelper = new FindScpCallbackHelper(this);
-            _storeScpCallbackHelper = new StoreScpCallbackHelper(this);
-            _moveScpCallbackHelper = new MoveScpCallbackHelper(this);
-			_storeScuCallbackHelper = new StoreScuCallbackHelper(this);
         }
 
 
@@ -170,19 +165,38 @@ namespace ClearCanvas.Dicom.Network
 
             public void Process()
             {
-                try
-                {
-                    OFCondition cond = _association.ProcessServerCommands(-1, _parent.SaveDirectory);
-                    if (DicomHelper.CompareConditions(cond, OffisDcm.DUL_PEERREQUESTEDRELEASE))
-                        _association.RespondToReleaseRequest();
-                    else
-                        _association.Release();
-                }
-                catch (Exception e)
-                {
-                    // TODO: Instead of throwing here, log or do something to exit gracefully
-                    Platform.Log(e);
-                }
+				bool needRelease = true;
+				try
+				{
+					OFCondition cond = _association.ProcessServerCommands(-1, _parent.SaveDirectory);
+					if (DicomHelper.CompareConditions(cond, OffisDcm.DUL_PEERREQUESTEDRELEASE))
+					{
+						needRelease = false;
+						_association.RespondToReleaseRequest();
+					}
+					else
+					{
+						needRelease = false;
+						_association.Release();
+					}
+				}
+				catch (Exception e)
+				{
+					// TODO: Instead of throwing here, log or do something to exit gracefully
+					Platform.Log(e);
+				}
+				finally
+				{
+					try
+					{
+						if (needRelease)
+							_association.Release();
+					}
+					catch (Exception e)
+					{
+						Platform.Log(e);
+					}
+				}
         }
 
             private T_ASC_Association _association;
@@ -384,10 +398,6 @@ namespace ClearCanvas.Dicom.Network
         private object _monitorLock = new object();
         private ThreadList _threadList = new ThreadList();
         private String _saveDirectory;
-        private FindScpCallbackHelper _findScpCallbackHelper;
-        private StoreScpCallbackHelper _storeScpCallbackHelper;
-        private MoveScpCallbackHelper _moveScpCallbackHelper;
-		private StoreScuCallbackHelper _storeScuCallbackHelper;
 
         #endregion
 
@@ -396,10 +406,6 @@ namespace ClearCanvas.Dicom.Network
         public void Dispose()
         {
             SocketManager.DeinitializeSockets();
-            _findScpCallbackHelper.Dispose();
-            _storeScpCallbackHelper.Dispose();
-            _moveScpCallbackHelper.Dispose();
-			_storeScuCallbackHelper.Dispose();
         }
 
         #endregion

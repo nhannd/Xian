@@ -52,11 +52,8 @@
     <Compile Include="DicomServer\DicomSessionObjects.cs" />
     <Compile Include="DicomServer\Parcel.cs" />
     <Compile Include="DicomServer\SendParcel.cs" />
-    <Compile Include="DicomServer\ServerTree\DicomServer.cs" />
-    <Compile Include="DicomServer\ServerTree\DicomServerBase.cs" />
-    <Compile Include="DicomServer\ServerTree\DicomServerGroup.cs" />
-    <Compile Include="DicomServer\ServerTree\DicomServerSetting.cs" />
-    <Compile Include="DicomServer\ServerTree\DicomServerTree.cs" />
+    <Compile Include="DicomServer\ServerTree\AEServerGroup.cs" />
+    <Compile Include="DicomServer\ServerTree\ServerTree.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerData.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerDBAccess.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerExtension.cs" />
