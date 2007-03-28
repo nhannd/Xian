@@ -10,5 +10,10 @@
       <key column="PatientOID_"/>
       <one-to-many class="PatientProfile"/>
     </set>
+
+    <set name="Notes" table="PatientNotes_" lazy="true" access="nosetter.camelcase-underscore">
+      <key column="PatientOID_"/>
+      <many-to-many class="Note" column="NoteOID_"/>
+    </set>
   </class>
 </hibernate-mapping>

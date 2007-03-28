@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<specifications>
+  <spec id="Address">
+    <each test="$.Profiles" failMessage="">
+      <each test="$.Addresses" failMessage="">
+        <true test="$.PostalCode != 'M5B 2H5'"/>
+      </each>
+    </each>
+  </spec>
+</specifications>

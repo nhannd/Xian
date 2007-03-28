@@ -15,6 +15,10 @@ namespace ClearCanvas.Ris.Application.Common
             this.TimeStamp = timeStamp;
         }
 
+        public NoteDetail()
+        {
+        }
+
         [DataMember]
         public string Text;
 

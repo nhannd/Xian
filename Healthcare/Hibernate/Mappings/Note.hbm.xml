@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
+  <class name="Note" proxy="Note" table="Note_">
+    <id name="OID" column="OID_" type="Guid">
+      <generator class="guid.comb"/>
+    </id>
+    <version name="Version" column="Version_"/>
+
+    <property name="Text" column="Text_" type="String" length ="1024" not-null="true"/>
+    <property name="Severity" column="Severity_" type="String" length="40" not-null="true"/>
+    <!--
+    <property name="Severity" column="Severity_" type="ClearCanvas.Healthcare.Hibernate.NoteSeverityEnumHbm, ClearCanvas.Healthcare.Hibernate" length="40" not-null="true"/>
+    -->
+    <property name="TimeStamp" column="TimeStamp_" type="DateTime" not-null="true"/>
+    <!--
+    <many-to-one name="StaffAuthor" class="Staff" column="StaffAuthorOID_" not-null="true" fetch="join"/>
+    -->
+  </class>
+</hibernate-mapping>

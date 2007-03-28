@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<specifications>
+  <spec id="Language">
+    <each test="$.Profiles" failMessage="">
+       <true test="$.PrimaryLanguage.ToString() == 'en'"/>
+    </each>
+  </spec>
+</specifications>

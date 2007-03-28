@@ -43,8 +43,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="*.gen.cs" />
+    <Compile Include="Alert\AddressAlert.cs" />
+    <Compile Include="Alert\Alert.cs" />
     <Compile Include="CheckInProcedureStep.cs" />
     <Compile Include="CheckInProcedureStepSearchCriteria.cs" />
+    <Compile Include="Alert\IAlert.cs" />
+    <Compile Include="Alert\IAlertNotification.cs" />
+    <Compile Include="Alert\LanguageAlert.cs" />
+    <Compile Include="Alert\NoteAlert.cs" />
     <Compile Include="PatientReconciliationException.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -54,6 +60,7 @@
     <Compile Include="PatientReconciliation\PatientProfileDiscrepancyTest.cs" />
     <Compile Include="PatientReconciliation\PatientProfileMatch.cs" />
     <Compile Include="PatientReconciliation\PatientReconciliationStrategyExtensionPoint.cs" />
+    <Compile Include="Note.cs" />
     <Compile Include="Workflow\Modality\WorklistItem.cs" />
     <Compile Include="Workflow\Modality\Worklists.cs" />
     <Compile Include="Workflow\Registration\WorklistQueryResult.cs" />
@@ -169,6 +176,11 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>TelephoneNumberSettings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Alert\AddressAlert.cfg.xml" />
+    <EmbeddedResource Include="Alert\LanguageAlert.cfg.xml" />
+    <EmbeddedResource Include="Alert\NoteAlert.cfg.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

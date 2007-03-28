@@ -23,7 +23,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private EmailAddressesSummaryComponent _emailAddressesSummary;
         private ContactPersonsSummaryComponent _contactPersonsSummary;
         private PatientProfileAdditionalInfoEditorComponent _additionalPatientInfoSummary;
-
+        private NoteSummaryComponent _notesSummary;
 
         /// <summary>
         /// Constructs an editor to edit the specified profile
@@ -88,14 +88,18 @@ namespace ClearCanvas.Ris.Client.Adt
                     }
                 });
 
-
-
             _patientEditor.Subject = _profile;
             _addressesSummary.Subject = _profile.Addresses;
             _phoneNumbersSummary.Subject = _profile.TelephoneNumbers;
             _emailAddressesSummary.Subject = _profile.EmailAddresses;
             _contactPersonsSummary.Subject = _profile.ContactPersons;
             _additionalPatientInfoSummary.Subject = _profile;
+
+            if (_isNew == false)
+            {
+                this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new NoteSummaryComponent()));
+                _notesSummary.Subject = _profile.Notes;
+            }
 
             base.Start();
         }

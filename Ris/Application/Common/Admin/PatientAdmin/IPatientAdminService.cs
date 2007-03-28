@@ -42,5 +42,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
         /// <returns></returns>
         [OperationContract]
         AdminAddPatientProfileResponse AdminAddPatientProfile(AdminAddPatientProfileRequest request);
+
+        [OperationContract]
+        SaveNewNoteForPatientResponse SaveNewNoteForPatient(SaveNewNoteForPatientRequest request);
     }
 }

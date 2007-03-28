@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<specifications>
+  <spec id="Note">
+    <each test="$.Notes" failMessage="">
+      <true test="$.Severity != 'High'"/>
+    </each>
+  </spec>
+</specifications>

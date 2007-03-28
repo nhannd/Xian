@@ -74,6 +74,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                 detail.EmailAddresses.Add(emailAssembler.CreateEmailAddressDetail(e, context));
             }
 
+            NoteAssembler noteAssembler = new NoteAssembler();
+            detail.Notes = new List<NoteDetail>();
+            foreach (Note n in profile.Patient.Notes)
+            {
+                detail.Notes.Add(noteAssembler.CreateNoteDetail(n, context));
+            }
+
             return detail;
         }
 
@@ -125,6 +132,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 	        {
                 profile.EmailAddresses.Add(emailAssembler.CreateEmailAddress(e));    
 	        }
+
+            NoteAssembler noteAssembler = new NoteAssembler();
+            profile.Patient.Notes.Clear();
+            foreach (NoteDetail n in detail.Notes)
+            {
+                profile.Patient.Notes.Add(noteAssembler.CreateNote(n));
+            }
         }
     }
 }

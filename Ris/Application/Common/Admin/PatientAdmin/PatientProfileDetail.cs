@@ -15,6 +15,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
             this.ContactPersons = new List<ContactPersonDetail>();
             this.EmailAddresses = new List<EmailAddressDetail>();
             this.TelephoneNumbers = new List<TelephoneDetail>();
+            this.Notes = new List<NoteDetail>();
             this.Name = new PersonNameDetail();
         }
 
@@ -72,7 +73,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
         [DataMember]
         public List<ContactPersonDetail> ContactPersons;
 
-        //[DataMember]
-        //public List<NoteDetail> Notes;
+        [DataMember]
+        public List<NoteDetail> Notes;
     }
 }

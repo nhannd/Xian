@@ -45,3 +45,4 @@ copy "..\..\..\..\..\Ris\Application\Services\bin\%1\ClearCanvas.Ris.Application
 copy "..\..\..\..\..\Ris\Server\bin\%1\ClearCanvas.Ris.Server.dll" .\plugins
 
 
+copy "..\..\..\..\..\Jscript\bin\%1\ClearCanvas.Jscript.dll" .\plugins

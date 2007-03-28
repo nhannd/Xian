@@ -119,6 +119,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             broker.LoadContactPersonsForPatientProfile(profile);
             broker.LoadPatientForPatientProfile(profile);
 
+            PersistenceContext.GetBroker<IPatientBroker>().LoadNotesForPatient(profile.Patient);
+
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             return new LoadPatientProfileForAdminEditResponse(profile.Patient.GetRef(), profile.GetRef(), assembler.CreatePatientProfileDetail(profile, PersistenceContext));
         }
@@ -149,6 +151,26 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             PersistenceContext.SynchState();
 
             return new AdminAddPatientProfileResponse(patient.GetRef(), profile.GetRef());
+        }
+
+        [UpdateOperation]
+        public SaveNewNoteForPatientResponse SaveNewNoteForPatient(SaveNewNoteForPatientRequest request)
+        {
+            NoteAssembler assembler = new NoteAssembler();
+            Note note = assembler.CreateNote(request.Note);
+
+            IPatientProfileBroker profileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
+            PatientProfile profile = profileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
+            profileBroker.LoadPatientForPatientProfile(profile);
+
+            PersistenceContext.GetBroker<IPatientBroker>().LoadNotesForPatient(profile.Patient);
+
+            PersistenceContext.Lock(profile.Patient);
+            PersistenceContext.Lock(note, DirtyState.New);
+
+            profile.Patient.Notes.Add(note);
+
+            return new SaveNewNoteForPatientResponse();
         }
 
         #endregion
