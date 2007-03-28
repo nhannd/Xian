@@ -48,7 +48,8 @@ namespace ClearCanvas.Healthcare {
         public string ToString(string format, IFormatProvider formatProvider)
         {
             // TODO interpret the format string according to custom-defined format characters
-            return string.Format("{0} {1} {2}", this.AssigningAuthority, this.Id, this.VersionCode);
+            // Note: Trim in case VersionCode is null, to remove the trailing space
+            return string.Format("{0} {1} {2}", this.AssigningAuthority, this.Id, this.VersionCode).Trim();
         }
 
         #endregion

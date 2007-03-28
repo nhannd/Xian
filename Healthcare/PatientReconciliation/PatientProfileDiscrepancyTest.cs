@@ -43,9 +43,6 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
     /// </summary>
     public class PatientProfileDiscrepancyTest
     {
-        delegate bool DiscrepancyTestDelegate(PatientProfile x, PatientProfile y);
-
-
         /// <summary>
         /// Returns a value that is a bitmask of <see cref="PatientProfileDiscrepancy"/> values indicating
         /// which discrepancies were found among the specified set of profiles.  Only the discrepancies specified in
@@ -61,92 +58,143 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
             // Healthcard
             if ((testableDiscrepancies & PatientProfileDiscrepancy.Healthcard) == PatientProfileDiscrepancy.Healthcard)
             {
-                results.Add(new DiscrepancyTestResult(PatientProfileDiscrepancy.Healthcard,
-                    !x.Healthcard.IsEquivalentTo(y.Healthcard),
-                    StringDiff.Compute(x.Healthcard.ToString(), y.Healthcard.ToString())));
+                results.Add(GetResult<HealthcardNumber>(x, y, PatientProfileDiscrepancy.Healthcard,
+                    delegate(PatientProfile p) { return p.Healthcard; },
+                    delegate(HealthcardNumber a, HealthcardNumber b) { return a.IsEquivalentTo(b); }));
             }
 
             // FamilyName
             if ((testableDiscrepancies & PatientProfileDiscrepancy.FamilyName) == PatientProfileDiscrepancy.FamilyName)
             {
-                results.Add(new DiscrepancyTestResult(PatientProfileDiscrepancy.FamilyName,
-                    !x.Name.FamilyName.Equals(y.Name.FamilyName, StringComparison.CurrentCultureIgnoreCase),
-                    StringDiff.Compute(x.Name.FamilyName.ToString(), y.Name.FamilyName.ToString())));
+                results.Add(GetResult<string>(x, y, PatientProfileDiscrepancy.FamilyName,
+                    delegate(PatientProfile p) { return p.Name.FamilyName; },
+                    delegate(string a, string b) { return a.Equals(b, StringComparison.CurrentCultureIgnoreCase); }));
             }
 
             // GivenName
             if ((testableDiscrepancies & PatientProfileDiscrepancy.GivenName) == PatientProfileDiscrepancy.GivenName)
             {
-                results.Add(new DiscrepancyTestResult(PatientProfileDiscrepancy.GivenName,
-                    !x.Name.GivenName.Equals(y.Name.GivenName, StringComparison.CurrentCultureIgnoreCase),
-                    StringDiff.Compute(x.Name.GivenName.ToString(), y.Name.GivenName.ToString())));
+                results.Add(GetResult<string>(x, y, PatientProfileDiscrepancy.GivenName,
+                    delegate(PatientProfile p) { return p.Name.GivenName; },
+                    delegate(string a, string b) { return a.Equals(b, StringComparison.CurrentCultureIgnoreCase); }));
             }
 
             // MiddleName
             if ((testableDiscrepancies & PatientProfileDiscrepancy.MiddleName) == PatientProfileDiscrepancy.MiddleName)
             {
-                results.Add(new DiscrepancyTestResult(PatientProfileDiscrepancy.MiddleName,
-                    !(x.Name.MiddleName != null ? x.Name.MiddleName.Equals(y.Name.MiddleName, StringComparison.CurrentCultureIgnoreCase) : y.Name.MiddleName == null),
-                    StringDiff.Compute(x.Name.MiddleName.ToString(), y.Name.MiddleName.ToString())));
+                results.Add(GetResult<string>(x, y, PatientProfileDiscrepancy.MiddleName,
+                    delegate(PatientProfile p) { return p.Name.MiddleName; },
+                    delegate(string a, string b) { return a.Equals(b, StringComparison.CurrentCultureIgnoreCase); }));
             }
 
             // DateOfBirth
             if ((testableDiscrepancies & PatientProfileDiscrepancy.DateOfBirth) == PatientProfileDiscrepancy.DateOfBirth)
             {
-                results.Add(new DiscrepancyTestResult(PatientProfileDiscrepancy.DateOfBirth,
-                    !(x.DateOfBirth == y.DateOfBirth),
-                    StringDiff.Compute(x.DateOfBirth.ToShortDateString(), y.DateOfBirth.ToShortDateString())));
+                results.Add(GetResult<DateTime>(x, y, PatientProfileDiscrepancy.DateOfBirth,
+                    delegate(PatientProfile p) { return p.DateOfBirth; },
+                    delegate(DateTime a, DateTime b) { return a.Date.Equals(b.Date); },
+                    delegate(DateTime a) { return a.ToShortDateString(); }));
             }
 
             // Sex
             if ((testableDiscrepancies & PatientProfileDiscrepancy.Sex) == PatientProfileDiscrepancy.Sex)
             {
-                results.Add(new DiscrepancyTestResult(PatientProfileDiscrepancy.Sex,
-                    !(x.Sex == y.Sex),
-                    StringDiff.Compute(x.Sex.ToString(), y.Sex.ToString())));
+                results.Add(GetResult<Sex>(x, y, PatientProfileDiscrepancy.Sex,
+                    delegate(PatientProfile p) { return p.Sex; }));
             }
 
             // HomePhone
             if ((testableDiscrepancies & PatientProfileDiscrepancy.HomePhone) == PatientProfileDiscrepancy.HomePhone)
             {
-                TelephoneNumber tx = x.CurrentHomePhone;
-                TelephoneNumber ty = y.CurrentHomePhone;
-                results.Add(new DiscrepancyTestResult(PatientProfileDiscrepancy.HomePhone,
-                    !((tx == null) ? (ty == null) : tx.IsEquivalentTo(ty)),
-                    StringDiff.Compute(tx.ToString(), ty.ToString())));
+                results.Add(GetResult<TelephoneNumber>(x, y, PatientProfileDiscrepancy.HomePhone,
+                    delegate(PatientProfile p) { return p.CurrentHomePhone; },
+                    delegate(TelephoneNumber a, TelephoneNumber b) { return a.IsEquivalentTo(b); }));
             }
 
             // HomeAddress
             if ((testableDiscrepancies & PatientProfileDiscrepancy.HomeAddress) == PatientProfileDiscrepancy.HomeAddress)
             {
-                Address tx = x.CurrentHomeAddress;
-                Address ty = y.CurrentHomeAddress;
-                results.Add(new DiscrepancyTestResult(PatientProfileDiscrepancy.HomeAddress,
-                    !((tx == null) ? (ty == null) : tx.IsEquivalentTo(ty)),
-                    StringDiff.Compute(tx.ToString(), ty.ToString())));
+                results.Add(GetResult<Address>(x, y, PatientProfileDiscrepancy.HomeAddress,
+                    delegate(PatientProfile p) { return p.CurrentHomeAddress; },
+                    delegate(Address a, Address b) { return a.IsEquivalentTo(b); }));
             }
 
             // WorkPhone
             if ((testableDiscrepancies & PatientProfileDiscrepancy.WorkPhone) == PatientProfileDiscrepancy.WorkPhone)
             {
-                TelephoneNumber tx = x.CurrentWorkPhone;
-                TelephoneNumber ty = y.CurrentWorkPhone;
-                results.Add(new DiscrepancyTestResult(PatientProfileDiscrepancy.WorkPhone,
-                    !((tx == null) ? (ty == null) : tx.IsEquivalentTo(ty)),
-                    StringDiff.Compute(tx.ToString(), ty.ToString())));
+                results.Add(GetResult<TelephoneNumber>(x, y, PatientProfileDiscrepancy.WorkPhone,
+                    delegate(PatientProfile p) { return p.CurrentWorkPhone; },
+                    delegate(TelephoneNumber a, TelephoneNumber b) { return a.IsEquivalentTo(b); }));
             }
 
             // WorkAddress
             if ((testableDiscrepancies & PatientProfileDiscrepancy.WorkAddress) == PatientProfileDiscrepancy.WorkAddress)
             {
-                Address tx = x.CurrentWorkAddress;
-                Address ty = y.CurrentWorkAddress;
-                results.Add(new DiscrepancyTestResult(PatientProfileDiscrepancy.WorkAddress,
-                    !((tx == null) ? (ty == null) : tx.IsEquivalentTo(ty)),
-                    StringDiff.Compute(tx.ToString(), ty.ToString())));
+                results.Add(GetResult<Address>(x, y, PatientProfileDiscrepancy.WorkAddress,
+                    delegate(PatientProfile p) { return p.CurrentWorkAddress; },
+                    delegate(Address a, Address b) { return a.IsEquivalentTo(b); }));
             }
 
             return results;
         }
+
+        delegate T PropertyGetter<T>(PatientProfile p);
+        delegate bool TestEqual<T>(T x, T y);
+        delegate string ToStringDelegate<T>(T x);
+
+        /// <summary>
+        /// Computes a <see cref="DiscrepancyTestResult"/> for a specified property
+        /// </summary>
+        /// <typeparam name="T">The type of the property being tested</typeparam>
+        /// <param name="x">Left operand</param>
+        /// <param name="y">Right operand</param>
+        /// <param name="discrepancy">Discrepancy being tested</param>
+        /// <param name="getter">A delegate that returns the value of the property from a <see cref="PatientProfile"/></param>
+        /// <param name="tester">A delegate that tests for equality of the property - need not be null-safe</param>
+        /// <param name="toString">A delegate that converts the property to a string</param>
+        /// <returns></returns>
+        private static DiscrepancyTestResult GetResult<T>(PatientProfile x, PatientProfile y, PatientProfileDiscrepancy discrepancy, PropertyGetter<T> getter, TestEqual<T> tester, ToStringDelegate<T> toString)
+        {
+            T vx = getter(x);
+            T vy = getter(y);
+
+            if (vx == null && vy == null)
+            {
+                return new DiscrepancyTestResult(discrepancy, false, StringDiff.Compute("", ""));
+            }
+
+            if (vx == null)
+            {
+                return new DiscrepancyTestResult(discrepancy, true, StringDiff.Compute("", toString(vy)));
+            }
+
+            if (vy == null)
+            {
+                return new DiscrepancyTestResult(discrepancy, true, StringDiff.Compute(toString(vx), ""));
+            }
+
+            return new DiscrepancyTestResult(discrepancy, !tester(vx, vy), StringDiff.Compute(toString(vx), toString(vy)));
+        }
+
+        private static DiscrepancyTestResult GetResult<T>(PatientProfile x, PatientProfile y, PatientProfileDiscrepancy discrepancy, PropertyGetter<T> propGetter, TestEqual<T> tester)
+        {
+            return GetResult<T>(x, y, discrepancy, propGetter, tester, DefaultToString<T>);
+        }
+
+        private static DiscrepancyTestResult GetResult<T>(PatientProfile x, PatientProfile y, PatientProfileDiscrepancy discrepancy, PropertyGetter<T> propGetter)
+        {
+            return GetResult<T>(x, y, discrepancy, propGetter, DefaultTestEqual<T>, DefaultToString<T>);
+        }
+
+        private static bool DefaultTestEqual<T>(T x, T y)
+        {
+            return x.Equals(y);
+        }
+
+        private static string DefaultToString<T>(T x)
+        {
+            return x.ToString();
+        }
+
     }
 }
