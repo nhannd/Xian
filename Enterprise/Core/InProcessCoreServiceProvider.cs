@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Ris.Server
+namespace ClearCanvas.Enterprise.Core
 {
     /// <summary>
     /// This service provider allows the application server to make use of core services internally

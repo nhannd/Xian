@@ -74,6 +74,7 @@
     <Compile Include="ICodedValueBroker.cs" />
     <Compile Include="IEntityBroker.cs" />
     <Compile Include="IEnumBroker.cs" />
+    <Compile Include="InProcessCoreServiceProvider.cs" />
     <Compile Include="IPersistenceBroker.cs" />
     <Compile Include="IPersistenceContext.cs" />
     <Compile Include="IPersistentStore.cs" />
