@@ -43,19 +43,21 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		}
 
 		public void Stop()
-		{ 
+		{
 			try
 			{
 				_serviceClient.Unsubscribe("");
 				_serviceClient.Close();
-
-				_marshaler.Dispose();
-				_marshaler = null;
 			}
 			catch
 			{
 				_serviceClient.Abort();
 				throw;
+			}
+			finally
+			{
+				_marshaler.Dispose();
+				_marshaler = null;
 			}
 		}
 

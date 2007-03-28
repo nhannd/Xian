@@ -10,6 +10,7 @@ namespace ClearCanvas.Common.Utilities
 	public class Timer : IDisposable
 	{
 		private System.Threading.Timer _internalTimer;
+		private object _syncLock = new object();
 		private InterthreadMarshaler _marshaler;
 
 		public Timer(TimerDelegate expiredDelegate, int dueTime, int period)
@@ -23,7 +24,11 @@ namespace ClearCanvas.Common.Utilities
 							expiredDelegate();
 						};
 
-					_marshaler.QueueInvoke(marshalDelegate);
+					lock (_syncLock)
+					{
+						if (_marshaler != null)
+							_marshaler.QueueInvoke(marshalDelegate);
+					}
 				};
 
 			_marshaler = new InterthreadMarshaler();
@@ -42,9 +47,12 @@ namespace ClearCanvas.Common.Utilities
 				{
 					_internalTimer.Dispose();
 					_internalTimer = null;
-
-					_marshaler.Dispose();
-					_marshaler = null;
+					
+					lock (_syncLock)
+					{
+						_marshaler.Dispose();
+						_marshaler = null;
+					}
 				}
 			}
 		}
