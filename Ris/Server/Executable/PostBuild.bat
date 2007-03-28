@@ -21,9 +21,9 @@ md ".\datastore"
 copy "..\..\Logging.config" "."
 
 :: Copy shared libraries
-copy "..\..\..\..\..\Common\bin\%2\*.*" ".\Common"
-copy "..\..\..\..\..\Common\refs\nunit.framework.dll" ".\Common" 
-copy "..\..\..\..\..\Common\refs\log4net.dll" ".\Common"
+copy "..\..\..\..\..\Common\bin\%3\*.*" ".\Common"
+copy "..\..\..\..\..\ReferencedAssemblies\nunit.framework.dll" ".\Common" 
+copy "..\..\..\..\..\ReferencedAssemblies\log4net.dll" ".\Common"
 copy "..\..\..\..\..\ReferencedAssemblies\Iesi.Collections.dll" ".\Common"
 copy "..\..\..\..\..\ReferencedAssemblies\Nhibernate.dll" ".\Common"
 copy "..\..\..\..\..\ReferencedAssemblies\Castle.DynamicProxy.dll" ".\Common"
