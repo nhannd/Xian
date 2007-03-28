@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
         #region Public Properties
 
-        [ConfigurationProperty("DriveName", DefaultValue = "C")]
+        [ConfigurationProperty("DriveName", DefaultValue = "")]
         public string DriveName
         {
             get { return (string)this["DriveName"]; }

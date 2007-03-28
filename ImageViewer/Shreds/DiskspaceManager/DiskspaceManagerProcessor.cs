@@ -13,7 +13,6 @@ using ClearCanvas.ImageViewer.Services.DiskspaceManager;
 
 namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 {
-    [ExtensionOf(typeof(ShredExtensionPoint))]
     public partial class DiskspaceManagerProcessor : IDiskspaceManagerService
     {
 		private static DiskspaceManagerProcessor _instance;
@@ -43,6 +42,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             {
                 _stopSignal = new EventWaitHandle(false, EventResetMode.ManualReset);
                 _diskspaceManagerData = new DiskspaceManagerData();
+                if (_diskspaceManagerData.DriveInfoList != null && _diskspaceManagerData.DriveInfoList.Count > 0
+                    && !_diskspaceManagerData.DriveInfoList[0].DriveName.Equals(DiskspaceManagerSettings.Instance.DriveName))
+                {
+                    DiskspaceManagerSettings.Instance.DriveName = _diskspaceManagerData.DriveInfoList[0].DriveName;
+                    DiskspaceManagerSettings.Save();
+                }
                 if (!FindDiskspaceManagerDBAccessExtensionPoint())
                     return;
 

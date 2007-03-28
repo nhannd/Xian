@@ -50,11 +50,13 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             _txtUsedSpace.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _txtStatus.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
+            _bnRefresh.Click += new System.EventHandler(_bnRefresh_Click);
         }
 
         private void _bnRefresh_Click(object sender, EventArgs e)
         {
             _component.ConnectToClient();
+            
         }
     }
 }

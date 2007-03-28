@@ -200,7 +200,7 @@ namespace ClearCanvas.ImageViewer.Configuration
             set
             {
                 if (value >= (100.0F - _watermarkMinDifference) * 100.0F)
-                    _lowWatermark = (100.0F - _watermarkMinDifference) * 100.0F;
+                    _lowWatermark = (100.0F - _watermarkMinDifference);
                 else if (value <= 0.0F)
                     _lowWatermark = 0.0F;
                 else
@@ -217,9 +217,9 @@ namespace ClearCanvas.ImageViewer.Configuration
             set
             {
                 if (value >= 10000.0F)
-                    _highWatermark = 10000.0F;
+                    _highWatermark = 100.0F;
                 else if (value <= (_watermarkMinDifference * 100.0F))
-                    _highWatermark = _watermarkMinDifference * 100.0F;
+                    _highWatermark = _watermarkMinDifference;
                 else
                     _highWatermark = value / 100.0F;
                 if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))

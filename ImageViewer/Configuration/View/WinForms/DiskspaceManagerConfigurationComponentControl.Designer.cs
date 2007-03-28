@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this._tbFrequency = new System.Windows.Forms.TrackBar();
             this._txtFrequency = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
-            this._btRefresh = new System.Windows.Forms.Button();
+            this._bnRefresh = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this._tbLowWatermark)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._tbHighWatermark)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._tbFrequency)).BeginInit();
@@ -236,20 +236,20 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.label10.TabIndex = 19;
             this.label10.Text = "Min";
             // 
-            // _btRefresh
+            // _bnRefresh
             // 
-            this._btRefresh.Location = new System.Drawing.Point(35, 334);
-            this._btRefresh.Name = "_btRefresh";
-            this._btRefresh.Size = new System.Drawing.Size(75, 28);
-            this._btRefresh.TabIndex = 20;
-            this._btRefresh.Text = "Refresh";
-            this._btRefresh.UseVisualStyleBackColor = true;
+            this._bnRefresh.Location = new System.Drawing.Point(35, 334);
+            this._bnRefresh.Name = "_bnRefresh";
+            this._bnRefresh.Size = new System.Drawing.Size(75, 28);
+            this._bnRefresh.TabIndex = 20;
+            this._bnRefresh.Text = "Refresh";
+            this._bnRefresh.UseVisualStyleBackColor = true;
             // 
             // DiskspaceManagerConfigurationComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._btRefresh);
+            this.Controls.Add(this._bnRefresh);
             this.Controls.Add(this.label10);
             this.Controls.Add(this._txtFrequency);
             this.Controls.Add(this._tbFrequency);
@@ -302,6 +302,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         private System.Windows.Forms.TrackBar _tbFrequency;
         private System.Windows.Forms.TextBox _txtFrequency;
         private System.Windows.Forms.Label label10;
-        private System.Windows.Forms.Button _btRefresh;
+        private System.Windows.Forms.Button _bnRefresh;
     }
 }
