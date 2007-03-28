@@ -158,6 +158,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				IDisplaySet displaySet = AddDisplaySet(imageSet, series);
 				AddImages(displaySet, series);
 			}
+
+			imageSet.DisplaySets.Sort(new DisplaySetSortBySeriesNumber());
 		}
 
 		private IDisplaySet AddDisplaySet(IImageSet imageSet, Series series)
@@ -175,6 +177,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			foreach (ImageSop image in series.Sops.Values)
 				AddImage(displaySet, image);
+
+			// This has been added so that the initial presentation of each display set has a reasonable 
+			// sort order.  When proper sorting support is added, the sorters will be extensions.
+			displaySet.PresentationImages.Sort(new PresentationImageSortByInstanceNumber());
 		}
 
 		private IPresentationImage AddImage(IDisplaySet displaySet, ImageSop image)
@@ -182,10 +188,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			StandardPresentationImage presentationImage = new StandardPresentationImage(image);
 			presentationImage.Uid = image.SopInstanceUID;
 			displaySet.PresentationImages.Add(presentationImage);
-
-			// This has been added so that the initial presentation of each display set has a reasonable 
-			// sort order.  When proper sorting support is added, the sorters will be extensions.
-			displaySet.PresentationImages.Sort((IComparer<IPresentationImage>)new DicomPresentationImageSortByInstanceNumber());
 
 			return presentationImage;
 		}

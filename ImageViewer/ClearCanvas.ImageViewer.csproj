@@ -121,6 +121,7 @@
     <Compile Include="Annotations\IAnnotationLayout.cs" />
     <Compile Include="Annotations\StoredAnnotatationLayoutProvider.cs" />
     <Compile Include="Annotations\Tests\AnnotationLayoutStoreTests.cs" />
+    <Compile Include="DisplaySetSortBySeriesNumber.cs" />
     <Compile Include="Graphics\GrayscaleImageGraphic.cs" />
     <Compile Include="Graphics\IImageSpatialTransform.cs" />
     <Compile Include="Graphics\ImageSpatialTransformMemento.cs" />
@@ -173,7 +174,7 @@
     <Compile Include="InputManagement\KeyStrokeSettings.cs" />
     <Compile Include="InputManagement\Modifiers.cs" />
     <Compile Include="InputManagement\IInputController.cs" />
-    <Compile Include="DicomPresentationImageSortByInstanceNumber.cs" />
+    <Compile Include="PresentationImageSortByInstanceNumber.cs" />
     <Compile Include="InputManagement\ModifiedMouseToolButtonAttribute.cs" />
     <Compile Include="InputManagement\MouseButtonShortcut.cs" />
     <Compile Include="InputManagement\KeyboardButtonMessage.cs" />

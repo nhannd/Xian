@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.IsFalse(VerifyOrdered(orderedCollection, nonOrderedCollection));
 
 			//Sort it.
-			nonOrderedCollection.Sort(new DicomPresentationImageSortByInstanceNumber(reverse));
+			nonOrderedCollection.Sort(new PresentationImageSortByInstanceNumber(reverse));
 			
 			Debug.WriteLine("NON-ORDERED COLLECTION (POST-SORT)");
 			Trace(nonOrderedCollection);
