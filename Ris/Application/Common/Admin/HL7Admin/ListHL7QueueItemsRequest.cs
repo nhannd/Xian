@@ -8,6 +8,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
     [DataContract]
     public class ListHL7QueueItemsRequest : DataContractBase
     {
+        public ListHL7QueueItemsRequest()
+        {
+        }
+
+        public ListHL7QueueItemsRequest(int firstRow, int maxRows)
+        {
+            this.FirstRow = firstRow;
+            this.MaxRows = maxRows;
+        }
+
         [DataMember]
         public EnumValueInfo Direction;
 
@@ -37,5 +47,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
 
         [DataMember]
         public EnumValueInfo MessageFormat;
+
+        [DataMember]
+        public int FirstRow;
+
+        [DataMember]
+        public int MaxRows;
     }
 }
