@@ -6,7 +6,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
-    public delegate IList<U> PageSearchDelegate<U>(SearchResultPage page);
+    public delegate IList<U> PageSearchDelegate<U>(int firstRow, int maxRows);
 
     public class PagingController<T> : IPagingController<T>
     {
@@ -71,10 +71,10 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
-        private IList<T> DoQuery(SearchResultPage page)
+        private IList<T> DoQuery(int firstRow)
         {
             IList<T> results;
-            results = _searchDelegate(page);
+            results = _searchDelegate(firstRow, _pageSize + 1);
 
             if (results.Count == _pageSize + 1)
             {
@@ -89,33 +89,33 @@ namespace ClearCanvas.Ris.Client
             return results;
         }
 
-        private SearchResultPage NextPage()
+        private int NextPage()
         {
             if (HasNext)
             {
-                return new SearchResultPage((_currentPageNumber + 1) * _pageSize, _pageSize + 1);
+                return (_currentPageNumber + 1) * _pageSize;
             }
             else
             {
-                return null;
+                return 0;
             }
         }
 
-        private SearchResultPage PrevPage()
+        private int PrevPage()
         {
             if (HasPrev)
             {
-                return new SearchResultPage((_currentPageNumber - 1) * _pageSize, _pageSize + 1);
+                return (_currentPageNumber - 1) * _pageSize;
             }
             else
             {
-                return null;
+                return 0;
             }
         }
 
-        private SearchResultPage FirstPage()
+        private int FirstPage()
         {
-            return new SearchResultPage(0, _pageSize + 1);
+            return 0;
         }
     }
 }

@@ -102,8 +102,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private HL7QueueItemSummaryTable _queue;
         private bool _refreshFiltered = false;
 
-        //private IPagingController<HL7QueueItemSummary> _pagingController;
-        //private PagingActionModel<HL7QueueItemSummary> _pagingActionHandler;
+        private IPagingController<HL7QueueItemSummary> _pagingController;
+        private PagingActionModel<HL7QueueItemSummary> _pagingActionHandler;
 
         private ToolSet _toolSet;
         private ClickHandlerDelegate _defaultAction;
@@ -127,6 +127,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private List<string> _typeChoices;
         private List<EnumValueInfo> _statusChoices;
 
+        private ListHL7QueueItemsRequest _listRequest;
+
         public override void Start()
         {
             base.Start();
@@ -135,25 +137,30 @@ namespace ClearCanvas.Ris.Client.Adt
 
             //TODO: figure out how to replace use of SearchCriteria in PagingController
 
-            //_pagingController = new PagingController<HL7QueueItemSummary>(
-            //    delegate (SearchCriteria criteria, SearchResultPage page)
-            //    {
-            //        Platform.GetService<IHL7QueueService>(
-            //            delegate(IHL7QueueService service)
-            //            {
-            //                try
-            //                {
-            //                    formResponse = service.GetHL7QueueFormData(formRequest);
-            //                }
-            //                catch (Exception e)
-            //                {
-            //                    ExceptionHandler.Report(e, desktopwindow);
-            //                }
-            //            });
-            //        return _hl7QueueService.GetHL7QueueItems((HL7QueueItemSearchCriteria)criteria, page); 
-            //    }
-            //);
-            //_pagingActionHandler = new PagingActionModel<HL7QueueItemSummary>(_pagingController, _queue);
+            _pagingController = new PagingController<HL7QueueItemSummary>(
+                delegate (int firstRow, int maxRows)
+                {
+                    //ListHL7QueueItemsRequest listRequest = _listRequest.Clone();
+                    ListHL7QueueItemsRequest listRequest = _listRequest;
+                    listRequest.FirstRow = firstRow;
+                    listRequest.MaxRows = maxRows;
+                    ListHL7QueueItemsResponse listResponse = null;
+                    Platform.GetService<IHL7QueueService>(
+                        delegate(IHL7QueueService service)
+                        {
+                            try
+                            {
+                                listResponse = service.ListHL7QueueItems(listRequest);
+                            }
+                            catch (Exception e)
+                            {
+                                ExceptionHandler.Report(e, Host.DesktopWindow);
+                            }
+                        });
+                    return listResponse.QueueItems;
+                }
+            );
+            _pagingActionHandler = new PagingActionModel<HL7QueueItemSummary>(_pagingController, _queue);
 
             GetHL7QueueFormDataRequest formRequest = new GetHL7QueueFormDataRequest();
             GetHL7QueueFormDataResponse formResponse = null;
@@ -356,8 +363,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get
             {
                 ActionModelNode node = ActionModelRoot.CreateModel(this.GetType().FullName, "hl7Queue-toolbar", _toolSet.Actions);
-                //TODO: Restore paging
-                //node.Merge(_pagingActionHandler);
+                node.Merge(_pagingActionHandler);
                 return node;
             }
         }
@@ -431,7 +437,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void ShowAllItems()
         {
-            ListHL7QueueItemsRequest request = new ListHL7QueueItemsRequest();
+            ListHL7QueueItemsRequest request = new ListHL7QueueItemsRequest(0, 50);
             UpdateTableData(request);
 
             _refreshFiltered = false;
@@ -439,7 +445,7 @@ namespace ClearCanvas.Ris.Client.Adt
         
         public void ShowFilteredItems()
         {
-            ListHL7QueueItemsRequest request = new ListHL7QueueItemsRequest();
+            ListHL7QueueItemsRequest request = new ListHL7QueueItemsRequest(0, 50);
 
             request.Direction = _directionChecked ? _direction : null;
             request.Peer = _peerChecked ? _peer : null;
@@ -459,28 +465,31 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void UpdateTableData(ListHL7QueueItemsRequest request)
         {
-            ListHL7QueueItemsResponse response = null;
+            //ListHL7QueueItemsResponse response = null;
 
-            Platform.GetService<IHL7QueueService>(
-                delegate(IHL7QueueService service)
-                {
-                    try
-                    {
-                        response = service.ListHL7QueueItems(request);
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, Host.DesktopWindow);
-                    }
-                });
+            //Platform.GetService<IHL7QueueService>(
+            //    delegate(IHL7QueueService service)
+            //    {
+            //        try
+            //        {
+            //            response = service.ListHL7QueueItems(request);
+            //        }
+            //        catch (Exception e)
+            //        {
+            //            ExceptionHandler.Report(e, Host.DesktopWindow);
+            //        }
+            //    });
 
+            //_queue.Items.Clear();
+            //if (response != null)
+            //{
+            //    //TODO: restore paging functionality
+            //    _queue.Items.AddRange(response.QueueItems);
+            //}
+
+            _listRequest = request;
             _queue.Items.Clear();
-            if (response != null)
-            {
-                //TODO: restore paging functionality
-                //_queue.Items.AddRange(_pagingController.GetFirst(criteria));
-                _queue.Items.AddRange(response.QueueItems);
-            }
+            _queue.Items.AddRange(_pagingController.GetFirst());
         }
     }
 }
