@@ -11,6 +11,7 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Healthcare.PatientReconciliation;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -34,13 +35,17 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request)
         {
+            IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)(new PatientReconciliationStrategyExtensionPoint()).CreateExtension();
+            IList<PatientProfileMatch> matches = strategy.FindReconciliationMatches(
+                (PatientProfile)PersistenceContext.Load(request.WorklistItem.PatientProfileRef),
+                PersistenceContext);
+            
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
-
-
             return new LoadWorklistPreviewResponse(assembler.CreateRegistrationWorklistPreview(
                 request.WorklistItem.PatientProfileRef, 
                 GetQueryResultForWorklistItem(request.WorklistItem.WorklistClassName, 
                     new WorklistItem(request.WorklistItem.WorklistClassName, request.WorklistItem.PatientProfileRef)),
+                matches.Count > 0,
                 this.PersistenceContext));
         }
 

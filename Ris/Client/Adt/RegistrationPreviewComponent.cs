@@ -178,27 +178,10 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 if (_showReconciliationAlert && _worklistPreview != null)
                 {
-                    try
-                    {
-                        bool showAlert = false;
-                        Platform.GetService<IPatientReconciliationService>(
-                            delegate(IPatientReconciliationService service)
-                            {
-                                ListPatientReconciliationMatchesResponse response = service.ListPatientReconciliationMatches(new ListPatientReconciliationMatchesRequest(_worklistPreview.PatientProfileRef));
-                                showAlert = response.ReconciledProfiles.Count > 0;
-                            });
-
-                        return showAlert;
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                    }
+                    return _worklistPreview.HasReconciliationCandidates;
                 }
-
                 return false;
             }
-            set { _showReconciliationAlert = value; }
         }
 
         public string Name

@@ -9,7 +9,7 @@ namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
     [DataContract]
     public class ReconciliationCandidate : DataContractBase
     {
-        [DataContract]
+        [Serializable]
         public enum ProbabilityScore
         {
             High,
@@ -17,7 +17,7 @@ namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
             Low
         }
 
-        [DataMember(IsRequired=true)]
+        [DataMember(IsRequired = true)]
         public PatientProfileSummary PatientProfile;
 
         [DataMember(IsRequired = true)]

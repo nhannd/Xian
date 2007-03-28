@@ -23,7 +23,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
                 TelephoneDetail currentWorkPhone,
                 List<TelephoneDetail> telephoneNumbers,
                 List<AddressDetail> addresses,
-                List<RICSummary> ricList)
+                List<RICSummary> ricList,
+                bool hasReconciliationCandidates)
         {
             this.PatientProfileRef = patientProfileRef;
             this.MrnID = mrnID;
@@ -39,6 +40,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.TelephoneNumbers = telephoneNumbers;
             this.Addresses = addresses;
             this.RICs = ricList;
+            this.HasReconciliationCandidates = hasReconciliationCandidates;
         }
 
         [DataMember(IsRequired=true)]
@@ -82,6 +84,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 
         [DataMember]
         public List<RICSummary> RICs;
+
+        [DataMember]
+        public bool HasReconciliationCandidates;
     }
 }
 
