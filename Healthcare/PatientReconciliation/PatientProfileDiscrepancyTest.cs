@@ -160,20 +160,20 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
 
             if (vx == null && vy == null)
             {
-                return new DiscrepancyTestResult(discrepancy, false, StringDiff.Compute("", ""));
+                return new DiscrepancyTestResult(discrepancy, false, StringDiff.Compute("", "", true));
             }
 
             if (vx == null)
             {
-                return new DiscrepancyTestResult(discrepancy, true, StringDiff.Compute("", toString(vy)));
+                return new DiscrepancyTestResult(discrepancy, true, StringDiff.Compute("", toString(vy), true));
             }
 
             if (vy == null)
             {
-                return new DiscrepancyTestResult(discrepancy, true, StringDiff.Compute(toString(vx), ""));
+                return new DiscrepancyTestResult(discrepancy, true, StringDiff.Compute(toString(vx), "", true));
             }
 
-            return new DiscrepancyTestResult(discrepancy, !tester(vx, vy), StringDiff.Compute(toString(vx), toString(vy)));
+            return new DiscrepancyTestResult(discrepancy, !tester(vx, vy), StringDiff.Compute(toString(vx), toString(vy), true));
         }
 
         private static DiscrepancyTestResult GetResult<T>(PatientProfile x, PatientProfile y, PatientProfileDiscrepancy discrepancy, PropertyGetter<T> propGetter, TestEqual<T> tester)

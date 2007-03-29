@@ -26,15 +26,13 @@ var component = this.Component;
                     var i=0;
                     var tdcell = "";
                     for(var segment in value.Segments) {                        
-                        if (segment != null) {                        
-                            if (i%2 == 1) {
-                                tdcell += "<span class='discrepancy'>" + segment.replace(" ", "&nbsp") + "</span>"
-                            }
-                            else {
-                                tdcell += "<span class=''>" + segment.replace(" ", "&nbsp") + "</span>"
-                            }
-                            i += 1;
+                        if (segment.IsDiscrepant) {
+                            tdcell += "<span class='discrepancy'>" + segment.Text.replace(" ", "&nbsp") + "</span>"
                         }
+                        else {
+                            tdcell += "<span class=''>" + segment.Text.replace(" ", "&nbsp") + "</span>"
+                        }
+                        i += 1;
                     }
             %>
         <td ><%= tdcell %></td>

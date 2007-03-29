@@ -41,49 +41,39 @@ namespace ClearCanvas.Ris.Client.Adt
             private void BuildValues(string leftValue, string rightValue, string diffMask)
             {
                 _values = new List<Value>();
-                List<String> ls1 = new List<String>();
-                List<String> ls2 = new List<String>();
+                List<Segment> leftSegments = new List<Segment>();
+                List<Segment> rightSegments = new List<Segment>();
 
                 if (!_isDiscrepant)
                 {
-                    ls1.Add(leftValue);
-                    _values.Add(new Value(ls1));
-                    ls2.Add(rightValue);
-                    _values.Add(new Value(ls2));
+                    leftSegments.Add(new Segment(leftValue, false));
+                    _values.Add(new Value(leftSegments));
+                    rightSegments.Add(new Segment(rightValue, false));
+                    _values.Add(new Value(rightSegments));
                     return;
                 }
 
-                char[] dm = diffMask.ToCharArray();
-                char[] al = leftValue.ToCharArray();
-                char[] ar = rightValue.ToCharArray();
-                char diagCh = '|';
-                StringBuilder sb1 = new StringBuilder();
-                StringBuilder sb2 = new StringBuilder();
-                int n1 = 0;
-                int n2 = 0;
-                for (int i = 0; i < dm.Length; i++)
+                char maskChar = diffMask[0];
+                StringBuilder leftSegment = new StringBuilder();
+                StringBuilder rightSegment = new StringBuilder();
+                for (int i = 0; i < diffMask.Length; i++)
                 {
-                    if (!dm[i].Equals(diagCh))
+                    if (!diffMask[i].Equals(maskChar))
                     {
-                        ls1.Add(sb1.ToString());
-                        ls2.Add(sb2.ToString());
-                        diagCh = dm[i];
-                        sb1 = new StringBuilder();
-                        sb2 = new StringBuilder();
+                        leftSegments.Add(new Segment(leftSegment.ToString(), maskChar == ' '));
+                        rightSegments.Add(new Segment(rightSegment.ToString(), maskChar == ' '));
+                        maskChar = diffMask[i];
+                        leftSegment = new StringBuilder();
+                        rightSegment = new StringBuilder();
                     }
-                    if (al[i].Equals(' '))
-                        sb1.Append(leftValue.Substring(i - n1, 1));
-                    else
-                        n1 += 1;
-                    if (ar[i].Equals(' '))
-                        sb2.Append(rightValue.Substring(i - n2, 1));
-                    else
-                        n2 += 1;
+                    leftSegment.Append(leftValue[i]);
+                    rightSegment.Append(rightValue[i]);
                 }
-                ls1.Add(sb1.ToString());
-                ls2.Add(sb2.ToString());
-                _values.Add(new Value(ls1));
-                _values.Add(new Value(ls2));
+                leftSegments.Add(new Segment(leftSegment.ToString(), maskChar == ' '));
+                rightSegments.Add(new Segment(rightSegment.ToString(), maskChar == ' '));
+
+                _values.Add(new Value(leftSegments));
+                _values.Add(new Value(rightSegments));
                 return;
             }
 
@@ -106,17 +96,32 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public class Value
         {
-            private List<string> _segments;
+            private List<Segment> _segments;
 
-            public Value(List<string> segments)
+            public Value(List<Segment> segments)
             {
                 _segments = segments;
             }
 
-            public List<string> Segments
+            public List<Segment> Segments
             {
                 get { return _segments; }
             }
+        }
+
+        public class Segment
+        {
+            private string _text;
+            private bool _isDiscrepant;
+
+            public Segment(string text, bool discrepant)
+            {
+                _text = text;
+                _isDiscrepant = discrepant;
+            }
+
+            public string Text { get { return _text; } }
+            public bool IsDiscrepant { get { return _isDiscrepant; } }
         }
 
         private List<Field> _fields;

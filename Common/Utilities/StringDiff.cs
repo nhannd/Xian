@@ -6,7 +6,7 @@ namespace ClearCanvas.Common.Utilities
 {
     /// <summary>
     /// Computes the difference between two strings.  The speed and memory requirements are 
-    /// to be O(n2) for this algorithm, so it should not be used on very long strings.
+    /// O(n2) for this algorithm, so it should not be used on very long strings.
     /// 
     /// Adapted from an algorithm presented here in Javascript:
     /// http://www.csse.monash.edu.au/~lloyd/tildeAlgDS/Dynamic/Edit/
@@ -22,7 +22,7 @@ namespace ClearCanvas.Common.Utilities
     /// </remarks>
     public class StringDiff
     {
-        public static StringDiff Compute(string left, string right)
+        public static StringDiff Compute(string left, string right, bool ignoreCase)
         {
             if (left == right)
             {
@@ -30,7 +30,7 @@ namespace ClearCanvas.Common.Utilities
                 return new StringDiff(left, right, new string('|', left.Length));
             }
 
-            string[] result = ComputeDiff(left, right);
+            string[] result = ComputeDiff(left, right, ignoreCase);
             return new StringDiff(result[0], result[2], result[1]);
         }
 
@@ -61,7 +61,7 @@ namespace ClearCanvas.Common.Utilities
             get { return _diffMask; }
         }
 
-        private static string[] ComputeDiff(string s1, string s2)
+        private static string[] ComputeDiff(string s1, string s2, bool ignoreCase)
         {
             int[,] m = new int[s1.Length + 1, s2.Length + 1];
 
@@ -77,7 +77,7 @@ namespace ClearCanvas.Common.Utilities
                 for (int j = 1; j <= s2.Length; j++)                         // inner loop
                 {
                     int diag = m[i - 1, j - 1];
-                    if (s1[i - 1] != s2[j - 1]) diag++;
+                    if (!CompareEqual(s1[i - 1], s2[j - 1], ignoreCase)) diag++;
 
                     m[i, j] = Math.Min(diag,               // match or change
                            Math.Min(m[i - 1, j] - 0 + 1,    // deletion
@@ -85,10 +85,10 @@ namespace ClearCanvas.Common.Utilities
                 }//for j
             }//for i
 
-            return traceBack("", "", "", m, s1.Length, s2.Length, s1, s2);
+            return traceBack("", "", "", m, s1.Length, s2.Length, s1, s2, ignoreCase);
         }
 
-        private static string[] traceBack(string row1, string row2, string row3, int[,] m, int i, int j, string s1, string s2)
+        private static string[] traceBack(string row1, string row2, string row3, int[,] m, int i, int j, string s1, string s2, bool ignoreCase)
         {
             // recover the alignment of s1 and s2
             if (i > 0 && j > 0)
@@ -96,26 +96,31 @@ namespace ClearCanvas.Common.Utilities
                 int diag = m[i - 1, j - 1];
                 char diagCh = '|';
 
-                if (s1[i - 1] != s2[j - 1]) { diag++; diagCh = ' '; }
+                if (!CompareEqual(s1[i - 1], s2[j - 1], ignoreCase)) { diag++; diagCh = ' '; }
 
                 if (m[i, j] == diag) //LAllison comp sci monash uni au
-                    return traceBack(' ' + row1, diagCh + row2, ' ' + row3,
-                              m, i - 1, j - 1, s1, s2);    // change or match
+                    return traceBack(s1[i - 1] + row1, diagCh + row2, s2[j - 1] + row3,
+                              m, i - 1, j - 1, s1, s2, ignoreCase);    // change or match
                 else if (m[i, j] == m[i - 1, j] - 0 + 1) // delete
-                    return traceBack(' ' + row1, ' ' + row2, '-' + row3,
-                              m, i - 1, j, s1, s2);
+                    return traceBack(s1[i - 1] + row1, ' ' + row2, '-' + row3,
+                              m, i - 1, j, s1, s2, ignoreCase);
                 else
-                    return traceBack('-' + row1, ' ' + row2, ' ' + row3,
-                              m, i, j - 1, s1, s2);      // insertion
+                    return traceBack('-' + row1, ' ' + row2, s2[j - 1] + row3,
+                              m, i, j - 1, s1, s2, ignoreCase);      // insertion
             }
             else if (i > 0)
-                return traceBack(' ' + row1, ' ' + row2, '-' + row3, m, i - 1, j, s1, s2);
+                return traceBack(s1[i - 1] + row1, ' ' + row2, '-' + row3, m, i - 1, j, s1, s2, ignoreCase);
             else if (j > 0)
-                return traceBack('-' + row1, ' ' + row2, ' ' + row3, m, i, j - 1, s1, s2);
+                return traceBack('-' + row1, ' ' + row2, s2[j - 1] + row3, m, i, j - 1, s1, s2, ignoreCase);
             else // i==0 and j==0
             {
                 return new string[] { row1, row2, row3 };
             }
         }//traceBack
+
+        private static bool CompareEqual(char c1, char c2, bool ignoreCase)
+        {
+            return c1 == c2 || (ignoreCase && char.ToLower(c1) == char.ToLower(c2));
+        }
     }
 }
