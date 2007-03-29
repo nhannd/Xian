@@ -137,7 +137,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             profile.Patient.Notes.Clear();
             foreach (NoteDetail n in detail.Notes)
             {
-                profile.Patient.Notes.Add(noteAssembler.CreateNote(n));
+                profile.Patient.Notes.Add(noteAssembler.CreateNote(n, context));
             }
         }
     }

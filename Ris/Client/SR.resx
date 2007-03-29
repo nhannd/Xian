@@ -267,6 +267,9 @@
   <data name="MessageDeleteSelectedAddress" xml:space="preserve">
     <value>Are you sure you want to delete this address?</value>
   </data>
+  <data name="MessageDeleteSelectedNote" xml:space="preserve">
+    <value>Are you sure you want to delete this note?</value>
+  </data>
   <data name="MessageDeleteSelectedPhoneNumber" xml:space="preserve">
     <value>Are you sure you want to delete this phone number?</value>
   </data>
@@ -291,6 +294,9 @@
   <data name="TitleAddEmailAddress" xml:space="preserve">
     <value>Add Email Address...</value>
   </data>
+  <data name="TitleAddNote" xml:space="preserve">
+    <value>Add Note...</value>
+  </data>
   <data name="TitleAddPhoneNumber" xml:space="preserve">
     <value>Add Phone Number...</value>
   </data>
@@ -314,6 +320,9 @@
   </data>
   <data name="TitleUpdateEmailAddress" xml:space="preserve">
     <value>Update Email Address...</value>
+  </data>
+  <data name="TitleUpdateNote" xml:space="preserve">
+    <value>Update Note...</value>
   </data>
   <data name="TitleUpdatePhoneNumber" xml:space="preserve">
     <value>Update Phone Number...</value>

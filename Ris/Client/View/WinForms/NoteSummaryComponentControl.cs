@@ -24,8 +24,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             : base(component)
         {
             InitializeComponent();
-
             _component = component;
+
+            _noteList.ToolbarModel = _component.NoteActionModel;
+            _noteList.MenuModel = _component.NoteActionModel;
             _noteList.Table = _component.Notes;
         }
     }

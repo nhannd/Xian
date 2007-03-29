@@ -84,6 +84,20 @@
       <DependentUpon>ModalityEditorComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ModalityEditorComponentView.cs" />
+    <Compile Include="NoteCategoryEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="NoteCategoryEditorComponentControl.designer.cs">
+      <DependentUpon>NoteCategoryEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NoteCategoryEditorComponentView.cs" />
+    <Compile Include="NoteCategorySummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="NoteCategorySummaryComponentControl.designer.cs">
+      <DependentUpon>NoteCategorySummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NoteCategorySummaryComponentView.cs" />
     <Compile Include="StaffDetailsEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -153,6 +167,14 @@
     <EmbeddedResource Include="ModalityEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ModalityEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NoteCategoryEditorComponentControl.resx">
+      <DependentUpon>NoteCategoryEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NoteCategorySummaryComponentControl.resx">
+      <DependentUpon>NoteCategorySummaryComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="StaffDetailsEditorComponentControl.resx">
       <DependentUpon>StaffDetailsEditorComponentControl.cs</DependentUpon>

@@ -42,7 +42,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AlertTestTool.cs" />
-    <Compile Include="NoteTestTool.cs" />
     <Compile Include="OrderSummaryTable.cs" />
     <Compile Include="RequestedProcedureCheckInTable.cs" />
     <Compile Include="Folders\FolderOptionComponent.cs" />

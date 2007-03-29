@@ -2,10 +2,11 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise.Core;
 
+using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin
 {
@@ -16,22 +17,38 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             if (note == null)
                 return null;
 
-            return new NoteDetail(note.Text, note.Severity, note.TimeStamp);
+            NoteDetail detail = new NoteDetail();
+
+            detail.Comment = note.Comment;
+            detail.TimeStamp = note.TimeStamp;
+            detail.ValidRangeFrom = note.ValidRange.From;
+            detail.ValidRangeUntil = note.ValidRange.Until;
+
+            NoteCategoryAssembler categoryAssembler = new NoteCategoryAssembler();
+            detail.Category = categoryAssembler.CreateNoteCategorySummary(note.Category, context);
+
+            StaffAssembler staffAssembler = new StaffAssembler();
+            detail.CreatedBy = staffAssembler.CreateStaffSummary(note.CreatedBy);
+
+            return detail;
         }
 
-        public Note CreateNote(NoteDetail noteDetail)
+        public Note CreateNote(NoteDetail detail, IPersistenceContext context)
         {
-            if (noteDetail == null)
-                return null;
+            Note newNote = new Note();
 
-            return new Note(noteDetail.Text, noteDetail.Severity, noteDetail.TimeStamp);
-        }
+            newNote.Comment = detail.Comment;
+            newNote.TimeStamp = detail.TimeStamp.Value;
+            newNote.ValidRange.From = detail.ValidRangeFrom;
+            newNote.ValidRange.Until = detail.ValidRangeUntil;
 
-        public void AddNote(NoteDetail noteDetail, IList notes)
-        {
-            Note newNote = CreateNote(noteDetail);
+            if (detail.Category != null)
+                newNote.Category = (NoteCategory)context.Load(detail.Category.NoteCategoryRef, EntityLoadFlags.Proxy);
 
-            notes.Add(newNote);
+            StaffAssembler staffAssembler = new StaffAssembler();
+            detail.CreatedBy = staffAssembler.CreateStaffSummary(newNote.CreatedBy);
+
+            return newNote;
         }
     }
 }

@@ -106,6 +106,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        internal static string ColumnDescription {
+            get {
+                return ResourceManager.GetString("ColumnDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Facility.
         /// </summary>
         internal static string ColumnFacility {
@@ -210,6 +219,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string ColumnRoom {
             get {
                 return ResourceManager.GetString("ColumnRoom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Severity.
+        /// </summary>
+        internal static string ColumnSeverity {
+            get {
+                return ResourceManager.GetString("ColumnSeverity", resourceCulture);
             }
         }
         
@@ -421,6 +439,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Note Category.
+        /// </summary>
+        internal static string TitleAddNoteCategory {
+            get {
+                return ResourceManager.GetString("TitleAddNoteCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Practitioner.
         /// </summary>
         internal static string TitleAddPractitioner {
@@ -538,6 +565,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Note Categories.
+        /// </summary>
+        internal static string TitleNoteCategories {
+            get {
+                return ResourceManager.GetString("TitleNoteCategories", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Practitioner.
         /// </summary>
         internal static string TitlePractitioner {
@@ -588,6 +624,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleUpdateModality {
             get {
                 return ResourceManager.GetString("TitleUpdateModality", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Note Category.
+        /// </summary>
+        internal static string TitleUpdateNoteCategory {
+            get {
+                return ResourceManager.GetString("TitleUpdateNoteCategory", resourceCulture);
             }
         }
         

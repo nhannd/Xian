@@ -69,6 +69,7 @@
     </Compile>
     <Compile Include="IFolder.cs" />
     <Compile Include="IPagingController.cs" />
+    <Compile Include="NoteEditorComponent.cs" />
     <Compile Include="NoteSummaryComponent.cs" />
     <Compile Include="NoteTable.cs" />
     <Compile Include="PagingActionModel.cs" />

@@ -132,6 +132,9 @@
   <data name="ColumnDegree" xml:space="preserve">
     <value>Degree</value>
   </data>
+  <data name="ColumnDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
   <data name="ColumnFacility" xml:space="preserve">
     <value>Facility</value>
   </data>
@@ -167,6 +170,9 @@
   </data>
   <data name="ColumnRoom" xml:space="preserve">
     <value>Room</value>
+  </data>
+  <data name="ColumnSeverity" xml:space="preserve">
+    <value>Severity</value>
   </data>
   <data name="ColumnSuffix" xml:space="preserve">
     <value>Suffix</value>
@@ -237,6 +243,9 @@
   <data name="TitleAddModality" xml:space="preserve">
     <value>Add Modality</value>
   </data>
+  <data name="TitleAddNoteCategory" xml:space="preserve">
+    <value>Add Note Category</value>
+  </data>
   <data name="TitleAddPractitioner" xml:space="preserve">
     <value>Add Practitioner</value>
   </data>
@@ -276,6 +285,9 @@
   <data name="TitleModalities" xml:space="preserve">
     <value>Modalities</value>
   </data>
+  <data name="TitleNoteCategories" xml:space="preserve">
+    <value>Note Categories</value>
+  </data>
   <data name="TitlePractitioner" xml:space="preserve">
     <value>Practitioner</value>
   </data>
@@ -293,6 +305,9 @@
   </data>
   <data name="TitleUpdateModality" xml:space="preserve">
     <value>Update Modality</value>
+  </data>
+  <data name="TitleUpdateNoteCategory" xml:space="preserve">
+    <value>Update Note Category</value>
   </data>
   <data name="TitleUpdatePractitioner" xml:space="preserve">
     <value>Update Practitioner</value>

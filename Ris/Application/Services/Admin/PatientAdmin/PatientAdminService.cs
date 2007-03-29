@@ -71,14 +71,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             dummyMrnChoices.Add("WCH");
             response.MrnAssigningAuthorityChoices = dummyMrnChoices;
 
-            response.NoteSeverityChoices = new List<EnumValueInfo>();
-            //TODO: add Note severity when Note code is merged into trunk
-            //response.NoteSeverityChoices = CollectionUtils.Map<NoteSeverityEnum, EnumValueInfo>(
-            //    PersistenceContext.GetBroker<INoteSeverityEnumBroker>().Load.Values,
-            //    delegate(NoteSeverityEnum e)
-            //    {
-            //        return new EnumValueInfo(e.Code.ToString(), e.Value);
-            //    });
+            response.NoteCategoryChoices = new List<NoteCategorySummary>();
+            NoteCategoryAssembler categoryAssembler = new NoteCategoryAssembler();
+            response.NoteCategoryChoices = CollectionUtils.Map<NoteCategory, NoteCategorySummary, List<NoteCategorySummary>>(
+                    PersistenceContext.GetBroker<INoteCategoryBroker>().FindAll(),
+                    delegate(NoteCategory category)
+                    {
+                        return categoryAssembler.CreateNoteCategorySummary(category, this.PersistenceContext);
+                    });
 
             response.PrimaryLanguageChoices = CollectionUtils.Map<SpokenLanguageEnum, EnumValueInfo, List<EnumValueInfo>>(
                 PersistenceContext.GetBroker<ISpokenLanguageEnumBroker>().Load().Items,
@@ -151,26 +151,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             PersistenceContext.SynchState();
 
             return new AdminAddPatientProfileResponse(patient.GetRef(), profile.GetRef());
-        }
-
-        [UpdateOperation]
-        public SaveNewNoteForPatientResponse SaveNewNoteForPatient(SaveNewNoteForPatientRequest request)
-        {
-            NoteAssembler assembler = new NoteAssembler();
-            Note note = assembler.CreateNote(request.Note);
-
-            IPatientProfileBroker profileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
-            PatientProfile profile = profileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
-            profileBroker.LoadPatientForPatientProfile(profile);
-
-            PersistenceContext.GetBroker<IPatientBroker>().LoadNotesForPatient(profile.Patient);
-
-            PersistenceContext.Lock(profile.Patient);
-            PersistenceContext.Lock(note, DirtyState.New);
-
-            profile.Patient.Notes.Add(note);
-
-            return new SaveNewNoteForPatientResponse();
         }
 
         #endregion

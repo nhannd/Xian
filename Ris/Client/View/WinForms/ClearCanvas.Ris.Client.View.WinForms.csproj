@@ -77,6 +77,13 @@
       <DependentUpon>EmailAddressesSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="EmailAddressesSummaryComponentView.cs" />
+    <Compile Include="NoteEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="NoteEditorComponentControl.Designer.cs">
+      <DependentUpon>NoteEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="NoteEditorComponentView.cs" />
     <Compile Include="NoteSummaryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -158,6 +165,10 @@
     <EmbeddedResource Include="FolderExplorerComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FolderExplorerComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="NoteEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>NoteEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="NoteSummaryComponentControl.resx">
       <DependentUpon>NoteSummaryComponentControl.cs</DependentUpon>

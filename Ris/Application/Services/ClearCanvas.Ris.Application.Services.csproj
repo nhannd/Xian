@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="AddressAssembler.cs" />
     <Compile Include="Admin\ModalityAssembler.cs" />
+    <Compile Include="Admin\NoteCategoryAdmin\NoteCategoryAdminService.cs" />
     <Compile Include="Admin\PatientProfileAssembler.cs" />
     <Compile Include="Admin\PractitionerAssembler.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceAdminService.cs" />
@@ -74,6 +75,7 @@
     <Compile Include="ApplicationServiceExtensionPoint.cs" />
     <Compile Include="Admin\HL7QueueItemAssembler.cs" />
     <Compile Include="ContactPersonAssembler.cs" />
+    <Compile Include="Admin\NoteCategoryAssembler.cs" />
     <Compile Include="NoteAssembler.cs" />
     <Compile Include="EmailAddressAssembler.cs" />
     <Compile Include="HealthcardAssembler.cs" />

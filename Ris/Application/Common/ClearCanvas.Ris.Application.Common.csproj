@@ -69,6 +69,17 @@
     <Compile Include="Admin\HL7Admin\ProcessHL7QueueItemResponse.cs" />
     <Compile Include="Admin\HL7QueueItemDetail.cs" />
     <Compile Include="Admin\HL7QueueItemSummary.cs" />
+    <Compile Include="Admin\NoteCategoryAdmin\AddNoteCategoryRequest.cs" />
+    <Compile Include="Admin\NoteCategoryAdmin\AddNoteCategoryResponse.cs" />
+    <Compile Include="Admin\NoteCategoryAdmin\GetNoteCategoryEditFormDataRequest.cs" />
+    <Compile Include="Admin\NoteCategoryAdmin\GetNoteCategoryEditFormDataResponse.cs" />
+    <Compile Include="Admin\NoteCategoryAdmin\INoteCategoryAdminService.cs" />
+    <Compile Include="Admin\NoteCategoryAdmin\ListAllLocationsRequest.cs" />
+    <Compile Include="Admin\NoteCategoryAdmin\ListAllLocationsResponse.cs" />
+    <Compile Include="Admin\NoteCategoryAdmin\LoadLocationForEditRequest.cs" />
+    <Compile Include="Admin\NoteCategoryAdmin\LoadLocationForEditResponse.cs" />
+    <Compile Include="Admin\NoteCategoryAdmin\UpdateLocationRequest.cs" />
+    <Compile Include="Admin\NoteCategoryAdmin\UpdateLocationResponse.cs" />
     <Compile Include="Admin\PatientAdmin\AdminAddPatientProfileRequest.cs" />
     <Compile Include="Admin\PatientAdmin\AdminAddPatientProfileResponse.cs" />
     <Compile Include="Admin\PatientAdmin\IPatientAdminService.cs" />
@@ -103,8 +114,6 @@
     <Compile Include="Admin\PatientAdmin\PatientProfileDetail.cs" />
     <Compile Include="Admin\PatientAdmin\SaveAdminEditsForPatientProfileRequest.cs" />
     <Compile Include="Admin\PatientAdmin\SaveAdminEditsForPatientProfileResponse.cs" />
-    <Compile Include="Admin\PatientAdmin\SaveNewNoteForPatientRequest.cs" />
-    <Compile Include="Admin\PatientAdmin\SaveNewNoteForPatientResponse.cs" />
     <Compile Include="Admin\PractitionerAdmin\AddPractitionerRequest.cs" />
     <Compile Include="Admin\PractitionerAdmin\AddPractitionerResponse.cs" />
     <Compile Include="Admin\PractitionerAdmin\FindPractitionersRequest.cs" />
@@ -152,6 +161,8 @@
     <Compile Include="Admin\VisitAdmin\VisitSummary.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="ContactPersonDetail.cs" />
+    <Compile Include="Admin\NoteCategoryDetail.cs" />
+    <Compile Include="Admin\NoteCategorySummary.cs" />
     <Compile Include="EmailAddressDetail.cs" />
     <Compile Include="EnumValueInfo.cs" />
     <Compile Include="HealthcardDetail.cs" />

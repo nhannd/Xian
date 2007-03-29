@@ -7,13 +7,17 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin
 {
     [DataContract]
-    public class StaffSummary : DataContractBase
+    public class StaffSummary : DataContractBase, ICloneable
     {
         public StaffSummary(EntityRef staffRef, PersonNameDetail personNameDetail, string licenseNumber)
         {
             this.StaffRef = staffRef;
             this.PersonNameDetail = personNameDetail;
             this.LicenseNumber = licenseNumber;
+        }
+
+        public StaffSummary()
+        {
         }
 
         [DataMember]
@@ -25,5 +29,18 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         // Member for Practitioner
         [DataMember]
         public string LicenseNumber;
+
+        #region ICloneable Members
+
+        public object Clone()
+        {
+            StaffSummary clone = new StaffSummary();
+            clone.StaffRef = this.StaffRef;
+            clone.PersonNameDetail = (PersonNameDetail)this.PersonNameDetail.Clone();
+            clone.LicenseNumber = this.LicenseNumber;
+            return clone;
+        }
+
+        #endregion
     }
 }

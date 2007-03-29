@@ -62,6 +62,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     this.Pages.Add(new NavigatorPage("Patient/Email Addresses", _emailAddressesSummary = new EmailAddressesSummaryComponent()));
                     this.Pages.Add(new NavigatorPage("Patient/Contact Persons", _contactPersonsSummary = new ContactPersonsSummaryComponent(formData.ContactPersonTypeChoices, formData.ContactPersonRelationshipChoices)));
                     this.Pages.Add(new NavigatorPage("Patient/Additional Info", _additionalPatientInfoSummary = new PatientProfileAdditionalInfoEditorComponent(formData.ReligionChoices, formData.PrimaryLanguageChoices)));
+                    this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new NoteSummaryComponent(formData.NoteCategoryChoices)));
 
                     this.ValidationStrategy = new AllNodesContainerValidationStrategy();
 
@@ -94,12 +95,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _emailAddressesSummary.Subject = _profile.EmailAddresses;
             _contactPersonsSummary.Subject = _profile.ContactPersons;
             _additionalPatientInfoSummary.Subject = _profile;
-
-            if (_isNew == false)
-            {
-                this.Pages.Add(new NavigatorPage("Patient/Notes", _notesSummary = new NoteSummaryComponent()));
-                _notesSummary.Subject = _profile.Notes;
-            }
+            _notesSummary.Subject = _profile.Notes;
 
             base.Start();
         }
