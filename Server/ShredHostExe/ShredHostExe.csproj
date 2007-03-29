@@ -93,6 +93,8 @@ copy $(ProjectDir)..\..\Dicom\OffisWrapper\csharp\$(ConfigurationName)\ClearCanv
 copy $(ProjectDir)..\..\Dicom\OffisWrapper\cppwrapper\$(ConfigurationName)\OffisDcm.dll $(TargetDir)common
 
 rem copy config files
-copy $(ProjectDir)..\..\Dicom\DataStore\AuxiliaryFiles\ClearCanvas.Dicom.DataStore.cfg.xml $(TargetDir)</PostBuildEvent>
+copy $(ProjectDir)..\..\Dicom\DataStore\AuxiliaryFiles\ClearCanvas.Dicom.DataStore.cfg.xml $(TargetDir)
+copy $(ProjectDir)..\..\Desktop\Executable\Logging.config $(TargetDir)
+copy $(ProjectDir)..\..\Desktop\Executable\$(OutDir)DicomAEServers.xml $(TargetDir)</PostBuildEvent>
   </PropertyGroup>
 </Project>
