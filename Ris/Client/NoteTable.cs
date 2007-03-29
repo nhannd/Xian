@@ -14,22 +14,16 @@ namespace ClearCanvas.Ris.Client
         public NoteTable()
         {
             this.Columns.Add(new TableColumn<NoteDetail, string>("Category",
-                delegate(NoteDetail n) { return n.Category.Name; },
+                delegate(NoteDetail n) { return (n.Category == null ? "" : n.Category.Name); },
                 1.0f));
             this.Columns.Add(new TableColumn<NoteDetail, string>("Description",
-                delegate(NoteDetail n) { return n.Category.Description; },
+                delegate(NoteDetail n) { return (n.Category == null ? "" : n.Category.Description); },
                 1.0f));
             this.Columns.Add(new TableColumn<NoteDetail, string>("Severity",
-                delegate(NoteDetail n) { return n.Category.Severity.Value; },
+                delegate(NoteDetail n) { return (n.Category == null ? "" : n.Category.Severity.Value); },
                 1.0f));
             this.Columns.Add(new TableColumn<NoteDetail, string>("Comment",
                 delegate(NoteDetail n) { return n.Comment; },
-                1.0f));
-            this.Columns.Add(new TableColumn<NoteDetail, string>("Date",
-                delegate(NoteDetail n) { return Format.DateTime(n.TimeStamp); },
-                1.0f));
-            this.Columns.Add(new TableColumn<NoteDetail, string>("CreatedBy",
-                delegate(NoteDetail n) { return String.Format("{0}, {1}", n.CreatedBy.PersonNameDetail.FamilyName, n.CreatedBy.PersonNameDetail.GivenName); },
                 1.0f));
         }
     }

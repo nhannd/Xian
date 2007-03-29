@@ -29,6 +29,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _noteList.ToolbarModel = _component.NoteActionModel;
             _noteList.MenuModel = _component.NoteActionModel;
             _noteList.Table = _component.Notes;
+            _noteList.DataBindings.Add("Selection", _component, "SelectedNote", true, DataSourceUpdateMode.OnPropertyChanged);
+        }
+
+        private void _noteList_ItemDoubleClicked(object sender, EventArgs e)
+        {
+            _component.UpdateSelectedNote();
         }
     }
 }

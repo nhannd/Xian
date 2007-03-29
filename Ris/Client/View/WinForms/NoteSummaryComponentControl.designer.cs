@@ -49,6 +49,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._noteList.ToolbarModel = null;
             this._noteList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._noteList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this._noteList.ItemDoubleClicked += new System.EventHandler(this._noteList_ItemDoubleClicked);
             // 
             // NoteSummaryComponentControl
             // 

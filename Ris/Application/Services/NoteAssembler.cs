@@ -3,9 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin
@@ -38,15 +39,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             Note newNote = new Note();
 
             newNote.Comment = detail.Comment;
-            newNote.TimeStamp = detail.TimeStamp.Value;
             newNote.ValidRange.From = detail.ValidRangeFrom;
             newNote.ValidRange.Until = detail.ValidRangeUntil;
+
+            if (detail.TimeStamp != null)
+                newNote.TimeStamp = detail.TimeStamp.Value;
+            else
+                newNote.TimeStamp = Platform.Time;
 
             if (detail.Category != null)
                 newNote.Category = (NoteCategory)context.Load(detail.Category.NoteCategoryRef, EntityLoadFlags.Proxy);
 
-            StaffAssembler staffAssembler = new StaffAssembler();
-            detail.CreatedBy = staffAssembler.CreateStaffSummary(newNote.CreatedBy);
+            if (detail.CreatedBy != null)
+                newNote.CreatedBy = (Staff)context.Load(detail.CreatedBy.StaffRef, EntityLoadFlags.Proxy);
+            else
+            {
+                //TODO: Services should know which staff is invoking the operation, use that staff instead
+                newNote.CreatedBy = context.GetBroker<IStaffBroker>().FindOne(new StaffSearchCriteria());
+            }
 
             return newNote;
         }

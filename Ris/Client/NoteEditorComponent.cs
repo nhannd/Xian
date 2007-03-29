@@ -41,7 +41,11 @@ namespace ClearCanvas.Ris.Client
         public string Comment
         {
             get { return _note.Comment; }
-            set { _note.Comment = value; }
+            set 
+            { 
+                _note.Comment = value;
+                this.Modified = true;
+            }
         }
 
         public DateTime? ValidRangeFrom
@@ -61,7 +65,7 @@ namespace ClearCanvas.Ris.Client
             get 
             { 
                 return _note.Category == null ? "" :
-                    String.Format("Severity {0} - {1}", _note.Category.Name, _note.Category.Severity.Value); 
+                    String.Format("{0} - Severity {1}", _note.Category.Name, _note.Category.Severity.Value); 
             }
             set
             {
@@ -69,9 +73,10 @@ namespace ClearCanvas.Ris.Client
                     CollectionUtils.SelectFirst<NoteCategorySummary>(_noteCategoryChoices,
                         delegate(NoteCategorySummary category) 
                         {
-                            return String.Format("Severity {0} - {1}", _note.Category.Name, _note.Category.Severity.Value) == value; 
+                            return (String.Format("{0} - Severity {1}", category.Name, category.Severity.Value) == value); 
                         });
 
+                SignalCategoryChanged();
                 this.Modified = true;
             }
         }
@@ -89,7 +94,11 @@ namespace ClearCanvas.Ris.Client
                 categoryStrings.Add("");
                 categoryStrings.AddRange(
                     CollectionUtils.Map<NoteCategorySummary, string>(
-                        _noteCategoryChoices, delegate(NoteCategorySummary category) { return category.Name; }));
+                        _noteCategoryChoices, 
+                        delegate(NoteCategorySummary category) 
+                        {
+                            return String.Format("{0} - Severity {1}", category.Name, category.Severity.Value);
+                        }));
 
                 return categoryStrings;
             }
@@ -120,5 +129,9 @@ namespace ClearCanvas.Ris.Client
 
         #endregion
 
+        private void SignalCategoryChanged()
+        {
+            NotifyPropertyChanged("Description");
+        }
     }
 }

@@ -91,6 +91,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._description.Location = new System.Drawing.Point(2, 47);
             this._description.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._description.Name = "_description";
+            this._description.ReadOnly = true;
             this._description.Size = new System.Drawing.Size(311, 46);
             this._description.TabIndex = 1;
             this._description.Value = null;
