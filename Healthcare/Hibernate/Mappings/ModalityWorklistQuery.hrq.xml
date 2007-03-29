@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" ?> 
+<reportquery-mapping assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
+  <query name="ModalityWorklistQuery" extends="WorklistQueryBase">
+	  <root alias="mps" class="ModalityProcedureStep"/>
+    <join alias="mpst" source="mps.Type"/>
+    <join alias="m" source="mps.Modality"/>
+	  <result name="ModalityWorklistQueryResult" extends="WorklistQueryBaseResult">
+      <property name="ModalityProcedureStep" source="mps"/>
+      <property name="ModalityProcedureStepName" source="mpst.Name"/>
+      <property name="ModalityName" source="m.Name"/>
+      <property name="State" source="mps.State"/>
+	  </result>
+	  <criteria name="ModalityWorklistQueryCriteria" extends="WorklistQueryBaseCriteria">
+		  <property name="ModalityProcedureStep" source="mps"/>
+	  </criteria>
+  </query>
+</reportquery-mapping>

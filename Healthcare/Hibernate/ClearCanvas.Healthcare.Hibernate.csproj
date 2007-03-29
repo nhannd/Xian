@@ -159,6 +159,7 @@
     <EmbeddedResource Include="Mappings\CheckInProcedureStep.hbm.xml" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
     <Content Include="Mappings\ModalityWorklistQuery.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />
