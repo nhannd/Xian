@@ -1,16 +1,16 @@
 require 'element_def'
 
+# Provides a common base class for QueryCriteriaDef and QueryResultDef
+# This class does not have much significance in and of itself
 class QueryClassDef < ElementDef
-  attr_reader :className, :fields
+  attr_reader :className, :superClassName
 
-  def initialize(model, className, defaultNamespace, mappings)
+  def initialize(model, className, defaultNamespace, superClassName, queryDef)
     @model = model
     @className = TypeNameUtils.getShortName(className)
     @namespace = TypeNameUtils.getNamespace(className) || defaultNamespace
-    @fields = []
-    mappings.each do |mapping|
-      @fields << QueryFieldDef.new(model, mapping)
-    end
+    @queryDef = queryDef
+    @superClassName = superClassName
   end
   
   def elementName
@@ -18,15 +18,25 @@ class QueryClassDef < ElementDef
   end
   
   def qualifiedName
-    @namespace + "." + @className
+    TypeNameUtils.getQualifiedName(@className, @namespace)
   end
   
   def namespace
     @namespace
   end
   
+protected
+  # the QueryDef that is the parent of this object
+  def queryDef
+    @queryDef
+  end
+  
+  def model
+    @model
+  end
 end
 
+# Represents a field of a QueryClassDef
 class QueryFieldDef < ElementDef
 
   attr_reader :accessorName, :fieldName
@@ -43,6 +53,7 @@ class QueryFieldDef < ElementDef
     @accessorName
   end
   
+  # the C# dataType of this field
   def dataType
     @mapping.dataType
   end

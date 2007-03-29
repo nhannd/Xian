@@ -31,6 +31,11 @@ class CodeGen
     Template.new("SearchCriteria.gen.ct", "<%=@className%>SearchCriteria.gen.cs", true),
   ]
   
+  @@queryTemplates = [
+    Template.new("IQueryBroker.gen.ct", "Brokers/I<%=queryName%>Broker.gen.cs", true),
+    Template.new("QueryBroker.gen.ct", "Hibernate/Brokers/<%=queryName%>Broker.gen.cs", true)
+  ]
+
   @@queryResultTemplates = [
     Template.new("QueryResult.gen.ct", "<%=@className%>.gen.cs", true)
   ]
@@ -39,10 +44,6 @@ class CodeGen
     Template.new("QueryCriteria.gen.ct", "<%=@className%>.gen.cs", true)
   ]
   
-  @@queryTemplates = [
-    Template.new("IQueryBroker.gen.ct", "Brokers/I<%=queryName%>Broker.gen.cs", true),
-    Template.new("QueryBroker.gen.ct", "Hibernate/Brokers/<%=queryName%>Broker.gen.cs", true)
-  ]
   
   
   # total number of generated files
@@ -80,9 +81,12 @@ class CodeGen
     applyTemplates(@@entityTemplates, model.entityDefs, destDir)
     applyTemplates(@@enumTemplates, model.enumDefs, destDir)
     applyTemplates(@@componentTemplates, model.componentDefs, destDir)
-    applyTemplates(@@queryResultTemplates, model.queryResultDefs, destDir)
-    applyTemplates(@@queryCriteriaTemplates, model.queryCriteriaDefs, destDir)
     applyTemplates(@@queryTemplates, model.queryDefs, destDir)
+    
+    # note that we process the criteria/result classes for each QueryDef
+    # inherited criteria/result classes are ignored because it would be redundant to generate them twice (hence the call to Array::compact)
+    applyTemplates(@@queryResultTemplates, model.queryDefs.map {|queryDef| queryDef.resultClass(false) }.compact, destDir)
+    applyTemplates(@@queryCriteriaTemplates, model.queryDefs.map {|queryDef| queryDef.criteriaClass(false) }.compact, destDir)
     
     
     puts "Total #{@@count} files"

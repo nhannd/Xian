@@ -14,8 +14,6 @@ class Model < ElementDef
     @enumDefs = []
     @componentDefs = []
     @queryDefs = []
-    @queryCriteriaDefs = []
-    @queryResultDefs = []
     
     @symbolMap = {}
   end
@@ -60,14 +58,6 @@ class Model < ElementDef
 
   def queryDefs
     @symbolMap.values.select {|v| QueryDef === v }
-  end
-  
-  def queryResultDefs
-    @symbolMap.values.select {|v| QueryResultDef === v }
-  end
-  
-  def queryCriteriaDefs
-    @symbolMap.values.select {|v| QueryCriteriaDef === v }
   end
   
 protected
@@ -130,7 +120,7 @@ protected
   
   def processQuery(queryNode, namespace)
     queryDef = QueryDef.new(self, queryNode, namespace)
-    addDef(queryDef.queryName,queryDef)
+    addDef(queryDef.qualifiedName,queryDef)
   end
    
 end

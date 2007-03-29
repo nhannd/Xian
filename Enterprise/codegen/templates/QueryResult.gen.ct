@@ -13,9 +13,9 @@ namespace <%= namespace %>
 
 
     /// <summary>
-    /// <%= className %> entity
+    /// <%= className %> query result container
     /// </summary>
-	public partial class <%= className %>
+	public partial class <%= className %> : <%= superClassName ? superClassName : 'System.Object' %>
 	{
        	#region Private fields
        	

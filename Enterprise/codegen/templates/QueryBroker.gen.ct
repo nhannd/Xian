@@ -26,7 +26,7 @@ namespace <%= namespace %>
         {
             HqlReportQuery query = new HqlReportQuery(new HqlFrom("<%= root.hqlAlias %>", "<%= root.dataType %>"));
             
-            <% joins.each do |j| %>
+            <% orderedJoins.each do |j| %>
             query.Joins.Add(new HqlJoin("<%= j.hqlAlias %>", "<%= j.source %>"));
 	  		<% end %>
 

@@ -12,7 +12,7 @@ namespace <%= namespace %>
     /// <summary>
     /// <see cref="<%= className %>"/> class
     /// </summary>
-	public partial class <%= className %> : ClearCanvas.Enterprise.Core.SearchCriteria
+	public partial class <%= className %> : <%= superClassName %>
 	{
 		/// <summary>
 		/// Constructor
