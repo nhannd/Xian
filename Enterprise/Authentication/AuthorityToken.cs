@@ -2,18 +2,15 @@ using System;
 using System.Collections;
 using System.Text;
 
-using Iesi.Collections;
-using ClearCanvas.Enterprise;
 using ClearCanvas.Enterprise.Core;
-
 
 namespace ClearCanvas.Enterprise.Authentication {
 
 
     /// <summary>
-    /// Permission entity
+    /// AuthorityToken entity
     /// </summary>
-	public partial class Permission : Entity
+	public partial class AuthorityToken : ClearCanvas.Enterprise.Core.Entity
 	{
 	
 		/// <summary>

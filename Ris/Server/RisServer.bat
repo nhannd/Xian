@@ -22,12 +22,15 @@ copy "..\..\..\..\..\ReferencedAssemblies\NHibernate.dll" .\plugins
 copy "..\..\..\..\..\ReferencedAssemblies\NHibernate.Caches.SysCache.dll" .\plugins
 copy "..\..\..\..\..\Enterprise\Hibernate\hibernate.cfg.xml" .
 
+copy "..\..\..\..\..\Enterprise\Configuration\bin\%1\ClearCanvas.Enterprise.Configuration.dll" .\plugins
+copy "..\..\..\..\..\Enterprise\Configuration\Hibernate\bin\%1\ClearCanvas.Enterprise.Configuration.Hibernate.dll" .\plugins
+copy "..\..\..\..\..\Enterprise\Authentication\bin\%1\ClearCanvas.Enterprise.Authentication.dll" .\plugins
+copy "..\..\..\..\..\Enterprise\Authentication\Hibernate\bin\%1\ClearCanvas.Enterprise.Authentication.Hibernate.dll" .\plugins
+
+
 
 
 :: copy models
-copy "..\..\..\..\..\Enterprise\Configuration\bin\%1\ClearCanvas.Enterprise.Configuration.dll" .\plugins
-copy "..\..\..\..\..\Enterprise\Configuration\Hibernate\bin\%1\ClearCanvas.Enterprise.Configuration.Hibernate.dll" .\plugins
-
 copy "..\..\..\..\..\Workflow\bin\%1\ClearCanvas.Workflow.dll" .\plugins
 copy "..\..\..\..\..\Workflow\Hibernate\bin\%1\ClearCanvas.Workflow.Hibernate.dll" .\plugins
 

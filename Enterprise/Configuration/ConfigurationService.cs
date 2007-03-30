@@ -11,6 +11,7 @@ namespace ClearCanvas.Enterprise.Configuration
 {
     [ExtensionOf(typeof(CoreServiceExtensionPoint))]
     [ServiceImplementsContract(typeof(IConfigurationService))]
+    [ServiceAuthentication(true)]
     public class ConfigurationService : CoreServiceLayer, IConfigurationService
     {
         #region IConfigurationService Members
@@ -22,7 +23,7 @@ namespace ClearCanvas.Enterprise.Configuration
         {
             try
             {
-                IConfigurationDocumentBroker broker = CurrentContext.GetBroker<IConfigurationDocumentBroker>();
+                IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
                 ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
                 ConfigurationDocument document = broker.FindOne(criteria);
 
@@ -45,7 +46,7 @@ namespace ClearCanvas.Enterprise.Configuration
             ConfigurationDocument document = null;
             try
             {
-                IConfigurationDocumentBroker broker = CurrentContext.GetBroker<IConfigurationDocumentBroker>();
+                IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
                 ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
                 document = broker.FindOne(criteria);
             }
@@ -54,7 +55,7 @@ namespace ClearCanvas.Enterprise.Configuration
                 // no saved settings, create new
                 document = NewDocument(name, version, user, instanceKey);
 
-                CurrentContext.Lock(document, DirtyState.New);
+                PersistenceContext.Lock(document, DirtyState.New);
             }
 
             // save the text
@@ -107,7 +108,7 @@ namespace ClearCanvas.Enterprise.Configuration
         {
             try
             {
-                IConfigurationDocumentBroker broker = CurrentContext.GetBroker<IConfigurationDocumentBroker>();
+                IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
                 ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
                 ConfigurationDocument document = broker.FindOne(criteria);
                 broker.Delete(document);

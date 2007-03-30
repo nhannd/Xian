@@ -94,6 +94,7 @@
     <Compile Include="SearchCondition.cs" />
     <Compile Include="SearchConditionBase.cs" />
     <Compile Include="SearchCriteria.cs" />
+    <Compile Include="ServiceAuthenticationAttribute.cs" />
     <Compile Include="ServiceImplementsContractAttribute.cs" />
     <Compile Include="ServiceFactory.cs" />
     <Compile Include="ServiceOperationAdvice.cs">

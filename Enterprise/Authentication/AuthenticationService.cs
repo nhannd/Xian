@@ -9,6 +9,8 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Enterprise.Authentication
 {
     [ExtensionOf(typeof(CoreServiceExtensionPoint))]
+    [ServiceImplementsContract(typeof(IAuthenticationService))]
+    [ServiceAuthentication(false)]
     public class AuthenticationService : CoreServiceLayer, IAuthenticationService
     {
         #region IAuthenticationService Members
@@ -21,14 +23,14 @@ namespace ClearCanvas.Enterprise.Authentication
             UserSearchCriteria where = new UserSearchCriteria();
             where.UserName.EqualTo(userName);
 
-            long count = CurrentContext.GetBroker<IUserBroker>().Count(where);
+            long count = PersistenceContext.GetBroker<IUserBroker>().Count(where);
             return count == 1;
         }
 
         [ReadOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
-        public string[] ListPermissionsForUser(string userName)
+        public string[] ListAuthorityTokensForUser(string userName)
         {
-            return CurrentContext.GetBroker<IPermissionBroker>().FindPermissionsByUserName(userName);
+            return PersistenceContext.GetBroker<IAuthorityTokenBroker>().FindTokensByUserName(userName);
         }
 
         #endregion

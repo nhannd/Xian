@@ -7,14 +7,15 @@ namespace ClearCanvas.Enterprise.Core
 {
     [ExtensionOf(typeof(CoreServiceExtensionPoint))]
     [ServiceImplementsContract(typeof(ITimeService))]
-    public class TimeService : ITimeService
+    [ServiceAuthentication(false)]
+    public class TimeService : CoreServiceLayer, ITimeService
     {
         #region ITimeService Members
 
         [ReadOperation(PersistenceScopeOption=PersistenceScopeOption.RequiresNew, Auditable=false)]
         public DateTime GetTime()
         {
-            ITimeBroker broker = PersistenceScope.Current.GetBroker<ITimeBroker>();
+            ITimeBroker broker = PersistenceContext.GetBroker<ITimeBroker>();
             return broker.GetTime();
         }
 

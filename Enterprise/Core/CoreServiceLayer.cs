@@ -7,7 +7,7 @@ namespace ClearCanvas.Enterprise.Core
 {
     public abstract class CoreServiceLayer : ICoreServiceLayer
     {
-        protected IPersistenceContext CurrentContext
+        protected IPersistenceContext PersistenceContext
         {
             get { return PersistenceScope.Current; }
         }

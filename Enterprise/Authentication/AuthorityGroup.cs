@@ -2,18 +2,15 @@ using System;
 using System.Collections;
 using System.Text;
 
-using Iesi.Collections;
-using ClearCanvas.Enterprise;
 using ClearCanvas.Enterprise.Core;
-
 
 namespace ClearCanvas.Enterprise.Authentication {
 
 
     /// <summary>
-    /// Group entity
+    /// AuthorityGroup entity
     /// </summary>
-	public partial class Group : Entity
+	public partial class AuthorityGroup : ClearCanvas.Enterprise.Core.Entity
 	{
 	
 		/// <summary>

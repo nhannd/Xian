@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.ServiceModel;
 
 namespace ClearCanvas.Enterprise.Core
 {
@@ -11,9 +12,13 @@ namespace ClearCanvas.Enterprise.Core
     /// <remarks>
     /// This service cannot itself be protected, because it is used to provide protection to other services.
     /// </remarks>
+    [ServiceContract]
     public interface IAuthenticationService
     {
+        [OperationContract]
         bool ValidateUser(string userName);
-        string[] ListPermissionsForUser(string userName);
+
+        [OperationContract]
+        string[] ListAuthorityTokensForUser(string userName);
     }
 }

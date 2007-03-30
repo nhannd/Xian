@@ -6,15 +6,15 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Authentication.Hibernate.Brokers
 {
-    public partial class PermissionBroker
+    public partial class AuthorityTokenBroker
     {
-        public string[] FindPermissionsByUserName(string userName)
+        public string[] FindTokensByUserName(string userName)
         {
             UserSearchCriteria where = new UserSearchCriteria();
             where.UserName.EqualTo(userName);
 
-            // want this to be as fast as possible - use joins and only select the Permission objects
-            HqlQuery query = new HqlQuery("select distinct p.PermissionName from User u join u.Groups g join g.Permissions p");
+            // want this to be as fast as possible - use joins and only select the AuthorityToken names
+            HqlQuery query = new HqlQuery("select distinct t.Name from User u join u.AuthorityGroups g join g.AuthorityTokens t");
             query.Conditions.AddRange(HqlCondition.FromSearchCriteria("u", where));
 
             return CollectionUtils.Map<object[], string, List<string>>(
