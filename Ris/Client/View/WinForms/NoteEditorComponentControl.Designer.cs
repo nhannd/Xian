@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(321, 247);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(341, 318);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // flowLayoutPanel1
@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(315, 95);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(335, 118);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // _category
@@ -92,8 +92,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._description.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._description.Name = "_description";
             this._description.ReadOnly = true;
-            this._description.Size = new System.Drawing.Size(311, 46);
+            this._description.Size = new System.Drawing.Size(330, 69);
             this._description.TabIndex = 1;
+            this._description.TabStop = false;
             this._description.Value = null;
             // 
             // flowLayoutPanel2
@@ -102,10 +103,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.flowLayoutPanel2.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.flowLayoutPanel2.Controls.Add(this._comment);
             this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 104);
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 127);
             this.flowLayoutPanel2.Name = "flowLayoutPanel2";
-            this.flowLayoutPanel2.Size = new System.Drawing.Size(315, 103);
-            this.flowLayoutPanel2.TabIndex = 2;
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(335, 153);
+            this.flowLayoutPanel2.TabIndex = 1;
             // 
             // _comment
             // 
@@ -113,7 +114,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._comment.Location = new System.Drawing.Point(2, 2);
             this._comment.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._comment.Name = "_comment";
-            this._comment.Size = new System.Drawing.Size(311, 99);
+            this._comment.Size = new System.Drawing.Size(330, 149);
             this._comment.TabIndex = 0;
             this._comment.Value = null;
             // 
@@ -124,15 +125,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.flowLayoutPanel3.Controls.Add(this._cancelButton);
             this.flowLayoutPanel3.Controls.Add(this._acceptButton);
             this.flowLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.flowLayoutPanel3.Location = new System.Drawing.Point(3, 213);
+            this.flowLayoutPanel3.Location = new System.Drawing.Point(3, 286);
             this.flowLayoutPanel3.Name = "flowLayoutPanel3";
             this.flowLayoutPanel3.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this.flowLayoutPanel3.Size = new System.Drawing.Size(315, 31);
-            this.flowLayoutPanel3.TabIndex = 0;
+            this.flowLayoutPanel3.Size = new System.Drawing.Size(335, 29);
+            this.flowLayoutPanel3.TabIndex = 2;
             // 
             // _cancelButton
             // 
-            this._cancelButton.Location = new System.Drawing.Point(237, 3);
+            this._cancelButton.Location = new System.Drawing.Point(257, 3);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(75, 23);
             this._cancelButton.TabIndex = 1;
@@ -142,7 +143,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // 
             // _acceptButton
             // 
-            this._acceptButton.Location = new System.Drawing.Point(156, 3);
+            this._acceptButton.Location = new System.Drawing.Point(176, 3);
             this._acceptButton.Name = "_acceptButton";
             this._acceptButton.Size = new System.Drawing.Size(75, 23);
             this._acceptButton.TabIndex = 0;
@@ -158,7 +159,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.CancelButton = this._cancelButton;
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "NoteEditorComponentControl";
-            this.Size = new System.Drawing.Size(321, 247);
+            this.Size = new System.Drawing.Size(341, 318);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);

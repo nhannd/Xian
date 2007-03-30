@@ -71,10 +71,23 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             dummyMrnChoices.Add("WCH");
             response.MrnAssigningAuthorityChoices = dummyMrnChoices;
 
+            // Sort the category from High to Low, then sort by name
+            IList<NoteCategory> sortedCategoryList = CollectionUtils.Sort<NoteCategory>(
+                PersistenceContext.GetBroker<INoteCategoryBroker>().FindAll(),
+                delegate(NoteCategory x, NoteCategory y)
+                {
+                    if (x.Severity > y.Severity)
+                        return 1;
+                    else if (x.Severity < y.Severity)
+                        return -1;
+
+                    return string.Compare(x.Name, y.Name);                
+                });
+            
             response.NoteCategoryChoices = new List<NoteCategorySummary>();
             NoteCategoryAssembler categoryAssembler = new NoteCategoryAssembler();
             response.NoteCategoryChoices = CollectionUtils.Map<NoteCategory, NoteCategorySummary, List<NoteCategorySummary>>(
-                    PersistenceContext.GetBroker<INoteCategoryBroker>().FindAll(),
+                    sortedCategoryList,
                     delegate(NoteCategory category)
                     {
                         return categoryAssembler.CreateNoteCategorySummary(category, this.PersistenceContext);
