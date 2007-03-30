@@ -36,11 +36,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
         public override void Stop()
         {
-			StopHost(_diskspaceManagerEndpointName);
-
             DiskspaceManagerProcessor.Instance.StopProcessor();
-			
-			Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
+
+            StopHost(_diskspaceManagerEndpointName);
+
+            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
         }
 
         public override string GetDisplayName()

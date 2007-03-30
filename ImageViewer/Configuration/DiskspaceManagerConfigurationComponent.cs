@@ -24,7 +24,6 @@ namespace ClearCanvas.ImageViewer.Configuration
     public class DiskspaceManagerConfigurationComponent : ConfigurationApplicationComponent
     {
         private string _driveName;
-        private List<string> _availableDrives;
         private string _status;
         private float _lowWatermark;
         private float _highWatermark;
@@ -65,15 +64,13 @@ namespace ClearCanvas.ImageViewer.Configuration
                 _serviceClient = new DiskspaceManagerServiceClient();
                 GetServerSettingResponse response = _serviceClient.GetServerSetting();
 
-                _availableDrives = new List<string>();
                 _driveName = response.DriveName;
-                _availableDrives.Add(_driveName);
                 _status = response.Status;
                 _lowWatermark = response.LowWatermark;
                 _highWatermark = response.HighWatermark;
                 _spaceUsed = response.UsedSpace;
                 _checkFrequency = response.CheckFrequency;
-
+                SignalPropertyChanged();
             }
             catch (Exception e)
             {
@@ -112,6 +109,15 @@ namespace ClearCanvas.ImageViewer.Configuration
             }
         }
 
+        private void SignalPropertyChanged()
+        {
+            NotifyPropertyChanged("DriveName");
+            NotifyPropertyChanged("Status");
+            NotifyPropertyChanged("LowWatermark");
+            NotifyPropertyChanged("HighWatermark");
+            NotifyPropertyChanged("UsedSpace");
+            NotifyPropertyChanged("Enabled");
+        }
 
         #region Properties
 
@@ -121,16 +127,6 @@ namespace ClearCanvas.ImageViewer.Configuration
             set
             {
                 _driveName = value;
-                this.Modified = true;
-            }
-        }
-
-        public List<string> AvailableDrives
-        {
-            get { return _availableDrives; }
-            set
-            {
-                _availableDrives = value;
                 this.Modified = true;
             }
         }
@@ -156,13 +152,22 @@ namespace ClearCanvas.ImageViewer.Configuration
             set
             {
                 if (value >= (100.0F - _watermarkMinDifference))
+                {
+                    SignalPropertyChanged();
                     _lowWatermark = 100.0F - _watermarkMinDifference;
+                }
                 else if (value <= 0.0F)
+                {
+                    SignalPropertyChanged();
                     _lowWatermark = 0.0F;
+                }
                 else
                     _lowWatermark = value;
                 if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
+                {
+                    SignalPropertyChanged();
                     _highWatermark = _lowWatermark + _watermarkMinDifference;
+                }
                 this.Modified = true;
             }
         }
@@ -173,13 +178,22 @@ namespace ClearCanvas.ImageViewer.Configuration
             set
             {
                 if (value >= 100.0F)
+                {
+                    SignalPropertyChanged();
                     _highWatermark = 100.0F;
+                }
                 else if (value <= _watermarkMinDifference)
+                {
+                    SignalPropertyChanged();
                     _highWatermark = _watermarkMinDifference;
+                }
                 else
                     _highWatermark = value;
                 if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
+                {
+                    SignalPropertyChanged();
                     _lowWatermark = _highWatermark - _watermarkMinDifference;
+                }
                 this.Modified = true;
             }
         }
@@ -200,13 +214,22 @@ namespace ClearCanvas.ImageViewer.Configuration
             set
             {
                 if (value >= (100.0F - _watermarkMinDifference) * 100.0F)
+                {
+                    SignalPropertyChanged();
                     _lowWatermark = (100.0F - _watermarkMinDifference);
+                }
                 else if (value <= 0.0F)
+                {
+                    SignalPropertyChanged();
                     _lowWatermark = 0.0F;
+                }
                 else
                     _lowWatermark = value / 100.0F;
                 if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
+                {
+                    SignalPropertyChanged();
                     _highWatermark = _lowWatermark + _watermarkMinDifference;
+                }
                 this.Modified = true;
             }
         }
@@ -217,13 +240,22 @@ namespace ClearCanvas.ImageViewer.Configuration
             set
             {
                 if (value >= 10000.0F)
+                {
+                    SignalPropertyChanged();
                     _highWatermark = 100.0F;
+                }
                 else if (value <= (_watermarkMinDifference * 100.0F))
+                {
+                    SignalPropertyChanged();
                     _highWatermark = _watermarkMinDifference;
+                }
                 else
                     _highWatermark = value / 100.0F;
                 if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
+                {
+                    SignalPropertyChanged();
                     _lowWatermark = _highWatermark - _watermarkMinDifference;
+                }
                 this.Modified = true;
             }
         }
@@ -240,7 +272,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         public bool Enabled
         {
-            get { return _serviceClient != null; }
+            get { return _serviceClient != null && !DriveName.Equals(""); }
         }
 
         #endregion

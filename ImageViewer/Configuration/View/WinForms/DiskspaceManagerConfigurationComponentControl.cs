@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
             _component = component;
 
-            _lbDriveName.DataSource = _component.AvailableDrives;
+            _txtDriveName.DataBindings.Add("Text", _component, "DriveName", true, DataSourceUpdateMode.OnPropertyChanged);
             _tbLowWatermark.DataBindings.Add("Value", _component, "LowWatermarkDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
             _tbHighWatermark.DataBindings.Add("Value", _component, "HighWatermarkDisplay", true, DataSourceUpdateMode.OnPropertyChanged);
             _tbFrequency.DataBindings.Add("Value", _component, "CheckFrequency", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             _txtUsedSpace.DataBindings.Add("Text", _component, "SpaceUsed", true, DataSourceUpdateMode.OnPropertyChanged);
             _txtStatus.DataBindings.Add("Text", _component, "Status", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _lbDriveName.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _txtDriveName.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _tbLowWatermark.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _tbHighWatermark.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _tbFrequency.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);

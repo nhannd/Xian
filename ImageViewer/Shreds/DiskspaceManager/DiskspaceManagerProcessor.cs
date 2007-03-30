@@ -41,23 +41,36 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             try
             {
                 _stopSignal = new EventWaitHandle(false, EventResetMode.ManualReset);
+                _checkSignal = new EventWaitHandle(false, EventResetMode.AutoReset);
+                
                 _diskspaceManagerData = new DiskspaceManagerData();
-                if (_diskspaceManagerData.DriveInfoList != null && _diskspaceManagerData.DriveInfoList.Count > 0
-                    && !_diskspaceManagerData.DriveInfoList[0].DriveName.Equals(DiskspaceManagerSettings.Instance.DriveName))
+                if (_diskspaceManagerData.DriveInfoList != null && _diskspaceManagerData.DriveInfoList.Count > 0)
                 {
-                    DiskspaceManagerSettings.Instance.DriveName = _diskspaceManagerData.DriveInfoList[0].DriveName;
-                    DiskspaceManagerSettings.Save();
+                    if (!_diskspaceManagerData.DriveInfoList[0].DriveName.Equals(DiskspaceManagerSettings.Instance.DriveName))
+                    {
+                        DiskspaceManagerSettings.Instance.DriveName = _diskspaceManagerData.DriveInfoList[0].DriveName;
+                        DiskspaceManagerSettings.Save();
+                    }
+                }
+                else
+                {
+                    if (!DiskspaceManagerSettings.Instance.DriveName.Equals(""))
+                    {
+                        DiskspaceManagerSettings.Instance.DriveName = "";
+                        DiskspaceManagerSettings.Save();
+                    }
                 }
                 if (!FindDiskspaceManagerDBAccessExtensionPoint())
                     return;
 
                 _stopSignal.Reset();
+                _checkSignal.Reset();
                 // start up processing thread
                 Thread t = new Thread(new ThreadStart(StartDiskspaceManager));
                 t.Start();
 
-                // wait for host's stop signal
-                _stopSignal.WaitOne();
+                _timer = new ClearCanvas.Common.Utilities.Timer(this.OnTimer, 60000, _diskspaceManagerData.CheckingFrequency);
+                _checkSignal.Reset();
 
                 // wait for processing thread to finish
                 t.Join();
@@ -76,6 +89,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
                 _diskspaceManagerData.DeleteStudyInDBCompletedEvent -= DeleteStudyHandler;
                 _diskspaceManagerData.OrderedStudyListReadyEvent -= ValidateStudyHandler;
                 _stopSignal.Set();
+                _checkSignal.Reset();
+                _timer.Dispose();
+                _timer = null;
             }
             catch (Exception e)
             {
@@ -87,9 +103,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
         {
             _diskspaceManagerData.OrderedStudyListReadyEvent += ValidateStudyHandler;
             _diskspaceManagerData.DeleteStudyInDBCompletedEvent += DeleteStudyHandler;
-            while (!_stopSignal.WaitOne(_diskspaceManagerData.CheckingFrequency, true))
+            
+            while (!_stopSignal.WaitOne(1000, true))
             {
-                if (_diskspaceManagerData.IsProcessing)
+                if (!_checkSignal.WaitOne(0, true) || _diskspaceManagerData.IsProcessing)
                     continue;
                 CheckConfigurationSettings();
                 CheckDiskspace();
@@ -101,10 +118,21 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             }
         }
 
+        private void OnTimer()
+        {
+            _checkSignal.Set();
+        }
+
         private void CheckConfigurationSettings()
         {
             if (_diskspaceManagerData.CheckingFrequency != DiskspaceManagerSettings.Instance.CheckFrequency * 60000)
+            {
                 _diskspaceManagerData.CheckingFrequency = DiskspaceManagerSettings.Instance.CheckFrequency * 60000;
+                _timer.Dispose();
+                _timer = null;
+                _timer = new ClearCanvas.Common.Utilities.Timer(this.OnTimer, _diskspaceManagerData.CheckingFrequency, _diskspaceManagerData.CheckingFrequency);
+                _checkSignal.Reset();
+            }
             foreach (DMDriveInfo dmDriveInfo in _diskspaceManagerData.DriveInfoList)
             {
                 if (dmDriveInfo.DriveName.StartsWith(DiskspaceManagerSettings.Instance.DriveName))
@@ -137,8 +165,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
                         DiskspaceManagerSettings.Save();
                     }
                 }
-                Platform.Log("    Checking diskspace on drive (" + dmDriveInfo.DriveName + ") : " + dmDriveInfo.UsedSpace + "/" + dmDriveInfo.DriveSize
-                    + " (" + dmDriveInfo.UsedSpacePercentage + "%) (Watermark: " + dmDriveInfo.LowWatermark + " ~ " + dmDriveInfo.HighWatermark + ")");
+                // debug data
+                //Platform.Log("    Checking diskspace on drive (" + dmDriveInfo.DriveName + ") : " + dmDriveInfo.UsedSpace + "/" + dmDriveInfo.DriveSize
+                //    + " (" + dmDriveInfo.UsedSpacePercentage + "%) (Watermark: " + dmDriveInfo.LowWatermark + " ~ " + dmDriveInfo.HighWatermark + ")");
             }
 
         }
@@ -290,7 +319,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
         #region Fields
 
         private DiskspaceManagerData _diskspaceManagerData;
+        private ClearCanvas.Common.Utilities.Timer _timer;
         private EventWaitHandle _stopSignal;
+        private EventWaitHandle _checkSignal;
 
         #endregion
 

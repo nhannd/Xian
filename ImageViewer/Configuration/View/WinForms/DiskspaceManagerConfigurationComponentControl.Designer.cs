@@ -43,12 +43,12 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.label7 = new System.Windows.Forms.Label();
             this._txtStatus = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
-            this._lbDriveName = new System.Windows.Forms.ListBox();
             this.label9 = new System.Windows.Forms.Label();
             this._tbFrequency = new System.Windows.Forms.TrackBar();
             this._txtFrequency = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this._bnRefresh = new System.Windows.Forms.Button();
+            this._txtDriveName = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this._tbLowWatermark)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._tbHighWatermark)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this._tbFrequency)).BeginInit();
@@ -188,15 +188,6 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this.label8.TabIndex = 14;
             this.label8.Text = "Drive";
             // 
-            // _lbDriveName
-            // 
-            this._lbDriveName.FormattingEnabled = true;
-            this._lbDriveName.ItemHeight = 16;
-            this._lbDriveName.Location = new System.Drawing.Point(104, 44);
-            this._lbDriveName.Name = "_lbDriveName";
-            this._lbDriveName.Size = new System.Drawing.Size(65, 20);
-            this._lbDriveName.TabIndex = 15;
-            // 
             // label9
             // 
             this.label9.AutoSize = true;
@@ -245,16 +236,24 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             this._bnRefresh.Text = "Refresh";
             this._bnRefresh.UseVisualStyleBackColor = true;
             // 
+            // _txtDriveName
+            // 
+            this._txtDriveName.Location = new System.Drawing.Point(104, 44);
+            this._txtDriveName.Name = "_txtDriveName";
+            this._txtDriveName.ReadOnly = true;
+            this._txtDriveName.Size = new System.Drawing.Size(61, 22);
+            this._txtDriveName.TabIndex = 21;
+            // 
             // DiskspaceManagerConfigurationComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._txtDriveName);
             this.Controls.Add(this._bnRefresh);
             this.Controls.Add(this.label10);
             this.Controls.Add(this._txtFrequency);
             this.Controls.Add(this._tbFrequency);
             this.Controls.Add(this.label9);
-            this.Controls.Add(this._lbDriveName);
             this.Controls.Add(this.label8);
             this.Controls.Add(this._txtStatus);
             this.Controls.Add(this.label7);
@@ -297,11 +296,11 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox _txtStatus;
         private System.Windows.Forms.Label label8;
-        private System.Windows.Forms.ListBox _lbDriveName;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.TrackBar _tbFrequency;
         private System.Windows.Forms.TextBox _txtFrequency;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Button _bnRefresh;
+        private System.Windows.Forms.TextBox _txtDriveName;
     }
 }
