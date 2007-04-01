@@ -6,8 +6,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Implements the DICOM concept of a Modality LUT.
 	/// </summary>
-	public class ModalityLUTLinear : CalculatedLUT
+	public class ModalityLUTLinear : ComposableLUT
 	{
+		private bool _lutCreated = false;
+		private int _bitsStored;
+		private int _pixelRepresentation;
 		private double _rescaleSlope;
 		private double _rescaleIntercept;
 
@@ -28,6 +31,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			ImageValidator.ValidateBitsStored(bitsStored);
 			ImageValidator.ValidatePixelRepresentation(pixelRepresentation);
 
+			_bitsStored = bitsStored;
+			_pixelRepresentation = pixelRepresentation;
 			this.RescaleSlope = rescaleSlope;
 			this.RescaleIntercept = rescaleIntercept;
 
@@ -35,10 +40,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 			SetOutputRange();
 		}
 
+		internal int BitsStored
+		{
+			get { return _bitsStored; }
+		}
+
+		internal int PixelRepresentation
+		{
+			get { return _pixelRepresentation; }
+		}
+
 		/// <summary>
 		/// Gets the rescale slope.
 		/// </summary>
-		public double RescaleSlope
+		internal double RescaleSlope
 		{
 			get { return _rescaleSlope; }
 			private set
@@ -53,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the rescale intercept.
 		/// </summary>
-		public double RescaleIntercept
+		internal double RescaleIntercept
 		{
 			get { return _rescaleIntercept; }
 			private set
@@ -74,13 +89,30 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				Platform.CheckIndexRange(index, this.MinInputValue, this.MaxInputValue, this);
+				if (!_lutCreated)
+				{
+					CreateLUT();
+					_lutCreated = true;
+				}
 
-				return (int) (index * _rescaleSlope + _rescaleIntercept);
+				return base[index];
 			}
-			set
+		}
+
+		public override string GetKey()
+		{
+			return String.Format("{0}-{1}-{2}-{3}",
+				this.BitsStored,
+				this.PixelRepresentation,
+				this.RescaleSlope,
+				this.RescaleIntercept);
+		}
+
+		private void CreateLUT()
+		{
+			for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
 			{
-				throw new InvalidOperationException("Cannot set elements in a calculated LUT");
+				this[i] = (int) (this.RescaleSlope * i + this.RescaleIntercept);
 			}
 		}
 
@@ -97,6 +129,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 				this.MinInputValue = -(1 << (bitsStored - 1));
 				this.MaxInputValue =  (1 << (bitsStored - 1)) - 1;
 			}
+
+			this.Length = this.MaxInputValue - this.MinInputValue + 1;
 		}
 
 		private void SetOutputRange()

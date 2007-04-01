@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -21,7 +22,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		private SeriesCollection _seriesCollection = new SeriesCollection();
 		private SopCollection _sops = new SopCollection();
 
-		private static SopCache _sopCache = new SopCache();
+		private static ReferenceCountedObjectCache _sopCache = new ReferenceCountedObjectCache();
 
 		internal StudyTree()
 		{
@@ -29,7 +30,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 #if UNIT_TESTS
 
-		internal SopCache SopCache
+		internal ReferenceCountedObjectCache SopCache
 		{
 			get { return _sopCache; }
 		}
@@ -241,7 +242,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 				// Try and add the image to the cache.  If it already exists
 				// it won't be added
-				_sopCache.Add(image as ICacheableSop);
+				_sopCache.Add(image.SopInstanceUID, image);
 
 				// Get the image from the cache
 				ImageSop cachedSop = _sopCache[image.SopInstanceUID] as ImageSop;

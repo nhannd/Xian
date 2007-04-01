@@ -7,6 +7,55 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	internal class OutputLUT : IReferenceCountable
+	{
+		private int _referenceCount = 0;
+		private int[] _outputLUT;
+		private string _key;
+
+		public OutputLUT(string key, int numEntries)
+		{
+			_key = key;
+			_outputLUT = new int[numEntries];
+		}
+
+		public string Key
+		{
+			get { return _key; }
+			set { _key = value; }
+		}
+
+		public int[] LUT
+		{
+			get { return _outputLUT; }
+		}
+
+		#region IReferenceCountable Members
+
+		public void IncrementReferenceCount()
+		{
+			_referenceCount++;
+		}
+
+		public void DecrementReferenceCount()
+		{
+			if (_referenceCount > 0)
+				_referenceCount--;
+		}
+
+		public bool IsReferenceCountZero
+		{
+			get { return (_referenceCount == 0); }
+		}
+
+		public int ReferenceCount
+		{
+			get { return _referenceCount; }
+		}
+
+		#endregion
+	}
+
 	/// <summary>
 	/// Allows <see cref="IComposableLUT"/> objects
 	/// be composed together in a pipeline.
@@ -15,15 +64,19 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		private LUTCollection _lutCollection;
 		private int _numEntries;
-		private int[] _outputLUT;
+		private OutputLUT _outputLUT;
 		private int _minInputValue;
 		private int _maxInputValue;
+		private bool _recalculate = true;
+
+		private static OutputLUTPool _lutPool = new OutputLUTPool();
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="LUTComposer"/>.
 		/// </summary>
 		public LUTComposer()
 		{
+			this.LUTCollection.ItemAdded += new EventHandler<LUTEventArgs>(OnLUTAdded);
 		}
 
 		/// <summary>
@@ -45,7 +98,25 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public int[] OutputLUT
 		{
-			get { return _outputLUT; }
+			get 
+			{
+				if (_recalculate)
+				{
+					ValidateLUTCollection();
+					Initialize();
+
+					_lutPool.Return(_outputLUT);
+
+					_outputLUT = _lutPool.Retrieve(GetKey(), _numEntries);
+					Compose();
+
+					// LUT object not in cache, so create a new one and add it
+					
+					_recalculate = false;
+				}
+
+				return _outputLUT.LUT; 
+			}
 		}
 
 		/// <summary>
@@ -56,11 +127,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// have been made, <see cref="Compose"/> should be called to update the
 		/// <see cref="OutputLUT"/>.
 		/// </remarks>
-		public void Compose()
+		private void Compose()
 		{
-			ValidateLUTCollection();
-			CreateLUT();
-
             CodeClock counter = new CodeClock();
 			counter.Start();
 
@@ -77,9 +145,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 				}
 
 				if (i >= 0)
-					_outputLUT[i] = val;
+					_outputLUT.LUT[i] = val;
 				else
-					_outputLUT[i + _numEntries] = val;
+					_outputLUT.LUT[i + _numEntries] = val;
 			}
 
 			counter.Stop();
@@ -88,19 +156,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 			Trace.Write(str);
 		}
 
-		private void CreateLUT()
+		private void Initialize()
 		{
 			IComposableLUT lut = this.LUTCollection[0];
-
-			// If the output LUT hasn't been created or the first LUT in the
-			// collection has changed, create a new output LUT
-			if (lut.Length != _numEntries)
-			{
-				_minInputValue = lut.MinInputValue;
-				_maxInputValue = lut.MaxInputValue;
-				_numEntries = lut.Length;
-				_outputLUT = new int[_numEntries];
-			}
+			_minInputValue = lut.MinInputValue;
+			_maxInputValue = lut.MaxInputValue;
+			_numEntries = lut.Length;
 		}
 
 		private void ValidateLUTCollection()
@@ -137,6 +198,28 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			if (!(this.LUTCollection[lastLUT] is PresentationLUT))
 				throw new InvalidOperationException("Last LUT in pipeline must be a PresentationLUT");
+		}
+
+		private string GetKey()
+		{
+			string key = String.Empty;
+
+			foreach (IComposableLUT lut in this.LUTCollection)
+			{
+				key += lut.GetKey();
+			}
+
+			return key;
+		}
+
+		void OnLUTAdded(object sender, LUTEventArgs e)
+		{
+			e.Lut.LUTChanged += new EventHandler(OnLUTChanged);
+		}
+
+		void OnLUTChanged(object sender, EventArgs e)
+		{
+			_recalculate = true;
 		}
 	}
 }

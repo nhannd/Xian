@@ -11,10 +11,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// An image where pixel values are indices into a LUT.
 	/// </summary>
-	public class IndexedImageGraphic : ImageGraphic
+	public abstract class IndexedImageGraphic : ImageGraphic
 	{
-		private LUTComposer _lutComposer;
-
 		/// <summary>
 		/// Initializes a new instance of <see cref="IndexedImageGraphic"/>
 		/// with the specified <see cref="ImageSop"/>.
@@ -27,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// Note that a reference to <paramref name="imageSop"/> is <i>not</i> held
 		/// by <see cref="IndexedImageGraphic"/>.
 		/// </remarks>
-		public IndexedImageGraphic(ImageSop imageSop)
+		protected IndexedImageGraphic(ImageSop imageSop)
 			: base(imageSop)
 		{
 		}
@@ -46,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="planarConfiguration"></param>
 		/// <param name="photometricInterpretation"></param>
 		/// <param name="pixelData"></param>
-		public IndexedImageGraphic(
+		protected IndexedImageGraphic(
 			int rows,
 			int columns,
 			int bitsAllocated,
@@ -79,27 +77,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// When an <see cref="IRenderer"/> renders an <see cref="IndexedImageGraphic"/>, it should
 		/// use <see cref="OutputLUT"/> to determine the ARGB value to display for a given pixel value.
 		/// </remarks>
-		public int[] OutputLUT
-		{
-			get
-			{
-				this.LUTComposer.Compose();
-				return this.LUTComposer.OutputLUT;
-			}
-		}
-
-		/// <summary>
-		/// Gets the <see cref="LUTComposer"/>.
-		/// </summary>
-		protected LUTComposer LUTComposer
-		{
-			get
-			{
-				if (_lutComposer == null)
-					_lutComposer = new LUTComposer();
-
-				return _lutComposer;
-			}
-		}
+		public abstract int[] OutputLUT { get; }
 	}
 }

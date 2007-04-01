@@ -18,6 +18,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// </remarks>
 	public class PresentationLUT : ComposableLUT
 	{
+		private PhotometricInterpretation _photometricInterpretation;
 		private bool _invert = false;
 		private bool _lutCreated = false;
 		private int _minPlusMax;
@@ -36,10 +37,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 			PhotometricInterpretation photometricInterpretation)
 			: base(minInputValue, maxInputValue)
 		{
+			_photometricInterpretation = photometricInterpretation;
+
 			if (photometricInterpretation == PhotometricInterpretation.Monochrome1)
 				_invert = true;
 
 			_minPlusMax = this.MinInputValue + this.MaxInputValue;
+		}
+
+		public PhotometricInterpretation PhotometricInterpretation
+		{
+			get { return _photometricInterpretation; }
 		}
 
 		/// <summary>
@@ -95,41 +103,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private void CreateColorLUT()
+		public override string GetKey()
 		{
-			Color color1 = Color.Red;
-			Color color2 = Color.Yellow;
-			Color color;
-
-			int start = -5000;
-			int end = 10000;
-			int range = end - start;
-			int j = 0;
-
-			for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
-			{
-				if (i < start)
-				{
-					color = Color.Black;
-				}
-				else if (i > end)
-				{
-					color = Color.White;
-				}
-				else
-				{
-					double scale = (double)j / (double)range;
-					int r = (int)(scale * Math.Abs(color2.R - color1.R) + color1.R);
-					int g = (int)(scale * Math.Abs(color2.G - color1.G) + color1.G);
-					int b = (int)(scale * Math.Abs(color2.B - color1.B) + color1.B);
-
-					color = Color.FromArgb(255, r, g, b);
-					j++;
-				}
-
-				this[i] = color.ToArgb();
-			}
-
+			return String.Format("{0}-{1}-{2}",
+				this.MinInputValue,
+				this.MaxInputValue,
+				this.GetType().ToString());
 		}
 
 		private void CreateGrayscaleLUT()

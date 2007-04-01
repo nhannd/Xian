@@ -88,6 +88,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				else
 					_windowWidth = value;
 
+				NotifyLUTChanged();
 				_recalculate = true;
 			}
 		}
@@ -101,6 +102,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 			set
 			{
 				_windowCenter = value;
+
+				NotifyLUTChanged();
 				_recalculate = true;
 			}
 		}
@@ -139,12 +142,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#endregion
 
+		public override string GetKey()
+		{
+			return String.Format("{0}-{1}-{2}-{3}",
+				this.MinInputValue,
+				this.MaxInputValue,
+				this.WindowWidth,
+				this.WindowCenter);
+		}
+
 		private void Calculate()
 		{
 			double halfWindow = (_windowWidth - 1)  / 2;
 			_windowRegionStart = _windowCenter - 0.5 - halfWindow;
 			_windowRegionEnd = _windowCenter - 0.5 + halfWindow;
 		}
-
 	}
 }

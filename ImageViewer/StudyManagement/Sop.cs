@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -73,7 +74,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return this.SopInstanceUID; }
 		}
 
-		bool ICacheableSop.IsReferenceCountZero
+		bool IReferenceCountable.IsReferenceCountZero
 		{
 			get { return (_referenceCount == 0); }
 		}
@@ -88,19 +89,19 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		void ICacheableSop.IncrementReferenceCount()
+		void IReferenceCountable.IncrementReferenceCount()
 		{
 			_referenceCount++;
 		}
 
-		void ICacheableSop.DecrementReferenceCount()
+		void IReferenceCountable.DecrementReferenceCount()
 		{
 			if (_referenceCount > 0)
 				_referenceCount--;
 		}
 
 #if UNIT_TESTS
-		int ICacheableSop.ReferenceCount
+		int IReferenceCountable.ReferenceCount
 		{
 			get { return _referenceCount; }
 		}

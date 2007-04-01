@@ -1,4 +1,5 @@
 using System;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -15,6 +16,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private int _maxInputValue;
 		private int _minOutputValue;
 		private int _maxOutputValue;
+
+		private event EventHandler _lutChangedEvent;
 
 		#region ILUT Members
 
@@ -42,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#endregion
 
-		#region IGrayscaleLUT Members
+		#region IComposableLUT Members
 
 		/// <summary>
 		/// Gets or sets the minimum allowable input value of the LUT.
@@ -80,6 +83,28 @@ namespace ClearCanvas.ImageViewer.Imaging
 			protected set { _maxOutputValue = value; }
 		}
 
+		/// <summary>
+		/// Occurs when the LUT has changed.
+		/// </summary>
+		public event EventHandler LUTChanged
+		{
+			add { _lutChangedEvent += value; }
+			remove { _lutChangedEvent -= value; }
+		}
+
+		public virtual string GetKey()
+		{
+			return null;
+		}
+
 		#endregion
+
+		/// <summary>
+		/// Notify listeners that the LUT has changed.
+		/// </summary>
+		public void NotifyLUTChanged()
+		{
+			EventsHelper.Fire(_lutChangedEvent, this, EventArgs.Empty);
+		}
 	}
 }

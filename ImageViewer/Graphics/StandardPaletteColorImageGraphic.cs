@@ -16,5 +16,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			//TODO: Load palette tables into LUTs here
 		}
+
+		public override int[] OutputLUT
+		{
+			get { throw new Exception("The method or operation is not implemented."); }
+		}
 	}
 }

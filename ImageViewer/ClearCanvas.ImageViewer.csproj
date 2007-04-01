@@ -133,6 +133,8 @@
     <Compile Include="Imaging\IVOILUTLinear.cs" />
     <Compile Include="Imaging\LUTCollection.cs" />
     <Compile Include="Imaging\LUTEventArgs.cs" />
+    <Compile Include="Imaging\LUTFactory.cs" />
+    <Compile Include="Imaging\OutputLUTPool.cs" />
     <Compile Include="Imaging\PresentationLUT.cs" />
     <Compile Include="InteractiveGraphics\CompassStretchIndicatorCursorProvider.cs" />
     <Compile Include="InteractiveGraphics\CreateGraphicState.cs" />
@@ -215,7 +217,6 @@
     <Compile Include="StudyManagement\LocalImageLoader.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="StudyManagement\SopCache.cs" />
     <Compile Include="StudyManagement\Tests\MockImageSop.cs" />
     <Compile Include="ClientArea.cs" />
     <Compile Include="IDisplaySet.cs" />

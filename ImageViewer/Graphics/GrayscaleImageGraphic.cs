@@ -12,6 +12,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </summary>
 	public class GrayscaleImageGraphic : IndexedImageGraphic
 	{
+		private LUTComposer _lutComposer;
+		private static LUTFactory _lutFactory = new LUTFactory();
+
 		/// <summary>
 		/// Initializes a new instance of <see cref="GrayscaleImageGraphic"/>
 		/// with the specified <see cref="ImageSop"/>.
@@ -120,12 +123,31 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return this.LUTComposer.LUTCollection[2]; }
 		}
 
+		public override int[] OutputLUT
+		{
+			get { return this.LUTComposer.OutputLUT; }
+		}
+
+		/// <summary>
+		/// Gets the <see cref="LUTComposer"/>.
+		/// </summary>
+		protected LUTComposer LUTComposer
+		{
+			get
+			{
+				if (_lutComposer == null)
+					_lutComposer = new LUTComposer();
+
+				return _lutComposer;
+			}
+		}
+
 		private void InstallGrayscaleLUTs(
 			double rescaleSlope, 
 			double rescaleIntercept,
 			PhotometricInterpretation photometricInterpretation)
 		{
-			ModalityLUTLinear modalityLut = new ModalityLUTLinear(
+			ModalityLUTLinear modalityLut = _lutFactory.GetModalityLUTLinear(
 				this.BitsStored,
 				this.PixelRepresentation,
 				rescaleSlope,
@@ -139,7 +161,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			this.LUTComposer.LUTCollection.Add(voiLut);
 
-			PresentationLUT presentationLut = new PresentationLUT(
+			PresentationLUT presentationLut = _lutFactory.GetPresentationLUT(
 				voiLut.MinOutputValue,
 				voiLut.MaxOutputValue,
 				photometricInterpretation);

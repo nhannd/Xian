@@ -26,5 +26,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Gets or sets the maximum output value.
 		/// </summary>
 		int MaxOutputValue { get; }
+
+		event EventHandler LUTChanged;
+
+		string GetKey();
 	}
 }

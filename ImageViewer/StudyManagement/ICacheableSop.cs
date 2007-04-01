@@ -1,21 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	internal interface ICacheableSop : IDisposable
+	internal interface ICacheableSop : IReferenceCountable, IDisposable
 	{
 		string SopInstanceUID { get; }
-		bool IsReferenceCountZero { get; }
 
 		void Load();
 		void Unload();
-		void IncrementReferenceCount();
-		void DecrementReferenceCount();
-
-#if UNIT_TESTS
-		int ReferenceCount { get; }
-#endif
 	}
 }

@@ -8,6 +8,7 @@ using System.Drawing;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.StudyManagement;
 using NMock2;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Tests
 {
@@ -121,7 +122,7 @@ namespace ClearCanvas.ImageViewer.Tests
 			TestImageSop image2 = new TestImageSop("patient1", "study1", "series1", "image1");
 
 			studyTree1.AddImage(image1);
-			ICacheableSop sop = studyTree1.SopCache[image1.SopInstanceUID];
+			IReferenceCountable sop = studyTree1.SopCache[image1.SopInstanceUID];
 
 			Assert.IsTrue(sop.ReferenceCount == 1);
 			

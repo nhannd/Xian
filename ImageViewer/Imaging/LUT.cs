@@ -11,6 +11,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private int _length;
 		private int[] _table;
 
+		protected LUT()
+		{
+		}
+
 		/// <summary>
 		/// Initializes a new instance of <see cref="LUT"/> with the specified
 		/// number of entries.
@@ -28,6 +32,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public int Length
 		{
 			get { return _length; }
+			protected set { _length = value; }
 		}
 
 		/// <summary>

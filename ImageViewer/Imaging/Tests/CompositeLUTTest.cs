@@ -66,7 +66,6 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			LUTComposer lutComposer = new LUTComposer();
 			lutComposer.LUTCollection.Add(modalityLUT);
 			lutComposer.LUTCollection.Add(voiLUT);
-			lutComposer.Compose();
 
 			Assert.AreEqual(0, lutComposer.OutputLUT[0]);
 			Assert.AreEqual(255, lutComposer.OutputLUT[255]);
@@ -112,7 +111,6 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			LUTComposer lutComposer = new LUTComposer();
 			lutComposer.LUTCollection.Add(modalityLUT);
 			lutComposer.LUTCollection.Add(voiLUT);
-			lutComposer.Compose();
 
 			Assert.AreEqual(0, lutComposer.OutputLUT[0]);
 			Assert.AreEqual(255, lutComposer.OutputLUT[4095]);
@@ -165,7 +163,6 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			LUTComposer lutComposer = new LUTComposer();
 			lutComposer.LUTCollection.Add(modalityLUT);
 			lutComposer.LUTCollection.Add(voiLUT);
-			lutComposer.Compose();
 
 			Assert.AreEqual(0, lutComposer.OutputLUT[890]);
 			Assert.AreEqual(127, lutComposer.OutputLUT[1064]);
@@ -213,7 +210,6 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			LUTComposer lutComposer = new LUTComposer();
 			lutComposer.LUTCollection.Add(modalityLUT);
 			lutComposer.LUTCollection.Add(voiLUT);
-			lutComposer.Compose();
 
 			Assert.AreEqual(255, lutComposer.OutputLUT[0]);
 			Assert.AreEqual(255, lutComposer.OutputLUT[127]);
@@ -263,7 +259,6 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			LUTComposer lutComposer = new LUTComposer();
 			lutComposer.LUTCollection.Add(modalityLUT);
 			lutComposer.LUTCollection.Add(voiLUT);
-			lutComposer.Compose();
 
 			Assert.AreEqual(63, lutComposer.OutputLUT[0]);
 			Assert.AreEqual(95, lutComposer.OutputLUT[2047]);
@@ -318,7 +313,6 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			LUTComposer lutComposer = new LUTComposer();
 			lutComposer.LUTCollection.Add(modalityLUT);
 			lutComposer.LUTCollection.Add(voiLUT);
-			lutComposer.Compose();
 
 			Assert.AreEqual(0, lutComposer.OutputLUT[890]);
 			Assert.AreEqual(127, lutComposer.OutputLUT[1064]);
@@ -338,7 +332,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 
 			LUTComposer lutComposer = new LUTComposer();
 			lutComposer.LUTCollection.Add(voiLUT);
-			lutComposer.Compose();
+			//lutComposer.Compose();
 		}
 
 		[Test]
@@ -368,7 +362,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			LUTComposer lutComposer = new LUTComposer();
 			lutComposer.LUTCollection.Add(modalityLUT);
 			lutComposer.LUTCollection.Add(voiLUT);
-			lutComposer.Compose();
+			//lutComposer.Compose();
 		}
 
 		[Test]
@@ -398,7 +392,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			LUTComposer lutComposer = new LUTComposer();
 			lutComposer.LUTCollection.Add(modalityLUT);
 			lutComposer.LUTCollection.Add(voiLUT);
-			lutComposer.Compose();
+			//lutComposer.Compose();
 		}
 
 		[Test]
@@ -406,7 +400,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		public void NoLUTsAdded()
 		{
 			LUTComposer lutComposer = new LUTComposer();
-			lutComposer.Compose();
+			//lutComposer.Compose();
 		}
 
 		[Test]
@@ -434,7 +428,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			LUTComposer lutComposer = new LUTComposer();
 			lutComposer.LUTCollection.Add(modalityLUT);
 			lutComposer.LUTCollection.Add(voiLUT);
-			lutComposer.Compose();
+			//lutComposer.Compose();
 		}
 
 		[Test]
@@ -454,7 +448,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 
 			LUTComposer lutComposer = new LUTComposer();
 			lutComposer.LUTCollection.Add(modalityLUT);
-			lutComposer.Compose();
+			//lutComposer.Compose();
 		}
 	}
 }
