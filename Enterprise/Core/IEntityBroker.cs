@@ -121,14 +121,14 @@ namespace ClearCanvas.Enterprise.Core
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        long Count(TSearchCriteria criteria);
+        int Count(TSearchCriteria criteria);
 
         /// <summary>
         /// Returns the number of entities matching any of the specified criteria (the criteria are combined using OR).
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        long Count(TSearchCriteria[] criteria);
+        int Count(TSearchCriteria[] criteria);
 
 
         /// <summary>

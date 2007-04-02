@@ -78,12 +78,12 @@ namespace ClearCanvas.Enterprise.Hibernate
             return results[0];
         }
 
-        public long Count(TSearchCriteria criteria)
+        public int Count(TSearchCriteria criteria)
         {
             return Count(new TSearchCriteria[] { criteria });
         }
 
-        public long Count(TSearchCriteria[] criteria)
+        public int Count(TSearchCriteria[] criteria)
         {
             HqlQuery query = new HqlQuery(string.Format("select count(*) from {0} x", typeof(TEntity).Name));
 
@@ -103,7 +103,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             IList results = ExecuteHql(query);
 
             // expect exactly one integer result
-            return (long)results[0];
+            return (int)results[0];
         }
 
 

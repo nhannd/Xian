@@ -5,6 +5,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Enterprise.Authentication
 {
@@ -23,7 +24,7 @@ namespace ClearCanvas.Enterprise.Authentication
             UserSearchCriteria where = new UserSearchCriteria();
             where.UserName.EqualTo(userName);
 
-            long count = PersistenceContext.GetBroker<IUserBroker>().Count(where);
+            int count = PersistenceContext.GetBroker<IUserBroker>().Count(where);
             return count == 1;
         }
 

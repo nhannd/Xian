@@ -17,11 +17,11 @@ namespace ClearCanvas.Enterprise.Authentication.Hibernate.Brokers
             HqlQuery query = new HqlQuery("select distinct t.Name from User u join u.AuthorityGroups g join g.AuthorityTokens t");
             query.Conditions.AddRange(HqlCondition.FromSearchCriteria("u", where));
 
-            return CollectionUtils.Map<object[], string, List<string>>(
+            return CollectionUtils.Map<object, string, List<string>>(
                 this.ExecuteHql(query),
-                delegate(object[] tuple)
+                delegate(object tokenName)
                 {
-                    return (string)tuple[0];
+                    return (string)tokenName;
                 }).ToArray();
         }
     }
