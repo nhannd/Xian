@@ -28,10 +28,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			if (lut == null)
 			{
 				lut = RetrieveFromPool(key, lutSize);
-				_lutCache.Add(key, lut);
 				composeRequired = true;
 			}
 
+			_lutCache.Add(key, lut);
+			
 			return lut;
 		}
 
