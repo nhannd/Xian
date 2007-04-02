@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public override string GetKey()
 		{
-			return String.Format("{0}-{1}-{2}-{3}",
+			return String.Format("{0}_{1}_{2:F2}_{3:F2}",
 				this.BitsStored,
 				this.PixelRepresentation,
 				this.RescaleSlope,

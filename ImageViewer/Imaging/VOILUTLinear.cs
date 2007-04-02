@@ -83,13 +83,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _windowWidth; }
 			set
 			{
-				if (value < 1)
-					_windowWidth = 1;
-				else
-					_windowWidth = value;
+				if (_windowWidth != value)
+				{
+					if (value < 1)
+						_windowWidth = 1;
+					else
+						_windowWidth = value;
 
-				NotifyLUTChanged();
-				_recalculate = true;
+					NotifyLUTChanged();
+					_recalculate = true;
+				}
 			}
 		}
 
@@ -101,10 +104,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _windowCenter; }
 			set
 			{
-				_windowCenter = value;
+				if (_windowCenter != value)
+				{
+					_windowCenter = value;
 
-				NotifyLUTChanged();
-				_recalculate = true;
+					NotifyLUTChanged();
+					_recalculate = true;
+				}
 			}
 		}
 
@@ -144,7 +150,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public override string GetKey()
 		{
-			return String.Format("{0}-{1}-{2}-{3}",
+			return String.Format("{0}_{1}_{2:F2}_{3:F2}",
 				this.MinInputValue,
 				this.MaxInputValue,
 				this.WindowWidth,

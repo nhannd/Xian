@@ -16,8 +16,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		}
 
-		public OutputLUT Retrieve(string key, int lutSize)
+		public OutputLUT Retrieve(string key, int lutSize, out bool composeRequired)
 		{
+			composeRequired = false;
+
 			// See if we can find the desired LUT in the cache
 			OutputLUT lut = _lutCache[key] as OutputLUT;
 
@@ -27,19 +29,25 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 				lut = RetrieveFromPool(key, lutSize);
 				_lutCache.Add(key, lut);
+				composeRequired = true;
 			}
 
 			return lut;
 		}
 
-		public void Return(OutputLUT lut)
+		public void Return(string key)
 		{
+			if (key == String.Empty)
+				return;
+
+			OutputLUT lut = _lutCache[key] as OutputLUT;
+
 			if (lut == null)
 				return;
 
 			// If a LUT is being "returned", remove it from the cache first...
-			_lutCache.Remove(lut.Key);
-			
+			_lutCache.Remove(key);
+
 			// ...then if no one else is reference the LUT, add it back
 			// into the pool so that it can be recycled.
 			if (lut.ReferenceCount == 0)

@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using System.Text;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -68,8 +69,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private int _minInputValue;
 		private int _maxInputValue;
 		private bool _recalculate = true;
+		private bool _validated = false;
 
 		private static OutputLUTPool _lutPool = new OutputLUTPool();
+		private string _key = String.Empty;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="LUTComposer"/>.
@@ -102,16 +105,23 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 				if (_recalculate)
 				{
-					ValidateLUTCollection();
-					Initialize();
+					if (!_validated)
+					{
+						SetInputRange();
+						ValidateLUTCollection();
+						_validated = true;
+					}
 
-					_lutPool.Return(_outputLUT);
+					_lutPool.Return(_key);
 
-					_outputLUT = _lutPool.Retrieve(GetKey(), _numEntries);
-					Compose();
+					_key = GetKey();
 
-					// LUT object not in cache, so create a new one and add it
-					
+					bool composeRequired;
+					_outputLUT = _lutPool.Retrieve(_key, _numEntries, out composeRequired);
+
+					if (composeRequired)
+						Compose();
+
 					_recalculate = false;
 				}
 
@@ -119,14 +129,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		/// <summary>
-		/// Executes the pipeline.
-		/// </summary>
-		/// <remarks>
-		/// After all changes to any of the LUTs in the <see cref="LUTCollection"/>
-		/// have been made, <see cref="Compose"/> should be called to update the
-		/// <see cref="OutputLUT"/>.
-		/// </remarks>
 		private void Compose()
 		{
             CodeClock counter = new CodeClock();
@@ -156,7 +158,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			Trace.Write(str);
 		}
 
-		private void Initialize()
+		private void SetInputRange()
 		{
 			IComposableLUT lut = this.LUTCollection[0];
 			_minInputValue = lut.MinInputValue;
@@ -202,19 +204,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private string GetKey()
 		{
-			string key = String.Empty;
+			StringBuilder key = new StringBuilder();
 
 			foreach (IComposableLUT lut in this.LUTCollection)
 			{
-				key += lut.GetKey();
+				key.Append(lut.GetKey());
 			}
 
-			return key;
+			return key.ToString();
 		}
 
 		void OnLUTAdded(object sender, LUTEventArgs e)
 		{
 			e.Lut.LUTChanged += new EventHandler(OnLUTChanged);
+			_validated = false;
 		}
 
 		void OnLUTChanged(object sender, EventArgs e)
