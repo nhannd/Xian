@@ -51,7 +51,6 @@ namespace ClearCanvas.Desktop
         {
             try
             {
-                AppDomain.CurrentDomain.SetPrincipalPolicy(PrincipalPolicy.WindowsPrincipal);
                 _view.RunMessagePump();
             }
             finally
