@@ -2,16 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Alert
 {
-    [ExtensionPoint()]
-    public class AlertExtensionPoint : ExtensionPoint<IAlert>
+    public interface IAlert<TEntity>
     {
-    }
-
-    public interface IAlert
-    {
-        IAlertNotification Test(object o);
+        string Name { get; }
+        IAlertNotification Test(TEntity entity, IPersistenceContext context);
     }
 }

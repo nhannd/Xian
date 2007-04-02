@@ -4,16 +4,21 @@ using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.Alert
+namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
     public class AlertNotificationDetail : DataContractBase
     {
-        public AlertNotificationDetail(string representation, string severity, string type)
+        public AlertNotificationDetail(string representation, string severity, string type, List<string> reasons)
         {
             this.Representation = representation;
             this.Severity = severity;
             this.Type = type;
+            this.Reasons = reasons;
+        }
+
+        public AlertNotificationDetail()
+        {
         }
 
         [DataMember]
@@ -24,5 +29,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.Alert
 
         [DataMember]
         public string Type;
+
+        [DataMember]
+        public List<string> Reasons;
     }
 }

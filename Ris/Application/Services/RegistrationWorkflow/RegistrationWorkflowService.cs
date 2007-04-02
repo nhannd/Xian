@@ -7,11 +7,12 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Alert;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.PatientReconciliation;
 using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Healthcare.PatientReconciliation;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -19,6 +20,20 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class RegistrationWorkflowService : WorklistService, IRegistrationWorkflowService
     {
+        IList<IPatientAlert> _patientAlertTests;
+
+        public RegistrationWorkflowService()
+        {
+            PatientAlertExtensionPoint xp = new PatientAlertExtensionPoint();
+            object[] tests = xp.CreateExtensions();
+
+            _patientAlertTests = new List<IPatientAlert>();
+            foreach (object o in tests)
+            {
+                _patientAlertTests.Add((IPatientAlert)o);
+            }
+        }
+
         [ReadOperation]
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
@@ -35,17 +50,21 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request)
         {
+            PatientProfile profile = (PatientProfile)PersistenceContext.Load(request.WorklistItem.PatientProfileRef);
+            PersistenceContext.GetBroker<IPatientProfileBroker>().LoadPatientForPatientProfile(profile);
+            PersistenceContext.GetBroker<IPatientBroker>().LoadNotesForPatient(profile.Patient);
+            List<AlertNotificationDetail> alertNotifications = GetAlertsHelper(profile.Patient, this.PersistenceContext);
+
             IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)(new PatientReconciliationStrategyExtensionPoint()).CreateExtension();
-            IList<PatientProfileMatch> matches = strategy.FindReconciliationMatches(
-                (PatientProfile)PersistenceContext.Load(request.WorklistItem.PatientProfileRef),
-                PersistenceContext);
-            
+            IList<PatientProfileMatch> matches = strategy.FindReconciliationMatches(profile, PersistenceContext);
+
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
             return new LoadWorklistPreviewResponse(assembler.CreateRegistrationWorklistPreview(
                 request.WorklistItem.PatientProfileRef, 
                 GetQueryResultForWorklistItem(request.WorklistItem.WorklistClassName, 
                     new WorklistItem(request.WorklistItem.WorklistClassName, request.WorklistItem.PatientProfileRef)),
                 matches.Count > 0,
+                alertNotifications,
                 this.PersistenceContext));
         }
 
@@ -124,5 +143,21 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     }));           
         }
 
+        private List<AlertNotificationDetail> GetAlertsHelper(Patient patient, IPersistenceContext context)
+        {
+            AlertAssembler assembler = new AlertAssembler();
+            List<AlertNotificationDetail> results = new List<AlertNotificationDetail>();
+
+            foreach (IPatientAlert patientAlertTests in _patientAlertTests)
+            {
+                IAlertNotification testResult = patientAlertTests.Test(patient, context);
+                if (testResult != null)
+                {
+                    results.Add(assembler.CreateAlertNotification(testResult));
+                }
+            }
+
+            return results;
+        }
     }
 }

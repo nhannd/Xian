@@ -286,9 +286,48 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _worklistPreview.RICs.Count - _RICTable.Items.Count; }
         }
 
+        public IList<AlertNotificationDetail> AlertNotifications
+        {
+            get { return _worklistPreview.AlertNotifications; }
+        }
+
         public bool HasAlert
         {
-            get { return true; }
+            get { return (_worklistPreview != null && _worklistPreview.AlertNotifications.Count > 0); }
+        }
+
+        public string GetAlertHTML(AlertNotificationDetail detail)
+        {
+            string alertImageURI = "";
+            string alertTooltip = "";
+
+            switch (detail.Type)
+            {
+                case "Note Alert":
+                    alertImageURI = "file:///C:\\Downloads\\icons\\note.png";
+                    alertTooltip = detail.Representation;
+                    foreach (string reason in detail.Reasons)
+                    {
+                        alertTooltip = String.Format("{0}\r\n{1}", alertTooltip, reason);
+                    }
+                    break;
+
+                case "Language Alert":
+                    alertImageURI = "file:///C:\\Downloads\\icons\\language.png";
+                    alertTooltip = detail.Representation + "\r\nPatient speaks:";
+                    foreach (string reason in detail.Reasons)
+                    {
+                        alertTooltip = String.Format("{0} {1}", alertTooltip, reason);
+                    }
+                    break;
+
+                default:
+                    alertImageURI = "file:///C:\\Downloads\\icons\\healthcare3.jpg";
+                    alertTooltip = detail.Representation;
+                    break;
+            }
+
+            return String.Format("<img width='50' border=0 src='{0}' alt='{1}' align='left'/>", alertImageURI, alertTooltip);
         }
 
         public ActionModelNode MenuModel

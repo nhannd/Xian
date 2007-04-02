@@ -28,7 +28,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 "N/A");
         }
 
-        public RegistrationWorklistPreview CreateRegistrationWorklistPreview(EntityRef profileRef, IList listQueryResult, bool hasReconciliationCandidates, IPersistenceContext context)
+        public RegistrationWorklistPreview CreateRegistrationWorklistPreview(EntityRef profileRef
+            , IList listQueryResult
+            , bool hasReconciliationCandidates
+            , List<AlertNotificationDetail> alertNotifications
+            , IPersistenceContext context)
         {
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
@@ -67,6 +71,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     {
                         return CreateRICSummary(result);
                     }),
+                alertNotifications,
                 hasReconciliationCandidates
                 );       
         }

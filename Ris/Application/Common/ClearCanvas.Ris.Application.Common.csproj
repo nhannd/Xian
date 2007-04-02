@@ -199,12 +199,7 @@
     <Compile Include="PatientReconciliation\ListProfilesForPatientsResponse.cs" />
     <Compile Include="PersonNameDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RegistrationWorkflow\Alert\AlertNotificationDetail.cs" />
-    <Compile Include="RegistrationWorkflow\Alert\GetAlertsByPatientProfileRequest.cs" />
-    <Compile Include="RegistrationWorkflow\Alert\GetAlertsByPatientProfileResponse.cs" />
-    <Compile Include="RegistrationWorkflow\Alert\GetAlertsByPatientRequest.cs" />
-    <Compile Include="RegistrationWorkflow\Alert\GetAlertsByPatientResponse.cs" />
-    <Compile Include="RegistrationWorkflow\Alert\IAlertService.cs" />
+    <Compile Include="AlertNotificationDetail.cs" />
     <Compile Include="RegistrationWorkflow\CheckInProcedureRequest.cs" />
     <Compile Include="RegistrationWorkflow\CheckInProcedureResponse.cs" />
     <Compile Include="RegistrationWorkflow\CheckInTableItem.cs" />

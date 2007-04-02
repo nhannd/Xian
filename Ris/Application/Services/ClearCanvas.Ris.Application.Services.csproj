@@ -90,8 +90,7 @@
     <Compile Include="PatientReconciliation\ReconciliationCandidateAssembler.cs" />
     <Compile Include="PersonNameAssembler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RegistrationWorkflow\AlertService.cs" />
-    <Compile Include="RegistrationWorkflow\AlertAssembler.cs" />
+    <Compile Include="AlertAssembler.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntryAssembler.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntryService.cs" />
     <Compile Include="RegistrationWorkflow\RegistrationWorkflowAssembler.cs" />

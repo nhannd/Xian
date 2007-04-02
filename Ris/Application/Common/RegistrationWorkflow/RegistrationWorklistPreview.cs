@@ -24,6 +24,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
                 List<TelephoneDetail> telephoneNumbers,
                 List<AddressDetail> addresses,
                 List<RICSummary> ricList,
+                List<AlertNotificationDetail> alertNotifications,
                 bool hasReconciliationCandidates)
         {
             this.PatientProfileRef = patientProfileRef;
@@ -40,6 +41,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.TelephoneNumbers = telephoneNumbers;
             this.Addresses = addresses;
             this.RICs = ricList;
+            this.AlertNotifications = alertNotifications;
             this.HasReconciliationCandidates = hasReconciliationCandidates;
         }
 
@@ -84,6 +86,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 
         [DataMember]
         public List<RICSummary> RICs;
+
+        [DataMember]
+        public List<AlertNotificationDetail> AlertNotifications;
 
         [DataMember]
         public bool HasReconciliationCandidates;

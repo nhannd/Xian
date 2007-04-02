@@ -97,8 +97,6 @@ namespace ClearCanvas.Ris.Client
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddNote);
             if (exitCode == ApplicationComponentExitCode.Normal)
             {
-                note.TimeStamp = Platform.Time;
-
                 _noteTable.Items.Add(note);
                 _noteList.Add(note);
                 this.Modified = true;

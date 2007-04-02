@@ -103,8 +103,9 @@ if(component.WorklistPreview != null)
   </tr>
   <tr>
     <td>
-        <img width="50" src="http://172.16.10.167/RisTemplates/medical_symbol_md.thumbnail.jpg" alt="Healthcare Alert" align="left" />
-        <img width="50" src="http://172.16.10.167/RisTemplates/Nopeanuts.jpg" alt="Peanut Allergy" align="left" />
+      <% for(var alert in component.AlertNotifications) {%>
+      <%=   component.GetAlertHTML(alert) %>      
+      <% } %>
     </td>
   </tr>
 </table>

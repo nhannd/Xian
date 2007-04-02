@@ -44,11 +44,13 @@
   <ItemGroup>
     <Compile Include="*.gen.cs" />
     <Compile Include="Alert\AddressAlert.cs" />
-    <Compile Include="Alert\Alert.cs" />
+    <Compile Include="Alert\AlertNotification.cs" />
+    <Compile Include="Alert\PatientAlert.cs" />
+    <Compile Include="Alert\IAlertNotification.cs" />
+    <Compile Include="Alert\IPatientAlert.cs" />
     <Compile Include="CheckInProcedureStep.cs" />
     <Compile Include="CheckInProcedureStepSearchCriteria.cs" />
     <Compile Include="Alert\IAlert.cs" />
-    <Compile Include="Alert\IAlertNotification.cs" />
     <Compile Include="Alert\LanguageAlert.cs" />
     <Compile Include="Alert\NoteAlert.cs" />
     <Compile Include="NoteCategory.cs" />
@@ -180,9 +182,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Alert\AddressAlert.cfg.xml" />
-    <EmbeddedResource Include="Alert\LanguageAlert.cfg.xml" />
-    <EmbeddedResource Include="Alert\NoteAlert.cfg.xml" />
+    <Content Include="Alert\AddressAlert.cfg.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
