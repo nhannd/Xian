@@ -167,7 +167,6 @@
     <Compile Include="ApplicationComponentHostWorkspace.cs" />
     <Compile Include="AssociateViewAttribute.cs" />
     <Compile Include="Command.cs" />
-    <Compile Include="CommandAddedEventArgs.cs" />
     <Compile Include="CommandHistory.cs" />
     <Compile Include="IApplicationComponent.cs" />
     <Compile Include="IApplicationComponentHost.cs" />
