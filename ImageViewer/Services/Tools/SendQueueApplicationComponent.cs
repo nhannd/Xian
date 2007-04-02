@@ -10,9 +10,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
-	/// <summary>
-	/// Extension point for views onto <see cref="SendQueueApplicationComponent"/>
-	/// </summary>
 	[ExtensionPoint]
 	public class SendQueueApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
@@ -35,27 +32,19 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			UpdateFromProgressItem(progressItem);
 		}
 
-		internal void UpdateFromProgressItem(SendProgressItem progressItem)
-		{
-			if (!this.Identifier.Equals(this.Identifier))
-				throw new InvalidOperationException("the identifiers must match!");
-
-			this.ToAETitle = progressItem.ToAETitle;
-			this.NumberOfFilesExported = progressItem.NumberOfFilesExported;
-			this.LastActive = progressItem.LastActive;
-
-			this.StudyInformation.PatientId = progressItem.StudyInformation.PatientId;
-			this.StudyInformation.PatientsName = progressItem.StudyInformation.PatientsName;
-			this.StudyInformation.StudyInstanceUid = progressItem.StudyInformation.StudyInstanceUid;
-			this.StudyInformation.StudyDescription = progressItem.StudyInformation.StudyDescription;
-			this.StudyInformation.StudyDate = progressItem.StudyInformation.StudyDate;
-
-			CalculateLastActiveDisplay();
-		}
-
 		public string LastActiveDisplay
 		{
 			get { return _lastActiveDisplay; }
+		}
+
+		internal void UpdateFromProgressItem(SendProgressItem progressItem)
+		{
+			if (!this.Identifier.Equals(this.Identifier))
+				throw new InvalidOperationException(SR.ExceptionIdentifiersMustMatch);
+
+			base.CopyFrom(progressItem);
+
+			CalculateLastActiveDisplay();
 		}
 
 		internal void CalculateLastActiveDisplay()
@@ -64,25 +53,28 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			if (lastActiveSpan.Minutes < 60)
 			{
 				if (lastActiveSpan.Minutes == 1)
-					_lastActiveDisplay = "1 minute ago";
+					_lastActiveDisplay = SR.MessageOneDayAgo;
 				else
-					_lastActiveDisplay = String.Format("{0} minutes ago", lastActiveSpan.Minutes);
+					_lastActiveDisplay = String.Format(SR.FormatXMinutesAgo, lastActiveSpan.Minutes);
 			}
 			else if (lastActiveSpan.Hours >= 1 && lastActiveSpan.Days == 0)
 			{
 				if (lastActiveSpan.Hours == 1)
-					_lastActiveDisplay = "1 hour, ";
+					_lastActiveDisplay = SR.MessageOneHourAgo;
 				else
-					_lastActiveDisplay = String.Format("{0} hours, ", lastActiveSpan.Hours);
+					_lastActiveDisplay = String.Format(SR.FormatXHoursAgo, lastActiveSpan.Hours);
 
 				if (lastActiveSpan.Minutes == 1)
-					_lastActiveDisplay += "1 minute ago";
+					_lastActiveDisplay += SR.MessageOneMinuteAgo;
 				else
-					_lastActiveDisplay += String.Format("{0} minutes ago", lastActiveSpan.Minutes);
+					_lastActiveDisplay += String.Format(SR.FormatXMinutesAgo, lastActiveSpan.Minutes);
 			}
 			else
 			{
-				_lastActiveDisplay = String.Format("{0} day(s)", lastActiveSpan.Days);
+				if (lastActiveSpan.Days == 1)
+					_lastActiveDisplay = SR.MessageOneDayAgo;
+				else
+					_lastActiveDisplay = String.Format(SR.FormatXDaysAgo, lastActiveSpan.Days);
 			}
 		}
 	}
@@ -95,16 +87,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	{
 		private Table<SendQueueItem> _sendTable;
 		private ISelection _selection;
-		private LocalDataStoreActivityMonitor _monitor;
 
 		private Timer _timer;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public SendQueueApplicationComponent(LocalDataStoreActivityMonitor monitor)
+		public SendQueueApplicationComponent()
 		{
-			_monitor = monitor;
 		}
 
 		public override void Start()
@@ -113,8 +103,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			base.Start();
 
 			_timer = new Timer(this.OnTimer, 30000, 30000);
-			
-			_monitor.SendProgressUpdate += new EventHandler<ItemEventArgs<SendProgressItem>>(OnSendProgressUpdate);
+
+			LocalDataStoreActivityMonitor.Instance.SendProgressUpdate += new EventHandler<ItemEventArgs<SendProgressItem>>(OnSendProgressUpdate);
 		}
 
 		public override void Stop()
@@ -123,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_timer.Dispose();
 			_timer = null;
 
-			_monitor.SendProgressUpdate -= new EventHandler<ItemEventArgs<SendProgressItem>>(OnSendProgressUpdate);
+			LocalDataStoreActivityMonitor.Instance.SendProgressUpdate -= new EventHandler<ItemEventArgs<SendProgressItem>>(OnSendProgressUpdate);
 		}
 
 		private void OnTimer()
@@ -165,28 +155,28 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			TableColumnBase<SendQueueItem> column;
 
 			column = new TableColumn<SendQueueItem, string>(
-					"From",
+					SR.TitleTo,
 					delegate(SendQueueItem item) { return FormatString(item.ToAETitle); },
 					0.75f);
 
 			_sendTable.Columns.Add(column);
 
 			column = new TableColumn<SendQueueItem, string>(
-					"Patient Id",
+					SR.TitlePatientId,
 					delegate(SendQueueItem item) { return FormatString(item.StudyInformation.PatientId); },
 					1f);
 
 			_sendTable.Columns.Add(column);
 
 			column = new TableColumn<SendQueueItem, string>(
-					"Patient's Name",
+					SR.TitlePatientId,
 					delegate(SendQueueItem item) { return FormatString(item.StudyInformation.PatientsName); },
 					1.5f);
 
 			_sendTable.Columns.Add(column);
 
 			column = new TableColumn<SendQueueItem, string>(
-					"Study Date",
+					SR.TitleStudyDate,
 					delegate(SendQueueItem item)
 					{
 						if (item.StudyInformation.StudyDate == default(DateTime))
@@ -199,14 +189,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_sendTable.Columns.Add(column);
 
 			column = new TableColumn<SendQueueItem, string>(
-					"Study Description",
+					SR.TitleStudyDescription,
 					delegate(SendQueueItem item) { return FormatString(item.StudyInformation.StudyDescription); },
 					2f);
 
 			_sendTable.Columns.Add(column);
 
 			column = new TableColumn<SendQueueItem, int>(
-					"Sent",
+					SR.TitleSent,
 					delegate(SendQueueItem item) { return item.NumberOfFilesExported; },
 					0.5f);
 
@@ -220,7 +210,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			//_receiveTable.Columns.Add(column);
 
 			column = new TableColumn<SendQueueItem, string>(
-					"Last Active",
+					SR.TitleLastActive,
 					delegate(SendQueueItem item) { return item.LastActiveDisplay;  },
 					1.5f);
 
@@ -229,7 +219,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public string Title
 		{
-			get { return "Send Queue"; }
+			get { return SR.TitleSend; }
 		}
 
 		public ITable SendTable

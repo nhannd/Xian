@@ -36,12 +36,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// _receiveTable
 			// 
 			this._receiveTable.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._receiveTable.Location = new System.Drawing.Point(0, 24);
+			this._receiveTable.Location = new System.Drawing.Point(0, 31);
 			this._receiveTable.MenuModel = null;
 			this._receiveTable.Name = "_receiveTable";
 			this._receiveTable.ReadOnly = false;
 			this._receiveTable.Selection = selection1;
-			this._receiveTable.Size = new System.Drawing.Size(624, 332);
+			this._receiveTable.Size = new System.Drawing.Size(624, 325);
 			this._receiveTable.TabIndex = 4;
 			this._receiveTable.Table = null;
 			this._receiveTable.ToolbarModel = null;
@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._titleBar.Location = new System.Drawing.Point(0, 0);
 			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._titleBar.Name = "_titleBar";
-			this._titleBar.Size = new System.Drawing.Size(624, 24);
+			this._titleBar.Size = new System.Drawing.Size(624, 31);
 			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2003;
 			this._titleBar.TabIndex = 5;
 			this._titleBar.Text = "Receive Operations";

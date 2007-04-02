@@ -21,30 +21,25 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 		[OperationContract(IsOneWay = true)]
 		void SopInstanceImported(ImportedSopInstanceInformation information);
-
-		[OperationContract(IsOneWay = true)]
-		void OnServiceStopped();
 	}
 
-	[ServiceContract(	//SessionMode = SessionMode.Required,
+	[ServiceContract(	SessionMode = SessionMode.Required,
 						CallbackContract = typeof(ILocalDataStoreActivityMonitorServiceCallback), 
 						ConfigurationName="ILocalDataStoreActivityMonitorService")]
 	public interface ILocalDataStoreActivityMonitorService
 	{
-		[OperationContract]
+		[OperationContract(IsOneWay = true)]
 		void Cancel(CancelProgressItemInformation information);
-		
-		[OperationContract]
+
+		[OperationContract(IsOneWay = true)]
 		void ClearInactive();
-		
-		[OperationContract]
+
+		[OperationContract(IsOneWay = true)]
 		void Refresh();
 
-		//[OperationContract(IsInitiating = true)]
 		[OperationContract]
 		void Subscribe(string eventName);
 
-		//[OperationContract(IsTerminating = true)]
 		[OperationContract]
 		void Unsubscribe(string eventName);
 	}

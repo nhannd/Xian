@@ -39,17 +39,17 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		public void Cancel(CancelProgressItemInformation information)
 		{
-			throw new LocalDataStoreFaultException("The method or operation is not implemented.");
+			LocalDataStoreService.Instance.Cancel(information);
 		}
 
 		public void ClearInactive()
 		{
-			throw new LocalDataStoreFaultException("The method or operation is not implemented.");
+			LocalDataStoreService.Instance.ClearInactive();
 		}
 
 		public void Refresh()
 		{
-			throw new LocalDataStoreFaultException("The method or operation is not implemented.");
+			LocalDataStoreService.Instance.RepublishAll();
 		}
 
 		#endregion

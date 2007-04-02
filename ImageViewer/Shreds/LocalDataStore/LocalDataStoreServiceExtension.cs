@@ -29,8 +29,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			LocalDataStoreService.Instance.Start();
 
-			StartNetPipeHost<LocalDataStoreServiceType, ILocalDataStoreService>(_localDataStoreEndpointName, "Local Data Store service");
-			StartNetPipeHost<LocalDataStoreActivityMonitorServiceType, ILocalDataStoreActivityMonitorService>(_localDataStoreActivityMonitorEndpointName, "Local Data Store Activity Monitor service");
+			StartNetPipeHost<LocalDataStoreServiceType, ILocalDataStoreService>(_localDataStoreEndpointName, SR.LocalDataStoreService);
+			StartNetPipeHost<LocalDataStoreActivityMonitorServiceType, ILocalDataStoreActivityMonitorService>(_localDataStoreActivityMonitorEndpointName, SR.LocalDataStoreActivityMonitorService);
 		}
 
 		public override void Stop()
@@ -45,12 +45,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		public override string GetDisplayName()
 		{
-			return "Local Data Store services";
+			return SR.LocalDataStoreServices;
 		}
 
 		public override string GetDescription()
 		{
-			return "This shred hosts the Local Data Store services";
+			return SR.LocalDataStoreServiceDescription;
 		}
 	}
 }

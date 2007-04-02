@@ -44,8 +44,6 @@
     <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
-    <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -63,9 +61,7 @@
     <Compile Include="DicomServerEditComponent.cs" />
     <Compile Include="DicomServerGroupEditComponent.cs" />
     <Compile Include="DicomExplorerConfigurationPageProvider.cs" />
-    <Compile Include="RetrieveStudyTool.cs" />
     <Compile Include="SearchPanelComponent.cs" />
-    <Compile Include="SendStudyTool.cs" />
     <Compile Include="ServerAddTool.cs" />
     <Compile Include="ServerDeleteTool.cs" />
     <Compile Include="ServerEditTool.cs" />
@@ -119,10 +115,6 @@
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Services\ClearCanvas.ImageViewer.Services.csproj">
-      <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
-      <Name>ClearCanvas.ImageViewer.Services</Name>
-    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
@@ -130,9 +122,6 @@
   <ItemGroup>
     <EmbeddedResource Include="Icons\DeleteStudySmall.png" />
     <EmbeddedResource Include="Icons\OpenStudySmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\SendStudySmall.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\Add.png" />

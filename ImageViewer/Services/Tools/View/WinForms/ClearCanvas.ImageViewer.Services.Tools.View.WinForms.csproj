@@ -39,6 +39,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DicomFileImportApplicationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DicomFileImportApplicationComponentControl.Designer.cs">
+      <DependentUpon>DicomFileImportApplicationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DicomFileImportApplicationComponentView.cs" />
+    <Compile Include="ImportProgressControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ImportProgressControl.Designer.cs">
+      <DependentUpon>ImportProgressControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="ReceiveQueueApplicationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -75,6 +88,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="DicomFileImportApplicationComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DicomFileImportApplicationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ImportProgressControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>ImportProgressControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ReceiveQueueApplicationComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ReceiveQueueApplicationComponentControl.cs</DependentUpon>

@@ -283,15 +283,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Please select a destination..
-        /// </summary>
-        internal static string MessageSelectDestination {
-            get {
-                return ResourceManager.GetString("MessageSelectDestination", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The Port must be a positive integer value.  Please enter a valid Port..
         /// </summary>
         internal static string MessageServerPortMustBePositiveInteger {
@@ -477,15 +468,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string TitleSearchPanelPane {
             get {
                 return ResourceManager.GetString("TitleSearchPanelPane", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Send Study.
-        /// </summary>
-        internal static string TitleSendStudy {
-            get {
-                return ResourceManager.GetString("TitleSendStudy", resourceCulture);
             }
         }
         

@@ -61,11 +61,353 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Dicom Server.
+        /// </summary>
+        internal static string DicomServer {
+            get {
+                return ResourceManager.GetString("DicomServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This shred hosts the Dicom Server and the WCF Dicom Request service.
+        /// </summary>
+        internal static string DicomServerDescription {
+            get {
+                return ResourceManager.GetString("DicomServerDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Diskspace Manager.
+        /// </summary>
+        internal static string DiskspaceManager {
+            get {
+                return ResourceManager.GetString("DiskspaceManager", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This shred hosts the Diskspace Manager service.
+        /// </summary>
+        internal static string DiskspaceManagerDescription {
+            get {
+                return ResourceManager.GetString("DiskspaceManagerDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The &apos;bad file&apos; storage directory is inaccessible.  The service has been disabled..
+        /// </summary>
+        internal static string ExceptionBadFileStorageDirectoryDoesNotExist {
+            get {
+                return ResourceManager.GetString("ExceptionBadFileStorageDirectoryDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancellation of at least one of the specified items has failed..
+        /// </summary>
+        internal static string ExceptionCancellationOfAtLeastOneItemFailed {
+            get {
+                return ResourceManager.GetString("ExceptionCancellationOfAtLeastOneItemFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while attempting to refresh the Local Data Store activities..
+        /// </summary>
+        internal static string ExceptionErrorAttemptingToRefresh {
+            get {
+                return ResourceManager.GetString("ExceptionErrorAttemptingToRefresh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error has occurred while attempting to process the file import request..
+        /// </summary>
+        internal static string ExceptionErrorProcessingImportRequest {
+            get {
+                return ResourceManager.GetString("ExceptionErrorProcessingImportRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error has occurred while attempting to process a received file ({0}).
+        /// </summary>
+        internal static string ExceptionErrorProcessingReceivedFile {
+            get {
+                return ResourceManager.GetString("ExceptionErrorProcessingReceivedFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error has occurred while attempting to process the reindex request..
+        /// </summary>
+        internal static string ExceptionErrorProcessingReindexRequest {
+            get {
+                return ResourceManager.GetString("ExceptionErrorProcessingReindexRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error has occurred while attempting to process a sent file ({0}).
+        /// </summary>
+        internal static string ExceptionErrorProcessingSentFile {
+            get {
+                return ResourceManager.GetString("ExceptionErrorProcessingSentFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while attempting to clear the inactive items..
+        /// </summary>
+        internal static string ExceptionErrorWhileAttemptingToClearInactiveItems {
+            get {
+                return ResourceManager.GetString("ExceptionErrorWhileAttemptingToClearInactiveItems", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to add subscriber to the Local DataStore Activity Monitor service..
+        /// </summary>
+        internal static string ExceptionFailedToAddSubscriber {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToAddSubscriber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to remove subscriber from the Local DataStore Activity Monitor service..
+        /// </summary>
+        internal static string ExceptionFailedToRemoveSubscriber {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToRemoveSubscriber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file importer has already been started..
+        /// </summary>
+        internal static string ExceptionImporterAlreadyStarted {
+            get {
+                return ResourceManager.GetString("ExceptionImporterAlreadyStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file importer is not running..
+        /// </summary>
+        internal static string ExceptionImporterNotStarted {
+            get {
+                return ResourceManager.GetString("ExceptionImporterNotStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No files have been specified to import..
+        /// </summary>
+        internal static string ExceptionNoFilesHaveBeenSpecifiedToImport {
+            get {
+                return ResourceManager.GetString("ExceptionNoFilesHaveBeenSpecifiedToImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No valid files have been specified to import..
+        /// </summary>
+        internal static string ExceptionNoValidFilesHaveBeenSpecifiedToImport {
+            get {
+                return ResourceManager.GetString("ExceptionNoValidFilesHaveBeenSpecifiedToImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to process request. The service has been disabled..
+        /// </summary>
+        internal static string ExceptionServiceHasBeenDisabled {
+            get {
+                return ResourceManager.GetString("ExceptionServiceHasBeenDisabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified retrieve level is unsupported at this time..
+        /// </summary>
+        internal static string ExceptionSpecifiedRetrieveLevelNotSupported {
+            get {
+                return ResourceManager.GetString("ExceptionSpecifiedRetrieveLevelNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The storage directory is inaccessible.  The service has been disabled..
+        /// </summary>
+        internal static string ExceptionStorageDirectoryDoesNotExist {
+            get {
+                return ResourceManager.GetString("ExceptionStorageDirectoryDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Adding: {0}.
+        /// </summary>
+        internal static string FormatAddingFile {
+            get {
+                return ResourceManager.GetString("FormatAddingFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to commit a file to the datastore ({0}); This file will need to be imported manually..
+        /// </summary>
+        internal static string FormatFailedToCommitToDatastore {
+            get {
+                return ResourceManager.GetString("FormatFailedToCommitToDatastore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Although the file format is recognized, it is not appropriate for insertion into the datastore ({0}).
+        /// </summary>
+        internal static string FormatFileFormatNotAppropriateForDatastore {
+            get {
+                return ResourceManager.GetString("FormatFileFormatNotAppropriateForDatastore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The file format is not recognized ({0}).
+        /// </summary>
+        internal static string FormatFileFormatNotRecognized {
+            get {
+                return ResourceManager.GetString("FormatFileFormatNotRecognized", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ; the file has been moved to {0}.
+        /// </summary>
+        internal static string FormatFileHasBeenMoved {
+            get {
+                return ResourceManager.GetString("FormatFileHasBeenMoved", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Importing: {0}.
+        /// </summary>
+        internal static string FormatImportingFile {
+            get {
+                return ResourceManager.GetString("FormatImportingFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to + {0}.
+        /// </summary>
+        internal static string FormatMultipleFilesDescription {
+            get {
+                return ResourceManager.GetString("FormatMultipleFilesDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Dicom Server Shred (Name: {0} AE: {1} Host: {2} Port: {3} Location: {4}).
         /// </summary>
         internal static string FormatTooltipServerDetails {
             get {
                 return ResourceManager.GetString("FormatTooltipServerDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to parse the file ({0}); the sent file information may not be accurate for this study..
+        /// </summary>
+        internal static string FormatUnableToParseFile {
+            get {
+                return ResourceManager.GetString("FormatUnableToParseFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Local Data Store Activity Monitor Service.
+        /// </summary>
+        internal static string LocalDataStoreActivityMonitorService {
+            get {
+                return ResourceManager.GetString("LocalDataStoreActivityMonitorService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Local Data Store Service.
+        /// </summary>
+        internal static string LocalDataStoreService {
+            get {
+                return ResourceManager.GetString("LocalDataStoreService", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Hosts the Local Data Store and Activity Monitor Services.
+        /// </summary>
+        internal static string LocalDataStoreServiceDescription {
+            get {
+                return ResourceManager.GetString("LocalDataStoreServiceDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Local Data Store Services.
+        /// </summary>
+        internal static string LocalDataStoreServices {
+            get {
+                return ResourceManager.GetString("LocalDataStoreServices", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancelled..
+        /// </summary>
+        internal static string MessageCancelled {
+            get {
+                return ResourceManager.GetString("MessageCancelled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Complete..
+        /// </summary>
+        internal static string MessageComplete {
+            get {
+                return ResourceManager.GetString("MessageComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ; the file has been deleted.
+        /// </summary>
+        internal static string MessageFileHasBeenDeleted {
+            get {
+                return ResourceManager.GetString("MessageFileHasBeenDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pending ....
+        /// </summary>
+        internal static string MessagePending {
+            get {
+                return ResourceManager.GetString("MessagePending", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Waiting for all files to become available ....
+        /// </summary>
+        internal static string MessageWaitingForFilesToBecomeAvailable {
+            get {
+                return ResourceManager.GetString("MessageWaitingForFilesToBecomeAvailable", resourceCulture);
             }
         }
     }

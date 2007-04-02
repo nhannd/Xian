@@ -49,6 +49,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			#region Client Input
 
 			private string _sourceFile;
+			private FileImportBehaviour _importBehaviour;
 			private BadFileBehaviour _badFileBehaviour;
 
 			#endregion
@@ -86,13 +87,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			#endregion
 
 			public FileImportInformation(string sourceFile)
-				: this(sourceFile, BadFileBehaviour.Ignore)
+				: this(sourceFile, FileImportBehaviour.Move, BadFileBehaviour.Ignore)
 			{
 			}
 
-			public FileImportInformation(string sourceFile, BadFileBehaviour badFileBehaviour)
+			public FileImportInformation(string sourceFile, FileImportBehaviour importBehaviour, BadFileBehaviour badFileBehaviour)
 			{
 				_sourceFile = sourceFile;
+				_importBehaviour = importBehaviour;
 				_badFileBehaviour = badFileBehaviour;
 			}
 
@@ -108,6 +110,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			public BadFileBehaviour BadFileBehaviour
 			{
 				get { return _badFileBehaviour; }
+			}
+
+			public FileImportBehaviour ImportBehaviour
+			{
+				get { return _importBehaviour; }
 			}
 
 			public ImportStage CompletedStage
@@ -338,9 +345,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					StringBuilder errorString = new StringBuilder("");
 					if (!processable)
-						errorString.AppendFormat("Although the file format is recognized, it is not appropriate for insertion into the datastore ({0})", fileImportInformation.SourceFile);
+						errorString.AppendFormat(SR.FormatFileFormatNotAppropriateForDatastore, fileImportInformation.SourceFile);
 					else
-						errorString.AppendFormat("The file format is not recognized ({0})", fileImportInformation.SourceFile);
+						errorString.AppendFormat(SR.FormatFileFormatNotRecognized, fileImportInformation.SourceFile);
 
 					if (fileImportInformation.BadFileBehaviour == BadFileBehaviour.Move)
 					{
@@ -348,13 +355,13 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						System.IO.File.Move(fileImportInformation.SourceFile, storedFile);
 						((IFileImportInformation)fileImportInformation).StoredFile = storedFile;
 
-						errorString.AppendFormat("; the file has been moved to {0}", storedFile);
+						errorString.AppendFormat(SR.FormatFileHasBeenMoved, storedFile);
 					}
 					else if (fileImportInformation.BadFileBehaviour == BadFileBehaviour.Delete)
 					{
 						System.IO.File.Delete(fileImportInformation.SourceFile);
-					
-						errorString.AppendFormat("; the file has been deleted");
+
+						errorString.AppendFormat(SR.MessageFileHasBeenDeleted);
 					}
 
 					setImportInformation.Error = new Exception(errorString.ToString());
@@ -421,9 +428,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				if (System.IO.File.Exists(storedFile))
 					System.IO.File.Delete(storedFile);
 
-				System.IO.File.Move(fileImportInformation.SourceFile, storedFile);
-				//System.IO.File.Copy(fileImportInformation.SourceFile, storedFile);
-
+				if (fileImportInformation.ImportBehaviour == FileImportBehaviour.Copy)
+					System.IO.File.Copy(fileImportInformation.SourceFile, storedFile);
+				else
+					System.IO.File.Move(fileImportInformation.SourceFile, storedFile);
+				
 				AssignSopInstanceUri(fileImportInformation.SopInstance, storedFile);
 
 				importerInformation.StoredFile = storedFile;
@@ -432,6 +441,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			catch (Exception e)
 			{
 				importerInformation.Error = e;
+
+				//!!retry
 			}
 
 			fileImportJobStatusReportDelegate(fileImportInformation);
@@ -550,7 +561,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				foreach (ImportJobInformation item in items)
 				{
-					string error = String.Format("Failed to commit a file to the datastore ({0}); This file will need to be imported manually.", item.FileImportInformation.StoredFile);
+					string error = String.Format(SR.FormatFailedToCommitToDatastore, item.FileImportInformation.StoredFile);
 					((IFileImportInformation)item.FileImportInformation).Error = new Exception(error);
 					item.FileImportJobStatusReportDelegate(item.FileImportInformation);
 				}
@@ -597,7 +608,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		public void Start()
 		{
 			if (_databaseUpdateThread != null)
-				throw new InvalidOperationException("The file importer has already been started.");
+				throw new InvalidOperationException(SR.ExceptionImporterAlreadyStarted);
 
 			_parseFileThreadPool.Start();
 
@@ -607,14 +618,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			ThreadStart threadStart = new ThreadStart(this.DatabaseUpdateThread);
 			_databaseUpdateThread = new Thread(threadStart);
 			_databaseUpdateThread.IsBackground = true;
-			_databaseUpdateThread.Priority = ThreadPriority.BelowNormal;
+			_databaseUpdateThread.Priority = ThreadPriority.AboveNormal;
 			_databaseUpdateThread.Start();
 		}
 
 		public void Stop()
 		{
 			if (_databaseUpdateThread == null)
-				throw new InvalidOperationException("The file importer is not running.");
+				throw new InvalidOperationException(SR.ExceptionImporterNotStarted);
 
 			_parseFileThreadPool.Stop();
 

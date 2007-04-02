@@ -45,12 +45,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
         public override string GetDisplayName()
         {
-            return "Diskspace Manager";
+			return SR.DiskspaceManager;
         }
 
         public override string GetDescription()
         {
-            return "This shred hosts the Diskspace Manager";
+			return SR.DiskspaceManagerDescription;
         }
    }
 }

@@ -48,12 +48,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
         public override string GetDisplayName()
         {
-            return "Dicom Server";
+			return SR.DicomServer;
         }
 
         public override string GetDescription()
         {
-            return "This shred hosts the Dicom Server and the WCF Dicom Move Request service";
+			return SR.DicomServerDescription;
         }
    }
 }

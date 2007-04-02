@@ -61,6 +61,7 @@
     <Compile Include="DiskspaceManager\DiskspaceManagerServiceType.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerSettings.cs" />
     <Compile Include="LocalDataStore\DicomFileImporter.cs" />
+    <Compile Include="LocalDataStore\ImportQueue.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreActivityMonitor.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreActivityMonitorServiceType.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreActivityPublisher.cs" />

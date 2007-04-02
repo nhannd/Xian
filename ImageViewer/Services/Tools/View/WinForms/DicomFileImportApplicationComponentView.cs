@@ -8,18 +8,21 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 {
-    [ExtensionOf(typeof(SendQueueApplicationComponentViewExtensionPoint))]
-    public class SendQueueApplicationComponentView : WinFormsView, IApplicationComponentView
+    /// <summary>
+    /// Provides a Windows Forms view onto <see cref="DicomFileImportApplicationComponent"/>
+    /// </summary>
+    [ExtensionOf(typeof(DicomFileImportApplicationComponentViewExtensionPoint))]
+    public class DicomFileImportApplicationComponentView : WinFormsView, IApplicationComponentView
     {
-        private SendQueueApplicationComponent _component;
-        private SendQueueApplicationComponentControl _control;
+        private DicomFileImportApplicationComponent _component;
+        private DicomFileImportApplicationComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (SendQueueApplicationComponent)component;
+            _component = (DicomFileImportApplicationComponent)component;
         }
 
         #endregion
@@ -30,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new SendQueueApplicationComponentControl(_component);
+                    _control = new DicomFileImportApplicationComponentControl(_component);
                 }
                 return _control;
             }

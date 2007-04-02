@@ -68,4 +68,19 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
         #endregion
     }
+
+	internal class BackgroundTaskContainer
+	{
+		BackgroundTask _task;
+
+		public BackgroundTaskContainer()
+		{ 
+		}
+
+		public BackgroundTask Task
+		{
+			get { return _task; }
+			set { _task = value; }
+		}
+	}
 }

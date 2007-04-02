@@ -58,8 +58,8 @@
   </action-model>
   <action-model id="ClearCanvas.ImageViewer.Explorer.Dicom.StudyBrowserComponent:dicomstudybrowser-toolbar">
     <action id="ClearCanvas.ImageViewer.Explorer.Dicom.OpenStudyTool:activate" path="dicomstudybrowser-toolbar/Open" group-hint="" />
-    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.RetrieveStudyTool:activate" path="dicomstudybrowser-toolbar/Retrieve" group-hint="" />
-    <action id="ClearCanvas.ImageViewer.Explorer.Dicom.SendStudyTool:activate" path="dicomstudybrowser-toolbar/Send" group-hint="" />
+    <action id="ClearCanvas.ImageViewer.Services.Tools.RetrieveStudyTool:activate" path="dicomstudybrowser-toolbar/Retrieve" group-hint="" />
+    <action id="ClearCanvas.ImageViewer.Services.Tools.SendStudyTool:activate" path="dicomstudybrowser-toolbar/Send" group-hint="" />
     <action id="ClearCanvas.ImageViewer.Explorer.Dicom.DeleteStudyTool:activate" path="dicomstudybrowser-toolbar/Delete" group-hint="" />
   </action-model>
   <action-model id="ClearCanvas.ImageViewer.Explorer.Dicom.StudyBrowserComponent:dicomstudybrowser-contextmenu">

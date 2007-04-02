@@ -27,8 +27,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
-				string message = String.Format("An error has occurred while attempting to process a received file ({0})", filesReceivedInformation.FileName);
-				throw new LocalDataStoreFaultException(message, e);
+				string message = String.Format(SR.ExceptionErrorProcessingReceivedFile, filesReceivedInformation.FileName);
+				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
+				throw new LocalDataStoreFaultException(exceptionMessage);
 			}
 		}
 
@@ -40,21 +41,23 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
-				string message = "An error has occurred while attempting to process the sent file information.";
-				throw new LocalDataStoreFaultException(message, e);
+				string message = String.Format(SR.ExceptionErrorProcessingSentFile, sentFileInformation.FileName);
+				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
+				throw new LocalDataStoreFaultException(exceptionMessage);
 			}
 		}
 
-		public void Import(FileImportRequest request)
+		public Guid Import(FileImportRequest request)
 		{
 			try
 			{
-				LocalDataStoreService.Instance.Import(request);
+				return LocalDataStoreService.Instance.Import(request);
 			}
 			catch (Exception e)
 			{
-				string message = "An error has occurred while attempting to process the file import request.";
-				throw new LocalDataStoreFaultException(message, e);
+				string message = SR.ExceptionErrorProcessingImportRequest;
+				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
+				throw new LocalDataStoreFaultException(exceptionMessage);
 			}
 		}
 
@@ -66,8 +69,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
-				string message = "An error has occurred while attempting to process the file import request.";
-				throw new LocalDataStoreFaultException(message, e);
+				string message = SR.ExceptionErrorProcessingReindexRequest;
+				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
+				throw new LocalDataStoreFaultException(exceptionMessage);
 			}
 		}
 

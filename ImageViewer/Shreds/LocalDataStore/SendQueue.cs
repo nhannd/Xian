@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						try
 						{
 							StudyInformation studyInformation = GetStudyInformation(sentFileInformation.FileName);
-							
+
 							//no synclock required, since only the single thread pool thread is accessing the items.
 							SendProgressItem progressItem = _sendProgressItems.Find(delegate(SendProgressItem testItem)
 								{
@@ -54,6 +54,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 								_sendProgressItems.Add(progressItem);
 							}
 
+							progressItem.LastActive = DateTime.Now;
 							++progressItem.NumberOfFilesExported;
 
 							LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem);
@@ -74,7 +75,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				OFCondition condition = file.loadFile(sopInstanceFilename);
 
 				if (!condition.good())
-					throw new Exception("Unable to parse the file ({0}); the sent file information may not be accurate for this study.");
+					throw new Exception(String.Format(SR.FormatUnableToParseFile, sopInstanceFilename));
 
 				DcmMetaInfo metaInfo = file.getMetaInfo();
 				DcmDataset dataset = file.getDataset();
@@ -121,9 +122,39 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					delegate()
 					{
 						foreach (SendProgressItem item in _sendProgressItems)
-								LocalDataStoreActivityPublisher.Instance.SendProgressChanged(item);
+							LocalDataStoreActivityPublisher.Instance.SendProgressChanged(item);
 					}
 				);
-			}
 		}
+
+		internal void Cancel(CancelProgressItemInformation information)
+		{
+			if (information.ProgressItemIdentifiers == null)
+				return;
+			
+			if (information.CancellationFlags != CancellationFlags.Clear)
+				return;
+
+			_sentFileInformationProcessor.AddFront
+				(
+					delegate()
+					{
+						foreach (Guid identifier in information.ProgressItemIdentifiers)
+						{
+							SendProgressItem item = _sendProgressItems.Find(delegate(SendProgressItem test) { return test.Identifier.Equals(identifier); });
+							if (item != null)
+							{
+								item.Removed = true;
+								LocalDataStoreActivityPublisher.Instance.SendProgressChanged(item.Clone());
+							}
+						}
+					}
+				);
+		}
+
+		internal void ClearInactive()
+		{
+			//not supported.
+		}
+	}
 }

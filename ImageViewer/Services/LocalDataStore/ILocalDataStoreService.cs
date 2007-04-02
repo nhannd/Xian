@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 		// Local DataStore requests.
 		[OperationContract]
-		void Import(FileImportRequest request);
+		Guid Import(FileImportRequest request);
 
 		[OperationContract]
 		void Reindex();

@@ -7,7 +7,7 @@ using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple)]
+	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
 	public class LocalDataStoreActivityMonitorServiceType : ILocalDataStoreActivityMonitorService
 	{
 		public LocalDataStoreActivityMonitorServiceType()
@@ -25,8 +25,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
-				string message = "Failed to add subscriber to the Local DataStore Activity Monitor service.";
-				throw new LocalDataStoreFaultException(message, e);
+				string message = String.Format("{0}\nDetail: {1}", SR.ExceptionFailedToAddSubscriber, e.Message);
+				throw new LocalDataStoreFaultException(message);
 			}
 		}
 
@@ -38,8 +38,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
-				string message = "Failed to remove subscriber from the Local DataStore Activity Monitor service.";
-				throw new LocalDataStoreFaultException(message, e);
+				string message = String.Format("{0}\nDetail: {1}", SR.ExceptionFailedToAddSubscriber, e.Message);
+				throw new LocalDataStoreFaultException(message);
 			}
 
 		}
@@ -52,8 +52,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
-				string message = "Cancellation of at least one of the specified items has failed.";
-				throw new LocalDataStoreFaultException(message, e);
+				string message = SR.ExceptionCancellationOfAtLeastOneItemFailed;
+				//this is a one-way operation, so you can't throw.
+				Platform.Log(new Exception(message, e));
+
 			}
 		}
 
@@ -65,8 +67,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
-				string message = "An error occurred while attempting to clear the inactive items.";
-				throw new LocalDataStoreFaultException(message, e);
+				string message = SR.ExceptionErrorWhileAttemptingToClearInactiveItems;
+				//this is a one-way operation, so you can't throw.
+				Platform.Log(new Exception(message, e));
 			}
 		}
 
@@ -78,8 +81,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
-				string message = "An error occurred while attempting to refresh the Local Data Store activities.";
-				throw new LocalDataStoreFaultException(message, e);
+				string message = SR.ExceptionErrorAttemptingToRefresh;
+				//this is a one-way operation, so you can't throw.
+				Platform.Log(new Exception(message, e));
 			}
 		}
 

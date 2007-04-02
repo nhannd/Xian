@@ -6,12 +6,12 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Network;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Services.DicomServer;
+using ClearCanvas.ImageViewer.Explorer.Dicom;
+using ClearCanvas.Dicom.Network;
 
-namespace ClearCanvas.ImageViewer.Explorer.Dicom
+namespace ClearCanvas.ImageViewer.Services.Tools
 {
     [ButtonAction("activate", "dicomstudybrowser-toolbar/Send")]
     [MenuAction("activate", "dicomstudybrowser-contextmenu/Send")]
@@ -71,10 +71,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				client.Open();
 				client.Send(request);
 				client.Close();
+				
+				//LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(this.Context.DesktopWindow);
 			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+				ExceptionHandler.Report(e, SR.ExceptionFailedToSendStudy, this.Context.DesktopWindow);
 			}
         }
 

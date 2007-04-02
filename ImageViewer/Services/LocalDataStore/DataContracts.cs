@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
+using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 {
@@ -60,6 +61,31 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			get { return _studyDate; }
 			set { _studyDate = value; }
 		}
+
+		public void CopyTo(StudyInformation studyInformation)
+		{
+			studyInformation.StudyInstanceUid = this.StudyInstanceUid;
+			studyInformation.PatientId = this.PatientId;
+			studyInformation.PatientsName = this.PatientsName;
+			studyInformation.StudyDescription = this.StudyDescription;
+			studyInformation.StudyDate = this.StudyDate;
+		}
+
+		public void CopyFrom(StudyInformation studyInformation)
+		{
+			this.StudyInstanceUid = studyInformation.StudyInstanceUid;
+			this.PatientId = studyInformation.PatientId;
+			this.PatientsName = studyInformation.PatientsName;
+			this.StudyDescription = studyInformation.StudyDescription;
+			this.StudyDate = studyInformation.StudyDate;
+		}
+
+		public StudyInformation Clone()
+		{
+			StudyInformation clone = new StudyInformation();
+			CopyTo(clone);
+			return clone;
+		}
 	}
 
 	[DataContract]
@@ -116,6 +142,8 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	public abstract class FileOperationProgressItem
 	{
 		private Guid _identifier;
+		private bool _cancelled;
+		private bool _removed;
 		private CancellationFlags _allowedCancellationOperations;
 		private DateTime _startTime;
 		private DateTime _lastActive;
@@ -139,6 +167,21 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			set { _allowedCancellationOperations = value; }
 		}
 
+
+		[DataMember(IsRequired = true)]
+		public bool Cancelled
+		{
+			get { return _cancelled; }
+			set { _cancelled = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public bool Removed
+		{
+			get { return _removed; }
+			set { _removed = value; }
+		}
+
 		[DataMember(IsRequired = true)]
 		public DateTime StartTime
 		{
@@ -159,20 +202,52 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			get { return _statusMessage; }
 			set { _statusMessage = value; }
 		}
+
+		public void CopyTo(FileOperationProgressItem progressItem)
+		{
+			progressItem.Identifier = this.Identifier;
+			progressItem.AllowedCancellationOperations = this.AllowedCancellationOperations;
+			progressItem.Cancelled = this.Cancelled;
+			progressItem.Removed = this.Removed;
+			progressItem.StartTime = this.StartTime;
+			progressItem.LastActive = this.LastActive;
+			progressItem.StatusMessage = this.StatusMessage;
+		}
+
+		public void CopyFrom(FileOperationProgressItem progressItem)
+		{
+			this.Identifier = progressItem.Identifier;
+			this.AllowedCancellationOperations = progressItem.AllowedCancellationOperations;
+			this.Cancelled = progressItem.Cancelled;
+			this.Removed = progressItem.Removed;
+			this.StartTime = progressItem.StartTime;
+			this.LastActive = progressItem.LastActive;
+			this.StatusMessage = progressItem.StatusMessage;
+		}
 	}
 
 	[DataContract]
 	public class ImportProgressItem : FileOperationProgressItem
 	{
+		private string _description;
 		private int _totalFilesToImport;
 		private int _numberOfFailedImports;
 		private int _numberOfFilesImported;
+		private int _numberOfFilesCommittedToDataStore;
 
 		public ImportProgressItem()
 		{
 			_totalFilesToImport = 0;
 			_numberOfFailedImports = 0;
 			_numberOfFilesImported = 0;
+			_numberOfFilesCommittedToDataStore = 0;
+		}
+
+		[DataMember(IsRequired = true)]
+		public string Description
+		{
+			get { return _description; }
+			set { _description = value; }
 		}
 
 		[DataMember(IsRequired = true)]
@@ -190,10 +265,46 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		}
 
 		[DataMember(IsRequired = true)]
+		public int NumberOfFilesCommittedToDataStore
+		{
+			get { return _numberOfFilesCommittedToDataStore; }
+			set { _numberOfFilesCommittedToDataStore = value; }
+		}
+
+		[DataMember(IsRequired = true)]
 		public int NumberOfFailedImports
 		{
 			get { return _numberOfFailedImports; }
 			set { _numberOfFailedImports = value; }
+		}
+
+		public void CopyTo(ImportProgressItem progressItem)
+		{
+			progressItem.Description = this.Description;
+			progressItem.TotalFilesToImport = this.TotalFilesToImport;
+			progressItem.NumberOfFailedImports = this.NumberOfFailedImports;
+			progressItem.NumberOfFilesImported = this.NumberOfFilesImported;
+			progressItem.NumberOfFilesCommittedToDataStore = this.NumberOfFilesCommittedToDataStore;
+
+			base.CopyTo(progressItem);
+		}
+
+		public void CopyFrom(ImportProgressItem progressItem)
+		{
+			this.Description = progressItem.Description;
+			this.TotalFilesToImport = progressItem.TotalFilesToImport;
+			this.NumberOfFailedImports = progressItem.NumberOfFailedImports;
+			this.NumberOfFilesImported = progressItem.NumberOfFilesImported;
+			this.NumberOfFilesCommittedToDataStore = progressItem.NumberOfFilesCommittedToDataStore;
+
+			base.CopyFrom(progressItem);
+		}
+
+		public ImportProgressItem Clone()
+		{
+			ImportProgressItem clone = new ImportProgressItem();
+			CopyTo(clone);
+			return clone;
 		}
 	}
 
@@ -221,6 +332,29 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		{
 			get { return _numberOfFilesExported; }
 			set { _numberOfFilesExported = value; }
+		}
+
+		public void CopyTo(ExportProgressItem progressItem)
+		{
+			progressItem.TotalFilesToExport = this.TotalFilesToExport;
+			progressItem.NumberOfFilesExported = this.NumberOfFilesExported;
+
+			base.CopyTo(progressItem);
+		}
+
+		public void CopyFrom(ExportProgressItem progressItem)
+		{
+			this.TotalFilesToExport = progressItem.TotalFilesToExport;
+			this.NumberOfFilesExported = progressItem.NumberOfFilesExported;
+
+			base.CopyFrom(progressItem);
+		}
+
+		public ExportProgressItem Clone()
+		{
+			ExportProgressItem clone = new ExportProgressItem();
+			CopyTo(clone);
+			return clone;
 		}
 	}
 
@@ -255,6 +389,39 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			get { return _numberOfFilesReceived; }
 			set { _numberOfFilesReceived = value; }
 		}
+
+		public void CopyTo(ReceiveProgressItem progressItem)
+		{
+			progressItem.FromAETitle = this.FromAETitle;
+			progressItem.NumberOfFilesReceived = this.NumberOfFilesReceived;
+
+			if (this.StudyInformation != null)
+				progressItem.StudyInformation = this.StudyInformation.Clone();
+			else
+				progressItem.StudyInformation = null;
+
+			base.CopyTo(progressItem);
+		}
+
+		public void CopyFrom(ReceiveProgressItem progressItem)
+		{
+			this.FromAETitle = progressItem.FromAETitle;
+			this.NumberOfFilesReceived = progressItem.NumberOfFilesReceived;
+
+			if (progressItem.StudyInformation != null)
+				this.StudyInformation = progressItem.StudyInformation.Clone();
+			else
+				this.StudyInformation = null;
+
+			base.CopyFrom(progressItem);
+		}
+
+		public new ReceiveProgressItem Clone()
+		{
+			ReceiveProgressItem clone = new ReceiveProgressItem();
+			CopyTo(clone);
+			return clone;
+		}
 	}
 
 	[DataContract]
@@ -280,6 +447,37 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			get { return _studyInformation; }
 			set { _studyInformation = value; }
 		}
+
+		public void CopyTo(SendProgressItem progressItem)
+		{
+			progressItem.ToAETitle = this.ToAETitle;
+
+			if (this.StudyInformation != null)
+				progressItem.StudyInformation = this.StudyInformation.Clone();
+			else
+				progressItem.StudyInformation = null;
+
+			base.CopyTo(progressItem);
+		}
+
+		public void CopyFrom(SendProgressItem progressItem)
+		{
+			this.ToAETitle = progressItem.ToAETitle;
+
+			if (progressItem.StudyInformation != null)
+				this.StudyInformation = progressItem.StudyInformation.Clone();
+			else
+				this.StudyInformation = null;
+
+			base.CopyFrom(progressItem);
+		}
+
+		public new SendProgressItem Clone()
+		{
+			SendProgressItem clone = new SendProgressItem();
+			CopyTo(clone);
+			return clone;
+		}
 	}
 
 	[DataContract]
@@ -287,6 +485,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	{
 		public ReindexProgressItem()
 		{
+		}
+
+		public new ReindexProgressItem Clone()
+		{
+			ReindexProgressItem clone = new ReindexProgressItem();
+			CopyTo(clone);
+			return clone;
 		}
 	}
 
@@ -363,6 +568,12 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		Delete
 	}
 
+	public enum FileImportBehaviour
+	{ 
+		Move = 0,
+		Copy
+	}
+
 	[DataContract]
 	public class FileImportRequest
 	{
@@ -370,6 +581,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		private BadFileBehaviour _badFileBehaviour;
 		private IEnumerable<string> _fileExtensions;
 		private IEnumerable<string> _filePaths;
+		private FileImportBehaviour _fileImportBehaviour;
 
 		public FileImportRequest()
 		{
@@ -402,12 +614,17 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			get { return _filePaths; }
 			set { _filePaths = value; }
 		}
+
+		[DataMember(IsRequired = true)]
+		public FileImportBehaviour FileImportBehaviour
+		{
+			get { return _fileImportBehaviour; }
+			set { _fileImportBehaviour = value; }
+		}
 	}
 
-	#region Fault Exceptions
-
 	[DataContract]
-	public class LocalDataStoreFaultException : Exception
+	public class LocalDataStoreFaultException : FaultException
 	{
 		public LocalDataStoreFaultException()
 			: base()
@@ -418,12 +635,5 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			: base(message)
 		{
 		}
-
-		public LocalDataStoreFaultException(string message, Exception exception)
-			: base(message, exception)
-		{
-		}
 	}
-
-	#endregion
 }

@@ -32,28 +32,19 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			UpdateFromProgressItem(progressItem);
 		}
 
-		internal void UpdateFromProgressItem(ReceiveProgressItem progressItem)
-		{
-			if (!this.Identifier.Equals(this.Identifier))
-				throw new InvalidOperationException("the identifiers must match!");
-
-			this.FromAETitle = progressItem.FromAETitle;
-			this.NumberOfFilesReceived = progressItem.NumberOfFilesReceived;
-			this.NumberOfFilesImported = progressItem.NumberOfFilesImported;
-			this.LastActive = progressItem.LastActive;
-
-			this.StudyInformation.PatientId = progressItem.StudyInformation.PatientId;
-			this.StudyInformation.PatientsName = progressItem.StudyInformation.PatientsName;
-			this.StudyInformation.StudyInstanceUid = progressItem.StudyInformation.StudyInstanceUid;
-			this.StudyInformation.StudyDescription = progressItem.StudyInformation.StudyDescription;
-			this.StudyInformation.StudyDate = progressItem.StudyInformation.StudyDate;
-
-			CalculateLastActiveDisplay();
-		}
-
 		public string LastActiveDisplay
 		{
 			get { return _lastActiveDisplay; }
+		}
+
+		internal void UpdateFromProgressItem(ReceiveProgressItem progressItem)
+		{
+			if (!this.Identifier.Equals(this.Identifier))
+				throw new InvalidOperationException(SR.ExceptionIdentifiersMustMatch);
+
+			base.CopyFrom(progressItem);
+
+			CalculateLastActiveDisplay();
 		}
 
 		internal void CalculateLastActiveDisplay()
@@ -62,25 +53,28 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			if (lastActiveSpan.Minutes < 60)
 			{
 				if (lastActiveSpan.Minutes == 1)
-					_lastActiveDisplay = "1 minute ago";
+					_lastActiveDisplay = SR.MessageOneDayAgo;
 				else
-					_lastActiveDisplay = String.Format("{0} minutes ago", lastActiveSpan.Minutes);
+					_lastActiveDisplay = String.Format(SR.FormatXMinutesAgo, lastActiveSpan.Minutes);
 			}
 			else if (lastActiveSpan.Hours >= 1 && lastActiveSpan.Days == 0)
 			{
 				if (lastActiveSpan.Hours == 1)
-					_lastActiveDisplay = "1 hour, ";
+					_lastActiveDisplay = SR.MessageOneHourAgo;
 				else
-					_lastActiveDisplay = String.Format("{0} hours, ", lastActiveSpan.Hours);
+					_lastActiveDisplay = String.Format(SR.FormatXHoursAgo, lastActiveSpan.Hours);
 
 				if (lastActiveSpan.Minutes == 1)
-					_lastActiveDisplay += "1 minute ago";
+					_lastActiveDisplay += SR.MessageOneMinuteAgo;
 				else
-					_lastActiveDisplay += String.Format("{0} minutes ago", lastActiveSpan.Minutes);
+					_lastActiveDisplay += String.Format(SR.FormatXMinutesAgo, lastActiveSpan.Minutes);
 			}
 			else
 			{
-				_lastActiveDisplay = String.Format("{0} day(s)", lastActiveSpan.Days);
+				if (lastActiveSpan.Days == 1)
+					_lastActiveDisplay = SR.MessageOneDayAgo;
+				else
+					_lastActiveDisplay = String.Format(SR.FormatXDaysAgo, lastActiveSpan.Days);
 			}
 		}
 	}
@@ -90,15 +84,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	{
 		private Table<ReceiveQueueItem> _receiveTable;
 		private ISelection _selection;
-		private LocalDataStoreActivityMonitor _monitor;
 		private Timer _timer;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public ReceiveQueueApplicationComponent(LocalDataStoreActivityMonitor monitor)
+		public ReceiveQueueApplicationComponent()
 		{
-			_monitor = monitor;
 		}
 
 		public override void Start()
@@ -108,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			_timer = new Timer(this.OnTimer, 30000, 30000);
 
-			_monitor.ReceiveProgressUpdate += new EventHandler<ItemEventArgs<ReceiveProgressItem>>(OnReceiveProgressUpdate);
+			LocalDataStoreActivityMonitor.Instance.ReceiveProgressUpdate += new EventHandler<ItemEventArgs<ReceiveProgressItem>>(OnReceiveProgressUpdate);
 		}
 
 		public override void Stop()
@@ -117,8 +109,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			_timer.Dispose();
 			_timer = null;
-			
-			_monitor.ReceiveProgressUpdate -= new EventHandler<ItemEventArgs<ReceiveProgressItem>>(OnReceiveProgressUpdate);
+
+			LocalDataStoreActivityMonitor.Instance.ReceiveProgressUpdate -= new EventHandler<ItemEventArgs<ReceiveProgressItem>>(OnReceiveProgressUpdate);
 		}
 
 		private void OnTimer()
@@ -160,28 +152,28 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			TableColumnBase<ReceiveQueueItem> column;
 
 			column = new TableColumn<ReceiveQueueItem, string>(
-					"From",
+					SR.TitleFrom,
 					delegate(ReceiveQueueItem item) { return FormatString(item.FromAETitle); },
 					0.75f);
 
 			_receiveTable.Columns.Add(column);
 
 			column = new TableColumn<ReceiveQueueItem, string>(
-					"Patient Id",
+					SR.TitlePatientId,
 					delegate(ReceiveQueueItem item) { return FormatString(item.StudyInformation.PatientId); },
 					1f);
 
 			_receiveTable.Columns.Add(column);
 
 			column = new TableColumn<ReceiveQueueItem, string>(
-					"Patient's Name",
+					SR.TitlePatientsName,
 					delegate(ReceiveQueueItem item) { return FormatString(item.StudyInformation.PatientsName); },
 					1.5f);
 
 			_receiveTable.Columns.Add(column);
 
 			column = new TableColumn<ReceiveQueueItem, string>(
-					"Study Date",
+					SR.TitleStudyDate,
 					delegate(ReceiveQueueItem item)
 					{
 						if (item.StudyInformation.StudyDate == default(DateTime))
@@ -194,22 +186,22 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_receiveTable.Columns.Add(column);
 
 			column = new TableColumn<ReceiveQueueItem, string>(
-					"Study Description",
+					SR.TitleStudyDescription,
 					delegate(ReceiveQueueItem item) { return FormatString(item.StudyInformation.StudyDescription); },
 					2f);
 
 			_receiveTable.Columns.Add(column);
 
 			column = new TableColumn<ReceiveQueueItem, int>(
-					"Received",
+					SR.TitleReceived,
 					delegate(ReceiveQueueItem item) { return item.NumberOfFilesReceived; },
 					0.5f);
 
 			_receiveTable.Columns.Add(column);
 
 			column = new TableColumn<ReceiveQueueItem, int>(
-					"Available",
-					delegate(ReceiveQueueItem item) { return item.NumberOfFilesImported; },
+					SR.TitleAvailable,
+					delegate(ReceiveQueueItem item) { return item.NumberOfFilesCommittedToDataStore; },
 					0.5f);
 
 			_receiveTable.Columns.Add(column);
@@ -222,7 +214,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			//_receiveTable.Columns.Add(column);
 
 			column = new TableColumn<ReceiveQueueItem, string>(
-					"Last Active",
+					SR.TitleLastActive,
 					delegate(ReceiveQueueItem item) { return item.LastActiveDisplay;  },
 					1.5f);
 
@@ -231,7 +223,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public string Title
 		{
-			get { return "Receive Queue"; }
+			get { return SR.TitleReceive; }
 		}
 
 		public ITable ReceiveTable

@@ -195,9 +195,6 @@ Location: {4}</value>
   <data name="MessageConfirmDeleteStudy" xml:space="preserve">
     <value>Are you sure you want to delete the selected studies?</value>
   </data>
-  <data name="MessageSelectDestination" xml:space="preserve">
-    <value>Please select a destination.</value>
-  </data>
   <data name="MessageServerPortMustBePositiveInteger" xml:space="preserve">
     <value>The Port must be a positive integer value.  Please enter a valid Port.</value>
   </data>
@@ -260,9 +257,6 @@ Location: {4}</value>
   </data>
   <data name="TitleSearchPanelPane" xml:space="preserve">
     <value>Search Panel</value>
-  </data>
-  <data name="TitleSendStudy" xml:space="preserve">
-    <value>Send Study</value>
   </data>
   <data name="TitleStudyBrowserPane" xml:space="preserve">
     <value>Study Browser</value>

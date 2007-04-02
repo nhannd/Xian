@@ -5,20 +5,19 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Network;
 using System.IO;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Services.DicomServer;
+using ClearCanvas.ImageViewer.Explorer.Dicom;
 
-namespace ClearCanvas.ImageViewer.Explorer.Dicom
+namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	[ButtonAction("activate", "dicomstudybrowser-toolbar/Retrieve")]
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/Retrieve")]
 	[ClickHandler("activate", "RetrieveStudy")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "Retrieve Study")]
-	[IconSet("activate", IconScheme.Colour, "Icons.SendStudySmall.png", "Icons.SendStudySmall.png", "Icons.SendStudySmall.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.RetrieveStudySmall.png", "Icons.RetrieveStudySmall.png", "Icons.RetrieveStudySmall.png")]
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class RetrieveStudyTool : StudyBrowserTool
 	{
@@ -64,12 +63,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				client.Open();
 				client.Retrieve(request);
 				client.Close();
+
+				LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(this.Context.DesktopWindow);
 			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+				ExceptionHandler.Report(e, SR.ExceptionFailedToRetrieveStudy, this.Context.DesktopWindow);
 			}
-
 		}
 
 		private void SetDoubleClickHandler()

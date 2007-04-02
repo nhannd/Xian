@@ -33,15 +33,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
 			this.SuspendLayout();
 			// 
-			// _receiveTable
+			// _sendTable
 			// 
 			this._sendTable.Dock = System.Windows.Forms.DockStyle.Fill;
-			this._sendTable.Location = new System.Drawing.Point(0, 24);
+			this._sendTable.Location = new System.Drawing.Point(0, 31);
 			this._sendTable.MenuModel = null;
-			this._sendTable.Name = "_receiveTable";
+			this._sendTable.Name = "_sendTable";
 			this._sendTable.ReadOnly = false;
 			this._sendTable.Selection = selection1;
-			this._sendTable.Size = new System.Drawing.Size(687, 396);
+			this._sendTable.Size = new System.Drawing.Size(687, 389);
 			this._sendTable.TabIndex = 6;
 			this._sendTable.Table = null;
 			this._sendTable.ToolbarModel = null;
@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._titleBar.Location = new System.Drawing.Point(0, 0);
 			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._titleBar.Name = "_titleBar";
-			this._titleBar.Size = new System.Drawing.Size(687, 24);
+			this._titleBar.Size = new System.Drawing.Size(687, 31);
 			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2003;
 			this._titleBar.TabIndex = 7;
 			this._titleBar.Text = "Send Operations";

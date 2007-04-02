@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			private string _sourceAETitle;
 
 			public ReceivedFileImportInformation(string sourceFile, string sourceAETitle)
-				: base(sourceFile, BadFileBehaviour.Move)
+				: base(sourceFile, FileImportBehaviour.Move, BadFileBehaviour.Move)
 			{
 				_sourceAETitle = sourceAETitle;
 			}
@@ -42,6 +42,48 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			//starting? Resume all the imports (status messages).
 		}
 
+		private ReceiveProgressItem GetReceiveProgressItem(ReceivedFileImportInformation receivedFileImportInformation, out bool exists)
+		{
+			ReceiveProgressItem progressItem = null;
+			lock (_receiveProgressItemsLock)
+			{
+				progressItem = _receiveProgressItems.Find(
+					delegate(ReceiveProgressItem testItem)
+					{
+						return testItem.FromAETitle == receivedFileImportInformation.SourceAETitle &&
+							testItem.StudyInformation.StudyInstanceUid == receivedFileImportInformation.StudyInstanceUid;
+					});
+
+				exists = (progressItem != null);
+				if (!exists)
+				{
+					progressItem = new ReceiveProgressItem();
+					progressItem.Identifier = Guid.NewGuid();
+					progressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+					progressItem.StartTime = DateTime.Now;
+					progressItem.LastActive = progressItem.StartTime;
+
+					progressItem.FromAETitle = receivedFileImportInformation.SourceAETitle;
+					progressItem.NumberOfFilesReceived = 0;
+					progressItem.NumberOfFilesImported = 0;
+					progressItem.TotalFilesToImport = 0;
+					progressItem.NumberOfFailedImports = 0; //not applicable, really, since we won't always know if it's not parseable.
+					progressItem.StudyInformation = new StudyInformation();
+					progressItem.StudyInformation.StudyInstanceUid = receivedFileImportInformation.StudyInstanceUid;
+					progressItem.StudyInformation.PatientId = receivedFileImportInformation.PatientId;
+					progressItem.StudyInformation.PatientsName = receivedFileImportInformation.PatientsName;
+					progressItem.StudyInformation.StudyDescription = receivedFileImportInformation.StudyDescription;
+					DateTime studyDate;
+					DateParser.Parse(receivedFileImportInformation.StudyDate, out studyDate);
+					progressItem.StudyInformation.StudyDate = studyDate;
+
+					_receiveProgressItems.Add(progressItem);
+				}
+			}
+
+			return progressItem;
+		}
+
 		private void ProcessFileImportResults(DicomFileImporter.FileImportInformation results)
 		{
 			ReceivedFileImportInformation receivedFileImportInformation = results as ReceivedFileImportInformation;
@@ -57,42 +99,16 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				return;
 			}
 
-			lock (_receiveProgressItemsLock)
+			bool exists;
+			bool updateProgress = false;
+
+			ReceiveProgressItem progressItem = GetReceiveProgressItem(receivedFileImportInformation, out exists);
+			if (!exists)
+				updateProgress = true;
+
+			lock(progressItem)
 			{
-				ReceiveProgressItem progressItem = _receiveProgressItems.Find(
-					delegate(ReceiveProgressItem testItem)
-					{
-						return testItem.FromAETitle == receivedFileImportInformation.SourceAETitle &&
-							testItem.StudyInformation.StudyInstanceUid == receivedFileImportInformation.StudyInstanceUid;
-					});
-
-				bool exists = (progressItem != null);
-				if (!exists)
-				{
-					progressItem = new ReceiveProgressItem();
-					progressItem.Identifier = Guid.NewGuid();
-					progressItem.AllowedCancellationOperations = CancellationFlags.Clear;
-					progressItem.StartTime = DateTime.Now;
-					progressItem.LastActive = progressItem.StartTime;
-
-					progressItem.FromAETitle = receivedFileImportInformation.SourceAETitle;
-					progressItem.NumberOfFilesReceived = 0;
-					progressItem.NumberOfFilesImported = 0;
-					progressItem.TotalFilesToImport = 0;
-					progressItem.NumberOfFailedImports = 0; //not applicable, really, since we won't always know if it's not parseable.
-					progressItem.StudyInformation = new StudyInformation();
-					progressItem.StudyInformation.StudyInstanceUid = results.StudyInstanceUid;
-					progressItem.StudyInformation.PatientId = results.PatientId;
-					progressItem.StudyInformation.PatientsName = results.PatientsName;
-					progressItem.StudyInformation.StudyDescription = results.StudyDescription;
-					DateTime studyDate;
-					DateParser.Parse(results.StudyDate, out studyDate);
-					progressItem.StudyInformation.StudyDate = studyDate;
-
-					LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(progressItem);
-					_receiveProgressItems.Add(progressItem);
-
-				}
+				ImportedSopInstanceInformation importedSopInformation = null;
 
 				progressItem.LastActive = DateTime.Now;
 
@@ -106,9 +122,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					else
 					{
 						++progressItem.NumberOfFilesReceived;
+						++progressItem.NumberOfFilesImported;
 					}
 
-					LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(progressItem);
+					updateProgress = true;
 				}
 				else if (receivedFileImportInformation.CompletedStage == DicomFileImporter.ImportStage.FileMoved)
 				{
@@ -116,6 +133,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					{
 						++progressItem.NumberOfFailedImports;
 						Platform.Log(results.Error);
+
+						updateProgress = true;
 					}
 					else
 					{
@@ -132,21 +151,28 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					else
 					{
 						if (!exists)
+						{
 							++progressItem.NumberOfFilesReceived;
+							++progressItem.NumberOfFilesImported;
+						}
 
-						++progressItem.NumberOfFilesImported;
+						++progressItem.NumberOfFilesCommittedToDataStore;
 
-						ImportedSopInstanceInformation importedSopInformation = new ImportedSopInstanceInformation();
+						importedSopInformation = new ImportedSopInstanceInformation();
 						importedSopInformation.StudyInstanceUid = receivedFileImportInformation.StudyInstanceUid;
 						importedSopInformation.SeriesInstanceUid = receivedFileImportInformation.SeriesInstanceUid;
-						importedSopInformation.SopInstanceFileName = receivedFileImportInformation.StoredFile;
 						importedSopInformation.SopInstanceUid = receivedFileImportInformation.SopInstanceUid;
-
-						LocalDataStoreActivityPublisher.Instance.SopInstanceImported(importedSopInformation);
+						importedSopInformation.SopInstanceFileName = receivedFileImportInformation.StoredFile;
 					}
 
-					LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(progressItem);
+					updateProgress = true;
 				}
+
+				if (importedSopInformation != null)
+					LocalDataStoreActivityPublisher.Instance.SopInstanceImported(importedSopInformation);
+
+				if (updateProgress)
+					LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(progressItem.Clone());
 			}
 		}
 
@@ -160,19 +186,45 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			//nothing to do.
 		}
 
+		internal void ProcessReceivedFileInformation(StoreScpReceivedFileInformation receivedFileInformation)
+		{
+			LocalDataStoreService.Instance.DicomFileImporter.Enqueue(new ReceivedFileImportInformation(receivedFileInformation.FileName, receivedFileInformation.AETitle), this.ProcessFileImportResults);
+		}
+
 		public void RepublishAll()
 		{
 			lock (_receiveProgressItemsLock)
 			{
-				//remember to clone!
 				foreach (ReceiveProgressItem item in _receiveProgressItems)
-					LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(item);
+					LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(item.Clone());
 			}
 		}
 
-		internal void ProcessReceivedFileInformation(StoreScpReceivedFileInformation receivedFileInformation)
+		internal void Cancel(CancelProgressItemInformation information)
 		{
-			LocalDataStoreService.Instance.DicomFileImporter.Enqueue(new ReceivedFileImportInformation(receivedFileInformation.FileName, receivedFileInformation.AETitle), this.ProcessFileImportResults);
+			if (information.ProgressItemIdentifiers == null)
+				return;
+
+			if (information.CancellationFlags != CancellationFlags.Clear)
+				return;
+
+			lock (_receiveProgressItemsLock)
+			{
+				foreach(Guid identifier in information.ProgressItemIdentifiers)
+				{
+					ReceiveProgressItem item = _receiveProgressItems.Find(delegate(ReceiveProgressItem test) { return test.Identifier.Equals(identifier); });
+					if (item != null)
+					{
+						item.Removed = true;
+						LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(item.Clone());
+					}
+				}
+			}
+		}
+
+		internal void ClearInactive()
+		{
+			//not supported.
 		}
 	}
 }

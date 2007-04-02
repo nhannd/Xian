@@ -22,9 +22,9 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			base.Channel.FileSent(sentFileInformation);
 		}
 
-		public void Import(FileImportRequest request)
+		public Guid Import(FileImportRequest request)
 		{
-			base.Channel.Import(request);
+			return base.Channel.Import(request);
 		}
 
 		public void Reindex()

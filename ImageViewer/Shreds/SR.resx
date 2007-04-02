@@ -117,7 +117,121 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="DicomServer" xml:space="preserve">
+    <value>Dicom Server</value>
+  </data>
+  <data name="DicomServerDescription" xml:space="preserve">
+    <value>This shred hosts the Dicom Server and the WCF Dicom Request service</value>
+  </data>
+  <data name="DiskspaceManager" xml:space="preserve">
+    <value>Diskspace Manager</value>
+  </data>
+  <data name="DiskspaceManagerDescription" xml:space="preserve">
+    <value>This shred hosts the Diskspace Manager service</value>
+  </data>
+  <data name="ExceptionBadFileStorageDirectoryDoesNotExist" xml:space="preserve">
+    <value>The 'bad file' storage directory is inaccessible.  The service has been disabled.</value>
+  </data>
+  <data name="ExceptionCancellationOfAtLeastOneItemFailed" xml:space="preserve">
+    <value>Cancellation of at least one of the specified items has failed.</value>
+  </data>
+  <data name="ExceptionErrorAttemptingToRefresh" xml:space="preserve">
+    <value>An error occurred while attempting to refresh the Local Data Store activities.</value>
+  </data>
+  <data name="ExceptionErrorProcessingImportRequest" xml:space="preserve">
+    <value>An error has occurred while attempting to process the file import request.</value>
+  </data>
+  <data name="ExceptionErrorProcessingReceivedFile" xml:space="preserve">
+    <value>An error has occurred while attempting to process a received file ({0})</value>
+  </data>
+  <data name="ExceptionErrorProcessingReindexRequest" xml:space="preserve">
+    <value>An error has occurred while attempting to process the reindex request.</value>
+  </data>
+  <data name="ExceptionErrorProcessingSentFile" xml:space="preserve">
+    <value>An error has occurred while attempting to process a sent file ({0})</value>
+  </data>
+  <data name="ExceptionErrorWhileAttemptingToClearInactiveItems" xml:space="preserve">
+    <value>An error occurred while attempting to clear the inactive items.</value>
+  </data>
+  <data name="ExceptionFailedToAddSubscriber" xml:space="preserve">
+    <value>Failed to add subscriber to the Local DataStore Activity Monitor service.</value>
+  </data>
+  <data name="ExceptionFailedToRemoveSubscriber" xml:space="preserve">
+    <value>Failed to remove subscriber from the Local DataStore Activity Monitor service.</value>
+  </data>
+  <data name="ExceptionImporterAlreadyStarted" xml:space="preserve">
+    <value>The file importer has already been started.</value>
+  </data>
+  <data name="ExceptionImporterNotStarted" xml:space="preserve">
+    <value>The file importer is not running.</value>
+  </data>
+  <data name="ExceptionNoFilesHaveBeenSpecifiedToImport" xml:space="preserve">
+    <value>No files have been specified to import.</value>
+  </data>
+  <data name="ExceptionNoValidFilesHaveBeenSpecifiedToImport" xml:space="preserve">
+    <value>No valid files have been specified to import.</value>
+  </data>
+  <data name="ExceptionServiceHasBeenDisabled" xml:space="preserve">
+    <value>Unable to process request. The service has been disabled.</value>
+  </data>
+  <data name="ExceptionSpecifiedRetrieveLevelNotSupported" xml:space="preserve">
+    <value>The specified retrieve level is unsupported at this time.</value>
+  </data>
+  <data name="ExceptionStorageDirectoryDoesNotExist" xml:space="preserve">
+    <value>The storage directory is inaccessible.  The service has been disabled.</value>
+  </data>
+  <data name="FormatAddingFile" xml:space="preserve">
+    <value>Adding: {0}</value>
+  </data>
+  <data name="FormatFailedToCommitToDatastore" xml:space="preserve">
+    <value>Failed to commit a file to the datastore ({0}); This file will need to be imported manually.</value>
+  </data>
+  <data name="FormatFileFormatNotAppropriateForDatastore" xml:space="preserve">
+    <value>Although the file format is recognized, it is not appropriate for insertion into the datastore ({0})</value>
+  </data>
+  <data name="FormatFileFormatNotRecognized" xml:space="preserve">
+    <value>The file format is not recognized ({0})</value>
+  </data>
+  <data name="FormatFileHasBeenMoved" xml:space="preserve">
+    <value>; the file has been moved to {0}</value>
+  </data>
+  <data name="FormatImportingFile" xml:space="preserve">
+    <value>Importing: {0}</value>
+  </data>
+  <data name="FormatMultipleFilesDescription" xml:space="preserve">
+    <value>+ {0}</value>
+  </data>
   <data name="FormatTooltipServerDetails" xml:space="preserve">
     <value>Dicom Server Shred (Name: {0} AE: {1} Host: {2} Port: {3} Location: {4})</value>
+  </data>
+  <data name="FormatUnableToParseFile" xml:space="preserve">
+    <value>Unable to parse the file ({0}); the sent file information may not be accurate for this study.</value>
+  </data>
+  <data name="LocalDataStoreActivityMonitorService" xml:space="preserve">
+    <value>Local Data Store Activity Monitor Service</value>
+  </data>
+  <data name="LocalDataStoreService" xml:space="preserve">
+    <value>Local Data Store Service</value>
+  </data>
+  <data name="LocalDataStoreServiceDescription" xml:space="preserve">
+    <value>Hosts the Local Data Store and Activity Monitor Services</value>
+  </data>
+  <data name="LocalDataStoreServices" xml:space="preserve">
+    <value>Local Data Store Services</value>
+  </data>
+  <data name="MessageCancelled" xml:space="preserve">
+    <value>Cancelled.</value>
+  </data>
+  <data name="MessageComplete" xml:space="preserve">
+    <value>Complete.</value>
+  </data>
+  <data name="MessageFileHasBeenDeleted" xml:space="preserve">
+    <value>; the file has been deleted</value>
+  </data>
+  <data name="MessagePending" xml:space="preserve">
+    <value>Pending ...</value>
+  </data>
+  <data name="MessageWaitingForFilesToBecomeAvailable" xml:space="preserve">
+    <value>Waiting for all files to become available ...</value>
   </data>
 </root>

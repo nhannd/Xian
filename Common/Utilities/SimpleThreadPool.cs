@@ -157,7 +157,6 @@ namespace ClearCanvas.Common.Utilities
 			{
 				EventWaitHandle.WaitAny(_waitHandles);
 
-				//process remaining tasks before quitting.
 				try
 				{
 					SimpleThreadPoolDelegate task = Next();

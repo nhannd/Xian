@@ -17,7 +17,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		private SendQueue _sendQueue;
 		private ReceiveQueue _receiveQueue;
 		private DicomFileImporter _dicomFileImporter;
-		
+		private ImportQueue _importQueue;
+
 		private string _storageFolder = null;
 		private string _badFileFolder = null;
 		private int _sendReceiveImportConcurrency;
@@ -51,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					_storageFolder = InitializeStorageFolder(LocalDataStoreServiceSettings.DefaultStorageFolder);
 					if (_storageFolder == null)
-						throw new Exception("The storage directory is inaccessible.  The service has been disabled.");
+						throw new Exception(SR.ExceptionStorageDirectoryDoesNotExist);
 				}
 
 				_badFileFolder = InitializeStorageFolder(LocalDataStoreServiceSettings.Instance.BadFileFolder);
@@ -59,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					_badFileFolder = InitializeStorageFolder(LocalDataStoreServiceSettings.DefaultBadFileFolder);
 					if (_badFileFolder == null)
-						throw new Exception("The 'bad file' storage directory is inaccessible.  The service has been disabled.");
+						throw new Exception(SR.ExceptionBadFileStorageDirectoryDoesNotExist);
 				}
 
 				_sendReceiveImportConcurrency = LocalDataStoreServiceSettings.Instance.SendReceiveImportConcurrency;
@@ -73,6 +74,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				_sendQueue = new SendQueue();
 				_receiveQueue = new ReceiveQueue();
+				_importQueue = new ImportQueue();
 
 				_dicomFileImporter = new DicomFileImporter();
 			}
@@ -111,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		private void CheckDisabled()
 		{
 			if (_disabled)
-				throw new Exception("Unable to process request. The service has been disabled.");
+				throw new Exception(SR.ExceptionServiceHasBeenDisabled);
 		}
 
 		private string InitializeStorageFolder(string folderPath)
@@ -144,12 +146,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			_sendQueue.Start();
 			_receiveQueue.Start();
+			_importQueue.Start();
 		}
 
 		public void Stop()
 		{
 			_receiveQueue.Stop();
 			_sendQueue.Stop();
+			_importQueue.Stop();
 
 			_dicomFileImporter.Stop();
 		}
@@ -158,6 +162,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			_receiveQueue.RepublishAll();
 			_sendQueue.RepublishAll();
+			_importQueue.RepublishAll();
 		}
 		
 		#region ILocalDataStoreService Members
@@ -174,10 +179,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			_sendQueue.ProcessSentFileInformation(sentFileInformation);
 		}
 
-		public void Import(FileImportRequest request)
+		public Guid Import(FileImportRequest request)
 		{
 			CheckDisabled();
-			//!!
+			return _importQueue.Import(request);
 		}
 
 		public void Reindex()
@@ -187,5 +192,19 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		}
 
 		#endregion
+
+		public void ClearInactive()
+		{
+			this._importQueue.ClearInactive();
+			this._sendQueue.ClearInactive();
+			this._receiveQueue.ClearInactive();
+		}
+
+		public void Cancel(CancelProgressItemInformation information)
+		{
+			this._importQueue.Cancel(information);
+			this._receiveQueue.Cancel(information);
+			this._sendQueue.Cancel(information);
+		}
 	}
 }

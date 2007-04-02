@@ -36,6 +36,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		private Dictionary<uint, DicomMoveSession> _moveSessionDictionary;
         private object _moveSessionLock = new object();
 
+		private List<BackgroundTaskContainer> _sendRetrieveTasks;
+		private object _sendRetrieveTaskLock = new object();
+
         public DicomServerManager()
         {
             _myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
@@ -43,6 +46,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
             _querySessionDictionary = new Dictionary<uint, DicomQuerySession>();
 			_moveSessionDictionary = new Dictionary<uint, DicomMoveSession>();
+			_sendRetrieveTasks = new List<BackgroundTaskContainer>();
         }
 
 		public static DicomServerManager Instance
@@ -551,30 +555,76 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			foreach (string uid in request.Uids)
 				parcel.Include(new Uid(uid));
 
+			BackgroundTaskContainer container = new BackgroundTaskContainer();
+
 			BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context) 
 			{
-				parcel.Send();
+				try
+				{
+					parcel.Send();
+				}
+				catch (Exception e)
+				{
+					Platform.Log(e);
+				}
+				finally
+				{
+					lock (_sendRetrieveTaskLock)
+					{
+						_sendRetrieveTasks.Remove((BackgroundTaskContainer)context.UserState);
+					}
+				}
 
-			}, false);
+			}, false, container);
+
+			container.Task = task;
+			lock (_sendRetrieveTaskLock)
+			{
+				_sendRetrieveTasks.Add(container);
+			}
 			
 			task.Run();
 		}
 
 		public void Retrieve(DicomRetrieveRequest request)
 		{
-			if (request.RetrieveLevel != RetrieveLevel.Study)
-				throw new Exception("The specified retrieve level is unsupported at this time.");
+			if (request.RetrieveLevel == RetrieveLevel.Image)
+				throw new Exception(SR.ExceptionSpecifiedRetrieveLevelNotSupported);
 
 			foreach (string uid in request.Uids)
 			{
-				string studyUid = uid; //have to do this, otherwise the anonymous delegate(s) will all use the same value.
+				string includeUid = uid; //have to do this, otherwise the anonymous delegate(s) will all use the same value.
+				
+				BackgroundTaskContainer container = new BackgroundTaskContainer(); 
+				
 				BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context)
 				{
-					DicomClient client = new DicomClient(_myApplicationEntity);
-					ApplicationEntity destinationAE = new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port));
-					client.Retrieve(new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port)), new Uid(studyUid), this.SaveDirectory);
-				}, false);
-				
+					try
+					{
+						DicomClient client = new DicomClient(_myApplicationEntity);
+						ApplicationEntity destinationAE = new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port));
+						client.Retrieve(new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port)), new Uid(includeUid), this.SaveDirectory);
+					}
+					catch (Exception e)
+					{
+						Platform.Log(e);
+					}
+					finally
+					{
+						lock (_sendRetrieveTaskLock)
+						{
+							_sendRetrieveTasks.Remove((BackgroundTaskContainer)context.UserState);
+						}
+					}
+
+				}, false, container);
+
+				container.Task = task;
+				lock(_sendRetrieveTaskLock)
+				{
+					_sendRetrieveTasks.Add(container);
+				}
+
 				task.Run();
 			}
 		}
