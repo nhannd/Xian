@@ -261,8 +261,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _searchTodayButton
 			// 
-			this._searchTodayButton.Location = new System.Drawing.Point(495, 58);
-			this._searchTodayButton.Margin = new System.Windows.Forms.Padding(2);
+			this._searchTodayButton.Location = new System.Drawing.Point(496, 58);
 			this._searchTodayButton.Name = "_searchTodayButton";
 			this._searchTodayButton.Size = new System.Drawing.Size(75, 22);
 			this._searchTodayButton.TabIndex = 18;
