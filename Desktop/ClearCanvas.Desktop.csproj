@@ -56,6 +56,7 @@
     <Compile Include="Actions\ActionModelRoot.cs" />
     <Compile Include="Actions\ActionModelStore.cs" />
     <Compile Include="Actions\ActionPath.cs" />
+    <Compile Include="Actions\ActionPermissionAttribute.cs" />
     <Compile Include="Actions\ActionSet.cs" />
     <Compile Include="Actions\GroupHint.cs" />
     <Compile Include="Actions\GroupHintAttribute.cs" />

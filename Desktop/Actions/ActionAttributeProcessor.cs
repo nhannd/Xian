@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common.Utilities;
+using System.Security;
 
 namespace ClearCanvas.Desktop.Actions
 {
@@ -26,9 +28,26 @@ namespace ClearCanvas.Desktop.Actions
             {
                 if (a is ActionInitiatorAttribute)
                 {
-                    ActionBuildingContext actionBuilder = new ActionBuildingContext(a.QualifiedActionID(actionTarget), actionTarget);
-                    a.Apply(actionBuilder);
-                    actionBuilders.Add(actionBuilder);
+                    try
+                    {
+                        // check permissions
+                        foreach (ActionAttribute pa in attributes)
+                        {
+                            if (pa is ActionPermissionAttribute && pa.QualifiedActionID(actionTarget) == a.QualifiedActionID(actionTarget))
+                            {
+                                ((ActionPermissionAttribute)pa).Demand();
+                            }
+                        }
+
+                        // permissions check succeeded
+                        ActionBuildingContext actionBuilder = new ActionBuildingContext(a.QualifiedActionID(actionTarget), actionTarget);
+                        a.Apply(actionBuilder);
+                        actionBuilders.Add(actionBuilder);
+                    }
+                    catch (SecurityException)
+                    {
+                        // permissions check failed, so don't build this action
+                    }
                 }
             }
 
