@@ -13,7 +13,6 @@ namespace ClearCanvas.Ris.Server
         public override void Validate(string userName, string password)
         {
             Console.WriteLine("Validating user " + userName);
-/*
             Platform.GetService<IAuthenticationService>(
                 delegate(IAuthenticationService service)
                 {
@@ -21,7 +20,6 @@ namespace ClearCanvas.Ris.Server
                     if (!service.ValidateUser(userName))
                         throw new SecurityTokenException("Invalid user name or password");
                 });
- */ 
         }
     }
 }

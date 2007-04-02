@@ -168,6 +168,9 @@
     <Compile Include="HealthcardDetail.cs" />
     <Compile Include="HL7ProcessingException.cs" />
     <Compile Include="ImportException.cs" />
+    <Compile Include="Login\ILoginService.cs" />
+    <Compile Include="Login\LoginRequest.cs" />
+    <Compile Include="Login\LoginResponse.cs" />
     <Compile Include="ModalityWorkflow\ExecuteOperationRequest.cs" />
     <Compile Include="ModalityWorkflow\GetOperationEnablementRequest.cs" />
     <Compile Include="ModalityWorkflow\GetOperationEnablementResponse.cs" />

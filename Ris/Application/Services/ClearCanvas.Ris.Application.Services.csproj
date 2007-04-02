@@ -76,6 +76,7 @@
     <Compile Include="Admin\HL7QueueItemAssembler.cs" />
     <Compile Include="ContactPersonAssembler.cs" />
     <Compile Include="Admin\NoteCategoryAssembler.cs" />
+    <Compile Include="Login\LoginService.cs" />
     <Compile Include="NoteAssembler.cs" />
     <Compile Include="EmailAddressAssembler.cs" />
     <Compile Include="HealthcardAssembler.cs" />

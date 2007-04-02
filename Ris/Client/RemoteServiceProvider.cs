@@ -21,6 +21,9 @@ namespace ClearCanvas.Ris.Client
         {
             try
             {
+                if (LoginSession.Current == null)
+                    throw new InvalidOperationException("User login credentials have not been provided");
+
                 string url = string.Format("http://localhost:8000/{0}", serviceType.FullName);
                 EndpointAddress endpoint = new EndpointAddress(url);
                 WSHttpBinding binding = new WSHttpBinding();
@@ -31,8 +34,8 @@ namespace ClearCanvas.Ris.Client
                 // create the channel factory
                 Type channelFactoryClass = typeof(ChannelFactory<>).MakeGenericType(new Type[] { serviceType });
                 ChannelFactory channelFactory = (ChannelFactory)Activator.CreateInstance(channelFactoryClass, binding, endpoint);
-                channelFactory.Credentials.UserName.UserName = "me";
-                channelFactory.Credentials.UserName.Password = "mmm";
+                channelFactory.Credentials.UserName.UserName = LoginSession.Current.UserName;
+                channelFactory.Credentials.UserName.Password = LoginSession.Current.Password;
                 channelFactory.Credentials.ServiceCertificate.Authentication.CertificateValidationMode = System.ServiceModel.Security.X509CertificateValidationMode.PeerOrChainTrust;
 
                 // reflection is unfortunately the only way to create the service channel

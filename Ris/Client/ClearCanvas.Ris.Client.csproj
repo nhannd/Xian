@@ -68,13 +68,16 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="IFolder.cs" />
+    <Compile Include="ILoginDialog.cs" />
     <Compile Include="IPagingController.cs" />
+    <Compile Include="LoginSession.cs" />
     <Compile Include="NoteEditorComponent.cs" />
     <Compile Include="NoteSummaryComponent.cs" />
     <Compile Include="NoteTable.cs" />
     <Compile Include="PagingActionModel.cs" />
     <Compile Include="PagingController.cs" />
     <Compile Include="RemoteServiceProvider.cs" />
+    <Compile Include="SessionManager.cs" />
     <Compile Include="WorkflowFolderSystem.cs" />
     <Compile Include="PhoneNumberEditorComponent.cs" />
     <Compile Include="PhoneNumbersSummaryComponent.cs" />

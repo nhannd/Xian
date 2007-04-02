@@ -32,17 +32,14 @@ namespace ClearCanvas.Ris.Server
             IList<IIdentity> identities = obj as IList<IIdentity>;
             if (obj == null || identities.Count <= 0)
                 return false;
-/*
+
             Platform.GetService<IAuthenticationService>(
                 delegate(IAuthenticationService service)
                 {
                     IIdentity clientIdentity = identities[0];
-                    string[] permissions = service.ListPermissionsForUser(clientIdentity.Name);
+                    string[] permissions = service.ListAuthorityTokensForUser(clientIdentity.Name);
                     context.Properties["Principal"] = new GenericPrincipal(clientIdentity, permissions);
                 });
- */
-            IIdentity clientIdentity = identities[0];
-            context.Properties["Principal"] = new GenericPrincipal(clientIdentity, new string[0]);
 
             return true;
         }
