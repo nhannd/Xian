@@ -320,7 +320,8 @@ namespace ClearCanvas.Common
             if (sessionManager != null)
             {
                 // allow any exception thrown here to cause the application to terminate
-                sessionManager.InitiateSession();
+                if (!sessionManager.InitiateSession())
+                    return;     // silent exit
             }
 
             try

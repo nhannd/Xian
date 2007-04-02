@@ -7,11 +7,15 @@ namespace ClearCanvas.Common
     public interface ISessionManager
     {
         /// <summary>
-        /// Called by the framework at start-up to initiate a session.  Any exception thrown 
-        /// from this method will effectively prevent the establishment of a session, causing
-        /// execution to terminate.
+        /// Called by the framework at start-up to initiate a session.
         /// </summary>
-        void InitiateSession();
+        /// <remarks>
+        /// Any exception thrown from this method will effectively prevent the establishment of a session, causing
+        /// execution to terminate with a message box.  A return value of false may be used
+        /// to silently refuse initiation of a session.  In this case, no message box is shown, so
+        /// the reason for failure must be clear to the user by other means.
+        /// </remarks>
+        bool InitiateSession();
 
         /// <summary>
         /// Called by the framework at shutdown to terminate an existing session.
