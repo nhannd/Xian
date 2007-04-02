@@ -276,8 +276,11 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser.ShellDll
                                     {
                                         ShellItem newItem = new ShellItem(browser, this, pidlSubItem);
 
-                                        if (!subFolders.Contains(newItem.Text))
-                                            subFiles.Add(newItem);
+										if (IsVisible(newItem))
+										{
+											if (!subFolders.Contains(newItem.Text))
+												subFiles.Add(newItem);
+										}
                                     }
                                     else
                                         Marshal.FreeCoTaskMem(pidlSubItem);
@@ -298,7 +301,9 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser.ShellDll
                                 while (fileEnum.Next(1, out pidlSubItem, out celtFetched) == ShellAPI.S_OK && celtFetched == 1)
                                 {
                                     ShellItem newItem = new ShellItem(browser, this, pidlSubItem);
-                                    subFiles.Add(newItem);
+
+									if (IsVisible(newItem))
+	                                    subFiles.Add(newItem);
                                 }
 
                                 subFiles.Sort();
@@ -333,7 +338,9 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser.ShellDll
                                         this,
                                         pidlSubItem,
                                         shellFolderPtr);
-                                    subFolders.Add(newItem);
+
+									if (IsVisible(newItem))
+	                                    subFolders.Add(newItem);
                                 }
                             }
 
@@ -475,10 +482,13 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser.ShellDll
                                             {
                                                 ShellItem newItem = new ShellItem(browser, this, pidlSubItem);
 
-                                                if (!subFolders.Contains(newItem.Text))
-                                                {
-                                                    add.Add(newItem);
-                                                }
+												if (IsVisible(newItem))
+												{
+													if (!subFolders.Contains(newItem.Text))
+													{
+														add.Add(newItem);
+													}
+												}
                                             }
                                             else if (index < fileExists.Length)
                                             {
@@ -507,7 +517,10 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser.ShellDll
                                     {
                                         if ((index = subFiles.IndexOf(pidlSubItem)) == -1)
                                         {
-                                            add.Add(new ShellItem(browser, this, pidlSubItem));
+											ShellItem newItem = new ShellItem(browser, this, pidlSubItem);
+
+											if (IsVisible(newItem))
+	                                            add.Add(newItem);
                                         }
                                         else if (index < fileExists.Length)
                                         {
@@ -566,8 +579,11 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser.ShellDll
 
                                 foreach (ShellItem newItem in add)
                                 {
-                                    subFiles.Add(newItem);
-                                    browser.OnShellItemUpdate(this, new ShellItemUpdateEventArgs(null, newItem, ShellItemUpdateType.Created));
+									if (IsVisible(newItem))
+									{
+										subFiles.Add(newItem);
+										browser.OnShellItemUpdate(this, new ShellItemUpdateEventArgs(null, newItem, ShellItemUpdateType.Created));
+									}
                                 }
 
                                 subFiles.Capacity = subFiles.Count;
@@ -610,11 +626,10 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser.ShellDll
                                                     ref ShellAPI.IID_IShellFolder,
                                                     out shellFolderPtr) == ShellAPI.S_OK)
                                         {
-                                            add.Add(new ShellItem(
-                                                browser,
-                                                this,
-                                                pidlSubItem,
-                                                shellFolderPtr));
+											ShellItem newItem = new ShellItem(browser, this, pidlSubItem, shellFolderPtr);
+
+											if (IsVisible(newItem))
+												add.Add(newItem);
                                         }
                                     }
                                     else if (index < folderExists.Length)
@@ -678,9 +693,11 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser.ShellDll
 
                                 foreach (ShellItem newItem in add)
                                 {
-                                    subFolders.Add(newItem);
-
-                                    browser.OnShellItemUpdate(this, new ShellItemUpdateEventArgs(null, newItem, ShellItemUpdateType.Created));
+									if (IsVisible(newItem))
+									{
+										subFolders.Add(newItem);
+										browser.OnShellItemUpdate(this, new ShellItemUpdateEventArgs(null, newItem, ShellItemUpdateType.Created));
+									}
                                 }
 
                                 subFolders.Capacity = subFolders.Count;
@@ -1203,7 +1220,37 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser.ShellDll
 
         #endregion        
         
-        public override string ToString()
+		#region NY (2007-04-02): Cheap hack to prevent certain folders from showing up
+
+		internal bool IsVisible(ShellItem item)
+		{
+			return (item.Text != GetSpecialFolderName(ShellAPI.CSIDL.BITBUCKET) &&
+					item.Text != GetSpecialFolderName(ShellAPI.CSIDL.CONTROLS) &&
+					item.Text != GetSpecialFolderName(ShellAPI.CSIDL.NETWORK) &&
+					item.Text != GetSpecialFolderName(ShellAPI.CSIDL.NETHOOD) &&
+					item.Text != GetSpecialFolderName(ShellAPI.CSIDL.PRINTERS));
+		}
+
+		internal string GetSpecialFolderName(ShellAPI.CSIDL csidl)
+		{
+			IntPtr tempPidl;
+			ShellAPI.SHFILEINFO info;
+
+			info = new ShellAPI.SHFILEINFO();
+			tempPidl = IntPtr.Zero;
+			ShellAPI.SHGetSpecialFolderLocation(IntPtr.Zero, csidl, out tempPidl);
+
+			ShellAPI.SHGetFileInfo(tempPidl, 0, ref info, ShellAPI.cbFileInfo,
+				ShellAPI.SHGFI.PIDL | ShellAPI.SHGFI.DISPLAYNAME | ShellAPI.SHGFI.TYPENAME);
+
+			Marshal.FreeCoTaskMem(tempPidl);
+
+			return info.szDisplayName;
+		}
+
+		#endregion
+
+		public override string ToString()
         {
             return text;
         }

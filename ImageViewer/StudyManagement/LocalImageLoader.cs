@@ -34,8 +34,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		public void Load(string path)
 		{
+			Platform.CheckForNullReference(path, "path");
+
 			_totalImages = 0;
 			_failedImages = 0;
+
+			if (!File.Exists(path))
+				return;
 
 			FileProcessor.ProcessFile process = new FileProcessor.ProcessFile(LoadImage);
 			FileProcessor.Process(path, "*.dcm", process, true);
@@ -43,6 +48,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		private void LoadImage(string file)
 		{
+			Platform.CheckForNullReference(file, "file");
+
 			LocalImageSop image = null;
 
 			try
