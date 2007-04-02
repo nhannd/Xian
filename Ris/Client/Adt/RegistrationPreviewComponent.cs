@@ -304,7 +304,7 @@ namespace ClearCanvas.Ris.Client.Adt
             switch (detail.Type)
             {
                 case "Note Alert":
-                    alertImageURI = "file:///C:\\Downloads\\icons\\note.png";
+                    alertImageURI = "http://172.16.10.167/RisTemplates/note.png";
                     alertTooltip = detail.Representation;
                     foreach (string reason in detail.Reasons)
                     {
@@ -313,7 +313,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     break;
 
                 case "Language Alert":
-                    alertImageURI = "file:///C:\\Downloads\\icons\\language.png";
+                    alertImageURI = "http://172.16.10.167/RisTemplates/language.png";
                     alertTooltip = detail.Representation + "\r\nPatient speaks:";
                     foreach (string reason in detail.Reasons)
                     {
@@ -322,7 +322,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     break;
 
                 default:
-                    alertImageURI = "file:///C:\\Downloads\\icons\\healthcare3.jpg";
+                    alertImageURI = "http://172.16.10.167/RisTemplates/healthcare3.jpg";
                     alertTooltip = detail.Representation;
                     break;
             }
