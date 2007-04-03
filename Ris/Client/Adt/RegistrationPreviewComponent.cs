@@ -161,6 +161,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Presentation Model
 
+        public ActionModelNode MenuModel
+        {
+            get { return ActionModelRoot.CreateModel(this.GetType().FullName, "RegistrationPreview-menu", _toolSet.Actions); }
+        }
+
         public RegistrationWorklistPreview WorklistPreview
         {
             get { return _worklistPreview; }
@@ -295,17 +300,34 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get { return (_worklistPreview != null && _worklistPreview.AlertNotifications.Count > 0); }
         }
-
-        public string GetAlertHTML(AlertNotificationDetail detail)
+        
+        public string GetAlertImageURI(AlertNotificationDetail detail)
         {
             string alertImageURI = "";
-            string alertTooltip = "";
 
             switch (detail.Type)
             {
                 case "Note Alert":
                     alertImageURI = "http://172.16.10.167/RisTemplates/note.png";
-                    alertTooltip = detail.Representation;
+                    break;
+                case "Language Alert":
+                    alertImageURI = "http://172.16.10.167/RisTemplates/language.png";
+                    break;
+                default:
+                    alertImageURI = "http://172.16.10.167/RisTemplates/healthcare3.jpg";
+                    break;
+            }
+
+            return alertImageURI;
+        }
+
+        public string GetAlertTooltip(AlertNotificationDetail detail)
+        {
+            string alertTooltip = detail.Representation;
+
+            switch (detail.Type)
+            {
+                case "Note Alert":
                     foreach (string reason in detail.Reasons)
                     {
                         alertTooltip = String.Format("{0}\r\n{1}", alertTooltip, reason);
@@ -313,7 +335,6 @@ namespace ClearCanvas.Ris.Client.Adt
                     break;
 
                 case "Language Alert":
-                    alertImageURI = "http://172.16.10.167/RisTemplates/language.png";
                     alertTooltip = detail.Representation + "\r\nPatient speaks:";
                     foreach (string reason in detail.Reasons)
                     {
@@ -322,17 +343,10 @@ namespace ClearCanvas.Ris.Client.Adt
                     break;
 
                 default:
-                    alertImageURI = "http://172.16.10.167/RisTemplates/healthcare3.jpg";
-                    alertTooltip = detail.Representation;
                     break;
             }
 
-            return String.Format("<img width='50' border=0 src='{0}' alt='{1}' align='left'/>", alertImageURI, alertTooltip);
-        }
-
-        public ActionModelNode MenuModel
-        {
-            get { return ActionModelRoot.CreateModel(this.GetType().FullName, "RegistrationPreview-menu", _toolSet.Actions); }
+            return alertTooltip;
         }
 
         #endregion

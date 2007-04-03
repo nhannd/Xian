@@ -76,12 +76,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
                 PersistenceContext.GetBroker<INoteCategoryBroker>().FindAll(),
                 delegate(NoteCategory x, NoteCategory y)
                 {
-                    if (x.Severity > y.Severity)
-                        return 1;
-                    else if (x.Severity < y.Severity)
-                        return -1;
-
-                    return string.Compare(x.Name, y.Name);                
+                    return string.Compare(x.Name, y.Name);
                 });
             
             response.NoteCategoryChoices = new List<NoteCategorySummary>();

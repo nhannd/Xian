@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
             _severity.DataSource = _component.SeverityChoices;
             _severity.DataBindings.Add("Value", _component, "Severity", true, DataSourceUpdateMode.OnPropertyChanged);
-            _name.DataBindings.Add("Value", _component, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
+            _category.DataBindings.Add("Value", _component, "Category", true, DataSourceUpdateMode.OnPropertyChanged);
             _description.DataBindings.Add("Value", _component, "Description", true, DataSourceUpdateMode.OnPropertyChanged);
             _acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }

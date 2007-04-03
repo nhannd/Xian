@@ -19,7 +19,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
             NoteCategoryDetail detail = new NoteCategoryDetail();
 
-            detail.Name = category.Name;
+            detail.Category = category.Name;
             detail.Description = category.Description;
 
             NoteSeverityEnumTable severityEnumTable = context.GetBroker<INoteSeverityEnumBroker>().Load();
@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
         public void UpdateNoteCategory(NoteCategoryDetail detail, NoteCategory category)
         {
-            category.Name = detail.Name;
+            category.Name = detail.Category;
             category.Description = detail.Description;
             category.Severity = (NoteSeverity)Enum.Parse(typeof(NoteSeverity), detail.Severity.Code);
         }

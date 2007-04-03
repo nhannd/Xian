@@ -116,12 +116,12 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        public string Name
+        public string Category
         {
-            get { return _noteCategoryDetail.Name; }
+            get { return _noteCategoryDetail.Category; }
             set 
             {
-                _noteCategoryDetail.Name = value;
+                _noteCategoryDetail.Category = value;
                 this.Modified = true;
             }
         }

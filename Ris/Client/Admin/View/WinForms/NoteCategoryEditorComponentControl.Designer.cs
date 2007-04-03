@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._acceptButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._severity = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._name = new ClearCanvas.Controls.WinForms.TextField();
+            this._category = new ClearCanvas.Controls.WinForms.TextField();
             this._description = new ClearCanvas.Controls.WinForms.TextAreaField();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
@@ -95,7 +95,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.flowLayoutPanel1.AutoSize = true;
             this.flowLayoutPanel1.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
             this.flowLayoutPanel1.Controls.Add(this._severity);
-            this.flowLayoutPanel1.Controls.Add(this._name);
+            this.flowLayoutPanel1.Controls.Add(this._category);
             this.flowLayoutPanel1.Controls.Add(this._description);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
@@ -116,16 +116,16 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._severity.TabIndex = 0;
             this._severity.Value = null;
             // 
-            // _name
+            // _category
             // 
-            this._name.LabelText = "Name";
-            this._name.Location = new System.Drawing.Point(2, 47);
-            this._name.Margin = new System.Windows.Forms.Padding(2);
-            this._name.Mask = "";
-            this._name.Name = "_name";
-            this._name.Size = new System.Drawing.Size(150, 41);
-            this._name.TabIndex = 1;
-            this._name.Value = null;
+            this._category.LabelText = "Category";
+            this._category.Location = new System.Drawing.Point(2, 47);
+            this._category.Margin = new System.Windows.Forms.Padding(2);
+            this._category.Mask = "";
+            this._category.Name = "_category";
+            this._category.Size = new System.Drawing.Size(150, 41);
+            this._category.TabIndex = 1;
+            this._category.Value = null;
             // 
             // _description
             // 
@@ -157,7 +157,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private ClearCanvas.Controls.WinForms.ComboBoxField _severity;
-        private ClearCanvas.Controls.WinForms.TextField _name;
+        private ClearCanvas.Controls.WinForms.TextField _category;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _acceptButton;

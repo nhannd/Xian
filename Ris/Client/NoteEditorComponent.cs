@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Client
             get 
             { 
                 return _note.Category == null ? "" :
-                    String.Format("Severity {0} - {1}", _note.Category.Severity.Value, _note.Category.Name); 
+                    String.Format(SR.FormatNoteCategory, _note.Category.Name, _note.Category.Severity.Value); 
             }
             set
             {
@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client
                     CollectionUtils.SelectFirst<NoteCategorySummary>(_noteCategoryChoices,
                         delegate(NoteCategorySummary category) 
                         {
-                            return (String.Format("Severity {0} - {1}", category.Severity.Value, category.Name) == value); 
+                            return (String.Format(SR.FormatNoteCategory, category.Name, category.Severity.Value) == value); 
                         });
 
                 SignalCategoryChanged();
@@ -97,7 +97,7 @@ namespace ClearCanvas.Ris.Client
                         _noteCategoryChoices, 
                         delegate(NoteCategorySummary category) 
                         {
-                            return String.Format("Severity {0} - {1}", category.Severity.Value, category.Name);
+                            return String.Format(SR.FormatNoteCategory, category.Name, category.Severity.Value);
                         }));
 
                 return categoryStrings;

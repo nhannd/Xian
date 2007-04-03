@@ -104,7 +104,7 @@ if(component.WorklistPreview != null)
   <tr>
     <td>
       <% for(var alert in component.AlertNotifications) {%>
-      <%=   component.GetAlertHTML(alert) %>      
+      <img width="50" border="0" src="<%= component.GetAlertImageURI(alert) %>" alt="<%= component.GetAlertTooltip(alert) %>" align="left"/>
       <% } %>
     </td>
   </tr>

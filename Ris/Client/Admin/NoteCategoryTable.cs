@@ -13,7 +13,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 delegate(NoteCategorySummary category) { return category.Severity.Value; },
                 0.2f));
 
-            this.Columns.Add(new TableColumn<NoteCategorySummary, string>(SR.ColumnName,
+            this.Columns.Add(new TableColumn<NoteCategorySummary, string>(SR.ColumnCategory,
                 delegate(NoteCategorySummary category) { return category.Name; },
                 0.5f));
 

@@ -502,6 +502,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} - Severity {1}.
+        /// </summary>
+        internal static string FormatNoteCategory {
+            get {
+                return ResourceManager.GetString("FormatNoteCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this address?.
         /// </summary>
         internal static string MessageDeleteSelectedAddress {

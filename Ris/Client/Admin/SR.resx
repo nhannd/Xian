@@ -126,6 +126,9 @@
   <data name="ColumnBuilding" xml:space="preserve">
     <value>Building</value>
   </data>
+  <data name="ColumnCategory" xml:space="preserve">
+    <value>Category</value>
+  </data>
   <data name="ColumnCode" xml:space="preserve">
     <value>Code</value>
   </data>

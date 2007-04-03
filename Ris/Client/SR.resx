@@ -264,6 +264,9 @@
   <data name="ColumnWorkPhone" xml:space="preserve">
     <value>Work Phone</value>
   </data>
+  <data name="FormatNoteCategory" xml:space="preserve">
+    <value>{0} - Severity {1}</value>
+  </data>
   <data name="MessageDeleteSelectedAddress" xml:space="preserve">
     <value>Are you sure you want to delete this address?</value>
   </data>

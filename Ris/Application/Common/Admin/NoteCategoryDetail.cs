@@ -9,9 +9,9 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class NoteCategoryDetail : DataContractBase, ICloneable
     {
-        public NoteCategoryDetail(string name, string description, EnumValueInfo severity)
+        public NoteCategoryDetail(string category, string description, EnumValueInfo severity)
         {
-            this.Name = name;
+            this.Category = category;
             this.Description = description;
             this.Severity = severity;
         }
@@ -21,7 +21,7 @@ namespace ClearCanvas.Ris.Application.Common
         }
 
         [DataMember]
-        public string Name;
+        public string Category;
 
         [DataMember]
         public string Description;
@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Application.Common
         public object Clone()
         {
             NoteCategoryDetail clone = new NoteCategoryDetail();
-            clone.Name = this.Name;
+            clone.Category = this.Category;
             clone.Description = this.Description;
             clone.Severity = (EnumValueInfo)this.Severity.Clone();
             return clone;
