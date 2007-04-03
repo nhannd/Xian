@@ -10,6 +10,7 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.Admin;
+using System.Security.Permissions;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
 {
@@ -130,6 +131,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.VisitAdmin)]
         public SaveAdminEditsForVisitResponse SaveAdminEditsForVisit(SaveAdminEditsForVisitRequest request)
         {
             Visit visit = (Visit)PersistenceContext.Load(request.VisitRef);
@@ -141,6 +143,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.VisitAdmin)]
         public AdminAddVisitResponse AdminAddVisit(AdminAddVisitRequest request)
         {
             Visit visit = new Visit();

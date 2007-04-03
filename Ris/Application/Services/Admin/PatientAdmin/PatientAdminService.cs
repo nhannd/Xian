@@ -12,6 +12,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common.Utilities;
+using System.Security.Permissions;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
 {
@@ -134,6 +135,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.PatientProfileAdmin)]
         public SaveAdminEditsForPatientProfileResponse SaveAdminEditsForPatientProfile(SaveAdminEditsForPatientProfileRequest request)
         {
             PatientProfile profile = (PatientProfile)PersistenceContext.Load(request.PatientProfileRef, EntityLoadFlags.CheckVersion);
@@ -145,6 +147,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.PatientProfileAdmin)]
         public AdminAddPatientProfileResponse AdminAddPatientProfile(AdminAddPatientProfileRequest request)
         {
             PatientProfile profile = new PatientProfile();

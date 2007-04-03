@@ -10,6 +10,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 using ClearCanvas.Ris.Application.Common;
+using System.Security.Permissions;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 {
@@ -90,6 +91,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.StaffAdmin)]
         public AddStaffResponse AddStaff(AddStaffRequest request)
         {
             Staff staff = new Staff();
@@ -107,6 +109,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.StaffAdmin)]
         public UpdateStaffResponse UpdateStaff(UpdateStaffRequest request)
         {
             Staff staff = (Staff)PersistenceContext.Load(request.StaffRef, EntityLoadFlags.CheckVersion);

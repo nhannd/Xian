@@ -9,6 +9,8 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
+using System.Security.Permissions;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 {
@@ -17,6 +19,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
     public class DiagnosticServiceAdminService : ApplicationServiceBase, IDiagnosticServiceAdminService
     {
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.DiagnosticServiceAdmin)]
         public BatchImportResponse BatchImport(BatchImportRequest request)
         {
             DiagnosticServiceBatchImporter.Import((IUpdateContext)this.PersistenceContext, request.ImportData);

@@ -197,7 +197,7 @@
     <Compile Include="PatientReconciliation\ReconcilePatientsResponse.cs" />
     <Compile Include="PatientReconciliation\ListProfilesForPatientsRequest.cs" />
     <Compile Include="PatientReconciliation\ListProfilesForPatientsResponse.cs" />
-    <Compile Include="Permissions.cs" />
+    <Compile Include="AuthorityTokens.cs" />
     <Compile Include="PersonNameDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AlertNotificationDetail.cs" />

@@ -11,6 +11,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin;
+using System.Security.Permissions;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
 {
@@ -91,6 +92,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.PractitionerAdmin)]
         public AddPractitionerResponse AddPractitioner(AddPractitionerRequest request)
         {
             Practitioner practitioner = new Practitioner();
@@ -108,6 +110,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.PractitionerAdmin)]
         public UpdatePractitionerResponse UpdatePractitioner(UpdatePractitionerRequest request)
         {
             Practitioner practitioner = (Practitioner)PersistenceContext.Load(request.PractitionerRef, EntityLoadFlags.CheckVersion);

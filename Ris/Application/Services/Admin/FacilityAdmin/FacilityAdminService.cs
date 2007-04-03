@@ -9,6 +9,8 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
+using System.Security.Permissions;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
 {
@@ -40,6 +42,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.FacilityAdmin)]
         public AddFacilityResponse AddFacility(AddFacilityRequest request)
         {
             Facility facility = new Facility();
@@ -57,6 +60,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.FacilityAdmin)]
         public UpdateFacilityResponse UpdateFacility(UpdateFacilityRequest request)
         {
             Facility facility = (Facility)PersistenceContext.Load(request.FacilityRef, EntityLoadFlags.CheckVersion);

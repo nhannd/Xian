@@ -5,7 +5,7 @@ using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.Ris.Application.Common
 {
-    public static class Permissions
+    public static class AuthorityTokens
     {
         [AuthorityToken(Description="Allow administration of patient profiles")]
         public const string PatientProfileAdmin = "PatientProfileAdmin";

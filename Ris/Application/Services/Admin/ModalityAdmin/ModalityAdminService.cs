@@ -9,6 +9,8 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin;
+using System.Security.Permissions;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
 {
@@ -40,6 +42,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.ModalityAdmin)]
         public AddModalityResponse AddModality(AddModalityRequest request)
         {
             Modality modality = new Modality();
@@ -57,6 +60,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.ModalityAdmin)]
         public UpdateModalityResponse UpdateModality(UpdateModalityRequest request)
         {
             Modality modality = (Modality)PersistenceContext.Load(request.ModalityRef, EntityLoadFlags.CheckVersion);
