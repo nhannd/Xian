@@ -149,12 +149,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             get { return _table; }
             set
             {
-				// Important: Unsubscribe from old table
-				if (_table != null)
-				{
-					foreach (ITableColumn column in _table.Columns)
-						column.VisibilityChanged -= OnColumnVisibilityChanged;
-				}
+				UnsubscribeFromOldTable();
 
                 _table = value;
 
@@ -172,7 +167,6 @@ namespace ClearCanvas.Desktop.View.WinForms
                 }
             }
         }
-
 
         /// <summary>
         /// Gets/sets the current selection
@@ -281,6 +275,15 @@ namespace ClearCanvas.Desktop.View.WinForms
                 }
             }
         }
+
+		private void UnsubscribeFromOldTable()
+		{
+			if (_table != null)
+			{
+				foreach (ITableColumn column in _table.Columns)
+					column.VisibilityChanged -= OnColumnVisibilityChanged;
+			}
+		}
 
 		private void OnColumnVisibilityChanged(object sender, EventArgs e)
 		{

@@ -15,6 +15,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			if (disposing && (_components != null))
 			{
+				UnsubscribeFromOldTable();
 				_components.Dispose();
 			}
 			base.Dispose(disposing);
