@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to query server..
+        ///   Looks up a localized string similar to Unable to query one or more servers..
         /// </summary>
         internal static string MessageUnableToQueryServer {
             get {

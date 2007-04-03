@@ -127,6 +127,6 @@
     <value>Clear</value>
   </data>
   <data name="MessageUnableToQueryServer" xml:space="preserve">
-    <value>Unable to query server.</value>
+    <value>Unable to query one or more servers.</value>
   </data>
 </root>

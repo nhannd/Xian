@@ -208,6 +208,9 @@ Are you sure you want to continue?</value>
   <data name="MessageUnableToDeleteStudy" xml:space="preserve">
     <value>Unable to delete study.  Please check the log for details.</value>
   </data>
+  <data name="MessageUnableToQueryServer" xml:space="preserve">
+    <value>Unable to query the following server</value>
+  </data>
   <data name="StatusLastRetrievalServerUsed" xml:space="preserve">
     <value>Last retrieval server used</value>
   </data>

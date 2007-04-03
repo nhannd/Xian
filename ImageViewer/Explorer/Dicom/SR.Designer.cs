@@ -320,6 +320,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to query the following server.
+        /// </summary>
+        internal static string MessageUnableToQueryServer {
+            get {
+                return ResourceManager.GetString("MessageUnableToQueryServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Last retrieval server used.
         /// </summary>
         internal static string StatusLastRetrievalServerUsed {

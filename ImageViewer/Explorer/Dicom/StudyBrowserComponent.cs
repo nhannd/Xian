@@ -369,29 +369,45 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
             StudyItemList aggregateStudyItemList = new StudyItemList();
 
-			try
-			{
-				foreach (Server server in _selectedServerGroup.Servers)
-				{
-					StudyItemList serverStudyItemList = _studyFinder.Query(server.GetApplicationEntity(), queryParams);
-					aggregateStudyItemList.AddRange(serverStudyItemList);
-				}
-			}
-			catch
-			{
-				throw;
-			}
-			finally
-			{
-				this.ResultsTitle = String.Format("{0} studies found on {1}", aggregateStudyItemList.Count, _selectedServerGroup.Name);
+            List<string> failedServers = new List<string>();
+            Exception savedException = null;
 
-				UpdateComponent();
+            foreach (Server server in _selectedServerGroup.Servers)
+            {
+                try
+			    {
+                    StudyItemList serverStudyItemList = _studyFinder.Query(server.GetApplicationEntity(), queryParams);
+                    aggregateStudyItemList.AddRange(serverStudyItemList);
+			    }
+			    catch (Exception e)
+			    {
+                    // keep track of the failed server names and save only the last exception
+                    // then continue querying the next server
+                    failedServers.Add(server.Name);
+                    savedException = e;
+			    }
+            }
+            
+			this.ResultsTitle = String.Format("{0} studies found on {1}", aggregateStudyItemList.Count, _selectedServerGroup.Name);
 
-				foreach (StudyItem item in aggregateStudyItemList)
-					_searchResults[_selectedServerGroup.GroupID].StudyList.Items.Add(item);
+			UpdateComponent();
 
-				_searchResults[_selectedServerGroup.GroupID].StudyList.Sort();
-			}
+			foreach (StudyItem item in aggregateStudyItemList)
+				_searchResults[_selectedServerGroup.GroupID].StudyList.Items.Add(item);
+
+			_searchResults[_selectedServerGroup.GroupID].StudyList.Sort();
+
+            // Re-throw the last exception with a list of failed server name, if any
+            if (savedException != null)
+            {
+                string message = SR.MessageUnableToQueryServer;
+                foreach(string serverName in failedServers)
+                {
+                    message = String.Format("{0}, {1}", message, serverName);   
+                }
+
+                throw new Exception(message, savedException);
+            }
 		}
 
 		public void ItemDoubleClick()
