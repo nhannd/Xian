@@ -97,6 +97,7 @@
   <ItemGroup />
   <ItemGroup>
     <Compile Include="Auditing\IAuditMessage.cs" />
+    <Compile Include="Authorization\AuthorityTokenAttribute.cs" />
     <Compile Include="ClassNameExtensionFilter.cs">
       <SubType>Code</SubType>
     </Compile>
