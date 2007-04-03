@@ -20,5 +20,8 @@ namespace ClearCanvas.Enterprise.Core
 
         [OperationContract]
         string[] ListAuthorityTokensForUser(string userName);
+
+        [OperationContract]
+        bool AssertTokenForUser(string userName, string token);
     }
 }

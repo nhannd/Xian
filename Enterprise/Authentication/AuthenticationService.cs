@@ -16,7 +16,7 @@ namespace ClearCanvas.Enterprise.Authentication
     {
         #region IAuthenticationService Members
 
-        [ReadOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
+        [ReadOperation]
         public bool ValidateUser(string userName)
         {
             // TODO expand this to include the concept of a password
@@ -28,11 +28,18 @@ namespace ClearCanvas.Enterprise.Authentication
             return count == 1;
         }
 
-        [ReadOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
+        [ReadOperation]
         public string[] ListAuthorityTokensForUser(string userName)
         {
             return PersistenceContext.GetBroker<IAuthorityTokenBroker>().FindTokensByUserName(userName);
         }
+
+        [ReadOperation]
+        public bool AssertTokenForUser(string userName, string token)
+        {
+            return PersistenceContext.GetBroker<IAuthorityTokenBroker>().AssertUserHasToken(userName, token);
+        }
+
 
         #endregion
     }

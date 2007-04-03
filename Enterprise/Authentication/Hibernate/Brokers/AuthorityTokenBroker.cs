@@ -24,5 +24,23 @@ namespace ClearCanvas.Enterprise.Authentication.Hibernate.Brokers
                     return (string)tokenName;
                 }).ToArray();
         }
+
+        public bool AssertUserHasToken(string userName, string token)
+        {
+            UserSearchCriteria whereUser = new UserSearchCriteria();
+            whereUser.UserName.EqualTo(userName);
+
+            AuthorityTokenSearchCriteria whereToken = new AuthorityTokenSearchCriteria();
+            whereToken.Name.EqualTo(token);
+
+            // want this to be as fast as possible - use joins and only select the count
+            HqlQuery query = new HqlQuery("select count(*) from User u join u.AuthorityGroups g join g.AuthorityTokens t");
+            query.Conditions.AddRange(HqlCondition.FromSearchCriteria("u", whereUser));
+            query.Conditions.AddRange(HqlCondition.FromSearchCriteria("t", whereToken));
+
+            // expect exactly one integer result
+            return ((int)ExecuteHql(query)[0]) > 0;
+        }
+
     }
 }

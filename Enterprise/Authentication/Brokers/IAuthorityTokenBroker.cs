@@ -13,5 +13,13 @@ namespace ClearCanvas.Enterprise.Authentication.Brokers
         /// <param name="userName"></param>
         /// <returns></returns>
         string[] FindTokensByUserName(string userName);
+
+        /// <summary>
+        /// Provides optimized assert that the specified user has the specified token.
+        /// </summary>
+        /// <param name="userName"></param>
+        /// <param name="token"></param>
+        /// <returns></returns>
+        bool AssertUserHasToken(string userName, string token);
     }
 }

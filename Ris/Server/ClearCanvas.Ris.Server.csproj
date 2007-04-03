@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="Application.cs" />
     <Compile Include="CustomAuthorizationPolicy.cs" />
+    <Compile Include="CustomPrincipal.cs" />
     <Compile Include="ErrorHandlerAdvice.cs" />
     <Compile Include="InstanceManagementServiceBehavior.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
