@@ -40,7 +40,9 @@
     <Compile Include="*.gen.cs" />
     <Compile Include="AuthenticationService.cs" />
     <Compile Include="AuthorityGroup.cs" />
+    <Compile Include="AuthorityGroupImporter.cs" />
     <Compile Include="AuthorityToken.cs" />
+    <Compile Include="AuthorityTokenImporter.cs" />
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Brokers\IAuthorityTokenBroker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
