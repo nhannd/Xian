@@ -183,6 +183,9 @@ namespace ClearCanvas.Desktop
                 switch (e.Reason)
                 {
                     case BackgroundTaskTerminatedReason.Completed:
+                    case BackgroundTaskTerminatedReason.Exception:
+                    case BackgroundTaskTerminatedReason.Cancelled:
+                    default:
                         if (this.ProgressBarStyle == ProgressBarStyle.Marquee)
                         {
                             // Make the progress bar looks 'full' at completion
@@ -190,9 +193,6 @@ namespace ClearCanvas.Desktop
                             _progressBar = this.ProgressBarMaximum;
                         }
                         break;
-                    case BackgroundTaskTerminatedReason.Exception:
-                    case BackgroundTaskTerminatedReason.Cancelled:
-                    default:
                         break;
                 }
                 

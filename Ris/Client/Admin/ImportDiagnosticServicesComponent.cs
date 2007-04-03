@@ -176,6 +176,7 @@ namespace ClearCanvas.Ris.Client.Admin
                     catch (Exception e)
                     {
                         String message = String.Format("Error importing batch {0} of {1} between rows {2}~{3}", batch, NumberOfBatches, startRow, endRow);
+                        context.ReportProgress(new BackgroundTaskProgress(percentage, message));
                         context.Error(new Exception(message, e));
                         return;
                     }
