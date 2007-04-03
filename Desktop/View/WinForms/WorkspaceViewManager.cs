@@ -9,6 +9,7 @@ using ClearCanvas.Desktop.Tools;
 using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Docking;
 using Crownwood.DotNetMagic.Controls;
+using System.Threading;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -16,6 +17,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 	{
 		private DesktopForm _desktopForm;
 		private TabbedGroups _tabbedGroups;
+		private int _numWorkspaces;
 
 		public WorkspaceViewManager(DesktopForm desktopForm, TabbedGroups tabbedGroups)
 		{
@@ -28,6 +30,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_tabbedGroups.PageCloseRequest += new TabbedGroups.PageCloseRequestHandler(OnTabbedGroupPageClosePressed);
 			_tabbedGroups.PageChanged += new TabbedGroups.PageChangeHandler(OnTabbedGroupPageChanged);
 		}
+
 
 		public void AddWorkpaceTab(IWorkspace workspace)
 		{
@@ -68,10 +71,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 				if(!tabPage.IsDisposed)
 				    tabPage.Dispose();
 
-                GC.Collect();
+				GC.Collect();
 				GC.WaitForPendingFinalizers();
-				//string str = String.Format("Memory: {0}", GC.GetTotalMemory(false));
-				//Platform.Log(str);
 
 				// When there are no tabs left, turn off the tab control strip.
 				// Done purely for aesthetic reasons.
@@ -181,6 +182,5 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			_desktopForm.RebuildMenusAndToolbars();
 		}
-
 	}
 }

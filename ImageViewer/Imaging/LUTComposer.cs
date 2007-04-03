@@ -8,60 +8,11 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal class OutputLUT : IReferenceCountable
-	{
-		private int _referenceCount = 0;
-		private int[] _outputLUT;
-		private string _key;
-
-		public OutputLUT(string key, int numEntries)
-		{
-			_key = key;
-			_outputLUT = new int[numEntries];
-		}
-
-		public string Key
-		{
-			get { return _key; }
-			set { _key = value; }
-		}
-
-		public int[] LUT
-		{
-			get { return _outputLUT; }
-		}
-
-		#region IReferenceCountable Members
-
-		public void IncrementReferenceCount()
-		{
-			_referenceCount++;
-		}
-
-		public void DecrementReferenceCount()
-		{
-			if (_referenceCount > 0)
-				_referenceCount--;
-		}
-
-		public bool IsReferenceCountZero
-		{
-			get { return (_referenceCount == 0); }
-		}
-
-		public int ReferenceCount
-		{
-			get { return _referenceCount; }
-		}
-
-		#endregion
-	}
-
 	/// <summary>
 	/// Allows <see cref="IComposableLUT"/> objects
 	/// be composed together in a pipeline.
 	/// </summary>
-	public class LUTComposer
+	public class LUTComposer : IDisposable
 	{
 		private LUTCollection _lutCollection;
 		private int _numEntries;
@@ -71,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private bool _recalculate = true;
 		private bool _validated = false;
 
-		private static OutputLUTPool _lutPool = new OutputLUTPool();
+		private OutputLUTPool _lutPool;
 		private string _key = String.Empty;
 
 		/// <summary>
@@ -112,12 +63,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 						_validated = true;
 					}
 
-					_lutPool.Return(_key);
+					this.LUTPool.Return(_key);
 
 					_key = GetKey();
 
 					bool composeRequired;
-					_outputLUT = _lutPool.Retrieve(_key, _numEntries, out composeRequired);
+					_outputLUT = this.LUTPool.Retrieve(_key, _numEntries, out composeRequired);
 
 					if (composeRequired)
 						Compose();
@@ -126,6 +77,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 				}
 
 				return _outputLUT.LUT; 
+			}
+		}
+
+		private OutputLUTPool LUTPool
+		{
+			get
+			{
+				if (_lutPool == null)
+					_lutPool = OutputLUTPool.NewInstance;
+
+				return _lutPool;
 			}
 		}
 
@@ -224,5 +186,42 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			_recalculate = true;
 		}
+
+		#region Disposal
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				// shouldn't throw anything from inside Dispose()
+				Platform.Log(e);
+			}
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern
+		/// </summary>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+		protected virtual void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				if (_lutPool != null)
+					_lutPool.Dispose();
+
+				_outputLUT = null;
+			}
+		}
+
+		#endregion
 	}
 }

@@ -152,6 +152,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 				graphic.Move(delta);
 		}
 
+		protected override void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				foreach (Graphic graphic in this.Graphics)
+					graphic.Dispose();
+			}
+		}
+
 		private void OnGraphicAdded(object sender, GraphicEventArgs e)
 		{
 			Graphic graphic = e.Graphic as Graphic;

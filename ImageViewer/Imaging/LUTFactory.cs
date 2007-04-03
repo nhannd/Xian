@@ -2,18 +2,65 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Dicom;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	// LUT flyweight factory
-	internal sealed class LUTFactory
+	internal sealed class LUTFactory : IReferenceCountable, IDisposable
 	{
-		private List<ModalityLUTLinear> _modalityLUTs = new List<ModalityLUTLinear>();
-		private List<PresentationLUT> _presentationLUTs = new List<PresentationLUT>();
+		private static volatile LUTFactory _instance;
+		private static object _syncRoot = new Object();
 
-		public LUTFactory()
+		private List<ModalityLUTLinear> _modalityLUTs;
+		private List<PresentationLUT> _presentationLUTs;
+		private int _referenceCount = 0;
+
+		private LUTFactory()
 		{
 
+		}
+
+		public static LUTFactory NewInstance
+		{
+			get
+			{
+				if (_instance == null)
+				{
+					lock (_syncRoot)
+					{
+						if (_instance == null)
+							_instance = new LUTFactory();
+					}
+				}
+
+				_instance.IncrementReferenceCount();
+
+				return _instance;
+			}
+		}
+
+		private List<ModalityLUTLinear> ModalityLUTs
+		{
+			get
+			{
+				if (_modalityLUTs == null)
+					_modalityLUTs = new List<ModalityLUTLinear>();
+
+				return _modalityLUTs;
+			}
+		}
+
+		private List<PresentationLUT> PresentationLUTs
+		{
+			get
+			{
+				if (_presentationLUTs == null)
+					_presentationLUTs = new List<PresentationLUT>();
+
+				return _presentationLUTs;
+			}
 		}
 
 		internal ModalityLUTLinear GetModalityLUTLinear(
@@ -22,7 +69,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 			double rescaleSlope,
 			double rescaleIntercept)
 		{
-			foreach (ModalityLUTLinear lut in _modalityLUTs)
+			if (rescaleSlope == 0 || double.IsNaN(rescaleSlope))
+				rescaleSlope = 1;
+
+			foreach (ModalityLUTLinear lut in this.ModalityLUTs)
 			{
 				if (lut.BitsStored == bitsStored &&
 					lut.PixelRepresentation == pixelRepresentation &&
@@ -37,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				rescaleSlope, 
 				rescaleIntercept);
 
-			_modalityLUTs.Add(modalityLut);
+			this.ModalityLUTs.Add(modalityLut);
 
 			return modalityLut;
 		}
@@ -47,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			int maxInputValue,
 			PhotometricInterpretation photometricInterpretation)
 		{
-			foreach (PresentationLUT lut in _presentationLUTs)
+			foreach (PresentationLUT lut in this.PresentationLUTs)
 			{
 				if (lut.MaxInputValue == maxInputValue &&
 					lut.MinInputValue == minInputValue &&
@@ -60,9 +110,84 @@ namespace ClearCanvas.ImageViewer.Imaging
 				maxInputValue, 
 				photometricInterpretation);
 
-			_presentationLUTs.Add(presentationLut);
+			this.PresentationLUTs.Add(presentationLut);
 
 			return presentationLut;
 		}
+
+		#region IReferenceCountable Members
+
+		public void IncrementReferenceCount()
+		{
+			_referenceCount++;
+		}
+
+		public void DecrementReferenceCount()
+		{
+			if (_referenceCount > 0)
+				_referenceCount--;
+		}
+
+		public bool IsReferenceCountZero
+		{
+			get { return _referenceCount == 0; }
+		}
+
+		public int ReferenceCount
+		{
+			get { return _referenceCount; }
+		}
+
+		#endregion
+
+
+		#region Disposal
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			try
+			{
+				Dispose(true);
+				GC.SuppressFinalize(this);
+			}
+			catch (Exception e)
+			{
+				// shouldn't throw anything from inside Dispose()
+				Platform.Log(e);
+			}
+		}
+
+		#endregion
+
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern
+		/// </summary>
+		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
+		private void Dispose(bool disposing)
+		{
+			if (disposing)
+			{
+				this.DecrementReferenceCount();
+
+				if (this.IsReferenceCountZero)
+				{
+					if (_modalityLUTs != null)
+					{
+						_modalityLUTs.Clear();
+						_modalityLUTs = null;
+					}
+
+					if (_presentationLUTs != null)
+					{
+						_presentationLUTs.Clear();
+						_presentationLUTs = null;
+					}
+				}
+			}
+		}
+
+		#endregion
 	}
 }

@@ -122,6 +122,7 @@
     <Compile Include="Annotations\StoredAnnotatationLayoutProvider.cs" />
     <Compile Include="Annotations\Tests\AnnotationLayoutStoreTests.cs" />
     <Compile Include="DisplaySetSortBySeriesNumber.cs" />
+    <Compile Include="GarbageCollectionTool.cs" />
     <Compile Include="Graphics\GrayscaleImageGraphic.cs" />
     <Compile Include="Graphics\IImageSpatialTransform.cs" />
     <Compile Include="Graphics\ImageSpatialTransformMemento.cs" />
@@ -134,6 +135,7 @@
     <Compile Include="Imaging\LUTCollection.cs" />
     <Compile Include="Imaging\LUTEventArgs.cs" />
     <Compile Include="Imaging\LUTFactory.cs" />
+    <Compile Include="Imaging\OutputLUT.cs" />
     <Compile Include="Imaging\OutputLUTPool.cs" />
     <Compile Include="Imaging\PresentationLUT.cs" />
     <Compile Include="InteractiveGraphics\CompassStretchIndicatorCursorProvider.cs" />

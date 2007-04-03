@@ -58,5 +58,10 @@ namespace ClearCanvas.Common.Utilities
 					return null;
 			}
 		}
+
+		public void Clear()
+		{
+			_cache.Clear();
+		}
 	}
 }

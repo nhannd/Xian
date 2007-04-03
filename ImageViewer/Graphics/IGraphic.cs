@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// Defines a graphical object that can be rendered.
 	/// </summary>
-	public interface IGraphic : IDrawable
+	public interface IGraphic : IDrawable, IDisposable
 	{
 		/// <summary>
 		/// Gets this <see cref="IGraphic"/> object's parent <see cref="IGraphic"/>.

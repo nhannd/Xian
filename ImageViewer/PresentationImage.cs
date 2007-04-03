@@ -302,8 +302,18 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (disposing)
 			{
+				DisposeSceneGraph();
 				DisposeRenderer();
 			}
+		}
+
+		private void DisposeSceneGraph()
+		{
+			if (this.SceneGraph == null)
+				return;
+
+			this.SceneGraph.Dispose();
+			_sceneGraph = null;
 		}
 
 		private void DisposeRenderer()
