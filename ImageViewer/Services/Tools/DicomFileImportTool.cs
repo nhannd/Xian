@@ -14,8 +14,8 @@ using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
-	[MenuAction("Import", "explorerlocal-contextmenu/DicomFileImportTool")]
-	[Tooltip("Import", "OpenDicomFilesVerbose")]
+	[MenuAction("Import", "explorerlocal-contextmenu/ImportDicomFiles")]
+	[Tooltip("Import", "TooltipImportDicomFiles")]
 	[IconSet("Import", IconScheme.Colour, "Icons.DicomFileImportSmall.png", "Icons.DicomFileImportSmall.png", "Icons.DicomFileImportSmall.png")]
 	[ClickHandler("Import", "Import")]
 
@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			request.FilePaths = filePaths;
 			request.BadFileBehaviour = BadFileBehaviour.Ignore;
 			request.Recursive = true;
-			request.FileImportBehaviour = FileImportBehaviour.Copy;
+			request.FileImportBehaviour = FileImportBehaviour.Move;
 
 			LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
 			try

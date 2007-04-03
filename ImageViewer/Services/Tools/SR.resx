@@ -129,6 +129,9 @@
   <data name="ExceptionFailedToImportSelection" xml:space="preserve">
     <value>Failed to initiate an import of the selected items.</value>
   </data>
+  <data name="ExceptionFailedToLaunchReindexComponent" xml:space="preserve">
+    <value>Failed to launch the Reindex Activity manager, likely due to a communication error with the Failed to launch the Import Activity manager, likely due to a communication error with the service.  Please check and make sure the service is running or call your system administrator.</value>
+  </data>
   <data name="ExceptionFailedToRetrieveStudy" xml:space="preserve">
     <value>Failed to initiate a retrieval of the selected items.</value>
   </data>
@@ -146,6 +149,12 @@
   </data>
   <data name="FormatXMinutesAgo" xml:space="preserve">
     <value>{0} minutes ago</value>
+  </data>
+  <data name="ImportDicomFiles" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="LocalDataStoreReindex" xml:space="preserve">
+    <value>Reindex Local Data Store</value>
   </data>
   <data name="MessageCancelFailed" xml:space="preserve">
     <value>Failed to cancel the selected items.</value>
@@ -211,7 +220,7 @@
     <value>Send Study</value>
   </data>
   <data name="TitleSent" xml:space="preserve">
-    <value>TitleSent</value>
+    <value>Sent</value>
   </data>
   <data name="TitleStartTime" xml:space="preserve">
     <value>Started</value>
@@ -227,5 +236,17 @@
   </data>
   <data name="TitleTo" xml:space="preserve">
     <value>To</value>
+  </data>
+  <data name="TooltipClearInactive" xml:space="preserve">
+    <value>Clear Inactive</value>
+  </data>
+  <data name="TooltipImportDicomFiles" xml:space="preserve">
+    <value>Import dicom files from the local file system</value>
+  </data>
+  <data name="TooltipRetrieveStudy" xml:space="preserve">
+    <value>Retrieve Study</value>
+  </data>
+  <data name="TooltipSendStudy" xml:space="preserve">
+    <value>Send Study</value>
   </data>
 </root>

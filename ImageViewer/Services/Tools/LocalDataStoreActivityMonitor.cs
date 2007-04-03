@@ -122,7 +122,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			remove 
 			{ 
 				_sendProgressUpdate -= value;
-				HandleConnection(this.AnySubscribers);
+				if (!this.AnySubscribers)
+					HandleConnection(false);
 			}
 		}
 
@@ -137,7 +138,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			remove 
 			{ 
 				_receiveProgressUpdate -= value;
-				HandleConnection(this.AnySubscribers);
+				if (!this.AnySubscribers)
+					HandleConnection(false);
 			}
 		}
 
@@ -152,7 +154,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			remove
 			{ 
 				_importProgressUpdate -= value;
-				HandleConnection(this.AnySubscribers);
+				if (!this.AnySubscribers)
+					HandleConnection(false);
 			}
 		}
 
@@ -167,7 +170,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			remove
 			{
 				_reindexProgressUpdate -= value;
-				HandleConnection(this.AnySubscribers);
+				if (!this.AnySubscribers)
+					HandleConnection(false);
 			}
 		}
 

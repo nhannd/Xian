@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
     [MenuAction("activate", "dicomstudybrowser-contextmenu/Send")]
     [ClickHandler("activate", "SendStudy")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-    [Tooltip("activate", "Send Study")]
+    [Tooltip("activate", "TooltipSendStudy")]
     [IconSet("activate", IconScheme.Colour, "Icons.SendStudySmall.png", "Icons.SendStudySmall.png", "Icons.SendStudySmall.png")]
     [ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
     public class SendStudyTool : StudyBrowserTool

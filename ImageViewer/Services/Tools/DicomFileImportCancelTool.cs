@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[EnabledStateObserver("clear", "ClearEnabled", "ClearEnabledChanged")]
 
 	[ButtonAction("clearInactive", "dicom-file-import-toolbar/ClearInactive")]
-	[Tooltip("clearInactive", "Clear Inactive")]
+	[Tooltip("clearInactive", "TooltipClearInactive")]
 	[IconSet("clearInactive", IconScheme.Colour, "Icons.ClearInactiveSmall.png", "Icons.ClearInactiveSmall.png", "Icons.ClearInactiveSmall.png")]
 	[ClickHandler("clearInactive", "ClearInactive")]
 	//[EnabledStateObserver("clearInactive", "ClearInactiveEnabled", "ClearInactiveEnabledChanged")]

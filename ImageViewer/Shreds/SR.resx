@@ -180,8 +180,8 @@
   <data name="ExceptionStorageDirectoryDoesNotExist" xml:space="preserve">
     <value>The storage directory is inaccessible.  The service has been disabled.</value>
   </data>
-  <data name="FormatAddingFile" xml:space="preserve">
-    <value>Adding: {0}</value>
+  <data name="FormatEnumeratingFile" xml:space="preserve">
+    <value>Enumerating: {0}</value>
   </data>
   <data name="FormatFailedToCommitToDatastore" xml:space="preserve">
     <value>Failed to commit a file to the datastore ({0}); This file will need to be imported manually.</value>

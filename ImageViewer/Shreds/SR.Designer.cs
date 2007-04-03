@@ -250,11 +250,11 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Adding: {0}.
+        ///   Looks up a localized string similar to Enumerating: {0}.
         /// </summary>
-        internal static string FormatAddingFile {
+        internal static string FormatEnumeratingFile {
             get {
-                return ResourceManager.GetString("FormatAddingFile", resourceCulture);
+                return ResourceManager.GetString("FormatEnumeratingFile", resourceCulture);
             }
         }
         

@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/Retrieve")]
 	[ClickHandler("activate", "RetrieveStudy")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-	[Tooltip("activate", "Retrieve Study")]
+	[Tooltip("activate", "TooltipRetrieveStudy")]
 	[IconSet("activate", IconScheme.Colour, "Icons.RetrieveStudySmall.png", "Icons.RetrieveStudySmall.png", "Icons.RetrieveStudySmall.png")]
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class RetrieveStudyTool : StudyBrowserTool

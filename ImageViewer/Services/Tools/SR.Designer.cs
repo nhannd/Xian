@@ -97,6 +97,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to launch the Reindex Activity manager, likely due to a communication error with the Failed to launch the Import Activity manager, likely due to a communication error with the service.  Please check and make sure the service is running or call your system administrator..
+        /// </summary>
+        internal static string ExceptionFailedToLaunchReindexComponent {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToLaunchReindexComponent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to initiate a retrieval of the selected items..
         /// </summary>
         internal static string ExceptionFailedToRetrieveStudy {
@@ -147,6 +156,24 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string FormatXMinutesAgo {
             get {
                 return ResourceManager.GetString("FormatXMinutesAgo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import.
+        /// </summary>
+        internal static string ImportDicomFiles {
+            get {
+                return ResourceManager.GetString("ImportDicomFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reindex Local Data Store.
+        /// </summary>
+        internal static string LocalDataStoreReindex {
+            get {
+                return ResourceManager.GetString("LocalDataStoreReindex", resourceCulture);
             }
         }
         
@@ -340,7 +367,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TitleSent.
+        ///   Looks up a localized string similar to Sent.
         /// </summary>
         internal static string TitleSent {
             get {
@@ -390,6 +417,42 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string TitleTo {
             get {
                 return ResourceManager.GetString("TitleTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear Inactive.
+        /// </summary>
+        internal static string TooltipClearInactive {
+            get {
+                return ResourceManager.GetString("TooltipClearInactive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import dicom files from the local file system.
+        /// </summary>
+        internal static string TooltipImportDicomFiles {
+            get {
+                return ResourceManager.GetString("TooltipImportDicomFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrieve Study.
+        /// </summary>
+        internal static string TooltipRetrieveStudy {
+            get {
+                return ResourceManager.GetString("TooltipRetrieveStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send Study.
+        /// </summary>
+        internal static string TooltipSendStudy {
+            get {
+                return ResourceManager.GetString("TooltipSendStudy", resourceCulture);
             }
         }
     }

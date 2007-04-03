@@ -14,10 +14,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		private bool _disabled;
 
-		private SendQueue _sendQueue;
-		private ReceiveQueue _receiveQueue;
 		private DicomFileImporter _dicomFileImporter;
-		private ImportQueue _importQueue;
+		private SentFileProcessor _sentFileProcessor;
+		private ReceivedFileProcessor _receivedFileProcessor;
+		private ImportProcessor _importProcessor;
 
 		private string _storageFolder = null;
 		private string _badFileFolder = null;
@@ -72,9 +72,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				_databaseUpdateFrequencyMilliseconds = LocalDataStoreServiceSettings.Instance.DatabaseUpdateFrequencyMilliseconds;
 
-				_sendQueue = new SendQueue();
-				_receiveQueue = new ReceiveQueue();
-				_importQueue = new ImportQueue();
+				_sentFileProcessor = new SentFileProcessor();
+				_receivedFileProcessor = new ReceivedFileProcessor();
+				_importProcessor = new ImportProcessor();
 
 				_dicomFileImporter = new DicomFileImporter();
 			}
@@ -144,25 +144,25 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			_dicomFileImporter.Start();
 
-			_sendQueue.Start();
-			_receiveQueue.Start();
-			_importQueue.Start();
+			_sentFileProcessor.Start();
+			_receivedFileProcessor.Start();
+			_importProcessor.Start();
 		}
 
 		public void Stop()
 		{
-			_receiveQueue.Stop();
-			_sendQueue.Stop();
-			_importQueue.Stop();
+			_receivedFileProcessor.Stop();
+			_sentFileProcessor.Stop();
+			_importProcessor.Stop();
 
 			_dicomFileImporter.Stop();
 		}
 
 		public void RepublishAll()
 		{
-			_receiveQueue.RepublishAll();
-			_sendQueue.RepublishAll();
-			_importQueue.RepublishAll();
+			_receivedFileProcessor.RepublishAll();
+			_sentFileProcessor.RepublishAll();
+			_importProcessor.RepublishAll();
 		}
 		
 		#region ILocalDataStoreService Members
@@ -170,41 +170,40 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		public void FileReceived(StoreScpReceivedFileInformation receivedFileInformation)
 		{
 			CheckDisabled();
-			_receiveQueue.ProcessReceivedFileInformation(receivedFileInformation);
+			_receivedFileProcessor.ProcessReceivedFileInformation(receivedFileInformation);
 		}
 
 		public void FileSent(StoreScuSentFileInformation sentFileInformation)
 		{
 			CheckDisabled();
-			_sendQueue.ProcessSentFileInformation(sentFileInformation);
+			_sentFileProcessor.ProcessSentFileInformation(sentFileInformation);
 		}
 
 		public Guid Import(FileImportRequest request)
 		{
 			CheckDisabled();
-			return _importQueue.Import(request);
+			return _importProcessor.Import(request);
 		}
 
 		public void Reindex()
 		{
 			CheckDisabled();
-			//!!
 		}
 
 		#endregion
 
 		public void ClearInactive()
 		{
-			this._importQueue.ClearInactive();
-			this._sendQueue.ClearInactive();
-			this._receiveQueue.ClearInactive();
+			this._importProcessor.ClearInactive();
+			this._sentFileProcessor.ClearInactive();
+			this._receivedFileProcessor.ClearInactive();
 		}
 
 		public void Cancel(CancelProgressItemInformation information)
 		{
-			this._importQueue.Cancel(information);
-			this._receiveQueue.Cancel(information);
-			this._sendQueue.Cancel(information);
+			this._importProcessor.Cancel(information);
+			this._receivedFileProcessor.Cancel(information);
+			this._sentFileProcessor.Cancel(information);
 		}
 	}
 }

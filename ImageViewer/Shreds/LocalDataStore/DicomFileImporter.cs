@@ -405,8 +405,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			finally
 			{
-				file.Dispose();
-				file = null;
+				if (file != null)
+				{
+					file.Dispose();
+					file = null;
+				}
 			}
 		}
 
