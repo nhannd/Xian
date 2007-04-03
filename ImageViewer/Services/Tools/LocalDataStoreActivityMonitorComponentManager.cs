@@ -81,12 +81,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			try
 			{
-				//DicomFileImportApplicationComponent component = new DicomFileImportApplicationComponent();
-				//_reindexComponentWorkspace = ApplicationComponent.LaunchAsWorkspace(desktopWindow, component, "Reindex Activity",
-				//    delegate(IApplicationComponent closingComponent)
-				//    {
-				//        _reindexComponentWorkspace = null;
-				//    });
+				LocalDataStoreReindexApplicationComponent component = new LocalDataStoreReindexApplicationComponent();
+				_reindexComponentWorkspace = ApplicationComponent.LaunchAsWorkspace(desktopWindow, component, SR.TitleReindexLocalDataStore,
+					delegate(IApplicationComponent closingComponent)
+					{
+						_reindexComponentWorkspace = null;
+					});
 			}
 			catch 
 			{

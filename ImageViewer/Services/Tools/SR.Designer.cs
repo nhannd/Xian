@@ -88,42 +88,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to initiate an import of the selected items..
-        /// </summary>
-        internal static string ExceptionFailedToImportSelection {
-            get {
-                return ResourceManager.GetString("ExceptionFailedToImportSelection", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to launch the Reindex Activity manager, likely due to a communication error with the Failed to launch the Import Activity manager, likely due to a communication error with the service.  Please check and make sure the service is running or call your system administrator..
-        /// </summary>
-        internal static string ExceptionFailedToLaunchReindexComponent {
-            get {
-                return ResourceManager.GetString("ExceptionFailedToLaunchReindexComponent", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to initiate a retrieval of the selected items..
-        /// </summary>
-        internal static string ExceptionFailedToRetrieveStudy {
-            get {
-                return ResourceManager.GetString("ExceptionFailedToRetrieveStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Failed to initiate sending of the selected items..
-        /// </summary>
-        internal static string ExceptionFailedToSendStudy {
-            get {
-                return ResourceManager.GetString("ExceptionFailedToSendStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The identifiers must match..
         /// </summary>
         internal static string ExceptionIdentifiersMustMatch {
@@ -205,6 +169,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to initiate an import of the selected items..
+        /// </summary>
+        internal static string MessageFailedToImportSelection {
+            get {
+                return ResourceManager.GetString("MessageFailedToImportSelection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to launch the Import Activity manager, likely due to a communication error with the service.  Please check and make sure the service is running or call your system administrator..
         /// </summary>
         internal static string MessageFailedToLaunchImportActivityComponent {
@@ -214,11 +187,47 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to launch the Reindex Activity manager, likely due to a communication error with the Failed to launch the Import Activity manager, likely due to a communication error with the service.  Please check and make sure the service is running or call your system administrator..
+        /// </summary>
+        internal static string MessageFailedToLaunchReindexComponent {
+            get {
+                return ResourceManager.GetString("MessageFailedToLaunchReindexComponent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to launch the Send/Receive Activity manager, likely due to a communication error with the service.  Please check and make sure the service is running or call your system administrator..
         /// </summary>
         internal static string MessageFailedToLaunchSendReceiveActivityComponent {
             get {
                 return ResourceManager.GetString("MessageFailedToLaunchSendReceiveActivityComponent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to initiate a retrieval of the selected items..
+        /// </summary>
+        internal static string MessageFailedToRetrieveStudy {
+            get {
+                return ResourceManager.GetString("MessageFailedToRetrieveStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to initiate sending of the selected items..
+        /// </summary>
+        internal static string MessageFailedToSendStudy {
+            get {
+                return ResourceManager.GetString("MessageFailedToSendStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to start Reindex operation..
+        /// </summary>
+        internal static string MessageFailedToStartReindex {
+            get {
+                return ResourceManager.GetString("MessageFailedToStartReindex", resourceCulture);
             }
         }
         
@@ -345,6 +354,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string TitleReceived {
             get {
                 return ResourceManager.GetString("TitleReceived", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reindex Local Data Store.
+        /// </summary>
+        internal static string TitleReindexLocalDataStore {
+            get {
+                return ResourceManager.GetString("TitleReindexLocalDataStore", resourceCulture);
             }
         }
         

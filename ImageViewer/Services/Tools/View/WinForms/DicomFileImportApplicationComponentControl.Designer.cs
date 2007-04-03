@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
+			ClearCanvas.Desktop.Selection selection4 = new ClearCanvas.Desktop.Selection();
 			this._layoutPanel = new System.Windows.Forms.TableLayoutPanel();
 			this._importTable = new ClearCanvas.Desktop.View.WinForms.TableView();
 			this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._importTable.MultiSelect = false;
 			this._importTable.Name = "_importTable";
 			this._importTable.ReadOnly = false;
-			this._importTable.Selection = selection1;
+			this._importTable.Selection = selection4;
 			this._importTable.Size = new System.Drawing.Size(767, 178);
 			this._importTable.TabIndex = 7;
 			this._importTable.Table = null;
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._titleBar.Size = new System.Drawing.Size(767, 25);
 			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2003;
 			this._titleBar.TabIndex = 6;
-			this._titleBar.Text = "Import Operations";
+			this._titleBar.Text = "Import Activity";
 			// 
 			// _importProgressControl
 			// 

@@ -40,6 +40,7 @@
     <Compile Include="DicomFileImportTool.cs" />
     <Compile Include="DicomSendReceiveActivityTool.cs" />
     <Compile Include="LocalDataStoreActivityMonitorComponentManager.cs" />
+    <Compile Include="LocalDataStoreReindexApplicationComponent.cs" />
     <Compile Include="LocalDataStoreReindexTool.cs" />
     <Compile Include="ReceiveQueueApplicationComponent.cs" />
     <Compile Include="LocalDataStoreActivityMonitor.cs" />

@@ -11,15 +11,51 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	internal class SendQueue
+	internal class SentFileProcessor
 	{
 		private SimpleThreadPool _sentFileInformationProcessor;
 		private List<SendProgressItem> _sendProgressItems;
 
-		public SendQueue()
+		public SentFileProcessor()
 		{
 			_sentFileInformationProcessor = new SimpleThreadPool(1);
 			_sendProgressItems = new List<SendProgressItem>();
+		}
+
+		private StudyInformation GetStudyInformation(string sopInstanceFilename)
+		{
+			using (DcmFileFormat file = new DcmFileFormat())
+			{
+				OFCondition condition = file.loadFile(sopInstanceFilename);
+
+				if (!condition.good())
+					throw new Exception(String.Format(SR.FormatUnableToParseFile, sopInstanceFilename));
+
+				DcmMetaInfo metaInfo = file.getMetaInfo();
+				DcmDataset dataset = file.getDataset();
+
+				StudyInformation information = new StudyInformation();
+				StringBuilder parser = new StringBuilder(1024);
+
+				dataset.findAndGetOFString(Dcm.PatientId, parser);
+				information.PatientId = parser.ToString();
+
+				dataset.findAndGetOFString(Dcm.PatientsName, parser);
+				information.PatientsName = parser.ToString();
+
+				dataset.findAndGetOFString(Dcm.StudyDate, parser);
+				DateTime studyDate;
+				DateParser.Parse(parser.ToString(), out studyDate);
+				information.StudyDate = studyDate;
+
+				dataset.findAndGetOFString(Dcm.StudyDescription, parser);
+				information.StudyDescription = parser.ToString();
+
+				dataset.findAndGetOFString(Dcm.StudyInstanceUID, parser);
+				information.StudyInstanceUid = parser.ToString();
+
+				return information;
+			}
 		}
 
 		public void ProcessSentFileInformation(StoreScuSentFileInformation sentFileInformation)
@@ -67,43 +103,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					}
 				);
 		}
-
-		private StudyInformation GetStudyInformation(string sopInstanceFilename)
-		{
-			using (DcmFileFormat file = new DcmFileFormat())
-			{
-				OFCondition condition = file.loadFile(sopInstanceFilename);
-
-				if (!condition.good())
-					throw new Exception(String.Format(SR.FormatUnableToParseFile, sopInstanceFilename));
-
-				DcmMetaInfo metaInfo = file.getMetaInfo();
-				DcmDataset dataset = file.getDataset();
-
-				StudyInformation information = new StudyInformation();
-				StringBuilder parser = new StringBuilder(1024);
-
-				dataset.findAndGetOFString(Dcm.PatientId, parser);
-				information.PatientId = parser.ToString();
-
-				dataset.findAndGetOFString(Dcm.PatientsName, parser);
-				information.PatientsName = parser.ToString();
-
-				dataset.findAndGetOFString(Dcm.StudyDate, parser);
-				DateTime studyDate;
-				DateParser.Parse(parser.ToString(), out studyDate);
-				information.StudyDate = studyDate;
-
-				dataset.findAndGetOFString(Dcm.StudyDescription, parser);
-				information.StudyDescription = parser.ToString();
-
-				dataset.findAndGetOFString(Dcm.StudyInstanceUID, parser);
-				information.StudyInstanceUid = parser.ToString();
-
-				return information;
-			}
-		}
-
+		
 		public void Start()
 		{
 			_sentFileInformationProcessor.Start();
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				);
 		}
 
-		internal void Cancel(CancelProgressItemInformation information)
+		public void Cancel(CancelProgressItemInformation information)
 		{
 			if (information.ProgressItemIdentifiers == null)
 				return;
@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				);
 		}
 
-		internal void ClearInactive()
+		public void ClearInactive()
 		{
 			//not supported.
 		}

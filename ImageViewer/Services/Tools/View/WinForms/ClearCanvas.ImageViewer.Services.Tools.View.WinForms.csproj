@@ -52,6 +52,13 @@
     <Compile Include="ImportProgressControl.Designer.cs">
       <DependentUpon>ImportProgressControl.cs</DependentUpon>
     </Compile>
+    <Compile Include="LocalDataStoreReindexApplicationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="LocalDataStoreReindexApplicationComponentControl.Designer.cs">
+      <DependentUpon>LocalDataStoreReindexApplicationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="LocalDataStoreReindexApplicationComponentView.cs" />
     <Compile Include="ReceiveQueueApplicationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -95,6 +102,10 @@
     <EmbeddedResource Include="ImportProgressControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ImportProgressControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="LocalDataStoreReindexApplicationComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>LocalDataStoreReindexApplicationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ReceiveQueueApplicationComponentControl.resx">
       <SubType>Designer</SubType>

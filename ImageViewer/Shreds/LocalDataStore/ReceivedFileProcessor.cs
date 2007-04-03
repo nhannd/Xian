@@ -10,7 +10,7 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	internal class ReceiveQueue
+	internal class ReceivedFileProcessor
 	{
 		private class ReceivedFileImportInformation : DicomFileImporter.FileImportInformation
 		{
@@ -31,15 +31,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		private object _receiveProgressItemsLock = new object();
 		private List<ReceiveProgressItem> _receiveProgressItems;
 
-		public ReceiveQueue()
+		public ReceivedFileProcessor()
 		{
 			_receiveProgressItems = new List<ReceiveProgressItem>();
-		}
-
-		private void OnImportThreadPoolStartStop(object sender, ItemEventArgs<SimpleThreadPool.StartStopState> e)
-		{
-			//stopping? Pause all the imports (status messages).
-			//starting? Resume all the imports (status messages).
 		}
 
 		private ReceiveProgressItem GetReceiveProgressItem(ReceivedFileImportInformation receivedFileImportInformation, out bool exists)
@@ -186,7 +180,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			//nothing to do.
 		}
 
-		internal void ProcessReceivedFileInformation(StoreScpReceivedFileInformation receivedFileInformation)
+		public void ProcessReceivedFileInformation(StoreScpReceivedFileInformation receivedFileInformation)
 		{
 			LocalDataStoreService.Instance.DicomFileImporter.Enqueue(new ReceivedFileImportInformation(receivedFileInformation.FileName, receivedFileInformation.AETitle), this.ProcessFileImportResults);
 		}
@@ -200,7 +194,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 		}
 
-		internal void Cancel(CancelProgressItemInformation information)
+		public void Cancel(CancelProgressItemInformation information)
 		{
 			if (information.ProgressItemIdentifiers == null)
 				return;
@@ -222,7 +216,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 		}
 
-		internal void ClearInactive()
+		public void ClearInactive()
 		{
 			//not supported.
 		}

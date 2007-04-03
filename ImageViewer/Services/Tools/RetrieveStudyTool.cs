@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, SR.ExceptionFailedToRetrieveStudy, this.Context.DesktopWindow);
+				ExceptionHandler.Report(e, SR.MessageFailedToRetrieveStudy, this.Context.DesktopWindow);
 			}
 		}
 

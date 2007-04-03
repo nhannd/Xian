@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, SR.ExceptionFailedToSendStudy, this.Context.DesktopWindow);
+				ExceptionHandler.Report(e, SR.MessageFailedToSendStudy, this.Context.DesktopWindow);
 			}
         }
 

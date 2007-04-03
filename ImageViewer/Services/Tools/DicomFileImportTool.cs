@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			catch (Exception e)
 			{
 				client.Abort();
-				ExceptionHandler.Report(e, SR.ExceptionFailedToImportSelection, this.Context.DesktopWindow);
+				ExceptionHandler.Report(e, SR.MessageFailedToImportSelection, this.Context.DesktopWindow);
 			}
 		}
 	}

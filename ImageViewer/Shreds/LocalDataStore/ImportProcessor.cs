@@ -9,7 +9,7 @@ using System.IO;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	internal class ImportQueue
+	internal class ImportProcessor
 	{
 		private class FileImportInformation : DicomFileImporter.FileImportInformation
 		{
@@ -74,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		private object _importJobsLock = new object();
 		private List<FileImportJobInformation> _importJobs;
 
-		public ImportQueue()
+		public ImportProcessor()
 		{
 			_importJobs = new List<FileImportJobInformation>();
 		}
@@ -103,6 +103,18 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					++jobInformation.ProgressItem.NumberOfFailedImports;
 					Platform.Log(results.Error);
+
+					if (jobInformation.ProgressItem.TotalFilesToImport == (jobInformation.ProgressItem.NumberOfFilesImported + jobInformation.ProgressItem.NumberOfFailedImports))
+					{
+						jobInformation.ProgressItem.StatusMessage = SR.MessageWaitingForFilesToBecomeAvailable;
+						jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+					}
+
+					if (jobInformation.ProgressItem.TotalFilesToImport == (jobInformation.ProgressItem.NumberOfFilesCommittedToDataStore + jobInformation.ProgressItem.NumberOfFailedImports))
+					{
+						jobInformation.ProgressItem.StatusMessage = SR.MessageComplete;
+						jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+					}
 
 					updateProgress = true;
 					
@@ -187,121 +199,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 		}
 
-		public Guid Import(FileImportRequest request)
-		{
-			ValidateRequest(request);
-
-			ImportProgressItem progressItem = new ImportProgressItem();
-
-			progressItem.Identifier = Guid.NewGuid();
-			progressItem.AllowedCancellationOperations = CancellationFlags.Cancel;
-			progressItem.StartTime = DateTime.Now;
-			progressItem.LastActive = progressItem.StartTime;
-
-			progressItem.NumberOfFailedImports = 0;
-			progressItem.NumberOfFilesImported = 0;
-			progressItem.TotalFilesToImport = 0;
-			progressItem.StatusMessage = SR.MessagePending;
-
-			FileImportJobInformation jobInformation = new FileImportJobInformation(progressItem, request.FileImportBehaviour, request.BadFileBehaviour);
-
-			lock (_importJobsLock)
-			{
-				_importJobs.Add(jobInformation);
-			}
-
-			lock(jobInformation)
-			{
-				LocalDataStoreActivityPublisher.Instance.ImportProgressChanged(progressItem.Clone());
-			}
-
-			WaitCallback enumerateFilesToImport = delegate(object nothing)
-			{
-				List<string> extensions = new List<string>();
-				if (request.FileExtensions != null)
-				{
-					foreach (string extension in request.FileExtensions)
-					{
-						if (String.IsNullOrEmpty(extension))
-							continue;
-
-						string addExtension = extension;
-						if (addExtension[0] != '.')
-							addExtension = String.Format(".{0}", extension);
-
-						extensions.Add(extension);
-					}
-				}
-
-				lock (jobInformation)
-				{
-					LocalDataStoreActivityPublisher.Instance.ImportProgressChanged(progressItem.Clone());
-				}
-
-				int numberOfPaths = 0;
-				string firstPath = "";
-				foreach (string path in request.FilePaths)
-				{
-					if (firstPath == "")
-						firstPath = path;
-
-					++numberOfPaths;
-
-					FileProcessor.Process(path, "", 
-						delegate(string file)
-						{
-							bool enqueue = false;
-							foreach(string extension in extensions)
-							{
-								if (file.EndsWith(extension))
-								{	
-									enqueue = true;
-									break;
-								}
-							}
-							
-							enqueue = enqueue || extensions.Count == 0;
-
-							if (enqueue)
-							{
-								lock (jobInformation)
-								{
-									if (jobInformation.ProgressItem.Cancelled)
-										return;
-
-									jobInformation.ProgressItem.StatusMessage = String.Format(SR.FormatAddingFile, file);
-
-									jobInformation.Add(file);
-									++progressItem.TotalFilesToImport;
-									LocalDataStoreActivityPublisher.Instance.ImportProgressChanged(progressItem.Clone());
-								}
-							}
-							
-						}, request.Recursive);
-				}
-
-				if (numberOfPaths > 1)
-				{
-					progressItem.Description = String.Format(SR.FormatMultipleFilesDescription, firstPath);
-				}
-				else
-				{
-					progressItem.Description = firstPath;
-				}
-
-				AddNextFileToImportQueue(jobInformation);
-
-				lock (jobInformation)
-				{
-					LocalDataStoreActivityPublisher.Instance.ImportProgressChanged(progressItem.Clone());
-				}
-			};
-
-			ThreadPool.QueueUserWorkItem(enumerateFilesToImport);
-
-			return progressItem.Identifier;
-		}
-
 		private void CancelJob(FileImportJobInformation jobInformation)
 		{
 			lock (jobInformation)
@@ -338,6 +235,111 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 		}
 
+		public Guid Import(FileImportRequest request)
+		{
+			ValidateRequest(request);
+
+			List<string> filePaths = new List<string>(request.FilePaths);
+
+			ImportProgressItem progressItem = new ImportProgressItem();
+
+			progressItem.Identifier = Guid.NewGuid();
+			progressItem.AllowedCancellationOperations = CancellationFlags.Cancel;
+			progressItem.StartTime = DateTime.Now;
+			progressItem.LastActive = progressItem.StartTime;
+
+			progressItem.NumberOfFailedImports = 0;
+			progressItem.NumberOfFilesImported = 0;
+			progressItem.TotalFilesToImport = 0;
+			progressItem.StatusMessage = SR.MessagePending;
+
+			FileImportJobInformation jobInformation = new FileImportJobInformation(progressItem, request.FileImportBehaviour, request.BadFileBehaviour);
+
+			lock (_importJobsLock)
+			{
+				_importJobs.Add(jobInformation);
+			}
+
+			lock (jobInformation)
+			{
+				if (filePaths.Count > 1)
+				{
+					progressItem.Description = String.Format(SR.FormatMultipleFilesDescription, filePaths[0]);
+				}
+				else
+				{
+					progressItem.Description = filePaths[0];
+				}
+
+				LocalDataStoreActivityPublisher.Instance.ImportProgressChanged(progressItem.Clone());
+			}
+
+			WaitCallback enumerateFilesToImport = delegate(object nothing)
+			{
+				List<string> extensions = new List<string>();
+				if (request.FileExtensions != null)
+				{
+					foreach (string extension in request.FileExtensions)
+					{
+						if (String.IsNullOrEmpty(extension))
+							continue;
+
+						string addExtension = extension;
+						if (addExtension[0] != '.')
+							addExtension = String.Format(".{0}", extension);
+
+						extensions.Add(extension);
+					}
+				}
+
+				foreach (string path in filePaths)
+				{
+					FileProcessor.Process(path, "",
+						delegate(string file)
+						{
+							bool enqueue = false;
+							foreach (string extension in extensions)
+							{
+								if (file.EndsWith(extension))
+								{
+									enqueue = true;
+									break;
+								}
+							}
+
+							enqueue = enqueue || extensions.Count == 0;
+
+							if (enqueue)
+							{
+								lock (jobInformation)
+								{
+									if (jobInformation.ProgressItem.Cancelled)
+										return;
+
+									jobInformation.ProgressItem.StatusMessage = String.Format(SR.FormatEnumeratingFile, file);
+
+									jobInformation.Add(file);
+									++progressItem.TotalFilesToImport;
+									LocalDataStoreActivityPublisher.Instance.ImportProgressChanged(progressItem.Clone());
+								}
+							}
+
+						}, request.Recursive);
+				}
+
+				AddNextFileToImportQueue(jobInformation);
+
+				lock (jobInformation)
+				{
+					LocalDataStoreActivityPublisher.Instance.ImportProgressChanged(progressItem.Clone());
+				}
+			};
+
+			ThreadPool.QueueUserWorkItem(enumerateFilesToImport);
+
+			return progressItem.Identifier;
+		}
+		
 		public void Start()
 		{
 			//nothing to do.
