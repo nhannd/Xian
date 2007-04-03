@@ -344,7 +344,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					modalityFilter = modalityFilter.Remove(modalityFilter.Length - 1);
 			}
 
-			QueryParameters queryParams = new QueryParameters();
+            bool isQueryingMyDataStore = (_selectedServerGroup.Servers.Count == 1 && _selectedServerGroup.Servers[0].Name == SR.TitleMyDataStore);
+            bool isOpenSearchQuery =
+                (patientsName.Length == 0
+                && patientId.Length == 0
+                && accessionNumber.Length == 0
+                && studyDescription.Length == 0
+                && modalityFilter.Length == 0
+                && dateRange.Length == 0);
+
+            if (isQueryingMyDataStore == false && isOpenSearchQuery)
+            {
+                if (Platform.ShowMessageBox(SR.MessageConfirmContinueOpenSearch, MessageBoxActions.YesNo) == DialogBoxAction.No)
+                    return;
+            }
+
+            QueryParameters queryParams = new QueryParameters();
 			queryParams.Add("PatientsName", patientsName);
 			queryParams.Add("PatientId", patientId);
 			queryParams.Add("AccessionNumber", accessionNumber);
@@ -352,7 +367,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			queryParams.Add("ModalitiesInStudy", modalityFilter);
 			queryParams.Add("StudyDate", dateRange);
 
-			StudyItemList aggregateStudyItemList = new StudyItemList();
+            StudyItemList aggregateStudyItemList = new StudyItemList();
 
 			try
 			{

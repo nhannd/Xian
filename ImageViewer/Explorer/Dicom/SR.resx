@@ -186,6 +186,10 @@ Location: {4}</value>
   <data name="MessageCEchoVerificationSingleServerResultSuccess" xml:space="preserve">
     <value>    {0}: successful    </value>
   </data>
+  <data name="MessageConfirmContinueOpenSearch" xml:space="preserve">
+    <value>This query could take a long time to complete because you have not specified any filters.
+Are you sure you want to continue?</value>
+  </data>
   <data name="MessageConfirmDeleteServer" xml:space="preserve">
     <value>Are you sure you want to delete the selected server?</value>
   </data>

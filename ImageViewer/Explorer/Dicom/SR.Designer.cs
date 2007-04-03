@@ -256,6 +256,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This query could take a long time to complete because you have not specified any filters.
+        ///Are you sure you want to continue?.
+        /// </summary>
+        internal static string MessageConfirmContinueOpenSearch {
+            get {
+                return ResourceManager.GetString("MessageConfirmContinueOpenSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete the selected server?.
         /// </summary>
         internal static string MessageConfirmDeleteServer {
