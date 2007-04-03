@@ -61,8 +61,8 @@ namespace ClearCanvas.ImageViewer
 			// we're good.
 			if (_gcCycles > 0)
 			{
-				GC.Collect();
 				_gcCycles--;
+				GC.Collect();
 			}
 		}
 
