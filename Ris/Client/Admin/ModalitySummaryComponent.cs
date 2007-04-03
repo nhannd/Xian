@@ -12,11 +12,14 @@ using ClearCanvas.Enterprise;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Modality")]
     [ClickHandler("launch", "Launch")]
+    [ActionPermission("launch", AuthorityTokens.ModalityAdmin)]
+
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ModalitySummaryTool : Tool<IDesktopToolContext>
     {

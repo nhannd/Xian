@@ -10,6 +10,9 @@ namespace ClearCanvas.Ris.Application.Common
         [AuthorityToken(Description="Allow administration of patient profiles")]
         public const string PatientProfileAdmin = "PatientProfileAdmin";
 
+        [AuthorityToken(Description = "Allow reconciliation of patient profiles")]
+        public const string ReconcilePatients = "ReconcilePatients";
+
         [AuthorityToken(Description = "Allow administration of diagnostic services")]
         public const string DiagnosticServiceAdmin = "DiagnosticServiceAdmin";
 

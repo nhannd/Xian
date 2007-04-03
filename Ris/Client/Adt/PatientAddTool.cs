@@ -16,6 +16,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [Tooltip("apply", "New Patient")]
     [IconSet("apply", IconScheme.Colour, "Icons.PatientAddToolSmall.png", "Icons.PatientAddToolMedium.png", "Icons.PatientAddToolLarge.png")]
     [ClickHandler("apply", "Apply")]
+    [ActionPermission("apply", AuthorityTokens.PatientProfileAdmin)]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
     public class PatientAddTool : Tool<IDesktopToolContext>

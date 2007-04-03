@@ -12,11 +12,14 @@ using ClearCanvas.Enterprise;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Facilities")]
     [ClickHandler("launch", "Launch")]
+    [ActionPermission("launch", AuthorityTokens.FacilityAdmin)]
+
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class FacilitySummaryTool : Tool<IDesktopToolContext>
     {

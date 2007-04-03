@@ -9,11 +9,14 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Tools/Import Diagnostic Services")]
     [ClickHandler("launch", "Launch")]
+    [ActionPermission("launch", AuthorityTokens.DiagnosticServiceAdmin)]
+
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ImportDiagnosticServicesTool : Tool<IDesktopToolContext>
     {

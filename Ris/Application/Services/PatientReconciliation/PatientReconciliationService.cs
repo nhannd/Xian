@@ -9,6 +9,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common;
+using System.Security.Permissions;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
 {
@@ -83,6 +85,7 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.ReconcilePatients)]
         public ReconcilePatientsResponse ReconcilePatients(ReconcilePatientsRequest request)
         {
             List<Patient> patients = CollectionUtils.Map<EntityRef, Patient, List<Patient>>(
@@ -95,6 +98,7 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
             if (patients.Count < 2)
             {
                 // TODO some exception
+                throw new Exception();
             }
 
             // reconcile all patients

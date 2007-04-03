@@ -10,6 +10,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -19,12 +20,14 @@ namespace ClearCanvas.Ris.Client.Adt
     [EnabledStateObserver("edit1", "Enabled", "EnabledChanged")]
     [Tooltip("edit1", "Edit Patient Information")]
     [IconSet("edit1", IconScheme.Colour, "Icons.PatientEditToolMedium.png", "Icons.PatientEditToolMedium.png", "Icons.PatientEditToolMedium.png")]
+    [ActionPermission("edit1", AuthorityTokens.PatientProfileAdmin)]
 
     [ButtonAction("edit3", "folderexplorer-items-toolbar/Edit")]
     [ClickHandler("edit3", "Apply")]
     [EnabledStateObserver("edit3", "Enabled", "EnabledChanged")]
     [Tooltip("edit3", "Edit Patient Information")]
     [IconSet("edit3", IconScheme.Colour, "Icons.PatientEditToolMedium.png", "Icons.PatientEditToolMedium.png", "Icons.PatientEditToolMedium.png")]
+    [ActionPermission("edit3", AuthorityTokens.PatientProfileAdmin)]
 
     [ExtensionOf(typeof(PatientOverviewToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
