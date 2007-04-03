@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<groups>
+  <group name="Administrators">
+    <token name="PatientProfileAdmin"/>
+    <token name="DiagnosticServiceAdmin"/>
+    <token name="FacilityAdmin"/>
+    <token name="HL7Admin"/>
+    <token name="LocationAdmin"/>
+    <token name="ModalityAdmin"/>
+    <token name="NoteAdmin"/>
+    <token name="PractitionerAdmin"/>
+    <token name="StaffAdmin"/>
+    <token name="VisitAdmin"/>
+  </group>
+</groups>

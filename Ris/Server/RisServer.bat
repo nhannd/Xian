@@ -5,6 +5,13 @@ echo Executing RIS post-build step
 :: Copy config files
 copy "..\..\..\..\Ris\Client\Adt\actionmodels.xml "."
 
+:: Copy setup files
+copy "..\..\..\..\..\Ris\Server\setup\ddl-writer.bat" .
+copy "..\..\..\..\..\Ris\Server\setup\import-authority-tokens.bat" .
+copy "..\..\..\..\..\Ris\Server\setup\import-authority-groups.bat" .
+copy "..\..\..\..\..\Ris\Server\setup\default-authority-groups.xml" .
+
+
 
 :: Copy Enterprise	
 copy "..\..\..\..\..\Enterprise\Common\bin\%1\ClearCanvas.Enterprise.Common.dll" .\plugins

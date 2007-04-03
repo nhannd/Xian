@@ -9,7 +9,16 @@ namespace ClearCanvas.Ris.Server.Executable
     {
         static void Main(string[] args)
         {
-            Platform.StartApp(new ClassNameExtensionFilter(args[0]), args);
+            if (args.Length > 0)
+            {
+                string[] args1 = new string[args.Length - 1];
+                Array.Copy(args, 1, args1, 0, args.Length - 1);
+                Platform.StartApp(new ClassNameExtensionFilter(args[0]), args1);
+            }
+            else
+            {
+                Platform.StartApp();
+            }
         }
     }
 }

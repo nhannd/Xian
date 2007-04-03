@@ -90,6 +90,12 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="RisServer.bat" />
+    <None Include="setup\ddl-writer.bat" />
+    <None Include="setup\import-authority-groups.bat" />
+    <None Include="setup\import-authority-tokens.bat" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="setup\default-authority-groups.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
