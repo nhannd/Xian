@@ -207,7 +207,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			column = new TableColumn<ImportProgressItem, string>(
 					SR.TitleDescription,
 					delegate(ImportProgressItem item) { return FormatString(item.Description); },
-					1f);
+					2f);
 
 			_importTable.Columns.Add(column);
 
@@ -220,14 +220,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 						return item.StartTime.ToString(Format.TimeFormat); 
 					},
-					1f);
+					0.5f);
 
 			_importTable.Columns.Add(column);
 
 			column = new TableColumn<ImportProgressItem, string>(
 					SR.TitleStatus,
 					delegate(ImportProgressItem item) { return FormatString(item.StatusMessage); },
-					1f);
+					2f);
 
 			_importTable.Columns.Add(column);
 

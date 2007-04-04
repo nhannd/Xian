@@ -11,150 +11,156 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
-	internal class SentFileProcessor
+	internal sealed partial class LocalDataStoreService
 	{
-		private SimpleThreadPool _sentFileInformationProcessor;
-		private List<SendProgressItem> _sendProgressItems;
-
-		public SentFileProcessor()
+		private class SentFileProcessor
 		{
-			_sentFileInformationProcessor = new SimpleThreadPool(1);
-			_sendProgressItems = new List<SendProgressItem>();
-		}
+			private LocalDataStoreService _parent;
+			private SimpleThreadPool _sentFileInformationProcessor;
+			private List<SendProgressItem> _sendProgressItems;
 
-		private StudyInformation GetStudyInformation(string sopInstanceFilename)
-		{
-			using (DcmFileFormat file = new DcmFileFormat())
+			public SentFileProcessor(LocalDataStoreService parent)
 			{
-				OFCondition condition = file.loadFile(sopInstanceFilename);
+				_sentFileInformationProcessor = new SimpleThreadPool(1);
+				_sendProgressItems = new List<SendProgressItem>();
 
-				if (!condition.good())
-					throw new Exception(String.Format(SR.FormatUnableToParseFile, sopInstanceFilename));
-
-				DcmMetaInfo metaInfo = file.getMetaInfo();
-				DcmDataset dataset = file.getDataset();
-
-				StudyInformation information = new StudyInformation();
-				StringBuilder parser = new StringBuilder(1024);
-
-				dataset.findAndGetOFString(Dcm.PatientId, parser);
-				information.PatientId = parser.ToString();
-
-				dataset.findAndGetOFString(Dcm.PatientsName, parser);
-				information.PatientsName = parser.ToString();
-
-				dataset.findAndGetOFString(Dcm.StudyDate, parser);
-				DateTime studyDate;
-				DateParser.Parse(parser.ToString(), out studyDate);
-				information.StudyDate = studyDate;
-
-				dataset.findAndGetOFString(Dcm.StudyDescription, parser);
-				information.StudyDescription = parser.ToString();
-
-				dataset.findAndGetOFString(Dcm.StudyInstanceUID, parser);
-				information.StudyInstanceUid = parser.ToString();
-
-				return information;
+				_parent = parent;
+				_parent.StartEvent += new EventHandler(OnStart);
+				_parent.StopEvent += new EventHandler(OnStop);
+				_parent.CancelEvent += new EventHandler<ItemEventArgs<CancelProgressItemInformation>>(OnCancel);
+				_parent.RepublishEvent += new EventHandler(OnRepublish);
 			}
-		}
 
-		public void ProcessSentFileInformation(StoreScuSentFileInformation sentFileInformation)
-		{
-			//always leave the main thread free to accept incoming requests.
-			_sentFileInformationProcessor.AddEnd
-				(
-					delegate()
-					{
-						try
+			private void OnStart(object sender, EventArgs e)
+			{
+				_sentFileInformationProcessor.Start();
+			}
+			private void OnStop(object sender, EventArgs e)
+			{
+				_sentFileInformationProcessor.Stop();
+			}
+
+			private void OnRepublish(object sender, EventArgs e)
+			{
+				//use the same thread for everything, then no synclock is required on the progress items.
+				_sentFileInformationProcessor.Enqueue
+					(
+						delegate()
 						{
-							StudyInformation studyInformation = GetStudyInformation(sentFileInformation.FileName);
+							foreach (SendProgressItem item in _sendProgressItems)
+								LocalDataStoreActivityPublisher.Instance.SendProgressChanged(item);
+						}
+					);
+			}
 
-							//no synclock required, since only the single thread pool thread is accessing the items.
-							SendProgressItem progressItem = _sendProgressItems.Find(delegate(SendProgressItem testItem)
+			private void OnCancel(object sender, ItemEventArgs<CancelProgressItemInformation> e)
+			{
+				CancelProgressItemInformation information = e.Item;
+
+				if (information.ProgressItemIdentifiers == null)
+					return;
+
+				if (information.CancellationFlags != CancellationFlags.Clear)
+					return;
+
+				_sentFileInformationProcessor.Enqueue
+					(
+						delegate()
+						{
+							foreach (Guid identifier in information.ProgressItemIdentifiers)
+							{
+								SendProgressItem item = _sendProgressItems.Find(delegate(SendProgressItem test) { return test.Identifier.Equals(identifier); });
+								if (item != null)
 								{
-									return testItem.ToAETitle == sentFileInformation.ToAETitle &&
-										testItem.StudyInformation.StudyInstanceUid == studyInformation.StudyInstanceUid;
-								});
-
-							if (progressItem == null)
-							{
-								progressItem = new SendProgressItem();
-								progressItem.Identifier = Guid.NewGuid();
-								progressItem.StartTime = DateTime.Now;
-								progressItem.LastActive = progressItem.StartTime;
-								progressItem.ToAETitle = sentFileInformation.ToAETitle;
-								progressItem.StudyInformation = studyInformation;
-								progressItem.NumberOfFilesExported = 0;
-								progressItem.AllowedCancellationOperations = CancellationFlags.Clear;
-
-								_sendProgressItems.Add(progressItem);
-							}
-
-							progressItem.LastActive = DateTime.Now;
-							++progressItem.NumberOfFilesExported;
-
-							LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem);
-						}
-						catch (Exception e)
-						{
-							//!!Report generic error to the subscribers.!!
-							Platform.Log(e);
-						}
-					}
-				);
-		}
-		
-		public void Start()
-		{
-			_sentFileInformationProcessor.Start();
-		}
-
-		public void Stop()
-		{
-			_sentFileInformationProcessor.Stop();
-		}
-
-		public void RepublishAll()
-		{
-			//use the same thread for everything, then no synclock is required on the progress items.
-			_sentFileInformationProcessor.AddFront
-				(
-					delegate()
-					{
-						foreach (SendProgressItem item in _sendProgressItems)
-							LocalDataStoreActivityPublisher.Instance.SendProgressChanged(item);
-					}
-				);
-		}
-
-		public void Cancel(CancelProgressItemInformation information)
-		{
-			if (information.ProgressItemIdentifiers == null)
-				return;
-			
-			if (information.CancellationFlags != CancellationFlags.Clear)
-				return;
-
-			_sentFileInformationProcessor.AddFront
-				(
-					delegate()
-					{
-						foreach (Guid identifier in information.ProgressItemIdentifiers)
-						{
-							SendProgressItem item = _sendProgressItems.Find(delegate(SendProgressItem test) { return test.Identifier.Equals(identifier); });
-							if (item != null)
-							{
-								item.Removed = true;
-								LocalDataStoreActivityPublisher.Instance.SendProgressChanged(item.Clone());
+									item.Removed = true;
+									LocalDataStoreActivityPublisher.Instance.SendProgressChanged(item.Clone());
+								}
 							}
 						}
-					}
-				);
-		}
+					);
+			}
 
-		public void ClearInactive()
-		{
-			//not supported.
+			private StudyInformation GetStudyInformation(string sopInstanceFilename)
+			{
+				using (DcmFileFormat file = new DcmFileFormat())
+				{
+					OFCondition condition = file.loadFile(sopInstanceFilename);
+
+					if (!condition.good())
+						throw new Exception(String.Format(SR.FormatUnableToParseFile, sopInstanceFilename));
+
+					DcmMetaInfo metaInfo = file.getMetaInfo();
+					DcmDataset dataset = file.getDataset();
+
+					StudyInformation information = new StudyInformation();
+					StringBuilder parser = new StringBuilder(1024);
+
+					dataset.findAndGetOFString(Dcm.PatientId, parser);
+					information.PatientId = parser.ToString();
+
+					dataset.findAndGetOFString(Dcm.PatientsName, parser);
+					information.PatientsName = parser.ToString();
+
+					dataset.findAndGetOFString(Dcm.StudyDate, parser);
+					DateTime studyDate;
+					DateParser.Parse(parser.ToString(), out studyDate);
+					information.StudyDate = studyDate;
+
+					dataset.findAndGetOFString(Dcm.StudyDescription, parser);
+					information.StudyDescription = parser.ToString();
+
+					dataset.findAndGetOFString(Dcm.StudyInstanceUID, parser);
+					information.StudyInstanceUid = parser.ToString();
+
+					return information;
+				}
+			}
+
+			public void ProcessSentFileInformation(StoreScuSentFileInformation sentFileInformation)
+			{
+				//always leave the main thread free to accept incoming requests.
+				_sentFileInformationProcessor.Enqueue
+					(
+						delegate()
+						{
+							try
+							{
+								StudyInformation studyInformation = GetStudyInformation(sentFileInformation.FileName);
+
+								//no synclock required, since only the single thread pool thread is accessing the items.
+								SendProgressItem progressItem = _sendProgressItems.Find(delegate(SendProgressItem testItem)
+									{
+										return testItem.ToAETitle == sentFileInformation.ToAETitle &&
+											testItem.StudyInformation.StudyInstanceUid == studyInformation.StudyInstanceUid;
+									});
+
+								if (progressItem == null)
+								{
+									progressItem = new SendProgressItem();
+									progressItem.Identifier = Guid.NewGuid();
+									progressItem.StartTime = DateTime.Now;
+									progressItem.LastActive = progressItem.StartTime;
+									progressItem.ToAETitle = sentFileInformation.ToAETitle;
+									progressItem.StudyInformation = studyInformation;
+									progressItem.NumberOfFilesExported = 0;
+									progressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+
+									_sendProgressItems.Add(progressItem);
+								}
+
+								progressItem.LastActive = DateTime.Now;
+								++progressItem.NumberOfFilesExported;
+
+								LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem);
+							}
+							catch (Exception e)
+							{
+								//!!Report generic error to the subscribers.!!
+								Platform.Log(e);
+							}
+						}
+					);
+			}
 		}
 	}
 }

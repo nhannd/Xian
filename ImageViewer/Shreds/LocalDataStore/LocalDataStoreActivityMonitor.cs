@@ -59,8 +59,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		public void Subscribe(string eventOperation)
 		{
 			_subscriptionManager.Subscribe(eventOperation);
-
-			LocalDataStoreService.Instance.RepublishAll();
 		}
 
 		public void Unsubscribe(string eventOperation)

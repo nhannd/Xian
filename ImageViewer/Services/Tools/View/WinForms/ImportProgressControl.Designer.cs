@@ -161,7 +161,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this.Controls.Add(this._processedCount);
 			this.Controls.Add(this._statusLabel);
 			this.Name = "ImportProgressControl";
-			this.Size = new System.Drawing.Size(385, 158);
+			this.Size = new System.Drawing.Size(385, 197);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

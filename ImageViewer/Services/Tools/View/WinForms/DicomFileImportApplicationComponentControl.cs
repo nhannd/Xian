@@ -35,8 +35,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			BindingSource bindingSource = new BindingSource();
 			bindingSource.DataSource = _component;
 
-			_titleBar.DataBindings.Add("Text", bindingSource, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
-
 			_importProgressControl.DataBindings.Add("StatusMessage", bindingSource, "SelectedStatusMessage", true, DataSourceUpdateMode.OnPropertyChanged);
 			_importProgressControl.DataBindings.Add("TotalToProcess", bindingSource, "SelectedTotalToProcess", true, DataSourceUpdateMode.OnPropertyChanged);
 			_importProgressControl.DataBindings.Add("TotalProcessed", bindingSource, "SelectedTotalProcessed", true, DataSourceUpdateMode.OnPropertyChanged);

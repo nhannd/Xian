@@ -196,7 +196,7 @@
     <value>Description</value>
   </data>
   <data name="TitleFrom" xml:space="preserve">
-    <value>TitleFrom</value>
+    <value>From</value>
   </data>
   <data name="TitleImportActivity" xml:space="preserve">
     <value>Import Activity</value>

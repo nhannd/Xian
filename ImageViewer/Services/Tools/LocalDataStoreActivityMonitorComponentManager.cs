@@ -7,8 +7,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	public class LocalDataStoreActivityMonitorComponentManager
 	{
-		private static IWorkspace _importComponentWorkspace;
-		private static IWorkspace _reindexComponentWorkspace;
+		private static IShelf _importComponentWorkspace;
+		private static IShelf _reindexComponentWorkspace;
 		private static IWorkspace _dicomSendReceiveActivityComponentWorkspace;
 
 		private LocalDataStoreActivityMonitorComponentManager()
@@ -50,15 +50,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		public static void ShowImportComponent(IDesktopWindow desktopWindow)
 		{
 			if (_importComponentWorkspace != null)
-			{
-				_importComponentWorkspace.Activate();
 				return;
-			}
 
 			try
 			{
 				DicomFileImportApplicationComponent component = new DicomFileImportApplicationComponent();
-				_importComponentWorkspace = ApplicationComponent.LaunchAsWorkspace(desktopWindow, component, SR.TitleImportActivity,
+				_importComponentWorkspace = ApplicationComponent.LaunchAsShelf(desktopWindow, component, component.Title, ShelfDisplayHint.DockBottom,
 					delegate(IApplicationComponent closingComponent)
 					{
 						_importComponentWorkspace = null;
@@ -74,15 +71,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		public static void ShowReindexComponent(IDesktopWindow desktopWindow)
 		{
 			if (_reindexComponentWorkspace != null)
-			{
-				_reindexComponentWorkspace.Activate();
 				return;
-			}
 
 			try
 			{
 				LocalDataStoreReindexApplicationComponent component = new LocalDataStoreReindexApplicationComponent();
-				_reindexComponentWorkspace = ApplicationComponent.LaunchAsWorkspace(desktopWindow, component, SR.TitleReindexLocalDataStore,
+				_reindexComponentWorkspace = ApplicationComponent.LaunchAsShelf(desktopWindow, component, component.Title, ShelfDisplayHint.DockBottom,
 					delegate(IApplicationComponent closingComponent)
 					{
 						_reindexComponentWorkspace = null;

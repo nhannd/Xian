@@ -295,7 +295,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to TitleFrom.
+        ///   Looks up a localized string similar to From.
         /// </summary>
         internal static string TitleFrom {
             get {

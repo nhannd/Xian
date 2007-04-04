@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 using ClearCanvas.Common;
-using System.Threading;
 
 namespace ClearCanvas.Common.Utilities
 {
@@ -18,11 +17,7 @@ namespace ClearCanvas.Common.Utilities
     /// </summary>
     public class InterthreadMarshaler : IDisposable
     {
-		private object _syncLock = new object();
-		private EventWaitHandle _itemsRemainingSignal;
-		private volatile bool _quit;
-		private Queue<InvokeDelegate> _queue;
-
+        private BlockingQueue<InvokeDelegate> _queue;
         private BackgroundWorker _queueProcessor;
 
         /// <summary>
@@ -30,10 +25,7 @@ namespace ClearCanvas.Common.Utilities
         /// </summary>
         public InterthreadMarshaler()
         {
-			_quit = false;
-			_itemsRemainingSignal = new EventWaitHandle(false, EventResetMode.ManualReset);
-			_queue = new Queue<InvokeDelegate>();
-
+            _queue = new BlockingQueue<InvokeDelegate>();
             _queueProcessor = new BackgroundWorker();
             _queueProcessor.WorkerReportsProgress = true;
             _queueProcessor.DoWork += new DoWorkEventHandler(ProcessQueueAsync);
@@ -49,38 +41,8 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="del"></param>
         public void QueueInvoke(InvokeDelegate del)
         {
-			lock (_syncLock)
-			{
-				_queue.Enqueue(del);
-				_itemsRemainingSignal.Set();
-			}
+            _queue.Enqueue(del);
         }
-
-		private InvokeDelegate Next()
-		{
-			lock (_syncLock)
-			{
-				if (_queue.Count == 0)
-				{
-					//only reset this if a cancel operation is not pending.
-					if (!_quit)
-						_itemsRemainingSignal.Reset();
-
-					return null;
-				}
-
-				return _queue.Dequeue();
-			}
-		}
-
-		private void Cancel()
-		{
-			lock (_syncLock)
-			{
-				_quit = true;
-				_itemsRemainingSignal.Set(); //set this so the background worker can quit.
-			}
-		}
 
         /// <summary>
         /// Handles progress events from the queue processing thread
@@ -102,18 +64,18 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="e"></param>
         private void ProcessQueueAsync(object sender, DoWorkEventArgs e)
         {
-			while (true)
+            // this method is running on a background thread
+            // consume each object on the queue, and marshall it over to the main thread
+            // as a "progress" event
+            // note that this is effectively an infinite loop that terminates
+            // only when this object is Disposed
+            foreach (InvokeDelegate del in _queue)
             {
-				_itemsRemainingSignal.WaitOne();
-				if (_quit)
+				if (del == null)
 					break;
 
-				InvokeDelegate del = Next();
-				if (del == null)
-					continue;
-
-				_queueProcessor.ReportProgress(0, del);
-			}
+                _queueProcessor.ReportProgress(0, del);
+            }
         }
 
         /// <summary>
@@ -123,11 +85,15 @@ namespace ClearCanvas.Common.Utilities
         {
             if (disposing)
             {
-                if (_queueProcessor != null)
+				if (_queue != null)
+				{
+					_queue.Active = false;
+					_queue = null;
+				}
+				
+				if (_queueProcessor != null)
                 {
-					this.Cancel();
-
-					_queueProcessor.Dispose();
+                    _queueProcessor.Dispose();
                     _queueProcessor = null;
                 }
             }

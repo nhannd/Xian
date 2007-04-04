@@ -135,6 +135,9 @@
   <data name="ExceptionCancellationOfAtLeastOneItemFailed" xml:space="preserve">
     <value>Cancellation of at least one of the specified items has failed.</value>
   </data>
+  <data name="ExceptionCannotStartNewImportJobWhileReindexing" xml:space="preserve">
+    <value>Cannot start a new import operation while reindex is still running.</value>
+  </data>
   <data name="ExceptionErrorAttemptingToRefresh" xml:space="preserve">
     <value>An error occurred while attempting to refresh the Local Data Store activities.</value>
   </data>
@@ -164,6 +167,9 @@
   </data>
   <data name="ExceptionImporterNotStarted" xml:space="preserve">
     <value>The file importer is not running.</value>
+  </data>
+  <data name="ExceptionNamedThreadPoolDoesNotExist" xml:space="preserve">
+    <value>The specified thread pool '{0}' does not exist.</value>
   </data>
   <data name="ExceptionNoFilesHaveBeenSpecifiedToImport" xml:space="preserve">
     <value>No files have been specified to import.</value>
@@ -195,11 +201,11 @@
   <data name="FormatFileHasBeenMoved" xml:space="preserve">
     <value>; the file has been moved to {0}</value>
   </data>
-  <data name="FormatImportingFile" xml:space="preserve">
-    <value>Importing: {0}</value>
-  </data>
   <data name="FormatMultipleFilesDescription" xml:space="preserve">
     <value>+ {0}</value>
+  </data>
+  <data name="FormatProcessingFile" xml:space="preserve">
+    <value>Processing: {0}</value>
   </data>
   <data name="FormatTooltipServerDetails" xml:space="preserve">
     <value>Dicom Server Shred (Name: {0} AE: {1} Host: {2} Port: {3} Location: {4})</value>
@@ -227,6 +233,15 @@
   </data>
   <data name="MessageFileHasBeenDeleted" xml:space="preserve">
     <value>; the file has been deleted</value>
+  </data>
+  <data name="MessageImportPausedForReindex" xml:space="preserve">
+    <value>Import has been paused waiting for reindex to complete.</value>
+  </data>
+  <data name="MessageInactive" xml:space="preserve">
+    <value>Inactive.</value>
+  </data>
+  <data name="MessageNoFilesToImport" xml:space="preserve">
+    <value>Complete.  No files could be found to import.</value>
   </data>
   <data name="MessagePending" xml:space="preserve">
     <value>Pending ...</value>

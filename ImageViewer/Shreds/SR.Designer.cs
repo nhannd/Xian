@@ -115,6 +115,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot start a new import operation while reindex is still running..
+        /// </summary>
+        internal static string ExceptionCannotStartNewImportJobWhileReindexing {
+            get {
+                return ResourceManager.GetString("ExceptionCannotStartNewImportJobWhileReindexing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occurred while attempting to refresh the Local Data Store activities..
         /// </summary>
         internal static string ExceptionErrorAttemptingToRefresh {
@@ -201,6 +210,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         internal static string ExceptionImporterNotStarted {
             get {
                 return ResourceManager.GetString("ExceptionImporterNotStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified thread pool &apos;{0}&apos; does not exist..
+        /// </summary>
+        internal static string ExceptionNamedThreadPoolDoesNotExist {
+            get {
+                return ResourceManager.GetString("ExceptionNamedThreadPoolDoesNotExist", resourceCulture);
             }
         }
         
@@ -295,20 +313,20 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Importing: {0}.
-        /// </summary>
-        internal static string FormatImportingFile {
-            get {
-                return ResourceManager.GetString("FormatImportingFile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to + {0}.
         /// </summary>
         internal static string FormatMultipleFilesDescription {
             get {
                 return ResourceManager.GetString("FormatMultipleFilesDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Processing: {0}.
+        /// </summary>
+        internal static string FormatProcessingFile {
+            get {
+                return ResourceManager.GetString("FormatProcessingFile", resourceCulture);
             }
         }
         
@@ -390,6 +408,33 @@ namespace ClearCanvas.ImageViewer.Shreds {
         internal static string MessageFileHasBeenDeleted {
             get {
                 return ResourceManager.GetString("MessageFileHasBeenDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import has been paused waiting for reindex to complete..
+        /// </summary>
+        internal static string MessageImportPausedForReindex {
+            get {
+                return ResourceManager.GetString("MessageImportPausedForReindex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Inactive..
+        /// </summary>
+        internal static string MessageInactive {
+            get {
+                return ResourceManager.GetString("MessageInactive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Complete.  No files could be found to import..
+        /// </summary>
+        internal static string MessageNoFilesToImport {
+            get {
+                return ResourceManager.GetString("MessageNoFilesToImport", resourceCulture);
             }
         }
         

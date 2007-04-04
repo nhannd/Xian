@@ -167,7 +167,6 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			set { _allowedCancellationOperations = value; }
 		}
 
-
 		[DataMember(IsRequired = true)]
 		public bool Cancelled
 		{
@@ -276,6 +275,16 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		{
 			get { return _numberOfFailedImports; }
 			set { _numberOfFailedImports = value; }
+		}
+
+		public bool IsImportComplete()
+		{
+			return TotalFilesToImport == (NumberOfFilesImported + NumberOfFailedImports);
+		}
+
+		public bool IsComplete()
+		{
+			return TotalFilesToImport == (NumberOfFilesCommittedToDataStore + NumberOfFailedImports);
 		}
 
 		public void CopyTo(ImportProgressItem progressItem)

@@ -14,6 +14,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
 	internal sealed class DicomFileImporter : DicomImageStoreBase
 	{
+		public enum DedicatedImportQueue
+		{ 
+			Default = 0,
+			Reindex
+		}
+
 		public enum ImportStage
 		{
 			NotStarted = 0,
@@ -28,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			Exception Error { set; }
 			bool BadFile { set; }
 			string StoredFile { set; }
-			
+
 			string PatientId { set; }
 			string PatientsName { set; }
 			string StudyDate { set; }
@@ -263,15 +269,23 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			private FileImportInformation _fileImportInformation;
 			private FileImportJobStatusReportDelegate _fileImportJobStatusReportDelegate;
+			private DedicatedImportQueue _destinationImportQueue;
 
 			public ImportJobInformation
 				(
 					FileImportInformation fileImportInformation,
-					FileImportJobStatusReportDelegate fileImportJobStatusReportDelegate
+					FileImportJobStatusReportDelegate fileImportJobStatusReportDelegate,
+					DedicatedImportQueue destinationImportQueue
 				)
 			{
 				_fileImportInformation = fileImportInformation;
 				_fileImportJobStatusReportDelegate = fileImportJobStatusReportDelegate;
+				_destinationImportQueue = destinationImportQueue;
+			}
+
+			public DedicatedImportQueue DestinationImportQueue
+			{
+				get { return _destinationImportQueue; }
 			}
 
 			public FileImportInformation FileImportInformation
@@ -287,21 +301,73 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		#endregion
 
-		private object _databaseUpdateItemsLock = new object();
-		private EventWaitHandle _stopDatabaseQueueSignal;
-		private List<ImportJobInformation> _databaseUpdateItems;
-		private Thread _databaseUpdateThread;
+		private class ParseFileThreadPool : SimpleThreadPoolBase<ImportJobInformation>
+		{
+			DicomFileImporter _parent;
 
-		private SimpleThreadPool _parseFileThreadPool;
-		private SimpleThreadPool _importFileThreadPool;
-		
-		public DicomFileImporter()
+			public ParseFileThreadPool(DicomFileImporter parent)
+				: base(LocalDataStoreService.Instance.SendReceiveImportConcurrency)
+			{
+				_parent = parent;
+			}
+
+			protected override void ProcessItem(ImportJobInformation jobInformation)
+			{
+				_parent.ParseFile(jobInformation);
+
+				if (!jobInformation.FileImportInformation.Failed)
+					_parent.AddToImportQueue(jobInformation);
+			}
+		};
+
+		private class ImportFileThreadPool : SimpleThreadPoolBase<ImportJobInformation>
+		{
+			DicomFileImporter _parent;
+
+			public ImportFileThreadPool(DicomFileImporter parent)
+				: base(LocalDataStoreService.Instance.SendReceiveImportConcurrency)
+			{
+				_parent = parent;
+				this.AllowInactiveAdd = true;
+			}
+
+			protected override void ProcessItem(ImportJobInformation jobInformation)
+			{
+				_parent.MoveFile(jobInformation);
+
+				if (!jobInformation.FileImportInformation.Failed)
+					_parent.AddToDatabaseQueue(jobInformation);
+			}
+		};
+
+		private LocalDataStoreService _parent;
+
+		private bool _stopDatabaseQueue = false;
+		private object _databaseQueueWait = new object();
+
+		private Thread _databaseUpdateThread;
+		private object _databaseUpdateItemsLock = new object();
+		private List<ImportJobInformation> _databaseUpdateItems;
+
+		private ParseFileThreadPool _parseFileThreadPool;
+
+		private DedicatedImportQueue _activeImportThreadPool;
+		private Dictionary<DedicatedImportQueue, ImportFileThreadPool> _importThreadPools;
+
+		private object _importThreadPoolSwitchSyncLock = new object();
+		private event EventHandler<ItemEventArgs<DedicatedImportQueue>> _importThreadPoolSwitched;
+
+		public DicomFileImporter(LocalDataStoreService parent)
 			: base()
 		{
-			_parseFileThreadPool = new SimpleThreadPool(LocalDataStoreService.Instance.SendReceiveImportConcurrency);
-			_importFileThreadPool = new SimpleThreadPool(LocalDataStoreService.Instance.SendReceiveImportConcurrency);
+			_parent = parent;
+			_parseFileThreadPool = new ParseFileThreadPool(this);
+			
+			_importThreadPools = new Dictionary<DedicatedImportQueue, ImportFileThreadPool>();
+			_importThreadPools.Add(DedicatedImportQueue.Default, new ImportFileThreadPool(this));
+			_importThreadPools.Add(DedicatedImportQueue.Reindex, new ImportFileThreadPool(this));
+			_activeImportThreadPool = DedicatedImportQueue.Default;
 
-			_stopDatabaseQueueSignal = new EventWaitHandle(false, EventResetMode.ManualReset);
 			_databaseUpdateItems = new List<ImportJobInformation>();
 		}
 
@@ -321,9 +387,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			return true;
 		}
-		
-		private void ParseFile(FileImportInformation fileImportInformation, FileImportJobStatusReportDelegate fileImportJobStatusReportDelegate)
+
+		private void ParseFile(ImportJobInformation jobInformation)
 		{
+			FileImportInformation fileImportInformation = jobInformation.FileImportInformation;
+			FileImportJobStatusReportDelegate fileImportJobStatusReportDelegate = jobInformation.FileImportJobStatusReportDelegate;
+
 			DcmFileFormat file = new DcmFileFormat();
 			//use this private interface to set the values as we go along.
 			IFileImportInformation setImportInformation = (IFileImportInformation)fileImportInformation;
@@ -413,8 +482,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 		}
 
-		private void MoveFile(FileImportInformation fileImportInformation, FileImportJobStatusReportDelegate fileImportJobStatusReportDelegate)
+		private void MoveFile(ImportJobInformation jobInformation)
 		{
+			FileImportInformation fileImportInformation = jobInformation.FileImportInformation;
+			FileImportJobStatusReportDelegate fileImportJobStatusReportDelegate = jobInformation.FileImportJobStatusReportDelegate;
+
 			IFileImportInformation importerInformation = (IFileImportInformation)fileImportInformation;
 
 			try
@@ -424,18 +496,33 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 																			fileImportInformation.SeriesInstanceUid,
 																			fileImportInformation.SopInstanceUid);
 
-				string directoryName = System.IO.Path.GetDirectoryName(storedFile);
-				if (!System.IO.Directory.Exists(directoryName))
-					System.IO.Directory.CreateDirectory(directoryName);
+				UriBuilder sourceUri = new UriBuilder();
+				sourceUri.Scheme = "file";
+				sourceUri.Path = fileImportInformation.SourceFile;
 
-				if (System.IO.File.Exists(storedFile))
-					System.IO.File.Delete(storedFile);
+				UriBuilder storedUri = new UriBuilder();
+				storedUri.Scheme = "file";
+				storedUri.Path = storedFile;
 
-				if (fileImportInformation.ImportBehaviour == FileImportBehaviour.Copy)
-					System.IO.File.Copy(fileImportInformation.SourceFile, storedFile);
-				else
-					System.IO.File.Move(fileImportInformation.SourceFile, storedFile);
-				
+				if (storedUri.Uri.AbsolutePath != sourceUri.Uri.AbsolutePath)
+				{
+					string directoryName = System.IO.Path.GetDirectoryName(storedFile);
+					if (!System.IO.Directory.Exists(directoryName))
+						System.IO.Directory.CreateDirectory(directoryName);
+
+					if (fileImportInformation.ImportBehaviour == FileImportBehaviour.Copy)
+					{
+						System.IO.File.Copy(fileImportInformation.SourceFile, storedFile, true);
+					}
+					else
+					{
+						if (System.IO.File.Exists(storedFile))
+							System.IO.File.Delete(storedFile);
+						
+						System.IO.File.Move(fileImportInformation.SourceFile, storedFile);
+					}
+				}
+
 				AssignSopInstanceUri(fileImportInformation.SopInstance, storedFile);
 
 				importerInformation.StoredFile = storedFile;
@@ -445,7 +532,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				importerInformation.Error = e;
 
-				//!!retry
+				//!!retry?
 			}
 
 			fileImportJobStatusReportDelegate(fileImportInformation);
@@ -453,51 +540,36 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		#endregion
 
-		public void Enqueue(FileImportInformation information, FileImportJobStatusReportDelegate statusReportDelegate)
+		public void Enqueue(FileImportInformation information, FileImportJobStatusReportDelegate statusReportDelegate, DedicatedImportQueue queue)
 		{
-			AddToParseQueue(information, statusReportDelegate);
+			AddToParseQueue(new ImportJobInformation(information, statusReportDelegate, queue));
 		}
 
-		private void AddToParseQueue(FileImportInformation information, FileImportJobStatusReportDelegate statusReportDelegate)
+		private void AddToParseQueue(ImportJobInformation jobInformation)
 		{
-			_parseFileThreadPool.AddEnd
-				(
-					delegate()
-					{
-						ParseFile(information, statusReportDelegate);
-
-						if (!information.Failed)
-							AddToImportQueue(information, statusReportDelegate);
-					}
-				);
+			_parseFileThreadPool.Enqueue(jobInformation);
 		}
 
-		private void AddToImportQueue(FileImportInformation information, FileImportJobStatusReportDelegate statusReportDelegate)
+		private void AddToImportQueue(ImportJobInformation jobInformation)
 		{
-			_importFileThreadPool.AddEnd
-				(
-					delegate()
-					{
-						MoveFile(information, statusReportDelegate);
-
-						if (!information.Failed)
-							AddToDatabaseQueue(information, statusReportDelegate);
-					}
-				);
+			_importThreadPools[jobInformation.DestinationImportQueue].Enqueue(jobInformation);
 		}
 
 		#region Database Related Methods
 
-		private void AddToDatabaseQueue(FileImportInformation information, FileImportJobStatusReportDelegate statusReportDelegate)
+		private void AddToDatabaseQueue(ImportJobInformation jobInformation)
 		{
 			lock (_databaseUpdateItemsLock)
 			{
-				_databaseUpdateItems.Add(new ImportJobInformation(information, statusReportDelegate));
+				_databaseUpdateItems.Add(jobInformation);
 			}
 		}
 
 		private void UpdateDatabase(List<ImportJobInformation> items)
 		{
+			if (items.Count == 0)
+				return;
+
 			CodeClock clock = new CodeClock();
 			clock.Start();
 
@@ -576,7 +648,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			SingleSessionDataAccessLayer.SqliteWorkaround();
 
-
 			clock.Stop();
 			Trace.WriteLine(String.Format("Update took {0} seconds", clock.Seconds));
 		}
@@ -584,10 +655,17 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		private void DatabaseUpdateThread()
 		{
 			int waitTimeout = LocalDataStoreService.Instance.DatabaseUpdateFrequencyMilliseconds;
-			while (!_stopDatabaseQueueSignal.WaitOne(waitTimeout, false))
+
+			while (true)
 			{
+				lock (_databaseQueueWait)
+				{
+					if (!_stopDatabaseQueue)
+						Monitor.Wait(_databaseQueueWait, waitTimeout);
+				}
+				
 				List<ImportJobInformation> updates = new List<ImportJobInformation>();
-				lock(_databaseUpdateItemsLock)
+				lock (_databaseUpdateItemsLock)
 				{
 					updates.AddRange(_databaseUpdateItems);
 					_databaseUpdateItems.Clear();
@@ -601,10 +679,34 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					Platform.Log(e);
 				}
+
+				lock (_databaseQueueWait)
+				{
+					if (_stopDatabaseQueue)
+						break;
+				}
 			}
 		}
 
 		#endregion
+
+		public event EventHandler<ItemEventArgs<DedicatedImportQueue>> ImportThreadPoolSwitched
+		{
+			add
+			{
+				lock (_importThreadPoolSwitchSyncLock)
+				{
+					_importThreadPoolSwitched += value;
+				}
+			}
+			remove 
+			{
+				lock (_importThreadPoolSwitchSyncLock)
+				{
+					_importThreadPoolSwitched -= value;
+				}
+			}
+		}
 
 		#region Start/Stop Methods
 
@@ -614,10 +716,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				throw new InvalidOperationException(SR.ExceptionImporterAlreadyStarted);
 
 			_parseFileThreadPool.Start();
+			_importThreadPools[DedicatedImportQueue.Default].Start();
 
-			_importFileThreadPool.Start();
+			_stopDatabaseQueue = false;
 
-			_stopDatabaseQueueSignal.Reset();
 			ThreadStart threadStart = new ThreadStart(this.DatabaseUpdateThread);
 			_databaseUpdateThread = new Thread(threadStart);
 			_databaseUpdateThread.IsBackground = true;
@@ -632,11 +734,32 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			_parseFileThreadPool.Stop();
 
-			_importFileThreadPool.Stop();
-			
-			_stopDatabaseQueueSignal.Set();
+			foreach (ImportFileThreadPool pool in _importThreadPools.Values)
+				pool.Stop();
+
+			lock (_databaseQueueWait)
+			{
+				_stopDatabaseQueue = true;
+				Monitor.Pulse(_databaseQueueWait);
+			}
+
 			_databaseUpdateThread.Join();
 			_databaseUpdateThread = null;
+		}
+
+		public void ActivateImportQueue(DedicatedImportQueue queue)
+		{
+			lock (_importThreadPoolSwitchSyncLock)
+			{
+				if (_activeImportThreadPool == queue)
+					return;
+
+				_importThreadPools[_activeImportThreadPool].Stop();
+				_activeImportThreadPool = queue;
+				_importThreadPools[_activeImportThreadPool].Start();
+
+				EventsHelper.Fire(_importThreadPoolSwitched, this, new ItemEventArgs<DedicatedImportQueue>(_activeImportThreadPool));
+			}
 		}
 
 		#endregion

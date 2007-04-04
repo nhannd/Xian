@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			request.FilePaths = filePaths;
 			request.BadFileBehaviour = BadFileBehaviour.Ignore;
 			request.Recursive = true;
-			request.FileImportBehaviour = FileImportBehaviour.Move;
+			request.FileImportBehaviour = FileImportBehaviour.Copy;
 
 			LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
 			try

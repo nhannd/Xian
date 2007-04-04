@@ -7,22 +7,36 @@ namespace ClearCanvas.Common.Utilities
 	{
 		// Public methods
 		public delegate void ProcessFile(string filePath);
+		public delegate void ProcessFileCancellable(string filePath, out bool cancel);
 
 		public static void Process(string path, string searchPattern, FileProcessor.ProcessFile proc, bool recursive)
+		{
+			Process(path, searchPattern,
+				delegate(string filePath, out bool cancel)
+				{
+					cancel = false;
+					proc(filePath);
+				},
+				recursive);
+		}
+
+		public static void Process(string path, string searchPattern, FileProcessor.ProcessFileCancellable proc, bool recursive)
 		{
 			Platform.CheckForNullReference(path, "path");
 			Platform.CheckForEmptyString(path, "path");
 			Platform.CheckForNullReference(proc, "proc");
 
+			bool cancel;
+
 			// If the path is a directory, process its contents
 			if (Directory.Exists(path))
 			{
-				ProcessDirectory(path, searchPattern, proc, recursive);
+				ProcessDirectory(path, searchPattern, proc, recursive, out cancel);
 			}
 			// If the path is a file, just process the file
 			else if (File.Exists(path))
 			{
-				proc(path);
+				proc(path, out cancel);
 			}
 			else
 			{
@@ -31,8 +45,10 @@ namespace ClearCanvas.Common.Utilities
 		}
 
 		// Private methods
-		private static void ProcessDirectory(string path, string searchPattern, FileProcessor.ProcessFile proc, bool recursive)
+		private static void ProcessDirectory(string path, string searchPattern, FileProcessor.ProcessFileCancellable proc, bool recursive, out bool cancel)
 		{
+			cancel = false;
+
 			// Process files in this directory
 			string[] fileList;
 			GetFiles(path, searchPattern, out fileList);
@@ -40,7 +56,11 @@ namespace ClearCanvas.Common.Utilities
 			if (fileList != null)
 			{
 				foreach (string file in fileList)
-					proc(file);
+				{
+					proc(file, out cancel);
+					if (cancel)
+						return;
+				}
 			}
 
 			// If recursive, then descend into lower directories and process those as well
@@ -66,7 +86,7 @@ namespace ClearCanvas.Common.Utilities
 			}
 		}
 
-		private static void GetDirectories(string path, string searchPattern, FileProcessor.ProcessFile proc, bool recursive, out string[] dirList)
+		private static void GetDirectories(string path, string searchPattern, FileProcessor.ProcessFileCancellable proc, bool recursive, out string[] dirList)
 		{
 			dirList = null;
 
@@ -82,8 +102,14 @@ namespace ClearCanvas.Common.Utilities
 
 			if (recursive)
 			{
+				bool cancel;
+
 				foreach (string dir in dirList)
-					ProcessDirectory(dir, searchPattern, proc, recursive);
+				{
+					ProcessDirectory(dir, searchPattern, proc, recursive, out cancel);
+					if (cancel)
+						break;
+				}
 			}
 		}
 	}

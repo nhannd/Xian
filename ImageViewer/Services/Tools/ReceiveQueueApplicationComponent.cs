@@ -50,14 +50,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		internal void CalculateLastActiveDisplay()
 		{
 			TimeSpan lastActiveSpan = DateTime.Now.Subtract(this.LastActive);
-			if (lastActiveSpan.Minutes < 60)
+			if (lastActiveSpan.Days > 0)
 			{
-				if (lastActiveSpan.Minutes == 1)
+				if (lastActiveSpan.Days == 1)
 					_lastActiveDisplay = SR.MessageOneDayAgo;
 				else
-					_lastActiveDisplay = String.Format(SR.FormatXMinutesAgo, lastActiveSpan.Minutes);
+					_lastActiveDisplay = String.Format(SR.FormatXDaysAgo, lastActiveSpan.Days);
 			}
-			else if (lastActiveSpan.Hours >= 1 && lastActiveSpan.Days == 0)
+			else if (lastActiveSpan.Hours > 0)
 			{
 				if (lastActiveSpan.Hours == 1)
 					_lastActiveDisplay = SR.MessageOneHourAgo;
@@ -71,10 +71,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 			else
 			{
-				if (lastActiveSpan.Days == 1)
+				if (lastActiveSpan.Minutes == 1)
 					_lastActiveDisplay = SR.MessageOneDayAgo;
 				else
-					_lastActiveDisplay = String.Format(SR.FormatXDaysAgo, lastActiveSpan.Days);
+					_lastActiveDisplay = String.Format(SR.FormatXMinutesAgo, lastActiveSpan.Minutes);
 			}
 		}
 	}

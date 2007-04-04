@@ -54,11 +54,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			FireEvent("SopInstanceImported", information);
 		}
 
-		public void OnServiceStopped()
-		{
-			FireEvent("OnServiceStopped", null);
-		}
-
 		#endregion
 	}
 }

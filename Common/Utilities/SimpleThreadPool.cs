@@ -7,52 +7,105 @@ namespace ClearCanvas.Common.Utilities
 {
 	public delegate void SimpleThreadPoolDelegate();
 
-	public class SimpleThreadPool
+	public class SimpleThreadPool : SimpleThreadPoolBase<SimpleThreadPoolDelegate>
+	{
+		public SimpleThreadPool(int concurrency, ThreadPriority priority)
+		 : base(concurrency, priority)
+		{
+		}
+
+		public SimpleThreadPool(int concurrency)
+			: base(concurrency)
+		{
+		}
+
+		protected SimpleThreadPool()
+			: base()
+		{
+		}
+
+		protected override void ProcessItem(SimpleThreadPoolDelegate del)
+		{
+			//execute the delegate.
+			del();
+		}
+	}
+
+	public abstract class SimpleThreadPoolBase<T>
+		where T : class
 	{
 		public enum StartStopState { Started, Stopped };
 
+		private object _queueSyncLock = new object();
+		private Queue<T> _queue;
+
+		private object _startStopEventSyncLock = new object();
 		private event EventHandler<ItemEventArgs<StartStopState>> _startStopEvent;
-		
-		private EventWaitHandle _stopSignal;
-		private EventWaitHandle _jobsRemainingSignal;
-		private EventWaitHandle[] _waitHandles;
+
+		private object _startStopSyncLock = new object();
+		private bool _active;
 		private List<Thread> _threads;
-		private uint _sleepTime;
 
-		private int _concurrency;
+		private volatile bool _stopThreads;
+		private volatile bool _completeBeforeStop;
+		private volatile bool _allowInactiveAdd;
+		private volatile uint _sleepTime;
+		
 		private ThreadPriority _threadPriority = ThreadPriority.BelowNormal;
-		private bool _allowInactiveAdd;
-
-		private object _syncLock = new object();
-		private List<SimpleThreadPoolDelegate> _jobQueue;
-
-		public SimpleThreadPool(int concurrency, ThreadPriority priority)
+		private int _concurrency;
+		
+		public SimpleThreadPoolBase(int concurrency, ThreadPriority priority)
 		 : this(concurrency)
 		{
 			_threadPriority = priority;
 		}
 
-		public SimpleThreadPool(int concurrency)
+		public SimpleThreadPoolBase(int concurrency)
+			: this()
 		{
 			_concurrency = concurrency;
-			_sleepTime = 0;
-
-			_stopSignal = new EventWaitHandle(false, EventResetMode.ManualReset);
-			_jobsRemainingSignal = new EventWaitHandle(false, EventResetMode.ManualReset);
-			_waitHandles = new EventWaitHandle[] { _stopSignal, _jobsRemainingSignal };
-
-			_threads = new List<Thread>();
-			_jobQueue = new List<SimpleThreadPoolDelegate>();
 		}
 
-		protected SimpleThreadPool()
-		{ 
+		protected SimpleThreadPoolBase()
+		{
+			_sleepTime = 0;
+			_active = false;
+
+			_stopThreads = false;
+			_completeBeforeStop = false;
+			_allowInactiveAdd = false;
+
+			_threads = new List<Thread>();
+			_queue = new Queue<T>();
 		}
 
 		public event EventHandler<ItemEventArgs<StartStopState>> StartStopEvent
 		{
-			add { _startStopEvent += value; }
-			remove { _startStopEvent -= value; }
+			add 
+			{
+				lock (_startStopEventSyncLock)
+				{
+					_startStopEvent += value;
+				}
+			}
+			remove 
+			{
+				lock (_startStopEventSyncLock)
+				{
+					_startStopEvent -= value;
+				}
+			}
+		}
+
+		public bool Active
+		{
+			get 
+			{
+				lock (_startStopSyncLock)
+				{
+					return _active;
+				}
+			}
 		}
 
 		public uint SleepTime
@@ -67,87 +120,77 @@ namespace ClearCanvas.Common.Utilities
 			set { _allowInactiveAdd = value; }
 		}
 
-		public bool Active
+		public bool CompleteBeforeStop
 		{
-			get { return (_threads.Count > 0); }
-		}
-
-		public bool StopSignalled
-		{
-			get { return _stopSignal.WaitOne(0, false); }
+			get { return _completeBeforeStop; }
+			set { _completeBeforeStop = value; }
 		}
 
 		public void Start()
 		{
-			if (this.Active)
-				throw new InvalidOperationException(SR.ExceptionThreadPoolAlreadyStarted);
-
-			_jobsRemainingSignal.Reset();
-			_stopSignal.Reset();
-
-			for (int i = 0; i < _concurrency; ++i)
+			lock (_startStopSyncLock)
 			{
-				ThreadStart threadStart = new ThreadStart(this.RunThread);
-				Thread thread = new Thread(threadStart);
-				thread.IsBackground = true;
-				thread.Priority = ThreadPriority.BelowNormal;
+				if (_active)
+					return;
 
-				thread.Start();
-				_threads.Add(thread);
+				for (int i = 0; i < _concurrency; ++i)
+				{
+					ThreadStart threadStart = new ThreadStart(this.RunThread);
+					Thread thread = new Thread(threadStart);
+					thread.IsBackground = true;
+					thread.Priority = ThreadPriority.BelowNormal;
+
+					thread.Start();
+					_threads.Add(thread);
+				}
+
+				_active = true;
+
+				lock (_startStopEventSyncLock)
+				{
+					EventsHelper.Fire(_startStopEvent, this, new ItemEventArgs<StartStopState>(StartStopState.Started));
+				}
 			}
-
-			EventsHelper.Fire(_startStopEvent, this, new ItemEventArgs<StartStopState>(StartStopState.Started));
 		}
 
 		public void Stop()
 		{
-			_stopSignal.Set();
-
-			foreach (Thread thread in _threads)
-				thread.Join();
-
-			_threads.Clear();
-
-			EventsHelper.Fire(_startStopEvent, this, new ItemEventArgs<StartStopState>(StartStopState.Stopped));
-		}
-
-		public void AddFront(SimpleThreadPoolDelegate task)
-		{
-			if (!_allowInactiveAdd && this.StopSignalled)
-				throw new InvalidOperationException(SR.ExceptionThreadPoolNotStarted);
-
-			lock (_syncLock)
+			lock (_startStopSyncLock)
 			{
-				_jobQueue.Insert(0, task);
-				_jobsRemainingSignal.Set();
-			}
-		}
+				if (!_active)
+					return;
 
-		public void AddEnd(SimpleThreadPoolDelegate task)
-		{
-			if (!_allowInactiveAdd && this.StopSignalled)
-				throw new InvalidOperationException(SR.ExceptionThreadPoolNotStarted);
+				_stopThreads = true;
 
-			lock (_syncLock)
-			{
-				_jobQueue.Add(task);
-				_jobsRemainingSignal.Set();
-			}
-		}
-
-		private SimpleThreadPoolDelegate Next()
-		{
-			lock (_syncLock)
-			{
-				if (_jobQueue.Count == 0)
+				lock (_queueSyncLock)
 				{
-					_jobsRemainingSignal.Reset();
-					return null;
+					Monitor.PulseAll(_queueSyncLock);
 				}
 
-				SimpleThreadPoolDelegate job = _jobQueue[0];
-				_jobQueue.RemoveAt(0);
-				return job;
+				foreach (Thread thread in _threads)
+					thread.Join();
+
+				_threads.Clear();
+
+				_stopThreads = false;
+				_active = false;
+
+				lock (_startStopEventSyncLock)
+				{
+					EventsHelper.Fire(_startStopEvent, this, new ItemEventArgs<StartStopState>(StartStopState.Stopped));
+				}
+			}
+		}
+
+		public void Enqueue(T item)
+		{
+			if (!_allowInactiveAdd && !this.Active)
+				throw new InvalidOperationException(SR.ExceptionThreadPoolNotStarted);
+
+			lock (_queueSyncLock)
+			{
+				_queue.Enqueue(item);
+				Monitor.Pulse(_queueSyncLock);
 			}
 		}
 
@@ -155,24 +198,46 @@ namespace ClearCanvas.Common.Utilities
 		{
 			while (true)
 			{
-				EventWaitHandle.WaitAny(_waitHandles);
-
 				try
 				{
-					SimpleThreadPoolDelegate task = Next();
-					if (task != null)
-						task();
+					T item = null;
+
+					lock (_queueSyncLock)
+					{
+						if (!_stopThreads)
+						{
+							while (_queue.Count == 0 && !_stopThreads)
+								Monitor.Wait(_queueSyncLock);
+						}
+						else
+						{
+							if (!_completeBeforeStop)
+							{
+								break;
+							}
+							else
+							{
+								if (_queue.Count == 0)
+									break;
+							}
+						}
+
+						if (_queue.Count > 0)
+							item = _queue.Dequeue();
+					}
+
+					if (item != null)
+						ProcessItem(item);
 				}
 				catch (Exception e)
 				{
 					Platform.Log(e);
 				}
 
-				if (this.StopSignalled)
-					break;
-
 				Thread.Sleep((int)_sleepTime);
 			}
 		}
+
+		protected abstract void ProcessItem(T item);
 	}
 }

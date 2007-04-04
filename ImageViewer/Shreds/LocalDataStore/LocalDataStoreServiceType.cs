@@ -13,9 +13,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 	{
 		public LocalDataStoreServiceType()
 		{
-			Platform.Log("[" + AppDomain.CurrentDomain.FriendlyName + "]: LocalDataStoreServiceType Constructor");
 		}
-
 
 		#region ILocalDataStoreService Members
 
