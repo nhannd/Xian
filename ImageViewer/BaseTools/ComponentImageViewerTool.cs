@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 	/// </summary>
 	public abstract class ComponentImageViewerTool : ImageViewerTool
 	{
-		private ImageViewerToolComponent _imageViewerToolComponent;
+		private static ImageViewerToolComponent _imageViewerToolComponent;
 
 		/// <summary>
 		/// Gets or sets the associated <see cref="ImageViewerToolComponent"/>.
@@ -36,8 +36,13 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		{
 			if (_imageViewerToolComponent != null)
 			{
-				_imageViewerToolComponent.ImageViewer = GetSubjectImageViewer();
+				_imageViewerToolComponent.ImageViewer = GetSubjectImageViewer(e.ActivatedWorkspace);
 			}
+		}
+
+		protected IImageViewer GetActiveImageViewer()
+		{
+			return GetSubjectImageViewer(this.Context.DesktopWindow.ActiveWorkspace);
 		}
 
 		/// <summary>
@@ -45,10 +50,8 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// </summary>
 		/// <returns>The active <see cref="IImageViewer"/> or <b>null</b> if 
 		/// the active workspace does not host an <see cref="IImageViewer"/>.</returns>
-		protected IImageViewer GetSubjectImageViewer()
+		private IImageViewer GetSubjectImageViewer(IWorkspace workspace)
 		{
-			IWorkspace workspace = this.Context.DesktopWindow.ActiveWorkspace;
-
 			if (workspace == null)
 				return null;
 

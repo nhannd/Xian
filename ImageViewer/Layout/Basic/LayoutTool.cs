@@ -7,7 +7,7 @@ using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-    [MenuAction("show", "global-menus/Layout/LayoutManager")]
+	[MenuAction("show", "global-menus/MenuTools/Standard/LayoutManager")]
     [ButtonAction("show", "global-toolbars/ToolbarStandard/LayoutManager")]
     [ClickHandler("show", "Show")]
     [IconSet("show", IconScheme.Colour, "", "Icons.LayoutMedium.png", "Icons.LayoutLarge.png")]
@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
             if (this.ImageViewerToolComponent == null)
             {
                 // create and initialize the layout component
-				this.ImageViewerToolComponent = new LayoutComponent(GetSubjectImageViewer());
+				this.ImageViewerToolComponent = new LayoutComponent(GetActiveImageViewer());
 
                 // launch the layout component in a shelf
                 // note that the component is thrown away when the shelf is closed by the user
