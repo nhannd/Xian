@@ -6,6 +6,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Configuration.Brokers;
 using ClearCanvas.Enterprise.Core;
+using System.Threading;
 
 namespace ClearCanvas.Enterprise.Configuration
 {
@@ -21,6 +22,8 @@ namespace ClearCanvas.Enterprise.Configuration
         [ReadOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
         public string LoadDocument(string name, Version version, string user, string instanceKey)
         {
+            CheckReadAccess(user);
+
             try
             {
                 IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
@@ -32,7 +35,7 @@ namespace ClearCanvas.Enterprise.Configuration
             }
             catch (EntityNotFoundException)
             {
-                throw new ConfigurationDocumentNotFoundException("Configuration document not found");
+                throw new ConfigurationDocumentNotFoundException(SR.ExceptionConfigurationDocumentNotFound);
             }
         }
 
@@ -43,6 +46,8 @@ namespace ClearCanvas.Enterprise.Configuration
         [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
         public void SaveDocument(string name, Version version, string user, string instanceKey, string documentText)
         {
+            CheckWriteAccess(user);
+
             ConfigurationDocument document = null;
             try
             {
@@ -106,6 +111,8 @@ namespace ClearCanvas.Enterprise.Configuration
         [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
         public void RemoveDocument(string name, Version version, string user, string instanceKey)
         {
+            CheckWriteAccess(user);
+   
             try
             {
                 IConfigurationDocumentBroker broker = PersistenceContext.GetBroker<IConfigurationDocumentBroker>();
@@ -120,6 +127,36 @@ namespace ClearCanvas.Enterprise.Configuration
         }
 
         #endregion
+
+        private void CheckReadAccess(string user)
+        {
+            if (string.IsNullOrEmpty(user))
+            {
+                // all users can read application configuration docs
+            }
+            else
+            {
+                // user can only read their own configuration docs
+                if (user != Thread.CurrentPrincipal.Identity.Name)
+                    throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
+            }
+        }
+
+        private void CheckWriteAccess(string user)
+        {
+            if (string.IsNullOrEmpty(user))
+            {
+                // this is an application configuration doc - need admin permission
+                if (!Thread.CurrentPrincipal.IsInRole(ClearCanvas.Enterprise.Common.AuthorityTokens.ConfigurationAdmin))
+                    throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
+            }
+            else
+            {
+                // user can only save their own configuration docs
+                if (user != Thread.CurrentPrincipal.Identity.Name)
+                    throw new System.Security.SecurityException(SR.ExceptionUserNotAuthorized);
+            }
+        }
 
         private ConfigurationDocument NewDocument(string name, Version version, string user, string instanceKey)
         {

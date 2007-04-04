@@ -135,7 +135,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.PatientProfileAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
         public SaveAdminEditsForPatientProfileResponse SaveAdminEditsForPatientProfile(SaveAdminEditsForPatientProfileRequest request)
         {
             PatientProfile profile = (PatientProfile)PersistenceContext.Load(request.PatientProfileRef, EntityLoadFlags.CheckVersion);
@@ -147,7 +147,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.PatientProfileAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
         public AdminAddPatientProfileResponse AdminAddPatientProfile(AdminAddPatientProfileRequest request)
         {
             PatientProfile profile = new PatientProfile();

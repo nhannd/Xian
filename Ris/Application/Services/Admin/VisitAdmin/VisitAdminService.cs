@@ -131,7 +131,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.VisitAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.VisitAdmin)]
         public SaveAdminEditsForVisitResponse SaveAdminEditsForVisit(SaveAdminEditsForVisitRequest request)
         {
             Visit visit = (Visit)PersistenceContext.Load(request.VisitRef);
@@ -143,7 +143,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.VisitAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.VisitAdmin)]
         public AdminAddVisitResponse AdminAddVisit(AdminAddVisitRequest request)
         {
             Visit visit = new Visit();

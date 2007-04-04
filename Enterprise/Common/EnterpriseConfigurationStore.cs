@@ -6,6 +6,7 @@ using System.Configuration;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using System.ServiceModel;
+using System.ServiceModel.Security;
 
 namespace ClearCanvas.Enterprise.Common
 {

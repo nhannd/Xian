@@ -19,7 +19,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
     public class DiagnosticServiceAdminService : ApplicationServiceBase, IDiagnosticServiceAdminService
     {
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.DiagnosticServiceAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.DiagnosticServiceAdmin)]
         public BatchImportResponse BatchImport(BatchImportRequest request)
         {
             DiagnosticServiceBatchImporter.Import((IUpdateContext)this.PersistenceContext, request.ImportData);

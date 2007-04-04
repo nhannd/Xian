@@ -20,7 +20,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [IconSet("apply", IconScheme.Colour, "Icons.PatientReconciliationToolSmall.png", "Icons.PatientReconciliationToolMedium.png", "Icons.PatientReconciliationToolLarge.png")]
     [ClickHandler("apply", "Reconcile")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ActionPermission("apply", AuthorityTokens.ReconcilePatients)]
+    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.ReconcilePatients)]
 
     [ExtensionOf(typeof(PatientOverviewToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]

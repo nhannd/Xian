@@ -18,7 +18,7 @@ namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/NoteCategories")]
     [ClickHandler("launch", "Launch")]
-    [ActionPermission("launch", AuthorityTokens.NoteAdmin)]
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class NoteCategorySummaryTool : Tool<IDesktopToolContext>

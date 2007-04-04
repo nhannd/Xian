@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthorityTokens.cs" />
     <Compile Include="ConfigurationDocumentNotFoundException.cs" />
     <Compile Include="DataContractBase.cs" />
     <Compile Include="EnterpriseConfigurationStore.cs" />

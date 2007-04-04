@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         /// </summary>
         /// <param name="NoteCategory"></param>
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.NoteAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
         public AddNoteCategoryResponse AddNoteCategory(AddNoteCategoryRequest request)
         {
             NoteCategory noteCategory = new NoteCategory();
@@ -90,7 +90,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         /// </summary>
         /// <param name="NoteCategory"></param>
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.NoteAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
         public UpdateNoteCategoryResponse UpdateNoteCategory(UpdateNoteCategoryRequest request)
         {
             NoteCategory noteCategory = (NoteCategory)PersistenceContext.Load(request.NoteCategoryRef, EntityLoadFlags.CheckVersion);

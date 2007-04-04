@@ -92,7 +92,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.PractitionerAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.PractitionerAdmin)]
         public AddPractitionerResponse AddPractitioner(AddPractitionerRequest request)
         {
             Practitioner practitioner = new Practitioner();
@@ -110,7 +110,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.PractitionerAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.PractitionerAdmin)]
         public UpdatePractitionerResponse UpdatePractitioner(UpdatePractitionerRequest request)
         {
             Practitioner practitioner = (Practitioner)PersistenceContext.Load(request.PractitionerRef, EntityLoadFlags.CheckVersion);

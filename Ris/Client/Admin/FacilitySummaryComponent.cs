@@ -18,7 +18,7 @@ namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Facilities")]
     [ClickHandler("launch", "Launch")]
-    [ActionPermission("launch", AuthorityTokens.FacilityAdmin)]
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.FacilityAdmin)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class FacilitySummaryTool : Tool<IDesktopToolContext>

@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
         }
 
         [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.ReconcilePatients)]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.ReconcilePatients)]
         public ReconcilePatientsResponse ReconcilePatients(ReconcilePatientsRequest request)
         {
             List<Patient> patients = CollectionUtils.Map<EntityRef, Patient, List<Patient>>(

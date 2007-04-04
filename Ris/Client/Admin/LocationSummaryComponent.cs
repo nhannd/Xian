@@ -18,7 +18,7 @@ namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Locations")]
     [ClickHandler("launch", "Launch")]
-    [ActionPermission("launch", AuthorityTokens.LocationAdmin)]
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.LocationAdmin)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class LocationSummaryTool : Tool<IDesktopToolContext>

@@ -61,11 +61,29 @@ namespace ClearCanvas.Enterprise.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configuration document not found.
+        /// </summary>
+        internal static string ExceptionConfigurationDocumentNotFound {
+            get {
+                return ResourceManager.GetString("ExceptionConfigurationDocumentNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The settings group {0} {1} has not been imported.
         /// </summary>
         internal static string ExceptionSettingsNotImported {
             get {
                 return ResourceManager.GetString("ExceptionSettingsNotImported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to User not authorized.
+        /// </summary>
+        internal static string ExceptionUserNotAuthorized {
+            get {
+                return ResourceManager.GetString("ExceptionUserNotAuthorized", resourceCulture);
             }
         }
     }

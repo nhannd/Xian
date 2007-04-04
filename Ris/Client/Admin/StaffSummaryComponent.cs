@@ -19,7 +19,7 @@ namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Staff")]
     [ClickHandler("launch", "Launch")]
-    [ActionPermission("launch", AuthorityTokens.StaffAdmin)]
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class StaffSummaryTool : Tool<IDesktopToolContext>

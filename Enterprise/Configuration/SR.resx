@@ -117,7 +117,13 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ExceptionConfigurationDocumentNotFound" xml:space="preserve">
+    <value>Configuration document not found</value>
+  </data>
   <data name="ExceptionSettingsNotImported" xml:space="preserve">
     <value>The settings group {0} {1} has not been imported</value>
+  </data>
+  <data name="ExceptionUserNotAuthorized" xml:space="preserve">
+    <value>User not authorized</value>
   </data>
 </root>

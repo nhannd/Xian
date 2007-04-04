@@ -18,7 +18,7 @@ namespace ClearCanvas.Ris.Client.Admin
 {
     [MenuAction("launch", "global-menus/Admin/Modality")]
     [ClickHandler("launch", "Launch")]
-    [ActionPermission("launch", AuthorityTokens.ModalityAdmin)]
+    [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.ModalityAdmin)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ModalitySummaryTool : Tool<IDesktopToolContext>
