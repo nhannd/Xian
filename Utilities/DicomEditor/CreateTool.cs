@@ -10,11 +10,11 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
-    [ButtonAction("activate", "dicomeditor-toolbar/Create")]
-    [MenuAction("activate", "dicomeditor-contextmenu/Create")]
+    [ButtonAction("activate", "dicomeditor-toolbar/ToolbarCreate")]
+    [MenuAction("activate", "dicomeditor-contextmenu/MenuCreate")]
     [ClickHandler("activate", "Create")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-    [Tooltip("activate", "Create Tag")]
+    [Tooltip("activate", "TooltipCreate")]
     [IconSet("activate", IconScheme.Colour, "Icons.CreateSmall.png", "Icons.CreateSmall.png", "Icons.CreateSmall.png")]
     [ExtensionOf(typeof(DicomEditorToolExtensionPoint))]
     class CreateTool : Tool<DicomEditorComponent.DicomEditorToolContext>

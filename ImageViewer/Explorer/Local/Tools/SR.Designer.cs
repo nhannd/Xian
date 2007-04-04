@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        internal static string MenuOpenFiles {
+            get {
+                return ResourceManager.GetString("MenuOpenFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} images failed to load..
         /// </summary>
         internal static string MessageFormatImagesFailedToLoad {
@@ -75,15 +84,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools {
         internal static string OpenDicomFilesVerbose {
             get {
                 return ResourceManager.GetString("OpenDicomFilesVerbose", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Open.
-        /// </summary>
-        internal static string OpenFiles {
-            get {
-                return ResourceManager.GetString("OpenFiles", resourceCulture);
             }
         }
         

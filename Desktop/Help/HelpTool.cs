@@ -6,7 +6,7 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.Help
 {
-    [MenuAction("activate", "global-menus/MenuHelp/MenuHelpAbout")]
+    [MenuAction("activate", "global-menus/MenuHelp/MenuAbout")]
     [ClickHandler("activate", "Activate")]
 	[GroupHint("activate", "Application.Help.About")]
 

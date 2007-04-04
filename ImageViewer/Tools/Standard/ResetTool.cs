@@ -11,11 +11,11 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("activate", "global-menus/MenuTools/MenuToolsStandard/MenuToolsStandardReset")]
-    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardReset")]
+	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuReset")]
+    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarReset")]
     [ClickHandler("activate", "Activate")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-	[Tooltip("activate", "ToolbarToolsStandardReset")]
+	[Tooltip("activate", "TooltipReset")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ResetSmall.png", "Icons.ResetMedium.png", "Icons.ResetLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Reset")]
 

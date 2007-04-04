@@ -101,6 +101,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LocateOnDiskTool.cs" />
+    <Compile Include="MemoryUsageTool.cs" />
     <Compile Include="WindowLevelConfigurationPageProvider.cs" />
     <Compile Include="FlipHorizontalTool.cs" />
     <Compile Include="FlipVerticalTool.cs" />
@@ -173,6 +174,9 @@
     <EmbeddedResource Include="Icons\ResetMedium.png" />
     <EmbeddedResource Include="Icons\LocateOnDiskToolLarge.png" />
     <EmbeddedResource Include="Icons\LocateOnDiskToolMedium.png" />
+    <EmbeddedResource Include="Icons\MemoryUsageToolLarge.png" />
+    <EmbeddedResource Include="Icons\MemoryUsageToolMedium.png" />
+    <EmbeddedResource Include="Icons\MemoryUsageToolSmall.png" />
     <Content Include="LutPresets\DefaultLutPresetKeyAssignments.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

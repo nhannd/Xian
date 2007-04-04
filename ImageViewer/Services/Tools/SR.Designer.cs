@@ -70,24 +70,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Import Activity.
-        /// </summary>
-        internal static string DicomFileImportActivity {
-            get {
-                return ResourceManager.GetString("DicomFileImportActivity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Send/Receive Activity.
-        /// </summary>
-        internal static string DicomSendReceiveActivity {
-            get {
-                return ResourceManager.GetString("DicomSendReceiveActivity", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The identifiers must match..
         /// </summary>
         internal static string ExceptionIdentifiersMustMatch {
@@ -133,11 +115,47 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Import Activity Monitor.
+        /// </summary>
+        internal static string MenuDicomFileImportActivity {
+            get {
+                return ResourceManager.GetString("MenuDicomFileImportActivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send/Receive Activity Monitor.
+        /// </summary>
+        internal static string MenuDicomSendReceiveActivity {
+            get {
+                return ResourceManager.GetString("MenuDicomSendReceiveActivity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Reindex Local Data Store.
         /// </summary>
-        internal static string LocalDataStoreReindex {
+        internal static string MenuLocalDataStoreReindex {
             get {
-                return ResourceManager.GetString("LocalDataStoreReindex", resourceCulture);
+                return ResourceManager.GetString("MenuLocalDataStoreReindex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrieve.
+        /// </summary>
+        internal static string MenuRetrieveStudy {
+            get {
+                return ResourceManager.GetString("MenuRetrieveStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send.
+        /// </summary>
+        internal static string MenuSendStudy {
+            get {
+                return ResourceManager.GetString("MenuSendStudy", resourceCulture);
             }
         }
         
@@ -435,6 +453,24 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string TitleTo {
             get {
                 return ResourceManager.GetString("TitleTo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Retrieve.
+        /// </summary>
+        internal static string ToolbarRetrieveStudy {
+            get {
+                return ResourceManager.GetString("ToolbarRetrieveStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send.
+        /// </summary>
+        internal static string ToolbarSendStudy {
+            get {
+                return ResourceManager.GetString("ToolbarSendStudy", resourceCulture);
             }
         }
         

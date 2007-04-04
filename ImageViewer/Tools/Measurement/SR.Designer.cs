@@ -61,20 +61,47 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Close Menu.
-        /// </summary>
-        public static string CloseMenu {
-            get {
-                return ResourceManager.GetString("CloseMenu", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         public static string DeleteGraphicTool {
             get {
                 return ResourceManager.GetString("DeleteGraphicTool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Close Menu.
+        /// </summary>
+        public static string MenuClose {
+            get {
+                return ResourceManager.GetString("MenuClose", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Measurement.
+        /// </summary>
+        public static string MenuMeasurement {
+            get {
+                return ResourceManager.GetString("MenuMeasurement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rectangular ROI.
+        /// </summary>
+        public static string MenuRectangularROI {
+            get {
+                return ResourceManager.GetString("MenuRectangularROI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ruler.
+        /// </summary>
+        public static string MenuRuler {
+            get {
+                return ResourceManager.GetString("MenuRuler", resourceCulture);
             }
         }
         
@@ -93,6 +120,24 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         public static string NotApplicable {
             get {
                 return ResourceManager.GetString("NotApplicable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rectangular ROI.
+        /// </summary>
+        public static string ToolbarRectangularROI {
+            get {
+                return ResourceManager.GetString("ToolbarRectangularROI", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ruler.
+        /// </summary>
+        public static string ToolbarRuler {
+            get {
+                return ResourceManager.GetString("ToolbarRuler", resourceCulture);
             }
         }
         
@@ -142,29 +187,20 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Line ROI.
-        /// </summary>
-        public static string ToolsMeasurementLineROI {
-            get {
-                return ResourceManager.GetString("ToolsMeasurementLineROI", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Rectangular ROI.
         /// </summary>
-        public static string ToolsMeasurementRectangularROI {
+        public static string TooltipRectangularROI {
             get {
-                return ResourceManager.GetString("ToolsMeasurementRectangularROI", resourceCulture);
+                return ResourceManager.GetString("TooltipRectangularROI", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Ruler.
         /// </summary>
-        public static string ToolsMeasurementRuler {
+        public static string TooltipRuler {
             get {
-                return ResourceManager.GetString("ToolsMeasurementRuler", resourceCulture);
+                return ResourceManager.GetString("TooltipRuler", resourceCulture);
             }
         }
     }

@@ -15,14 +15,14 @@ using ClearCanvas.Desktop.Trees;
 
 namespace ClearCanvas.Desktop.Configuration
 {
-    [MenuAction("launch", "global-menus/Admin/Configuration/Settings")]
-    [ClickHandler("launch", "Launch")]
+	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuConfigureSettings")]
+	[ClickHandler("activate", "Activate")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class SettingsManagementLaunchTool : Tool<IDesktopToolContext>
     {
         private IWorkspace _workspace;
 
-        public void Launch()
+        public void Activate()
         {
             if (_workspace == null)
             {

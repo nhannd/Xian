@@ -8,11 +8,11 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-    [ButtonAction("activate", "dicomaenavigator-toolbar/Delete")]
-    [MenuAction("activate", "dicomaenavigator-contextmenu/Delete")]
+    [ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarDelete")]
+    [MenuAction("activate", "dicomaenavigator-contextmenu/MenuDelete")]
     [ClickHandler("activate", "DeleteServerServerGroup")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-    [Tooltip("activate", "Delete")]
+	[Tooltip("activate", "TooltipDelete")]
     [IconSet("activate", IconScheme.Colour, "Icons.Delete.png", "Icons.Delete.png", "Icons.Delete.png")]
     [ExtensionOf(typeof(AENavigatorToolExtensionPoint))]
     public class ServerDeleteTool : AENavigatorTool

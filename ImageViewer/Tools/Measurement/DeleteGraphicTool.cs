@@ -14,7 +14,7 @@ using ClearCanvas.ImageViewer.InteractiveGraphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	[MenuAction("closemenu", "basicgraphic-menu/CloseMenu")]
+	[MenuAction("closemenu", "basicgraphic-menu/MenuClose")]
 	[Tooltip("closemenu", "CloseMenu")]
 
 	[MenuAction("delete", "basicgraphic-menu/DeleteGraphicTool")]

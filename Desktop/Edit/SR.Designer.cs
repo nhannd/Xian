@@ -63,18 +63,54 @@ namespace ClearCanvas.Desktop.Edit {
         /// <summary>
         ///   Looks up a localized string similar to Redo.
         /// </summary>
-        public static string MenuEditRedo {
+        public static string MenuRedo {
             get {
-                return ResourceManager.GetString("MenuEditRedo", resourceCulture);
+                return ResourceManager.GetString("MenuRedo", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Undo.
         /// </summary>
-        public static string MenuEditUndo {
+        public static string MenuUndo {
             get {
-                return ResourceManager.GetString("MenuEditUndo", resourceCulture);
+                return ResourceManager.GetString("MenuUndo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo.
+        /// </summary>
+        public static string ToolbarRedo {
+            get {
+                return ResourceManager.GetString("ToolbarRedo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo.
+        /// </summary>
+        public static string ToolbarUndo {
+            get {
+                return ResourceManager.GetString("ToolbarUndo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Redo.
+        /// </summary>
+        public static string TooltipRedo {
+            get {
+                return ResourceManager.GetString("TooltipRedo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Undo.
+        /// </summary>
+        public static string TooltipUndo {
+            get {
+                return ResourceManager.GetString("TooltipUndo", resourceCulture);
             }
         }
     }

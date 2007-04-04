@@ -8,11 +8,11 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-    [ButtonAction("activate", "dicomaenavigator-toolbar/Edit")]
-    [MenuAction("activate", "dicomaenavigator-contextmenu/Edit")]
+    [ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarEdit")]
+    [MenuAction("activate", "dicomaenavigator-contextmenu/MenuEdit")]
     [ClickHandler("activate", "EditServer")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-    [Tooltip("activate", "Edit")]
+	[Tooltip("activate", "TooltipEdit")]
     [IconSet("activate", IconScheme.Colour, "Icons.Edit.png", "Icons.Edit.png", "Icons.Edit.png")]
     [ExtensionOf(typeof(AENavigatorToolExtensionPoint))]
     public class ServerEditTool : AENavigatorTool

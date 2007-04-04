@@ -13,11 +13,11 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-	[ButtonAction("activate", "dicomstudybrowser-toolbar/Delete")]
-	[MenuAction("activate", "dicomstudybrowser-contextmenu/Delete")]
+	[ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarDeleteStudy")]
+	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuDeleteStudy")]
 	[ClickHandler("activate", "DeleteStudy")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-	[Tooltip("activate", "Delete Study")]
+	[Tooltip("activate", "TooltipDeleteStudy")]
 	[IconSet("activate", IconScheme.Colour, "Icons.DeleteStudySmall.png", "Icons.DeleteStudySmall.png", "Icons.DeleteStudySmall.png")]
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class DeleteStudyTool : StudyBrowserTool

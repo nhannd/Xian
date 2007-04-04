@@ -59,7 +59,7 @@
     <Compile Include="DisplayLevel.cs" />
     <Compile Include="NextTool.cs" />
     <Compile Include="DicomDump.cs" />
-    <Compile Include="DicomEditor.cs" />
+    <Compile Include="DicomEditorTool.cs" />
     <Compile Include="DicomEditorComponent.cs" />
     <Compile Include="EditItem.cs" />
     <Compile Include="PreviousTool.cs" />

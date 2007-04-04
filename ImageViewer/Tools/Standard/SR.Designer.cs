@@ -250,263 +250,344 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Locate on Disk.
-        /// </summary>
-        internal static string MenuStandardLocateOnDisk {
-            get {
-                return ResourceManager.GetString("MenuStandardLocateOnDisk", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Flip &amp;Horizontal.
         /// </summary>
-        internal static string MenuToolsStandardFlipHorizontal {
+        internal static string MenuFlipHorizontal {
             get {
-                return ResourceManager.GetString("MenuToolsStandardFlipHorizontal", resourceCulture);
+                return ResourceManager.GetString("MenuFlipHorizontal", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Flip &amp;Vertical.
         /// </summary>
-        internal static string MenuToolsStandardFlipVertical {
+        internal static string MenuFlipVertical {
             get {
-                return ResourceManager.GetString("MenuToolsStandardFlipVertical", resourceCulture);
+                return ResourceManager.GetString("MenuFlipVertical", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Locate on Disk.
+        /// </summary>
+        internal static string MenuLocateOnDisk {
+            get {
+                return ResourceManager.GetString("MenuLocateOnDisk", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Lut Presets.
         /// </summary>
-        internal static string MenuToolsStandardLutPresets {
+        internal static string MenuLutPresets {
             get {
-                return ResourceManager.GetString("MenuToolsStandardLutPresets", resourceCulture);
+                return ResourceManager.GetString("MenuLutPresets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Memory Usage.
+        /// </summary>
+        internal static string MenuMemoryUsage {
+            get {
+                return ResourceManager.GetString("MenuMemoryUsage", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to &amp;Pan.
         /// </summary>
-        internal static string MenuToolsStandardPan {
+        internal static string MenuPan {
             get {
-                return ResourceManager.GetString("MenuToolsStandardPan", resourceCulture);
+                return ResourceManager.GetString("MenuPan", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Probe.
         /// </summary>
-        internal static string MenuToolsStandardProbe {
+        internal static string MenuProbe {
             get {
-                return ResourceManager.GetString("MenuToolsStandardProbe", resourceCulture);
+                return ResourceManager.GetString("MenuProbe", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to R&amp;eset.
         /// </summary>
-        internal static string MenuToolsStandardReset {
+        internal static string MenuReset {
             get {
-                return ResourceManager.GetString("MenuToolsStandardReset", resourceCulture);
+                return ResourceManager.GetString("MenuReset", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Rotate &amp;Left.
         /// </summary>
-        internal static string MenuToolsStandardRotateLeft {
+        internal static string MenuRotateLeft {
             get {
-                return ResourceManager.GetString("MenuToolsStandardRotateLeft", resourceCulture);
+                return ResourceManager.GetString("MenuRotateLeft", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Rotate &amp;Right.
         /// </summary>
-        internal static string MenuToolsStandardRotateRight {
+        internal static string MenuRotateRight {
             get {
-                return ResourceManager.GetString("MenuToolsStandardRotateRight", resourceCulture);
+                return ResourceManager.GetString("MenuRotateRight", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to &amp;Stack.
         /// </summary>
-        internal static string MenuToolsStandardStack {
+        internal static string MenuStack {
             get {
-                return ResourceManager.GetString("MenuToolsStandardStack", resourceCulture);
+                return ResourceManager.GetString("MenuStack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Standard.
+        /// </summary>
+        internal static string MenuStandard {
+            get {
+                return ResourceManager.GetString("MenuStandard", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to &amp;Window/Level.
         /// </summary>
-        internal static string MenuToolsStandardWindowLevel {
+        internal static string MenuWindowLevel {
             get {
-                return ResourceManager.GetString("MenuToolsStandardWindowLevel", resourceCulture);
+                return ResourceManager.GetString("MenuWindowLevel", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to &amp;Zoom.
         /// </summary>
-        internal static string MenuToolsStandardZoom {
+        internal static string MenuZoom {
             get {
-                return ResourceManager.GetString("MenuToolsStandardZoom", resourceCulture);
+                return ResourceManager.GetString("MenuZoom", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to &amp;1X.
         /// </summary>
-        internal static string MenuToolsStandardZoom1X {
+        internal static string MenuZoom1X {
             get {
-                return ResourceManager.GetString("MenuToolsStandardZoom1X", resourceCulture);
+                return ResourceManager.GetString("MenuZoom1X", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to &amp;2X.
         /// </summary>
-        internal static string MenuToolsStandardZoom2X {
+        internal static string MenuZoom2X {
             get {
-                return ResourceManager.GetString("MenuToolsStandardZoom2X", resourceCulture);
+                return ResourceManager.GetString("MenuZoom2X", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to &amp;4X.
         /// </summary>
-        internal static string MenuToolsStandardZoom4X {
+        internal static string MenuZoom4X {
             get {
-                return ResourceManager.GetString("MenuToolsStandardZoom4X", resourceCulture);
+                return ResourceManager.GetString("MenuZoom4X", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Flip Horizontal.
+        ///   Looks up a localized string similar to Flip horizontal.
         /// </summary>
-        internal static string ToolbarToolsStandardFlipHorizontal {
+        internal static string ToolbarFlipHorizontal {
             get {
-                return ResourceManager.GetString("ToolbarToolsStandardFlipHorizontal", resourceCulture);
+                return ResourceManager.GetString("ToolbarFlipHorizontal", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Flip Vertical.
+        ///   Looks up a localized string similar to Flip vertical.
         /// </summary>
-        internal static string ToolbarToolsStandardFlipVertical {
+        internal static string ToolbarFlipVertical {
             get {
-                return ResourceManager.GetString("ToolbarToolsStandardFlipVertical", resourceCulture);
+                return ResourceManager.GetString("ToolbarFlipVertical", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Pan.
         /// </summary>
-        internal static string ToolbarToolsStandardPan {
+        internal static string ToolbarPan {
             get {
-                return ResourceManager.GetString("ToolbarToolsStandardPan", resourceCulture);
+                return ResourceManager.GetString("ToolbarPan", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Probe.
         /// </summary>
-        internal static string ToolbarToolsStandardProbe {
+        internal static string ToolbarProbe {
             get {
-                return ResourceManager.GetString("ToolbarToolsStandardProbe", resourceCulture);
+                return ResourceManager.GetString("ToolbarProbe", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Reset.
         /// </summary>
-        internal static string ToolbarToolsStandardReset {
+        internal static string ToolbarReset {
             get {
-                return ResourceManager.GetString("ToolbarToolsStandardReset", resourceCulture);
+                return ResourceManager.GetString("ToolbarReset", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rotate Left.
+        ///   Looks up a localized string similar to Rotate counterclockwise 90 degrees.
         /// </summary>
-        internal static string ToolbarToolsStandardRotateLeft {
+        internal static string ToolbarRotateLeft {
             get {
-                return ResourceManager.GetString("ToolbarToolsStandardRotateLeft", resourceCulture);
+                return ResourceManager.GetString("ToolbarRotateLeft", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Rotate Right.
+        ///   Looks up a localized string similar to Rotate clockwise 90 degrees.
         /// </summary>
-        internal static string ToolbarToolsStandardRotateRight {
+        internal static string ToolbarRotateRight {
             get {
-                return ResourceManager.GetString("ToolbarToolsStandardRotateRight", resourceCulture);
+                return ResourceManager.GetString("ToolbarRotateRight", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Stack.
         /// </summary>
-        internal static string ToolbarToolsStandardStack {
+        internal static string ToolbarStack {
             get {
-                return ResourceManager.GetString("ToolbarToolsStandardStack", resourceCulture);
+                return ResourceManager.GetString("ToolbarStack", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Window/Level.
+        ///   Looks up a localized string similar to Window &amp; Level.
         /// </summary>
-        internal static string ToolbarToolsStandardWindowLevel {
+        internal static string ToolbarWindowLevel {
             get {
-                return ResourceManager.GetString("ToolbarToolsStandardWindowLevel", resourceCulture);
+                return ResourceManager.GetString("ToolbarWindowLevel", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Zoom.
         /// </summary>
-        internal static string ToolbarToolsStandardZoom {
+        internal static string ToolbarZoom {
             get {
-                return ResourceManager.GetString("ToolbarToolsStandardZoom", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 1X.
-        /// </summary>
-        internal static string ToolbarToolsStandardZoom1X {
-            get {
-                return ResourceManager.GetString("ToolbarToolsStandardZoom1X", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 2X.
-        /// </summary>
-        internal static string ToolbarToolsStandardZoom2X {
-            get {
-                return ResourceManager.GetString("ToolbarToolsStandardZoom2X", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to 4X.
-        /// </summary>
-        internal static string ToolbarToolsStandardZoom4X {
-            get {
-                return ResourceManager.GetString("ToolbarToolsStandardZoom4X", resourceCulture);
+                return ResourceManager.GetString("ToolbarZoom", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Lut Presets.
         /// </summary>
-        internal static string ToolsStandardLutPresets {
+        internal static string ToolsPresets {
             get {
-                return ResourceManager.GetString("ToolsStandardLutPresets", resourceCulture);
+                return ResourceManager.GetString("ToolsPresets", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flip horizontal.
+        /// </summary>
+        internal static string TooltipFlipHorizontal {
+            get {
+                return ResourceManager.GetString("TooltipFlipHorizontal", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Flip vertical.
+        /// </summary>
+        internal static string TooltipFlipVertical {
+            get {
+                return ResourceManager.GetString("TooltipFlipVertical", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pan.
+        /// </summary>
+        internal static string TooltipPan {
+            get {
+                return ResourceManager.GetString("TooltipPan", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Probe.
+        /// </summary>
+        internal static string TooltipProbe {
+            get {
+                return ResourceManager.GetString("TooltipProbe", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Reset.
+        /// </summary>
+        internal static string TooltipReset {
+            get {
+                return ResourceManager.GetString("TooltipReset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotate counterclockwise 90 degrees.
+        /// </summary>
+        internal static string TooltipRotateLeft {
+            get {
+                return ResourceManager.GetString("TooltipRotateLeft", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rotate clockwise 90 degrees.
+        /// </summary>
+        internal static string TooltipRotateRight {
+            get {
+                return ResourceManager.GetString("TooltipRotateRight", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stack.
+        /// </summary>
+        internal static string TooltipStack {
+            get {
+                return ResourceManager.GetString("TooltipStack", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Window &amp; Level.
+        /// </summary>
+        internal static string TooltipWindowLevel {
+            get {
+                return ResourceManager.GetString("TooltipWindowLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Zoom.
+        /// </summary>
+        internal static string TooltipZoom {
+            get {
+                return ResourceManager.GetString("TooltipZoom", resourceCulture);
             }
         }
         

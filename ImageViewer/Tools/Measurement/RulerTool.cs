@@ -15,12 +15,12 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	[MenuAction("activate", "imageviewer-contextmenu/ToolsMeasurementRuler", Flags = ClickActionFlags.CheckAction)]
-	[MenuAction("activate", "global-menus/MenuTools/MenuToolsMeasurement/ToolsMeasurementRuler", Flags = ClickActionFlags.CheckAction)]
-    [ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolsMeasurementRuler", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "imageviewer-contextmenu/MenuRuler", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuRuler", Flags = ClickActionFlags.CheckAction)]
+    [ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarRuler", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
-    [Tooltip("activate", "ToolsMeasurementRuler")]
+	[Tooltip("activate", "TooltipRuler")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.RulerMedium.png", "Icons.RulerLarge.png")]
 	[GroupHint("activate", "Tools.Image.Measurement.ROI.Linear")]
 
@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			PolyLineInteractiveGraphic polyLineGraphic = new PolyLineInteractiveGraphic(true, 2);
 			_roiGraphic = new ROIGraphic(polyLineGraphic, true);
 
-			_roiGraphic.Callout.Text = SR.ToolsMeasurementLineROI;
+			//_roiGraphic.Callout.Text = SR.ToolsMeasurementLineROI;
 			image.OverlayGraphics.Add(_roiGraphic);
 			_roiGraphic.RoiChanged += new EventHandler(OnRoiChanged);
 			_roiGraphic.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnRulerStateChanged);

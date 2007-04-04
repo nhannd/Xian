@@ -151,6 +151,15 @@ namespace ClearCanvas.Desktop.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Configure Settings.
+        /// </summary>
+        internal static string MenuConfigureSettings {
+            get {
+                return ResourceManager.GetString("MenuConfigureSettings", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No configuration pages exist..
         /// </summary>
         internal static string MessageNoConfigurationPagesExist {

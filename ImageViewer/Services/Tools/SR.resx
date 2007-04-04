@@ -120,12 +120,6 @@
   <data name="ClearInactive" xml:space="preserve">
     <value>Clear Inactive</value>
   </data>
-  <data name="DicomFileImportActivity" xml:space="preserve">
-    <value>Import Activity</value>
-  </data>
-  <data name="DicomSendReceiveActivity" xml:space="preserve">
-    <value>Send/Receive Activity</value>
-  </data>
   <data name="ExceptionIdentifiersMustMatch" xml:space="preserve">
     <value>The identifiers must match.</value>
   </data>
@@ -141,8 +135,20 @@
   <data name="ImportDicomFiles" xml:space="preserve">
     <value>Import</value>
   </data>
-  <data name="LocalDataStoreReindex" xml:space="preserve">
+  <data name="MenuDicomFileImportActivity" xml:space="preserve">
+    <value>Import Activity Monitor</value>
+  </data>
+  <data name="MenuDicomSendReceiveActivity" xml:space="preserve">
+    <value>Send/Receive Activity Monitor</value>
+  </data>
+  <data name="MenuLocalDataStoreReindex" xml:space="preserve">
     <value>Reindex Local Data Store</value>
+  </data>
+  <data name="MenuRetrieveStudy" xml:space="preserve">
+    <value>Retrieve</value>
+  </data>
+  <data name="MenuSendStudy" xml:space="preserve">
+    <value>Send</value>
   </data>
   <data name="MessageCancelFailed" xml:space="preserve">
     <value>Failed to cancel the selected items.</value>
@@ -242,6 +248,12 @@
   </data>
   <data name="TitleTo" xml:space="preserve">
     <value>To</value>
+  </data>
+  <data name="ToolbarRetrieveStudy" xml:space="preserve">
+    <value>Retrieve</value>
+  </data>
+  <data name="ToolbarSendStudy" xml:space="preserve">
+    <value>Send</value>
   </data>
   <data name="TooltipClearInactive" xml:space="preserve">
     <value>Clear Inactive</value>

@@ -61,6 +61,15 @@ namespace ClearCanvas.Desktop.Explorer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string MenuExplorer {
+            get {
+                return ResourceManager.GetString("MenuExplorer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Explorer.
         /// </summary>
         public static string TitleExplorer {
@@ -70,11 +79,20 @@ namespace ClearCanvas.Desktop.Explorer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Explorer.
+        ///   Looks up a localized string similar to Search.
         /// </summary>
-        public static string ToolbarToolsStandardExplorer {
+        public static string ToolbarExplorer {
             get {
-                return ResourceManager.GetString("ToolbarToolsStandardExplorer", resourceCulture);
+                return ResourceManager.GetString("ToolbarExplorer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        public static string TooltipExplorer {
+            get {
+                return ResourceManager.GetString("TooltipExplorer", resourceCulture);
             }
         }
     }

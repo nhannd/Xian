@@ -121,7 +121,7 @@
     <value>ClearCanvas Workstation</value>
   </data>
   <data name="ApplicationVersion" xml:space="preserve">
-    <value>0.9</value>
+    <value>1.0</value>
   </data>
   <data name="CommandCreateMultilineGraphic" xml:space="preserve">
     <value>Create multiline graphic</value>

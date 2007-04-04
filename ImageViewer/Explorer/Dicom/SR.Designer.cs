@@ -220,6 +220,69 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add server.
+        /// </summary>
+        internal static string MenuAddServer {
+            get {
+                return ResourceManager.GetString("MenuAddServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add server group.
+        /// </summary>
+        internal static string MenuAddServerGroup {
+            get {
+                return ResourceManager.GetString("MenuAddServerGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string MenuDelete {
+            get {
+                return ResourceManager.GetString("MenuDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string MenuDeleteStudy {
+            get {
+                return ResourceManager.GetString("MenuDeleteStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        internal static string MenuEdit {
+            get {
+                return ResourceManager.GetString("MenuEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        internal static string MenuOpenStudy {
+            get {
+                return ResourceManager.GetString("MenuOpenStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verify.
+        /// </summary>
+        internal static string MenuVerify {
+            get {
+                return ResourceManager.GetString("MenuVerify", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sorry, but you cannot start two different retrieval sessions at the same time..
         /// </summary>
         internal static string MessageCannotStartMultipleRetrievalSessions {
@@ -505,6 +568,132 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string TitleStudyNavigatorPane {
             get {
                 return ResourceManager.GetString("TitleStudyNavigatorPane", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add server.
+        /// </summary>
+        internal static string ToolbarAddServer {
+            get {
+                return ResourceManager.GetString("ToolbarAddServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add server group.
+        /// </summary>
+        internal static string ToolbarAddServerGroup {
+            get {
+                return ResourceManager.GetString("ToolbarAddServerGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string ToolbarDelete {
+            get {
+                return ResourceManager.GetString("ToolbarDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string ToolbarDeleteStudy {
+            get {
+                return ResourceManager.GetString("ToolbarDeleteStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        internal static string ToolbarEdit {
+            get {
+                return ResourceManager.GetString("ToolbarEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open.
+        /// </summary>
+        internal static string ToolbarOpenStudy {
+            get {
+                return ResourceManager.GetString("ToolbarOpenStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verify.
+        /// </summary>
+        internal static string ToolbarVerify {
+            get {
+                return ResourceManager.GetString("ToolbarVerify", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add server.
+        /// </summary>
+        internal static string TooltipAddServer {
+            get {
+                return ResourceManager.GetString("TooltipAddServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add server group.
+        /// </summary>
+        internal static string TooltipAddServerGroup {
+            get {
+                return ResourceManager.GetString("TooltipAddServerGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete server or server group.
+        /// </summary>
+        internal static string TooltipDelete {
+            get {
+                return ResourceManager.GetString("TooltipDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete study.
+        /// </summary>
+        internal static string TooltipDeleteStudy {
+            get {
+                return ResourceManager.GetString("TooltipDeleteStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit server or server group.
+        /// </summary>
+        internal static string TooltipEdit {
+            get {
+                return ResourceManager.GetString("TooltipEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Open study.
+        /// </summary>
+        internal static string TooltipOpenStudy {
+            get {
+                return ResourceManager.GetString("TooltipOpenStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verify server or server group.
+        /// </summary>
+        internal static string TooltipVerify {
+            get {
+                return ResourceManager.GetString("TooltipVerify", resourceCulture);
             }
         }
     }

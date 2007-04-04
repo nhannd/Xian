@@ -10,10 +10,10 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
-    [ButtonAction("activate", "dicomeditor-toolbar/Next")]
+    [ButtonAction("activate", "dicomeditor-toolbar/ToolbarNext")]
     [ClickHandler("activate", "Next")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-    [Tooltip("activate", "View Next File")]
+    [Tooltip("activate", "TooltipNext")]
     [IconSet("activate", IconScheme.Colour, "Icons.NextSmall.png", "Icons.NextSmall.png", "Icons.NextSmall.png")]
     [ExtensionOf(typeof(DicomEditorToolExtensionPoint))]
     class NextTool : Tool<DicomEditorComponent.DicomEditorToolContext>

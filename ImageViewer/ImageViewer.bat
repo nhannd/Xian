@@ -10,7 +10,7 @@ IF NOT EXIST "C:\dicom_datastore\viewer.sdf" copy "..\..\..\..\Dicom\DataStore\A
 copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf" "C:\dicom_datastore\empty_viewer.sdf"
 
 :: Copy Sql CE files
-copy "..\..\..\..\Dicom\DataStore\NHibernateDriver\bin\%3\ClearCanvas.Dicom.DataStore.NHibernateDriver.dll" ".\Common"
+copy "..\..\..\..\Dicom\DataStorC:\VS2005\Projects\Trunk\ImageViewer\actionmodels.xmle\NHibernateDriver\bin\%3\ClearCanvas.Dicom.DataStore.NHibernateDriver.dll" ".\Common"
 copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlceca30.dll" ".\Common"
 copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlcecompact30.dll" ".\Common"
 copy "..\..\..\..\Dicom\DataStore\AuxiliaryFiles\sqlceer30EN.dll" ".\Common"
@@ -64,3 +64,6 @@ copy "..\..\..\..\ImageViewer\Configuration\View\WinForms\bin\%1\ClearCanvas.Ima
 copy "..\..\..\..\Dicom\Services\bin\%1\ClearCanvas.Dicom.Services.dll" ".\plugins"
 copy "..\..\..\..\Utilities\DicomEditor\bin\%1\ClearCanvas.Utilities.DicomEditor.dll" ".\plugins"
 copy "..\..\..\..\Utilities\DicomEditor\View\WinForms\bin\%1\ClearCanvas.Utilities.DicomEditor.View.WinForms.dll" ".\plugins"
+
+:: Copy config files
+copy "..\..\..\..\ImageViewer\actionmodels.xml "."

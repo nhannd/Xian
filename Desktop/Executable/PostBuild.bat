@@ -38,9 +38,6 @@ copy "..\..\..\Help\bin\%3\ClearCanvas.Desktop.Help.dll" ".\plugins"
 copy "..\..\..\ExtensionBrowser\bin\%3\ClearCanvas.Desktop.ExtensionBrowser.dll" ".\plugins"
 copy "..\..\..\ExtensionBrowser\View\WinForms\bin\%3\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" ".\plugins"
 
-:: Copy config files
-copy "..\..\..\Actions\actionmodels.xml "."
-
 :: Copy license file
 copy "..\..\..\..\License.rtf ."
 

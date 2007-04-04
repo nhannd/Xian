@@ -147,6 +147,9 @@
   <data name="LabelSaveAll" xml:space="preserve">
     <value>Save All</value>
   </data>
+  <data name="MenuConfigureSettings" xml:space="preserve">
+    <value>Configure Settings</value>
+  </data>
   <data name="MessageNoConfigurationPagesExist" xml:space="preserve">
     <value>No configuration pages exist.</value>
   </data>

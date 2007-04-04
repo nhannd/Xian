@@ -11,12 +11,12 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-	[MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardFlipVertical")]
+	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuFlipVertical")]
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardFlipVertical", KeyStroke = XKeys.V)]
-    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarToolsStandardFlipVertical")]
+    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarFlipVertical")]
 	[ClickHandler("activate", "Activate")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-	[Tooltip("activate", "ToolbarToolsStandardFlipVertical")]
+	[Tooltip("activate", "TooltipFlipVertical")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.FlipVerticalMedium.png", "Icons.FlipVerticalLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Flip.Vertical")]
 

@@ -10,11 +10,11 @@ using ClearCanvas.Dicom.Network;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-    [ButtonAction("activate", "dicomaenavigator-toolbar/Verify")]
-    [MenuAction("activate", "dicomaenavigator-contextmenu/Verify (C-ECHO)")]
+    [ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarVerify")]
+    [MenuAction("activate", "dicomaenavigator-contextmenu/MenuVerify")]
     [ClickHandler("activate", "VerifyServer")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-    [Tooltip("activate", "Verify (C-ECHO)")]
+    [Tooltip("activate", "TooltipVerify")]
     [IconSet("activate", IconScheme.Colour, "Icons.Verify.png", "Icons.Verify.png", "Icons.Verify.png")]
     [ExtensionOf(typeof(AENavigatorToolExtensionPoint))]
     public class ServerVerifyTool : AENavigatorTool

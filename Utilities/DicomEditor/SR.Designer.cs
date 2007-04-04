@@ -106,6 +106,96 @@ namespace ClearCanvas.Utilities.DicomEditor {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create.
+        /// </summary>
+        internal static string MenuCreate {
+            get {
+                return ResourceManager.GetString("MenuCreate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string MenuDelete {
+            get {
+                return ResourceManager.GetString("MenuDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to DICOM Editor.
+        /// </summary>
+        internal static string MenuDicomEditor {
+            get {
+                return ResourceManager.GetString("MenuDicomEditor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Dump Files.
+        /// </summary>
+        internal static string MenuDumpFiles {
+            get {
+                return ResourceManager.GetString("MenuDumpFiles", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next.
+        /// </summary>
+        internal static string MenuNext {
+            get {
+                return ResourceManager.GetString("MenuNext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous.
+        /// </summary>
+        internal static string MenuPrevious {
+            get {
+                return ResourceManager.GetString("MenuPrevious", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quick anonymize.
+        /// </summary>
+        internal static string MenuQuickAnonymize {
+            get {
+                return ResourceManager.GetString("MenuQuickAnonymize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replicate.
+        /// </summary>
+        internal static string MenuReplicate {
+            get {
+                return ResourceManager.GetString("MenuReplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Revert.
+        /// </summary>
+        internal static string MenuRevert {
+            get {
+                return ResourceManager.GetString("MenuRevert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        internal static string MenuSave {
+            get {
+                return ResourceManager.GetString("MenuSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The selected tag(s) will be deleted.  Are you sure you want to continue?.
         /// </summary>
         internal static string MessageConfirmDeleteSelectedTags {
@@ -183,6 +273,150 @@ namespace ClearCanvas.Utilities.DicomEditor {
         internal static string TitleDicomEditor {
             get {
                 return ResourceManager.GetString("TitleDicomEditor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create.
+        /// </summary>
+        internal static string ToolbarCreate {
+            get {
+                return ResourceManager.GetString("ToolbarCreate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string ToolbarDelete {
+            get {
+                return ResourceManager.GetString("ToolbarDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next.
+        /// </summary>
+        internal static string ToolbarNext {
+            get {
+                return ResourceManager.GetString("ToolbarNext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous.
+        /// </summary>
+        internal static string ToolbarPrevious {
+            get {
+                return ResourceManager.GetString("ToolbarPrevious", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Quick anonymize.
+        /// </summary>
+        internal static string ToolbarQuickAnonymize {
+            get {
+                return ResourceManager.GetString("ToolbarQuickAnonymize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replicate.
+        /// </summary>
+        internal static string ToolbarReplicate {
+            get {
+                return ResourceManager.GetString("ToolbarReplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Revert.
+        /// </summary>
+        internal static string ToolbarRevert {
+            get {
+                return ResourceManager.GetString("ToolbarRevert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Save.
+        /// </summary>
+        internal static string ToolbarSave {
+            get {
+                return ResourceManager.GetString("ToolbarSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create new tag.
+        /// </summary>
+        internal static string TooltipCreate {
+            get {
+                return ResourceManager.GetString("TooltipCreate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete tag.
+        /// </summary>
+        internal static string TooltipDelete {
+            get {
+                return ResourceManager.GetString("TooltipDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Next image.
+        /// </summary>
+        internal static string TooltipNext {
+            get {
+                return ResourceManager.GetString("TooltipNext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Previous image.
+        /// </summary>
+        internal static string TooltipPrevious {
+            get {
+                return ResourceManager.GetString("TooltipPrevious", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Anonymize all loaded files with one click.
+        /// </summary>
+        internal static string TooltipQuickAnonymize {
+            get {
+                return ResourceManager.GetString("TooltipQuickAnonymize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Replicates selected tag to all loaded files.
+        /// </summary>
+        internal static string TooltipReplicate {
+            get {
+                return ResourceManager.GetString("TooltipReplicate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Revert changes.
+        /// </summary>
+        internal static string TooltipRevert {
+            get {
+                return ResourceManager.GetString("TooltipRevert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Saves edits.
+        /// </summary>
+        internal static string TooltipSave {
+            get {
+                return ResourceManager.GetString("TooltipSave", resourceCulture);
             }
         }
     }

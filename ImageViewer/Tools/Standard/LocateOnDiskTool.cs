@@ -15,11 +15,11 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-    [MenuAction("apply", "global-menus/Utilities/MenuStandardLocateOnDisk")]
-    [Tooltip("apply", "Locates the selected image(s) on disk")]
-    [IconSet("apply", IconScheme.Colour, "", "Icons.LocateOnDiskToolMedium.png", "Icons.LocateOnDiskToolLarge.png")]
-    [ClickHandler("apply", "Apply")]
-    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuLocateOnDisk")]
+	[Tooltip("activate", "Locates the selected image(s) on disk")]
+	[IconSet("activate", IconScheme.Colour, "", "Icons.LocateOnDiskToolMedium.png", "Icons.LocateOnDiskToolLarge.png")]
+	[ClickHandler("activate", "Activate")]
+	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     public class LocateOnDiskTool : ImageViewerTool
     {
@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
         /// You may change the name of this method as desired, but be sure to change the
         /// ClickHandler attribute accordingly.
         /// </summary>
-        public void Apply()
+        public void Activate()
         {
             if (this.SelectedPresentationImage == null)
                 return;

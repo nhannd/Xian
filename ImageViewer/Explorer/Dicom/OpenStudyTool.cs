@@ -10,11 +10,11 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-	[ButtonAction("activate", "dicomstudybrowser-toolbar/Open")]
-	[MenuAction("activate", "dicomstudybrowser-contextmenu/Open")]
+	[ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarOpenStudy")]
+	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuOpenStudy")]
 	[ClickHandler("activate", "OpenStudy")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-	[Tooltip("activate", "Open Study")]
+	[Tooltip("activate", "TooltipOpenStudy")]
 	[IconSet("activate", IconScheme.Colour, "Icons.OpenStudySmall.png", "Icons.OpenStudySmall.png", "Icons.OpenStudySmall.png")]
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class OpenStudyTool : StudyBrowserTool

@@ -13,8 +13,8 @@ using ClearCanvas.Dicom.Network;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
-    [ButtonAction("activate", "dicomstudybrowser-toolbar/Send")]
-    [MenuAction("activate", "dicomstudybrowser-contextmenu/Send")]
+    [ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarSendStudy")]
+    [MenuAction("activate", "dicomstudybrowser-contextmenu/MenuSendStudy")]
     [ClickHandler("activate", "SendStudy")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [Tooltip("activate", "TooltipSendStudy")]

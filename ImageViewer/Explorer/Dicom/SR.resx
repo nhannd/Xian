@@ -174,6 +174,27 @@ Host: {2}
 Listening Port: {3}
 Location: {4}</value>
   </data>
+  <data name="MenuAddServer" xml:space="preserve">
+    <value>Add server</value>
+  </data>
+  <data name="MenuAddServerGroup" xml:space="preserve">
+    <value>Add server group</value>
+  </data>
+  <data name="MenuDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="MenuDeleteStudy" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="MenuEdit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="MenuOpenStudy" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="MenuVerify" xml:space="preserve">
+    <value>Verify</value>
+  </data>
   <data name="MessageCannotStartMultipleRetrievalSessions" xml:space="preserve">
     <value>Sorry, but you cannot start two different retrieval sessions at the same time.</value>
   </data>
@@ -270,5 +291,47 @@ Are you sure you want to continue?</value>
   </data>
   <data name="TitleStudyNavigatorPane" xml:space="preserve">
     <value>Study Navigator</value>
+  </data>
+  <data name="ToolbarAddServer" xml:space="preserve">
+    <value>Add server</value>
+  </data>
+  <data name="ToolbarAddServerGroup" xml:space="preserve">
+    <value>Add server group</value>
+  </data>
+  <data name="ToolbarDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ToolbarDeleteStudy" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ToolbarEdit" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="ToolbarOpenStudy" xml:space="preserve">
+    <value>Open</value>
+  </data>
+  <data name="ToolbarVerify" xml:space="preserve">
+    <value>Verify</value>
+  </data>
+  <data name="TooltipAddServer" xml:space="preserve">
+    <value>Add server</value>
+  </data>
+  <data name="TooltipAddServerGroup" xml:space="preserve">
+    <value>Add server group</value>
+  </data>
+  <data name="TooltipDelete" xml:space="preserve">
+    <value>Delete server or server group</value>
+  </data>
+  <data name="TooltipDeleteStudy" xml:space="preserve">
+    <value>Delete study</value>
+  </data>
+  <data name="TooltipEdit" xml:space="preserve">
+    <value>Edit server or server group</value>
+  </data>
+  <data name="TooltipOpenStudy" xml:space="preserve">
+    <value>Open study</value>
+  </data>
+  <data name="TooltipVerify" xml:space="preserve">
+    <value>Verify server or server group</value>
   </data>
 </root>

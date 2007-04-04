@@ -10,7 +10,7 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
-	[MenuAction("activate", "global-menus/MenuTools/DicomSendReceiveActivity")]
+	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuDicomSendReceiveActivity")]
 	[IconSet("activate", IconScheme.Colour, "", "Icons.DicomSendReceiveActivityMedium.png", "Icons.DicomSendReceiveActivityLarge.png")]
 	[ClickHandler("activate", "Activate")]
 

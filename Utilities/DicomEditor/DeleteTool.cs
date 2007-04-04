@@ -10,11 +10,11 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
-    [ButtonAction("activate", "dicomeditor-toolbar/Delete")]
-    [MenuAction("activate", "dicomeditor-contextmenu/Delete")]
+    [ButtonAction("activate", "dicomeditor-toolbar/ToolbarDelete")]
+    [MenuAction("activate", "dicomeditor-contextmenu/MenuDelete")]
     [ClickHandler("activate", "Delete")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-    [Tooltip("activate", "Delete Tag")]
+    [Tooltip("activate", "TooltipDelete")]
     [IconSet("activate", IconScheme.Colour, "Icons.DeleteSmall.png", "Icons.DeleteSmall.png", "Icons.DeleteSmall.png")]
     [ExtensionOf(typeof(DicomEditorToolExtensionPoint))]
     class DeleteTool : Tool<DicomEditorComponent.DicomEditorToolContext>

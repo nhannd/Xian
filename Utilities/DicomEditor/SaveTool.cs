@@ -11,8 +11,8 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.Utilities.DicomEditor
 {
     //[MenuAction("activate", "global-menus/MenuTools/MenuToolsMyTools/SaveTool")]
-    [ButtonAction("activate", "dicomeditor-toolbar/Save All")]
-    [Tooltip("activate", "Saves Edits")]
+    [ButtonAction("activate", "dicomeditor-toolbar/ToolbarSave")]
+    [Tooltip("activate", "TooltipSave")]
     [IconSet("activate", IconScheme.Colour, "Icons.SaveToolSmall.png", "Icons.SaveToolMedium.png", "Icons.SaveToolLarge.png")]
     [ClickHandler("activate", "Save")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]

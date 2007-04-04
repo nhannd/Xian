@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to 0.9.
+        ///   Looks up a localized string similar to 1.0.
         /// </summary>
         public static string ApplicationVersion {
             get {

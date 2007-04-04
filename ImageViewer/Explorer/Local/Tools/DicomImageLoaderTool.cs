@@ -12,7 +12,7 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 {
-	[MenuAction("Open", "explorerlocal-contextmenu/OpenFiles")]
+	[MenuAction("Open", "explorerlocal-contextmenu/MenuOpenFiles")]
 	[Tooltip("Open", "OpenDicomFilesVerbose")]
 	[IconSet("Open", IconScheme.Colour, "Icons.OpenStudySmall.png", "Icons.OpenStudySmall.png", "Icons.OpenStudySmall.png")]
 	[ClickHandler("Open", "Open")]

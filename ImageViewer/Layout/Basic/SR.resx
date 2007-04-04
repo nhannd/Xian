@@ -135,10 +135,19 @@
   <data name="LabelDefault" xml:space="preserve">
     <value>(Default)</value>
   </data>
+  <data name="MenuLayoutManager" xml:space="preserve">
+    <value>Layout Manager</value>
+  </data>
+  <data name="MenuStandard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
   <data name="TitleLayoutConfiguration" xml:space="preserve">
     <value>Layout</value>
   </data>
   <data name="TitleLayoutManager" xml:space="preserve">
     <value>Layout Manager</value>
+  </data>
+  <data name="ToolbarLayoutManager" xml:space="preserve">
+    <value>LayoutManager</value>
   </data>
 </root>

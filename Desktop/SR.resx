@@ -177,31 +177,28 @@
   <data name="InvalidCustomDateFormat" xml:space="preserve">
     <value>The custom date format must be from the available list.</value>
   </data>
+  <data name="MenuAbout" xml:space="preserve">
+    <value>About</value>
+  </data>
+  <data name="MenuCloseWorkspace" xml:space="preserve">
+    <value>Close Workspace</value>
+  </data>
+  <data name="MenuContents" xml:space="preserve">
+    <value>Contents</value>
+  </data>
   <data name="MenuEdit" xml:space="preserve">
     <value>&amp;Edit</value>
+  </data>
+  <data name="MenuExitApplication" xml:space="preserve">
+    <value>Exit Application</value>
   </data>
   <data name="MenuFile" xml:space="preserve">
     <value>&amp;File</value>
   </data>
-  <data name="MenuFileCloseWorkspace" xml:space="preserve">
-    <value>Close Workspace</value>
-  </data>
-  <data name="MenuFileExitApplication" xml:space="preserve">
-    <value>Exit Application</value>
-  </data>
-  <data name="MenuFileSearch" xml:space="preserve">
-    <value>Search</value>
-  </data>
   <data name="MenuHelp" xml:space="preserve">
     <value>&amp;Help</value>
   </data>
-  <data name="MenuHelpAbout" xml:space="preserve">
-    <value>About</value>
-  </data>
-  <data name="MenuHelpContents" xml:space="preserve">
-    <value>Contents</value>
-  </data>
-  <data name="MenuHelpIndex" xml:space="preserve">
+  <data name="MenuIndex" xml:space="preserve">
     <value>Index</value>
   </data>
   <data name="MenuOptions" xml:space="preserve">
@@ -209,6 +206,9 @@
   </data>
   <data name="MenuTools" xml:space="preserve">
     <value>&amp;Tools</value>
+  </data>
+  <data name="MenuUtilities" xml:space="preserve">
+    <value>Utilities</value>
   </data>
   <data name="MessageConfirmCancelTask" xml:space="preserve">
     <value>The background task is still running.  Are you sure you want to cancel?</value>

@@ -132,6 +132,36 @@
   <data name="ColumnHeadingVR" xml:space="preserve">
     <value>VR</value>
   </data>
+  <data name="MenuCreate" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="MenuDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="MenuDicomEditor" xml:space="preserve">
+    <value>DICOM Editor</value>
+  </data>
+  <data name="MenuDumpFiles" xml:space="preserve">
+    <value>Dump Files</value>
+  </data>
+  <data name="MenuNext" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="MenuPrevious" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="MenuQuickAnonymize" xml:space="preserve">
+    <value>Quick anonymize</value>
+  </data>
+  <data name="MenuReplicate" xml:space="preserve">
+    <value>Replicate</value>
+  </data>
+  <data name="MenuRevert" xml:space="preserve">
+    <value>Revert</value>
+  </data>
+  <data name="MenuSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
   <data name="MessageConfirmDeleteSelectedTags" xml:space="preserve">
     <value>The selected tag(s) will be deleted.  Are you sure you want to continue?</value>
   </data>
@@ -158,5 +188,53 @@
   </data>
   <data name="TitleDicomEditor" xml:space="preserve">
     <value>DICOM Editor</value>
+  </data>
+  <data name="ToolbarCreate" xml:space="preserve">
+    <value>Create</value>
+  </data>
+  <data name="ToolbarDelete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="ToolbarNext" xml:space="preserve">
+    <value>Next</value>
+  </data>
+  <data name="ToolbarPrevious" xml:space="preserve">
+    <value>Previous</value>
+  </data>
+  <data name="ToolbarQuickAnonymize" xml:space="preserve">
+    <value>Quick anonymize</value>
+  </data>
+  <data name="ToolbarReplicate" xml:space="preserve">
+    <value>Replicate</value>
+  </data>
+  <data name="ToolbarRevert" xml:space="preserve">
+    <value>Revert</value>
+  </data>
+  <data name="ToolbarSave" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="TooltipCreate" xml:space="preserve">
+    <value>Create new tag</value>
+  </data>
+  <data name="TooltipDelete" xml:space="preserve">
+    <value>Delete tag</value>
+  </data>
+  <data name="TooltipNext" xml:space="preserve">
+    <value>Next image</value>
+  </data>
+  <data name="TooltipPrevious" xml:space="preserve">
+    <value>Previous image</value>
+  </data>
+  <data name="TooltipQuickAnonymize" xml:space="preserve">
+    <value>Anonymize all loaded files with one click</value>
+  </data>
+  <data name="TooltipReplicate" xml:space="preserve">
+    <value>Replicates selected tag to all loaded files</value>
+  </data>
+  <data name="TooltipRevert" xml:space="preserve">
+    <value>Revert changes</value>
+  </data>
+  <data name="TooltipSave" xml:space="preserve">
+    <value>Saves edits</value>
   </data>
 </root>

@@ -12,8 +12,8 @@ using ClearCanvas.ImageViewer.Explorer.Dicom;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
-	[ButtonAction("activate", "dicomstudybrowser-toolbar/Retrieve")]
-	[MenuAction("activate", "dicomstudybrowser-contextmenu/Retrieve")]
+	[ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarRetrieveStudy")]
+	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuRetrieveStudy")]
 	[ClickHandler("activate", "RetrieveStudy")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipRetrieveStudy")]

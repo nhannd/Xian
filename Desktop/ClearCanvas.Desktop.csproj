@@ -238,10 +238,6 @@
     <None Include="Tools\Tools.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Actions\actionmodels.xml">
-    </Content>
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Tools\Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

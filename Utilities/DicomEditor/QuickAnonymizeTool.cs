@@ -10,9 +10,9 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
-    [MenuAction("activate", "dicomeditor-toolbar/Quick Anonymize")]
-    [ButtonAction("activate", "dicomeditor-contextmenu/Quick Anonymize")]
-    [Tooltip("activate", "Anonymize all loaded files with one click")]
+    [ButtonAction("activate", "dicomeditor-contextmenu/ToolbarQuickAnonymize")]
+	[MenuAction("activate", "dicomeditor-toolbar/MenuQuickAnonymize")]
+	[Tooltip("activate", "TooltipQuickAnonymize")]
     [IconSet("activate", IconScheme.Colour, "Icons.QuickAnonymizeToolSmall.png", "Icons.QuickAnonymizeToolMedium.png", "Icons.QuickAnonymizeToolLarge.png")]
     [ClickHandler("activate", "Apply")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]

@@ -10,10 +10,10 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
-    [ButtonAction("activate", "dicomeditor-toolbar/Previous")]
+    [ButtonAction("activate", "dicomeditor-toolbar/ToolbarPrevious")]
     [ClickHandler("activate", "Previous")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-    [Tooltip("activate", "View Previous File")]
+    [Tooltip("activate", "TooltipPrevious")]
     [IconSet("activate", IconScheme.Colour, "Icons.PreviousSmall.png", "Icons.PreviousSmall.png", "Icons.PreviousSmall.png")]
     [ExtensionOf(typeof(DicomEditorToolExtensionPoint))]
     class PreviousTool : Tool<DicomEditorComponent.DicomEditorToolContext>

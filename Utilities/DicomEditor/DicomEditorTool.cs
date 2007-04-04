@@ -15,9 +15,9 @@ using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
-    [MenuAction("activate", "explorerlocal-contextmenu/DumpFiles")]
+    [MenuAction("activate", "explorerlocal-contextmenu/MenuDumpFiles")]
     [ClickHandler("activate", "Dump")]
-    [MenuAction("activate", "global-menus/Utilities/DicomEditor")]
+	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuDicomEditor")]
     [ClickHandler("activate", "Dump")]
     [Tooltip("activate", "OpenDicomFilesVerbose")]
     [IconSet("activate", IconScheme.Colour, "Icons.DumpToolSmall.png", "Icons.DumpToolSmall.png", "Icons.DumpToolSmall.png")]
@@ -26,9 +26,9 @@ namespace ClearCanvas.Utilities.DicomEditor
 
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
     [ExtensionOf(typeof(LocalImageExplorerToolExtensionPoint))]
-    public class DicomEditor : ToolBase
+    public class DicomEditorTool : ToolBase
     {
-        public DicomEditor()
+        public DicomEditorTool()
         {
             _enabled = true;
             _component = null;

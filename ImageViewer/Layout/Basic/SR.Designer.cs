@@ -115,6 +115,24 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Layout Manager.
+        /// </summary>
+        public static string MenuLayoutManager {
+            get {
+                return ResourceManager.GetString("MenuLayoutManager", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Standard.
+        /// </summary>
+        public static string MenuStandard {
+            get {
+                return ResourceManager.GetString("MenuStandard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Layout.
         /// </summary>
         public static string TitleLayoutConfiguration {
@@ -129,6 +147,15 @@ namespace ClearCanvas.ImageViewer.Layout.Basic {
         public static string TitleLayoutManager {
             get {
                 return ResourceManager.GetString("TitleLayoutManager", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to LayoutManager.
+        /// </summary>
+        public static string ToolbarLayoutManager {
+            get {
+                return ResourceManager.GetString("ToolbarLayoutManager", resourceCulture);
             }
         }
     }

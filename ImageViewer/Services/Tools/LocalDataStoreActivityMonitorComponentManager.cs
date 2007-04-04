@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 					SplitComponentContainer container = new SplitComponentContainer(topPane, bottomPane, SplitOrientation.Horizontal);
 
-					_dicomSendReceiveActivityComponentWorkspace = ApplicationComponent.LaunchAsWorkspace(desktopWindow, container, SR.DicomSendReceiveActivity,
+					_dicomSendReceiveActivityComponentWorkspace = ApplicationComponent.LaunchAsWorkspace(desktopWindow, container, SR.MenuDicomSendReceiveActivity,
 						delegate(IApplicationComponent closingComponent)
 						{
 							_dicomSendReceiveActivityComponentWorkspace = null;

@@ -8,11 +8,11 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-    [ButtonAction("activate", "dicomaenavigator-toolbar/AddServerGroup")]
-    [MenuAction("activate", "dicomaenavigator-contextmenu/Add New Group")]
+    [ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarAddServerGroup")]
+    [MenuAction("activate", "dicomaenavigator-contextmenu/MenuAddServerGroup")]
     [ClickHandler("activate", "AddNewServerGroup")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-    [Tooltip("activate", "Add New Group")]
+	[Tooltip("activate", "TooltipAddServerGroup")]
     [IconSet("activate", IconScheme.Colour, "Icons.AddGroup.png", "Icons.AddGroup.png", "Icons.AddGroup.png")]
     [ExtensionOf(typeof(AENavigatorToolExtensionPoint))]
     public class ServerGroupAddTool : AENavigatorTool
