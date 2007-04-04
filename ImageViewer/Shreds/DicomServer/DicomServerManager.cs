@@ -23,9 +23,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 	public partial class DicomServerManager : IDicomServerService
     {
 		private static DicomServerManager _instance;
-
-        private ApplicationEntity _myApplicationEntity;
-        private string _storageDirectory;
         private ClearCanvas.Dicom.Network.DicomServer _dicomServer;
 
         // Used by CFindScp
@@ -41,9 +38,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
         public DicomServerManager()
         {
-            _myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
-            _storageDirectory = DicomServerSettings.Instance.InterimStorageDirectory;
-
             _querySessionDictionary = new Dictionary<uint, DicomQuerySession>();
 			_moveSessionDictionary = new Dictionary<uint, DicomMoveSession>();
 			_sendRetrieveTasks = new List<BackgroundTaskContainer>();
@@ -69,10 +63,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             try
             {
                 // Create storage directory
-                if (!Directory.Exists(_storageDirectory))
-                    Directory.CreateDirectory(_storageDirectory);
+                if (!Directory.Exists(DicomServerSettings.Instance.InterimStorageDirectory))
+                    Directory.CreateDirectory(DicomServerSettings.Instance.InterimStorageDirectory);
 
-                _dicomServer = new ClearCanvas.Dicom.Network.DicomServer(_myApplicationEntity, _storageDirectory);
+                ApplicationEntity myApplicationEntity = new ApplicationEntity(
+                    new HostName(DicomServerSettings.Instance.HostName), 
+                    new AETitle(DicomServerSettings.Instance.AETitle), 
+                    new ListeningPort(DicomServerSettings.Instance.Port));
+
+                _dicomServer = new ClearCanvas.Dicom.Network.DicomServer(myApplicationEntity, DicomServerSettings.Instance.InterimStorageDirectory);
 
                 DicomEventManager.Instance.FindScpEvent += OnFindScpEvent;
 				DicomEventManager.Instance.FindScpProgressEvent += OnFindScpProgressEvent;
@@ -84,6 +83,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				DicomEventManager.Instance.StoreScuProgressEvent += OnStoreScuProgressEvent;
 
                 _dicomServer.Start();
+
+                Platform.Log("Start DICOM server", LogLevel.Info);
             }
             catch (Exception e)
             {
@@ -109,6 +110,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
                 _querySessionDictionary.Clear();
                 _moveSessionDictionary.Clear();
+                _sendRetrieveTasks.Clear();
+
+                Platform.Log("Stop DICOM server", LogLevel.Info);            
             }
             catch (Exception e)
             {
@@ -120,22 +124,22 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
         public string HostName
         {
-            get { return _myApplicationEntity.Host; }
+            get { return DicomServerSettings.Instance.HostName; }
         }
 
         public string AETitle
         {
-            get { return _myApplicationEntity.AE; }
+            get { return DicomServerSettings.Instance.AETitle; }
         }
 
         public int Port
         {
-            get { return _myApplicationEntity.Port; }
+            get { return DicomServerSettings.Instance.Port; }
         }
 
         public string SaveDirectory
         {
-            get { return _storageDirectory; }
+            get { return DicomServerSettings.Instance.InterimStorageDirectory; }
         }
 
         public bool IsServerRunning
@@ -215,7 +219,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				return;
 			}
 
-			SendParcel sendParcel = new SendParcel(_myApplicationEntity, destinationAE, "");
+            ApplicationEntity myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
+            SendParcel sendParcel = new SendParcel(myApplicationEntity, destinationAE, "");
 
 			// Move all return results
             while (info.Response.DimseStatus == (ushort) OffisDcm.STATUS_Pending)
@@ -550,8 +555,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		public void Send(DicomSendRequest request)
 		{
 			ApplicationEntity destinationAE = new ApplicationEntity(new HostName(request.DestinationHostName), new AETitle(request.DestinationAETitle), new ListeningPort(request.Port));
+            ApplicationEntity myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
 
-			SendParcel parcel = new SendParcel(_myApplicationEntity, destinationAE, "");
+            SendParcel parcel = new SendParcel(myApplicationEntity, destinationAE, "");
 			foreach (string uid in request.Uids)
 				parcel.Include(new Uid(uid));
 
@@ -591,7 +597,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			if (request.RetrieveLevel == RetrieveLevel.Image)
 				throw new Exception(SR.ExceptionSpecifiedRetrieveLevelNotSupported);
 
-			foreach (string uid in request.Uids)
+            ApplicationEntity myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
+
+            foreach (string uid in request.Uids)
 			{
 				string includeUid = uid; //have to do this, otherwise the anonymous delegate(s) will all use the same value.
 				
@@ -601,7 +609,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				{
 					try
 					{
-						DicomClient client = new DicomClient(_myApplicationEntity);
+                        DicomClient client = new DicomClient(myApplicationEntity);
 						ApplicationEntity destinationAE = new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port));
 						client.Retrieve(new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port)), new Uid(includeUid), this.SaveDirectory);
 					}
@@ -639,11 +647,24 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
         public void UpdateServerSetting(UpdateServerSettingRequest request)
         {
+            bool isServerSettingsChanged = (
+                DicomServerSettings.Instance.HostName != request.HostName ||
+                DicomServerSettings.Instance.AETitle != request.AETitle ||
+                DicomServerSettings.Instance.Port != request.Port ||
+                DicomServerSettings.Instance.InterimStorageDirectory != request.InterimStorageDirectory);
+
             DicomServerSettings.Instance.HostName = request.HostName;
             DicomServerSettings.Instance.AETitle = request.AETitle;
             DicomServerSettings.Instance.Port = request.Port;
             DicomServerSettings.Instance.InterimStorageDirectory = request.InterimStorageDirectory;
             DicomServerSettings.Save();
+
+            // Restart server after settings changed
+            if (isServerSettingsChanged)
+            {
+                this.StopServer();
+                this.StartServer();
+            }
         }
 
 		#endregion
