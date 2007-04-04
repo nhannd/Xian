@@ -40,16 +40,16 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			}
 		}
 
-		protected IImageViewer GetActiveImageViewer()
-		{
-			return GetSubjectImageViewer(this.Context.DesktopWindow.ActiveWorkspace);
-		}
-
 		/// <summary>
 		/// Gets a reference to the <see cref="IImageViewer"/> hosted by the active workspace.
 		/// </summary>
 		/// <returns>The active <see cref="IImageViewer"/> or <b>null</b> if 
 		/// the active workspace does not host an <see cref="IImageViewer"/>.</returns>
+		protected IImageViewer GetActiveImageViewer()
+		{
+			return GetSubjectImageViewer(this.Context.DesktopWindow.ActiveWorkspace);
+		}
+
 		private IImageViewer GetSubjectImageViewer(IWorkspace workspace)
 		{
 			if (workspace == null)
