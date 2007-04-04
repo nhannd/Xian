@@ -72,6 +72,10 @@
       <Project>{223DFDC9-B1F5-441D-B659-33F9E55E74A5}</Project>
       <Name>ClearCanvas.Desktop.Configuration</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\Dicom\Services\ClearCanvas.Dicom.Services.csproj">
+      <Project>{F38AAF4B-2F51-4E28-A63F-87F35B4CBE2B}</Project>
+      <Name>ClearCanvas.Dicom.Services</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Services\ClearCanvas.ImageViewer.Services.csproj">
       <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
       <Name>ClearCanvas.ImageViewer.Services</Name>

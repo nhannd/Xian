@@ -6,6 +6,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.ImageViewer.Services.DicomServer;
+using ClearCanvas.Dicom.Services;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -65,11 +66,9 @@ namespace ClearCanvas.ImageViewer.Configuration
 
                         try
                         {
-                            if (_serviceClient != null)
-                                _serviceClient.Close();
-
                             _serviceClient = new DicomServerServiceClient();
                             GetServerSettingResponse response = _serviceClient.GetServerSetting();
+                            _serviceClient.Close();
 
                             _hostName = response.HostName;
                             _aeTitle = response.AETitle;
@@ -111,7 +110,12 @@ namespace ClearCanvas.ImageViewer.Configuration
                     request.AETitle = _aeTitle;
                     request.Port = _port;
                     request.InterimStorageDirectory = _storageDir;
+
+                    _serviceClient = new DicomServerServiceClient();
                     _serviceClient.UpdateServerSetting(request);
+                    _serviceClient.Close();
+
+                    LocalApplicationEntity.UpdateSettings(_aeTitle, _port);
                 }
                 catch (Exception e)
                 {

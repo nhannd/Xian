@@ -129,6 +129,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             return listOfChildrenServers;
         }
 
+        public void OnUpdateLocalDataStoreNode(object sender, EventArgs e)
+        {
+            _rootNode.LocalDataStoreNode.AETitle = LocalApplicationEntity.AETitle;
+            _rootNode.LocalDataStoreNode.Port = LocalApplicationEntity.Port;
+            SaveDicomServers();
+            FireServerTreeUpdatedEvent();
+        }
+
         #region Properties
         public IServerTreeNode CurrentNode
         {

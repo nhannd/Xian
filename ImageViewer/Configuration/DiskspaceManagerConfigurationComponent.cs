@@ -58,11 +58,9 @@ namespace ClearCanvas.ImageViewer.Configuration
         {
             try
             {
-                if (_serviceClient != null)
-                    _serviceClient.Close();
-
                 _serviceClient = new DiskspaceManagerServiceClient();
                 GetServerSettingResponse response = _serviceClient.GetServerSetting();
+                _serviceClient.Close();
 
                 _driveName = response.DriveName;
                 _status = response.Status;
@@ -100,7 +98,10 @@ namespace ClearCanvas.ImageViewer.Configuration
                     request.HighWatermark = _highWatermark;
                     request.UsedSpace = _spaceUsed;
                     request.CheckFrequency = _checkFrequency;
+
+                    _serviceClient = new DiskspaceManagerServiceClient();
                     _serviceClient.UpdateServerSetting(request);
+                    _serviceClient.Close();
                 }
                 catch (Exception e)
                 {

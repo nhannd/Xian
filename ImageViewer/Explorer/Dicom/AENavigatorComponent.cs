@@ -14,6 +14,8 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Services.DicomServer;
+using ClearCanvas.Dicom.Services;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -161,6 +163,26 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 _selectedServers.Servers.Add(_serverTree.CurrentNode as Server);
                 _selectedServers.Name = _serverTree.CurrentNode.Name;
                 _selectedServers.GroupID = _serverTree.CurrentNode.ParentPath + "/" + _selectedServers.Name;
+            }
+
+            LocalApplicationEntity.SettingsUpdated += new EventHandler(_serverTree.OnUpdateLocalDataStoreNode);
+
+            QueryAESettings();
+        }
+
+        public void QueryAESettings()
+        {
+            try
+            {
+                DicomServerServiceClient serviceClient = new DicomServerServiceClient();
+                GetServerSettingResponse response = serviceClient.GetServerSetting();
+                this.UpdateType = (int) ServerUpdateType.Edit;
+                LocalApplicationEntity.UpdateSettings(response.AETitle, response.Port);
+                serviceClient.Close();
+            }
+            catch (Exception e)
+            {                
+                Platform.Log(e, LogLevel.Warn);
             }
         }
 
