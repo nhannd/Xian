@@ -11,7 +11,6 @@ namespace ClearCanvas.Enterprise.Authentication
 {
     [ExtensionOf(typeof(CoreServiceExtensionPoint))]
     [ServiceImplementsContract(typeof(IAuthenticationService))]
-    [ServiceAuthentication(false)]
     public class AuthenticationService : CoreServiceLayer, IAuthenticationService
     {
         #region IAuthenticationService Members

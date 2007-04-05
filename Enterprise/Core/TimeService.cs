@@ -7,7 +7,6 @@ namespace ClearCanvas.Enterprise.Core
 {
     [ExtensionOf(typeof(CoreServiceExtensionPoint))]
     [ServiceImplementsContract(typeof(ITimeService))]
-    [ServiceAuthentication(false)]
     public class TimeService : CoreServiceLayer, ITimeService
     {
         #region ITimeService Members

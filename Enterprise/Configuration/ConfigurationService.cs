@@ -12,7 +12,6 @@ namespace ClearCanvas.Enterprise.Configuration
 {
     [ExtensionOf(typeof(CoreServiceExtensionPoint))]
     [ServiceImplementsContract(typeof(IConfigurationService))]
-    [ServiceAuthentication(true)]
     public class ConfigurationService : CoreServiceLayer, IConfigurationService
     {
         #region IConfigurationService Members
