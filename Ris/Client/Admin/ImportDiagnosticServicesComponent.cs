@@ -13,7 +13,7 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("launch", "global-menus/Tools/Import Diagnostic Services")]
+    [MenuAction("launch", "global-menus/Admin/Diagnostic Services")]
     [ClickHandler("launch", "Launch")]
     [ActionPermission("launch", AuthorityTokens.DiagnosticServiceAdmin)]
 

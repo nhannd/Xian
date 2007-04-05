@@ -32,7 +32,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         private void _userName_TextChanged(object sender, EventArgs e)
         {
-            _loginButton.Enabled = !string.IsNullOrEmpty(_userName.Text);
+            bool empty = string.IsNullOrEmpty(_userName.Text);
+            _loginButton.Enabled = !empty;
+            this.AcceptButton = empty ? _cancelButton : _loginButton;
         }
     }
 }
