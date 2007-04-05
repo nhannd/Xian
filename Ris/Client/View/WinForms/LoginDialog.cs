@@ -12,6 +12,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         public bool Show(out string userName, out string password)
         {
+            System.Windows.Forms.Application.EnableVisualStyles();
             LoginForm form = new LoginForm();
             if (form.ShowDialog() == System.Windows.Forms.DialogResult.OK)
             {
