@@ -28,20 +28,23 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[Tooltip("clearInactive", "TooltipClearInactive")]
 	[IconSet("clearInactive", IconScheme.Colour, "Icons.ClearInactiveSmall.png", "Icons.ClearInactiveSmall.png", "Icons.ClearInactiveSmall.png")]
 	[ClickHandler("clearInactive", "ClearInactive")]
-	//[EnabledStateObserver("clearInactive", "ClearInactiveEnabled", "ClearInactiveEnabledChanged")]
+	[EnabledStateObserver("clearInactive", "ClearInactiveEnabled", "ClearInactiveEnabledChanged")]
 
 	[ExtensionOf(typeof(DicomFileImportComponentToolExtensionPoint))]
 	public class DicomFileImportCancelTool : Tool<IDicomFileImportComponentToolContext>
 	{
 		private bool _cancelEnabled;
 		private bool _clearEnabled;
+		private bool _clearInactiveEnabled;
 		private event EventHandler _cancelEnabledChanged;
 		private event EventHandler _clearEnabledChanged;
+		private event EventHandler _clearInactiveEnabledChanged;
 
 		public DicomFileImportCancelTool()
 		{
 			_clearEnabled = false;
 			_cancelEnabled = false;
+			_clearInactiveEnabled = false;
 		}
 
 		public override void Initialize()
@@ -54,6 +57,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			this.CancelEnabled = this.Context.CanCancelSelected();
 			this.ClearEnabled = this.Context.CanClearSelected();
+			this.ClearInactiveEnabled = this.Context.NumberOfEntries > 0;
 		}
 
 		public bool CancelEnabled
@@ -82,6 +86,19 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 		}
 
+		public bool ClearInactiveEnabled
+		{
+			get { return _clearInactiveEnabled; }
+			protected set
+			{
+				if (_clearInactiveEnabled != value)
+				{
+					_clearInactiveEnabled = value;
+					EventsHelper.Fire(_clearInactiveEnabledChanged, this, EventArgs.Empty);
+				}
+			}
+		}
+
 		public event EventHandler CancelEnabledChanged
 		{
 			add { _cancelEnabledChanged += value; }
@@ -94,6 +111,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			remove { _clearEnabledChanged -= value; }
 		}
 
+		public event EventHandler ClearInactiveEnabledChanged
+		{
+			add { _clearInactiveEnabledChanged += value; }
+			remove { _clearInactiveEnabledChanged -= value; }
+		}
 
 		private void Cancel()
 		{

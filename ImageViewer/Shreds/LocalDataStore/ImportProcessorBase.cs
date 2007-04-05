@@ -289,6 +289,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							if (jobInformation.NumberOfFilesInQueue == 0)
 							{
 								jobInformation.ProgressItem.StatusMessage = SR.MessageNoFilesToImport;
+								jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
 							}
 							else
 							{

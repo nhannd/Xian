@@ -24,6 +24,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		event EventHandler SelectionUpdated;
 
+		int NumberOfEntries { get; }
+
 		bool CanCancelSelected();
 		bool CanClearSelected();
 		bool CanClearInactive();
@@ -61,6 +63,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			public IDesktopWindow DesktopWindow
 			{
 				get { return _component.Host.DesktopWindow; }
+			}
+
+			public int NumberOfEntries
+			{
+				get { return _component._importTable.Items.Count; }
 			}
 
 			public bool CanCancelSelected()
@@ -149,22 +156,26 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			if (index >= 0)
 			{
 				existingItem = _importTable.Items[index];
-				existingItem.CopyFrom(e.Item);
-				_importTable.Items.NotifyItemUpdated(index);
+
+				if (e.Item.Removed)
+				{
+					_importTable.Items.Remove(existingItem);
+				}
+				else
+				{
+					existingItem.CopyFrom(e.Item);
+					_importTable.Items.NotifyItemUpdated(index);
+				}
 			}
 			else
 			{
 				existingItem = e.Item;
-				_importTable.Items.Add(e.Item);
+			
+				if (!e.Item.Removed)
+					_importTable.Items.Add(e.Item);
 			}
 
 			UpateSelectedItemStats();
-
-			if (e.Item.Removed)
-			{
-				if (existingItem != null)
-					_importTable.Items.Remove(existingItem);
-			}
 
 			if (existingItem == _selectedProgressItem)
 				EventsHelper.Fire(_selectionUpdated, this, EventArgs.Empty);
@@ -273,8 +284,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_selection = selection;
 			_selectedProgressItem = (ImportProgressItem)_selection.Item;
 			this.UpateSelectedItemStats();
-			
-			EventsHelper.Fire(_selectionUpdated, this, new ItemEventArgs<ImportProgressItem>(_selectedProgressItem));
+
+			EventsHelper.Fire(_selectionUpdated, this, EventArgs.Empty);
 		}
 
 		public string SelectedStatusMessage

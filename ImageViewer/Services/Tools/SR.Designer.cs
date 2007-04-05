@@ -61,11 +61,29 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear All.
+        /// </summary>
+        internal static string ClearAll {
+            get {
+                return ResourceManager.GetString("ClearAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clear Inactive.
         /// </summary>
         internal static string ClearInactive {
             get {
                 return ResourceManager.GetString("ClearInactive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear Selected.
+        /// </summary>
+        internal static string ClearSelected {
+            get {
+                return ResourceManager.GetString("ClearSelected", resourceCulture);
             }
         }
         
@@ -475,11 +493,29 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Clear All Items.
+        /// </summary>
+        internal static string TooltipClearAll {
+            get {
+                return ResourceManager.GetString("TooltipClearAll", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Clear Inactive.
         /// </summary>
         internal static string TooltipClearInactive {
             get {
                 return ResourceManager.GetString("TooltipClearInactive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clear Selected Item(s).
+        /// </summary>
+        internal static string TooltipClearSelected {
+            get {
+                return ResourceManager.GetString("TooltipClearSelected", resourceCulture);
             }
         }
         

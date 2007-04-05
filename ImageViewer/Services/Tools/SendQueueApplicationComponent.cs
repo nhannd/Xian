@@ -7,9 +7,29 @@ using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
+	[ExtensionPoint()]
+	public class SendQueueApplicationComponentToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
+
+	public interface ISendQueueApplicationComponentToolContext : IToolContext
+	{
+		IDesktopWindow DesktopWindow { get; }
+
+		event EventHandler Updated;
+
+		bool ItemsSelected { get; }
+		bool AnyItems { get; }
+		
+		void ClearSelected();
+		void ClearAll();
+	}
+
 	[ExtensionPoint]
 	public class SendQueueApplicationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
@@ -72,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			else
 			{
 				if (lastActiveSpan.Minutes == 1)
-					_lastActiveDisplay = SR.MessageOneDayAgo;
+					_lastActiveDisplay = SR.MessageOneMinuteAgo;
 				else
 					_lastActiveDisplay = String.Format(SR.FormatXMinutesAgo, lastActiveSpan.Minutes);
 			}
@@ -85,8 +105,55 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[AssociateView(typeof(SendQueueApplicationComponentViewExtensionPoint))]
 	public class SendQueueApplicationComponent : ApplicationComponent
 	{
+		private class SendQueueApplicationComponentToolContext : ISendQueueApplicationComponentToolContext
+		{
+			private SendQueueApplicationComponent _component;
+
+			public SendQueueApplicationComponentToolContext(SendQueueApplicationComponent component)
+			{
+				_component = component;
+			}
+
+			#region ISendQueueApplicationComponentToolContext Members
+
+			public IDesktopWindow DesktopWindow
+			{
+				get { return _component.Host.DesktopWindow; }
+			}
+
+			public bool ItemsSelected
+			{
+				get { return _component._selection != null && _component._selection.Item != null; }
+			}
+
+			public bool AnyItems
+			{
+				get { return _component._sendTable.Items.Count > 0; }
+			}
+
+			public event EventHandler Updated
+			{
+				add { _component.SelectionUpdated += value; }
+				remove { _component.SelectionUpdated -= value; }
+			}
+			
+			public void ClearSelected()
+			{
+				_component.ClearSelected();
+			}
+
+			public void ClearAll()
+			{
+				_component.ClearAll();
+			}
+
+			#endregion
+		}
+
+		private ToolSet _toolSet;
 		private Table<SendQueueItem> _sendTable;
 		private ISelection _selection;
+		private event EventHandler _selectionUpdated;
 
 		private Timer _timer;
 
@@ -97,10 +164,18 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 		}
 
+		public event EventHandler SelectionUpdated
+		{
+			add { _selectionUpdated += value; }
+			remove { _selectionUpdated -= value; }
+		}
+		
 		public override void Start()
 		{
 			InitializeTable();
 			base.Start();
+
+			_toolSet = new ToolSet(new SendQueueApplicationComponentToolExtensionPoint(), new SendQueueApplicationComponentToolContext(this));
 
 			_timer = new Timer(this.OnTimer, 30000, 30000);
 
@@ -134,12 +209,20 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			if (index >= 0)
 			{
-				_sendTable.Items[index].UpdateFromProgressItem(e.Item);
-				_sendTable.Items.NotifyItemUpdated(index);
+				if (e.Item.Removed)
+				{
+					_sendTable.Items.Remove(_sendTable.Items[index]);
+				}
+				else
+				{
+					_sendTable.Items[index].UpdateFromProgressItem(e.Item);
+					_sendTable.Items.NotifyItemUpdated(index);
+				}
 			}
 			else
 			{
-				_sendTable.Items.Add(new SendQueueItem(e.Item));
+				if (!e.Item.Removed) 
+					_sendTable.Items.Add(new SendQueueItem(e.Item));
 			}
 		}
 
@@ -217,6 +300,25 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_sendTable.Columns.Add(column);
 		}
 
+		private void ClearItems(IEnumerable<Guid> progressIdentifiers)
+		{
+			CancelProgressItemInformation cancelInformation = new CancelProgressItemInformation();
+			cancelInformation.CancellationFlags = CancellationFlags.Clear;
+			cancelInformation.ProgressItemIdentifiers = progressIdentifiers;
+
+			LocalDataStoreActivityMonitor.Instance.Cancel(cancelInformation);
+		}
+
+		public ActionModelNode ToolbarModel
+		{
+			get { return ActionModelRoot.CreateModel(this.GetType().FullName, "send-queue-toolbar", _toolSet.Actions); }
+		}
+
+		public ActionModelNode ContextMenuModel
+		{
+			get { return ActionModelRoot.CreateModel(this.GetType().FullName, "send-queue-contextmenu", _toolSet.Actions); }
+		}
+
 		public string Title
 		{
 			get { return SR.TitleSend; }
@@ -230,6 +332,32 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		public void SetSelection(ISelection selection)
 		{
 			_selection = selection;
+			EventsHelper.Fire(_selectionUpdated, this, EventArgs.Empty);
+		}
+
+		public void ClearSelected()
+		{
+			if (_selection == null)
+				return;
+
+			List<Guid> progressIdentifiers = new List<Guid>();
+			foreach(SendQueueItem item in _selection.Items)
+			{
+				progressIdentifiers.Add(item.Identifier);
+			}
+
+			ClearItems(progressIdentifiers);
+		}
+
+		public void ClearAll()
+		{
+			List<Guid> progressIdentifiers = new List<Guid>();
+			foreach (SendQueueItem item in _sendTable.Items)
+			{
+				progressIdentifiers.Add(item.Identifier);
+			}
+
+			ClearItems(progressIdentifiers);
 		}
 	}
 }

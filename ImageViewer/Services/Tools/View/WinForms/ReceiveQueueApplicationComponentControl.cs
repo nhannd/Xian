@@ -21,8 +21,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			_receiveTable.ToolStripItemDisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
 			_receiveTable.Table = _component.ReceiveTable;
 
-			//_sendReceiveProgressTable.ToolbarModel = _component.ToolbarModel;
-			//_sendReceiveProgressTable.MenuModel = _component.ContextMenuModel;
+			_receiveTable.ToolbarModel = _component.ToolbarModel;
+			_receiveTable.MenuModel = _component.ContextMenuModel;
 
 			_receiveTable.SelectionChanged += new EventHandler(OnSelectionChanged);
 

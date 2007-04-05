@@ -70,6 +70,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						ReceiveProgressItem item = _receiveProgressItems.Find(delegate(ReceiveProgressItem test) { return test.Identifier.Equals(identifier); });
 						if (item != null)
 						{
+							_receiveProgressItems.Remove(item);
+
 							item.Removed = true;
 							LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(item.Clone());
 						}

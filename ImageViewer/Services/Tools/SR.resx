@@ -117,8 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ClearAll" xml:space="preserve">
+    <value>Clear All</value>
+  </data>
   <data name="ClearInactive" xml:space="preserve">
     <value>Clear Inactive</value>
+  </data>
+  <data name="ClearSelected" xml:space="preserve">
+    <value>Clear Selected</value>
   </data>
   <data name="ExceptionIdentifiersMustMatch" xml:space="preserve">
     <value>The identifiers must match.</value>
@@ -255,8 +261,14 @@
   <data name="ToolbarSendStudy" xml:space="preserve">
     <value>Send</value>
   </data>
+  <data name="TooltipClearAll" xml:space="preserve">
+    <value>Clear All Items</value>
+  </data>
   <data name="TooltipClearInactive" xml:space="preserve">
     <value>Clear Inactive</value>
+  </data>
+  <data name="TooltipClearSelected" xml:space="preserve">
+    <value>Clear Selected Item(s)</value>
   </data>
   <data name="TooltipImportDicomFiles" xml:space="preserve">
     <value>Import dicom files from the local file system</value>
