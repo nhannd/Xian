@@ -14,14 +14,14 @@ namespace ClearCanvas.Ris.Application.Common
             StaffSummary createdBy, 
             DateTime? timeStamp,
             DateTime? validRangeFrom,
-            DateTime? validRangeTo)
+            DateTime? validRangeUntil)
         {
             this.Comment = comment;
             this.Category = category;
             this.CreatedBy = createdBy;
             this.TimeStamp = timeStamp;
             this.ValidRangeFrom = validRangeFrom;
-            this.ValidRangeUntil = ValidRangeUntil;
+            this.ValidRangeUntil = validRangeUntil;
         }
 
         public NoteDetail()
