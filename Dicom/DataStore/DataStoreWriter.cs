@@ -89,6 +89,8 @@ namespace ClearCanvas.Dicom.DataStore
             ITransaction transaction = null;
             try
             {
+                FileRemover.DeleteFilesInSeries(seriesToRemove);
+
                 session = this.SessionFactory.OpenSession();
                 transaction = session.BeginTransaction();
                 session.Delete(seriesToRemove);
@@ -114,6 +116,8 @@ namespace ClearCanvas.Dicom.DataStore
             ITransaction transaction = null;
             try
             {
+                FileRemover.DeleteFileForSopInstance(sopToRemove);
+
                 session = this.SessionFactory.OpenSession();
                 transaction = session.BeginTransaction();
 
@@ -170,6 +174,8 @@ namespace ClearCanvas.Dicom.DataStore
             ISession session = null;
             try
             {
+                FileRemover.DeleteFilesInStudy(studyToRemove);
+
                 session = this.SessionFactory.OpenSession();
                 transaction = session.BeginTransaction();
                 session.Delete(studyToRemove);

@@ -244,6 +244,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					foreach (string path in filePaths)
 					{
+                        if (Directory.Exists(path) == false)
+                            continue;
+
 						FileProcessor.Process(path, "",
 							delegate(string file, out bool cancel)
 							{

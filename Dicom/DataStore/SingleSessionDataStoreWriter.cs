@@ -72,6 +72,8 @@ namespace ClearCanvas.Dicom.DataStore
             ITransaction tx = null;
             try
             {
+                FileRemover.DeleteFileForSopInstance(sopToRemove);
+
                 tx = this.Session.BeginTransaction();
 
                 // remove the child sop instance from the parent series' collection
@@ -115,6 +117,8 @@ namespace ClearCanvas.Dicom.DataStore
             ITransaction tx = null;
             try
             {
+                FileRemover.DeleteFilesInSeries(seriesToRemove);
+
                 tx = this.Session.BeginTransaction();
                 this.Session.Delete(seriesToRemove);
                 tx.Commit();
@@ -150,6 +154,8 @@ namespace ClearCanvas.Dicom.DataStore
             ITransaction tx = null;
             try
             {
+                FileRemover.DeleteFilesInStudy(studyToRemove);
+
                 tx = this.Session.BeginTransaction();
                 this.Session.Delete(studyToRemove);
                 tx.Commit();
