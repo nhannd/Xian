@@ -93,24 +93,17 @@ namespace ClearCanvas.Ris.Server
                     ServiceBehaviorAttribute debuggingBehavior = host.Description.Behaviors.Find<ServiceBehaviorAttribute>();
                     debuggingBehavior.IncludeExceptionDetailInFaults = true;
 #endif
-                    // check if the service specifies its authentication requirements
-                    ServiceAuthenticationAttribute authAttr = CollectionUtils.FirstElement<ServiceAuthenticationAttribute>(
-                        serviceClass.GetCustomAttributes(typeof(ServiceAuthenticationAttribute), false));
 
-                    // if they are not specified, assume authentication is required by default
-                    if (authAttr == null || authAttr.RequireAuthentication)
-                    {
-                        // set up authentication model
-                        host.Credentials.UserNameAuthentication.UserNamePasswordValidationMode = UserNamePasswordValidationMode.Custom;
-                        host.Credentials.UserNameAuthentication.CustomUserNamePasswordValidator = new CustomUserValidator();
+                    // set up authentication model
+                    host.Credentials.UserNameAuthentication.UserNamePasswordValidationMode = UserNamePasswordValidationMode.Custom;
+                    host.Credentials.UserNameAuthentication.CustomUserNamePasswordValidator = new CustomUserValidator();
 
 
-                        // set up authorization
-                        List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
-                        policies.Add(new CustomAuthorizationPolicy());
-                        host.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
-                        host.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.Custom;
-                    }
+                    // set up authorization
+                    List<IAuthorizationPolicy> policies = new List<IAuthorizationPolicy>();
+                    policies.Add(new CustomAuthorizationPolicy());
+                    host.Authorization.ExternalAuthorizationPolicies = policies.AsReadOnly();
+                    host.Authorization.PrincipalPermissionMode = PrincipalPermissionMode.Custom;
 
                     // set up the certificate - required for WSHttpBinding
                     host.Credentials.ServiceCertificate.SetCertificate(
