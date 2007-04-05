@@ -8,8 +8,10 @@
     <property name="connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
     <property name="hibernate.connection.isolation">ReadCommitted</property>
     <property name="hibernate.show_sql">true</property>
-    <property name="hibernate.cache.provider_class">NHibernate.Caches.SysCache.SysCacheProvider, NHibernate.Caches.SysCache</property>
-    <property name="relativeExpiration">10</property>
+    <!-- 2nd level cache - need a distributed cache implementation for this to work correctly
+    	<property name="hibernate.cache.provider_class">NHibernate.Caches.SysCache.SysCacheProvider, NHibernate.Caches.SysCache</property>
+    	<property name="relativeExpiration">10</property>
+    -->
 
     <!--MS SQL-->
     <property name="hibernate.dialect">NHibernate.Dialect.MsSql2000Dialect</property>
