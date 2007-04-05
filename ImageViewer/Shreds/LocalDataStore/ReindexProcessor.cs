@@ -104,10 +104,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							{
 								ReindexProcessor processor = (ReindexProcessor)reindexProcessor;
 
-								processor._parent.Importer.ActivateImportQueue(DicomFileImporter.DedicatedImportQueue.Default);
-								processor._active = false;
-								processor._resumingImports = false;
-
+								lock (processor._syncLock)
+								{
+									processor._parent.Importer.ActivateImportQueue(DicomFileImporter.DedicatedImportQueue.Default);
+									processor._active = false;
+									processor._resumingImports = false;
+								}
 							};
 
 							ThreadPool.QueueUserWorkItem(resumeImportsDelegate, this);

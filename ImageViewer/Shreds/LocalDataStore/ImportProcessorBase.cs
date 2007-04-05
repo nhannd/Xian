@@ -88,6 +88,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					if (jobInformation.ProgressItem.Cancelled)
 						return;
 
+					if (jobInformation.ProgressItem.IsImportComplete())
+						return;
+
 					jobInformation.ProgressItem.Cancelled = true;
 					jobInformation.ProgressItem.StatusMessage = SR.MessageCancelled;
 					jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
@@ -100,6 +103,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				lock (jobInformation)
 				{
 					if (!((jobInformation.ProgressItem.AllowedCancellationOperations & CancellationFlags.Clear) == CancellationFlags.Clear))
+						return;
+
+					if (!jobInformation.ProgressItem.Cancelled && !jobInformation.ProgressItem.IsImportComplete())
 						return;
 
 					jobInformation.ProgressItem.Removed = true;
@@ -118,13 +124,13 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				lock (jobInformation)
 				{
-					jobInformation.ProgressItem.LastActive = DateTime.Now;
-
 					if (jobInformation.ProgressItem.Removed)
 					{
 						//forget it, just return.
 						return;
 					}
+
+					jobInformation.ProgressItem.LastActive = DateTime.Now;
 
 					bool updateProgress = false;
 
@@ -196,6 +202,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				lock (jobInformation)
 				{
+					if (jobInformation.ProgressItem.Removed)
+						return;
+
 					if (jobInformation.ProgressItem.Cancelled)
 						return;
 
@@ -215,20 +224,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			protected virtual void Import(FileImportJobInformation jobInformation, IList<string> filePaths, IList<string> fileExtensions, bool recursive)
 			{
-				lock (jobInformation)
-				{
-					if (filePaths.Count > 1)
-					{
-						jobInformation.ProgressItem.Description = String.Format(SR.FormatMultipleFilesDescription, filePaths[0]);
-					}
-					else
-					{
-						jobInformation.ProgressItem.Description = filePaths[0];
-					}
-
-					UpdateProgress(jobInformation.ProgressItem);
-				}
-
 				WaitCallback enumerateFilesToImport = delegate(object nothing)
 				{
 					List<string> extensions = new List<string>();

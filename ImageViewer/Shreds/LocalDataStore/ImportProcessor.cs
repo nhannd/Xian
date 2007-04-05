@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						if (_paused && !information.FileImportJobInformation.ProgressItem.IsImportComplete() && !information.FileImportJobInformation.ProgressItem.Cancelled)
 						{
 							information.FileImportJobInformation.ProgressItem.StatusMessage = SR.MessageImportPausedForReindex;
-							UpdateProgress(information.FileImportJobInformation.ProgressItem.Clone());
+							UpdateProgress(information.FileImportJobInformation.ProgressItem);
 						}
 					}
 				}
@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 								if (!jobInformation.ProgressItem.IsImportComplete() && !jobInformation.ProgressItem.Cancelled)
 								{
 									jobInformation.ProgressItem.StatusMessage = SR.MessageImportPausedForReindex;
-									UpdateProgress(jobInformation.ProgressItem.Clone());
+									UpdateProgress(jobInformation.ProgressItem);
 								}
 							}
 						}
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					{
 						lock (jobInformation)
 						{
-							LocalDataStoreActivityPublisher.Instance.ImportProgressChanged(jobInformation.ProgressItem.Clone());
+							UpdateProgress(jobInformation.ProgressItem);
 						}
 					}
 				}
@@ -178,13 +178,19 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			protected override void ClearJob(FileImportJobInformation jobInformation)
 			{
-				lock (_syncLock)
-				{
-					if (_importJobs.Contains(jobInformation))
-						_importJobs.Remove(jobInformation);
-				}
-
 				base.ClearJob(jobInformation);
+
+				lock (jobInformation)
+				{
+					if (jobInformation.ProgressItem.Removed)
+					{
+						lock (_syncLock)
+						{
+							if (_importJobs.Contains(jobInformation))
+								_importJobs.Remove(jobInformation);
+						}
+					}
+				}
 			}
 
 			public Guid Import(FileImportRequest request)
@@ -207,16 +213,27 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				FileImportJobInformation jobInformation = new FileImportJobInformation(progressItem, request.FileImportBehaviour, request.BadFileBehaviour);
 
+				List<string> fileExtensions = new List<string>();
+				if (request.FileExtensions != null)
+					fileExtensions.AddRange(request.FileExtensions);
+
+				List<string> filePaths = new List<string>(request.FilePaths);
+
+				if (filePaths.Count > 1)
+				{
+					jobInformation.ProgressItem.Description = String.Format(SR.FormatMultipleFilesDescription, filePaths[0]);
+				}
+				else
+				{
+					jobInformation.ProgressItem.Description = filePaths[0];
+				}
+
 				lock (_syncLock)
 				{
 					_importJobs.Add(jobInformation);
 				}
 
-				List<string> fileExtensions = new List<string>();
-				if (request.FileExtensions != null)
-					fileExtensions.AddRange(request.FileExtensions);
-
-				base.Import(jobInformation, new List<string>(request.FilePaths), fileExtensions, request.Recursive);
+				base.Import(jobInformation, filePaths, fileExtensions, request.Recursive);
 
 				return progressItem.Identifier;
 			}
