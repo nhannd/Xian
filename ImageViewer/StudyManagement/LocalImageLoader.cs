@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_totalImages = 0;
 			_failedImages = 0;
 
-			if (!File.Exists(path))
+			if (!File.Exists(path) && !Directory.Exists(path))
 				return;
 
 			FileProcessor.ProcessFile process = new FileProcessor.ProcessFile(LoadImage);

@@ -54,7 +54,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			{
 				foreach (IDisplaySet displaySet in imageSet.DisplaySets)
 				{
-					actions.Add(CreateDisplaySetAction(displaySet, ++i));
+					actions.Add(
+						CreateDisplaySetAction(
+							this.ImageViewer.LogicalWorkspace,
+							imageSet, 
+							displaySet, 
+							++i));
 				}
 			}
 
@@ -68,9 +73,30 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		/// <param name="displaySet"></param>
 		/// <param name="index"></param>
 		/// <returns></returns>
-		private IClickAction CreateDisplaySetAction(IDisplaySet displaySet, int index)
+		private IClickAction CreateDisplaySetAction(
+			ILogicalWorkspace logicalWorkspace,
+			IImageSet imageSet, 
+			IDisplaySet displaySet, 
+			int index)
 		{
-			ActionPath path = new ActionPath(string.Format("imageviewer-contextmenu/display{0}", index), null);
+			string pathString;
+
+			if (logicalWorkspace.ImageSets.Count == 1)
+			{
+				pathString = string.Format("imageviewer-contextmenu/display{0}", index);
+			}
+			else
+			{
+				//string imageSetName = imageSet.Name.Replace("/", "\\");
+				string imageSetName = imageSet.Name.Replace("/", "-");
+
+				if (IsMoreThanOnePatient(logicalWorkspace.ImageSets))
+					pathString = string.Format("imageviewer-contextmenu/{0}/{1}/display{2}", imageSet.PatientInfo, imageSetName, index);
+				else
+					pathString = string.Format("imageviewer-contextmenu/{0}/display{1}", imageSetName, index);
+			}
+
+			ActionPath path = new ActionPath(pathString, null);
 			MenuAction action = new MenuAction(string.Format("{0}:display{1}", this.GetType().FullName, index), path, ClickActionFlags.None, null);
 			action.GroupHint = new GroupHint("DisplaySets");
 			action.Label = displaySet.Name;
@@ -84,8 +110,26 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			action.Checked = this.ImageViewer.SelectedImageBox != null &&
 				this.ImageViewer.SelectedImageBox.DisplaySet != null && 
 				this.ImageViewer.SelectedImageBox.DisplaySet.Uid == displaySet.Uid;
+			action.CheckParents = action.Checked;
 
 			return action;
+		}
+
+		private bool IsMoreThanOnePatient(ImageSetCollection imageSetCollection)
+		{
+			string patientInfo = String.Empty;
+			int numPatients = 0;
+
+			foreach (IImageSet imageSet in imageSetCollection)
+			{
+				if (imageSet.PatientInfo != patientInfo)
+				{
+					patientInfo = imageSet.PatientInfo;
+					numPatients++;
+				}
+			}
+
+			return numPatients > 1;
 		}
 
 		private void AssignDisplaySetToImageBox(IDisplaySet displaySet)

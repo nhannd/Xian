@@ -12,6 +12,7 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom;
 using System.ComponentModel;
 using ClearCanvas.Common.Utilities;
+using System.Collections.ObjectModel;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -29,7 +30,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	{
 		StudyItem SelectedStudy { get; }
 
-		IEnumerable<StudyItem> SelectedStudies { get; }
+		ReadOnlyCollection<StudyItem> SelectedStudies { get; }
+
+		ReadOnlyCollection<StudyItem> RelatedPriors { get; }
 
 		AEServerGroup SelectedServerGroup { get; }
 
@@ -67,12 +70,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				}
 			}
 
-			public IEnumerable<StudyItem> SelectedStudies 
+			public ReadOnlyCollection<StudyItem> SelectedStudies 
 			{
 				get 
 				{
 					return _component.SelectedStudies;
 				} 
+			}
+
+			public ReadOnlyCollection<StudyItem> RelatedPriors 
+			{
+				get
+				{
+					return _component.RelatedPriors;
+				}
 			}
 
 			public AEServerGroup SelectedServerGroup
@@ -192,7 +203,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
-		public IEnumerable<StudyItem> SelectedStudies
+		public ReadOnlyCollection<StudyItem> SelectedStudies
 		{
 			get
 			{
@@ -205,6 +216,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					selectedStudies.Add(item);
 
 				return selectedStudies.AsReadOnly();
+			}
+		}
+
+		public ReadOnlyCollection<StudyItem> RelatedPriors
+		{
+			get
+			{
+				if (this.SelectedStudies.Count > 1)
+					return null;
+
+				// TODO
+
+				return null;
 			}
 		}
 

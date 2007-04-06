@@ -41,32 +41,81 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (this.Context.SelectedStudies == null)
 				return;
 
+			if (this.Context.SelectedStudies.Count == 1)
+			{
+				OpenSingleStudyWithPriors();
+			}
+			else
+			{
+				OpenMultipleStudiesInSingleWorkspace();
+				//OpenMultipleStudiesInIndividualWorkspaces();
+			}
+		}
+
+		private void OpenSingleStudyWithPriors()
+		{
+			DiagnosticImageViewerComponent imageViewer = new DiagnosticImageViewerComponent();
+			StudyItem item = this.Context.SelectedStudy;
+			string studyInstanceUid = item.StudyInstanceUID;
+
+			try
+			{
+				imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
+				LaunchWorkspace(imageViewer);
+			}
+			catch (OpenStudyException e)
+			{
+				if (e.SuccessfulImages == 0 || e.FailedImages > 0)
+					ExceptionHandler.Report(e, this.Context.DesktopWindow);
+			}
+		}
+
+		private void OpenMultipleStudiesInSingleWorkspace()
+		{
+			DiagnosticImageViewerComponent imageViewer = new DiagnosticImageViewerComponent();
+			string label = "";
+			int completelySuccessfulStudies = 0;
+			int successfulImagesInLoadFailure = 0;
+
 			foreach (StudyItem item in this.Context.SelectedStudies)
 			{
-				DiagnosticImageViewerComponent imageViewer = new DiagnosticImageViewerComponent();
-
 				string studyInstanceUid = item.StudyInstanceUID;
-
-				string label = String.Format("{0}, {1}, {2}",
-					item.PatientsName.LastName,
-					item.PatientsName.FirstName,
-					item.PatientId);
 
 				try
 				{
 					imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
+					completelySuccessfulStudies++;
+				}
+				catch (OpenStudyException e)
+				{
+					// Study failed to load completely; keep track of how many
+					// images in the study actually did load
+					successfulImagesInLoadFailure += e.SuccessfulImages;
 
-					ApplicationComponent.LaunchAsWorkspace(
-						this.Context.DesktopWindow,
-						imageViewer,
-						label,
-						delegate
-						{
-							imageViewer.Dispose();
-						});
+					if (e.SuccessfulImages == 0 || e.FailedImages > 0)
+						ExceptionHandler.Report(e, this.Context.DesktopWindow);
+				}
+			}
 
-					imageViewer.Layout();
-					imageViewer.PhysicalWorkspace.SelectDefaultImageBox();
+			// If nothing at all was able to load, then don't bother trying to
+			// even open a workspace; just return
+			if (completelySuccessfulStudies == 0 && successfulImagesInLoadFailure == 0)
+				return;
+
+			LaunchWorkspace(imageViewer);
+		}
+
+		private void OpenMultipleStudiesInIndividualWorkspaces()
+		{
+			foreach (StudyItem item in this.Context.SelectedStudies)
+			{
+				DiagnosticImageViewerComponent imageViewer = new DiagnosticImageViewerComponent();
+				string studyInstanceUid = item.StudyInstanceUID;
+
+				try
+				{
+					imageViewer.LoadStudy(studyInstanceUid, "DICOM_LOCAL");
+					LaunchWorkspace(imageViewer);
 				}
 				catch (OpenStudyException e)
 				{
@@ -74,6 +123,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 						ExceptionHandler.Report(e, this.Context.DesktopWindow);
 				}
 			}
+		}
+
+		private void LaunchWorkspace(DiagnosticImageViewerComponent imageViewer)
+		{
+			ApplicationComponent.LaunchAsWorkspace(
+				this.Context.DesktopWindow,
+				imageViewer,
+				imageViewer.PatientsLoadedLabel,
+				delegate
+				{
+					imageViewer.Dispose();
+				});
+
+			imageViewer.Layout();
+			imageViewer.PhysicalWorkspace.SelectDefaultImageBox();
 		}
 
 		private void SetDoubleClickHandler()

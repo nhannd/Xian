@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 			ApplicationComponent.LaunchAsWorkspace(
 				this.Context.DesktopWindow,
 				viewer,
-				"Image",
+				viewer.PatientsLoadedLabel,
 				delegate
 				{
 					viewer.Dispose();

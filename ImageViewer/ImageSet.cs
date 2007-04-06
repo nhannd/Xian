@@ -18,6 +18,7 @@ namespace ClearCanvas.ImageViewer
 		private LogicalWorkspace _parentLogicalWorkspace;
 		private IImageViewer _imageViewer;
 		private string _name;
+		private string _patientInfo;
 		private string _uid;
 
 		#endregion
@@ -91,6 +92,13 @@ namespace ClearCanvas.ImageViewer
 			get { return _name; }
 			set { _name = value; }
 		}
+
+		public string PatientInfo
+		{
+			get { return _patientInfo; }
+			set { _patientInfo = value; }
+		}
+
 
 		/// <summary>
 		/// Gets or sets unique identifier for this <see cref="IImageSet"/>.

@@ -43,6 +43,11 @@ namespace ClearCanvas.ImageViewer
 		string Name { get; set; }
 
 		/// <summary>
+		/// Gets or sets the patient information associated with the image set.
+		/// </summary>
+		string PatientInfo { get; set; }
+
+		/// <summary>
 		/// Gets or sets unique identifier for this <see cref="IImageSet"/>.
 		/// </summary>
 		string Uid { get; set; }

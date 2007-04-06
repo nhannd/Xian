@@ -274,6 +274,36 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets a string containing the patients currently loaded in this
+		/// <see cref="ImageViewerComponent"/>.
+		/// </summary>
+		public string PatientsLoadedLabel
+		{
+			get
+			{
+				string label = String.Empty;
+				int i = 0;
+
+				foreach (Patient patient in this.StudyTree.Patients.Values)
+				{
+					string patientInfo;
+					i++;
+
+					patientInfo = String.Format("{0} · {1}",
+						patient.PatientsName,
+						patient.PatientId);
+
+					if (i < this.StudyTree.Patients.Count)
+						patientInfo += " :: ";
+
+					label += patientInfo;
+				}
+
+				return label;
+			}
+		}
+
 		#endregion
 
 		#region Events

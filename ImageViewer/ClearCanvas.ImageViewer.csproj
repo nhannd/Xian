@@ -121,6 +121,7 @@
     <Compile Include="Annotations\IAnnotationLayout.cs" />
     <Compile Include="Annotations\StoredAnnotatationLayoutProvider.cs" />
     <Compile Include="Annotations\Tests\AnnotationLayoutStoreTests.cs" />
+    <Compile Include="ImageSetSortByStudyDate.cs" />
     <Compile Include="DisplaySetSortBySeriesNumber.cs" />
     <Compile Include="GarbageCollectionTool.cs" />
     <Compile Include="Graphics\GrayscaleImageGraphic.cs" />

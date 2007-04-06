@@ -31,6 +31,12 @@ namespace ClearCanvas.Desktop.Actions
         bool Checked { get; }
 
 		/// <summary>
+		/// Gets a value indicating whether parent items should be checked if this
+		/// <see cref="IClickAction"/> is checked.
+		/// </summary>
+		bool CheckParents { get; }
+
+		/// <summary>
 		/// The keystroke that the UI should attempt to intercept and invoke the action.
 		/// </summary>
 		XKeys KeyStroke { get; set; }

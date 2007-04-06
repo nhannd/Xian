@@ -16,8 +16,10 @@ namespace ClearCanvas.Desktop.Actions
         private ClickHandlerDelegate _clickHandler;
 		private XKeys _keyStroke;
 
-        private bool _checked;
+        private bool _checked = false;
         private event EventHandler _checkedChanged;
+
+		private bool _checkParents = false;
 
         /// <summary>
         /// Constructor
@@ -74,7 +76,13 @@ namespace ClearCanvas.Desktop.Actions
             remove { _checkedChanged -= value; }
         }
 
-        public void Click()
+		public bool CheckParents
+		{
+			get { return _checkParents; }
+			set { _checkParents = value; }
+		}
+		
+		public void Click()
         {
             if (_clickHandler != null)
             {

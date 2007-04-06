@@ -49,18 +49,40 @@ namespace ClearCanvas.Desktop.View.WinForms
                     IAction action = (IAction)node.Action;
                     menuItem = (ToolStripMenuItem)GetToolStripItemForAction(action, ToolStripKind.Menu);
 
-                }
+					menuItem.Tag = node;
+					parentItemCollection.Add(menuItem);
+
+					// Determine whether we should check the parent menu items too
+					IClickAction clickAction = node.Action as IClickAction;
+
+					if (clickAction != null && clickAction.CheckParents && clickAction.Checked)
+						CheckParentItems(menuItem);
+				}
                 else
                 {
                     // this menu item has a sub menu
                     menuItem = new ToolStripMenuItem(node.PathSegment.LocalizedText);
-                    BuildMenu(menuItem.DropDownItems, node.ChildNodes);
+					
+					menuItem.Tag = node;
+					parentItemCollection.Add(menuItem);
+					
+					BuildMenu(menuItem.DropDownItems, node.ChildNodes);
                 }
-
-				menuItem.Tag = node;
-                parentItemCollection.Add(menuItem);
             }
         }
+
+		private static void CheckParentItems(ToolStripMenuItem menuItem)
+		{
+			ToolStripMenuItem parentItem = (ToolStripMenuItem) menuItem.OwnerItem;
+
+			if (parentItem != null)
+			{
+				parentItem.Checked = true;
+				CheckParentItems(parentItem);
+			}
+
+			return;
+		}
         
         public static void Clear(ToolStripItemCollection parentItemCollection)
         {

@@ -6,6 +6,8 @@ using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.Dicom;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -96,6 +98,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				return;
 
 			imageSet = AddImageSet(_imageViewer.LogicalWorkspace, study);
+			_imageViewer.LogicalWorkspace.ImageSets.Sort(new ImageSetSortByStudyDate());
 
 			AddDisplaySets(imageSet, study);
 		}
@@ -143,7 +146,18 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private IImageSet AddImageSet(ILogicalWorkspace logicalWorkspace, Study study)
 		{
 			IImageSet imageSet = new ImageSet();
-			imageSet.Name = study.StudyDescription;
+
+			DateTime studyDate;
+			DateParser.Parse(study.StudyDate, out studyDate);
+
+			imageSet.Name = String.Format("{0} · {1}", 
+				studyDate.ToString(Format.DateFormat), 
+				study.StudyDescription);
+
+			imageSet.PatientInfo = String.Format("{0} · {1}", 
+				study.ParentPatient.PatientsName,
+				study.ParentPatient.PatientId);
+
 			imageSet.Uid = study.StudyInstanceUID;
 
 			logicalWorkspace.ImageSets.Add(imageSet);
