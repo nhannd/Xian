@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.Dicom;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Comparers;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -196,8 +197,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			// sort order.  When proper sorting support is added, the sorters will be extensions.
 			displaySet.PresentationImages.Sort(new InstanceNumberComparer());
 
-			if (AtLeastTwoImageNumbersEqual())
-				Sort(new AcquisitionNumberComparer());
+			if (AtLeastTwoImageNumbersEqual(displaySet.PresentationImages))
+				displaySet.PresentationImages.Sort(new AcquisitionNumberComparer());
 		}
 
 		private IPresentationImage AddImage(IDisplaySet displaySet, ImageSop image)
@@ -289,11 +290,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 		}
 
-		private bool AtLeastTwoImageNumbersEqual()
+		private bool AtLeastTwoImageNumbersEqual(PresentationImageCollection presentationImages)
 		{
 			int previous = -1;
 
-			foreach (IPresentationImage image in this)
+			foreach (IPresentationImage image in presentationImages)
 			{
 				IImageSopProvider provider = image as IImageSopProvider;
 				int current = provider.ImageSop.InstanceNumber;
