@@ -121,8 +121,16 @@
     <Compile Include="Annotations\IAnnotationLayout.cs" />
     <Compile Include="Annotations\StoredAnnotatationLayoutProvider.cs" />
     <Compile Include="Annotations\Tests\AnnotationLayoutStoreTests.cs" />
-    <Compile Include="ImageSetSortByStudyDate.cs" />
-    <Compile Include="DisplaySetSortBySeriesNumber.cs" />
+    <Compile Include="Comparers\ComparerBase.cs" />
+    <Compile Include="Comparers\AcquisitionNumberComparer.cs" />
+    <Compile Include="Comparers\StandardImageSetComparer.cs" />
+    <Compile Include="Comparers\ImageSetComparer.cs" />
+    <Compile Include="Comparers\StandardDisplaySetComparer.cs" />
+    <Compile Include="Comparers\DisplaySetComparer.cs" />
+    <Compile Include="Comparers\StandardPresentationImageComparer.cs" />
+    <Compile Include="Comparers\PresentationImageComparer.cs" />
+    <Compile Include="Comparers\StudyDateComparer.cs" />
+    <Compile Include="Comparers\SeriesNumberComparer.cs" />
     <Compile Include="GarbageCollectionTool.cs" />
     <Compile Include="Graphics\GrayscaleImageGraphic.cs" />
     <Compile Include="Graphics\IImageSpatialTransform.cs" />
@@ -179,7 +187,7 @@
     <Compile Include="InputManagement\KeyStrokeSettings.cs" />
     <Compile Include="InputManagement\Modifiers.cs" />
     <Compile Include="InputManagement\IInputController.cs" />
-    <Compile Include="PresentationImageSortByInstanceNumber.cs" />
+    <Compile Include="Comparers\InstanceNumberComparer.cs" />
     <Compile Include="InputManagement\ModifiedMouseToolButtonAttribute.cs" />
     <Compile Include="InputManagement\MouseButtonShortcut.cs" />
     <Compile Include="InputManagement\KeyboardButtonMessage.cs" />

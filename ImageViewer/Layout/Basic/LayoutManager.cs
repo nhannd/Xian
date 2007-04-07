@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				return;
 
 			imageSet = AddImageSet(_imageViewer.LogicalWorkspace, study);
-			_imageViewer.LogicalWorkspace.ImageSets.Sort(new ImageSetSortByStudyDate());
+			_imageViewer.LogicalWorkspace.ImageSets.Sort(new StudyDateComparer());
 
 			AddDisplaySets(imageSet, study);
 		}
@@ -173,7 +173,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				AddImages(displaySet, series);
 			}
 
-			imageSet.DisplaySets.Sort(new DisplaySetSortBySeriesNumber());
+			imageSet.DisplaySets.Sort(new SeriesNumberComparer());
 		}
 
 		private IDisplaySet AddDisplaySet(IImageSet imageSet, Series series)
@@ -194,7 +194,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			// This has been added so that the initial presentation of each display set has a reasonable 
 			// sort order.  When proper sorting support is added, the sorters will be extensions.
-			displaySet.PresentationImages.Sort(new PresentationImageSortByInstanceNumber());
+			displaySet.PresentationImages.Sort(new InstanceNumberComparer());
+
+			if (AtLeastTwoImageNumbersEqual())
+				Sort(new AcquisitionNumberComparer());
 		}
 
 		private IPresentationImage AddImage(IDisplaySet displaySet, ImageSop image)
@@ -284,6 +287,24 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				imageBox.DisplaySet = logicalWorkspace.ImageSets[imageSetIndex].DisplaySets[displaySetIndex];
 				displaySetIndex++;
 			}
+		}
+
+		private bool AtLeastTwoImageNumbersEqual()
+		{
+			int previous = -1;
+
+			foreach (IPresentationImage image in this)
+			{
+				IImageSopProvider provider = image as IImageSopProvider;
+				int current = provider.ImageSop.InstanceNumber;
+
+				if (current == previous)
+					return true;
+				else
+					previous = current;
+			}
+
+			return false;
 		}
 	}
 }

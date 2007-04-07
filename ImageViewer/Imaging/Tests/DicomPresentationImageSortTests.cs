@@ -10,6 +10,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 using System.Diagnostics;
 using ClearCanvas.ImageViewer.StudyManagement.Tests;
 using ClearCanvas.ImageViewer.Tests;
+using ClearCanvas.ImageViewer.Comparers;
 
 namespace ClearCanvas.ImageViewer.Imaging.Tests
 {
@@ -92,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.IsFalse(VerifyOrdered(orderedCollection, nonOrderedCollection));
 
 			//Sort it.
-			nonOrderedCollection.Sort(new PresentationImageSortByInstanceNumber(reverse));
+			nonOrderedCollection.Sort(new InstanceNumberComparer(reverse));
 			
 			Debug.WriteLine("NON-ORDERED COLLECTION (POST-SORT)");
 			Trace(nonOrderedCollection);
