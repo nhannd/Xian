@@ -124,6 +124,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private void AddImage(string sopInstanceUID)
 		{
+			bool sortImageSets = false;
+			bool sortDisplaySets = false;
+
 			ImageSop image = _imageViewer.StudyTree.GetSop(sopInstanceUID) as ImageSop;
 
 			if (image == null)
@@ -133,15 +136,32 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			IImageSet imageSet = GetImageSet(_imageViewer.LogicalWorkspace, studyInstanceUID);
 
 			if (imageSet == null)
+			{
 				imageSet = AddImageSet(_imageViewer.LogicalWorkspace, image.ParentSeries.ParentStudy);
+				sortImageSets = true;
+			}
 
 			string seriesInstanceUID = image.ParentSeries.SeriesInstanceUID;
 			IDisplaySet displaySet = GetDisplaySet(imageSet, seriesInstanceUID);
 
 			if (displaySet == null)
+			{
 				displaySet = AddDisplaySet(imageSet, image.ParentSeries);
+				sortDisplaySets = true;
+			}
 
 			AddImage(displaySet, image);
+
+			// Yes, all this sorting as each image is loaded is terribly inefficient,
+			// but seeing that this is not that common an operation, we'll live with
+			// it for now.
+			if (sortImageSets)
+				_imageViewer.LogicalWorkspace.ImageSets.Sort(new StudyDateComparer());
+
+			if (sortDisplaySets)
+				imageSet.DisplaySets.Sort(new SeriesNumberComparer());
+	
+			SortImages(displaySet);
 		}
 
 		private IImageSet AddImageSet(ILogicalWorkspace logicalWorkspace, Study study)
@@ -193,6 +213,11 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			foreach (ImageSop image in series.Sops.Values)
 				AddImage(displaySet, image);
 
+			SortImages(displaySet);
+		}
+
+		private void SortImages(IDisplaySet displaySet)
+		{
 			// This has been added so that the initial presentation of each display set has a reasonable 
 			// sort order.  When proper sorting support is added, the sorters will be extensions.
 			displaySet.PresentationImages.Sort(new InstanceNumberComparer());
