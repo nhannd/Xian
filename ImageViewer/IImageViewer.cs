@@ -78,10 +78,21 @@ namespace ClearCanvas.ImageViewer
 		void LoadStudy(string studyInstanceUID, string source);
 
 		/// <summary>
-		/// Loads an image from a specified file path.
+		/// Loads images with the specified file paths.
 		/// </summary>
 		/// <param name="path">The file path of the image.</param>
-		/// <exception cref="OpenStudyException">The image could not be opened.</exception>
-		void LoadImage(string path);
+		/// <exception cref="OpenStudyException">One or more images could not be opened.</exception>
+		/// <exception cref="ArgumentNullException">A parameter is <b>null</b>.</exception>
+		void LoadImages(string[] path);
+
+		/// <summary>
+		/// Loads images with the specified file paths and displays a progress bar.
+		/// </summary>
+		/// <param name="path">The file path of the image.</param>
+		/// <param name="desktop">The desktop window.  This is necessary for
+		/// a progress bar to be shown.</param>
+		/// <exception cref="OpenStudyException">One or more images could not be opened.</exception>
+		/// <exception cref="ArgumentNullException">A parameter is <b>null</b>.</exception>
+		void LoadImages(string[] path, IDesktopWindow desktopWindow);
     }
 }

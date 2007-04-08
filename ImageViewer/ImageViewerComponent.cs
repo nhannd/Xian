@@ -384,10 +384,11 @@ namespace ClearCanvas.ImageViewer
 		public void LoadStudy(string studyInstanceUID, string source)
 		{
 			IStudyLoader studyLoader = this.StudyLoaders[source];
+			int totalImages = 0;
 
 			try
 			{
-				studyLoader.Start(studyInstanceUID);
+				totalImages = studyLoader.Start(studyInstanceUID);
 			}
 			catch (Exception e)
 			{
@@ -395,7 +396,7 @@ namespace ClearCanvas.ImageViewer
 				throw ex;
 			}
 
-			int totalImages = 0;
+			int numberOfImages = 0;
 			int failedImages = 0;
 
 			while (true)
@@ -415,10 +416,11 @@ namespace ClearCanvas.ImageViewer
 					Platform.Log(e);
 				}
 
-				totalImages++;
+				numberOfImages++;
+
 			}
 
-			int successfulImages = totalImages - failedImages;
+			int successfulImages = numberOfImages - failedImages;
 
 			// Only bother to tell someone if at least one image loaded
 			if (successfulImages > 0)
@@ -427,18 +429,35 @@ namespace ClearCanvas.ImageViewer
 					new StudyEventArgs(this.StudyTree.GetStudy(studyInstanceUID)));
 			}
 
-			VerifyLoad(totalImages, failedImages);
+			VerifyLoad(numberOfImages, failedImages);
 		}
 
 		/// <summary>
-		/// Loads an image from a specified file path.
+		/// Loads images with the specified file paths.
 		/// </summary>
 		/// <param name="path">The file path of the image.</param>
-		/// <exception cref="OpenStudyException">The image could not be opened.</exception>
-		public void LoadImage(string path)
+		/// <exception cref="OpenStudyException">One or more images could not be opened.</exception>
+		/// <exception cref="ArgumentNullException">A parameter is <b>null</b>.</exception>
+		public void LoadImages(string[] files)
 		{
-			LocalImageLoader loader = new LocalImageLoader(this);
-			loader.Load(path);
+			LoadImages(files, null);
+		}
+
+		/// <summary>
+		/// Loads images with the specified file paths and displays a progress bar.
+		/// </summary>
+		/// <param name="path">The file path of the image.</param>
+		/// <param name="desktop">The desktop window.  This is necessary for
+		/// a progress bar to be shown.</param>
+		/// <exception cref="OpenStudyException">One or more images could not be opened.</exception>
+		/// <exception cref="ArgumentNullException">A parameter is <b>null</b>.</exception>
+		public void LoadImages(string[] files, IDesktopWindow desktop)
+		{
+			Platform.CheckForNullReference(files, "files");
+			Platform.CheckForNullReference(desktop, "desktop");
+
+			LocalImageLoader loader = new LocalImageLoader(this, desktop);
+			loader.Load(files);
 
 			VerifyLoad(loader.TotalImages, loader.FailedImages);
 		}

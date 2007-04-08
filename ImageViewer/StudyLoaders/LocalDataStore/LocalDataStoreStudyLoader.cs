@@ -7,6 +7,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom;
+using System.Collections.ObjectModel;
 
 namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 {
@@ -28,11 +29,13 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             }
         }
 
-		public void Start(string studyInstanceUID)
+		public int Start(string studyInstanceUID)
 		{
 			IStudy study = DataAccessLayer.GetIDataStoreReader().GetStudy(new Uid(studyInstanceUID));
 			_sops = study.GetSopInstances().GetEnumerator();
 			_sops.Reset();
+
+			return study.GetSopInstances().Count;
 		}
 
 		public ImageSop LoadNextImage()

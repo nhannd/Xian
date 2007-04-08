@@ -6,20 +6,23 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	internal class LocalImageLoader
 	{
 		private IImageViewer _viewer;
+		private IDesktopWindow _desktop;
 
 		private int _totalImages;
 		private int _failedImages;
 
 
-		public LocalImageLoader(IImageViewer viewer)
+		public LocalImageLoader(IImageViewer viewer, IDesktopWindow desktop)
 		{
 			_viewer = viewer;
+			_desktop = desktop;
 		}
 
 		public int TotalImages
@@ -32,18 +35,43 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _failedImages; }
 		}
 
-		public void Load(string path)
+		public void Load(string[] files)
 		{
-			Platform.CheckForNullReference(path, "path");
+			Platform.CheckForNullReference(files, "files");
 
 			_totalImages = 0;
 			_failedImages = 0;
 
-			if (!File.Exists(path) && !Directory.Exists(path))
-				return;
+			if (_desktop != null)
+			{
+				BackgroundTask task = new BackgroundTask(
+					delegate(IBackgroundTaskContext context)
+					{
+						for (int i = 0; i < files.Length; i++)
+						{
+							LoadImage(files[i]);
 
-			FileProcessor.ProcessFile process = new FileProcessor.ProcessFile(LoadImage);
-			FileProcessor.Process(path, "*.dcm", process, true);
+							int percentComplete = (int)(((float)(i + 1) / files.Length) * 100);
+							string message = String.Format("Opening {0} of {1} images", i, files.Length);
+
+							BackgroundTaskProgress progress = new BackgroundTaskProgress(percentComplete, message);
+							context.ReportProgress(progress);
+
+							if (context.CancelRequested)
+								break;
+						}
+
+						context.Complete(null);
+
+					}, true);
+
+				ProgressDialog.Show(task, true, ProgressBarStyle.Blocks, _desktop);
+			}
+			else
+			{
+				foreach (string file in files)
+					LoadImage(file);
+			}
 		}
 
 		private void LoadImage(string file)

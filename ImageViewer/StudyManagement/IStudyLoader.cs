@@ -24,7 +24,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Study Instance UID.
 		/// </summary>
 		/// <param name="studyInstanceUID"></param>
-		void Start(string studyInstanceUID);
+		/// <returns>Number of images in study.</returns>
+		int Start(string studyInstanceUID);
 
 		/// <summary>
 		/// Loads the next image.

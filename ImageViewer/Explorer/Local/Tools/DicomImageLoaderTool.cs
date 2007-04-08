@@ -9,6 +9,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Imaging;
+using System.IO;
 
 namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 {
@@ -74,18 +75,20 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 			int successfulLoadAttempts = 0;
 			int successfulImagesInLoadFailure = 0;
 
-			foreach (string path in this.Context.SelectedPaths)
+			string[] files = BuildFileList();
+
+			if (files.Length == 0)
+				return;
+
+			try
 			{
-				try
-				{
-					viewer.LoadImage(path);
-					successfulLoadAttempts++;
-				}
-				catch (OpenStudyException e)
-				{
-					successfulImagesInLoadFailure += e.SuccessfulImages;
-					ExceptionHandler.Report(e, this.Context.DesktopWindow);
-				}
+				viewer.LoadImages(files, this.Context.DesktopWindow);
+				successfulLoadAttempts++;
+			}
+			catch (OpenStudyException e)
+			{
+				successfulImagesInLoadFailure += e.SuccessfulImages;
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
 
 			if (successfulLoadAttempts == 0 && successfulImagesInLoadFailure == 0)
@@ -102,6 +105,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 
 			viewer.Layout();
 			viewer.PhysicalWorkspace.SelectDefaultImageBox();
+		}
+
+		private string[] BuildFileList()
+		{
+			List<string> fileList = new List<string>();
+
+			foreach (string path in this.Context.SelectedPaths)
+			{
+				if (File.Exists(path))
+					fileList.Add(path);
+				else if (Directory.Exists(path))
+					fileList.AddRange(Directory.GetFiles(path, "*.dcm", SearchOption.AllDirectories));
+			}
+
+			return fileList.ToArray();
 		}
 	}
 }

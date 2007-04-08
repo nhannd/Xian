@@ -73,7 +73,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private void OpenMultipleStudiesInSingleWorkspace()
 		{
 			DiagnosticImageViewerComponent imageViewer = new DiagnosticImageViewerComponent();
-			string label = "";
 			int completelySuccessfulStudies = 0;
 			int successfulImagesInLoadFailure = 0;
 

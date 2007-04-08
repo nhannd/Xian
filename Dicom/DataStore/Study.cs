@@ -5,6 +5,7 @@ using System.Text;
 using NHibernate;
 using NHibernate.Collection;
 using Iesi.Collections;
+using System.Collections.ObjectModel;
 
 namespace ClearCanvas.Dicom.DataStore
 {
@@ -180,7 +181,7 @@ namespace ClearCanvas.Dicom.DataStore
         #endregion
         #region IStudy Members
 
-        public IEnumerable<ISopInstance> GetSopInstances()
+        public ReadOnlyCollection<ISopInstance> GetSopInstances()
         {
             List<ISopInstance> sopList = new List<ISopInstance>();
             foreach (ISeries series in this.Series)
@@ -209,7 +210,7 @@ namespace ClearCanvas.Dicom.DataStore
             this.Series.Remove(series);
         }
 
-        public IEnumerable<ISeries> GetSeries()
+        public ReadOnlyCollection<ISeries> GetSeries()
         {
             List<ISeries> seriesList = new List<ISeries>();
             foreach (ISeries series in this.Series)
