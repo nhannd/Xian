@@ -481,6 +481,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			studyList.Columns.Add(column);
 
+			// Default: Sort by lastname
+			studyList.Sort(new TableSortParams(column, true));
+
 			column = new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingFirstName,
 					delegate(StudyItem item) { return item.PatientsName.FirstName; },
