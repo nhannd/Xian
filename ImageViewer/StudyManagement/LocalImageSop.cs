@@ -1265,7 +1265,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get
 			{
-				return _dicomImage.GetPixelData();
+				return this.DecompressPixelData(_dicomImage.GetPixelData());
 			}
 		}
 

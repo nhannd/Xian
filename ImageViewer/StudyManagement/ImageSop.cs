@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.OffisWrapper;
+using ClearCanvas.Codecs;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -11,6 +13,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// </summary>
 	public abstract class ImageSop : Sop
 	{
+		private static ImageCodecMap _imageCodecMap;
+
 		/// <summary>
 		/// Gets the underlying native DICOM object.
 		/// </summary>
@@ -333,11 +337,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public abstract int PixelRepresentation { get; set; }
 
 		/// <summary>
-		/// Gets the pixel data.
-		/// </summary>
-		public abstract byte[] PixelData { get; }
-
-		/// <summary>
 		/// Gets or sets the planar configuration.
 		/// </summary>
 		public abstract int PlanarConfiguration { get; set; }
@@ -370,6 +369,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets or sets the window width and center explanation.
 		/// </summary>
 		public abstract string[] WindowCenterAndWidthExplanation { get; set; }
+
+
+		/// <summary>
+		/// Gets the raw pixel data.
+		/// </summary>
+		public abstract byte[] PixelData { get; }
 
 		/// <summary>
 		/// Gets a DICOM tag (16 bit, unsigned).
@@ -474,6 +479,47 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				pixelSpacingX = this.PixelSpacing.Row;
 				pixelSpacingY = this.PixelSpacing.Column;
 			}
+		}
+
+		/// <summary>
+		/// Decompresses pixel data.
+		/// </summary>
+		/// <param name="compressedPixelData">The compressed pixel data.</param>
+		/// <remarks>
+		/// This method should be called by the subclass's <see cref="PixelData"/> 
+		/// property.
+		/// </remarks>
+		protected byte[] DecompressPixelData(byte[] compressedPixelData)
+		{
+			if (_imageCodecMap == null)
+				_imageCodecMap = new ImageCodecMap();
+
+			if (!_imageCodecMap.IsTransferSyntaxSupported(this.TransferSyntaxUID))
+				throw new Exception("Transfer syntax not supported.");
+
+			byte[] uncompressedPixelData;
+
+			try
+			{
+				uncompressedPixelData = _imageCodecMap[this.TransferSyntaxUID].Decode(
+					compressedPixelData,
+					this.Rows,
+					this.Columns,
+					this.BitsAllocated,
+					this.BitsStored,
+					this.PixelRepresentation,
+					PhotometricInterpretationHelper.GetString(this.PhotometricInterpretation),
+					this.SamplesPerPixel,
+					this.PlanarConfiguration,
+					null);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(e);
+				throw new Exception("Unable to decode pixel data.", e);
+			}
+
+			return uncompressedPixelData;
 		}
 
 		public override string ToString()

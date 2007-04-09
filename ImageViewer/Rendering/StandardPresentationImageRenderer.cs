@@ -171,14 +171,39 @@ namespace ClearCanvas.ImageViewer.Rendering
 				_surface.FinalBuffer.Bitmap.PixelFormat);
 
 			int bytesPerPixel = 4;
-			ImageRenderer.Render(imageGraphic, bitmapData.Scan0, bitmapData.Width, bytesPerPixel, clientArea);
 
-			_surface.FinalBuffer.Bitmap.UnlockBits(bitmapData);
+			try
+			{
+				ImageRenderer.Render(imageGraphic, bitmapData.Scan0, bitmapData.Width, bytesPerPixel, clientArea);
+				_surface.FinalBuffer.Bitmap.UnlockBits(bitmapData);
+			}
+			catch (Exception e)
+			{
+				_surface.FinalBuffer.Bitmap.UnlockBits(bitmapData);
+				ShowPixelDataError(e.Message);
+			}
 
 			counter.Stop();
 
 			string str = String.Format("DrawImageGraphic: {0}\n", counter.ToString());
 			Trace.Write(str);
+		}
+
+		private void ShowPixelDataError(string message)
+		{
+			Font font = new Font("Arial", 12.0f);
+			SizeF size = _surface.FinalBuffer.Graphics.MeasureString(message, font);
+
+			int centerHeight = _surface.FinalBuffer.Height / 2;
+			int centerWidth = _surface.FinalBuffer.Width / 2;
+ 
+			_surface.FinalBuffer.Graphics.DrawString(
+				message,
+				font,
+				_brush,
+				new PointF(centerWidth - size.Width / 2, centerHeight - size.Height / 2));
+
+			font.Dispose();
 		}
 
 		private void DrawLinePrimitive(LinePrimitive line)
