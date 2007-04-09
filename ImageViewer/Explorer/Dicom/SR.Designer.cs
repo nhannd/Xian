@@ -207,6 +207,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} studies found on {1}.
+        /// </summary>
+        internal static string FormatStudiesFound {
+            get {
+                return ResourceManager.GetString("FormatStudiesFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Server Name: {0}
         ///AE Title: {1}
         ///Host: {2}
@@ -216,6 +225,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string FormatTooltipServerDetails {
             get {
                 return ResourceManager.GetString("FormatTooltipServerDetails", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to Query server {0}:  {1}.
+        /// </summary>
+        internal static string FormatUnableToQueryServer {
+            get {
+                return ResourceManager.GetString("FormatUnableToQueryServer", resourceCulture);
             }
         }
         
@@ -379,15 +397,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string MessageUnableToDeleteStudy {
             get {
                 return ResourceManager.GetString("MessageUnableToDeleteStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Unable to query the following server.
-        /// </summary>
-        internal static string MessageUnableToQueryServer {
-            get {
-                return ResourceManager.GetString("MessageUnableToQueryServer", resourceCulture);
             }
         }
         

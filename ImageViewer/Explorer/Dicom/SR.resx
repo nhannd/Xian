@@ -167,12 +167,18 @@ Please choose another Server Group Name.</value>
     <value>The Server Name ({0}) conflicts with {1}.
 Please choose another Server Name.</value>
   </data>
+  <data name="FormatStudiesFound" xml:space="preserve">
+    <value>{0} studies found on {1}</value>
+  </data>
   <data name="FormatTooltipServerDetails" xml:space="preserve">
     <value>Server Name: {0}
 AE Title: {1}
 Host: {2}
 Listening Port: {3}
 Location: {4}</value>
+  </data>
+  <data name="FormatUnableToQueryServer" xml:space="preserve">
+    <value>Unable to Query server {0}:  {1}</value>
   </data>
   <data name="MenuAddServer" xml:space="preserve">
     <value>Add server</value>
@@ -228,9 +234,6 @@ Are you sure you want to continue?</value>
   </data>
   <data name="MessageUnableToDeleteStudy" xml:space="preserve">
     <value>Unable to delete study.  Please check the log for details.</value>
-  </data>
-  <data name="MessageUnableToQueryServer" xml:space="preserve">
-    <value>Unable to query the following server</value>
   </data>
   <data name="StatusLastRetrievalServerUsed" xml:space="preserve">
     <value>Last retrieval server used</value>

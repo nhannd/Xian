@@ -309,6 +309,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				: base(LocalDataStoreService.Instance.SendReceiveImportConcurrency)
 			{
 				_parent = parent;
+				base.AllowInactiveAdd = true;
 			}
 
 			protected override void ProcessItem(ImportJobInformation jobInformation)

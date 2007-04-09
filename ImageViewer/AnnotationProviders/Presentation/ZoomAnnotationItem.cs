@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			if (image  == null)
 				return string.Empty;
 
-			return String.Format("{0}{1}", new DoubleFormatter().Format(image.SpatialTransform.Scale), SR.Presentation_Zoom_Indicator);
+			return String.Format("{0}{1}", image.SpatialTransform.Scale.ToString("F2"), SR.Presentation_Zoom_Indicator);
 		}
 	}
 }

@@ -48,7 +48,6 @@
     <Compile Include="Dicom\MRImageAnnotationItemProvider.cs" />
     <Compile Include="Dicom\CTImageAnnotationItemProvider.cs" />
     <Compile Include="Dicom\DicomAnnotationItem.cs" />
-    <Compile Include="DoubleFormatter.cs" />
     <Compile Include="Dicom\DicomBasicResultFormatter.cs" />
     <Compile Include="Dicom\DicomTagRetriever.cs" />
     <Compile Include="Dicom\GeneralEquipmentAnnotationItemProvider.cs" />
@@ -83,7 +82,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="Tests\FormatterTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">

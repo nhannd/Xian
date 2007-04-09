@@ -43,7 +43,6 @@
     <Compile Include="LocalDataStoreReindexApplicationComponent.cs" />
     <Compile Include="LocalDataStoreReindexTool.cs" />
     <Compile Include="ReceiveQueueApplicationComponent.cs" />
-    <Compile Include="LocalDataStoreActivityMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReceiveQueueTools.cs" />
     <Compile Include="RetrieveStudyTool.cs" />

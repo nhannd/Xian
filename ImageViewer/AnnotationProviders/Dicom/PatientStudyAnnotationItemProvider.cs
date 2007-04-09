@@ -69,8 +69,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								new DicomTagAsDoubleRetriever(Dcm.PatientsSize).GetTagValue,
 								delegate(double input)
 								{
-									DoubleFormatter formatter = new DoubleFormatter();
-									return String.Format("{0} {1}", formatter.Format(input), SR.Label_metres);
+									return String.Format("{0} {1}", input.ToString("F2"), SR.Label_metres);
 								}
 							)
 						);
@@ -84,8 +83,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								new DicomTagAsDoubleRetriever(Dcm.PatientsWeight).GetTagValue,
 								delegate(double input)
 								{
-									DoubleFormatter formatter = new DoubleFormatter();
-									return String.Format("{0} {1}", formatter.Format(input), SR.Label_kilograms);
+									return String.Format("{0} {1}", input.ToString("F2"), SR.Label_kilograms);
 								}
 							)
 						);

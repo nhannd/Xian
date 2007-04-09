@@ -88,7 +88,7 @@
     <Compile Include="AETitle.cs" />
     <Compile Include="ComponentGroup.cs" />
     <Compile Include="DateParser.cs" />
-    <Compile Include="DateRangeParser.cs" />
+    <Compile Include="DateRangeHelper.cs" />
     <Compile Include="DateTimeParser.cs" />
     <Compile Include="DicomException.cs" />
     <Compile Include="DicomImage.cs" />

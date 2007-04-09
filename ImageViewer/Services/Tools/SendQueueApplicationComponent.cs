@@ -150,6 +150,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			#endregion
 		}
 
+		private string _title;
 		private ToolSet _toolSet;
 		private Table<SendQueueItem> _sendTable;
 		private ISelection _selection;
@@ -179,7 +180,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			_timer = new Timer(this.OnTimer, 30000, 30000);
 
+			LocalDataStoreActivityMonitor.Instance.LostConnection += new EventHandler(OnLostConnection);
+			LocalDataStoreActivityMonitor.Instance.Connected += new EventHandler(OnConnected);
 			LocalDataStoreActivityMonitor.Instance.SendProgressUpdate += new EventHandler<ItemEventArgs<SendProgressItem>>(OnSendProgressUpdate);
+
+			SetTitle();
 		}
 
 		public override void Stop()
@@ -188,7 +193,28 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_timer.Dispose();
 			_timer = null;
 
+			LocalDataStoreActivityMonitor.Instance.LostConnection -= new EventHandler(OnLostConnection);
+			LocalDataStoreActivityMonitor.Instance.Connected -= new EventHandler(OnConnected);
 			LocalDataStoreActivityMonitor.Instance.SendProgressUpdate -= new EventHandler<ItemEventArgs<SendProgressItem>>(OnSendProgressUpdate);
+		}
+
+		private void SetTitle()
+		{
+			if (LocalDataStoreActivityMonitor.Instance.IsConnected)
+				this.Title = SR.TitleSend;
+			else
+				this.Title = String.Format("{0} ({1})", SR.TitleSend, SR.MessageActivityMonitorServiceUnavailable);
+		}
+
+		private void OnConnected(object sender, EventArgs e)
+		{
+			SetTitle();
+		}
+
+		private void OnLostConnection(object sender, EventArgs e)
+		{
+			_sendTable.Items.Clear();
+			SetTitle();
 		}
 
 		private void OnTimer()
@@ -321,7 +347,18 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public string Title
 		{
-			get { return SR.TitleSend; }
+			get 
+			{
+				return _title; 
+			}
+			protected set
+			{
+				if (_title != value)
+				{
+					_title = value;
+					NotifyPropertyChanged("Title");
+				}
+			}
 		}
 
 		public ITable SendTable

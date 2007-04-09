@@ -44,6 +44,7 @@
     <Compile Include="LocalDataStore\DataContracts.cs" />
     <Compile Include="LocalDataStore\ILocalDataStoreActivityMonitorService.cs" />
     <Compile Include="LocalDataStore\ILocalDataStoreService.cs" />
+    <Compile Include="LocalDataStore\LocalDataStoreActivityMonitor.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreActivityMonitorServiceClient.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreServiceClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

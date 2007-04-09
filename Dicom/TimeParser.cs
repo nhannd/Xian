@@ -16,7 +16,24 @@ namespace ClearCanvas.Dicom
 	/// </summary>
 	public static class TimeParser
 	{
+		public static readonly string DicomFullTimeFormat = "HHmmss.FFFFFF";
+
 		private static readonly string[] _timeFormats = { "HHmmss", "HHmmss.FFFFFF", "HHmm", "HH" };
+
+		/// <summary>
+		/// Attempts to parse the time string exactly, according to accepted Dicom time format(s).
+		/// Will *not* throw an exception if the format is invalid (better for when performance is needed).
+		/// </summary>
+		/// <param name="timeString">the dicom time string</param>
+		/// <returns>a nullable DateTime</returns>
+		public static DateTime? Parse(string timeString)
+		{
+			DateTime time;
+			if (!Parse(timeString, out time))
+				return null;
+
+			return time;
+		}
 
 		/// <summary>
 		/// Attempts to parse the time string exactly, according to accepted Dicom time format(s).

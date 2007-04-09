@@ -14,8 +14,50 @@ namespace ClearCanvas.Dicom
 	/// 	-20070606				Beginning of time	20070606			Yes
 	///		20060101-20070606		20060101			20070606			Yes
 	/// </summary>
-	public class DateRangeParser
+	public sealed class DateRangeHelper
 	{
+		private DateRangeHelper()
+		{ 
+		}
+
+		/// <summary>
+		/// The semantics of the fromDate and toDate, is:
+		/// <table>
+		/// <tr><td>fromDate</td><td>toDate</td><td>Query</td></tr>
+		/// <tr><td>null</td><td>null</td><td>Empty</td></tr>
+		/// <tr><td>20060608</td><td>null</td><td>Since: "20060608-"</td></tr>
+		/// <tr><td>20060608</td><td>20060610</td><td>Between: "20060608-20060610"</td></tr>
+		/// <tr><td>null</td><td>20060610</td><td>Prior to: "-20060610"</td></tr>
+		/// </table>
+		/// </summary>
+		/// <param name="fromDate"></param>
+		/// <param name="toDate"></param>
+		public static string GetDicomDateRangeQueryString(DateTime? fromDate, DateTime? toDate)
+		{
+			if (null == fromDate && null == toDate)
+			{
+				return "";
+			}
+			else if (fromDate == toDate)
+			{
+				return ((DateTime)fromDate).ToString("yyyyMMdd");
+			}
+			else if (null != fromDate && null == toDate)
+			{
+				return ((DateTime)fromDate).ToString("yyyyMMdd-");
+			}
+			else if (null != fromDate && null != toDate)
+			{
+				return ((DateTime)fromDate).ToString("yyyyMMdd-") + ((DateTime)toDate).ToString("yyyyMMdd");
+			}
+			else if (null == fromDate && null != toDate)
+			{
+				return ((DateTime)toDate).ToString("-yyyyMMdd");
+			}
+
+			return "";
+		}
+
 		/// <summary>
 		/// Will parse a date range adhering to the dicom date format, returning the dates as <see cref="DateTime"/> objects.
 		/// </summary>

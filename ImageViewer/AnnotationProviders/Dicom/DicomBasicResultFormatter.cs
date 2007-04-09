@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.Desktop;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 {
@@ -19,14 +20,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 
 		public static string StringListFormat(string[] input)
 		{
-			string result = "";
-			foreach (string inputString in input)
-				result += inputString + ",\n";
-
-			if (!String.IsNullOrEmpty(result))
-				result = result.Remove(result.Length - 2);
-
-			return result;
+			return StringUtilities.Combine<string>(input, ",\n");
 		}
 
 		public static string DateFormat(string input)

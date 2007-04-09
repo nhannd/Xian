@@ -178,6 +178,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Activity Monitor service is currently unavailable.
+        /// </summary>
+        internal static string MessageActivityMonitorServiceUnavailable {
+            get {
+                return ResourceManager.GetString("MessageActivityMonitorServiceUnavailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to cancel the selected items..
         /// </summary>
         internal static string MessageCancelFailed {

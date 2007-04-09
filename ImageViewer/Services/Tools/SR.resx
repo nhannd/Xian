@@ -156,6 +156,9 @@
   <data name="MenuSendStudy" xml:space="preserve">
     <value>Send</value>
   </data>
+  <data name="MessageActivityMonitorServiceUnavailable" xml:space="preserve">
+    <value>The Activity Monitor service is currently unavailable</value>
+  </data>
   <data name="MessageCancelFailed" xml:space="preserve">
     <value>Failed to cancel the selected items.</value>
   </data>

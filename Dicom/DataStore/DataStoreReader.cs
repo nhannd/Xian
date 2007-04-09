@@ -7,6 +7,7 @@ using NHibernate;
 using NHibernate.Collection;
 using NHibernate.Expression;
 using Iesi.Collections;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom.DataStore
 {
@@ -295,25 +296,13 @@ namespace ClearCanvas.Dicom.DataStore
 
         public ReadOnlyQueryResultCollection StudyQuery(QueryKey queryKey)
         {
-            // TODO
             if (null == queryKey)
 				throw new System.ArgumentNullException("queryKey", SR.ExceptionStudyQueryNullKey);
 
-			if (queryKey.ContainsTag(DicomTag.ModalitiesInStudy))
-			{
-				// Dicom *does* support wildcards on this tag, but right now the local datastore
-				// does not.  This is because the modalities are post-filtered in the code 
-				// and I couldn't find a good wildcard RegEx pattern to use.  This should get
-				// sorted out when C-FIND is implemented.
-				if (ContainsWildCards(queryKey[DicomTag.ModalitiesInStudy]))
-					throw new NotSupportedException(SR.ExceptionModalitiesInStudyWildcardsNotSupported);
-			}
-
-			//
             // prepare the HQL query string
             //
             StringBuilder selectCommandString = new StringBuilder(1024);
-            selectCommandString.AppendFormat("FROM Study ");
+			selectCommandString.AppendFormat(" FROM Study as study ");
 
 			bool whereClauseAdded = false;
 
@@ -328,7 +317,15 @@ namespace ClearCanvas.Dicom.DataStore
 						continue;
 
 					StringBuilder nextCriteria = new StringBuilder();
-					AppendQuery(queryKey[tag], column, nextCriteria);
+					if (tag.Equals(DicomTag.ModalitiesInStudy))
+					{
+						//special case for modalities in study since it's not actually in the study table.
+						AppendModalitiesInStudyQuery(queryKey[DicomTag.ModalitiesInStudy], nextCriteria);
+					}
+					else
+					{
+						AppendQuery(queryKey[tag], column, nextCriteria);
+					}
 
 					if (nextCriteria.Length == 0)
 						continue;
@@ -358,7 +355,7 @@ namespace ClearCanvas.Dicom.DataStore
                 session = this.SessionFactory.OpenSession();
                 transaction = session.BeginTransaction();
 
-                IQuery query = session.CreateQuery(selectCommandString.ToString());
+				IQuery query = session.CreateQuery(selectCommandString.ToString());
                 studiesFound = query.List();
             }
             catch (Exception ex)
@@ -423,82 +420,42 @@ namespace ClearCanvas.Dicom.DataStore
 
         private ReadOnlyQueryResultCollection CompileResults(QueryKey queryKey, IList studiesFound)
 		{
-			List<string> modalitiesInStudyFilterValues = new List<string>();
-			bool processModalitiesInStudy = queryKey.ContainsTag(DicomTag.ModalitiesInStudy);
-			if (processModalitiesInStudy)
-			{
-				string modalitiesInStudyFilter = queryKey[DicomTag.ModalitiesInStudy].ToString();
-				if (!String.IsNullOrEmpty(modalitiesInStudyFilter))
-				{
-					string[] splitValues = modalitiesInStudyFilter.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
-					if (splitValues != null && splitValues.Length > 0)
-						modalitiesInStudyFilterValues.AddRange(splitValues);
-				}
-			}
-
 			// 
 			// compile the query results
 			//
 			QueryResultList results = new QueryResultList();
-			
+
 			foreach (object element in studiesFound)
-            {
-                Study study = element as Study;
-                QueryResult result = new QueryResult();
+			{
+				Study study = element as Study;
+				QueryResult result = new QueryResult();
 
-                foreach (PropertyInfo pi in study.GetType().GetProperties())
-                {
-                    string fieldName = pi.Name;
-                    if (DataAccessLayer.GetIDicomDictionary().Contains(new TagName(fieldName)))
-                    {
-                        // ensure that property actually has a value
-                        object fieldValue = pi.GetValue(study, null);
-                        if (null == fieldValue)
-                            continue;
-
-                        DictionaryEntry col = DataAccessLayer.GetIDicomDictionary().GetColumn(new TagName(fieldName));
-                        DicomTag tag = new DicomTag(col.Path.GetLastPathElementAsInt32());
-                        result.Add(tag, fieldValue.ToString());
-                    }
-                }
-
-                // special tags
-                if (processModalitiesInStudy)
-                {
-                    Dictionary<string, string> set = new Dictionary<string, string>();
-                    foreach (Series series in study.Series)
-                    {
-						if (String.IsNullOrEmpty(series.Modality))
-							continue;
-
-                        if (!set.ContainsKey(series.Modality))
-                            set.Add(series.Modality, series.Modality);
-                    }
-
-					if (modalitiesInStudyFilterValues.Count > 0 && set.Count > 0)
+				foreach (PropertyInfo pi in study.GetType().GetProperties())
+				{
+					string fieldName = pi.Name;
+					if (DataAccessLayer.GetIDicomDictionary().Contains(new TagName(fieldName)))
 					{
-						//when filter values have been specified for the ModalitiesInStudyTag, if any of the filter values is a match
-						//for any of the modalities contained in the study, then the study is returned.  Otherwise, the study is
-						//filtered out, hence we continue right away, skipping the addition of the study to the results.
-						if (!modalitiesInStudyFilterValues.Exists(delegate(string filterValue) { return set.ContainsKey(filterValue); }))
+						// ensure that property actually has a value
+						object fieldValue = pi.GetValue(study, null);
+						if (null == fieldValue)
 							continue;
+
+						DictionaryEntry col = DataAccessLayer.GetIDicomDictionary().GetColumn(new TagName(fieldName));
+						DicomTag tag = new DicomTag(col.Path.GetLastPathElementAsInt32());
+						result.Add(tag, fieldValue.ToString());
 					}
-										
-					string modalities = "";
-                    foreach (string modality in set.Keys)
-                    {
-                        modalities += modality + @"\";
-                    }
+				}
 
-                    // get rid of trailing slash
-					if (modalities != "")
-						modalities = modalities.Remove(modalities.Length - 1);
+				Dictionary<string, string> setModalities = new Dictionary<string, string>();
+				foreach (Series series in study.Series)
+					setModalities[series.Modality] = series.Modality;
 
-                    result.Add(DicomTag.ModalitiesInStudy, modalities);
-                }
+				string modalities = VMStringConverter.ToDicomStringArray<string>(setModalities.Keys);
+				result.Add(DicomTag.ModalitiesInStudy, modalities);
 
-                results.Add(result);
-            }
+				results.Add(result);
+			}
+
             return new ReadOnlyQueryResultCollection(results); 
         }
 
@@ -506,7 +463,11 @@ namespace ClearCanvas.Dicom.DataStore
 		{ 
 			string newQueryKeyString = StandardizeQueryKey(queryKeyString);
 
-			if (column.ValueRepresentation == "DA")
+			if (column.ValueRepresentation == "UI")
+			{
+				AppendListOfUidQuery(newQueryKeyString, column.TagName.ToString(), returnBuilder);
+			}
+			else if (column.ValueRepresentation == "DA")
 			{
 				AppendDateQuery(newQueryKeyString, column.TagName.ToString(), returnBuilder);
 			}
@@ -530,6 +491,33 @@ namespace ClearCanvas.Dicom.DataStore
 			}
 		}
 
+		private void AppendModalitiesInStudyQuery(string modalitiesInStudyQuery, StringBuilder returnBuilder)
+		{
+			if (String.IsNullOrEmpty(modalitiesInStudyQuery))
+				return;
+
+			if (ContainsWildCards(modalitiesInStudyQuery))
+			{
+				returnBuilder.AppendFormat("exists(from study.InternalSeries as series where series.Modality like '{0}')", modalitiesInStudyQuery);
+			}
+			else
+			{
+				List<string> modalities = new List<string>(VMStringConverter.ToStringArray(modalitiesInStudyQuery));
+				string modalitiesList = StringUtilities.Combine<string>(modalities, ", ", delegate(string value) { return String.Format("'{0}'", value); });
+				returnBuilder.AppendFormat("exists(from study.InternalSeries as series where series.Modality in ( {0} ))", modalitiesList);
+			}
+		}
+
+		private void AppendListOfUidQuery(string listOfUidQueryString, string columnName, StringBuilder returnBuilder)
+		{
+			if (String.IsNullOrEmpty(listOfUidQueryString))
+				return;
+
+			List<string> uids = new List<string>(VMStringConverter.ToStringArray(listOfUidQueryString));
+			string uidList = StringUtilities.Combine<string>(uids, ", ", delegate(string value) { return String.Format("'{0}'", value); });
+			returnBuilder.AppendFormat("{0} in ( {1} )", columnName + "_", uidList);
+		}
+
 		private void AppendDateQuery(string dateQueryString, string columnName, StringBuilder returnBuilder)
 		{
 			string fromDate, toDate;
@@ -537,10 +525,10 @@ namespace ClearCanvas.Dicom.DataStore
 
 			try
 			{
-				DateRangeParser.Parse(dateQueryString, out fromDate, out toDate, out isRange);
+				DateRangeHelper.Parse(dateQueryString, out fromDate, out toDate, out isRange);
 			}
 			catch (Exception e)
-			{ 
+			{
 				throw;
 			}
 

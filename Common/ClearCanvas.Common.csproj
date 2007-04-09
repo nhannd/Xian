@@ -206,6 +206,7 @@
     <Compile Include="Utilities\ReferenceCountedObjectCache.cs" />
     <Compile Include="Utilities\StringDiff.cs" />
     <Compile Include="Utilities\SimpleThreadPool.cs" />
+    <Compile Include="Utilities\StringUtilities.cs" />
     <Compile Include="Utilities\Timer.cs" />
     <Compile Include="Utilities\TypeSafeComparerWrapper.cs" />
     <Compile Include="Utilities\DefaultPerformanceCounter.cs" />

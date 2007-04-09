@@ -150,8 +150,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private ToolSet _toolSet;
 		private Table<ReceiveQueueItem> _receiveTable;
 		private ISelection _selection;
-		private event EventHandler _selectionUpdated; 
-		
+		private event EventHandler _selectionUpdated;
+		private string _title;
 		private Timer _timer;
 
 		/// <summary>
@@ -176,7 +176,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			_timer = new Timer(this.OnTimer, 30000, 30000);
 
+			LocalDataStoreActivityMonitor.Instance.LostConnection += new EventHandler(OnLostConnection);
+			LocalDataStoreActivityMonitor.Instance.Connected += new EventHandler(OnConnected);
 			LocalDataStoreActivityMonitor.Instance.ReceiveProgressUpdate += new EventHandler<ItemEventArgs<ReceiveProgressItem>>(OnReceiveProgressUpdate);
+			SetTitle();
 		}
 
 		public override void Stop()
@@ -186,7 +189,29 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_timer.Dispose();
 			_timer = null;
 
+			LocalDataStoreActivityMonitor.Instance.LostConnection -= new EventHandler(OnLostConnection);
+			LocalDataStoreActivityMonitor.Instance.Connected -= new EventHandler(OnConnected);
 			LocalDataStoreActivityMonitor.Instance.ReceiveProgressUpdate -= new EventHandler<ItemEventArgs<ReceiveProgressItem>>(OnReceiveProgressUpdate);
+		}
+
+		private void SetTitle()
+		{
+			if (LocalDataStoreActivityMonitor.Instance.IsConnected)
+				this.Title = SR.TitleReceive;
+			else
+				this.Title = String.Format("{0} ({1})", SR.TitleReceive, SR.MessageActivityMonitorServiceUnavailable);
+
+		}
+
+		private void OnConnected(object sender, EventArgs e)
+		{
+			SetTitle();
+		}
+
+		private void OnLostConnection(object sender, EventArgs e)
+		{
+			_receiveTable.Items.Clear();
+			SetTitle();
 		}
 
 		private void OnTimer()
@@ -326,7 +351,18 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public string Title
 		{
-			get { return SR.TitleReceive; }
+			get
+			{
+				return _title;
+			}
+			protected set
+			{
+				if (_title != value)
+				{
+					_title = value;
+					NotifyPropertyChanged("Title");
+				}
+			}
 		}
 
 		public ITable ReceiveTable

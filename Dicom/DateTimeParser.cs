@@ -7,6 +7,8 @@ namespace ClearCanvas.Dicom
 {
 	public static class DateTimeParser
 	{
+		public static readonly string DicomFullDateTimeFormat = "yyyyMMddHHmmss.FFFFFF";
+
 		private static readonly char[] _plusMinus = { '+', '-' };
 
 		/// <summary>

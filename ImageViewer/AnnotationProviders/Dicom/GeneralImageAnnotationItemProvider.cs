@@ -6,6 +6,7 @@ using System.Reflection;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 {
@@ -174,7 +175,11 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								"Dicom.GeneralImage.LossyImageCompressionRatio",
 								this,
 								delegate(ImageSop imageSop) { return imageSop.LossyImageCompressionRatio; },
-								new DoubleFormatter().FormatList
+								delegate(double[] values) 
+								{
+									return StringUtilities.Combine<double>(values, ",\n",
+										delegate(double value) { return value.ToString("F2"); });
+								}
 							)
 						);
 

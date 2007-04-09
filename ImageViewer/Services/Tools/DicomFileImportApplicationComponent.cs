@@ -134,14 +134,35 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			InitializeTable();
 			_toolSet = new ToolSet(new DicomFileImportComponentToolExtensionPoint(), new DicomFileImportComponentToolContext(this));
 
+			LocalDataStoreActivityMonitor.Instance.LostConnection += new EventHandler(OnLostConnection);
+			LocalDataStoreActivityMonitor.Instance.Connected += new EventHandler(OnConnected);
 			LocalDataStoreActivityMonitor.Instance.ImportProgressUpdate += new EventHandler<ItemEventArgs<ImportProgressItem>>(OnImportProgressUpdate);
+
+			Clear();
+			if (!LocalDataStoreActivityMonitor.Instance.IsConnected)
+				this.SelectedStatusMessage = SR.MessageActivityMonitorServiceUnavailable;
 		}
 
 		public override void Stop()
 		{
 			base.Stop();
 
+			LocalDataStoreActivityMonitor.Instance.LostConnection -= new EventHandler(OnLostConnection);
+			LocalDataStoreActivityMonitor.Instance.Connected -= new EventHandler(OnConnected);
 			LocalDataStoreActivityMonitor.Instance.ImportProgressUpdate -= new EventHandler<ItemEventArgs<ImportProgressItem>>(OnImportProgressUpdate);
+		}
+
+		private void OnConnected(object sender, EventArgs e)
+		{
+			Clear();
+			this.SelectedStatusMessage = SR.MessageNothingSelected;
+		}
+
+		private void OnLostConnection(object sender, EventArgs e)
+		{
+			this._importTable.Items.Clear();
+			Clear();
+			this.SelectedStatusMessage = SR.MessageActivityMonitorServiceUnavailable;
 		}
 
 		private void OnImportProgressUpdate(object sender, ItemEventArgs<ImportProgressItem> e)
@@ -181,16 +202,22 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				EventsHelper.Fire(_selectionUpdated, this, EventArgs.Empty);
 		}
 
+		private void Clear()
+		{
+			this.SelectedTotalProcessed = 0;
+			this.SelectedAvailableCount = 0;
+			this.SelectedTotalToProcess = 0;
+			this.SelectedBadFiles = 0;
+			this.SelectedCancelEnabled = false;
+			this.SelectedStatusMessage = "";
+		}
+		
 		private void UpateSelectedItemStats()
 		{
 			if (_selectedProgressItem == null)
 			{
-				this.SelectedTotalProcessed = 0;
-				this.SelectedAvailableCount = 0;
-				this.SelectedTotalToProcess = 0;
-				this.SelectedBadFiles = 0;
+				Clear();
 				this.SelectedStatusMessage = SR.MessageNothingSelected;
-				this.SelectedCancelEnabled = false;
 			}
 			else
 			{

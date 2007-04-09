@@ -40,6 +40,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
             queryKey.Add(DicomTag.PatientsBirthDate, "");
             queryKey.Add(DicomTag.ModalitiesInStudy, queryParams["ModalitiesInStudy"]);
             queryKey.Add(DicomTag.SpecificCharacterSet, "");
+			queryKey.Add(DicomTag.StudyInstanceUID, queryParams["StudyInstanceUid"]);
 
             ReadOnlyQueryResultCollection results = Query(queryKey);
             if (null == results)

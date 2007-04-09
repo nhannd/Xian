@@ -27,6 +27,21 @@ namespace ClearCanvas.Dicom
 		/// Will *not* throw an exception if the format is invalid.
 		/// </summary>
 		/// <param name="dicomDate">the dicom date string</param>
+		/// <returns>a nullable DateTime</returns>
+		public static DateTime? Parse(string dicomDate)
+		{
+			DateTime date;
+			if (!Parse(dicomDate, out date))
+				return null;
+
+			return date;
+		}
+
+		/// <summary>
+		/// Attempts to parse the date string exactly, according to accepted Dicom format(s).
+		/// Will *not* throw an exception if the format is invalid.
+		/// </summary>
+		/// <param name="dicomDate">the dicom date string</param>
 		/// <param name="date">returns the date as a DateTime object</param>
 		/// <returns>true on success, false otherwise</returns>
 		public static bool Parse(string dicomDate, out DateTime date)

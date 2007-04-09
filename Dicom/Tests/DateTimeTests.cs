@@ -368,7 +368,7 @@ namespace ClearCanvas.Dicom.Tests
 				{
 					DateTime? from, to;
 
-					DateRangeParser.Parse(dateRange, out from, out to, out isRange);
+					DateRangeHelper.Parse(dateRange, out from, out to, out isRange);
 					if (expectedResult == "exception")
 						Assert.Fail("expected an exception");
 
@@ -395,7 +395,7 @@ namespace ClearCanvas.Dicom.Tests
 				{
 					string fromString, toString;
 
-					DateRangeParser.Parse(dateRange, out fromString, out toString, out isRange);
+					DateRangeHelper.Parse(dateRange, out fromString, out toString, out isRange);
 					if (expectedResult == "exception")
 						Assert.Fail("expected an exception");
 
@@ -414,7 +414,7 @@ namespace ClearCanvas.Dicom.Tests
 				{
 					int fromInt, toInt;
 
-					DateRangeParser.Parse(dateRange, out fromInt, out toInt, out isRange);
+					DateRangeHelper.Parse(dateRange, out fromInt, out toInt, out isRange);
 					if (expectedResult == "exception")
 						Assert.Fail("expected an exception");
 

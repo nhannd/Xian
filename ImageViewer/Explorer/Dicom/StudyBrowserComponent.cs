@@ -12,6 +12,8 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom;
 using System.ComponentModel;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Services;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using System.Collections.ObjectModel;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
@@ -157,7 +159,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private IStudyFinder _studyFinder;
 		private Dictionary<string, SearchResult> _searchResults;
 		private Table<StudyItem> _currentStudyList;
-
+		
 		private string _resultsTitle;
 
 		private ISelection _currentSelection;
@@ -171,13 +173,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private ActionModelRoot _toolbarModel;
 		private ActionModelRoot _contextMenuModel;
 
-
-
+		private Dictionary<string, string> _setStudiesArrived;
 		#endregion
 
 		public StudyBrowserComponent()
 		{
 			_searchResults = new Dictionary<string, SearchResult>();
+			_setStudiesArrived = new Dictionary<string, string>();
 		}
 
 		internal SearchPanelComponent SearchPanelComponent
@@ -274,6 +276,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-toolbar", _toolSet.Actions);
 			_contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomstudybrowser-contextmenu", _toolSet.Actions);
 
+			LocalDataStoreActivityMonitor.Instance.SopInstanceImported += new EventHandler<ItemEventArgs<ImportedSopInstanceInformation>>(OnSopInstanceImported);
 			DicomExplorerConfigurationSettings.Default.PropertyChanged += new PropertyChangedEventHandler(OnConfigurationSettingsChanged);
 		}
 
@@ -282,6 +285,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_toolSet.Dispose();
 			_toolSet = null;
 
+			LocalDataStoreActivityMonitor.Instance.SopInstanceImported -= new EventHandler<ItemEventArgs<ImportedSopInstanceInformation>>(OnSopInstanceImported);
+			DicomExplorerConfigurationSettings.Default.PropertyChanged -= new PropertyChangedEventHandler(OnConfigurationSettingsChanged);
+
 			base.Stop();
 		}
 
@@ -289,12 +295,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void SelectServerGroup(AEServerGroup selectedServerGroup)
 		{
-			//if (_selectedServerGroup != null)
-			//{
-			//    if (_selectedServerGroup.GroupID == selectedServerGroup.GroupID)
-			//        return;
-			//}
-
 			_selectedServerGroup = selectedServerGroup;
 
 			if (selectedServerGroup.IsLocalDatastore)
@@ -311,108 +311,40 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				_searchResults.Add(_selectedServerGroup.GroupID, searchResult);
 			}
 
+			AddReceivedStudies();
+
 			UpdateView();
 
 			EventsHelper.Fire(_selectedServerChangedEvent, this, EventArgs.Empty);
 		}
 
-
-
 		public void Search()
 		{
-			Platform.CheckMemberIsSet(_studyFinder, "StudyFinder");
-			Platform.CheckMemberIsSet(_searchPanelComponent, "SearchPanelComponent");
+			if (_selectedServerGroup != null && _selectedServerGroup.IsLocalDatastore)
+				_setStudiesArrived.Clear();
 
-			// create patient's name query key
-			// LastName   FirstName   Result
-			//    X           X        <Blank>
-			//    V           X        LastName*
-			//    V           V        LastName*FirstName*
-			//    X           V        *FirstName*
-			string patientsName = "";
-			if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length == 0)
-				patientsName = _searchPanelComponent.LastName + "*";
-			if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length > 0)
-				patientsName = _searchPanelComponent.LastName + "*" + _searchPanelComponent.FirstName + "*";
-			if (_searchPanelComponent.LastName.Length == 0 && _searchPanelComponent.FirstName.Length > 0)
-				patientsName = "*" + _searchPanelComponent.FirstName + "*";
+			QueryParameters queryParams = PrepareQueryParameters();
 
-			string patientId = "";
-			if (_searchPanelComponent.PatientID.Length > 0)
-				patientId = _searchPanelComponent.PatientID + "*";
+			bool isOpenSearchQuery = (queryParams["PatientsName"].Length == 0
+							&& queryParams["PatientId"].Length == 0
+							&& queryParams["AccessionNumber"].Length == 0
+							&& queryParams["StudyDescription"].Length == 0
+							&& queryParams["ModalitiesInStudy"].Length == 0
+							&& queryParams["StudyDate"].Length == 0 &&
+							queryParams["StudyInstanceUid"].Length == 0);
 
-			string accessionNumber = "";
-			if (_searchPanelComponent.AccessionNumber.Length > 0)
-				accessionNumber = _searchPanelComponent.AccessionNumber + "*";
 
-			string studyDescription = "";
-			if (_searchPanelComponent.StudyDescription.Length > 0)
-				studyDescription = _searchPanelComponent.StudyDescription +"*";
-
-			DateTime fromDate = _searchPanelComponent.StudyDateFrom ?? DateTime.MinValue;
-			DateTime toDate = _searchPanelComponent.StudyDateTo ?? DateTime.MinValue;
-			string dateRange = GetDicomDateRangeMatchString(fromDate, toDate);
-
-			//At the application level, ClearCanvas defines the 'ModalitiesInStudy' filter as a multi-valued
-			//Key Attribute.  This goes against the Dicom standard for C-FIND SCU behaviour, so the
-			//underlying IStudyFinder(s) must handle this special case, either by ignoring the filter
-			//or by running multiple queries, one per modality specified (for example).
-			IList<string> searchModalities = _searchPanelComponent.SearchModalities;
-			string modalityFilter = "";
-			if (searchModalities != null)
+			bool isQueryingMyDataStore = (_selectedServerGroup.Servers.Count == 1 && _selectedServerGroup.Servers[0].Name == SR.TitleMyDataStore);
+			if (isQueryingMyDataStore == false && isOpenSearchQuery)
 			{
-				foreach (string modality in searchModalities)
-					modalityFilter += modality + @"\";
-
-				if (modalityFilter != "")
-					modalityFilter = modalityFilter.Remove(modalityFilter.Length - 1);
+				if (Platform.ShowMessageBox(SR.MessageConfirmContinueOpenSearch, MessageBoxActions.YesNo) == DialogBoxAction.No)
+					return;
 			}
 
-            bool isQueryingMyDataStore = (_selectedServerGroup.Servers.Count == 1 && _selectedServerGroup.Servers[0].Name == SR.TitleMyDataStore);
-            bool isOpenSearchQuery =
-                (patientsName.Length == 0
-                && patientId.Length == 0
-                && accessionNumber.Length == 0
-                && studyDescription.Length == 0
-                && modalityFilter.Length == 0
-                && dateRange.Length == 0);
+			List<KeyValuePair<string, Exception>> failedServerInfo = new List<KeyValuePair<string, Exception>>();
+			StudyItemList aggregateStudyItemList = Query(queryParams, failedServerInfo);
 
-            if (isQueryingMyDataStore == false && isOpenSearchQuery)
-            {
-                if (Platform.ShowMessageBox(SR.MessageConfirmContinueOpenSearch, MessageBoxActions.YesNo) == DialogBoxAction.No)
-                    return;
-            }
-
-            QueryParameters queryParams = new QueryParameters();
-			queryParams.Add("PatientsName", patientsName);
-			queryParams.Add("PatientId", patientId);
-			queryParams.Add("AccessionNumber", accessionNumber);
-			queryParams.Add("StudyDescription", studyDescription);
-			queryParams.Add("ModalitiesInStudy", modalityFilter);
-			queryParams.Add("StudyDate", dateRange);
-
-            StudyItemList aggregateStudyItemList = new StudyItemList();
-
-            List<string> failedServers = new List<string>();
-            Exception savedException = null;
-
-            foreach (Server server in _selectedServerGroup.Servers)
-            {
-                try
-			    {
-                    StudyItemList serverStudyItemList = _studyFinder.Query(server.GetApplicationEntity(), queryParams);
-                    aggregateStudyItemList.AddRange(serverStudyItemList);
-			    }
-			    catch (Exception e)
-			    {
-                    // keep track of the failed server names and save only the last exception
-                    // then continue querying the next server
-                    failedServers.Add(server.Name);
-                    savedException = e;
-			    }
-            }
-            
-			this.ResultsTitle = String.Format("{0} studies found on {1}", aggregateStudyItemList.Count, _selectedServerGroup.Name);
+			this.ResultsTitle = String.Format(SR.FormatStudiesFound, aggregateStudyItemList.Count, _selectedServerGroup.Name);
 
 			UpdateComponent();
 
@@ -422,15 +354,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			_searchResults[_selectedServerGroup.GroupID].StudyList.Sort();
 
             // Re-throw the last exception with a list of failed server name, if any
-            if (savedException != null)
+			if (failedServerInfo.Count > 0)
             {
-                string message = SR.MessageUnableToQueryServer;
-                foreach(string serverName in failedServers)
+				StringBuilder aggregateExceptionMessage = new StringBuilder();
+				int count = 0;
+                foreach(KeyValuePair<string, Exception> pair in failedServerInfo)
                 {
-                    message = String.Format("{0}, {1}", message, serverName);   
+					if (count++ > 0)
+						aggregateExceptionMessage.Append("\n\n");
+
+					aggregateExceptionMessage.AppendFormat(SR.FormatUnableToQueryServer, pair.Key, pair.Value.Message);
                 }
 
-                throw new Exception(message, savedException);
+				throw new Exception(aggregateExceptionMessage.ToString());
             }
 		}
 
@@ -461,6 +397,79 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			this.ResultsTitle = _searchResults[_selectedServerGroup.GroupID].ResultsTitle;
 			this.StudyList = _searchResults[_selectedServerGroup.GroupID].StudyList;
+		}
+
+		private QueryParameters PrepareQueryParameters()
+		{
+			Platform.CheckMemberIsSet(_studyFinder, "StudyFinder");
+			Platform.CheckMemberIsSet(_searchPanelComponent, "SearchPanelComponent");
+
+			// create patient's name query key
+			// LastName   FirstName   Result
+			//    X           X        <Blank>
+			//    V           X        LastName*
+			//    V           V        LastName*FirstName*
+			//    X           V        *FirstName*
+			string patientsName = "";
+			if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length == 0)
+				patientsName = _searchPanelComponent.LastName + "*";
+			if (_searchPanelComponent.LastName.Length > 0 && _searchPanelComponent.FirstName.Length > 0)
+				patientsName = _searchPanelComponent.LastName + "*" + _searchPanelComponent.FirstName + "*";
+			if (_searchPanelComponent.LastName.Length == 0 && _searchPanelComponent.FirstName.Length > 0)
+				patientsName = "*" + _searchPanelComponent.FirstName + "*";
+
+			string patientId = "";
+			if (_searchPanelComponent.PatientID.Length > 0)
+				patientId = _searchPanelComponent.PatientID + "*";
+
+			string accessionNumber = "";
+			if (_searchPanelComponent.AccessionNumber.Length > 0)
+				accessionNumber = _searchPanelComponent.AccessionNumber + "*";
+
+			string studyDescription = "";
+			if (_searchPanelComponent.StudyDescription.Length > 0)
+				studyDescription = _searchPanelComponent.StudyDescription + "*";
+
+			string dateRangeQuery = DateRangeHelper.GetDicomDateRangeQueryString(_searchPanelComponent.StudyDateFrom, _searchPanelComponent.StudyDateTo);
+
+			//At the application level, ClearCanvas defines the 'ModalitiesInStudy' filter as a multi-valued
+			//Key Attribute.  This goes against the Dicom standard for C-FIND SCU behaviour, so the
+			//underlying IStudyFinder(s) must handle this special case, either by ignoring the filter
+			//or by running multiple queries, one per modality specified (for example).
+
+			string modalityFilter = VMStringConverter.ToDicomStringArray<string>(_searchPanelComponent.SearchModalities);
+
+			QueryParameters queryParams = new QueryParameters();
+			queryParams.Add("PatientsName", patientsName);
+			queryParams.Add("PatientId", patientId);
+			queryParams.Add("AccessionNumber", accessionNumber);
+			queryParams.Add("StudyDescription", studyDescription);
+			queryParams.Add("ModalitiesInStudy", modalityFilter);
+			queryParams.Add("StudyDate", dateRangeQuery);
+			queryParams.Add("StudyInstanceUid", "");
+
+			return queryParams;
+		}
+
+		private StudyItemList Query(QueryParameters queryParams, List<KeyValuePair<string, Exception>> failedServerInfo)
+		{
+			StudyItemList aggregateStudyItemList = new StudyItemList();
+
+			foreach (Server server in _selectedServerGroup.Servers)
+			{
+				try
+				{
+					StudyItemList serverStudyItemList = _studyFinder.Query(server.GetApplicationEntity(), queryParams);
+					aggregateStudyItemList.AddRange(serverStudyItemList);
+				}
+				catch (Exception e)
+				{
+					// keep track of the failed server names and exceptions
+					failedServerInfo.Add(new KeyValuePair<string, Exception>(server.Name, e));
+				}
+			}
+
+			return aggregateStudyItemList;
 		}
 
 		private void AddColumns(Table<StudyItem> studyList)
@@ -548,46 +557,66 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			studyList.Columns.Add(column);
 		}
 
-		/// <summary>
-		/// The semantics of the fromDate and toDate, is:
-		/// <table>
-		/// <tr><td>fromDate</td><td>toDate</td><td>Query</td></tr>
-		/// <tr><td>null</td><td>null</td><td>Empty</td></tr>
-		/// <tr><td>20060608</td><td>null</td><td>Since: "20060608-"</td></tr>
-		/// <tr><td>20060608</td><td>20060610</td><td>Between: "20060608-20060610"</td></tr>
-		/// <tr><td>null</td><td>20060610</td><td>Prior to: "-20060610"</td></tr>
-		/// </table>
-		/// Treat "null" above as DateTime.MinValue
-		/// </summary>
-		/// <param name="fromDate"></param>
-		/// <param name="toDate"></param>
-		private string GetDicomDateRangeMatchString(DateTime fromDate, DateTime toDate)
-        {
-            if (DateTime.MinValue == fromDate && DateTime.MinValue == toDate)
-            {
-                return "";
-            }
-            else if (fromDate == toDate)
-            {
-                return fromDate.ToString("yyyyMMdd");
-            }
-            else if (DateTime.MinValue != fromDate && DateTime.MinValue == toDate)
-            {
-                return fromDate.ToString("yyyyMMdd-");
-            }
-            else if (DateTime.MinValue != fromDate && DateTime.MinValue != toDate)
-            {
-                return fromDate.ToString("yyyyMMdd-") + toDate.ToString("yyyyMMdd");
-            }
-            else if (DateTime.MinValue == fromDate && DateTime.MinValue != toDate)
-            {
-                return toDate.ToString("-yyyyMMdd");
-            }
+		private bool StudyExists(string studyInstanceUid)
+		{
+			int foundIndex = _searchResults[_selectedServerGroup.GroupID].StudyList.Items.FindIndex(
+				delegate(StudyItem test)
+				{
+					return test.StudyInstanceUID == studyInstanceUid;
+				});
 
-            return "";
-        }
+			return foundIndex >= 0;
+		}
 
-		void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)
+		private void AddReceivedStudies()
+		{
+			if (_selectedServerGroup == null || !_selectedServerGroup.IsLocalDatastore)
+				return;
+
+			if (_setStudiesArrived.Count == 0)
+				return;
+
+			List<string> newStudies = new List<string>();
+			foreach (string studyUid in _setStudiesArrived.Keys)
+			{
+				if (!StudyExists(studyUid))
+					newStudies.Add(studyUid);
+			}
+
+			if (newStudies.Count == 0)
+				return;
+
+			string studyUids = VMStringConverter.ToDicomStringArray<string>(newStudies);
+			if (String.IsNullOrEmpty(studyUids))
+				return;
+
+			QueryParameters parameters = PrepareQueryParameters();
+			parameters["StudyInstanceUid"] = studyUids;
+
+			StudyItemList list = new StudyItemList();
+			list = _studyFinder.Query(parameters);
+
+			foreach (StudyItem item in list)
+			{
+				//don't need to check this again, it's just paranoia
+				if (!StudyExists(item.StudyInstanceUID))
+					_searchResults[_selectedServerGroup.GroupID].StudyList.Items.Add(item);
+			}
+
+			_setStudiesArrived.Clear();
+			_searchResults[_selectedServerGroup.GroupID].StudyList.Sort();
+		}
+
+		private void OnSopInstanceImported(object sender, ItemEventArgs<ImportedSopInstanceInformation> e)
+		{
+			if (_setStudiesArrived.ContainsKey(e.Item.StudyInstanceUid))
+				return;
+
+			_setStudiesArrived[e.Item.StudyInstanceUid] = e.Item.StudyInstanceUid;
+			AddReceivedStudies();
+		}
+
+		private void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)
 		{
 			if (e.PropertyName == "ShowIdeographicName" ||
 				e.PropertyName == "ShowPhoneticName")

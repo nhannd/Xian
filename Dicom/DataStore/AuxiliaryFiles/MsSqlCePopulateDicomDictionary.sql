@@ -44,7 +44,7 @@ INSERT INTO DictionaryEntries_ (EntryOid_, TagName_, Path_, IsComputed_, ValueRe
 SELECT EntryOid_, 'Modality', '(0008,0060)', 0, 'CS', temp_index.next_index from DicomDictionaryContainer_, temp_index;
 UPDATE temp_index SET next_index = next_index + 1;
 INSERT INTO DictionaryEntries_ (EntryOid_, TagName_, Path_, IsComputed_, ValueRepresentation_, Index_)
-SELECT EntryOid_, 'ModalitiesInStudy', '(0008,0061)', 1, 'CS', temp_index.next_index from DicomDictionaryContainer_, temp_index;
+SELECT EntryOid_, 'ModalitiesInStudy', '(0008,0061)', 0, 'CS', temp_index.next_index from DicomDictionaryContainer_, temp_index;
 UPDATE temp_index SET next_index = next_index + 1;
 INSERT INTO DictionaryEntries_ (EntryOid_, TagName_, Path_, IsComputed_, ValueRepresentation_, Index_)
 SELECT EntryOid_, 'SOPClassesInStudy', '(0008,0062)', 1, 'UI', temp_index.next_index from DicomDictionaryContainer_, temp_index;

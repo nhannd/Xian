@@ -31,9 +31,29 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_reindexProgress = new ReindexProgressItem();
 		}
 
+		public string Title
+		{
+			get { return SR.TitleReindexLocalDataStore; }
+		}
+
+		private void OnConnected(object sender, EventArgs e)
+		{
+		}
+
+		private void OnLostConnection(object sender, EventArgs e)
+		{
+			this.StatusMessage = SR.MessageActivityMonitorServiceUnavailable;
+			this.TotalProcessed = 0;
+			this.TotalToProcess = 0;
+			this.AvailableCount = 0;
+			this.BadFiles = 0;
+			this.CancelEnabled = false;
+		}
+
 		private void OnReindexProgressUpdate(object sender, ItemEventArgs<ReindexProgressItem> e)
 		{
 			_reindexProgress.CopyFrom(e.Item);
+
 			this.StatusMessage = _reindexProgress.StatusMessage;
 			this.TotalProcessed = _reindexProgress.NumberOfFailedImports + _reindexProgress.NumberOfFilesImported;
 			this.TotalToProcess = _reindexProgress.TotalFilesToImport;
@@ -42,22 +62,24 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			this.CancelEnabled = (_reindexProgress.AllowedCancellationOperations & CancellationFlags.Cancel) == CancellationFlags.Cancel;
 		}
 
-		public string Title
-		{
-			get { return SR.TitleReindexLocalDataStore; }
-		}
-
 		public override void Start()
 		{
 			base.Start();
 
+			LocalDataStoreActivityMonitor.Instance.LostConnection += new EventHandler(OnLostConnection);
+			LocalDataStoreActivityMonitor.Instance.Connected += new EventHandler(OnConnected);
 			LocalDataStoreActivityMonitor.Instance.ReindexProgressUpdate += new EventHandler<ItemEventArgs<ReindexProgressItem>>(OnReindexProgressUpdate);
+
+			if (!LocalDataStoreActivityMonitor.Instance.IsConnected)
+				this.OnLostConnection(null, null);
 		}
 
 		public override void Stop()
 		{
 			base.Stop();
 
+			LocalDataStoreActivityMonitor.Instance.LostConnection -= new EventHandler(OnLostConnection);
+			LocalDataStoreActivityMonitor.Instance.Connected -= new EventHandler(OnConnected);
 			LocalDataStoreActivityMonitor.Instance.ReindexProgressUpdate -= new EventHandler<ItemEventArgs<ReindexProgressItem>>(OnReindexProgressUpdate);
 		}
 

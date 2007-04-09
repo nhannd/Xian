@@ -37,6 +37,7 @@ namespace ClearCanvas.Common.Utilities
 		public enum StartStopState { Started, Stopped };
 
 		private object _queueSyncLock = new object();
+		private bool _stopThreads;
 		private Queue<T> _queue;
 
 		private object _startStopEventSyncLock = new object();
@@ -46,7 +47,6 @@ namespace ClearCanvas.Common.Utilities
 		private bool _active;
 		private List<Thread> _threads;
 
-		private volatile bool _stopThreads;
 		private volatile bool _completeBeforeStop;
 		private volatile bool _allowInactiveAdd;
 		private volatile uint _sleepTime;
@@ -69,13 +69,14 @@ namespace ClearCanvas.Common.Utilities
 		protected SimpleThreadPoolBase()
 		{
 			_sleepTime = 0;
-			_active = false;
 
-			_stopThreads = false;
+			_active = false;
+			_threads = new List<Thread>();
+
 			_completeBeforeStop = false;
 			_allowInactiveAdd = false;
 
-			_threads = new List<Thread>();
+			_stopThreads = false;
 			_queue = new Queue<T>();
 		}
 
@@ -133,18 +134,21 @@ namespace ClearCanvas.Common.Utilities
 				if (_active)
 					return;
 
-				for (int i = 0; i < _concurrency; ++i)
+				lock (_queueSyncLock)
 				{
-					ThreadStart threadStart = new ThreadStart(this.RunThread);
-					Thread thread = new Thread(threadStart);
-					thread.IsBackground = true;
-					thread.Priority = ThreadPriority.BelowNormal;
+					for (int i = 0; i < _concurrency; ++i)
+					{
+						ThreadStart threadStart = new ThreadStart(this.RunThread);
+						Thread thread = new Thread(threadStart);
+						thread.IsBackground = true;
+						thread.Priority = ThreadPriority.BelowNormal;
 
-					thread.Start();
-					_threads.Add(thread);
+						thread.Start();
+						_threads.Add(thread);
+					}
+
+					_active = true;
 				}
-
-				_active = true;
 
 				lock (_startStopEventSyncLock)
 				{
@@ -160,10 +164,9 @@ namespace ClearCanvas.Common.Utilities
 				if (!_active)
 					return;
 
-				_stopThreads = true;
-
 				lock (_queueSyncLock)
 				{
+					_stopThreads = true;
 					Monitor.PulseAll(_queueSyncLock);
 				}
 
@@ -196,20 +199,18 @@ namespace ClearCanvas.Common.Utilities
 
 		private void RunThread()
 		{
-			while (true)
+			lock (_queueSyncLock)
 			{
-				try
+				while (true)
 				{
 					T item = null;
 
-					lock (_queueSyncLock)
+					try
 					{
-						if (!_stopThreads)
-						{
-							while (_queue.Count == 0 && !_stopThreads)
-								Monitor.Wait(_queueSyncLock);
-						}
-						else
+						while (_queue.Count == 0 && !_stopThreads)
+							Monitor.Wait(_queueSyncLock);
+
+						if (_stopThreads)
 						{
 							if (!_completeBeforeStop)
 							{
@@ -225,16 +226,16 @@ namespace ClearCanvas.Common.Utilities
 						if (_queue.Count > 0)
 							item = _queue.Dequeue();
 					}
+					catch (Exception e)
+					{
+						Platform.Log(e);
+					}
 
 					if (item != null)
 						ProcessItem(item);
-				}
-				catch (Exception e)
-				{
-					Platform.Log(e);
-				}
 
-				Thread.Sleep((int)_sleepTime);
+					Thread.Sleep((int)_sleepTime);
+				}
 			}
 		}
 
