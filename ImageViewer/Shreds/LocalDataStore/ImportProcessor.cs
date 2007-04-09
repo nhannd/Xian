@@ -166,6 +166,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					throw new ArgumentNullException(SR.ExceptionNoValidFilesHaveBeenSpecifiedToImport);
 			}
 
+			protected override void NotifyNoFilesToImport(FileImportJobInformation jobInformation)
+			{
+				jobInformation.ProgressItem.StatusMessage = SR.MessageNoFilesToImport;
+				jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+			}
+
 			protected override void UpdateProgress(ImportProgressItem progressItem)
 			{
 				LocalDataStoreActivityPublisher.Instance.ImportProgressChanged(progressItem.Clone());

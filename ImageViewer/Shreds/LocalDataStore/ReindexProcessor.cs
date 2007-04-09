@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				CheckResumeImports();
 			}
-
+			
 			private void CheckResumeImports()
 			{
 				lock (_syncLock)
@@ -116,6 +116,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						};
 					}
 				}
+			}
+
+			protected override void NotifyNoFilesToImport(FileImportJobInformation jobInformation)
+			{
+				jobInformation.ProgressItem.StatusMessage = SR.MessageNoFilesToReindex;
+				jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+
+				CheckResumeImports();
 			}
 
 			protected override void UpdateProgress(ImportProgressItem progressItem)

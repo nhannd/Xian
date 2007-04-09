@@ -439,6 +439,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Complete.  No files could be found to reindex..
+        /// </summary>
+        internal static string MessageNoFilesToReindex {
+            get {
+                return ResourceManager.GetString("MessageNoFilesToReindex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Pending ....
         /// </summary>
         internal static string MessagePending {

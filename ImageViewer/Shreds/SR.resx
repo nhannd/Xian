@@ -243,6 +243,9 @@
   <data name="MessageNoFilesToImport" xml:space="preserve">
     <value>Complete.  No files could be found to import.</value>
   </data>
+  <data name="MessageNoFilesToReindex" xml:space="preserve">
+    <value>Complete.  No files could be found to reindex.</value>
+  </data>
   <data name="MessagePending" xml:space="preserve">
     <value>Pending ...</value>
   </data>

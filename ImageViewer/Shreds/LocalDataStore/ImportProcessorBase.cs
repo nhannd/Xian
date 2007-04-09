@@ -13,6 +13,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 	{
 		protected abstract class ImportProcessorBase
 		{
+			protected delegate void NotifyNoFilesToImportDelegate(FileImportJobInformation jobInformation);
+
 			protected class FileImportInformation : DicomFileImporter.FileImportInformation
 			{
 				private FileImportJobInformation _fileImportJobInformation;
@@ -222,7 +224,13 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			protected abstract void AddToImportQueue(FileImportInformation fileImportInformation);
 
-			protected virtual void Import(FileImportJobInformation jobInformation, IList<string> filePaths, IList<string> fileExtensions, bool recursive)
+			protected abstract void NotifyNoFilesToImport(FileImportJobInformation jobInformation);
+
+			protected virtual void Import(
+				FileImportJobInformation jobInformation, 
+				IList<string> filePaths, 
+				IList<string> fileExtensions, 
+				bool recursive)
 			{
 				WaitCallback enumerateFilesToImport = delegate(object nothing)
 				{
@@ -291,8 +299,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						{
 							if (jobInformation.NumberOfFilesInQueue == 0)
 							{
-								jobInformation.ProgressItem.StatusMessage = SR.MessageNoFilesToImport;
-								jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+								NotifyNoFilesToImport(jobInformation);
 							}
 							else
 							{
