@@ -120,6 +120,18 @@
   <data name="ColumnActive" xml:space="preserve">
     <value>Active</value>
   </data>
+  <data name="ColumnAuthorityGroup" xml:space="preserve">
+    <value>Authority Group</value>
+  </data>
+  <data name="ColumnAuthorityGroupName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="ColumnAuthorityTokenDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ColumnAuthorityTokenName" xml:space="preserve">
+    <value>Name</value>
+  </data>
   <data name="ColumnBed" xml:space="preserve">
     <value>Bed</value>
   </data>
@@ -180,6 +192,12 @@
   <data name="ColumnSuffix" xml:space="preserve">
     <value>Suffix</value>
   </data>
+  <data name="ColumnUserId" xml:space="preserve">
+    <value>User ID</value>
+  </data>
+  <data name="ColumnUserName" xml:space="preserve">
+    <value>Name</value>
+  </data>
   <data name="ExceptionConcurrencyDiagnosticServiceNotSaved" xml:space="preserve">
     <value>The diagnostic service was modified by another user.  Your changes could not be saved.</value>
   </data>
@@ -234,6 +252,9 @@
   <data name="MessageDuplicateModalityID" xml:space="preserve">
     <value>This modality ID already exist.  Your changes could not be saved.</value>
   </data>
+  <data name="TitleAddAuthorityGroup" xml:space="preserve">
+    <value>Add Authority Group</value>
+  </data>
   <data name="TitleAddDiagnosticService" xml:space="preserve">
     <value>Add Diagnostic Service ...</value>
   </data>
@@ -254,6 +275,12 @@
   </data>
   <data name="TitleAddStaff" xml:space="preserve">
     <value>Add Staff</value>
+  </data>
+  <data name="TitleAddUser" xml:space="preserve">
+    <value>Add User</value>
+  </data>
+  <data name="TitleAuthorityGroup" xml:space="preserve">
+    <value>AuthorityGroup</value>
   </data>
   <data name="TitleDeleteDiagnosticService" xml:space="preserve">
     <value>Delete Diagnostic Service</value>
@@ -297,6 +324,9 @@
   <data name="TitleStaff" xml:space="preserve">
     <value>Staff</value>
   </data>
+  <data name="TitleUpdateAuthorityGroup" xml:space="preserve">
+    <value>Update Authority Group</value>
+  </data>
   <data name="TitleUpdateDiagnosticService" xml:space="preserve">
     <value>Update Diagnostic Service ...</value>
   </data>
@@ -317,5 +347,11 @@
   </data>
   <data name="TitleUpdateStaff" xml:space="preserve">
     <value>Update Staff</value>
+  </data>
+  <data name="TitleUpdateUser" xml:space="preserve">
+    <value>Update User</value>
+  </data>
+  <data name="TitleUser" xml:space="preserve">
+    <value>User</value>
   </data>
 </root>

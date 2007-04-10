@@ -38,6 +38,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
 
         internal void UpdateUser(User user, UserDetail detail, IPersistenceContext context)
         {
+            user.UserName = detail.UserId;
+
+            user.AuthorityGroups.Clear();
+            foreach (AuthorityGroupSummary group in detail.AuthorityGroups)
+            {
+                user.AuthorityGroups.Add((AuthorityGroup)context.Load(group.EntityRef));
+            }
         }
     }
 }

@@ -35,6 +35,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
 
         internal void UpdateAuthorityGroup(AuthorityGroup authorityGroup, AuthorityGroupDetail detail, IPersistenceContext persistenceContext)
         {
+            authorityGroup.Name = detail.Name;
+
+            authorityGroup.AuthorityTokens.Clear();
+            foreach (AuthorityTokenSummary summary in detail.AuthorityTokens)
+            {
+                authorityGroup.AuthorityTokens.Add((AuthorityToken)persistenceContext.Load(summary.EntityRef));
+            }
         }
     }
 }

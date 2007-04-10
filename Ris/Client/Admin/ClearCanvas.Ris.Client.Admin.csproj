@@ -42,6 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthorityGroupEditorComponent.cs" />
+    <Compile Include="AuthorityGroupSummaryComponent.cs" />
+    <Compile Include="AuthorityGroupTable.cs" />
     <Compile Include="NoteCategoryTable.cs" />
     <Compile Include="FacilitySummaryComponent.cs" />
     <Compile Include="FacilityEditorComponent.cs" />
@@ -65,6 +68,9 @@
     </Compile>
     <Compile Include="StaffSummaryComponent.cs" />
     <Compile Include="StaffTable.cs" />
+    <Compile Include="UserEditorComponent.cs" />
+    <Compile Include="UserSummaryComponent.cs" />
+    <Compile Include="UserTable.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

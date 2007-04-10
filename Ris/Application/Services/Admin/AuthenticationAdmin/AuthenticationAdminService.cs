@@ -1,14 +1,17 @@
 using System;
 using System.Collections.Generic;
 
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Authentication;
+using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
-using ClearCanvas.Enterprise.Authentication.Brokers;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
 {
+    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    [ServiceImplementsContract(typeof(IAuthenticationAdminService))]
     class AuthenticationAdminService : ApplicationServiceBase, IAuthenticationAdminService
     {
         #region IAuthorityAdminService Members

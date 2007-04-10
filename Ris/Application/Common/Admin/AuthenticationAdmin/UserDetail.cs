@@ -16,6 +16,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin
             AuthorityGroups = authorityGroups;
         }
 
+        public UserDetail()
+        {
+            UserName = new PersonNameDetail();
+            AuthorityGroups = new List<AuthorityGroupSummary>();
+        }
+
         [DataMember]
         public string UserId;
 

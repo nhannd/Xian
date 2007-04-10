@@ -11,5 +11,7 @@
     <token name="PractitionerAdmin"/>
     <token name="StaffAdmin"/>
     <token name="VisitAdmin"/>
+    <token name="UserAdmin"/>
+    <token name="AuthorityGroupAdmin"/>
   </group>
 </groups>

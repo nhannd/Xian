@@ -15,6 +15,11 @@ namespace ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin
             AuthorityTokens = authorityTokens;
         }
 
+        public AuthorityGroupDetail()
+        {
+            AuthorityTokens = new List<AuthorityTokenSummary>();
+        }
+
         [DataMember]
         public string Name;
 

@@ -40,5 +40,11 @@ namespace ClearCanvas.Ris.Application.Common
         [AuthorityToken(Description = "Allow administration of visit details")]
         public const string VisitAdmin = "VisitAdmin";
 
+        [AuthorityToken(Description = "Allow administration of user accounts")]
+        public const string UserAdmin = "UserAdmin";
+
+        [AuthorityToken(Description = "Allow administration of authority groups")]
+        public const string AuthorityGroupAdmin = "AuthorityGroupAdmin";
+
     }
 }

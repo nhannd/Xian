@@ -35,6 +35,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AuthorityGroupEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AuthorityGroupEditorComponentControl.Designer.cs">
+      <DependentUpon>AuthorityGroupEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AuthorityGroupEditorComponentView.cs" />
+    <Compile Include="AuthorityGroupSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="AuthorityGroupSummaryComponentControl.Designer.cs">
+      <DependentUpon>AuthorityGroupSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="AuthorityGroupSummaryComponentView.cs" />
     <Compile Include="FacilitySummaryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -113,6 +127,20 @@
       <DependentUpon>StaffSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="StaffSummaryComponentView.cs" />
+    <Compile Include="UserEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserEditorComponentControl.Designer.cs">
+      <DependentUpon>UserEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserEditorComponentView.cs" />
+    <Compile Include="UserSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UserSummaryComponentControl.Designer.cs">
+      <DependentUpon>UserSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UserSummaryComponentView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common\ClearCanvas.Common.csproj">
@@ -140,6 +168,14 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AuthorityGroupEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AuthorityGroupEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="AuthorityGroupSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>AuthorityGroupSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="FacilitySummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FacilitySummaryComponentControl.cs</DependentUpon>
@@ -183,6 +219,14 @@
     <EmbeddedResource Include="StaffSummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>StaffSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>UserEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UserSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>UserSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
