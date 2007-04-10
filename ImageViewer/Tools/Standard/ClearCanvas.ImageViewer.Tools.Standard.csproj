@@ -177,6 +177,7 @@
     <EmbeddedResource Include="Icons\MemoryUsageToolLarge.png" />
     <EmbeddedResource Include="Icons\MemoryUsageToolMedium.png" />
     <EmbeddedResource Include="Icons\MemoryUsageToolSmall.png" />
+    <EmbeddedResource Include="ProbeCursor.png" />
     <Content Include="LutPresets\DefaultLutPresetKeyAssignments.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

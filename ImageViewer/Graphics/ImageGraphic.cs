@@ -382,9 +382,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			PointF srcPoint = this.SpatialTransform.ConvertToSource(point);
 
 			if (srcPoint.X >= 0.0 &&
-				srcPoint.X <= _columns-1 &&
+				srcPoint.X < _columns &&
 				srcPoint.Y >= 0.0 &&
-				srcPoint.Y <= _rows-1)
+				srcPoint.Y < _rows)
 				return true;
 			else
 				return false;

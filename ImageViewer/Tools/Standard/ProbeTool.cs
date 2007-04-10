@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// </summary>
 		public ProbeTool()
 		{
-			//this.CursorToken = new CursorToken("Icons.ProbeToolMedium.png", this.GetType().Assembly);
+			this.CursorToken = new CursorToken("ProbeCursor.png", this.GetType().Assembly);
 		}
 
 		/// <summary>
@@ -116,7 +116,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void Probe(Point destinationPoint)
 		{
-			Point sourcePointRounded = Point.Round(_selectedImageGraphic.SpatialTransform.ConvertToSource(destinationPoint));
+			PointF sourcePoint = _selectedImageGraphic.SpatialTransform.ConvertToSource(destinationPoint);
+			Point sourcePointRounded = Point.Truncate(_selectedImageGraphic.SpatialTransform.ConvertToSource(destinationPoint));
 
 			//!! Make these user preferences later.
 			bool showPixelValue = true;
@@ -124,6 +125,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			bool showVoiValue = true;
 			bool showPresentationValue = true;
 
+			string probeString = String.Format("LOC: x={0}, y={1}", SR.LabelNotApplicable, SR.LabelNotApplicable);
 			string pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, SR.LabelNotApplicable);
 			string modalityLutString = String.Format("{0}: {1}", SR.LabelModalityLut, SR.LabelNotApplicable);
 			string voiLutString = String.Format("{0}: {1}", SR.LabelVOILut, SR.LabelNotApplicable);
@@ -133,6 +135,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			if (_selectedImageGraphic.HitTest(destinationPoint))
 			{
+				probeString = String.Format("LOC: x={0}, y={1}", sourcePointRounded.X, sourcePointRounded.Y);
+
 				if (_selectedImageGraphic.IsGrayscale)
 				{
 					GrayscaleImageGraphic grayscaleImage = _selectedImageGraphic as GrayscaleImageGraphic;
@@ -158,11 +162,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 					Color color = _selectedImageGraphic.PixelData.GetPixelRGB(sourcePointRounded.X, sourcePointRounded.Y);
 					string rgbFormatted = String.Format("R={0}, G={1}, B={2})", color.R, color.G, color.B);
-					pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, rgbFormatted);
+					pixelValueString = String.Format("{0:F2}: {1:F2}", SR.LabelPixelValue, rgbFormatted);
 				}
 			}
 
-			string probeString = String.Format("LOC: x={0}, y={1}", sourcePointRounded.X, sourcePointRounded.Y);
+			//string probeString = String.Format("LOC: x={0}, y={1}", sourcePoint.X, sourcePoint.Y);
 
 			if (showPixelValue)
 				probeString += "\n" + pixelValueString;
