@@ -26,7 +26,7 @@ namespace ClearCanvas.Desktop
         /// <param name="desktopWindow">Desktop window that parents the progress dialog</param>
         public static void Show(BackgroundTask task, IDesktopWindow desktopWindow)
         {
-            Show(task, false, ProgressBarStyle.Blocks, desktopWindow);
+            Show(task, desktopWindow, false, ProgressBarStyle.Blocks);
         }
 
         /// <summary>
