@@ -42,6 +42,30 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AddressDetail.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\IAuthenticationAdminService.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\ListUsersRequest.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\ListUsersResponse.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\AddUserRequest.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\AddUserResponse.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\LoadUserForEditRequest.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\LoadUserForEditResponse.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\ListAuthorityGroupsRequest.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\ListAuthorityGroupsResponse.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\AddAuthorityGroupRequest.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\AddAuthorityGroupResponse.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\LoadAuthorityGroupForEditRequest.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\LoadAuthorityGroupForEditResponse.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\ListAuthorityTokensRequest.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\ListAuthorityTokensResponse.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\AuthorityGroupDetail.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\AuthorityGroupSummary.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\AuthorityTokenSummary.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\UserSummary.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\UserDetail.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\UpdateAuthorityGroupRequest.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\UpdateAuthorityGroupResponse.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\UpdateUserRequest.cs" />
+    <Compile Include="Admin\AuthenticationAdmin\UpdateUserResponse.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\BatchImportRequest.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\BatchImportResponse.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\IDiagnosticServiceAdminService.cs" />
