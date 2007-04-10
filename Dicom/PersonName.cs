@@ -36,6 +36,7 @@ namespace ClearCanvas.Dicom
             set
             {
                 _personsName = value;
+                BreakApartIntoComponentGroups();
             }
         }
 
