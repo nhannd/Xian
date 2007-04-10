@@ -13,6 +13,7 @@ using ClearCanvas.Healthcare.PatientReconciliation;
 using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -143,6 +144,56 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     }));           
         }
 
+        [ReadOperation]
+        public GetDataForCancelOrderTableResponse GetDataForCancelOrderTable(GetDataForCancelOrderTableRequest request)
+        {
+            IPatientProfileBroker patientProfileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
+            PatientProfile profile = patientProfileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
+            patientProfileBroker.LoadPatientForPatientProfile(profile);
+
+            OrderSearchCriteria criteria = new OrderSearchCriteria();
+            criteria.Patient.EqualTo(profile.Patient);
+            criteria.CancelReason.IsNull();
+
+            OrderPriorityEnumTable orderPriorityEnumTable = PersistenceContext.GetBroker<IOrderPriorityEnumBroker>().Load();
+
+            return new GetDataForCancelOrderTableResponse(
+                CollectionUtils.Map<Order, CancelOrderTableItem, List<CancelOrderTableItem>>(
+                    PersistenceContext.GetBroker<IOrderBroker>().Find(criteria),
+                    delegate(Order o)
+                    {
+                        return new CancelOrderTableItem(o.GetRef(), 
+                            o.AccessionNumber,
+                            o.DiagnosticService.Name,
+                            o.SchedulingRequestDateTime,
+                            new EnumValueInfo(o.Priority.ToString(), orderPriorityEnumTable[o.Priority].Value));
+                    }),
+                CollectionUtils.Map<OrderCancelReasonEnum, EnumValueInfo, List<EnumValueInfo>>(
+                    PersistenceContext.GetBroker<IOrderCancelReasonEnumBroker>().Load().Items,
+                    delegate(OrderCancelReasonEnum ocrEnum)
+                    {
+                        EnumValueInfo cancelReason = new EnumValueInfo(ocrEnum.Code.ToString(), ocrEnum.Value, ocrEnum.Description);
+                        return cancelReason;
+                    }));
+        }
+
+        [UpdateOperation]
+        public CancelOrderResponse CancelOrder(CancelOrderRequest request)
+        {
+            Staff staff = PersistenceContext.GetBroker<IStaffBroker>().FindOne(new StaffSearchCriteria(request.Staff));
+            OrderCancelReason reason = (OrderCancelReason) Enum.Parse(typeof(OrderCancelReason), request.CancelReason.Code);
+
+            foreach (EntityRef orderRef in request.CancelledOrders)
+            {
+                Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(orderRef);
+
+                order.Cancel(reason);
+                PersistenceContext.Lock(order, DirtyState.Dirty);
+            }
+
+            return new CancelOrderResponse();
+        }
+        
         private List<AlertNotificationDetail> GetAlertsHelper(Patient patient, IPersistenceContext context)
         {
             AlertAssembler assembler = new AlertAssembler();

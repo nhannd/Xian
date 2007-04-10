@@ -40,6 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CancelOrderComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CancelOrderComponentControl.Designer.cs">
+      <DependentUpon>CancelOrderComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CancelOrderComponentView.cs" />
     <Compile Include="PatientOverviewComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -181,6 +188,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="CancelOrderComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CancelOrderComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Folders\FolderOptionComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>FolderOptionComponentControl.cs</DependentUpon>

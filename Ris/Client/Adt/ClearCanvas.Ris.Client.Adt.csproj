@@ -41,8 +41,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="OrderSummaryTable.cs" />
+    <Compile Include="CancelOrderComponent.cs" />
     <Compile Include="RequestedProcedureCheckInTable.cs" />
+    <Compile Include="OrderSummaryTable.cs" />
+    <Compile Include="CancelOrderTable.cs" />
     <Compile Include="Folders\FolderOptionComponent.cs" />
     <Compile Include="Folders\WorkflowFolders.cs" />
     <Compile Include="OrderEntryComponent.cs" />

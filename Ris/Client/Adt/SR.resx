@@ -135,6 +135,9 @@
   <data name="ColumnAmbulatoryStatus" xml:space="preserve">
     <value>Ambulatory Status</value>
   </data>
+  <data name="ColumnCancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
   <data name="ColumnCreatedOn" xml:space="preserve">
     <value>Created On</value>
   </data>
@@ -221,6 +224,9 @@
   </data>
   <data name="ColumnRole" xml:space="preserve">
     <value>Role</value>
+  </data>
+  <data name="ColumnScheduledRequestDate" xml:space="preserve">
+    <value>Scheduled Request Date</value>
   </data>
   <data name="ColumnScheduledStep" xml:space="preserve">
     <value>Scheduled Step</value>

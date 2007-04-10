@@ -66,6 +66,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         [OperationContract]
         LoadPatientSearchComponentFormDataResponse LoadPatientSearchComponentFormData(LoadPatientSearchComponentFormDataRequest request);
 
+        [OperationContract]
+        GetDataForCancelOrderTableResponse GetDataForCancelOrderTable(GetDataForCancelOrderTableRequest request);
+
+        [OperationContract]
+        CancelOrderResponse CancelOrder(CancelOrderRequest request);
+
         //RequestedProcedure LoadRequestedProcedure(EntityRef rpRef, bool loadDetail);
         //void UpdateRequestedProcedure(RequestedProcedure rp);
         //void AddCheckInProcedureStep(CheckInProcedureStep cps);

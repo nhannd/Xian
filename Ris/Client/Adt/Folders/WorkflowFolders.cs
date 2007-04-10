@@ -94,6 +94,21 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Cancelled";
         }
+
+        protected override bool CanAcceptDrop(RegistrationWorklistItem item)
+        {
+            return this.WorklistClassName == "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled"
+                || this.WorklistClassName == "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn";
+        }
+
+        protected override bool ProcessDrop(RegistrationWorklistItem item)
+        {
+            CancelOrderComponent cancelOrderComponent = new CancelOrderComponent(item.PatientProfileRef);
+            ApplicationComponent.LaunchAsDialog(
+                this.WorkflowFolderSystem.DesktopWindow, cancelOrderComponent, String.Format("Cancel Order for {0}", Format.Custom(item.Name)));
+
+            return true;
+        }
     }
 
     public class SearchFolder : RegistrationWorkflowFolder

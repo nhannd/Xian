@@ -67,7 +67,20 @@ namespace ClearCanvas.Healthcare {
 		private void CustomInitialize()
 		{
 		}
-		
+
+        public void Cancel(OrderCancelReason reason)
+        {
+            this.CancelReason = reason;
+
+            foreach (RequestedProcedure rp in this.RequestedProcedures)
+            {
+                foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
+                {
+                    mps.Discontinue();
+                }
+            }        
+        }
+
 		#region Object overrides
 		
 		public override bool Equals(object that)

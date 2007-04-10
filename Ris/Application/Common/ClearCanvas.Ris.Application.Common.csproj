@@ -225,10 +225,15 @@
     <Compile Include="PersonNameDetail.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AlertNotificationDetail.cs" />
+    <Compile Include="RegistrationWorkflow\CancelOrderRequest.cs" />
+    <Compile Include="RegistrationWorkflow\CancelOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\CheckInProcedureRequest.cs" />
     <Compile Include="RegistrationWorkflow\CheckInProcedureResponse.cs" />
     <Compile Include="RegistrationWorkflow\CheckInTableItem.cs" />
+    <Compile Include="RegistrationWorkflow\CancelOrderTableItem.cs" />
     <Compile Include="RegistrationWorkflow\ExecuteOperationRequest.cs" />
+    <Compile Include="RegistrationWorkflow\GetDataForCancelOrderTableRequest.cs" />
+    <Compile Include="RegistrationWorkflow\GetDataForCancelOrderTableResponse.cs" />
     <Compile Include="RegistrationWorkflow\GetDataForCheckInTableRequest.cs" />
     <Compile Include="RegistrationWorkflow\GetDataForCheckInTableResponse.cs" />
     <Compile Include="RegistrationWorkflow\GetOperationEnablementRequest.cs" />
