@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.Configuration
                         }
                     }, false);
 
-                ProgressDialog.Show(task, true, ProgressBarStyle.Marquee, this.Host.DesktopWindow);
+                ProgressDialog.Show(task, this.Host.DesktopWindow, true, ProgressBarStyle.Marquee);
                 SignalPropertyChanged();
             }
             catch (Exception e)

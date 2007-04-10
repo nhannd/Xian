@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 					}, true);
 
-				ProgressDialog.Show(task, true, ProgressBarStyle.Blocks, _desktop);
+                ProgressDialog.Show(task, _desktop, true, ProgressBarStyle.Blocks);
 			}
 			else
 			{

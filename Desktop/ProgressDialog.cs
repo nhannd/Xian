@@ -33,21 +33,21 @@ namespace ClearCanvas.Desktop
         /// Show the progress dialog to to the user
         /// </summary>
         /// <param name="task">The <see cref="BackgroundTask"/> to execute</param>
-        /// <param name="autoClose">Close the progress dialog after task completion</param>
         /// <param name="desktopWindow">Desktop window that parents the progress dialog</param>
-        public static void Show(BackgroundTask task, bool autoClose, IDesktopWindow desktopWindow)
+        /// <param name="autoClose">Close the progress dialog after task completion</param>
+        public static void Show(BackgroundTask task, IDesktopWindow desktopWindow, bool autoClose)
         {
-            Show(task, autoClose, ProgressBarStyle.Blocks, desktopWindow);
+            Show(task, desktopWindow, autoClose, ProgressBarStyle.Blocks);
         }
 
         /// <summary>
         /// Show the progress dialog to to the user
         /// </summary>
         /// <param name="task">The <see cref="BackgroundTask"/> to execute</param>
+        /// <param name="desktopWindow">Desktop window that parents the progress dialog</param>
         /// <param name="autoClose">Close the progress dialog after task completion</param>
         /// <param name="progressBarStyle">Show the progressbar using Marquee style</param>
-        /// <param name="desktopWindow">Desktop window that parents the progress dialog</param>
-        public static void Show(BackgroundTask task, bool autoClose, ProgressBarStyle progressBarStyle, IDesktopWindow desktopWindow)
+        public static void Show(BackgroundTask task, IDesktopWindow desktopWindow, bool autoClose, ProgressBarStyle progressBarStyle)
         {
             ApplicationComponent.LaunchAsDialog(
                 desktopWindow,

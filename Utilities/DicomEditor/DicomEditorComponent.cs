@@ -340,7 +340,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                         backgroundcontext.Complete(null);
                     }, false);
 
-                ProgressDialog.Show(task, true, this.Host.DesktopWindow);
+                ProgressDialog.Show(task, this.Host.DesktopWindow, true);
 
                 _position = 0;
 
