@@ -97,8 +97,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
         protected override bool CanAcceptDrop(RegistrationWorklistItem item)
         {
-            return this.WorklistClassName == "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled"
-                || this.WorklistClassName == "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn";
+            return item.WorklistClassName == "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled";
         }
 
         protected override bool ProcessDrop(RegistrationWorklistItem item)
