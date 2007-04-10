@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Dicom Server Setting.
+        ///   Looks up a localized string similar to DICOM Server.
         /// </summary>
         internal static string DicomServerConfiguration {
             get {
@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Diskspace Manager Setting.
+        ///   Looks up a localized string similar to Diskspace Manager.
         /// </summary>
         internal static string DiskspaceManagerConfiguration {
             get {
