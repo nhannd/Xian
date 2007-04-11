@@ -32,10 +32,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			this.SelectedSpatialTransformProvider.SpatialTransform.Scale = scale;
 
-            command.EndState = applicator.CreateMemento();
-
-            // Apply the final state to all linked images
-            applicator.SetMemento(command.EndState);
+			applicator.ApplyToLinkedImages();
+			command.EndState = applicator.CreateMemento();
 
             this.Context.Viewer.CommandHistory.AddCommand(command);
         }

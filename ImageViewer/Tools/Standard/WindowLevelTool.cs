@@ -81,6 +81,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (_command == null)
 				return;
 
+			_applicator.ApplyToLinkedImages();
 			_command.EndState = _applicator.CreateMemento();
 
 			// If the state hasn't changed since MouseDown just return
@@ -89,9 +90,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				_command = null;
 				return;
 			}
-
-			// Apply the final state to all linked images
-			_applicator.SetMemento(_command.EndState);
 
 			this.Context.Viewer.CommandHistory.AddCommand(_command);
 		}

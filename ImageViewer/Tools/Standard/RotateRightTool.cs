@@ -40,10 +40,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			this.SelectedSpatialTransformProvider.SpatialTransform.RotationXY += 90;
 
+			applicator.ApplyToLinkedImages();
 			command.EndState = applicator.CreateMemento();
-
-			// Apply the final state to all linked images
-			applicator.SetMemento(command.EndState);
 
             this.Context.Viewer.CommandHistory.AddCommand(command);
 		}

@@ -6,15 +6,20 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
-	internal class ImageAndOriginator
+	internal class ImageOriginatorMemento
 	{
 		private IPresentationImage _presentationImage;
 		private IMemorable _originator;
+		private IMemento _memento;
 
-		public ImageAndOriginator(IPresentationImage presentationImage, IMemorable originator)
+		public ImageOriginatorMemento(
+			IPresentationImage presentationImage, 
+			IMemorable originator,
+			IMemento memento)
 		{
 			_presentationImage = presentationImage;
 			_originator = originator;
+			_memento = memento;
 		}
 
 		public IPresentationImage PresentationImage
@@ -25,6 +30,11 @@ namespace ClearCanvas.ImageViewer
 		public IMemorable Originator
 		{
 			get { return _originator; }
+		}
+
+		public IMemento Memento
+		{
+			get { return _memento; }
 		}
 	}
 	
@@ -58,15 +68,27 @@ namespace ClearCanvas.ImageViewer
 	/// </remarks>
 	public abstract class ImageOperationApplicator : IMemorable
 	{
+		private delegate void Apply(IPresentationImage image);
 		private IPresentationImage _presentationImage;
 
-		protected ImageOperationApplicator(IPresentationImage selectedPresentationImage)
+		protected ImageOperationApplicator(IPresentationImage presentationImage)
 		{
-			// If this fails, the cast in the subclass' constructor may have failed
-			Platform.CheckForNullReference(selectedPresentationImage, "selectedPresentationImage");
-
-			_presentationImage = selectedPresentationImage;
+			Platform.CheckForNullReference(presentationImage, "presentationImage");
+			_presentationImage = presentationImage;
 		}
+
+		public void ApplyToLinkedImages()
+		{
+			IMemento memento = GetOriginator(_presentationImage).CreateMemento();
+
+			ApplyToLinkedImages(
+				delegate(IPresentationImage image)
+				{
+					GetOriginator(image).SetMemento(memento);
+					image.Draw();
+				});
+		}
+
 
 		#region IMemorable Members
 
@@ -76,9 +98,21 @@ namespace ClearCanvas.ImageViewer
 		/// <returns>An <see cref="IMemento"/>.</returns>
 		public IMemento CreateMemento()
 		{
-			IList<ImageAndOriginator> imagesAndOriginators = GetImagesAndOriginatorsFromLinkedImages();
-			IMemento innerMemento = GetOriginator(_presentationImage).CreateMemento();
-			IMemento applicatorMemento = new ImageOperationApplicatorMemento(imagesAndOriginators, innerMemento);
+			List<ImageOriginatorMemento> imageOriginatorMementos = new List<ImageOriginatorMemento>();
+
+			ApplyToLinkedImages(
+				delegate(IPresentationImage image)
+				{
+					IMemorable originator = GetOriginator(image);
+					ImageOriginatorMemento obj = new ImageOriginatorMemento(
+						image,
+						originator,
+						originator.CreateMemento());
+
+					imageOriginatorMementos.Add(obj);
+				});
+
+			IMemento applicatorMemento = new ImageOperationApplicatorMemento(imageOriginatorMementos);
 			return applicatorMemento;
 		}
 
@@ -93,12 +127,12 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckForInvalidCast(applicatorMemento, "memento", "ImageOperationApplicatorMemento");
 
 			// Apply memento to all originators of linked images
-			foreach (ImageAndOriginator imageAndOriginator in applicatorMemento.LinkedImagesAndOriginators)
+			foreach (ImageOriginatorMemento imageOriginatorMemento in applicatorMemento.ImageOriginatorMementos)
 			{
-				if (imageAndOriginator.Originator != null)
+				if (imageOriginatorMemento.Originator != null)
 				{
-					imageAndOriginator.Originator.SetMemento(applicatorMemento.Memento);
-					imageAndOriginator.PresentationImage.Draw();
+					imageOriginatorMemento.Originator.SetMemento(imageOriginatorMemento.Memento);
+					imageOriginatorMemento.PresentationImage.Draw();
 				}
 			}
 		}
@@ -132,40 +166,30 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		protected abstract IMemorable GetOriginator(IPresentationImage image);
 
-		private IList<ImageAndOriginator> GetImagesAndOriginatorsFromLinkedImages()
+		private void ApplyToLinkedImages(Apply apply)
 		{
 			IDisplaySet displaySet = _presentationImage.ParentDisplaySet;
 			IImageSet imageSet = displaySet.ParentImageSet;
 
-			List<ImageAndOriginator> imagesAndOrginators = new List<ImageAndOriginator>();
-
-			// If display set is linked and selected, then remember all the linked images
+			// If display set is linked and selected, then iterate through all the linked images
 			// from the other linked display sets
 			if (displaySet.Linked)
 			{
 				foreach (IDisplaySet currentDisplaySet in imageSet.LinkedDisplaySets)
-				{
-					foreach (IPresentationImage image in currentDisplaySet.LinkedPresentationImages)
-					{
-						IMemorable originator = GetOriginator(image);
-						ImageAndOriginator imageAndOriginator = new ImageAndOriginator(image, originator); 
-						imagesAndOrginators.Add(imageAndOriginator);
-					}
-				}
+					ApplyToLinkedImages(currentDisplaySet, apply);
 			}
-			// If display set is just selected, then remember all the linked images
+			// If display set is just selected, then iterate through all the linked images
 			// in that display set
 			else
 			{
-				foreach (IPresentationImage image in displaySet.LinkedPresentationImages)
-				{
-					IMemorable originator = GetOriginator(image);
-					ImageAndOriginator imageAndOriginator = new ImageAndOriginator(image, originator); 
-					imagesAndOrginators.Add(imageAndOriginator);
-				}
+				ApplyToLinkedImages(displaySet, apply);
 			}
+		}
 
-			return imagesAndOrginators;
+		private void ApplyToLinkedImages(IDisplaySet displaySet, Apply apply)
+		{
+			foreach (IPresentationImage image in displaySet.LinkedPresentationImages)
+				apply(image);
 		}
 	}
 }

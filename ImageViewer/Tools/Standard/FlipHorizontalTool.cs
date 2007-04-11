@@ -49,11 +49,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			else
 				image.SpatialTransform.FlipX = !image.SpatialTransform.FlipX;
 
+			applicator.ApplyToLinkedImages();
 			// Save the new state
 			command.EndState = applicator.CreateMemento();
-
-			// Apply the final state to all linked images
-			applicator.SetMemento(command.EndState);
 
             this.Context.Viewer.CommandHistory.AddCommand(command);
 		}

@@ -48,10 +48,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			transform.ScaleToFit = true;
 			this.SelectedSpatialTransformProvider.Draw();
 
+			applicator.ApplyToLinkedImages();
 			command.EndState = applicator.CreateMemento();
-
-			// Apply the final state to all linked images
-			applicator.SetMemento(command.EndState);
 
             this.Context.Viewer.CommandHistory.AddCommand(command);
 		}

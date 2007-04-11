@@ -8,28 +8,19 @@ namespace ClearCanvas.ImageViewer
 {
 	internal class ImageOperationApplicatorMemento : IMemento
 	{
-		private IList<ImageAndOriginator> _linkedImagesAndOriginators;
-		private IMemento _memento;
+		private IList<ImageOriginatorMemento> _imageOriginatorMementos;
 
 		public ImageOperationApplicatorMemento(
-			IList<ImageAndOriginator> linkedImagesAndOriginators,
-			IMemento memento)
+			IList<ImageOriginatorMemento> imageOriginatorMementos)
 		{
-			Platform.CheckForNullReference(linkedImagesAndOriginators, "linkedImagesAndOriginators");
-			Platform.CheckForNullReference(memento, "memento");
+			Platform.CheckForNullReference(imageOriginatorMementos, "imageOriginatorMementos");
 
-			_linkedImagesAndOriginators = linkedImagesAndOriginators;
-			_memento = memento;
+			_imageOriginatorMementos = imageOriginatorMementos;
 		}
 
-		public IList<ImageAndOriginator> LinkedImagesAndOriginators
+		public IList<ImageOriginatorMemento> ImageOriginatorMementos
 		{
-			get { return _linkedImagesAndOriginators; }
-		}
-
-		public IMemento Memento
-		{
-			get { return _memento; }
+			get { return _imageOriginatorMementos; }
 		}
 
 		public override bool Equals(object obj)
@@ -38,7 +29,18 @@ namespace ClearCanvas.ImageViewer
 			ImageOperationApplicatorMemento imageOperationApplicatorMemento = obj as ImageOperationApplicatorMemento;
 			Platform.CheckForInvalidCast(imageOperationApplicatorMemento, "obj", "ImageOperationApplicatorMemento");
 
-			return _memento.Equals(imageOperationApplicatorMemento.Memento);
+			if (this.ImageOriginatorMementos.Count !=
+				imageOperationApplicatorMemento.ImageOriginatorMementos.Count)
+				return false;
+
+			for (int i = 0; i < this.ImageOriginatorMementos.Count; i++)
+			{
+				if (!this.ImageOriginatorMementos[i].Memento.Equals(
+					imageOperationApplicatorMemento.ImageOriginatorMementos[i].Memento))
+					return false;
+			}
+
+			return true;
 		}
 
 		public override int GetHashCode()
