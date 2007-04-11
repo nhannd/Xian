@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             else
             {
                 // create default entries and save them to disk
-                _rootNode.LocalDataStoreNode = new LocalDataStore(AENavigatorComponent.MyDatastoreTitle, "", ".", AENavigatorComponent.MyDatastoreTitle, LocalApplicationEntity.AETitle, LocalApplicationEntity.Port);
+                _rootNode.LocalDataStoreNode = new LocalDataStore(AENavigatorComponent.MyDatastoreTitle, "", ".", GetLocalDataStoreIps(), LocalApplicationEntity.AETitle, LocalApplicationEntity.Port);
                 _rootNode.ServerGroupNode = new ServerGroup(AENavigatorComponent.MyServersTitle, ".");
                 _rootNode.ServerGroupNode.ChildGroups.Add(new ServerGroup("Example Group", "./" + AENavigatorComponent.MyServersTitle));
                 _rootNode.ServerGroupNode.ChildServers.Add(new Server("Sample server", "Rm 101", "./" + AENavigatorComponent.MyServersTitle, "localhost", "SAMPLE", 104));
@@ -194,6 +194,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
 
             return; 
+        }
+        private string GetLocalDataStoreIps()
+        {
+            string hostname = System.Net.Dns.GetHostName();
+            System.Net.IPAddress[] ips = System.Net.Dns.GetHostAddresses(hostname);
+            StringBuilder ipstring = new StringBuilder();
+            foreach (System.Net.IPAddress ip in ips)
+            {
+                ipstring.Append(ip.ToString() + ", ");
+            }
+            ipstring.Remove(ipstring.Length - 2, 2);
+
+            return ipstring.ToString();  
         }
         private IServerTreeNode FindParentGroup(IServerTreeNode node)
         {
