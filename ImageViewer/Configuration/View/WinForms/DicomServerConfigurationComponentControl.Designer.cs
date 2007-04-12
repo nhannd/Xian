@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             // 
             // _storageDir
             // 
-            this._storageDir.LabelText = "Storage Directory";
+            this._storageDir.LabelText = "Interim Storage Directory";
             this._storageDir.Location = new System.Drawing.Point(4, 145);
             this._storageDir.Margin = new System.Windows.Forms.Padding(2);
             this._storageDir.Mask = "";
