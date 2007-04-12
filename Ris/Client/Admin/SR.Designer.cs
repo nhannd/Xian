@@ -547,7 +547,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AuthorityGroup.
+        ///   Looks up a localized string similar to Authority Groups Admin.
         /// </summary>
         internal static string TitleAuthorityGroup {
             get {
@@ -763,7 +763,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to User.
+        ///   Looks up a localized string similar to User Admin.
         /// </summary>
         internal static string TitleUser {
             get {

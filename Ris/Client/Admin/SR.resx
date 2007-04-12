@@ -280,7 +280,7 @@
     <value>Add User</value>
   </data>
   <data name="TitleAuthorityGroup" xml:space="preserve">
-    <value>AuthorityGroup</value>
+    <value>Authority Groups Admin</value>
   </data>
   <data name="TitleDeleteDiagnosticService" xml:space="preserve">
     <value>Delete Diagnostic Service</value>
@@ -352,6 +352,6 @@
     <value>Update User</value>
   </data>
   <data name="TitleUser" xml:space="preserve">
-    <value>User</value>
+    <value>User Admin</value>
   </data>
 </root>
