@@ -16,6 +16,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     public partial class ProgressDialogComponentControl : ApplicationComponentUserControl
     {
         private ProgressDialogComponent _component;
+        private int _defaultProgressBarWidth;
 
         /// <summary>
         /// Constructor
@@ -36,6 +37,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             _component.ProgressUpdateEvent += OnProgressUpdate;
             _component.ProgressTerminateEvent += OnProgressTerminate;
+
+            _defaultProgressBarWidth = _progressBar.Width;
+            UpdateProgressBarLength();
         }
 
         ~ProgressDialogComponentControl()
@@ -58,6 +62,16 @@ namespace ClearCanvas.Desktop.View.WinForms
             _progressBar.Value = _component.ProgressBar;
             _progressBar.Style = (System.Windows.Forms.ProgressBarStyle)_component.ProgressBarStyle;
             _progressBar.MarqueeAnimationSpeed = _component.MarqueeSpeed;
+
+            UpdateProgressBarLength();
+        }
+
+        private void UpdateProgressBarLength()
+        {
+            if (_cancelButton.Visible)
+                _progressBar.Width = _defaultProgressBarWidth;
+            else
+                _progressBar.Width = _cancelButton.Right - _progressBar.Left;
         }
 
         private void _cancelButton_Click(object sender, EventArgs e)
