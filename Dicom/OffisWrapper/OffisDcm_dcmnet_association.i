@@ -10,22 +10,44 @@
 	// Ensure that the GC does not collect any 
 	// DcmDataset set from C#
 	// as the underlying C++ class stores a shallow copy
-	private DcmDataset findReference;
-	private DcmDataset moveReference;
-	private T_ASC_Network networkReference;
+	private DcmDataset _findReference;
+	private DcmDataset _moveReference;
+	private T_ASC_Network _networkReference;
 	private HandleRef getCPtrAndAddReferenceFind(DcmDataset cFindDataset) {
-		findReference = cFindDataset;
+		_findReference = cFindDataset;
 		return DcmDataset.getCPtr(cFindDataset);
 	}
 	private HandleRef getCPtrAndAddReferenceMove(DcmDataset cMoveDataset) {
-		moveReference = cMoveDataset;
+		_moveReference = cMoveDataset;
 		return DcmDataset.getCPtr(cMoveDataset);
 	}
 	private HandleRef getCPtrAndAddReferenceNetwork(T_ASC_Network network) {
-		networkReference = network;
+		_networkReference = network;
 		return T_ASC_Network.getCPtr(network);
 	}
 %}
+
+/////////////////////////////////////////////////////////////////////////
+// 
+// SECTION: Customize the Dispose method to clean up references to the
+// C# proxy objects that hold references to underlying unmanaged C++
+// objects, created using the getCPtrAndAddXXX methods. The references
+// were created in the first place, so that they are not GC when
+// PInvoke occurs, but they have to be cleaned up afterwards
+//
+%typemap(csdestruct, methodname="Dispose") T_ASC_Association {
+	if(swigCPtr.Handle != IntPtr.Zero && swigCMemOwn) 
+	{
+		swigCMemOwn = false;
+		$imcall;
+		_findReference = null;
+		_moveReference = null;
+		_networkReference = null;
+	}
+	swigCPtr = new HandleRef(null, IntPtr.Zero);
+
+	GC.SuppressFinalize(this);
+}
 
 struct T_ASC_Association
 {
@@ -353,11 +375,6 @@ struct T_ASC_Association
 		}
 
 		return true;
-	}
-
-	~T_ASC_Association() 
-	{
-		ASC_destroyAssociation(&self);
 	}
 }
 

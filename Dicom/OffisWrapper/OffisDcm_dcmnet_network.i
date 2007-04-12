@@ -8,12 +8,32 @@
 	// Ensure that the GC does not collect any 
 	// T_ASC_Parameters set from C#
 	// as the underlying C++ class stores a shallow copy
-	private T_ASC_Parameters parametersReference;
+	private T_ASC_Parameters _parametersReference;
 	private HandleRef getCPtrAndAddReference(T_ASC_Parameters associationParameters) {
-		parametersReference = associationParameters;
+		_parametersReference = associationParameters;
 		return T_ASC_Parameters.getCPtr(associationParameters);
 	}
 %}
+
+/////////////////////////////////////////////////////////////////////////
+// 
+// SECTION: Customize the Dispose method to clean up references to the
+// C# proxy objects that hold references to underlying unmanaged C++
+// objects, created using the getCPtrAndAddXXX methods. The references
+// were created in the first place, so that they are not GC when
+// PInvoke occurs, but they have to be cleaned up afterwards
+//
+%typemap(csdestruct, methodname="Dispose") T_ASC_Network {
+	if(swigCPtr.Handle != IntPtr.Zero && swigCMemOwn) 
+	{
+		swigCMemOwn = false;
+		$imcall;
+		_parametersReference = null;
+	}
+	swigCPtr = new HandleRef(null, IntPtr.Zero);
+
+	GC.SuppressFinalize(this);
+}
 
 %typemap(csvarin) T_ASC_NetworkRole role %{
 	set {
@@ -308,10 +328,5 @@ struct T_ASC_Network
 		ASC_getAPTitles(assoc->params, callingTitle, calledTitle, NULL);
 		
 		return assoc;
-	}
-
-	~T_ASC_Network() 
-	{
-		ASC_dropNetwork(&self);
 	}
 }
