@@ -6,6 +6,7 @@ using System.ServiceModel;
 using System.Reflection;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Server
 {
@@ -21,6 +22,15 @@ namespace ClearCanvas.Ris.Server
             }
             catch (Exception error)
             {
+                // special handling of EntityVersionException
+                // assume all such exceptions occured because of concurrent modifications
+                // wrap in ConcurrentModificationException will be used in the fault contract
+                if (error is EntityVersionException)
+                {
+                    error = new ConcurrentModificationException(error);
+                }
+
+
                 // get the service contract
                 ServiceImplementsContractAttribute serviceContractAttr = CollectionUtils.FirstElement<ServiceImplementsContractAttribute>(
                     invocation.This.GetType().GetCustomAttributes(typeof(ServiceImplementsContractAttribute), false));
