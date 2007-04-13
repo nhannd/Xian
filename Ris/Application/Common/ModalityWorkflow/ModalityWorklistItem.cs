@@ -32,7 +32,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         {
         }
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public EntityRef ProcedureStepRef;
 
         [DataMember]

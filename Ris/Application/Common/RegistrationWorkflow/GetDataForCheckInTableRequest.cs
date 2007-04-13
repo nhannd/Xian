@@ -15,10 +15,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.PatientProfileRef = patientProfileRef;
         }
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public string WorklistClassName;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public EntityRef PatientProfileRef;
     }
 }

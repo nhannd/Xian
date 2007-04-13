@@ -28,10 +28,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.Sex = sex;
         }
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public EntityRef PatientProfileRef;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public string WorklistClassName;
 
         [DataMember]

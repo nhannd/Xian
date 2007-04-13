@@ -15,10 +15,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.Staff = staffRef;
         }
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public List<EntityRef> RequestedProcedures;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public EntityRef Staff;
     }
 }

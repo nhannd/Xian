@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.SearchCriteria = searchCriteria;
         }
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public string WorklistClassName;
 
         [DataMember]

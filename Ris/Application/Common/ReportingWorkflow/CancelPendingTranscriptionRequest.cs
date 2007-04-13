@@ -9,7 +9,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class CancelPendingTranscriptionRequest : DataContractBase
     {
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public EntityRef ProcedureStepRef;
     }
 }

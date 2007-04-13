@@ -14,7 +14,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.ProcedureStepRef = procedureStepRef;
         }
 
-        [DataMember(IsRequired=true)]
+        [DataMember]
         public EntityRef ProcedureStepRef;
     }
 }

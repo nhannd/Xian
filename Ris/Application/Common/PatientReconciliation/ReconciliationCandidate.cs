@@ -17,10 +17,10 @@ namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
             Low
         }
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public PatientProfileSummary PatientProfile;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public ProbabilityScore Score;
     }
 

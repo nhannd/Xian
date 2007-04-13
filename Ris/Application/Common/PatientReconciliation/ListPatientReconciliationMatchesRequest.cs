@@ -13,7 +13,7 @@ namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
             this.PatientProfileRef = patientProfileRef;
         }
 
-        [DataMember(IsRequired=true)]
+        [DataMember]
         public EntityRef PatientProfileRef;
     }
 }

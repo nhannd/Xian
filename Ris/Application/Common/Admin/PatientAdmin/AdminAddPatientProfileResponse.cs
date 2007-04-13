@@ -18,13 +18,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
         /// <summary>
         /// Ref to the newly created patient profile
         /// </summary>
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public EntityRef PatientProfileRef;
 
         /// <summary>
         /// Ref to the newly created patient
         /// </summary>
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public EntityRef PatientRef;
     }
 }

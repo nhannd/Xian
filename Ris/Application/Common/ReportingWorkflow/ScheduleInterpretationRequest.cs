@@ -9,7 +9,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class ScheduleInterpretationRequest : DataContractBase
     {
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public EntityRef ProcedureRef;
     }
 }

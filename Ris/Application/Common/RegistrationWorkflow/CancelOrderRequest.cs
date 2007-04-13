@@ -16,13 +16,13 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.Staff = staffRef;
         }
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public List<EntityRef> CancelledOrders;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public EnumValueInfo CancelReason;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public EntityRef Staff;
     }
 }

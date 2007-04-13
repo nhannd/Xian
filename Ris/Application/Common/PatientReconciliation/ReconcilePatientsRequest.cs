@@ -17,7 +17,7 @@ namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
         /// <summary>
         /// The set of patients to reconcile
         /// </summary>
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public List<EntityRef> PatientRefs;
     }
 }

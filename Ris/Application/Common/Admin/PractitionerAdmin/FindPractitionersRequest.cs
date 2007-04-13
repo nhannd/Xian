@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin
             this.GivenName = givenName;
         }
 
-        [DataMember(IsRequired=true)]
+        [DataMember]
         public string FamilyName;
 
         [DataMember]

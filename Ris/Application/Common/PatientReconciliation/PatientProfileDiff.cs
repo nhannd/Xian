@@ -9,56 +9,56 @@ namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
     [DataContract]
     public class PatientProfileDiff : DataContractBase
     {
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public string RightProfileAssigningAuthority;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public string LeftProfileAssigningAuthority;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public PropertyDiff Healthcard;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public PropertyDiff FamilyName;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public PropertyDiff MiddleName;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public PropertyDiff GivenName;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public PropertyDiff DateOfBirth;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public PropertyDiff Sex;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public PropertyDiff HomePhone;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public PropertyDiff HomeAddress;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public PropertyDiff WorkPhone;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public PropertyDiff WorkAddress;
     }
 
     [DataContract]
     public class PropertyDiff : DataContractBase
     {
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public bool IsDiscrepant;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public string AlignedLeftValue;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public string AlignedRightValue;
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public string DiffMask;
     }
 }

@@ -15,10 +15,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.OperationClassName = operationClassName;
         }
 
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public EntityRef ProcedureStepRef;
 
-        [DataMember(IsRequired=true)]
+        [DataMember]
         public string OperationClassName;
     }
 }

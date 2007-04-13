@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.HasReconciliationCandidates = hasReconciliationCandidates;
         }
 
-        [DataMember(IsRequired=true)]
+        [DataMember]
         public EntityRef PatientProfileRef;
 
         [DataMember]

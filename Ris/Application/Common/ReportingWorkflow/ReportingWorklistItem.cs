@@ -10,7 +10,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     public class ReportingWorklistItem : DataContractBase
     {
         //TODO: ReportWorklistItem detail not defined
-        [DataMember(IsRequired = true)]
+        [DataMember]
         public EntityRef ProcedureStepRef;
 
         [DataMember]
