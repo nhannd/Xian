@@ -29,7 +29,7 @@ if(component.WorklistPreview != null)
 <% if(component.ShowReconciliationAlert) { %>
 <div class="alert">
 <ul>
-   <li>Patient has unreconciled records</li>
+   <li><%= component.ReconciliationMessage %></li>
 </ul>
 </div>
 <% } // end-if(component.ShowReconciliationAlert) %>

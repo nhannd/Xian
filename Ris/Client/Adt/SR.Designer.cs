@@ -583,6 +583,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0}. {1} has unreconciled records.
+        /// </summary>
+        internal static string MessageUnreconciledRecordsAlert {
+            get {
+                return ResourceManager.GetString("MessageUnreconciledRecordsAlert", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown.
         /// </summary>
         internal static string TextUnknownValue {

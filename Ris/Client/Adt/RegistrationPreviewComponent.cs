@@ -130,6 +130,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void UpdateDisplay()
         {
+            _worklistPreview = null;
             _RICTable.Items.Clear();
             
             if (_worklistItem != null && _worklistItem.PatientProfileRef != null)
@@ -187,6 +188,12 @@ namespace ClearCanvas.Ris.Client.Adt
                 }
                 return false;
             }
+        }
+
+        public string ReconciliationMessage
+        {
+            //TODO: PersonNameDetail formatting
+            get { return String.Format(SR.MessageUnreconciledRecordsAlert, _worklistPreview.Name.GivenName.Substring(0, 1), _worklistPreview.Name.FamilyName); }
         }
 
         public string Name
@@ -323,11 +330,13 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string GetAlertTooltip(AlertNotificationDetail detail)
         {
-            string alertTooltip = detail.Representation;
+            string alertTooltip = "";
+            string patientName = String.Format("{0}. {1}", _worklistPreview.Name.GivenName.Substring(0, 1), _worklistPreview.Name.FamilyName);
 
             switch (detail.Type)
             {
                 case "Note Alert":
+                    alertTooltip = String.Format("{0} has high severity notes:", patientName);
                     foreach (string reason in detail.Reasons)
                     {
                         alertTooltip = String.Format("{0}\r\n{1}", alertTooltip, reason);
@@ -335,7 +344,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     break;
 
                 case "Language Alert":
-                    alertTooltip = detail.Representation + "\r\nPatient speaks:";
+                    alertTooltip = String.Format("{0} speaks:", patientName);
                     foreach (string reason in detail.Reasons)
                     {
                         alertTooltip = String.Format("{0} {1}", alertTooltip, reason);
