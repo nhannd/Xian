@@ -33,6 +33,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
         SaveAdminEditsForPatientProfileResponse SaveAdminEditsForPatientProfile(SaveAdminEditsForPatientProfileRequest request);
 
         /// <summary>
@@ -41,6 +43,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         AdminAddPatientProfileResponse AdminAddPatientProfile(AdminAddPatientProfileRequest request);
     }
 }

@@ -120,4 +120,7 @@
   <data name="ExceptionImportEntityNameIdMismatch" xml:space="preserve">
     <value>Attempt to import entities with the same Id but different names</value>
   </data>
+  <data name="ExceptionMrnAlreadyExists" xml:space="preserve">
+    <value>A patient profile with MRN {0} {1} already exists</value>
+  </data>
 </root>

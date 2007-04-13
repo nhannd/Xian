@@ -43,6 +43,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
         {
             foreach (string[] row in data)
             {
+                if (row.Length < 8)
+                    throw new ImportException("Input record must contain 8 elements");
+
                 string dsId = row[0];
                 string dsName = row[1];
                 string rptId = row[2];

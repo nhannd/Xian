@@ -68,5 +68,14 @@ namespace ClearCanvas.Ris.Application.Services {
                 return ResourceManager.GetString("ExceptionImportEntityNameIdMismatch", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A patient profile with MRN {0} {1} already exists.
+        /// </summary>
+        internal static string ExceptionMrnAlreadyExists {
+            get {
+                return ResourceManager.GetString("ExceptionMrnAlreadyExists", resourceCulture);
+            }
+        }
     }
 }

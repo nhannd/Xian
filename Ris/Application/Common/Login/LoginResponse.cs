@@ -14,7 +14,9 @@ namespace ClearCanvas.Ris.Application.Common.Login
             this.UserAuthorityTokens = userAuthorityTokens;
         }
 
-
+        /// <summary>
+        /// Set of authority tokens granted to the user
+        /// </summary>
         [DataMember]
         public string[] UserAuthorityTokens;
     }

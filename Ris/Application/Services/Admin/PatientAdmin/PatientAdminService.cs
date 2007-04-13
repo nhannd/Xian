@@ -140,6 +140,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
         {
             PatientProfile profile = (PatientProfile)PersistenceContext.Load(request.PatientProfileRef, EntityLoadFlags.CheckVersion);
 
+            CheckForDuplicateMrn(request.PatientDetail.Mrn, request.PatientDetail.MrnAssigningAuthority, profile);
+
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             assembler.UpdatePatientProfile(profile, request.PatientDetail, PersistenceContext);
 
@@ -154,6 +156,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             Patient patient = new Patient();
             patient.AddProfile(profile);
 
+            CheckForDuplicateMrn(request.PatientDetail.Mrn, request.PatientDetail.MrnAssigningAuthority, profile);
+
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             assembler.UpdatePatientProfile(profile, request.PatientDetail, PersistenceContext);
 
@@ -165,6 +169,30 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
         }
 
         #endregion
+
+        /// <summary>
+        /// Helper method to check validate that the MRN does not already exist
+        /// </summary>
+        /// <param name="mrnId"></param>
+        /// <param name="mrnAuthority"></param>
+        /// <param name="subject"></param>
+        private void CheckForDuplicateMrn(string mrnId, string mrnAuthority, PatientProfile subject)
+        {
+            try
+            {
+                PatientProfileSearchCriteria where = new PatientProfileSearchCriteria();
+                where.Mrn.Id.EqualTo(mrnId);
+                where.Mrn.AssigningAuthority.EqualTo(mrnAuthority);
+
+                PatientProfile duplicate = PersistenceContext.GetBroker<IPatientProfileBroker>().FindOne(where);
+                if (duplicate != subject)
+                    throw new RequestValidationException(string.Format(SR.ExceptionMrnAlreadyExists, mrnAuthority, mrnId));
+            }
+            catch (EntityNotFoundException)
+            {
+                // no duplicates
+            }
+        }
 
     }
 }

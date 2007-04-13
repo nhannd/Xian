@@ -3,10 +3,10 @@ using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin
 {
-   /// <summary>
+    /// <summary>
     /// Importing a batch of services for the <see cref="ImportDiagnosticServicesComponent"/>
     /// </summary>
-     [ServiceContract]
+    [ServiceContract]
     public interface IDiagnosticServiceAdminService
     {
         /// <summary>
@@ -24,6 +24,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.DiagnosticServiceAdmin
         ///     7 - Default Modality Name
         /// </param>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         BatchImportResponse BatchImport(BatchImportRequest request);
     }
 }
