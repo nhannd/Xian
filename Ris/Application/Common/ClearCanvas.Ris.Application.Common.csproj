@@ -279,6 +279,7 @@
     <Compile Include="ReportingWorkflow\ScheduleInterpretationRequest.cs" />
     <Compile Include="ReportingWorkflow\StartInterpretationRequest.cs" />
     <Compile Include="ReportingWorkflow\StartVerificationRequest.cs" />
+    <Compile Include="RequestValidationException.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
