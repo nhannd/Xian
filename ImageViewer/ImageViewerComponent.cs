@@ -440,24 +440,28 @@ namespace ClearCanvas.ImageViewer
 		/// <exception cref="ArgumentNullException">A parameter is <b>null</b>.</exception>
 		public void LoadImages(string[] files)
 		{
-			LoadImages(files, null);
+			// Dummy variable; this overload can't be cancelled
+			bool cancelled;
+			LoadImages(files, null, out cancelled);
 		}
 
 		/// <summary>
 		/// Loads images with the specified file paths and displays a progress bar.
 		/// </summary>
-		/// <param name="path">The file path of the image.</param>
+		/// <param name="files">A list of file paths.</param>
 		/// <param name="desktop">The desktop window.  This is necessary for
 		/// a progress bar to be shown.</param>
+		/// <param name="cancelled">A value that indicates whether the operation
+		/// was cancelled.</param>
 		/// <exception cref="OpenStudyException">One or more images could not be opened.</exception>
 		/// <exception cref="ArgumentNullException">A parameter is <b>null</b>.</exception>
-		public void LoadImages(string[] files, IDesktopWindow desktop)
+		public void LoadImages(string[] files, IDesktopWindow desktop, out bool cancelled)
 		{
 			Platform.CheckForNullReference(files, "files");
 			Platform.CheckForNullReference(desktop, "desktop");
 
-			LocalImageLoader loader = new LocalImageLoader(this, desktop);
-			loader.Load(files);
+			LocalImageLoader loader = new LocalImageLoader(this);
+			loader.Load(files, desktop, out cancelled);
 
 			VerifyLoad(loader.TotalImages, loader.FailedImages);
 		}

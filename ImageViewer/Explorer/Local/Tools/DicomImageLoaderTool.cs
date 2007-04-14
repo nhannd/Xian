@@ -80,9 +80,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 			if (files.Length == 0)
 				return;
 
+			bool cancelled = false;
+
 			try
 			{
-				viewer.LoadImages(files, this.Context.DesktopWindow);
+				viewer.LoadImages(files, this.Context.DesktopWindow, out cancelled);
 				successfulLoadAttempts++;
 			}
 			catch (OpenStudyException e)
@@ -91,7 +93,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
 
-			if (successfulLoadAttempts == 0 && successfulImagesInLoadFailure == 0)
+			if (cancelled || 
+				(successfulLoadAttempts == 0 && successfulImagesInLoadFailure == 0))
 				return;
 
 			ApplicationComponent.LaunchAsWorkspace(

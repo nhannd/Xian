@@ -13,16 +13,13 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	internal class LocalImageLoader
 	{
 		private IImageViewer _viewer;
-		private IDesktopWindow _desktop;
 
 		private int _totalImages;
 		private int _failedImages;
 
-
-		public LocalImageLoader(IImageViewer viewer, IDesktopWindow desktop)
+		public LocalImageLoader(IImageViewer viewer)
 		{
 			_viewer = viewer;
-			_desktop = desktop;
 		}
 
 		public int TotalImages
@@ -35,14 +32,16 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get { return _failedImages; }
 		}
 
-		public void Load(string[] files)
+		public void Load(string[] files, IDesktopWindow desktop, out bool cancelled)
 		{
 			Platform.CheckForNullReference(files, "files");
 
 			_totalImages = 0;
 			_failedImages = 0;
 
-			if (_desktop != null)
+			bool userCancelled = false;
+
+			if (desktop != null)
 			{
 				BackgroundTask task = new BackgroundTask(
 					delegate(IBackgroundTaskContext context)
@@ -58,19 +57,25 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 							context.ReportProgress(progress);
 
 							if (context.CancelRequested)
+							{
+								userCancelled = true;
 								break;
+							}
 						}
 
 						context.Complete(null);
 
 					}, true);
 
-                ProgressDialog.Show(task, _desktop, true, ProgressBarStyle.Blocks);
+                ProgressDialog.Show(task, desktop, true, ProgressBarStyle.Blocks);
+				cancelled = userCancelled;
 			}
 			else
 			{
 				foreach (string file in files)
 					LoadImage(file);
+
+				cancelled = false;
 			}
 		}
 
