@@ -10,12 +10,19 @@ using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Services
 {
+	/// <summary>
+	/// This is a singleton class that manages one connection to the LocalDataStoreActivityMonitorService for all application components.
+	/// ApplicationComponents can subscribe to the various events, but it is VERY important that all components unsubscribe when finished.
+	/// Otherwise, the connection to the service may remain open and the resources used may not get freed up.  
+	/// </summary>
+	/// <remarks>
+	/// This class is not guaranteed to be thread safe and is intended only to be used from the main UI thread.
+	/// </remarks>
 	public sealed class LocalDataStoreActivityMonitor
 	{
 		[CallbackBehavior(UseSynchronizationContext = false)]
 		private class LocalDataStoreActivityMonitorServiceCallback : ILocalDataStoreActivityMonitorServiceCallback
 		{
-			private object _syncLock = new object();
 			private LocalDataStoreActivityMonitor _parent;
 
 			public LocalDataStoreActivityMonitorServiceCallback(LocalDataStoreActivityMonitor parent)
@@ -27,62 +34,27 @@ namespace ClearCanvas.ImageViewer.Services
 
 			public void ReceiveProgressChanged(ReceiveProgressItem progressItem)
 			{
-				lock(_syncLock)
-				{
-					_parent._marshaler.QueueInvoke
-					(delegate()
-						{
-							EventsHelper.Fire(_parent._receiveProgressUpdate, _parent, new ItemEventArgs<ReceiveProgressItem>(progressItem));
-						});
-				}
+				_parent.OnReceiveProgressChanged(progressItem);
 			}
 
 			public void SendProgressChanged(SendProgressItem progressItem)
 			{
-				lock (_syncLock)
-				{
-					_parent._marshaler.QueueInvoke
-					(delegate()
-						{
-							EventsHelper.Fire(_parent._sendProgressUpdate, _parent, new ItemEventArgs<SendProgressItem>(progressItem));
-						});
-				}
+				_parent.OnSendProgressChanged(progressItem);
 			}
 
 			public void ImportProgressChanged(ImportProgressItem progressItem)
 			{
-				lock (_syncLock)
-				{
-					_parent._marshaler.QueueInvoke
-					(delegate()
-						{
-							EventsHelper.Fire(_parent._importProgressUpdate, _parent, new ItemEventArgs<ImportProgressItem>(progressItem));
-						});
-				}
+				_parent.OnImportProgressChanged(progressItem);
 			}
 
 			public void ReindexProgressChanged(ReindexProgressItem progressItem)
 			{
-				lock (_syncLock)
-				{
-					_parent._marshaler.QueueInvoke
-					(delegate()
-						{
-							EventsHelper.Fire(_parent._reindexProgressUpdate, _parent, new ItemEventArgs<ReindexProgressItem>(progressItem));
-						});
-				}
+				_parent.OnReindexProgressChanged(progressItem);
 			}
 
 			public void SopInstanceImported(ImportedSopInstanceInformation information)
 			{
-				lock (_syncLock)
-				{
-					_parent._marshaler.QueueInvoke
-					(delegate()
-					{
-						EventsHelper.Fire(_parent._sopInstanceImported, _parent, new ItemEventArgs<ImportedSopInstanceInformation>(information));
-					});
-				}
+				_parent.OnSopInstanceImported(information);
 			}
 
 			#endregion
@@ -102,6 +74,7 @@ namespace ClearCanvas.ImageViewer.Services
 		private InterthreadMarshaler _marshaler;
 
 		private object _connectionThreadLock = new object();
+		private bool _active;
 		private bool _stopThread;
 		private volatile bool _isConnected;
 
@@ -112,20 +85,23 @@ namespace ClearCanvas.ImageViewer.Services
 		private LocalDataStoreActivityMonitorServiceClient _serviceClient;
 		private Thread _connectionThread;
 
-		public LocalDataStoreActivityMonitor()
+		private LocalDataStoreActivityMonitor()
 		{
-			_marshaler = new InterthreadMarshaler();
-			_callback = new LocalDataStoreActivityMonitorServiceCallback(this);
+		}
 
-			_isConnected = false;
-			_stopThread = false;
-			_refreshRequired = false;
-
-			ThreadStart threadStart = new ThreadStart(this.RunThread);
-			_connectionThread = new Thread(threadStart);
-			_connectionThread.IsBackground = true;
-			_connectionThread.Priority = ThreadPriority.Lowest;
-			_connectionThread.Start();
+		/// <summary>
+		/// Try to make sure things get cleaned up during Finalization just in case a component didn't unsubscribe.
+		/// </summary>
+		~LocalDataStoreActivityMonitor()
+		{
+			try
+			{
+				ShutDown();
+			}
+			catch (Exception e)
+			{
+				Platform.Log(e);
+			}
 		}
 
 		public static LocalDataStoreActivityMonitor Instance
@@ -157,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Services
 					_refreshRequired = true;
 				}
 
-				WaitConnect();
+				Startup();
 			}
 			remove 
 			{
@@ -165,6 +141,9 @@ namespace ClearCanvas.ImageViewer.Services
 				{
 					_sendProgressUpdate -= value;
 				}
+
+				if (!this.AnySubscribers)
+					ShutDown();
 			}
 		}
 
@@ -178,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Services
 					_refreshRequired = true;
 				}
 
-				WaitConnect();
+				Startup();
 			}
 			remove 
 			{
@@ -186,6 +165,9 @@ namespace ClearCanvas.ImageViewer.Services
 				{
 					_receiveProgressUpdate -= value;
 				}
+
+				if (!this.AnySubscribers)
+					ShutDown();
 			}
 		}
 
@@ -199,7 +181,7 @@ namespace ClearCanvas.ImageViewer.Services
 					_refreshRequired = true;
 				}
 
-				WaitConnect();
+				Startup();
 			}
 			remove
 			{
@@ -207,6 +189,9 @@ namespace ClearCanvas.ImageViewer.Services
 				{
 					_importProgressUpdate -= value;
 				}
+
+				if (!this.AnySubscribers)
+					ShutDown();
 			}
 		}
 
@@ -220,7 +205,7 @@ namespace ClearCanvas.ImageViewer.Services
 					_refreshRequired = true;
 				}
 
-				WaitConnect();
+				Startup();
 			}
 			remove
 			{
@@ -228,6 +213,9 @@ namespace ClearCanvas.ImageViewer.Services
 				{
 					_reindexProgressUpdate -= value;
 				}
+
+				if (!this.AnySubscribers)
+					ShutDown();
 			}
 		}
 
@@ -239,6 +227,8 @@ namespace ClearCanvas.ImageViewer.Services
 				{
 					_sopInstanceImported += value;
 				}
+				
+				Startup();
 			}
 			remove
 			{
@@ -246,6 +236,9 @@ namespace ClearCanvas.ImageViewer.Services
 				{
 					_sopInstanceImported -= value;
 				}
+
+				if (!this.AnySubscribers)
+					ShutDown();
 			}
 		}
 
@@ -298,13 +291,118 @@ namespace ClearCanvas.ImageViewer.Services
 			OnLostConnection();
 		}
 
-		private void WaitConnect()
+		private void Startup()
 		{
+			lock (_connectionThreadLock)
+			{
+				if (_active)
+					return;
+
+				_active = true;
+			}
+
+			_marshaler = new InterthreadMarshaler();
+			_callback = new LocalDataStoreActivityMonitorServiceCallback(this);
+
+			_isConnected = false;
+			_stopThread = false;
+			_refreshRequired = false;
+			_serviceClient = null;
+
+			ThreadStart threadStart = new ThreadStart(this.RunThread);
+			_connectionThread = new Thread(threadStart);
+			_connectionThread.IsBackground = true;
+			_connectionThread.Priority = ThreadPriority.Lowest;
+			_connectionThread.Start();
+
 			lock (_connectionThreadLock)
 			{
 				Monitor.Pulse(_connectionThreadLock);
 				Monitor.Wait(_connectionThreadLock);
 			}
+		}
+
+		private void ShutDown()
+		{
+			lock (_connectionThreadLock)
+			{
+				if (!_active)
+					return;
+
+				_stopThread = true;
+				Monitor.Pulse(_connectionThreadLock);
+			}
+
+			_connectionThread.Join();
+			_connectionThread = null;
+
+			if (_marshaler != null)
+			{
+				_marshaler.Dispose();
+				_marshaler = null;
+			}
+
+			_callback = null;
+
+			lock (_connectionThreadLock)
+			{
+				_active = false;
+			}
+		}
+
+		private void OnReceiveProgressChanged(ReceiveProgressItem progressItem)
+		{
+			if (!this.AnySubscribers || _marshaler == null)
+				return;
+
+			_marshaler.QueueInvoke(delegate()
+			{
+					EventsHelper.Fire(_receiveProgressUpdate, this, new ItemEventArgs<ReceiveProgressItem>(progressItem));
+			});
+		}
+
+		private void OnSendProgressChanged(SendProgressItem progressItem)
+		{
+			if (!this.AnySubscribers || _marshaler == null)
+				return;
+
+			_marshaler.QueueInvoke(delegate()
+			{
+				EventsHelper.Fire(_sendProgressUpdate, this, new ItemEventArgs<SendProgressItem>(progressItem));
+			});
+		}
+
+		private void OnImportProgressChanged(ImportProgressItem progressItem)
+		{
+			if (!this.AnySubscribers || _marshaler == null)
+				return;
+
+			_marshaler.QueueInvoke(delegate()
+			{
+				EventsHelper.Fire(_importProgressUpdate, this, new ItemEventArgs<ImportProgressItem>(progressItem));
+			});
+		}
+
+		private void OnReindexProgressChanged(ReindexProgressItem progressItem)
+		{
+			if (!this.AnySubscribers || _marshaler == null)
+				return;
+
+			_marshaler.QueueInvoke(delegate()
+			{
+				EventsHelper.Fire(_reindexProgressUpdate, this, new ItemEventArgs<ReindexProgressItem>(progressItem));
+			});
+		}
+
+		private void OnSopInstanceImported(ImportedSopInstanceInformation information)
+		{
+			if (!this.AnySubscribers || _marshaler == null)
+				return;
+
+			_marshaler.QueueInvoke(delegate()
+			{
+				EventsHelper.Fire(_sopInstanceImported, this, new ItemEventArgs<ImportedSopInstanceInformation>(information));
+			});
 		}
 
 		private void OnLostConnection()
@@ -390,7 +488,7 @@ namespace ClearCanvas.ImageViewer.Services
 
 			lock (_subscriptionLock)
 			{
-				if (_refreshRequired)
+				if (_refreshRequired && _serviceClient != null)
 				{
 					try
 					{
@@ -495,29 +593,6 @@ namespace ClearCanvas.ImageViewer.Services
 				client.Abort();
 				throw;
 			}
-		}
-
-		#endregion
-
-		#region IDisposable Members
-
-		public void Dispose()
-		{
-			lock (_connectionThreadLock)
-			{
-				_stopThread = true;
-				Monitor.Pulse(_connectionThreadLock);
-			}
-
-			_connectionThread.Join();
-
-			if (_marshaler != null)
-			{
-				_marshaler.Dispose();
-				_marshaler = null;
-			}
-
-			_callback = null;
 		}
 
 		#endregion

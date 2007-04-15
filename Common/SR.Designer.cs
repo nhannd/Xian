@@ -376,7 +376,16 @@ namespace ClearCanvas.Common {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The thread pool has not been started..
+        ///   Looks up a localized string similar to The thread pool must be stopped before setting the {0} parameter..
+        /// </summary>
+        public static string ExceptionThreadPoolMustBeStopped {
+            get {
+                return ResourceManager.GetString("ExceptionThreadPoolMustBeStopped", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The thread pool has not been started.  Unable to enqueue the specified item..
         /// </summary>
         public static string ExceptionThreadPoolNotStarted {
             get {

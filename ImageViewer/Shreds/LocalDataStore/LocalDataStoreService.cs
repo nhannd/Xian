@@ -23,8 +23,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		private string _storageFolder = null;
 		private string _badFileFolder = null;
-		private int _sendReceiveImportConcurrency;
-		private int _databaseUpdateFrequencyMilliseconds;
+		private uint _sendReceiveImportConcurrency;
+		private uint _databaseUpdateFrequencyMilliseconds;
 
 		private object _startEventLock  = new object();
 		private event EventHandler _startEvent;
@@ -165,12 +165,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			get { return _badFileFolder; }
 		}
 
-		public int SendReceiveImportConcurrency
+		public uint SendReceiveImportConcurrency
 		{
 			get { return _sendReceiveImportConcurrency; }
 		}
 
-		public int DatabaseUpdateFrequencyMilliseconds
+		public uint DatabaseUpdateFrequencyMilliseconds
 		{
 			get { return _databaseUpdateFrequencyMilliseconds; }
 		}

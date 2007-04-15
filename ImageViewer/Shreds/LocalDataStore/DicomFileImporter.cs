@@ -303,15 +303,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			#endregion
 
-			private class ParseFileThreadPool : SimpleThreadPoolBase<ImportJobInformation>
+			private class ParseFileThreadPool : BlockingThreadPool<ImportJobInformation>
 			{
 				DicomFileImporter _parent;
 
 				public ParseFileThreadPool(DicomFileImporter parent)
-					: base(LocalDataStoreService.Instance.SendReceiveImportConcurrency)
+					: base((int)LocalDataStoreService.Instance.SendReceiveImportConcurrency, true)
 				{
 					_parent = parent;
-					base.AllowInactiveAdd = true;
 				}
 
 				protected override void ProcessItem(ImportJobInformation jobInformation)
@@ -323,15 +322,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 			};
 
-			private class ImportFileThreadPool : SimpleThreadPoolBase<ImportJobInformation>
+			private class ImportFileThreadPool : BlockingThreadPool<ImportJobInformation>
 			{
 				DicomFileImporter _parent;
 
 				public ImportFileThreadPool(DicomFileImporter parent)
-					: base(LocalDataStoreService.Instance.SendReceiveImportConcurrency)
+					: base((int)LocalDataStoreService.Instance.SendReceiveImportConcurrency, true)
 				{
 					_parent = parent;
-					this.AllowInactiveAdd = true;
 				}
 
 				protected override void ProcessItem(ImportJobInformation jobInformation)
@@ -657,14 +655,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			private void DatabaseUpdateThread()
 			{
-				int waitTimeout = LocalDataStoreService.Instance.DatabaseUpdateFrequencyMilliseconds;
+				uint waitTimeout = LocalDataStoreService.Instance.DatabaseUpdateFrequencyMilliseconds;
 
 				while (true)
 				{
 					lock (_databaseQueueWait)
 					{
 						if (!_stopDatabaseQueue)
-							Monitor.Wait(_databaseQueueWait, waitTimeout);
+							Monitor.Wait(_databaseQueueWait, (int)waitTimeout);
 					}
 
 					List<ImportJobInformation> updates = new List<ImportJobInformation>();

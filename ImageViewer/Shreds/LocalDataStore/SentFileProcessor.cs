@@ -16,12 +16,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		private class SentFileProcessor
 		{
 			private LocalDataStoreService _parent;
-			private SimpleThreadPool _sentFileInformationProcessor;
+			private SimpleBlockingThreadPool _sentFileInformationProcessor;
 			private List<SendProgressItem> _sendProgressItems;
 
 			public SentFileProcessor(LocalDataStoreService parent)
 			{
-				_sentFileInformationProcessor = new SimpleThreadPool(1);
+				_sentFileInformationProcessor = new SimpleBlockingThreadPool(1);
 				_sendProgressItems = new List<SendProgressItem>();
 
 				_parent = parent;
@@ -97,22 +97,29 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					StudyInformation information = new StudyInformation();
 					StringBuilder parser = new StringBuilder(1024);
 
-					dataset.findAndGetOFString(Dcm.PatientId, parser);
-					information.PatientId = parser.ToString();
+					condition = dataset.findAndGetOFString(Dcm.PatientId, parser);
+					if (condition.good())
+						information.PatientId = parser.ToString();
 
-					dataset.findAndGetOFString(Dcm.PatientsName, parser);
-					information.PatientsName = parser.ToString();
+					condition = dataset.findAndGetOFString(Dcm.PatientsName, parser);
+					if (condition.good()) 
+						information.PatientsName = parser.ToString();
 
-					dataset.findAndGetOFString(Dcm.StudyDate, parser);
-					DateTime studyDate;
-					DateParser.Parse(parser.ToString(), out studyDate);
-					information.StudyDate = studyDate;
+					condition = dataset.findAndGetOFString(Dcm.StudyDate, parser);
+					if (condition.good())
+					{
+						DateTime studyDate;
+						DateParser.Parse(parser.ToString(), out studyDate);
+						information.StudyDate = studyDate;
+					}
 
-					dataset.findAndGetOFString(Dcm.StudyDescription, parser);
-					information.StudyDescription = parser.ToString();
+					condition = dataset.findAndGetOFString(Dcm.StudyDescription, parser);
+					if (condition.good())
+						information.StudyDescription = parser.ToString();
 
-					dataset.findAndGetOFString(Dcm.StudyInstanceUID, parser);
-					information.StudyInstanceUid = parser.ToString();
+					condition = dataset.findAndGetOFString(Dcm.StudyInstanceUID, parser);
+					if (condition.good()) 
+						information.StudyInstanceUid = parser.ToString();
 
 					return information;
 				}

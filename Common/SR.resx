@@ -256,6 +256,9 @@
     <value>The thread pool has already been started.</value>
   </data>
   <data name="ExceptionThreadPoolNotStarted" xml:space="preserve">
-    <value>The thread pool has not been started.</value>
+    <value>The thread pool has not been started.  Unable to enqueue the specified item.</value>
+  </data>
+  <data name="ExceptionThreadPoolMustBeStopped" xml:space="preserve">
+    <value>The thread pool must be stopped before setting the {0} parameter.</value>
   </data>
 </root>

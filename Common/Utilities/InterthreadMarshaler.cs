@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 using ClearCanvas.Common;
+using System.Threading;
 
 namespace ClearCanvas.Common.Utilities
 {
@@ -15,23 +16,26 @@ namespace ClearCanvas.Common.Utilities
     /// This class allows any block of code, in the form of a delegate, to be passed from an abitrary
     /// thread over to the application's main thread for execution. 
     /// </summary>
+	/// <remarks>Note that on disposal, this object does not finish processing its queue, it quits immediately.</remarks>
     public class InterthreadMarshaler : IDisposable
     {
         private BlockingQueue<InvokeDelegate> _queue;
         private BackgroundWorker _queueProcessor;
 
-        /// <summary>
-        /// Constructor.  The object must be constructed on the thread that events should be marshaled to.
-        /// </summary>
-        public InterthreadMarshaler()
-        {
-            _queue = new BlockingQueue<InvokeDelegate>();
-            _queueProcessor = new BackgroundWorker();
-            _queueProcessor.WorkerReportsProgress = true;
-            _queueProcessor.DoWork += new DoWorkEventHandler(ProcessQueueAsync);
-            _queueProcessor.ProgressChanged += new ProgressChangedEventHandler(QueueProgressEventHandler);
-            _queueProcessor.RunWorkerAsync();
-        }
+		object _threadExitingLock = new object(); 
+        
+		/// <summary>
+		/// Constructor.  The object must be constructed on the thread that events should be marshaled to.
+		/// </summary>
+		public InterthreadMarshaler()
+		{
+			_queue = new BlockingQueue<InvokeDelegate>();
+			_queueProcessor = new BackgroundWorker();
+			_queueProcessor.WorkerReportsProgress = true;
+			_queueProcessor.DoWork += new DoWorkEventHandler(ProcessQueueAsync);
+			_queueProcessor.ProgressChanged += new ProgressChangedEventHandler(QueueProgressEventHandler);
+			_queueProcessor.RunWorkerAsync();
+		}
 
         /// <summary>
         /// Queues the specified delegate for invocation on this object's thread, regardless of which
@@ -69,14 +73,23 @@ namespace ClearCanvas.Common.Utilities
             // as a "progress" event
             // note that this is effectively an infinite loop that terminates
             // only when this object is Disposed
-            foreach (InvokeDelegate del in _queue)
-            {
-				if (del == null)
+			while(true)
+			{
+				InvokeDelegate del;
+				_queue.Dequeue(out del);
+
+				//we've been signalled to quit.
+				if (!_queue.ContinueBlocking)
 					break;
 
-                _queueProcessor.ReportProgress(0, del);
-            }
-        }
+				_queueProcessor.ReportProgress(0, del);
+			}
+
+			lock (_threadExitingLock)
+			{
+				Monitor.Pulse(_threadExitingLock);
+			}
+		}
 
         /// <summary>
         /// Supports the implementation of the <see cref="IDisposable"/> pattern.
@@ -87,12 +100,19 @@ namespace ClearCanvas.Common.Utilities
             {
 				if (_queue != null)
 				{
-					_queue.Active = false;
+					lock (_threadExitingLock)
+					{
+						_queue.ContinueBlocking = false;
+						Monitor.Wait(_threadExitingLock);
+					}
 					_queue = null;
 				}
 				
 				if (_queueProcessor != null)
                 {
+					_queueProcessor.DoWork -= new DoWorkEventHandler(ProcessQueueAsync);
+					_queueProcessor.ProgressChanged -= new ProgressChangedEventHandler(QueueProgressEventHandler);
+
                     _queueProcessor.Dispose();
                     _queueProcessor = null;
                 }
@@ -101,7 +121,10 @@ namespace ClearCanvas.Common.Utilities
 
         #region IDisposable Members
 
-        public void Dispose()
+		/// <summary>
+		/// Implementation of the <see cref="IDisposable"/> pattern.
+		/// </summary>
+		public void Dispose()
         {
             try
             {

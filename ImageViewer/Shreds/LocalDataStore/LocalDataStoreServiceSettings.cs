@@ -10,8 +10,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 	{
 		public const string DefaultStorageFolder = @"c:\dicom_datastore\filestore\";
 		public const string DefaultBadFileFolder = @"c:\dicom_datastore\badfiles\";
-		public const int DefaultSendReceiveImportConcurrency = 2;
-		public const int DefaultDatabaseUpdateFrequencyMilliseconds = 5000;
+		public const uint DefaultSendReceiveImportConcurrency = 2;
+		public const uint DefaultDatabaseUpdateFrequencyMilliseconds = 5000;
 
 		private static LocalDataStoreServiceSettings _instance;
 
@@ -64,16 +64,16 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		}
 
 		[ConfigurationProperty("SendReceiveImportConcurrency", DefaultValue = LocalDataStoreServiceSettings.DefaultSendReceiveImportConcurrency)]
-		public int SendReceiveImportConcurrency
+		public uint SendReceiveImportConcurrency
 		{
-			get { return (int)this["SendReceiveImportConcurrency"]; }
+			get { return (uint)this["SendReceiveImportConcurrency"]; }
 			set { this["SendReceiveImportConcurrency"] = value; }
 		}
 
 		[ConfigurationProperty("DatabaseUpdateFrequencyMilliseconds", DefaultValue = LocalDataStoreServiceSettings.DefaultDatabaseUpdateFrequencyMilliseconds)]
-		public int DatabaseUpdateFrequencyMilliseconds
+		public uint DatabaseUpdateFrequencyMilliseconds
 		{
-			get { return (int)this["DatabaseUpdateFrequencyMilliseconds"]; }
+			get { return (uint)this["DatabaseUpdateFrequencyMilliseconds"]; }
 			set { this["DatabaseUpdateFrequencyMilliseconds"] = value; }
 		}
 
