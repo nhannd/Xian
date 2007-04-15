@@ -278,7 +278,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_sendTable.Columns.Add(column);
 
 			column = new TableColumn<SendQueueItem, string>(
-					SR.TitlePatientId,
+					SR.TitlePatientsName,
 					delegate(SendQueueItem item) { return FormatString(item.StudyInformation.PatientsName); },
 					1.5f);
 
