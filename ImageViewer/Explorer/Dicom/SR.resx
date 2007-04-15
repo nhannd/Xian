@@ -223,11 +223,20 @@ Are you sure you want to continue?</value>
   <data name="MessageConfirmDeleteServerGroup" xml:space="preserve">
     <value>Are you sure you want to delete the selected server group?</value>
   </data>
+  <data name="MessageConfirmDeleteStudies" xml:space="preserve">
+    <value>Are you sure you want to delete the following studies?\n\n{0}</value>
+  </data>
   <data name="MessageConfirmDeleteStudy" xml:space="preserve">
-    <value>Are you sure you want to delete the selected studies?</value>
+    <value>Are you sure you want to delete {0}?</value>
   </data>
   <data name="MessageServerPortMustBePositiveInteger" xml:space="preserve">
     <value>The Port must be a positive integer value.  Please enter a valid Port.</value>
+  </data>
+  <data name="MessageStudiesInUse" xml:space="preserve">
+    <value>The following studies are in use:\n\n{0}\n\nPlease close before deleting.</value>
+  </data>
+  <data name="MessageStudyInUse" xml:space="preserve">
+    <value>The study {0} is in use.\nPlease close before deleting.</value>
   </data>
   <data name="MessageUnableToCreateStorageDirectory" xml:space="preserve">
     <value>Unable to create storage directory; cannot retrieve study.</value>

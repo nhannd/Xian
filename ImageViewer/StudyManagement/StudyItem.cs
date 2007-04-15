@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -126,6 +127,17 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             get { return _server; }
             set { _server = value; }
         }
+
+		public override string ToString()
+		{
+			DateTime studyDate;
+			DateParser.Parse(this.StudyDate, out studyDate);
+
+			return String.Format("{0} · {1} · {2}",
+				this.PatientsName,
+				this.PatientId,
+				studyDate.ToString(Format.DateFormat));
+		}
 
         #region Private Members
         private string _patientID;
