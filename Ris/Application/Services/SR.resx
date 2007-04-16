@@ -141,4 +141,7 @@
   <data name="ExceptionStaffAlreadyExist" xml:space="preserve">
     <value>A staff with the name {0}, {1} already exists</value>
   </data>
+  <data name="ExceptionReconciliationRequiresAtLeast2Patients" xml:space="preserve">
+    <value>At least 2 patients must be specified for reconciliation</value>
+  </data>
 </root>

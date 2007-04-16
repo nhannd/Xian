@@ -92,14 +92,11 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
                 request.PatientRefs,
                 delegate(EntityRef patientRef)
                 {
-                    return (Patient)PersistenceContext.Load(patientRef);
+                    return (Patient)PersistenceContext.Load(patientRef, EntityLoadFlags.CheckVersion);
                 });
 
             if (patients.Count < 2)
-            {
-                // TODO some exception
-                throw new Exception();
-            }
+                throw new RequestValidationException(SR.ExceptionReconciliationRequiresAtLeast2Patients);
 
             // reconcile all patients
             for (int i = 1; i < patients.Count; i++)

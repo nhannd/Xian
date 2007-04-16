@@ -18,7 +18,7 @@ namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
         ListPatientReconciliationMatchesResponse ListPatientReconciliationMatches(ListPatientReconciliationMatchesRequest request);
         
         /// <summary>
-        /// 
+        /// Obtains a detailed "diff" between two Patient Profiles
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
@@ -26,15 +26,17 @@ namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
         LoadPatientProfileDiffResponse LoadPatientProfileDiff(LoadPatientProfileDiffRequest request);
         
         /// <summary>
-        /// 
+        /// Reconciles one or more patients
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         ReconcilePatientsResponse ReconcilePatients(ReconcilePatientsRequest request);
 
         /// <summary>
-        /// 
+        /// Lists all profiles for the specified set of patients
         /// </summary>
         /// <param name="request"></param>
         /// <returns></returns>
