@@ -70,26 +70,13 @@ namespace ClearCanvas.Enterprise.Common
         {
             DateTime time = default(DateTime);
 
-            try
-            {
-                Platform.GetService<ITimeService>(
-                    delegate(ITimeService service)
-                    {
-                        time = service.GetTime();
-                    });
+            Platform.GetService<ITimeService>(
+                delegate(ITimeService service)
+                {
+                    time = service.GetTime();
+                });
 
-                _lastResyncInLocalTime = DateTime.Now;
-            }
-            // Null reference exception can be thrown during Platform.StartApp().  This is because there is no current Session defined,
-            // but nHibernate will attempt to instantiate an instance of all objects referenced in the nHibernate mapping files, some of which 
-            // may initialise members with Platform.Time
-            catch (NullReferenceException e)
-            { 
-                Platform.Log("Unable to contact time service, defaulting to local time");
-                Platform.Log(e);
-
-                time = DateTime.Now;
-            }
+            _lastResyncInLocalTime = DateTime.Now;
 
             return time;
         }
