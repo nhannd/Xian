@@ -11,11 +11,12 @@ namespace ClearCanvas.Enterprise.Core
     {
         #region ITimeService Members
 
-        [ReadOperation(PersistenceScopeOption=PersistenceScopeOption.RequiresNew, Auditable=false)]
+        //[ReadOperation(PersistenceScopeOption=PersistenceScopeOption.RequiresNew, Auditable=false)]
         public DateTime GetTime()
         {
-            ITimeBroker broker = PersistenceContext.GetBroker<ITimeBroker>();
-            return broker.GetTime();
+            //ITimeBroker broker = PersistenceContext.GetBroker<ITimeBroker>();
+            //return broker.GetTime();
+            return DateTime.Now;
         }
 
         #endregion
