@@ -11,7 +11,7 @@ copy "..\..\..\..\..\Ris\Server\setup\import-authority-tokens.bat" .
 copy "..\..\..\..\..\Ris\Server\setup\import-authority-groups.bat" .
 copy "..\..\..\..\..\Ris\Server\setup\default-authority-groups.xml" .
 
-
+copy "..\..\..\..\..\Jscript\bin\%1\ClearCanvas.Jscript.dll" .\plugins
 
 :: Copy Enterprise	
 copy "..\..\..\..\..\Enterprise\Common\bin\%1\ClearCanvas.Enterprise.Common.dll" .\plugins
@@ -53,6 +53,3 @@ copy "..\..\..\..\..\ReferencedAssemblies\NHapi.*" .\plugins
 copy "..\..\..\..\..\Ris\Application\Common\bin\%1\ClearCanvas.Ris.Application.Common.dll" .\plugins
 copy "..\..\..\..\..\Ris\Application\Services\bin\%1\ClearCanvas.Ris.Application.Services.dll" .\plugins
 copy "..\..\..\..\..\Ris\Server\bin\%1\ClearCanvas.Ris.Server.dll" .\plugins
-
-
-copy "..\..\..\..\..\Jscript\bin\%1\ClearCanvas.Jscript.dll" .\plugins
