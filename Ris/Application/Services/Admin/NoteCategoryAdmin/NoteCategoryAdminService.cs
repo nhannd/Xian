@@ -18,6 +18,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
     [ServiceImplementsContract(typeof(INoteCategoryAdminService))]
     public class NoteCategoryAdminService : ApplicationServiceBase, INoteCategoryAdminService
     {
+        #region INoteCategoryAdminService Members
+
         /// <summary>
         /// Return all NoteCategory options
         /// </summary>
@@ -74,7 +76,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
             NoteCategoryAssembler assembler = new NoteCategoryAssembler();
             assembler.UpdateNoteCategory(request.NoteCategoryDetail, noteCategory);
 
-            // TODO prior to accepting this add request, we should check that the same NoteCategory does not already exist
+            CheckForDuplicateNoteCategory(request.NoteCategoryDetail.Category, noteCategory);
 
             PersistenceContext.Lock(noteCategory, DirtyState.New);
 
@@ -98,9 +100,33 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
             NoteCategoryAssembler assembler = new NoteCategoryAssembler();
             assembler.UpdateNoteCategory(request.NoteCategoryDetail, noteCategory);
 
-            // TODO prior to accepting this update request, we should check that the same NoteCategory does not already exist
+            CheckForDuplicateNoteCategory(request.NoteCategoryDetail.Category, noteCategory);
 
             return new UpdateNoteCategoryResponse(assembler.CreateNoteCategorySummary(noteCategory, this.PersistenceContext));
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Helper method to check that the note category with the same name does not already exist
+        /// </summary>
+        /// <param name="categoryName"></param>
+        /// <param name="subject"></param>
+        private void CheckForDuplicateNoteCategory(string categoryName, NoteCategory subject)
+        {
+            try
+            {
+                NoteCategorySearchCriteria where = new NoteCategorySearchCriteria();
+                where.Name.EqualTo(categoryName);
+
+                NoteCategory duplicate = PersistenceContext.GetBroker<INoteCategoryBroker>().FindOne(where);
+                if (duplicate != subject)
+                    throw new RequestValidationException(string.Format(SR.ExceptionNoteCategoryAlreadyExist, categoryName));
+            }
+            catch (EntityNotFoundException)
+            {
+                // no duplicates
+            }
         }
     }
 }

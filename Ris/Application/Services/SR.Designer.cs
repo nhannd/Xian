@@ -61,6 +61,15 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A facility with code {0} already exists.
+        /// </summary>
+        internal static string ExceptionFacilityAlreadyExist {
+            get {
+                return ResourceManager.GetString("ExceptionFacilityAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Attempt to import entities with the same Id but different names.
         /// </summary>
         internal static string ExceptionImportEntityNameIdMismatch {
@@ -70,11 +79,56 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A location with the same facility, building, floor, point of care, room and bed already exists.
+        /// </summary>
+        internal static string ExceptionLocationAlreadyExist {
+            get {
+                return ResourceManager.GetString("ExceptionLocationAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A modality with ID {0} already exists.
+        /// </summary>
+        internal static string ExceptionModalityAlreadyExist {
+            get {
+                return ResourceManager.GetString("ExceptionModalityAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A patient profile with MRN {0} {1} already exists.
         /// </summary>
         internal static string ExceptionMrnAlreadyExists {
             get {
                 return ResourceManager.GetString("ExceptionMrnAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A note category with name {0} already exists.
+        /// </summary>
+        internal static string ExceptionNoteCategoryAlreadyExist {
+            get {
+                return ResourceManager.GetString("ExceptionNoteCategoryAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A practitioner with the name {0}, {1} already exists.
+        /// </summary>
+        internal static string ExceptionPractitionerAlreadyExist {
+            get {
+                return ResourceManager.GetString("ExceptionPractitionerAlreadyExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A staff with the name {0}, {1} already exists.
+        /// </summary>
+        internal static string ExceptionStaffAlreadyExist {
+            get {
+                return ResourceManager.GetString("ExceptionStaffAlreadyExist", resourceCulture);
             }
         }
     }

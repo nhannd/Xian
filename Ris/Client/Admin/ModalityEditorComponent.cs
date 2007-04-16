@@ -44,13 +44,13 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            if (_isNew)
+            try
             {
-                _modalityDetail = new ModalityDetail();
-            }
-            else
-            {
-                try
+                if (_isNew)
+                {
+                    _modalityDetail = new ModalityDetail();
+                }
+                else
                 {
                     Platform.GetService<IModalityAdminService>(
                         delegate(IModalityAdminService service)
@@ -60,10 +60,10 @@ namespace ClearCanvas.Ris.Client.Admin
                             _modalityDetail = response.ModalityDetail;
                         });
                 }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
 
             base.Start();
@@ -79,6 +79,8 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _modalityDetail; }
             set { _modalityDetail = value; }
         }
+
+        #region Presentation Model
 
         public string ID
         {
@@ -123,43 +125,6 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        private bool SaveChanges()
-        {
-            try
-            {
-                if (_isNew)
-                {
-                    if (DuplicateIDExist())
-                    {
-                        this.Host.ShowMessageBox(SR.MessageDuplicateModalityID, MessageBoxActions.Ok);
-                        return false;
-                    }
-
-                    Platform.GetService<IModalityAdminService>(
-                        delegate(IModalityAdminService service)
-                        {
-                            AddModalityResponse response = service.AddModality(new AddModalityRequest(_modalityDetail));
-                            _modalityRef = response.Modality.ModalityRef;
-                        });
-                }
-                else
-                {
-                    Platform.GetService<IModalityAdminService>(
-                        delegate(IModalityAdminService service)
-                        {
-                            UpdateModalityResponse response = service.UpdateModality(new UpdateModalityRequest(_modalityRef, _modalityDetail));
-                            _modalityRef = response.Modality.ModalityRef;
-                        });
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-
-            return true;
-        }
-
         public void Cancel()
         {
             this.ExitCode = ApplicationComponentExitCode.Cancelled;
@@ -171,39 +136,39 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return this.Modified; }
         }
 
+        #endregion
+
+        private bool SaveChanges()
+        {
+            try
+            {
+                Platform.GetService<IModalityAdminService>(
+                    delegate(IModalityAdminService service)
+                    {
+                        if (_isNew)
+                        {
+                            AddModalityResponse response = service.AddModality(new AddModalityRequest(_modalityDetail));
+                            _modalityRef = response.Modality.ModalityRef;
+                        }
+                        else
+                        {
+                            UpdateModalityResponse response = service.UpdateModality(new UpdateModalityRequest(_modalityRef, _modalityDetail));
+                            _modalityRef = response.Modality.ModalityRef;
+                        }
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+
+            return true;
+        }
+
         public event EventHandler AcceptEnabledChanged
         {
             add { this.ModifiedChanged += value; }
             remove { this.ModifiedChanged -= value; }
         }
-
-        private bool DuplicateIDExist()
-        {
-            List<ModalitySummary> listModality = new List<ModalitySummary>();
-
-            Platform.GetService<IModalityAdminService>(
-                delegate(IModalityAdminService service)
-                {
-                    ListAllModalitiesResponse response = service.ListAllModalities(new ListAllModalitiesRequest(false));
-                    listModality = response.Modalities;
-                });
-
-            foreach (ModalitySummary m in listModality)
-            {
-                if (_isNew)
-                {
-                    if (m.Id == _modalityDetail.Id)
-                        return true;                    
-                }
-                else
-                {
-                    if (m.Id == _modalityDetail.Id && (_modalityRef != null && _modalityRef == m.ModalityRef))
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
     }
 }

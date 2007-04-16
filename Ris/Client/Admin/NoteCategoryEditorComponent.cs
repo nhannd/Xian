@@ -98,6 +98,8 @@ namespace ClearCanvas.Ris.Client.Admin
             set { _noteCategoryDetail = value; }
         }
 
+        #region Presentation Model
+
         public List<string> SeverityChoices
         {
             get { return EnumValueUtils.GetDisplayValues(_severityChoices); }
@@ -136,7 +138,6 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-
         public void Accept()
         {
             if (this.HasValidationErrors)
@@ -158,35 +159,6 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        private void SaveChanges()
-        {
-            try
-            {
-                if (_isNew)
-                {
-                    Platform.GetService<INoteCategoryAdminService>(
-                        delegate(INoteCategoryAdminService service)
-                        {
-                            AddNoteCategoryResponse response = service.AddNoteCategory(new AddNoteCategoryRequest(_noteCategoryDetail));
-                            _noteCategoryRef = response.NoteCategory.NoteCategoryRef;
-                        });
-                }
-                else
-                {
-                    Platform.GetService<INoteCategoryAdminService>(
-                        delegate(INoteCategoryAdminService service)
-                        {
-                            UpdateNoteCategoryResponse response = service.UpdateNoteCategory(new UpdateNoteCategoryRequest(_noteCategoryRef, _noteCategoryDetail));
-                            _noteCategoryRef = response.NoteCategory.NoteCategoryRef;
-                        });
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
         public void Cancel()
         {
             this.ExitCode = ApplicationComponentExitCode.Cancelled;
@@ -196,6 +168,33 @@ namespace ClearCanvas.Ris.Client.Admin
         public bool AcceptEnabled
         {
             get { return this.Modified; }
+        }
+
+        #endregion
+
+        private void SaveChanges()
+        {
+            try
+            {
+                Platform.GetService<INoteCategoryAdminService>(
+                    delegate(INoteCategoryAdminService service)
+                    {
+                        if (_isNew)
+                        {
+                            AddNoteCategoryResponse response = service.AddNoteCategory(new AddNoteCategoryRequest(_noteCategoryDetail));
+                            _noteCategoryRef = response.NoteCategory.NoteCategoryRef;
+                        }
+                        else
+                        {
+                            UpdateNoteCategoryResponse response = service.UpdateNoteCategory(new UpdateNoteCategoryRequest(_noteCategoryRef, _noteCategoryDetail));
+                            _noteCategoryRef = response.NoteCategory.NoteCategoryRef;
+                        }
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         public event EventHandler AcceptEnabledChanged

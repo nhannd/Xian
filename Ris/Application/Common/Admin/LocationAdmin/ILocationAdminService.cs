@@ -23,6 +23,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.LocationAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         AddLocationResponse AddLocation(AddLocationRequest request);
 
         /// <summary>
@@ -32,6 +33,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.LocationAdmin
         /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
         UpdateLocationResponse UpdateLocation(UpdateLocationRequest request);
 
         /// <summary>

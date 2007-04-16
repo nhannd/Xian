@@ -31,6 +31,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         AddStaffResponse AddStaff(AddStaffRequest request);
 
         /// <summary>
@@ -39,6 +40,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
         UpdateStaffResponse UpdateStaff(UpdateStaffRequest request);
 
         /// <summary>

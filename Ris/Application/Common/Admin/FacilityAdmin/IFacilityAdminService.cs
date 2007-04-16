@@ -23,6 +23,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         AddFacilityResponse AddFacility(AddFacilityRequest request);
 
         /// <summary>
@@ -31,6 +32,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
         UpdateFacilityResponse UpdateFacility(UpdateFacilityRequest request);
 
         /// <summary>

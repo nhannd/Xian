@@ -18,6 +18,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
     [ServiceImplementsContract(typeof(IFacilityAdminService))]
     public class FacilityAdminService : ApplicationServiceBase, IFacilityAdminService
     {
+        #region IFacilityAdminService Members
+
         [ReadOperation]
         public ListAllFacilitiesResponse ListAllFacilities(ListAllFacilitiesRequest request)
         {
@@ -49,7 +51,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
             FacilityAssembler assembler = new FacilityAssembler();
             assembler.UpdateFacility(request.FacilityDetail, facility);
 
-            // TODO prior to accepting this add request, we should check that the same facility does not already exist
+            CheckForDuplicateFacility(request.FacilityDetail.Code, facility);
 
             PersistenceContext.Lock(facility, DirtyState.New);
 
@@ -68,10 +70,33 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
             FacilityAssembler assembler = new FacilityAssembler();
             assembler.UpdateFacility(request.FacilityDetail, facility);
 
-            // TODO prior to accepting this update request, we should check that the same facility does not already exist
+            CheckForDuplicateFacility(request.FacilityDetail.Code, facility);
 
             return new UpdateFacilityResponse(assembler.CreateFacilitySummary(facility));
         }
 
+        #endregion
+
+        /// <summary>
+        /// Helper method to check that the facility with the same code does not already exist
+        /// </summary>
+        /// <param name="facilityCode"></param>
+        /// <param name="subject"></param>
+        private void CheckForDuplicateFacility(string facilityCode, Facility subject)
+        {
+            try
+            {
+                FacilitySearchCriteria where = new FacilitySearchCriteria();
+                where.Code.EqualTo(facilityCode);
+
+                Facility duplicate = PersistenceContext.GetBroker<IFacilityBroker>().FindOne(where);
+                if (duplicate != subject)
+                    throw new RequestValidationException(string.Format(SR.ExceptionFacilityAlreadyExist, facilityCode));
+            }
+            catch (EntityNotFoundException)
+            {
+                // no duplicates
+            }
+        }
     }
 }

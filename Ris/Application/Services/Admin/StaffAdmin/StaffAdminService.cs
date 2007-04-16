@@ -18,6 +18,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
     [ServiceImplementsContract(typeof(IStaffAdminService))]
     public class StaffAdminService : ApplicationServiceBase, IStaffAdminService
     {
+        #region IStaffAdminService Members
+
         [ReadOperation]
         public FindStaffsResponse FindStaffs(FindStaffsRequest request)
         {
@@ -98,7 +100,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
             StaffAssembler assembler = new StaffAssembler();
             assembler.UpdateStaff(request.StaffDetail, staff);
 
-            // TODO prior to accepting this add request, we should check that the same staff does not already exist
+            CheckForDuplicateStaff(request.StaffDetail.PersonNameDetail.FamilyName,
+                request.StaffDetail.PersonNameDetail.GivenName,
+                staff);
 
             PersistenceContext.Lock(staff, DirtyState.New);
 
@@ -117,9 +121,37 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
             StaffAssembler assembler = new StaffAssembler();
             assembler.UpdateStaff(request.StaffDetail, staff);
 
-            // TODO prior to accepting this update request, we should check that the same staff does not already exist
+            CheckForDuplicateStaff(request.StaffDetail.PersonNameDetail.FamilyName,
+                request.StaffDetail.PersonNameDetail.GivenName,
+                staff);
 
             return new UpdateStaffResponse(assembler.CreateStaffSummary(staff));
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Helper method to check that the staff with the same name does not already exist
+        /// </summary>
+        /// <param name="familiyName"></param>
+        /// <param name="givenName"></param>
+        /// <param name="subject"></param>
+        private void CheckForDuplicateStaff(string familiyName, string givenName, Staff subject)
+        {
+            try
+            {
+                StaffSearchCriteria where = new StaffSearchCriteria();
+                where.Name.FamilyName.EqualTo(familiyName);
+                where.Name.GivenName.EqualTo(givenName);
+
+                Staff duplicate = PersistenceContext.GetBroker<IStaffBroker>().FindOne(where);
+                if (duplicate != subject)
+                    throw new RequestValidationException(string.Format(SR.ExceptionStaffAlreadyExist, familiyName, givenName));
+            }
+            catch (EntityNotFoundException)
+            {
+                // no duplicates
+            }
         }
     }
 }

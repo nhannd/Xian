@@ -23,6 +23,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         AddNoteCategoryResponse AddNoteCategory(AddNoteCategoryRequest request);
 
         /// <summary>
@@ -32,6 +33,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin
         /// <returns></returns>
         [OperationContract]
         [FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
         UpdateNoteCategoryResponse UpdateNoteCategory(UpdateNoteCategoryRequest request);
 
         /// <summary>

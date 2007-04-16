@@ -18,6 +18,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
     [ServiceImplementsContract(typeof(IModalityAdminService))]
     public class ModalityAdminService : ApplicationServiceBase, IModalityAdminService
     {
+        #region IModalityAdminService Members
+
         [ReadOperation]
         public ListAllModalitiesResponse ListAllModalities(ListAllModalitiesRequest request)
         {
@@ -49,7 +51,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
             ModalityAssembler assembler = new ModalityAssembler();
             assembler.UpdateModality(request.ModalityDetail, modality);
 
-            // TODO prior to accepting this add request, we should check that the same modality does not already exist
+            CheckForDuplicateModality(request.ModalityDetail.Id, modality);
 
             PersistenceContext.Lock(modality, DirtyState.New);
 
@@ -68,9 +70,33 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
             ModalityAssembler assembler = new ModalityAssembler();
             assembler.UpdateModality(request.ModalityDetail, modality);
 
-            // TODO prior to accepting this update request, we should check that the same modality does not already exist
+            CheckForDuplicateModality(request.ModalityDetail.Id, modality);
 
             return new UpdateModalityResponse(assembler.CreateModalitySummary(modality));
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Helper method to check that the modality with the same ID does not already exist
+        /// </summary>
+        /// <param name="modalityID"></param>
+        /// <param name="subject"></param>
+        private void CheckForDuplicateModality(string modalityID, Modality subject)
+        {
+            try
+            {
+                ModalitySearchCriteria where = new ModalitySearchCriteria();
+                where.Id.EqualTo(modalityID);
+
+                Modality duplicate = PersistenceContext.GetBroker<IModalityBroker>().FindOne(where);
+                if (duplicate != subject)
+                    throw new RequestValidationException(string.Format(SR.ExceptionModalityAlreadyExist, modalityID));
+            }
+            catch (EntityNotFoundException)
+            {
+                // no duplicates
+            }
         }
     }
 }

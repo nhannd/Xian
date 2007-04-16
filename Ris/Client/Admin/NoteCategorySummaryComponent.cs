@@ -16,7 +16,7 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("launch", "global-menus/Admin/NoteCategories")]
+    [MenuAction("launch", "global-menus/Admin/Note Categories")]
     [ClickHandler("launch", "Launch")]
     [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
 

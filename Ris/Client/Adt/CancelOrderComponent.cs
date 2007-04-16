@@ -127,27 +127,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void SaveChanges()
         {
-            // TODO: Need to get the real current staff that is using the system
-            EntityRef staffRef = null;
-            Platform.GetService<IStaffAdminService>(
-                delegate(IStaffAdminService service)
-                {
-                    FindStaffsResponse findResponse = service.FindStaffs(new FindStaffsRequest("Clerk", "Registration"));
-                    if (findResponse.Staffs.Count == 0)
-                    {
-                        StaffDetail newStaff = new StaffDetail();
-                        newStaff.PersonNameDetail.FamilyName = "Clerk";
-                        newStaff.PersonNameDetail.GivenName = "Registration";
-                        AddStaffResponse addResponse = service.AddStaff(new AddStaffRequest(newStaff));
-                        staffRef = addResponse.Staff.StaffRef;
-                    }
-                    else
-                    {
-                        StaffSummary staff = CollectionUtils.FirstElement(findResponse.Staffs) as StaffSummary;
-                        staffRef = staff.StaffRef;
-                    }
-                });
-
             // Get the list of Order EntityRef from the table
             List<EntityRef> selectedOrders = new List<EntityRef>();
             foreach (CancelOrderTableEntry entry in _cancelOrderTable.Items)
@@ -159,7 +138,7 @@ namespace ClearCanvas.Ris.Client.Adt
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
                 {
-                    service.CancelOrder(new CancelOrderRequest(selectedOrders, _selectedCancelReason, staffRef));
+                    service.CancelOrder(new CancelOrderRequest(selectedOrders, _selectedCancelReason));
                 });
         }
 

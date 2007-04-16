@@ -19,6 +19,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
     [ServiceImplementsContract(typeof(IPractitionerAdminService))]
     public class PractitionerAdminService : ApplicationServiceBase, IPractitionerAdminService
     {
+        #region IPractitionerAdminService Members
+
         [ReadOperation]
         public FindPractitionersResponse FindPractitioners(FindPractitionersRequest request)
         {
@@ -99,7 +101,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
             PractitionerAssembler assembler = new PractitionerAssembler();
             assembler.UpdatePractitioner(request.PractitionerDetail, practitioner);
 
-            // TODO prior to accepting this add request, we should check that the same practitioner does not already exist
+            CheckForDuplicatePractitioner(request.PractitionerDetail.PersonNameDetail.FamilyName,
+                request.PractitionerDetail.PersonNameDetail.GivenName,
+                practitioner);
 
             PersistenceContext.Lock(practitioner, DirtyState.New);
 
@@ -118,9 +122,37 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
             PractitionerAssembler assembler = new PractitionerAssembler();
             assembler.UpdatePractitioner(request.PractitionerDetail, practitioner);
 
-            // TODO prior to accepting this update request, we should check that the same practitioner does not already exist
+            CheckForDuplicatePractitioner(request.PractitionerDetail.PersonNameDetail.FamilyName,
+                request.PractitionerDetail.PersonNameDetail.GivenName,
+                practitioner);
 
             return new UpdatePractitionerResponse(assembler.CreatePractitionerSummary(practitioner));
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Helper method to check that the practitioner with the same name does not already exist
+        /// </summary>
+        /// <param name="familiyName"></param>
+        /// <param name="givenName"></param>
+        /// <param name="subject"></param>
+        private void CheckForDuplicatePractitioner(string familiyName, string givenName, Practitioner subject)
+        {
+            try
+            {
+                PractitionerSearchCriteria where = new PractitionerSearchCriteria();
+                where.Name.FamilyName.EqualTo(familiyName);
+                where.Name.GivenName.EqualTo(givenName);
+
+                Practitioner duplicate = PersistenceContext.GetBroker<IPractitionerBroker>().FindOne(where);
+                if (duplicate != subject)
+                    throw new RequestValidationException(string.Format(SR.ExceptionPractitionerAlreadyExist, familiyName, givenName));
+            }
+            catch (EntityNotFoundException)
+            {
+                // no duplicates
+            }
         }
     }
 }

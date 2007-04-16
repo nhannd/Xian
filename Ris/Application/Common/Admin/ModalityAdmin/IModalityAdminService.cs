@@ -23,6 +23,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         AddModalityResponse AddModality(AddModalityRequest request);
 
         /// <summary>
@@ -31,6 +32,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
         UpdateModalityResponse UpdateModality(UpdateModalityRequest request);
 
         /// <summary>

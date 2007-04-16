@@ -9,11 +9,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class CancelOrderRequest : DataContractBase
     {
-        public CancelOrderRequest(List<EntityRef> cancelledOrders, EnumValueInfo cancelReason, EntityRef staffRef)
+        public CancelOrderRequest(List<EntityRef> cancelledOrders, EnumValueInfo cancelReason)
         {
             this.CancelledOrders = cancelledOrders;
             this.CancelReason = cancelReason;
-            this.Staff = staffRef;
         }
 
         [DataMember]
@@ -21,8 +20,5 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 
         [DataMember]
         public EnumValueInfo CancelReason;
-
-        [DataMember]
-        public EntityRef Staff;
     }
 }

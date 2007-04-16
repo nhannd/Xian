@@ -35,6 +35,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             }
         }
 
+        #region IRegistrationWorkflowService Members
+
         [ReadOperation]
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
@@ -116,10 +118,26 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [UpdateOperation]
         public CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
         {
+            // TODO: Need to get the real current staff that is using the system
+            StaffSearchCriteria staffCriteria = new StaffSearchCriteria();
+            staffCriteria.Name.FamilyName.EqualTo("Clerk");
+            staffCriteria.Name.GivenName.EqualTo("Registration");
+            Staff staff = PersistenceContext.GetBroker<IStaffBroker>().FindOne(staffCriteria);
+            if (staff == null)
+            {
+                staff = new Staff();
+                staff.Name.FamilyName = "Clerk";
+                staff.Name.GivenName = "Registration";
+
+                PersistenceContext.Lock(staff, DirtyState.New);
+
+                // ensure the new staff is assigned an OID before using it in the return value
+                PersistenceContext.SynchState();
+            }
+
             foreach (EntityRef rpRef in request.RequestedProcedures)
             {
                 RequestedProcedure rp = PersistenceContext.GetBroker<IRequestedProcedureBroker>().Load(rpRef);
-                Staff staff = PersistenceContext.GetBroker<IStaffBroker>().FindOne(new StaffSearchCriteria(request.Staff));
 
                 CheckInProcedureStep cps = new CheckInProcedureStep(rp);
                 cps.Start(staff);
@@ -180,8 +198,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [UpdateOperation]
         public CancelOrderResponse CancelOrder(CancelOrderRequest request)
         {
-            Staff staff = PersistenceContext.GetBroker<IStaffBroker>().FindOne(new StaffSearchCriteria(request.Staff));
-            OrderCancelReason reason = (OrderCancelReason) Enum.Parse(typeof(OrderCancelReason), request.CancelReason.Code);
+            // TODO: Do we need to record which staff cancel the order?  or will it be audited automatically anyway?
+          
+            OrderCancelReason reason = (OrderCancelReason)Enum.Parse(typeof(OrderCancelReason), request.CancelReason.Code);
 
             foreach (EntityRef orderRef in request.CancelledOrders)
             {
@@ -193,15 +212,23 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             return new CancelOrderResponse();
         }
-        
-        private List<AlertNotificationDetail> GetAlertsHelper(Patient patient, IPersistenceContext context)
+
+        #endregion
+
+        /// <summary>
+        /// Helper method to test a patient with alerts that implement the PatientAlertExtensionPoint
+        /// </summary>
+        /// <param name="subject"></param>
+        /// <param name="context"></param>
+        /// <returns>a list of alert notification detail if each alert test succeeds</returns>
+        private List<AlertNotificationDetail> GetAlertsHelper(Patient subject, IPersistenceContext context)
         {
             AlertAssembler assembler = new AlertAssembler();
             List<AlertNotificationDetail> results = new List<AlertNotificationDetail>();
 
             foreach (IPatientAlert patientAlertTests in _patientAlertTests)
             {
-                IAlertNotification testResult = patientAlertTests.Test(patient, context);
+                IAlertNotification testResult = patientAlertTests.Test(subject, context);
                 if (testResult != null)
                 {
                     results.Add(assembler.CreateAlertNotification(testResult));

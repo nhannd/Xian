@@ -44,13 +44,13 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            if (_isNew)
+            try
             {
-                _facilityDetail = new FacilityDetail();
-            }
-            else
-            {
-                try
+                if (_isNew)
+                {
+                    _facilityDetail = new FacilityDetail();
+                }
+                else
                 {
                     Platform.GetService<IFacilityAdminService>(
                         delegate(IFacilityAdminService service)
@@ -60,10 +60,10 @@ namespace ClearCanvas.Ris.Client.Admin
                             _facilityDetail = response.FacilityDetail;
                         });
                 }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
             
             base.Start();
@@ -79,6 +79,8 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _facilityDetail; }
             set { _facilityDetail = value; }
         }
+
+        #region Presentation Model
 
         public string Name
         {
@@ -121,35 +123,6 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        private void SaveChanges()
-        {
-            try
-            {
-                if (_isNew)
-                {
-                    Platform.GetService<IFacilityAdminService>(
-                        delegate(IFacilityAdminService service)
-                        {
-                            AddFacilityResponse response = service.AddFacility(new AddFacilityRequest(_facilityDetail));
-                            _facilityRef = response.Facility.FacilityRef;
-                        });
-                }
-                else
-                {
-                    Platform.GetService<IFacilityAdminService>(
-                        delegate(IFacilityAdminService service)
-                        {
-                            UpdateFacilityResponse response = service.UpdateFacility(new UpdateFacilityRequest(_facilityRef, _facilityDetail));
-                            _facilityRef = response.Facility.FacilityRef;
-                        });
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
         public void Cancel()
         {
             this.ExitCode = ApplicationComponentExitCode.Cancelled;
@@ -159,6 +132,33 @@ namespace ClearCanvas.Ris.Client.Admin
         public bool AcceptEnabled
         {
             get { return this.Modified; }
+        }
+
+        #endregion
+
+        private void SaveChanges()
+        {
+            try
+            {
+                Platform.GetService<IFacilityAdminService>(
+                    delegate(IFacilityAdminService service)
+                    {
+                        if (_isNew)
+                        {
+                            AddFacilityResponse response = service.AddFacility(new AddFacilityRequest(_facilityDetail));
+                            _facilityRef = response.Facility.FacilityRef;
+                        }
+                        else
+                        {
+                            UpdateFacilityResponse response = service.UpdateFacility(new UpdateFacilityRequest(_facilityRef, _facilityDetail));
+                            _facilityRef = response.Facility.FacilityRef;
+                        }
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         public event EventHandler AcceptEnabledChanged

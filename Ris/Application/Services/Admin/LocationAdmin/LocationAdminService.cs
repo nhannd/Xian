@@ -18,6 +18,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
     [ServiceImplementsContract(typeof(ILocationAdminService))]
     public class LocationAdminService : ApplicationServiceBase, ILocationAdminService
     {
+        #region ILocationAdminService Members
+
         /// <summary>
         /// Return all location options
         /// </summary>
@@ -67,12 +69,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         public AddLocationResponse AddLocation(AddLocationRequest request)
         {
             Location location = new Location();
-            location.Active = true;
 
             LocationAssembler assembler = new LocationAssembler();
             assembler.UpdateLocation(request.LocationDetail, location, PersistenceContext);
 
-            // TODO prior to accepting this add request, we should check that the same location does not already exist
+            CheckForDuplicateLocation(location);
 
             PersistenceContext.Lock(location, DirtyState.New);
 
@@ -96,9 +97,37 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
             LocationAssembler assembler = new LocationAssembler();
             assembler.UpdateLocation(request.LocationDetail, location, PersistenceContext);
 
-            // TODO prior to accepting this update request, we should check that the same location does not already exist
+            CheckForDuplicateLocation(location);
 
             return new UpdateLocationResponse(assembler.CreateLocationSummary(location));
+        }
+
+        #endregion
+
+        /// <summary>
+        /// Helper method to check that the location with the exact same content does not already exist
+        /// </summary>
+        /// <param name="subject"></param>
+        private void CheckForDuplicateLocation(Location subject)
+        {
+            try
+            {
+                LocationSearchCriteria where = new LocationSearchCriteria();
+                where.Facility.EqualTo(subject.Facility);
+                where.Building.EqualTo(subject.Building);
+                where.Floor.EqualTo(subject.Floor);
+                where.PointOfCare.EqualTo(subject.PointOfCare);
+                where.Room.EqualTo(subject.Room);
+                where.Bed.EqualTo(subject.Bed);
+
+                Location duplicate = PersistenceContext.GetBroker<ILocationBroker>().FindOne(where);
+                if (duplicate != subject)
+                    throw new RequestValidationException(string.Format(SR.ExceptionLocationAlreadyExist));
+            }
+            catch (EntityNotFoundException)
+            {
+                // no duplicates
+            }
         }
     }
 }

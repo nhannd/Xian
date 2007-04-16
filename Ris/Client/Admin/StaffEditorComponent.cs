@@ -39,7 +39,8 @@ namespace ClearCanvas.Ris.Client.Admin
         /// <summary>
         /// Constructs an editor to edit an existing staff/practitioner profile
         /// </summary>
-        /// <param name="staffRef"></param>
+        /// <param name="reference"></param>
+        /// <param name="staffMode"></param>
         public StaffEditorComponent(EntityRef reference, bool staffMode)
         {
             _isNew = false;

@@ -31,6 +31,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         AddPractitionerResponse AddPractitioner(AddPractitionerRequest request);
 
         /// <summary>
@@ -39,6 +40,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
         UpdatePractitionerResponse UpdatePractitioner(UpdatePractitionerRequest request);
 
         /// <summary>

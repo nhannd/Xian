@@ -60,9 +60,9 @@ namespace ClearCanvas.Ris.Client.Admin
                     Platform.GetService<ILocationAdminService>(
                         delegate(ILocationAdminService service)
                         {
-                            LoadLocationForEditResponse response = service.LoadLocationForEdit(new LoadLocationForEditRequest(_locationRef));
-                            _locationRef = response.LocationRef;
-                            _locationDetail = response.LocationDetail;
+                                LoadLocationForEditResponse response = service.LoadLocationForEdit(new LoadLocationForEditRequest(_locationRef));
+                                _locationRef = response.LocationRef;
+                                _locationDetail = response.LocationDetail;
                         });
                 }
             
@@ -76,7 +76,6 @@ namespace ClearCanvas.Ris.Client.Admin
                         {
                             _locationDetail.Facility = response.Facilities[0];
                         }
-                    
                     });
                 
             }
@@ -98,6 +97,8 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _locationDetail; }
             set { _locationDetail = value; }
         }
+
+        #region Presentation Model
 
         public List<string> FacilityChoices
         {
@@ -197,6 +198,19 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
+        public void Cancel()
+        {
+            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            Host.Exit();
+        }
+
+        public bool AcceptEnabled
+        {
+            get { return this.Modified; }
+        }
+
+        #endregion
+
         private void SaveChanges()
         {
             try
@@ -224,17 +238,6 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
-        }
-
-        public void Cancel()
-        {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
-            Host.Exit();
-        }
-
-        public bool AcceptEnabled
-        {
-            get { return this.Modified; }
         }
 
         public event EventHandler AcceptEnabledChanged

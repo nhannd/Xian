@@ -40,6 +40,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
         void ExecuteOperation(ExecuteOperationRequest request);
 
         /// <summary>
@@ -56,6 +57,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
         CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request);
 
         /// <summary>
@@ -70,6 +72,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         GetDataForCancelOrderTableResponse GetDataForCancelOrderTable(GetDataForCancelOrderTableRequest request);
 
         [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        [FaultContract(typeof(RequestValidationException))]
         CancelOrderResponse CancelOrder(CancelOrderRequest request);
 
         //RequestedProcedure LoadRequestedProcedure(EntityRef rpRef, bool loadDetail);
