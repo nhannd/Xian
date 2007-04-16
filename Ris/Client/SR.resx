@@ -264,6 +264,15 @@
   <data name="ColumnWorkPhone" xml:space="preserve">
     <value>Work Phone</value>
   </data>
+  <data name="ExceptionFailedToContactRisServer" xml:space="preserve">
+    <value>Unable to contact RIS server</value>
+  </data>
+  <data name="ExceptionInvalidUserNamePassword" xml:space="preserve">
+    <value>Invalid user name or password</value>
+  </data>
+  <data name="ExceptionLoginTimeout" xml:space="preserve">
+    <value>Timed-out while attempting to login</value>
+  </data>
   <data name="FormatNoteCategory" xml:space="preserve">
     <value>{0} - Severity {1}</value>
   </data>

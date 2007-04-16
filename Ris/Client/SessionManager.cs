@@ -5,6 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common.Login;
 using System.Threading;
 using System.Security.Principal;
+using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -37,9 +38,17 @@ namespace ClearCanvas.Ris.Client
                             // successfully logged in
                             return true;
                         }
+                        catch (CommunicationException)
+                        {
+                            Platform.ShowMessageBox(SR.ExceptionFailedToContactRisServer);
+                        }
+                        catch (TimeoutException)
+                        {
+                            Platform.ShowMessageBox(SR.ExceptionLoginTimeout);
+                        }
                         catch (Exception)
                         {
-                            Platform.ShowMessageBox("Invalid user name or password");
+                            Platform.ShowMessageBox(SR.ExceptionInvalidUserNamePassword);
                         }
                     }
                     else

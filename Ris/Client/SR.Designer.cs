@@ -502,6 +502,33 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to contact RIS server.
+        /// </summary>
+        internal static string ExceptionFailedToContactRisServer {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToContactRisServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid user name or password.
+        /// </summary>
+        internal static string ExceptionInvalidUserNamePassword {
+            get {
+                return ResourceManager.GetString("ExceptionInvalidUserNamePassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Timed-out while attempting to login.
+        /// </summary>
+        internal static string ExceptionLoginTimeout {
+            get {
+                return ResourceManager.GetString("ExceptionLoginTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} - Severity {1}.
         /// </summary>
         internal static string FormatNoteCategory {
