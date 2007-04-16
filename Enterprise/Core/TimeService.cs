@@ -11,11 +11,11 @@ namespace ClearCanvas.Enterprise.Core
     {
         #region ITimeService Members
 
-        //[ReadOperation(PersistenceScopeOption=PersistenceScopeOption.RequiresNew, Auditable=false)]
         public DateTime GetTime()
         {
-            //ITimeBroker broker = PersistenceContext.GetBroker<ITimeBroker>();
-            //return broker.GetTime();
+            // TODO: obtain the time from some central source.  Sql server may be used for this purpose, however:
+            // do not use NHibernate to communicate with Sql server to obtain the time!!!
+            // this is because initializing NHibernate may itself cause this method to be invoked -> infinite recursion
             return DateTime.Now;
         }
 
