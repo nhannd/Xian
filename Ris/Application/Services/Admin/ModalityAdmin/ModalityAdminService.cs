@@ -89,9 +89,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
                 ModalitySearchCriteria where = new ModalitySearchCriteria();
                 where.Id.EqualTo(modalityID);
 
-                Modality duplicate = PersistenceContext.GetBroker<IModalityBroker>().FindOne(where);
-                if (duplicate != subject)
-                    throw new RequestValidationException(string.Format(SR.ExceptionModalityAlreadyExist, modalityID));
+                IList<Modality> duplicateList = PersistenceContext.GetBroker<IModalityBroker>().Find(where, new SearchResultPage(0, 2));
+                foreach (Modality duplicate in duplicateList)
+                {
+                    if (duplicate != subject)
+                        throw new RequestValidationException(string.Format(SR.ExceptionModalityAlreadyExist, modalityID));
+                }
             }
             catch (EntityNotFoundException)
             {

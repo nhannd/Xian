@@ -118,12 +118,17 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [UpdateOperation]
         public CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
         {
-            // TODO: Need to get the real current staff that is using the system
-            StaffSearchCriteria staffCriteria = new StaffSearchCriteria();
-            staffCriteria.Name.FamilyName.EqualTo("Clerk");
-            staffCriteria.Name.GivenName.EqualTo("Registration");
-            Staff staff = PersistenceContext.GetBroker<IStaffBroker>().FindOne(staffCriteria);
-            if (staff == null)
+            Staff staff = null;
+
+            try
+            {
+                // TODO: Need to get the real current staff that is using the system
+                StaffSearchCriteria staffCriteria = new StaffSearchCriteria();
+                staffCriteria.Name.FamilyName.EqualTo("Clerk");
+                staffCriteria.Name.GivenName.EqualTo("Registration");
+                staff = PersistenceContext.GetBroker<IStaffBroker>().FindOne(staffCriteria);
+            }
+            catch (EntityNotFoundException)
             {
                 staff = new Staff();
                 staff.Name.FamilyName = "Clerk";
@@ -131,7 +136,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
                 PersistenceContext.Lock(staff, DirtyState.New);
 
-                // ensure the new staff is assigned an OID before using it in the return value
+                // ensure the new staff is assigned an OID before using it
                 PersistenceContext.SynchState();
             }
 

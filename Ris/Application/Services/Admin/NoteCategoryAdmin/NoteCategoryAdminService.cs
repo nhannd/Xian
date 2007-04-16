@@ -119,9 +119,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
                 NoteCategorySearchCriteria where = new NoteCategorySearchCriteria();
                 where.Name.EqualTo(categoryName);
 
-                NoteCategory duplicate = PersistenceContext.GetBroker<INoteCategoryBroker>().FindOne(where);
-                if (duplicate != subject)
-                    throw new RequestValidationException(string.Format(SR.ExceptionNoteCategoryAlreadyExist, categoryName));
+                IList<NoteCategory> duplicateList = PersistenceContext.GetBroker<INoteCategoryBroker>().Find(where, new SearchResultPage(0, 2));
+                foreach (NoteCategory duplicate in duplicateList)
+                {
+                    if (duplicate != subject)
+                        throw new RequestValidationException(string.Format(SR.ExceptionNoteCategoryAlreadyExist, categoryName));
+                }
             }
             catch (EntityNotFoundException)
             {

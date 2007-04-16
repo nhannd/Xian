@@ -145,9 +145,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
                 where.Name.FamilyName.EqualTo(familiyName);
                 where.Name.GivenName.EqualTo(givenName);
 
-                Practitioner duplicate = PersistenceContext.GetBroker<IPractitionerBroker>().FindOne(where);
-                if (duplicate != subject)
-                    throw new RequestValidationException(string.Format(SR.ExceptionPractitionerAlreadyExist, familiyName, givenName));
+                IList<Practitioner> duplicateList = PersistenceContext.GetBroker<IPractitionerBroker>().Find(where, new SearchResultPage(0, 2));
+                foreach (Practitioner duplicate in duplicateList)
+                {
+                    if (duplicate != subject)
+                        throw new RequestValidationException(string.Format(SR.ExceptionPractitionerAlreadyExist, familiyName, givenName));
+                }
             }
             catch (EntityNotFoundException)
             {

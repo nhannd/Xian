@@ -6,10 +6,10 @@ namespace ClearCanvas.Healthcare.Alert
 {
     public abstract class AlertNotification : IAlertNotification
     {
-        string _rep;
-        string _sev;
-        string _type;
-        List<string> _details;
+        private string _rep;
+        private string _sev;
+        private string _type;
+        private List<string> _details;
 
         protected AlertNotification(string representation, string severity, string type)
         {
@@ -19,7 +19,7 @@ namespace ClearCanvas.Healthcare.Alert
             _details = new List<string>();
         }
 
-        #region IAlert Members
+        #region IAlertNotification Members
 
         public string Representation
         {

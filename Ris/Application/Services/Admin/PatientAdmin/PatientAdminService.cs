@@ -184,9 +184,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
                 where.Mrn.Id.EqualTo(mrnId);
                 where.Mrn.AssigningAuthority.EqualTo(mrnAuthority);
 
-                PatientProfile duplicate = PersistenceContext.GetBroker<IPatientProfileBroker>().FindOne(where);
-                if (duplicate != subject)
-                    throw new RequestValidationException(string.Format(SR.ExceptionMrnAlreadyExists, mrnAuthority, mrnId));
+                IList<PatientProfile> duplicateList = PersistenceContext.GetBroker<IPatientProfileBroker>().Find(where, new SearchResultPage(0, 2));
+                foreach (PatientProfile duplicate in duplicateList)
+                {
+                    if (duplicate != subject)
+                        throw new RequestValidationException(string.Format(SR.ExceptionMrnAlreadyExists, mrnAuthority, mrnId));
+                }
             }
             catch (EntityNotFoundException)
             {

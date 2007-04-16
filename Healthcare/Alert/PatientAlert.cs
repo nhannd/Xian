@@ -12,7 +12,7 @@ namespace ClearCanvas.Healthcare.Alert
         {
         }
 
-        #region IAlertTest Members
+        #region IPatientAlert Members
 
         public string Name
         {

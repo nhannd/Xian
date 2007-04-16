@@ -120,9 +120,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
                 where.Room.EqualTo(subject.Room);
                 where.Bed.EqualTo(subject.Bed);
 
-                Location duplicate = PersistenceContext.GetBroker<ILocationBroker>().FindOne(where);
-                if (duplicate != subject)
-                    throw new RequestValidationException(string.Format(SR.ExceptionLocationAlreadyExist));
+                IList<Location> duplicateList = PersistenceContext.GetBroker<ILocationBroker>().Find(where, new SearchResultPage(0, 2));
+                foreach (Location duplicate in duplicateList)
+                {
+                    if (duplicate != subject)
+                        throw new RequestValidationException(string.Format(SR.ExceptionLocationAlreadyExist));
+                }            
             }
             catch (EntityNotFoundException)
             {

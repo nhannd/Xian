@@ -144,9 +144,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
                 where.Name.FamilyName.EqualTo(familiyName);
                 where.Name.GivenName.EqualTo(givenName);
 
-                Staff duplicate = PersistenceContext.GetBroker<IStaffBroker>().FindOne(where);
-                if (duplicate != subject)
-                    throw new RequestValidationException(string.Format(SR.ExceptionStaffAlreadyExist, familiyName, givenName));
+                IList<Staff> duplicateList = PersistenceContext.GetBroker<IStaffBroker>().Find(where, new SearchResultPage(0, 2));
+                foreach (Staff duplicate in duplicateList)
+                {
+                    if (duplicate != subject)
+                        throw new RequestValidationException(string.Format(SR.ExceptionStaffAlreadyExist, familiyName, givenName));
+                }
             }
             catch (EntityNotFoundException)
             {

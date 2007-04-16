@@ -141,6 +141,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this._cancelButton;
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "NoteCategoryEditorComponentControl";
             this.Size = new System.Drawing.Size(287, 259);

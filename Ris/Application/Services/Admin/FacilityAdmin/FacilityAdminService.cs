@@ -89,9 +89,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
                 FacilitySearchCriteria where = new FacilitySearchCriteria();
                 where.Code.EqualTo(facilityCode);
 
-                Facility duplicate = PersistenceContext.GetBroker<IFacilityBroker>().FindOne(where);
-                if (duplicate != subject)
-                    throw new RequestValidationException(string.Format(SR.ExceptionFacilityAlreadyExist, facilityCode));
+                IList<Facility> duplicateList = PersistenceContext.GetBroker<IFacilityBroker>().Find(where, new SearchResultPage(0, 2));
+                foreach (Facility duplicate in duplicateList)
+                {
+                    if (duplicate != subject)
+                        throw new RequestValidationException(string.Format(SR.ExceptionFacilityAlreadyExist, facilityCode));
+                }
             }
             catch (EntityNotFoundException)
             {
