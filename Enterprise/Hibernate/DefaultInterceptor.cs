@@ -11,36 +11,52 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// <summary>
     /// Implementation of NHibernate IInterceptor, used to record entity change-set for a transaction.
     /// </summary>
-    public class DefaultInterceptor : IInterceptor
+    internal class DefaultInterceptor : IInterceptor
     {
-        private Dictionary<object, EntityChange> _changes = new Dictionary<object, EntityChange>();
+        class ChangeRecord
+        {
+            private Entity _entity;
+            private EntityChangeType _changeType;
+
+            public ChangeRecord(object entity, EntityChangeType changeType)
+            {
+                _entity = (Entity)entity;
+                _changeType = changeType;
+            }
+
+            public Entity Entity
+            {
+                get { return _entity; }
+            }
+
+            public EntityChangeType ChangeType
+            {
+                get { return _changeType; }
+            }
+        }
+
+
+        private List<ChangeRecord> _changeRecords = new List<ChangeRecord>();
+        private EntityChange[] _changeSet;
 
         /// <summary>
-        /// Returns the set of entities that were changed during the session
+        /// Returns the set of <see cref="EntityChange"/> reflecting the changes that were made during the session
         /// </summary>
-        public ICollection<EntityChange> EntityChangeSet
+        public EntityChange[] EntityChangeSet
         {
-            get { return _changes.Values; }
+            get
+            {
+                if (_changeSet == null)
+                    throw new InvalidOperationException(SR.ExceptionAttemptToAccessChangeSetBeforeFlush);
+
+                return _changeSet;
+            }
         }
 
         public void ClearChangeSet()
         {
-            _changes.Clear();
-        }
-
-        private void AddChange(EntityChange change)
-        {
-            if (_changes.ContainsKey(change.EntityOID))
-            {
-                // check if the previous change to this entity has been succeeded by another change with a higher ChangeType
-                EntityChange prevChange = _changes[change.EntityOID];
-                if (change.Supercedes(prevChange))
-                    _changes[change.EntityOID] = change;
-            }
-            else
-            {
-                _changes.Add(change.EntityOID, change);
-            }
+            _changeRecords.Clear();
+            _changeSet = null;
         }
 
         #region IInterceptor Members
@@ -55,8 +71,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="types"></param>
         public void OnDelete(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
         {
-            Entity ent = (Entity)entity;
-            AddChange(new EntityChange(NHibernateUtil.GetClass(entity), ent.OID, ent.Version, EntityChangeType.Delete));
+            _changeRecords.Add(new ChangeRecord(entity, EntityChangeType.Delete));
         }
 
         /// <summary>
@@ -71,8 +86,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <returns></returns>
         public bool OnFlushDirty(object entity, object id, object[] currentState, object[] previousState, string[] propertyNames, NHibernate.Type.IType[] types)
         {
-            Entity ent = (Entity)entity;
-            AddChange(new EntityChange(NHibernateUtil.GetClass(entity), ent.OID, ent.Version, EntityChangeType.Update));
+            _changeRecords.Add(new ChangeRecord(entity, EntityChangeType.Update));
             return false;
         }
 
@@ -87,8 +101,11 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <returns></returns>
         public bool OnSave(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
         {
-            Entity ent = (Entity)entity;
-            AddChange(new EntityChange(NHibernateUtil.GetClass(entity), ent.OID, ent.Version, EntityChangeType.Create));
+            // HACK: ignore the addition of auditing records
+            if (NHibernateUtil.GetClass(entity).Equals(typeof(TransactionRecord)))
+                return false;
+
+            _changeRecords.Add(new ChangeRecord(entity, EntityChangeType.Create));
             return false;
 
         }
@@ -110,6 +127,28 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         public void PostFlush(System.Collections.ICollection entities)
         {
+            // from the individual change records, construct a change set that contains each entity only once
+            Dictionary<object, EntityChange> changes = new Dictionary<object, EntityChange>();
+            foreach (ChangeRecord cr in _changeRecords)
+            {
+                EntityChange change = new EntityChange(cr.Entity.GetClass(), cr.Entity.OID, cr.Entity.Version, cr.ChangeType);
+
+                if (changes.ContainsKey(cr.Entity.OID))
+                {
+                    // this entity is already in the change set, so see if this change supercedes the previous one
+                    EntityChange previousChange = changes[cr.Entity.OID];
+                    if (change.Supercedes(previousChange))
+                        changes[cr.Entity.OID] = change;
+                }
+                else
+                {
+                    // this entity is not yet in the change set, so add it
+                    changes[cr.Entity.OID] = change;
+                }
+            }
+
+            // convert to array
+            _changeSet = (new List<EntityChange>(changes.Values)).ToArray();
         }
 
         public void PreFlush(System.Collections.ICollection entities)

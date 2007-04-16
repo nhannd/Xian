@@ -61,6 +61,15 @@ namespace ClearCanvas.Enterprise.Hibernate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Session must be flushed prior to accessing this property.
+        /// </summary>
+        internal static string ExceptionAttemptToAccessChangeSetBeforeFlush {
+            get {
+                return ResourceManager.GetString("ExceptionAttemptToAccessChangeSetBeforeFlush", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Error closing context.
         /// </summary>
         internal static string ExceptionCloseContext {

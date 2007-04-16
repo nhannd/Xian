@@ -358,7 +358,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <summary>
         /// Provides access to the interceptor
         /// </summary>
-        protected DefaultInterceptor Interceptor
+        internal DefaultInterceptor Interceptor
         {
             get { return _interceptor; }
         }
