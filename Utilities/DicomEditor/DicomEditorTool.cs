@@ -80,6 +80,8 @@ namespace ClearCanvas.Utilities.DicomEditor
                 }
                 FileDicomImage file = image.ImageSop.NativeDicomObject as FileDicomImage;
 
+                DicomFileAccessor accessor = new DicomFileAccessor();
+
                 if (_component == null)
                 {
                     _component = new DicomEditorComponent();
@@ -87,27 +89,52 @@ namespace ClearCanvas.Utilities.DicomEditor
                     ApplicationComponent.LaunchAsShelf(
                                 context.DesktopWindow,
                                 _component,
-                                "DICOM Editor",
+                                SR.TitleDicomEditor,
                                 ShelfDisplayHint.DockRight,
                                 delegate(IApplicationComponent component) { _component = null; });
-
-                    _component.Files = new FileDicomImage[1] { file };
                 }
-                else
-                {
-                    _component.Files = new FileDicomImage[1] { file };
-                }
+                
+                _component.Dumps = new DicomDump[1] { accessor.LoadDicomDump(file) };
+                
             }
             else if (this.ContextBase is ILocalImageExplorerToolContext)
             {
                 ILocalImageExplorerToolContext context = this.ContextBase as ILocalImageExplorerToolContext;
                 List<FileDicomImage> files = new List<FileDicomImage>();
+                List<DicomDump> dumps = new List<DicomDump>();
 
                 foreach (string rawPath in context.SelectedPaths)
                 {
                     FileProcessor.ProcessFile process = new FileProcessor.ProcessFile(delegate(string path) { files.Add(new FileDicomImage(path)); });
                     FileProcessor.Process(rawPath, "*.*", process, true);
                 }
+                    
+                DicomFileAccessor accessor = new DicomFileAccessor();
+
+                bool userCancelled = false;
+                BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext backgroundcontext)
+                {
+                    int i = 0;
+
+                    foreach (FileDicomImage file in files)
+                    {
+                        if (backgroundcontext.CancelRequested)
+                        {
+                            backgroundcontext.Cancel();
+                            userCancelled = true;
+                            return;
+                        }
+                        dumps.Add(accessor.LoadDicomDump(file));
+                        backgroundcontext.ReportProgress(new BackgroundTaskProgress((int)(((double)(i + 1) / (double)files.Count) * 100.0), SR.MessageDumpProgressBar));
+                        i++;
+                    }
+
+                    backgroundcontext.Complete(null);
+                }, true);
+
+                ProgressDialog.Show(task, context.DesktopWindow, true);
+                if (userCancelled == true)
+                    return;
 
                 if (_component == null)
                 {
@@ -116,16 +143,12 @@ namespace ClearCanvas.Utilities.DicomEditor
                     ApplicationComponent.LaunchAsShelf(
                                 context.DesktopWindow,
                                 _component,
-                                "DICOM Editor",
+                                SR.TitleDicomEditor,
                                 ShelfDisplayHint.DockRight,
                                 delegate(IApplicationComponent component) { _component = null; });
-
-                    _component.Files = files;
                 }
-                else
-                {
-                    _component.Files = files;
-                }
+                
+                _component.Dumps = dumps;
             }            
         }
 
@@ -133,36 +156,4 @@ namespace ClearCanvas.Utilities.DicomEditor
         private event EventHandler _enabledChanged;
         private DicomEditorComponent _component; 
     }
-
-    // Original pass at making this a menu item tool
-    //[MenuAction("show", "global-menus/Utilities/Dicom Editor")]
-    //[ClickHandler("show", "Show")]
-
-    //[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-
-    //public class DicomEditor : Tool<IDesktopToolContext>
-    //{
-    //    private DicomEditorComponent _component;
-
-    //    public DICOMEditor()
-    //    {
-    //    }
-
-    //    public void Show()
-    //    {
-    //        if (_component == null)
-    //        {
-    //            _component = new DicomEditorComponent();
-
-    //            ApplicationComponent.LaunchAsShelf(
-    //                this.Context.DesktopWindow,
-    //                _component,
-    //                "DICOM Editor",
-    //                ShelfDisplayHint.DockLeft,
-    //                delegate(IApplicationComponent component) { _component = null; });
-                
-    //        }
-    //    }
-
-    //}
 }

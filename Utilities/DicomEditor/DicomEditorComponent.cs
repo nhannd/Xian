@@ -312,36 +312,12 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         #endregion
 
-        //public IEnumerable<FileDicomImage> Files
-        public ICollection<FileDicomImage> Files
+        public IEnumerable<DicomDump> Dumps
         {
             set 
             {
                 _loadedDicomDumps.Clear();
-                DicomFileAccessor accessor = new DicomFileAccessor();
-                IEnumerator<FileDicomImage> enumerator = value.GetEnumerator();
-
-                BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext backgroundcontext)
-                    {
-                        int i = 0;
-                        
-                        while (enumerator.MoveNext())
-                        {
-                            if (backgroundcontext.CancelRequested)
-                            {
-                                backgroundcontext.Cancel();
-                                return;
-                            }
-                            _loadedDicomDumps.Add(accessor.LoadDicomDump(enumerator.Current));
-                            backgroundcontext.ReportProgress(new BackgroundTaskProgress((int) (( (double)(i + 1) / (double) value.Count) * 100.0), "Processing Files..."));
-                            i++;
-                        }
-
-                        backgroundcontext.Complete(null);
-                    }, false);
-
-                ProgressDialog.Show(task, this.Host.DesktopWindow, true);
-
+                _loadedDicomDumps.AddRange(value);
                 _position = 0;
 
                 this.UpdateComponent();

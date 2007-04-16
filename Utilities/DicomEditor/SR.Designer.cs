@@ -250,6 +250,15 @@ namespace ClearCanvas.Utilities.DicomEditor {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Processing Files....
+        /// </summary>
+        internal static string MessageDumpProgressBar {
+            get {
+                return ResourceManager.GetString("MessageDumpProgressBar", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This tool is only valid when a DICOM Image is selected..
         /// </summary>
         internal static string MessagePleaseSelectAnImage {

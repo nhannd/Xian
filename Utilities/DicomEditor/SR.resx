@@ -180,6 +180,9 @@
   <data name="MessageConfirmSaveAllFiles" xml:space="preserve">
     <value>The changes will be saved to *all* loaded files and the original files will be overwritten.  Are you sure you want to continue?</value>
   </data>
+  <data name="MessageDumpProgressBar" xml:space="preserve">
+    <value>Processing Files...</value>
+  </data>
   <data name="MessagePleaseSelectAnImage" xml:space="preserve">
     <value>This tool is only valid when a DICOM Image is selected.</value>
   </data>
