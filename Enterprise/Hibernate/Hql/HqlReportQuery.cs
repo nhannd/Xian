@@ -79,7 +79,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Hql
                 StringBuilder baseHql = new StringBuilder();
                 if (select.Length > 0)
                 {
-                    baseHql.Append("select distinct ");
+                    baseHql.Append("select ");
                     baseHql.Append(select.ToString());
                 }
 
