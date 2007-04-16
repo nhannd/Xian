@@ -56,34 +56,38 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         public void ConnectToClient()
         {
-            try
-            {
-                _serviceClient = new DiskspaceManagerServiceClient();
-                GetServerSettingResponse response = _serviceClient.GetServerSetting();
-                _serviceClient.Close();
+			BlockingOperation.Run(this.ConnectToClientInternal);
+			SignalPropertyChanged();
+		}
 
-                _driveName = response.DriveName;
-                _status = response.Status;
-                _lowWatermark = response.LowWatermark;
-                _highWatermark = response.HighWatermark;
-                _spaceUsed = response.UsedSpace;
-                _checkFrequency = response.CheckFrequency;
-                SignalPropertyChanged();
-            }
-            catch (Exception e)
-            {
-                _driveName = "";
-                _status = "";
-                _lowWatermark = 0.0F;
-                _highWatermark = 0.0F;
-                _spaceUsed = 0.0F;
-                _serviceClient = null;
-                _checkFrequency = 10;
+		private void ConnectToClientInternal()
+		{
+			try
+			{
+				_serviceClient = new DiskspaceManagerServiceClient();
+				GetServerSettingResponse response = _serviceClient.GetServerSetting();
+				_serviceClient.Close();
 
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+				_driveName = response.DriveName;
+				_status = response.Status;
+				_lowWatermark = response.LowWatermark;
+				_highWatermark = response.HighWatermark;
+				_spaceUsed = response.UsedSpace;
+				_checkFrequency = response.CheckFrequency;
+			}
+			catch
+			{
+				_driveName = "";
+				_status = "";
+				_lowWatermark = 0.0F;
+				_highWatermark = 0.0F;
+				_spaceUsed = 0.0F;
+				_serviceClient = null;
+				_checkFrequency = 10;
 
-        }
+				this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToRetrieveDiskspaceManagementSettings, MessageBoxActions.Ok);
+			}
+		}
 
         public override void Save()
         {
@@ -103,9 +107,9 @@ namespace ClearCanvas.ImageViewer.Configuration
                     _serviceClient.UpdateServerSetting(request);
                     _serviceClient.Close();
                 }
-                catch (Exception e)
+                catch
                 {
-                    ExceptionHandler.Report(e, SR.ExceptionFailedToUpdateServerSettings, this.Host.DesktopWindow);
+					this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToUpdateDiskspaceManagementSettings, MessageBoxActions.Ok);
                 }
             }
         }

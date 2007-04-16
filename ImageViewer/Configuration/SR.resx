@@ -123,13 +123,16 @@
   <data name="DiskspaceManagerConfiguration" xml:space="preserve">
     <value>Diskspace Manager</value>
   </data>
-  <data name="ExceptionFailedToRetrieveServerSettings" xml:space="preserve">
-    <value>Failed to retrieving Server Settings.  Make sure the DICOM Server is running.</value>
+  <data name="MessageFailedToRetrieveDiskspaceManagementSettings" xml:space="preserve">
+    <value>Failed to retrieve Diskspace Management settings.  Make sure the ClearCanvas Service is running.</value>
   </data>
-  <data name="ExceptionFailedToUpdateServerSettings" xml:space="preserve">
-    <value>Failed to update server settings.  Make sure the DICOM Server is running.</value>
+  <data name="MessageFailedToRetrieveServerSettings" xml:space="preserve">
+    <value>Failed to retrieve DICOM Server settings.  Make sure the ClearCanvas Service is running.</value>
   </data>
-  <data name="MessageRetrievingServerSettings" xml:space="preserve">
-    <value>Retrieving DICOM Server Settings...</value>
+  <data name="MessageFailedToUpdateDiskspaceManagementSettings" xml:space="preserve">
+    <value>Failed to update Diskspace Management settings.  Make sure the ClearCanvas Service is running.</value>
+  </data>
+  <data name="MessageFailedToUpdateServerSettings" xml:space="preserve">
+    <value>Failed to update DICOM Server settings.  Make sure the ClearCanvas Service is running.</value>
   </data>
 </root>
