@@ -111,22 +111,28 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         {
             HL7QueueItem queueItem = (HL7QueueItem)PersistenceContext.Load(request.QueueItemRef);
 
-            //TODO:  Refactor following region
-            #region To Be Refactored
-            
-            IHL7PreProcessor preProcessor = new HL7PreProcessor();
-            HL7QueueItem preProcessedQueueItem = preProcessor.ApplyAll(queueItem);
+            IList<string> identifiers;
+            string assigningAuthority;
 
-            IHL7Processor processor = HL7ProcessorFactory.GetProcessor(preProcessedQueueItem.Message);
-
-            IList<string> identifiers = processor.ListReferencedPatientIdentifiers();
-            if (identifiers.Count == 0)
+            try
             {
-                return null;
-            }
-            string assigningAuthority = processor.ReferencedPatientIdentifiersAssigningAuthority();
+                IHL7PreProcessor preProcessor = new HL7PreProcessor();
+                HL7QueueItem preProcessedQueueItem = preProcessor.ApplyAll(queueItem);
 
-            #endregion
+                IHL7Processor processor = HL7ProcessorFactory.GetProcessor(preProcessedQueueItem.Message);
+
+                identifiers = processor.ListReferencedPatientIdentifiers();
+                if (identifiers.Count == 0)
+                {
+                    return null;
+                }
+                
+                assigningAuthority = processor.ReferencedPatientIdentifiersAssigningAuthority();
+            }
+            catch (HL7ProcessingException e)
+            {
+                throw new RequestValidationException("HL7 processing error: " + e.Message);
+            }
 
             PatientProfileSearchCriteria criteria = new PatientProfileSearchCriteria();
             criteria.Mrn.Id.EqualTo(identifiers[0]);
@@ -162,10 +168,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
                 PersistenceContext.Lock(queueItem);
                 queueItem.SetComplete();
             }
-            catch (Exception e)
+            catch (HL7ProcessingException e)
             {
                 // Set the queue item's error description in a different persistence context
-                // Ensures queue item's status updates but domain object changes are rolled back
+                // Ensures queue item's status is updated but domain object changes are rolled back
                 using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update, PersistenceScopeOption.RequiresNew))
                 {
                     PersistenceScope.Current.Lock(queueItem);
@@ -173,7 +179,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
                     scope.Complete();
                 }
 
-                throw e;
+                throw new RequestValidationException("HL7 processing error: " + e.Message);
             }
 
             return new ProcessHL7QueueItemResponse();

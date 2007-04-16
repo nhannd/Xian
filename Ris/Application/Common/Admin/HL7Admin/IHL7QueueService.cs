@@ -26,6 +26,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         ListHL7QueueItemsResponse ListHL7QueueItems(ListHL7QueueItemsRequest request);
 
         /// <summary>
@@ -42,7 +43,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
-        [FaultContract(typeof(HL7ProcessingException))]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         ProcessHL7QueueItemResponse ProcessHL7QueueItem(ProcessHL7QueueItemRequest request);
 
         /// <summary>
@@ -51,6 +53,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         GetReferencedPatientResponse GetReferencedPatient(GetReferencedPatientRequest request);
     }
 }
