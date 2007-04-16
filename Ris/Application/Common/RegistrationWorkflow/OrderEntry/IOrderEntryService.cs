@@ -43,6 +43,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         PlaceOrderResponse PlaceOrder(PlaceOrderRequest request);
 
         /// <summary>
@@ -51,6 +52,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         GetOrdersWorkListResponse GetOrdersWorkList(GetOrdersWorkListRequest request);
     }
 }

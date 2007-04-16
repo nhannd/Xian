@@ -100,6 +100,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         public GetOrdersWorkListResponse GetOrdersWorkList(GetOrdersWorkListRequest request)
         {
             //TODO: remove this after adding the criteria into GetOrdersWorkListRequest
+            //TODO: add validation to criteria that can throw a RequestValidationException
             ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
 
             OrderEntryAssembler assembler = new OrderEntryAssembler();
@@ -149,6 +150,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
             string accNum = broker.GetNextAccessionNumber();
+
+            // TODO: add validation and throw RequestValidationException if necessary
 
             Order order = Order.NewOrder(
                     accNum, 
