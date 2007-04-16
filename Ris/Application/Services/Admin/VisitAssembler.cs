@@ -90,6 +90,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
         public void UpdateVisit(Visit visit, VisitDetail detail, IPersistenceContext context)
         {
+            // TODO: add validation and throw RequestValidationException as necessary
+
             visit.Patient = (Patient)context.Load(detail.Patient, EntityLoadFlags.Proxy);
             visit.VisitNumber.Id = detail.VisitNumberId;
             visit.VisitNumber.AssigningAuthority = detail.VisitNumberAssigningAuthority;

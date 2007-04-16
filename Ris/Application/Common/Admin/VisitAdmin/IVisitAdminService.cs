@@ -39,6 +39,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         SaveAdminEditsForVisitResponse SaveAdminEditsForVisit(SaveAdminEditsForVisitRequest request);
 
         /// <summary>
@@ -47,6 +49,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
         /// <param name="request"></param>
         /// <returns></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         AdminAddVisitResponse AdminAddVisit(AdminAddVisitRequest request);
     }
 }
