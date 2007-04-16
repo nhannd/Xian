@@ -331,26 +331,22 @@ namespace ClearCanvas.Ris.Client.Adt
         public string GetAlertTooltip(AlertNotificationDetail detail)
         {
             string alertTooltip = "";
-            string patientName = String.Format("{0}. {1}", _worklistPreview.Name.GivenName.Substring(0, 1), _worklistPreview.Name.FamilyName);
+            string patientName = String.Format("{0}. {1}"
+                , _worklistPreview.Name.GivenName.Substring(0, 1)
+                , _worklistPreview.Name.FamilyName);
 
             switch (detail.Type)
             {
                 case "Note Alert":
-                    alertTooltip = String.Format("{0} has high severity notes:", patientName);
-                    foreach (string reason in detail.Reasons)
-                    {
-                        alertTooltip = String.Format("{0}\r\n{1}", alertTooltip, reason);
-                    }
+                    alertTooltip = String.Format("{0} has high severity notes: \r\n{1}"
+                        , patientName
+                        , StringUtilities.Combine<string>(detail.Reasons, "\r\n"));
                     break;
-
                 case "Language Alert":
-                    alertTooltip = String.Format("{0} speaks:", patientName);
-                    foreach (string reason in detail.Reasons)
-                    {
-                        alertTooltip = String.Format("{0} {1}", alertTooltip, reason);
-                    }
+                    alertTooltip = String.Format("{0} speaks: {1}"
+                        , patientName
+                        , StringUtilities.Combine<string>(detail.Reasons, ", "));
                     break;
-
                 default:
                     break;
             }
