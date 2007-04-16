@@ -7,6 +7,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     public interface IModalityWorkflowService
     {
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         GetWorklistResponse GetWorklist(GetWorklistRequest request);
 
         [OperationContract]
@@ -19,6 +20,8 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
 
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         void ExecuteOperation(ExecuteOperationRequest request);
     }
 }

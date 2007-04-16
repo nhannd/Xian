@@ -46,7 +46,10 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
     
         public ModalityProcedureStepSearchCriteria CreateSearchCriteria(ModalityWorklistSearchData criteria)
         {
+            // TODO: add validation and throw RequestValidationException if necessary
+
             ModalityProcedureStepSearchCriteria mpsSearchCriteria = new ModalityProcedureStepSearchCriteria();
+
             ActivityStatus status = (ActivityStatus)Enum.Parse(typeof(ActivityStatus), criteria.ActivityStatusCode);
             mpsSearchCriteria.State.EqualTo(status);
 
