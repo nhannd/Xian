@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
                 _diskspaceManagerData = new DiskspaceManagerData();
                 if (_diskspaceManagerData.DriveInfoList != null && _diskspaceManagerData.DriveInfoList.Count > 0)
                 {
-                    if (!_diskspaceManagerData.DriveInfoList[0].DriveName.Equals(DiskspaceManagerSettings.Instance.DriveName))
+                    if (!_diskspaceManagerData.DriveInfoList[0].DriveName.Equals(DiskspaceManagerSettings.Instance.DriveName, StringComparison.CurrentCultureIgnoreCase))
                     {
                         DiskspaceManagerSettings.Instance.DriveName = _diskspaceManagerData.DriveInfoList[0].DriveName;
                         DiskspaceManagerSettings.Save();
@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
         {
             try
             {
-                _diskspaceManagerData.DeleteStudyInDBCompletedEvent -= DeleteStudyHandler;
+                _diskspaceManagerData.DeleteStudyInDBCompletedEvent -= DeleteStudyCompletedHandler;
                 _diskspaceManagerData.OrderedStudyListReadyEvent -= ValidateStudyHandler;
                 _stopSignal.Set();
                 _checkSignal.Reset();
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
         private void StartDiskspaceManager()
         {
             _diskspaceManagerData.OrderedStudyListReadyEvent += ValidateStudyHandler;
-            _diskspaceManagerData.DeleteStudyInDBCompletedEvent += DeleteStudyHandler;
+            _diskspaceManagerData.DeleteStudyInDBCompletedEvent += DeleteStudyCompletedHandler;
             
             while (!_stopSignal.WaitOne(1000, true))
             {
@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             }
             foreach (DMDriveInfo dmDriveInfo in _diskspaceManagerData.DriveInfoList)
             {
-                if (dmDriveInfo.DriveName.StartsWith(DiskspaceManagerSettings.Instance.DriveName))
+                if (dmDriveInfo.DriveName.StartsWith(DiskspaceManagerSettings.Instance.DriveName, StringComparison.CurrentCultureIgnoreCase))
                 {
                     if (dmDriveInfo.LowWatermark != DiskspaceManagerSettings.Instance.LowWatermark)
                         dmDriveInfo.LowWatermark = DiskspaceManagerSettings.Instance.LowWatermark;
@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
                 drive.Get();
                 dmDriveInfo.DriveSize = long.Parse(drive["Size"].ToString());
                 dmDriveInfo.UsedSpace = dmDriveInfo.DriveSize - long.Parse(drive["FreeSpace"].ToString());
-                if (dmDriveInfo.DriveName.StartsWith(DiskspaceManagerSettings.Instance.DriveName))
+                if (dmDriveInfo.DriveName.StartsWith(DiskspaceManagerSettings.Instance.DriveName, StringComparison.CurrentCultureIgnoreCase))
                 {
                     if (dmDriveInfo.UsedSpace != DiskspaceManagerSettings.Instance.UsedSpace)
                     {
@@ -166,15 +166,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
                     }
                 }
                 // debug data
-                //Platform.Log("    Checking diskspace on drive (" + dmDriveInfo.DriveName + ") : " + dmDriveInfo.UsedSpace + "/" + dmDriveInfo.DriveSize
+                // Platform.Log("    Checking diskspace on drive (" + dmDriveInfo.DriveName + ") : " + dmDriveInfo.UsedSpace + "/" + dmDriveInfo.DriveSize
                 //    + " (" + dmDriveInfo.UsedSpacePercentage + "%) (Watermark: " + dmDriveInfo.LowWatermark + " ~ " + dmDriveInfo.HighWatermark + ")");
             }
 
         }
 
-        private void DeleteStudyHandler(object sender, EventArgs args)
+        private void DeleteStudyCompletedHandler(object sender, EventArgs args)
         {
-            DeleteStudyOnDrive();
             _diskspaceManagerData.IsProcessing = false;
         }
 
@@ -182,69 +181,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
         {
             ValidateOrderedStudyList();
             _diskspaceManagerData.FireDeleteStudyInDBRequired();
-        }
-
-        private void DeleteStudyOnDrive()
-        {
-            for (int i = 0; i < _diskspaceManagerData.DriveInfoList.Count; i++)
-            {
-                if (_diskspaceManagerData.DriveInfoList[i].ReachLowWaterMark)
-                    continue;
-                int deletedNumber = 0;
-                long deletedSpace = 0;
-                string fileName = "";
-                foreach (DMStudyItem studyItem in _diskspaceManagerData.OrderedStudyList)
-                {
-                    if (studyItem.DriveID != i || !studyItem.Status.Equals(DiskspaceManagerStatus.DeletedFromDatabase))
-                        continue;
-                    bool isSuccessful = true;
-                    foreach (DMSopItem sopItem in studyItem.SopItemList)
-                    {
-                        try
-                        {
-                            fileName = sopItem.LocationUri;
-                            if (!File.Exists(fileName))
-                            {
-                                Platform.Log("    Studies deleted on disk warning: file does not exist (" + fileName + ")");
-                            }
-                            else
-                                File.Delete(fileName);
-                        }
-                        catch (Exception e)
-                        {
-                            Platform.Log(e, LogLevel.Error);
-                            isSuccessful = false;
-                        }
-                    }
-                    if (isSuccessful)
-                    {
-                        string studyFolder = fileName.Substring(0, fileName.IndexOf(studyItem.StudyInstanceUID) + studyItem.StudyInstanceUID.Length);
-                        if (Directory.Exists(studyFolder))
-                        {
-                            DirectoryInfo dinfo = new DirectoryInfo(studyFolder);
-                            if (dinfo.GetFiles("*", SearchOption.AllDirectories).Length <= 0)
-                                Directory.Delete(studyFolder, true);
-                        }
-                        deletedNumber += 1;
-                        deletedSpace += studyItem.UsedSpace;
-                        studyItem.Status = DiskspaceManagerStatus.DeletedFromDrive;
-                        Platform.Log("    Studies deleted on drive " + _diskspaceManagerData.DriveInfoList[i].DriveName + " -> Study " + deletedNumber + ") DicomFiles: " + studyItem.SopItemList.Count + "; UsedSpace: " + studyItem.UsedSpace
-                            + "; StudyInstanceUID: " + studyItem.StudyInstanceUID + "; StudyFolder: " + studyFolder);
-                    }
-                }
-                _diskspaceManagerData.DriveInfoList[i].UsedSpace -= deletedSpace;
-                if (deletedNumber > 0)
-                {
-                    Platform.Log("    Total studies deleted on drive " + _diskspaceManagerData.DriveInfoList[i].DriveName + " -> Deleted Studies: " + deletedNumber + "; Deleted Space: " + deletedSpace
-                        + " (Current Used Space: " + _diskspaceManagerData.DriveInfoList[i].UsedSpacePercentage + "%) (Watermark: " + _diskspaceManagerData.DriveInfoList[i].LowWatermark + " ~ " + _diskspaceManagerData.DriveInfoList[i].HighWatermark + ")");
-                    if (_diskspaceManagerData.DriveInfoList[i].DriveName.StartsWith(DiskspaceManagerSettings.Instance.DriveName))
-                    {
-                        DateTime t = new DateTime();
-                        DiskspaceManagerSettings.Instance.Status = t.ToLongTimeString() + ") Deleted Studies: " + deletedNumber + "; Deleted Space: " + deletedSpace;
-                        DiskspaceManagerSettings.Save();
-                    }
-                }
-            }
         }
 
         private void ValidateOrderedStudyList()
@@ -260,8 +196,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             {
                 if (!dmDriveInfo.ReachHighWaterMark)
                     continue;
-                //Platform.Log("    Validation for drive " + dmDriveInfo.DriveName + " Studies found: " + dmDriveInfo.DeletedStudyNumber + "; Used Space: " + dmDriveInfo.DeletedFileSpace
-                //    + " (" + dmDriveInfo.UsedSpacePercentage + "%) (Watermark: " + dmDriveInfo.LowWatermark + " ~ " + dmDriveInfo.HighWatermark + ")");
+                Platform.Log("    Validation for drive " + dmDriveInfo.DriveName + " Studies found: " + dmDriveInfo.DeletedStudyNumber + "; Used Space: " + dmDriveInfo.DeletedFileSpace
+                    + " (" + dmDriveInfo.UsedSpacePercentage + "%) (Watermark: " + dmDriveInfo.LowWatermark + " ~ " + dmDriveInfo.HighWatermark + ")");
             }
             return;
         }
@@ -276,7 +212,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
                     studyItem.DriveID = -1;
                     for (int i = 0; i < _diskspaceManagerData.DriveInfoList.Count; i++)
                     {
-                        if (sopItem.LocationUri.StartsWith(_diskspaceManagerData.DriveInfoList[i].DriveName))
+                        if (sopItem.LocationUri.StartsWith(_diskspaceManagerData.DriveInfoList[i].DriveName, StringComparison.CurrentCultureIgnoreCase))
                         {
                             if (_diskspaceManagerData.DriveInfoList[i].ReachHighWaterMark)
                                 studyItem.DriveID = i;

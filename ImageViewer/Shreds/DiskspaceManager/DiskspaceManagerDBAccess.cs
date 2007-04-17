@@ -93,6 +93,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
         public void DeleteStudyInDB()
         {
             int deletedNumber = 0;
+            long deletedSpace = 0;
             foreach (DMStudyItem studyItem in _diskspaceManagerData.OrderedStudyList)
             {
                 if (!studyItem.Status.Equals(DiskspaceManagerStatus.ExistsOnDrive))
@@ -102,8 +103,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
                 {
                     DataAccessLayer.GetIDataStoreWriter().RemoveStudy(study);
                     deletedNumber += 1;
+                    deletedSpace += studyItem.UsedSpace;
                     studyItem.Status = DiskspaceManagerStatus.DeletedFromDatabase;
-                    Platform.Log("    Study deleted in DB " + deletedNumber + ") StudyInstanceUid: " + studyItem.StudyInstanceUID);
+                    string fileName = studyItem.SopItemList[0].LocationUri;
+                    string studyFolder = fileName.Substring(0, fileName.IndexOf(studyItem.StudyInstanceUID) + studyItem.StudyInstanceUID.Length);
+                    Platform.Log("    Deleted study " + deletedNumber + ") DicomFiles: " + studyItem.SopItemList.Count + "; UsedSpace: "
+                        + studyItem.UsedSpace + "; StudyInstanceUid: " + studyItem.StudyInstanceUID + "; StudyFolder: " + studyFolder);
                 }
                 catch (Exception e)
                 {
@@ -111,7 +116,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
                 }
             }
             if (deletedNumber > 0)
-                Platform.Log("    Total studies deleted in DB: " + deletedNumber);
+                Platform.Log("    Total studies deleted: " + deletedNumber + "; Deleted Space: " + deletedSpace);
             return;
         }
 
