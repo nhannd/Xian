@@ -7,7 +7,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
 {
     [DataContract]
-    public class ListAllStaffsRequest : DataContractBase
+    public class ListAllStaffsRequest : PagedDataContractBase
     {
     }
 }

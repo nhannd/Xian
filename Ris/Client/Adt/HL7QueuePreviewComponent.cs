@@ -183,8 +183,8 @@ namespace ClearCanvas.Ris.Client.Adt
                         delegate(IHL7QueueService service)
                         {
                             ListHL7QueueItemsRequest listRequest = _listRequest;
-                            listRequest.FirstRow = firstRow;
-                            listRequest.MaxRows = maxRows;
+                            listRequest.PageRequest.FirstRow = firstRow;
+                            listRequest.PageRequest.MaxRows = maxRows;
 
                             listResponse = service.ListHL7QueueItems(listRequest);
                         });
@@ -423,7 +423,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void ShowAllItems()
         {
-            ListHL7QueueItemsRequest request = new ListHL7QueueItemsRequest(0, 50);
+            ListHL7QueueItemsRequest request = new ListHL7QueueItemsRequest();
             UpdateTableData(request);
 
             _refreshFiltered = false;
@@ -431,7 +431,7 @@ namespace ClearCanvas.Ris.Client.Adt
         
         public void ShowFilteredItems()
         {
-            ListHL7QueueItemsRequest request = new ListHL7QueueItemsRequest(0, 50);
+            ListHL7QueueItemsRequest request = new ListHL7QueueItemsRequest();
 
             request.Direction = _directionChecked ? _direction : null;
             request.Peer = _peerChecked ? _peer : null;

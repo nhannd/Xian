@@ -23,7 +23,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         [ReadOperation]
         public FindStaffsResponse FindStaffs(FindStaffsRequest request)
         {
-            //Note: FamilyName should never be null because the null reference check is done by WCF using the DataMember IsRequired attribute
+            if (string.IsNullOrEmpty(request.FamilyName))
+            {
+                throw new RequestValidationException(SR.ExceptionFamilyNameMissing);
+            }
+
             StaffSearchCriteria criteria = new StaffSearchCriteria();
             criteria.Name.FamilyName.Like(StringCriteriaWithWildcardAppendedTo(request.FamilyName));
             if (request.GivenName != null)
@@ -49,10 +53,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         [ReadOperation]
         public ListAllStaffsResponse ListAllStaffs(ListAllStaffsRequest request)
         {
+            StaffSearchCriteria criteria = new StaffSearchCriteria();
+            SearchResultPage page = new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows);
+
             StaffAssembler assembler = new StaffAssembler();
             return new ListAllStaffsResponse(
                 CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
-                    PersistenceContext.GetBroker<IStaffBroker>().FindAll(),
+                    PersistenceContext.GetBroker<IStaffBroker>().Find(criteria, page),
                     delegate(Staff s)
                     {
                         return assembler.CreateStaffSummary(s);

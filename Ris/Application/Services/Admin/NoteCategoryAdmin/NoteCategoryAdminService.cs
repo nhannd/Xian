@@ -27,10 +27,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         [ReadOperation]
         public ListAllNoteCategoriesResponse ListAllNoteCategories(ListAllNoteCategoriesRequest request)
         {
+            NoteCategorySearchCriteria criteria = new NoteCategorySearchCriteria();
+            SearchResultPage page = new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows);
+
             NoteCategoryAssembler assembler = new NoteCategoryAssembler();
             return new ListAllNoteCategoriesResponse(
                 CollectionUtils.Map<NoteCategory, NoteCategorySummary, List<NoteCategorySummary>>(
-                    PersistenceContext.GetBroker<INoteCategoryBroker>().FindAll(),
+                    PersistenceContext.GetBroker<INoteCategoryBroker>().Find(criteria, page),
                     delegate(NoteCategory category)
                     {
                         return assembler.CreateNoteCategorySummary(category, this.PersistenceContext);

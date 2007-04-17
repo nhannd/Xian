@@ -7,15 +7,14 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Admin.LocationAdmin
 {
     [DataContract]
-    public class ListAllLocationsRequest : DataContractBase
+    public class ListAllLocationsRequest : PagedDataContractBase
     {
         public ListAllLocationsRequest(bool activeOnly)
         {
-            this.ActiveOnly = activeOnly; 
+            this.ActiveOnly = activeOnly;
         }
 
         [DataMember]
         public bool ActiveOnly;
-
     }
 }

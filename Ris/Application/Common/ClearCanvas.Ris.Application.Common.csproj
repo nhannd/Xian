@@ -209,6 +209,8 @@
     <Compile Include="ModalityWorkflow\ModalityWorklistPreview.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistSearchData.cs" />
     <Compile Include="NoteDetail.cs" />
+    <Compile Include="PagedDataContractBase.cs" />
+    <Compile Include="PageRequestDetail.cs" />
     <Compile Include="PatientReconciliation\IPatientReconciliationService.cs" />
     <Compile Include="PatientReconciliation\ListPatientReconciliationMatchesRequest.cs" />
     <Compile Include="PatientReconciliation\ListPatientReconciliationMatchesResponse.cs" />

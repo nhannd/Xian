@@ -6,16 +6,10 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
 {
     [DataContract]
-    public class ListHL7QueueItemsRequest : DataContractBase
+    public class ListHL7QueueItemsRequest : PagedDataContractBase
     {
         public ListHL7QueueItemsRequest()
         {
-        }
-
-        public ListHL7QueueItemsRequest(int firstRow, int maxRows)
-        {
-            this.FirstRow = firstRow;
-            this.MaxRows = maxRows;
         }
 
         [DataMember]
@@ -47,11 +41,5 @@ namespace ClearCanvas.Ris.Application.Common.Admin.HL7Admin
 
         [DataMember]
         public EnumValueInfo MessageFormat;
-
-        [DataMember]
-        public int FirstRow;
-
-        [DataMember]
-        public int MaxRows;
     }
 }

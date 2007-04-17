@@ -7,6 +7,7 @@ using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
 {
@@ -19,11 +20,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         [ReadOperation]
         public ListUsersResponse ListUsers(ListUsersRequest request)
         {
-            // ignore request
+            UserSearchCriteria criteria = new UserSearchCriteria();
+            SearchResultPage page = new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows);
 
             UserAssembler assembler = new UserAssembler();
             List<UserSummary> userSummaries = CollectionUtils.Map<User, UserSummary, List<UserSummary>>(
-                PersistenceContext.GetBroker<IUserBroker>().FindAll(),
+                PersistenceContext.GetBroker<IUserBroker>().Find(criteria, page),
                 delegate(User user)
                 {
                     return assembler.GetUserSummary(user);
@@ -42,9 +44,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         [ReadOperation]
         public ListAuthorityGroupsResponse ListAuthorityGroups(ListAuthorityGroupsRequest request)
         {
+            AuthorityGroupSearchCriteria criteria = new AuthorityGroupSearchCriteria();
+            SearchResultPage page = new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows);
+
             AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
             List<AuthorityGroupSummary> authorityGroups = CollectionUtils.Map<AuthorityGroup, AuthorityGroupSummary, List<AuthorityGroupSummary>>(
-                PersistenceContext.GetBroker<IAuthorityGroupBroker>().FindAll(),
+                PersistenceContext.GetBroker<IAuthorityGroupBroker>().Find(criteria, page),
                 delegate(AuthorityGroup authorityGroup)
                 {
                     return assembler.GetAuthorityGroupSummary(authorityGroup);

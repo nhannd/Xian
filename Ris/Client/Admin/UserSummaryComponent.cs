@@ -67,6 +67,11 @@ namespace ClearCanvas.Ris.Client.Admin
         private ClickAction _addUserAction;
         private ClickAction _editUserAction;
 
+        private IPagingController<UserSummary> _pagingController;
+        private PagingActionModel<UserSummary> _pagingActionHandler;
+
+        private ListUsersRequest _listRequest;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -83,7 +88,42 @@ namespace ClearCanvas.Ris.Client.Admin
             _userActionHandler.InsertAction(_addUserAction);
             _userActionHandler.InsertAction(_editUserAction);
 
+            InitialisePaging();
+            _userActionHandler.Merge(_pagingActionHandler);
+
             base.Start();
+        }
+
+        private void InitialisePaging()
+        {
+            _pagingController = new PagingController<UserSummary>(
+                delegate(int firstRow, int maxRows)
+                {
+                    ListUsersResponse listResponse = null;
+
+                    try
+                    {
+                        Platform.GetService<IAuthenticationAdminService>(
+                            delegate(IAuthenticationAdminService service)
+                            {
+                                ListUsersRequest listRequest = _listRequest;
+                                listRequest.PageRequest.FirstRow = firstRow;
+                                listRequest.PageRequest.MaxRows = maxRows;
+
+                                listResponse = service.ListUsers(listRequest);
+                            });
+
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                    }
+
+                    return listResponse.Users;
+                }
+            );
+
+            _pagingActionHandler = new PagingActionModel<UserSummary>(_pagingController, _userTable);
         }
 
         public override void Stop()
@@ -133,24 +173,10 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void LoadUserTable()
         {
-            try
-            {
-                Platform.GetService<IAuthenticationAdminService>(
-                    delegate(IAuthenticationAdminService service)
-                    {
-                        ListUsersResponse response = service.ListUsers(new ListUsersRequest());
-                        if (response.Users != null)
-                        {
-                            _userTable.Items.Clear();
-                            _userTable.Items.AddRange(response.Users);
-                        }
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            _listRequest = new ListUsersRequest();
 
+            _userTable.Items.Clear();
+            _userTable.Items.AddRange(_pagingController.GetFirst());
         }
 
         #endregion

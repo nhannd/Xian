@@ -7,7 +7,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin
 {
     [DataContract]
-    public class ListAllFacilitiesRequest : DataContractBase
+    public class ListAllFacilitiesRequest : PagedDataContractBase
     {
     }
 }

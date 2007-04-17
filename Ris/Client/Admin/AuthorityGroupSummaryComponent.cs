@@ -67,6 +67,11 @@ namespace ClearCanvas.Ris.Client.Admin
         private ClickAction _addAuthorityGroupAction;
         private ClickAction _editAuthorityGroupAction;
 
+        private IPagingController<AuthorityGroupSummary> _pagingController;
+        private PagingActionModel<AuthorityGroupSummary> _pagingActionHandler;
+
+        private ListAuthorityGroupsRequest _listRequest;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -83,7 +88,34 @@ namespace ClearCanvas.Ris.Client.Admin
             _authorityGroupActionHandler.InsertAction(_addAuthorityGroupAction);
             _authorityGroupActionHandler.InsertAction(_editAuthorityGroupAction);
 
+            InitialisePaging();
+            _authorityGroupActionHandler.Merge(_pagingActionHandler);
+
             base.Start();
+        }
+
+        private void InitialisePaging()
+        {
+            _pagingController = new PagingController<AuthorityGroupSummary>(
+                delegate(int firstRow, int maxRows)
+                {
+                    ListAuthorityGroupsResponse listResponse = null;
+
+                    Platform.GetService<IAuthenticationAdminService>(
+                        delegate(IAuthenticationAdminService service)
+                        {
+                            ListAuthorityGroupsRequest listRequest = _listRequest;
+                            listRequest.PageRequest.FirstRow = firstRow;
+                            listRequest.PageRequest.MaxRows = maxRows;
+
+                            listResponse = service.ListAuthorityGroups(listRequest);
+                        });
+
+                    return listResponse.AuthorityGroups;
+                }
+            );
+
+            _pagingActionHandler = new PagingActionModel<AuthorityGroupSummary>(_pagingController, _authorityGroupTable);
         }
 
         public override void Stop()
@@ -119,25 +151,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void LoadAuthorityGroupTable()
         {
-            try
-            {
-                Platform.GetService<IAuthenticationAdminService>(
-                    delegate(IAuthenticationAdminService service)
-                    {
-                        ListAuthorityGroupsResponse response = service.ListAuthorityGroups(new ListAuthorityGroupsRequest());
-                        if (response.AuthorityGroups != null)
-                        {
-                            _authorityGroupTable.Items.Clear();
-                            _authorityGroupTable.Items.AddRange(response.AuthorityGroups);
-                        }
-                    });
-
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                throw;
-            }
+            _listRequest = new ListAuthorityGroupsRequest();
+            _authorityGroupTable.Items.Clear();
+            _authorityGroupTable.Items.AddRange(_pagingController.GetFirst());
         }
 
         public void AddAuthorityGroup()

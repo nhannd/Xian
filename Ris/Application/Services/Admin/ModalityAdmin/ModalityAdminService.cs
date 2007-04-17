@@ -23,10 +23,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
         [ReadOperation]
         public ListAllModalitiesResponse ListAllModalities(ListAllModalitiesRequest request)
         {
+            ModalitySearchCriteria criteria = new ModalitySearchCriteria();
+            SearchResultPage page = new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows);
+
             ModalityAssembler assembler = new ModalityAssembler();
             return new ListAllModalitiesResponse(
                 CollectionUtils.Map<Modality, ModalitySummary, List<ModalitySummary>>(
-                    PersistenceContext.GetBroker<IModalityBroker>().FindAll(),
+                    PersistenceContext.GetBroker<IModalityBroker>().Find(criteria, page),
                     delegate(Modality m)
                     {
                         return assembler.CreateModalitySummary(m);

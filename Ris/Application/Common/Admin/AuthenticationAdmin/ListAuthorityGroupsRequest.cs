@@ -6,7 +6,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin
 {
     [DataContract]
-    public class ListAuthorityGroupsRequest : DataContractBase
+    public class ListAuthorityGroupsRequest : PagedDataContractBase
     {
         public ListAuthorityGroupsRequest()
         {

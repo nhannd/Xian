@@ -144,4 +144,7 @@
   <data name="ExceptionReconciliationRequiresAtLeast2Patients" xml:space="preserve">
     <value>At least 2 patients must be specified for reconciliation</value>
   </data>
+  <data name="ExceptionFamilyNameMissing" xml:space="preserve">
+    <value>A family name must be provided</value>
+  </data>
 </root>

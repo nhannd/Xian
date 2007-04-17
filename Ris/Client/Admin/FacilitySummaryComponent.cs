@@ -62,6 +62,11 @@ namespace ClearCanvas.Ris.Client.Admin
         private FacilityTable _facilityTable;
         private CrudActionModel _facilityActionHandler;
 
+        private PagingController<FacilitySummary> _pagingController;
+        private PagingActionModel<FacilitySummary> _pagingActionHandler;
+
+        private ListAllFacilitiesRequest _listRequest;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -71,23 +76,50 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            try
-            {
-                //_facilityAdminService.FacilityChanged += FacilityChangedEventHandler;
+            //_facilityAdminService.FacilityChanged += FacilityChangedEventHandler;
 
-                _facilityTable = new FacilityTable();
-                _facilityActionHandler = new CrudActionModel();
-                _facilityActionHandler.Add.SetClickHandler(AddFacility);
-                _facilityActionHandler.Edit.SetClickHandler(UpdateSelectedFacility);
-                _facilityActionHandler.Add.Enabled = true;
-                _facilityActionHandler.Delete.Enabled = false;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            _facilityTable = new FacilityTable();
+            _facilityActionHandler = new CrudActionModel();
+            _facilityActionHandler.Add.SetClickHandler(AddFacility);
+            _facilityActionHandler.Edit.SetClickHandler(UpdateSelectedFacility);
+            _facilityActionHandler.Add.Enabled = true;
+            _facilityActionHandler.Delete.Enabled = false;
+
+            InitialisePaging();
+            _facilityActionHandler.Merge(_pagingActionHandler);
 
             base.Start();
+        }
+
+        private void InitialisePaging()
+        {
+            _pagingController = new PagingController<FacilitySummary>(
+                delegate(int firstRow, int maxRows)
+                {
+                    ListAllFacilitiesResponse listResponse = null;
+
+                    try
+                    {
+                        Platform.GetService<IFacilityAdminService>(
+                            delegate(IFacilityAdminService service)
+                            {
+                                ListAllFacilitiesRequest listRequest = _listRequest;
+                                listRequest.PageRequest.FirstRow = firstRow;
+                                listRequest.PageRequest.MaxRows = maxRows;
+
+                                listResponse = service.ListAllFacilities(listRequest);
+                            });
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                    }
+
+                    return listResponse.Facilities;
+                }
+            );
+
+            _pagingActionHandler = new PagingActionModel<FacilitySummary>(_pagingController, _facilityTable);
         }
 
         public override void Stop()
@@ -166,23 +198,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void LoadFacilityTable()
         {
-            try
-            {
-                Platform.GetService<IFacilityAdminService>(
-                    delegate(IFacilityAdminService service)
-                    {
-                        ListAllFacilitiesResponse response = service.ListAllFacilities(new ListAllFacilitiesRequest());
-                        if (response.Facilities != null)
-                        {
-                            _facilityTable.Items.Clear();
-                            _facilityTable.Items.AddRange(response.Facilities);
-                        }
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            _listRequest = new ListAllFacilitiesRequest();
+            _facilityTable.Items.Clear();
+            _facilityTable.Items.AddRange(_pagingController.GetFirst());
         }
 
         #endregion

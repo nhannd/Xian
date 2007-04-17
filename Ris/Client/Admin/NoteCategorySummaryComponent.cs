@@ -62,6 +62,11 @@ namespace ClearCanvas.Ris.Client.Admin
         private NoteCategoryTable _noteCategoryTable;
         private CrudActionModel _noteCategoryActionHandler;
 
+        private PagingController<NoteCategorySummary> _pagingController;
+        private PagingActionModel<NoteCategorySummary> _pagingActionHandler;
+
+        private ListAllNoteCategoriesRequest _listRequest;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -80,7 +85,41 @@ namespace ClearCanvas.Ris.Client.Admin
             _noteCategoryActionHandler.Add.Enabled = true;
             _noteCategoryActionHandler.Delete.Enabled = false;
 
+            InitialisePaging();
+            _noteCategoryActionHandler.Merge(_pagingActionHandler);
+
             base.Start();
+        }
+
+        private void InitialisePaging()
+        {
+            _pagingController = new PagingController<NoteCategorySummary>(
+                delegate(int firstRow, int maxRows)
+                {
+                    ListAllNoteCategoriesResponse listResponse = null;
+
+                    try
+                    {
+                        Platform.GetService<INoteCategoryAdminService>(
+                            delegate(INoteCategoryAdminService service)
+                            {
+                                ListAllNoteCategoriesRequest listRequest = _listRequest;
+                                listRequest.PageRequest.FirstRow = firstRow;
+                                listRequest.PageRequest.MaxRows = maxRows;
+
+                                listResponse = service.ListAllNoteCategories(listRequest);
+                            });
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                    }
+
+                    return listResponse.NoteCategories;
+                }
+            );
+
+            _pagingActionHandler = new PagingActionModel<NoteCategorySummary>(_pagingController, _noteCategoryTable);
         }
 
         public override void Stop()
@@ -136,23 +175,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void LoadNoteCategoryTable()
         {
-            try
-            {
-                Platform.GetService<INoteCategoryAdminService>(
-                    delegate(INoteCategoryAdminService service)
-                    {
-                        ListAllNoteCategoriesResponse response = service.ListAllNoteCategories(new ListAllNoteCategoriesRequest());
-                        if (response.NoteCategories != null)
-                        {
-                            _noteCategoryTable.Items.Clear();
-                            _noteCategoryTable.Items.AddRange(response.NoteCategories);
-                        }
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            _listRequest = new ListAllNoteCategoriesRequest();
+            _noteCategoryTable.Items.Clear();
+            _noteCategoryTable.Items.AddRange(_pagingController.GetFirst());
         }
 
         #endregion

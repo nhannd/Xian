@@ -67,6 +67,11 @@ namespace ClearCanvas.Ris.Client.Admin
         private ClickAction _addPractitionerAction;
         private ClickAction _editAction;
 
+        private PagingController<StaffSummary> _pagingController;
+        private PagingActionModel<StaffSummary> _pagingActionHandler;
+
+        private ListAllStaffsRequest _listRequest;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -87,8 +92,42 @@ namespace ClearCanvas.Ris.Client.Admin
             _staffActionHandler.InsertAction(_addPractitionerAction);
             _staffActionHandler.InsertAction(_addStaffAction);
             _staffActionHandler.InsertAction(_editAction);
-            
+
+            InitialisePaging();
+            _staffActionHandler.Merge(_pagingActionHandler);
+
             base.Start();
+        }
+
+        private void InitialisePaging()
+        {
+            _pagingController = new PagingController<StaffSummary>(
+                delegate(int firstRow, int maxRows)
+                {
+                    ListAllStaffsResponse listResponse = null;
+
+                    try
+                    {
+                        Platform.GetService<IStaffAdminService>(
+                            delegate(IStaffAdminService service)
+                            {
+                                ListAllStaffsRequest listRequest = _listRequest;
+                                listRequest.PageRequest.FirstRow = firstRow;
+                                listRequest.PageRequest.MaxRows = maxRows;
+
+                                listResponse = service.ListAllStaffs(listRequest);
+                            });
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                    }
+
+                    return listResponse.Staffs;
+                }
+            );
+
+            _pagingActionHandler = new PagingActionModel<StaffSummary>(_pagingController, _staffTable);
         }
 
         public override void Stop()
@@ -246,23 +285,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void LoadStaffTable()
         {
-            try
-            {
-                Platform.GetService<IStaffAdminService>(
-                    delegate(IStaffAdminService service)
-                    {
-                        ListAllStaffsResponse response = service.ListAllStaffs(new ListAllStaffsRequest());
-                        if (response.Staffs != null)
-                        {
-                            _staffTable.Items.Clear();
-                            _staffTable.Items.AddRange(response.Staffs);
-                        }
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            _listRequest = new ListAllStaffsRequest();
+            _staffTable.Items.Clear();
+            _staffTable.Items.AddRange(_pagingController.GetFirst());
         }
 
         #endregion

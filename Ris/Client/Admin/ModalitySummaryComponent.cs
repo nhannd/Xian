@@ -62,6 +62,11 @@ namespace ClearCanvas.Ris.Client.Admin
         private ModalityTable _modalityTable;
         private CrudActionModel _modalityActionHandler;
 
+        private PagingController<ModalitySummary> _pagingController;
+        private PagingActionModel<ModalitySummary> _pagingActionHandler;
+
+        private ListAllModalitiesRequest _listRequest;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -80,7 +85,41 @@ namespace ClearCanvas.Ris.Client.Admin
             _modalityActionHandler.Add.Enabled = true;
             _modalityActionHandler.Delete.Enabled = false;
 
+            InitialisePaging();
+            _modalityActionHandler.Merge(_pagingActionHandler);
+
             base.Start();
+        }
+
+        private void InitialisePaging()
+        {
+            _pagingController = new PagingController<ModalitySummary>(
+                delegate(int firstRow, int maxRows)
+                {
+                    ListAllModalitiesResponse listResponse = null;
+
+                    try
+                    {
+                        Platform.GetService<IModalityAdminService>(
+                            delegate(IModalityAdminService service)
+                            {
+                                ListAllModalitiesRequest listRequest = _listRequest;
+                                listRequest.PageRequest.FirstRow = firstRow;
+                                listRequest.PageRequest.MaxRows = maxRows;
+
+                                listResponse = service.ListAllModalities(listRequest);
+                            });
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                    }
+
+                    return listResponse.Modalities;
+                }
+            );
+
+            _pagingActionHandler = new PagingActionModel<ModalitySummary>(_pagingController, _modalityTable);
         }
 
         public override void Stop()
@@ -159,23 +198,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void LoadModalityTable()
         {
-            try
-            {
-                Platform.GetService<IModalityAdminService>(
-                    delegate(IModalityAdminService service)
-                    {
-                        ListAllModalitiesResponse response = service.ListAllModalities(new ListAllModalitiesRequest(false));
-                        if (response.Modalities != null)
-                        {
-                            _modalityTable.Items.Clear();
-                            _modalityTable.Items.AddRange(response.Modalities);
-                        }
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            _listRequest = new ListAllModalitiesRequest(false);
+            _modalityTable.Items.Clear();
+            _modalityTable.Items.AddRange(_pagingController.GetFirst());
         }
 
         #endregion

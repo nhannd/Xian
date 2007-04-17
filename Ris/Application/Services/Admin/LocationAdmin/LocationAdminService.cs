@@ -27,10 +27,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         [ReadOperation]
         public ListAllLocationsResponse ListAllLocations(ListAllLocationsRequest request)
         {
+            LocationSearchCriteria criteria = new LocationSearchCriteria();
+            SearchResultPage page = new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows);
+
             LocationAssembler assembler = new LocationAssembler();
             return new ListAllLocationsResponse(
                 CollectionUtils.Map<Location, LocationSummary, List<LocationSummary>>(
-                    PersistenceContext.GetBroker<ILocationBroker>().FindAll(),
+                    PersistenceContext.GetBroker<ILocationBroker>().Find(criteria, page),
                     delegate(Location l)
                     {
                         return assembler.CreateLocationSummary(l);

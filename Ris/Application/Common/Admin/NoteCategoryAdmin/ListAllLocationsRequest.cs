@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin
 {
     [DataContract]
-    public class ListAllNoteCategoriesRequest : DataContractBase
+    public class ListAllNoteCategoriesRequest : PagedDataContractBase
     {
         // none
     }

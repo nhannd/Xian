@@ -62,6 +62,11 @@ namespace ClearCanvas.Ris.Client.Admin
         private LocationTable _locationTable;
         private CrudActionModel _locationActionHandler;
 
+        private PagingController<LocationSummary> _pagingController;
+        private PagingActionModel<LocationSummary> _pagingActionHandler;
+
+        private ListAllLocationsRequest _listRequest;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -80,7 +85,41 @@ namespace ClearCanvas.Ris.Client.Admin
             _locationActionHandler.Add.Enabled = true;
             _locationActionHandler.Delete.Enabled = false;
 
+            InitialisePaging();
+            _locationActionHandler.Merge(_pagingActionHandler);
+
             base.Start();
+        }
+
+        private void InitialisePaging()
+        {
+            _pagingController = new PagingController<LocationSummary>(
+                delegate(int firstRow, int maxRows)
+                {
+                    ListAllLocationsResponse listResponse = null;
+
+                    try
+                    {
+                        Platform.GetService<ILocationAdminService>(
+                            delegate(ILocationAdminService service)
+                            {
+                                ListAllLocationsRequest listRequest = _listRequest;
+                                listRequest.PageRequest.FirstRow = firstRow;
+                                listRequest.PageRequest.MaxRows = maxRows;
+
+                                listResponse = service.ListAllLocations(listRequest);
+                            });
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                    }
+
+                    return listResponse.Locations;
+                }
+            );
+
+            _pagingActionHandler = new PagingActionModel<LocationSummary>(_pagingController, _locationTable);
         }
 
         public override void Stop()
@@ -159,23 +198,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void LoadLocationTable()
         {
-            try
-            {
-                Platform.GetService<ILocationAdminService>(
-                    delegate(ILocationAdminService service)
-                    {
-                        ListAllLocationsResponse response = service.ListAllLocations(new ListAllLocationsRequest(false));
-                        if (response.Locations != null)
-                        {
-                            _locationTable.Items.Clear();
-                            _locationTable.Items.AddRange(response.Locations);
-                        }
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            _listRequest = new ListAllLocationsRequest(false);
+            _locationTable.Items.Clear();
+            _locationTable.Items.AddRange(_pagingController.GetFirst());
         }
 
         #endregion

@@ -70,6 +70,15 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A family name must be provided.
+        /// </summary>
+        internal static string ExceptionFamilyNameMissing {
+            get {
+                return ResourceManager.GetString("ExceptionFamilyNameMissing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Attempt to import entities with the same Id but different names.
         /// </summary>
         internal static string ExceptionImportEntityNameIdMismatch {
@@ -124,20 +133,20 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A staff with the name {0}, {1} already exists.
-        /// </summary>
-        internal static string ExceptionStaffAlreadyExist {
-            get {
-                return ResourceManager.GetString("ExceptionStaffAlreadyExist", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to At least 2 patients must be specified for reconciliation.
         /// </summary>
         internal static string ExceptionReconciliationRequiresAtLeast2Patients {
             get {
                 return ResourceManager.GetString("ExceptionReconciliationRequiresAtLeast2Patients", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A staff with the name {0}, {1} already exists.
+        /// </summary>
+        internal static string ExceptionStaffAlreadyExist {
+            get {
+                return ResourceManager.GetString("ExceptionStaffAlreadyExist", resourceCulture);
             }
         }
     }

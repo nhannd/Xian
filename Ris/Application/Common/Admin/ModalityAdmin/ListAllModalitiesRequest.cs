@@ -7,15 +7,14 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Admin.ModalityAdmin
 {
     [DataContract]
-    public class ListAllModalitiesRequest : DataContractBase
+    public class ListAllModalitiesRequest : PagedDataContractBase
     {
         public ListAllModalitiesRequest(bool activeOnly)
         {
-            this.ActiveOnly = activeOnly; 
+            this.ActiveOnly = activeOnly;
         }
 
         [DataMember]
         public bool ActiveOnly;
-
     }
 }
