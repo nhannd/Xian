@@ -344,7 +344,9 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				}
 				else if (graphic is CompositeGraphic)
 				{
-					return FindHandlingGraphic(graphic as CompositeGraphic, handlerDelegate);
+					IMouseButtonHandler handler = FindHandlingGraphic(graphic as CompositeGraphic, handlerDelegate);
+					if (handler != null)
+						return handler;
 				}
 			}
 
