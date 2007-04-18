@@ -82,9 +82,14 @@
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
     </ProjectReference>
+    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
+    </Reference>
     <Reference Include="System">
       <Name>System</Name>
     </Reference>
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data">
       <Name>System.Data</Name>
     </Reference>
@@ -101,6 +106,27 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LocateOnDiskTool.cs" />
+    <Compile Include="LutPresets\AvailableLutPresetKeyStrokeSettings.cs" />
+    <Compile Include="LutPresets\AvailableLutPresetKeyStrokeSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>AvailableLutPresetKeyStrokeSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="LutPresets\Tests\VoiLutPresetTests.cs" />
+    <Compile Include="LutPresets\VoiLutPresetConfigurationCollection.cs" />
+    <Compile Include="LutPresets\VoiLutPreset.cs" />
+    <Compile Include="LutPresets\VoiLutPresetConfiguration.cs" />
+    <Compile Include="LutPresets\VoiLutPresetConfigurations.cs" />
+    <Compile Include="LutPresets\VoiLutPresetSettings.cs" />
+    <Compile Include="LutPresets\VoiLutPresetSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>VoiLutPresetSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="LutPresets\IVoiLutPresetApplicator.cs" />
+    <Compile Include="LutPresets\VoiLutPresetApplicatorConfiguration.cs" />
+    <Compile Include="LutPresets\VoiLutLinearPresetApplicatorFactory.cs" />
+    <Compile Include="LutPresets\VoiLutPresetFactory.cs" />
     <Compile Include="MemoryUsageTool.cs" />
     <Compile Include="WindowLevelConfigurationPageProvider.cs" />
     <Compile Include="FlipHorizontalTool.cs" />
@@ -121,16 +147,7 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="StackTool.cs" />
-    <Compile Include="LutPresets\LutPresetToolGeneratedAction.cs" />
-    <Compile Include="LutPresets\LutPresetImageFilter.cs" />
-    <Compile Include="LutPresets\LutPresetImageFilterByModality.cs" />
-    <Compile Include="LutPresets\LutPresetImageFilterSet.cs" />
-    <Compile Include="LutPresets\FilteredLutPreset.cs" />
-    <Compile Include="LutPresets\NamedVoiLutPreset.cs" />
-    <Compile Include="LutPresets\VoiLutPreset.cs" />
-    <Compile Include="LutPresets\LutPreset.cs" />
-    <Compile Include="LutPresets\LutPresetGroup.cs" />
-    <Compile Include="LutPresets\LutPresetSettings.cs" />
+    <Compile Include="LutPresets\VoiLutLinearPresetApplicator.cs" />
     <Compile Include="LutPresetTool.cs" />
     <Compile Include="WindowLevelConfigurationApplicationComponent.cs" />
     <Compile Include="WindowLevelPresetApplicationComponent.cs" />
@@ -178,12 +195,20 @@
     <EmbeddedResource Include="Icons\MemoryUsageToolMedium.png" />
     <EmbeddedResource Include="Icons\MemoryUsageToolSmall.png" />
     <EmbeddedResource Include="ProbeCursor.png" />
-    <Content Include="LutPresets\DefaultLutPresetKeyAssignments.xml">
+    <EmbeddedResource Include="LutPresets\DefaultVoiLutPresets.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Include="LutPresets\DefaultLutPresets.xml">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="LutPresets\AvailableLutPresetKeyStrokeSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>AvailableLutPresetKeyStrokeSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="LutPresets\VoiLutPresetSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>VoiLutPresetSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />

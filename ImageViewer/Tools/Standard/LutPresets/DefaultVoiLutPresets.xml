@@ -1,0 +1,35 @@
+<?xml version="1.0"?>
+<voilut-presets>
+  <voilut-preset-group modality="CT">
+    <voilut-preset name="Chest/Abdomen/Pelvis" keystroke="F3">
+      <voilut-applicator-configuration factory-key="VoiLutLinear">
+          <configuration-value key="WindowWidth" value="40" />
+          <configuration-value key="WindowCenter" value="350" />
+        </voilut-applicator-configuration>
+    </voilut-preset>
+    <voilut-preset name="Lung" keystroke="F4">
+      <voilut-applicator-configuration factory-key="VoiLutLinear">
+        <configuration-value key="WindowWidth" value="1500" />
+        <configuration-value key="WindowCenter" value="-600" />
+      </voilut-applicator-configuration>
+    </voilut-preset>
+    <voilut-preset name="Brain" keystroke="F5">
+      <voilut-applicator-configuration factory-key="VoiLutLinear">
+        <configuration-value key="WindowWidth" value="80" />
+        <configuration-value key="WindowCenter" value="40" />
+      </voilut-applicator-configuration>
+    </voilut-preset>
+    <voilut-preset name="Bone" keystroke="F6">
+      <voilut-applicator-configuration factory-key="VoiLutLinear">
+        <configuration-value key="WindowWidth" value="2500" />
+        <configuration-value key="WindowCenter" value="480" />
+      </voilut-applicator-configuration>
+    </voilut-preset>
+    <voilut-preset name="Head/Neck" keystroke="F7">
+      <voilut-applicator-configuration factory-key="VoiLutLinear">
+        <configuration-value key="WindowWidth" value="350" />
+        <configuration-value key="WindowCenter" value="90" />
+      </voilut-applicator-configuration>
+    </voilut-preset>
+  </voilut-preset-group>
+</voilut-presets>

@@ -49,6 +49,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			_bindingSource = new BindingSource();
 			_bindingSource.DataSource = _component;
 
+			_comboKey.DataSource = _component.AvailableKeys;
+
+			_comboKey.DataBindings.Add("Value", _bindingSource, "SelectedKey", true, DataSourceUpdateMode.OnPropertyChanged);
 			_name.DataBindings.Add("Value", _bindingSource, "Name", true, DataSourceUpdateMode.OnPropertyChanged);
 			_window.DataBindings.Add("Value", _bindingSource, "Window", true, DataSourceUpdateMode.OnPropertyChanged);
 			_level.DataBindings.Add("Value", _bindingSource, "Level", true, DataSourceUpdateMode.OnPropertyChanged);

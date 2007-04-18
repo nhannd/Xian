@@ -297,4 +297,48 @@
   <data name="ToolbarZoom" xml:space="preserve">
     <value>Zoom</value>
   </data>
+  <data name="ExceptionNoWindowCenterHasBeenSpecified" xml:space="preserve">
+    <value>No Window Centre value has been specified.</value>
+  </data>
+  <data name="ExceptionNoWindowWidthHasBeenSpecified" xml:space="preserve">
+    <value>No Window Width value has been specified.</value>
+  </data>
+  <data name="ExceptionLutPresetIsNotApplicableForTheProvidedImage" xml:space="preserve">
+    <value>The Lut Preset is not applicable for the provided image.</value>
+  </data>
+  <data name="ItemDoesNotExist" xml:space="preserve">
+    <value>The specified item does not exist.</value>
+  </data>
+  <data name="LabelNone" xml:space="preserve">
+    <value>(none)</value>
+  </data>
+  <data name="ItemAlreadyExists" xml:space="preserve">
+    <value>The specified item already exists.</value>
+  </data>
+  <data name="ExceptionWindowLevelPresetSingleConflict" xml:space="preserve">
+    <value>The preset cannot be {0} because its {1} conflicts with one or more existing presets.
+Please ensure that the name/keystroke combination is unique.</value>
+  </data>
+  <data name="Added" xml:space="preserve">
+    <value>added</value>
+  </data>
+  <data name="Edited" xml:space="preserve">
+    <value>edited</value>
+  </data>
+  <data name="ExceptionPresetConfigurationDoesNotExist" xml:space="preserve">
+    <value>The specified 'existing' preset item is not in the collection.</value>
+  </data>
+  <data name="ExceptionWindowLevelPresetDualConflict" xml:space="preserve">
+    <value>The preset cannot be {0} because both its name and keystroke conflict with one or more existing presets.
+Please ensure that the name/keystroke combination is unique.</value>
+  </data>
+  <data name="KeyStroke" xml:space="preserve">
+    <value>keystroke</value>
+  </data>
+  <data name="Name" xml:space="preserve">
+    <value>name</value>
+  </data>
+  <data name="TitleAddWindowLevelPreset" xml:space="preserve">
+    <value>Add Window/Level Preset</value>
+  </data>
 </root>

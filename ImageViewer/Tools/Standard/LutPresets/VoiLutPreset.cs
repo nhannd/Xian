@@ -1,67 +1,61 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.Common;
-using System.Runtime.Serialization;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 {
-	[Serializable]
-	public sealed class VoiLutPreset : LutPreset
+	internal sealed class VoiLutPreset
 	{
-		private string _label;
-		private float _windowWidth;
-		private float _windowCenter;
+		private string _name;
+		private string _modalityFilter;
+		private XKeys _keyStroke;
+		private IVoiLutPresetApplicator _lutPresetApplicator;
 
-		public override string Label
-		{
-			get { return _label; }
-			set { _label = value; }
+		public VoiLutPreset(string name, string modalityFilter, XKeys keyStroke, IVoiLutPresetApplicator lutPresetApplicator)
+		{ 
+			Platform.CheckForEmptyString(name, "name");
+			Platform.CheckForNullReference(lutPresetApplicator, "lutPresetApplicator");
+
+			_name = name;
+			_modalityFilter = modalityFilter;
+			_keyStroke = keyStroke;
+			_lutPresetApplicator = lutPresetApplicator;
 		}
 
-		public float WindowWidth
+		#region IVoiLutPreset Members
+
+		public string Name
 		{
-			get { return _windowWidth; }
-			set { _windowWidth = value; }
+			get { return _name; }
 		}
 
-		public float WindowCenter
+		public bool AppliesTo(IPresentationImage image)
 		{
-			get { return _windowCenter; }
-			set { _windowCenter = value; }
+			return _lutPresetApplicator.AppliesTo(image) && this.IsModalityMatch(image);
 		}
 
-		public override bool Apply(IPresentationImage image)
+		public void Apply(IPresentationImage image)
 		{
-			Platform.CheckForNullReference(image, "image");
+			if (!AppliesTo(image))
+				throw new InvalidOperationException(SR.ExceptionLutPresetIsNotApplicableForTheProvidedImage);
 
-			IVOILUTLinearProvider provider = image as IVOILUTLinearProvider;
+			_lutPresetApplicator.Apply(image);
+		}
 
-			if (provider == null)
+		#endregion
+
+		private bool IsModalityMatch(IPresentationImage image)
+		{
+			if (String.IsNullOrEmpty(_modalityFilter))
+				return true;
+
+			if (!(image is IImageSopProvider))
 				return false;
 
-			WindowLevelApplicator applicator = new WindowLevelApplicator(image);
-
-			UndoableCommand command = new UndoableCommand(applicator);
-			command.Name = SR.CommandWindowLevel;
-			command.BeginState = applicator.CreateMemento();
-
-			provider.VoiLutLinear.WindowWidth = this.WindowWidth;
-			provider.VoiLutLinear.WindowCenter = this.WindowCenter;
-			provider.Draw();
-
-			command.EndState = applicator.CreateMemento();
-
-			if (!command.EndState.Equals(command.BeginState))
-			{
-				applicator.SetMemento(command.EndState);
-				image.ImageViewer.CommandHistory.AddCommand(command);
-			}
-
-			return true;
+			return ((image as IImageSopProvider).ImageSop.Modality == _modalityFilter);
 		}
 	}
 }

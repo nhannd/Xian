@@ -21,21 +21,38 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[AssociateView(typeof(WindowLevelPresetApplicationComponentViewExtensionPoint))]
 	public class WindowLevelPresetApplicationComponent : ApplicationComponent
 	{
+		private readonly IList<XKeys> _availableKeys;
 		private string _name;
 		private int _window;
 		private int _level;
+		private XKeys _selectedKey;
 
 		/// <summary>
 		/// Constructor
 		/// </summary>
 		public WindowLevelPresetApplicationComponent(
+			IList<XKeys> availableKeys,
+			XKeys selectedKey,
 			string name,
 			int window,
 			int level)
 		{
+			_availableKeys = availableKeys;
+			_selectedKey = selectedKey;
 			_name = name;
 			_window = window;
 			_level = level;
+		}
+
+		public IEnumerable<XKeys> AvailableKeys
+		{
+			get { return _availableKeys; }
+		}
+
+		public XKeys SelectedKey
+		{
+			get { return _selectedKey; }
+			set { _selectedKey = value; }
 		}
 
 		public string Name
@@ -58,14 +75,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override void Start()
 		{
-			// TODO prepare the component for its live phase
 			base.Start();
 		}
 
 		public override void Stop()
 		{
-			// TODO prepare the component to exit the live phase
-			// This is a good place to do any clean up
 			base.Stop();
 		}
 	}

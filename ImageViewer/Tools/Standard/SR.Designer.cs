@@ -61,6 +61,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to added.
+        /// </summary>
+        internal static string Added {
+            get {
+                return ResourceManager.GetString("Added", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flip Horizontal.
         /// </summary>
         internal static string CommandFlipHorizontal {
@@ -142,6 +151,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to edited.
+        /// </summary>
+        internal static string Edited {
+            get {
+                return ResourceManager.GetString("Edited", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to [{0}] is an invalid index.  Index must be between {1} and {2}..
         /// </summary>
         internal static string ExceptionIndexOutOfRange {
@@ -196,6 +214,89 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Lut Preset is not applicable for the provided image..
+        /// </summary>
+        internal static string ExceptionLutPresetIsNotApplicableForTheProvidedImage {
+            get {
+                return ResourceManager.GetString("ExceptionLutPresetIsNotApplicableForTheProvidedImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Window Centre value has been specified..
+        /// </summary>
+        internal static string ExceptionNoWindowCenterHasBeenSpecified {
+            get {
+                return ResourceManager.GetString("ExceptionNoWindowCenterHasBeenSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Window Width value has been specified..
+        /// </summary>
+        internal static string ExceptionNoWindowWidthHasBeenSpecified {
+            get {
+                return ResourceManager.GetString("ExceptionNoWindowWidthHasBeenSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified &apos;existing&apos; preset item is not in the collection..
+        /// </summary>
+        internal static string ExceptionPresetConfigurationDoesNotExist {
+            get {
+                return ResourceManager.GetString("ExceptionPresetConfigurationDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The preset cannot be {0} because both its name and keystroke conflict with one or more existing presets.
+        ///Please ensure that the name/keystroke combination is unique..
+        /// </summary>
+        internal static string ExceptionWindowLevelPresetDualConflict {
+            get {
+                return ResourceManager.GetString("ExceptionWindowLevelPresetDualConflict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The preset cannot be {0} because its {1} conflicts with one or more existing presets.
+        ///Please ensure that the name/keystroke combination is unique..
+        /// </summary>
+        internal static string ExceptionWindowLevelPresetSingleConflict {
+            get {
+                return ResourceManager.GetString("ExceptionWindowLevelPresetSingleConflict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified item already exists..
+        /// </summary>
+        internal static string ItemAlreadyExists {
+            get {
+                return ResourceManager.GetString("ItemAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The specified item does not exist..
+        /// </summary>
+        internal static string ItemDoesNotExist {
+            get {
+                return ResourceManager.GetString("ItemDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to keystroke.
+        /// </summary>
+        internal static string KeyStroke {
+            get {
+                return ResourceManager.GetString("KeyStroke", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to HU.
         /// </summary>
         internal static string LabelHounsfieldUnitsAbbreviation {
@@ -210,6 +311,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string LabelModalityLut {
             get {
                 return ResourceManager.GetString("LabelModalityLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to (none).
+        /// </summary>
+        internal static string LabelNone {
+            get {
+                return ResourceManager.GetString("LabelNone", resourceCulture);
             }
         }
         
@@ -399,6 +509,24 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string MenuZoom4X {
             get {
                 return ResourceManager.GetString("MenuZoom4X", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to name.
+        /// </summary>
+        internal static string Name {
+            get {
+                return ResourceManager.GetString("Name", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Window/Level Preset.
+        /// </summary>
+        internal static string TitleAddWindowLevelPreset {
+            get {
+                return ResourceManager.GetString("TitleAddWindowLevelPreset", resourceCulture);
             }
         }
         

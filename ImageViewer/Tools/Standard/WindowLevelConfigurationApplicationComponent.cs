@@ -9,6 +9,8 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 using System.Collections;
+using ClearCanvas.ImageViewer.Tools.Standard.LutPresets;
+using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -24,10 +26,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	/// WindowLevelConfigurationApplicationComponent class
 	/// </summary>
 	[AssociateView(typeof(WindowLevelConfigurationApplicationComponentViewExtensionPoint))]
-	public class WindowLevelConfigurationApplicationComponent : ConfigurationApplicationComponent
+	public partial class WindowLevelConfigurationApplicationComponent : ConfigurationApplicationComponent
 	{
 		public class WindowLevelPreset
 		{
+			private XKeys _key;
 			private string _name;
 			private int _window;
 			private int _level;
@@ -37,11 +40,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			}
 
-			public WindowLevelPreset(string name, int window, int level)
+			public WindowLevelPreset(XKeys key, string name, int window, int level)
 			{
+				_key = key;
 				_name = name;
 				_window = window;
 				_level = level;
+			}
+
+			public XKeys Key
+			{
+				get { return _key; }
+				set { _key = value; }
 			}
 
 			public string Name
@@ -69,7 +79,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private Table<WindowLevelPreset> _selectedPresetList;
 		private string _selectedModality;
 		private WindowLevelPreset _selectedPreset;
-
+		private List<XKeys> _availableKeyStrokes;
+		private VoiLutPresetConfigurationCollection _currentConfiguration;
 		#endregion
 
 		/// <summary>
@@ -77,7 +88,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// </summary>
 		public WindowLevelConfigurationApplicationComponent()
 		{
-
+			_availableKeyStrokes = new List<XKeys>();
+			_availableKeyStrokes.Add(XKeys.None);
+			foreach (XKeys availableKeyStroke in AvailableLutPresetKeyStrokes.GetAvailableKeyStrokes())
+			{
+				if (availableKeyStroke != XKeys.None)
+					_availableKeyStrokes.Add(availableKeyStroke);
+			}
 		}
 
 		public ICollection<string> ModalityList
@@ -122,6 +139,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.SelectedModality = enumerator.Current;
 
 			this.ModalityList.GetEnumerator().Reset();
+
+			Load();
 		}
 
 		public override void Stop()
@@ -129,9 +148,43 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			base.Stop();
 		}
 
+		private VoiLutPresetConfiguration ConvertToLutPresetConfiguration(WindowLevelPreset preset)
+		{ 
+			return new VoiLutPresetConfiguration(_selectedModality, preset.Key, preset.Name,
+				VoiLutLinearPresetApplicatorFactory.CreateVoiLutLinearApplicatorConfiguration(preset.Window, preset.Level));
+		}
+
+		private WindowLevelPreset ConvertToWindowLevelPreset(VoiLutPresetConfiguration presetConfiguration)
+		{
+			WindowLevelPreset preset = new WindowLevelPreset();
+			preset.Key = presetConfiguration.KeyStroke;
+			preset.Name = presetConfiguration.Name;
+			preset.Window = int.Parse(presetConfiguration.VoiLutPresetApplicatorConfiguration.ConfigurationValues["WindowWidth"]);
+			preset.Level = int.Parse(presetConfiguration.VoiLutPresetApplicatorConfiguration.ConfigurationValues["WindowCenter"]);
+
+			return preset;
+		}
+
+		private void Load()
+		{
+			VoiLutPresetConfigurationCollection configuration = VoiLutPresetSettings.Default.GetVoiLutPresetConfigurations();
+			_currentConfiguration = configuration;
+
+			foreach (KeyValuePair<string, IEnumerable<VoiLutPresetConfiguration>> modalityConfiguration in
+				VoiLutPresetConfigurations.GetConfigurationsByModality(VoiLutLinearPresetApplicatorFactory.InternalFactoryKey))
+			{
+				string modality = modalityConfiguration.Key;
+				if (!_presetLists.ContainsKey(modality))
+					continue;
+
+				foreach (VoiLutPresetConfiguration presetConfiguration in modalityConfiguration.Value)
+					_presetLists[modality].Items.Add(this.ConvertToWindowLevelPreset(presetConfiguration));
+			}
+		}
+
 		public override void Save()
 		{
-			throw new Exception("The method or operation is not implemented.");
+			VoiLutPresetSettings.Default.SetVoiLutPresetGroupConfigurations(_currentConfiguration);
 		}
 
 		public void SetSelection(ISelection selection)
@@ -141,22 +194,34 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void AddPreset()
 		{
-			WindowLevelPresetApplicationComponent presetComponent = 
-				new WindowLevelPresetApplicationComponent("", 400, 200);
+			WindowLevelPresetApplicationComponent presetComponent =
+				new WindowLevelPresetApplicationComponent(_availableKeyStrokes, _availableKeyStrokes[0], "", 400, 200);
 			DialogContent content = new DialogContent(presetComponent);
 			DialogComponentContainer dialog = new DialogComponentContainer(content);
-			ApplicationComponentExitCode code = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, dialog, "Add Window/Level Preset");
+			ApplicationComponentExitCode code = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, dialog, SR.TitleAddWindowLevelPreset);
 
 			if (code == ApplicationComponentExitCode.Normal)
 			{
 				WindowLevelPreset preset =
-					new WindowLevelPreset(
+					new WindowLevelPreset(presetComponent.SelectedKey,
 						presetComponent.Name,
 						presetComponent.Window,
 						presetComponent.Level);
 
-				this.SelectedPresetList.Items.Add(preset);
-				this.Modified = true;
+				VoiLutPresetConfiguration newConfiguration = this.ConvertToLutPresetConfiguration(preset);
+
+				try
+				{
+					_currentConfiguration.Add(newConfiguration);
+
+					this.SelectedPresetList.Items.Add(preset);
+					this.Modified = true;
+				}
+				catch (Exception e)
+				{ 
+					//the exception thrown is a user message.
+					Platform.ShowMessageBox(e.Message);
+				}
 			}
 		}
 
@@ -164,6 +229,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			WindowLevelPresetApplicationComponent presetComponent =
 				new WindowLevelPresetApplicationComponent(
+				_availableKeyStrokes, 
+				_selectedPreset.Key,
 				_selectedPreset.Name,
 				_selectedPreset.Window,
 				_selectedPreset.Level);
@@ -173,16 +240,36 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			if (code == ApplicationComponentExitCode.Normal)
 			{
-				_selectedPreset.Name = presetComponent.Name;
-				_selectedPreset.Window = presetComponent.Window;
-				_selectedPreset.Level = presetComponent.Level;
-				_selectedPresetList.Items.NotifyItemUpdated(_selectedPreset);
-				this.Modified = true;
+				WindowLevelPreset editPreset = new WindowLevelPreset(presetComponent.SelectedKey, presetComponent.Name, presetComponent.Window, presetComponent.Level);
+
+				VoiLutPresetConfiguration existingConfiguration = this.ConvertToLutPresetConfiguration(_selectedPreset);
+				VoiLutPresetConfiguration editConfiguration = this.ConvertToLutPresetConfiguration(editPreset);
+
+				try
+				{
+					_currentConfiguration.Replace(existingConfiguration, editConfiguration);
+
+					_selectedPreset.Key = presetComponent.SelectedKey;
+					_selectedPreset.Name = presetComponent.Name;
+					_selectedPreset.Window = presetComponent.Window;
+					_selectedPreset.Level = presetComponent.Level;
+					_selectedPresetList.Items.NotifyItemUpdated(_selectedPreset);
+					
+					this.Modified = true;
+				}
+				catch (Exception e)
+				{
+					//the exception thrown is a user message.
+					Platform.ShowMessageBox(e.Message);
+				}
 			}
 		}
 
 		public void DeletePreset()
 		{
+			VoiLutPresetConfiguration existingConfiguration = this.ConvertToLutPresetConfiguration(_selectedPreset);
+
+			_currentConfiguration.Remove(existingConfiguration);
 			this.SelectedPresetList.Items.Remove(_selectedPreset);
 			this.Modified = true;
 		}
@@ -194,6 +281,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			foreach (string modality in this.ModalityList)
 			{
 				Table<WindowLevelPreset> presetList = new Table<WindowLevelPreset>();
+
+				presetList.Columns.Add(
+					new TableColumn<WindowLevelPreset, string>(
+						"Key",
+						delegate(WindowLevelPreset item) { return item.Key.ToString(); },
+						1f
+						));
+
 				presetList.Columns.Add(
 					new TableColumn<WindowLevelPreset, string>(
 						"Name",
@@ -204,13 +299,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					new TableColumn<WindowLevelPreset, string>(
 						"Window",
 						delegate(WindowLevelPreset item) { return item.Window.ToString(); },
-						1.5f
+						1f
 						));
 				presetList.Columns.Add(
 					new TableColumn<WindowLevelPreset, string>(
 						"Level",
 						delegate(WindowLevelPreset item) { return item.Level.ToString(); },
-						1.5f
+						1f
 						));
 
 				_presetLists.Add(modality, presetList);
