@@ -84,8 +84,13 @@ namespace ClearCanvas.ImageViewer
 			ApplyToLinkedImages(
 				delegate(IPresentationImage image)
 				{
-					GetOriginator(image).SetMemento(memento);
-					image.Draw();
+					IMemorable originator = GetOriginator(image);
+
+					if (originator != null)
+					{
+						originator.SetMemento(memento);
+						image.Draw();
+					}
 				});
 		}
 
@@ -104,12 +109,16 @@ namespace ClearCanvas.ImageViewer
 				delegate(IPresentationImage image)
 				{
 					IMemorable originator = GetOriginator(image);
-					ImageOriginatorMemento obj = new ImageOriginatorMemento(
-						image,
-						originator,
-						originator.CreateMemento());
 
-					imageOriginatorMementos.Add(obj);
+					if (originator != null)
+					{
+						ImageOriginatorMemento obj = new ImageOriginatorMemento(
+							image,
+							originator,
+							originator.CreateMemento());
+
+						imageOriginatorMementos.Add(obj);
+					}
 				});
 
 			IMemento applicatorMemento = new ImageOperationApplicatorMemento(imageOriginatorMementos);
