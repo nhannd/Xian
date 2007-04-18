@@ -295,30 +295,31 @@ namespace ClearCanvas.ImageViewer.Services
 		{
 			lock (_connectionThreadLock)
 			{
-				if (_active)
-					return;
+				if (!_active)
+				{
+					_active = true;
 
-				_active = true;
-			}
+					_marshaler = new InterthreadMarshaler();
+					_callback = new LocalDataStoreActivityMonitorServiceCallback(this);
 
-			_marshaler = new InterthreadMarshaler();
-			_callback = new LocalDataStoreActivityMonitorServiceCallback(this);
+					_isConnected = false;
+					_stopThread = false;
+					_refreshRequired = false;
+					_serviceClient = null;
 
-			_isConnected = false;
-			_stopThread = false;
-			_refreshRequired = false;
-			_serviceClient = null;
+					ThreadStart threadStart = new ThreadStart(this.RunThread);
+					_connectionThread = new Thread(threadStart);
+					_connectionThread.IsBackground = true;
+					_connectionThread.Priority = ThreadPriority.Lowest;
 
-			ThreadStart threadStart = new ThreadStart(this.RunThread);
-			_connectionThread = new Thread(threadStart);
-			_connectionThread.IsBackground = true;
-			_connectionThread.Priority = ThreadPriority.Lowest;
-			_connectionThread.Start();
+					_connectionThread.Start();
+					Monitor.Wait(_connectionThreadLock); //wait for the thread to signal it has started.
+				}
 
-			lock (_connectionThreadLock)
-			{
+				//release the running thread to attempt to connect/refresh if necessary.
 				Monitor.Pulse(_connectionThreadLock);
-				Monitor.Wait(_connectionThreadLock);
+				//wait up to one second for a connection/refresh to occur.
+				Monitor.Wait(_connectionThreadLock, 1000);
 			}
 		}
 
@@ -330,22 +331,21 @@ namespace ClearCanvas.ImageViewer.Services
 					return;
 
 				_stopThread = true;
+				//release the thread and wait for it to signal it has stopped running.
 				Monitor.Pulse(_connectionThreadLock);
-			}
+				Monitor.Wait(_connectionThreadLock);
 
-			_connectionThread.Join();
-			_connectionThread = null;
+				_connectionThread.Join();
+				_connectionThread = null;
 
-			if (_marshaler != null)
-			{
-				_marshaler.Dispose();
-				_marshaler = null;
-			}
+				if (_marshaler != null)
+				{
+					_marshaler.Dispose();
+					_marshaler = null;
+				}
 
-			_callback = null;
+				_callback = null;
 
-			lock (_connectionThreadLock)
-			{
 				_active = false;
 			}
 		}
@@ -508,6 +508,9 @@ namespace ClearCanvas.ImageViewer.Services
 		{
 			lock (_connectionThreadLock)
 			{
+				//signal the thread has started up.
+				Monitor.Pulse(_connectionThreadLock);
+
 				while (true)
 				{
 					Monitor.Wait(_connectionThreadLock, 5000);
@@ -534,6 +537,9 @@ namespace ClearCanvas.ImageViewer.Services
 				
 					Monitor.Pulse(_connectionThreadLock);
 				}
+				
+				//the ShutDown method is waiting for a final pulse before joining the thread.
+				Monitor.Pulse(_connectionThreadLock);
 			}
 		}
 
