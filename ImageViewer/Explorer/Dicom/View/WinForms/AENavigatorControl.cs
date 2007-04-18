@@ -28,9 +28,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this._aeTreeView.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView_DragOver);
             this._aeTreeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeView_DragDrop);
 
-            this.ToolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
-            this.ToolbarModel = _component.ToolbarModel;
-            this.MenuModel = _component.ContextMenuModel;
+			this._titleBar.Visible = _component.ShowTitlebar;
+			this._serverTools.Visible = _component.ShowTools;
+
+			if (this._component.ShowTools)
+			{
+				this.ToolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
+				this.ToolbarModel = _component.ToolbarModel;
+				this.MenuModel = _component.ContextMenuModel;
+			}
 
             _aeTreeView.MouseDown += new MouseEventHandler(AETreeView_Click);
             BuildServerTreeView(_aeTreeView, _component.ServerTree);

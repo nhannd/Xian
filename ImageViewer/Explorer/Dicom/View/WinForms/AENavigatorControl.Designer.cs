@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		{
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AENavigatorControl));
-            this.titleBar1 = new Crownwood.DotNetMagic.Controls.TitleBar();
+            this._titleBar = new Crownwood.DotNetMagic.Controls.TitleBar();
             this._aeTreeView = new System.Windows.Forms.TreeView();
             this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this._imageList = new System.Windows.Forms.ImageList(this.components);
@@ -39,17 +39,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             // 
             // titleBar1
             // 
-            this.titleBar1.Dock = System.Windows.Forms.DockStyle.Top;
-            this.titleBar1.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.titleBar1.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
-            this.titleBar1.Location = new System.Drawing.Point(0, 0);
-            this.titleBar1.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
-            this.titleBar1.MouseOverColor = System.Drawing.Color.Empty;
-            this.titleBar1.Name = "titleBar1";
-            this.titleBar1.Size = new System.Drawing.Size(400, 37);
-            this.titleBar1.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2003;
-            this.titleBar1.TabIndex = 2;
-            this.titleBar1.Text = "Servers";
+            this._titleBar.Dock = System.Windows.Forms.DockStyle.Top;
+            this._titleBar.Font = new System.Drawing.Font("Arial", 15.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this._titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToDarkBack;
+            this._titleBar.Location = new System.Drawing.Point(0, 0);
+            this._titleBar.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
+            this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
+            this._titleBar.Name = "titleBar1";
+            this._titleBar.Size = new System.Drawing.Size(400, 37);
+            this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2003;
+            this._titleBar.TabIndex = 2;
+            this._titleBar.Text = "Servers";
             // 
             // _aeTreeView
             // 
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             this.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.Controls.Add(this._aeTreeView);
             this.Controls.Add(this._serverTools);
-            this.Controls.Add(this.titleBar1);
+            this.Controls.Add(this._titleBar);
             this.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this.Name = "AENavigatorControl";
             this.Size = new System.Drawing.Size(400, 372);
@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 		#endregion
 
-        private Crownwood.DotNetMagic.Controls.TitleBar titleBar1;
+        private Crownwood.DotNetMagic.Controls.TitleBar _titleBar;
         private System.Windows.Forms.TreeView _aeTreeView;
 		private System.Windows.Forms.ImageList _imageList;
         private System.Windows.Forms.ToolStrip _serverTools;

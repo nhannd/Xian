@@ -29,39 +29,44 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
         private void SendStudy()
         {
-            if (this.Context.SelectedStudy == null)
-                return;
+			BlockingOperation.Run(SendStudyInternal);
+        }
 
-            AENavigatorComponent aeNavigator = new AENavigatorComponent();
-            DialogContent content = new DialogContent(aeNavigator);
-            DialogComponentContainer dialogContainer = new DialogComponentContainer(content);
+		private void SendStudyInternal()
+		{
+			if (this.Context.SelectedStudy == null)
+				return;
 
-            ApplicationComponentExitCode code =
-                ApplicationComponent.LaunchAsDialog(
-                    this.Context.DesktopWindow,
-                    dialogContainer,
+			AENavigatorComponent aeNavigator = new AENavigatorComponent(false, false);
+			DialogContent content = new DialogContent(aeNavigator);
+			DialogComponentContainer dialogContainer = new DialogComponentContainer(content);
+
+			ApplicationComponentExitCode code =
+				ApplicationComponent.LaunchAsDialog(
+					this.Context.DesktopWindow,
+					dialogContainer,
 					SR.TitleSendStudy);
 
-            if (code == ApplicationComponentExitCode.Cancelled)
-                return;
+			if (code == ApplicationComponentExitCode.Cancelled)
+				return;
 
-            ApplicationEntity destinationAE = (aeNavigator.SelectedServers.Servers[0] as Server).GetApplicationEntity();
+			ApplicationEntity destinationAE = (aeNavigator.SelectedServers.Servers[0] as Server).GetApplicationEntity();
 
-            if (destinationAE == null)
-            {
+			if (destinationAE == null)
+			{
 				Platform.ShowMessageBox(SR.MessageSelectDestination);
-                return;
-            }
+				return;
+			}
 
 			DicomSendRequest request = new DicomSendRequest();
 			request.DestinationAETitle = destinationAE.AE;
 			request.DestinationHostName = destinationAE.Host;
 			request.Port = destinationAE.Port;
-			
+
 			List<string> studyUids = new List<string>();
 			foreach (StudyItem item in this.Context.SelectedStudies)
 				studyUids.Add(item.StudyInstanceUID);
-			
+
 			request.Uids = studyUids.ToArray();
 
 			DicomServerServiceClient client = new DicomServerServiceClient();
@@ -71,14 +76,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				client.Open();
 				client.Send(request);
 				client.Close();
-				
+
 				//LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(this.Context.DesktopWindow);
 			}
 			catch (Exception e)
 			{
 				ExceptionHandler.Report(e, SR.MessageFailedToSendStudy, this.Context.DesktopWindow);
 			}
-        }
+		}
 
         protected override void OnSelectedStudyChanged(object sender, EventArgs e)
         {

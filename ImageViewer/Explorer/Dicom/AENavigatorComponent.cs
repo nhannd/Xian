@@ -95,6 +95,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private ActionModelRoot _toolbarModel;
         private ActionModelRoot _contextMenuModel;
         private ClickHandlerDelegate _defaultActionHandler;
+		private bool _showTools;
+		private bool _showTitlebar;
 
 		private static String _myServersTitle = SR.TitleMyServers;
 		private static String _myDatastoreTitle = SR.TitleMyDataStore;
@@ -131,7 +133,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             set { _contextMenuModel = value; }
         }
 
-        public static String MyServersTitle
+		public bool ShowTools
+		{
+			get { return _showTools; }
+		}
+
+		public bool ShowTitlebar
+		{
+			get { return _showTitlebar; }
+		}
+		
+		public static String MyServersTitle
         {
             get { return AENavigatorComponent._myServersTitle; }
         }
@@ -153,22 +165,29 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         #endregion
 
-        public AENavigatorComponent()
+        public AENavigatorComponent() : this(true, true)
         {
-            _selectedServers = new AEServerGroup();
-            _serverTree = new ServerTree();
-
-            if (_serverTree.CurrentNode != null && _serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalDataStore)
-            {
-                _selectedServers.Servers.Add(_serverTree.CurrentNode as Server);
-                _selectedServers.Name = _serverTree.CurrentNode.Name;
-                _selectedServers.GroupID = _serverTree.CurrentNode.ParentPath + "/" + _selectedServers.Name;
-            }
-
-            LocalApplicationEntity.SettingsUpdated += new EventHandler(_serverTree.OnUpdateLocalDataStoreNode);
-
-            QueryAESettings();
         }
+
+		public AENavigatorComponent(bool showTools, bool showTitlebar)
+		{
+			_showTools = showTools;
+			_showTitlebar = showTitlebar;
+
+			_selectedServers = new AEServerGroup();
+			_serverTree = new ServerTree();
+
+			if (_serverTree.CurrentNode != null && _serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalDataStore)
+			{
+				_selectedServers.Servers.Add(_serverTree.CurrentNode as Server);
+				_selectedServers.Name = _serverTree.CurrentNode.Name;
+				_selectedServers.GroupID = _serverTree.CurrentNode.ParentPath + "/" + _selectedServers.Name;
+			}
+
+			LocalApplicationEntity.SettingsUpdated += new EventHandler(_serverTree.OnUpdateLocalDataStoreNode);
+
+			QueryAESettings();
+		}
 
         public void QueryAESettings()
         {
@@ -299,7 +318,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             // the node is a Server
             if (!_serverTree.CurrentNode.IsLocalDataStore && 
                 !_serverTree.CurrentNode.IsServerGroup && 
-                null != _defaultActionHandler)
+                null != _defaultActionHandler &&
+				_showTools)
                 _defaultActionHandler();
         }
     }
