@@ -34,6 +34,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this._comboKey = new ClearCanvas.Controls.WinForms.ComboBoxField();
+			this._ok = new System.Windows.Forms.Button();
+			this._cancel = new System.Windows.Forms.Button();
 			((System.ComponentModel.ISupportInitialize)(this._window)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._level)).BeginInit();
 			this.SuspendLayout();
@@ -94,10 +96,30 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this._comboKey.TabIndex = 0;
 			this._comboKey.Value = null;
 			// 
+			// _ok
+			// 
+			this._ok.Location = new System.Drawing.Point(244, 66);
+			this._ok.Name = "_ok";
+			this._ok.Size = new System.Drawing.Size(75, 23);
+			this._ok.TabIndex = 5;
+			this._ok.Text = "OK";
+			this._ok.UseVisualStyleBackColor = true;
+			// 
+			// _cancel
+			// 
+			this._cancel.Location = new System.Drawing.Point(325, 66);
+			this._cancel.Name = "_cancel";
+			this._cancel.Size = new System.Drawing.Size(75, 23);
+			this._cancel.TabIndex = 6;
+			this._cancel.Text = "Cancel";
+			this._cancel.UseVisualStyleBackColor = true;
+			// 
 			// WindowLevelPresetApplicationComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.Controls.Add(this._cancel);
+			this.Controls.Add(this._ok);
 			this.Controls.Add(this._comboKey);
 			this.Controls.Add(this.label2);
 			this.Controls.Add(this.label1);
@@ -105,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this.Controls.Add(this._window);
 			this.Controls.Add(this._name);
 			this.Name = "WindowLevelPresetApplicationComponentControl";
-			this.Size = new System.Drawing.Size(413, 69);
+			this.Size = new System.Drawing.Size(413, 104);
 			((System.ComponentModel.ISupportInitialize)(this._window)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._level)).EndInit();
 			this.ResumeLayout(false);
@@ -121,5 +143,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
 		private ClearCanvas.Controls.WinForms.ComboBoxField _comboKey;
+		private System.Windows.Forms.Button _ok;
+		private System.Windows.Forms.Button _cancel;
     }
 }

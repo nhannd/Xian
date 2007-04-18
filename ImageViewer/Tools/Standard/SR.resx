@@ -341,4 +341,7 @@ Please ensure that the name/keystroke combination is unique.</value>
   <data name="TitleAddWindowLevelPreset" xml:space="preserve">
     <value>Add Window/Level Preset</value>
   </data>
+  <data name="TitleEditWindowLevelPreset" xml:space="preserve">
+    <value>Edit Window/Level Preset</value>
+  </data>
 </root>

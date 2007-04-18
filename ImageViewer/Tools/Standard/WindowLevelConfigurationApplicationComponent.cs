@@ -196,9 +196,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			WindowLevelPresetApplicationComponent presetComponent =
 				new WindowLevelPresetApplicationComponent(_availableKeyStrokes, _availableKeyStrokes[0], "", 400, 200);
-			DialogContent content = new DialogContent(presetComponent);
-			DialogComponentContainer dialog = new DialogComponentContainer(content);
-			ApplicationComponentExitCode code = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, dialog, SR.TitleAddWindowLevelPreset);
+			ApplicationComponentExitCode code = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, presetComponent, SR.TitleAddWindowLevelPreset);
 
 			if (code == ApplicationComponentExitCode.Normal)
 			{
@@ -234,9 +232,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				_selectedPreset.Name,
 				_selectedPreset.Window,
 				_selectedPreset.Level);
-			DialogContent content = new DialogContent(presetComponent);
-			DialogComponentContainer dialog = new DialogComponentContainer(content);
-			ApplicationComponentExitCode code = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, dialog, "Edit Window/Level Preset");
+			ApplicationComponentExitCode code = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, presetComponent, SR.TitleEditWindowLevelPreset);
 
 			if (code == ApplicationComponentExitCode.Normal)
 			{

@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	public class WindowLevelPresetApplicationComponent : ApplicationComponent
 	{
 		private readonly IList<XKeys> _availableKeys;
-		private string _name;
+		private string _name = String.Empty;
 		private int _window;
 		private int _level;
 		private XKeys _selectedKey;
@@ -52,13 +52,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public XKeys SelectedKey
 		{
 			get { return _selectedKey; }
-			set { _selectedKey = value; }
+			set 
+			{ _selectedKey = value; }
 		}
 
 		public string Name
 		{
 			get { return _name; }
-			set { _name = value; }
+			set 
+			{
+				_name = value;
+				this.NotifyPropertyChanged("OKEnabled");
+			}
 		}
 
 		public int Window
@@ -73,6 +78,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			set { _level = value; }
 		}
 
+		public bool OKEnabled
+		{
+			get 
+			{ 
+				return this.Name != String.Empty && 
+				this.Name != null; 
+			}
+		}
+
 		public override void Start()
 		{
 			base.Start();
@@ -81,6 +95,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override void Stop()
 		{
 			base.Stop();
+		}
+
+		public void OK()
+		{
+			this.ExitCode = ApplicationComponentExitCode.Normal;
+			this.Host.Exit();
+		}
+
+		public void Cancel()
+		{
+			this.ExitCode = ApplicationComponentExitCode.Cancelled;
+			this.Host.Exit();
 		}
 	}
 }
