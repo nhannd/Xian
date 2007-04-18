@@ -173,7 +173,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				});
 
 			ImportProgressItem existingItem = null;
-
+			bool sort = false;
 			if (index >= 0)
 			{
 				existingItem = _importTable.Items[index];
@@ -181,6 +181,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				if (e.Item.Removed)
 				{
 					_importTable.Items.Remove(existingItem);
+					sort = true;
 				}
 				else
 				{
@@ -191,12 +192,18 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			else
 			{
 				existingItem = e.Item;
-			
+
 				if (!e.Item.Removed)
+				{
 					_importTable.Items.Add(e.Item);
+					sort = true;
+				}
 			}
 
 			UpateSelectedItemStats();
+
+			if (sort)
+				_importTable.Sort();
 
 			if (existingItem == _selectedProgressItem)
 				EventsHelper.Fire(_selectionUpdated, this, EventArgs.Empty);
@@ -251,16 +258,21 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			column = new TableColumn<ImportProgressItem, string>(
 					SR.TitleStartTime,
-					delegate(ImportProgressItem item) 
+					delegate(ImportProgressItem item)
 					{
 						if (item.StartTime == default(DateTime))
 							return "";
 
-						return item.StartTime.ToString(Format.TimeFormat); 
+						return item.StartTime.ToString(Format.TimeFormat);
 					},
-					0.5f);
+					null,
+					0.5f,
+					delegate(ImportProgressItem one, ImportProgressItem two) { return one.StartTime.CompareTo(two.StartTime); });
 
 			_importTable.Columns.Add(column);
+
+			// Default: Sort by start time
+			_importTable.Sort(new TableSortParams(column, false));
 
 			column = new TableColumn<ImportProgressItem, string>(
 					SR.TitleStatus,

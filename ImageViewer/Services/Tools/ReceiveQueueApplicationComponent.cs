@@ -37,8 +37,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 	public class ReceiveQueueItem : ReceiveProgressItem
 	{
-		private string _lastActiveDisplay;
-
 		private ReceiveQueueItem()
 		{
 			this.StudyInformation = new StudyInformation();
@@ -52,50 +50,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			UpdateFromProgressItem(progressItem);
 		}
 
-		public string LastActiveDisplay
-		{
-			get { return _lastActiveDisplay; }
-		}
-
 		internal void UpdateFromProgressItem(ReceiveProgressItem progressItem)
 		{
 			if (!this.Identifier.Equals(this.Identifier))
 				throw new InvalidOperationException(SR.ExceptionIdentifiersMustMatch);
 
 			base.CopyFrom(progressItem);
-
-			CalculateLastActiveDisplay();
-		}
-
-		internal void CalculateLastActiveDisplay()
-		{
-			TimeSpan lastActiveSpan = DateTime.Now.Subtract(this.LastActive);
-			if (lastActiveSpan.Days > 0)
-			{
-				if (lastActiveSpan.Days == 1)
-					_lastActiveDisplay = SR.MessageOneDayAgo;
-				else
-					_lastActiveDisplay = String.Format(SR.FormatXDaysAgo, lastActiveSpan.Days);
-			}
-			else if (lastActiveSpan.Hours > 0)
-			{
-				if (lastActiveSpan.Hours == 1)
-					_lastActiveDisplay = SR.MessageOneHourAgo;
-				else
-					_lastActiveDisplay = String.Format(SR.FormatXHoursAgo, lastActiveSpan.Hours);
-
-				if (lastActiveSpan.Minutes == 1)
-					_lastActiveDisplay += SR.MessageOneMinuteAgo;
-				else
-					_lastActiveDisplay += String.Format(SR.FormatXMinutesAgo, lastActiveSpan.Minutes);
-			}
-			else
-			{
-				if (lastActiveSpan.Minutes == 1)
-					_lastActiveDisplay = SR.MessageOneMinuteAgo;
-				else
-					_lastActiveDisplay = String.Format(SR.FormatXMinutesAgo, lastActiveSpan.Minutes);
-			}
 		}
 	}
 
@@ -218,7 +178,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			foreach (ReceiveQueueItem item in _receiveTable.Items)
 			{
-				item.CalculateLastActiveDisplay();
+				//need to do this to update the 'last active' column.
 				_receiveTable.Items.NotifyItemUpdated(item);
 			}
 		}
@@ -230,11 +190,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					return testItem.Identifier.Equals(e.Item.Identifier);
 				});
 
+			bool sort = false;
 			if (index >= 0)
 			{
 				if (e.Item.Removed)
 				{
 					_receiveTable.Items.Remove(_receiveTable.Items[index]);
+					sort = true;
 				}
 				else
 				{
@@ -245,8 +207,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			else
 			{
 				if (!e.Item.Removed)
+				{
 					_receiveTable.Items.Add(new ReceiveQueueItem(e.Item));
+					sort = true;
+				}
 			}
+
+			if (sort)
+				_receiveTable.Sort();
 		}
 
 		private string FormatString(string input)
@@ -290,7 +258,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 						return item.StudyInformation.StudyDate.ToString(Format.DateFormat); 
 					},
-					0.5f);
+					null,
+					0.5f,
+					delegate(ReceiveQueueItem one, ReceiveQueueItem two) { return one.StudyInformation.StudyDate.CompareTo(two.StudyInformation.StudyDate); });
 
 			_receiveTable.Columns.Add(column);
 
@@ -315,17 +285,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			_receiveTable.Columns.Add(column);
 
-			//column = new TableColumn<ReceiveQueueItem, string>(
-			//        "Message",
-			//        delegate(ReceiveQueueItem item) { return item.StatusMessage; },
-			//        1.5f);
-
-			//_receiveTable.Columns.Add(column);
-
 			column = new TableColumn<ReceiveQueueItem, string>(
 					SR.TitleLastActive,
-					delegate(ReceiveQueueItem item) { return item.LastActiveDisplay;  },
-					1.5f);
+					delegate(ReceiveQueueItem item) { return TimeSpanDisplayHelper.CalculateTimeSpanDisplay(item.LastActive); },
+					null,
+					1.5f,
+					delegate(ReceiveQueueItem one, ReceiveQueueItem two) { return one.LastActive.CompareTo(two.LastActive); });
+
+			// Default: Sort by last active
+			_receiveTable.Sort(new TableSortParams(column, false));
 
 			_receiveTable.Columns.Add(column);
 		}
