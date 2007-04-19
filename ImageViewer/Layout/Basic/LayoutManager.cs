@@ -176,7 +176,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				study.StudyDescription);
 
 			imageSet.PatientInfo = String.Format("{0} · {1}", 
-				study.ParentPatient.PatientsName,
+				study.ParentPatient.PatientsName.FormattedName,
 				study.ParentPatient.PatientId);
 
 			imageSet.Uid = study.StudyInstanceUID;

@@ -13,6 +13,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -282,25 +283,13 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				string label = String.Empty;
-				int i = 0;
-
-				foreach (Patient patient in this.StudyTree.Patients.Values)
-				{
-					string patientInfo;
-					i++;
-
-					patientInfo = String.Format("{0} · {1}",
-						patient.PatientsName,
-						patient.PatientId);
-
-					if (i < this.StudyTree.Patients.Count)
-						patientInfo += " :: ";
-
-					label += patientInfo;
-				}
-
-				return label;
+				return StringUtilities.Combine<Patient>(this.StudyTree.Patients.Values, " :: ",
+					delegate(Patient patient)
+					{
+						PersonName name = patient.PatientsName;
+						string formattedName = name.FormattedName;
+						return StringUtilities.Combine<string>(new string[] { formattedName, patient.PatientId } , " · ");
+					});
 			}
 		}
 

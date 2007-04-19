@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom
 {
@@ -26,8 +27,7 @@ namespace ClearCanvas.Dicom
             if (null == personsName)
                 throw new System.ArgumentNullException("personsName", SR.ExceptionGeneralPersonsNameNull);
 
-            _personsName = personsName;
-            BreakApartIntoComponentGroups();
+			this.InternalPersonName = personsName;
         }
 
         protected virtual string InternalPersonName
@@ -37,6 +37,7 @@ namespace ClearCanvas.Dicom
             {
                 _personsName = value;
                 BreakApartIntoComponentGroups();
+				SetFormattedName();
             }
         }
 
@@ -49,6 +50,11 @@ namespace ClearCanvas.Dicom
         {
             get { return this.SingleByte.GivenName; }
         }
+
+		public virtual String FormattedName
+		{
+			get { return _formattedName; }
+		}
 
         public virtual ComponentGroup SingleByte
         {
@@ -107,12 +113,20 @@ namespace ClearCanvas.Dicom
 
             if (componentGroupsStrings.GetUpperBound(0) > 1 && componentGroupsStrings[2] != string.Empty)
                 _componentGroups[2] = new ComponentGroup(componentGroupsStrings[2]);
-        }
+		}
 
-        #region Private fields
+		private void SetFormattedName()
+		{
+			//by default, the formatted name is LastName, FirstName
+			_formattedName = StringUtilities.Combine<string>(new string[] { this.LastName, this.FirstName }, ", ");
+		}
+		
+		#region Private fields
         private string _personsName;
         private string _lastName;
         private string _firstName;
+		private string _formattedName;
+
         private ComponentGroup[] _componentGroups = { ComponentGroup.GetEmptyComponentGroup(), 
                                                         ComponentGroup.GetEmptyComponentGroup(),
                                                         ComponentGroup.GetEmptyComponentGroup() };

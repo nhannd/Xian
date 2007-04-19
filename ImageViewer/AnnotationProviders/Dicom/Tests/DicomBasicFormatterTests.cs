@@ -24,11 +24,35 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom.Tests
 
 			input = @"Doe^John^^^";
 			result = DicomBasicResultFormatter.PersonNameFormatter(new PersonName(input));
-			Assert.AreEqual(result, "John Doe");
+			Assert.AreEqual(result, "Doe, John");
+
+			input = @"^John^^^";
+			result = DicomBasicResultFormatter.PersonNameFormatter(new PersonName(input));
+			Assert.AreEqual(result, "John");
+
+			input = @"Doe^^^^";
+			result = DicomBasicResultFormatter.PersonNameFormatter(new PersonName(input));
+			Assert.AreEqual(result, "Doe");
 
 			input = @"Doe^John^^^\Doe^Jane^^^";
 			result = DicomBasicResultFormatter.PersonNameListFormatter(VMStringConverter.ToPersonNameArray(input));
-			Assert.AreEqual(result, "John Doe,\nJane Doe");
+			Assert.AreEqual(result, "Doe, John,\nDoe, Jane");
+
+			input = @"^John^^^\Doe^Jane^^^";
+			result = DicomBasicResultFormatter.PersonNameListFormatter(VMStringConverter.ToPersonNameArray(input));
+			Assert.AreEqual(result, "John,\nDoe, Jane");
+
+			input = @"^John^^^\Doe^^^^";
+			result = DicomBasicResultFormatter.PersonNameListFormatter(VMStringConverter.ToPersonNameArray(input));
+			Assert.AreEqual(result, "John,\nDoe");
+
+			input = @"^^^^\Doe^^^^";
+			result = DicomBasicResultFormatter.PersonNameListFormatter(VMStringConverter.ToPersonNameArray(input));
+			Assert.AreEqual(result, "Doe");
+
+			input = @"^^^^\^^^^";
+			result = DicomBasicResultFormatter.PersonNameListFormatter(VMStringConverter.ToPersonNameArray(input));
+			Assert.AreEqual(result, "");
 		}
 	}
 }

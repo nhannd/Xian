@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -44,7 +45,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the patient's name.
 		/// </summary>
-		public string PatientsName
+		public PersonName PatientsName
 		{
 			get { return _imageSop.PatientsName; }
 		}

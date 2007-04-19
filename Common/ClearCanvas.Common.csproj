@@ -207,6 +207,7 @@
     <Compile Include="Utilities\StringDiff.cs" />
     <Compile Include="Utilities\BlockingThreadPool.cs" />
     <Compile Include="Utilities\StringUtilities.cs" />
+    <Compile Include="Utilities\Tests\StringUtilitiesTests.cs" />
     <Compile Include="Utilities\Tests\ThreadPoolTests.cs" />
     <Compile Include="Utilities\ThreadPoolBase.cs" />
     <Compile Include="Utilities\Timer.cs" />

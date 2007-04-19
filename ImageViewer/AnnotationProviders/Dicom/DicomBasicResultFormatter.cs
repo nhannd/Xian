@@ -87,19 +87,12 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 
 		public static string PersonNameFormatter(PersonName personName)
 		{
-			return String.Format("{0} {1}", personName.FirstName, personName.LastName);
+			return personName.FormattedName;
 		}
 
 		public static string PersonNameListFormatter(IEnumerable<PersonName> personNames)
-		{ 
-			string result = "";
-			foreach (PersonName personName in personNames)
-				result += PersonNameFormatter(personName) + ",\n";
-
-			if (!String.IsNullOrEmpty(result))
-				result = result.Remove(result.Length - 2);
-
-			return result;
+		{
+			return StringUtilities.Combine<PersonName>(personNames, ",\n", PersonNameFormatter);
 		}
 
 		#endregion

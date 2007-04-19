@@ -58,10 +58,20 @@ namespace ClearCanvas.Common.Utilities
 
 		public static string Combine<T>(IEnumerable<T> values, string separator)
 		{
-			return Combine<T>(values, separator, null);
+			return Combine<T>(values, separator, true);
+		}
+
+		public static string Combine<T>(IEnumerable<T> values, string separator, bool skipEmptyValues)
+		{
+			return Combine<T>(values, separator, null, skipEmptyValues);
 		}
 
 		public static string Combine<T>(IEnumerable<T> values, string separator, FormatDelegate<T> formatDelegate)
+		{
+			return Combine<T>(values, separator, formatDelegate, true);
+		}
+
+		public static string Combine<T>(IEnumerable<T> values, string separator, FormatDelegate<T> formatDelegate, bool skipEmptyValues)
 		{
 			if (values == null)
 				return "";
@@ -73,13 +83,19 @@ namespace ClearCanvas.Common.Utilities
 			int count = 0;
 			foreach (T value in values)
 			{
+				string stringValue = null;
+				if (formatDelegate == null)
+					stringValue = (value == null) ? null : value.ToString();
+				else
+					stringValue = formatDelegate(value);
+
+				if (String.IsNullOrEmpty(stringValue) && skipEmptyValues)
+					continue;
+
 				if (count++ > 0)
 					builder.Append(separator);
 
-				if (formatDelegate == null)
-					builder.Append(value.ToString());
-				else
-					builder.Append(formatDelegate(value));
+				builder.Append(stringValue);
 			}
 
 			return builder.ToString();

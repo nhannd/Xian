@@ -9,6 +9,7 @@ using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -37,9 +38,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 	public class ReceiveQueueItem : ReceiveProgressItem
 	{
+		private PersonName _patientsName;
+
 		private ReceiveQueueItem()
 		{
 			this.StudyInformation = new StudyInformation();
+			_patientsName = new PersonName("");
 		}
 
 		internal ReceiveQueueItem(ReceiveProgressItem progressItem)
@@ -50,12 +54,20 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			UpdateFromProgressItem(progressItem);
 		}
 
+		public PersonName PatientsName
+		{
+			get { return _patientsName; }
+		}
+
 		internal void UpdateFromProgressItem(ReceiveProgressItem progressItem)
 		{
 			if (!this.Identifier.Equals(this.Identifier))
 				throw new InvalidOperationException(SR.ExceptionIdentifiersMustMatch);
 
 			base.CopyFrom(progressItem);
+
+			if (!String.IsNullOrEmpty(this.StudyInformation.PatientsName) && this.StudyInformation.PatientsName != _patientsName.ToString())
+				_patientsName = new PersonName(this.StudyInformation.PatientsName);
 		}
 	}
 
@@ -244,7 +256,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			column = new TableColumn<ReceiveQueueItem, string>(
 					SR.TitlePatientsName,
-					delegate(ReceiveQueueItem item) { return FormatString(item.StudyInformation.PatientsName); },
+					delegate(ReceiveQueueItem item) { return item.PatientsName.FormattedName; },
 					1.5f);
 
 			_receiveTable.Columns.Add(column);
