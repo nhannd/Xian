@@ -112,6 +112,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
     public class SearchFolder : RegistrationWorkflowFolder
     {
+        private PatientProfileSearchData _searchCriteria;
+
         public SearchFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Search")
         {
@@ -122,12 +124,38 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Search";
         }
 
+        public PatientProfileSearchData SearchCriteria
+        {
+            get { return _searchCriteria; }
+            set
+            {
+                _searchCriteria = value;
+                this.Refresh();
+            }
+        }
+
         protected override bool CanQuery()
         {
             if (this.SearchCriteria != null)
                 return true;
 
             return false;
+        }
+
+        protected override IList<RegistrationWorklistItem> QueryItems()
+        {
+            List<RegistrationWorklistItem> worklistItems = null;
+            Platform.GetService<IRegistrationWorkflowService>(
+                delegate(IRegistrationWorkflowService service)
+                {
+                    SearchPatientResponse response = service.SearchPatient(new SearchPatientRequest(this.SearchCriteria));
+                    worklistItems = response.WorklistItems;
+                });
+
+            if (worklistItems == null)
+                worklistItems = new List<RegistrationWorklistItem>();
+
+            return worklistItems;
         }
     }
 }

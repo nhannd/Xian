@@ -233,7 +233,6 @@
     <Compile Include="RegistrationWorkflow\CheckInProcedureResponse.cs" />
     <Compile Include="RegistrationWorkflow\CheckInTableItem.cs" />
     <Compile Include="RegistrationWorkflow\CancelOrderTableItem.cs" />
-    <Compile Include="RegistrationWorkflow\ExecuteOperationRequest.cs" />
     <Compile Include="RegistrationWorkflow\GetDataForCancelOrderTableRequest.cs" />
     <Compile Include="RegistrationWorkflow\GetDataForCancelOrderTableResponse.cs" />
     <Compile Include="RegistrationWorkflow\GetDataForCheckInTableRequest.cs" />
@@ -267,6 +266,8 @@
     <Compile Include="RegistrationWorkflow\LoadPatientSearchComponentFormDataRequest.cs" />
     <Compile Include="RegistrationWorkflow\LoadPatientSearchComponentFormDataResponse.cs" />
     <Compile Include="RegistrationWorkflow\RICSummary.cs" />
+    <Compile Include="RegistrationWorkflow\SearchPatientRequest.cs" />
+    <Compile Include="RegistrationWorkflow\SearchPatientResponse.cs" />
     <Compile Include="ReportingWorkflow\CancelPendingTranscriptionRequest.cs" />
     <Compile Include="ReportingWorkflow\ClaimInterpretationRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationAndVerifyRequest.cs" />

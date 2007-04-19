@@ -10,20 +10,12 @@ namespace ClearCanvas.Healthcare.Workflow
 {
     public interface IWorklistItem
     {
-    }
-
-    public interface IWorklistQueryResult
-    {
+        string WorklistClassName { get; set; }
     }
 
     public interface IWorklist
     {
-        SearchCriteria SearchCriteria { get; set; }
         IList GetWorklist(IPersistenceContext context);
-        IList GetWorklist(IPersistenceContext context, SearchCriteria additionalCriteria);
-        IList GetQueryResultForWorklistItem(IPersistenceContext context, IWorklistItem item);
-
-        //void Subscribe(string callback);   
     }
 
 }

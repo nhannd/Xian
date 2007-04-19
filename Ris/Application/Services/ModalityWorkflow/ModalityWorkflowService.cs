@@ -18,6 +18,12 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
     [ServiceImplementsContract(typeof(IModalityWorkflowService))]
     public class ModalityWorkflowService : WorkflowServiceBase, IModalityWorkflowService
     {
+        public ModalityWorkflowService()
+        {
+            _worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Modality.WorklistExtensionPoint();
+            _operationExtPoint = new ClearCanvas.Healthcare.Workflow.Modality.WorkflowOperationExtensionPoint();
+        }
+
         [ReadOperation]
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
@@ -25,11 +31,11 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             ModalityProcedureStepSearchCriteria criteria = assembler.CreateSearchCriteria(request.SearchCriteria);
 
             return new GetWorklistResponse(
-                CollectionUtils.Map<WorklistQueryResult, ModalityWorklistItem, List<ModalityWorklistItem>>(
+                CollectionUtils.Map<WorklistItem, ModalityWorklistItem, List<ModalityWorklistItem>>(
                     PersistenceContext.GetBroker<IModalityWorklistBroker>().GetWorklist(criteria, request.PatientProfileAuthority),
-                    delegate(WorklistQueryResult queryResult)
+                    delegate(WorklistItem queryResult)
                     {
-                        return assembler.CreateWorklistItem(queryResult);
+                        return assembler.CreateModalityWorklistItem(queryResult);
                     }));
         }
 
@@ -37,8 +43,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         public GetWorklistItemResponse GetWorklistItem(GetWorklistItemRequest request)
         {
             ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
-            WorklistQueryResult result = PersistenceContext.GetBroker<IModalityWorklistBroker>().GetWorklistItem(request.ProcedureStepRef, request.PatientProfileAuthority);
-            return new GetWorklistItemResponse(assembler.CreateWorklistItem(result));
+            WorklistItem result = PersistenceContext.GetBroker<IModalityWorklistBroker>().GetWorklistItem(request.ProcedureStepRef, request.PatientProfileAuthority);
+            return new GetWorklistItemResponse(assembler.CreateModalityWorklistItem(result));
         }
 
         [ReadOperation]
@@ -61,7 +67,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             spsBroker.LoadTypeForModalityProcedureStep(sps);
             rpBroker.LoadTypeForRequestedProcedure(sps.RequestedProcedure);
 
-            patientBroker.LoadProfilesForPatient( sps.RequestedProcedure.Order.Patient );
+            patientBroker.LoadProfilesForPatient(sps.RequestedProcedure.Order.Patient);
 
             ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
             return new LoadWorklistItemPreviewResponse(assembler.CreateWorklistPreview(sps, request.PatientProfileAuthority));
@@ -70,20 +76,16 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         [UpdateOperation]
         public void ExecuteOperation(ExecuteOperationRequest request)
         {
-            ExecuteOperation(LoadStep(request.ProcedureStepRef), 
-                new ClearCanvas.Healthcare.Workflow.Modality.WorkflowOperationExtensionPoint(), request.OperationClassName);
+            //TODO: This operation should be removed
+            ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
+            ExecuteOperation(assembler.CreateWorklistItem(request.ModalityWorklistItem), null, request.OperationClassName);
         }
 
         [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
-            return new GetOperationEnablementResponse(GetOperationEnablement(LoadStep(request.ProcedureStepRef),
-                new ClearCanvas.Healthcare.Workflow.Modality.WorkflowOperationExtensionPoint()));
-        }
-
-        private ModalityProcedureStep LoadStep(EntityRef stepRef)
-        {
-            return PersistenceContext.GetBroker<IModalityProcedureStepBroker>().Load(stepRef, EntityLoadFlags.CheckVersion);
+            ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
+            return new GetOperationEnablementResponse(GetOperationEnablement(assembler.CreateWorklistItem(request.WorklistItem)));
         }
     }
 }

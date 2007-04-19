@@ -11,6 +11,14 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     public interface IRegistrationWorkflowService
     {
         /// <summary>
+        /// Search for a list of Patient
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        SearchPatientResponse SearchPatient(SearchPatientRequest request);
+
+        /// <summary>
         /// Get the worklist for each folder in the <see cref="WorklistComponent"/>
         /// </summary>
         /// <param name="request"></param>
@@ -33,15 +41,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// <returns></returns>
         [OperationContract]
         GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
-
-        /// <summary>
-        /// Execute a particular operation associated with a folder in the <see cref="WorklistComponent"/>
-        /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
-        [OperationContract]
-        [FaultContract(typeof(ConcurrentModificationException))]
-        void ExecuteOperation(ExecuteOperationRequest request);
 
         /// <summary>
         /// Loads all data for the <see cref="RequestedProcedureCheckInComponent"/>

@@ -9,7 +9,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
     public class ReportingWorklistAssembler
     {
-        public ReportingWorklistItem CreateWorklistItem(ReportingWorklistQueryResult result)
+        public ReportingWorklistItem CreateReportingWorklistItem(ReportingWorklistQueryResult result)
         {
             ReportingWorklistItem item = new ReportingWorklistItem();
 

@@ -19,7 +19,6 @@ namespace ClearCanvas.Ris.Client.Adt
         private IconSet _openIconSet;
 
         private string _worklistClassName;
-        private PatientProfileSearchData _searchCriteria;
 
         public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName)
             : base(folderSystem, folderName, new RegistrationWorklistTable())
@@ -36,16 +35,6 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get { return _worklistClassName; }
             set { _worklistClassName = value; }
-        }
-
-        public PatientProfileSearchData SearchCriteria
-        {
-            get { return _searchCriteria; }
-            set 
-            { 
-                _searchCriteria = value;
-                this.Refresh();
-            }
         }
 
         public IconSet ClosedIconSet
@@ -83,13 +72,16 @@ namespace ClearCanvas.Ris.Client.Adt
 
         protected override IList<RegistrationWorklistItem> QueryItems()
         {
-            List<RegistrationWorklistItem> worklistItems = new List<RegistrationWorklistItem>();
+            List<RegistrationWorklistItem> worklistItems = null;
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
                 {
-                    GetWorklistResponse response = service.GetWorklist(new GetWorklistRequest(this.WorklistClassName, this.SearchCriteria));
+                    GetWorklistResponse response = service.GetWorklist(new GetWorklistRequest(this.WorklistClassName));
                     worklistItems = response.WorklistItems;
                 });
+
+            if (worklistItems == null)
+                worklistItems = new List<RegistrationWorklistItem>();
 
             return worklistItems;
         }

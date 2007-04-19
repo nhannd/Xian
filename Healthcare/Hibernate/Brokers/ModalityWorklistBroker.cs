@@ -15,7 +15,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
     [ExtensionOf(typeof(BrokerExtensionPoint))]
     public class ModalityWorklistBroker : Broker, IModalityWorklistBroker
     {
-        public IList<WorklistQueryResult> GetWorklist(ModalityProcedureStepSearchCriteria criteria, string patientProfileAuthority)
+        public IList<WorklistItem> GetWorklist(ModalityProcedureStepSearchCriteria criteria, string patientProfileAuthority)
         {
             HqlReportQuery query = new HqlReportQuery(new HqlFrom("sps", "ModalityProcedureStep"));
             query.Joins.Add(new HqlJoin("spst", "sps.Type"));
@@ -51,22 +51,21 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             profileCriteria.Mrn.AssigningAuthority.EqualTo(patientProfileAuthority);
             query.Conditions.AddRange(HqlCondition.FromSearchCriteria("pp", profileCriteria));
 
-            List<WorklistQueryResult> items = new List<WorklistQueryResult>();
+            List<WorklistItem> items = new List<WorklistItem>();
             foreach (object[] tuple in ExecuteHql(query))
             {
-                items.Add( (WorklistQueryResult)Activator.CreateInstance(typeof(WorklistQueryResult), tuple) );
+                items.Add((WorklistItem)Activator.CreateInstance(typeof(WorklistItem), tuple));
             }
             return items;
         }
 
-        public WorklistQueryResult GetWorklistItem(EntityRef mpsRef, string patientProfileAuthority)
+        public WorklistItem GetWorklistItem(EntityRef mpsRef, string patientProfileAuthority)
         {
             ModalityProcedureStepSearchCriteria mpsCriteria = new ModalityProcedureStepSearchCriteria(mpsRef);
-            IList<WorklistQueryResult> results = this.GetWorklist(mpsCriteria, patientProfileAuthority);
+            IList<WorklistItem> results = this.GetWorklist(mpsCriteria, patientProfileAuthority);
 
             // expect exactly one result
-            return CollectionUtils.FirstElement<WorklistQueryResult>(results);
+            return CollectionUtils.FirstElement<WorklistItem>(results);
         }
-
     }
 }

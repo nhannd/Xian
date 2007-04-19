@@ -4,8 +4,11 @@ using System.Text;
 using ClearCanvas.Workflow;
 using ClearCanvas.Common;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
+using System.Collections;
 
-namespace ClearCanvas.Healthcare.Workflow
+namespace ClearCanvas.Healthcare.Workflow.Registration
 {
     [ExtensionPoint]
     public class WorkflowOperationExtensionPoint : ExtensionPoint<IOperation>
@@ -15,38 +18,45 @@ namespace ClearCanvas.Healthcare.Workflow
     public class Operations
     {
         [ExtensionOf(typeof(WorkflowOperationExtensionPoint))]
-        public class CheckIn : Operation
+        public class CheckIn : OperationBase
         {
-            protected override void Execute(ProcedureStep step, IWorkflow workflow)
+            public override void Execute(IWorklistItem item, IList parameters ,IWorkflow workflow)
             {
-                //ModalityProcedureStep mps = (ModalityProcedureStep)step;
-                //mps.Start(this.CurrentUserStaff);
-                Platform.ShowMessageBox("Check-in Not Implemented");
+                if (parameters == null)
+                    return;
+
+                foreach (EntityRef rpRef in parameters)
+                {
+                    RequestedProcedure rp = workflow.CurrentContext.GetBroker<IRequestedProcedureBroker>().Load(rpRef);
+                    
+                    CheckInProcedureStep cps = new CheckInProcedureStep(rp);
+                    cps.Start(this.CurrentUserStaff);
+                    cps.Complete(this.CurrentUserStaff);
+
+                    rp.CheckInProcedureSteps.Add(cps);
+                    workflow.CurrentContext.Lock(rp, DirtyState.Dirty);
+                }
             }
 
-            protected override bool CanExecute(ProcedureStep step)
+            protected override bool CanExecute(IWorklistItem item)
             {
-                ModalityProcedureStep mps = (ModalityProcedureStep)step;
-                return mps.State == ActivityStatus.SC;
+                return item.WorklistClassName == "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled";
             }
         }
 
         [ExtensionOf(typeof(WorkflowOperationExtensionPoint))]
-        public class Cancel : Operation
+        public class Cancel : OperationBase
         {
-            protected override void Execute(ProcedureStep step, IWorkflow workflow)
+            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
             {
-                //ModalityProcedureStep mps = (ModalityProcedureStep)step;
-                //mps.Start(this.CurrentUserStaff);
                 Platform.ShowMessageBox("Cancel Not Implemented");
             }
 
-            protected override bool CanExecute(ProcedureStep step)
+            protected override bool CanExecute(IWorklistItem item)
             {
-                ModalityProcedureStep mps = (ModalityProcedureStep)step;
-                return (mps.State == ActivityStatus.IP
-                    || mps.State == ActivityStatus.SC
-                    || mps.State == ActivityStatus.SU);
+                return item.WorklistClassName == "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled"
+                    || item.WorklistClassName == "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn"
+                    || item.WorklistClassName == "ClearCanvas.Healthcare.Workflow.Registration.Worklists+InProgress";
             }
         }
     

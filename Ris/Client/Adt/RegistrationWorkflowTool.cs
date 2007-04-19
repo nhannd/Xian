@@ -8,6 +8,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -15,7 +16,7 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         public abstract class WorkflowItemTool : Tool<IRegistrationWorkflowItemToolContext>
         {
-            private string _operationClass;
+            protected string _operationClass;
 
             public WorkflowItemTool(string operationClass)
             {
@@ -38,7 +39,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             public virtual void Apply()
             {
-                this.Context.ExecuteWorkflowOperation(_operationClass);
+                //this.Context.ExecuteWorkflowOperation(_operationClass);
             }
         }
 
@@ -49,8 +50,18 @@ namespace ClearCanvas.Ris.Client.Adt
         public class CheckInTool : WorkflowItemTool
         {
             public CheckInTool()
-                : base("ClearCanvas.Healthcare.Workflow.Operations+CheckIn")
+                : base("ClearCanvas.Healthcare.Workflow.Registration.Operations+CheckIn")
             {
+            }
+
+            public override void Apply()
+            {
+                foreach (RegistrationWorklistItem item in this.Context.SelectedItems)
+                {
+                    RequestedProcedureCheckInComponent checkInComponent = new RequestedProcedureCheckInComponent(item);
+                    ApplicationComponent.LaunchAsDialog(
+                        this.Context.DesktopWindow, checkInComponent, String.Format("Checking in {0}", Format.Custom(item.Name)));
+                }
             }
         }
 
@@ -61,8 +72,18 @@ namespace ClearCanvas.Ris.Client.Adt
         public class CancelTool : WorkflowItemTool
         {
             public CancelTool()
-                : base("ClearCanvas.Healthcare.Workflow.Operations+Cancel")
+                : base("ClearCanvas.Healthcare.Workflow.Registration.Operations+Cancel")
             {
+            }
+
+            public override void Apply()
+            {
+                foreach (RegistrationWorklistItem item in this.Context.SelectedItems)
+                {
+                    CancelOrderComponent cancelOrderComponent = new CancelOrderComponent(item.PatientProfileRef);
+                    ApplicationComponent.LaunchAsDialog(
+                        this.Context.DesktopWindow, cancelOrderComponent, String.Format("Cancel Order for {0}", Format.Custom(item.Name)));
+                }
             }
         }
     

@@ -16,7 +16,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             PersonNameDetail name,
             HealthcardDetail healthcard,
             DateTime? dateOfBirth,
-            string sex)
+            EnumValueInfo sex)
         {
             this.PatientProfileRef = patientProfileRef;
             this.WorklistClassName = worklistClassName;
@@ -50,6 +50,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         public DateTime? DateOfBirth;
 
         [DataMember]
-        public string Sex;
+        public EnumValueInfo Sex;
     }
 }

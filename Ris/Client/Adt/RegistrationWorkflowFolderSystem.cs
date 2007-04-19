@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Client.Adt
     public interface IRegistrationWorkflowItemToolContext : IToolContext
     {
         bool GetWorkflowOperationEnablement(string operationClass);
-        void ExecuteWorkflowOperation(string operationClass);
+        //void ExecuteWorkflowOperation(string operationClass);
 
         ICollection<RegistrationWorklistItem> SelectedItems { get; }
         event EventHandler SelectedItemsChanged;
@@ -76,10 +76,10 @@ namespace ClearCanvas.Ris.Client.Adt
                 return _owner.GetOperationEnablement(operationClass);
             }
 
-            public void ExecuteWorkflowOperation(string operationClass)
-            {
-                _owner.ExecuteOperation(operationClass);
-            }
+            //public void ExecuteWorkflowOperation(string operationClass)
+            //{
+            //    _owner.ExecuteOperation(operationClass);
+            //}
 
             #endregion
         }
@@ -155,18 +155,27 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
         {
-
             //// TODO: update workflow enablement
-            //WorklistItem selectedItem = CollectionUtils.FirstElement<WorklistItem>(this.SelectedItems);
-            //if (selectedItem != null)
-            //{
-            //    WorklistQueryResult result = CollectionUtils.FirstElement<WorklistQueryResult>(selectedItem.QueryResults);
-            //    _workflowEnablment = _workflowService.GetOperationEnablement(result.ProcedureStep);
-            //}
-            //else
-            //{
-            //    _workflowEnablment = null;
-            //}
+            RegistrationWorklistItem selectedItem = CollectionUtils.FirstElement<RegistrationWorklistItem>(this.SelectedItems);
+            if (selectedItem == null)
+            {
+                _workflowEnablment = null;
+                return;
+            }
+
+            try
+            {
+                Platform.GetService<IRegistrationWorkflowService>(
+                    delegate(IRegistrationWorkflowService service)
+                    {
+                        GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem));
+                        _workflowEnablment = response.OperationEnablementDictionary;
+                    });
+            }
+            catch (Exception ex)
+            {
+                ExceptionHandler.Report(ex, this.DesktopWindow);
+            }
         }
 
         private void ModalityProcedureStepChangedEventHandler(object sender, EntityChangeEventArgs e)
@@ -189,13 +198,25 @@ namespace ClearCanvas.Ris.Client.Adt
             //}
         }
 
-        private void ExecuteOperation(string operationName)
-        {
-            //TODO: Update ExecuteOperation
-
-            //WorklistItem selectedItem = CollectionUtils.FirstElement<WorklistItem>(this.SelectedItems);
-            //_workflowService.ExecuteOperation(selectedItem.ProcedureStep, operationName);
-        }
+        //private void ExecuteOperation(string operationName)
+        //{
+        //    //TODO: Update ExecuteOperation
+        //    try
+        //    {
+        //        foreach (RegistrationWorklistItem selectedItem in this.SelectedItems)
+        //        {
+        //            Platform.GetService<IRegistrationWorkflowService>(
+        //                delegate(IRegistrationWorkflowService service)
+        //                {
+        //                    ExecuteOperationResponse response = service.ExecuteOperation(new ExecuteOperationRequest(selectedItem, operationName));
+        //                });
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        ExceptionHandler.Report(e, this.DesktopWindow);
+        //    }
+        //}
 
         private bool GetOperationEnablement(string operationName)
         {

@@ -11,59 +11,57 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Registration
 {
-    public class WorklistItem : IWorklistItem
+    public class WorklistItem : WorklistItemBase
     {
         private EntityRef _patientProfile;
-        private string _workClassName;
-
         private CompositeIdentifier _mrn;
         private PersonName _patientName;
         private HealthcardNumber _healthcardNumber;
-        private DateTime _dateOfBirth;
+        private DateTime? _dateOfBirth;
         private Sex _sex;
 
-        public WorklistItem(string workClassName, WorklistQueryResult queryResult)
+        public WorklistItem(PatientProfile profile)
         {
-            _workClassName = workClassName;
-            _mrn = queryResult.Mrn;
-            _patientName = queryResult.PatientName;
-            _healthcardNumber = queryResult.HealthcardNumber;
-            _dateOfBirth = queryResult.DateOfBirth;
-            _sex = queryResult.Sex;
-
-            _patientProfile = queryResult.PatientProfile;
-        }
-
-        public WorklistItem(string workClassName, PatientProfile profile)
-        {
-            _workClassName = workClassName;
-
+            _patientProfile = profile.GetRef();
             _mrn = profile.Mrn;
             _patientName = profile.Name;
             _healthcardNumber = profile.Healthcard;
             _dateOfBirth = profile.DateOfBirth;
             _sex = profile.Sex;
-
-            _patientProfile = profile.GetRef();
         }
 
-        public WorklistItem(string workClassName, EntityRef profileRef)
+        public WorklistItem(EntityRef profileRef,
+            CompositeIdentifier mrn,
+            PersonName patientName,
+            HealthcardNumber healthcard,
+            DateTime? dateOfBirth,
+            Sex sex)
         {
-            _workClassName = workClassName;
             _patientProfile = profileRef;
-         }
+            _mrn = mrn;
+            _patientName = patientName;
+            _healthcardNumber = healthcard;
+            _dateOfBirth = dateOfBirth;
+            _sex = sex;
+        }
+
+        public override bool Equals(object obj)
+        {
+            WorklistItem that = (WorklistItem)obj;
+            return (that != null) &&
+                (this.PatientProfile == that.PatientProfile);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.PatientProfile.GetHashCode();
+        }
 
         #region Public Properties
 
         public EntityRef PatientProfile
         {
             get { return _patientProfile; }
-        }
-
-        public string WorkClassName
-        {
-            get { return _workClassName; }
-            set { _workClassName = value; }
         }
 
         public CompositeIdentifier Mrn
@@ -81,7 +79,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             get { return _healthcardNumber; }
         }
 
-        public DateTime DateOfBirth
+        public DateTime? DateOfBirth
         {
             get { return _dateOfBirth; }
         }

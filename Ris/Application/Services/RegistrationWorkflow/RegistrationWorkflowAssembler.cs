@@ -17,19 +17,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
     public class RegistrationWorkflowAssembler
     {
-        public RICSummary CreateRICSummary(WorklistQueryResult result)
-        {
-            PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            return new RICSummary(
-                result.RequestedProcedureName,
-                nameAssembler.CreatePersonNameDetail(result.OrderingPractitioner),
-                "N/A",
-                result.ProcedureStepScheduledStartTime,
-                "N/A");
-        }
-
-        public RegistrationWorklistPreview CreateRegistrationWorklistPreview(EntityRef profileRef
-            , IList listQueryResult
+        public RegistrationWorklistPreview CreateRegistrationWorklistPreview(RegistrationWorklistItem item
             , bool hasReconciliationCandidates
             , List<AlertNotificationDetail> alertNotifications
             , IPersistenceContext context)
@@ -39,10 +27,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             TelephoneNumberAssembler phoneAssembler = new TelephoneNumberAssembler();
             AddressAssembler addressAssembler = new AddressAssembler();
             SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
-            PatientProfile profile = context.GetBroker<IPatientProfileBroker>().Load(profileRef);
+
+            IPatientProfileBroker profileBroker = context.GetBroker<IPatientProfileBroker>();
+            PatientProfile profile = profileBroker.Load(item.PatientProfileRef);
+            profileBroker.LoadPatientForPatientProfile(profile);
 
             return new RegistrationWorklistPreview(
-                profileRef,
+                item.PatientProfileRef,
                 profile.Mrn.Id,
                 profile.Mrn.AssigningAuthority,
                 nameAssembler.CreatePersonNameDetail(profile.Name),
@@ -65,11 +56,18 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     {
                         return addressAssembler.CreateAddressDetail(address, context);
                     }),
-                CollectionUtils.Map<WorklistQueryResult, RICSummary, List<RICSummary>>(
-                    listQueryResult,
-                    delegate(WorklistQueryResult result)
+                CollectionUtils.Map<RequestedProcedure, RICSummary, List<RICSummary>>(
+                    context.GetBroker<IRegistrationWorklistBroker>().GetRequestedProcedureForPatient(
+                            profile.Patient, 
+                            item.WorklistClassName),
+                    delegate(RequestedProcedure rp)
                     {
-                        return CreateRICSummary(result);
+                        return new RICSummary(
+                            rp.Type.Name,
+                            nameAssembler.CreatePersonNameDetail(rp.Order.OrderingPractitioner.Name),
+                            "N/A",
+                            null,
+                            "N/A");
                     }),
                 alertNotifications,
                 hasReconciliationCandidates
@@ -114,36 +112,37 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             return profileCriteria;
         }
 
-        private RegistrationWorklistItem CreateRegistrationWorklistItem(string worklistClassName, WorklistQueryResult result, IPersistenceContext context)
-        {
-            PersonNameAssembler personNameAssembler = new PersonNameAssembler();
-            HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
-
-            return new RegistrationWorklistItem(
-                result.PatientProfile,
-                worklistClassName,
-                result.Mrn.Id,
-                result.Mrn.AssigningAuthority,
-                personNameAssembler.CreatePersonNameDetail(result.PatientName),
-                healthcardAssembler.CreateHealthcardDetail(result.HealthcardNumber),
-                result.DateOfBirth,
-                result.Sex.ToString());
-        }
-
         public RegistrationWorklistItem CreateRegistrationWorklistItem(WorklistItem domainItem, IPersistenceContext context)
         {
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
 
+            SexEnum sex = context.GetBroker<ISexEnumBroker>().Load()[domainItem.Sex];
+
             return new RegistrationWorklistItem(
                 domainItem.PatientProfile,
-                domainItem.WorkClassName,
+                domainItem.WorklistClassName,
                 domainItem.Mrn.Id,
                 domainItem.Mrn.AssigningAuthority,
                 nameAssembler.CreatePersonNameDetail(domainItem.PatientName),
                 healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
                 domainItem.DateOfBirth,
-                domainItem.Sex.ToString());
+                new EnumValueInfo(sex.Code.ToString(), sex.Value));
         }
+
+        public WorklistItem CreateWorklistItem(RegistrationWorklistItem item)
+        {
+            WorklistItem domainItem = new WorklistItem(
+                    item.PatientProfileRef, 
+                    new CompositeIdentifier(item.MrnID, item.MrnAssigningAuthority),
+                    new PersonName(item.Name.FamilyName, item.Name.GivenName, item.Name.MiddleName, item.Name.Prefix, item.Name.Suffix, item.Name.Degree), 
+                    new HealthcardNumber(item.Healthcard.Id, item.Healthcard.AssigningAuthority, item.Healthcard.VersionCode, item.Healthcard.ExpiryDate),
+                    item.DateOfBirth,
+                    (Sex)Enum.Parse(typeof(Sex), item.Sex.Code));
+
+            domainItem.WorklistClassName = item.WorklistClassName;
+            return domainItem;
+        }
+    
     }
 }

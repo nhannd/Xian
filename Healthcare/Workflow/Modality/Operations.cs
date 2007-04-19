@@ -3,9 +3,18 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Workflow;
 using ClearCanvas.Common;
+using System.Collections;
+using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Modality
 {
+    public class Test
+    {
+
+    }
+
     [ExtensionPoint]
     public class WorkflowOperationExtensionPoint : ExtensionPoint<IOperation>
     {
@@ -13,51 +22,58 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
     public class Operations
     {
-        [ExtensionOf(typeof(WorkflowOperationExtensionPoint))]
-        public class StartModalityProcedureStep : Operation
+        public abstract class ModalityWorklistOperation : OperationBase
         {
-            protected override void Execute(ProcedureStep step, IWorkflow workflow)
+            protected ModalityProcedureStep LoadStep(EntityRef stepRef, IPersistenceContext context)
             {
-                ModalityProcedureStep mps = (ModalityProcedureStep)step;
+                return context.GetBroker<IModalityProcedureStepBroker>().Load(stepRef, EntityLoadFlags.CheckVersion);
+            }
+        }
+
+        [ExtensionOf(typeof(WorkflowOperationExtensionPoint))]
+        public class StartModalityProcedureStep : ModalityWorklistOperation
+        {
+            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
+            {
+                ModalityProcedureStep mps = LoadStep((item as WorklistItem).RequestedProcedure, workflow.CurrentContext);
                 mps.Start(this.CurrentUserStaff);
             }
 
-            protected override bool CanExecute(ProcedureStep step)
+            protected override bool CanExecute(IWorklistItem item)
             {
-                ModalityProcedureStep mps = (ModalityProcedureStep)step;
-                return mps.State == ActivityStatus.SC;
+                return (item as WorklistItem).Status == ActivityStatus.SC;
             }
         }
 
         [ExtensionOf(typeof(WorkflowOperationExtensionPoint))]
-        public class CompleteModalityProcedureStep : Operation
+        public class CompleteModalityProcedureStep : ModalityWorklistOperation
         {
-            protected override void Execute(ProcedureStep step, IWorkflow workflow)
+            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
             {
-                ModalityProcedureStep mps = (ModalityProcedureStep)step;
+                ModalityProcedureStep mps = LoadStep((item as WorklistItem).RequestedProcedure, workflow.CurrentContext);
                 mps.Complete(this.CurrentUserStaff);
             }
 
-            protected override bool CanExecute(ProcedureStep step)
+            protected override bool CanExecute(IWorklistItem item)
             {
-                ModalityProcedureStep mps = (ModalityProcedureStep)step;
-                return mps.State == ActivityStatus.SC || mps.State == ActivityStatus.IP;
+                ActivityStatus status = (item as WorklistItem).Status;
+                return status == ActivityStatus.SC || status == ActivityStatus.IP;
             }
         }
 
         [ExtensionOf(typeof(WorkflowOperationExtensionPoint))]
-        public class CancelModalityProcedureStep : Operation
+        public class CancelModalityProcedureStep : ModalityWorklistOperation
         {
-            protected override void Execute(ProcedureStep step, IWorkflow workflow)
+            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
             {
-                ModalityProcedureStep mps = (ModalityProcedureStep)step;
+                ModalityProcedureStep mps = LoadStep((item as WorklistItem).RequestedProcedure, workflow.CurrentContext);
                 mps.Discontinue();
             }
 
-            protected override bool CanExecute(ProcedureStep step)
+            protected override bool CanExecute(IWorklistItem item)
             {
-                ModalityProcedureStep mps = (ModalityProcedureStep)step;
-                return mps.State == ActivityStatus.SC || mps.State == ActivityStatus.IP;
+                ActivityStatus status = (item as WorklistItem).Status;
+                return status == ActivityStatus.SC || status == ActivityStatus.IP;
             }
         }
     }

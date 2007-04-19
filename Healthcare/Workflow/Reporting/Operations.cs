@@ -2,25 +2,41 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Workflow;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Healthcare.Brokers;
+using System.Collections;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Reporting
 {
     public class Operations
     {
-        public class ClaimInterpretation : Operation
+        public abstract class ReportingOperation : OperationBase
         {
-            protected override void Execute(ProcedureStep step, IWorkflow workflow)
+            protected ReportingProcedureStep LoadStep(EntityRef stepRef, IPersistenceContext context)
             {
-                InterpretationStep interpretation = (InterpretationStep)step;
+                // it is extremly important that we get the actual object and not a proxy here
+                // if a proxy is returned, then it cannot be cast to a subclass
+                // (eg InterpretationStep s = (InterpretationStep)rps; will fail even if we know that rps is an interpretation step)
+                return context.GetBroker<IReportingProcedureStepBroker>().Load(stepRef, EntityLoadFlags.CheckVersion);
+            }
+        }
+
+        public class ClaimInterpretation : ReportingOperation
+        {
+            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
+            {
+                InterpretationStep interpretation = (InterpretationStep)LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
                 interpretation.Assign(this.CurrentUserStaff);
             }
         }
 
-        public class StartInterpretation : Operation
+        public class StartInterpretation : ReportingOperation
         {
-            protected override void Execute(ProcedureStep step, IWorkflow workflow)
+            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
             {
-                InterpretationStep interpretation = (InterpretationStep)step;
+                InterpretationStep interpretation = (InterpretationStep)LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
 
                 // if not assigned, assign
                 if (interpretation.AssignedStaff == null)
@@ -31,9 +47,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             }
         }
 
-        public abstract class CompleteInterpretationBase : Operation
+        public abstract class CompleteInterpretationBase : ReportingOperation
         {
-            protected override void Execute(ProcedureStep step, IWorkflow workflow)
+            public virtual void Execute(ReportingProcedureStep step, IWorkflow workflow)
             {
                 InterpretationStep interpretation = (InterpretationStep)step;
                 interpretation.Complete();
@@ -42,18 +58,19 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CompleteInterpretationForTranscription : CompleteInterpretationBase
         {
-            protected override void Execute(ProcedureStep step, IWorkflow workflow)
+            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
             {
+                ReportingProcedureStep step = LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
                 base.Execute(step, workflow);
-
-                workflow.AddActivity(new TranscriptionStep((InterpretationStep)step));
+                workflow.AddActivity(new TranscriptionStep(step));
             }
         }
 
         public class CompleteInterpretationForVerification : CompleteInterpretationBase
         {
-            protected override void Execute(ProcedureStep step, IWorkflow workflow)
+            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
             {
+                ReportingProcedureStep step = LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
                 base.Execute(step, workflow);
 
                 InterpretationStep interpretation = (InterpretationStep)step;
@@ -66,8 +83,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CompleteInterpretationAndVerify : CompleteInterpretationBase
         {
-            protected override void Execute(ProcedureStep step, IWorkflow workflow)
+            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
             {
+                ReportingProcedureStep step = LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
                 base.Execute(step, workflow);
 
                 InterpretationStep interpretation = (InterpretationStep)step;
@@ -79,11 +97,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             }
         }
 
-        public class CancelPendingTranscription : Operation
+        public class CancelPendingTranscription : ReportingOperation
         {
-            protected override void Execute(ProcedureStep step, IWorkflow workflow)
+            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
             {
-                TranscriptionStep transcription = (TranscriptionStep)step;
+                TranscriptionStep transcription = (TranscriptionStep)LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
                 transcription.Discontinue();
 
                 InterpretationStep interpretation = new InterpretationStep(transcription);
@@ -95,11 +113,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             }
         }
 
-        public class StartVerification : Operation
+        public class StartVerification : ReportingOperation
         {
-            protected override void Execute(ProcedureStep step, IWorkflow workflow)
+            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
             {
-                VerificationStep verification = (VerificationStep)step;
+                VerificationStep verification = (VerificationStep)LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
 
                 // if not assigned, assign
                 if (verification.AssignedStaff == null)
@@ -110,11 +128,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             }
         }
 
-        public class CompleteVerification : Operation
+        public class CompleteVerification : ReportingOperation
         {
-            protected override void Execute(ProcedureStep step, IWorkflow workflow)
+            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
             {
-                VerificationStep verification = (VerificationStep)step;
+                VerificationStep verification = (VerificationStep)LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
 
                 // this operation is legal even if the step was never started, therefore need to supply the performer
                 verification.Complete(this.CurrentUserStaff);

@@ -18,33 +18,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class ReportingWorkflowService : WorkflowServiceBase, IReportingWorkflowService
     {
-/*
-        private InterpretationStep LoadStep(EntityRef<InterpretationStep> stepRef)
-        {
-            IInterpretationStepBroker broker = CurrentContext.GetBroker<IInterpretationStepBroker>();
-            return broker.Load(stepRef, EntityLoadFlags.CheckVersion);
-        }
-
-        private TranscriptionStep LoadStep(EntityRef<TranscriptionStep> stepRef)
-        {
-            ITranscriptionStepBroker broker = CurrentContext.GetBroker<ITranscriptionStepBroker>();
-            return broker.Load(stepRef, EntityLoadFlags.CheckVersion);
-        }
-
-        private VerificationStep LoadStep(EntityRef<VerificationStep> stepRef)
-        {
-            IVerificationStepBroker broker = CurrentContext.GetBroker<IVerificationStepBroker>();
-            return broker.Load(stepRef, EntityLoadFlags.CheckVersion);
-        }
-*/
-        private ReportingProcedureStep LoadStep(EntityRef stepRef)
-        {
-            // it is extremly important that we get the actual object and not a proxy here
-            // if a proxy is returned, then it cannot be cast to a subclass
-            // (eg InterpretationStep s = (InterpretationStep)rps; will fail even if we know that rps is an interpretation step)
-            return PersistenceContext.GetBroker<IReportingProcedureStepBroker>().Load(stepRef, EntityLoadFlags.CheckVersion);
-        }
-
         #region IReportingWorkflowService Members
 
         [ReadOperation]
@@ -58,7 +31,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                     PersistenceContext.GetBroker<IReportingWorklistBroker>().GetWorklist(request.StepClass, criteria),
                     delegate(ReportingWorklistQueryResult queryResult)
                     {
-                        return assembler.CreateWorklistItem(queryResult);
+                        return assembler.CreateReportingWorklistItem(queryResult);
                     }));
         }
 
@@ -74,49 +47,49 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [UpdateOperation]
         public void ClaimInterpretation(ClaimInterpretationRequest request)
         {
-            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.ClaimInterpretation());
+            //ExecuteOperation(request.WorklistItem, new Operations.ClaimInterpretation());
         }
 
         [UpdateOperation]
         public void StartInterpretation(StartInterpretationRequest request)
         {
-            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.StartInterpretation());
+            //ExecuteOperation(request.WorklistItem, new Operations.StartInterpretation());
         }
 
         [UpdateOperation]
         public void CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request)
         {
-            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.CompleteInterpretationForTranscription());
+            //ExecuteOperation(request.WorklistItem, new Operations.CompleteInterpretationForTranscription());
         }
 
         [UpdateOperation]
         public void CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request)
         {
-            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.CompleteInterpretationForVerification());
+            //ExecuteOperation(request.WorklistItem, new Operations.CompleteInterpretationForVerification());
         }
 
         [UpdateOperation]
         public void CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request)
         {
-            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.CompleteInterpretationAndVerify());
+            //ExecuteOperation(request.WorklistItem, new Operations.CompleteInterpretationAndVerify());
         }
 
         [UpdateOperation]
         public void CancelPendingTranscription(CancelPendingTranscriptionRequest request)
         {
-            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.CancelPendingTranscription());
+            //ExecuteOperation(request.WorklistItem, new Operations.CancelPendingTranscription());
         }
 
         [UpdateOperation]
         public void StartVerification(StartVerificationRequest request)
         {
-            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.StartVerification());
+            //ExecuteOperation(request.WorklistItem, new Operations.StartVerification());
         }
 
         [UpdateOperation]
         public void CompleteVerification(CompleteVerificationRequest request)
         {
-            ExecuteOperation(LoadStep(request.ProcedureStepRef), new Operations.CompleteVerification());
+            //ExecuteOperation(request.WorklistItem, new Operations.CompleteVerification());
         }
 
         #endregion

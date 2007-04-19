@@ -14,17 +14,21 @@ using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Workflow;
+using ClearCanvas.Healthcare.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
     [ServiceImplementsContract(typeof(IRegistrationWorkflowService))]
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    public class RegistrationWorkflowService : WorklistService, IRegistrationWorkflowService
+    public class RegistrationWorkflowService : WorkflowServiceBase, IRegistrationWorkflowService
     {
         IList<IPatientAlert> _patientAlertTests;
 
         public RegistrationWorkflowService()
         {
+            _worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Registration.WorklistExtensionPoint();
+            _operationExtPoint = new ClearCanvas.Healthcare.Workflow.Registration.WorkflowOperationExtensionPoint();
+
             PatientAlertExtensionPoint xp = new PatientAlertExtensionPoint();
             object[] tests = xp.CreateExtensions();
 
@@ -38,12 +42,26 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         #region IRegistrationWorkflowService Members
 
         [ReadOperation]
+        public SearchPatientResponse SearchPatient(SearchPatientRequest request)
+        {
+            RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
+            return new SearchPatientResponse(
+                CollectionUtils.Map<PatientProfile, RegistrationWorklistItem, List<RegistrationWorklistItem>>(
+                PersistenceContext.GetBroker<IPatientProfileBroker>().Find(assembler.CreatePatientProfileSearchCriteria(request.SearchCriteria)),
+                delegate(PatientProfile profile)
+                {
+                    return assembler.CreateRegistrationWorklistItem(new WorklistItem(profile), this.PersistenceContext);
+                }));
+        }
+
+        [ReadOperation]
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
+
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
             return new GetWorklistResponse(
                 CollectionUtils.Map<WorklistItem, RegistrationWorklistItem, List<RegistrationWorklistItem>>(
-                    GetWorklist(request.WorklistClassName, assembler.CreatePatientProfileSearchCriteria(request.SearchCriteria)),
+                    GetWorklist(request.WorklistClassName),
                     delegate(WorklistItem item)
                     {
                         return assembler.CreateRegistrationWorklistItem(item, this.PersistenceContext);
@@ -63,9 +81,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
             return new LoadWorklistPreviewResponse(assembler.CreateRegistrationWorklistPreview(
-                request.WorklistItem.PatientProfileRef, 
-                GetQueryResultForWorklistItem(request.WorklistItem.WorklistClassName, 
-                    new WorklistItem(request.WorklistItem.WorklistClassName, request.WorklistItem.PatientProfileRef)),
+                request.WorklistItem,
                 matches.Count > 0,
                 alertNotifications,
                 this.PersistenceContext));
@@ -74,84 +90,34 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
-            return new GetOperationEnablementResponse(GetOperationEnablement(request.ProcedureStepRef));
-        }
-
-        [UpdateOperation]
-        public void ExecuteOperation(ExecuteOperationRequest request)
-        {
-            ExecuteOperation(request.ProcedureStepRef, request.OperationClassName);
+            RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
+            return new GetOperationEnablementResponse(GetOperationEnablement(assembler.CreateWorklistItem(request.WorklistItem)));
         }
 
         [ReadOperation]
         public GetDataForCheckInTableResponse GetDataForCheckInTable(GetDataForCheckInTableRequest request)
         {
-            IRequestedProcedureBroker rpBroker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
-            IOrderBroker orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
+            IPatientProfileBroker profileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
+            PatientProfile profile = profileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
+            profileBroker.LoadPatientForPatientProfile(profile);
 
-            List<WorklistQueryResult> listQueryResult = (List<WorklistQueryResult>) GetQueryResultForWorklistItem(request.WorklistClassName, new WorklistItem(request.WorklistClassName, request.PatientProfileRef));
-            List<EntityRef> rpRefList = new List<EntityRef>();
-            List<CheckInTableItem> checkInItemList = new List<CheckInTableItem>();
-            foreach (WorklistQueryResult queryResult in listQueryResult)
-            {
-                if (rpRefList.Contains(queryResult.RequestedProcedure) == false)
-                {
-                    rpRefList.Add(queryResult.RequestedProcedure);
-
-                    RequestedProcedure rp = rpBroker.Load(queryResult.RequestedProcedure);
-                    rpBroker.LoadOrderForRequestedProcedure(rp);
-                    rpBroker.LoadTypeForRequestedProcedure(rp);
-                    orderBroker.LoadOrderingFacilityForOrder(rp.Order);
-                    orderBroker.LoadOrderingPractitionerForOrder(rp.Order);
-
-                    checkInItemList.Add(new CheckInTableItem(
-                            rp.GetRef(), 
-                            rp.Type.Name, 
-                            rp.Order.SchedulingRequestDateTime, 
-                            rp.Order.OrderingFacility.Name));
-                }
-            }
-
-            return new GetDataForCheckInTableResponse(checkInItemList);
+            return new GetDataForCheckInTableResponse(
+                CollectionUtils.Map<RequestedProcedure, CheckInTableItem, List<CheckInTableItem>>(
+                    PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetRequestedProcedureForPatient(profile.Patient, request.WorklistClassName),
+                    delegate(RequestedProcedure rp)
+                    {
+                        return new CheckInTableItem(
+                            rp.GetRef(),
+                            rp.Type.Name,
+                            rp.Order.SchedulingRequestDateTime,
+                            rp.Order.OrderingFacility.Name);
+                    }));
         }
 
         [UpdateOperation]
         public CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
         {
-            Staff staff = null;
-
-            try
-            {
-                // TODO: Need to get the real current staff that is using the system
-                StaffSearchCriteria staffCriteria = new StaffSearchCriteria();
-                staffCriteria.Name.FamilyName.EqualTo("Clerk");
-                staffCriteria.Name.GivenName.EqualTo("Registration");
-                staff = PersistenceContext.GetBroker<IStaffBroker>().FindOne(staffCriteria);
-            }
-            catch (EntityNotFoundException)
-            {
-                staff = new Staff();
-                staff.Name.FamilyName = "Clerk";
-                staff.Name.GivenName = "Registration";
-
-                PersistenceContext.Lock(staff, DirtyState.New);
-
-                // ensure the new staff is assigned an OID before using it
-                PersistenceContext.SynchState();
-            }
-
-            foreach (EntityRef rpRef in request.RequestedProcedures)
-            {
-                RequestedProcedure rp = PersistenceContext.GetBroker<IRequestedProcedureBroker>().Load(rpRef);
-
-                CheckInProcedureStep cps = new CheckInProcedureStep(rp);
-                cps.Start(staff);
-                cps.Complete(staff);
-
-                rp.CheckInProcedureSteps.Add(cps);
-                PersistenceContext.Lock(rp, DirtyState.Dirty);
-            }
-
+            ExecuteOperation(null, request.RequestedProcedures, "ClearCanvas.Healthcare.Workflow.Registration.Operations+CheckIn");
             return new CheckInProcedureResponse();
         }
 

@@ -9,8 +9,14 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     [DataContract]
     public class ExecuteOperationRequest : DataContractBase
     {
+        public ExecuteOperationRequest(ModalityWorklistItem item, string operationClassName)
+        {
+            this.ModalityWorklistItem = item;
+            this.OperationClassName = operationClassName;
+        }
+
         [DataMember]
-        public EntityRef ProcedureStepRef;
+        public ModalityWorklistItem ModalityWorklistItem;
 
         [DataMember]
         public string OperationClassName;

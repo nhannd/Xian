@@ -64,18 +64,10 @@ namespace ClearCanvas.Ris.Client.Adt
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
 
-            // Special case for 0 or 1 Requested Procedure.  No need to show the dialog box
-            if (_requestedProcedureCheckInTable.Items.Count == 0)
-            {
-                this.ExitCode = ApplicationComponentExitCode.Normal;
-                Host.Exit();
-            }
-            else if (_requestedProcedureCheckInTable.Items.Count == 1)
+            // Special case for 1 Requested Procedure.  Check the item right away
+            if (_requestedProcedureCheckInTable.Items.Count == 1)
             {
                 _requestedProcedureCheckInTable.Items[0].Checked = true;
-                SaveChanges();
-                this.ExitCode = ApplicationComponentExitCode.Normal;
-                Host.Exit();
             }
 
             base.Start();

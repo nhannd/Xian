@@ -103,14 +103,16 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             //TODO: add validation to criteria that can throw a RequestValidationException
             ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
 
-            OrderEntryAssembler assembler = new OrderEntryAssembler();
-            return new GetOrdersWorkListResponse(
-                CollectionUtils.Map<WorklistQueryResult, OrderSummary, List<OrderSummary>>(
-                    PersistenceContext.GetBroker<IModalityWorklistBroker>().GetWorklist(criteria, request.PatientProfileAuthority),
-                    delegate(WorklistQueryResult result)
-                    {
-                        return assembler.CreateOrderSummary(result, this.PersistenceContext);
-                    }));
+            //TODO(jl): restore later
+            return new GetOrdersWorkListResponse(new List<OrderSummary>());
+
+            //return new GetOrdersWorkListResponse(
+            //    CollectionUtils.Map<WorklistQueryResult, OrderSummary, List<OrderSummary>>(
+            //        PersistenceContext.GetBroker<IModalityWorklistBroker>().GetWorklist(criteria, request.PatientProfileAuthority),
+            //        delegate(WorklistQueryResult result)
+            //        {
+            //            return assembler.CreateOrderSummary(result, this.PersistenceContext);
+            //        }));
         }
 
 /*

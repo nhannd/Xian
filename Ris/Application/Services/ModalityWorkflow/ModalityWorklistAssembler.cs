@@ -11,20 +11,26 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
     public class ModalityWorklistAssembler
     {
-        public ModalityWorklistItem CreateWorklistItem(WorklistQueryResult result)
+        public ModalityWorklistItem CreateModalityWorklistItem(WorklistItem domainItem)
         {
             ModalityWorklistItem item = new ModalityWorklistItem();
 
-            item.ProcedureStepRef = result.ProcedureStep;
-            item.MrnAssigningAuthority = result.Mrn.AssigningAuthority;
-            item.MrnID = result.Mrn.Id;
+            item.ProcedureStepRef = domainItem.ProcedureStep;
+            item.MrnAssigningAuthority = domainItem.Mrn.AssigningAuthority;
+            item.MrnID = domainItem.Mrn.Id;
             PersonNameAssembler assembler = new PersonNameAssembler();
-            item.PersonNameDetail = assembler.CreatePersonNameDetail(result.PatientName);
-            item.AccessionNumber = result.AccessionNumber;
-            item.ModalityProcedureStepName = result.ModalityProcedureStepName;
-            item.ModalityName = result.ModalityName;
-            item.Priority = result.Priority.ToString();
+            item.PersonNameDetail = assembler.CreatePersonNameDetail(domainItem.PatientName);
+            item.AccessionNumber = domainItem.AccessionNumber;
+            item.ModalityProcedureStepName = domainItem.ModalityProcedureStepName;
+            item.ModalityName = domainItem.ModalityName;
+            item.Priority = domainItem.Priority.ToString();
             return item;
+        }
+
+        public WorklistItem CreateWorklistItem(ModalityWorklistItem item)
+        {
+            //TODO still
+            throw new Exception("Feature not implemented");
         }
 
         public ModalityWorklistPreview CreateWorklistPreview(ModalityProcedureStep mps, string patientProfileAuthority)

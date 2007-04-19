@@ -85,7 +85,6 @@
     <Compile Include="EmailAddressAssembler.cs" />
     <Compile Include="HealthcardAssembler.cs" />
     <Compile Include="IApplicationServiceLayer.cs" />
-    <Compile Include="IWorklistService.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorkflowService.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistAssembler.cs" />
     <Compile Include="PatientReconciliation\PatientProfileAssembler.cs" />
@@ -110,7 +109,6 @@
     <Compile Include="Admin\StaffAssembler.cs" />
     <Compile Include="TelephoneNumberAssembler.cs" />
     <Compile Include="Tests\AdtServiceTest.cs" />
-    <Compile Include="WorklistService.cs" />
     <Compile Include="WorkflowServiceBase.cs" />
   </ItemGroup>
   <ItemGroup>
