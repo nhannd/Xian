@@ -32,10 +32,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private string _accessionNumber = "";
 		private string _studyDescription = "";
 
-		private bool _useStudyDateFrom = false;
-		private bool _useStudyDateTo = false;
-		private DateTime _studyDateFrom;
-		private DateTime _studyDateTo;
+		private DateTime? _studyDateFrom = null;
+		private DateTime? _studyDateTo = null;
 
 		private List<string> _searchModalities;
 		private ICollection<string> _availableModalities;
@@ -124,23 +122,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			get
 			{
-				if (_useStudyDateFrom)
-					return _studyDateFrom;
-				else
-					return null;
+				return _studyDateFrom;
 			}
 			set
 			{
-				if (value == null || (object)value == System.DBNull.Value)
-				{
-					_useStudyDateFrom = false;
-				}
-				else
-				{
-					_studyDateFrom = this.MinimumDate((DateTime)value, this.MaximumStudyDateFrom);
-					_useStudyDateFrom = true;
-				}
-
+				_studyDateFrom = (value == null) ? value : MinimumDate(((DateTime)value).Date, this.MaximumStudyDateFrom);
 				NotifyPropertyChanged("StudyDateFrom");
 			}
 		}
@@ -149,42 +135,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			get
 			{
-				if (_useStudyDateTo)
-					return _studyDateTo;
-				else 
-					return null;
+				return _studyDateTo;
 			}
 			set
 			{
-				if (value == null || (object)value == System.DBNull.Value)
-				{
-					_useStudyDateTo = false;
-				}
-				else
-				{
-					_studyDateTo = MinimumDate((DateTime)value, this.MaximumStudyDateTo);
-					_useStudyDateTo = true;
-				}
-
+				_studyDateTo = (value == null) ? value : MinimumDate(((DateTime)value).Date, this.MaximumStudyDateTo);
 				NotifyPropertyChanged("StudyDateTo");
-
-				//always keep the fromdate less that the todate
-				if (this.StudyDateFrom != null)
-				{
-					//try re-setting the fromdate, it will be automatically changed if it's not valid.
-					this.StudyDateFrom = this.StudyDateFrom;
-				}
 			}
 		}
 
 		public DateTime MaximumStudyDateFrom
 		{
-			get { return this.StudyDateTo ?? DateTime.Today; }
+			get { return Platform.Time.Date; }
 		}
 
 		public DateTime MaximumStudyDateTo
 		{
-			get { return DateTime.Today; }
+			get { return Platform.Time.Date; }
 		}
 
 		public ICollection<string> AvailableSearchModalities
@@ -234,9 +201,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void Search()
 		{
+			if (!ValidateDateRange())
+				return;
+
 			BlockingOperation.Run(_studyBrowserComponent.Search);
 		}
-		
+
 		public void SearchToday()
         {
 			InternalSearchLastXDays(0);
@@ -254,10 +224,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private void InternalSearchLastXDays(int numberOfDays)
 		{
-			this.StudyDateTo = DateTime.Today;
-			this.StudyDateFrom = DateTime.Today - TimeSpan.FromDays((double)numberOfDays);
+			this.StudyDateTo = Platform.Time.Date;
+			this.StudyDateFrom = Platform.Time.Date - TimeSpan.FromDays((double)numberOfDays);
 
 			Search();
+		}
+
+		private void InternalClearDates()
+		{
+			this.StudyDateTo = Platform.Time.Date;
+			this.StudyDateFrom = Platform.Time.Date;
+			this.StudyDateTo = null;
+			this.StudyDateFrom = null;
 		}
 
 		private DateTime MinimumDate(params DateTime[] dates)
@@ -272,12 +250,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return minimumDate;
 		}
 
-		private void InternalClearDates()
+		private bool ValidateDateRange()
 		{
-			this.StudyDateTo = DateTime.Today;
-			this.StudyDateFrom = DateTime.Today;
-			this.StudyDateTo = null;
-			this.StudyDateFrom = null;
+			if (this.StudyDateFrom != null && this.StudyDateTo != null)
+			{
+				DateTime dateFrom = (DateTime)this.StudyDateFrom;
+				DateTime dateTo = (DateTime)this.StudyDateTo;
+
+				if (dateFrom <= dateTo)
+					return true;
+
+				Platform.ShowMessageBox(SR.MessageFromDateIsGreaterThanToDate);
+				return false;
+			}
+
+			return true;
 		}
     }
 }
