@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
 	internal sealed partial class LocalDataStoreService
 	{
-		protected abstract class ImportProcessorBase
+		private abstract class ImportProcessorBase
 		{
 			protected delegate void NotifyNoFilesToImportDelegate(FileImportJobInformation jobInformation);
 

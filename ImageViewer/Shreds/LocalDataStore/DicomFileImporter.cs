@@ -343,10 +343,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			private LocalDataStoreService _parent;
 
-			private bool _stopDatabaseQueue = false;
-			private object _databaseQueueWait = new object();
-
+			private object _databaseThreadLock = new object();
+			private bool _stopDatabaseThread = false;
 			private Thread _databaseUpdateThread;
+
 			private object _databaseUpdateItemsLock = new object();
 			private List<ImportJobInformation> _databaseUpdateItems;
 
@@ -657,35 +657,37 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				uint waitTimeout = LocalDataStoreService.Instance.DatabaseUpdateFrequencyMilliseconds;
 
-				while (true)
+				lock (_databaseThreadLock)
 				{
-					lock (_databaseQueueWait)
-					{
-						if (!_stopDatabaseQueue)
-							Monitor.Wait(_databaseQueueWait, (int)waitTimeout);
-					}
+					Monitor.Pulse(_databaseThreadLock); //signal that the thread has started.
 
-					List<ImportJobInformation> updates = new List<ImportJobInformation>();
-					lock (_databaseUpdateItemsLock)
+					while (true)
 					{
-						updates.AddRange(_databaseUpdateItems);
-						_databaseUpdateItems.Clear();
-					}
+						List<ImportJobInformation> updates = new List<ImportJobInformation>();
+						lock (_databaseUpdateItemsLock)
+						{
+							updates.AddRange(_databaseUpdateItems);
+							_databaseUpdateItems.Clear();
+						}
 
-					try
-					{
-						UpdateDatabase(updates);
-					}
-					catch (Exception e)
-					{
-						Platform.Log(e);
-					}
+						try
+						{
+							UpdateDatabase(updates);
+						}
+						catch (Exception e)
+						{
+							Platform.Log(e);
+						}
 
-					lock (_databaseQueueWait)
-					{
-						if (_stopDatabaseQueue)
+						if (_stopDatabaseThread)
 							break;
+
+						//putting the wait here is important because it will update the database
+						//one last time before exiting in case there was any data left to insert.
+						Monitor.Wait(_databaseThreadLock, (int)waitTimeout);
 					}
+
+					Monitor.Pulse(_databaseThreadLock); //signal that the thread is exiting.
 				}
 			}
 
@@ -713,40 +715,40 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			public void Start()
 			{
-				if (_databaseUpdateThread != null)
-					throw new InvalidOperationException(SR.ExceptionImporterAlreadyStarted);
-
 				_parseFileThreadPool.Start();
 				_importThreadPools[DedicatedImportQueue.Default].Start();
 
-				_stopDatabaseQueue = false;
-
-				ThreadStart threadStart = new ThreadStart(this.DatabaseUpdateThread);
-				_databaseUpdateThread = new Thread(threadStart);
-				_databaseUpdateThread.IsBackground = true;
-				_databaseUpdateThread.Priority = ThreadPriority.AboveNormal;
-				_databaseUpdateThread.Start();
+				lock (_databaseThreadLock)
+				{
+					_stopDatabaseThread = false;
+					ThreadStart threadStart = new ThreadStart(this.DatabaseUpdateThread);
+					_databaseUpdateThread = new Thread(threadStart);
+					_databaseUpdateThread.IsBackground = true;
+					_databaseUpdateThread.Priority = ThreadPriority.AboveNormal;
+					_databaseUpdateThread.Start();
+					Monitor.Wait(_databaseThreadLock); //wait for the signal that the thread has started.
+				}
 			}
 
 			public void Stop()
 			{
-				if (_databaseUpdateThread == null)
-					throw new InvalidOperationException(SR.ExceptionImporterNotStarted);
-
 				_parseFileThreadPool.Stop();
 
 				foreach (ImportFileThreadPool pool in _importThreadPools.Values)
 					pool.Stop();
 
-				lock (_databaseQueueWait)
+				lock (_databaseThreadLock)
 				{
-					_stopDatabaseQueue = true;
-					Monitor.Pulse(_databaseQueueWait);
-				}
+					_stopDatabaseThread = true;
+					Monitor.Pulse(_databaseThreadLock);
+					Monitor.Wait(_databaseThreadLock); //wait for the signal that the thread has ended.
 
-				_databaseUpdateThread.Join();
-				_databaseUpdateThread = null;
+					_databaseUpdateThread.Join();
+					_databaseUpdateThread = null;
+				}
 			}
+
+			#endregion
 
 			public void ActivateImportQueue(DedicatedImportQueue queue)
 			{
@@ -762,8 +764,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					EventsHelper.Fire(_importThreadPoolSwitched, this, new ItemEventArgs<DedicatedImportQueue>(_activeImportThreadPool));
 				}
 			}
-
-			#endregion
 		}
 	}
 }
