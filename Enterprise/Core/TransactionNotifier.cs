@@ -62,13 +62,14 @@ namespace ClearCanvas.Enterprise.Core
         {
             foreach (Type eventKeyClass in _eventMap.Keys)
             {
-                // check if the eventKeyClass is the entity class, or a superclass of it
-                if (eventKeyClass.IsAssignableFrom(change.EntityClass))
+/*                // check if the eventKeyClass is the entity class, or a superclass of it
+                if (eventKeyClass.IsAssignableFrom(change.EntityRef))
                 {
                     // create an entity ref based on the eventKeyClass, regardless of the actual entity class
                     //EntityRefBase entityRef = EntityRefFactory.CreateReference(eventKeyClass, change.EntityOID, change.Version);
                     //EventsHelper.Fire(_eventMap[change.EntityClass], null, new EntityChangeEventArgs(entityRef, change.ChangeType));
                 }
+ * */
             }
         }
     }

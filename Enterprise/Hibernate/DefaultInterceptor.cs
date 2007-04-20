@@ -131,7 +131,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             Dictionary<object, EntityChange> changes = new Dictionary<object, EntityChange>();
             foreach (ChangeRecord cr in _changeRecords)
             {
-                EntityChange change = new EntityChange(cr.Entity.GetClass(), cr.Entity.OID, cr.Entity.Version, cr.ChangeType);
+                EntityChange change = new EntityChange(new EntityRef(cr.Entity.GetClass(), cr.Entity.OID, cr.Entity.Version), cr.ChangeType);
 
                 if (changes.ContainsKey(cr.Entity.OID))
                 {

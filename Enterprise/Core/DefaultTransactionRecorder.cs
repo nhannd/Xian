@@ -44,9 +44,9 @@ namespace ClearCanvas.Enterprise.Core
             {
                 writer.WriteStartElement("action");
                 writer.WriteAttributeString("type", entityChange.ChangeType.ToString());
-                writer.WriteAttributeString("class", entityChange.EntityClass.FullName);
-                writer.WriteAttributeString("oid", entityChange.EntityOID.ToString());
-                writer.WriteAttributeString("version", entityChange.Version.ToString());
+                writer.WriteAttributeString("class", EntityRefUtils.GetClass(entityChange.EntityRef).FullName);
+                writer.WriteAttributeString("oid", EntityRefUtils.GetOID(entityChange.EntityRef).ToString());
+                writer.WriteAttributeString("version", EntityRefUtils.GetVersion(entityChange.EntityRef).ToString());
                 writer.WriteEndElement();
             }
             writer.WriteEndElement();

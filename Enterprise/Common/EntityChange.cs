@@ -1,12 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Enterprise.Common
 {
     /// <summary>
     /// Used by class <see cref="EntityChange"/> to record the type of change made to an entity.
     /// </summary>
+    [Serializable]
     public enum EntityChangeType
     {
         Update = 0,
@@ -17,58 +19,37 @@ namespace ClearCanvas.Enterprise.Common
     /// <summary>
     /// Acts as a memento of a change made to an entity.
     /// </summary>
+    [DataContract]
     public class EntityChange
     {
-        private object _entityOid;
-        private int _version;
-        private Type _entityClass;
+        private EntityRef _entityRef;
         private EntityChangeType _changeType;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="entityType"></param>
-        /// <param name="entityOid"></param>
-        /// <param name="version"></param>
-        /// <param name="changeType"></param>
-        public EntityChange(Type entityType, object entityOid, int version, EntityChangeType changeType)
+        public EntityChange(EntityRef entityRef, EntityChangeType changeType)
         {
-            _entityOid = entityOid;
-            _entityClass = entityType;
+            _entityRef = entityRef;
             _changeType = changeType;
-            _version = version;
         }
 
         /// <summary>
         /// The type of change
         /// </summary>
+        [DataMember]
         public EntityChangeType ChangeType
         {
             get { return _changeType; }
         }
 
         /// <summary>
-        /// The class of the entity
+        /// Reference to the entity that changed
         /// </summary>
-        public Type EntityClass
+        [DataMember]
+        public EntityRef EntityRef
         {
-            get { return _entityClass; }
-        }
-
-        /// <summary>
-        /// The entity OID
-        /// </summary>
-        public object EntityOID
-        {
-            get { return _entityOid; }
-        }
-
-        /// <summary>
-        /// The entity version
-        /// </summary>
-        public int Version
-        {
-            get { return _version; }
+            get { return _entityRef; }
         }
 
         /// <summary>
@@ -84,10 +65,10 @@ namespace ClearCanvas.Enterprise.Common
         /// <returns></returns>
         public bool Supercedes(EntityChange other)
         {
-            if (!_entityClass.Equals(other._entityClass) || !_entityOid.Equals(other._entityOid))
+            if (!_entityRef.Class.Equals(other._entityRef.Class) || !_entityRef.OID.Equals(other._entityRef.OID))
                 throw new ArgumentException("Argument must represent a change to the same entity");
 
-            return _version > other._version || (_version == other._version && _changeType > other._changeType);
+            return _entityRef.Version > other._entityRef.Version || (_entityRef.Version == other._entityRef.Version && _changeType > other._changeType);
         }
     }
 }

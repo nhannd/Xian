@@ -48,6 +48,7 @@
     <Compile Include="EnterpriseTimeProvider.cs" />
     <Compile Include="EntityChange.cs" />
     <Compile Include="EntityChangeEventArgs.cs" />
+    <Compile Include="EntityChangeSet.cs" />
     <Compile Include="EntityRef.cs" />
     <Compile Include="EntityRefUtils.cs" />
     <Compile Include="IConfigurationService.cs" />
@@ -61,6 +62,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="TransactionNotifier.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

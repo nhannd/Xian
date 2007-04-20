@@ -4,39 +4,24 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Common
 {
-    /// <summary>
-    /// Used by <see cref="ITransactionNotifier"/> to publish notifications about changes to entities.
-    /// </summary>
     public class EntityChangeEventArgs : EventArgs
     {
-        private EntityRef _entityRef;
-        private EntityChangeType _changeType;
+        private EntityChangeSet _changeSet;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="entityRef"></param>
-        /// <param name="changeType"></param>
-        internal EntityChangeEventArgs(EntityRef entityRef, EntityChangeType changeType)
+        internal EntityChangeEventArgs(EntityChangeSet changeSet)
         {
-            _entityRef = entityRef;
-            _changeType = changeType;
+            _changeSet = changeSet;
         }
 
         /// <summary>
-        /// The type of change
+        /// Change set
         /// </summary>
-        public EntityChangeType ChangeType
+        public EntityChangeSet ChangeSet
         {
-            get { return _changeType; }
-        }
-
-        /// <summary>
-        /// Reference to the changed entity
-        /// </summary>
-        public EntityRef EntityRef
-        {
-            get { return _entityRef; }
+            get { return _changeSet; }
         }
     }
 }
