@@ -26,7 +26,6 @@ namespace ClearCanvas.Ris.Client.Adt
     public interface IRegistrationWorkflowItemToolContext : IToolContext
     {
         bool GetWorkflowOperationEnablement(string operationClass);
-        //void ExecuteWorkflowOperation(string operationClass);
 
         ICollection<RegistrationWorklistItem> SelectedItems { get; }
         event EventHandler SelectedItemsChanged;
@@ -75,11 +74,6 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 return _owner.GetOperationEnablement(operationClass);
             }
-
-            //public void ExecuteWorkflowOperation(string operationClass)
-            //{
-            //    _owner.ExecuteOperation(operationClass);
-            //}
 
             #endregion
         }
@@ -134,9 +128,6 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             // important to initialize service before adding any folders, because folders may access service
 
-            // TODO: WorkflowService.ModalityProcedureStepChanged
-            //_workflowService.ModalityProcedureStepChanged += ModalityProcedureStepChangedEventHandler;
-
             this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
 
             this.AddFolder(new Folders.ScheduledFolder(this));
@@ -155,7 +146,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
         {
-            //// TODO: update workflow enablement
             RegistrationWorklistItem selectedItem = CollectionUtils.FirstElement<RegistrationWorklistItem>(this.SelectedItems);
             if (selectedItem == null)
             {
@@ -178,46 +168,6 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private void ModalityProcedureStepChangedEventHandler(object sender, EntityChangeEventArgs e)
-        {
-            // TODO: ModalityProcedureStepChangedEventHandler
-
-            //// this should never happen
-            //if (e.ChangeType == EntityChangeType.Delete)
-            //    throw new NotSupportedException("Unexpected deletion of modality procedure step");
-
-            //EntityRef<ModalityProcedureStep> mpsRef = (EntityRef<ModalityProcedureStep>)e.EntityRef;
-
-            //// retrieve the new or updated worklist item
-            //WorklistItem worklistItem = _workflowService.GetWorklistItem(mpsRef);
-
-            //// force all folders to update this item
-            //foreach (RegistrationWorkflowFolder folder in this.Folders)
-            //{
-            //    folder.UpdateWorklistItem(worklistItem);
-            //}
-        }
-
-        //private void ExecuteOperation(string operationName)
-        //{
-        //    //TODO: Update ExecuteOperation
-        //    try
-        //    {
-        //        foreach (RegistrationWorklistItem selectedItem in this.SelectedItems)
-        //        {
-        //            Platform.GetService<IRegistrationWorkflowService>(
-        //                delegate(IRegistrationWorkflowService service)
-        //                {
-        //                    ExecuteOperationResponse response = service.ExecuteOperation(new ExecuteOperationRequest(selectedItem, operationName));
-        //                });
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        ExceptionHandler.Report(e, this.DesktopWindow);
-        //    }
-        //}
-
         private bool GetOperationEnablement(string operationName)
         {
             return _workflowEnablment == null ? false : _workflowEnablment[operationName];
@@ -229,9 +179,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
             if (disposing)
             {
-                // TODO: ModalityProcedureStepChangedEventHandler
-                //_workflowService.ModalityProcedureStepChanged -= ModalityProcedureStepChangedEventHandler;
-
                 if(_itemToolSet != null) _itemToolSet.Dispose();
                 if (_folderToolSet != null) _folderToolSet.Dispose();
             }

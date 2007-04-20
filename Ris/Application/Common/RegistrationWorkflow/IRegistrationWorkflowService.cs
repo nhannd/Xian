@@ -74,9 +74,5 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         [FaultContract(typeof(ConcurrentModificationException))]
         [FaultContract(typeof(RequestValidationException))]
         CancelOrderResponse CancelOrder(CancelOrderRequest request);
-
-        //RequestedProcedure LoadRequestedProcedure(EntityRef rpRef, bool loadDetail);
-        //void UpdateRequestedProcedure(RequestedProcedure rp);
-        //void AddCheckInProcedureStep(CheckInProcedureStep cps);
     }
 }

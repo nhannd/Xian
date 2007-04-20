@@ -16,18 +16,18 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         public abstract class WorkflowItemTool : Tool<IRegistrationWorkflowItemToolContext>
         {
-            protected string _operationClass;
+            protected string _operationName;
 
-            public WorkflowItemTool(string operationClass)
+            public WorkflowItemTool(string operationName)
             {
-                _operationClass = operationClass;
+                _operationName = operationName;
             }
 
             public virtual bool Enabled
             {
                 get
                 {
-                    return this.Context.GetWorkflowOperationEnablement(_operationClass);
+                    return this.Context.GetWorkflowOperationEnablement(_operationName);
                 }
             }
 
@@ -37,10 +37,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 remove { this.Context.SelectedItemsChanged -= value; }
             }
 
-            public virtual void Apply()
-            {
-                //this.Context.ExecuteWorkflowOperation(_operationClass);
-            }
+            public abstract void Apply();
         }
 
         [MenuAction("apply", "folderexplorer-items-contextmenu/Check-in")]
@@ -50,7 +47,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public class CheckInTool : WorkflowItemTool
         {
             public CheckInTool()
-                : base("ClearCanvas.Healthcare.Workflow.Registration.Operations+CheckIn")
+                : base("CheckInProcedure")
             {
             }
 
@@ -72,7 +69,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public class CancelTool : WorkflowItemTool
         {
             public CancelTool()
-                : base("ClearCanvas.Healthcare.Workflow.Registration.Operations+Cancel")
+                : base("CancelOrder")
             {
             }
 

@@ -73,14 +73,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             return new LoadWorklistItemPreviewResponse(assembler.CreateWorklistPreview(sps, request.PatientProfileAuthority));
         }
 
-        [UpdateOperation]
-        public void ExecuteOperation(ExecuteOperationRequest request)
-        {
-            //TODO: This operation should be removed
-            ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
-            ExecuteOperation(assembler.CreateWorklistItem(request.ModalityWorklistItem), null, request.OperationClassName);
-        }
-
         [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {

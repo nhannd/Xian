@@ -47,75 +47,49 @@ namespace ClearCanvas.Ris.Application.Services
             return worklist.GetWorklist(this.PersistenceContext);
         }
 
-        protected void ExecuteOperation(IWorklistItem item, IList parameters, string operationClassName)
-        {
-            IOperation operation = (IOperation)_operationExtPoint.CreateExtension(new ClassNameExtensionFilter(operationClassName));
-
-            // TODO: just hack in the user staff for the time-being
-            IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
-            operation.CurrentUserStaff = staffBroker.FindOne(new StaffSearchCriteria());
-
-            operation.Execute(item, parameters, new PersistentWorkflow(PersistenceContext));
-        }
-
-        protected Dictionary<string, bool> GetOperationEnablement(IWorklistItem item)
-        {
-            // just hack in the user staff for the time-being
-            IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
-            Staff userStaff = staffBroker.FindOne(new StaffSearchCriteria());
-
-            Dictionary<string, bool> results = new Dictionary<string, bool>();
-            foreach (IOperation op in _operationExtPoint.CreateExtensions())
-            {
-                op.CurrentUserStaff = userStaff;
-                results.Add(op.GetType().FullName, op.InputSpecification.Test(item).Success);
-            }
-            return results;
-        }
-
-        //protected void ExecuteOperation(IWorklistItem item, OperationBase operation)
+        //protected void ExecuteOperation(IWorklistItem item, IList parameters, OperationBase operation)
         //{
         //    // TODO: just hack in the user staff for the time-being
         //    IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
         //    operation.CurrentUserStaff = staffBroker.FindOne(new StaffSearchCriteria());
 
-        //    operation.Execute(item, null, new PersistentWorkflow(PersistenceContext));
+        //    operation.Execute(item, parameters, new PersistentWorkflow(PersistenceContext));
         //}
 
-        //protected void ExecuteOperation(ProcedureStep step, ClearCanvas.Healthcare.Workflow.Operation operation)
-        //{
-        //    // just hack in the user staff for the time-being
-        //    IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
-        //    operation.CurrentUserStaff = staffBroker.FindOne(new StaffSearchCriteria());
+        protected Dictionary<string, bool> GetOperationEnablement(IWorklistItem item)
+        {
+            //TODO: HACK WARNING for GetOperationEnablement!!!
+            // Depends on the worklistClassName of the particular worklist item, the Dictionary returns 
+            // whether a particular service operation should be enable for that item.  Ideally, we want 
+            // to get rid of the switch-case statement.  But this will do for now.  The Operation extension 
+            // point architecture still exist, we are not using it at this point.
 
-        //    operation.Execute(step, new PersistentWorkflow(PersistenceContext));
-        //}
+            Dictionary<string, bool> results = new Dictionary<string, bool>();
+            switch (item.WorklistClassName)
+            {
+                case "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled":
+                    results.Add("CheckInProcedure", true);
+                    results.Add("CancelOrder", true);
+                    break;
+                case "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn":
+                case "ClearCanvas.Healthcare.Workflow.Registration.Worklists+InProgress":
+                    results.Add("CheckInProcedure", false);
+                    results.Add("CancelOrder", true);
+                    break;
+                case "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Completed":
+                case "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Cancelled":
+                default:
+                    results.Add("CheckInProcedure", false);
+                    results.Add("CancelOrder", false);
+                    break;
+            }
 
-        //protected void ExecuteOperation(ProcedureStep step, IExtensionPoint operationExtPoint, string operationClassName)
-        //{
-        //    IOperation operation = (IOperation)operationExtPoint.CreateExtension(new ClassNameExtensionFilter(operationClassName));
-
-        //    // just hack in the user staff for the time-being
-        //    IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
-        //    operation.CurrentUserStaff = staffBroker.FindOne(new StaffSearchCriteria());
-
-        //    operation.Execute(step, new PersistentWorkflow(PersistenceContext));
-        //}
-
-        //protected Dictionary<string, bool> GetOperationEnablement(ProcedureStep step, IExtensionPoint operationExtPoint)
-        //{
-        //    // just hack in the user staff for the time-being
-        //    IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
-        //    Staff userStaff = staffBroker.FindOne(new StaffSearchCriteria());
-
-        //    Dictionary<string, bool> results = new Dictionary<string, bool>();
-        //    foreach (IOperation op in operationExtPoint.CreateExtensions())
-        //    {
-        //        op.CurrentUserStaff = userStaff;
-        //        results.Add(op.GetType().FullName, op.InputSpecification.Test(step).Success);
-        //    }
-        //    return results;
-        //}
-
+            //foreach (IOperation op in _operationExtPoint.CreateExtensions())
+            //{
+            //    op.CurrentUserStaff = userStaff;
+            //    results.Add(op.GetType().FullName, op.InputSpecification.Test(item).Success);
+            //}
+            return results;
+        }
     }
 }

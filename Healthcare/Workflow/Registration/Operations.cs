@@ -22,20 +22,22 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         {
             public override void Execute(IWorklistItem item, IList parameters ,IWorkflow workflow)
             {
-                if (parameters == null)
-                    return;
+                Platform.ShowMessageBox("CheckIn Not Implemented");
 
-                foreach (EntityRef rpRef in parameters)
-                {
-                    RequestedProcedure rp = workflow.CurrentContext.GetBroker<IRequestedProcedureBroker>().Load(rpRef);
+                //if (parameters == null)
+                //    return;
+
+                //foreach (EntityRef rpRef in parameters)
+                //{
+                //    RequestedProcedure rp = workflow.CurrentContext.GetBroker<IRequestedProcedureBroker>().Load(rpRef);
                     
-                    CheckInProcedureStep cps = new CheckInProcedureStep(rp);
-                    cps.Start(this.CurrentUserStaff);
-                    cps.Complete(this.CurrentUserStaff);
+                //    CheckInProcedureStep cps = new CheckInProcedureStep(rp);
+                //    cps.Start(this.CurrentUserStaff);
+                //    cps.Complete(this.CurrentUserStaff);
 
-                    rp.CheckInProcedureSteps.Add(cps);
-                    workflow.CurrentContext.Lock(rp, DirtyState.Dirty);
-                }
+                //    rp.CheckInProcedureSteps.Add(cps);
+                //    workflow.CurrentContext.Lock(rp, DirtyState.Dirty);
+                //}
             }
 
             protected override bool CanExecute(IWorklistItem item)

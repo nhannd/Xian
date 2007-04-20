@@ -117,7 +117,24 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [UpdateOperation]
         public CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
         {
-            ExecuteOperation(null, request.RequestedProcedures, "ClearCanvas.Healthcare.Workflow.Registration.Operations+CheckIn");
+            //ExecuteOperation(null, request.RequestedProcedures, new Operations.CheckIn());
+
+            // just hack in the user staff for the time-being
+            IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
+            Staff userStaff = staffBroker.FindOne(new StaffSearchCriteria());
+
+            foreach (EntityRef rpRef in request.RequestedProcedures)
+            {
+                RequestedProcedure rp = PersistenceContext.GetBroker<IRequestedProcedureBroker>().Load(rpRef);
+
+                CheckInProcedureStep cps = new CheckInProcedureStep(rp);
+                cps.Start(userStaff);
+                cps.Complete(userStaff);
+
+                rp.CheckInProcedureSteps.Add(cps);
+                PersistenceContext.Lock(rp, DirtyState.Dirty);
+            }
+
             return new CheckInProcedureResponse();
         }
 

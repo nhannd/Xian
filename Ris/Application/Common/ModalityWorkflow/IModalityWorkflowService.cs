@@ -18,10 +18,5 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 
         [OperationContract]
         GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
-
-        [OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        [FaultContract(typeof(ConcurrentModificationException))]
-        void ExecuteOperation(ExecuteOperationRequest request);
     }
 }

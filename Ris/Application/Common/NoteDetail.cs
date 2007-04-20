@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Application.Common
             NoteDetail clone = new NoteDetail();
             clone.Comment = this.Comment;
             clone.Category = (NoteCategorySummary)this.Category.Clone();
-            clone.CreatedBy = (StaffSummary)this.CreatedBy.Clone();
+            clone.CreatedBy = this.CreatedBy == null ? null : (StaffSummary)this.CreatedBy.Clone();
             clone.TimeStamp = this.TimeStamp;
             clone.ValidRangeFrom = this.ValidRangeFrom;
             clone.ValidRangeUntil = this.ValidRangeUntil;
