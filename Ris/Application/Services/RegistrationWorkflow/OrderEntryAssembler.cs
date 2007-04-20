@@ -18,30 +18,29 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
     public class OrderEntryAssembler
     {
-        //TODO(jl): restore later
-        //public OrderSummary CreateOrderSummary(WorklistQueryResult result, IPersistenceContext context)
-        //{
-        //    OrderSummary summary = new OrderSummary();
+        public OrderSummary CreateOrderSummary(WorklistItem item, IPersistenceContext context)
+        {
+            OrderSummary summary = new OrderSummary();
 
-        //    summary.OrderRef = result.Order;
-        //    summary.MrnId = result.Mrn.Id;
-        //    summary.MrnAssigningAuthority = result.Mrn.AssigningAuthority;
-        //    summary.VisitId = result.VisitNumber.Id;
-        //    summary.VisitAssigningAuthority = result.VisitNumber.AssigningAuthority;
-        //    summary.AccessionNumber = result.AccessionNumber;
-        //    summary.DiagnosticServiceName = result.DiagnosticService;
-        //    summary.RequestedProcedureName = result.RequestedProcedureName;
-        //    summary.ModalityProcedureStepName = result.ModalityProcedureStepName;
-        //    summary.ModalityName = result.ModalityName;
+            summary.OrderRef = item.Order;
+            summary.MrnId = item.Mrn.Id;
+            summary.MrnAssigningAuthority = item.Mrn.AssigningAuthority;
+            summary.VisitId = item.VisitNumber.Id;
+            summary.VisitAssigningAuthority = item.VisitNumber.AssigningAuthority;
+            summary.AccessionNumber = item.AccessionNumber;
+            summary.DiagnosticServiceName = item.DiagnosticService;
+            summary.RequestedProcedureName = item.RequestedProcedureName;
+            summary.ModalityProcedureStepName = item.ModalityProcedureStepName;
+            summary.ModalityName = item.ModalityName;
 
-        //    PersonNameAssembler personNameAssembler = new PersonNameAssembler();
-        //    summary.PatientName = personNameAssembler.CreatePersonNameDetail(result.PatientName);
+            PersonNameAssembler personNameAssembler = new PersonNameAssembler();
+            summary.PatientName = personNameAssembler.CreatePersonNameDetail(item.PatientName);
 
-        //    OrderPriorityEnumTable priorityEnumTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
-        //    summary.OrderPriority = new EnumValueInfo(result.Priority.ToString(), priorityEnumTable[result.Priority].Value);
+            OrderPriorityEnumTable priorityEnumTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
+            summary.OrderPriority = new EnumValueInfo(item.Priority.ToString(), priorityEnumTable[item.Priority].Value);
 
-        //    return summary;
-        //}
+            return summary;
+        }
 
         public DiagnosticServiceSummary CreateDiagnosticServiceSummary(DiagnosticService diagnosticService)
         {

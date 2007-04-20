@@ -103,34 +103,28 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         public IList<RequestedProcedure> GetRequestedProcedureForPatient(Patient patient, string worklistClassName)
         {
             List<RequestedProcedure> results = new List<RequestedProcedure>();
-            try
-            {
-                string hqlQuery = "select distinct rp from ModalityProcedureStep mps" +
-                                " join mps.Type spst" +
-                                " join mps.Modality m" +
-                                " join mps.RequestedProcedure rp" +
-                                " join rp.Type rpt" +
-                                " join rp.Order o" +
-                                " join o.DiagnosticService ds" +
-                                " join o.Visit v" +
-                                " join o.Patient p" +
-                                " where mps.State = :mpsState and p = :patient";
-                //" where (cps.Scheduling.StartTime between :cpsSchedulingStartTimeBegin and :cpsSchedulingStartTimeEnd)";
 
-                hqlQuery = String.Concat(hqlQuery, GetSubQuery(worklistClassName));
-                IQuery query = this.Context.CreateHibernateQuery(hqlQuery);
-                SetNamedParameters(query, worklistClassName);
-                query.SetParameter("patient", patient);
+            string hqlQuery = "select distinct rp from ModalityProcedureStep mps" +
+                            " join mps.Type spst" +
+                            " join mps.Modality m" +
+                            " join mps.RequestedProcedure rp" +
+                            " join rp.Type rpt" +
+                            " join rp.Order o" +
+                            " join o.DiagnosticService ds" +
+                            " join o.Visit v" +
+                            " join o.Patient p" +
+                            " where mps.State = :mpsState and p = :patient";
+            //" where (cps.Scheduling.StartTime between :cpsSchedulingStartTimeBegin and :cpsSchedulingStartTimeEnd)";
 
-                foreach (object tuple in query.List())
-                {
-                    RequestedProcedure item = (RequestedProcedure)tuple;
-                    results.Add(item);
-                }
-            }
-            catch (Exception e)
+            hqlQuery = String.Concat(hqlQuery, GetSubQuery(worklistClassName));
+            IQuery query = this.Context.CreateHibernateQuery(hqlQuery);
+            SetNamedParameters(query, worklistClassName);
+            query.SetParameter("patient", patient);
+
+            foreach (object tuple in query.List())
             {
-                Console.WriteLine(e.Message);
+                RequestedProcedure item = (RequestedProcedure)tuple;
+                results.Add(item);
             }
 
             return results;
