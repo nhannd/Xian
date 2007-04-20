@@ -32,14 +32,16 @@ namespace ClearCanvas.Desktop
         {
             Platform.Log(e, LogLevel.Error);
             
-            // use exception message as the default message
-            if (userMessage == null || userMessage == "")
-                userMessage = e.Message;
+            IExceptionPolicy policy = ExceptionPolicyFactory.GetPolicy(e.GetType());
+            ExceptionReport report = policy.Handle(e, userMessage);
 
-            ApplicationComponent.LaunchAsDialog(
-                desktopWindow,
-                new ExceptionHandlerComponent(e, userMessage),
-                Application.ApplicationName);
+            if (report.Action == ExceptionReportAction.ReportInDialog)
+            {
+                ApplicationComponent.LaunchAsDialog(
+                    desktopWindow,
+                    new ExceptionHandlerComponent(e, report.Message),
+                    Application.ApplicationName);
+            }
         }
     }
 }
