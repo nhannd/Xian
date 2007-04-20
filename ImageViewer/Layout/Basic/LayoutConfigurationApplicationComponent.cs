@@ -29,6 +29,38 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 		}
 
+		/// <summary>
+		/// Gets the maximum allowable rows for image boxes.
+		/// </summary>
+		public int MaximumImageBoxRows
+		{
+			get { return LayoutConfigurationSettings.MaximumImageBoxRows; }
+		}
+
+		/// <summary>
+		/// Gets the maximum allowable columns for image boxes.
+		/// </summary>
+		public int MaximumImageBoxColumns
+		{
+			get { return LayoutConfigurationSettings.MaximumImageBoxColumns; }
+		}
+
+		/// <summary>
+		/// Gets the maximum allowable rows for tiles.
+		/// </summary>
+		public int MaximumTileRows
+		{
+			get { return LayoutConfigurationSettings.MaximumTileRows; }
+		}
+
+		/// <summary>
+		/// Gets the maximum allowable columns for tiles.
+		/// </summary>
+		public int MaximumTileColumns
+		{
+			get { return LayoutConfigurationSettings.MaximumTileColumns; }
+		}
+		
 		public IList<StoredLayoutConfiguration> LayoutConfigurations
 		{
 			get

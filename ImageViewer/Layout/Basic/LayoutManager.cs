@@ -266,7 +266,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 			StoredLayoutConfiguration configuration = null;
 
-			//take the first opened study, enumerate the modalities and compute the union of the layout configuration (in case there are multiple modalities).
+			//take the first opened study, enumerate the modalities and compute the union of the layout configuration (in case there are multiple modalities in the study).
 			if (physicalWorkspace.LogicalWorkspace.ImageSets.Count > 0)
 			{
 				IImageSet firstImageSet = physicalWorkspace.LogicalWorkspace.ImageSets[0];
@@ -276,7 +276,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 						continue;
 
 					if (configuration == null)
-						configuration = new StoredLayoutConfiguration();
+						configuration = LayoutConfigurationSettings.GetMinimumConfiguration();
 
 					StoredLayoutConfiguration storedConfiguration = LayoutConfigurationSettings.Default.GetLayoutConfiguration(displaySet.PresentationImages[0] as IImageSopProvider);
 					configuration.ImageBoxRows = Math.Max(configuration.ImageBoxRows, storedConfiguration.ImageBoxRows);

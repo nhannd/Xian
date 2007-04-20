@@ -77,7 +77,39 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
             get { return this.ImageBoxSectionEnabled && this.ImageViewer.PhysicalWorkspace.SelectedImageBox != null; }
         }
 
-        /// <summary>
+		/// <summary>
+		/// Gets the maximum allowable rows for image boxes.
+		/// </summary>
+		public int MaximumImageBoxRows
+		{
+			get { return LayoutConfigurationSettings.MaximumImageBoxRows; }
+		}
+
+		/// <summary>
+		/// Gets the maximum allowable columns for image boxes.
+		/// </summary>
+		public int MaximumImageBoxColumns
+		{
+			get { return LayoutConfigurationSettings.MaximumImageBoxColumns; }
+		}
+
+		/// <summary>
+		/// Gets the maximum allowable rows for tiles.
+		/// </summary>
+		public int MaximumTileRows
+		{
+			get { return LayoutConfigurationSettings.MaximumTileRows; }
+		}
+
+		/// <summary>
+		/// Gets the maximum allowable columns for tiles.
+		/// </summary>
+		public int MaximumTileColumns
+		{
+			get { return LayoutConfigurationSettings.MaximumTileColumns; }
+		}
+		
+		/// <summary>
         /// Gets/sets the number of image box rows
         /// </summary>
         public int ImageBoxRows
@@ -86,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
             set
 			{
 				_imageBoxRows = Math.Max(value, 1);
-				_imageBoxRows = Math.Min(_imageBoxRows, StoredLayoutConfiguration.MaximumImageBoxRows);
+				_imageBoxRows = Math.Min(_imageBoxRows, this.MaximumImageBoxRows);
 			}
         }
 
@@ -99,7 +131,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			set
 			{
 				_imageBoxColumns = Math.Max(value, 1);
-				_imageBoxColumns = Math.Min(_imageBoxColumns, StoredLayoutConfiguration.MaximumImageBoxColumns);
+				_imageBoxColumns = Math.Min(_imageBoxColumns, this.MaximumImageBoxColumns);
 			}
         }
 
@@ -112,7 +144,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			set
 			{
 				_tileRows = Math.Max(value, 1);
-				_tileRows = Math.Min(_tileRows, StoredLayoutConfiguration.MaximumTileRows);
+				_tileRows = Math.Min(_tileRows, this.MaximumTileRows);
 			}
         }
 
@@ -125,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			set
 			{
 				_tileColumns = Math.Max(value, 1);
-				_tileColumns = Math.Min(_tileColumns, StoredLayoutConfiguration.MaximumTileColumns);
+				_tileColumns = Math.Min(_tileColumns, this.MaximumTileColumns);
 			}
         }
 

@@ -25,11 +25,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 	public sealed class StoredLayoutConfiguration : INotifyPropertyChanged
 	{
-		public const int MaximumImageBoxRows = 4;
-		public const int MaximumImageBoxColumns = 8;
-		public const int MaximumTileRows = 4;
-		public const int MaximumTileColumns = 4;
-
 		private string _modality;
 		private int _imageBoxRows;
 		private int _imageBoxColumns;
@@ -37,16 +32,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		private int _tileColumns;
 
 		private event PropertyChangedEventHandler _propertyChanged;
-
-		internal StoredLayoutConfiguration()
-			: this("")
-		{
-		}
-
-		internal StoredLayoutConfiguration(string modality)
-			: this(modality, 1, 2, 1, 1)
-		{
-		}
 
 		internal StoredLayoutConfiguration(string modality, int imageBoxRows, int imageBoxColumns, int tileRows, int tileColumns)
 		{
@@ -57,6 +42,16 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			_tileColumns = tileColumns;
 		}
 
+		#region INotifyPropertyChanged Members
+
+		public event PropertyChangedEventHandler PropertyChanged
+		{
+			add { _propertyChanged += value; }
+			remove { _propertyChanged -= value; }
+		}
+
+		#endregion
+
 		public int ImageBoxRows
 		{
 			get { return _imageBoxRows; }
@@ -66,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					return;
 
 				_imageBoxRows = Math.Max(value, 1);
-				_imageBoxRows = Math.Min(_imageBoxRows, MaximumImageBoxRows);
+				_imageBoxRows = Math.Min(_imageBoxRows, LayoutConfigurationSettings.MaximumImageBoxRows);
 
 				EventsHelper.Fire(_propertyChanged, this, new PropertyChangedEventArgs("ImageBoxRows"));
 			}
@@ -81,7 +76,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					return;
 
 				_imageBoxColumns = Math.Max(value, 1);
-				_imageBoxColumns = Math.Min(_imageBoxColumns, MaximumImageBoxColumns);
+				_imageBoxColumns = Math.Min(_imageBoxColumns, LayoutConfigurationSettings.MaximumImageBoxColumns);
 
 				EventsHelper.Fire(_propertyChanged, this, new PropertyChangedEventArgs("ImageBoxColumns"));
 			}
@@ -96,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					return;
 
 				_tileRows = Math.Max(value, 1);
-				_tileRows = Math.Min(_tileRows, MaximumTileRows);
+				_tileRows = Math.Min(_tileRows, LayoutConfigurationSettings.MaximumTileRows);
 
 				EventsHelper.Fire(_propertyChanged, this, new PropertyChangedEventArgs("TileRows"));
 			}
@@ -111,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					return;
 
 				_tileColumns = Math.Max(value, 1);
-				_tileColumns = Math.Min(_tileColumns, MaximumTileColumns);
+				_tileColumns = Math.Min(_tileColumns, LayoutConfigurationSettings.MaximumTileColumns);
 
 				EventsHelper.Fire(_propertyChanged, this, new PropertyChangedEventArgs("TileColumns"));
 			}
@@ -134,15 +129,5 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{
 			get { return String.IsNullOrEmpty(_modality); }
 		}
-
-		#region INotifyPropertyChanged Members
-
-		public event PropertyChangedEventHandler PropertyChanged
-		{
-			add { _propertyChanged += value; }
-			remove { _propertyChanged -= value; }
-		}
-
-		#endregion
 	}
 }

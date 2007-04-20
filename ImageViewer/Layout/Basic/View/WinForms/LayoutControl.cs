@@ -59,10 +59,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			_tileRows.Minimum = 1;
 			_tileColumns.Minimum = 1;
 
-			_imageBoxRows.Maximum = StoredLayoutConfiguration.MaximumImageBoxRows;
-			_imageBoxColumns.Maximum = StoredLayoutConfiguration.MaximumImageBoxColumns;
-			_tileRows.Maximum = StoredLayoutConfiguration.MaximumTileRows;
-			_tileColumns.Maximum = StoredLayoutConfiguration.MaximumTileColumns;
+			_imageBoxRows.Maximum = _layoutComponent.MaximumImageBoxRows;
+			_imageBoxColumns.Maximum = _layoutComponent.MaximumImageBoxColumns;
+			_tileRows.Maximum = _layoutComponent.MaximumTileRows;
+			_tileColumns.Maximum = _layoutComponent.MaximumTileColumns;
 			
 			// bind control values
             _tileColumns.DataBindings.Add("Value", _bindingSource, "TileColumns", true, DataSourceUpdateMode.OnPropertyChanged);

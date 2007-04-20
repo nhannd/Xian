@@ -13,6 +13,16 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class LayoutConfigurationSettings
 	{
+		public static readonly int DefaultImageBoxRows = 1;
+		public static readonly int DefaultImageBoxColumns = 2;
+		public static readonly int DefaultTileRows = 1;
+		public static readonly int DefaultTileColumns = 1;
+
+		public static readonly int MaximumImageBoxRows = 4;
+		public static readonly int MaximumImageBoxColumns = 8;
+		public static readonly int MaximumTileRows = 4;
+		public static readonly int MaximumTileColumns = 4;
+
 		private LayoutConfigurationSettings()
 		{
 			ApplicationSettingsRegister.Instance.RegisterInstance(this);
@@ -21,35 +31,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		~LayoutConfigurationSettings()
 		{
 			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
-		}
-
-		public StoredLayoutConfiguration GetLayoutConfiguration(string modality)
-		{
-			IList<StoredLayoutConfiguration> layoutConfigurations = this.LayoutConfigurations;
-
-			foreach (StoredLayoutConfiguration configuration in layoutConfigurations)
-			{
-				if (!configuration.IsDefault && configuration.Modality == modality)
-					return configuration;
-			}
-
-			return GetDefaultLayoutConfiguration(layoutConfigurations);
-		}
-
-		public StoredLayoutConfiguration GetLayoutConfiguration(ImageSop imageSop)
-		{
-			if (imageSop == null)
-				return this.DefaultConfiguration;
-
-			return GetLayoutConfiguration(imageSop.Modality);
-		}
-
-		public StoredLayoutConfiguration GetLayoutConfiguration(IImageSopProvider imageSopProvider)
-		{
-			if (imageSopProvider == null)
-				return this.DefaultConfiguration;
-
-			return GetLayoutConfiguration(imageSopProvider.ImageSop);
 		}
 
 		public StoredLayoutConfiguration DefaultConfiguration
@@ -72,8 +53,8 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				XmlNodeList layoutConfigurationNodes = document.SelectNodes("//layout");
 				foreach (XmlElement layoutConfigurationNode in layoutConfigurationNodes)
 				{
-					StoredLayoutConfiguration newConfiguration = new StoredLayoutConfiguration(layoutConfigurationNode.GetAttribute("modality"));
-					
+					StoredLayoutConfiguration newConfiguration = ConstructDefaultConfiguration(layoutConfigurationNode.GetAttribute("modality"));
+
 					newConfiguration.ImageBoxRows = Convert.ToInt32(layoutConfigurationNode.GetAttribute("image-box-rows"));
 					newConfiguration.ImageBoxColumns = Convert.ToInt32(layoutConfigurationNode.GetAttribute("image-box-columns"));
 					newConfiguration.TileRows = Convert.ToInt32(layoutConfigurationNode.GetAttribute("tile-rows"));
@@ -93,7 +74,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				}
 
 				if (defaultConfiguration == null)
-					defaultConfiguration = new StoredLayoutConfiguration();
+					defaultConfiguration = ConstructDefaultConfiguration();
 
 				layoutConfigurations.Add(defaultConfiguration);
 
@@ -125,6 +106,53 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			}
 		}
 
+		public StoredLayoutConfiguration GetLayoutConfiguration(string modality)
+		{
+			IList<StoredLayoutConfiguration> layoutConfigurations = this.LayoutConfigurations;
+
+			foreach (StoredLayoutConfiguration configuration in layoutConfigurations)
+			{
+				if (!configuration.IsDefault && configuration.Modality == modality)
+					return configuration;
+			}
+
+			return GetDefaultLayoutConfiguration(layoutConfigurations);
+		}
+
+		public StoredLayoutConfiguration GetLayoutConfiguration(ImageSop imageSop)
+		{
+			if (imageSop == null)
+				return this.DefaultConfiguration;
+
+			return GetLayoutConfiguration(imageSop.Modality);
+		}
+
+		public StoredLayoutConfiguration GetLayoutConfiguration(IImageSopProvider imageSopProvider)
+		{
+			if (imageSopProvider == null)
+				return this.DefaultConfiguration;
+
+			return GetLayoutConfiguration(imageSopProvider.ImageSop);
+		}
+
+		public static StoredLayoutConfiguration GetMinimumConfiguration()
+		{
+			return new StoredLayoutConfiguration("", 1, 1, 1, 1);
+		}
+
+		private StoredLayoutConfiguration ConstructDefaultConfiguration()
+		{
+			return ConstructDefaultConfiguration("");
+		}
+
+		private static StoredLayoutConfiguration ConstructDefaultConfiguration(string modality)
+		{
+			return new StoredLayoutConfiguration(modality, DefaultImageBoxRows,
+														DefaultImageBoxColumns,
+														DefaultTileRows,
+														DefaultTileColumns);
+		}
+
 		private StoredLayoutConfiguration GetDefaultLayoutConfiguration(IList<StoredLayoutConfiguration> layoutConfigurations)
 		{
 			foreach (StoredLayoutConfiguration configuration in layoutConfigurations)
@@ -133,7 +161,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 					return configuration;
 			}
 
-			return new StoredLayoutConfiguration();
+			return ConstructDefaultConfiguration();
 		}
 
 		private XmlDocument GetLayoutSettingsDocument(string layoutConfigurationSettingsXml)
