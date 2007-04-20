@@ -268,6 +268,151 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 
 			Assert.AreEqual(testValue, actualValue);
 		}
+
+		[Test]
+		public void Signed9Bit()
+		{
+			int columns = 7;
+			int rows = 19;
+			int bitsAllocated = 16;
+			int bitsStored = 9;
+			int highBit = 8;
+			int samplesPerPixel = 1;
+			int pixelRepresentation = 1;
+			int planarConfiguration = 0;
+			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
+			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
+			byte[] pixelData = new byte[imageSize];
+
+			PixelData pixelDataWrapper = new PixelData(
+				rows,
+				columns,
+				bitsAllocated,
+				bitsStored,
+				highBit,
+				samplesPerPixel,
+				pixelRepresentation,
+				planarConfiguration,
+				photometricInterpretation,
+				pixelData);
+
+
+			pixelData[0] = 255;
+			pixelData[1] = 1;
+
+			int actualValue = pixelDataWrapper.GetPixel(0, 0);
+
+			Assert.AreEqual(-1, actualValue);
+
+			int expectedValue = -1;
+			pixelDataWrapper.SetPixel(0, 0, expectedValue);
+			actualValue = pixelDataWrapper.GetPixel(0, 0);
+			Assert.AreEqual(expectedValue, actualValue);
+
+			expectedValue = -256;
+			pixelDataWrapper.SetPixel(0, 0, expectedValue);
+			actualValue = pixelDataWrapper.GetPixel(0, 0);
+			Assert.AreEqual(expectedValue, actualValue);
+
+			expectedValue = 255;
+			pixelDataWrapper.SetPixel(0, 0, expectedValue);
+			actualValue = pixelDataWrapper.GetPixel(0, 0);
+			Assert.AreEqual(expectedValue, actualValue);
+
+			expectedValue = 0;
+			pixelDataWrapper.SetPixel(0, 0, expectedValue);
+			actualValue = pixelDataWrapper.GetPixel(0, 0);
+			Assert.AreEqual(expectedValue, actualValue);
+		}
+	
+		[Test]
+		public void Signed5Bit8BitsAllocated()
+		{
+			int columns = 7;
+			int rows = 19;
+			int bitsAllocated = 8;
+			int bitsStored = 5;
+			int highBit = 4;
+			int samplesPerPixel = 1;
+			int pixelRepresentation = 1;
+			int planarConfiguration = 0;
+			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
+			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
+			byte[] pixelData = new byte[imageSize];
+
+			PixelData pixelDataWrapper = new PixelData(
+				rows,
+				columns,
+				bitsAllocated,
+				bitsStored,
+				highBit,
+				samplesPerPixel,
+				pixelRepresentation,
+				planarConfiguration,
+				photometricInterpretation,
+				pixelData);
+
+			Signed5Bit(pixelData, pixelDataWrapper);
+		}
+
+		[Test]
+		public void Signed5Bit16BitsAllocated()
+		{
+			int columns = 7;
+			int rows = 19;
+			int bitsAllocated = 16;
+			int bitsStored = 5;
+			int highBit = 4;
+			int samplesPerPixel = 1;
+			int pixelRepresentation = 1;
+			int planarConfiguration = 0;
+			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
+			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
+			byte[] pixelData = new byte[imageSize];
+
+			PixelData pixelDataWrapper = new PixelData(
+				rows,
+				columns,
+				bitsAllocated,
+				bitsStored,
+				highBit,
+				samplesPerPixel,
+				pixelRepresentation,
+				planarConfiguration,
+				photometricInterpretation,
+				pixelData);
+
+			Signed5Bit(pixelData, pixelDataWrapper);
+		}
+
+		private static void Signed5Bit(byte[] pixelData, PixelData pixelDataWrapper)
+		{
+			pixelData[0] = 31;
+
+			int actualValue = pixelDataWrapper.GetPixel(0, 0);
+
+			Assert.AreEqual(-1, actualValue);
+
+			int expectedValue = -1;
+			pixelDataWrapper.SetPixel(0, 0, expectedValue);
+			actualValue = pixelDataWrapper.GetPixel(0, 0);
+			Assert.AreEqual(expectedValue, actualValue);
+
+			expectedValue = -16;
+			pixelDataWrapper.SetPixel(0, 0, expectedValue);
+			actualValue = pixelDataWrapper.GetPixel(0, 0);
+			Assert.AreEqual(expectedValue, actualValue);
+
+			expectedValue = 15;
+			pixelDataWrapper.SetPixel(0, 0, expectedValue);
+			actualValue = pixelDataWrapper.GetPixel(0, 0);
+			Assert.AreEqual(expectedValue, actualValue);
+
+			expectedValue = 0;
+			pixelDataWrapper.SetPixel(0, 0, expectedValue);
+			actualValue = pixelDataWrapper.GetPixel(0, 0);
+			Assert.AreEqual(expectedValue, actualValue);
+		}
 	}
 }
 

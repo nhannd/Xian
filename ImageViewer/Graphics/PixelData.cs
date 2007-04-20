@@ -271,8 +271,30 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private sbyte GetPixelSigned8(int x, int y)
 		{
-			int i = GetIndex(x, y);
-			return (sbyte)_pixelData[i];
+			// Create a mask that will pick out the sign bit, which is the high bit
+			byte signMask = (byte)(1 << (_bitsStored - 1));
+			byte raw = GetPixelUnsigned8(x, y);
+			sbyte result;
+
+			// If the sign bit is 0, then just return the raw value,
+			// since it's like an unsigned value
+			if ((raw & signMask) == 0)
+			{
+				result = (sbyte)raw;
+			}
+			// If the sign bit is 1, then the value is in 2's complement, which
+			// means we have to compute the corresponding positive number by
+			// inverting the bits and adding 1
+			else
+			{
+				byte inverted = (byte)(~raw);
+				// Need to mask out the bits greater above the high bit, since they're irrelevant
+				byte mask = (byte)(byte.MaxValue >> (_bitsAllocated - _bitsStored));
+				byte maskedInverted = (byte)(inverted & mask);
+				result = (sbyte)(-(maskedInverted + 1));
+			}
+
+			return result; 
 		}
 
 		private ushort GetPixelUnsigned16(int x, int y)
@@ -287,7 +309,30 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private short GetPixelSigned16(int x, int y)
 		{
-			return (short)GetPixelUnsigned16(x, y);
+			// Create a mask that will pick out the sign bit, which is the high bit
+			ushort signMask = (ushort)(1 << (_bitsStored - 1));
+			ushort raw = GetPixelUnsigned16(x, y);
+			short result;
+
+			// If the sign bit is 0, then just return the raw value,
+			// since it's like an unsigned value
+			if ((raw & signMask) == 0)
+			{
+				result = (short)raw;
+			}
+			// If the sign bit is 1, then the value is in 2's complement, which
+			// means we have to compute the corresponding positive number by
+			// inverting the bits and adding 1
+			else
+			{
+				ushort inverted = (ushort)(~raw);
+				// Need to mask out the bits greater above the high bit, since they're irrelevant
+				ushort mask = (ushort)(ushort.MaxValue >> (_bitsAllocated - _bitsStored));
+				ushort maskedInverted = (ushort)(inverted & mask);
+				result = (short)(-(maskedInverted+1));
+			}
+
+			return result;
 		}
 
 		private int GetPixelRGBInternal(int x, int y)
@@ -322,8 +367,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 			if (value < _minPixelValue || value > _maxPixelValue)
 				throw new ArgumentException("Value is out of range");
 
+			if (value >= 0)
+				SetPixel8(x, y, (byte)value);
+			else
+			{
+				byte raw = (byte)value;
+				// Need to mask out the bits greater above the high bit, since they're irrelevant
+				byte mask = (byte)(byte.MaxValue >> (_bitsAllocated - _bitsStored));
+				byte maskedRaw = (byte)(raw & mask);
+				SetPixel8(x, y, maskedRaw);
+			}
+		}
+
+		private void SetPixel8(int x, int y, byte value)
+		{
 			int i = GetIndex(x, y);
-			_pixelData[i] = (byte)value;
+			_pixelData[i] = value;
 		}
 
 		private void SetPixelUnsigned16(int x, int y, int value)
@@ -331,9 +390,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			if (value < _minPixelValue || value > _maxPixelValue)
 				throw new ArgumentException("Value is out of range");
 
-			int i = GetIndex(x, y);
-			_pixelData[i] = (byte)(value & 0x00ff); // low-byte first (little endian)
-			_pixelData[i + 1] = (byte)((value & 0xff00) >> 8); // high-byte last
+			SetPixel16(x, y, (ushort) value);
 		}
 
 		private void SetPixelSigned16(int x, int y, int value)
@@ -341,6 +398,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 			if (value < _minPixelValue || value > _maxPixelValue)
 				throw new ArgumentException("Value is out of range");
 
+			if (value >= 0)
+				SetPixel16(x, y, (ushort) value);
+			else
+			{
+				ushort raw = (ushort)value;
+				// Need to mask out the bits greater above the high bit, since they're irrelevant
+				ushort mask = (ushort)(ushort.MaxValue >> (_bitsAllocated - _bitsStored));
+				ushort maskedRaw = (ushort)(raw & mask);
+				SetPixel16(x, y, maskedRaw);
+			}
+		}
+
+		private void SetPixel16(int x, int y, ushort value)
+		{
 			int i = GetIndex(x, y);
 			_pixelData[i] = (byte)(value & 0x00ff); // low-byte first (little endian)
 			_pixelData[i + 1] = (byte)((value & 0xff00) >> 8); // high-byte last
