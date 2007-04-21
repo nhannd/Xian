@@ -56,6 +56,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 							imageGraphic.Columns,
 							imageGraphic.Rows,
 							srcBytesPerPixel,
+							imageGraphic.BitsStored,
 							dstViewableRectangle,
 							(byte*)pDstPixelData,
 							dstWidth,

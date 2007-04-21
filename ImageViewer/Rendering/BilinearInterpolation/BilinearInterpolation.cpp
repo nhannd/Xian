@@ -117,9 +117,21 @@ using std::auto_ptr;
 ///     decreases.  For example, for a 14 bit image, the error would
 ///     be 512/4 = 128 for the extreme case shown above.
 ///
+/// Notes about signed representation in DICOM:
+///
+/// In DICOM, negative numbers are represented as two's complement
+/// where the sign bit is the high bit, *not* the most significant bit.
+/// For example, in a 9-bit signed image, -1 would be represented as 
+/// 0000 0001 1111 1111, *not* 1111 1111 1111 1111. For the interpolation
+/// arithmetic, this representation is problematic, so we
+/// convert the DICOM representation to standard representation by
+/// padding bits above the high bit with 1's.  In the example above,
+/// this means that -1 would be changed from 0000 0001 1111 1111 to
+/// 1111 1111 1111 1111.
+///
 ///////////////////////////////////////////////////////////////////////
-template <class T, class U>
-void InterpolateBilinearT(
+
+void InterpolateBilinearUnsigned8(
 
 		BYTE* pDstPixelData,
 
@@ -128,7 +140,206 @@ void InterpolateBilinearT(
 		int xDstIncrement,
 		int yDstIncrement,
 
-		T* pSrcPixelData,
+		BYTE* pSrcPixelData,
+		unsigned int srcWidth,
+		unsigned int srcHeight,
+		float srcRegionOriginY,
+
+		float xRatio,
+		float yRatio,
+		int* pLutData,
+
+		std::auto_ptr<int>& spxSrcPixels,
+		std::auto_ptr<int>& spdxFixedAtSrcPixelCoordinates)
+{
+	// NY: Bug #295: When I originally changed this method so that
+	// int pointers are used instead of byte pointers, I simply
+	// incremented the pointer by 1 to go to the next pixel.  That obviously
+	// doesn't work when the image has been rotated 90 deg.  And so we need
+	// to use xDstIncrement when incrementing the pointer.  Problem is though,
+	// xDstIncrement is in bytes.  So to compensate, we divide xDstIncrement
+	// by 4 (i.e. right shift 2 bits) to get the increment in ints.
+	xDstIncrement = xDstIncrement >> 2;
+
+    float srcSlightlyLessThanHeightMinusOne = (float)srcHeight - SLIGHTLYGREATERTHANONE;
+	int ySrcPixel, dyFixed;
+	int* pRowDstPixelData;
+	BYTE* pRowSrcPixelData;
+	int *pxPixel, *pdxFixed;
+	BYTE *pSrcPixel00, *pSrcPixel01, *pSrcPixel10, *pSrcPixel11;
+	int yInterpolated1, yInterpolated2, finalInterpolated, value;
+
+	for (float y = 0; y < dstRegionHeight; ++y)  //so we're not constantly converting ints to floats.
+	{
+		float ySrcCoordinate = srcRegionOriginY + (y + 0.5F) * yRatio;
+
+		//a necessary evil, I'm afraid.
+		if (ySrcCoordinate < 0)
+			ySrcCoordinate = 0;
+		else if (ySrcCoordinate > srcSlightlyLessThanHeightMinusOne)
+			ySrcCoordinate = srcSlightlyLessThanHeightMinusOne; //force it to be just barely before the last pixel.
+
+		ySrcPixel = (int)ySrcCoordinate;
+		dyFixed = int((ySrcCoordinate - (float)ySrcPixel) * FIXEDSCALE);
+
+		pRowDstPixelData = (int*)pDstPixelData;
+		pRowSrcPixelData = pSrcPixelData + ySrcPixel * srcWidth;
+	    
+		pxPixel = spxSrcPixels.get();
+		pdxFixed = spdxFixedAtSrcPixelCoordinates.get();
+		
+		for (unsigned int x = 0; x < dstRegionWidth; ++x)
+		{
+			pSrcPixel00 = pRowSrcPixelData + (*pxPixel);
+			pSrcPixel01 = pSrcPixel00 + 1;
+			pSrcPixel10 = pSrcPixel00 + srcWidth;
+			pSrcPixel11 = pSrcPixel10 + 1;
+			
+			//wherever you multiply, you have to downshift again to keep the decimal precision of the #s the same.
+			yInterpolated1 = ((*pSrcPixel00) << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel10 - *pSrcPixel00) << FIXEDPRECISION)) >> FIXEDPRECISION);
+			yInterpolated2 = ((*pSrcPixel01) << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel11 - *pSrcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
+
+			finalInterpolated = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
+
+			value = *(pLutData + finalInterpolated);
+			*pRowDstPixelData = value;
+
+			pRowDstPixelData += xDstIncrement;
+
+			++pxPixel;
+			++pdxFixed;
+		}
+
+		pDstPixelData += yDstIncrement;
+	}
+}
+
+void InterpolateBilinearSigned8(
+
+		BYTE* pDstPixelData,
+
+		float dstRegionWidth,
+		float dstRegionHeight,
+		int xDstIncrement,
+		int yDstIncrement,
+
+		char* pSrcPixelData,
+		unsigned int srcWidth,
+		unsigned int srcHeight,
+		unsigned int srcBitsStored,
+		float srcRegionOriginY,
+
+		float xRatio,
+		float yRatio,
+		int* pLutData,
+
+		std::auto_ptr<int>& spxSrcPixels,
+		std::auto_ptr<int>& spdxFixedAtSrcPixelCoordinates)
+{
+	// NY: Bug #295: When I originally changed this method so that
+	// int pointers are used instead of byte pointers, I simply
+	// incremented the pointer by 1 to go to the next pixel.  That obviously
+	// doesn't work when the image has been rotated 90 deg.  And so we need
+	// to use xDstIncrement when incrementing the pointer.  Problem is though,
+	// xDstIncrement is in bytes.  So to compensate, we divide xDstIncrement
+	// by 4 (i.e. right shift 2 bits) to get the increment in ints.
+	xDstIncrement = xDstIncrement >> 2;
+
+    float srcSlightlyLessThanHeightMinusOne = (float)srcHeight - SLIGHTLYGREATERTHANONE;
+	int ySrcPixel, dyFixed;
+	int* pRowDstPixelData;
+	char* pRowSrcPixelData;
+	int *pxPixel, *pdxFixed;
+	char *pSrcPixel00, *pSrcPixel01, *pSrcPixel10, *pSrcPixel11;
+	char srcPixel00, srcPixel01, srcPixel10, srcPixel11;
+	int yInterpolated1, yInterpolated2, finalInterpolated, value;
+
+	// Mask used to determine if a pixel value is signed or not.  Note that the
+	// sign bit is the high bit.  Thus, if the bits stored = 9, the sign bit is 8
+	char signMask = (char)(1 << (srcBitsStored - 1));
+
+	// Used to turn a signed pixel value of arbitrary bit depth into a 8 bit signed equivalent
+	char signPadding = (char)(0xff << (srcBitsStored - 1));
+	int offset = 1 << srcBitsStored;
+
+	for (float y = 0; y < dstRegionHeight; ++y)  //so we're not constantly converting ints to floats.
+	{
+		float ySrcCoordinate = srcRegionOriginY + (y + 0.5F) * yRatio;
+
+		//a necessary evil, I'm afraid.
+		if (ySrcCoordinate < 0)
+			ySrcCoordinate = 0;
+		else if (ySrcCoordinate > srcSlightlyLessThanHeightMinusOne)
+			ySrcCoordinate = srcSlightlyLessThanHeightMinusOne; //force it to be just barely before the last pixel.
+
+		ySrcPixel = (int)ySrcCoordinate;
+		dyFixed = int((ySrcCoordinate - (float)ySrcPixel) * FIXEDSCALE);
+
+		pRowDstPixelData = (int*)pDstPixelData;
+		pRowSrcPixelData = pSrcPixelData + ySrcPixel * srcWidth;
+	    
+		pxPixel = spxSrcPixels.get();
+		pdxFixed = spdxFixedAtSrcPixelCoordinates.get();
+		
+		for (unsigned int x = 0; x < dstRegionWidth; ++x)
+		{
+			pSrcPixel00 = pRowSrcPixelData + (*pxPixel);
+			pSrcPixel01 = pSrcPixel00 + 1;
+			pSrcPixel10 = pSrcPixel00 + srcWidth;
+			pSrcPixel11 = pSrcPixel10 + 1;
+			
+			if ((*pSrcPixel00 & signMask) != 0)
+				srcPixel00 = *pSrcPixel00 | signPadding;
+			else
+				srcPixel00 = *pSrcPixel00;
+
+			if ((*pSrcPixel01 & signMask) != 0)
+				srcPixel01 = *pSrcPixel01 | signPadding;
+			else
+				srcPixel01 = *pSrcPixel01;
+
+			if ((*pSrcPixel10 & signMask) != 0)
+				srcPixel10 = *pSrcPixel10 | signPadding;
+			else
+				srcPixel10 = *pSrcPixel10;
+
+			if ((*pSrcPixel11 & signMask) != 0)
+				srcPixel11 = *pSrcPixel11 | signPadding;
+			else
+				srcPixel11 = *pSrcPixel11;
+
+			//wherever you multiply, you have to downshift again to keep the decimal precision of the #s the same.
+			yInterpolated1 = ((srcPixel00) << FIXEDPRECISION) + ((dyFixed * ((srcPixel10 - srcPixel00) << FIXEDPRECISION)) >> FIXEDPRECISION);
+			yInterpolated2 = ((srcPixel01) << FIXEDPRECISION) + ((dyFixed * ((srcPixel11 - srcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
+
+			finalInterpolated = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
+
+			if (finalInterpolated < 0)
+				finalInterpolated += offset;
+
+			value = *(pLutData + finalInterpolated);
+			*pRowDstPixelData = value;
+
+			pRowDstPixelData += xDstIncrement;
+
+			++pxPixel;
+			++pdxFixed;
+		}
+
+		pDstPixelData += yDstIncrement;
+	}
+}
+
+void InterpolateBilinearUnsigned16(
+
+		BYTE* pDstPixelData,
+
+		float dstRegionWidth,
+		float dstRegionHeight,
+		int xDstIncrement,
+		int yDstIncrement,
+
+		unsigned short* pSrcPixelData,
 		unsigned int srcWidth,
 		unsigned int srcHeight,
 		float srcRegionOriginY,
@@ -151,6 +362,14 @@ void InterpolateBilinearT(
 
     float srcSlightlyLessThanHeightMinusOne = (float)srcHeight - SLIGHTLYGREATERTHANONE;
 
+	int ySrcPixel, dyFixed;
+
+	int* pRowDstPixelData;
+	unsigned short* pRowSrcPixelData;
+	int *pxPixel, *pdxFixed;
+	unsigned short *pSrcPixel00, *pSrcPixel01, *pSrcPixel10, *pSrcPixel11;
+	int yInterpolated1, yInterpolated2, finalInterpolated, value;
+
 	for (float y = 0; y < dstRegionHeight; ++y)  //so we're not constantly converting ints to floats.
 	{
 		float ySrcCoordinate = srcRegionOriginY + (y + 0.5F) * yRatio;
@@ -161,28 +380,238 @@ void InterpolateBilinearT(
 		else if (ySrcCoordinate > srcSlightlyLessThanHeightMinusOne)
 			ySrcCoordinate = srcSlightlyLessThanHeightMinusOne; //force it to be just barely before the last pixel.
 
-		int ySrcPixel = (int)ySrcCoordinate;
-		int dyFixed = int((ySrcCoordinate - (float)ySrcPixel) * FIXEDSCALE);
+		ySrcPixel = (int)ySrcCoordinate;
+		dyFixed = int((ySrcCoordinate - (float)ySrcPixel) * FIXEDSCALE);
 
-		int* pRowDstPixelData = (int*)pDstPixelData;
-		T* pRowSrcPixelData = pSrcPixelData + ySrcPixel * srcWidth;
+		pRowDstPixelData = (int*)pDstPixelData;
+		pRowSrcPixelData = pSrcPixelData + ySrcPixel * srcWidth;
 	    
-		int* pxPixel = spxSrcPixels.get();
-		int* pdxFixed = spdxFixedAtSrcPixelCoordinates.get();
+		pxPixel = spxSrcPixels.get();
+		pdxFixed = spdxFixedAtSrcPixelCoordinates.get();
 		
 		for (unsigned int x = 0; x < dstRegionWidth; ++x)
 		{
-			T* pSrcPixel00 = pRowSrcPixelData + (*pxPixel);
-			T* pSrcPixel01 = pSrcPixel00 + 1;
-			T* pSrcPixel10 = pSrcPixel00 + srcWidth;
-			T* pSrcPixel11 = pSrcPixel10 + 1;
+			pSrcPixel00 = pRowSrcPixelData + (*pxPixel);
+			pSrcPixel01 = pSrcPixel00 + 1;
+			pSrcPixel10 = pSrcPixel00 + srcWidth;
+			pSrcPixel11 = pSrcPixel10 + 1;
+			
+			//wherever you multiply, you have to downshift again to keep the decimal precision of the #s the same.
+			yInterpolated1 = ((*pSrcPixel00) << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel10 - *pSrcPixel00) << FIXEDPRECISION)) >> FIXEDPRECISION);
+			yInterpolated2 = ((*pSrcPixel01) << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel11 - *pSrcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
+
+			finalInterpolated = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
+
+			value = *(pLutData + finalInterpolated);
+			*pRowDstPixelData = value;
+
+			pRowDstPixelData += xDstIncrement;
+
+			++pxPixel;
+			++pdxFixed;
+		}
+
+		pDstPixelData += yDstIncrement;
+	}
+}
+
+// In the case where bits stored = 16, the DICOM representation of negative numbers
+// is the same as the standard representation, so we don't have to do anything special
+// to handle them.
+void InterpolateBilinearSigned16(
+
+		BYTE* pDstPixelData,
+
+		float dstRegionWidth,
+		float dstRegionHeight,
+		int xDstIncrement,
+		int yDstIncrement,
+
+		short* pSrcPixelData,
+		unsigned int srcWidth,
+		unsigned int srcHeight,
+		float srcRegionOriginY,
+
+		float xRatio,
+		float yRatio,
+		int* pLutData,
+
+		std::auto_ptr<int>& spxSrcPixels,
+		std::auto_ptr<int>& spdxFixedAtSrcPixelCoordinates)
+{
+	// NY: Bug #295: When I originally changed this method so that
+	// int pointers are used instead of byte pointers, I simply
+	// incremented the pointer by 1 to go to the next pixel.  That obviously
+	// doesn't work when the image has been rotated 90 deg.  And so we need
+	// to use xDstIncrement when incrementing the pointer.  Problem is though,
+	// xDstIncrement is in bytes.  So to compensate, we divide xDstIncrement
+	// by 4 (i.e. right shift 2 bits) to get the increment in ints.
+	xDstIncrement = xDstIncrement >> 2;
+
+    float srcSlightlyLessThanHeightMinusOne = (float)srcHeight - SLIGHTLYGREATERTHANONE;
+	int ySrcPixel, dyFixed;
+	int* pRowDstPixelData;
+	short* pRowSrcPixelData;
+	int *pxPixel, *pdxFixed;
+	short *pSrcPixel00, *pSrcPixel01, *pSrcPixel10, *pSrcPixel11;
+	int yInterpolated1, yInterpolated2, finalInterpolated, value;
+
+	for (float y = 0; y < dstRegionHeight; ++y)  //so we're not constantly converting ints to floats.
+	{
+		float ySrcCoordinate = srcRegionOriginY + (y + 0.5F) * yRatio;
+
+		//a necessary evil, I'm afraid.
+		if (ySrcCoordinate < 0)
+			ySrcCoordinate = 0;
+		else if (ySrcCoordinate > srcSlightlyLessThanHeightMinusOne)
+			ySrcCoordinate = srcSlightlyLessThanHeightMinusOne; //force it to be just barely before the last pixel.
+
+		ySrcPixel = (int)ySrcCoordinate;
+		dyFixed = int((ySrcCoordinate - (float)ySrcPixel) * FIXEDSCALE);
+
+		pRowDstPixelData = (int*)pDstPixelData;
+		pRowSrcPixelData = pSrcPixelData + ySrcPixel * srcWidth;
+	    
+		pxPixel = spxSrcPixels.get();
+		pdxFixed = spdxFixedAtSrcPixelCoordinates.get();
+		
+		for (unsigned int x = 0; x < dstRegionWidth; ++x)
+		{
+			pSrcPixel00 = pRowSrcPixelData + (*pxPixel);
+			pSrcPixel01 = pSrcPixel00 + 1;
+			pSrcPixel10 = pSrcPixel00 + srcWidth;
+			pSrcPixel11 = pSrcPixel10 + 1;
+			
+			//wherever you multiply, you have to downshift again to keep the decimal precision of the #s the same.
+			yInterpolated1 = ((*pSrcPixel00) << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel10 - *pSrcPixel00) << FIXEDPRECISION)) >> FIXEDPRECISION);
+			yInterpolated2 = ((*pSrcPixel01) << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel11 - *pSrcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
+
+			finalInterpolated = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
+
+			value = *(pLutData + (unsigned short)finalInterpolated);
+			*pRowDstPixelData = value;
+
+			pRowDstPixelData += xDstIncrement;
+
+			++pxPixel;
+			++pdxFixed;
+		}
+
+		pDstPixelData += yDstIncrement;
+	}
+}
+
+// In the case where bits stored < 16, the DICOM representation of negative numbers
+// is NOT the same as the standard representation, so we need some special case code to
+// convert the DICOM representation to the standard representation.
+void InterpolateBilinearSignedSub16(
+
+		BYTE* pDstPixelData,
+
+		float dstRegionWidth,
+		float dstRegionHeight,
+		int xDstIncrement,
+		int yDstIncrement,
+
+		short* pSrcPixelData,
+		unsigned int srcWidth,
+		unsigned int srcHeight,
+		unsigned int srcBitsStored,
+		float srcRegionOriginY,
+
+		float xRatio,
+		float yRatio,
+		int* pLutData,
+
+		std::auto_ptr<int>& spxSrcPixels,
+		std::auto_ptr<int>& spdxFixedAtSrcPixelCoordinates)
+{
+	// NY: Bug #295: When I originally changed this method so that
+	// int pointers are used instead of byte pointers, I simply
+	// incremented the pointer by 1 to go to the next pixel.  That obviously
+	// doesn't work when the image has been rotated 90 deg.  And so we need
+	// to use xDstIncrement when incrementing the pointer.  Problem is though,
+	// xDstIncrement is in bytes.  So to compensate, we divide xDstIncrement
+	// by 4 (i.e. right shift 2 bits) to get the increment in ints.
+	xDstIncrement = xDstIncrement >> 2;
+
+    float srcSlightlyLessThanHeightMinusOne = (float)srcHeight - SLIGHTLYGREATERTHANONE;
+	int ySrcPixel, dyFixed;
+	int* pRowDstPixelData;
+	short* pRowSrcPixelData;
+	int *pxPixel, *pdxFixed;
+	short *pSrcPixel00, *pSrcPixel01, *pSrcPixel10, *pSrcPixel11;
+	short srcPixel00, srcPixel01, srcPixel10, srcPixel11;
+	int yInterpolated1, yInterpolated2, finalInterpolated, value;
+
+	// Mask used to determine if a pixel value is signed or not.  Note that the
+	// sign bit is the high bit.  Thus, if the bits stored = 9, the sign bit is 8
+	short signMask = (short)(1 << (srcBitsStored - 1));
+
+	// Used to turn a signed pixel value of arbitrary bit depth into a 16 bit signed equivalent
+	short signPadding = (short)(0xffff << (srcBitsStored - 1));
+	int offset = 1 << srcBitsStored;
+
+	for (float y = 0; y < dstRegionHeight; ++y)  //so we're not constantly converting ints to floats.
+	{
+		float ySrcCoordinate = srcRegionOriginY + (y + 0.5F) * yRatio;
+
+		//a necessary evil, I'm afraid.
+		if (ySrcCoordinate < 0)
+			ySrcCoordinate = 0;
+		else if (ySrcCoordinate > srcSlightlyLessThanHeightMinusOne)
+			ySrcCoordinate = srcSlightlyLessThanHeightMinusOne; //force it to be just barely before the last pixel.
+
+		ySrcPixel = (int)ySrcCoordinate;
+		dyFixed = int((ySrcCoordinate - (float)ySrcPixel) * FIXEDSCALE);
+
+		pRowDstPixelData = (int*)pDstPixelData;
+		pRowSrcPixelData = pSrcPixelData + ySrcPixel * srcWidth;
+	    
+		pxPixel = spxSrcPixels.get();
+		pdxFixed = spdxFixedAtSrcPixelCoordinates.get();
+		
+		for (unsigned int x = 0; x < dstRegionWidth; ++x)
+		{
+			pSrcPixel00 = pRowSrcPixelData + (*pxPixel);
+			pSrcPixel01 = pSrcPixel00 + 1;
+			pSrcPixel10 = pSrcPixel00 + srcWidth;
+			pSrcPixel11 = pSrcPixel10 + 1;
+
+			// Convert DICOM representation of negative numbers to 
+			// standard 16-bit representation
+			if ((*pSrcPixel00 & signMask) != 0 )
+				srcPixel00 = *pSrcPixel00 | signPadding;
+			else
+				srcPixel00 = *pSrcPixel00;
+
+			if ((*pSrcPixel01 & signMask) != 0 )
+				srcPixel01 = *pSrcPixel01 | signPadding;
+			else
+				srcPixel01 = *pSrcPixel01;
+
+			if ((*pSrcPixel10 & signMask) != 0 )
+				srcPixel10 = *pSrcPixel10 | signPadding;
+			else
+				srcPixel10 = *pSrcPixel10;
+
+			if ((*pSrcPixel11 & signMask) != 0 )
+				srcPixel11 = *pSrcPixel11 | signPadding;
+			else
+				srcPixel11 = *pSrcPixel11;
 
 			//wherever you multiply, you have to downshift again to keep the decimal precision of the #s the same.
-			int yInterpolated1 = ((*pSrcPixel00) << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel10 - *pSrcPixel00) << FIXEDPRECISION)) >> FIXEDPRECISION);
-			int yInterpolated2 = ((*pSrcPixel01) << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel11 - *pSrcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
-			int iFinal = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
+			yInterpolated1 = ((srcPixel00) << FIXEDPRECISION) + ((dyFixed * ((srcPixel10 - srcPixel00) << FIXEDPRECISION)) >> FIXEDPRECISION);
+			yInterpolated2 = ((srcPixel01) << FIXEDPRECISION) + ((dyFixed * ((srcPixel11 - srcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
 
-			int value = *(pLutData + (U)iFinal);
+			finalInterpolated = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
+
+			// If the interpolated value is negative, we add an offset equal to the
+			// size of the LUT so that it properly indexes the LUT
+			if (finalInterpolated < 0)
+				finalInterpolated += offset;
+
+			value = *(pLutData + finalInterpolated);
 			*pRowDstPixelData = value;
 
 			pRowDstPixelData += xDstIncrement;
@@ -281,6 +710,7 @@ BOOL InterpolateBilinear
 	unsigned int srcWidth,
 	unsigned int srcHeight,
 	unsigned int srcBytesPerPixel,
+	unsigned int srcBitsStored,
 
 	BOOL isSigned,
 	BOOL isRGB,
@@ -426,7 +856,7 @@ BOOL InterpolateBilinear
 		{
 			if (isSigned == FALSE)
 			{
-				InterpolateBilinearT<unsigned short, unsigned short>
+				InterpolateBilinearUnsigned16
 				(
 					pDstPixelData,
 					dstRegionWidth,
@@ -445,29 +875,52 @@ BOOL InterpolateBilinear
 			}
 			else
 			{
-				InterpolateBilinearT<short, unsigned short>
-				(
-					pDstPixelData,
-					dstRegionWidth,
-					dstRegionHeight,
-					xDstIncrement,
-					yDstIncrement,
-					(short*)pSrcPixelData,
-					srcWidth,
-					srcHeight,
-					srcRegionRectTop,
-					xRatio,
-					yRatio,
-					pLutData,
-					spxSrcPixels,
-					spdxFixedAtSrcPixelCoordinates);
+				if (srcBitsStored == 16)
+				{
+					InterpolateBilinearSigned16
+					(
+						pDstPixelData,
+						dstRegionWidth,
+						dstRegionHeight,
+						xDstIncrement,
+						yDstIncrement,
+						(short*)pSrcPixelData,
+						srcWidth,
+						srcHeight,
+						srcRegionRectTop,
+						xRatio,
+						yRatio,
+						pLutData,
+						spxSrcPixels,
+						spdxFixedAtSrcPixelCoordinates);
+				}
+				else
+				{
+					InterpolateBilinearSignedSub16
+					(
+						pDstPixelData,
+						dstRegionWidth,
+						dstRegionHeight,
+						xDstIncrement,
+						yDstIncrement,
+						(short*)pSrcPixelData,
+						srcWidth,
+						srcHeight,
+						srcBitsStored,
+						srcRegionRectTop,
+						xRatio,
+						yRatio,
+						pLutData,
+						spxSrcPixels,
+						spdxFixedAtSrcPixelCoordinates);
+				}
 			}
 		}
 		else
 		{
 			if (isSigned == FALSE)
 			{
-				InterpolateBilinearT<BYTE, BYTE>
+				InterpolateBilinearUnsigned8
 				(
 					pDstPixelData,
 					dstRegionWidth,
@@ -486,7 +939,7 @@ BOOL InterpolateBilinear
 			}
 			else
 			{
-				InterpolateBilinearT<char, BYTE>
+				InterpolateBilinearSigned8
 				(
 					pDstPixelData,
 					dstRegionWidth,
@@ -496,6 +949,7 @@ BOOL InterpolateBilinear
 					(char*)pSrcPixelData,
 					srcWidth,
 					srcHeight,
+					srcBitsStored,
 					srcRegionRectTop,
 					xRatio,
 					yRatio,

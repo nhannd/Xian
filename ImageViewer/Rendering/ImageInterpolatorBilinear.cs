@@ -12,6 +12,7 @@ namespace ClearCanvas.ImageViewer.Rendering
             int srcWidth,
             int srcHeight,
             int srcBytesPerPixel,
+			int srcBitsStored,
             RectangleF dstRegionRectangle,
             byte* pDstPixelData,
             int dstWidth,
@@ -27,6 +28,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 				srcWidth, 
 				srcHeight, 
 				srcBytesPerPixel,
+				srcBitsStored,
 				isSigned, 
 				isRGB, 
 				isPlanar,
@@ -56,6 +58,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			int srcWidth,
 			int srcHeight,
 			int srcBytesPerPixel,
+			int srcBitsStored,
 
 			bool isSigned,
 			bool isRGB,

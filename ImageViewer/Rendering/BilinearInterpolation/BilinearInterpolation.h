@@ -20,6 +20,7 @@ extern "C"
 			unsigned int srcWidth,
             unsigned int srcHeight,
             unsigned int srcBytesPerPixel,
+			unsigned int srcBitsStored,
 
 			BOOL isSigned,
 			BOOL isRGB,
