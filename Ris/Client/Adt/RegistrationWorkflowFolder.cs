@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         protected override bool IsMember(RegistrationWorklistItem item)
         {
-            return (item.WorklistClassName == this.WorklistClassName);
+            return true;
         }
 
         protected override bool CanAcceptDrop(RegistrationWorklistItem item)
@@ -104,6 +104,11 @@ namespace ClearCanvas.Ris.Client.Adt
         protected override bool ProcessDrop(RegistrationWorklistItem item)
         {
             return false;
+        }
+
+        protected bool GetOperationEnablement(string operationName)
+        {
+            return _folderSystem.GetOperationEnablement(operationName);
         }
     }
 }

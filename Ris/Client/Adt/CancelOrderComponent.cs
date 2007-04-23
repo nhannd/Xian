@@ -34,6 +34,8 @@ namespace ClearCanvas.Ris.Client.Adt
         private EnumValueInfo _selectedCancelReason;
         private List<EnumValueInfo> _cancelReasonChoices;
 
+        private List<EntityRef> _selectedOrders;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -44,6 +46,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
+            _selectedOrders = new List<EntityRef>();
             _cancelOrderTable = new CancelOrderTable();
 
             try
@@ -102,6 +105,16 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        public EnumValueInfo SelectedReason
+        {
+            get { return _selectedCancelReason; }
+        }
+
+        public List<EntityRef> SelectedOrders
+        {
+            get { return _selectedOrders; }
+        }
+
         #endregion
 
         public void Accept()
@@ -128,18 +141,11 @@ namespace ClearCanvas.Ris.Client.Adt
         private void SaveChanges()
         {
             // Get the list of Order EntityRef from the table
-            List<EntityRef> selectedOrders = new List<EntityRef>();
             foreach (CancelOrderTableEntry entry in _cancelOrderTable.Items)
             {
                 if (entry.Checked)
-                    selectedOrders.Add(entry.CancelOrderTableItem.OrderRef);
+                    _selectedOrders.Add(entry.CancelOrderTableItem.OrderRef);
             }
-
-            Platform.GetService<IRegistrationWorkflowService>(
-                delegate(IRegistrationWorkflowService service)
-                {
-                    service.CancelOrder(new CancelOrderRequest(selectedOrders, _selectedCancelReason));
-                });
         }
 
         public void Cancel()

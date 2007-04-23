@@ -21,7 +21,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         public ModalityWorkflowService()
         {
             _worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Modality.WorklistExtensionPoint();
-            _operationExtPoint = new ClearCanvas.Healthcare.Workflow.Modality.WorkflowOperationExtensionPoint();
         }
 
         [ReadOperation]

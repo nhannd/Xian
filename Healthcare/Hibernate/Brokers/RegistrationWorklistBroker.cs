@@ -42,10 +42,32 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             foreach (object tuple in query.List())
             {
                 WorklistItem item = (WorklistItem)Activator.CreateInstance(typeof(WorklistItem), tuple);
-                item.WorklistClassName = worklistClassName;
                 results.Add(item);
             }
             return results;
+        }
+
+        public int GetWorklistCount(string worklistClassName)
+        {
+            string defaultHqlQuery = "select count(distinct pp) from ModalityProcedureStep mps" +
+                            " join mps.Type spst" +
+                            " join mps.Modality m" +
+                            " join mps.RequestedProcedure rp" +
+                            " join rp.Type rpt" +
+                            " join rp.Order o" +
+                            " join o.DiagnosticService ds" +
+                            " join o.Visit v" +
+                            " join o.Patient p" +
+                            " join p.Profiles pp" +
+                            " where mps.State = :mpsState";
+            //" and mps.Scheduling.StartTime between :mpsSchedulingStartTimeBegin and :mpsSchedulingStartTimeEnd";
+
+            string hqlQuery = String.Concat(defaultHqlQuery, GetSubQuery(worklistClassName));
+            IQuery query = this.Context.CreateHibernateQuery(hqlQuery);
+            SetNamedParameters(query, worklistClassName);
+
+            IList list = query.List();
+            return (int) list[0];
         }
 
         private void SetNamedParameters(IQuery query, string worklistClassName)
@@ -100,26 +122,34 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return subQuery;
         }
 
-        public IList<RequestedProcedure> GetRequestedProcedureForPatient(Patient patient, string worklistClassName)
+        public IList<RequestedProcedure> GetScheduledRequestedProcedureForPatient(Patient patient)
         {
             List<RequestedProcedure> results = new List<RequestedProcedure>();
+ 
+            string hqlQuery;
 
-            string hqlQuery = "select distinct rp from ModalityProcedureStep mps" +
-                            " join mps.Type spst" +
-                            " join mps.Modality m" +
-                            " join mps.RequestedProcedure rp" +
-                            " join rp.Type rpt" +
-                            " join rp.Order o" +
-                            " join o.DiagnosticService ds" +
-                            " join o.Visit v" +
-                            " join o.Patient p" +
-                            " where mps.State = :mpsState and p = :patient";
-            //" where (cps.Scheduling.StartTime between :cpsSchedulingStartTimeBegin and :cpsSchedulingStartTimeEnd)";
+            hqlQuery = "select distinct rp from ModalityProcedureStep mps" +
+                        " join mps.Type spst" +
+                        " join mps.Modality m" +
+                        " join mps.RequestedProcedure rp" +
+                        " join rp.Type rpt" +
+                        " join rp.Order o" +
+                        " join o.DiagnosticService ds" +
+                        " join o.Visit v" +
+                        " join o.Patient p" +
+                        " where mps.State = :mpsState and p = :patient" +
+                //" and mps.Scheduling.StartTime between :mpsSchedulingStartTimeBegin and :mpsSchedulingStartTimeEnd";
+                        " and rp not in (select rp from CheckInProcedureStep cps join cps.RequestedProcedure rp" +
+                //" where (cps.Scheduling.StartTime between :cpsSchedulingStartTimeBegin and :cpsSchedulingStartTimeEnd)";
+                        ")";
 
-            hqlQuery = String.Concat(hqlQuery, GetSubQuery(worklistClassName));
             IQuery query = this.Context.CreateHibernateQuery(hqlQuery);
-            SetNamedParameters(query, worklistClassName);
+            query.SetParameter("mpsState", "SC");
             query.SetParameter("patient", patient);
+            //query.SetParameter("cpsSchedulingStartTimeBegin", Platform.Time.Date.ToString());
+            //query.SetParameter("cpsSchedulingStartTimeEnd", Platform.Time.Date.AddDays(1).ToString());
+            //query.SetParameter("mpsSchedulingStartTimeBegin", Platform.Time.Date.ToString());
+            //query.SetParameter("mpsSchedulingStartTimeEnd", Platform.Time.Date.AddDays(1).ToString());            
 
             foreach (object tuple in query.List())
             {

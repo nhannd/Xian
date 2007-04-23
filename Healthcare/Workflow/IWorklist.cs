@@ -10,12 +10,12 @@ namespace ClearCanvas.Healthcare.Workflow
 {
     public interface IWorklistItem
     {
-        string WorklistClassName { get; set; }
     }
 
     public interface IWorklist
     {
         IList GetWorklist(IPersistenceContext context);
+        int GetWorklistCount(IPersistenceContext context);
     }
 
 }

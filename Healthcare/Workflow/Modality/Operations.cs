@@ -10,19 +10,9 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Modality
 {
-    public class Test
-    {
-
-    }
-
-    [ExtensionPoint]
-    public class WorkflowOperationExtensionPoint : ExtensionPoint<IOperation>
-    {
-    }
-
     public class Operations
     {
-        public abstract class ModalityWorklistOperation : OperationBase
+        public abstract class ModalityOperation
         {
             protected ModalityProcedureStep LoadStep(EntityRef stepRef, IPersistenceContext context)
             {
@@ -30,50 +20,45 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             }
         }
 
-        [ExtensionOf(typeof(WorkflowOperationExtensionPoint))]
-        public class StartModalityProcedureStep : ModalityWorklistOperation
+        public class StartModalityProcedureStep : ModalityOperation
         {
-            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
+            public void Execute(EntityRef rpRef, Staff currentUserStaff, IWorkflow workflow)
             {
-                ModalityProcedureStep mps = LoadStep((item as WorklistItem).RequestedProcedure, workflow.CurrentContext);
-                mps.Start(this.CurrentUserStaff);
+                ModalityProcedureStep mps = LoadStep(rpRef, workflow.CurrentContext);
+                mps.Start(currentUserStaff);
             }
 
-            protected override bool CanExecute(IWorklistItem item)
+            public bool CanExecute(ModalityProcedureStep step)
             {
-                return (item as WorklistItem).Status == ActivityStatus.SC;
+                return step.State == ActivityStatus.SC;
             }
         }
 
-        [ExtensionOf(typeof(WorkflowOperationExtensionPoint))]
-        public class CompleteModalityProcedureStep : ModalityWorklistOperation
+        public class CompleteModalityProcedureStep : ModalityOperation
         {
-            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
+            public void Execute(EntityRef rpRef, Staff currentUserStaff, IWorkflow workflow)
             {
-                ModalityProcedureStep mps = LoadStep((item as WorklistItem).RequestedProcedure, workflow.CurrentContext);
-                mps.Complete(this.CurrentUserStaff);
+                ModalityProcedureStep mps = LoadStep(rpRef, workflow.CurrentContext);
+                mps.Complete(currentUserStaff);
             }
 
-            protected override bool CanExecute(IWorklistItem item)
+            public bool CanExecute(ModalityProcedureStep step)
             {
-                ActivityStatus status = (item as WorklistItem).Status;
-                return status == ActivityStatus.SC || status == ActivityStatus.IP;
+                return step.State == ActivityStatus.SC || step.State == ActivityStatus.IP;
             }
         }
 
-        [ExtensionOf(typeof(WorkflowOperationExtensionPoint))]
-        public class CancelModalityProcedureStep : ModalityWorklistOperation
+        public class CancelModalityProcedureStep : ModalityOperation
         {
-            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
+            public void Execute(EntityRef rpRef, Staff currentUserStaff, IWorkflow workflow)
             {
-                ModalityProcedureStep mps = LoadStep((item as WorklistItem).RequestedProcedure, workflow.CurrentContext);
+                ModalityProcedureStep mps = LoadStep(rpRef, workflow.CurrentContext);
                 mps.Discontinue();
             }
 
-            protected override bool CanExecute(IWorklistItem item)
+            public bool CanExecute(ModalityProcedureStep step)
             {
-                ActivityStatus status = (item as WorklistItem).Status;
-                return status == ActivityStatus.SC || status == ActivityStatus.IP;
+                return step.State == ActivityStatus.SC || step.State == ActivityStatus.IP;
             }
         }
     }

@@ -10,7 +10,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     public class RegistrationWorklistItem : DataContractBase
     {
         public RegistrationWorklistItem(EntityRef patientProfileRef,
-            string worklistClassName,
             string mrnID,
             string mrnAssigningAuthority,
             PersonNameDetail name,
@@ -19,7 +18,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             EnumValueInfo sex)
         {
             this.PatientProfileRef = patientProfileRef;
-            this.WorklistClassName = worklistClassName;
             this.MrnID = mrnID;
             this.MrnAssigningAuthority = mrnAssigningAuthority;
             this.Name = name;
@@ -30,9 +28,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 
         [DataMember]
         public EntityRef PatientProfileRef;
-
-        [DataMember]
-        public string WorklistClassName;
 
         [DataMember]
         public string MrnID;

@@ -13,17 +13,7 @@ namespace ClearCanvas.Healthcare.Workflow
 {
     public abstract class WorklistItemBase : IWorklistItem
     {
-        protected string _worklistClassName;
 
-        #region IWorklistItem Members
-
-        public string WorklistClassName
-        {
-            get { return _worklistClassName; }
-            set { _worklistClassName = value; }
-        }
-
-        #endregion
     }
 
     public abstract class WorklistBase : IWorklist
@@ -32,6 +22,9 @@ namespace ClearCanvas.Healthcare.Workflow
 
         public virtual IList GetWorklist(IPersistenceContext context)
         { return null; }
+
+        public virtual int GetWorklistCount(IPersistenceContext context)
+        { return -1; }
 
         #endregion
     }

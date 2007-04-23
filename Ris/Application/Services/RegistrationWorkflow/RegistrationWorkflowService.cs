@@ -27,7 +27,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         public RegistrationWorkflowService()
         {
             _worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Registration.WorklistExtensionPoint();
-            _operationExtPoint = new ClearCanvas.Healthcare.Workflow.Registration.WorkflowOperationExtensionPoint();
 
             PatientAlertExtensionPoint xp = new PatientAlertExtensionPoint();
             object[] tests = xp.CreateExtensions();
@@ -69,6 +68,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
+        public GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request)
+        {
+            return new GetWorklistCountResponse(GetWorklistCount(request.WorklistClassName));
+        }
+
+        [ReadOperation]
         public LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request)
         {
             PatientProfile profile = (PatientProfile)PersistenceContext.Load(request.WorklistItem.PatientProfileRef);
@@ -103,7 +108,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             return new GetDataForCheckInTableResponse(
                 CollectionUtils.Map<RequestedProcedure, CheckInTableItem, List<CheckInTableItem>>(
-                    PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetRequestedProcedureForPatient(profile.Patient, request.WorklistClassName),
+                    PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetScheduledRequestedProcedureForPatient(profile.Patient),
                     delegate(RequestedProcedure rp)
                     {
                         return new CheckInTableItem(
@@ -115,24 +120,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [UpdateOperation]
+        [OperationEnablement]
         public CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
         {
-            //ExecuteOperation(null, request.RequestedProcedures, new Operations.CheckIn());
-
-            // just hack in the user staff for the time-being
-            IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
-            Staff userStaff = staffBroker.FindOne(new StaffSearchCriteria());
-
+            Operations.CheckIn op = new Operations.CheckIn();
             foreach (EntityRef rpRef in request.RequestedProcedures)
             {
-                RequestedProcedure rp = PersistenceContext.GetBroker<IRequestedProcedureBroker>().Load(rpRef);
-
-                CheckInProcedureStep cps = new CheckInProcedureStep(rp);
-                cps.Start(userStaff);
-                cps.Complete(userStaff);
-
-                rp.CheckInProcedureSteps.Add(cps);
-                PersistenceContext.Lock(rp, DirtyState.Dirty);
+                op.Execute(rpRef, this.CurrentUserStaff, this.PersistenceContext);
             }
 
             return new CheckInProcedureResponse();
@@ -155,7 +149,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             IPatientProfileBroker patientProfileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = patientProfileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
-            patientProfileBroker.LoadPatientForPatientProfile(profile);
 
             OrderSearchCriteria criteria = new OrderSearchCriteria();
             criteria.Patient.EqualTo(profile.Patient);
@@ -184,24 +177,71 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [UpdateOperation]
+        [OperationEnablement]
         public CancelOrderResponse CancelOrder(CancelOrderRequest request)
         {
-            // TODO: Do we need to record which staff cancel the order?  or will it be audited automatically anyway?
-          
             OrderCancelReason reason = (OrderCancelReason)Enum.Parse(typeof(OrderCancelReason), request.CancelReason.Code);
 
+            Operations.Cancel op = new Operations.Cancel();
             foreach (EntityRef orderRef in request.CancelledOrders)
             {
-                Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(orderRef);
-
-                order.Cancel(reason);
-                PersistenceContext.Lock(order, DirtyState.Dirty);
+                op.Execute(orderRef, reason, this.PersistenceContext);
             }
 
             return new CancelOrderResponse();
         }
 
         #endregion
+
+        public bool CanCheckInProcedure(IWorklistItem item)
+        {
+            IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
+            IRegistrationWorklistBroker broker = this.PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
+
+            PatientProfile profile = profileBroker.Load((item as WorklistItem).PatientProfile, EntityLoadFlags.Proxy);
+            profileBroker.LoadPatientForPatientProfile(profile);
+            return broker.GetScheduledRequestedProcedureForPatient(profile.Patient).Count > 0;
+
+            //IOrderBroker orderBroker = this.CurrentContext.GetBroker<IOrderBroker>();
+            //IRequestedProcedureBroker rpBroker = this.CurrentContext.GetBroker<IRequestedProcedureBroker>();
+            //IModalityProcedureStepBroker mpsBroker = this.CurrentContext.GetBroker<IModalityProcedureStepBroker>();
+
+            //OrderSearchCriteria criteria = new OrderSearchCriteria();
+            //criteria.Patient.EqualTo(profile.Patient);
+            //foreach (Order order in orderBroker.Find(criteria))
+            //{
+            //    orderBroker.LoadRequestedProceduresForOrder(order);
+            //    foreach (RequestedProcedure rp in order.RequestedProcedures)
+            //    {
+            //        ModalityProcedureStepSearchCriteria mpsCriteria = new ModalityProcedureStepSearchCriteria();
+            //        mpsCriteria.State.EqualTo(ActivityStatus.SC);
+            //        //TODO: add date filter for mpsCriteria 
+            //        //mpsCriteria.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
+            //        foreach (ModalityProcedureStep mps in mpsBroker.Find(mpsCriteria))
+            //        {
+            //            foreach (CheckInProcedureStep cps in mps.RequestedProcedure.CheckInProcedureSteps)
+            //            {
+            //                //TODO: add date filter for cps date range for today
+            //                //return after we found the first RequestedProcedure that can be CheckIn
+            //                return true;
+            //            }
+            //        }
+            //    }
+            //}        
+        }
+
+        public bool CanCancelOrder(IWorklistItem item)
+        {
+            IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
+            IOrderBroker orderBroker = this.PersistenceContext.GetBroker<IOrderBroker>();
+
+            PatientProfile profile = profileBroker.Load((item as WorklistItem).PatientProfile, EntityLoadFlags.CheckVersion);
+
+            OrderSearchCriteria criteria = new OrderSearchCriteria();
+            criteria.Patient.EqualTo(profile.Patient);
+            criteria.CancelReason.IsNull();
+            return (orderBroker.FindOne(criteria) != null);
+        }
 
         /// <summary>
         /// Helper method to test a patient with alerts that implement the PatientAlertExtensionPoint
@@ -224,6 +264,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             }
 
             return results;
-        }
+        }    
     }
 }

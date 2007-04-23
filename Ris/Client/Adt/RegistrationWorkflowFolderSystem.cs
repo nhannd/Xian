@@ -144,6 +144,11 @@ namespace ClearCanvas.Ris.Client.Adt
             folderExplorer.AddFolderActions(_folderToolSet.Actions);
         }
 
+        public bool GetOperationEnablement(string operationName)
+        {
+            return _workflowEnablment == null ? false : _workflowEnablment[operationName];
+        }
+
         private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
         {
             RegistrationWorklistItem selectedItem = CollectionUtils.FirstElement<RegistrationWorklistItem>(this.SelectedItems);
@@ -166,11 +171,6 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 ExceptionHandler.Report(ex, this.DesktopWindow);
             }
-        }
-
-        private bool GetOperationEnablement(string operationName)
-        {
-            return _workflowEnablment == null ? false : _workflowEnablment[operationName];
         }
 
         protected override void Dispose(bool disposing)

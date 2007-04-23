@@ -30,6 +30,7 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         private RegistrationWorklistItem _worklistItem;
         private RequestedProcedureCheckInTable _requestedProcedureCheckInTable;
+        private List<EntityRef> _selectedRequestedProcedures;
 
         /// <summary>
         /// Constructor
@@ -41,6 +42,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
+            _selectedRequestedProcedures = new List<EntityRef>();
             _requestedProcedureCheckInTable = new RequestedProcedureCheckInTable();
 
             try
@@ -48,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 Platform.GetService<IRegistrationWorkflowService>(
                     delegate(IRegistrationWorkflowService service)
                     {
-                        GetDataForCheckInTableResponse response = service.GetDataForCheckInTable(new GetDataForCheckInTableRequest(_worklistItem.WorklistClassName, _worklistItem.PatientProfileRef));
+                        GetDataForCheckInTableResponse response = service.GetDataForCheckInTable(new GetDataForCheckInTableRequest(_worklistItem.PatientProfileRef));
                         _requestedProcedureCheckInTable.Items.AddRange(
                             CollectionUtils.Map<CheckInTableItem, RequestedProcedureCheckInTableEntry>(response.CheckInTableItems,
                                     delegate(CheckInTableItem item)
@@ -85,6 +87,11 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _requestedProcedureCheckInTable; }
         }
 
+        public List<EntityRef> SelectedRequestedProcedures
+        {
+            get { return _selectedRequestedProcedures; }
+        }
+
         #endregion
 
         public void Accept()
@@ -111,18 +118,11 @@ namespace ClearCanvas.Ris.Client.Adt
         private void SaveChanges()
         {
             // Get the list of RequestedProcedure EntityRef from the table
-            List<EntityRef> selectedRequestedProcedures = new List<EntityRef>();
             foreach (RequestedProcedureCheckInTableEntry entry in _requestedProcedureCheckInTable.Items)
             {
                 if (entry.Checked)
-                    selectedRequestedProcedures.Add(entry.CheckInTableItem.RequestedProcedureRef);
+                    _selectedRequestedProcedures.Add(entry.CheckInTableItem.RequestedProcedureRef);
             }      
-
-            Platform.GetService<IRegistrationWorkflowService>(
-                delegate(IRegistrationWorkflowService service)
-                {
-                    service.CheckInProcedure(new CheckInProcedureRequest(selectedRequestedProcedures));
-                });        
         }
 
         public void Cancel()

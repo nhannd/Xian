@@ -30,6 +30,12 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
                 IList<WorklistItem> worklist = broker.GetWorklist(this.WorklistClassName);
                 return (IList)worklist;
             }
+
+            public override int GetWorklistCount(IPersistenceContext context)
+            {
+                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
+                return broker.GetWorklistCount(this.WorklistClassName);
+            }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]

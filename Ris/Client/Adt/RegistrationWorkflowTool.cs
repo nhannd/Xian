@@ -58,6 +58,12 @@ namespace ClearCanvas.Ris.Client.Adt
                     RequestedProcedureCheckInComponent checkInComponent = new RequestedProcedureCheckInComponent(item);
                     ApplicationComponent.LaunchAsDialog(
                         this.Context.DesktopWindow, checkInComponent, String.Format("Checking in {0}", Format.Custom(item.Name)));
+
+                    Platform.GetService<IRegistrationWorkflowService>(
+                        delegate(IRegistrationWorkflowService service)
+                        {
+                            service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedRequestedProcedures));
+                        });        
                 }
             }
         }
@@ -80,6 +86,12 @@ namespace ClearCanvas.Ris.Client.Adt
                     CancelOrderComponent cancelOrderComponent = new CancelOrderComponent(item.PatientProfileRef);
                     ApplicationComponent.LaunchAsDialog(
                         this.Context.DesktopWindow, cancelOrderComponent, String.Format("Cancel Order for {0}", Format.Custom(item.Name)));
+
+                    Platform.GetService<IRegistrationWorkflowService>(
+                        delegate(IRegistrationWorkflowService service)
+                        {
+                            service.CancelOrder(new CancelOrderRequest(cancelOrderComponent.SelectedOrders, cancelOrderComponent.SelectedReason));
+                        });                
                 }
             }
         }

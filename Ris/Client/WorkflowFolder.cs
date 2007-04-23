@@ -13,6 +13,7 @@ namespace ClearCanvas.Ris.Client
         private string _folderName;
         private Table<TItem> _itemsTable;
         private bool _isPopulated;
+        private int _itemCount = -1;
         private WorkflowFolderSystem<TItem> _folderSystem;
 
         public WorkflowFolder(WorkflowFolderSystem<TItem> folderSystem, string folderName, Table<TItem> itemsTable)
@@ -22,6 +23,7 @@ namespace ClearCanvas.Ris.Client
             _itemsTable = itemsTable;
             _itemsTable.Items.ItemsChanged += delegate(object sender, ItemEventArgs args)
                 {
+                    _itemCount = _itemsTable.Items.Count;
                     NotifyTextChanged();
                 };
         }
@@ -63,8 +65,18 @@ namespace ClearCanvas.Ris.Client
         {
             get
             {
-                return _isPopulated ?
-                    string.Format("{0} ({1})", _folderName, this._itemsTable.Items.Count) : _folderName;
+                return _isPopulated || _itemCount >= 0 ?
+                    string.Format("{0} ({1})", _folderName, _itemCount) : _folderName;
+            }
+        }
+
+        public int ItemCount
+        {
+            get { return _itemCount; }
+            set
+            {
+                _itemCount = value;
+                NotifyTextChanged();
             }
         }
 

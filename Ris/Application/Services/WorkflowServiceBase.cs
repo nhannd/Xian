@@ -9,6 +9,7 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Common;
 using ClearCanvas.Healthcare.Workflow;
 using System.Collections;
+using System.Reflection;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -16,6 +17,14 @@ namespace ClearCanvas.Ris.Application.Services
     {
         protected IExtensionPoint _worklistExtPoint;
         protected IExtensionPoint _operationExtPoint;
+
+        [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+        protected class OperationEnablementAttribute : Attribute
+        {
+            public OperationEnablementAttribute()
+            {
+            }
+        }
 
         class PersistentWorkflow : IWorkflow
         {
@@ -47,48 +56,37 @@ namespace ClearCanvas.Ris.Application.Services
             return worklist.GetWorklist(this.PersistenceContext);
         }
 
-        //protected void ExecuteOperation(IWorklistItem item, IList parameters, OperationBase operation)
-        //{
-        //    // TODO: just hack in the user staff for the time-being
-        //    IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
-        //    operation.CurrentUserStaff = staffBroker.FindOne(new StaffSearchCriteria());
-
-        //    operation.Execute(item, parameters, new PersistentWorkflow(PersistenceContext));
-        //}
+        protected int GetWorklistCount(string worklistClassName)
+        {
+            IWorklist worklist = (IWorklist)_worklistExtPoint.CreateExtension(new ClassNameExtensionFilter(worklistClassName));
+            return worklist.GetWorklistCount(this.PersistenceContext);
+        }
 
         protected Dictionary<string, bool> GetOperationEnablement(IWorklistItem item)
         {
-            //TODO: HACK WARNING for GetOperationEnablement!!!
-            // Depends on the worklistClassName of the particular worklist item, the Dictionary returns 
-            // whether a particular service operation should be enable for that item.  Ideally, we want 
-            // to get rid of the switch-case statement.  But this will do for now.  The Operation extension 
-            // point architecture still exist, we are not using it at this point.
-
             Dictionary<string, bool> results = new Dictionary<string, bool>();
-            switch (item.WorklistClassName)
+
+            Type serviceContractType = this.GetType();
+            foreach (MethodInfo info in serviceContractType.GetMethods())
             {
-                case "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled":
-                    results.Add("CheckInProcedure", true);
-                    results.Add("CancelOrder", true);
-                    break;
-                case "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn":
-                case "ClearCanvas.Healthcare.Workflow.Registration.Worklists+InProgress":
-                    results.Add("CheckInProcedure", false);
-                    results.Add("CancelOrder", true);
-                    break;
-                case "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Completed":
-                case "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Cancelled":
-                default:
-                    results.Add("CheckInProcedure", false);
-                    results.Add("CancelOrder", false);
-                    break;
+                object[] attribs = info.GetCustomAttributes(typeof(OperationEnablementAttribute), true);
+                if (attribs.Length < 1)
+                    continue;
+
+                try
+                {
+                    // Find the CanXXX helper class to evaluate operation enablement
+                    MethodInfo enablementHelper = serviceContractType.GetMethod(String.Format("Can{0}", info.Name));
+                    object test = enablementHelper.Invoke(this, new object[] { item });
+                    results.Add(info.Name, (bool)test);
+                }
+                catch (Exception e)
+                {
+                    // Helper method not found
+                    results.Add(info.Name, false);
+                }
             }
 
-            //foreach (IOperation op in _operationExtPoint.CreateExtensions())
-            //{
-            //    op.CurrentUserStaff = userStaff;
-            //    results.Add(op.GetType().FullName, op.InputSpecification.Test(item).Success);
-            //}
             return results;
         }
     }

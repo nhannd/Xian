@@ -12,7 +12,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 {
     public class Operations
     {
-        public abstract class ReportingOperation : OperationBase
+        public abstract class ReportingOperation
         {
             protected ReportingProcedureStep LoadStep(EntityRef stepRef, IPersistenceContext context)
             {
@@ -25,25 +25,25 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class ClaimInterpretation : ReportingOperation
         {
-            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
+            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
             {
-                InterpretationStep interpretation = (InterpretationStep)LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
-                interpretation.Assign(this.CurrentUserStaff);
+                InterpretationStep interpretation = (InterpretationStep)LoadStep(procedureStepRef, workflow.CurrentContext);
+                interpretation.Assign(currentUserStaff);
             }
         }
 
         public class StartInterpretation : ReportingOperation
         {
-            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
+            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
             {
-                InterpretationStep interpretation = (InterpretationStep)LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
+                InterpretationStep interpretation = (InterpretationStep)LoadStep(procedureStepRef, workflow.CurrentContext);
 
                 // if not assigned, assign
                 if (interpretation.AssignedStaff == null)
                 {
-                    interpretation.Assign(this.CurrentUserStaff);
+                    interpretation.Assign(currentUserStaff);
                 }
-                interpretation.Start(this.CurrentUserStaff);
+                interpretation.Start(currentUserStaff);
             }
         }
 
@@ -58,9 +58,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CompleteInterpretationForTranscription : CompleteInterpretationBase
         {
-            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
+            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
             {
-                ReportingProcedureStep step = LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
+                ReportingProcedureStep step = LoadStep(procedureStepRef, workflow.CurrentContext);
                 base.Execute(step, workflow);
                 workflow.AddActivity(new TranscriptionStep(step));
             }
@@ -68,9 +68,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CompleteInterpretationForVerification : CompleteInterpretationBase
         {
-            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
+            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
             {
-                ReportingProcedureStep step = LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
+                ReportingProcedureStep step = LoadStep(procedureStepRef, workflow.CurrentContext);
                 base.Execute(step, workflow);
 
                 InterpretationStep interpretation = (InterpretationStep)step;
@@ -83,9 +83,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CompleteInterpretationAndVerify : CompleteInterpretationBase
         {
-            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
+            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
             {
-                ReportingProcedureStep step = LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
+                ReportingProcedureStep step = LoadStep(procedureStepRef, workflow.CurrentContext);
                 base.Execute(step, workflow);
 
                 InterpretationStep interpretation = (InterpretationStep)step;
@@ -99,9 +99,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CancelPendingTranscription : ReportingOperation
         {
-            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
+            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
             {
-                TranscriptionStep transcription = (TranscriptionStep)LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
+                TranscriptionStep transcription = (TranscriptionStep)LoadStep(procedureStepRef, workflow.CurrentContext);
                 transcription.Discontinue();
 
                 InterpretationStep interpretation = new InterpretationStep(transcription);
@@ -115,27 +115,27 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class StartVerification : ReportingOperation
         {
-            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
+            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
             {
-                VerificationStep verification = (VerificationStep)LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
+                VerificationStep verification = (VerificationStep)LoadStep(procedureStepRef, workflow.CurrentContext);
 
                 // if not assigned, assign
                 if (verification.AssignedStaff == null)
                 {
-                    verification.Assign(this.CurrentUserStaff);
+                    verification.Assign(currentUserStaff);
                 }
-                verification.Start(this.CurrentUserStaff);
+                verification.Start(currentUserStaff);
             }
         }
 
         public class CompleteVerification : ReportingOperation
         {
-            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
+            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
             {
-                VerificationStep verification = (VerificationStep)LoadStep((item as WorklistItem).ProcedureStep, workflow.CurrentContext);
+                VerificationStep verification = (VerificationStep)LoadStep(procedureStepRef, workflow.CurrentContext);
 
                 // this operation is legal even if the step was never started, therefore need to supply the performer
-                verification.Complete(this.CurrentUserStaff);
+                verification.Complete(currentUserStaff);
             }
         }
     }

@@ -147,8 +147,6 @@
     <Compile Include="Workflow\IWorklist.cs" />
     <Compile Include="Workflow\Registration\Operations.cs" />
     <Compile Include="Workflow\Modality\Operations.cs" />
-    <Compile Include="Workflow\IOperation.cs" />
-    <Compile Include="Workflow\OperationBase.cs" />
     <Compile Include="Workflow\Reporting\Operations.cs" />
     <Compile Include="Workflow\Reporting\WorklistItem.cs" />
     <Compile Include="Workflow\WorklistBase.cs" />

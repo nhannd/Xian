@@ -10,57 +10,36 @@ using System.Collections;
 
 namespace ClearCanvas.Healthcare.Workflow.Registration
 {
-    [ExtensionPoint]
-    public class WorkflowOperationExtensionPoint : ExtensionPoint<IOperation>
-    {
-    }
-
     public class Operations
     {
-        [ExtensionOf(typeof(WorkflowOperationExtensionPoint))]
-        public class CheckIn : OperationBase
+        public abstract class RegistrationOperation
         {
-            public override void Execute(IWorklistItem item, IList parameters ,IWorkflow workflow)
+            // nothing here
+        }
+
+        public class CheckIn : RegistrationOperation
+        {
+            public void Execute(EntityRef rpRef, Staff currentUserStaff, IPersistenceContext context)
             {
-                Platform.ShowMessageBox("CheckIn Not Implemented");
+                RequestedProcedure rp = context.GetBroker<IRequestedProcedureBroker>().Load(rpRef);
 
-                //if (parameters == null)
-                //    return;
+                CheckInProcedureStep cps = new CheckInProcedureStep(rp);
+                cps.Start(currentUserStaff);
+                cps.Complete(currentUserStaff);
 
-                //foreach (EntityRef rpRef in parameters)
-                //{
-                //    RequestedProcedure rp = workflow.CurrentContext.GetBroker<IRequestedProcedureBroker>().Load(rpRef);
-                    
-                //    CheckInProcedureStep cps = new CheckInProcedureStep(rp);
-                //    cps.Start(this.CurrentUserStaff);
-                //    cps.Complete(this.CurrentUserStaff);
-
-                //    rp.CheckInProcedureSteps.Add(cps);
-                //    workflow.CurrentContext.Lock(rp, DirtyState.Dirty);
-                //}
-            }
-
-            protected override bool CanExecute(IWorklistItem item)
-            {
-                return item.WorklistClassName == "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled";
+                rp.CheckInProcedureSteps.Add(cps);
+                context.Lock(rp, DirtyState.Dirty);
             }
         }
 
-        [ExtensionOf(typeof(WorkflowOperationExtensionPoint))]
-        public class Cancel : OperationBase
+        public class Cancel : RegistrationOperation
         {
-            public override void Execute(IWorklistItem item, IList parameters, IWorkflow workflow)
+            public void Execute(EntityRef orderRef, OrderCancelReason reason, IPersistenceContext context)
             {
-                Platform.ShowMessageBox("Cancel Not Implemented");
-            }
-
-            protected override bool CanExecute(IWorklistItem item)
-            {
-                return item.WorklistClassName == "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled"
-                    || item.WorklistClassName == "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn"
-                    || item.WorklistClassName == "ClearCanvas.Healthcare.Workflow.Registration.Worklists+InProgress";
+                Order order = context.GetBroker<IOrderBroker>().Load(orderRef);
+                order.Cancel(reason);
+                context.Lock(order, DirtyState.Dirty);
             }
         }
-    
     }
 }

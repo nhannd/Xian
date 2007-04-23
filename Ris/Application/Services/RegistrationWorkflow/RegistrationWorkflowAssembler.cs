@@ -57,9 +57,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         return addressAssembler.CreateAddressDetail(address, context);
                     }),
                 CollectionUtils.Map<RequestedProcedure, RICSummary, List<RICSummary>>(
-                    context.GetBroker<IRegistrationWorklistBroker>().GetRequestedProcedureForPatient(
-                            profile.Patient, 
-                            item.WorklistClassName),
+                    context.GetBroker<IRegistrationWorklistBroker>().GetScheduledRequestedProcedureForPatient(profile.Patient),
                     delegate(RequestedProcedure rp)
                     {
                         return new RICSummary(
@@ -121,7 +119,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             return new RegistrationWorklistItem(
                 domainItem.PatientProfile,
-                domainItem.WorklistClassName,
                 domainItem.Mrn.Id,
                 domainItem.Mrn.AssigningAuthority,
                 nameAssembler.CreatePersonNameDetail(domainItem.PatientName),
@@ -140,7 +137,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     item.DateOfBirth,
                     (Sex)Enum.Parse(typeof(Sex), item.Sex.Code));
 
-            domainItem.WorklistClassName = item.WorklistClassName;
             return domainItem;
         }
     
