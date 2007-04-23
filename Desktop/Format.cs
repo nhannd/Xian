@@ -17,6 +17,11 @@ namespace ClearCanvas.Desktop
         public static string DateFormat
         {
             get { return FormatSettings.Default.DateFormat; }
+			set 
+			{
+				FormatSettings.Default.DateFormat = value;
+				FormatSettings.Default.Save();
+			}
         }
 
         /// <summary>
@@ -25,6 +30,11 @@ namespace ClearCanvas.Desktop
         public static string TimeFormat
         { 
             get { return FormatSettings.Default.TimeFormat; }
+			set
+			{
+				FormatSettings.Default.TimeFormat = value;
+				FormatSettings.Default.Save();
+			}
         }
 
         /// <summary>
@@ -33,6 +43,11 @@ namespace ClearCanvas.Desktop
         public static string DateTimeFormat
         {
             get { return FormatSettings.Default.DateTimeFormat; }
+			set
+			{ 
+				FormatSettings.Default.DateTimeFormat = value;
+				FormatSettings.Default.Save();
+			}
         }
 
         /// <summary>
