@@ -2,7 +2,7 @@ using System;
 using System.Configuration;
 using ClearCanvas.Common.Configuration;
 
-namespace ClearCanvas.Dicom.Services
+namespace ClearCanvas.ImageViewer.Configuration
 {
 	[SettingsGroupDescription("Defines the Local AE Settings for the application")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]

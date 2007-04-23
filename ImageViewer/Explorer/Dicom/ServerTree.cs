@@ -5,8 +5,8 @@ using System.IO;
 using System.Xml.Serialization;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
-using ClearCanvas.Dicom.Services;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Configuration;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {

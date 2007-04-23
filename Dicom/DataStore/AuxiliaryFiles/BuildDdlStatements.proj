@@ -12,13 +12,11 @@
 		<DependentAuxiliaryFiles Include="$(ProjectRoot)\Dicom\bin\$(Configuration)\ClearCanvas.Dicom.dll" />
 		<DependentAuxiliaryFiles Include="$(ProjectRoot)\Dicom\DataStore\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.dll" />
 		<DependentAuxiliaryFiles Include="$(ProjectRoot)\Dicom\DataStore\NHibernateDriver\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.NHibernateDriver.dll" />
-		<DependentAuxiliaryFiles Include="$(ProjectRoot)\Dicom\Services\bin\$(Configuration)\ClearCanvas.Dicom.Services.dll" />
 		<DependentAuxiliaryFiles Include="$(ProjectRoot)\Utilities\Hibernate2DdlGenerator\bin\$(Configuration)\hbm2ddl.exe" />
 		<InputFiles Include="ClearCanvas.Dicom.DataStore.dll" />
-		<InputFiles Include="ClearCanvas.Dicom.Services.dll" />
 		<CombineInputFiles Include="CreateTables.clearcanvas.dicom.datastore.ddl" />
 		<CombineInputFiles Include="CreateIndices.sql" />
-		<CombineInputFiles Include="MsSqlCePopulateDicomDictionary.sql" />
+		<CombineInputFiles Include="PopulateDicomDictionary.sql" />
 		<OutputFiles Include="CreateTables.clearcanvas.dicom.datastore.ddl" />
 		<OutputFiles Include="DropTables.clearcanvas.dicom.datastore.ddl" />
 	</ItemGroup> 
@@ -26,13 +24,12 @@
 		<Copy SourceFiles="@(DependentAuxiliaryFiles)" DestinationFolder="$(OutputDir)" />
 	</Target>
 	<Target Name="CreateDDL" DependsOnTargets="Preparation" Inputs="@(InputFiles)" Outputs="@(OutputFiles)">
-		<Exec Command="hbm2ddl ClearCanvas.Dicom.DataStore ClearCanvas.Dicom.Services" />
+		<Exec Command="hbm2ddl ClearCanvas.Dicom.DataStore" />
 	</Target>
-	<Target Name="CombineStatementFiles" DependsOnTargets="CreateDDL" Inputs="@(CombineInputFiles)" Outputs="Combined.Sql">
-		<ReadLinesFromFile File="%(CombineInputFiles.Identity)">
-			<Output TaskParameter="Lines" ItemName="lines"/>
-		</ReadLinesFromFile>
-		<WriteLinesToFile File="Combined.Sql" Lines="@(Lines)" Overwrite="true" />
-	</Target>
-	<Target Name="BuildAll" DependsOnTargets="CombineStatementFiles" />
+  <Target Name="CombineStatementFiles" DependsOnTargets="CreateDDL" Inputs="@(CombineInputFiles)" Outputs="Combined.Sql">
+    <ReadLinesFromFile File="%(CombineInputFiles.Identity)">
+      <Output TaskParameter="Lines" ItemName="lines"/>
+    </ReadLinesFromFile>
+    <WriteLinesToFile File="Combined.Sql" Lines="@(Lines)" Overwrite="true" />
+  </Target>	<Target Name="BuildAll" DependsOnTargets="CombineStatementFiles" />
 </Project>

@@ -106,22 +106,12 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Hibernate\CreateIndices.sql" />
-    <None Include="Hibernate\PopulateDicomDictionary.sql" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="AuxiliaryFiles\ripp.sqb" />
-    <None Include="Hibernate\ClearCanvas.Dicom.DataStore.cfg.xml" />
     <EmbeddedResource Include="Hibernate\DicomDictionary.hbm.xml" />
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>SR.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="AuxiliaryFiles\SQLite.NET.dll" />
-    <None Include="AuxiliaryFiles\SQLite3.dll" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">

@@ -15,7 +15,7 @@ using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Services.DicomServer;
-using ClearCanvas.Dicom.Services;
+using ClearCanvas.ImageViewer.Configuration;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {

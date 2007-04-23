@@ -6,7 +6,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.ImageViewer.Services.DicomServer;
-using ClearCanvas.Dicom.Services;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {

@@ -57,13 +57,13 @@
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Dicom\Services\ClearCanvas.Dicom.Services.csproj">
-      <Project>{F38AAF4B-2F51-4E28-A63F-87F35B4CBE2B}</Project>
-      <Name>ClearCanvas.Dicom.Services</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Configuration\ClearCanvas.ImageViewer.Configuration.csproj">
+      <Project>{89DF567B-A0D1-456A-A28F-043FD57D7F9A}</Project>
+      <Name>ClearCanvas.ImageViewer.Configuration</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
