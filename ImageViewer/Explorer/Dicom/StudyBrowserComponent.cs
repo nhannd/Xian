@@ -313,7 +313,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			AddReceivedStudies();
 
-			UpdateView();
+			//Update both of these in the view.
+			this.ResultsTitle = _searchResults[_selectedServerGroup.GroupID].ResultsTitle;
+			this.StudyList = _searchResults[_selectedServerGroup.GroupID].StudyList;
 
 			EventsHelper.Fire(_selectedServerChangedEvent, this, EventArgs.Empty);
 		}
@@ -346,8 +348,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			this.ResultsTitle = String.Format(SR.FormatStudiesFound, aggregateStudyItemList.Count, _selectedServerGroup.Name);
 
-			UpdateComponent();
-
+			//Update the results title in the component and add the new results.
+			_searchResults[_selectedServerGroup.GroupID].ResultsTitle = this.ResultsTitle;
+			_searchResults[_selectedServerGroup.GroupID].StudyList.Items.Clear();
+			
 			foreach (StudyItem item in aggregateStudyItemList)
 				_searchResults[_selectedServerGroup.GroupID].StudyList.Items.Add(item);
 
@@ -385,18 +389,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				_currentSelection = selection;
 				EventsHelper.Fire(_selectedStudyChangedEvent, this, EventArgs.Empty);
 			}
-		}
-
-		private void UpdateComponent()
-		{
-			_searchResults[_selectedServerGroup.GroupID].ResultsTitle = this.ResultsTitle;
-			_searchResults[_selectedServerGroup.GroupID].StudyList.Items.Clear();
-		}
-
-		private void UpdateView()
-		{
-			this.ResultsTitle = _searchResults[_selectedServerGroup.GroupID].ResultsTitle;
-			this.StudyList = _searchResults[_selectedServerGroup.GroupID].StudyList;
 		}
 
 		private QueryParameters PrepareQueryParameters()
@@ -604,7 +596,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 
 			_setStudiesArrived.Clear();
-			_searchResults[_selectedServerGroup.GroupID].StudyList.Sort();
+
+			//update the search results title.
+			_searchResults[_selectedServerGroup.GroupID].ResultsTitle = 
+				String.Format(SR.FormatStudiesFound, _searchResults[_selectedServerGroup.GroupID].StudyList.Items.Count, _selectedServerGroup.Name);
 		}
 
 		private void OnSopInstanceImported(object sender, ItemEventArgs<ImportedSopInstanceInformation> e)
@@ -614,6 +609,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			_setStudiesArrived[e.Item.StudyInstanceUid] = e.Item.StudyInstanceUid;
 			AddReceivedStudies();
+
+			//update the title in the view.
+			this.ResultsTitle = _searchResults[_selectedServerGroup.GroupID].ResultsTitle;
 		}
 
 		private void OnConfigurationSettingsChanged(object sender, PropertyChangedEventArgs e)
