@@ -492,9 +492,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				try
 				{
-					string storedFile = String.Format("{0}{1}\\{2}\\{3}.dcm", LocalDataStoreService.Instance.StorageFolder,
+					string storedFile = String.Format("{0}{1}\\{2}.dcm", LocalDataStoreService.Instance.StorageFolder,
 																				fileImportInformation.StudyInstanceUid,
-																				fileImportInformation.SeriesInstanceUid,
 																				fileImportInformation.SopInstanceUid);
 
 					UriBuilder sourceUri = new UriBuilder();
