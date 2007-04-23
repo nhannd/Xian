@@ -446,6 +446,14 @@ namespace ClearCanvas.ImageViewer.Services
 					_isConnected = true;
 					_marshaler.QueueInvoke(delegate() { EventsHelper.Fire(_connected, this, EventArgs.Empty); });
 				}
+				catch (EndpointNotFoundException)
+				{ 
+					//the service isn't running, don't log the exception.
+					_serviceClient.Abort();
+					_serviceClient = null;
+
+					_isConnected = false;
+				}
 				catch (Exception e)
 				{
 					_serviceClient.Abort();
