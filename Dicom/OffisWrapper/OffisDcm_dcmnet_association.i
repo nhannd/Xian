@@ -141,7 +141,7 @@ struct T_ASC_Association
 		}
 	}
 
-	bool SendCMoveStudyRootQuery(DcmDataset* cMoveDataset, T_ASC_Network* network, int timeout, const char* saveDirectory, unsigned long queryRetrieveOperationIdentifier) 
+	bool SendCMoveStudyRootQuery(DcmDataset* cMoveDataset, T_ASC_Network* network, int timeout, const char* saveDirectory, unsigned long queryRetrieveOperationIdentifier, bool isAsServiceClassUserOnly) 
 		throw (dicom_runtime_error)
 	{
 		T_ASC_PresentationContextID presId;
@@ -168,10 +168,21 @@ struct T_ASC_Association
 		ASC_getAPTitles(self->params, req.MoveDestination, NULL, NULL);
 
 		OFCondition cond;
-		cond = DIMSE_moveUser(self, presId, &req, cMoveDataset,
-				MoveProgressCallback, &callbackData, DIMSE_BLOCKING, timeout,
-				network, CStoreSubOpCallback, (void*) saveDirectory,
-				&rsp, &statusDetail, &rspIds); 
+
+		if (isAsServiceClassUserOnly)
+		{
+			cond = DIMSE_moveUser(self, presId, &req, cMoveDataset,
+					MoveProgressCallback, &callbackData, DIMSE_BLOCKING, timeout,
+					network, NULL, NULL,
+					&rsp, &statusDetail, &rspIds); 
+		}
+		else
+		{
+			cond = DIMSE_moveUser(self, presId, &req, cMoveDataset,
+					MoveProgressCallback, &callbackData, DIMSE_BLOCKING, timeout,
+					network, CStoreSubOpCallback, (void*) saveDirectory,
+					&rsp, &statusDetail, &rspIds); 
+		}
 
 		if (rspIds != NULL) delete rspIds;
 

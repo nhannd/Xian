@@ -611,7 +611,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					{
                         DicomClient client = new DicomClient(myApplicationEntity);
 						ApplicationEntity destinationAE = new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port));
-						client.Retrieve(new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port)), new Uid(includeUid), this.SaveDirectory);
+						client.RetrieveAsServiceClassUserOnly(new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port)), new Uid(includeUid), this.SaveDirectory);
 					}
 					catch (Exception e)
 					{

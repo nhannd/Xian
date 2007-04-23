@@ -408,50 +408,7 @@ namespace ClearCanvas.Dicom.Network
             GC.KeepAlive(cFindDataset);
             return results;
         }
-
-        /// <summary>
-        /// Performs a DICOM retrieve using C-MOVE with the Study Root Query/Retrieve Information Model.
-        /// A DICOM listener will automatically be created to receive the incoming DICOM data. The listener's
-        /// AE parameters are defined by the ApplicationEntity used in the construction of the 
-        /// <see cref="DicomClient">DicomClient</see>.
-        /// </summary>
-        /// <param name="serverAE">AE parameters of the server who will provided the C-MOVE service.</param>
-        /// <param name="studyInstanceUid">Study Instance UID of the study to be retrieved.</param>
-        /// <param name="saveDirectory">A path to a directory on the local filesystem that will receive
-        /// the incoming DICOM data objects.</param>
-        /// <example>
-        /// <code>
-        /// ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
-        ///     new AETitle("CCNETTEST"), new ListeningPort(4000));
-        /// ApplicationEntity serverAE = new ApplicationEntity(new HostName("localhost"),
-        ///     new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
-        ///
-        /// DicomClient dicomClient = new DicomClient(myOwnAEParameters);
-        ///
-        /// if (!dicomClient.Verify(serverAE))
-        ///     throw new Exception("Target server is not running");
-        ///
-        /// dicomClient.SopInstanceReceivedEvent += SopInstanceReceivedEventHandler;
-        /// dicomClient.Retrieve(serverAE, new Uid("1.3.46.670589.5.2.10.2156913941.892665384.993397"), "C:\\temp\\");
-        /// dicomClient.SopInstanceReceivedEvent -= SopInstanceReceivedEventHandler;
-        /// </code>
-        /// </example>
-        public void Retrieve(ApplicationEntity serverAE, Uid studyInstanceUid, System.String saveDirectory)
-        {
-            string normalizedSaveDirectory = DicomHelper.NormalizeDirectory(saveDirectory);
-
-            DcmDataset cMoveDataset = new DcmDataset();
-
-            // set the specific query for study instance uid
-            InitializeStandardCMoveDataset(ref cMoveDataset, QRLevel.Study);
-            cMoveDataset.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), studyInstanceUid.ToString());
-
-            Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory.ToString());
-
-            // fire event to indicate successful retrieval
-            return;
-        }
-        
+       
         /// <summary>
         /// Retrieves a series from the server.
         /// </summary>
@@ -469,7 +426,7 @@ namespace ClearCanvas.Dicom.Network
             InitializeStandardCMoveDataset(ref cMoveDataset, QRLevel.Series);
             cMoveDataset.putAndInsertString(new DcmTag(Dcm.SeriesInstanceUID), seriesInstanceUid.ToString());
 
-            Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory.ToString());
+            Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory, false);
 
             // fire event to indicate successful retrieval
             return;
@@ -660,6 +617,77 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
+        /// Performs a DICOM retrieve using C-MOVE with the Study Root Query/Retrieve Information Model.
+        /// A DICOM listener will automatically be created to receive the incoming DICOM data. The listener's
+        /// AE parameters are defined by the ApplicationEntity used in the construction of the 
+        /// <see cref="DicomClient">DicomClient</see>.
+        /// </summary>
+        /// <param name="serverAE">AE parameters of the server who will provided the C-MOVE service.</param>
+        /// <param name="studyInstanceUid">Study Instance UID of the study to be retrieved.</param>
+        /// <param name="saveDirectory">A path to a directory on the local filesystem that will receive
+        /// the incoming DICOM data objects.</param>
+        /// <example>
+        /// <code>
+        /// ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
+        ///     new AETitle("CCNETTEST"), new ListeningPort(4000));
+        /// ApplicationEntity serverAE = new ApplicationEntity(new HostName("localhost"),
+        ///     new AETitle("CONQUESTSRV1"), new ListeningPort(5678));
+        ///
+        /// DicomClient dicomClient = new DicomClient(myOwnAEParameters);
+        ///
+        /// if (!dicomClient.Verify(serverAE))
+        ///     throw new Exception("Target server is not running");
+        ///
+        /// dicomClient.SopInstanceReceivedEvent += SopInstanceReceivedEventHandler;
+        /// dicomClient.Retrieve(serverAE, new Uid("1.3.46.670589.5.2.10.2156913941.892665384.993397"), "C:\\temp\\");
+        /// dicomClient.SopInstanceReceivedEvent -= SopInstanceReceivedEventHandler;
+        /// </code>
+        /// </example>
+        public void Retrieve(ApplicationEntity serverAE, Uid studyInstanceUid, System.String saveDirectory)
+        {
+            string normalizedSaveDirectory;
+            DcmDataset cMoveDataset;
+            PrepareForRetrieve(studyInstanceUid, saveDirectory, out normalizedSaveDirectory, out cMoveDataset);
+
+            Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory.ToString(), false);
+
+            return;
+        }
+
+        /// <summary>
+        /// This variation on Retrieve assumes that there is a C-STORE SCP process running in the background
+        /// that will take responsibility for listening for the "sub" associations that will be the response
+        /// of the DICOM server fulfilling the Retreive request (C-MOVE) by sending objects. In contrast, the
+        /// regular Retrieve assumes responsibility for opening a listener on the appropriate port to "catch"
+        /// the incoming objects.
+        /// </summary>
+        /// <param name="serverAE">Application Entity of the server to retrieve from</param>
+        /// <param name="studyInstanceUid">Study Instance UID of the study to be retrieved</param>
+        /// <param name="saveDirectory">Directory where the objects will be stored</param>
+        public void RetrieveAsServiceClassUserOnly(ApplicationEntity serverAE, Uid studyInstanceUid, string saveDirectory)
+        {
+            string normalizedSaveDirectory;
+            DcmDataset cMoveDataset;
+            PrepareForRetrieve(studyInstanceUid, saveDirectory, out normalizedSaveDirectory, out cMoveDataset);
+
+            Retrieve(serverAE, cMoveDataset, normalizedSaveDirectory, true);
+
+            return;
+        }
+
+        protected void PrepareForRetrieve(Uid studyInstanceUid, string saveDirectory, out string normalizedSaveDirectory, out DcmDataset cMoveDataset)
+        {
+            normalizedSaveDirectory = DicomHelper.NormalizeDirectory(saveDirectory);
+
+            cMoveDataset = new DcmDataset();
+
+            // set the specific query for study instance uid
+            InitializeStandardCMoveDataset(ref cMoveDataset, QRLevel.Study);
+            cMoveDataset.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), studyInstanceUid.ToString());
+        }
+
+
+        /// <summary>
         /// The low-level version of Retrieve that just takes in a dataset that has already been
         /// properly initialized with the appropriate tags for the C-MOVE command.
         /// </summary>
@@ -667,12 +695,17 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="cMoveDataset">The dataset containing the parameters for this Retrieve.</param>
         /// <param name="saveDirectory">The path on the local filesystem that will store the
         /// DICOM objects that are received.</param>
-        protected void Retrieve(ApplicationEntity serverAE, DcmDataset cMoveDataset, System.String saveDirectory)
+        protected void Retrieve(ApplicationEntity serverAE, DcmDataset cMoveDataset, string saveDirectory, bool isAsServiceClassUserOnly)
         {
             try
             {
                 SetGlobalConnectionTimeout(serverAE.ConnectionTimeout);
-                T_ASC_Network network = new T_ASC_Network(T_ASC_NetworkRole.NET_ACCEPTORREQUESTOR, _myOwnAE.Port, serverAE.OperationTimeout);
+                T_ASC_Network network;
+
+                if (isAsServiceClassUserOnly)
+                    network = new T_ASC_Network(T_ASC_NetworkRole.NET_REQUESTOR, _myOwnAE.Port, serverAE.OperationTimeout);
+                else
+                    network = new T_ASC_Network(T_ASC_NetworkRole.NET_ACCEPTORREQUESTOR, _myOwnAE.Port, serverAE.OperationTimeout);
 
                 using (network)
                 {
@@ -715,8 +748,8 @@ namespace ClearCanvas.Dicom.Network
 
 							try
 							{
-								if (association.SendCMoveStudyRootQuery(cMoveDataset, network, serverAE.OperationTimeout, saveDirectory, queryRetrieveOperationIdentifier))
-									association.Release();
+                                if (association.SendCMoveStudyRootQuery(cMoveDataset, network, serverAE.OperationTimeout, saveDirectory, queryRetrieveOperationIdentifier, isAsServiceClassUserOnly))
+                                    association.Release();
 							}
 							catch
 							{
@@ -737,6 +770,7 @@ namespace ClearCanvas.Dicom.Network
                 throw new NetworkDicomException(OffisConditionParser.GetTextString(serverAE, e), e);
             }
         }
+
 
         /// <summary>
         /// The low-level version of Query that just takes in a dataset that has been properly 
