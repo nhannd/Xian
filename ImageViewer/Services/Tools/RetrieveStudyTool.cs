@@ -9,6 +9,7 @@ using System.IO;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
+using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -65,6 +66,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				client.Close();
 
 				LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(this.Context.DesktopWindow);
+			}
+			catch (EndpointNotFoundException)
+			{
+				client.Abort();
+				Platform.ShowMessageBox(SR.MessageRetrieveDicomServerServiceNotRunning);
 			}
 			catch (Exception e)
 			{

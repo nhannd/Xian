@@ -277,6 +277,16 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to import the selected items because the Local Data Store service is not running.
+        ///Please ensure the ClearCanvas server is running or contact your system administrator for assistance..
+        /// </summary>
+        internal static string MessageImportLocalDataStoreServiceNotRunning {
+            get {
+                return ResourceManager.GetString("MessageImportLocalDataStoreServiceNotRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Nothing has been selected..
         /// </summary>
         internal static string MessageNothingSelected {
@@ -313,11 +323,41 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to reindex the Local Data Store because the Local Data Store service is not running.
+        ///Please ensure the ClearCanvas server is running or contact your system administrator for assistance..
+        /// </summary>
+        internal static string MessageReindexLocalDataStoreServiceNotRunning {
+            get {
+                return ResourceManager.GetString("MessageReindexLocalDataStoreServiceNotRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to retrieve the selected studies because the Dicom Server service is not running.
+        ///Please ensure the ClearCanvas server is running or contact your system administrator for assistance..
+        /// </summary>
+        internal static string MessageRetrieveDicomServerServiceNotRunning {
+            get {
+                return ResourceManager.GetString("MessageRetrieveDicomServerServiceNotRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Please select a destination..
         /// </summary>
         internal static string MessageSelectDestination {
             get {
                 return ResourceManager.GetString("MessageSelectDestination", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to send the selected studies because the Dicom Server service is not running.
+        ///Please ensure the ClearCanvas server is running or contact your system administrator for assistance..
+        /// </summary>
+        internal static string MessageSendDicomServerServiceNotRunning {
+            get {
+                return ResourceManager.GetString("MessageSendDicomServerServiceNotRunning", resourceCulture);
             }
         }
         

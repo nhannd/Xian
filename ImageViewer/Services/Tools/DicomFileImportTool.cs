@@ -11,6 +11,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Explorer.Local;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -54,6 +55,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				client.Close();
 
 				LocalDataStoreActivityMonitorComponentManager.ShowImportComponent(this.Context.DesktopWindow);
+			}
+			catch (EndpointNotFoundException)
+			{
+				client.Abort();
+				Platform.ShowMessageBox(SR.MessageImportLocalDataStoreServiceNotRunning);
 			}
 			catch (Exception e)
 			{

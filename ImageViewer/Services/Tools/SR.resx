@@ -189,6 +189,10 @@
   <data name="MessageFailedToStartReindex" xml:space="preserve">
     <value>Failed to start Reindex operation.</value>
   </data>
+  <data name="MessageImportLocalDataStoreServiceNotRunning" xml:space="preserve">
+    <value>Failed to import the selected items because the Local Data Store service is not running.
+Please ensure the ClearCanvas server is running or contact your system administrator for assistance.</value>
+  </data>
   <data name="MessageNothingSelected" xml:space="preserve">
     <value>Nothing has been selected.</value>
   </data>
@@ -201,8 +205,20 @@
   <data name="MessageOneMinuteAgo" xml:space="preserve">
     <value>1 minute ago</value>
   </data>
+  <data name="MessageReindexLocalDataStoreServiceNotRunning" xml:space="preserve">
+    <value>Failed to reindex the Local Data Store because the Local Data Store service is not running.
+Please ensure the ClearCanvas server is running or contact your system administrator for assistance.</value>
+  </data>
+  <data name="MessageRetrieveDicomServerServiceNotRunning" xml:space="preserve">
+    <value>Failed to retrieve the selected studies because the Dicom Server service is not running.
+Please ensure the ClearCanvas server is running or contact your system administrator for assistance.</value>
+  </data>
   <data name="MessageSelectDestination" xml:space="preserve">
     <value>Please select a destination.</value>
+  </data>
+  <data name="MessageSendDicomServerServiceNotRunning" xml:space="preserve">
+    <value>Failed to send the selected studies because the Dicom Server service is not running.
+Please ensure the ClearCanvas server is running or contact your system administrator for assistance.</value>
   </data>
   <data name="TitleAvailable" xml:space="preserve">
     <value>Available</value>

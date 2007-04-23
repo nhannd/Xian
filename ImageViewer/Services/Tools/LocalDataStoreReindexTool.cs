@@ -8,6 +8,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -37,6 +38,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				client.Close();
 
 				LocalDataStoreActivityMonitorComponentManager.ShowReindexComponent(this.Context.DesktopWindow);
+			}
+			catch (EndpointNotFoundException)
+			{
+				client.Abort();
+				Platform.ShowMessageBox(SR.MessageReindexLocalDataStoreServiceNotRunning);
 			}
 			catch (Exception e)
 			{
