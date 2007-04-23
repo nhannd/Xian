@@ -18,6 +18,7 @@ namespace ClearCanvas.Ris.Client
 
         private IconSet _iconSet;
         private IResourceResolver _resourceResolver;
+        private bool _isOpen;
 
         protected void NotifyTextChanged()
         {
@@ -28,8 +29,16 @@ namespace ClearCanvas.Ris.Client
 
         public abstract string Text { get; }
         public abstract void Refresh();
-        public virtual void OpenFolder() {}
-        public virtual void CloseFolder() {}
+        public virtual void OpenFolder() 
+        {
+            _isOpen = true;
+            Refresh();
+        }
+
+        public virtual void CloseFolder() 
+        {
+            _isOpen = false;
+        }
 
         public virtual event EventHandler TextChanged
         {
@@ -74,6 +83,11 @@ namespace ClearCanvas.Ris.Client
         {
             get { return _menuModel; }
             set { _menuModel = value; }
+        }
+
+        public virtual bool IsOpen
+        {
+            get { return _isOpen; }
         }
 
         public virtual DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)

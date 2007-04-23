@@ -53,6 +53,11 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         ActionModelNode MenuModel { get; }
 
+        /// <summary>
+        /// Gets the open/close state of the current folder
+        /// </summary>
+        bool IsOpen { get; }
+
         void Refresh();
         void OpenFolder();
         void CloseFolder();

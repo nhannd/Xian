@@ -8,13 +8,16 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
-    public abstract class WorkflowFolder<TItem> : Folder
+    public abstract class WorkflowFolder<TItem> : Folder, IDisposable
     {
         private string _folderName;
         private Table<TItem> _itemsTable;
         private bool _isPopulated;
         private int _itemCount = -1;
         private WorkflowFolderSystem<TItem> _folderSystem;
+
+        private Timer _refreshTimer;
+        private int _refreshTime;
 
         public WorkflowFolder(WorkflowFolderSystem<TItem> folderSystem, string folderName, Table<TItem> itemsTable)
         {
@@ -93,6 +96,16 @@ namespace ClearCanvas.Ris.Client
             get { return _folderSystem; }
         }
 
+        public int RefreshTime
+        {
+            get { return _refreshTime; }
+            set
+            {
+                _refreshTime = value;
+                this.RestartRefreshTimer();
+            }
+        }
+
         public override void Refresh()
         {
             if (CanQuery())
@@ -102,6 +115,20 @@ namespace ClearCanvas.Ris.Client
                 _itemsTable.Items.Clear();
                 _itemsTable.Items.AddRange(items);
             }
+        }
+
+        public override void OpenFolder()
+        {
+            base.OpenFolder();
+
+            this.RestartRefreshTimer();
+        }
+
+        public override void CloseFolder()
+        {
+            base.CloseFolder();
+
+            this.RestartRefreshTimer();
         }
 
         public override void DragComplete(object[] items, DragDropKind kind)
@@ -145,6 +172,24 @@ namespace ClearCanvas.Ris.Client
             return DragDropKind.Move;
         }
 
+        protected void RestartRefreshTimer()
+        {
+            if (_refreshTimer != null)
+            {
+                _refreshTimer.Dispose();
+                _refreshTimer = null;
+            }
+
+            if (_refreshTime > 0)
+            {
+                if (this.IsOpen)
+                    _refreshTimer = new Timer(new TimerDelegate(Refresh), _refreshTime, _refreshTime);
+                else
+                    _refreshTimer = new Timer(new TimerDelegate(RefreshCount), 1000, _refreshTime);
+            }
+        }
+
+        protected abstract void RefreshCount();
         protected abstract bool CanQuery();
         protected abstract IList<TItem> QueryItems();
         protected abstract bool CanAcceptDrop(TItem item);
@@ -161,5 +206,17 @@ namespace ClearCanvas.Ris.Client
 
         protected abstract bool IsMember(TItem item);
 
+        #region IDisposable Members
+
+        public void Dispose()
+        {
+            if (_refreshTimer != null)
+            {
+                _refreshTimer.Dispose();
+                _refreshTimer = null;
+            }
+        }
+
+        #endregion
     }
 }

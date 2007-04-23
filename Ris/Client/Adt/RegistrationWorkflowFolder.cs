@@ -9,6 +9,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -110,5 +111,15 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             return _folderSystem.GetOperationEnablement(operationName);
         }
-    }
+
+        protected override void RefreshCount()
+        {
+            Platform.GetService<IRegistrationWorkflowService>(
+                delegate(IRegistrationWorkflowService service)
+                {
+                    GetWorklistResponse response = service.GetWorklist(new GetWorklistRequest(this.WorklistClassName));
+                    this.ItemCount = response.WorklistItems.Count;
+                });
+        }
+   }
 }

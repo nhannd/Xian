@@ -24,16 +24,21 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
             ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "Edit.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
-
+            
             this.OpenIconSet = new IconSet(IconScheme.Colour, "OpenItemSmall.png", "OpenItemMedium.png", "OpenItemLarge.png");
             this.IconSet = this.OpenIconSet;
 
+            this.RefreshTime = 30000;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled";
         }
 
         private void DisplayOption(IDesktopWindow desktopWindow)
         {
-            ApplicationComponent.LaunchAsDialog(desktopWindow, new FolderOptionComponent(), "Scheduled Option");
+            FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
+            if (ApplicationComponent.LaunchAsDialog(desktopWindow, optionComponent, "Option") == ApplicationComponentExitCode.Normal)
+            {
+                this.RefreshTime = optionComponent.RefreshTime;
+            }
         }
     }
 
@@ -43,9 +48,10 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             : base(folderSystem, "Checked In")
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            ((SimpleActionModel) this.MenuModel).AddAction("CheckInOption", "Option", "Edit.png", "Option",
+            ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "Edit.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
+            this.RefreshTime = 30000;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn";
         }
 
@@ -71,7 +77,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
         private void DisplayOption(IDesktopWindow desktopWindow)
         {
-            ApplicationComponent.LaunchAsDialog(desktopWindow, new FolderOptionComponent(), "Check-In Option");
+            FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
+            if (ApplicationComponent.LaunchAsDialog(desktopWindow, optionComponent, "Option") == ApplicationComponentExitCode.Normal)
+            {
+                this.RefreshTime = optionComponent.RefreshTime;
+            }
         }
     }
 
@@ -80,7 +90,21 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "In Progress")
         {
+            this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "Edit.png", "Option",
+                delegate() { DisplayOption(folderSystem.DesktopWindow); });
+
+            this.RefreshTime = 30000;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+InProgress";
+        }
+
+        private void DisplayOption(IDesktopWindow desktopWindow)
+        {
+            FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
+            if (ApplicationComponent.LaunchAsDialog(desktopWindow, optionComponent, "Option") == ApplicationComponentExitCode.Normal)
+            {
+                this.RefreshTime = optionComponent.RefreshTime;
+            }
         }
     }
 
@@ -89,7 +113,21 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Completed")
         {
+            this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "Edit.png", "Option",
+                delegate() { DisplayOption(folderSystem.DesktopWindow); });
+
+            this.RefreshTime = 30000;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Completed";
+        }
+
+        private void DisplayOption(IDesktopWindow desktopWindow)
+        {
+            FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
+            if (ApplicationComponent.LaunchAsDialog(desktopWindow, optionComponent, "Option") == ApplicationComponentExitCode.Normal)
+            {
+                this.RefreshTime = optionComponent.RefreshTime;
+            }
         }
     }
 
@@ -98,6 +136,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Cancelled")
         {
+            this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "Edit.png", "Option",
+                delegate() { DisplayOption(folderSystem.DesktopWindow); });
+
+            this.RefreshTime = 30000;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Cancelled";
         }
 
@@ -120,6 +163,15 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             
             return true;
         }
+
+        private void DisplayOption(IDesktopWindow desktopWindow)
+        {
+            FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
+            if (ApplicationComponent.LaunchAsDialog(desktopWindow, optionComponent, "Option") == ApplicationComponentExitCode.Normal)
+            {
+                this.RefreshTime = optionComponent.RefreshTime;
+            }
+        }
     }
 
     public class SearchFolder : RegistrationWorkflowFolder
@@ -133,7 +185,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             this.ClosedIconSet = this.OpenIconSet;
             this.IconSet = this.OpenIconSet;
 
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Search";
+            this.RefreshTime = 0;
+            //this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Search";
         }
 
         public PatientProfileSearchData SearchCriteria
@@ -169,5 +222,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
             return worklistItems;
         }
+
+        protected override void RefreshCount()
+        {
+            // does nothing
+        }
+
     }
 }

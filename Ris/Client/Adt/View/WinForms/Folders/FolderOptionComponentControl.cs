@@ -25,6 +25,9 @@ namespace ClearCanvas.Ris.Client.Adt.Folders.View.WinForms
         {
             InitializeComponent();
             _component = component;
+
+            _refreshTime.DataBindings.Add("Value", _component, "RefreshTime", true, DataSourceUpdateMode.OnPropertyChanged);
+            _okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _okButton_Click(object sender, EventArgs e)

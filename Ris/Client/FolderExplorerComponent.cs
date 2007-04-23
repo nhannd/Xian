@@ -280,7 +280,6 @@ namespace ClearCanvas.Ris.Client
                     try
                     {
                         _selectedFolder.OpenFolder();
-                        _selectedFolder.Refresh();
                     }
                     catch (Exception e)
                     {

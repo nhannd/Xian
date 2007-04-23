@@ -95,6 +95,10 @@ namespace ClearCanvas.Ris.Client
 
         protected virtual void Dispose(bool disposing)
         {
+            foreach (WorkflowFolder<TItem> folder in _folders)
+            {
+                folder.Dispose();
+            }
         }
 
         #region IDisposable Members
