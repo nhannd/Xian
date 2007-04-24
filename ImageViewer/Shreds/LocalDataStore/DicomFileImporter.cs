@@ -320,7 +320,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					if (!jobInformation.FileImportInformation.Failed)
 						_parent.AddToImportQueue(jobInformation);
 				}
-			};
+			}
 
 			private class ImportFileThreadPool : BlockingThreadPool<ImportJobInformation>
 			{
@@ -339,7 +339,32 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					if (!jobInformation.FileImportInformation.Failed)
 						_parent.AddToDatabaseQueue(jobInformation);
 				}
-			};
+			}
+
+			/// <summary>
+			/// An unsophisticated way to provide a mutually exclusive lock on a file that is about to get
+			/// written to (or deleted or copied over) by any one of the threads in the import thread pool.
+			/// This is really only for the (very unlikely) case where you 'receive' the same image at the same
+			/// time from multiple sources.  For example, you could be importing from a folder at the same time
+			/// as you are retrieving a study, at the same time some other server is sending to you, and identical
+			/// images could be coming in from all 3 places.
+			/// </summary>
+			private class UriLock
+			{
+				private Uri _uri;
+				private int _lockCount;
+
+				public UriLock(Uri uri)
+				{
+					_uri = uri;
+					_lockCount = 0;
+				}
+
+				public Uri Uri { get { return _uri; } }
+				public int LockCount { get { return _lockCount; } }
+				public void IncrementLockCount() { ++_lockCount; }
+				public void DecrementLockCount() { --_lockCount; }
+			}
 
 			private LocalDataStoreService _parent;
 
@@ -358,6 +383,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			private object _importThreadPoolSwitchSyncLock = new object();
 			private event EventHandler<ItemEventArgs<DedicatedImportQueue>> _importThreadPoolSwitched;
 
+			private object _uriLocksSync = new object();
+			private List<UriLock> _uriLocks;
+
 			public DicomFileImporter(LocalDataStoreService parent)
 				: base()
 			{
@@ -370,7 +398,52 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				_activeImportThreadPool = DedicatedImportQueue.Default;
 
 				_databaseUpdateItems = new List<ImportJobInformation>();
+
+				_uriLocks = new List<UriLock>();
 			}
+
+			#region Uri Locking
+			
+			private Uri GetLockUri(string filePath)
+			{
+				lock (_uriLocksSync)
+				{
+					UriBuilder searchUri = new UriBuilder();
+					searchUri.Scheme = "file";
+					searchUri.Path = filePath;
+
+					UriLock uriLock = _uriLocks.Find(delegate(UriLock test) { return test.Uri.AbsoluteUri == searchUri.Uri.AbsoluteUri; });
+					if (uriLock == null)
+					{
+						uriLock = new UriLock(searchUri.Uri);
+						_uriLocks.Add(uriLock);
+						uriLock.IncrementLockCount();
+					}
+					else
+					{
+						uriLock.IncrementLockCount();
+					}
+
+					return uriLock.Uri;
+				}
+			}
+
+			private void ReleaseLockUri(Uri releaseUri)
+			{
+				lock (_uriLocksSync)
+				{
+					UriLock uriLock = _uriLocks.Find(delegate(UriLock test) { return test.Uri == releaseUri; });
+					if (uriLock != null)
+					{
+						uriLock.DecrementLockCount();
+
+						if (0 == uriLock.LockCount)
+							_uriLocks.Remove(uriLock);
+					}
+				}
+			}
+
+			#endregion
 
 			#region File Parse / Import Methods
 
@@ -445,11 +518,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					setImportInformation.Series = CreateNewSeries(metaInfo, dataset);
 					setImportInformation.SopInstance = CreateNewSopInstance(metaInfo, dataset);
 
-					//!! lock the uri!!
-					//UriBuilder storedFileUri = new UriBuilder();
-					//storedFileUri.Scheme = "file";
-					//storedFileUri.Path = storedFile;
-
 					setImportInformation.StudyInstanceUid = setImportInformation.Study.StudyInstanceUid;
 					setImportInformation.SeriesInstanceUid = setImportInformation.Series.SeriesInstanceUid;
 					setImportInformation.SopInstanceUid = setImportInformation.SopInstance.SopInstanceUid;
@@ -461,12 +529,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					//report the progress.
 					setImportInformation.CompletedStage = ImportStage.FileParsed;
 					fileImportJobStatusReportDelegate(fileImportInformation);
-
-					// keep the file object alive until the end of this scope block
-					// otherwise, it'll be GC'd and metaInfo and dataset will be gone
-					// as well, even though they are needed in the InsertSopInstance
-					// and sub methods
-					//GC.KeepAlive(file);
 				}
 				catch (Exception e)
 				{
@@ -492,35 +554,46 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				try
 				{
-					string storedFile = String.Format("{0}{1}\\{2}.dcm", LocalDataStoreService.Instance.StorageFolder,
-																				fileImportInformation.StudyInstanceUid,
-																				fileImportInformation.SopInstanceUid);
-
 					UriBuilder sourceUri = new UriBuilder();
 					sourceUri.Scheme = "file";
 					sourceUri.Path = fileImportInformation.SourceFile;
 
-					UriBuilder storedUri = new UriBuilder();
-					storedUri.Scheme = "file";
-					storedUri.Path = storedFile;
+					string storedFile = String.Format("{0}{1}\\{2}.dcm", LocalDataStoreService.Instance.StorageFolder,
+																				fileImportInformation.StudyInstanceUid,
+																				fileImportInformation.SopInstanceUid);
 
-					if (storedUri.Uri.AbsolutePath != sourceUri.Uri.AbsolutePath)
+					Uri storedUri = GetLockUri(storedFile);
+
+					try
 					{
-						string directoryName = System.IO.Path.GetDirectoryName(storedFile);
-						if (!System.IO.Directory.Exists(directoryName))
-							System.IO.Directory.CreateDirectory(directoryName);
-
-						if (fileImportInformation.ImportBehaviour == FileImportBehaviour.Copy)
+						if (storedUri.AbsolutePath != sourceUri.Uri.AbsolutePath)
 						{
-							System.IO.File.Copy(fileImportInformation.SourceFile, storedFile, true);
-						}
-						else
-						{
-							if (System.IO.File.Exists(storedFile))
-								System.IO.File.Delete(storedFile);
+							//by locking on the Uri, two threads will only ever block each other if the file they are attempting
+							//to write to is exactly the same one, which will happen very infrequently.
 
-							System.IO.File.Move(fileImportInformation.SourceFile, storedFile);
+							lock (storedUri)
+							{
+								string directoryName = System.IO.Path.GetDirectoryName(storedFile);
+								if (!System.IO.Directory.Exists(directoryName))
+									System.IO.Directory.CreateDirectory(directoryName);
+
+								if (fileImportInformation.ImportBehaviour == FileImportBehaviour.Copy)
+								{
+									System.IO.File.Copy(fileImportInformation.SourceFile, storedFile, true);
+								}
+								else
+								{
+									if (System.IO.File.Exists(storedFile))
+										System.IO.File.Delete(storedFile);
+
+									System.IO.File.Move(fileImportInformation.SourceFile, storedFile);
+								}
+							}
 						}
+					}
+					finally
+					{
+						ReleaseLockUri(storedUri);
 					}
 
 					AssignSopInstanceUri(fileImportInformation.SopInstance, storedFile);
@@ -531,8 +604,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				catch (Exception e)
 				{
 					importerInformation.Error = e;
-
-					//!!retry?
 				}
 
 				fileImportJobStatusReportDelegate(fileImportInformation);

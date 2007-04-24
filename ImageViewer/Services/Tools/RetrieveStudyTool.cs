@@ -10,6 +10,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using System.ServiceModel;
+using ClearCanvas.Dicom.Network;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -36,33 +37,40 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		private void RetrieveStudy()
 		{
-            //
-            // check pre-conditions
-            //
-
 			if (this.Context.SelectedServerGroup.IsLocalDatastore)
 				return;
 
             if (this.Context.SelectedStudy == null)
                 return;
 
-			DicomRetrieveRequest request = new DicomRetrieveRequest();
-			request.SourceAETitle = this.Context.SelectedStudy.Server.AE;
-			request.SourceHostName = this.Context.SelectedStudy.Server.Host; ;
-			request.Port = this.Context.SelectedStudy.Server.Port;
-
-			List<string> studyUids = new List<string>();
+			Dictionary<ApplicationEntity, List<string>> retrieveInformation = new Dictionary<ApplicationEntity, List<string>>();
 			foreach (StudyItem item in this.Context.SelectedStudies)
-				studyUids.Add(item.StudyInstanceUID);
+			{
+				if (!retrieveInformation.ContainsKey(item.Server))
+					retrieveInformation[item.Server] = new List<string>();
 
-			request.Uids = studyUids.ToArray();
+				retrieveInformation[item.Server].Add(item.StudyInstanceUID);
+			}
 
 			DicomServerServiceClient client = new DicomServerServiceClient();
 
 			try
 			{
 				client.Open();
-				client.Retrieve(request);
+
+				foreach (KeyValuePair<ApplicationEntity, List<string>> kvp in retrieveInformation)
+				{
+					DicomRetrieveRequest request = new DicomRetrieveRequest();
+					request.RetrieveLevel = RetrieveLevel.Study;
+
+					request.SourceAETitle = kvp.Key.AE;
+					request.SourceHostName = kvp.Key.Host;
+					request.Port = kvp.Key.Port;
+					request.Uids = kvp.Value;
+
+					client.Retrieve(request);
+				}
+								
 				client.Close();
 
 				LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(this.Context.DesktopWindow);

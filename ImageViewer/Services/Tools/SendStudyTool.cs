@@ -51,34 +51,34 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			if (code == ApplicationComponentExitCode.Cancelled)
 				return;
 
-			ApplicationEntity destinationAE = (aeNavigator.SelectedServers.Servers[0] as Server).GetApplicationEntity();
-
-			if (destinationAE == null)
+			if (aeNavigator.SelectedServers == null || aeNavigator.SelectedServers.Servers == null || aeNavigator.SelectedServers.Servers.Count == 0)
 			{
 				Platform.ShowMessageBox(SR.MessageSelectDestination);
 				return;
 			}
 
-			DicomSendRequest request = new DicomSendRequest();
-			request.DestinationAETitle = destinationAE.AE;
-			request.DestinationHostName = destinationAE.Host;
-			request.Port = destinationAE.Port;
-
 			List<string> studyUids = new List<string>();
 			foreach (StudyItem item in this.Context.SelectedStudies)
 				studyUids.Add(item.StudyInstanceUID);
-
-			request.Uids = studyUids.ToArray();
 
 			DicomServerServiceClient client = new DicomServerServiceClient();
 
 			try
 			{
 				client.Open();
-				client.Send(request);
-				client.Close();
 
-				//LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(this.Context.DesktopWindow);
+				foreach (Server destinationAE in aeNavigator.SelectedServers.Servers)
+				{
+					DicomSendRequest request = new DicomSendRequest();
+					request.DestinationAETitle = destinationAE.AETitle;
+					request.DestinationHostName = destinationAE.Host;
+					request.Port = destinationAE.Port;
+					request.Uids = studyUids;
+
+					client.Send(request);
+				}
+
+				client.Close();
 			}
 			catch (EndpointNotFoundException)
 			{
