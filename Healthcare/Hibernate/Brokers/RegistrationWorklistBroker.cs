@@ -125,10 +125,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         public IList<RequestedProcedure> GetScheduledRequestedProcedureForPatient(Patient patient)
         {
             List<RequestedProcedure> results = new List<RequestedProcedure>();
- 
-            string hqlQuery;
-
-            hqlQuery = "select distinct rp from ModalityProcedureStep mps" +
+            string hqlQuery = "select distinct rp from ModalityProcedureStep mps" +
                         " join mps.Type spst" +
                         " join mps.Modality m" +
                         " join mps.RequestedProcedure rp" +

@@ -223,9 +223,9 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             return worklistItems;
         }
 
-        protected override void RefreshCount()
+        protected override int QueryCount()
         {
-            // does nothing
+            return this.ItemCount;
         }
 
     }

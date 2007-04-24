@@ -277,14 +277,7 @@ namespace ClearCanvas.Ris.Client
                 _selectedFolder = folder;
                 if (_selectedFolder != null)
                 {
-                    try
-                    {
-                        _selectedFolder.OpenFolder();
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, "Folder refresh failed", this.Host.DesktopWindow);
-                    }
+                    _selectedFolder.OpenFolder();
                 }
                 EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
             }

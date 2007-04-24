@@ -108,12 +108,35 @@ namespace ClearCanvas.Ris.Client
 
         public override void Refresh()
         {
-            if (CanQuery())
+            try
             {
-                IList<TItem> items = QueryItems();
-                _isPopulated = true;
-                _itemsTable.Items.Clear();
-                _itemsTable.Items.AddRange(items);
+                if (CanQuery())
+                {
+                    IList<TItem> items = QueryItems();
+                    _isPopulated = true;
+                    _itemsTable.Items.Clear();
+                    _itemsTable.Items.AddRange(items);
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, "Folder refresh failed", _folderSystem.DesktopWindow);
+            }
+        }
+
+        public void RefreshCount()
+        {
+            try
+            {
+                if (CanQuery())
+                {
+                    this.ItemCount = QueryCount();
+                }
+            }
+            catch (Exception e)
+            {
+                // TODO report this, but don't show messagebox
+                Console.WriteLine(e.Message);
             }
         }
 
@@ -165,7 +188,7 @@ namespace ClearCanvas.Ris.Client
                 catch (Exception e)
                 {
                     // TODO report this
-                    Console.WriteLine("error");
+                    Console.WriteLine(e.Message);
                 }
             }
 
@@ -189,8 +212,8 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        protected abstract void RefreshCount();
         protected abstract bool CanQuery();
+        protected abstract int QueryCount();
         protected abstract IList<TItem> QueryItems();
         protected abstract bool CanAcceptDrop(TItem item);
         protected abstract bool ConfirmAcceptDrop(ICollection<TItem> items);

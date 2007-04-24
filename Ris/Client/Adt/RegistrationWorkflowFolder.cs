@@ -87,6 +87,19 @@ namespace ClearCanvas.Ris.Client.Adt
             return worklistItems;
         }
 
+        protected override int QueryCount()
+        {
+            int count = -1;
+            Platform.GetService<IRegistrationWorkflowService>(
+                delegate(IRegistrationWorkflowService service)
+                {
+                    GetWorklistResponse response = service.GetWorklist(new GetWorklistRequest(this.WorklistClassName));
+                    count = response.WorklistItems.Count;
+                });
+
+            return count;
+        }
+
         protected override bool IsMember(RegistrationWorklistItem item)
         {
             return true;
@@ -110,16 +123,6 @@ namespace ClearCanvas.Ris.Client.Adt
         protected bool GetOperationEnablement(string operationName)
         {
             return _folderSystem.GetOperationEnablement(operationName);
-        }
-
-        protected override void RefreshCount()
-        {
-            Platform.GetService<IRegistrationWorkflowService>(
-                delegate(IRegistrationWorkflowService service)
-                {
-                    GetWorklistResponse response = service.GetWorklist(new GetWorklistRequest(this.WorklistClassName));
-                    this.ItemCount = response.WorklistItems.Count;
-                });
         }
    }
 }
