@@ -9,6 +9,11 @@ namespace ClearCanvas.Common
     {
         private static readonly Object _policyLock = new Object();
         private static IDictionary<Type, IExceptionPolicy> _policies;
+        private static readonly Type _noMatchingPolicyKey = typeof(NoMatchingPolicyKey);
+
+        private sealed class NoMatchingPolicyKey
+        {
+        }
 
         private static IDictionary<Type, IExceptionPolicy> Policies
         {
@@ -32,23 +37,31 @@ namespace ClearCanvas.Common
         {
             _policies = new Dictionary<Type, IExceptionPolicy>();
 
-            ExceptionPolicyExtensionPoint xp = new ExceptionPolicyExtensionPoint();
-            Object[] extensions = xp.CreateExtensions();
-            foreach (object extension in extensions)
+            try
             {
-                IExceptionPolicy policy = extension as IExceptionPolicy;
-                if (policy != null)
+                ExceptionPolicyExtensionPoint xp = new ExceptionPolicyExtensionPoint();
+                Object[] extensions = xp.CreateExtensions();
+                foreach (object extension in extensions)
                 {
-                    foreach (ExceptionPolicyForAttribute attr in policy.GetType().GetCustomAttributes(typeof(ExceptionPolicyForAttribute), true))
+                    IExceptionPolicy policy = extension as IExceptionPolicy;
+                    if (policy != null)
                     {
-                        _policies.Add(new KeyValuePair<Type, IExceptionPolicy>(attr.ExceptionType, policy));
+                        foreach (ExceptionPolicyForAttribute attr in policy.GetType().GetCustomAttributes(typeof(ExceptionPolicyForAttribute), true))
+                        {
+                            _policies.Add(new KeyValuePair<Type, IExceptionPolicy>(attr.ExceptionType, policy));
 
-                        //Type faultWrappedExceptionType = typeof(FaultException<>);
-                        //faultWrappedExceptionType = faultWrappedExceptionType.MakeGenericType(attr.ExceptionType);
+                            //Type faultWrappedExceptionType = typeof(FaultException<>);
+                            //faultWrappedExceptionType = faultWrappedExceptionType.MakeGenericType(attr.ExceptionType);
 
-                        //_policies.Add(new KeyValuePair<Type, IExceptionPolicy>(faultWrappedExceptionType, policy));
+                            //_policies.Add(new KeyValuePair<Type, IExceptionPolicy>(faultWrappedExceptionType, policy));
+                        }
                     }
                 }
+
+            }
+            finally
+            {
+                _policies.Add(new KeyValuePair<Type, IExceptionPolicy>(_noMatchingPolicyKey, new DefaultExceptionPolicy()));
             }
         }
 
@@ -62,11 +75,14 @@ namespace ClearCanvas.Common
             }
             catch (KeyNotFoundException e)
             {
-                //some default policy
-                //policy = Policies[typeof(Exception)];
+                policy = Policies[_noMatchingPolicyKey];
             }
 
             return policy;
         }
+    }
+
+    internal sealed class DefaultExceptionPolicy : ExceptionPolicyBase
+    {
     }
 }
