@@ -27,6 +27,14 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         GetWorklistResponse GetWorklist(GetWorklistRequest request);
 
         /// <summary>
+        /// Get the worklist count for each folder in the <see cref="WorklistComponent"/>
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request);
+
+        /// <summary>
         /// Load all the data for the <see cref="RegistrationPreviewComponent"/>
         /// </summary>
         /// <param name="request"></param>

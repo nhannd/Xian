@@ -93,8 +93,8 @@ namespace ClearCanvas.Ris.Client.Adt
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
                 {
-                    GetWorklistResponse response = service.GetWorklist(new GetWorklistRequest(this.WorklistClassName));
-                    count = response.WorklistItems.Count;
+                    GetWorklistCountResponse response = service.GetWorklistCount(new GetWorklistCountRequest(this.WorklistClassName));
+                    count = response.ItemCount;
                 });
 
             return count;
