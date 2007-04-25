@@ -183,33 +183,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				_selectedServers.Name = _serverTree.CurrentNode.Name;
 				_selectedServers.GroupID = _serverTree.CurrentNode.ParentPath + "/" + _selectedServers.Name;
 			}
-
-			LocalApplicationEntity.SettingsUpdated += new EventHandler(_serverTree.OnUpdateLocalDataStoreNode);
-
-			QueryAESettings();
 		}
 
-        public void QueryAESettings()
-        {
-			DicomServerServiceClient serviceClient = new DicomServerServiceClient(); 
-			try
-            {
-				DicomServerConfiguration serverConfiguration = serviceClient.GetServerConfiguration();
-				LocalApplicationEntity.UpdateSettings(serverConfiguration.AETitle, serverConfiguration.Port);
-                serviceClient.Close();
-            }
-            catch (Exception e)
-            {
-				serviceClient.Abort();
-                Platform.Log(e, LogLevel.Warn);
-            }
-        }
-
-        public void SelectChanged(IServerTreeNode dataNode)
+		public void SetSelection(IServerTreeNode dataNode)
         {
             if (dataNode.IsServer)
             {
-                SetSelectedServer(dataNode as Server);
+				Server server = dataNode as Server;
+				_selectedServers = new AEServerGroup();
+				_selectedServers.Servers.Add(server);
+				_selectedServers.Name = server.Name;
+				_selectedServers.GroupID = server.Path;
+				_serverTree.CurrentNode = server;
+				FireSelectedServerChangedEvent();
             }
             else if (dataNode.IsServerGroup)
             {
@@ -236,7 +222,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
                 movingServer.ChangeParentPath(destinationNode.Path);
                 (destinationNode as ServerGroup).AddChild(movingDataNode);
-                SelectChanged(movingDataNode);
+                SetSelection(movingDataNode);
             }
             else if (movingDataNode.IsServerGroup)
             {
@@ -246,7 +232,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
                 movingGroup.ChangeParentPath(destinationNode.Path);
                 (destinationNode as ServerGroup).AddChild(movingGroup);
-                SelectChanged(movingGroup);
+                SetSelection(movingGroup);
             }
             _serverTree.SaveDicomServers();
             return true;
@@ -258,15 +244,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             remove { _selectedServerChanged -= value; }
         }
 
-        private void SetSelectedServer(Server server)
-        {
-            _selectedServers = new AEServerGroup();
-            _selectedServers.Servers.Add(server);
-            _selectedServers.Name = server.Name;
-            _selectedServers.GroupID = server.Path;
-            _serverTree.CurrentNode = server;
-            FireSelectedServerChangedEvent();
-        }
+		private void QueryAESettings()
+		{
+			DicomServerServiceClient serviceClient = new DicomServerServiceClient();
+
+			try
+			{
+				DicomServerConfiguration serverConfiguration = serviceClient.GetServerConfiguration();
+				LocalApplicationEntity.UpdateSettings(serverConfiguration.AETitle, serverConfiguration.Port);
+				serviceClient.Close();
+			}
+			catch (Exception e)
+			{
+				serviceClient.Abort();
+				Platform.Log(e, LogLevel.Warn);
+			}
+		}
 
         private bool isMovingInvalid(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
         {
@@ -299,10 +292,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             _toolSet = new ToolSet(new AENavigatorToolExtensionPoint(), new AENavigatorToolContext(this));
             _toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomaenavigator-toolbar", _toolSet.Actions);
             _contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomaenavigator-contextmenu", _toolSet.Actions);
-        }
+
+			LocalApplicationEntity.SettingsUpdated += new EventHandler(_serverTree.OnUpdateLocalDataStoreNode);
+			QueryAESettings();
+		}
 
         public override void Stop()
         {
+			LocalApplicationEntity.SettingsUpdated -= new EventHandler(_serverTree.OnUpdateLocalDataStoreNode);
             base.Stop();
         }
 

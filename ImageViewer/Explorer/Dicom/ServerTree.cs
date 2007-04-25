@@ -36,7 +36,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
 
             serverGroup.AddChild(newServer);
-            return;
         }
 
 
@@ -185,8 +184,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 // create default entries and save them to disk
                 _rootNode.LocalDataStoreNode = new LocalDataStore(AENavigatorComponent.MyDatastoreTitle, "", ".", GetLocalDataStoreIps(), LocalApplicationEntity.AETitle, LocalApplicationEntity.Port);
                 _rootNode.ServerGroupNode = new ServerGroup(AENavigatorComponent.MyServersTitle, ".");
-                _rootNode.ServerGroupNode.ChildGroups.Add(new ServerGroup("Example Group", "./" + AENavigatorComponent.MyServersTitle));
-                _rootNode.ServerGroupNode.ChildServers.Add(new Server("Sample server", "Rm 101", "./" + AENavigatorComponent.MyServersTitle, "localhost", "SAMPLE", 104));
+                _rootNode.ServerGroupNode.ChildGroups.Add(new ServerGroup(SR.ExampleGroup, "./" + AENavigatorComponent.MyServersTitle));
+                _rootNode.ServerGroupNode.ChildServers.Add(new Server(SR.ExampleServer, SR.SampleLocation, "./" + AENavigatorComponent.MyServersTitle, "localhost", "SAMPLE", 104));
                 SaveDicomServers();
             }
 

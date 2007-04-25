@@ -75,9 +75,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 _lastClickedNode.Text = dataNode.Name;
                 _lastClickedNode.Tag = dataNode;
                 _lastClickedNode.ToolTipText = dataNode.ToString();
-				RefreshToolTipText(_aeTreeView.Nodes[1]);
             }
-            _component.SelectChanged(_lastClickedNode.Tag as IServerTreeNode);
+            _component.SetSelection(_lastClickedNode.Tag as IServerTreeNode);
         }
 
 
@@ -88,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 return;
             _aeTreeView.SelectedNode = _lastClickedNode;
             IServerTreeNode dataNode = _lastClickedNode.Tag as IServerTreeNode;
-            _component.SelectChanged(dataNode);
+            _component.SetSelection(dataNode);
         }
 
         /// <summary>
@@ -138,26 +137,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             }
         }
 
-        /// <summary>
-        /// Called to build subsequent levels of the tree as they are expanded
-        /// </summary>
-        /// <param name="treeNode"></param>
-        //private void BuildNextTreeLevel(TreeNode treeNode)
-        //{
-        //    IServerTreeNode dataNode = treeNode.Tag as IServerTreeNode;
-
-        //    if (dataNode.IsServer)
-        //    {
-        //        return;
-        //    }
-
-        //    foreach (IServerTreeNode dataChild in (dataNode as ServerGroup).ChildServers)
-        //    {
-        //        TreeNode treeChild = AddTreeNode(treeNode, dataChild);
-        //        BuildNextTreeLevel(treeChild);
-        //    }
-        //}
-
         private TreeNode AddTreeNode(TreeNode treeNode, IServerTreeNode dataChild)
         {
             TreeNode treeChild = new TreeNode(dataChild.Name);
@@ -166,25 +145,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             treeChild.ToolTipText = dataChild.ToString();
             treeNode.Nodes.Add(treeChild);
             return treeChild;
-        }
-
-        private void RefreshToolTipText(TreeNode treeNode)
-        {
-            ServerGroup dataNode = treeNode.Tag as ServerGroup;
-            foreach (TreeNode tnChild in treeNode.Nodes)
-            {
-                foreach (IServerTreeNode dataChild in (dataNode as ServerGroup).ChildServers)
-                {
-                    if (tnChild.Text.Equals(dataChild.Name))
-                    {
-                        if (!tnChild.ToolTipText.Equals(dataChild.ToString()))
-                            tnChild.ToolTipText = dataChild.ToString();
-                        break;
-                    }
-                }
-                if (!((tnChild.Tag as IServerTreeNode).IsServer))
-                    RefreshToolTipText(tnChild);
-            }
         }
 
         private void SetIcon(IServerTreeNode browserNode, TreeNode treeNode)
@@ -348,7 +308,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             _lastClickedNode = e.Node;
             _aeTreeView.SelectedNode = _lastClickedNode;
             IServerTreeNode dataNode = _lastClickedNode.Tag as IServerTreeNode;
-            _component.SelectChanged(dataNode);
+            _component.SetSelection(dataNode);
             _component.NodeDoubleClick();
         }
 

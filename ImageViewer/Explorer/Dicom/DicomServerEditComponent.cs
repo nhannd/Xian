@@ -28,19 +28,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             _serverTree = dicomServerTree;
             if (_serverTree.CurrentNode.IsServer)
             {
-                _serverName = _serverTree.CurrentNode.Name;
-                _serverPath = _serverTree.CurrentNode.Path;
-                _serverParentPath = _serverTree.CurrentNode.ParentPath;
-                _serverLocation = (_serverTree.CurrentNode as Server).Location;
-                _serverAE = (_serverTree.CurrentNode as Server).AETitle;
-                _serverHost = (_serverTree.CurrentNode as Server).Host;
-                _serverPort = (_serverTree.CurrentNode as Server).Port.ToString();
+				Server server = _serverTree.CurrentNode as Server;
+				_serverName = server.Name;
+				_serverParentPath = server.ParentPath;
+				_serverLocation = server.Location;
+				_serverAE = server.AETitle;
+				_serverHost = server.Host;
+				_serverPort = server.Port.ToString();
             }
             else
             {
                 _serverName = "";
-                _serverPath = _serverTree.CurrentNode.Path;
-                _serverParentPath = _serverTree.CurrentNode.ParentPath;
+				_serverParentPath = _serverTree.CurrentNode.Path;
                 _serverLocation = "";
                 _serverAE = "";
                 _serverHost = "";
@@ -170,42 +169,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         private ServerTree _serverTree;
         private string _serverName = "";
-        private string _serverPath = "";
         private string _serverLocation = "";
         private string _serverAE = "";
         private string _serverHost = "";
         private string _serverPort = "";
         private string _serverParentPath = "";
 
-        public ServerTree ServerTree
-        {
-          get { return _serverTree; }
-          set { _serverTree = value; }
-        }
-
-        public string ServerPath
-        {
-            get { return _serverPath; }
-            set { _serverPath = value; }
-        }
-
-        public string ParentPath
-        {
-            get { return _serverParentPath; }
-            set { _serverParentPath = value; }
-        }
-
-        public string ServerName
-        {
-            get { return _serverName; }
-            set 
-            { 
-                _serverName = value;
-                this.Modified = IsServerPropertyEmpty();
-            }
-        }
-
-        public string ServerLocation
+		public string ServerName
+		{
+			get { return _serverName; }
+			set
+			{
+				_serverName = value;
+				this.Modified = IsServerPropertyEmpty();
+			}
+		}
+		
+		public string ServerLocation
         {
             get { return _serverLocation; }
             set { 

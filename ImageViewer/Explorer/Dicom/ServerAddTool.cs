@@ -28,12 +28,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             DicomServerEditComponent editor = new DicomServerEditComponent(serverTree);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, SR.TitleAddNewServer);
 			this.Context.UpdateType = (int)ServerUpdateType.None; 
-			return;
         }
 
         protected override void OnSelectedServerChanged(object sender, EventArgs e)
         {
-                this.Enabled = !this.Context.ServerTree.CurrentNode.IsServer;
+			this.Enabled = !this.Context.ServerTree.CurrentNode.IsServer;
         }
     }
 }

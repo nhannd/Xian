@@ -156,6 +156,12 @@
   <data name="DicomStudyBrowserToolsRetrieveStudy" xml:space="preserve">
     <value>Retrieve</value>
   </data>
+  <data name="ExampleGroup" xml:space="preserve">
+    <value>Example Group</value>
+  </data>
+  <data name="ExampleServer" xml:space="preserve">
+    <value>Example Server</value>
+  </data>
   <data name="ExceptionNoServersSelected" xml:space="preserve">
     <value>No servers have been selected.  Please select at least one server and try again.</value>
   </data>
@@ -247,6 +253,9 @@ Please change the dates and try again.</value>
   </data>
   <data name="MessageUnableToDeleteStudy" xml:space="preserve">
     <value>Unable to delete study.  Please check the log for details.</value>
+  </data>
+  <data name="SampleLocation" xml:space="preserve">
+    <value>Rm 101</value>
   </data>
   <data name="StatusLastRetrievalServerUsed" xml:space="preserve">
     <value>Last retrieval server used</value>

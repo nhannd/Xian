@@ -178,6 +178,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Example Group.
+        /// </summary>
+        internal static string ExampleGroup {
+            get {
+                return ResourceManager.GetString("ExampleGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Example Server.
+        /// </summary>
+        internal static string ExampleServer {
+            get {
+                return ResourceManager.GetString("ExampleServer", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to No servers have been selected.  Please select at least one server and try again..
         /// </summary>
         internal static string ExceptionNoServersSelected {
@@ -434,6 +452,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string MessageUnableToDeleteStudy {
             get {
                 return ResourceManager.GetString("MessageUnableToDeleteStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Rm 101.
+        /// </summary>
+        internal static string SampleLocation {
+            get {
+                return ResourceManager.GetString("SampleLocation", resourceCulture);
             }
         }
         
