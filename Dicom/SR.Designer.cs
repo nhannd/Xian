@@ -61,6 +61,15 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Non-DICOM, application-level logic exception or execution failure.
+        /// </summary>
+        public static string ExceptionApplicationLevelLogic {
+            get {
+                return ResourceManager.GetString("ExceptionApplicationLevelLogic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The module number provided from the OFFIS toolkit is unexpected and cannot be dealt with in this version of the software..
         /// </summary>
         public static string ExceptionDecodingBadModuleNumber {

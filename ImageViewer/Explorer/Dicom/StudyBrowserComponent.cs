@@ -370,7 +370,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					aggregateExceptionMessage.AppendFormat(SR.FormatUnableToQueryServer, pair.Key, pair.Value.Message);
                 }
 
-				throw new Exception(aggregateExceptionMessage.ToString());
+                // this isn't ideal, but since we can operate on multiple entities, we need to aggregate all the
+                // exception messages. We should at least attempt to get at the first inner exception, and that's
+                // what we do here, to aid in debugging
+                throw new Exception(aggregateExceptionMessage.ToString(), failedServerInfo[0].Value.InnerException);
             }
 		}
 

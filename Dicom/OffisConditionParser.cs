@@ -21,6 +21,9 @@ namespace ClearCanvas.Dicom.Network
             ushort submodule = (ushort)(code & 0x0f00);
             ushort subcode = (ushort)(code & 0x00ff);
 
+            if (0x00 == module && 0x00 == code)
+                return SR.ExceptionApplicationLevelLogic;
+
             if (0x06 != module)
                 throw new System.ArgumentOutOfRangeException("e.Module", SR.ExceptionDicomCannotHandleNonDcmNetModules);
 

@@ -339,4 +339,8 @@
   <data name="ExceptionPoorlyFormattedDateRange" xml:space="preserve">
     <value>Poorly formatted Dicom date range {0}.</value>
   </data>
+  <data name="ExceptionApplicationLevelLogic" xml:space="preserve">
+    <value>Non-DICOM, application-level logic exception or execution failure</value>
+    <comment>Used to indicate execution failures that have to do with the intended functionality, rather than technical DICOM problems</comment>
+  </data>
 </root>

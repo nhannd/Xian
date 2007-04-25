@@ -174,8 +174,10 @@ struct T_ASC_Network
 
 		if (0 == ASC_countAcceptedPresentationContexts(associationParameters)) 
 		{
-			// clean up the allocated association before throwing exception
-			ASC_destroyAssociation(&pAssociation);
+			// we are here because there are no acceptable presentation contexts
+			// this does not consitute a DICOM error, and we should release
+			// the association
+			ASC_releaseAssociation(pAssociation);
 			throw dicom_runtime_error(result, "T_ASC_Network.CreateAssociation: No acceptable Presentation Contexts");
 		}
 
