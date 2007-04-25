@@ -39,14 +39,25 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			}
 
             _aeTreeView.MouseDown += new MouseEventHandler(AETreeView_Click);
-            BuildServerTreeView(_aeTreeView, _component.ServerTree);
+
+			_component.ServerTree.RootNode.LocalDataStoreNode.Updated += new EventHandler(OnLocalDataStoreNodeUpdated);
+			BuildServerTreeView(_aeTreeView, _component.ServerTree);
         }
+
+		void OnLocalDataStoreNodeUpdated(object sender, EventArgs e)
+		{
+			_aeTreeView.Nodes[0].ToolTipText = _component.ServerTree.RootNode.LocalDataStoreNode.ToString();
+		}
 
         void OnServerTreeUpdated(object sender, EventArgs e)
         {
             if (_lastClickedNode == null)
                 return;
-            if (_component.UpdateType == (int)ServerUpdateType.Add)
+
+			if (_component.UpdateType == 0)
+				return;
+
+			if (_component.UpdateType == (int)ServerUpdateType.Add)
             {
                 IServerTreeNode dataChild = _component.ServerTree.CurrentNode;
                 AddTreeNode(_lastClickedNode, dataChild);
@@ -64,7 +75,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 _lastClickedNode.Text = dataNode.Name;
                 _lastClickedNode.Tag = dataNode;
                 _lastClickedNode.ToolTipText = dataNode.ToString();
-                RefreshToolTipText(_aeTreeView.Nodes[1]);
+				RefreshToolTipText(_aeTreeView.Nodes[1]);
             }
             _component.SelectChanged(_lastClickedNode.Tag as IServerTreeNode);
         }

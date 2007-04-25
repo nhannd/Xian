@@ -22,14 +22,14 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 			base.Channel.Retrieve(request);
 		}
 
-		public GetServerSettingResponse GetServerSetting()
+		public DicomServerConfiguration GetServerConfiguration()
 		{
-			return base.Channel.GetServerSetting();
+			return base.Channel.GetServerConfiguration();
 		}
 
-		public void UpdateServerSetting(UpdateServerSettingRequest request)
+		public void UpdateServerConfiguration(DicomServerConfiguration newConfiguration)
 		{
-			base.Channel.UpdateServerSetting(request);
+			base.Channel.UpdateServerConfiguration(newConfiguration);
 		}
 	}
 }

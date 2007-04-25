@@ -32,6 +32,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             ServerTree serverTree = this.Context.ServerTree;
             this.Context.UpdateType = (int)ServerUpdateType.Edit;
+
             if (serverTree.CurrentNode.IsServer)
             {
                 DicomServerEditComponent editor = new DicomServerEditComponent(serverTree);
@@ -42,8 +43,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 DicomServerGroupEditComponent editor = new DicomServerGroupEditComponent(serverTree, ServerUpdateType.Edit);
 				ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, SR.TitleEditServerGroup);
             }
-            return;
-        }
+
+			this.Context.UpdateType = (int)ServerUpdateType.None;
+		}
 
         private void SetDoubleClickHandler()
         {

@@ -27,7 +27,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             this.Context.UpdateType = (int)ServerUpdateType.Add;
             DicomServerEditComponent editor = new DicomServerEditComponent(serverTree);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, editor, SR.TitleAddNewServer);
-            return;
+			this.Context.UpdateType = (int)ServerUpdateType.None; 
+			return;
         }
 
         protected override void OnSelectedServerChanged(object sender, EventArgs e)

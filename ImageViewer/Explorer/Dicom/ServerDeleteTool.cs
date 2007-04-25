@@ -31,6 +31,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
                 this.Context.UpdateType = (int)ServerUpdateType.Delete;
                 serverTree.DeleteDicomServer();
+				this.Context.UpdateType = (int)ServerUpdateType.None; 
             }
             else
             {
@@ -39,6 +40,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
                 this.Context.UpdateType = (int)ServerUpdateType.Delete;
                 serverTree.DeleteServerGroup();
+				this.Context.UpdateType = (int)ServerUpdateType.None; 
             }
         }
 

@@ -29,14 +29,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		}
 
-		public GetServerSettingResponse GetServerSetting()
+		public DicomServerConfiguration GetServerConfiguration()
 		{
-			return DicomServerManager.Instance.GetServerSetting();
+			return DicomServerManager.Instance.GetServerConfiguration();
 		}
 
-		public void UpdateServerSetting(UpdateServerSettingRequest request)
+		public void UpdateServerConfiguration(DicomServerConfiguration newConfiguration)
 		{
-			DicomServerManager.Instance.UpdateServerSetting(request);
+			DicomServerManager.Instance.UpdateServerConfiguration(newConfiguration);
 		}
 
 		#endregion

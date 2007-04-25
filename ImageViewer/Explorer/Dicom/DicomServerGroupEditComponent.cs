@@ -60,7 +60,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 ((ServerGroup)_serverTree.CurrentNode).AddChild(serverGroup);
                 _serverTree.CurrentNode = serverGroup;
             }
-            _serverTree.SaveDicomServers();
+
+			_serverTree.SaveDicomServers();
             _serverTree.FireServerTreeUpdatedEvent();
             this.ExitCode = ApplicationComponentExitCode.Normal;
             Host.Exit();
@@ -111,14 +112,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public override void Start()
         {
-            // TODO prepare the component for its live phase
             base.Start();
         }
 
         public override void Stop()
         {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
             base.Stop();
         }
 

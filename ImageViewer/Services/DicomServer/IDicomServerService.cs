@@ -16,9 +16,9 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		void Retrieve(DicomRetrieveRequest request);
 
 		[OperationContract]
-		GetServerSettingResponse GetServerSetting();
+		DicomServerConfiguration GetServerConfiguration();
 
 		[OperationContract]
-		void UpdateServerSetting(UpdateServerSettingRequest request);
+		void UpdateServerConfiguration(DicomServerConfiguration newConfiguration);
 	}
 }

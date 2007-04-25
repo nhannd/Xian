@@ -66,13 +66,13 @@ namespace ClearCanvas.ImageViewer.Configuration
 			try
 			{
 				_serviceClient = new DicomServerServiceClient();
-				GetServerSettingResponse response = _serviceClient.GetServerSetting();
+				DicomServerConfiguration serverConfiguration = _serviceClient.GetServerConfiguration();
 				_serviceClient.Close();
 
-				_hostName = response.HostName;
-				_aeTitle = response.AETitle;
-				_port = response.Port;
-				_storageDir = response.InterimStorageDirectory;
+				_hostName = serverConfiguration.HostName;
+				_aeTitle = serverConfiguration.AETitle;
+				_port = serverConfiguration.Port;
+				_storageDir = serverConfiguration.InterimStorageDirectory;
 			}
 			catch
 			{
@@ -92,14 +92,14 @@ namespace ClearCanvas.ImageViewer.Configuration
             {
                 try
                 {
-                    UpdateServerSettingRequest request = new UpdateServerSettingRequest();
-                    request.HostName = _hostName;
-                    request.AETitle = _aeTitle;
-                    request.Port = _port;
-                    request.InterimStorageDirectory = _storageDir;
+					DicomServerConfiguration newConfiguration = new DicomServerConfiguration();
+					newConfiguration.HostName = _hostName;
+					newConfiguration.AETitle = _aeTitle;
+					newConfiguration.Port = _port;
+					newConfiguration.InterimStorageDirectory = _storageDir;
 
                     _serviceClient = new DicomServerServiceClient();
-                    _serviceClient.UpdateServerSetting(request);
+					_serviceClient.UpdateServerConfiguration(newConfiguration);
                     _serviceClient.Close();
 
                     LocalApplicationEntity.UpdateSettings(_aeTitle, _port);

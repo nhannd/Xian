@@ -637,26 +637,26 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-        public GetServerSettingResponse GetServerSetting()
+		public DicomServerConfiguration GetServerConfiguration()
         {
-            return new GetServerSettingResponse(DicomServerSettings.Instance.HostName,
+			return new DicomServerConfiguration(DicomServerSettings.Instance.HostName,
                                                 DicomServerSettings.Instance.AETitle,
                                                 DicomServerSettings.Instance.Port,
                                                 DicomServerSettings.Instance.InterimStorageDirectory);
         }
 
-        public void UpdateServerSetting(UpdateServerSettingRequest request)
+		public void UpdateServerConfiguration(DicomServerConfiguration newConfiguration)
         {
             bool isServerSettingsChanged = (
-                DicomServerSettings.Instance.HostName != request.HostName ||
-                DicomServerSettings.Instance.AETitle != request.AETitle ||
-                DicomServerSettings.Instance.Port != request.Port ||
-                DicomServerSettings.Instance.InterimStorageDirectory != request.InterimStorageDirectory);
+				DicomServerSettings.Instance.HostName != newConfiguration.HostName ||
+				DicomServerSettings.Instance.AETitle != newConfiguration.AETitle ||
+				DicomServerSettings.Instance.Port != newConfiguration.Port ||
+				DicomServerSettings.Instance.InterimStorageDirectory != newConfiguration.InterimStorageDirectory);
 
-            DicomServerSettings.Instance.HostName = request.HostName;
-            DicomServerSettings.Instance.AETitle = request.AETitle;
-            DicomServerSettings.Instance.Port = request.Port;
-            DicomServerSettings.Instance.InterimStorageDirectory = request.InterimStorageDirectory;
+			DicomServerSettings.Instance.HostName = newConfiguration.HostName;
+			DicomServerSettings.Instance.AETitle = newConfiguration.AETitle;
+			DicomServerSettings.Instance.Port = newConfiguration.Port;
+			DicomServerSettings.Instance.InterimStorageDirectory = newConfiguration.InterimStorageDirectory;
             DicomServerSettings.Save();
 
             // Restart server after settings changed

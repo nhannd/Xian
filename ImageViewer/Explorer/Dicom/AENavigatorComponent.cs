@@ -191,16 +191,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public void QueryAESettings()
         {
-            try
+			DicomServerServiceClient serviceClient = new DicomServerServiceClient(); 
+			try
             {
-                DicomServerServiceClient serviceClient = new DicomServerServiceClient();
-                GetServerSettingResponse response = serviceClient.GetServerSetting();
-                this.UpdateType = (int) ServerUpdateType.Edit;
-                LocalApplicationEntity.UpdateSettings(response.AETitle, response.Port);
+				DicomServerConfiguration serverConfiguration = serviceClient.GetServerConfiguration();
+				LocalApplicationEntity.UpdateSettings(serverConfiguration.AETitle, serverConfiguration.Port);
                 serviceClient.Close();
             }
             catch (Exception e)
-            {                
+            {
+				serviceClient.Abort();
                 Platform.Log(e, LogLevel.Warn);
             }
         }
@@ -326,7 +326,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
     public enum ServerUpdateType
     {
-        Add,
+        None = 0,
+		Add,
         Edit,
         Delete
     }

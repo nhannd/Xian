@@ -78,11 +78,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     CurrentNode = parentGroup;
                     SaveDicomServers();
                     FireServerTreeUpdatedEvent();
-                    return;
+                    break;
                 }
             }
-
-            return;
         }
 
         public void DeleteDicomServer()
@@ -100,10 +98,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     CurrentNode = parentGroup;
                     SaveDicomServers();
                     FireServerTreeUpdatedEvent();
-                    return;
+                    break;
                 }
             }
-            return;
         }
 
         public void SaveDicomServers()
@@ -133,8 +130,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             _rootNode.LocalDataStoreNode.AETitle = LocalApplicationEntity.AETitle;
             _rootNode.LocalDataStoreNode.Port = LocalApplicationEntity.Port;
-            SaveDicomServers();
-            FireServerTreeUpdatedEvent();
+			SaveDicomServers();
+			_rootNode.LocalDataStoreNode.FireUpdated();
         }
 
         #region Properties
@@ -615,6 +612,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     [Serializable]
     public class LocalDataStore : Server, IServerTreeNode
     {
+		private event EventHandler _updated;
+
         public LocalDataStore()
         {
 
@@ -626,7 +625,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         }
 
-        #region IServerTreeNode Members
+		public event EventHandler Updated
+		{
+			add { _updated += value; }
+			remove { _updated -= value; }
+		}
+		
+		#region IServerTreeNode Members
 
         public new bool IsLocalDataStore
         {
@@ -639,6 +644,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         }
 
         #endregion
-    }
+
+		public void FireUpdated()
+		{
+			EventsHelper.Fire(_updated, this, EventArgs.Empty);
+		}
+	}
 }
 
