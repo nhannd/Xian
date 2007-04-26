@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("4006")]
+        [global::System.Configuration.DefaultSettingValueAttribute("104")]
         public int Port {
             get {
                 return ((int)(this["Port"]));

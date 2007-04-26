@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             set { this["AETitle"] = value; }
         }
 
-        [ConfigurationProperty("Port", DefaultValue = "4006")]
+        [ConfigurationProperty("Port", DefaultValue = "104")]
         public int Port
         {
             get { return (int)this["Port"]; }

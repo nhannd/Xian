@@ -61,7 +61,7 @@ namespace ClearCanvas.Dicom.Tests
             ApplicationEntity myOwnAEParameters = new ApplicationEntity(new HostName("localhost"),
                 new AETitle("CCNETTEST"), new ListeningPort(4000));
             ApplicationEntity serverAE = new ApplicationEntity(new HostName("10.2.34.203"),
-                new AETitle("AE_TITLE"), new ListeningPort(4006));
+                new AETitle("AE_TITLE"), new ListeningPort(4001));
 
             DicomClient dicomClient = new DicomClient(myOwnAEParameters);
 

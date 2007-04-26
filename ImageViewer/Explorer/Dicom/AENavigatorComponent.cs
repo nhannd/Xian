@@ -31,11 +31,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
     public interface IAENavigatorToolContext : IToolContext
     {
-        ServerTree ServerTree { get; set;}
-        event EventHandler SelectedServerChanged;
-        IDesktopWindow DesktopWindow { get; }
+		IDesktopWindow DesktopWindow { get; }
+		ClickHandlerDelegate DefaultActionHandler { get; set; }
+				
+		ServerTree ServerTree { get; }
+
+		AEServerGroup SelectedServers { get; }
+		event EventHandler SelectedServerChanged;
+        
         int UpdateType { get; set; }
-        ClickHandlerDelegate DefaultActionHandler { get; set; }
     }
 
     [AssociateView(typeof(AENavigatorComponentViewExtensionPoint))]
@@ -56,8 +60,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             public ServerTree ServerTree
             {
                 get { return _component._serverTree; }
-                set { _component._serverTree = value; }
             }
+
+			public AEServerGroup SelectedServers
+			{
+				get { return _component.SelectedServers; }
+			}
 
             public event EventHandler SelectedServerChanged
             {

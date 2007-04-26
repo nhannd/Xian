@@ -515,7 +515,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			column = new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingDateOfBirth,
-                    delegate(StudyItem item) { return DicomHelper.GetDateStringFromDicomDA(item.PatientsBirthDate); },
+                    delegate(StudyItem item) { return GetDateStringFromDicomDA(item.PatientsBirthDate); },
                     null,
                     1.0f,
                     delegate(StudyItem one, StudyItem two) { return one.PatientsBirthDate.CompareTo(two.PatientsBirthDate); });
@@ -530,7 +530,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			column = new TableColumn<StudyItem, string>(
 					SR.ColumnHeadingStudyDate,
-					delegate(StudyItem item) { return DicomHelper.GetDateStringFromDicomDA(item.StudyDate); },
+					delegate(StudyItem item){ return GetDateStringFromDicomDA(item.StudyDate); },
                     null,
                     1.0f,
                     delegate(StudyItem one, StudyItem two) {  return one.StudyDate.CompareTo(two.StudyDate); });
@@ -550,6 +550,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                     0.5f);
 
 			studyList.Columns.Add(column);
+		}
+
+		private string GetDateStringFromDicomDA(string dicomDate)
+		{
+			DateTime date;
+			if (!DateParser.Parse(dicomDate, out date))
+				return dicomDate;
+
+			return date.ToString(Format.DateFormat);
 		}
 
 		private bool StudyExists(string studyInstanceUid)

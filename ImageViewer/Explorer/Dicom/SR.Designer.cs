@@ -196,15 +196,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No servers have been selected.  Please select at least one server and try again..
-        /// </summary>
-        internal static string ExceptionNoServersSelected {
-            get {
-                return ResourceManager.GetString("ExceptionNoServersSelected", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The Server Group Name ({0}) conflicts with {1}.
         ///Please choose another Server Group Name..
         /// </summary>
@@ -407,6 +398,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string MessageFromDateIsGreaterThanToDate {
             get {
                 return ResourceManager.GetString("MessageFromDateIsGreaterThanToDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No servers have been selected.  Please select at least one server and try again..
+        /// </summary>
+        internal static string MessageNoServersSelected {
+            get {
+                return ResourceManager.GetString("MessageNoServersSelected", resourceCulture);
             }
         }
         

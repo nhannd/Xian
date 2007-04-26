@@ -177,7 +177,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer.ServerTree
 			else
 			{
 				// create default entries and save them to disk
-				_rootNode.LocalDataStoreNode = new LocalDataStore("My Studies", "", ".", "My Studies", "AETITLE", 4006);
+				_rootNode.LocalDataStoreNode = new LocalDataStore("My Studies", "", ".", "My Studies", "AETITLE", 104);
 				_rootNode.ServerGroupNode = new ServerGroup("My Servers", ".");
 				_rootNode.ServerGroupNode.ChildGroups.Add(new ServerGroup("Example Group", "./" + "My Servers"));
 				_rootNode.ServerGroupNode.ChildServers.Add(new Server("Sample server", "Rm 101", "./" + "My Servers", "localhost", "SAMPLE", 104));

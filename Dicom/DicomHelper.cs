@@ -122,25 +122,5 @@ namespace ClearCanvas.Dicom
 
             return normalizedDirectory.ToString();
         }
-
-        /// <summary>
-        /// Convert from a DICOM DT string into a string that uses
-        /// the currently configured culture. Makes use of the DateParser
-        /// static class.
-        /// </summary>
-        public static string GetDateStringFromDicomDA(string dicomDAValue)
-        {
-            if (dicomDAValue.Length < 8)
-                return dicomDAValue;
-
-            DateTime newDate;
-            if (DateParser.Parse(dicomDAValue, out newDate))
-            {
-                string[] formats = newDate.GetDateTimeFormats(Thread.CurrentThread.CurrentCulture);
-                return formats[0];
-            }
-            else
-                return dicomDAValue;
-        }
 	}
 }

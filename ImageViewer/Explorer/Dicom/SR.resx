@@ -162,9 +162,6 @@
   <data name="ExampleServer" xml:space="preserve">
     <value>Example Server</value>
   </data>
-  <data name="ExceptionNoServersSelected" xml:space="preserve">
-    <value>No servers have been selected.  Please select at least one server and try again.</value>
-  </data>
   <data name="FormatServerGroupNameConflict" xml:space="preserve">
     <value>The Server Group Name ({0}) conflicts with {1}.
 Please choose another Server Group Name.</value>
@@ -238,6 +235,9 @@ Are you sure you want to continue?</value>
   <data name="MessageFromDateIsGreaterThanToDate" xml:space="preserve">
     <value>The date range you have selected is invalid because the 'from date' is after the 'to date'.
 Please change the dates and try again.</value>
+  </data>
+  <data name="MessageNoServersSelected" xml:space="preserve">
+    <value>No servers have been selected.  Please select at least one server and try again.</value>
   </data>
   <data name="MessageServerPortMustBePositiveInteger" xml:space="preserve">
     <value>The Port must be a positive integer value.  Please enter a valid Port.</value>
