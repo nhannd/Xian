@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public StackTool()
 		{
-			this.CursorToken = new CursorToken("Icons.StackMedium.png", this.GetType().Assembly);
+			this.CursorToken = new CursorToken("Icons.StackToolSmall.png", this.GetType().Assembly);
 		}
 
 		private void CaptureBeginState(IImageBox imageBox)

@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public WindowLevelTool()
 		{
-			this.CursorToken = new CursorToken("Icons.WindowLevelMedium.png", this.GetType().Assembly);
+			this.CursorToken = new CursorToken("Icons.WindowLevelToolSmall.png", this.GetType().Assembly);
         }
 
 		public override void Initialize()

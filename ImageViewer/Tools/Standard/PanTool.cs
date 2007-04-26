@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public PanTool()
 		{
-			this.CursorToken = new CursorToken("Icons.PanMedium.png", this.GetType().Assembly);
+			this.CursorToken = new CursorToken("Icons.PanToolSmall.png", this.GetType().Assembly);
 		}
 
 		private void CaptureBeginState()

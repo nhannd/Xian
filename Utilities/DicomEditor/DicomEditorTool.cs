@@ -20,7 +20,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuDicomEditor")]
     [ClickHandler("activate", "Dump")]
     [Tooltip("activate", "OpenDicomFilesVerbose")]
-    [IconSet("activate", IconScheme.Colour, "Icons.DumpToolSmall.png", "Icons.DumpToolSmall.png", "Icons.DumpToolSmall.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.DicomEditorSmall.png", "Icons.DicomEditorMedium.png", "Icons.DicomEditorLarge.png")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[GroupHint("activate", "Tools.Dicom.Editor")]
 

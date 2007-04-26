@@ -107,9 +107,6 @@
     <EmbeddedResource Include="Icons\ReloadSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\DumpToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\PreviousSmall.png" />
   </ItemGroup>
   <ItemGroup>
@@ -147,6 +144,11 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\QuickAnonymizeToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DicomEditorSmall.png" />
+    <EmbeddedResource Include="Icons\DicomEditorToolLarge.png" />
+    <EmbeddedResource Include="Icons\DicomEditorToolMedium.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

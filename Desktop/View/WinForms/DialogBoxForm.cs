@@ -9,7 +9,7 @@ using Crownwood.DotNetMagic.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
-    public partial class DialogBoxForm : Form
+    public partial class DialogBoxForm : DotNetMagicForm
     {
         private Control _content;
 
