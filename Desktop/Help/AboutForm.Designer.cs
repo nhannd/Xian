@@ -37,18 +37,24 @@ namespace ClearCanvas.Desktop.Help
 			// 
 			// _closeButton
 			// 
+			this._closeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._closeButton.AutoSize = true;
 			this._closeButton.BackColor = System.Drawing.Color.White;
 			this._closeButton.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(150)))), ((int)(((byte)(208)))));
 			this._closeButton.Location = new System.Drawing.Point(626, 9);
 			this._closeButton.Name = "_closeButton";
+			this._closeButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
 			this._closeButton.Size = new System.Drawing.Size(33, 13);
 			this._closeButton.TabIndex = 0;
 			this._closeButton.TabStop = true;
 			this._closeButton.Text = "Close";
+			this._closeButton.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// _versionLabel
 			// 
+			this._versionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this._versionLabel.AutoSize = true;
 			this._versionLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(61)))), ((int)(((byte)(152)))), ((int)(((byte)(209)))));
 			this._versionLabel.ForeColor = System.Drawing.Color.White;
@@ -71,21 +77,24 @@ namespace ClearCanvas.Desktop.Help
 			// 
 			// _showLicenseButton
 			// 
+			this._showLicenseButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
 			this._showLicenseButton.AutoSize = true;
 			this._showLicenseButton.BackColor = System.Drawing.Color.White;
 			this._showLicenseButton.LinkColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(150)))), ((int)(((byte)(208)))));
 			this._showLicenseButton.Location = new System.Drawing.Point(585, 31);
 			this._showLicenseButton.Name = "_showLicenseButton";
+			this._showLicenseButton.RightToLeft = System.Windows.Forms.RightToLeft.No;
 			this._showLicenseButton.Size = new System.Drawing.Size(74, 13);
 			this._showLicenseButton.TabIndex = 4;
 			this._showLicenseButton.TabStop = true;
 			this._showLicenseButton.Text = "Show License";
+			this._showLicenseButton.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
 			// AboutForm
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
+			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
 			this.CancelButton = this._closeButton;
 			this.ClientSize = new System.Drawing.Size(673, 385);
 			this.ControlBox = false;
@@ -94,6 +103,8 @@ namespace ClearCanvas.Desktop.Help
 			this.Controls.Add(this._versionLabel);
 			this.Controls.Add(this._closeButton);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
 			this.Name = "AboutForm";
 			this.ShowIcon = false;
 			this.ShowInTaskbar = false;
