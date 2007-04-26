@@ -57,6 +57,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				return;
 			}
 
+			if (aeNavigator.SelectedServers.Servers.Count > 1)
+			{
+				if (Platform.ShowMessageBox(SR.MessageConfirmSendToMultipleServers, MessageBoxActions.YesNo) == DialogBoxAction.No)
+					return;
+			}
+
 			List<string> studyUids = new List<string>();
 			foreach (StudyItem item in this.Context.SelectedStudies)
 				studyUids.Add(item.StudyInstanceUID);

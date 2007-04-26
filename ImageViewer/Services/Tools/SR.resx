@@ -168,6 +168,9 @@
   <data name="MessageClearInactiveFailed" xml:space="preserve">
     <value>Failed to clear the selected items.</value>
   </data>
+  <data name="MessageConfirmSendToMultipleServers" xml:space="preserve">
+    <value>You have selected multiple servers to send to.  Are you sure you want to continue?</value>
+  </data>
   <data name="MessageFailedToImportSelection" xml:space="preserve">
     <value>Failed to initiate an import of the selected items.</value>
   </data>

@@ -214,6 +214,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You have selected multiple servers to send to.  Are you sure you want to continue?.
+        /// </summary>
+        internal static string MessageConfirmSendToMultipleServers {
+            get {
+                return ResourceManager.GetString("MessageConfirmSendToMultipleServers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to initiate an import of the selected items..
         /// </summary>
         internal static string MessageFailedToImportSelection {
