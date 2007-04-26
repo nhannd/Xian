@@ -12,7 +12,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 #if DEBUG
 	[MenuAction("apply", "global-menus/MenuTools/MenuUtilities/MenuMemoryUsage")]
-	[IconSet("apply", IconScheme.Colour, "Icons.MemoryUsageToolSmall.png", "Icons.MemoryUsageToolMedium.png", "Icons.MemoryUsageToolLarge.png")]
 	[ClickHandler("apply", "Apply")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]

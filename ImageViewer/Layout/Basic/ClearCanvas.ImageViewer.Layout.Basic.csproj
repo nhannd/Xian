@@ -124,8 +124,8 @@
     <Compile Include="StoredLayoutConfiguration.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\LayoutLarge.png" />
-    <EmbeddedResource Include="Icons\LayoutMedium.png" />
+    <EmbeddedResource Include="Icons\LayoutToolLarge.png" />
+    <EmbeddedResource Include="Icons\LayoutToolMedium.png" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
@@ -139,6 +139,9 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="LayoutConfigurationSettingsDefaults.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\LayoutToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />

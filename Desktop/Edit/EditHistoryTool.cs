@@ -13,7 +13,7 @@ namespace ClearCanvas.Desktop.Edit
     [ButtonAction("undo", "global-toolbars/ToolbarStandard/ToolbarUndo")]
     [ClickHandler("undo", "Undo")]
     [EnabledStateObserver("undo", "UndoEnabled", "UndoEnabledChanged")]
-    [IconSet("undo", IconScheme.Colour, "", "Icons.UndoMedium.png", "Icons.UndoLarge.png")]
+	[IconSet("undo", IconScheme.Colour, "Icons.UndoToolSmall.png", "Icons.UndoToolMedium.png", "Icons.UndoToolLarge.png")]
     [Tooltip("undo", "TooltipUndo")]
 	[GroupHint("undo", "Application.Edit.Undo")]
 
@@ -21,7 +21,7 @@ namespace ClearCanvas.Desktop.Edit
     [ButtonAction("redo", "global-toolbars/ToolbarStandard/ToolbarRedo")]
     [ClickHandler("redo", "Redo")]
     [EnabledStateObserver("redo", "RedoEnabled", "RedoEnabledChanged")]
-    [IconSet("redo", IconScheme.Colour, "", "Icons.RedoMedium.png", "Icons.RedoLarge.png")]
+	[IconSet("redo", IconScheme.Colour, "Icons.RedoToolSmall.png", "Icons.RedoToolMedium.png", "Icons.RedoToolLarge.png")]
     [Tooltip("redo", "TooltipRedo")]
 	[GroupHint("redo", "Application.Edit.Redo")]
 

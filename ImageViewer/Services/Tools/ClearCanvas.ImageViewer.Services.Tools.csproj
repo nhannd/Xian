@@ -94,9 +94,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\DicomFileImportSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\SendStudySmall.png" />
   </ItemGroup>
   <ItemGroup>
@@ -110,24 +107,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\ClearInactiveSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DicomSendReceiveActivityLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DicomSendReceiveActivityMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DicomFileImportActivityLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DicomFileImportActivityMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\LocalDataStoreReindexLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\LocalDataStoreReindexMedium.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\ClearSelectedSmall.png" />

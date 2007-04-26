@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
     [Tooltip("activate", "TooltipZoom")]
-	[IconSet("activate", IconScheme.Colour, "", "Icons.ZoomMedium.png", "Icons.ZoomLarge.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.ZoomToolMedium.png", "Icons.ZoomToolMedium.png", "Icons.ZoomToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Zoom")]
 
 	//Mark the delegates as keyboard controllable, without assigning a default keystroke.

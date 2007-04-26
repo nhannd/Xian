@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [ClickHandler("activate", "Activate")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipRotateLeft")]
-	[IconSet("activate", IconScheme.Colour, "", "Icons.RotateLeftMedium.png", "Icons.RotateLeftLarge.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.RotateLeftToolSmall.png", "Icons.RotateLeftToolMedium.png", "Icons.RotateLeftToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Rotate.Left")]
 
     [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]

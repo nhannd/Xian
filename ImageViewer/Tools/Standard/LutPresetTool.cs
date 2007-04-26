@@ -270,6 +270,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (windowCenterAndWidth == null || windowCenterAndWidth.Length == 0)
 				return;
 
+			if (double.IsNaN(windowCenterAndWidth[0].Width) ||
+				double.IsNaN(windowCenterAndWidth[0].Center))
+				return;
+
 			WindowLevelApplicator applicator = new WindowLevelApplicator(this.SelectedPresentationImage);
 			UndoableCommand command = new UndoableCommand(applicator);
 			command.Name = SR.CommandWindowLevel;

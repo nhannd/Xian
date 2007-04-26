@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._titleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._titleBar.Name = "_titleBar";
 			this._titleBar.Size = new System.Drawing.Size(687, 31);
-			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2003;
+			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black;
 			this._titleBar.TabIndex = 7;
 			this._titleBar.Text = "Send Operations";
 			// 

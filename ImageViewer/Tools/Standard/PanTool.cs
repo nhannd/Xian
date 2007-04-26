@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
 	[Tooltip("activate", "TooltipPan")]
-	[IconSet("activate", IconScheme.Colour, "", "Icons.PanMedium.png", "Icons.PanLarge.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.PanToolSmall.png", "Icons.PanToolMedium.png", "Icons.PanToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Pan")]
 
 	[KeyboardAction("panleft", "imageviewer-keyboard/ToolsStandardPan/PanLeft", KeyStroke = XKeys.Control | XKeys.Left)]

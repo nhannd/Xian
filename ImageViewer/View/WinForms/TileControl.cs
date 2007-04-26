@@ -13,6 +13,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.Desktop.View.WinForms.Renderers;
 
 namespace ClearCanvas.ImageViewer.View.WinForms
 {
@@ -56,6 +57,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			_tile.RendererChanged += new EventHandler(OnRendererChanged);
 			_tile.InformationBoxChanged += new EventHandler<InformationBoxChangedEventArgs>(OnInformationBoxChanged);
 
+			_contextMenuStrip.ImageScalingSize = new Size(24, 24);
+			_contextMenuStrip.Renderer = new ClearCanvasToolStripRenderer();
 			_contextMenuStrip.Opening += new CancelEventHandler(OnContextMenuStripOpening);
 
 			_tileController.CursorTokenChanged += new EventHandler(OnCursorTokenChanged);

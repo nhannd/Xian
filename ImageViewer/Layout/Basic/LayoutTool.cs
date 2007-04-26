@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	[MenuAction("show", "global-menus/MenuTools/MenuStandard/MenuLayoutManager")]
     [ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarLayoutManager")]
     [ClickHandler("show", "Show")]
-    [IconSet("show", IconScheme.Colour, "", "Icons.LayoutMedium.png", "Icons.LayoutLarge.png")]
+	[IconSet("show", IconScheme.Colour, "Icons.LayoutToolSmall.png", "Icons.LayoutToolMedium.png", "Icons.LayoutToolLarge.png")]
     [Tooltip("show", "Layout Manager")]
 	[GroupHint("show", "Application.Workspace.Layout.Basic")]
 

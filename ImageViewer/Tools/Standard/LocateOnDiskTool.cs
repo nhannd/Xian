@@ -17,7 +17,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuLocateOnDisk")]
 	[Tooltip("activate", "Locates the selected image(s) on disk")]
-	[IconSet("activate", IconScheme.Colour, "", "Icons.LocateOnDiskToolMedium.png", "Icons.LocateOnDiskToolLarge.png")]
 	[ClickHandler("activate", "Activate")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(ImageViewerToolExtensionPoint))]

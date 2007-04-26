@@ -50,8 +50,9 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			// 
 			// _contextMenuStrip
 			// 
+			this._contextMenuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._contextMenuStrip.Name = "_contextMenuStrip";
-			this._contextMenuStrip.Size = new System.Drawing.Size(61, 4);
+			this._contextMenuStrip.Size = new System.Drawing.Size(153, 26);
 			// 
 			// _toolTip
 			// 
@@ -65,6 +66,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			this.ContextMenuStrip = this._contextMenuStrip;
 			this.Name = "TileControl";
 			this.ResumeLayout(false);
+
         }
 
         #endregion

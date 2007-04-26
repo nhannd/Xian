@@ -11,7 +11,7 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuDicomFileImportActivity")]
-	[IconSet("activate", IconScheme.Colour, "", "Icons.DicomFileImportActivityMedium.png", "Icons.DicomFileImportActivityLarge.png")]
+	//[IconSet("activate", IconScheme.Colour, "", "Icons.DicomFileImportActivityMedium.png", "Icons.DicomFileImportActivityLarge.png")]
 	[ClickHandler("activate", "Activate")]
 
 	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]

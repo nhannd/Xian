@@ -112,16 +112,17 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\RectangularROILarge.png" />
-    <EmbeddedResource Include="Icons\RectangularROIMedium.png" />
-    <EmbeddedResource Include="Icons\RulerLarge.png" />
-    <EmbeddedResource Include="Icons\RulerMedium.png" />
+    <EmbeddedResource Include="Icons\RectangularROIToolLarge.png" />
+    <EmbeddedResource Include="Icons\RectangularROIToolMedium.png" />
+    <EmbeddedResource Include="Icons\RulerToolLarge.png" />
+    <EmbeddedResource Include="Icons\RulerToolMedium.png" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\DeleteGraphicSmall.png" />
+    <EmbeddedResource Include="Icons\RectangularROIToolSmall.png" />
+    <EmbeddedResource Include="Icons\RulerToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />

@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 	[MenuAction("delete", "basicgraphic-menu/DeleteGraphicTool")]
 	[Tooltip("delete", "DeleteGraphicTool")]
-	[IconSet("delete", IconScheme.Colour, "Icons.DeleteGraphicSmall.png", "DeleteGraphicSmall.png", "DeleteGraphicSmall.png")]
+	//[IconSet("delete", IconScheme.Colour, "Icons.DeleteGraphicSmall.png", "DeleteGraphicSmall.png", "DeleteGraphicSmall.png")]
 	[ClickHandler("delete", "Delete")]
 
 	[ExtensionOf(typeof(GraphicToolExtensionPoint))]

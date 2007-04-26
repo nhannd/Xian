@@ -101,13 +101,17 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\RedoLarge.png" />
-    <EmbeddedResource Include="Icons\RedoMedium.png" />
-    <EmbeddedResource Include="Icons\UndoLarge.png" />
-    <EmbeddedResource Include="Icons\UndoMedium.png" />
+    <EmbeddedResource Include="Icons\RedoToolLarge.png" />
+    <EmbeddedResource Include="Icons\RedoToolMedium.png" />
+    <EmbeddedResource Include="Icons\UndoToolLarge.png" />
+    <EmbeddedResource Include="Icons\UndoToolMedium.png" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RedoToolSmall.png" />
+    <EmbeddedResource Include="Icons\UndoToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />

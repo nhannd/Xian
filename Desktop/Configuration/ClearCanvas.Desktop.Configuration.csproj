@@ -56,7 +56,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Standard\DateFormatApplicationComponent.cs" />
-    <Compile Include="Tools\MenuOptions.cs" />
+    <Compile Include="Tools\OptionsTool.cs" />
     <Compile Include="Tools\StandardOptionsConfigurationPageProvider.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -77,9 +77,9 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\MenuOptionsLarge.png" />
-    <EmbeddedResource Include="Icons\MenuOptionsMedium.png" />
-    <EmbeddedResource Include="Icons\MenuOptionsSmall.png" />
+    <EmbeddedResource Include="Icons\OptionsToolLarge.png" />
+    <EmbeddedResource Include="Icons\OptionsToolMedium.png" />
+    <EmbeddedResource Include="Icons\OptionsToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />

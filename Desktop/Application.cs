@@ -76,14 +76,6 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// The current version of the application
-        /// </summary>
-        public static string ApplicationVersion
-        {
-            get { return SR.ApplicationVersion; }
-        }
-
-        /// <summary>
         /// The <see cref="GuiToolkitID"/> of the GUI toolkit that is currently in use
         /// </summary>
         public static GuiToolkitID GuiToolkit

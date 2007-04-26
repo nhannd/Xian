@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ClickHandler("activate", "Activate")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipFlipHorizontal")]
-	[IconSet("activate", IconScheme.Colour, "", "Icons.FlipHorizontalMedium.png", "Icons.FlipHorizontalLarge.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.FlipHorizontalToolSmall.png", "Icons.FlipHorizontalToolMedium.png", "Icons.FlipHorizontalToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Flip.Horizontal")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]

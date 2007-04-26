@@ -156,22 +156,22 @@
     <Compile Include="ZoomTool.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\FlipHorizontalLarge.png" />
-    <EmbeddedResource Include="Icons\FlipHorizontalMedium.png" />
-    <EmbeddedResource Include="Icons\FlipVerticalLarge.png" />
-    <EmbeddedResource Include="Icons\FlipVerticalMedium.png" />
-    <EmbeddedResource Include="Icons\PanLarge.png" />
-    <EmbeddedResource Include="Icons\PanMedium.png" />
-    <EmbeddedResource Include="Icons\RotateLeftLarge.png" />
-    <EmbeddedResource Include="Icons\RotateLeftMedium.png" />
-    <EmbeddedResource Include="Icons\RotateRightLarge.png" />
-    <EmbeddedResource Include="Icons\RotateRightMedium.png" />
-    <EmbeddedResource Include="Icons\StackLarge.png" />
-    <EmbeddedResource Include="Icons\StackMedium.png" />
-    <EmbeddedResource Include="Icons\WindowLevelLarge.png" />
-    <EmbeddedResource Include="Icons\WindowLevelMedium.png" />
-    <EmbeddedResource Include="Icons\ZoomLarge.png" />
-    <EmbeddedResource Include="Icons\ZoomMedium.png" />
+    <EmbeddedResource Include="Icons\FlipHorizontalToolLarge.png" />
+    <EmbeddedResource Include="Icons\FlipHorizontalToolMedium.png" />
+    <EmbeddedResource Include="Icons\FlipVerticalToolLarge.png" />
+    <EmbeddedResource Include="Icons\FlipVerticalToolMedium.png" />
+    <EmbeddedResource Include="Icons\PanToolLarge.png" />
+    <EmbeddedResource Include="Icons\PanToolMedium.png" />
+    <EmbeddedResource Include="Icons\RotateLeftToolLarge.png" />
+    <EmbeddedResource Include="Icons\RotateLeftToolMedium.png" />
+    <EmbeddedResource Include="Icons\RotateRightToolLarge.png" />
+    <EmbeddedResource Include="Icons\RotateRightToolMedium.png" />
+    <EmbeddedResource Include="Icons\StackToolLarge.png" />
+    <EmbeddedResource Include="Icons\StackToolMedium.png" />
+    <EmbeddedResource Include="Icons\WindowLevelToolLarge.png" />
+    <EmbeddedResource Include="Icons\WindowLevelToolMedium.png" />
+    <EmbeddedResource Include="Icons\ZoomToolLarge.png" />
+    <EmbeddedResource Include="Icons\ZoomToolMedium.png" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
@@ -186,14 +186,9 @@
     <EmbeddedResource Include="Icons\ProbeToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\ResetLarge.png" />
-    <EmbeddedResource Include="Icons\ResetSmall.png" />
-    <EmbeddedResource Include="Icons\ResetMedium.png" />
-    <EmbeddedResource Include="Icons\LocateOnDiskToolLarge.png" />
-    <EmbeddedResource Include="Icons\LocateOnDiskToolMedium.png" />
-    <EmbeddedResource Include="Icons\MemoryUsageToolLarge.png" />
-    <EmbeddedResource Include="Icons\MemoryUsageToolMedium.png" />
-    <EmbeddedResource Include="Icons\MemoryUsageToolSmall.png" />
+    <EmbeddedResource Include="Icons\ResetToolLarge.png" />
+    <EmbeddedResource Include="Icons\ResetToolSmall.png" />
+    <EmbeddedResource Include="Icons\ResetToolMedium.png" />
     <EmbeddedResource Include="ProbeCursor.png" />
     <EmbeddedResource Include="LutPresets\DefaultVoiLutPresets.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -209,6 +204,16 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>VoiLutPresetSettings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\FlipHorizontalToolSmall.png" />
+    <EmbeddedResource Include="Icons\FlipVerticalToolSmall.png" />
+    <EmbeddedResource Include="Icons\PanToolSmall.png" />
+    <EmbeddedResource Include="Icons\RotateLeftToolSmall.png" />
+    <EmbeddedResource Include="Icons\RotateRightToolSmall.png" />
+    <EmbeddedResource Include="Icons\StackToolSmall.png" />
+    <EmbeddedResource Include="Icons\WindowLevelToolSmall.png" />
+    <EmbeddedResource Include="Icons\ZoomToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />

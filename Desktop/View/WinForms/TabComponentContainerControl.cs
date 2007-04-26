@@ -25,7 +25,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_tabControl.ControlTopOffset = 3;
 			_tabControl.ControlRightOffset = 3;
 			_tabControl.ControlBottomOffset = 3;
-			_tabControl.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2003;
 
 			foreach (TabPage page in _component.Pages)
 			{

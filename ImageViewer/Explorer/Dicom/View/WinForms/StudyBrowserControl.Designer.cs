@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._resultsTitleBar.MouseOverColor = System.Drawing.Color.Empty;
 			this._resultsTitleBar.Name = "_resultsTitleBar";
 			this._resultsTitleBar.Size = new System.Drawing.Size(623, 30);
-			this._resultsTitleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2003;
+			this._resultsTitleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black;
 			this._resultsTitleBar.TabIndex = 3;
 			this._resultsTitleBar.Text = "10 results found on server";
 			// 

@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	[MenuAction("Import", "explorerlocal-contextmenu/ImportDicomFiles")]
 	[Tooltip("Import", "TooltipImportDicomFiles")]
-	[IconSet("Import", IconScheme.Colour, "Icons.DicomFileImportSmall.png", "Icons.DicomFileImportSmall.png", "Icons.DicomFileImportSmall.png")]
+	//[IconSet("Import", IconScheme.Colour, "Icons.DicomFileImportSmall.png", "Icons.DicomFileImportSmall.png", "Icons.DicomFileImportSmall.png")]
 	[ClickHandler("Import", "Import")]
 
 	[ExtensionOf(typeof(LocalImageExplorerToolExtensionPoint))]

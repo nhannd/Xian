@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
 	[Tooltip("activate", "TooltipStack")]
-	[IconSet("activate", IconScheme.Colour, "", "Icons.StackMedium.png", "Icons.StackLarge.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.StackToolSmall.png", "Icons.StackToolMedium.png", "Icons.StackToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Stacking.Standard")]
 
 	[MouseWheelControl("StackDown", "StackUp")]

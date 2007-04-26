@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [ClickHandler("activate", "Activate")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipReset")]
-	[IconSet("activate", IconScheme.Colour, "Icons.ResetSmall.png", "Icons.ResetMedium.png", "Icons.ResetLarge.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.ResetToolSmall.png", "Icons.ResetToolMedium.png", "Icons.ResetToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Reset")]
 
 	[ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]

@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ClickHandler("activate", "Activate")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipFlipVertical")]
-	[IconSet("activate", IconScheme.Colour, "", "Icons.FlipVerticalMedium.png", "Icons.FlipVerticalLarge.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.FlipVerticalToolSmall.png", "Icons.FlipVerticalToolMedium.png", "Icons.FlipVerticalToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Orientation.Flip.Vertical")]
 
     [ClearCanvas.Common.ExtensionOf(typeof(ImageViewerToolExtensionPoint))]

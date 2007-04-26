@@ -45,8 +45,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// _mainMenu
 			// 
 			this._mainMenu.Dock = System.Windows.Forms.DockStyle.None;
-			this._mainMenu.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
-			this._mainMenu.ImageScalingSize = new System.Drawing.Size(32, 32);
+			this._mainMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._mainMenu.Location = new System.Drawing.Point(0, 0);
 			this._mainMenu.Name = "_mainMenu";
 			this._mainMenu.Size = new System.Drawing.Size(792, 24);
@@ -57,10 +56,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this._toolbar.AllowItemReorder = true;
 			this._toolbar.Dock = System.Windows.Forms.DockStyle.None;
-			this._toolbar.ImageScalingSize = new System.Drawing.Size(32, 32);
-			this._toolbar.Location = new System.Drawing.Point(3, 24);
+			this._toolbar.ImageScalingSize = new System.Drawing.Size(48, 48);
+			this._toolbar.Location = new System.Drawing.Point(0, 24);
 			this._toolbar.Name = "_toolbar";
-			this._toolbar.Size = new System.Drawing.Size(111, 25);
+			this._toolbar.Size = new System.Drawing.Size(792, 25);
+			this._toolbar.Stretch = true;
 			this._toolbar.TabIndex = 4;
 			this._toolbar.Text = "toolStrip1";
 			// 
@@ -88,7 +88,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			this._tabbedGroups.AllowDrop = true;
 			this._tabbedGroups.AtLeastOneLeaf = true;
-			this._tabbedGroups.BackColor = System.Drawing.SystemColors.Control;
+			this._tabbedGroups.BackColor = System.Drawing.Color.Black;
 			this._tabbedGroups.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
 			this._tabbedGroups.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._tabbedGroups.Location = new System.Drawing.Point(0, 0);
@@ -99,7 +99,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._tabbedGroups.ProminentLeaf = null;
 			this._tabbedGroups.ResizeBarColor = System.Drawing.SystemColors.Control;
 			this._tabbedGroups.Size = new System.Drawing.Size(792, 512);
-			this._tabbedGroups.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2003;
+			this._tabbedGroups.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black;
 			this._tabbedGroups.TabIndex = 0;
 			// 
 			// DesktopForm
@@ -113,6 +113,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.MainMenuStrip = this._mainMenu;
 			this.Name = "DesktopForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			this.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black;
 			this._toolStripContainer.ContentPanel.ResumeLayout(false);
 			this._toolStripContainer.TopToolStripPanel.ResumeLayout(false);
 			this._toolStripContainer.TopToolStripPanel.PerformLayout();

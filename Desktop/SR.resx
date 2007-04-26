@@ -120,9 +120,6 @@
   <data name="ApplicationName" xml:space="preserve">
     <value>ClearCanvas Workstation</value>
   </data>
-  <data name="ApplicationVersion" xml:space="preserve">
-    <value>0.9</value>
-  </data>
   <data name="ExceptionActionBuilderEventDoesNotExist" xml:space="preserve">
     <value>The event {0} does not exist for class {1}.</value>
   </data>

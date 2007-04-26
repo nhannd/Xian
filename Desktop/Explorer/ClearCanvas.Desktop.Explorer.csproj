@@ -114,11 +114,14 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\DashboardLarge.png" />
-    <EmbeddedResource Include="Icons\DashboardMedium.png" />
+    <EmbeddedResource Include="Icons\ExplorerToolLarge.png" />
+    <EmbeddedResource Include="Icons\ExplorerToolMedium.png" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ExplorerToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />

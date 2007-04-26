@@ -45,7 +45,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 try
                 {
-                    this.Image = IconFactory.CreateIcon(_action.IconSet.MediumIcon, _action.ResourceResolver);
+                    this.Image = IconFactory.CreateIcon(_action.IconSet.SmallIcon, _action.ResourceResolver);
                 }
                 catch (Exception e)
                 {
