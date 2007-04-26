@@ -78,11 +78,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// when the size of the overall control changes, we adjust the splitter distance
             // so as to maintain the current splitRatio
 
-            // FIX: trying to set split distance when window is minimized causes exception
-            // so don't do anything if the overall size of this control is quite small
-            if (this.Width < 20 || this.Height < 20)
-                return;
-
 			ResetSplitterDistance();
         }
 
@@ -113,11 +108,19 @@ namespace ClearCanvas.Desktop.View.WinForms
 		
 		private void ResetSplitterDistance()
         {
-            _resetting = true;
+            int baseDimension = _vertical ? _splitContainer.Width : _splitContainer.Height;
 
-			float baseDimension = _vertical ? this.Width : this.Height;
 			int min = _splitContainer.Panel1MinSize;
-			int max = _splitContainer.Width - _splitContainer.Panel2MinSize;
+			int max = baseDimension - _splitContainer.Panel2MinSize;
+
+			// rule is that SplitterDistance must be between Panel1MinSize and Width/Height - Panel2MinSize,
+			// otherwise, setting the splitter distance will throw an exception.  So, we'll just let .NET take
+			// care of it when the control is that small.
+			if (max <= min)
+				return;
+			
+			_resetting = true;
+			
 			_splitContainer.SplitterDistance = Bound(min, (int)(_splitRatio * baseDimension), max);
 
             _resetting = false;
