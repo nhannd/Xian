@@ -72,24 +72,23 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <returns></returns>
         protected override bool ProcessDialogKey(Keys keyData)
         {
-            // if the active control is a button control, it takes precedence
-            // therefore, only do this processing if the active control is not a button control
-            if (!(this.ActiveControl is IButtonControl))
-            {
-                if (keyData == Keys.Return && _acceptButton != null)
-                {
-                    _acceptButton.PerformClick();
-                    return true;    // handled
-                }
-                if (keyData == Keys.Escape && _cancelButton != null)
-                {
-                    _cancelButton.PerformClick();
-                    return true;    // handled
-                }
-            }
+			if (base.ProcessDialogKey(keyData))
+				return true;
 
-            // use default processing
-            return base.ProcessDialogKey(keyData);
+			//if none of the other controls handled it using default processing, 
+			// then try our Accept and Cancel buttons, if they are assigned.
+			if (keyData == Keys.Return && _acceptButton != null)
+			{
+					_acceptButton.PerformClick();
+					return true;    // handled
+			}
+			else if (keyData == Keys.Escape && _cancelButton != null)
+			{
+					_cancelButton.PerformClick();
+					return true;    // handled
+			}
+
+			return false;
         }
 
         /// <summary>

@@ -27,6 +27,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             _component = component;
             _description.Text = _component.Message;
 
+			base.AcceptButton = this._okButton;
+			base.CancelButton = this._okButton;
+
             // Update Exceptions detail tree
             _detailTree.BeginUpdate();
             BuildTreeFromException(null, _component.Exception);

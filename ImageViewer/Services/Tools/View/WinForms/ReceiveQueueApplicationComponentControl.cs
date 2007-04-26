@@ -5,10 +5,11 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 {
-    public partial class ReceiveQueueApplicationComponentControl : UserControl
+	public partial class ReceiveQueueApplicationComponentControl : ApplicationComponentUserControl
     {
         private ReceiveQueueApplicationComponent _component;
 

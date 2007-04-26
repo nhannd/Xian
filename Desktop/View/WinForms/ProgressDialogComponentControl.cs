@@ -27,6 +27,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             InitializeComponent();
             _component = component;
 
+			base.CancelButton = _cancelButton;
+			base.AcceptButton = _cancelButton;
+
             _cancelButton.Visible = _component.ShowCancel;
             _cancelButton.Text = _component.ButtonText;
             _message.Text = _component.ProgressMessage;

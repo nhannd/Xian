@@ -19,6 +19,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			InitializeComponent();
 
 			this.AcceptButton = _okButton;
+			this.CancelButton = _cancelButton;
 
 			DialogContent content = _component.Content;
 			Control contentControl = _component.ContentHost.ComponentView.GuiElement as Control;

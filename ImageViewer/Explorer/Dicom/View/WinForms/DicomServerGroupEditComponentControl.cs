@@ -29,6 +29,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             _component = component;
 
 			this.AcceptButton = _btnAccept;
+			this.CancelButton = _btnCancel;
 			
 			AcceptClicked += new EventHandler(OnAcceptClicked);
             CancelClicked += new EventHandler(OnCancelClicked);

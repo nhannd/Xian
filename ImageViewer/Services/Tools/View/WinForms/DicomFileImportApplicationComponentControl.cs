@@ -5,13 +5,14 @@ using System.Drawing;
 using System.Data;
 using System.Text;
 using System.Windows.Forms;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 {
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="DicomFileImportApplicationComponent"/>
     /// </summary>
-    public partial class DicomFileImportApplicationComponentControl : UserControl
+	public partial class DicomFileImportApplicationComponentControl : ApplicationComponentUserControl
     {
         private DicomFileImportApplicationComponent _component;
 

@@ -26,6 +26,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             _component = component;
             _component.CurrentPageChanged += new EventHandler(_component_CurrentNodeChanged);
 
+			base.AcceptButton = this._okButton;
+			base.CancelButton = this._cancelButton;
+
             _nextButton.DataBindings.Add("Enabled", _component, "ForwardEnabled");
             _backButton.DataBindings.Add("Enabled", _component, "BackEnabled");
             _okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled");

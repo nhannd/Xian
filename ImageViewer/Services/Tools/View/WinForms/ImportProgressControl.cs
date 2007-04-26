@@ -6,10 +6,11 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 {
-	public partial class ImportProgressControl : UserControl
+	public partial class ImportProgressControl : ApplicationComponentUserControl
 	{
 		private event EventHandler _cancelButtonClicked;
 

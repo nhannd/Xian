@@ -34,6 +34,9 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
             _vr.DataBindings.Add("Enabled", _component, "VrEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _value.DataBindings.Add("value", _component, "Value", true, DataSourceUpdateMode.OnPropertyChanged);
             _accept.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.Never);
+
+			base.AcceptButton = _accept;
+			base.CancelButton = _cancel;
         }
 
         private void _accept_Click(object sender, EventArgs e)

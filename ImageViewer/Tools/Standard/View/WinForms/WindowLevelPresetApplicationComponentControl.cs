@@ -57,6 +57,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			_level.DataBindings.Add("Value", _bindingSource, "Level", true, DataSourceUpdateMode.OnPropertyChanged);
 			_ok.DataBindings.Add("Enabled", _bindingSource, "OKEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
+			base.CancelButton = _cancel;
+			base.AcceptButton = _ok;
+
 			_ok.Click += new EventHandler(OnOK);
 			_cancel.Click += new EventHandler(OnCancel);
         }
