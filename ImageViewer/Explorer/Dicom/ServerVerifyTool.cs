@@ -28,6 +28,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             if (this.Context.SelectedServers == null || this.Context.SelectedServers.Servers == null || this.Context.SelectedServers.Servers.Count == 0)
             {
 				Platform.ShowMessageBox(SR.MessageNoServersSelected, MessageBoxActions.Ok);
+				return;
             }
 
             ApplicationEntity myAE = this.Context.ServerTree.RootNode.LocalDataStoreNode.GetApplicationEntity();
@@ -46,7 +47,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
             msgText.AppendFormat("\r\n");
             Platform.ShowMessageBox(msgText.ToString(), MessageBoxActions.Ok);
-            return;
         }
 
         protected override void OnSelectedServerChanged(object sender, EventArgs e)
