@@ -15,7 +15,6 @@
 		<DependentAuxiliaryFiles Include="$(ProjectRoot)\Utilities\Hibernate2DdlGenerator\bin\$(Configuration)\hbm2ddl.exe" />
 		<InputFiles Include="ClearCanvas.Dicom.DataStore.dll" />
 		<CombineInputFiles Include="CreateTables.clearcanvas.dicom.datastore.ddl" />
-		<CombineInputFiles Include="CreateIndices.sql" />
 		<CombineInputFiles Include="PopulateDicomDictionary.sql" />
 		<OutputFiles Include="CreateTables.clearcanvas.dicom.datastore.ddl" />
 		<OutputFiles Include="DropTables.clearcanvas.dicom.datastore.ddl" />

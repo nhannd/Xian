@@ -7,7 +7,7 @@
     </id>
     <property name="TransferSyntaxUid" column="TransferSyntaxUid_" type="string" length="64" />
     <property name="InstanceNumber" column="InstanceNumber_" type="Int32" />
-    <property name="SopInstanceUid" column="SopInstanceUid_" type="string" length="64" />
+    <property name="SopInstanceUid" column="SopInstanceUid_" type="string" length="64" not-null="true" unique="true" />
     <property name="SopClassUid" column="SopClassUid_" type="string" length="64" />
     <property name="SpecificCharacterSet" column="SpecificCharacterSet_" type="string" length="64" />
     <component name="LocationUri" class="DicomUri">

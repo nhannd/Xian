@@ -8,8 +8,10 @@ using Iesi.Collections;
 namespace ClearCanvas.Dicom.DataStore
 {
     public class ImageSopInstance : SopInstance
-    {
-        public ImageSopInstance()
+	{
+		#region Handcoded Members
+
+		public ImageSopInstance()
         {
             _windowValues = new ArrayList();
         }
@@ -97,43 +99,18 @@ namespace ClearCanvas.Dicom.DataStore
             get { return _windowValues; }
         }
 
-        public override bool Equals(object obj)
-        {
-            if (this == obj)
-                return true;
+		public override int GetHashCode()
+		{
+			return base.GetHashCode();
+		}
 
-            ImageSopInstance sop = obj as ImageSopInstance;
-            if (null == sop)
-                return false; // null or not a sop
-
-            return Equals(sop);
-        }
-
-        public bool Equals(ImageSopInstance sop)
-        {
-            // if the base class Equals returns true AND
-            // my own values are equal, then we should return true
-            bool isInstanceUidIdentical = this.SopInstanceUid == sop.SopInstanceUid;
-            bool isLocationUriIdentical = this.LocationUri != null && sop.LocationUri != null &&
-                this.LocationUri.Equals(sop.LocationUri);
-
-            return base.Equals(sop) && isInstanceUidIdentical && isLocationUriIdentical;
-        }
-
-        public override int GetHashCode()
-        {
-            int accumulator = 0;
-            foreach (char character in this.SopInstanceUid)
-            {
-                if ('.' != character)
-                    accumulator += Convert.ToInt32(character);
-                else
-                    accumulator -= 19;
-            }
-            return accumulator;
-        }
+		public override bool Equals(object obj)
+		{
+			return base.Equals(obj);
+		}
 
         #region Private members
+
         private int _samplesPerPixel;
         private int _bitsStored;
         private double _rescaleSlope;
@@ -148,6 +125,8 @@ namespace ClearCanvas.Dicom.DataStore
         private int _bitsAllocated;
         private int _highBit;
         private IList _windowValues;
-        #endregion
-    }
+
+		#endregion //Private Members
+		#endregion //Handcoded Members
+	}
 }

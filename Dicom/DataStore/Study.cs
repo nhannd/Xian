@@ -12,6 +12,7 @@ namespace ClearCanvas.Dicom.DataStore
     public class Study : IStudy
     {
         #region Handcoded Members
+
         public delegate void InitializeAssociatedCollectionCallback(object domainObject, PersistentCollection associatedCollection);
         public InitializeAssociatedCollectionCallback InitializeAssociatedCollection;
 
@@ -132,21 +133,18 @@ namespace ClearCanvas.Dicom.DataStore
             }
         }
 
-        public override bool Equals(object obj)
+		public override bool Equals(object obj)
         {
             if (this == obj)
                 return true;
 
-            Study study = obj as Study;
-            if (null == study)
-                return false; // null or not a sop
+            Study other = obj as Study;
+			if (null == other)
+                return false; // null or not a study
 
-            if (this.StudyInstanceUid != study.StudyInstanceUid)
-                return false;
-
-            return true;
+			return (this.StudyInstanceUid == other.StudyInstanceUid);
         }
-
+		
         public override int GetHashCode()
         {
             int accumulator = 0;
@@ -159,8 +157,10 @@ namespace ClearCanvas.Dicom.DataStore
             }
             return accumulator;
         }
+
         #region Private fields
-        Guid _studyOid;
+
+		Guid _studyOid;
         string _procedureCodeSequenceCodingSchemeDesignator;
         string _studyId;
         string _studyTime;
@@ -177,9 +177,11 @@ namespace ClearCanvas.Dicom.DataStore
         string _patientsSex;
         string _patientsBirthDate;
         ISet _internalSeries;
-        #endregion
-        #endregion
-        #region IStudy Members
+
+		#endregion //Private Fields
+        #endregion //Handcoded Members
+
+		#region IStudy Members
 
         public ReadOnlyCollection<ISopInstance> GetSopInstances()
         {

@@ -10,7 +10,7 @@
     <property name="StudyTime" column="StudyTime_" type="string" length="16" />
     <property name="StudyDate" column="StudyDate_" type="string" length="26" />
     <property name="AccessionNumber" column="AccessionNumber_" type="string" length="16" />
-    <property name="StudyInstanceUid" column="StudyInstanceUid_" type="string" length="64" />	
+    <property name="StudyInstanceUid" column="StudyInstanceUid_" type="string" length="64" not-null="true" unique="true" />	
     <property name="StudyDescription" column="StudyDescription_" type="string" length="64" />
     <property name="SpecificCharacterSet" column="SpecificCharacterSet_" type="string" length="64" />
     <property name="ProcedureCodeSequenceCodeValue" column="ProcedureCodeSequenceCodeValue_" type="string" length="16" />

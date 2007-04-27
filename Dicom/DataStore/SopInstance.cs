@@ -8,6 +8,7 @@ namespace ClearCanvas.Dicom.DataStore
     public abstract class SopInstance : ISopInstance
     {
         #region Handcoded Members
+
         public virtual Guid Oid
         {
             get { return _oid; }
@@ -56,7 +57,33 @@ namespace ClearCanvas.Dicom.DataStore
             set { _specificCharacterSet = value; }
         }
 
-        #region Private members
+		public override bool Equals(object obj)
+		{
+			if (this == obj)
+				return true;
+
+			SopInstance other = obj as SopInstance;
+			if (null == other)
+				return false; // null or not a sop
+
+			return (this.SopInstanceUid == other.SopInstanceUid);
+		}
+
+		public override int GetHashCode()
+		{
+			int accumulator = 0;
+			foreach (char character in this.SopInstanceUid)
+			{
+				if ('.' != character)
+					accumulator += Convert.ToInt32(character);
+				else
+					accumulator -= 19;
+			}
+			return accumulator;
+		}
+		
+		#region Private members
+
         Guid _oid;
         string _sopInstanceUid;
         string _sopClassUid;
@@ -65,8 +92,9 @@ namespace ClearCanvas.Dicom.DataStore
         int _instanceNumber;
         string _specificCharacterSet;
         Series _parentSeries;
-        #endregion
-        #endregion
+        
+		#endregion //Private Members
+        #endregion //Handcoded Members
 
         #region ISopInstance Members
 
@@ -105,6 +133,6 @@ namespace ClearCanvas.Dicom.DataStore
             return this.LocationUri;
         }
 
-        #endregion
-    }
+		#endregion
+	}
 }

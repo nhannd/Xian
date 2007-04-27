@@ -11,7 +11,8 @@ namespace ClearCanvas.Dicom.DataStore
     public class Series : ISeries
     {
         #region Handcoded Members
-        public delegate void InitializeAssociatedCollectionCallback(object domainObject, PersistentCollection associatedCollection);
+        
+		public delegate void InitializeAssociatedCollectionCallback(object domainObject, PersistentCollection associatedCollection);
         public InitializeAssociatedCollectionCallback InitializeAssociatedCollection;
 
         public Series()
@@ -88,14 +89,11 @@ namespace ClearCanvas.Dicom.DataStore
             if (this == obj)
                 return true;
 
-            Series series = obj as Series;
-            if (null == series)
-                return false; // null or not a sop
+			Series other = obj as Series;
+            if (null == other)
+                return false; // null or not a series
 
-            if (this.SeriesInstanceUid != series.SeriesInstanceUid)
-                return false;
-
-            return true;
+			return (this.SeriesInstanceUid == other.SeriesInstanceUid);
         }
 
         public override int GetHashCode()
@@ -112,6 +110,7 @@ namespace ClearCanvas.Dicom.DataStore
         }
 
         #region Private Members
+
         Guid _seriesOid;
         string _seriesInstanceUid;
         string _modality;
@@ -121,9 +120,11 @@ namespace ClearCanvas.Dicom.DataStore
         string _specificCharacterSet;
         ISet _internalSopInstances;
         Study _parentStudy;
-        #endregion
-        #endregion
-        #region ISeries Members
+
+		#endregion //Private Members
+		#endregion //Handcoded Members
+
+		#region ISeries Members
 
         public IEnumerable<ISopInstance> GetSopInstances()
         {
