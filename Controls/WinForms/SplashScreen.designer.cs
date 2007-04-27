@@ -43,6 +43,9 @@ namespace ClearCanvas.Controls.WinForms
 			// 
 			// _statusLabel
 			// 
+			this._statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this._statusLabel.AutoEllipsis = true;
 			this._statusLabel.BackColor = System.Drawing.Color.White;
 			this._statusLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -54,6 +57,9 @@ namespace ClearCanvas.Controls.WinForms
 			// 
 			// _versionLabel
 			// 
+			this._versionLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this._versionLabel.AutoSize = true;
 			this._versionLabel.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(61)))), ((int)(((byte)(152)))), ((int)(((byte)(209)))));
 			this._versionLabel.ForeColor = System.Drawing.Color.White;
@@ -76,15 +82,17 @@ namespace ClearCanvas.Controls.WinForms
 			// 
 			// SplashScreen
 			// 
-			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
+			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
 			this.ClientSize = new System.Drawing.Size(673, 385);
 			this.ControlBox = false;
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this._versionLabel);
 			this.Controls.Add(this._statusLabel);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
 			this.Name = "SplashScreen";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "SplashScreen";
