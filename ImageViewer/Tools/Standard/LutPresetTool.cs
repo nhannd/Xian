@@ -265,22 +265,40 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!this.Enabled)
 				return;
 
-			Window[] windowCenterAndWidth = this.SelectedImageSopProvider.ImageSop.WindowCenterAndWidth;
+			//!!TODO: this code has been basically borrowed from StandardGrayscaleImageGraphic until we can fix
+			//!! auto w/l properly for 1.0.
+			double windowWidth = double.NaN;
+			double windowCenter = double.NaN;
 
-			if (windowCenterAndWidth == null || windowCenterAndWidth.Length == 0)
-				return;
+			Window[] windows = this.SelectedImageSopProvider.ImageSop.WindowCenterAndWidth;
 
-			if (double.IsNaN(windowCenterAndWidth[0].Width) ||
-				double.IsNaN(windowCenterAndWidth[0].Center))
-				return;
+			if (windows != null)
+			{
+				windowWidth = windows[0].Width;
+				windowCenter = windows[0].Center;
+			}
+
+			//Window Width must be non-zero according to DICOM.
+			//Otherwise, we want to do something simple (pick 2^BitsStored).
+			if (windowWidth == 0 || double.IsNaN(windowWidth))
+				windowWidth = 1 << ((int)this.SelectedImageSopProvider.ImageSop.BitsStored);
+
+			//If Window Center is invalid, calculate a value based on the Window Width.
+			if (double.IsNaN(windowCenter))
+			{
+				if (this.SelectedImageSopProvider.ImageSop.PixelRepresentation == 0)
+					windowCenter = ((int)windowWidth) >> 1;
+				else
+					windowCenter = 0;
+			}
 
 			WindowLevelApplicator applicator = new WindowLevelApplicator(this.SelectedPresentationImage);
 			UndoableCommand command = new UndoableCommand(applicator);
 			command.Name = SR.CommandWindowLevel;
 			command.BeginState = applicator.CreateMemento();
 
-			this.SelectedVOILUTLinearProvider.VoiLutLinear.WindowWidth = windowCenterAndWidth[0].Width;
-			this.SelectedVOILUTLinearProvider.VoiLutLinear.WindowCenter = windowCenterAndWidth[0].Center;
+			this.SelectedVOILUTLinearProvider.VoiLutLinear.WindowWidth = windowWidth;
+			this.SelectedVOILUTLinearProvider.VoiLutLinear.WindowCenter = windowCenter;
 			this.SelectedVOILUTLinearProvider.Draw();
 
 			applicator.ApplyToLinkedImages();
