@@ -23,10 +23,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
         }
 
+		private bool NoServersSelected()
+		{
+			return this.Context.SelectedServers == null || this.Context.SelectedServers.Servers == null || this.Context.SelectedServers.Servers.Count == 0;
+		}
+
         private void VerifyServer()
         {
-            if (this.Context.SelectedServers == null || this.Context.SelectedServers.Servers == null || this.Context.SelectedServers.Servers.Count == 0)
+            if (this.NoServersSelected())
             {
+				//should never get here because the verify button should be disabled.
 				Platform.ShowMessageBox(SR.MessageNoServersSelected, MessageBoxActions.Ok);
 				return;
             }
@@ -51,8 +57,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         protected override void OnSelectedServerChanged(object sender, EventArgs e)
         {
-            this.Enabled = !this.Context.ServerTree.CurrentNode.Name.Equals(AENavigatorComponent.MyDatastoreTitle)
-                            && this.Context.ServerTree.RootNode.ServerGroupNode.ChildServers.Count > 0;
+			this.Enabled = !this.Context.ServerTree.CurrentNode.Name.Equals(AENavigatorComponent.MyDatastoreTitle) && !this.NoServersSelected();                            
         }
     }
 }

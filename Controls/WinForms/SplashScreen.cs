@@ -16,17 +16,18 @@ namespace ClearCanvas.Controls.WinForms
 	public partial class SplashScreen : Form
 	{
 		// Threading
-		static SplashScreen _splashForm = null;
-		static Thread _thread = null;
+		private static SplashScreen _splashForm = null;
+		private static Thread _thread = null;
 
 		// Fade in and out.
 		private double _opacityIncrement = .05;
 		private double _opacityDecrement = .08;
 
 		// Status and progress bar
-		static string _status;
+		private static object _statusLock = new object();
+		private static string _status;
 
-		static double _totalTime = 0;
+		private static double _totalTime = 0;
 
 		public SplashScreen()
 		{
@@ -54,6 +55,13 @@ namespace ClearCanvas.Controls.WinForms
 			// Make sure it's only launched once.
 			if (_splashForm != null)
 				return;
+
+			// According to MSDN, this needs to be the first call in the Main() function for Winforms apps
+			// in order for visual styles to work properly.
+			// For some reason, the fact that the Splash Screen was being created before this got called
+			// (in WinFormsView constructor) when the DesktopForm is created caused some problems with 
+			// the AENavigator tree control (the folder icons didn't show up).
+			System.Windows.Forms.Application.EnableVisualStyles();
 
 			_thread = new Thread(new ThreadStart(SplashScreen.ShowForm));
             _thread.IsBackground = true;
@@ -92,7 +100,10 @@ namespace ClearCanvas.Controls.WinForms
 		// A static method to set the status and update the reference.
 		static public void SetStatus(string newStatus)
 		{
-			_status = newStatus;
+			lock (_statusLock)
+			{
+				_status = newStatus;
+			}
 		}
 
 
@@ -112,7 +123,10 @@ namespace ClearCanvas.Controls.WinForms
 		// handle the smoothed progress bar.
 		private void _Timer_Tick(object sender, EventArgs e)
 		{
-			_statusLabel.Text = _status;
+			lock (_statusLock)
+			{
+				_statusLabel.Text = _status;
+			}
 
 			if (_opacityIncrement > 0)
 			{
