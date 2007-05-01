@@ -51,7 +51,7 @@ namespace ClearCanvas.Healthcare {
                 foreach (ModalityProcedureStepType spt in rpt.ModalityProcedureStepTypes)
                 {
                     ModalityProcedureStep sps = new ModalityProcedureStep(rp, spt, spt.DefaultModality);
-                    rp.ModalityProcedureSteps.Add(sps);
+                    rp.ProcedureSteps.Add(sps);
                 }
             }
 
@@ -74,9 +74,12 @@ namespace ClearCanvas.Healthcare {
 
             foreach (RequestedProcedure rp in this.RequestedProcedures)
             {
-                foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
+                foreach (ProcedureStep ps in rp.ProcedureSteps)
                 {
-                    mps.Discontinue();
+                    if (!ps.IsTerminated)
+                    {
+                        ps.Discontinue();
+                    }
                 }
             }        
         }

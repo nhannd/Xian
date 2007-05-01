@@ -9,9 +9,9 @@
     <many-to-one name="Order" class="Order" column="OrderOID_" not-null="true"/>
     <many-to-one name="Type" class="RequestedProcedureType" column="RequestedProcedureTypeOID_" not-null="true" fetch="join"/>
     <property name="Index" column="Index_" type="String" length="10" not-null="true"/>
-    <set name="ModalityProcedureSteps" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+    <set name="ProcedureSteps" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
       <key column="RequestedProcedureOID_"/>
-      <one-to-many class="ModalityProcedureStep"/>
+      <one-to-many class="ProcedureStep"/>
     </set>
   </class>
 </hibernate-mapping>
