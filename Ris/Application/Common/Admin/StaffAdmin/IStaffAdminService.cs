@@ -4,7 +4,7 @@ using System.ServiceModel;
 namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
 {
     /// <summary>
-    /// Provides data loading/saving for the <see cref="StaffSummaryComponent"/> and <see cref="StaffEditorComponent"/>
+    /// Provides operations to administer staffs
     /// </summary>
     [ServiceContract]
     public interface IStaffAdminService
@@ -12,51 +12,51 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         /// <summary>
         /// Search for staffs by name
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="request"><see cref="FindStaffsRequest"/></param>
+        /// <returns><see cref="FindStaffsResponse"/></returns>
         [OperationContract]
         FindStaffsResponse FindStaffs(FindStaffsRequest request);
 
         /// <summary>
-        /// List all staffs for the <see cref="StaffSummaryComponent"/>
+        /// Summary list of all staffs
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="request"><see cref="ListAllStaffsRequest"/></param>
+        /// <returns><see cref="ListAllStaffsResponse"/></returns>
         [OperationContract]
         ListAllStaffsResponse ListAllStaffs(ListAllStaffsRequest request);
 
         /// <summary>
-        /// Update changes to a staff made via the <see cref="StaffEditorComponent"/>
+        /// Add a new staff.  A staff with the same name as an existing staff cannnot be added.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="request"><see cref="AddStaffRequest"/></param>
+        /// <returns><see cref="AddStaffResponse"/></returns>
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         AddStaffResponse AddStaff(AddStaffRequest request);
 
         /// <summary>
-        /// Update changes to a staff made via the <see cref="StaffEditorComponent"/>
+        /// Update a new staff.  A staff with the same name as an existing staff cannnot be updated.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="request"><see cref="UpdateStaffRequest"/></param>
+        /// <returns><see cref="UpdateStaffResponse"/></returns>
         [OperationContract]
         [FaultContract(typeof(ConcurrentModificationException))]
         [FaultContract(typeof(RequestValidationException))]
         UpdateStaffResponse UpdateStaff(UpdateStaffRequest request);
 
         /// <summary>
-        /// Loads all staff data for the <see cref="StaffEditorComponent"/>
+        /// Load details for a specified staff
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="request"><see cref="LoadStaffForEditRequest"/></param>
+        /// <returns><see cref="LoadStaffForEditResponse"/></returns>
         [OperationContract]
         LoadStaffForEditResponse LoadStaffForEdit(LoadStaffForEditRequest request);
 
         /// <summary>
-        /// Loads all form data for the <see cref="StaffEditorComponent"/>
+        /// Loads all form data needed to edit a staff
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="request"><see cref="LoadStaffEditorFormDataRequest"/></param>
+        /// <returns><see cref="LoadStaffEditorFormDataResponse"/></returns>
         [OperationContract]
         LoadStaffEditorFormDataResponse LoadStaffEditorFormData(LoadStaffEditorFormDataRequest request);
     }

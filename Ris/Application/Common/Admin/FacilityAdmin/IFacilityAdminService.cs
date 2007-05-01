@@ -4,43 +4,43 @@ using System.ServiceModel;
 namespace ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin
 {
     /// <summary>
-    /// Provides data loading/saving for the <see cref="FacilitySummaryComponent"/> and <see cref="FacilityEditorComponent"/>
+    /// Provides operations to administer facilities
     /// </summary>
     [ServiceContract]
     public interface IFacilityAdminService
     {
         /// <summary>
-        /// List all facilities for the <see cref="FacilitySummaryComponent"/>
+        /// Summary list of all facilities
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="request"><see cref="ListAllFacilitiesRequest"/></param>
+        /// <returns><see cref="ListAllFacilitiesResponse"/></returns>
         [OperationContract]
         ListAllFacilitiesResponse ListAllFacilities(ListAllFacilitiesRequest request);
 
         /// <summary>
-        /// Add a new facility created via the <see cref="FacilityEditorComponent"/>
+        /// Add a new facility.  A facility with the same code as an existing facility cannnot be added.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="request"><see cref="AddFacilityRequest"/></param>
+        /// <returns><see cref="AddFacilityResponse"/></returns>
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         AddFacilityResponse AddFacility(AddFacilityRequest request);
 
         /// <summary>
-        /// Update changes to a facility made via the <see cref="FacilityEditorComponent"/>
+        /// Update a new facility.  A facility with the same code as an existing facility cannnot be updated.
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="request"><see cref="UpdateFacilityRequest"/></param>
+        /// <returns><see cref="UpdateFacilityResponse"/></returns>
         [OperationContract]
         [FaultContract(typeof(ConcurrentModificationException))]
         [FaultContract(typeof(RequestValidationException))]
         UpdateFacilityResponse UpdateFacility(UpdateFacilityRequest request);
 
         /// <summary>
-        /// Loads all facility data for the <see cref="FacilityEditorComponent"/>
+        /// Load details for a specified facility
         /// </summary>
-        /// <param name="request"></param>
-        /// <returns></returns>
+        /// <param name="request"><see cref="GetDataForCancelOrderTableRequest"/></param>
+        /// <returns><see cref="GetDataForCancelOrderTableResponse"/></returns>
         [OperationContract]
         LoadFacilityForEditResponse LoadFacilityForEdit(LoadFacilityForEditRequest request);
     }

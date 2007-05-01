@@ -101,7 +101,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
             PractitionerAssembler assembler = new PractitionerAssembler();
             assembler.UpdatePractitioner(request.PractitionerDetail, practitioner);
 
-            CheckForDuplicatePractitioner(request.PractitionerDetail.PersonNameDetail.FamilyName,
+            CheckForDuplicateStaff(request.PractitionerDetail.PersonNameDetail.FamilyName,
                 request.PractitionerDetail.PersonNameDetail.GivenName,
                 practitioner);
 
@@ -122,7 +122,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
             PractitionerAssembler assembler = new PractitionerAssembler();
             assembler.UpdatePractitioner(request.PractitionerDetail, practitioner);
 
-            CheckForDuplicatePractitioner(request.PractitionerDetail.PersonNameDetail.FamilyName,
+            CheckForDuplicateStaff(request.PractitionerDetail.PersonNameDetail.FamilyName,
                 request.PractitionerDetail.PersonNameDetail.GivenName,
                 practitioner);
 
@@ -132,24 +132,24 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
         #endregion
 
         /// <summary>
-        /// Helper method to check that the practitioner with the same name does not already exist
+        /// Helper method to check that the staff with the same name does not already exist
         /// </summary>
         /// <param name="familiyName"></param>
         /// <param name="givenName"></param>
         /// <param name="subject"></param>
-        private void CheckForDuplicatePractitioner(string familiyName, string givenName, Practitioner subject)
+        private void CheckForDuplicateStaff(string familiyName, string givenName, Practitioner subject)
         {
             try
             {
-                PractitionerSearchCriteria where = new PractitionerSearchCriteria();
+                StaffSearchCriteria where = new StaffSearchCriteria();
                 where.Name.FamilyName.EqualTo(familiyName);
                 where.Name.GivenName.EqualTo(givenName);
 
-                IList<Practitioner> duplicateList = PersistenceContext.GetBroker<IPractitionerBroker>().Find(where, new SearchResultPage(0, 2));
-                foreach (Practitioner duplicate in duplicateList)
+                IList<Staff> duplicateList = PersistenceContext.GetBroker<IStaffBroker>().Find(where, new SearchResultPage(0, 2));
+                foreach (Staff duplicate in duplicateList)
                 {
                     if (duplicate != subject)
-                        throw new RequestValidationException(string.Format(SR.ExceptionPractitionerAlreadyExist, familiyName, givenName));
+                        throw new RequestValidationException(string.Format(SR.ExceptionStaffAlreadyExist, familiyName, givenName));
                 }
             }
             catch (EntityNotFoundException)
