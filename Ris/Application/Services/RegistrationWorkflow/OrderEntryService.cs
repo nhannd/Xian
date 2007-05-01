@@ -26,7 +26,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             IPatientProfileBroker patientProfileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = patientProfileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
-            patientProfileBroker.LoadPatientForPatientProfile(profile);
 
             VisitSearchCriteria criteria = new VisitSearchCriteria();
             criteria.Patient.EqualTo(profile.Patient);
@@ -83,13 +82,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         public LoadDiagnosticServiceBreakdownResponse LoadDiagnosticServiceBreakdown(LoadDiagnosticServiceBreakdownRequest request)
         {
             IDiagnosticServiceBroker dsBroker = PersistenceContext.GetBroker<IDiagnosticServiceBroker>();
-            IRequestedProcedureTypeBroker rptBroker = PersistenceContext.GetBroker<IRequestedProcedureTypeBroker>();
 
             DiagnosticService diagnosticService = dsBroker.Load(request.DiagnosticServiceRef);
-            foreach (RequestedProcedureType rpt in diagnosticService.RequestedProcedureTypes)
-            {
-                rptBroker.LoadModalityProcedureStepTypesForRequestedProcedureType(rpt);
-            }
 
             OrderEntryAssembler assembler = new OrderEntryAssembler();
             return new LoadDiagnosticServiceBreakdownResponse(assembler.CreateDiagnosticServiceDetail(diagnosticService));
@@ -134,19 +128,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             Practitioner orderingPhysician = PersistenceContext.GetBroker<IPractitionerBroker>().Load(request.OrderingPhysician, EntityLoadFlags.Proxy);
             Facility orderingFacility = PersistenceContext.GetBroker<IFacilityBroker>().Load(request.OrderingFacility, EntityLoadFlags.Proxy);
             OrderPriority orderingPriority = (OrderPriority)Enum.Parse(typeof(OrderPriority), request.OrderPriority.Code);
-
             DiagnosticService diagnosticService = PersistenceContext.GetBroker<IDiagnosticServiceBroker>().Load(request.DiagnosticService);
-            IRequestedProcedureTypeBroker rptBroker = PersistenceContext.GetBroker<IRequestedProcedureTypeBroker>();
-            foreach (RequestedProcedureType rpt in diagnosticService.RequestedProcedureTypes)
-            {
-                rptBroker.LoadModalityProcedureStepTypesForRequestedProcedureType(rpt);
-            }
-
-            this.PersistenceContext.Lock(patient);
-            this.PersistenceContext.Lock(visit);
-            this.PersistenceContext.Lock(diagnosticService);
-            this.PersistenceContext.Lock(orderingPhysician);
-            this.PersistenceContext.Lock(orderingFacility);
 
             IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
             string accNum = broker.GetNextAccessionNumber();

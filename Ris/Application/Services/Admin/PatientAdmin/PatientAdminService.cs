@@ -122,14 +122,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             IPatientProfileBroker broker = PersistenceContext.GetBroker<IPatientProfileBroker>();
 
             PatientProfile profile = broker.Load(request.PatientProfileRef);
-            broker.LoadAddressesForPatientProfile(profile);
-            broker.LoadTelephoneNumbersForPatientProfile(profile);
-            broker.LoadEmailAddressesForPatientProfile(profile);
-            broker.LoadContactPersonsForPatientProfile(profile);
-            broker.LoadPatientForPatientProfile(profile);
-
-            PersistenceContext.GetBroker<IPatientBroker>().LoadNotesForPatient(profile.Patient);
-
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             return new LoadPatientProfileForAdminEditResponse(profile.Patient.GetRef(), profile.GetRef(), assembler.CreatePatientProfileDetail(profile, PersistenceContext));
         }

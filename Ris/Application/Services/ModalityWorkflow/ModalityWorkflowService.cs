@@ -55,19 +55,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             IPatientBroker patientBroker = PersistenceContext.GetBroker<IPatientBroker>();
 
             ModalityProcedureStep sps = spsBroker.Load(request.ProcedureStepRef);
-
-            // force a whole bunch of relationships to load... this could be optimized by using fetch joins
-            //spsBroker.LoadRequestedProcedureForModalityProcedureStep(sps);
-            //rpBroker.LoadOrderForRequestedProcedure(sps.RequestedProcedure);
-            orderBroker.LoadOrderingFacilityForOrder(sps.RequestedProcedure.Order);
-
-            // ensure that these associations are loaded
-            orderBroker.LoadDiagnosticServiceForOrder(sps.RequestedProcedure.Order);
-            spsBroker.LoadTypeForModalityProcedureStep(sps);
-            rpBroker.LoadTypeForRequestedProcedure(sps.RequestedProcedure);
-
-            patientBroker.LoadProfilesForPatient(sps.RequestedProcedure.Order.Patient);
-
             ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
             return new LoadWorklistItemPreviewResponse(assembler.CreateWorklistPreview(sps, request.PatientProfileAuthority));
         }

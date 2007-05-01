@@ -120,12 +120,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
             IVisitBroker broker = PersistenceContext.GetBroker<IVisitBroker>();
 
             Visit visit = broker.Load(request.VisitRef);
-            broker.LoadAmbulatoryStatusesForVisit(visit);
-            broker.LoadFacilityForVisit(visit);
-            broker.LoadLocationsForVisit(visit);
-            broker.LoadPractitionersForVisit(visit);
-            //broker.LoadPatientForVisit(visit);
-
             VisitAssembler assembler = new VisitAssembler();
             return new LoadVisitForAdminEditResponse(visit.GetRef(), assembler.CreateVisitDetail(visit, PersistenceContext));
         }

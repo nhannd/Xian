@@ -30,7 +30,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             IPatientProfileBroker profileBroker = context.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = profileBroker.Load(item.PatientProfileRef);
-            profileBroker.LoadPatientForPatientProfile(profile);
 
             return new RegistrationWorklistPreview(
                 item.PatientProfileRef,

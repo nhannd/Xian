@@ -12,6 +12,7 @@ namespace <%= namespace %>.Brokers {
     /// </summary>
 	public partial interface I<%= className %>Broker : IEntityBroker<<%= className %>, <%= searchCriteriaClassName %>>
 	{
+		/*
 		<% fields.select {|f| (f.kind == :collection && f.isLazy) || f.kind == :entity }.each do |f| %>
 		/// <summary>
 		/// Ensures that the <see cref="<%= className %>.<%= f.accessorName %>"/> association is loaded.  Does
@@ -19,6 +20,7 @@ namespace <%= namespace %>.Brokers {
 		/// </summary>
 		void Load<%= f.accessorName %>For<%= className %>(<%= className %> entity);
 		<% end %>
+		*/
 	}
 
 }

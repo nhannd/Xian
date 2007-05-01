@@ -77,8 +77,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         public LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request)
         {
             PatientProfile profile = (PatientProfile)PersistenceContext.Load(request.WorklistItem.PatientProfileRef);
-            PersistenceContext.GetBroker<IPatientProfileBroker>().LoadPatientForPatientProfile(profile);
-            PersistenceContext.GetBroker<IPatientBroker>().LoadNotesForPatient(profile.Patient);
             List<AlertNotificationDetail> alertNotifications = GetAlertsHelper(profile.Patient, this.PersistenceContext);
 
             IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)(new PatientReconciliationStrategyExtensionPoint()).CreateExtension();
@@ -104,7 +102,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             IPatientProfileBroker profileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = profileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
-            profileBroker.LoadPatientForPatientProfile(profile);
 
             return new GetDataForCheckInTableResponse(
                 CollectionUtils.Map<RequestedProcedure, CheckInTableItem, List<CheckInTableItem>>(
@@ -199,7 +196,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IRegistrationWorklistBroker broker = this.PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
 
             PatientProfile profile = profileBroker.Load((item as WorklistItem).PatientProfile, EntityLoadFlags.Proxy);
-            profileBroker.LoadPatientForPatientProfile(profile);
             return broker.GetScheduledRequestedProcedureForPatient(profile.Patient).Count > 0;
 
             //IOrderBroker orderBroker = this.CurrentContext.GetBroker<IOrderBroker>();
