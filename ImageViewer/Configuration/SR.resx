@@ -123,6 +123,21 @@
   <data name="DiskspaceManagerConfiguration" xml:space="preserve">
     <value>Diskspace Manager</value>
   </data>
+  <data name="LabelBytes" xml:space="preserve">
+    <value>bytes</value>
+  </data>
+  <data name="LabelGigabytes" xml:space="preserve">
+    <value>Gb</value>
+  </data>
+  <data name="LabelKilobytes" xml:space="preserve">
+    <value>Kb</value>
+  </data>
+  <data name="LabelMegabytes" xml:space="preserve">
+    <value>Mb</value>
+  </data>
+  <data name="LabelTerabytes" xml:space="preserve">
+    <value>Tb</value>
+  </data>
   <data name="MessageFailedToRetrieveDiskspaceManagementSettings" xml:space="preserve">
     <value>Failed to retrieve Diskspace Management settings.  Make sure the ClearCanvas Service is running.</value>
   </data>

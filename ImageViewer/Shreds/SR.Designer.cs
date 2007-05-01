@@ -268,6 +268,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unrecoverable error: Unable to determine drive..
+        /// </summary>
+        internal static string ExceptionUnableToDetermineDrive {
+            get {
+                return ResourceManager.GetString("ExceptionUnableToDetermineDrive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enumerating: {0}.
         /// </summary>
         internal static string FormatEnumeratingFile {

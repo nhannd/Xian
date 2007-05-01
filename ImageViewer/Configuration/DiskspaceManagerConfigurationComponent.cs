@@ -23,15 +23,26 @@ namespace ClearCanvas.ImageViewer.Configuration
     [AssociateView(typeof(DiskspaceManagerConfigurationComponentViewExtensionPoint))]
     public class DiskspaceManagerConfigurationComponent : ConfigurationApplicationComponent
     {
-        private string _driveName;
-        private string _status;
-        private float _lowWatermark;
-        private float _highWatermark;
-        private float _spaceUsed;
-        private float _watermarkMinDifference = 5.0F;
-        private int _checkFrequency;
+		private static readonly int _minCheckFrequency = 1;
+		private static readonly int _maxCheckFrequency = 10;
+		private static readonly float _watermarkMinDifference = 5.0F;
 
-        private DiskspaceManagerServiceClient _serviceClient;
+		private string _driveName;
+		private long _driveSize;
+		private string _driveDisplay;
+
+		private float _lowWatermark;
+        private float _highWatermark;
+		private string _lowWatermarkBytesDisplay;
+		private string _highWatermarkBytesDisplay;
+		
+		private long _spaceUsed;
+		private float _spaceUsedPercent;
+		private string _spaceUsedPercentDisplay;
+		private string _spaceUsedBytesDisplay;
+        
+		private int _checkFrequency;
+		private bool _enabled;
 
         /// <summary>
         /// Constructor
@@ -40,247 +51,299 @@ namespace ClearCanvas.ImageViewer.Configuration
         {
         }
 
-        public override void Start()
-        {
-            // TODO prepare the component for its live phase
-            ConnectToClient();
-            base.Start();
-        }
+		private void LowWatermarkChanged()
+		{
+			_lowWatermarkBytesDisplay = GetSpaceDescription(_lowWatermark / 100F);
+			
+			NotifyPropertyChanged("LowWatermark");
+			NotifyPropertyChanged("LowatermarkBytesDisplay");
+		}
 
-        public override void Stop()
-        {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
-            base.Stop();
-        }
+		private void HighWatermarkChanged()
+		{
+			_highWatermarkBytesDisplay = GetSpaceDescription(_highWatermark / 100F);
 
-        public void ConnectToClient()
-        {
-			BlockingOperation.Run(this.ConnectToClientInternal);
-			SignalPropertyChanged();
+			NotifyPropertyChanged("HighWatermark");
+			NotifyPropertyChanged("HighatermarkBytesDisplay");
 		}
 
 		private void ConnectToClientInternal()
 		{
+			DiskspaceManagerServiceClient serviceClient = new DiskspaceManagerServiceClient();
+
 			try
 			{
-				_serviceClient = new DiskspaceManagerServiceClient();
-				GetServerSettingResponse response = _serviceClient.GetServerSetting();
-				_serviceClient.Close();
+				ServiceInformation serviceInformation = serviceClient.GetServiceInformation();
+				serviceClient.Close();
 
-				_driveName = response.DriveName;
-				_status = response.Status;
-				_lowWatermark = response.LowWatermark;
-				_highWatermark = response.HighWatermark;
-				_spaceUsed = response.UsedSpace;
-				_checkFrequency = response.CheckFrequency;
+				_driveName = serviceInformation.DriveName;
+				_driveSize = serviceInformation.DriveSize;
+				_driveDisplay = String.Format("{0} ({1})", _driveName, GetSpaceDescription(1F));
+
+				_lowWatermark = serviceInformation.LowWatermark;
+				LowWatermarkChanged();
+				
+				_highWatermark = serviceInformation.HighWatermark;
+				HighWatermarkChanged();
+
+				_spaceUsed = serviceInformation.UsedSpace;
+				_spaceUsedPercent = _spaceUsed / (float)_driveSize * 100F;
+				_spaceUsedPercentDisplay = _spaceUsedPercent.ToString("F3");
+				_spaceUsedBytesDisplay = GetSpaceDescription(_spaceUsedPercent / 100F);
+				
+				_checkFrequency = serviceInformation.CheckFrequency;
+
+				this.Enabled = true;
 			}
 			catch
 			{
+				serviceClient.Abort();
+
 				_driveName = "";
-				_status = "";
+				_driveSize = 0;
+				_driveDisplay = "";
+				
 				_lowWatermark = 0.0F;
+				_lowWatermarkBytesDisplay = "";
+				
 				_highWatermark = 0.0F;
-				_spaceUsed = 0.0F;
-				_serviceClient = null;
+				_highWatermarkBytesDisplay = "";
+				
+				_spaceUsed = 0;
+				_spaceUsedPercent = 0F;
+				_spaceUsedPercentDisplay = "";
+				_spaceUsedBytesDisplay = "";
+
 				_checkFrequency = 10;
 
+				this.Enabled = false; 
+				
 				this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToRetrieveDiskspaceManagementSettings, MessageBoxActions.Ok);
 			}
 		}
 
-        public override void Save()
-        {
-            if (_serviceClient != null)
-            {
-                try
-                {
-                    UpdateServerSettingRequest request = new UpdateServerSettingRequest();
-                    request.DriveName = _driveName;
-                    request.Status = _status;
-                    request.LowWatermark = _lowWatermark;
-                    request.HighWatermark = _highWatermark;
-                    request.UsedSpace = _spaceUsed;
-                    request.CheckFrequency = _checkFrequency;
+		public override void Start()
+		{
+			Refresh();
+			base.Start();
+		}
 
-                    _serviceClient = new DiskspaceManagerServiceClient();
-                    _serviceClient.UpdateServerSetting(request);
-                    _serviceClient.Close();
-                }
-                catch
-                {
-					this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToUpdateDiskspaceManagementSettings, MessageBoxActions.Ok);
-                }
+		public override void Stop()
+		{
+			base.Stop();
+		}
+
+		public void Refresh()
+		{
+			BlockingOperation.Run(this.ConnectToClientInternal);
+			NotifyAllPropertiesChanged();
+		}
+		
+		public override void Save()
+        {
+			DiskspaceManagerServiceClient serviceClient = new DiskspaceManagerServiceClient();
+
+			try
+			{
+				serviceClient.Open();
+				ServiceConfiguration newConfiguration = new ServiceConfiguration();
+                newConfiguration.LowWatermark = _lowWatermark;
+                newConfiguration.HighWatermark = _highWatermark;
+                newConfiguration.CheckFrequency = _checkFrequency;
+
+                serviceClient.UpdateServiceConfiguration(newConfiguration);
+                serviceClient.Close();
+            }
+            catch
+            {
+				serviceClient.Abort();
+				this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToUpdateDiskspaceManagementSettings, MessageBoxActions.Ok);
             }
         }
 
-        private void SignalPropertyChanged()
-        {
-            NotifyPropertyChanged("DriveName");
-            NotifyPropertyChanged("Status");
-            NotifyPropertyChanged("LowWatermark");
-            NotifyPropertyChanged("HighWatermark");
-            NotifyPropertyChanged("UsedSpace");
-            NotifyPropertyChanged("Enabled");
-        }
+		private string GetSpaceDescription(float percentSpace)
+		{
+			double space = (double)percentSpace * this.DriveSize;
+			if (space <= 0)
+				return "";
+
+			int i = 0;
+			while (space > 1024)
+			{
+				space /= 1024;
+				if (++i == 4)
+					break;
+			}
+
+			StringBuilder builder = new StringBuilder(space.ToString("F3"));
+			switch (i)
+			{ 
+				case 4:
+					builder.AppendFormat(" {0}", SR.LabelTerabytes);
+					break;
+				case 3:
+					builder.AppendFormat(" {0}", SR.LabelGigabytes);
+					break;
+				case 2:
+					builder.AppendFormat(" {0}", SR.LabelMegabytes);
+					break;
+				case 1:
+					builder.AppendFormat(" {0}", SR.LabelKilobytes);
+					break;
+				default: //0
+					builder.AppendFormat(" {0}", SR.LabelBytes);
+					break;
+			}
+
+			return builder.ToString();
+		}
 
         #region Properties
 
-        public string DriveName
+		public bool Enabled
+		{
+			get { return _enabled; }
+			private set
+			{
+				_enabled = value;
+				NotifyPropertyChanged("Enabled");
+			}
+		}
+		
+		public string DriveName
         {
             get { return _driveName; }
-            set
-            {
-                _driveName = value;
-                this.Modified = true;
-            }
         }
 
-        public string Status
-        {
-            get { return _status; }
-            set
-            {
-                _status = value;
-                this.Modified = true;
-            }
-        }
+		public long DriveSize
+		{
+			get { return _driveSize; }
+		}
 
-        public float WatermarkMinDifference
-        {
-            get { return _watermarkMinDifference; }
-        }
+		public string DriveDisplay
+		{
+			get { return _driveDisplay; }
+		}
 
-        public float LowWatermark
-        {
-            get { return _lowWatermark; }
-            set
-            {
-                if (value >= (100.0F - _watermarkMinDifference))
-                {
-                    SignalPropertyChanged();
-                    _lowWatermark = 100.0F - _watermarkMinDifference;
-                }
-                else if (value <= 0.0F)
-                {
-                    SignalPropertyChanged();
-                    _lowWatermark = 0.0F;
-                }
-                else
-                    _lowWatermark = value;
-                if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
-                {
-                    SignalPropertyChanged();
-                    _highWatermark = _lowWatermark + _watermarkMinDifference;
-                }
-                this.Modified = true;
-            }
-        }
+		public long SpaceUsed
+		{
+			get { return _spaceUsed; }
+		}
 
-        public float HighWatermark
-        {
-            get { return _highWatermark; }
-            set
-            {
-                if (value >= 100.0F)
-                {
-                    SignalPropertyChanged();
-                    _highWatermark = 100.0F;
-                }
-                else if (value <= _watermarkMinDifference)
-                {
-                    SignalPropertyChanged();
-                    _highWatermark = _watermarkMinDifference;
-                }
-                else
-                    _highWatermark = value;
-                if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
-                {
-                    SignalPropertyChanged();
-                    _lowWatermark = _highWatermark - _watermarkMinDifference;
-                }
-                this.Modified = true;
-            }
-        }
+		public float SpaceUsedPercent
+		{
+			get { return _spaceUsedPercent; }
+		}
 
-        public float SpaceUsed
-        {
-            get { return _spaceUsed; }
-            set
-            {
-                _spaceUsed = value;
-                this.Modified = true;
-            }
-        }
+		public string SpaceUsedPercentDisplay
+		{
+			get { return _spaceUsedPercentDisplay; }
+		}
 
-        public float LowWatermarkDisplay
-        {
-            get { return (_lowWatermark * 100.0F); }
-            set
-            {
-                if (value >= (100.0F - _watermarkMinDifference) * 100.0F)
-                {
-                    SignalPropertyChanged();
-                    _lowWatermark = (100.0F - _watermarkMinDifference);
-                }
-                else if (value <= 0.0F)
-                {
-                    SignalPropertyChanged();
-                    _lowWatermark = 0.0F;
-                }
-                else
-                    _lowWatermark = value / 100.0F;
-                if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
-                {
-                    SignalPropertyChanged();
-                    _highWatermark = _lowWatermark + _watermarkMinDifference;
-                }
-                this.Modified = true;
-            }
-        }
+		public string SpaceUsedBytesDisplay
+		{
+			get { return _spaceUsedBytesDisplay; }
+		}
 
-        public float HighWatermarkDisplay
-        {
-            get { return (_highWatermark * 100.0F); }
-            set
-            {
-                if (value >= 10000.0F)
-                {
-                    SignalPropertyChanged();
-                    _highWatermark = 100.0F;
-                }
-                else if (value <= (_watermarkMinDifference * 100.0F))
-                {
-                    SignalPropertyChanged();
-                    _highWatermark = _watermarkMinDifference;
-                }
-                else
-                    _highWatermark = value / 100.0F;
-                if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
-                {
-                    SignalPropertyChanged();
-                    _lowWatermark = _highWatermark - _watermarkMinDifference;
-                }
-                this.Modified = true;
-            }
-        }
+		public int MinimumCheckFrequency
+		{
+			get { return _minCheckFrequency; }
+		}
 
-        public int CheckFrequency
-        {
-            get { return _checkFrequency; }
-            set
-            {
-                _checkFrequency = value;
-                this.Modified = true;
-            }
-        }
+		public int MaximumCheckFrequency
+		{
+			get { return _maxCheckFrequency; }
+		}
+		
+		public int CheckFrequency
+		{
+			get { return _checkFrequency; }
+			set
+			{
+				int checkFrequency = Math.Max(value, _minCheckFrequency);
+				checkFrequency = Math.Min(value, _maxCheckFrequency);
 
-        public bool Enabled
-        {
-            get { return _serviceClient != null && !DriveName.Equals(""); }
-        }
+				if (_checkFrequency != checkFrequency)
+				{
+					_checkFrequency = checkFrequency;
+					this.Modified = true;
 
-        #endregion
+					NotifyPropertyChanged("CheckFrequency");
+				}
+			}
+		}
 
+		public float WatermarkMinDifference
+		{
+			get { return _watermarkMinDifference; }
+		}
+
+		public string LowWaterMarkBytesDisplay
+		{
+			get { return _lowWatermarkBytesDisplay; }
+		}
+		
+		public string HighWaterMarkBytesDisplay
+		{
+			get { return _highWatermarkBytesDisplay; }
+		}
+
+		public float LowWatermark
+		{
+			get { return _lowWatermark; }
+			set
+			{
+				if (value >= (100.0F - _watermarkMinDifference))
+				{
+					_lowWatermark = 100.0F - _watermarkMinDifference;
+				}
+				else if (value <= 0.0F)
+				{
+					_lowWatermark = 0.0F;
+				}
+				else
+					_lowWatermark = value;
+
+				LowWatermarkChanged();
+
+				if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
+				{
+					_highWatermark = _lowWatermark + _watermarkMinDifference;
+					HighWatermarkChanged();
+				}
+
+				this.Modified = true;
+			}
+		}
+
+		public float HighWatermark
+		{
+			get { return _highWatermark; }
+			set
+			{
+				if (value >= 100.0F)
+				{
+					_highWatermark = 100.0F;
+				}
+				else if (value <= _watermarkMinDifference)
+				{
+					_highWatermark = _watermarkMinDifference;
+				}
+				else
+					_highWatermark = value;
+
+				HighWatermarkChanged();
+
+				if (_highWatermark <= (_lowWatermark + _watermarkMinDifference))
+				{
+					_lowWatermark = _highWatermark - _watermarkMinDifference;
+					LowWatermarkChanged();
+				}
+
+				this.Modified = true;
+			}
+		}
+
+		#endregion
     }
 }

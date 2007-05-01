@@ -12,14 +12,14 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
 		{
 		}
 
-		public GetServerSettingResponse GetServerSetting()
+		public ServiceInformation GetServiceInformation()
 		{
-			return base.Channel.GetServerSetting();
+			return base.Channel.GetServiceInformation();
 		}
 
-		public void UpdateServerSetting(UpdateServerSettingRequest request)
+		public void UpdateServiceConfiguration(ServiceConfiguration newConfiguration)
 		{
-			base.Channel.UpdateServerSetting(request);
+			base.Channel.UpdateServiceConfiguration(newConfiguration);
 		}
 	}
 }
