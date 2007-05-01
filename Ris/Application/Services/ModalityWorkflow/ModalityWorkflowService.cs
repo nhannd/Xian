@@ -62,8 +62,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
-            ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
-            return new GetOperationEnablementResponse(GetOperationEnablement(assembler.CreateWorklistItem(request.WorklistItem)));
+            return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.WorklistItem.ProcedureStepRef)));
         }
     }
 }

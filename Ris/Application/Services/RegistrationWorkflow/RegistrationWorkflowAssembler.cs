@@ -125,19 +125,5 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 domainItem.DateOfBirth,
                 new EnumValueInfo(sex.Code.ToString(), sex.Value));
         }
-
-        public WorklistItem CreateWorklistItem(RegistrationWorklistItem item)
-        {
-            WorklistItem domainItem = new WorklistItem(
-                    item.PatientProfileRef, 
-                    new CompositeIdentifier(item.MrnID, item.MrnAssigningAuthority),
-                    new PersonName(item.Name.FamilyName, item.Name.GivenName, item.Name.MiddleName, item.Name.Prefix, item.Name.Suffix, item.Name.Degree), 
-                    new HealthcardNumber(item.Healthcard.Id, item.Healthcard.AssigningAuthority, item.Healthcard.VersionCode, item.Healthcard.ExpiryDate),
-                    item.DateOfBirth,
-                    (Sex)Enum.Parse(typeof(Sex), item.Sex.Code));
-
-            return domainItem;
-        }
-    
     }
 }

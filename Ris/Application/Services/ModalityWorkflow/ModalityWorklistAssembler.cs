@@ -27,12 +27,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             return item;
         }
 
-        public WorklistItem CreateWorklistItem(ModalityWorklistItem item)
-        {
-            //TODO still
-            throw new Exception("Feature not implemented");
-        }
-
         public ModalityWorklistPreview CreateWorklistPreview(ModalityProcedureStep mps, string patientProfileAuthority)
         {
             ModalityWorklistPreview preview = new ModalityWorklistPreview();

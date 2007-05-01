@@ -11,9 +11,24 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Registration
 {
-    public class WorklistItem : WorklistItemBase
+    public class WorklistItemKey : IWorklistItemKey
     {
         private EntityRef _patientProfile;
+
+        public WorklistItemKey(EntityRef patientProfile)
+        {
+            _patientProfile = patientProfile;
+        }
+
+        public EntityRef PatientProfile
+        {
+            get { return _patientProfile; }
+            set { _patientProfile = value; }
+        }
+    }
+
+    public class WorklistItem : WorklistItemBase
+    {
         private CompositeIdentifier _mrn;
         private PersonName _patientName;
         private HealthcardNumber _healthcardNumber;
@@ -21,8 +36,8 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         private Sex _sex;
 
         public WorklistItem(PatientProfile profile)
+            : base(new WorklistItemKey(profile.GetRef()))
         {
-            _patientProfile = profile.GetRef();
             _mrn = profile.Mrn;
             _patientName = profile.Name;
             _healthcardNumber = profile.Healthcard;
@@ -36,8 +51,8 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             HealthcardNumber healthcard,
             DateTime? dateOfBirth,
             Sex sex)
+            : base(new WorklistItemKey(profileRef))
         {
-            _patientProfile = profileRef;
             _mrn = mrn;
             _patientName = patientName;
             _healthcardNumber = healthcard;
@@ -45,23 +60,11 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             _sex = sex;
         }
 
-        public override bool Equals(object obj)
-        {
-            WorklistItem that = (WorklistItem)obj;
-            return (that != null) &&
-                (this.PatientProfile == that.PatientProfile);
-        }
-
-        public override int GetHashCode()
-        {
-            return this.PatientProfile.GetHashCode();
-        }
-
         #region Public Properties
 
         public EntityRef PatientProfile
         {
-            get { return _patientProfile; }
+            get { return (this.Key as WorklistItemKey).PatientProfile; }
         }
 
         public CompositeIdentifier Mrn

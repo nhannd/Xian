@@ -93,8 +93,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
-            RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
-            return new GetOperationEnablementResponse(GetOperationEnablement(assembler.CreateWorklistItem(request.WorklistItem)));
+            return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.WorklistItem.PatientProfileRef)));
         }
 
         [ReadOperation]
@@ -120,10 +119,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [OperationEnablement("CanCheckInProcedure")]
         public CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
         {
+            IRequestedProcedureBroker broker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
             Operations.CheckIn op = new Operations.CheckIn();
             foreach (EntityRef rpRef in request.RequestedProcedures)
             {
-                op.Execute(rpRef, this.CurrentUserStaff, this.PersistenceContext);
+                RequestedProcedure rp = broker.Load(rpRef, EntityLoadFlags.CheckVersion);
+                op.Execute(rp, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
             }
 
             return new CheckInProcedureResponse();
@@ -177,12 +178,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [OperationEnablement("CanCancelOrder")]
         public CancelOrderResponse CancelOrder(CancelOrderRequest request)
         {
+            IOrderBroker broker = PersistenceContext.GetBroker<IOrderBroker>();
             OrderCancelReason reason = (OrderCancelReason)Enum.Parse(typeof(OrderCancelReason), request.CancelReason.Code);
 
             Operations.Cancel op = new Operations.Cancel();
             foreach (EntityRef orderRef in request.CancelledOrders)
             {
-                op.Execute(orderRef, reason, this.PersistenceContext);
+                Order order = broker.Load(orderRef, EntityLoadFlags.CheckVersion);
+                op.Execute(order, reason);
             }
 
             return new CancelOrderResponse();
@@ -190,12 +193,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         #endregion
 
-        public bool CanCheckInProcedure(IWorklistItem item)
+        public bool CanCheckInProcedure(IWorklistItemKey itemKey)
         {
             IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
             IRegistrationWorklistBroker broker = this.PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
 
-            PatientProfile profile = profileBroker.Load((item as WorklistItem).PatientProfile, EntityLoadFlags.Proxy);
+            PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).PatientProfile, EntityLoadFlags.Proxy);
             return broker.GetScheduledRequestedProcedureForPatient(profile.Patient).Count > 0;
 
             //IOrderBroker orderBroker = this.CurrentContext.GetBroker<IOrderBroker>();
@@ -226,14 +229,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             //}        
         }
 
-        public bool CanCancelOrder(IWorklistItem item)
+        public bool CanCancelOrder(IWorklistItemKey itemKey)
         {
             try
             {
                 IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
                 IOrderBroker orderBroker = this.PersistenceContext.GetBroker<IOrderBroker>();
 
-                PatientProfile profile = profileBroker.Load((item as WorklistItem).PatientProfile, EntityLoadFlags.CheckVersion);
+                PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).PatientProfile, EntityLoadFlags.CheckVersion);
 
                 OrderSearchCriteria criteria = new OrderSearchCriteria();
                 criteria.Patient.EqualTo(profile.Patient);

@@ -11,32 +11,34 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Reporting
 {
+    public class WorklistItemKey : IWorklistItemKey
+    {
+        private EntityRef _procedureStep;
+
+        public WorklistItemKey(EntityRef procedureStep)
+        {
+            _procedureStep = procedureStep;
+        }
+
+        public EntityRef ProcedureStep
+        {
+            get { return _procedureStep; }
+            set { _procedureStep = value; }
+        }
+    }
+
     public class WorklistItem : WorklistItemBase
     {
-        private EntityRef _procedureStepRef;
-
         public WorklistItem(EntityRef step)
+            : base(new WorklistItemKey(step))
         {
-            _procedureStepRef = step;
-        }
-
-        public override bool Equals(object obj)
-        {
-            WorklistItem that = (WorklistItem)obj;
-            return (that != null) &&
-                (this.ProcedureStep.Equals(that.ProcedureStep));
-        }
-
-        public override int GetHashCode()
-        {
-            return this.ProcedureStep.GetHashCode();
         }
 
         #region Public Properties
 
         public EntityRef ProcedureStep
         {
-            get { return _procedureStepRef; }
+            get { return (this.Key as WorklistItemKey).ProcedureStep; }
         }
 
         #endregion

@@ -13,7 +13,30 @@ namespace ClearCanvas.Healthcare.Workflow
 {
     public abstract class WorklistItemBase : IWorklistItem
     {
+        private IWorklistItemKey _key;
 
+        protected WorklistItemBase(IWorklistItemKey key)
+        {
+            _key = key;
+        }
+
+        public IWorklistItemKey Key
+        {
+            get { return _key; }
+            set { _key = value; }
+        }
+
+        public override bool Equals(object obj)
+        {
+            WorklistItemBase that = (WorklistItemBase)obj;
+            return (that != null) &&
+                (this.Key == that.Key);
+        }
+
+        public override int GetHashCode()
+        {
+            return this.Key.GetHashCode();
+        }
     }
 
     public abstract class WorklistBase : IWorklist

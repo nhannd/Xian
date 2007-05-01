@@ -8,8 +8,13 @@ using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Workflow
 {
+    public interface IWorklistItemKey
+    {
+    }
+
     public interface IWorklistItem
     {
+        IWorklistItemKey Key { get; set; }
     }
 
     public interface IWorklist

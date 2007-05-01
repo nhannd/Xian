@@ -13,10 +13,5 @@
       <key column="RequestedProcedureOID_"/>
       <one-to-many class="ModalityProcedureStep"/>
     </set>
-
-    <set name="CheckInProcedureSteps" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
-      <key column="RequestedProcedureOID_"/>
-      <one-to-many class="CheckInProcedureStep"/>
-    </set>
   </class>
 </hibernate-mapping>

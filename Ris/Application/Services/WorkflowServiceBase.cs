@@ -35,7 +35,7 @@ namespace ClearCanvas.Ris.Application.Services
             }
         }
 
-        class PersistentWorkflow : IWorkflow
+        protected class PersistentWorkflow : IWorkflow
         {
             private IPersistenceContext _context;
 
@@ -71,7 +71,7 @@ namespace ClearCanvas.Ris.Application.Services
             return worklist.GetWorklistCount(this.PersistenceContext);
         }
 
-        protected Dictionary<string, bool> GetOperationEnablement(IWorklistItem item)
+        protected Dictionary<string, bool> GetOperationEnablement(IWorklistItemKey itemKey)
         {
             Dictionary<string, bool> results = new Dictionary<string, bool>();
 
@@ -93,7 +93,7 @@ namespace ClearCanvas.Ris.Application.Services
                     if (enablementHelper == null)
                         throw new EnablementMethodNotFoundException(attrib.EnablementMethodName, info.Name);
 
-                    bool test = (bool) enablementHelper.Invoke(this, new object[] { item });
+                    bool test = (bool) enablementHelper.Invoke(this, new object[] { itemKey });
                     if (test == false)
                     {
                         // No need to continue after any evaluation failed

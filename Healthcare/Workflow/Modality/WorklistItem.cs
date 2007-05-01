@@ -7,6 +7,22 @@ using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Workflow.Modality
 {
+    public class WorklistItemKey : IWorklistItemKey
+    {
+        private EntityRef _procedureStep;
+
+        public WorklistItemKey(EntityRef procedureStep)
+        {
+            _procedureStep = procedureStep;
+        }
+
+        public EntityRef ProcedureStep
+        {
+            get { return _procedureStep; }
+            set { _procedureStep = value; }
+        }
+    }
+
     //TODO:  This need to be trim down to contain only fields that is in the ModalityWorklist Pane
     public class WorklistItem : WorklistItemBase
     {
@@ -14,7 +30,6 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         private EntityRef _patientProfile;
         private EntityRef _order;
         private EntityRef _requestedProcedure;
-        private EntityRef _procedureStep;
 
         private CompositeIdentifier _mrn;
         private PersonName _patientName;
@@ -43,12 +58,12 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             string modalityName,
             OrderPriority priority,
             ActivityStatus status)
+            : base(new WorklistItemKey(procedureStep.GetRef()))
         {
             _patient = patient.GetRef();
             _patientProfile = profile.GetRef();
             _order = order.GetRef();
             _requestedProcedure = requestedProcedure.GetRef();
-            _procedureStep = procedureStep.GetRef();
 
             _mrn = mrn;
             _patientName = patientName;
@@ -62,20 +77,9 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             _status = status;
         }
 
-        public override bool Equals(object obj)
-        {
-            WorklistItem that = (WorklistItem)obj;
-            return that != null && this._procedureStep.Equals(that._procedureStep);
-        }
-
-        public override int GetHashCode()
-        {
-            return _procedureStep.GetHashCode();
-        }
-
         public EntityRef ProcedureStep
         {
-            get { return _procedureStep; }
+            get { return (this.Key as WorklistItemKey).ProcedureStep; }
         }
 
         public EntityRef Patient

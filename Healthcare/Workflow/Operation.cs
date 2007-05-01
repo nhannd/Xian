@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Workflow
 {
@@ -16,26 +17,20 @@ namespace ClearCanvas.Healthcare.Workflow
 
         public class CheckIn : Operation
         {
-            public void Execute(EntityRef rpRef, Staff currentUserStaff, IPersistenceContext context)
+            public void Execute(RequestedProcedure rp, Staff currentUserStaff, IWorkflow workflow)
             {
-                RequestedProcedure rp = context.GetBroker<IRequestedProcedureBroker>().Load(rpRef);
-
                 CheckInProcedureStep cps = new CheckInProcedureStep(rp);
                 cps.Start(currentUserStaff);
                 cps.Complete(currentUserStaff);
-
-                rp.CheckInProcedureSteps.Add(cps);
-                context.Lock(rp, DirtyState.Dirty);
+                workflow.AddActivity(cps);
             }
         }
 
         public class Cancel : Operation
         {
-            public void Execute(EntityRef orderRef, OrderCancelReason reason, IPersistenceContext context)
+            public void Execute(Order order, OrderCancelReason reason)
             {
-                Order order = context.GetBroker<IOrderBroker>().Load(orderRef);
                 order.Cancel(reason);
-                context.Lock(order, DirtyState.Dirty);
             }
         }
     }
