@@ -120,7 +120,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [UpdateOperation]
-        [OperationEnablement]
+        [OperationEnablement("CanCheckInProcedure")]
         public CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
         {
             Operations.CheckIn op = new Operations.CheckIn();
@@ -177,7 +177,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [UpdateOperation]
-        [OperationEnablement]
+        [OperationEnablement("CanCancelOrder")]
         public CancelOrderResponse CancelOrder(CancelOrderRequest request)
         {
             OrderCancelReason reason = (OrderCancelReason)Enum.Parse(typeof(OrderCancelReason), request.CancelReason.Code);
@@ -232,15 +232,23 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         public bool CanCancelOrder(IWorklistItem item)
         {
-            IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
-            IOrderBroker orderBroker = this.PersistenceContext.GetBroker<IOrderBroker>();
+            try
+            {
+                IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
+                IOrderBroker orderBroker = this.PersistenceContext.GetBroker<IOrderBroker>();
 
-            PatientProfile profile = profileBroker.Load((item as WorklistItem).PatientProfile, EntityLoadFlags.CheckVersion);
+                PatientProfile profile = profileBroker.Load((item as WorklistItem).PatientProfile, EntityLoadFlags.CheckVersion);
 
-            OrderSearchCriteria criteria = new OrderSearchCriteria();
-            criteria.Patient.EqualTo(profile.Patient);
-            criteria.CancelReason.IsNull();
-            return (orderBroker.FindOne(criteria) != null);
+                OrderSearchCriteria criteria = new OrderSearchCriteria();
+                criteria.Patient.EqualTo(profile.Patient);
+                criteria.CancelReason.IsNull();
+
+                return (orderBroker.FindOne(criteria) != null);
+            }
+            catch (EntityNotFoundException)
+            {
+                return false;
+            }
         }
 
         /// <summary>

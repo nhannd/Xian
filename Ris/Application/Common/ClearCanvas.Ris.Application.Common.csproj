@@ -187,6 +187,7 @@
     <Compile Include="ContactPersonDetail.cs" />
     <Compile Include="Admin\NoteCategoryDetail.cs" />
     <Compile Include="Admin\NoteCategorySummary.cs" />
+    <Compile Include="EnablementMethodNotFoundException.cs" />
     <Compile Include="EmailAddressDetail.cs" />
     <Compile Include="EnumValueInfo.cs" />
     <Compile Include="HealthcardDetail.cs" />

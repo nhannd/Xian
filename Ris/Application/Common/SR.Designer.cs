@@ -70,6 +70,15 @@ namespace ClearCanvas.Ris.Application.Common {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot find enablement method {0} for {1}.
+        /// </summary>
+        internal static string ExceptionEnablementMethodNotFound {
+            get {
+                return ResourceManager.GetString("ExceptionEnablementMethodNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot process HL7 message.
         /// </summary>
         internal static string ExceptionHL7Processing {

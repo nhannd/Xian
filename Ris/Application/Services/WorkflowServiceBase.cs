@@ -1,15 +1,16 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
-
-using ClearCanvas.Healthcare;
-using ClearCanvas.Workflow;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Common;
-using ClearCanvas.Healthcare.Workflow;
-using System.Collections;
 using System.Reflection;
+
+using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.Workflow;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -18,11 +19,19 @@ namespace ClearCanvas.Ris.Application.Services
         protected IExtensionPoint _worklistExtPoint;
         protected IExtensionPoint _operationExtPoint;
 
-        [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
+        [AttributeUsage(AttributeTargets.Method, AllowMultiple = true, Inherited = true)]
         protected class OperationEnablementAttribute : Attribute
         {
-            public OperationEnablementAttribute()
+            private string _enablementMethodName;
+
+            public OperationEnablementAttribute(string enablementMethodName)
             {
+                _enablementMethodName = enablementMethodName;
+            }
+
+            public string EnablementMethodName
+            {
+                get { return _enablementMethodName; }
             }
         }
 
@@ -73,18 +82,27 @@ namespace ClearCanvas.Ris.Application.Services
                 if (attribs.Length < 1)
                     continue;
 
-                try
+                // Evaluate the list of enablement method in the OperationEnablementAttribute
+
+                bool enablement = true;
+                foreach (object obj in attribs)
                 {
-                    // Find the CanXXX helper class to evaluate operation enablement
-                    MethodInfo enablementHelper = serviceContractType.GetMethod(String.Format("Can{0}", info.Name));
-                    object test = enablementHelper.Invoke(this, new object[] { item });
-                    results.Add(info.Name, (bool)test);
+                    OperationEnablementAttribute attrib = obj as OperationEnablementAttribute;
+
+                    MethodInfo enablementHelper = serviceContractType.GetMethod(attrib.EnablementMethodName);
+                    if (enablementHelper == null)
+                        throw new EnablementMethodNotFoundException(attrib.EnablementMethodName, info.Name);
+
+                    bool test = (bool) enablementHelper.Invoke(this, new object[] { item });
+                    if (test == false)
+                    {
+                        // No need to continue after any evaluation failed
+                        enablement = false;
+                        break;
+                    }
                 }
-                catch (Exception e)
-                {
-                    // Helper method not found
-                    results.Add(info.Name, false);
-                }
+
+                results.Add(info.Name, enablement);
             }
 
             return results;
