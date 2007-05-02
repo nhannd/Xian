@@ -74,6 +74,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private ToolSet _toolSet;
 
+        private BackgroundTask _previewLoadTask;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -130,34 +132,69 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void UpdateDisplay()
         {
-            _worklistPreview = null;
-            _RICTable.Items.Clear();
-            
+            // if there is a preview showing, clear it
+            if (_worklistPreview != null)
+            {
+                _worklistPreview = null;
+                _RICTable.Items.Clear();
+
+                // clear current preview
+                NotifyAllPropertiesChanged();
+            }
+
             if (_worklistItem != null && _worklistItem.PatientProfileRef != null)
             {
-                try
+                LoadPreviewAsync(_worklistItem);
+            }
+        }
+
+        private void LoadPreviewAsync(RegistrationWorklistItem item)
+        {
+            // remove any previous task
+            if (_previewLoadTask != null)
+            {
+                // important to unsubscribe - in case the previous task is still running, we don't want to receive events from it anymore
+                _previewLoadTask.Terminated -= OnPreviewLoaded;
+                _previewLoadTask.Dispose();
+                _previewLoadTask = null;
+            }
+
+            // create a background task to load the preview
+            _previewLoadTask = new BackgroundTask(
+                delegate(IBackgroundTaskContext taskContext)
                 {
+                    RegistrationWorklistItem worklistItem = (RegistrationWorklistItem)taskContext.UserState;
                     Platform.GetService<IRegistrationWorkflowService>(
                         delegate(IRegistrationWorkflowService service)
                         {
-                            LoadWorklistPreviewResponse response = service.LoadWorklistPreview(new LoadWorklistPreviewRequest(_worklistItem));
-                            _worklistPreview = response.WorklistPreview;
+                            LoadWorklistPreviewResponse response = service.LoadWorklistPreview(new LoadWorklistPreviewRequest(worklistItem));
+                            taskContext.Complete(response.WorklistPreview);
                         });
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                }
+                },
+                false, item);
 
+            _previewLoadTask.Terminated += OnPreviewLoaded;
+            _previewLoadTask.Run();
+        }
+
+        private void OnPreviewLoaded(object sender, BackgroundTaskTerminatedEventArgs args)
+        {
+            if (args.Reason == BackgroundTaskTerminatedReason.Completed)
+            {
+                _worklistPreview = (RegistrationWorklistPreview)args.Result;
                 foreach (RICSummary summary in _worklistPreview.RICs)
                 {
                     _RICTable.Items.Add(summary);
                     if (_RICTable.Items.Count >= this._maxRICDisplay)
                         break;
                 }
-            }
 
-            NotifyAllPropertiesChanged();
+                NotifyAllPropertiesChanged();
+            }
+            else if (args.Reason == BackgroundTaskTerminatedReason.Exception)
+            {
+                ExceptionHandler.Report(args.Exception, this.Host.DesktopWindow);
+            }
         }
 
         #region Presentation Model
