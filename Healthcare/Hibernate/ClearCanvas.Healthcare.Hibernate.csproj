@@ -162,7 +162,6 @@
     <EmbeddedResource Include="Mappings\OrderCancelReasonEnum.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
-    <Content Include="Mappings\ModalityWorklistQuery.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
