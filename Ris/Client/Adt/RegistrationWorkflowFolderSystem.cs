@@ -160,11 +160,15 @@ namespace ClearCanvas.Ris.Client.Adt
 
             try
             {
-                Platform.GetService<IRegistrationWorkflowService>(
-                    delegate(IRegistrationWorkflowService service)
+                BlockingOperation.Run(
+                    delegate()
                     {
-                        GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem));
-                        _workflowEnablment = response.OperationEnablementDictionary;
+                        Platform.GetService<IRegistrationWorkflowService>(
+                            delegate(IRegistrationWorkflowService service)
+                            {
+                                GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem));
+                                _workflowEnablment = response.OperationEnablementDictionary;
+                            });
                     });
             }
             catch (Exception ex)
