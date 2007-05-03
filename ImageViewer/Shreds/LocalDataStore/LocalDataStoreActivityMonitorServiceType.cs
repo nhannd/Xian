@@ -4,11 +4,12 @@ using System.Text;
 using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerSession, ConcurrencyMode = ConcurrencyMode.Multiple)]
-	public class LocalDataStoreActivityMonitorServiceType : ILocalDataStoreActivityMonitorService
+	public class LocalDataStoreActivityMonitorServiceType : ILocalDataStoreActivityMonitorService, IDisposable
 	{
 		public LocalDataStoreActivityMonitorServiceType()
 		{
@@ -84,6 +85,17 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				//this is a one-way operation, so you can't throw.
 				Platform.Log(new Exception(message, e));
 			}
+		}
+
+		#endregion
+
+		#region IDisposable Members
+
+		public void Dispose()
+		{
+			string message = "Local Data Store Activity Monitor session object disposed";
+			Console.WriteLine(message);
+			Platform.Log(message);
 		}
 
 		#endregion
