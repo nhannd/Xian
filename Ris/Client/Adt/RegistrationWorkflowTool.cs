@@ -14,7 +14,7 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public class RegistrationWorkflowTool
     {
-        public abstract class WorkflowItemTool : Tool<IRegistrationWorkflowItemToolContext>
+        public abstract class WorkflowItemTool : Tool<IRegistrationWorkflowItemToolContext>, IDropHandler<RegistrationWorklistItem>
         {
             protected string _operationName;
 
@@ -37,13 +37,42 @@ namespace ClearCanvas.Ris.Client.Adt
                 remove { this.Context.SelectedItemsChanged -= value; }
             }
 
-            public abstract void Apply();
+            public virtual void Apply()
+            {
+                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(this.Context.SelectedItems);
+                Execute(item, this.Context.DesktopWindow);
+            }
+
+            protected string OperationName
+            {
+                get { return _operationName; }
+            }
+
+            protected abstract bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow);
+
+            #region IDropHandler<RegistrationWorklistItem> Members
+
+            public virtual bool CanAcceptDrop(IDropContext dropContext, ICollection<RegistrationWorklistItem> items)
+            {
+                IRegistrationWorkflowFolderDropContext ctxt = (IRegistrationWorkflowFolderDropContext)dropContext;
+                return ctxt.GetOperationEnablement(this.OperationName);
+            }
+
+            public virtual bool ProcessDrop(IDropContext dropContext, ICollection<RegistrationWorklistItem> items)
+            {
+                IRegistrationWorkflowFolderDropContext ctxt = (IRegistrationWorkflowFolderDropContext)dropContext;
+                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(items);
+                return Execute(item, ctxt.DesktopWindow);
+            }
+
+            #endregion
         }
 
         [MenuAction("apply", "folderexplorer-items-contextmenu/Check-in")]
         [ClickHandler("apply", "Apply")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
         [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+        [ExtensionOf(typeof(Folders.CheckedInFolder.DropHandlerExtensionPoint))]
         public class CheckInTool : WorkflowItemTool
         {
             public CheckInTool()
@@ -51,19 +80,32 @@ namespace ClearCanvas.Ris.Client.Adt
             {
             }
 
-            public override void Apply()
+            protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow)
             {
-                foreach (RegistrationWorklistItem item in this.Context.SelectedItems)
+                try
                 {
                     RequestedProcedureCheckInComponent checkInComponent = new RequestedProcedureCheckInComponent(item);
-                    ApplicationComponent.LaunchAsDialog(
-                        this.Context.DesktopWindow, checkInComponent, String.Format("Checking in {0}", Format.Custom(item.Name)));
+                    ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                        desktopWindow, checkInComponent, String.Format("Checking in {0}", Format.Custom(item.Name)));
 
-                    Platform.GetService<IRegistrationWorkflowService>(
-                        delegate(IRegistrationWorkflowService service)
-                        {
-                            service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedRequestedProcedures));
-                        });        
+                    if (exitCode == ApplicationComponentExitCode.Normal)
+                    {
+                        Platform.GetService<IRegistrationWorkflowService>(
+                            delegate(IRegistrationWorkflowService service)
+                            {
+                                service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedRequestedProcedures));
+                            });
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, desktopWindow);
+                    return false;
                 }
             }
         }
@@ -72,26 +114,40 @@ namespace ClearCanvas.Ris.Client.Adt
         [ClickHandler("apply", "Apply")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
         [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
-        public class CancelTool : WorkflowItemTool
+        [ExtensionOf(typeof(Folders.CancelledFolder.DropHandlerExtensionPoint))]
+        public class CancelTool : WorkflowItemTool, IDropHandler<RegistrationWorklistItem>
         {
             public CancelTool()
                 : base("CancelOrder")
             {
             }
 
-            public override void Apply()
+            protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow)
             {
-                foreach (RegistrationWorklistItem item in this.Context.SelectedItems)
+                try
                 {
                     CancelOrderComponent cancelOrderComponent = new CancelOrderComponent(item.PatientProfileRef);
-                    ApplicationComponent.LaunchAsDialog(
-                        this.Context.DesktopWindow, cancelOrderComponent, String.Format("Cancel Order for {0}", Format.Custom(item.Name)));
+                    ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                        desktopWindow, cancelOrderComponent, String.Format("Cancel Order for {0}", Format.Custom(item.Name)));
 
-                    Platform.GetService<IRegistrationWorkflowService>(
-                        delegate(IRegistrationWorkflowService service)
-                        {
-                            service.CancelOrder(new CancelOrderRequest(cancelOrderComponent.SelectedOrders, cancelOrderComponent.SelectedReason));
-                        });                
+                    if (exitCode == ApplicationComponentExitCode.Normal)
+                    {
+                        Platform.GetService<IRegistrationWorkflowService>(
+                            delegate(IRegistrationWorkflowService service)
+                            {
+                                service.CancelOrder(new CancelOrderRequest(cancelOrderComponent.SelectedOrders, cancelOrderComponent.SelectedReason));
+                            });
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, desktopWindow);
+                    return false;
                 }
             }
         }

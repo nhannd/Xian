@@ -13,15 +13,49 @@ using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
+    public interface IRegistrationWorkflowFolderDropContext : IDropContext
+    {
+        bool GetOperationEnablement(string operationName);
+    }
+
     public abstract class RegistrationWorkflowFolder : WorkflowFolder<RegistrationWorklistItem>
     {
+        class DropContext : IRegistrationWorkflowFolderDropContext
+        {
+            private RegistrationWorkflowFolder _folder;
+
+            public DropContext(RegistrationWorkflowFolder folder)
+            {
+                _folder = folder;
+            }
+
+            #region IRegistrationWorkflowFolderDropContext Members
+
+            public bool GetOperationEnablement(string operationName)
+            {
+                return _folder._folderSystem.GetOperationEnablement(operationName);
+            }
+
+            #endregion
+
+            #region IDropContext Members
+
+            public IDesktopWindow DesktopWindow
+            {
+                get { return _folder._folderSystem.DesktopWindow; }
+            }
+
+            #endregion
+        }
+
+
         private RegistrationWorkflowFolderSystem _folderSystem;
         private IconSet _closedIconSet;
         private IconSet _openIconSet;
 
         private string _worklistClassName;
 
-        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName)
+        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
             : base(folderSystem, folderName, new RegistrationWorklistTable())
         {
             _folderSystem = folderSystem;
@@ -30,7 +64,17 @@ namespace ClearCanvas.Ris.Client.Adt
             _openIconSet = new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenMedium.png");
             this.IconSet = _closedIconSet;
             this.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
+            if (dropHandlerExtensionPoint != null)
+            {
+                this.InitDragDropHandling(dropHandlerExtensionPoint, new DropContext(this));
+            }
         }
+
+        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName)
+            :this(folderSystem, folderName, null)
+        {
+        }
+
 
         public string WorklistClassName
         {
@@ -102,25 +146,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         protected override bool IsMember(RegistrationWorklistItem item)
         {
-            return true;
+            throw new NotImplementedException();
         }
 
-        protected override bool CanAcceptDrop(RegistrationWorklistItem item)
-        {
-            return false;
-        }
-
-        protected override bool ConfirmAcceptDrop(ICollection<RegistrationWorklistItem> items)
-        {
-            return true;
-        }
-
-        protected override bool ProcessDrop(RegistrationWorklistItem item)
-        {
-            return false;
-        }
-
-        protected bool GetOperationEnablement(string operationName)
+        public bool GetOperationEnablement(string operationName)
         {
             return _folderSystem.GetOperationEnablement(operationName);
         }

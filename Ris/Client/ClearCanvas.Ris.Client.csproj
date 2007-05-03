@@ -67,6 +67,8 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="IDropContext.cs" />
+    <Compile Include="IDropHandler.cs" />
     <Compile Include="IFolder.cs" />
     <Compile Include="ILoginDialog.cs" />
     <Compile Include="IPagingController.cs" />

@@ -44,8 +44,13 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
     public class CheckedInFolder : RegistrationWorkflowFolder
     {
+        [ExtensionPoint]
+        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<RegistrationWorklistItem>>
+        {
+        }
+
         public CheckedInFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Checked In")
+            : base(folderSystem, "Checked In", new DropHandlerExtensionPoint())
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
             ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "Edit.png", "Option",
@@ -53,26 +58,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
             this.RefreshTime = 30000;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn";
-        }
-
-        protected override bool CanAcceptDrop(RegistrationWorklistItem item)
-        {
-            return GetOperationEnablement("CheckInProcedure");
-        }
-
-        protected override bool ProcessDrop(RegistrationWorklistItem item)
-        {
-            RequestedProcedureCheckInComponent checkInComponent = new RequestedProcedureCheckInComponent(item);
-            ApplicationComponent.LaunchAsDialog(
-                this.WorkflowFolderSystem.DesktopWindow, checkInComponent, String.Format("Checking in {0}", Format.Custom(item.Name)));
-
-            Platform.GetService<IRegistrationWorkflowService>(
-                delegate(IRegistrationWorkflowService service)
-                {
-                    service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedRequestedProcedures));
-                });
-            
-            return true;
         }
 
         private void DisplayOption(IDesktopWindow desktopWindow)
@@ -133,8 +118,13 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
     public class CancelledFolder : RegistrationWorkflowFolder
     {
+        [ExtensionPoint]
+        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<RegistrationWorklistItem>>
+        {
+        }
+
         public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Cancelled")
+            : base(folderSystem, "Cancelled", new DropHandlerExtensionPoint())
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
             ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "Edit.png", "Option",
@@ -142,26 +132,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
             this.RefreshTime = 30000;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Cancelled";
-        }
-
-        protected override bool CanAcceptDrop(RegistrationWorklistItem item)
-        {
-            return GetOperationEnablement("CancelOrder");
-        }
-
-        protected override bool ProcessDrop(RegistrationWorklistItem item)
-        {
-            CancelOrderComponent cancelOrderComponent = new CancelOrderComponent(item.PatientProfileRef);
-            ApplicationComponent.LaunchAsDialog(
-                this.WorkflowFolderSystem.DesktopWindow, cancelOrderComponent, String.Format("Cancel Order for {0}", Format.Custom(item.Name)));
-
-            Platform.GetService<IRegistrationWorkflowService>(
-                delegate(IRegistrationWorkflowService service)
-                {
-                    service.CancelOrder(new CancelOrderRequest(cancelOrderComponent.SelectedOrders, cancelOrderComponent.SelectedReason));
-                });
-            
-            return true;
         }
 
         private void DisplayOption(IDesktopWindow desktopWindow)

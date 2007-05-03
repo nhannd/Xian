@@ -5,6 +5,7 @@ using System.Text;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -18,6 +19,10 @@ namespace ClearCanvas.Ris.Client
 
         private Timer _refreshTimer;
         private int _refreshTime;
+
+        private ExtensionPoint<IDropHandler<TItem>> _dropHandlerExtensionPoint;
+        private IDropContext _dropContext;
+        private IDropHandler<TItem> _currentDropHandler;
 
         public WorkflowFolder(WorkflowFolderSystem<TItem> folderSystem, string folderName, Table<TItem> itemsTable)
         {
@@ -169,35 +174,31 @@ namespace ClearCanvas.Ris.Client
 
         public override DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)
         {
-            bool acceptable = CollectionUtils.TrueForAll(items,
-                delegate(object item)
+            if (_dropHandlerExtensionPoint == null)
+                return DragDropKind.None;
+
+            // cast items to type safe collection
+            ICollection<TItem> dropItems = CollectionUtils.Map<object, TItem>(items, delegate(object item) { return (TItem)item; });
+
+            // check for a handler that can accept
+            _currentDropHandler = CollectionUtils.SelectFirst<IDropHandler<TItem>>(_dropHandlerExtensionPoint.CreateExtensions(),
+                delegate(IDropHandler<TItem> handler)
                 {
-                    return (item is TItem) && CanAcceptDrop((TItem)item);
+                    return handler.CanAcceptDrop(_dropContext, dropItems);
                 });
 
             // if the items are acceptable, return Move (never Copy, which would make no sense for a workflow folder)
-            return acceptable ? DragDropKind.Move : DragDropKind.None;
+            return _currentDropHandler != null ? DragDropKind.Move : DragDropKind.None;
         }
 
         public override DragDropKind AcceptDrop(object[] items, DragDropKind kind)
         {
-            if (!ConfirmAcceptDrop(CollectionUtils.Map<object, TItem>(items, delegate(object item) { return (TItem)item; })))
+            if (_currentDropHandler == null)
                 return DragDropKind.None;
 
-            foreach (TItem item in items)
-            {
-                try
-                {
-                    bool processed = ProcessDrop(item);
-                }
-                catch (Exception e)
-                {
-                    // TODO report this
-                    Console.WriteLine(e.Message);
-                }
-            }
-
-            return DragDropKind.Move;
+            // cast items to type safe collection
+            ICollection<TItem> dropItems = CollectionUtils.Map<object, TItem>(items, delegate(object item) { return (TItem)item; });
+            return _currentDropHandler.ProcessDrop(_dropContext, dropItems) ? DragDropKind.Move : DragDropKind.None;
         }
 
         protected void RestartRefreshTimer()
@@ -217,21 +218,15 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        protected void InitDragDropHandling(ExtensionPoint<IDropHandler<TItem>> dropHandlerExtensionPoint, IDropContext dropContext)
+        {
+            _dropHandlerExtensionPoint = dropHandlerExtensionPoint;
+            _dropContext = dropContext;
+        }
+
         protected abstract bool CanQuery();
         protected abstract int QueryCount();
         protected abstract IList<TItem> QueryItems();
-        protected abstract bool CanAcceptDrop(TItem item);
-        protected abstract bool ConfirmAcceptDrop(ICollection<TItem> items);
-
-        /// <summary>
-        /// Subclass implements this to process a dropped item.  Return true if the item was actually added to this folder, otherwise false.
-        /// Throw an exception to indicate an unexpected condition.
-        /// </summary>
-        /// <param name="item"></param>
-        /// <returns></returns>
-        protected abstract bool ProcessDrop(TItem item);
-
-
         protected abstract bool IsMember(TItem item);
 
         #region IDisposable Members
