@@ -140,6 +140,7 @@ namespace ClearCanvas.Ris.Client.Adt
             set
             {
                 _profile.TimeOfDeath = value;
+                _profile.DeathIndicator = (_profile.TimeOfDeath == null ? false : true);
                 this.Modified = true;
             }
         }

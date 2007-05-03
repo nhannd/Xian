@@ -46,5 +46,19 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 
         [DataMember]
         public EnumValueInfo Sex;
+
+        public override bool Equals(object obj)
+        {
+            RegistrationWorklistItem that = obj as RegistrationWorklistItem;
+            if (that != null)
+                return this.PatientProfileRef.Equals(that.PatientProfileRef);
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.PatientProfileRef.GetHashCode();
+        }
     }
 }

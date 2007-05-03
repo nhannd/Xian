@@ -14,6 +14,9 @@ namespace ClearCanvas.Ris.Client
         private event EventHandler _textChanged;
         private event EventHandler _iconChanged;
         private event EventHandler _tooltipChanged;
+        private event EventHandler _refreshBegin;
+        private event EventHandler _refreshFinish;
+
         private ActionModelNode _menuModel;
 
         private IconSet _iconSet;
@@ -23,6 +26,16 @@ namespace ClearCanvas.Ris.Client
         protected void NotifyTextChanged()
         {
             EventsHelper.Fire(_textChanged, this, EventArgs.Empty);
+        }
+
+        protected void NotifyRefreshBegin()
+        {
+            EventsHelper.Fire(_refreshBegin, this, EventArgs.Empty);
+        }
+
+        protected void NotifyRefreshFinish()
+        {
+            EventsHelper.Fire(_refreshFinish, this, EventArgs.Empty);
         }
 
         #region IFolder Members
@@ -77,6 +90,18 @@ namespace ClearCanvas.Ris.Client
         {
             add { _tooltipChanged += value; }
             remove { _tooltipChanged -= value; }
+        }
+
+        public virtual event EventHandler RefreshBegin
+        {
+            add { _refreshBegin += value; }
+            remove { _refreshBegin -= value; }
+        }
+
+        public virtual event EventHandler RefreshFinish
+        {
+            add { _refreshFinish += value; }
+            remove { _refreshFinish -= value; }
         }
 
         public virtual ActionModelNode MenuModel

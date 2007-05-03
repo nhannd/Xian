@@ -115,6 +115,7 @@ namespace ClearCanvas.Ris.Client
         private event EventHandler _folderIconChanged;
 
         private ISelection _selectedItems = Selection.Empty;
+        private ISelection _selectedItemsBeforeRefresh = Selection.Empty;
         private event EventHandler _selectedItemsChanged;
 
         private ToolSet _tools;
@@ -272,14 +273,41 @@ namespace ClearCanvas.Ris.Client
             if (_selectedFolder != folder)
             {
                 if (_selectedFolder != null)
+                {
+                    _selectedFolder.RefreshBegin -= OnSelectedFolderRefreshBegin;
+                    _selectedFolder.RefreshFinish -= OnSelectedFolderRefreshFinish;
                     _selectedFolder.CloseFolder();
+                }
 
                 _selectedFolder = folder;
                 if (_selectedFolder != null)
                 {
+                    _selectedFolder.RefreshBegin += new EventHandler(OnSelectedFolderRefreshBegin);
+                    _selectedFolder.RefreshFinish += new EventHandler(OnSelectedFolderRefreshFinish);
                     _selectedFolder.OpenFolder();
                 }
                 EventsHelper.Fire(_selectedFolderChanged, this, EventArgs.Empty);
+            }
+        }
+
+        void OnSelectedFolderRefreshBegin(object sender, EventArgs e)
+        {
+            _selectedItemsBeforeRefresh = _selectedItems;
+        }
+
+        void OnSelectedFolderRefreshFinish(object sender, EventArgs e)
+        {
+            if (!_selectedItems.Equals(_selectedItemsBeforeRefresh))
+            {
+                object sameObjFound = CollectionUtils.SelectFirst<object>(_selectedFolder.ItemsTable.Items,
+                    delegate(object obj)
+                    {
+                        return obj.Equals(_selectedItemsBeforeRefresh.Item);
+                    });
+
+                if (sameObjFound != null)
+                    this.SelectedItems = new Selection(sameObjFound);
+
             }
         }
 

@@ -112,10 +112,15 @@ namespace ClearCanvas.Ris.Client
             {
                 if (CanQuery())
                 {
+                    NotifyRefreshBegin();
+
                     IList<TItem> items = QueryItems();
                     _isPopulated = true;
                     _itemsTable.Items.Clear();
                     _itemsTable.Items.AddRange(items);
+                    _itemsTable.Sort();
+
+                    NotifyRefreshFinish();
                 }
             }
             catch (Exception e)

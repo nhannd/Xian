@@ -27,7 +27,13 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnDateOfBirth,
                 delegate(RegistrationWorklistItem item) { return Format.Date(item.DateOfBirth); }, 1.0f));
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnSex,
-                delegate(RegistrationWorklistItem item) { return Format.Custom(item.Sex); }, 0.5f));
+                delegate(RegistrationWorklistItem item) { return Format.Custom(item.Sex.Value); }, 0.5f));
+
+            // Sort the table by Name initially
+            int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<RegistrationWorklistItem> column) 
+                { return column.Name.Equals(SR.ColumnName); });
+
+            this.Sort(new TableSortParams(this.Columns[sortColumnIndex], true));
         }
    }
 }

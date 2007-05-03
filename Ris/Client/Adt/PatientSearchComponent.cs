@@ -161,6 +161,9 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get 
             {
+                if (_sexChoices == null)
+                    _sexChoices = new List<EnumValueInfo>();
+
                 List<string> values = EnumValueUtils.GetDisplayValues(_sexChoices);
                 values.Add("(Any)");
                 return values;

@@ -58,6 +58,16 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         bool IsOpen { get; }
 
+        /// <summary>
+        /// Allows the folder to notify when refresh is about to begin
+        /// </summary>
+        event EventHandler RefreshBegin;
+
+        /// <summary>
+        /// Allows the folder to notify when refresh is about to finish
+        /// </summary>
+        event EventHandler RefreshFinish;
+
         void Refresh();
         void OpenFolder();
         void CloseFolder();
