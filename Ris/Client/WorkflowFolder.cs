@@ -127,6 +127,7 @@ namespace ClearCanvas.Ris.Client
 
                     NotifyRefreshFinish();
                 }
+                this.RestartRefreshTimer();
             }
             catch (Exception e)
             {
@@ -134,7 +135,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public void RefreshCount()
+        public override void RefreshCount()
         {
             try
             {
@@ -142,6 +143,7 @@ namespace ClearCanvas.Ris.Client
                 {
                     this.ItemCount = QueryCount();
                 }
+                this.RestartRefreshTimer();
             }
             catch (Exception e)
             {
@@ -214,7 +216,7 @@ namespace ClearCanvas.Ris.Client
                 if (this.IsOpen)
                     _refreshTimer = new Timer(new TimerDelegate(Refresh), _refreshTime, _refreshTime);
                 else
-                    _refreshTimer = new Timer(new TimerDelegate(RefreshCount), 1000, _refreshTime);
+                    _refreshTimer = new Timer(new TimerDelegate(RefreshCount), _refreshTime, _refreshTime);
             }
         }
 

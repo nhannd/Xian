@@ -10,12 +10,28 @@ using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Desktop.Tables;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     public interface IRegistrationWorkflowFolderDropContext : IDropContext
     {
+        /// <summary>
+        /// Gets the enablement of the specified operation from the folder system
+        /// </summary>
+        /// <param name="operationName"></param>
+        /// <returns></returns>
         bool GetOperationEnablement(string operationName);
+
+        /// <summary>
+        /// Gets the folder that is the drop target of the current operation
+        /// </summary>
+        RegistrationWorkflowFolder DropTargetFolder { get; }
+
+        /// <summary>
+        /// Gets the folder system that owns the drop target folder
+        /// </summary>
+        RegistrationWorkflowFolderSystem FolderSystem { get; }
     }
 
     public abstract class RegistrationWorkflowFolder : WorkflowFolder<RegistrationWorklistItem>
@@ -34,6 +50,19 @@ namespace ClearCanvas.Ris.Client.Adt
             public bool GetOperationEnablement(string operationName)
             {
                 return _folder._folderSystem.GetOperationEnablement(operationName);
+            }
+
+            public RegistrationWorkflowFolder DropTargetFolder
+            {
+                get { return _folder; }
+            }
+
+            public RegistrationWorkflowFolderSystem FolderSystem
+            {
+                get
+                {
+                    return _folder._folderSystem;
+                }
             }
 
             #endregion

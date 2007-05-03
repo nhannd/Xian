@@ -9,6 +9,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -40,7 +41,11 @@ namespace ClearCanvas.Ris.Client.Adt
             public virtual void Apply()
             {
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(this.Context.SelectedItems);
-                Execute(item, this.Context.DesktopWindow);
+                bool success = Execute(item, this.Context.DesktopWindow, this.Context.Folders);
+                if (success)
+                {
+                    this.Context.SelectedFolder.Refresh();
+                }
             }
 
             protected string OperationName
@@ -48,7 +53,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 get { return _operationName; }
             }
 
-            protected abstract bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow);
+            protected abstract bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders);
 
             #region IDropHandler<RegistrationWorklistItem> Members
 
@@ -62,7 +67,13 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IRegistrationWorkflowFolderDropContext ctxt = (IRegistrationWorkflowFolderDropContext)dropContext;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(items);
-                return Execute(item, ctxt.DesktopWindow);
+                bool success = Execute(item, ctxt.DesktopWindow, ctxt.FolderSystem.Folders);
+                if (success)
+                {
+                    ctxt.FolderSystem.SelectedFolder.Refresh();
+                    return true;
+                }
+                return false;
             }
 
             #endregion
@@ -80,7 +91,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
             }
 
-            protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow)
+            protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
             {
                 try
                 {
@@ -95,6 +106,11 @@ namespace ClearCanvas.Ris.Client.Adt
                             {
                                 service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedRequestedProcedures));
                             });
+
+                        IFolder checkInFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                            delegate(IFolder f) { return f is Folders.CheckedInFolder; });
+                        checkInFolder.RefreshCount();
+
                         return true;
                     }
                     else
@@ -122,7 +138,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
             }
 
-            protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow)
+            protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
             {
                 try
                 {
@@ -137,6 +153,11 @@ namespace ClearCanvas.Ris.Client.Adt
                             {
                                 service.CancelOrder(new CancelOrderRequest(cancelOrderComponent.SelectedOrders, cancelOrderComponent.SelectedReason));
                             });
+
+                        IFolder cancelledFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                           delegate(IFolder f) { return f is Folders.CancelledFolder; });
+                        cancelledFolder.RefreshCount();
+
                         return true;
                     }
                     else

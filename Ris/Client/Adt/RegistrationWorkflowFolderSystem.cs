@@ -10,6 +10,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -29,6 +30,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
         ICollection<RegistrationWorklistItem> SelectedItems { get; }
         event EventHandler SelectedItemsChanged;
+
+        IEnumerable Folders { get; }
+        IFolder SelectedFolder { get; }
 
         IDesktopWindow DesktopWindow { get; }
     }
@@ -73,6 +77,16 @@ namespace ClearCanvas.Ris.Client.Adt
             public bool GetWorkflowOperationEnablement(string operationClass)
             {
                 return _owner.GetOperationEnablement(operationClass);
+            }
+
+            public IEnumerable Folders
+            {
+                get { return _owner.Folders; }
+            }
+
+            public IFolder SelectedFolder
+            {
+                get { return _owner.SelectedFolder; }
             }
 
             #endregion

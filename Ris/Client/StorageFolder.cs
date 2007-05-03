@@ -44,6 +44,11 @@ namespace ClearCanvas.Ris.Client
             // do nothing
         }
 
+        public override void RefreshCount()
+        {
+            // do nothing
+        }
+
         public override DragDropKind CanAcceptDrop(object[] items, DragDropKind kind)
         {
             // return the requested kind if all items are of type TItem, otherwise None

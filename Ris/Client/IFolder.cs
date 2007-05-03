@@ -69,6 +69,9 @@ namespace ClearCanvas.Ris.Client
         event EventHandler RefreshFinish;
 
         void Refresh();
+
+        void RefreshCount();
+
         void OpenFolder();
         void CloseFolder();
 

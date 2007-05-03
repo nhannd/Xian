@@ -42,6 +42,8 @@ namespace ClearCanvas.Ris.Client
 
         public abstract string Text { get; }
         public abstract void Refresh();
+        public abstract void RefreshCount();
+
         public virtual void OpenFolder() 
         {
             _isOpen = true;

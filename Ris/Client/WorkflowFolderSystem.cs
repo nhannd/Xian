@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client
             _folderExplorer.AddFolder(folder);
         }
 
-        protected IList<WorkflowFolder<TItem>> Folders
+        public IEnumerable<WorkflowFolder<TItem>> Folders
         {
             get { return _folders; }
         }
