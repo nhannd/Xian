@@ -79,6 +79,15 @@ namespace ClearCanvas.Healthcare.Hibernate {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to No staff associated to user &apos;{0}&apos;.
+        /// </summary>
+        internal static string ErrorNoStaffForUser {
+            get {
+                return ResourceManager.GetString("ErrorNoStaffForUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sequence not initialized.
         /// </summary>
         internal static string ErrorSequenceNotInitialized {

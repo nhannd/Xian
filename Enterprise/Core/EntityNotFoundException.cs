@@ -13,5 +13,10 @@ namespace ClearCanvas.Enterprise.Core
             : base(SR.ExceptionEntityNotFound, inner)
         {
         }
+
+        public EntityNotFoundException(string message, Exception inner)
+            : base(message, inner)
+        {
+        }
     }
 }

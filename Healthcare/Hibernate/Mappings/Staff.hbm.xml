@@ -52,5 +52,10 @@
       </composite-element>
     </idbag>
 
+    <!-- This property associates the staff with a User entity - may be null if the Staff is not associated with a user
+         Technically it should be a one-to-one mapping (e.g it should enforce that a Staff maps to at most one user and vice-versa.
+         However, this cannot be achieved at the database-level, as we must allow for the possibility of nulls
+    -->
+    <many-to-one name="User" class="ClearCanvas.Enterprise.Authentication.User, ClearCanvas.Enterprise.Authentication" column="UserOID_" not-null="false"/>
   </class>
 </hibernate-mapping>

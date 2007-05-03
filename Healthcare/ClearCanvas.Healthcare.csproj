@@ -48,6 +48,7 @@
     <Compile Include="Alert\PatientAlert.cs" />
     <Compile Include="Alert\IAlertNotification.cs" />
     <Compile Include="Alert\IPatientAlert.cs" />
+    <Compile Include="Brokers\IStaffBroker.cs" />
     <Compile Include="CheckInProcedureStep.cs" />
     <Compile Include="CheckInProcedureStepSearchCriteria.cs" />
     <Compile Include="Alert\IAlert.cs" />
@@ -158,6 +159,10 @@
     <ProjectReference Include="..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Enterprise\Authentication\ClearCanvas.Enterprise.Authentication.csproj">
+      <Project>{F3AC6B07-4E21-4BE2-875E-E4FC7BD240D0}</Project>
+      <Name>ClearCanvas.Enterprise.Authentication</Name>
     </ProjectReference>
     <ProjectReference Include="..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
       <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>

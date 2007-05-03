@@ -123,6 +123,9 @@
   <data name="ErrorFailedUpdateNextSequenceNumber" xml:space="preserve">
     <value>Unable to update next number in sequence</value>
   </data>
+  <data name="ErrorNoStaffForUser" xml:space="preserve">
+    <value>No staff associated to user '{0}'</value>
+  </data>
   <data name="ErrorSequenceNotInitialized" xml:space="preserve">
     <value>Sequence not initialized</value>
   </data>

@@ -51,6 +51,7 @@
     <Compile Include="Brokers\PatientProfileBroker.cs" />
     <Compile Include="Brokers\ReportingProcedureStepBroker.cs" />
     <Compile Include="Brokers\ReportingWorklistBroker.cs" />
+    <Compile Include="Brokers\StaffBroker.cs" />
     <Compile Include="DateTimeRangeHbm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
