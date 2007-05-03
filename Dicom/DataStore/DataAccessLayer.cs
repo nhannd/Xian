@@ -19,7 +19,7 @@ namespace ClearCanvas.Dicom.DataStore
         private static Dictionary<ISessionFactory, IDataStoreWriter> _dataStoreWriters;
         private static DicomDictionary _dicomDictionary;
 
-        public static Dictionary<ISessionFactory, IDataStoreWriter> DataStoreWriters
+        private static Dictionary<ISessionFactory, IDataStoreWriter> DataStoreWriters
         {
             get { return _dataStoreWriters; }
             set { _dataStoreWriters = value; }

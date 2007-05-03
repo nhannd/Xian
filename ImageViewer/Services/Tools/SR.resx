@@ -168,6 +168,10 @@
   <data name="MessageClearInactiveFailed" xml:space="preserve">
     <value>Failed to clear the selected items.</value>
   </data>
+  <data name="MessageConfirmCancelReindex" xml:space="preserve">
+    <value>Cancelling a reindex operation will cause your data store to be out of sync with the files stored on your local machine.
+Do you want to cancel the reindex operation anyway?</value>
+  </data>
   <data name="MessageConfirmSendToMultipleServers" xml:space="preserve">
     <value>You have selected multiple servers to send to.  Are you sure you want to continue?</value>
   </data>

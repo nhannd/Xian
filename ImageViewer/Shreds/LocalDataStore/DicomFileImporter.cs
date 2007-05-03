@@ -374,7 +374,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			private object _databaseUpdateItemsLock = new object();
 			private List<ImportJobInformation> _databaseUpdateItems;
-
+			
 			private ParseFileThreadPool _parseFileThreadPool;
 
 			private DedicatedImportQueue _activeImportThreadPool;
@@ -628,6 +628,39 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			#region Database Related Methods
 
+			private void StartDatabaseThread()
+			{
+				lock (_databaseThreadLock)
+				{
+					if (_databaseUpdateThread != null)
+						return;
+
+					_stopDatabaseThread = false;
+					ThreadStart threadStart = new ThreadStart(this.DatabaseUpdateThread);
+					_databaseUpdateThread = new Thread(threadStart);
+					_databaseUpdateThread.IsBackground = true;
+					_databaseUpdateThread.Priority = ThreadPriority.BelowNormal;
+					_databaseUpdateThread.Start();
+					Monitor.Wait(_databaseThreadLock); //wait for the signal that the thread has started.
+				}
+			}
+
+			private void StopDatabaseThread()
+			{
+				lock (_databaseThreadLock)
+				{
+					if (_databaseUpdateThread == null)
+						return;
+
+					_stopDatabaseThread = true;
+					Monitor.Pulse(_databaseThreadLock);
+					Monitor.Wait(_databaseThreadLock); //wait for the signal that the thread has ended.
+
+					_databaseUpdateThread.Join();
+					_databaseUpdateThread = null;
+				}
+			}
+
 			private void AddToDatabaseQueue(ImportJobInformation jobInformation)
 			{
 				lock (_databaseUpdateItemsLock)
@@ -645,11 +678,17 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				clock.Start();
 
 				IDataStoreReader dataStoreReader = SingleSessionDataAccessLayer.GetIDataStoreReader();
+				Dictionary<string, List<ImportJobInformation>> jobsByStudyUid = new Dictionary<string, List<ImportJobInformation>>();
 
 				try
 				{
 					foreach (ImportJobInformation item in items)
 					{
+						if (!jobsByStudyUid.ContainsKey(item.FileImportInformation.StudyInstanceUid))
+							jobsByStudyUid.Add(item.FileImportInformation.StudyInstanceUid, new List<ImportJobInformation>());
+
+						jobsByStudyUid[item.FileImportInformation.StudyInstanceUid].Add(item);
+
 						Study study = null;
 						if (this.StudyCache.ContainsKey(item.FileImportInformation.StudyInstanceUid))
 							study = this.StudyCache[item.FileImportInformation.StudyInstanceUid];
@@ -692,27 +731,34 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					foreach (KeyValuePair<string, Study> pair in this.StudyCache)
 					{
-						SingleSessionDataAccessLayer.GetIDataStoreWriter().StoreStudy(pair.Value);
-					}
+						List<ImportJobInformation> relevantJobs = jobsByStudyUid[pair.Key];
 
-					foreach (ImportJobInformation item in items)
-					{
-						((IFileImportInformation)item.FileImportInformation).CompletedStage = ImportStage.CommittedToDataStore;
-						item.FileImportJobStatusReportDelegate(item.FileImportInformation);
+						try
+						{
+							SingleSessionDataAccessLayer.GetIDataStoreWriter().StoreStudy(pair.Value);
+							foreach (ImportJobInformation item in relevantJobs)
+							{
+								((IFileImportInformation)item.FileImportInformation).CompletedStage = ImportStage.CommittedToDataStore;
+								item.FileImportJobStatusReportDelegate(item.FileImportInformation);
+							}
+
+						}
+						catch(Exception e)
+						{
+							Platform.Log(e);
+							foreach (ImportJobInformation item in relevantJobs)
+							{
+								string error = String.Format(SR.FormatFailedToCommitToDatastore, item.FileImportInformation.StoredFile);
+								((IFileImportInformation)item.FileImportInformation).Error = new Exception(error);
+								item.FileImportJobStatusReportDelegate(item.FileImportInformation);
+							}
+						}
 					}
 				}
 				catch (Exception e)
 				{
 					Platform.Log(e);
-
-					foreach (ImportJobInformation item in items)
-					{
-						string error = String.Format(SR.FormatFailedToCommitToDatastore, item.FileImportInformation.StoredFile);
-						((IFileImportInformation)item.FileImportInformation).Error = new Exception(error);
-						item.FileImportJobStatusReportDelegate(item.FileImportInformation);
-					}
 				}
-
 
 				this.SeriesCache.Clear();
 				this.StudyCache.Clear();
@@ -788,16 +834,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				_parseFileThreadPool.Start();
 				_importThreadPools[DedicatedImportQueue.Default].Start();
 
-				lock (_databaseThreadLock)
-				{
-					_stopDatabaseThread = false;
-					ThreadStart threadStart = new ThreadStart(this.DatabaseUpdateThread);
-					_databaseUpdateThread = new Thread(threadStart);
-					_databaseUpdateThread.IsBackground = true;
-					_databaseUpdateThread.Priority = ThreadPriority.AboveNormal;
-					_databaseUpdateThread.Start();
-					Monitor.Wait(_databaseThreadLock); //wait for the signal that the thread has started.
-				}
+				StartDatabaseThread();
 			}
 
 			public void Stop()
@@ -807,15 +844,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				foreach (ImportFileThreadPool pool in _importThreadPools.Values)
 					pool.Stop();
 
-				lock (_databaseThreadLock)
-				{
-					_stopDatabaseThread = true;
-					Monitor.Pulse(_databaseThreadLock);
-					Monitor.Wait(_databaseThreadLock); //wait for the signal that the thread has ended.
-
-					_databaseUpdateThread.Join();
-					_databaseUpdateThread = null;
-				}
+				StopDatabaseThread();
 			}
 
 			#endregion
@@ -828,6 +857,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						return;
 
 					_importThreadPools[_activeImportThreadPool].Stop();
+
+					//make sure all pending database updates have been processed by restarting the database thread.
+					StopDatabaseThread();
+					StartDatabaseThread();
+
 					_activeImportThreadPool = queue;
 					_importThreadPools[_activeImportThreadPool].Start();
 

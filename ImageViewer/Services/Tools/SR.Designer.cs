@@ -214,6 +214,16 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancelling a reindex operation will cause your data store to be out of sync with the files stored on your local machine.
+        ///Do you want to cancel the reindex operation anyway?.
+        /// </summary>
+        internal static string MessageConfirmCancelReindex {
+            get {
+                return ResourceManager.GetString("MessageConfirmCancelReindex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You have selected multiple servers to send to.  Are you sure you want to continue?.
         /// </summary>
         internal static string MessageConfirmSendToMultipleServers {

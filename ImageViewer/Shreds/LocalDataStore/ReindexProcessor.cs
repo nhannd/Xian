@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 using System.Threading;
+using NHibernate.Cfg;
+using NHibernate;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
@@ -11,12 +14,53 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 	{
 		private class ReindexProcessor : ImportProcessorBase
 		{
+			private static class DatabaseCleaner
+			{
+				static Configuration _configuration;
+				static ISessionFactory _sessionFactory;
+
+				static DatabaseCleaner()
+				{
+					_configuration = new Configuration();
+					_configuration.Configure("ClearCanvas.Dicom.DataStore.cfg.xml");
+					_configuration.AddAssembly("ClearCanvas.Dicom.DataStore");
+					_sessionFactory = _configuration.BuildSessionFactory();
+				}
+
+				public static void ClearAllStudies()
+				{
+					ITransaction transaction = null;
+					ISession session = null;
+
+					try
+					{
+						session = _sessionFactory.OpenSession();
+						transaction = session.BeginTransaction();
+						session.Delete("from Study");
+						transaction.Commit();
+					}
+					catch
+					{
+						if (transaction != null)
+							transaction.Rollback();
+
+						throw;
+					}
+					finally
+					{
+						if (session != null)
+							session.Close();
+					}
+				}
+			}
+
 			private LocalDataStoreService _parent;
 
 			private object _syncLock = new object();
 			private FileImportJobInformation _activeJobInformation;
 			private bool _active;
 			private bool _resumingImports;
+			private bool _cancelRequested;
 
 			public ReindexProcessor(LocalDataStoreService parent)
 			{
@@ -28,6 +72,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				_resumingImports = false;
 				_active = false;
+				_cancelRequested = false;
 			}
 
 			private void NewJobInformation(bool inactive)
@@ -43,6 +88,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						_activeJobInformation.ProgressItem.StartTime = DateTime.Now;
 						_activeJobInformation.ProgressItem.LastActive = _activeJobInformation.ProgressItem.StartTime;
 						_activeJobInformation.ProgressItem.Cancelled = false;
+						_activeJobInformation.ProgressItem.Removed = false;
 						_activeJobInformation.ProgressItem.NumberOfFailedImports = 0;
 						_activeJobInformation.ProgressItem.NumberOfFilesImported = 0;
 						_activeJobInformation.ProgressItem.TotalFilesToImport = 0;
@@ -56,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 			}
 
-			private void OnRepublish(object sender, EventArgs e)
+			private void UpdateProgress()
 			{
 				lock (_syncLock)
 				{
@@ -65,6 +111,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						this.UpdateProgress(_activeJobInformation.ProgressItem);
 					}
 				}
+			}
+
+			private void OnRepublish(object sender, EventArgs e)
+			{
+				UpdateProgress();
 			}
 
 			private void OnCancel(object sender, ItemEventArgs<CancelProgressItemInformation> e)
@@ -76,11 +127,24 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					foreach (Guid guid in information.ProgressItemIdentifiers)
 					{
 						if (guid.Equals(_activeJobInformation.ProgressItem.Identifier))
-							CancelJob(_activeJobInformation);
+						{
+							if (_active)
+							{
+								lock (_activeJobInformation)
+								{
+									if (base.CanCancelJob(_activeJobInformation))
+									{
+										_cancelRequested = true;
+										_activeJobInformation.ProgressItem.StatusMessage = SR.MessageCancelling;
+										UpdateProgress();
+									}
+								}
+							}
+
+							break;
+						}
 					}
 				}
-
-				CheckResumeImports();
 			}
 			
 			private void CheckResumeImports()
@@ -92,23 +156,26 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					lock (_activeJobInformation)
 					{
-						bool resumeImports = _active && (_activeJobInformation.ProgressItem.Cancelled || _activeJobInformation.ProgressItem.IsImportComplete());
+						if (_cancelRequested)
+							base.CancelJob(_activeJobInformation);
 
+						bool resumeImports = _active && (_activeJobInformation.ProgressItem.Cancelled || _activeJobInformation.ProgressItem.IsImportComplete());
 						if (resumeImports)
 						{
 							_resumingImports = true;
 
 							//do this on a separate thread, because what we are essentially doing is stopping this thread, so if we didn't do
 							//the stop operation on another thread, we would cause a deadlock.
-							WaitCallback resumeImportsDelegate = delegate(object reindexProcessor)
+							WaitCallback resumeImportsDelegate = delegate(object nothing)
 							{
-								ReindexProcessor processor = (ReindexProcessor)reindexProcessor;
+								//the reindex database updates will have to complete before returning from this function.
+								_parent.Importer.ActivateImportQueue(DicomFileImporter.DedicatedImportQueue.Default);
 
-								lock (processor._syncLock)
+								lock (_syncLock)
 								{
-									processor._parent.Importer.ActivateImportQueue(DicomFileImporter.DedicatedImportQueue.Default);
-									processor._active = false;
-									processor._resumingImports = false;
+									_active = false;
+									_resumingImports = false;
+									_cancelRequested = false;
 								}
 							};
 
@@ -155,26 +222,87 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				lock (_syncLock)
 				{
 					if (_active)
-						return; //don't throw an exception, just return.
+						return; //don't throw an exception, just ignore it.
 
 					_active = true;
 					NewJobInformation(false);
+				}
 
-					WaitCallback reindexDelegate = delegate(object reindexProcessor)
+				WaitCallback reindexDelegate = delegate(object reindexProcessor)
+				{
+					lock (_syncLock)
 					{
-						_parent.Importer.ActivateImportQueue(DicomFileImporter.DedicatedImportQueue.Reindex);
+						if (_cancelRequested)
+						{
+							CheckResumeImports();
+							return;
+						}
 
-						List<string> filePaths = new List<string>();
-						filePaths.Add(LocalDataStoreService.Instance.StorageFolder);
+						lock (_activeJobInformation)
+						{
+							_activeJobInformation.ProgressItem.StatusMessage = SR.MessagePausingActiveImportJobs;
+							UpdateProgress();
+						}
+					}
+
+					_parent.Importer.ActivateImportQueue(DicomFileImporter.DedicatedImportQueue.Reindex);
+
+					bool clearFailed = false;
+
+					try
+					{
+						lock (_syncLock)
+						{
+							if (_cancelRequested)
+							{
+								CheckResumeImports();
+								return;
+							}
+
+							lock (_activeJobInformation)
+							{
+								_activeJobInformation.ProgressItem.StatusMessage = SR.MessageClearingDatabase;
+								UpdateProgress();
+							}
+						}
+
+						DatabaseCleaner.ClearAllStudies();
+					}
+					catch (Exception e)
+					{
+						clearFailed = true;
+						Platform.Log(e);
 
 						lock (_syncLock)
 						{
-							((ReindexProcessor)reindexProcessor).Import(_activeJobInformation, filePaths, new List<string>(), true);
+							lock (_activeJobInformation)
+							{
+								_activeJobInformation.ProgressItem.StatusMessage = SR.MessageFailedToClearDatabase;
+								_activeJobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+								UpdateProgress();
+							}
 						}
-					};
+					}
 
-					ThreadPool.QueueUserWorkItem(reindexDelegate, this);
-				}
+					lock (_syncLock)
+					{
+						if (clearFailed || _cancelRequested)
+						{
+							CheckResumeImports();
+							return;
+						}
+					}
+
+					List<string> filePaths = new List<string>();
+					filePaths.Add(LocalDataStoreService.Instance.StorageFolder);
+
+					lock (_syncLock)
+					{
+						((ReindexProcessor)reindexProcessor).Import(_activeJobInformation, filePaths, new List<string>(), true);
+					}
+				};
+
+				ThreadPool.QueueUserWorkItem(reindexDelegate, this);
 			}
 		}
 	}

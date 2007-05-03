@@ -80,17 +80,28 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 			}
 
-			protected virtual void CancelJob(FileImportJobInformation jobInformation)
+			protected virtual bool CanCancelJob(FileImportJobInformation jobInformation)
 			{
 				lock (jobInformation)
 				{
 					if (!((jobInformation.ProgressItem.AllowedCancellationOperations & CancellationFlags.Cancel) == CancellationFlags.Cancel))
-						return;
+						return false;
 
 					if (jobInformation.ProgressItem.Cancelled)
-						return;
+						return false;
 
-					if (jobInformation.ProgressItem.IsImportComplete())
+					if (jobInformation.ProgressItem.TotalFilesToImport > 0 && jobInformation.ProgressItem.IsImportComplete())
+						return false;
+				}
+
+				return true;
+			}
+
+			protected virtual void CancelJob(FileImportJobInformation jobInformation)
+			{
+				lock (jobInformation)
+				{
+					if (!CanCancelJob(jobInformation))
 						return;
 
 					jobInformation.ProgressItem.Cancelled = true;
@@ -100,14 +111,25 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 			}
 
+			protected virtual bool CanClearJob(FileImportJobInformation jobInformation)
+			{ 
+				lock (jobInformation)
+				{
+					if (!((jobInformation.ProgressItem.AllowedCancellationOperations & CancellationFlags.Clear) == CancellationFlags.Clear))
+						return false;
+
+					if (!jobInformation.ProgressItem.Cancelled && jobInformation.ProgressItem.TotalFilesToImport > 0 && !jobInformation.ProgressItem.IsImportComplete())
+						return false;
+				}
+
+				return true;
+			}
+
 			protected virtual void ClearJob(FileImportJobInformation jobInformation)
 			{
 				lock (jobInformation)
 				{
-					if (!((jobInformation.ProgressItem.AllowedCancellationOperations & CancellationFlags.Clear) == CancellationFlags.Clear))
-						return;
-
-					if (!jobInformation.ProgressItem.Cancelled && !jobInformation.ProgressItem.IsImportComplete())
+					if (!CanClearJob(jobInformation))
 						return;
 
 					jobInformation.ProgressItem.Removed = true;

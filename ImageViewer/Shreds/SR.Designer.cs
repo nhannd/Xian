@@ -403,11 +403,38 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cancelling ....
+        /// </summary>
+        internal static string MessageCancelling {
+            get {
+                return ResourceManager.GetString("MessageCancelling", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Clearing Database ....
+        /// </summary>
+        internal static string MessageClearingDatabase {
+            get {
+                return ResourceManager.GetString("MessageClearingDatabase", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Complete..
         /// </summary>
         internal static string MessageComplete {
             get {
                 return ResourceManager.GetString("MessageComplete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed: unable to clear database prior to reindex operation..
+        /// </summary>
+        internal static string MessageFailedToClearDatabase {
+            get {
+                return ResourceManager.GetString("MessageFailedToClearDatabase", resourceCulture);
             }
         }
         
@@ -453,6 +480,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         internal static string MessageNoFilesToReindex {
             get {
                 return ResourceManager.GetString("MessageNoFilesToReindex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Pausing active import jobs ....
+        /// </summary>
+        internal static string MessagePausingActiveImportJobs {
+            get {
+                return ResourceManager.GetString("MessagePausingActiveImportJobs", resourceCulture);
             }
         }
         

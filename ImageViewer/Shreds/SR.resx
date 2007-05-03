@@ -228,8 +228,17 @@
   <data name="MessageCancelled" xml:space="preserve">
     <value>Cancelled.</value>
   </data>
+  <data name="MessageCancelling" xml:space="preserve">
+    <value>Cancelling ...</value>
+  </data>
+  <data name="MessageClearingDatabase" xml:space="preserve">
+    <value>Clearing Database ...</value>
+  </data>
   <data name="MessageComplete" xml:space="preserve">
     <value>Complete.</value>
+  </data>
+  <data name="MessageFailedToClearDatabase" xml:space="preserve">
+    <value>Failed: unable to clear database prior to reindex operation.</value>
   </data>
   <data name="MessageFileHasBeenDeleted" xml:space="preserve">
     <value>; the file has been deleted</value>
@@ -245,6 +254,9 @@
   </data>
   <data name="MessageNoFilesToReindex" xml:space="preserve">
     <value>Complete.  No files could be found to reindex.</value>
+  </data>
+  <data name="MessagePausingActiveImportJobs" xml:space="preserve">
+    <value>Pausing active import jobs ...</value>
   </data>
   <data name="MessagePending" xml:space="preserve">
     <value>Pending ...</value>
