@@ -21,6 +21,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
     [MenuAction("view3", "RegistrationPreview-menu/Details")]
     [ButtonAction("view3", "folderexplorer-items-toolbar/Details")]
+    [MenuAction("view3", "folderexplorer-items-contextmenu/Details")]
     [ClickHandler("view3", "View")]
     [EnabledStateObserver("view3", "Enabled", "EnabledChanged")]
     [Tooltip("view3", "Open patient details")]

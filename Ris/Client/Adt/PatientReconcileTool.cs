@@ -15,7 +15,8 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     [MenuAction("apply", "global-menus/Patient/Reconcile")]
     [ButtonAction("apply", "global-toolbars/Patient/Reconcile")]
-    [MenuAction("apply", "folderexplorer-items-toolbar/Reconcile")]
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Reconcile")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/Reconcile")]
     [Tooltip("apply", "Reconcile patient profiles")]
     [IconSet("apply", IconScheme.Colour, "Icons.PatientReconciliationToolSmall.png", "Icons.PatientReconciliationToolMedium.png", "Icons.PatientReconciliationToolLarge.png")]
     [ClickHandler("apply", "Reconcile")]
@@ -73,6 +74,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
                 ShowReconciliationDialog(item.PatientProfileRef, context.DesktopWindow);
+                context.SelectedFolder.Refresh();
             }
             else
             {

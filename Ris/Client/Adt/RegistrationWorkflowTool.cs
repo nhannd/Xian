@@ -80,6 +80,7 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         [MenuAction("apply", "folderexplorer-items-contextmenu/Check-in")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Check-in")]
         [ClickHandler("apply", "Apply")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
         [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
@@ -127,6 +128,7 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         [MenuAction("apply", "folderexplorer-items-contextmenu/Cancel")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel")]
         [ClickHandler("apply", "Apply")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
         [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]

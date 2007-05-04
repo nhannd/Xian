@@ -23,6 +23,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [ActionPermission("edit1", ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
 
     [ButtonAction("edit3", "folderexplorer-items-toolbar/Edit")]
+    [MenuAction("edit3", "folderexplorer-items-contextmenu/Edit")]
     [ClickHandler("edit3", "Apply")]
     [EnabledStateObserver("edit3", "Enabled", "EnabledChanged")]
     [Tooltip("edit3", "Edit Patient Information")]
@@ -80,6 +81,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
                 Edit(item.PatientProfileRef, context.DesktopWindow);
+                context.SelectedFolder.Refresh();
             }
             else
             {
