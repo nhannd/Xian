@@ -80,8 +80,10 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
-                Edit(item.PatientProfileRef, context.DesktopWindow);
-                context.SelectedFolder.Refresh();
+                if (Edit(item.PatientProfileRef, context.DesktopWindow))
+                {
+                    context.SelectedFolder.Refresh();
+                }
             }
             else
             {
@@ -90,12 +92,14 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private void Edit(EntityRef profileRef, IDesktopWindow desktopWindow)
+        private bool Edit(EntityRef profileRef, IDesktopWindow desktopWindow)
         {
-            ApplicationComponent.LaunchAsDialog(
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 desktopWindow,
                 new PatientProfileEditorComponent(profileRef),
                 SR.TitleEditPatient);
+
+            return exitCode == ApplicationComponentExitCode.Normal;
         }
     }
 }

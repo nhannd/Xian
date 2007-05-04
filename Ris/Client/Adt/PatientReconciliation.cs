@@ -12,43 +12,34 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public static class PatientReconciliation
     {
-        public static void ShowReconciliationDialog(EntityRef targetProfile, IDesktopWindow window)
+        public static bool ShowReconciliationDialog(EntityRef targetProfile, IDesktopWindow window)
         {
-            if (targetProfile != null)
+            IList<ReconciliationCandidate> candidates = null;
+            IList<PatientProfileSummary> reconciledProfiles = null;
+
+            Platform.GetService<IPatientReconciliationService>(
+                delegate(IPatientReconciliationService service)
+                {
+                    ListPatientReconciliationMatchesResponse response =
+                        service.ListPatientReconciliationMatches(new ListPatientReconciliationMatchesRequest(targetProfile));
+
+                    candidates = response.MatchCandidates;
+                    reconciledProfiles = response.ReconciledProfiles;
+                });
+
+            if (candidates.Count > 0)
             {
-                try
-                {
-                    IList<ReconciliationCandidate> candidates = null;
-                    IList<PatientProfileSummary> reconciledProfiles = null;
-
-                    Platform.GetService<IPatientReconciliationService>(
-                        delegate(IPatientReconciliationService service)
-                        {
-                            ListPatientReconciliationMatchesResponse response =
-                                service.ListPatientReconciliationMatches(new ListPatientReconciliationMatchesRequest(targetProfile));
-
-                            candidates = response.MatchCandidates;
-                            reconciledProfiles = response.ReconciledProfiles;
-                        });
-
-                    if (candidates.Count > 0)
-                    {
-                        ReconciliationComponent component = new ReconciliationComponent(targetProfile, reconciledProfiles, candidates);
-                        ApplicationComponent.LaunchAsDialog(
-                            window,
-                            component,
-                            SR.TitlePatientReconciliation);
-                    }
-                    else
-                    {
-                        window.ShowMessageBox(SR.MessageNoReconciliationCandidate, MessageBoxActions.Ok);
-                    }
-
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, window);
-                }
+                ReconciliationComponent component = new ReconciliationComponent(targetProfile, reconciledProfiles, candidates);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    window,
+                    component,
+                    SR.TitlePatientReconciliation);
+                return exitCode == ApplicationComponentExitCode.Normal;
+            }
+            else
+            {
+                window.ShowMessageBox(SR.MessageNoReconciliationCandidate, MessageBoxActions.Ok);
+                return false;
             }
         }
     }

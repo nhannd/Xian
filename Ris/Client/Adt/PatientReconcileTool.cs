@@ -73,8 +73,10 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
-                ShowReconciliationDialog(item.PatientProfileRef, context.DesktopWindow);
-                context.SelectedFolder.Refresh();
+                if (ShowReconciliationDialog(item.PatientProfileRef, context.DesktopWindow))
+                {
+                    context.SelectedFolder.Refresh();
+                }
             }
             else
             {
@@ -83,9 +85,17 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private void ShowReconciliationDialog(EntityRef patientProfile, IDesktopWindow desktopWindow)
+        private bool ShowReconciliationDialog(EntityRef patientProfile, IDesktopWindow desktopWindow)
         {
-            PatientReconciliation.ShowReconciliationDialog(patientProfile, desktopWindow);
+            try
+            {
+                return PatientReconciliation.ShowReconciliationDialog(patientProfile, desktopWindow);
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, desktopWindow);
+                return false;
+            }
         }
     }
 }
