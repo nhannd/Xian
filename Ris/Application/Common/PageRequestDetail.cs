@@ -8,6 +8,14 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class PageRequestDetail : DataContractBase
     {
+        public static readonly int Ignore = -1;
+
+        public PageRequestDetail()
+        {
+            FirstRow = PageRequestDetail.Ignore;
+            MaxRows = PageRequestDetail.Ignore;
+        }
+
         [DataMember]
         public int FirstRow;
 
