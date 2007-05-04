@@ -12,5 +12,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		void Cancel();
 
 		bool SuppressContextMenu { get; }
+		bool ConstrainToTile { get; }
 	}
 }

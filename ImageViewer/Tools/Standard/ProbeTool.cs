@@ -57,8 +57,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{
-			//base.Start(mouseInformation);
-
 			if (this.SelectedImageGraphicProvider == null)
 				return false;
 
@@ -82,8 +80,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (_selectedTile == null || _selectedImageGraphic == null)
 				return false;
 
-			//base.Track(mouseInformation);
-
 			Probe(mouseInformation.Location);
 			
 			return true;
@@ -105,13 +101,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (_selectedTile == null || _selectedImageGraphic == null)
 				return;
 
-			//base.Stop(mouseInformation);
-
 			_selectedImageGraphic = null;
 
 			_selectedTile.InformationBox.Visible = false;
 			_selectedTile.InformationBox = null;
 			_selectedTile = null;
+		}
+
+		public override bool ConstrainToTile
+		{
+			get { return true; }
 		}
 
 		private void Probe(Point destinationPoint)

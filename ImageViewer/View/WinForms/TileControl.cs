@@ -42,11 +42,10 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         public TileControl(Tile tile, Rectangle parentRectangle, int parentImageBoxInsetWidth)
         {
 			_tile = tile;
-			SetParentImageBoxRectangle(parentRectangle, parentImageBoxInsetWidth);
-
-			_inputTranslator = new TileInputTranslator(this);
 			_tileController = new TileController(_tile, (_tile.ImageViewer as ImageViewerComponent).ShortcutManager);
-			
+			_inputTranslator = new TileInputTranslator(this);
+
+			SetParentImageBoxRectangle(parentRectangle, parentImageBoxInsetWidth);
 			InitializeComponent();
 
 			this.BackColor = Color.Black;
@@ -113,7 +112,6 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			this.Location = new Point(left + parentImageBoxBorderWidth, top + parentImageBoxBorderWidth);
 			this.Size = new Size(right - left, bottom - top);
-
 			this.ResumeLayout(false);
 		}
 		
@@ -187,6 +185,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			base.OnSizeChanged(e);
 
 			Trace.Write("TileControl.OnSizeChanged()\n");
+
+			_tileController.TileClientRectangle = this.ClientRectangle;
 
 			// Set the surface to null so when it's accessed, a new surface
 			// will be created.

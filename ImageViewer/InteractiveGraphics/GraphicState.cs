@@ -87,6 +87,11 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			get { return false; }
 		}
 
+		public virtual bool ConstrainToTile
+		{
+			get { return false; }
+		}
+
 		#endregion
 	}
 }

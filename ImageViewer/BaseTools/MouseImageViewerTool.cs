@@ -223,6 +223,11 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			get { return false; }
 		}
 
+		public virtual bool ConstrainToTile
+		{
+			get { return false; }
+		}
+
 		#endregion
 
 		#region ICursorTokenProvider Members

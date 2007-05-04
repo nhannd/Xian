@@ -21,6 +21,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		private Tile _tile;
 		private Point _startMousePoint;
 		private Point _currentMousePoint;
+		private Rectangle _tileClientRectangle;
 
 		private IMouseButtonHandler _captureHandler;
  
@@ -53,6 +54,12 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		}
 
 		#region Public Properties
+
+		public Rectangle TileClientRectangle
+		{
+			get { return _tileClientRectangle; }
+			set { _tileClientRectangle = value; }
+		}
 
 		public bool ContextMenuEnabled
 		{
@@ -291,6 +298,12 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 			if (this.CaptureHandler != null)
 			{
+				if (this.CaptureHandler.ConstrainToTile && !this.TileClientRectangle.Contains(this.Location))
+				{
+					SetCursorToken(null, trackMessage.Location);
+					return true;
+				}
+
 				if (this.CaptureHandler.Track(this))
 				{
 					SetCursorToken(this.CaptureHandler, trackMessage.Location);
@@ -310,6 +323,9 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		private bool TrackHandler(IMouseButtonHandler handler)
 		{
+			if (handler.ConstrainToTile && !this.TileClientRectangle.Contains(this.Location))
+				return false;
+
 			return handler.Track(this);
 		}
 
