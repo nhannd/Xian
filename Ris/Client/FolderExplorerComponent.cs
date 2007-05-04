@@ -148,6 +148,11 @@ namespace ClearCanvas.Ris.Client
             base.Start();
 
             _tools = new ToolSet(_folderExplorerToolExtensionPoint, new FolderExplorerToolContext(this));
+
+            foreach (IFolder folder in _folderTree.Items)
+            {
+                folder.RefreshCount();
+            }
         }
 
         public override void Stop()

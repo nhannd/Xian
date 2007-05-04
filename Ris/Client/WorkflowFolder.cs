@@ -24,6 +24,9 @@ namespace ClearCanvas.Ris.Client
         private IDropContext _dropContext;
         private IDropHandler<TItem> _currentDropHandler;
 
+        private BackgroundTask _queryItemsTask;
+        private BackgroundTask _queryCountTask;
+
         public WorkflowFolder(WorkflowFolderSystem<TItem> folderSystem, string folderName, Table<TItem> itemsTable)
         {
             _folderSystem = folderSystem;
@@ -113,43 +116,95 @@ namespace ClearCanvas.Ris.Client
 
         public override void Refresh()
         {
-            try
+            if (_queryItemsTask != null)
             {
-                if (CanQuery())
-                {
-                    NotifyRefreshBegin();
-
-                    IList<TItem> items = QueryItems();
-                    _isPopulated = true;
-                    _itemsTable.Items.Clear();
-                    _itemsTable.Items.AddRange(items);
-                    _itemsTable.Sort();
-
-                    NotifyRefreshFinish();
-                }
-                this.RestartRefreshTimer();
+                // refresh already in progress
+                return;
             }
-            catch (Exception e)
+
+            if (CanQuery())
             {
-                ExceptionHandler.Report(e, "Folder refresh failed", _folderSystem.DesktopWindow);
+                NotifyRefreshBegin();
+
+                _queryItemsTask = new BackgroundTask(
+                    delegate(IBackgroundTaskContext taskContext)
+                    {
+                        IList<TItem> items = QueryItems();
+                        taskContext.Complete(items);
+                    },
+                    false);
+
+                _queryItemsTask.Terminated += OnQueryItemsCompleted;
+                _queryItemsTask.Run();
             }
+        }
+
+        private void OnQueryItemsCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
+        {
+            if(args.Reason == BackgroundTaskTerminatedReason.Completed)
+            {
+                IList<TItem> items = (IList<TItem>)args.Result;
+                _isPopulated = true;
+                _itemsTable.Items.Clear();
+                _itemsTable.Items.AddRange(items);
+                _itemsTable.Sort();
+            }
+            else
+            {
+                ExceptionHandler.Report(args.Exception, "Folder refresh failed", _folderSystem.DesktopWindow);
+            }
+
+            // dispose of the task
+            _queryItemsTask.Terminated -= OnQueryItemsCompleted;
+            _queryItemsTask.Dispose();
+            _queryItemsTask = null;
+
+            NotifyRefreshFinish();
+
+            this.RestartRefreshTimer();
         }
 
         public override void RefreshCount()
         {
-            try
+            if (_queryCountTask != null)
             {
-                if (CanQuery())
-                {
-                    this.ItemCount = QueryCount();
-                }
-                this.RestartRefreshTimer();
+                // refresh already in progress
+                return;
             }
-            catch (Exception e)
+
+            if (CanQuery())
             {
-                // TODO report this, but don't show messagebox
-                Console.WriteLine(e.Message);
+                _queryCountTask = new BackgroundTask(
+                    delegate(IBackgroundTaskContext taskContext)
+                    {
+                        int count = QueryCount();
+                        taskContext.Complete(count);
+                    },
+                    false);
+
+                _queryCountTask.Terminated += OnQueryCountCompleted;
+                _queryCountTask.Run();
+
             }
+        }
+
+        private void OnQueryCountCompleted(object sender, BackgroundTaskTerminatedEventArgs args)
+        {
+            if (args.Reason == BackgroundTaskTerminatedReason.Completed)
+            {
+                this.ItemCount = (int)args.Result;
+            }
+            else
+            {
+                ExceptionHandler.Report(args.Exception, "Folder refresh failed", _folderSystem.DesktopWindow);
+            }
+
+            // dispose of the task
+            _queryCountTask.Terminated -= OnQueryCountCompleted;
+            _queryCountTask.Dispose();
+            _queryCountTask = null;
+
+            this.RestartRefreshTimer();
         }
 
         public override void OpenFolder()
