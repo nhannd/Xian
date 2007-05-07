@@ -91,7 +91,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _showHeader = showHeader;
             _showReconciliationAlert = showReconciliationAlert;
-            _maxRICDisplay = 5;
+            _maxRICDisplay = 10;
         }
 
         public RegistrationWorklistItem WorklistItem
@@ -182,6 +182,8 @@ namespace ClearCanvas.Ris.Client.Adt
             if (args.Reason == BackgroundTaskTerminatedReason.Completed)
             {
                 _worklistPreview = (RegistrationWorklistPreview)args.Result;
+                _worklistPreview.RICs = SortRICSummaryList(_worklistPreview.RICs);
+
                 foreach (RICSummary summary in _worklistPreview.RICs)
                 {
                     _RICTable.Items.Add(summary);
@@ -195,6 +197,54 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 ExceptionHandler.Report(args.Exception, this.Host.DesktopWindow);
             }
+        }
+
+        private List<RICSummary> SortRICSummaryList(List<RICSummary> ricList)
+        {
+            List<RICSummary> ricForToday = new List<RICSummary>();
+            List<RICSummary> ricForTomorrow = new List<RICSummary>();
+            List<RICSummary> ricForFuture = new List<RICSummary>();
+            List<RICSummary> ricForYesterday = new List<RICSummary>();
+            List<RICSummary> ricForPast = new List<RICSummary>();
+
+            DateTime today = Platform.Time.Date;
+
+            foreach (RICSummary summary in ricList)
+            {
+                DateTime datePart = summary.ModalityProcedureStepScheduledTime.Value.Date;
+
+                if (datePart == today)
+                    ricForToday.Add(summary);
+                else if (datePart == today.AddDays(-1))
+                    ricForYesterday.Add(summary);
+                else if (datePart == today.AddDays(1))
+                    ricForTomorrow.Add(summary);
+                else if (datePart.CompareTo(today) < 0)
+                    ricForPast.Add(summary);
+                else
+                    ricForFuture.Add(summary);
+            }
+
+            Comparison<RICSummary> summaryComparer = new Comparison<RICSummary>(CompareRICSummary);
+            ricForToday.Sort(summaryComparer);
+            ricForYesterday.Sort(summaryComparer);
+            ricForTomorrow.Sort(summaryComparer);
+            ricForPast.Sort(summaryComparer);
+            ricForFuture.Sort(summaryComparer);
+
+            List<RICSummary> sortedList = new List<RICSummary>();
+            sortedList.AddRange(ricForToday);
+            sortedList.AddRange(ricForTomorrow);
+            sortedList.AddRange(ricForFuture);
+            sortedList.AddRange(ricForYesterday);
+            sortedList.AddRange(ricForPast);
+
+            return sortedList;
+        }
+
+        private int CompareRICSummary(RICSummary summary1, RICSummary summary2)
+        {
+            return summary1.ModalityProcedureStepScheduledTime.Value.CompareTo(summary2.ModalityProcedureStepScheduledTime.Value);
         }
 
         #region Presentation Model
