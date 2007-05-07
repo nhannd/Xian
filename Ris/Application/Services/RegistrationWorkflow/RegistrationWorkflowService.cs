@@ -104,7 +104,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             return new GetDataForCheckInTableResponse(
                 CollectionUtils.Map<RequestedProcedure, CheckInTableItem, List<CheckInTableItem>>(
-                    PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetScheduledRequestedProcedureForPatient(profile.Patient),
+                    PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetRequestedProcedureForCheckIn(profile.Patient),
                     delegate(RequestedProcedure rp)
                     {
                         return new CheckInTableItem(
@@ -199,7 +199,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IRegistrationWorklistBroker broker = this.PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
 
             PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).PatientProfile, EntityLoadFlags.Proxy);
-            return broker.GetScheduledRequestedProcedureForPatient(profile.Patient).Count > 0;
+            return broker.GetRequestedProcedureForCheckIn(profile.Patient).Count > 0;
 
             //IOrderBroker orderBroker = this.CurrentContext.GetBroker<IOrderBroker>();
             //IRequestedProcedureBroker rpBroker = this.CurrentContext.GetBroker<IRequestedProcedureBroker>();

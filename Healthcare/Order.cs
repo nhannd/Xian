@@ -27,6 +27,28 @@ namespace ClearCanvas.Healthcare {
             Facility orderingFacility,
             OrderPriority priority)
         {
+            return Order.NewOrder(accessionNumber, 
+                patient, 
+                visit, 
+                diagnosticService, 
+                schedulingRequestDateTime, 
+                orderingPhysician, 
+                orderingFacility, 
+                priority, 
+                false);
+        }
+
+        public static Order NewOrder(
+            string accessionNumber,
+            Patient patient,
+            Visit visit,
+            DiagnosticService diagnosticService,
+            DateTime schedulingRequestDateTime,
+            Practitioner orderingPhysician,
+            Facility orderingFacility,
+            OrderPriority priority,
+            bool scheduleOrder)
+        {
             // create the basic order
             Order order = new Order();
 
@@ -51,6 +73,10 @@ namespace ClearCanvas.Healthcare {
                 foreach (ModalityProcedureStepType spt in rpt.ModalityProcedureStepTypes)
                 {
                     ModalityProcedureStep sps = new ModalityProcedureStep(rp, spt, spt.DefaultModality);
+
+                    if (scheduleOrder)
+                        sps.Scheduling.StartTime = schedulingRequestDateTime;
+
                     rp.ProcedureSteps.Add(sps);
                 }
             }

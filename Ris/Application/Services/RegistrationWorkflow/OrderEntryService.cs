@@ -143,7 +143,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     request.SchedulingRequestTime, 
                     orderingPhysician, 
                     orderingFacility, 
-                    (OrderPriority) Enum.Parse(typeof(OrderPriority), request.OrderPriority.Code));
+                    (OrderPriority) Enum.Parse(typeof(OrderPriority), request.OrderPriority.Code),
+                    request.ScheduleOrder);
 
             PersistenceContext.Lock(order, DirtyState.New);
 

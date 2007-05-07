@@ -20,8 +20,10 @@ namespace ClearCanvas.Healthcare.Workflow
             public void Execute(RequestedProcedure rp, Staff currentUserStaff, IWorkflow workflow)
             {
                 CheckInProcedureStep cps = new CheckInProcedureStep(rp);
+
+                // The CheckIn Step should be completed when the mps start
                 cps.Start(currentUserStaff);
-                cps.Complete(currentUserStaff);
+
                 workflow.AddActivity(cps);
             }
         }

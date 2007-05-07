@@ -74,7 +74,7 @@ if(component.WorklistPreview != null)
 <% if(component.RIC.Items.Count > 0) { %>
 <table width="640" border="0">
   <tr class="sectionheading">
-    <td colspan="5">Request for Imaging Consultation</td>
+    <td colspan="6">Request for Imaging Consultation</td>
   </tr>
   <tr class="tableheading">
   <% for(var column in component.RIC.Columns) { %>
@@ -90,7 +90,7 @@ if(component.WorklistPreview != null)
   <% } %>
     <% if(component.MoreRICCount > 0) { %>
     <tr class="additionalentriescount">
-        <td colspan="5"><%= amr.GetHTML(component.MenuModel, "NewOrders", "(" + component.MoreRICCount + " more...)") %></td>
+        <td colspan="6"><%= amr.GetHTML(component.MenuModel, "NewOrders", "(" + component.MoreRICCount + " more...)") %></td>
     </tr>
     <% } %>
 </table>

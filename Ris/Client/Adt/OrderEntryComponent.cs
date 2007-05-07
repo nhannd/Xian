@@ -132,6 +132,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private Tree<RequestedProcedureTypeDetail> _diagnosticServiceBreakdown;
         private object _selectedDiagnosticServiceBreakdownItem;
 
+        private bool _scheduleOrder;
         private DateTime _schedulingRequestDateTime;
 
         /// <summary>
@@ -163,7 +164,8 @@ namespace ClearCanvas.Ris.Client.Adt
                         _selectedPriority = _priorityChoices[0];
                     });
 
-                _schedulingRequestDateTime = Platform.Time;            
+                _schedulingRequestDateTime = Platform.Time;
+                _scheduleOrder = true;
             }
             catch (Exception e)
             {
@@ -316,6 +318,12 @@ namespace ClearCanvas.Ris.Client.Adt
             set { _schedulingRequestDateTime = value; }
         }
 
+        public bool ScheduleOrder
+        {
+            get { return _scheduleOrder; }
+            set { _scheduleOrder = value; }
+        }
+
         public void PlaceOrder()
         {
             if (this.HasValidationErrors)
@@ -336,6 +344,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             _selectedPriority,
                             _selectedOrderingPhysician.StaffRef,
                             _selectedFacility.FacilityRef,
+                            _scheduleOrder,
                             _schedulingRequestDateTime));
                     });
 

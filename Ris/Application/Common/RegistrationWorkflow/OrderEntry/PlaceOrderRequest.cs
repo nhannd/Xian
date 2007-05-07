@@ -17,6 +17,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
             EnumValueInfo orderPriority,
             EntityRef orderingPhysician,
             EntityRef orderingFacility,
+            bool scheduleOrder,
             DateTime schedulingRequestTime)
         {
             this.Patient = patient;
@@ -25,6 +26,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
             this.OrderPriority = orderPriority;
             this.OrderingPhysician = orderingPhysician;
             this.OrderingFacility = orderingFacility;
+            this.ScheduleOrder = scheduleOrder;
             this.SchedulingRequestTime = schedulingRequestTime;
         }
 
@@ -45,6 +47,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 
         [DataMember]
         public EntityRef OrderingFacility;
+
+        [DataMember]
+        public bool ScheduleOrder;
 
         [DataMember]
         public DateTime SchedulingRequestTime;

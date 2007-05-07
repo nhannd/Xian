@@ -47,6 +47,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _orderingPhysician.DataSource = _component.OrderingPhysicianChoices;
             _orderingPhysician.DataBindings.Add("Value", _component, "SelectedOrderingPhysician", true, DataSourceUpdateMode.OnPropertyChanged);
 
+            _scheduleOrder.DataBindings.Add("Checked", _component, "ScheduleOrder", true, DataSourceUpdateMode.OnPropertyChanged);
             _schedulingRequestDateTime.DataBindings.Add("Value", _component, "SchedulingRequestDateTime", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 

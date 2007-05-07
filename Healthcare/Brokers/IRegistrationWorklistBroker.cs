@@ -12,6 +12,7 @@ namespace ClearCanvas.Healthcare.Brokers
         IList<WorklistItem> GetWorklist(string worklistClassName);
         int GetWorklistCount(string worklistClassName);
 
-        IList<RequestedProcedure> GetScheduledRequestedProcedureForPatient(Patient patient);
+        IList<RequestedProcedure> GetRequestedProcedureForPatientPreview(Patient patient);
+        IList<RequestedProcedure> GetRequestedProcedureForCheckIn(Patient patient);
     }
 }

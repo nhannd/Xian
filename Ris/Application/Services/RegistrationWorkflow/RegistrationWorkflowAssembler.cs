@@ -12,6 +12,9 @@ using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Services.Admin;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Common;
+using ClearCanvas.Workflow;
+using ClearCanvas.Workflow.Brokers;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -27,6 +30,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             TelephoneNumberAssembler phoneAssembler = new TelephoneNumberAssembler();
             AddressAssembler addressAssembler = new AddressAssembler();
             SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
+            ActivityStatusEnumTable activityStatusTable = context.GetBroker<IActivityStatusEnumBroker>().Load();
 
             IPatientProfileBroker profileBroker = context.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = profileBroker.Load(item.PatientProfileRef);
@@ -56,15 +60,46 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         return addressAssembler.CreateAddressDetail(address, context);
                     }),
                 CollectionUtils.Map<RequestedProcedure, RICSummary, List<RICSummary>>(
-                    context.GetBroker<IRegistrationWorklistBroker>().GetScheduledRequestedProcedureForPatient(profile.Patient),
+                    context.GetBroker<IRegistrationWorklistBroker>().GetRequestedProcedureForPatientPreview(profile.Patient),
                     delegate(RequestedProcedure rp)
                     {
+                        ModalityProcedureStep earliestMPS = null;
+                        CheckInProcedureStep checkInStep = null;
+                        DateTime? earliestMPSScheduledTime = Platform.Time;
+                        foreach (ProcedureStep ps in rp.ProcedureSteps)
+                        {
+                            if (ps is ModalityProcedureStep && ps.Scheduling != null)
+                            {
+                                if (earliestMPS == null ||
+                                    ps.Scheduling.StartTime != null && ps.Scheduling.StartTime.Value.CompareTo(earliestMPS.Scheduling.StartTime) < 0)
+                                {
+                                    earliestMPS = ps as ModalityProcedureStep;
+                                }
+                            }
+                            else if (ps is CheckInProcedureStep)
+                            {
+                                if (ps.State == ActivityStatus.IP)
+                                    checkInStep = ps as CheckInProcedureStep;
+                            }
+                        }
+
+                        string mpsStatus = "";
+                        if (earliestMPS != null)
+                        {
+                            if (checkInStep != null)
+                                mpsStatus = "Checked In";
+                            else
+                                mpsStatus = activityStatusTable[earliestMPS.State].Value;   
+                        }
+
+
                         return new RICSummary(
                             rp.Type.Name,
                             nameAssembler.CreatePersonNameDetail(rp.Order.OrderingPractitioner.Name),
                             "N/A",
-                            null,
-                            "N/A");
+                            earliestMPS == null ? null : earliestMPS.Scheduling.StartTime,
+                            "N/A",
+                            mpsStatus);
                     }),
                 alertNotifications,
                 hasReconciliationCandidates
