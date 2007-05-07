@@ -254,10 +254,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
-			this.Enabled = !(this.SelectedPresentationImage == null || 
-				this.SelectedImageSopProvider == null || 
-				this.SelectedVOILUTLinearProvider == null || 
-				this.SelectedVOILUTLinearProvider.VoiLutLinear == null);
+			this.Enabled = !(this.SelectedAutoLutApplicatorProvider == null || this.SelectedAutoLutApplicatorProvider.AutoVoiLutApplicator == null);
 		}
 
 		private void AutoApplyLut()
@@ -265,42 +262,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!this.Enabled)
 				return;
 
-			//!!TODO: this code has been basically borrowed from StandardGrayscaleImageGraphic until we can fix
-			//!! auto w/l properly for 1.0.
-			double windowWidth = double.NaN;
-			double windowCenter = double.NaN;
-
-			Window[] windows = this.SelectedImageSopProvider.ImageSop.WindowCenterAndWidth;
-
-			if (windows != null)
-			{
-				windowWidth = windows[0].Width;
-				windowCenter = windows[0].Center;
-			}
-
-			//Window Width must be non-zero according to DICOM.
-			//Otherwise, we want to do something simple (pick 2^BitsStored).
-			if (windowWidth == 0 || double.IsNaN(windowWidth))
-				windowWidth = 1 << ((int)this.SelectedImageSopProvider.ImageSop.BitsStored);
-
-			//If Window Center is invalid, calculate a value based on the Window Width.
-			if (double.IsNaN(windowCenter))
-			{
-				if (this.SelectedImageSopProvider.ImageSop.PixelRepresentation == 0)
-					windowCenter = ((int)windowWidth) >> 1;
-				else
-					windowCenter = 0;
-			}
-
-			WindowLevelApplicator applicator = new WindowLevelApplicator(this.SelectedPresentationImage);
+			AutoVoiLutOperationApplicator applicator = new AutoVoiLutOperationApplicator(this.SelectedPresentationImage);
 			UndoableCommand command = new UndoableCommand(applicator);
-			command.Name = SR.CommandWindowLevel;
+			command.Name = SR.CommandAutoVoiLutApplication;
 			command.BeginState = applicator.CreateMemento();
 
-			this.SelectedVOILUTLinearProvider.VoiLutLinear.WindowWidth = windowWidth;
-			this.SelectedVOILUTLinearProvider.VoiLutLinear.WindowCenter = windowCenter;
-			this.SelectedVOILUTLinearProvider.Draw();
-
+			this.SelectedAutoLutApplicatorProvider.AutoVoiLutApplicator.ApplyNext();
 			applicator.ApplyToLinkedImages();
 
 			command.EndState = applicator.CreateMemento();

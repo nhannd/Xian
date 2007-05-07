@@ -255,6 +255,9 @@
   <data name="ExceptionLUTNotAdded" xml:space="preserve">
     <value>Cannot generate composite LUT because no LUTs have been added yet.</value>
   </data>
+  <data name="ExceptionMementoMustBeEitherAutoOrWindowLevel" xml:space="preserve">
+    <value>The supplied memento is of the wrong type.  It must be either a WindowLevelMemento or an AutoVoiLutMemento.</value>
+  </data>
   <data name="ExceptionMouseToolAssignmentInUse" xml:space="preserve">
     <value>Another mouse tool is already using the specified assignment ({0}).  The assignment has been ignored.</value>
   </data>

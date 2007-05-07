@@ -23,6 +23,7 @@ namespace ClearCanvas.ImageViewer
 		IImageSopProvider, 
 		ISpatialTransformProvider,
 		IVOILUTLinearProvider,
+		IAutoVoiLutApplicatorProvider,
 		IOverlayGraphicsProvider,
 		IAnnotationLayoutProvider
 	{
@@ -123,6 +124,21 @@ namespace ClearCanvas.ImageViewer
 					return null;
 				else
 					return grayscaleImageGraphic.VoiLUTLinear;
+			}
+		}
+
+		#endregion
+
+		#region IAutoLutApplicatorProvider Members
+
+		public IAutoVoiLutApplicator AutoVoiLutApplicator
+		{
+			get
+			{
+				if (_imageGraphic is IAutoVoiLutApplicatorProvider)
+					return (_imageGraphic as IAutoVoiLutApplicatorProvider).AutoVoiLutApplicator;
+
+				return null;
 			}
 		}
 

@@ -143,6 +143,24 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
+		/// Gets the selected <see cref="IAutoLutApplicatorProvider"/>.
+		/// </summary>
+		/// <value>The selected <see cref="IAutoLutApplicatorProvider"/> or <b>null</b>
+		/// if no <see cref="IAutoLutApplicatorProvider"/> is currently selected.</value>
+		public IAutoVoiLutApplicatorProvider SelectedAutoLutApplicatorProvider
+		{
+			get
+			{
+				if (this.SelectedPresentationImage != null)
+				{
+					return this.SelectedPresentationImage as IAutoVoiLutApplicatorProvider;
+				}
+				else
+					return null;
+			}
+		}
+
+		/// <summary>
 		/// Gets the selected <see cref="IOverlayGraphicsProvider"/>.
 		/// </summary>
 		/// <value>The selected <see cref="IOverlayGraphicsProvider"/> or <b>null</b>

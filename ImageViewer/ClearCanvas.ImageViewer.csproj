@@ -140,6 +140,10 @@
     <Compile Include="Graphics\IndexedImageGraphic.cs" />
     <Compile Include="Graphics\StandardGrayscaleImageGraphic.cs" />
     <Compile Include="Graphics\StandardPaletteColorImageGraphic.cs" />
+    <Compile Include="Imaging\AutoVoiLutOperationApplicator.cs" />
+    <Compile Include="Imaging\AutoVoiLutMemento.cs" />
+    <Compile Include="Imaging\IAutoVoiLutApplicator.cs" />
+    <Compile Include="Imaging\IAutoVoiLutApplicatorProvider.cs" />
     <Compile Include="Imaging\IVOILUTLinear.cs" />
     <Compile Include="Imaging\LUTCollection.cs" />
     <Compile Include="Imaging\LUTEventArgs.cs" />
@@ -411,6 +415,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="ClassDiagram1.cd" />
     <None Include="ClassDiagrams\Annotations.cd" />
     <None Include="ClassDiagrams\CompositeGraphics.cd" />
     <None Include="ClassDiagrams\Graphics.cd" />

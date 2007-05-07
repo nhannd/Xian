@@ -475,6 +475,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The supplied memento is of the wrong type.  It must be either a WindowLevelMemento or an AutoVoiLutMemento..
+        /// </summary>
+        public static string ExceptionMementoMustBeEitherAutoOrWindowLevel {
+            get {
+                return ResourceManager.GetString("ExceptionMementoMustBeEitherAutoOrWindowLevel", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Another mouse tool is already using the specified assignment ({0}).  The assignment has been ignored..
         /// </summary>
         public static string ExceptionMouseToolAssignmentInUse {
