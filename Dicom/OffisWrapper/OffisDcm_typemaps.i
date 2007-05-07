@@ -164,7 +164,8 @@ INPUT_ARRAY_TYPEMAP(const double,			const double*,			double[])
 %typecheck(SWIG_TYPECHECK_##TYPECHECKPRECEDENCE) TYPE *&OUTPUT ""
 %enddef
 
-OUTPUT_ARRAY_TYPEMAP(char,				char**,				IntPtr,		INT8_PTR)
+// Do not use the char** typemap anymore
+// OUTPUT_ARRAY_TYPEMAP(char,				char**,				IntPtr,		INT8_PTR)
 OUTPUT_ARRAY_TYPEMAP(unsigned char,		unsigned char**,	IntPtr,		UINT8_PTR)
 OUTPUT_ARRAY_TYPEMAP(short,				short**,			IntPtr,		INT16_PTR)
 OUTPUT_ARRAY_TYPEMAP(unsigned short,	unsigned short**,	IntPtr,		UINT16_PTR)
@@ -216,8 +217,11 @@ OUTPUT_ARRAY_TYPEMAP(double,			double**,			IntPtr,		DOUBLE_PTR)
 
 %typemap(in, canthrow=1) std::string&
 %{ 
-	if (!$input) 
+	if (NULL == $input) 
+	{
 		SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "null string", 0);
+		return 0;
+	}
 
 	std::string $1_str;
 	$1 = &$1_str;
@@ -232,6 +236,41 @@ OUTPUT_ARRAY_TYPEMAP(double,			double**,			IntPtr,		DOUBLE_PTR)
 		$input[$1_str.length()] = 0;
 	}
 %}
+
+//
+// Handle the char*& type for situations like findAndGetString()
+// What we want returned is a byte array
+//
+// do it all using byte[] first, then see if we can simplify the
+// API by allowing client to use StringBuilder
+//
+%typemap(ctype) char *& "char **" 
+%typemap(imtype, inattributes="[MarshalAs(UnmanagedType.LPArray, SizeConst=1025)]") char *& "byte []"
+%typemap(cstype) char *& "byte []"
+%typemap(csin) char *& "$csinput"
+
+%typemap(in, canthrow=1) char *&
+%{
+	if (NULL == $input)
+	{
+		SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "null byte []", 0);
+		return 0;
+	}
+
+	char* dummy_string = "Dummy String";
+	$1 = &dummy_string;
+%}
+
+%typemap(argout) char *&
+%{
+	if (NULL != $1 && strlen(*$1) > 0)
+		memcpy($input, *$1, strlen(*$1));
+%}
+
+%typemap(ctype) int& "int *"
+%typemap(imtype) int& "ref int"
+%typemap(cstype) int& "ref int"
+%typemap(csin) int& "ref $csinput"
 
 //
 // Make sure that generated C# interface files have the correct

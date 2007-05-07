@@ -133,8 +133,9 @@ namespace ClearCanvas.Utilities.DicomEditor
                     }
                     else
                     {
-                        elem.getString(ref ptr);
-                        value = Marshal.PtrToStringAnsi(ptr);
+                        StringBuilder stringBuilder = new StringBuilder();
+                        elem.getOFString(stringBuilder, 0);
+                        value = stringBuilder.ToString();
                     }
                 }
 

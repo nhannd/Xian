@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common;
+using System.Runtime.InteropServices;
 
 namespace ClearCanvas.Dicom.DataStore
 {
@@ -149,15 +150,20 @@ namespace ClearCanvas.Dicom.DataStore
             if (cond.good())
                 study.SpecificCharacterSet = stringValue.ToString();
 
-            cond = sopInstanceDataset.findAndGetOFString(Dcm.PatientsName, stringValue);
+            //cond = sopInstanceDataset.findAndGetOFString(Dcm.PatientsName, stringValue);
+
+            byte[] rawBytes = new byte[1025];
+            int length = 0;
+            cond = OffisDcm.findAndGetRawStringFromItem(sopInstanceDataset, Dcm.PatientsName, rawBytes, ref length, false);
+
             if (cond.good())
             {
-				study.PatientsNameRaw = stringValue.ToString();
+                study.PatientsNameRaw = System.Text.Encoding.GetEncoding("Windows-1252").GetString(rawBytes, 0, length);
 
 				if (null == study.SpecificCharacterSet || study.SpecificCharacterSet == String.Empty)
-					study.PatientsName = new PersonName(stringValue.ToString());
+					study.PatientsName = new PersonName(study.PatientsNameRaw);
 				else
-					study.PatientsName = new PersonName(SpecificCharacterSetParser.Parse(study.SpecificCharacterSet, stringValue.ToString()));
+					study.PatientsName = new PersonName(SpecificCharacterSetParser.Parse(study.SpecificCharacterSet, study.PatientsNameRaw));
             }
 
             study.StoreTime = Platform.Time;

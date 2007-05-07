@@ -51,9 +51,41 @@ DcmElement* castToDcmElement(DcmObject* pObj)
 	return dynamic_cast<DcmElement*> (pObj);
 }
 
+//
+// Helper function to get raw strings
+// 
+OFCondition findAndGetRawStringFromItem(DcmItem& item,
+								  const DcmTagKey& tagKey,
+								  const char *&value,
+								  int &length,
+								  const OFBool searchIntoSub)
+{
+	DcmElement *elem;
+	/* find the element */
+	OFCondition status = item.findAndGetElement(tagKey, elem, searchIntoSub);
+	if (status.good())
+	{
+		/* get the value */
+		status = elem->getString(OFconst_cast(char *&, value));
+	}
+
+	/* reset value */
+	if (status.bad())
+	{
+		value = NULL;
+		length = 0;
+	}
+	else
+	{
+		length = strlen(value);
+	}
+	return status;
+}
+
 %}
 
 namespace std
 {
 	%template(OFStringVector) vector<string>;
 }
+
