@@ -62,6 +62,17 @@
       <DependentUpon>BindingTreeView.cs</DependentUpon>
     </Compile>
     <Compile Include="BlockingOperationView.cs" />
+    <Compile Include="StackTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StackTabComponentContainerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StackTabComponentContainerControl.Designer.cs">
+      <DependentUpon>StackTabComponentContainerControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StackTabComponentContainerView.cs" />
+    <Compile Include="TabGroupComponentContainerView.cs" />
     <Compile Include="CrudTableView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -118,6 +129,12 @@
       <DependentUpon>SplitComponentContainerControl.cs</DependentUpon>
     </Compile>
     <Compile Include="SplitComponentContainerView.cs" />
+    <Compile Include="TabGroupComponentContainerControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TabGroupComponentContainerControl.Designer.cs">
+      <DependentUpon>TabGroupComponentContainerControl.cs</DependentUpon>
+    </Compile>
     <Compile Include="TabComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -192,6 +209,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>DialogComponentContainerControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="StackTab.resx">
+      <DependentUpon>StackTab.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="ExceptionHandlerComponentControl.resx">
       <DependentUpon>ExceptionHandlerComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -220,6 +241,14 @@
     <EmbeddedResource Include="DesktopForm.resx">
       <DependentUpon>DesktopForm.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StackTabComponentContainerControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>StackTabComponentContainerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TabGroupComponentContainerControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TabGroupComponentContainerControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="TabComponentContainerControl.resx">
       <SubType>Designer</SubType>

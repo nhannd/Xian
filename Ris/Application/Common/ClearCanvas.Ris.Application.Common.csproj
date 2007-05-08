@@ -245,6 +245,8 @@
     <Compile Include="RegistrationWorkflow\GetWorklistRequest.cs" />
     <Compile Include="RegistrationWorkflow\GetWorklistResponse.cs" />
     <Compile Include="RegistrationWorkflow\IRegistrationWorkflowService.cs" />
+    <Compile Include="RegistrationWorkflow\LoadPatientProfileForBiographyRequest.cs" />
+    <Compile Include="RegistrationWorkflow\LoadPatientProfileForBiographyResponse.cs" />
     <Compile Include="RegistrationWorkflow\LoadWorklistPreviewRequest.cs" />
     <Compile Include="RegistrationWorkflow\LoadWorklistPreviewResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ModalityProcedureStepTypeDetail.cs" />

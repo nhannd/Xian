@@ -43,6 +43,14 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request);
 
         /// <summary>
+        /// Load all the patient data to populate a Patient detail/biography page
+        /// </summary>
+        /// <param name="request"><see cref="LoadWorklistPreviewRequest"/></param>
+        /// <returns><see cref="LoadWorklistPreviewResponse"/></returns>
+        [OperationContract]
+        LoadPatientProfileForBiographyResponse LoadPatientProfileForBiography(LoadPatientProfileForBiographyRequest request);
+
+        /// <summary>
         /// Get enablements for operations that can be applied to a worklist item
         /// </summary>
         /// <param name="request"><see cref="GetOperationEnablementRequest"/></param>

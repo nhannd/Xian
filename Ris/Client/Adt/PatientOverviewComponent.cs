@@ -9,6 +9,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -31,6 +32,19 @@ namespace ClearCanvas.Ris.Client.Adt
         IDesktopWindow DesktopWindow { get; }
     }
 
+    public class AlertListItem
+    {
+        public AlertListItem(string name, string message, string icon)
+        {
+            this.Name = name;
+            this.Message = message;
+            this.Icon = icon;
+        }
+
+        public string Name;
+        public string Message;
+        public string Icon;
+    }
 
     /// <summary>
     /// PatientComponent class
@@ -49,7 +63,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             public EntityRef PatientProfile
             {
-                get { return _component._patientProfileRef; }
+                get { return _component._profileRef; }
             }
 
             public IDesktopWindow DesktopWindow
@@ -58,59 +72,35 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-
-        private EntityRef _patientProfileRef;
+        private EntityRef _profileRef;
         private PatientProfileDetail _patientProfile;
-        private ToolSet _toolSet;
+        private List<AlertNotificationDetail> _alertNotifications;
 
+        private ToolSet _toolSet;
+        private ResourceResolver _resourceResolver;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientOverviewComponent(EntityRef profileRef)
+        public PatientOverviewComponent(EntityRef profileRef, PatientProfileDetail patientProfile, List<AlertNotificationDetail> alertNotifications)
         {
-            _patientProfileRef = profileRef;
+            _profileRef = profileRef;
+            _patientProfile = patientProfile;
+            _alertNotifications = alertNotifications;
+
+            _resourceResolver = new ResourceResolver(this.GetType().Assembly);
         }
 
         public override void Start()
         {
             _toolSet = new ToolSet(new PatientOverviewToolExtensionPoint(), new PatientOverviewToolContext(this));
 
-            try
-            {
-                Platform.GetService<IPatientAdminService>(
-                    delegate(IPatientAdminService service)
-                    {
-                        //_patientProfile
-                        LoadPatientProfileForAdminEditResponse response = service.LoadPatientProfileForAdminEdit(new LoadPatientProfileForAdminEditRequest(_patientProfileRef));
-                        _patientProfileRef = response.PatientProfileRef;
-                        _patientProfile = response.PatientDetail;
-                    });
-
-                Refresh();
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-
             base.Start();
         }
-/*
-        private void PatientProfileChangedEventHandler(object sender, EntityChangeEventArgs e)
-        {
-            // is the patient profile that changed the same one we are looking at?
-            if (_patientProfileRef != null && e.EntityRef.Equals(_patientProfileRef))
-            {
-                Refresh();
-            }
-        }
-*/
+
         public override void Stop()
         {
             _toolSet.Dispose();
- //           _adtService.PatientProfileChanged -= PatientProfileChangedEventHandler;
-
             base.Stop();
         }
 
@@ -127,16 +117,127 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return String.Format("{0}, {1}", _patientProfile.Name.FamilyName, _patientProfile.Name.GivenName); }
         }
 
+        public string Mrn
+        {
+            get { return String.Format("Mrn: {0} {1}", _patientProfile.MrnAssigningAuthority, _patientProfile.Mrn); }
+        }
+
+        public string HealthCard
+        {
+            get { return _patientProfile == null ? "" : 
+                String.Format("Healthcard: {0} {1} {2}", _patientProfile.HealthcardAssigningAuthority, _patientProfile.Healthcard, _patientProfile.HealthcardVC); }
+        }
+
+        public string AgeSex
+        {
+            get 
+            {
+                if (_patientProfile.DeathIndicator)
+                {
+                    TimeSpan age = _patientProfile.TimeOfDeath.Value.Subtract(_patientProfile.DateOfBirth);
+                    return String.Format("Age/Sex: {0} ({1}) Deceased", (int)age.Days / 365, _patientProfile.Sex.Value);
+                }
+                else
+                {
+                    TimeSpan age = Platform.Time.Date.Subtract(_patientProfile.DateOfBirth);
+                    return String.Format("Age/Sex: {0} ({1})", (int)age.Days / 365, _patientProfile.Sex.Value);
+                }
+            }
+        }
+
+        public string DateOfBirth
+        {
+            get { return String.Format("DOB: {0}", Format.Date(_patientProfile.DateOfBirth)); }
+        }
+
+        public ResourceResolver ResourceResolver
+        {
+            get { return _resourceResolver; }
+        }
+
+        public string PatientImage
+        {
+            get { return "AlertMessenger.png"; }
+        }
+
+        public List<AlertListItem> AlertList
+        {
+            get 
+            {
+                List<AlertListItem> alertListItems = new List<AlertListItem>();
+
+                foreach (AlertNotificationDetail detail in _alertNotifications)
+                {
+                    alertListItems.Add(new AlertListItem(detail.Type, GetAlertTooltip(detail), GetAlertIcon(detail)));
+                }
+
+                return alertListItems;
+            }
+        }
+
         #endregion
 
-        private void Refresh()
+        private string GetAlertIcon(AlertNotificationDetail detail)
         {
-            this.Host.SetTitle(string.Format(SR.TitlePatientComponent,
-                String.Format("{0}, {1}", _patientProfile.Name.FamilyName, _patientProfile.Name.GivenName),
-                String.Format("{0} {1}", _patientProfile.MrnAssigningAuthority, _patientProfile.Mrn)));
+            string icon = "";
 
+            switch (detail.Type)
+            {
+                case "Note Alert":
+                    icon = "AlertPen.png";
+                    break;
+                case "Language Alert":
+                    icon = "AlertWorld.png";
+                    break;
+                case "Patient Alert":
+                    icon = "AlertMessenger.png";
+                    break;
+                case "Schedule Alert":
+                    icon = "AlertClock.png";
+                    break;
+                default:
+                    icon = "AlertMessenger.png";
+                    break;
+            }
 
-            NotifyAllPropertiesChanged();
+            return icon;
         }
+
+        private string GetAlertTooltip(AlertNotificationDetail detail)
+        {
+            string alertTooltip = "";
+            string patientName = String.Format("{0}. {1}"
+                , _patientProfile.Name.GivenName.Substring(0, 1)
+                , _patientProfile.Name.FamilyName);
+
+            switch (detail.Type)
+            {
+                case "Note Alert":
+                    alertTooltip = String.Format("{0} has high severity notes: {1}"
+                        , patientName
+                        , StringUtilities.Combine<string>(detail.Reasons, "\r\n"));
+                    break;
+                case "Language Alert":
+                    alertTooltip = String.Format("{0} speaks: {1}"
+                        , patientName
+                        , StringUtilities.Combine<string>(detail.Reasons, ", "));
+                    break;
+                default:
+                    break;
+            }
+
+            return alertTooltip;
+        }
+
+        public void ShowPatientDemographicsDialog()
+        {
+            //TODO: ShowPatientDemographicsDialog
+            // This is to illustrate the concept only, eventually we want to show some dialog/form other than the editor
+            ApplicationComponent.LaunchAsDialog(
+                this.Host.DesktopWindow,
+                new PatientProfileEditorComponent(_profileRef),
+                SR.TitleEditPatient);
+        }
+
     }
 }

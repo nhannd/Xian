@@ -69,6 +69,9 @@
     <Compile Include="Actions\ValueObserverAttribute.cs" />
     <Compile Include="Actions\VisibleStateObserverAttribute.cs" />
     <Compile Include="BlockingOperation.cs" />
+    <Compile Include="StackTabComponentContainer.cs" />
+    <Compile Include="TabGroup.cs" />
+    <Compile Include="TabGroupComponentContainer.cs" />
     <Compile Include="CursorToken.cs" />
     <Compile Include="Actions\IActionSet.cs" />
     <Compile Include="ApplicationComponentContainer.cs" />

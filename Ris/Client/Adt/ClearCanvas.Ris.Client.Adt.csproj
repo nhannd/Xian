@@ -41,7 +41,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BiographyDocumentComponent.cs" />
+    <Compile Include="BiographyNoteComponent.cs" />
     <Compile Include="CancelOrderComponent.cs" />
+    <Compile Include="BiographyOrderHistoryTable.cs" />
+    <Compile Include="BiographyOrderHistoryComponent.cs" />
+    <Compile Include="BiographyDocumentTable.cs" />
+    <Compile Include="BiographyNoteTable.cs" />
     <Compile Include="RequestedProcedureCheckInTable.cs" />
     <Compile Include="OrderSummaryTable.cs" />
     <Compile Include="CancelOrderTable.cs" />
@@ -187,6 +193,11 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
+    <EmbeddedResource Include="Icons\AlertClock.png" />
+    <EmbeddedResource Include="Icons\AlertMessenger.png" />
+    <EmbeddedResource Include="Icons\AlertPen.png" />
+    <EmbeddedResource Include="Icons\AlertWorld.png" />
+    <EmbeddedResource Include="Icons\Add.png" />
     <EmbeddedResource Include="Icons\NoteTestToolLarge.png" />
     <EmbeddedResource Include="Icons\NoteTestToolMedium.png" />
     <EmbeddedResource Include="Icons\NoteTestToolSmall.png" />

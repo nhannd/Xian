@@ -15,6 +15,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Workflow;
 using ClearCanvas.Healthcare.Workflow;
+using ClearCanvas.Ris.Application.Services.Admin;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -22,20 +23,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class RegistrationWorkflowService : WorkflowServiceBase, IRegistrationWorkflowService
     {
-        IList<IPatientAlert> _patientAlertTests;
-
         public RegistrationWorkflowService()
         {
             _worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Registration.WorklistExtensionPoint();
-
-            PatientAlertExtensionPoint xp = new PatientAlertExtensionPoint();
-            object[] tests = xp.CreateExtensions();
-
-            _patientAlertTests = new List<IPatientAlert>();
-            foreach (object o in tests)
-            {
-                _patientAlertTests.Add((IPatientAlert)o);
-            }
         }
 
         #region IRegistrationWorkflowService Members
@@ -77,7 +67,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         public LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request)
         {
             PatientProfile profile = (PatientProfile)PersistenceContext.Load(request.WorklistItem.PatientProfileRef);
-            List<AlertNotificationDetail> alertNotifications = GetAlertsHelper(profile.Patient, this.PersistenceContext);
+            List<AlertNotificationDetail> alertNotifications = GetPatientAlertNotifications(profile.Patient, this.PersistenceContext);
 
             IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)(new PatientReconciliationStrategyExtensionPoint()).CreateExtension();
             IList<PatientProfileMatch> matches = strategy.FindReconciliationMatches(profile, PersistenceContext);
@@ -89,6 +79,22 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 alertNotifications,
                 this.PersistenceContext));
         }
+
+        [ReadOperation]
+        public LoadPatientProfileForBiographyResponse LoadPatientProfileForBiography(LoadPatientProfileForBiographyRequest request)
+        {
+            IPatientProfileBroker broker = PersistenceContext.GetBroker<IPatientProfileBroker>();
+
+            PatientProfile profile = broker.Load(request.PatientProfileRef);
+            PatientProfileAssembler assembler = new PatientProfileAssembler();
+
+            return new LoadPatientProfileForBiographyResponse(
+                profile.Patient.GetRef(), 
+                profile.GetRef(), 
+                assembler.CreatePatientProfileDetail(profile, PersistenceContext),
+                GetPatientAlertNotifications(profile.Patient, this.PersistenceContext));
+        }
+
 
         [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
@@ -256,12 +262,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         /// <param name="subject"></param>
         /// <param name="context"></param>
         /// <returns>a list of alert notification detail if each alert test succeeds</returns>
-        private List<AlertNotificationDetail> GetAlertsHelper(Patient subject, IPersistenceContext context)
+        private List<AlertNotificationDetail> GetPatientAlertNotifications(Patient subject, IPersistenceContext context)
         {
             AlertAssembler assembler = new AlertAssembler();
             List<AlertNotificationDetail> results = new List<AlertNotificationDetail>();
 
-            foreach (IPatientAlert patientAlertTests in _patientAlertTests)
+            foreach (IPatientAlert patientAlertTests in PatientAlertHelper.Instance.GetAlertTests())
             {
                 IAlertNotification testResult = patientAlertTests.Test(subject, context);
                 if (testResult != null)
