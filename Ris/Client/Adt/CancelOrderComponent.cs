@@ -156,7 +156,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public bool AcceptEnabled
         {
-            get { return this.Modified; }
+            get { return this.Modified && SelectedCancelReason != ""; }
         }
 
         public event EventHandler AcceptEnabledChanged

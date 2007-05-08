@@ -156,7 +156,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             OrderSearchCriteria criteria = new OrderSearchCriteria();
             criteria.Patient.EqualTo(profile.Patient);
-            criteria.CancelReason.NotEqualTo(OrderCancelReason.None);
+            criteria.CancelReason.EqualTo(OrderCancelReason.None);
 
             OrderPriorityEnumTable orderPriorityEnumTable = PersistenceContext.GetBroker<IOrderPriorityEnumBroker>().Load();
 
@@ -246,7 +246,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
                 OrderSearchCriteria criteria = new OrderSearchCriteria();
                 criteria.Patient.EqualTo(profile.Patient);
-                criteria.CancelReason.NotEqualTo(OrderCancelReason.None);
+                criteria.CancelReason.EqualTo(OrderCancelReason.None);
 
                 return (orderBroker.FindOne(criteria) != null);
             }
