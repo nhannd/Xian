@@ -150,20 +150,14 @@ namespace ClearCanvas.Dicom.DataStore
             if (cond.good())
                 study.SpecificCharacterSet = stringValue.ToString();
 
-            //cond = sopInstanceDataset.findAndGetOFString(Dcm.PatientsName, stringValue);
-
-            byte[] rawBytes = new byte[1025];
-            int length = 0;
-            cond = OffisDcm.findAndGetRawStringFromItem(sopInstanceDataset, Dcm.PatientsName, rawBytes, ref length, false);
+            byte[] patientsNameRawBytes;
+            cond = DicomHelper.FindAndGetRawStringFromItem(sopInstanceDataset, Dcm.PatientsName, out patientsNameRawBytes);
 
             if (cond.good())
             {
-                study.PatientsNameRaw = System.Text.Encoding.GetEncoding("Windows-1252").GetString(rawBytes, 0, length);
-
-				if (null == study.SpecificCharacterSet || study.SpecificCharacterSet == String.Empty)
-					study.PatientsName = new PersonName(study.PatientsNameRaw);
-				else
-					study.PatientsName = new PersonName(SpecificCharacterSetParser.Parse(study.SpecificCharacterSet, study.PatientsNameRaw));
+                // of course we shouldn't be converting this yet again, we should be able to store the raw
+                study.PatientsNameRaw = patientsNameRawBytes;
+				study.PatientsName = new PersonName(SpecificCharacterSetParser.Parse(study.SpecificCharacterSet, study.PatientsNameRaw));
             }
 
             study.StoreTime = Platform.Time;

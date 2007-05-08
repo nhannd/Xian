@@ -15,7 +15,7 @@
     <property name="SpecificCharacterSet" column="SpecificCharacterSet_" type="string" length="64" />
     <property name="ProcedureCodeSequenceCodeValue" column="ProcedureCodeSequenceCodeValue_" type="string" length="16" />
     <property name="StoreTime" column="StoreTime_" type="DateTime" />
-    <property name="PatientsNameRaw" column="PatientsNameRaw_" type="string" />
+    <property name="PatientsNameRaw" column="PatientsNameRaw_" type="binary" length="256"/>
     <component name="PatientsName" class="ClearCanvas.Dicom.PersonName, ClearCanvas.Dicom"> <!-- class attribute optional -->
       <property name="InternalPersonName" column="PatientsName_" type="string" length="256" />
     </component>

@@ -122,5 +122,15 @@ namespace ClearCanvas.Dicom
 
             return normalizedDirectory.ToString();
         }
+
+        public static OFCondition FindAndGetRawStringFromItem(DcmItem dcmItem, DcmTagKey tagKey, out byte[] rawBytes)
+        {
+            int lengthRequiredOfArray = 0;
+            OffisDcm.findAndGetRawStringFromItemGetLength(dcmItem, Dcm.PatientsName, ref lengthRequiredOfArray, false);
+
+            rawBytes = new byte[lengthRequiredOfArray];
+            OFCondition cond = OffisDcm.findAndGetRawStringFromItem(dcmItem, Dcm.PatientsName, rawBytes, ref lengthRequiredOfArray, false);
+            return cond;
+        }
 	}
 }

@@ -1,4 +1,4 @@
-#if false
+#if UNIT_TESTS
 
 using System;
 using System.IO;

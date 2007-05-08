@@ -49,6 +49,125 @@ namespace ClearCanvas.Dicom
             if ("" == specificCharacterSet)
                 return dataInUnicode;
 
+            CharacterSetInfo defaultRepertoire;
+            Dictionary<string, CharacterSetInfo> extensionRepertoires;
+            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
+
+            // TODO: here's where the hack starts
+            // pick the first one and use that for decoding
+            foreach (CharacterSetInfo info in extensionRepertoires.Values)
+            {
+                return Encode(dataInUnicode, info);
+            }
+
+            // if nothing happened with extension repertoires, use default repertoire
+            if (null != defaultRepertoire)
+            {
+                return Encode(dataInUnicode, defaultRepertoire);
+            }
+            else
+            {
+                return dataInUnicode;
+            }
+        }
+
+        public static void Unparse(string specificCharacterSet, string dataInUnicode, out byte[] rawBytes)
+        {
+            if ("" == specificCharacterSet)
+            {
+                rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(dataInUnicode);
+                return;
+            }
+
+            CharacterSetInfo defaultRepertoire;
+            Dictionary<string, CharacterSetInfo> extensionRepertoires;
+            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
+
+            // TODO: here's where the hack starts
+            // pick the first one and use that for decoding
+            foreach (CharacterSetInfo info in extensionRepertoires.Values)
+            {
+                Encode(dataInUnicode, info, out rawBytes);
+                return;
+            }
+
+            // if nothing happened with extension repertoires, use default repertoire
+            if (null != defaultRepertoire)
+            {
+                Encode(dataInUnicode, defaultRepertoire, out rawBytes);
+                return;
+            }
+            else
+            {
+                rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(dataInUnicode);
+                return;
+            }
+        }
+
+        public static string Parse(string specificCharacterSet, byte[] rawData)
+        {
+            if ("" == specificCharacterSet)
+            {
+                // this takes the raw bytes, and converts it into a Unicode string
+                // represention of the original raw bytes
+                return System.Text.Encoding.GetEncoding("Windows-1252").GetString(rawData);
+            }
+
+            CharacterSetInfo defaultRepertoire;
+            Dictionary<string, CharacterSetInfo> extensionRepertoires;
+            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
+
+            // TODO: here's where the hack starts
+            // pick the first one and use that for decoding
+            foreach (CharacterSetInfo info in extensionRepertoires.Values)
+            {
+                return Decode(rawData, info);
+            }
+
+            // if nothing happened with extension repertoires, use default repertoire
+            if (null != defaultRepertoire)
+            {
+                return Decode(rawData, defaultRepertoire);
+            }
+            else
+            {
+                // this takes the raw bytes, and converts it into a Unicode string
+                // represention of the original raw bytes
+                return System.Text.Encoding.GetEncoding("Windows-1252").GetString(rawData);
+
+            }
+        }
+
+        public static string Parse(string specificCharacterSet, string rawData)
+        {
+            if ("" == specificCharacterSet)
+                return rawData;
+
+            CharacterSetInfo defaultRepertoire;
+            Dictionary<string, CharacterSetInfo> extensionRepertoires;
+            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
+
+            // TODO: here's where the hack starts
+            // pick the first one and use that for decoding
+            foreach (CharacterSetInfo info in extensionRepertoires.Values)
+            {
+                return Decode(rawData, info);
+            }
+
+            // if nothing happened with extension repertoires, use default repertoire
+            if (null != defaultRepertoire)
+            {
+                return Decode(rawData, defaultRepertoire);
+            }
+            else
+            {
+                return rawData;
+            }
+            
+        }
+
+        private static void GetRepertoires(string specificCharacterSet, out CharacterSetInfo defaultRepertoire, out Dictionary<string, CharacterSetInfo> extensionRepertoires)
+        {
             // TODO:
             // Specific Character Set may have up to n values if 
             // Code Extensions are used. We accomodate for that here
@@ -62,33 +181,22 @@ namespace ClearCanvas.Dicom
             // since the only support for Chinese is through GB18030 and
             // UTF-8, both of which do not support Code Extensions.)
             string[] specificCharacterSetValues = specificCharacterSet.Split('\\');
-            CharacterSetInfo defaultRepertoire = null;
+            defaultRepertoire = null;
 
             // set the default repertoire from Value 1 
             if (specificCharacterSetValues.GetUpperBound(0) >= 0)
             {
                 if (SpecificCharacterSetParser.CharacterSetDatabase.ContainsKey(specificCharacterSetValues[0]))
-                {
-                    // if the repertoire is either of these special cases, just parse
-                    // and return the result
-                    if ("GB18030" == specificCharacterSetValues[0] || "ISO_IR 192" == specificCharacterSetValues[0])
-                    {
-                        return Encode(dataInUnicode, SpecificCharacterSetParser.CharacterSetDatabase[specificCharacterSetValues[0]]);
-                    }
-
                     defaultRepertoire = SpecificCharacterSetParser.CharacterSetDatabase[specificCharacterSetValues[0]];
-                }
                 else
-                {
                     // we put in the default repertoire. Technically, it may
                     // not be ISO 2022 IR 6, but ISO_IR 6, but the information
                     // we want to use is the same
                     defaultRepertoire = SpecificCharacterSetParser.CharacterSetDatabase["ISO 2022 IR 6"];
-                }
             }
 
             // parse out the extension repertoires
-            Dictionary<string, CharacterSetInfo> extensionRepertoires = new Dictionary<string, CharacterSetInfo>();
+            extensionRepertoires = new Dictionary<string, CharacterSetInfo>();
             for (int i = 1; i < specificCharacterSetValues.Length; ++i)
             {
                 string value = specificCharacterSetValues[i];
@@ -115,132 +223,26 @@ namespace ClearCanvas.Dicom
                     extensionRepertoires.Add(value, SpecificCharacterSetParser.CharacterSetDatabase["ISO 2022 IR 6"]);
                 }
             }
-
-            // TODO: here's where the hack starts
-            // pick the first one and use that for decoding
-            foreach (CharacterSetInfo info in extensionRepertoires.Values)
-            {
-                return Encode(dataInUnicode, info);
-            }
-
-            // if nothing happened with extension repertoires, use default repertoire
-            if (null != defaultRepertoire)
-            {
-                return Encode(dataInUnicode, defaultRepertoire);
-            }
-            else
-            {
-                return dataInUnicode;
-            }
-        }
-
-        public static string Parse(string specificCharacterSet, string rawData)
-        {
-            if ("" == specificCharacterSet)
-                return rawData;
-
-            // TODO:
-            // Specific Character Set may have up to n values if 
-            // Code Extensions are used. We accomodate for that here
-            // by parsing out all the different possible defined terms.
-            // At this point, however, we're not going to handle escaping
-            // between character sets from different code pages within
-            // a single string. For example, DICOM implies that you should
-            // be able to have JIS-encoded Japanese, ISO European characters,
-            // Thai characters and Korean characters on the same line, using
-            // Code Extensions (escape sequences). (Chinese is not included
-            // since the only support for Chinese is through GB18030 and
-            // UTF-8, both of which do not support Code Extensions.)
-            string[] specificCharacterSetValues = specificCharacterSet.Split('\\');
-            CharacterSetInfo defaultRepertoire = null;
-
-            // set the default repertoire from Value 1 
-            if (specificCharacterSetValues.GetUpperBound(0) >= 0)
-            {
-                if (SpecificCharacterSetParser.CharacterSetDatabase.ContainsKey(specificCharacterSetValues[0]))
-                {
-                    // if the repertoire is either of these special cases, just parse
-                    // and return the result
-                    if ("GB18030" == specificCharacterSetValues[0] || "ISO_IR 192" == specificCharacterSetValues[0])
-                    {
-                        return Decode(rawData, SpecificCharacterSetParser.CharacterSetDatabase[specificCharacterSetValues[0]]);
-                    }
-
-                    defaultRepertoire = SpecificCharacterSetParser.CharacterSetDatabase[specificCharacterSetValues[0]];
-                }
-                else
-                {
-                    // we put in the default repertoire. Technically, it may
-                    // not be ISO 2022 IR 6, but ISO_IR 6, but the information
-                    // we want to use is the same
-                    defaultRepertoire = SpecificCharacterSetParser.CharacterSetDatabase["ISO 2022 IR 6"];
-                }                
-            }
-
-            // parse out the extension repertoires
-            Dictionary<string, CharacterSetInfo> extensionRepertoires = new Dictionary<string, CharacterSetInfo>();
-            for (int i = 1; i<specificCharacterSetValues.Length; ++i)
-            {
-                string value = specificCharacterSetValues[i];
-
-                if (SpecificCharacterSetParser.CharacterSetDatabase.ContainsKey(value) && !extensionRepertoires.ContainsKey(value))
-                {
-                    // special robustness handling of GB18030 and UTF-8
-                    if ("GB18030" == value || "ISO_IR 192" == value)
-                    {
-                        // these two character sets can't use code extensions, so there should really only be 1
-                        // character set in the repertoire
-                        extensionRepertoires.Clear();
-                        extensionRepertoires.Add(value, SpecificCharacterSetParser.CharacterSetDatabase[value]);
-                        break;
-                    }
-
-                    extensionRepertoires.Add(value, SpecificCharacterSetParser.CharacterSetDatabase[value]);
-                }
-                else if (!extensionRepertoires.ContainsKey("ISO 2022 IR 6"))
-                {
-                    // we put in the default repertoire. Technically, it may
-                    // not be ISO 2022 IR 6, but ISO_IR 6, but the information
-                    // we want to use is the same
-                    extensionRepertoires.Add(value, SpecificCharacterSetParser.CharacterSetDatabase["ISO 2022 IR 6"]);
-                }
-            }
-
-            // TODO: here's where the hack starts
-            // pick the first one and use that for decoding
-            foreach (CharacterSetInfo info in extensionRepertoires.Values)
-            {
-                return Decode(rawData, info);
-            }
-
-            // if nothing happened with extension repertoires, use default repertoire
-            if (null != defaultRepertoire)
-            {
-                return Decode(rawData, defaultRepertoire);
-            }
-            else
-            {
-                return rawData;
-            }
-            
         }
 
         private static string Encode(string unicodeData, CharacterSetInfo repertoire)
         {
-            byte[] rawBytes = Encoding.GetEncoding(repertoire.MicrosoftCodePage).GetBytes(unicodeData);
+            byte[] rawBytes;
+            Encode(unicodeData, repertoire, out rawBytes);
             char[] rawCharacters = Encoding.GetEncoding("Windows-1252").GetChars(rawBytes);
             return new string(rawCharacters);
         }
 
-        private static string Decode(string rawData, CharacterSetInfo repertoire)
+        private static void Encode(string unicodeData, CharacterSetInfo repertoire, out byte[] encoded)
+        {
+            byte[] rawBytes = Encoding.GetEncoding(repertoire.MicrosoftCodePage).GetBytes(unicodeData);
+            encoded = rawBytes;
+        }
+
+        private static string Decode(byte[] rawData, CharacterSetInfo repertoire)
         {
             Encoding rawEncoding = Encoding.GetEncoding(repertoire.MicrosoftCodePage);
-
-            // get it back to byte array form using a character set that includes 
-            // both GR and GL areas (characters up to \xff in binary value)
-            // and it seems Windows-1252 works better than ISO-8859-1
-            byte[] rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(rawData);
-            string rawDataDecoded = new string(rawEncoding.GetChars(rawBytes));
+            string rawDataDecoded = new string(rawEncoding.GetChars(rawData));
 
             // get rid of any escape sequences, if they appear in the decoded string,
             // like the case of Korean, using code page 20949 for some reason
@@ -248,6 +250,15 @@ namespace ClearCanvas.Dicom
                 return rawDataDecoded.Replace(repertoire.G1Sequence, "");
             else
                 return rawDataDecoded;            
+        }
+
+        private static string Decode(string rawData, CharacterSetInfo repertoire)
+        {
+            // get it back to byte array form using a character set that includes 
+            // both GR and GL areas (characters up to \xff in binary value)
+            // and it seems Windows-1252 works better than ISO-8859-1
+            byte[] rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(rawData);
+            return Decode(rawBytes, repertoire);
         }
 
         protected class CharacterSetInfo

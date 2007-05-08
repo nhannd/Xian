@@ -7,6 +7,6 @@ drop table SopInstance_;
 drop table WindowValues_;
 drop table DictionaryEntries_;
 drop table Series_;
-drop table Study_;
-drop table ImageSopInstance_;
 drop table DicomDictionaryContainer_;
+drop table ImageSopInstance_;
+drop table Study_;

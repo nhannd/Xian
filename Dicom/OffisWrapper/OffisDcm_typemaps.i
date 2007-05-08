@@ -110,6 +110,77 @@
 		return buffer.ToString();
 	}
 %}
+//
+// Handle the std::string type
+//
+%typemap(ctype) std::string& "char *"
+%typemap(imtype) std::string& "StringBuilder"
+%typemap(cstype) std::string& "StringBuilder" 
+%typemap(csin) std::string& "$csinput.Remove(0, $csinput.Length)"
+
+%typemap(in, canthrow=1) std::string&
+%{ 
+	if (NULL == $input) 
+	{
+		SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "null string", 0);
+		return 0;
+	}
+
+	std::string $1_str;
+	$1 = &$1_str;
+%}
+
+
+%typemap(argout) std::string&
+%{
+	if ($1_str.c_str() != 0 && $1_str.length() > 0)
+	{
+		memcpy($input, $1_str.c_str(), $1_str.length());
+		$input[$1_str.length()] = 0;
+	}
+%}
+
+//
+// Handle the char*& type for situations like findAndGetString()
+// What we want returned is a byte array
+//
+// do it all using byte[] first, then see if we can simplify the
+// API by allowing client to use StringBuilder
+//
+%typemap(ctype) char *&arrayForStringRawBytes "char **" 
+%typemap(imtype, inattributes="[MarshalAs(UnmanagedType.LPArray, SizeConst=1025)]") char *&arrayForStringRawBytes "byte []"
+%typemap(cstype) char *&arrayForStringRawBytes "byte []"
+%typemap(csin) char *&arrayForStringRawBytes "$csinput"
+
+%typemap(in, canthrow=1) char *&arrayForStringRawBytes
+%{
+	if (NULL == $input)
+	{
+		SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "null byte []", 0);
+		return 0;
+	}
+
+	// we have to give something to $1 to point to, because SWIG generates code that
+	// dereferences the $1 to pass in as a parameter into the underlying string getter
+	char* dummy_string = "Dummy String";
+	$1 = &dummy_string;
+%}
+
+%typemap(argout) char *&arrayForStringRawBytes
+%{
+	// this may look strange, because shouldn't we be copying into
+	// *$input (*jargx)? In our case, no, because $input's type
+	// is char**, but in reality, $input is the pointer to a block
+	// of allocated memory. The char** arises out of the typemap
+	if (NULL != $1 && strlen(*$1) > 0)
+		memcpy($input, *$1, strlen(*$1));
+%}
+
+%typemap(ctype) int& "int *"
+%typemap(imtype) int& "ref int"
+%typemap(cstype) int& "ref int"
+%typemap(csin) int& "ref $csinput"
+
 /*
 %define INPUT_ARRAY_TYPEMAP(TYPE, CTYPE, CSTYPE)
 %typemap(ctype) TYPE *INPUT_ARRAY "CTYPE"
@@ -165,7 +236,7 @@ INPUT_ARRAY_TYPEMAP(const double,			const double*,			double[])
 %enddef
 
 // Do not use the char** typemap anymore
-// OUTPUT_ARRAY_TYPEMAP(char,				char**,				IntPtr,		INT8_PTR)
+OUTPUT_ARRAY_TYPEMAP(char,				char**,				IntPtr,		INT8_PTR)
 OUTPUT_ARRAY_TYPEMAP(unsigned char,		unsigned char**,	IntPtr,		UINT8_PTR)
 OUTPUT_ARRAY_TYPEMAP(short,				short**,			IntPtr,		INT16_PTR)
 OUTPUT_ARRAY_TYPEMAP(unsigned short,	unsigned short**,	IntPtr,		UINT16_PTR)
@@ -196,7 +267,6 @@ OUTPUT_ARRAY_TYPEMAP(double,			double**,			IntPtr,		DOUBLE_PTR)
 %apply float *OUTPUT {Float32 &};
 %apply double *OUTPUT {Float64 &};
 %apply double *OUTPUT {double &};
-%apply std::string & {std::string &};
 
 %apply char *&OUTPUT_ARRAY {char *&};
 %apply unsigned char *&OUTPUT_ARRAY {Uint8 *&};
@@ -206,71 +276,6 @@ OUTPUT_ARRAY_TYPEMAP(double,			double**,			IntPtr,		DOUBLE_PTR)
 %apply int *&OUTPUT_ARRAY {Sint32 *&};
 %apply float *&OUTPUT_ARRAY {Float32 *&};
 %apply double *&OUTPUT_ARRAY {Float64 *&};
-
-//
-// Handle the std::string type
-//
-%typemap(ctype) std::string& "char *"
-%typemap(imtype) std::string& "StringBuilder"
-%typemap(cstype) std::string& "StringBuilder" 
-%typemap(csin) std::string& "$csinput.Remove(0, $csinput.Length)"
-
-%typemap(in, canthrow=1) std::string&
-%{ 
-	if (NULL == $input) 
-	{
-		SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "null string", 0);
-		return 0;
-	}
-
-	std::string $1_str;
-	$1 = &$1_str;
-%}
-
-
-%typemap(argout) std::string&
-%{
-	if ($1_str.c_str() != 0 && $1_str.length() > 0)
-	{
-		memcpy($input, $1_str.c_str(), $1_str.length());
-		$input[$1_str.length()] = 0;
-	}
-%}
-
-//
-// Handle the char*& type for situations like findAndGetString()
-// What we want returned is a byte array
-//
-// do it all using byte[] first, then see if we can simplify the
-// API by allowing client to use StringBuilder
-//
-%typemap(ctype) char *& "char **" 
-%typemap(imtype, inattributes="[MarshalAs(UnmanagedType.LPArray, SizeConst=1025)]") char *& "byte []"
-%typemap(cstype) char *& "byte []"
-%typemap(csin) char *& "$csinput"
-
-%typemap(in, canthrow=1) char *&
-%{
-	if (NULL == $input)
-	{
-		SWIG_CSharpSetPendingExceptionArgument(SWIG_CSharpArgumentNullException, "null byte []", 0);
-		return 0;
-	}
-
-	char* dummy_string = "Dummy String";
-	$1 = &dummy_string;
-%}
-
-%typemap(argout) char *&
-%{
-	if (NULL != $1 && strlen(*$1) > 0)
-		memcpy($input, *$1, strlen(*$1));
-%}
-
-%typemap(ctype) int& "int *"
-%typemap(imtype) int& "ref int"
-%typemap(cstype) int& "ref int"
-%typemap(csin) int& "ref $csinput"
 
 //
 // Make sure that generated C# interface files have the correct
