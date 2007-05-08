@@ -237,13 +237,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				client.Store(this.DestinationAE, this.SopInstanceFilenamesList, this.SopClasses, this.TransferSyntaxes);
 				this.ParcelTransferState = ParcelTransferState.Completed;
 			}
-			catch (Exception e)
+			catch
 			{
 				this.ParcelTransferState = ParcelTransferState.Error;
-				Platform.Log(e, LogLevel.Error);
+				throw;
 			}
-
-			client.SendProgressUpdated -= updateDelegate;
+			finally
+			{
+				client.SendProgressUpdated -= updateDelegate;
+			}
 		}
 
         #endregion

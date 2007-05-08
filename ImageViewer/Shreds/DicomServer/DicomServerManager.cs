@@ -241,7 +241,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context)
 			{
-				sendParcel.Send();
+				try
+				{
+					sendParcel.Send();
+				}
+				catch (Exception ex)
+				{
+					Platform.Log(ex);
+				}
 
 			}, false);
 
@@ -251,6 +258,18 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 
 			info.Response.NumberOfRemainingSubOperations = (ushort)sendParcel.GetToSendObjectCount();
+			
+			EventHandler<BackgroundTaskTerminatedEventArgs> deleteHandler = new EventHandler<BackgroundTaskTerminatedEventArgs>
+				(delegate(object ignore, BackgroundTaskTerminatedEventArgs ignoreArgs)
+				{
+					lock (_moveSessionLock)
+					{
+						_moveSessionDictionary.Remove(info.QueryRetrieveOperationIdentifier);
+						task.Dispose();
+					}
+				});
+
+			task.Terminated += deleteHandler;
 			task.Run();
 
 			info.Response.DimseStatus = (ushort)OffisDcm.STATUS_Pending;
@@ -522,14 +541,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					break;
 			}
 
-            if (status != OffisDcm.STATUS_Pending)
-            {
-				lock (_moveSessionLock)
-				{
-					_moveSessionDictionary.Remove(moveOperationIdentifier);
-				}
-            }
-
 #if DEBUG 
 			Console.WriteLine("MOVE - Completed: {0} Remaining: {1}", response.NumberOfCompletedSubOperations, response.NumberOfRemainingSubOperations);
 #endif
@@ -573,14 +584,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				{
 					Platform.Log(e);
 				}
-				finally
-				{
-					lock (_sendRetrieveTaskLock)
-					{
-						_sendRetrieveTasks.Remove((BackgroundTaskContainer)context.UserState);
-					}
-				}
-
 			}, false, container);
 
 			container.Task = task;
@@ -588,7 +591,18 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				_sendRetrieveTasks.Add(container);
 			}
-			
+
+			EventHandler<BackgroundTaskTerminatedEventArgs> deleteHandler = new EventHandler<BackgroundTaskTerminatedEventArgs>
+				(delegate(object ignore, BackgroundTaskTerminatedEventArgs args)
+				{
+					lock (_sendRetrieveTaskLock)
+					{
+						_sendRetrieveTasks.Remove(container);
+						task.Dispose();
+					}
+				});
+
+			task.Terminated += deleteHandler;
 			task.Run();
 		}
 
@@ -617,13 +631,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					{
 						Platform.Log(e);
 					}
-					finally
-					{
-						lock (_sendRetrieveTaskLock)
-						{
-							_sendRetrieveTasks.Remove((BackgroundTaskContainer)context.UserState);
-						}
-					}
 
 				}, false, container);
 
@@ -633,6 +640,17 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					_sendRetrieveTasks.Add(container);
 				}
 
+				EventHandler<BackgroundTaskTerminatedEventArgs> deleteHandler = new EventHandler<BackgroundTaskTerminatedEventArgs>
+					(delegate(object ignore, BackgroundTaskTerminatedEventArgs ignoreArgs)
+					{
+						lock (_sendRetrieveTaskLock)
+						{
+							_sendRetrieveTasks.Remove(container);
+							task.Dispose();
+						}
+					});
+
+				task.Terminated += deleteHandler;
 				task.Run();
 			}
 		}
