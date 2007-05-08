@@ -13,6 +13,12 @@ namespace ClearCanvas.Healthcare {
 	public enum OrderCancelReason
 	{
         /// <summary>
+        /// Default value, not cancelled
+        /// </summary>
+        [EnumValue("")]
+        None,
+
+        /// <summary>
         /// Cancelled by patient
         /// </summary>
         [EnumValue("Cancelled by patient")]
@@ -41,5 +47,5 @@ namespace ClearCanvas.Healthcare {
         /// </summary>
         [EnumValue("Patient did not show for exam")]
         NS
-    }
+   }
 }
