@@ -154,6 +154,8 @@
       <DependentUpon>RequestedProcedureCheckInComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="RequestedProcedureCheckInComponentView.cs" />
+    <Compile Include="TechnologistPreviewComponentView.cs">
+    </Compile>
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

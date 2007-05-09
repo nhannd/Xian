@@ -799,6 +799,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Technologist Home.
+        /// </summary>
+        internal static string TitleTechnologistHome {
+            get {
+                return ResourceManager.GetString("TitleTechnologistHome", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update Visit....
         /// </summary>
         internal static string TitleUpdateVisit {

@@ -11,6 +11,9 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         GetWorklistResponse GetWorklist(GetWorklistRequest request);
 
         [OperationContract]
+        GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request);
+
+        [OperationContract]
         GetWorklistItemResponse GetWorklistItem(GetWorklistItemRequest request);
 
         [OperationContract]

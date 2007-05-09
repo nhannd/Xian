@@ -199,6 +199,8 @@
     <Compile Include="ModalityWorkflow\ExecuteOperationRequest.cs" />
     <Compile Include="ModalityWorkflow\GetOperationEnablementRequest.cs" />
     <Compile Include="ModalityWorkflow\GetOperationEnablementResponse.cs" />
+    <Compile Include="ModalityWorkflow\GetWorklistCountRequest.cs" />
+    <Compile Include="ModalityWorkflow\GetWorklistCountResponse.cs" />
     <Compile Include="ModalityWorkflow\GetWorklistItemRequest.cs" />
     <Compile Include="ModalityWorkflow\GetWorklistItemResponse.cs" />
     <Compile Include="ModalityWorkflow\GetWorklistRequest.cs" />

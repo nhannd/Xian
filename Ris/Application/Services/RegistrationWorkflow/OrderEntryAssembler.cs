@@ -22,22 +22,22 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             OrderSummary summary = new OrderSummary();
 
-            summary.OrderRef = item.Order;
-            summary.MrnId = item.Mrn.Id;
-            summary.MrnAssigningAuthority = item.Mrn.AssigningAuthority;
-            summary.VisitId = item.VisitNumber.Id;
-            summary.VisitAssigningAuthority = item.VisitNumber.AssigningAuthority;
-            summary.AccessionNumber = item.AccessionNumber;
-            summary.DiagnosticServiceName = item.DiagnosticService;
-            summary.RequestedProcedureName = item.RequestedProcedureName;
-            summary.ModalityProcedureStepName = item.ModalityProcedureStepName;
-            summary.ModalityName = item.ModalityName;
+            //summary.OrderRef = item.Order;
+            //summary.MrnId = item.Mrn.Id;
+            //summary.MrnAssigningAuthority = item.Mrn.AssigningAuthority;
+            //summary.VisitId = item.VisitNumber.Id;
+            //summary.VisitAssigningAuthority = item.VisitNumber.AssigningAuthority;
+            //summary.AccessionNumber = item.AccessionNumber;
+            //summary.DiagnosticServiceName = item.DiagnosticService;
+            //summary.RequestedProcedureName = item.RequestedProcedureName;
+            //summary.ModalityProcedureStepName = item.ModalityProcedureStepName;
+            //summary.ModalityName = item.ModalityName;
 
-            PersonNameAssembler personNameAssembler = new PersonNameAssembler();
-            summary.PatientName = personNameAssembler.CreatePersonNameDetail(item.PatientName);
+            //PersonNameAssembler personNameAssembler = new PersonNameAssembler();
+            //summary.PatientName = personNameAssembler.CreatePersonNameDetail(item.PatientName);
 
-            OrderPriorityEnumTable priorityEnumTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
-            summary.OrderPriority = new EnumValueInfo(item.Priority.ToString(), priorityEnumTable[item.Priority].Value);
+            //OrderPriorityEnumTable priorityEnumTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
+            //summary.OrderPriority = new EnumValueInfo(item.Priority.ToString(), priorityEnumTable[item.Priority].Value);
 
             return summary;
         }

@@ -16,7 +16,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
             string accessionNumber,
             string modalityProcedureStepName,
             string modalityName,
-            string priority)
+            EnumValueInfo priority)
         {
             this.ProcedureStepRef = procedureStepRef;
             this.MrnAssigningAuthority = mrnAssigningAuthority;
@@ -51,9 +51,12 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         public string ModalityProcedureStepName;
 
         [DataMember]
+        public string RequestedProcedureStepName;
+
+        [DataMember]
         public string ModalityName;
 
         [DataMember]
-        public string Priority;
+        public EnumValueInfo Priority;
     }
 }

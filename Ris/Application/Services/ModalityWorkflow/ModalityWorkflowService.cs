@@ -27,15 +27,21 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
             ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
-            ModalityProcedureStepSearchCriteria criteria = assembler.CreateSearchCriteria(request.SearchCriteria);
 
             return new GetWorklistResponse(
                 CollectionUtils.Map<WorklistItem, ModalityWorklistItem, List<ModalityWorklistItem>>(
-                    PersistenceContext.GetBroker<IModalityWorklistBroker>().GetWorklist(criteria, request.PatientProfileAuthority),
+                    GetWorklist(request.WorklistClassName),
                     delegate(WorklistItem queryResult)
                     {
-                        return assembler.CreateModalityWorklistItem(queryResult);
+                        return assembler.CreateModalityWorklistItem(queryResult, this.PersistenceContext);
                     }));
+        }
+
+        [ReadOperation]
+        public GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request)
+        {
+            return new GetWorklistCountResponse(
+                GetWorklistCount(request.WorklistClassName));
         }
 
         [ReadOperation]
@@ -43,7 +49,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         {
             ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
             WorklistItem result = PersistenceContext.GetBroker<IModalityWorklistBroker>().GetWorklistItem(request.ProcedureStepRef, request.PatientProfileAuthority);
-            return new GetWorklistItemResponse(assembler.CreateModalityWorklistItem(result));
+            return new GetWorklistItemResponse(assembler.CreateModalityWorklistItem(result, this.PersistenceContext));
         }
 
         [ReadOperation]

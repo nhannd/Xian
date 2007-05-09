@@ -363,6 +363,9 @@
   <data name="TitleSearch" xml:space="preserve">
     <value>Search</value>
   </data>
+  <data name="TitleTechnologistHome" xml:space="preserve">
+    <value>Technologist Home</value>
+  </data>
   <data name="TitleUpdateVisit" xml:space="preserve">
     <value>Update Visit...</value>
   </data>

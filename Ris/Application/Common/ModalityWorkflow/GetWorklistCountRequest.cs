@@ -1,26 +1,19 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
+
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [DataContract]
-    public class GetWorklistRequest : DataContractBase
+    public class GetWorklistCountRequest : DataContractBase
     {
-        public GetWorklistRequest(string worklistClassName)
+        public GetWorklistCountRequest(string worklistClassName)
         {
             this.WorklistClassName = worklistClassName;
         }
 
         [DataMember]
         public string WorklistClassName;
-
-        //[DataMember]
-        //public ModalityWorklistSearchData SearchCriteria;
-
-        //[DataMember]
-        //public string PatientProfileAuthority;
     }
 }
