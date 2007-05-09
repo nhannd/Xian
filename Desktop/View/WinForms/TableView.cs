@@ -26,6 +26,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ITable _table;
         private bool _multiLine;
 
+        private bool _delaySelectionChangeNotification = true; // see bug 386
+
 		public TableView()
 		{
 			InitializeComponent();
@@ -320,32 +322,49 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void _contextMenu_Opening(object sender, CancelEventArgs e)
         {
-			// Find the row we're on
+            // if a context menu is being opened, need to flush any pending selection change notification immediately before
+            // showing menu (bug 386)
+            FlushPendingSelectionChangeNotification();
+            
+            // Find the row we're on
 			Point pt = _dataGridView.PointToClient(DataGridView.MousePosition);
 			DataGridView.HitTestInfo info = _dataGridView.HitTest(pt.X, pt.Y);
 
-            
-            if (_dataGridView.SelectedRows.Count == 0)
-            {
-                // select the new row
-                if (info.RowIndex >= 0)
-                    _dataGridView.Rows[info.RowIndex].Selected = true;
-            }
-            else if (_dataGridView.SelectedRows.Count == 1 && _dataGridView.SelectedRows[0].Index != info.RowIndex)
-            {
-                // deselect the selected row
-                _dataGridView.SelectedRows[0].Selected = false;
 
-                // Now select the new row
-                if (info.RowIndex >= 0)
-                    _dataGridView.Rows[info.RowIndex].Selected = true;
-            }
-            else
+            try
             {
-                // If multiple
-                // rows are selected we don't want to deselect anything, since the
-                // user's intent is to perform a context menu operation on all
-                // selected rows.
+                // temporarily disable the delaying of selection change notifications
+                // if we modify the selection while opening the context menu, we need those notifications to propagate immediately
+                _delaySelectionChangeNotification = false;
+
+                if (_dataGridView.SelectedRows.Count == 0)
+                {
+                    // select the new row
+                    if (info.RowIndex >= 0)
+                        _dataGridView.Rows[info.RowIndex].Selected = true;
+                }
+                else if (_dataGridView.SelectedRows.Count == 1 && _dataGridView.SelectedRows[0].Index != info.RowIndex)
+                {
+                    // deselect the selected row
+                    _dataGridView.SelectedRows[0].Selected = false;
+
+                    // Now select the new row
+                    if (info.RowIndex >= 0)
+                        _dataGridView.Rows[info.RowIndex].Selected = true;
+                }
+                else
+                {
+                    // If multiple
+                    // rows are selected we don't want to deselect anything, since the
+                    // user's intent is to perform a context menu operation on all
+                    // selected rows.
+                }
+
+            }
+            finally
+            {
+                // re-enable the delaying of selection change notifications
+                _delaySelectionChangeNotification = true;
             }
         }
 
@@ -366,7 +385,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void _dataGridView_SelectionChanged(object sender, EventArgs e)
         {
-            EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
+            if (_delaySelectionChangeNotification)
+            {
+                // fix Bug 386: rather than firing our own _selectionChanged event immediately, post delayed notification
+                PostSelectionChangeNotification();
+            }
+            else
+            {
+                NotifySelectionChanged();
+            }
         }
 
         /// <summary>
@@ -392,9 +419,63 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="e"></param>
         private void _dataGridView_ItemDrag(object sender, ItemDragEventArgs e)
         {
+            // if a drag is being initiated, need to flush any pending selection change notification immediately before
+            // proceeding (bug 386)
+            FlushPendingSelectionChangeNotification();
+
             ItemDragEventArgs args = new ItemDragEventArgs(e.Button, this.GetSelectionHelper());
             EventsHelper.Fire(_itemDrag, this, args);
         }
+
+        /// <summary>
+        /// Fix Bug 386: Add a 50ms delay before posting selection changes to outside clients
+        /// this has the effect of filtering out very quick selection changes that usually reflect
+        /// "bugs" in the windowing framework rather than user actions
+        /// </summary>
+        private void PostSelectionChangeNotification()
+        {
+            // restart the timer - this effectively "posts" a selection change notification to occur on the timer tick
+            // if a change notification is already pending, it is cleared
+            _selectionChangeTimer.Stop();
+            _selectionChangeTimer.Start();
+        }
+
+        /// <summary>
+        /// If a selection change notification is pending, this method will force it to occur now rather than
+        /// waiting for the timer tick. (Bug 386)
+        /// </summary>
+        private void FlushPendingSelectionChangeNotification()
+        {
+            bool pending = _selectionChangeTimer.Enabled;
+            _selectionChangeTimer.Stop();   // stop the timer before firing event, in case event handler runs long duration
+
+            // if there was a "pending" notification, send it now
+            if (pending)
+            {
+                NotifySelectionChanged();
+            }
+        }
+
+        /// <summary>
+        /// Delayed selection change notification (fix for bug 386)
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void _selectionChangeTimer_Tick(object sender, EventArgs e)
+        {
+            // stop the timer (one-shot behaviour)
+            _selectionChangeTimer.Stop();
+
+            // notify clients
+            NotifySelectionChanged();
+        }
+
+        private void NotifySelectionChanged()
+        {
+            // notify clients of this class of a *real* selection change
+            EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
+        }
+
 
         protected DataGridView DataGridView
         {
