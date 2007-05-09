@@ -46,7 +46,7 @@ namespace ClearCanvas.Dicom
 
         public static string Unparse(string specificCharacterSet, string dataInUnicode)
         {
-            if ("" == specificCharacterSet)
+            if (null == specificCharacterSet || "" == specificCharacterSet)
                 return dataInUnicode;
 
             CharacterSetInfo defaultRepertoire;
@@ -73,7 +73,7 @@ namespace ClearCanvas.Dicom
 
         public static void Unparse(string specificCharacterSet, string dataInUnicode, out byte[] rawBytes)
         {
-            if ("" == specificCharacterSet)
+            if (null == specificCharacterSet || "" == specificCharacterSet)
             {
                 rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(dataInUnicode);
                 return;
@@ -106,7 +106,7 @@ namespace ClearCanvas.Dicom
 
         public static string Parse(string specificCharacterSet, byte[] rawData)
         {
-            if ("" == specificCharacterSet)
+            if (null == specificCharacterSet || "" == specificCharacterSet)
             {
                 // this takes the raw bytes, and converts it into a Unicode string
                 // represention of the original raw bytes
@@ -140,7 +140,7 @@ namespace ClearCanvas.Dicom
 
         public static string Parse(string specificCharacterSet, string rawData)
         {
-            if ("" == specificCharacterSet)
+            if (null == specificCharacterSet || "" == specificCharacterSet)
                 return rawData;
 
             CharacterSetInfo defaultRepertoire;
