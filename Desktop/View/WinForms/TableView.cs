@@ -395,5 +395,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             ItemDragEventArgs args = new ItemDragEventArgs(e.Button, this.GetSelectionHelper());
             EventsHelper.Fire(_itemDrag, this, args);
         }
+
+        protected DataGridView DataGridView
+        {
+            get { return _dataGridView; }
+        }
 	}
 }

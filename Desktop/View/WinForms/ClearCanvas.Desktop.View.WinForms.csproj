@@ -62,6 +62,9 @@
       <DependentUpon>BindingTreeView.cs</DependentUpon>
     </Compile>
     <Compile Include="BlockingOperationView.cs" />
+    <Compile Include="DecoratedTableView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Include="StackTab.cs">
       <SubType>UserControl</SubType>
     </Compile>

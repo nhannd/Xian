@@ -96,6 +96,10 @@
     <Compile Include="IBlockingOperationView.cs" />
     <Compile Include="NavigatorPageSortByPath.cs" />
     <Compile Include="Actions\SimpleActionModel.cs" />
+    <Compile Include="Tables\DecoratedTable.cs" />
+    <Compile Include="Tables\DecoratedTableColumn.cs" />
+    <Compile Include="Tables\IDecoratedTable.cs" />
+    <Compile Include="Tables\IDecoratedTableColumn.cs" />
     <Compile Include="Validation\IApplicationComponentContainerValidationStrategy.cs" />
     <Compile Include="IItemCollection.cs" />
     <Compile Include="ItemCollection.cs" />
