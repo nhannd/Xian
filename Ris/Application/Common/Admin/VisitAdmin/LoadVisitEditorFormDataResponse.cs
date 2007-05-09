@@ -32,5 +32,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
 
         [DataMember]
         public List<EnumValueInfo> VisitStatusChoices;
+
+        [DataMember]
+        public List<FacilitySummary> FacilityChoices;
     }
 }

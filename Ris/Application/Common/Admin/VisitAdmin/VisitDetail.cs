@@ -9,6 +9,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
     [DataContract]
     public class VisitDetail : DataContractBase
     {
+        public VisitDetail()
+        {
+            this.Locations = new List<VisitLocationDetail>();
+            this.Practitioners = new List<VisitPractitionerDetail>();
+            this.AmbulatoryStatuses = new List<EnumValueInfo>();
+        }
+        
         [DataMember]
         public EntityRef Patient;
 

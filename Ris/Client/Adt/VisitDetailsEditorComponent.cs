@@ -182,12 +182,10 @@ namespace ClearCanvas.Ris.Client.Adt
         #region PatientClass
         public string PatientClass
         {
-            get { return _visit.PatientClass == null ? "" : _visit.PatientClass.Value; }
+            get { return _visit.PatientClass.Value; }
             set
             {
-                _visit.PatientClass = (value == "") ? null :
-                    CollectionUtils.SelectFirst<EnumValueInfo>(_patientClassChoices,
-                    delegate(EnumValueInfo e) { return e.Value == value; });
+                _visit.PatientClass = EnumValueUtils.MapDisplayValue(_patientClassChoices, value);
                 this.Modified = true;
             }
         }
@@ -201,12 +199,10 @@ namespace ClearCanvas.Ris.Client.Adt
         #region PatientType
         public string PatientType
         {
-            get { return _visit.PatientType == null ? "" : _visit.PatientType.Value; }
+            get { return _visit.PatientType.Value; }
             set
             {
-                _visit.PatientType = (value == "") ? null :
-                    CollectionUtils.SelectFirst<EnumValueInfo>(_patientTypeChoices,
-                    delegate(EnumValueInfo e) { return e.Value == value; });
+                _visit.PatientType = EnumValueUtils.MapDisplayValue(_patientTypeChoices, value);
                 this.Modified = true;
             }
         }
@@ -220,12 +216,10 @@ namespace ClearCanvas.Ris.Client.Adt
         #region AdmissionType
         public string AdmissionType
         {
-            get { return _visit.AdmissionType == null ? "" : _visit.AdmissionType.Value; }
+            get { return _visit.AdmissionType.Value; }
             set
             {
-                _visit.AdmissionType = (value == "") ? null :
-                    CollectionUtils.SelectFirst<EnumValueInfo>(_admissionTypeChoices,
-                    delegate(EnumValueInfo e) { return e.Value == value; });
+                _visit.AdmissionType = EnumValueUtils.MapDisplayValue(_admissionTypeChoices, value);
                 this.Modified = true;
             }
         }
@@ -258,12 +252,10 @@ namespace ClearCanvas.Ris.Client.Adt
         #region VisitStatus
         public String VisitStatus
         {
-            get { return _visit.Status == null ? "" : _visit.Status.Value; }
+            get { return _visit.Status.Value; }
             set
             {
-                _visit.Status = (value == "") ? null :
-                    CollectionUtils.SelectFirst<EnumValueInfo>(_visitStatusChoices,
-                    delegate(EnumValueInfo e) { return e.Value == value; });
+                _visit.Status = EnumValueUtils.MapDisplayValue(_visitStatusChoices, value);
                 this.Modified = true;
             }
         }

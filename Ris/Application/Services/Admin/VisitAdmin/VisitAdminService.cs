@@ -89,6 +89,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
                     return new EnumValueInfo(e.Code.ToString(), e.Value);
                 });
 
+            FacilityAssembler facilityAssembler = new FacilityAssembler();
+            response.FacilityChoices = CollectionUtils.Map<Facility, FacilitySummary, List<FacilitySummary>>(
+                PersistenceContext.GetBroker<IFacilityBroker>().FindAll(),
+                delegate(Facility f)
+                {
+                    return facilityAssembler.CreateFacilitySummary(f);
+                });
+
             return response;
         }
 

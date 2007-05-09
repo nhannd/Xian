@@ -46,19 +46,6 @@ namespace ClearCanvas.Ris.Client.Adt
                 Platform.GetService<IVisitAdminService>(
                     delegate(IVisitAdminService service)
                     {
-                        if (_isNew)
-                        {
-                            _visit = new VisitDetail();
-                            _visit.Patient = _patientRef;
-                        }
-                        else
-                        {
-                            LoadVisitForAdminEditResponse loadVisitResponse = service.LoadVisitForAdminEdit(new LoadVisitForAdminEditRequest(_visitRef));
-                            _patientRef = loadVisitResponse.Patient;
-                            _visitRef = loadVisitResponse.VisitRef;
-                            _visit = loadVisitResponse.VisitDetail;
-                        }
-
                         LoadVisitEditorFormDataResponse response = service.LoadVisitEditorFormData(new LoadVisitEditorFormDataRequest());
 
                         this.Pages.Add(new NavigatorPage("Visit",
@@ -79,6 +66,25 @@ namespace ClearCanvas.Ris.Client.Adt
                             _visitLocationsSummary = new VisitLocationsSummaryComponent(
                                 response.VisitLocationRoleChoices
                             )));
+
+                        if (_isNew)
+                        {
+                            _visit = new VisitDetail();
+                            _visit.Patient = _patientRef;
+                            _visit.VisitNumberAssigningAuthority = response.VisitNumberAssigningAuthorityChoices[0];
+                            _visit.PatientClass = response.PatientClassChoices[0];
+                            _visit.PatientType = response.PatientTypeChoices[0];
+                            _visit.AdmissionType = response.AdmissionTypeChoices[0];
+                            _visit.Status = response.VisitStatusChoices[0];
+                            _visit.Facility = response.FacilityChoices[0];
+                        }
+                        else
+                        {
+                            LoadVisitForAdminEditResponse loadVisitResponse = service.LoadVisitForAdminEdit(new LoadVisitForAdminEditRequest(_visitRef));
+                            _patientRef = loadVisitResponse.Patient;
+                            _visitRef = loadVisitResponse.VisitRef;
+                            _visit = loadVisitResponse.VisitDetail;
+                        }
 
                     });
 

@@ -105,7 +105,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             visit.DischargeDateTime = detail.DischargeDateTime;
             visit.DischargeDisposition = detail.DischargeDisposition;
 
-            visit.Facility = (Facility)context.Load(detail.Facility.FacilityRef, EntityLoadFlags.Proxy);
+            if (detail.Facility != null)
+            {
+                visit.Facility = (Facility)context.Load(detail.Facility.FacilityRef, EntityLoadFlags.Proxy);
+            }
+            else
+            {
+                throw new RequestValidationException("Visit requires a facility");
+            }
 
             visit.Locations.Clear();
             foreach (VisitLocationDetail vlDetail in detail.Locations)
