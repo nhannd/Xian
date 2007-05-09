@@ -129,8 +129,15 @@ namespace ClearCanvas.Ris.Client
                 _queryItemsTask = new BackgroundTask(
                     delegate(IBackgroundTaskContext taskContext)
                     {
-                        IList<TItem> items = QueryItems();
-                        taskContext.Complete(items);
+                        try
+                        {
+                            IList<TItem> items = QueryItems();
+                            taskContext.Complete(items);
+                        }
+                        catch (Exception e)
+                        {
+                            taskContext.Error(e);
+                        }
                     },
                     false);
 
@@ -177,8 +184,15 @@ namespace ClearCanvas.Ris.Client
                 _queryCountTask = new BackgroundTask(
                     delegate(IBackgroundTaskContext taskContext)
                     {
-                        int count = QueryCount();
-                        taskContext.Complete(count);
+                        try
+                        {
+                            int count = QueryCount();
+                            taskContext.Complete(count);
+                        }
+                        catch (Exception e)
+                        {
+                            taskContext.Error(e);
+                        }
                     },
                     false);
 

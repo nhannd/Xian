@@ -163,13 +163,21 @@ namespace ClearCanvas.Ris.Client.Adt
             _previewLoadTask = new BackgroundTask(
                 delegate(IBackgroundTaskContext taskContext)
                 {
-                    RegistrationWorklistItem worklistItem = (RegistrationWorklistItem)taskContext.UserState;
-                    Platform.GetService<IRegistrationWorkflowService>(
-                        delegate(IRegistrationWorkflowService service)
-                        {
-                            LoadWorklistPreviewResponse response = service.LoadWorklistPreview(new LoadWorklistPreviewRequest(worklistItem));
-                            taskContext.Complete(response.WorklistPreview);
-                        });
+                    try
+                    {
+                        RegistrationWorklistItem worklistItem = (RegistrationWorklistItem)taskContext.UserState;
+                        Platform.GetService<IRegistrationWorkflowService>(
+                            delegate(IRegistrationWorkflowService service)
+                            {
+                                LoadWorklistPreviewResponse response = service.LoadWorklistPreview(new LoadWorklistPreviewRequest(worklistItem));
+                                taskContext.Complete(response.WorklistPreview);
+                            });
+
+                    }
+                    catch (Exception e)
+                    {
+                        taskContext.Error(e);
+                    }
                 },
                 false, item);
 
