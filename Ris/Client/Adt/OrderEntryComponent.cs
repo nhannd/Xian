@@ -19,13 +19,14 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
+    [MenuAction("neworder", "folderexplorer-items-contextmenu/New Order")]
+    [ButtonAction("neworder", "folderexplorer-items-toolbar/New Order")]
     [MenuAction("neworder", "RegistrationPreview-menu/NewOrders")]
     [MenuAction("neworder", "global-menus/Orders/New")]
     [EnabledStateObserver("neworder", "Enabled", "EnabledChanged")]
     [ClickHandler("neworder", "NewOrder")]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]
-
     public class OrderEntryTool : Tool<IToolContext>
     {
         private bool _enabled;
@@ -79,23 +80,23 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
-                OrderEntryComponent component = new OrderEntryComponent(item.PatientProfileRef);
-                ApplicationComponent.LaunchAsWorkspace(
-                    context.DesktopWindow,
-                    component,
-                    SR.TitleNewOrder,
-                    null);
+                NewOrder(item.PatientProfileRef, context.DesktopWindow);
             }
             else if (this.ContextBase is IRegistrationPreviewToolContext)
             {
                 IRegistrationPreviewToolContext context = (IRegistrationPreviewToolContext)this.ContextBase;
-                OrderEntryComponent component = new OrderEntryComponent(context.WorklistItem.PatientProfileRef);
-                ApplicationComponent.LaunchAsWorkspace(
-                    context.DesktopWindow,
-                    component,
-                    SR.TitleNewOrder,
-                    null);
+                NewOrder(context.WorklistItem.PatientProfileRef, context.DesktopWindow);
             }
+        }
+
+        private void NewOrder(EntityRef profileRef, IDesktopWindow desktopWindow)
+        {
+            OrderEntryComponent component = new OrderEntryComponent(profileRef);
+            ApplicationComponent.LaunchAsWorkspace(
+                desktopWindow,
+                component,
+                SR.TitleNewOrder,
+                null);
         }
     }
 
