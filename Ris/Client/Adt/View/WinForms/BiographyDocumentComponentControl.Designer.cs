@@ -42,21 +42,20 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._reason = new ClearCanvas.Controls.WinForms.TextField();
             this._institution = new ClearCanvas.Controls.WinForms.TextField();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this._previewImage = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this._nextPageButton = new System.Windows.Forms.Button();
             this._prevPageButton = new System.Windows.Forms.Button();
             this._pageIndicator = new System.Windows.Forms.TextBox();
             this._printPreviewDialog = new System.Windows.Forms.PrintPreviewDialog();
-            this._printDialog = new System.Windows.Forms.PrintDialog();
-            this._previewImage = new System.Windows.Forms.PictureBox();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel3.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
-            this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this._previewImage)).BeginInit();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // splitContainer1
@@ -213,6 +212,18 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel2.Size = new System.Drawing.Size(447, 467);
             this.tableLayoutPanel2.TabIndex = 7;
             // 
+            // _previewImage
+            // 
+            this._previewImage.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._previewImage.Image = ((System.Drawing.Image)(resources.GetObject("_previewImage.Image")));
+            this._previewImage.Location = new System.Drawing.Point(2, 2);
+            this._previewImage.Margin = new System.Windows.Forms.Padding(2);
+            this._previewImage.Name = "_previewImage";
+            this._previewImage.Size = new System.Drawing.Size(443, 433);
+            this._previewImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this._previewImage.TabIndex = 10;
+            this._previewImage.TabStop = false;
+            // 
             // panel1
             // 
             this.panel1.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
@@ -266,22 +277,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._printPreviewDialog.Name = "_printPreviewDialog";
             this._printPreviewDialog.Visible = false;
             // 
-            // _printDialog
-            // 
-            this._printDialog.UseEXDialog = true;
-            // 
-            // _previewImage
-            // 
-            this._previewImage.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._previewImage.Image = ((System.Drawing.Image)(resources.GetObject("_previewImage.Image")));
-            this._previewImage.Location = new System.Drawing.Point(2, 2);
-            this._previewImage.Margin = new System.Windows.Forms.Padding(2);
-            this._previewImage.Name = "_previewImage";
-            this._previewImage.Size = new System.Drawing.Size(443, 433);
-            this._previewImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
-            this._previewImage.TabIndex = 10;
-            this._previewImage.TabStop = false;
-            // 
             // BiographyDocumentComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -296,9 +291,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.panel3.ResumeLayout(false);
             this.panel3.PerformLayout();
             this.tableLayoutPanel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this._previewImage)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this._previewImage)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -309,7 +304,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.TableView _documentList;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.PrintPreviewDialog _printPreviewDialog;
-        private System.Windows.Forms.PrintDialog _printDialog;
         private System.Windows.Forms.Panel panel3;
         private ClearCanvas.Controls.WinForms.DateTimeField _documentDate;
         private System.Windows.Forms.Label _category;

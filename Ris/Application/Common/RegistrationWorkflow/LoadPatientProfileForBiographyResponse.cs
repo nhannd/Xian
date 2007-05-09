@@ -10,12 +10,18 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class LoadPatientProfileForBiographyResponse : DataContractBase
     {
-        public LoadPatientProfileForBiographyResponse(EntityRef patientRef, EntityRef patientProfileRef, PatientProfileDetail patientDetail, List<AlertNotificationDetail> alertNotifications)
+        public LoadPatientProfileForBiographyResponse(
+            EntityRef patientRef, 
+            EntityRef patientProfileRef, 
+            PatientProfileDetail patientDetail, 
+            List<AlertNotificationDetail> alertNotifications,
+            bool hasReconciliationCandidates)
         {
             this.PatientRef = patientRef;
             this.PatientProfileRef = patientProfileRef;
             this.PatientDetail = patientDetail;
             this.AlertNotifications = alertNotifications;
+            this.HasReconciliationCandidates = hasReconciliationCandidates;
         }
 
         [DataMember]
@@ -29,5 +35,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 
         [DataMember]
         public List<AlertNotificationDetail> AlertNotifications;
+
+        [DataMember]
+        public bool HasReconciliationCandidates;
     }
 }

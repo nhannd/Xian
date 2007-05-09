@@ -75,6 +75,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private EntityRef _profileRef;
         private PatientProfileDetail _patientProfile;
         private List<AlertNotificationDetail> _alertNotifications;
+        private bool _hasReconciliationCandidates;
 
         private ToolSet _toolSet;
         private ResourceResolver _resourceResolver;
@@ -82,11 +83,16 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor
         /// </summary>
-        public PatientOverviewComponent(EntityRef profileRef, PatientProfileDetail patientProfile, List<AlertNotificationDetail> alertNotifications)
+        public PatientOverviewComponent(
+            EntityRef profileRef, 
+            PatientProfileDetail patientProfile, 
+            List<AlertNotificationDetail> alertNotifications,
+            bool hasReconciliationCandidates)
         {
             _profileRef = profileRef;
             _patientProfile = patientProfile;
             _alertNotifications = alertNotifications;
+            _hasReconciliationCandidates = hasReconciliationCandidates;
 
             _resourceResolver = new ResourceResolver(this.GetType().Assembly);
         }
@@ -171,6 +177,14 @@ namespace ClearCanvas.Ris.Client.Adt
                     alertListItems.Add(new AlertListItem(detail.Type, GetAlertTooltip(detail), GetAlertIcon(detail)));
                 }
 
+                // Display Reconciliation Alert as one of the Alert List Items
+                if (_hasReconciliationCandidates)
+                {
+                    AlertNotificationDetail detail = new AlertNotificationDetail();
+                    detail.Type = "Reconciliation Alert";
+                    alertListItems.Add(new AlertListItem(detail.Type, GetAlertTooltip(detail), GetAlertIcon(detail)));
+                }
+
                 return alertListItems;
             }
         }
@@ -189,7 +203,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 case "Language Alert":
                     icon = "AlertWorld.png";
                     break;
-                case "Patient Alert":
+                case "Reconciliation Alert":
                     icon = "AlertMessenger.png";
                     break;
                 case "Schedule Alert":
@@ -221,6 +235,9 @@ namespace ClearCanvas.Ris.Client.Adt
                     alertTooltip = String.Format("{0} speaks: {1}"
                         , patientName
                         , StringUtilities.Combine<string>(detail.Reasons, ", "));
+                    break;
+                case "Reconciliation Alert":
+                    alertTooltip = String.Format(SR.MessageUnreconciledRecordsAlert, _patientProfile.Name.GivenName.Substring(0, 1), _patientProfile.Name.FamilyName);
                     break;
                 default:
                     break;

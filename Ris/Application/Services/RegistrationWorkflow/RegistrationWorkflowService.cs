@@ -88,11 +88,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             PatientProfile profile = broker.Load(request.PatientProfileRef);
             PatientProfileAssembler assembler = new PatientProfileAssembler();
 
+            IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)(new PatientReconciliationStrategyExtensionPoint()).CreateExtension();
+            IList<PatientProfileMatch> matches = strategy.FindReconciliationMatches(profile, PersistenceContext);
+
             return new LoadPatientProfileForBiographyResponse(
                 profile.Patient.GetRef(), 
                 profile.GetRef(), 
                 assembler.CreatePatientProfileDetail(profile, PersistenceContext),
-                GetPatientAlertNotifications(profile.Patient, this.PersistenceContext));
+                GetPatientAlertNotifications(profile.Patient, this.PersistenceContext),
+                matches.Count > 0);
         }
 
 
