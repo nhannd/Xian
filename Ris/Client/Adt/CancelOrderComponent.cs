@@ -74,6 +74,12 @@ namespace ClearCanvas.Ris.Client.Adt
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
 
+            // Special case for 1 Order.  Check the item right away
+            if (_cancelOrderTable.Items.Count == 1)
+            {
+                _cancelOrderTable.Items[0].Checked = true;
+            }
+
             base.Start();
         }
 

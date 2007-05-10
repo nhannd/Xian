@@ -20,66 +20,83 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 
     public class Worklists
     {
-        public abstract class RegistrationWorklist : WorklistBase
+        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        public class Scheduled : WorklistBase
         {
-            public abstract string WorklistClassName { get; }
-
             public override IList GetWorklist(IPersistenceContext context)
             {
                 IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                IList<WorklistItem> worklist = broker.GetWorklist(this.WorklistClassName);
-                return (IList)worklist;
+                return (IList)broker.GetScheduledWorklist();
             }
 
             public override int GetWorklistCount(IPersistenceContext context)
             {
                 IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return broker.GetWorklistCount(this.WorklistClassName);
+                return broker.GetScheduledWorklistCount();
             }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class Scheduled : RegistrationWorklist
+        public class CheckIn : WorklistBase
         {
-            public override string WorklistClassName
+            public override IList GetWorklist(IPersistenceContext context)
             {
-                get { return "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled"; }
+                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
+                return (IList)broker.GetCheckInWorklist();
+            }
+
+            public override int GetWorklistCount(IPersistenceContext context)
+            {
+                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
+                return broker.GetCheckInWorklistCount();
             }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class CheckIn : RegistrationWorklist
+        public class InProgress : WorklistBase
         {
-            public override string WorklistClassName
+            public override IList GetWorklist(IPersistenceContext context)
             {
-                get { return "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn"; }
+                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
+                return (IList)broker.GetInProgressWorklist();
+            }
+
+            public override int GetWorklistCount(IPersistenceContext context)
+            {
+                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
+                return broker.GetInProgressWorklistCount();
             }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class InProgress : RegistrationWorklist
+        public class Completed : WorklistBase
         {
-            public override string WorklistClassName
+            public override IList GetWorklist(IPersistenceContext context)
             {
-                get { return "ClearCanvas.Healthcare.Workflow.Registration.Worklists+InProgress"; }
+                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
+                return (IList)broker.GetCompletedWorklist();
+            }
+
+            public override int GetWorklistCount(IPersistenceContext context)
+            {
+                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
+                return broker.GetCompletedWorklistCount();
             }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class Completed : RegistrationWorklist
+        public class Cancelled : WorklistBase
         {
-            public override string WorklistClassName
+            public override IList GetWorklist(IPersistenceContext context)
             {
-                get { return "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Completed"; }
+                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
+                return (IList)broker.GetCancelledWorklist();
             }
-        }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class Cancelled : RegistrationWorklist
-        {
-            public override string WorklistClassName
+            public override int GetWorklistCount(IPersistenceContext context)
             {
-                get { return "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Cancelled"; }
+                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
+                return broker.GetCancelledWorklistCount();
             }
         }
     }

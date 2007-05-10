@@ -9,10 +9,19 @@ namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IRegistrationWorklistBroker : IPersistenceBroker
     {
-        IList<WorklistItem> GetWorklist(string worklistClassName);
-        int GetWorklistCount(string worklistClassName);
+        IList<WorklistItem> GetScheduledWorklist();
+        IList<WorklistItem> GetCheckInWorklist();
+        IList<WorklistItem> GetInProgressWorklist();
+        IList<WorklistItem> GetCompletedWorklist();
+        IList<WorklistItem> GetCancelledWorklist();
 
-        IList<RequestedProcedure> GetRequestedProcedureForPatientPreview(Patient patient);
+        int GetScheduledWorklistCount();
+        int GetCheckInWorklistCount();
+        int GetInProgressWorklistCount();
+        int GetCompletedWorklistCount();
+        int GetCancelledWorklistCount();
+
         IList<RequestedProcedure> GetRequestedProcedureForCheckIn(Patient patient);
+        IList<RequestedProcedure> GetRequestedProcedureForPatientPreview(Patient patient);
     }
 }
