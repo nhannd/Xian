@@ -15,7 +15,7 @@
       <collection-id column="OID_" type="Guid">
         <generator class="guid.comb"/>
       </collection-id>
-      <key column="PatientNoteOID_"/>
+      <key column="PatientOID_"/>
       <composite-element class="Note">
         <property name="Comment" column="Comment_" type="String" length ="1024"/>
         <property name="TimeStamp" column="TimeStamp_" type="DateTime" not-null="true"/>
@@ -23,7 +23,7 @@
           <column name="ValidFrom_"/>
           <column name="ValidUntil_"/>
         </property>
-        <many-to-one name="CreatedBy" class="Staff" column="StaffOID_" not-null="true" fetch="join"/>
+        <many-to-one name="CreatedBy" class="Staff" column="CreatedBy_" not-null="true" fetch="join"/>
         <many-to-one name="Category" class="NoteCategory" column="NoteCategoryOID_" fetch="join"/>
       </composite-element>
     </idbag>
