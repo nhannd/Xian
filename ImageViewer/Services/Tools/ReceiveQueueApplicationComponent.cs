@@ -279,7 +279,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			column = new TableColumn<ReceiveQueueItem, string>(
 					SR.TitleStudyDescription,
 					delegate(ReceiveQueueItem item) { return FormatString(item.StudyInformation.StudyDescription); },
-					2f);
+					1.5f);
 
 			_receiveTable.Columns.Add(column);
 
@@ -297,15 +297,29 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			_receiveTable.Columns.Add(column);
 
+			column = new TableColumn<ReceiveQueueItem, int>(
+					SR.TitleFailed,
+					delegate(ReceiveQueueItem item) { return item.NumberOfFailedImports; },
+					0.5f);
+
+			_receiveTable.Columns.Add(column);
+
 			column = new TableColumn<ReceiveQueueItem, string>(
 					SR.TitleLastActive,
 					delegate(ReceiveQueueItem item) { return TimeSpanDisplayHelper.CalculateTimeSpanDisplay(item.LastActive); },
 					null,
-					1.5f,
+					1.0f,
 					delegate(ReceiveQueueItem one, ReceiveQueueItem two) { return one.LastActive.CompareTo(two.LastActive); });
 
 			// Default: Sort by last active
 			_receiveTable.Sort(new TableSortParams(column, false));
+
+			_receiveTable.Columns.Add(column);
+
+			column = new TableColumn<ReceiveQueueItem, string>(
+					SR.TitleMessage,
+					delegate(ReceiveQueueItem item) { return FormatString(item.StatusMessage); },
+					2.0f);
 
 			_receiveTable.Columns.Add(column);
 		}

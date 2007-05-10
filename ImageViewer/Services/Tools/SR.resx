@@ -233,6 +233,9 @@ Please ensure the ClearCanvas server is running or contact your system administr
   <data name="TitleDescription" xml:space="preserve">
     <value>Description</value>
   </data>
+  <data name="TitleFailed" xml:space="preserve">
+    <value>Failed</value>
+  </data>
   <data name="TitleFrom" xml:space="preserve">
     <value>From</value>
   </data>
@@ -241,6 +244,9 @@ Please ensure the ClearCanvas server is running or contact your system administr
   </data>
   <data name="TitleLastActive" xml:space="preserve">
     <value>Last Active</value>
+  </data>
+  <data name="TitleMessage" xml:space="preserve">
+    <value>Message</value>
   </data>
   <data name="TitlePatientId" xml:space="preserve">
     <value>Patient Id</value>

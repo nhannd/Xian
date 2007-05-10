@@ -15,76 +15,118 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	}
 
 	[DataContract]
-	public class StudyInformation
+	public class RetrieveStudyInformation
 	{
-		private string _studyInstanceUid;
-		private string _patientId;
-		private string _patientsName;
-		private string _studyDescription;
-		private DateTime _studyDate;
+		private string _fromAETitle;
+		private StudyInformation _studyInformation;
+		
+		public RetrieveStudyInformation()
+		{ 
+		}
 
-		public StudyInformation()
+		[DataMember(IsRequired = true)]
+		public string FromAETitle
+		{
+			get { return _fromAETitle; }
+			set { _fromAETitle = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public StudyInformation StudyInformation
+		{
+			get { return _studyInformation; }
+			set { _studyInformation = value; }
+		}
+	}
+
+	[DataContract]
+	public class ReceiveErrorInformation
+	{
+		private string _fromAETitle;
+		private StudyInformation _studyInformation;
+		private string _errorMessage;
+
+		public ReceiveErrorInformation()
+		{ 
+		}
+
+		[DataMember(IsRequired = true)]
+		public string FromAETitle
+		{
+			get { return _fromAETitle; }
+			set { _fromAETitle = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public StudyInformation StudyInformation
+		{
+			get { return _studyInformation; }
+			set { _studyInformation = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string ErrorMessage
+		{
+			get { return _errorMessage; }
+			set { _errorMessage = value;}
+		}
+	}
+
+	[DataContract]
+	public class SendStudyInformation
+	{
+		private string _toAETitle;
+		private StudyInformation _studyInformation;
+
+		public SendStudyInformation()
 		{
 		}
 
 		[DataMember(IsRequired = true)]
-		public string StudyInstanceUid
+		public string ToAETitle
 		{
-			get { return _studyInstanceUid; }
-			set { _studyInstanceUid = value; }
+			get { return _toAETitle; }
+			set { _toAETitle = value; }
 		}
 
 		[DataMember(IsRequired = true)]
-		public string PatientId
+		public StudyInformation StudyInformation
 		{
-			get { return _patientId; }
-			set { _patientId = value; }
+			get { return _studyInformation; }
+			set { _studyInformation = value; }
+		}
+	}
+
+	[DataContract]
+	public class SendErrorInformation
+	{
+		private string _toAETitle;
+		private StudyInformation _studyInformation;
+		private string _errorMessage;
+
+		public SendErrorInformation()
+		{
 		}
 
 		[DataMember(IsRequired = true)]
-		public string PatientsName
+		public string ToAETitle
 		{
-			get { return _patientsName; }
-			set { _patientsName = value; }
+			get { return _toAETitle; }
+			set { _toAETitle = value; }
 		}
 
 		[DataMember(IsRequired = true)]
-		public string StudyDescription
+		public StudyInformation StudyInformation
 		{
-			get { return _studyDescription; }
-			set { _studyDescription = value; }
+			get { return _studyInformation; }
+			set { _studyInformation = value; }
 		}
-
+		
 		[DataMember(IsRequired = true)]
-		public DateTime StudyDate
+		public string ErrorMessage
 		{
-			get { return _studyDate; }
-			set { _studyDate = value; }
-		}
-
-		public void CopyTo(StudyInformation studyInformation)
-		{
-			studyInformation.StudyInstanceUid = this.StudyInstanceUid;
-			studyInformation.PatientId = this.PatientId;
-			studyInformation.PatientsName = this.PatientsName;
-			studyInformation.StudyDescription = this.StudyDescription;
-			studyInformation.StudyDate = this.StudyDate;
-		}
-
-		public void CopyFrom(StudyInformation studyInformation)
-		{
-			this.StudyInstanceUid = studyInformation.StudyInstanceUid;
-			this.PatientId = studyInformation.PatientId;
-			this.PatientsName = studyInformation.PatientsName;
-			this.StudyDescription = studyInformation.StudyDescription;
-			this.StudyDate = studyInformation.StudyDate;
-		}
-
-		public StudyInformation Clone()
-		{
-			StudyInformation clone = new StudyInformation();
-			CopyTo(clone);
-			return clone;
+			get { return _errorMessage; }
+			set { _errorMessage = value; }
 		}
 	}
 
@@ -279,12 +321,12 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 		public bool IsImportComplete()
 		{
-			return TotalFilesToImport == (NumberOfFilesImported + NumberOfFailedImports);
+			return TotalFilesToImport == (this.NumberOfFilesImported + this.NumberOfFailedImports);
 		}
 
 		public bool IsComplete()
 		{
-			return TotalFilesToImport == (NumberOfFilesCommittedToDataStore + NumberOfFailedImports);
+			return TotalFilesToImport == (this.NumberOfFilesCommittedToDataStore + this.NumberOfFailedImports);
 		}
 
 		public void CopyTo(ImportProgressItem progressItem)

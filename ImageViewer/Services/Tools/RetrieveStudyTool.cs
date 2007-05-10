@@ -11,6 +11,7 @@ using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using System.ServiceModel;
 using ClearCanvas.Dicom.Network;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
@@ -43,13 +44,22 @@ namespace ClearCanvas.ImageViewer.Services.Tools
             if (this.Context.SelectedStudy == null)
                 return;
 
-			Dictionary<ApplicationEntity, List<string>> retrieveInformation = new Dictionary<ApplicationEntity, List<string>>();
+			Dictionary<ApplicationEntity, List<StudyInformation>> retrieveInformation = new Dictionary<ApplicationEntity, List<StudyInformation>>();
 			foreach (StudyItem item in this.Context.SelectedStudies)
 			{
 				if (!retrieveInformation.ContainsKey(item.Server))
-					retrieveInformation[item.Server] = new List<string>();
+					retrieveInformation[item.Server] = new List<StudyInformation>();
 
-				retrieveInformation[item.Server].Add(item.StudyInstanceUID);
+				StudyInformation studyInformation = new StudyInformation();
+				studyInformation.PatientId = item.PatientId;
+				studyInformation.PatientsName = item.PatientsName;
+				DateTime studyDate;
+				DateParser.Parse(item.StudyDate, out studyDate);
+				studyInformation.StudyDate = studyDate;
+				studyInformation.StudyDescription = item.StudyDescription;
+				studyInformation.StudyInstanceUid = item.StudyInstanceUID;
+
+				retrieveInformation[item.Server].Add(studyInformation);
 			}
 
 			DicomServerServiceClient client = new DicomServerServiceClient();
@@ -58,17 +68,14 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				client.Open();
 
-				foreach (KeyValuePair<ApplicationEntity, List<string>> kvp in retrieveInformation)
+				foreach (KeyValuePair<ApplicationEntity, List<StudyInformation>> kvp in retrieveInformation)
 				{
-					DicomRetrieveRequest request = new DicomRetrieveRequest();
-					request.RetrieveLevel = RetrieveLevel.Study;
+					AEInformation aeInformation = new AEInformation();
+					aeInformation.AETitle = kvp.Key.AE;
+					aeInformation.HostName = kvp.Key.Host;
+					aeInformation.Port = kvp.Key.Port;
 
-					request.SourceAETitle = kvp.Key.AE;
-					request.SourceHostName = kvp.Key.Host;
-					request.Port = kvp.Key.Port;
-					request.Uids = kvp.Value;
-
-					client.Retrieve(request);
+					client.RetrieveStudies(aeInformation, kvp.Value);
 				}
 								
 				client.Close();

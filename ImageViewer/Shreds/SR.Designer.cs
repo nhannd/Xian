@@ -151,11 +151,47 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occurred while processing the &apos;receive error&apos; operation..
+        /// </summary>
+        internal static string ExceptionErrorProcessingReceiveError {
+            get {
+                return ResourceManager.GetString("ExceptionErrorProcessingReceiveError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error has occurred while attempting to process the reindex request..
         /// </summary>
         internal static string ExceptionErrorProcessingReindexRequest {
             get {
                 return ResourceManager.GetString("ExceptionErrorProcessingReindexRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while processing the &apos;retrieve started&apos; operation..
+        /// </summary>
+        internal static string ExceptionErrorProcessingRetrieveStarted {
+            get {
+                return ResourceManager.GetString("ExceptionErrorProcessingRetrieveStarted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while processing the &apos;send error&apos; operation..
+        /// </summary>
+        internal static string ExceptionErrorProcessingSendError {
+            get {
+                return ResourceManager.GetString("ExceptionErrorProcessingSendError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while processing the &apos;send started&apos; operation..
+        /// </summary>
+        internal static string ExceptionErrorProcessingSendStarted {
+            get {
+                return ResourceManager.GetString("ExceptionErrorProcessingSendStarted", resourceCulture);
             }
         }
         
@@ -183,6 +219,24 @@ namespace ClearCanvas.ImageViewer.Shreds {
         internal static string ExceptionFailedToAddSubscriber {
             get {
                 return ResourceManager.GetString("ExceptionFailedToAddSubscriber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error has occurred while attempting to import the file into the local file store..
+        /// </summary>
+        internal static string ExceptionFailedToImportFile {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToImportFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error has occurred while attempting to parse the file..
+        /// </summary>
+        internal static string ExceptionFailedToParseFile {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToParseFile", resourceCulture);
             }
         }
         
@@ -268,7 +322,7 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unrecoverable error: Unable to determine drive..
+        ///   Looks up a localized string similar to Unrecoverable Error: unable to determine drive..
         /// </summary>
         internal static string ExceptionUnableToDetermineDrive {
             get {
@@ -313,7 +367,7 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ; the file has been moved to {0}.
+        ///   Looks up a localized string similar to   The file has been moved to {0}.
         /// </summary>
         internal static string FormatFileHasBeenMoved {
             get {
@@ -336,6 +390,16 @@ namespace ClearCanvas.ImageViewer.Shreds {
         internal static string FormatProcessingFile {
             get {
                 return ResourceManager.GetString("FormatProcessingFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to total errors: {0}, last error: {1}
+        ///Please check the service logs for more details..
+        /// </summary>
+        internal static string FormatReceiveErrorSummary {
+            get {
+                return ResourceManager.GetString("FormatReceiveErrorSummary", resourceCulture);
             }
         }
         
@@ -439,7 +503,7 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ; the file has been deleted.
+        ///   Looks up a localized string similar to   The file has been deleted..
         /// </summary>
         internal static string MessageFileHasBeenDeleted {
             get {

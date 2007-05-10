@@ -30,6 +30,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		private Dictionary<string, string> _setTransferSyntaxes;
 		private Dictionary<string, string> _setSopClasses;
         private List<ISopInstance> _sopInstances;
+		private Dictionary<string, string> _sentSopInstanceUids;
 
         public SendParcel(ApplicationEntity sourceAE, ApplicationEntity destinationAE, string parcelDescription)
             : base(sourceAE, destinationAE, parcelDescription)
@@ -37,6 +38,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			_setTransferSyntaxes = new Dictionary<string, string>();
 			_setSopClasses = new Dictionary<string, string>();
             _sopInstances = new List<ISopInstance>();
+			_sentSopInstanceUids = new Dictionary<string, string>();
         }
 
         private SendParcel()
@@ -65,7 +67,73 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             get { return _sopInstances.AsReadOnly(); }
         }
 
-        #region Internal and Private members
+		public IList<ISopInstance> SentSopInstances
+		{
+			get 
+			{
+				return new List<ISopInstance>(_sopInstances.FindAll
+					(
+						delegate(ISopInstance sop) { return _sentSopInstanceUids.ContainsKey(sop.GetSopInstanceUid()); })
+					
+					).AsReadOnly(); 
+			}
+		}
+
+		public IList<ISopInstance> UnsentSopInstances
+		{
+			get
+			{
+				return new List<ISopInstance>(_sopInstances.FindAll
+					(
+						delegate(ISopInstance sop) { return !_sentSopInstanceUids.ContainsKey(sop.GetSopInstanceUid()); })
+
+					).AsReadOnly();
+			}
+		}
+
+		private IDictionary<IStudy, IList<ISopInstance>> GetSopInstancesByStudy(IList<ISopInstance> sopInstances)
+		{
+			IDictionary<IStudy, IList<ISopInstance>> sopInstancesByStudy = new Dictionary<IStudy, IList<ISopInstance>>();
+
+			foreach (ISopInstance sopInstance in sopInstances)
+			{
+				ISeries parentSeries = sopInstance.GetParentSeries();
+				IStudy parentStudy = parentSeries.GetParentStudy();
+
+				if (!sopInstancesByStudy.ContainsKey(parentStudy))
+					sopInstancesByStudy[parentStudy] = new List<ISopInstance>();
+
+				sopInstancesByStudy[parentStudy].Add(sopInstance);
+			}
+
+			return sopInstancesByStudy;
+		}
+
+		public IDictionary<IStudy, IList<ISopInstance>> SopInstancesByStudy
+		{
+			get
+			{
+				return GetSopInstancesByStudy(_sopInstances);
+			}
+		}
+
+		public IDictionary<IStudy, IList<ISopInstance>> SentSopInstancesByStudy
+		{
+			get
+			{
+				return GetSopInstancesByStudy(this.SentSopInstances);
+			}
+		}
+
+		public IDictionary<IStudy, IList<ISopInstance>> UnsentSopInstancesByStudy
+		{
+			get
+			{
+				return GetSopInstancesByStudy(this.UnsentSopInstances);
+			}
+		}
+
+		#region Internal and Private members
         private void AddTransferSyntax(Uid newTransferSyntax)
         {
 			if (_setTransferSyntaxes.ContainsKey(newTransferSyntax))
@@ -214,6 +282,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			return _sopInstances.Count;
 		}
 
+
 		public void Send()
 		{
 			DicomClient client = new DicomClient(base.SourceAE);
@@ -225,6 +294,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 							if (args.TotalCount == args.CurrentCount)
 								this.ParcelTransferState = ParcelTransferState.Completed;
 
+							_sentSopInstanceUids[args.SentSopInstanceUid] = args.SentSopInstanceUid;
 							this.TotalProgressSteps = args.TotalCount;
 							this.CurrentProgressStep = args.CurrentCount;
 						}
@@ -232,19 +302,22 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			client.SendProgressUpdated += updateDelegate;
 
-			try
+			using (client)
 			{
-				client.Store(this.DestinationAE, this.SopInstanceFilenamesList, this.SopClasses, this.TransferSyntaxes);
-				this.ParcelTransferState = ParcelTransferState.Completed;
-			}
-			catch
-			{
-				this.ParcelTransferState = ParcelTransferState.Error;
-				throw;
-			}
-			finally
-			{
-				client.SendProgressUpdated -= updateDelegate;
+				try
+				{
+					client.Store(this.DestinationAE, this.SopInstanceFilenamesList, this.SopClasses, this.TransferSyntaxes);
+					this.ParcelTransferState = ParcelTransferState.Completed;
+				}
+				catch (Exception e)
+				{
+					this.ParcelTransferState = ParcelTransferState.Error;
+					throw;
+				}
+				finally
+				{
+					client.SendProgressUpdated -= updateDelegate;
+				}
 			}
 		}
 

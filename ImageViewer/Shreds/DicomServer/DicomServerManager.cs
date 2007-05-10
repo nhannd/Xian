@@ -13,6 +13,7 @@ using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.Network;
 using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Server.ShredHost;
+using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.ImageViewer.Shreds.DicomServer.ServerTree;
@@ -309,6 +310,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 return;
 
 			StoreScpReceivedFileInformation storedInformation = new StoreScpReceivedFileInformation();
+
 			storedInformation.AETitle = info.CallingAETitle;
 			storedInformation.FileName = info.FileName;
 
@@ -346,6 +348,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				return;
 
 			StoreScuSentFileInformation sentFileInformation = new StoreScuSentFileInformation();
+
 			sentFileInformation.ToAETitle = info.CalledAETitle;
 			sentFileInformation.FileName = info.CurrentFile;
 
@@ -561,21 +564,69 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             return "";
 		}
 
-		#region IDicomMoveRequestService Members
-
-		public void Send(DicomSendRequest request)
+		private List<SendStudyInformation> ConvertToSendStudyInformation(IDictionary<IStudy, IList<ISopInstance>> sopInstancesByStudy)
 		{
-			ApplicationEntity destinationAE = new ApplicationEntity(new HostName(request.DestinationHostName), new AETitle(request.DestinationAETitle), new ListeningPort(request.Port));
-            ApplicationEntity myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
+			List<SendStudyInformation> sendStudyInformation = new List<SendStudyInformation>();
 
+			foreach (KeyValuePair<IStudy, IList<ISopInstance>> kvp in sopInstancesByStudy)
+			{
+				SendStudyInformation information = new SendStudyInformation();
+				information.StudyInformation = new StudyInformation();
+
+				Study study = kvp.Key as Study;
+				if (study != null)
+				{
+					information.StudyInformation.PatientId = study.PatientId;
+					information.StudyInformation.PatientsName = study.PatientsName;
+					DateTime studyDate;
+					DateParser.Parse(study.StudyDate, out studyDate);
+					information.StudyInformation.StudyDate = studyDate;
+					information.StudyInformation.StudyDescription = study.StudyDescription;
+				}
+
+				information.StudyInformation.StudyInstanceUid = kvp.Key.GetStudyInstanceUid();
+
+				sendStudyInformation.Add(information);
+			}
+
+			return sendStudyInformation;
+		}
+
+		#region IDicomServerService Members
+
+		public void Send(AEInformation destinationAEInformation, IEnumerable<string> uids)
+		{
+			ApplicationEntity destinationAE = new ApplicationEntity(new HostName(destinationAEInformation.HostName), new AETitle(destinationAEInformation.AETitle), new ListeningPort(destinationAEInformation.Port));
+            ApplicationEntity myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
+			
             SendParcel parcel = new SendParcel(myApplicationEntity, destinationAE, "");
-			foreach (string uid in request.Uids)
+			foreach (string uid in uids)
 				parcel.Include(new Uid(uid));
 
 			BackgroundTaskContainer container = new BackgroundTaskContainer();
 
-			BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context) 
+			BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context)
 			{
+				LocalDataStoreServiceClient serviceClient = new LocalDataStoreServiceClient();
+
+				try
+				{
+					List<SendStudyInformation> sendStudyInformation = ConvertToSendStudyInformation(parcel.SopInstancesByStudy);
+					foreach (SendStudyInformation information in sendStudyInformation)
+					{
+						information.ToAETitle = destinationAE.AE;
+						serviceClient.SendStarted(information);
+					}
+
+					serviceClient.Close();
+				}
+				catch(Exception e)
+				{
+					//not much we can do other than just log it.
+					Platform.Log(e);
+					serviceClient.Abort();
+				}
+
 				try
 				{
 					parcel.Send();
@@ -583,6 +634,30 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				catch (Exception e)
 				{
 					Platform.Log(e);
+
+					List<SendStudyInformation> incompleteStudyInformation = ConvertToSendStudyInformation(parcel.UnsentSopInstancesByStudy);
+
+					serviceClient = new LocalDataStoreServiceClient();
+
+					try
+					{
+						foreach (SendStudyInformation information in incompleteStudyInformation)
+						{
+							SendErrorInformation errorInformation = new SendErrorInformation();
+							errorInformation.ToAETitle = destinationAE.AE;
+							errorInformation.StudyInformation = information.StudyInformation;
+							errorInformation.ErrorMessage = e.Message;
+							serviceClient.SendError(errorInformation);
+						}
+
+						serviceClient.Close();
+					}
+					catch (Exception ex)
+					{
+						//not much we can do other than just log it.
+						Platform.Log(ex);
+						serviceClient.Abort();
+					}
 				}
 			}, false, container);
 
@@ -606,30 +681,65 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			task.Run();
 		}
 
-		public void Retrieve(DicomRetrieveRequest request)
+		public void RetrieveStudies(AEInformation sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve)
 		{
-			if (request.RetrieveLevel == RetrieveLevel.Image)
-				throw new Exception(SR.ExceptionSpecifiedRetrieveLevelNotSupported);
+            ApplicationEntity myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), 
+														new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
 
-            ApplicationEntity myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
-
-            foreach (string uid in request.Uids)
+			foreach (StudyInformation studyInformation in studiesToRetrieve)
 			{
-				string includeUid = uid; //have to do this, otherwise the anonymous delegate(s) will all use the same value.
-				
+				StudyInformation retrieveStudyInformation = studyInformation;
 				BackgroundTaskContainer container = new BackgroundTaskContainer(); 
 				
 				BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context)
 				{
+					LocalDataStoreServiceClient serviceClient = new LocalDataStoreServiceClient();
+
+					try
+					{
+						serviceClient.Open();
+						RetrieveStudyInformation retrieveInformation = new RetrieveStudyInformation();
+						retrieveInformation.FromAETitle = sourceAEInformation.AETitle;
+						retrieveInformation.StudyInformation = retrieveStudyInformation;
+						serviceClient.RetrieveStarted(retrieveInformation);
+						serviceClient.Close();
+					}
+					catch(Exception ex)
+					{
+						//can't tell the Local Data Store service about the pending retrieve operation, not much we can do.
+						Platform.Log(ex);
+						serviceClient.Abort();
+					}
+
 					try
 					{
                         DicomClient client = new DicomClient(myApplicationEntity);
-						ApplicationEntity destinationAE = new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port));
-						client.RetrieveAsServiceClassUserOnly(new ApplicationEntity(new HostName(request.SourceHostName), new AETitle(request.SourceAETitle), new ListeningPort(request.Port)), new Uid(includeUid), this.SaveDirectory);
+						ApplicationEntity sourceAE = new ApplicationEntity(new HostName(sourceAEInformation.HostName), 
+														new AETitle(sourceAEInformation.AETitle), new ListeningPort(sourceAEInformation.Port));
+
+						client.RetrieveAsServiceClassUserOnly(sourceAE, new Uid(retrieveStudyInformation.StudyInstanceUid), this.SaveDirectory);
 					}
 					catch (Exception e)
 					{
 						Platform.Log(e);
+
+						serviceClient = new LocalDataStoreServiceClient();
+
+						try
+						{
+							ReceiveErrorInformation errorInformation = new ReceiveErrorInformation();
+							errorInformation.FromAETitle = sourceAEInformation.AETitle;
+							errorInformation.StudyInformation = retrieveStudyInformation;
+							errorInformation.ErrorMessage = e.Message;
+							serviceClient.ReceiveError(errorInformation);
+							serviceClient.Close();
+						}
+						catch(Exception ex)
+						{
+							//again, not much we can do.
+							Platform.Log(ex);
+							serviceClient.Abort();
+						}
 					}
 
 				}, false, container);

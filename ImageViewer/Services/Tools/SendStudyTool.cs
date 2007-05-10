@@ -75,13 +75,12 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 				foreach (Server destinationAE in aeNavigator.SelectedServers.Servers)
 				{
-					DicomSendRequest request = new DicomSendRequest();
-					request.DestinationAETitle = destinationAE.AETitle;
-					request.DestinationHostName = destinationAE.Host;
-					request.Port = destinationAE.Port;
-					request.Uids = studyUids;
-
-					client.Send(request);
+					AEInformation aeInformation = new AEInformation();
+					aeInformation.AETitle = destinationAE.AETitle;
+					aeInformation.HostName = destinationAE.Host;
+					aeInformation.Port = destinationAE.Port;
+					
+					client.Send(aeInformation, studyUids);
 				}
 
 				client.Close();

@@ -17,6 +17,20 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		#region ILocalDataStoreService Members
 
+		public void RetrieveStarted(RetrieveStudyInformation information)
+		{
+			try
+			{
+				LocalDataStoreService.Instance.RetrieveStarted(information);
+			}
+			catch (Exception e)
+			{
+				string message = SR.ExceptionErrorProcessingRetrieveStarted;
+				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
+				throw new LocalDataStoreFaultException(exceptionMessage);
+			}
+		}
+
 		public void FileReceived(StoreScpReceivedFileInformation filesReceivedInformation)
 		{
 			try
@@ -31,6 +45,34 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 		}
 
+		public void ReceiveError(ReceiveErrorInformation errorInformation)
+		{
+			try
+			{
+				LocalDataStoreService.Instance.ReceiveError(errorInformation);
+			}
+			catch (Exception e)
+			{
+				string message = SR.ExceptionErrorProcessingReceiveError;
+				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
+				throw new LocalDataStoreFaultException(exceptionMessage);
+			}
+		}
+
+		public void SendStarted(SendStudyInformation information)
+		{
+			try
+			{
+				LocalDataStoreService.Instance.SendStarted(information);
+			}
+			catch (Exception e)
+			{
+				string message = SR.ExceptionErrorProcessingSendStarted;
+				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
+				throw new LocalDataStoreFaultException(exceptionMessage);
+			}
+		}
+
 		public void FileSent(StoreScuSentFileInformation sentFileInformation)
 		{
 			try
@@ -40,6 +82,20 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			catch (Exception e)
 			{
 				string message = String.Format(SR.ExceptionErrorProcessingSentFile, sentFileInformation.FileName);
+				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
+				throw new LocalDataStoreFaultException(exceptionMessage);
+			}
+		}
+
+		public void SendError(SendErrorInformation errorInformation)
+		{
+			try
+			{
+				LocalDataStoreService.Instance.SendError(errorInformation);
+			}
+			catch (Exception e)
+			{
+				string message = SR.ExceptionErrorProcessingSendError;
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
 				throw new LocalDataStoreFaultException(exceptionMessage);
 			}

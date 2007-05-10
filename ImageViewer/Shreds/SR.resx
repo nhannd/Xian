@@ -147,8 +147,20 @@
   <data name="ExceptionErrorProcessingReceivedFile" xml:space="preserve">
     <value>An error has occurred while attempting to process a received file ({0})</value>
   </data>
+  <data name="ExceptionErrorProcessingReceiveError" xml:space="preserve">
+    <value>An error occurred while processing the 'receive error' operation.</value>
+  </data>
   <data name="ExceptionErrorProcessingReindexRequest" xml:space="preserve">
     <value>An error has occurred while attempting to process the reindex request.</value>
+  </data>
+  <data name="ExceptionErrorProcessingRetrieveStarted" xml:space="preserve">
+    <value>An error occurred while processing the 'retrieve started' operation.</value>
+  </data>
+  <data name="ExceptionErrorProcessingSendError" xml:space="preserve">
+    <value>An error occurred while processing the 'send error' operation.</value>
+  </data>
+  <data name="ExceptionErrorProcessingSendStarted" xml:space="preserve">
+    <value>An error occurred while processing the 'send started' operation.</value>
   </data>
   <data name="ExceptionErrorProcessingSentFile" xml:space="preserve">
     <value>An error has occurred while attempting to process a sent file ({0})</value>
@@ -158,6 +170,12 @@
   </data>
   <data name="ExceptionFailedToAddSubscriber" xml:space="preserve">
     <value>Failed to add subscriber to the Local DataStore Activity Monitor service.</value>
+  </data>
+  <data name="ExceptionFailedToImportFile" xml:space="preserve">
+    <value>An error has occurred while attempting to import the file into the local file store.</value>
+  </data>
+  <data name="ExceptionFailedToParseFile" xml:space="preserve">
+    <value>An error has occurred while attempting to parse the file.</value>
   </data>
   <data name="ExceptionFailedToRemoveSubscriber" xml:space="preserve">
     <value>Failed to remove subscriber from the Local DataStore Activity Monitor service.</value>
@@ -186,6 +204,9 @@
   <data name="ExceptionStorageDirectoryDoesNotExist" xml:space="preserve">
     <value>The storage directory is inaccessible.  The service has been disabled.</value>
   </data>
+  <data name="ExceptionUnableToDetermineDrive" xml:space="preserve">
+    <value>Unrecoverable Error: unable to determine drive.</value>
+  </data>
   <data name="FormatEnumeratingFile" xml:space="preserve">
     <value>Enumerating: {0}</value>
   </data>
@@ -199,13 +220,17 @@
     <value>The file format is not recognized ({0})</value>
   </data>
   <data name="FormatFileHasBeenMoved" xml:space="preserve">
-    <value>; the file has been moved to {0}</value>
+    <value>  The file has been moved to {0}</value>
   </data>
   <data name="FormatMultipleFilesDescription" xml:space="preserve">
     <value>+ {0}</value>
   </data>
   <data name="FormatProcessingFile" xml:space="preserve">
     <value>Processing: {0}</value>
+  </data>
+  <data name="FormatReceiveErrorSummary" xml:space="preserve">
+    <value>total errors: {0}, last error: {1}
+Please check the service logs for more details.</value>
   </data>
   <data name="FormatTooltipServerDetails" xml:space="preserve">
     <value>Dicom Server Shred (Name: {0} AE: {1} Host: {2} Port: {3} Location: {4})</value>
@@ -241,7 +266,7 @@
     <value>Failed: unable to clear database prior to reindex operation.</value>
   </data>
   <data name="MessageFileHasBeenDeleted" xml:space="preserve">
-    <value>; the file has been deleted</value>
+    <value>  The file has been deleted.</value>
   </data>
   <data name="MessageImportPausedForReindex" xml:space="preserve">
     <value>Import has been paused waiting for reindex to complete.</value>

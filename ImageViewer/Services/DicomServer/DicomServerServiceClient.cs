@@ -12,14 +12,14 @@ namespace ClearCanvas.ImageViewer.Services.DicomServer
 		{
 		}
 
-		public void Send(DicomSendRequest request)
+		public void Send(AEInformation destinationAEInformation, IEnumerable<string> uids)
 		{
-			base.Channel.Send(request);
+			base.Channel.Send(destinationAEInformation, uids);
 		}
 
-		public void Retrieve(DicomRetrieveRequest request)
+		public void RetrieveStudies(AEInformation sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve)
 		{
-			base.Channel.Retrieve(request);
+			base.Channel.RetrieveStudies(sourceAEInformation, studiesToRetrieve);
 		}
 
 		public DicomServerConfiguration GetServerConfiguration()

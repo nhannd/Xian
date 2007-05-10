@@ -35,6 +35,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataContracts.cs" />
     <Compile Include="DicomServer\DataContracts.cs" />
     <Compile Include="DicomServer\DicomServerServiceClient.cs" />
     <Compile Include="DicomServer\IDicomServerService.cs" />

@@ -12,14 +12,36 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		{
 		}
 
+		#region ILocalDataStoreService Members
+
+		public void RetrieveStarted(RetrieveStudyInformation information)
+		{
+			base.Channel.RetrieveStarted(information);
+		}
+
 		public void FileReceived(StoreScpReceivedFileInformation receivedFileInformation)
 		{
 			base.Channel.FileReceived(receivedFileInformation);
 		}
 
+		public void ReceiveError(ReceiveErrorInformation errorInformation)
+		{
+			base.Channel.ReceiveError(errorInformation);
+		}
+
+		public void SendStarted(SendStudyInformation information)
+		{
+			base.Channel.SendStarted(information);
+		}
+
 		public void FileSent(StoreScuSentFileInformation sentFileInformation)
 		{
 			base.Channel.FileSent(sentFileInformation);
+		}
+
+		public void SendError(SendErrorInformation errorInformation)
+		{
+			base.Channel.SendError(errorInformation);
 		}
 
 		public Guid Import(FileImportRequest request)
@@ -31,5 +53,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		{
 			base.Channel.Reindex();
 		}
+
+		#endregion
 	}
 }

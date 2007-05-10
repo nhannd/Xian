@@ -301,16 +301,40 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		#region ILocalDataStoreService Members
 
+		public void RetrieveStarted(RetrieveStudyInformation information)
+		{
+			CheckDisabled();
+			_receivedFileProcessor.RetrieveStarted(information);
+		}
+
 		public void FileReceived(StoreScpReceivedFileInformation receivedFileInformation)
 		{
 			CheckDisabled();
 			_receivedFileProcessor.ProcessReceivedFileInformation(receivedFileInformation);
 		}
 
+		public void ReceiveError(ReceiveErrorInformation errorInformation)
+		{
+			CheckDisabled();
+			_receivedFileProcessor.ReceiveError(errorInformation);
+		}
+
+		public void SendStarted(SendStudyInformation information)
+		{
+			CheckDisabled();
+			_sentFileProcessor.SendStarted(information);
+		}
+
 		public void FileSent(StoreScuSentFileInformation sentFileInformation)
 		{
 			CheckDisabled();
 			_sentFileProcessor.ProcessSentFileInformation(sentFileInformation);
+		}
+
+		public void SendError(SendErrorInformation errorInformation)
+		{
+			CheckDisabled();
+			_sentFileProcessor.SendError(errorInformation);
 		}
 
 		public Guid Import(FileImportRequest request)

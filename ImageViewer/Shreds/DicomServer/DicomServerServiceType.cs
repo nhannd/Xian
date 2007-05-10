@@ -5,6 +5,7 @@ using System.ServiceModel;
 
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Services.DicomServer;
+using ClearCanvas.ImageViewer.Services;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
@@ -18,15 +19,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		#region IDicomServerService Members
 
-		public void Send(DicomSendRequest request)
+		public void Send(AEInformation destinationAEInformation, IEnumerable<string> uids)
 		{
-			DicomServerManager.Instance.Send(request);
+			DicomServerManager.Instance.Send(destinationAEInformation, uids);
 		}
 
-		public void Retrieve(DicomRetrieveRequest request)
+		public void RetrieveStudies(AEInformation sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve)
 		{
-			DicomServerManager.Instance.Retrieve(request);
-
+			DicomServerManager.Instance.RetrieveStudies(sourceAEInformation, studiesToRetrieve);
 		}
 
 		public DicomServerConfiguration GetServerConfiguration()

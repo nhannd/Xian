@@ -399,6 +399,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed.
+        /// </summary>
+        internal static string TitleFailed {
+            get {
+                return ResourceManager.GetString("TitleFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to From.
         /// </summary>
         internal static string TitleFrom {
@@ -422,6 +431,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string TitleLastActive {
             get {
                 return ResourceManager.GetString("TitleLastActive", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Message.
+        /// </summary>
+        internal static string TitleMessage {
+            get {
+                return ResourceManager.GetString("TitleMessage", resourceCulture);
             }
         }
         

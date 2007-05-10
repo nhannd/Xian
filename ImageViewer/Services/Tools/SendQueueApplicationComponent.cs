@@ -304,6 +304,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_sendTable.Sort(new TableSortParams(column, false));
 
 			_sendTable.Columns.Add(column);
+
+			column = new TableColumn<SendQueueItem, string>(
+				SR.TitleMessage,
+				delegate(SendQueueItem item) { return FormatString(item.StatusMessage); },
+				2.0f);
+
+			_sendTable.Columns.Add(column);
 		}
 
 		private void ClearItems(IEnumerable<Guid> progressIdentifiers)

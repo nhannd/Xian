@@ -532,7 +532,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 				catch (Exception e)
 				{
-					setImportInformation.Error = e;
+					setImportInformation.Error = new Exception(SR.ExceptionFailedToParseFile, e);
 					fileImportJobStatusReportDelegate(fileImportInformation);
 				}
 				finally
@@ -603,7 +603,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 				catch (Exception e)
 				{
-					importerInformation.Error = e;
+					importerInformation.Error = new Exception(SR.ExceptionFailedToImportFile, e);
 				}
 
 				fileImportJobStatusReportDelegate(fileImportInformation);
@@ -677,11 +677,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				CodeClock clock = new CodeClock();
 				clock.Start();
 
-				IDataStoreReader dataStoreReader = SingleSessionDataAccessLayer.GetIDataStoreReader();
-				Dictionary<string, List<ImportJobInformation>> jobsByStudyUid = new Dictionary<string, List<ImportJobInformation>>();
-
 				try
 				{
+					IDataStoreReader dataStoreReader = SingleSessionDataAccessLayer.GetIDataStoreReader();
+					Dictionary<string, List<ImportJobInformation>> jobsByStudyUid = new Dictionary<string, List<ImportJobInformation>>();
+
 					foreach (ImportJobInformation item in items)
 					{
 						if (!jobsByStudyUid.ContainsKey(item.FileImportInformation.StudyInstanceUid))
@@ -745,11 +745,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						}
 						catch(Exception e)
 						{
-							Platform.Log(e);
 							foreach (ImportJobInformation item in relevantJobs)
 							{
 								string error = String.Format(SR.FormatFailedToCommitToDatastore, item.FileImportInformation.StoredFile);
-								((IFileImportInformation)item.FileImportInformation).Error = new Exception(error);
+								((IFileImportInformation)item.FileImportInformation).Error = new Exception(error, e);
 								item.FileImportJobStatusReportDelegate(item.FileImportInformation);
 							}
 						}
@@ -757,7 +756,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 				catch (Exception e)
 				{
-					Platform.Log(e);
+					foreach (ImportJobInformation item in items)
+					{
+						string error = String.Format(SR.FormatFailedToCommitToDatastore, item.FileImportInformation.StoredFile);
+						((IFileImportInformation)item.FileImportInformation).Error = new Exception(error, e);
+						item.FileImportJobStatusReportDelegate(item.FileImportInformation);
+					}
 				}
 
 				this.SeriesCache.Clear();

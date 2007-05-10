@@ -555,7 +555,7 @@ namespace ClearCanvas.Dicom.Network
 								if (progress.state != T_DIMSE_StoreProgressState.DIMSE_StoreEnd)
 									return;
 
-								SendProgressUpdatedEventArgs args = new SendProgressUpdatedEventArgs(info.CurrentCount, info.TotalCount);
+								SendProgressUpdatedEventArgs args = new SendProgressUpdatedEventArgs(info.Request.AffectedSOPInstanceUID, info.CurrentCount, info.TotalCount);
 								this.OnSendProgressUpdatedEvent(args);
 							};
 
@@ -565,6 +565,8 @@ namespace ClearCanvas.Dicom.Network
 							{
 								if (association.SendCStore(interopFilenameList, storeOperationIdentifier))
 									association.Release();
+								else //SendCStore only returns false when the peer has aborted the association.
+									throw new NetworkDicomException(SR.ExceptionOffisDulPeerAbortedAssociation);
 							}
 							catch
 							{
@@ -574,11 +576,9 @@ namespace ClearCanvas.Dicom.Network
 							{
 								DicomEventManager.Instance.StoreScuProgressEvent -= progressHandler;
 							}
-
-                            return;
-                        }
-                    }
-                }
+						}
+					}
+				}
             }
             catch (DicomRuntimeApplicationException e)
             {
@@ -750,6 +750,8 @@ namespace ClearCanvas.Dicom.Network
 							{
                                 if (association.SendCMoveStudyRootQuery(cMoveDataset, network, serverAE.OperationTimeout, saveDirectory, queryRetrieveOperationIdentifier, isAsServiceClassUserOnly))
                                     association.Release();
+								else
+									throw new NetworkDicomException(SR.ExceptionOffisDulPeerAbortedAssociation);
 							}
 							catch
 							{
@@ -759,9 +761,9 @@ namespace ClearCanvas.Dicom.Network
 							{
 								DicomEventManager.Instance.RetrieveProgressUpdatedEvent -= updateHandler;
 							}
-                        }
-                    }
-                }
+						}
+					}
+				}
 
                 return;
             }

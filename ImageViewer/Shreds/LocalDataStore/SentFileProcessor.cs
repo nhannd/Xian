@@ -8,6 +8,7 @@ using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Services;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
@@ -48,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						delegate()
 						{
 							foreach (SendProgressItem item in _sendProgressItems)
-								LocalDataStoreActivityPublisher.Instance.SendProgressChanged(item);
+								LocalDataStoreActivityPublisher.Instance.SendProgressChanged(item.Clone());
 						}
 					);
 			}
@@ -73,7 +74,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 								if (item != null)
 								{
 									_sendProgressItems.Remove(item);
-
 									item.Removed = true;
 									LocalDataStoreActivityPublisher.Instance.SendProgressChanged(item.Clone());
 								}
@@ -125,6 +125,32 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 			}
 
+			private SendProgressItem GetProgressItem(string toAETitle, StudyInformation studyInformation)
+			{
+				//no synclock required, since only the single thread pool thread is accessing the items.
+				SendProgressItem progressItem = _sendProgressItems.Find(delegate(SendProgressItem testItem)
+					{
+						return testItem.ToAETitle == toAETitle &&
+							testItem.StudyInformation.StudyInstanceUid == studyInformation.StudyInstanceUid;
+					});
+
+				if (progressItem == null)
+				{
+					progressItem = new SendProgressItem();
+					progressItem.Identifier = Guid.NewGuid();
+					progressItem.StartTime = DateTime.Now;
+					progressItem.LastActive = progressItem.StartTime;
+					progressItem.ToAETitle = toAETitle;
+					progressItem.StudyInformation = studyInformation;
+					progressItem.NumberOfFilesExported = 0;
+					progressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+
+					_sendProgressItems.Add(progressItem);
+				}
+
+				return progressItem;
+			}
+
 			public void ProcessSentFileInformation(StoreScuSentFileInformation sentFileInformation)
 			{
 				//always leave the main thread free to accept incoming requests.
@@ -135,38 +161,52 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							try
 							{
 								StudyInformation studyInformation = GetStudyInformation(sentFileInformation.FileName);
+								SendProgressItem progressItem = GetProgressItem(sentFileInformation.ToAETitle, studyInformation);
+								progressItem.StudyInformation = studyInformation;
 
-								//no synclock required, since only the single thread pool thread is accessing the items.
-								SendProgressItem progressItem = _sendProgressItems.Find(delegate(SendProgressItem testItem)
-									{
-										return testItem.ToAETitle == sentFileInformation.ToAETitle &&
-											testItem.StudyInformation.StudyInstanceUid == studyInformation.StudyInstanceUid;
-									});
-
-								if (progressItem == null)
-								{
-									progressItem = new SendProgressItem();
-									progressItem.Identifier = Guid.NewGuid();
-									progressItem.StartTime = DateTime.Now;
-									progressItem.LastActive = progressItem.StartTime;
-									progressItem.ToAETitle = sentFileInformation.ToAETitle;
-									progressItem.StudyInformation = studyInformation;
-									progressItem.NumberOfFilesExported = 0;
-									progressItem.AllowedCancellationOperations = CancellationFlags.Clear;
-
-									_sendProgressItems.Add(progressItem);
-								}
-
+								if (progressItem.StatusMessage == SR.MessagePending)
+									progressItem.StatusMessage = "";
+								
 								progressItem.LastActive = DateTime.Now;
 								++progressItem.NumberOfFilesExported;
-
-								LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem);
+								LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem.Clone());
 							}
 							catch (Exception e)
 							{
-								//!!Report generic error to the subscribers.!!
-								Platform.Log(e);
+								Platform.Log(e); //this only happens if we can't parse the file, so not much we can do.
 							}
+						}
+					);
+			}
+
+			internal void SendStarted(SendStudyInformation information)
+			{
+				//always leave the main thread free to accept incoming requests.
+				_sentFileInformationProcessor.Enqueue
+					(
+						delegate()
+						{
+							SendProgressItem progressItem = GetProgressItem(information.ToAETitle, information.StudyInformation);
+							progressItem.StudyInformation = information.StudyInformation;
+							progressItem.LastActive = DateTime.Now; 
+							progressItem.StatusMessage = SR.MessagePending;
+							LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem.Clone());
+						}
+					);
+			}
+			
+			public void SendError(SendErrorInformation errorInformation)
+			{
+				//always leave the main thread free to accept incoming requests.
+				_sentFileInformationProcessor.Enqueue
+					(
+						delegate()
+						{
+							SendProgressItem progressItem = GetProgressItem(errorInformation.ToAETitle, errorInformation.StudyInformation);
+							progressItem.StudyInformation = errorInformation.StudyInformation;
+							progressItem.LastActive = DateTime.Now;
+							progressItem.StatusMessage = errorInformation.ErrorMessage;
+							LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem.Clone());
 						}
 					);
 			}
