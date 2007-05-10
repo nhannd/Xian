@@ -64,8 +64,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         private void SetNamedParameters(IQuery query, string worklistClassName)
         {
             // Set the filter to display any MPS between 2 weeks before/after
-            query.SetParameter("mpsSchedulingStartTimeBegin", Platform.Time.Date.ToString());
-            query.SetParameter("mpsSchedulingStartTimeEnd", Platform.Time.Date.AddDays(1).ToString());
+            query.SetParameter("mpsSchedulingStartTimeBegin", Platform.Time.Date);
+            query.SetParameter("mpsSchedulingStartTimeEnd", Platform.Time.Date.AddDays(1));
 
             switch (worklistClassName)
             {
@@ -73,8 +73,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 case "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn":
                     query.SetParameter("mpsState", "SC");
                     query.SetParameter("cpsState", "IP");
-                    query.SetParameter("cpsStartTimeBegin", Platform.Time.Date.ToString());
-                    query.SetParameter("cpsStartTimeEnd", Platform.Time.Date.AddDays(1).ToString());
+                    query.SetParameter("cpsStartTimeBegin", Platform.Time.Date);
+                    query.SetParameter("cpsStartTimeEnd", Platform.Time.Date.AddDays(1));
                     break;
                 case "ClearCanvas.Healthcare.Workflow.Registration.Worklists+InProgress":
                     query.SetParameter("mpsState", "IP");
@@ -127,8 +127,8 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
             IQuery query = this.Context.CreateHibernateQuery(hqlQuery);
             query.SetParameter("patient", patient);
-            query.SetParameter("mpsSchedulingStartTimeBegin", Platform.Time.Date.AddDays(-14).ToString());
-            query.SetParameter("mpsSchedulingStartTimeEnd", Platform.Time.Date.AddDays(14).ToString());
+            query.SetParameter("mpsSchedulingStartTimeBegin", Platform.Time.Date.AddDays(-14));
+            query.SetParameter("mpsSchedulingStartTimeEnd", Platform.Time.Date.AddDays(14));
 
             IList list = query.List();
             foreach (object tuple in list)
@@ -158,10 +158,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             query.SetParameter("mpsState", "SC");
             query.SetParameter("cpsState", "IP");
             query.SetParameter("patient", patient);
-            query.SetParameter("cpsStartTimeBegin", Platform.Time.Date.ToString());
-            query.SetParameter("cpsStartTimeEnd", Platform.Time.Date.AddDays(1).ToString());
-            query.SetParameter("mpsSchedulingStartTimeBegin", Platform.Time.Date.ToString());
-            query.SetParameter("mpsSchedulingStartTimeEnd", Platform.Time.Date.AddDays(1).ToString());
+            query.SetParameter("cpsStartTimeBegin", Platform.Time.Date);
+            query.SetParameter("cpsStartTimeEnd", Platform.Time.Date.AddDays(1));
+            query.SetParameter("mpsSchedulingStartTimeBegin", Platform.Time.Date);
+            query.SetParameter("mpsSchedulingStartTimeEnd", Platform.Time.Date.AddDays(1));
 
             IList list = query.List();
             foreach (object tuple in list)
