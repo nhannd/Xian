@@ -18,7 +18,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(NoteDetail n) { return (n.Category == null ? "" : n.Category.Name); }, 0.2f));
             this.Columns.Add(new TableColumn<NoteDetail, string>("Comment",
                 delegate(NoteDetail n) { return n.Comment; }, 0.45f));
-            this.Columns.Add(new TableColumn<NoteDetail, string>("Created",
+            this.Columns.Add(new TableColumn<NoteDetail, string>(SR.ColumnCreatedOn,
                 delegate(NoteDetail n) { return Format.Date(n.TimeStamp); }, 0.2f));
         }
     }

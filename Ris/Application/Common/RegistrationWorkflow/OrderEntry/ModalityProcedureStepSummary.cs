@@ -9,33 +9,34 @@ using ClearCanvas.Ris.Application.Common.Admin;
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
     [DataContract]
-    public class OrderSummary : DataContractBase
+    public class ModalityProcedureStepSummary : DataContractBase
     {
-        [DataMember]
-        public EntityRef OrderRef;
+        public ModalityProcedureStepSummary()
+        {
+        }
 
         [DataMember]
-        public string AccessionNumber;
+        public EnumValueInfo State;
 
         [DataMember]
-        public string DiagnosticServiceName;
+        public StaffSummary ScheduledPerformerStaff;
 
         [DataMember]
-        public DateTime? EnteredDateTime;
+        public DateTime? ScheduledStartTime;
 
         [DataMember]
-        public DateTime? SchedulingRequestDateTime;
+        public DateTime? ScheduledEndTime;
 
         [DataMember]
-        public PractitionerDetail OrderingPractitioner;
+        public StaffSummary PerformerStaff;
 
         [DataMember]
-        public string OrderingFacility;
+        public DateTime? StartTime;
 
         [DataMember]
-        public string ReasonForStudy;
+        public DateTime? EndTime;
 
         [DataMember]
-        public EnumValueInfo OrderPriority;
+        public ModalityProcedureStepTypeDetail Type;
     }
 }

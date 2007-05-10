@@ -4,21 +4,33 @@ using System.Text;
 using System.Runtime.Serialization;
 
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
     [DataContract]
-    public class OrderSummary : DataContractBase
+    public class OrderDetail : DataContractBase
     {
+        public OrderDetail()
+        {
+            this.RequestedProcedures = new List<RequestedProcedureSummary>();
+        }
+
         [DataMember]
-        public EntityRef OrderRef;
+        public EntityRef PatientRef;
+
+        [DataMember]
+        public VisitDetail Visit;
+
+        [DataMember]
+        public string PlacerNumber;
 
         [DataMember]
         public string AccessionNumber;
 
         [DataMember]
-        public string DiagnosticServiceName;
+        public DiagnosticServiceDetail DiagnosticService;
 
         [DataMember]
         public DateTime? EnteredDateTime;
@@ -30,12 +42,19 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         public PractitionerDetail OrderingPractitioner;
 
         [DataMember]
-        public string OrderingFacility;
+        public FacilityDetail OrderingFacility;
 
         [DataMember]
         public string ReasonForStudy;
 
         [DataMember]
         public EnumValueInfo OrderPriority;
+
+        [DataMember]
+        public EnumValueInfo CancelReason;
+
+        [DataMember]
+        public List<RequestedProcedureSummary> RequestedProcedures;
+
     }
 }

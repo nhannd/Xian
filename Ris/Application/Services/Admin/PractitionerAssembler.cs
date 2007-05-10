@@ -23,6 +23,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
         public PractitionerDetail CreatePractitionerDetail(Practitioner practitioner, IPersistenceContext context)
         {
+            if (practitioner == null)
+                return null;
+
             PersonNameAssembler assembler = new PersonNameAssembler();
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
             AddressAssembler addressAssembler = new AddressAssembler();

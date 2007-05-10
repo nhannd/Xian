@@ -14,6 +14,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin
     {
         public StaffSummary CreateStaffSummary(Staff staff)
         {
+            if (staff == null)
+                return null;
+
             PersonNameAssembler assembler = new PersonNameAssembler();
             return new StaffSummary(
                 staff.GetRef(),

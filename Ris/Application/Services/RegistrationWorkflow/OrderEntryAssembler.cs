@@ -13,31 +13,63 @@ using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Services.Admin;
+using ClearCanvas.Workflow.Brokers;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
     public class OrderEntryAssembler
     {
-        public OrderSummary CreateOrderSummary(WorklistItem item, IPersistenceContext context)
+        public OrderDetail CreateOrderDetail(Order order, IPersistenceContext context)
         {
+            OrderDetail detail = new OrderDetail();
+
+            VisitAssembler visitAssembler = new VisitAssembler();
+            PractitionerAssembler practitionerAssembler = new PractitionerAssembler();
+            FacilityAssembler facilityAssembler = new FacilityAssembler();
+
+            detail.PatientRef = order.Patient.GetRef();
+            detail.Visit = visitAssembler.CreateVisitDetail(order.Visit, context);
+            detail.PlacerNumber = order.PlacerNumber;
+            detail.AccessionNumber = order.AccessionNumber;
+            detail.DiagnosticService = this.CreateDiagnosticServiceDetail(order.DiagnosticService);
+            detail.EnteredDateTime = order.EnteredDateTime;
+            detail.SchedulingRequestDateTime = order.SchedulingRequestDateTime;
+            detail.OrderingPractitioner = practitionerAssembler.CreatePractitionerDetail(order.OrderingPractitioner, context);
+            detail.OrderingFacility = facilityAssembler.CreateFacilityDetail(order.OrderingFacility);
+            detail.ReasonForStudy = order.ReasonForStudy;
+            
+            OrderPriorityEnumTable priorityEnumTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
+            detail.OrderPriority = new EnumValueInfo(order.Priority.ToString(), priorityEnumTable[order.Priority].Value);
+
+            OrderCancelReasonEnumTable cancelReasonEnumTable = context.GetBroker<IOrderCancelReasonEnumBroker>().Load();
+            detail.CancelReason = new EnumValueInfo(order.CancelReason.ToString(), cancelReasonEnumTable[order.CancelReason].Value);
+
+            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            {
+                detail.RequestedProcedures.Add(this.CreateRequestedProcedureDetail(rp, context));
+            }
+
+            return detail;
+        }
+
+        public OrderSummary CreateOrderSummary(Order order, IPersistenceContext context)
+        {
+            PractitionerAssembler practitionerAssembler = new PractitionerAssembler();
+
             OrderSummary summary = new OrderSummary();
 
-            //summary.OrderRef = item.Order;
-            //summary.MrnId = item.Mrn.Id;
-            //summary.MrnAssigningAuthority = item.Mrn.AssigningAuthority;
-            //summary.VisitId = item.VisitNumber.Id;
-            //summary.VisitAssigningAuthority = item.VisitNumber.AssigningAuthority;
-            //summary.AccessionNumber = item.AccessionNumber;
-            //summary.DiagnosticServiceName = item.DiagnosticService;
-            //summary.RequestedProcedureName = item.RequestedProcedureName;
-            //summary.ModalityProcedureStepName = item.ModalityProcedureStepName;
-            //summary.ModalityName = item.ModalityName;
+            summary.OrderRef = order.GetRef();
+            summary.AccessionNumber = order.AccessionNumber;
+            summary.DiagnosticServiceName = order.DiagnosticService.Name;
+            summary.EnteredDateTime = order.EnteredDateTime;
+            summary.SchedulingRequestDateTime = order.SchedulingRequestDateTime;
+            summary.OrderingPractitioner = practitionerAssembler.CreatePractitionerDetail(order.OrderingPractitioner, context);
+            summary.OrderingFacility = order.OrderingFacility.Name;
+            summary.ReasonForStudy = order.ReasonForStudy;
 
-            //PersonNameAssembler personNameAssembler = new PersonNameAssembler();
-            //summary.PatientName = personNameAssembler.CreatePersonNameDetail(item.PatientName);
-
-            //OrderPriorityEnumTable priorityEnumTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
-            //summary.OrderPriority = new EnumValueInfo(item.Priority.ToString(), priorityEnumTable[item.Priority].Value);
+            OrderPriorityEnumTable priorityEnumTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
+            summary.OrderPriority = new EnumValueInfo(order.Priority.ToString(), priorityEnumTable[order.Priority].Value);
 
             return summary;
         }
@@ -61,6 +93,52 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     {
                         return CreateRequestedProcedureTypeDetail(rpType);
                     }));
+        }
+
+        public RequestedProcedureSummary CreateRequestedProcedureDetail(RequestedProcedure rp, IPersistenceContext context)
+        {
+            RequestedProcedureSummary detail = new RequestedProcedureSummary();
+
+            detail.OrderRef = rp.Order.GetRef();
+            detail.Index = rp.Index;
+            detail.Type = this.CreateRequestedProcedureTypeDetail(rp.Type);
+
+            foreach (ProcedureStep step in rp.ProcedureSteps)
+            {
+                //TODO: include other ProcedureStep in RequestedProcedureSummary
+                if (step is ModalityProcedureStep)
+                {
+                    detail.ProcedureSteps.Add(this.CreateModalityProcedureStepSummary(step as ModalityProcedureStep, context));
+                }
+            }
+
+            return detail;
+        }
+
+        public ModalityProcedureStepSummary CreateModalityProcedureStepSummary(ModalityProcedureStep mps, IPersistenceContext context)
+        {
+            StaffAssembler staffAssembler = new StaffAssembler();
+
+            ModalityProcedureStepSummary summary = new ModalityProcedureStepSummary();
+            
+            summary.Type = this.CreateModalityProcedureStepTypeDetail(mps.Type);
+
+            ActivityStatusEnumTable statusEnumTable = context.GetBroker<IActivityStatusEnumBroker>().Load();
+            summary.State = new EnumValueInfo(mps.State.ToString(), statusEnumTable[mps.State].Value);
+
+            summary.PerformerStaff = staffAssembler.CreateStaffSummary(mps.PerformingStaff);
+            summary.StartTime = mps.StartTime;
+            summary.EndTime = mps.EndTime;
+
+            if (mps.Scheduling != null)
+            {
+                //TODO ScheduledPerformerStaff for ModalityProcedureStepSummary
+                //summary.ScheduledPerformerStaff = staffAssembler.CreateStaffSummary(mps.Scheduling.Performer);
+                summary.ScheduledStartTime = mps.Scheduling.StartTime;
+                summary.ScheduledEndTime = mps.Scheduling.EndTime;
+            }
+
+            return summary;
         }
 
         public RequestedProcedureTypeDetail CreateRequestedProcedureTypeDetail(RequestedProcedureType requestedProcedureType)

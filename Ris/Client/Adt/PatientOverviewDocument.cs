@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             
             // Create component for each tab
-            BiographyOrderHistoryComponent orderHistoryComponent = new BiographyOrderHistoryComponent();
+            BiographyOrderHistoryComponent orderHistoryComponent = new BiographyOrderHistoryComponent(_profileRef);
 
             BiographyDocumentComponent documentComponent = new BiographyDocumentComponent();
 

@@ -29,40 +29,40 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            ClearCanvas.Desktop.Selection selection3 = new ClearCanvas.Desktop.Selection();
-            ClearCanvas.Desktop.Selection selection4 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection5 = new ClearCanvas.Desktop.Selection();
             this._orderList = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.textField2 = new ClearCanvas.Controls.WinForms.TextField();
-            this.comboBoxField2 = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this.textField3 = new ClearCanvas.Controls.WinForms.TextField();
-            this.textField8 = new ClearCanvas.Controls.WinForms.TextField();
-            this._orderingFacility = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._orderingFacility = new ClearCanvas.Controls.WinForms.TextField();
+            this._orderingPhysician = new ClearCanvas.Controls.WinForms.TextField();
+            this._priority = new ClearCanvas.Controls.WinForms.TextField();
+            this._cancelReason = new ClearCanvas.Controls.WinForms.TextField();
+            this._placerNumber = new ClearCanvas.Controls.WinForms.TextField();
+            this._accessionNumber = new ClearCanvas.Controls.WinForms.TextField();
+            this._reasonForStudy = new ClearCanvas.Controls.WinForms.TextField();
             this._schedulingRequestDateTime = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this._orderingPhysician = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._priority = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.textField7 = new ClearCanvas.Controls.WinForms.TextField();
-            this.textField5 = new ClearCanvas.Controls.WinForms.TextField();
+            this._mpsState = new ClearCanvas.Controls.WinForms.TextField();
+            this._mpsPerformerStaff = new ClearCanvas.Controls.WinForms.TextField();
+            this._mpsScheduledPerformerStaff = new ClearCanvas.Controls.WinForms.TextField();
             this._diagnosticServiceBreakdown = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
-            this.comboBoxField1 = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this.textField4 = new ClearCanvas.Controls.WinForms.TextField();
-            this.dateTimeField3 = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this.dateTimeField4 = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this.dateTimeField2 = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this.dateTimeField1 = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._modality = new ClearCanvas.Controls.WinForms.TextField();
+            this._mpsEndTime = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._mpsStartTime = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._mpsScheduledEndTime = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._mpsScheduledStartTime = new ClearCanvas.Controls.WinForms.DateTimeField();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this._ambulatoryStatus = new ClearCanvas.Controls.WinForms.TextField();
+            this._admissionType = new ClearCanvas.Controls.WinForms.TextField();
+            this._site = new ClearCanvas.Controls.WinForms.TextField();
+            this._patientType = new ClearCanvas.Controls.WinForms.TextField();
+            this._visitStatus = new ClearCanvas.Controls.WinForms.TextField();
+            this._patientClass = new ClearCanvas.Controls.WinForms.TextField();
             this._visitNumber = new ClearCanvas.Controls.WinForms.TextField();
-            this._ambulatoryStatus = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._admissionType = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._visitStatus = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._visitNumberAssigningAuthority = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._dischargeDateTime = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this._preadmitNumber = new ClearCanvas.Controls.WinForms.TextField();
+            this._preAdmitNumber = new ClearCanvas.Controls.WinForms.TextField();
             this._admitDateTime = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this._patientType = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._patientClass = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._vip = new System.Windows.Forms.CheckBox();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -79,7 +79,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderList.MenuModel = null;
             this._orderList.Name = "_orderList";
             this._orderList.ReadOnly = false;
-            this._orderList.Selection = selection3;
+            this._orderList.Selection = selection2;
             this._orderList.Size = new System.Drawing.Size(731, 239);
             this._orderList.TabIndex = 0;
             this._orderList.Table = null;
@@ -110,14 +110,14 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.textField2);
-            this.groupBox3.Controls.Add(this.comboBoxField2);
-            this.groupBox3.Controls.Add(this.textField3);
-            this.groupBox3.Controls.Add(this.textField8);
             this.groupBox3.Controls.Add(this._orderingFacility);
-            this.groupBox3.Controls.Add(this._schedulingRequestDateTime);
             this.groupBox3.Controls.Add(this._orderingPhysician);
             this.groupBox3.Controls.Add(this._priority);
+            this.groupBox3.Controls.Add(this._cancelReason);
+            this.groupBox3.Controls.Add(this._placerNumber);
+            this.groupBox3.Controls.Add(this._accessionNumber);
+            this.groupBox3.Controls.Add(this._reasonForStudy);
+            this.groupBox3.Controls.Add(this._schedulingRequestDateTime);
             this.groupBox3.Location = new System.Drawing.Point(3, 4);
             this.groupBox3.Name = "groupBox3";
             this.groupBox3.Size = new System.Drawing.Size(288, 203);
@@ -125,69 +125,87 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Order Info";
             // 
-            // textField2
-            // 
-            this.textField2.LabelText = "Placer Number";
-            this.textField2.Location = new System.Drawing.Point(5, 18);
-            this.textField2.Margin = new System.Windows.Forms.Padding(2);
-            this.textField2.Mask = "";
-            this.textField2.Name = "textField2";
-            this.textField2.Size = new System.Drawing.Size(136, 41);
-            this.textField2.TabIndex = 19;
-            this.textField2.Value = null;
-            // 
-            // comboBoxField2
-            // 
-            this.comboBoxField2.DataSource = null;
-            this.comboBoxField2.DisplayMember = "";
-            this.comboBoxField2.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxField2.LabelText = "Cancel Reason";
-            this.comboBoxField2.Location = new System.Drawing.Point(5, 153);
-            this.comboBoxField2.Margin = new System.Windows.Forms.Padding(2);
-            this.comboBoxField2.Name = "comboBoxField2";
-            this.comboBoxField2.Size = new System.Drawing.Size(136, 41);
-            this.comboBoxField2.TabIndex = 22;
-            this.comboBoxField2.Value = null;
-            // 
-            // textField3
-            // 
-            this.textField3.LabelText = "Accession Number";
-            this.textField3.Location = new System.Drawing.Point(5, 63);
-            this.textField3.Margin = new System.Windows.Forms.Padding(2);
-            this.textField3.Mask = "";
-            this.textField3.Name = "textField3";
-            this.textField3.Size = new System.Drawing.Size(136, 41);
-            this.textField3.TabIndex = 20;
-            this.textField3.Value = null;
-            // 
-            // textField8
-            // 
-            this.textField8.LabelText = "Reason For Study";
-            this.textField8.Location = new System.Drawing.Point(5, 108);
-            this.textField8.Margin = new System.Windows.Forms.Padding(2);
-            this.textField8.Mask = "";
-            this.textField8.Name = "textField8";
-            this.textField8.Size = new System.Drawing.Size(136, 41);
-            this.textField8.TabIndex = 21;
-            this.textField8.Value = null;
-            // 
             // _orderingFacility
             // 
-            this._orderingFacility.DataSource = null;
-            this._orderingFacility.DisplayMember = "";
-            this._orderingFacility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._orderingFacility.LabelText = "Ordering Facility";
-            this._orderingFacility.Location = new System.Drawing.Point(145, 153);
+            this._orderingFacility.Location = new System.Drawing.Point(145, 152);
             this._orderingFacility.Margin = new System.Windows.Forms.Padding(2);
+            this._orderingFacility.Mask = "";
             this._orderingFacility.Name = "_orderingFacility";
             this._orderingFacility.Size = new System.Drawing.Size(136, 41);
-            this._orderingFacility.TabIndex = 13;
+            this._orderingFacility.TabIndex = 26;
             this._orderingFacility.Value = null;
+            // 
+            // _orderingPhysician
+            // 
+            this._orderingPhysician.LabelText = "Ordering Physician";
+            this._orderingPhysician.Location = new System.Drawing.Point(145, 107);
+            this._orderingPhysician.Margin = new System.Windows.Forms.Padding(2);
+            this._orderingPhysician.Mask = "";
+            this._orderingPhysician.Name = "_orderingPhysician";
+            this._orderingPhysician.Size = new System.Drawing.Size(136, 41);
+            this._orderingPhysician.TabIndex = 25;
+            this._orderingPhysician.Value = null;
+            // 
+            // _priority
+            // 
+            this._priority.LabelText = "Priority";
+            this._priority.Location = new System.Drawing.Point(145, 18);
+            this._priority.Margin = new System.Windows.Forms.Padding(2);
+            this._priority.Mask = "";
+            this._priority.Name = "_priority";
+            this._priority.Size = new System.Drawing.Size(136, 41);
+            this._priority.TabIndex = 24;
+            this._priority.Value = null;
+            // 
+            // _cancelReason
+            // 
+            this._cancelReason.LabelText = "Cancel Reason";
+            this._cancelReason.Location = new System.Drawing.Point(5, 152);
+            this._cancelReason.Margin = new System.Windows.Forms.Padding(2);
+            this._cancelReason.Mask = "";
+            this._cancelReason.Name = "_cancelReason";
+            this._cancelReason.Size = new System.Drawing.Size(136, 41);
+            this._cancelReason.TabIndex = 23;
+            this._cancelReason.Value = null;
+            // 
+            // _placerNumber
+            // 
+            this._placerNumber.LabelText = "Placer Number";
+            this._placerNumber.Location = new System.Drawing.Point(5, 18);
+            this._placerNumber.Margin = new System.Windows.Forms.Padding(2);
+            this._placerNumber.Mask = "";
+            this._placerNumber.Name = "_placerNumber";
+            this._placerNumber.Size = new System.Drawing.Size(136, 41);
+            this._placerNumber.TabIndex = 19;
+            this._placerNumber.Value = null;
+            // 
+            // _accessionNumber
+            // 
+            this._accessionNumber.LabelText = "Accession Number";
+            this._accessionNumber.Location = new System.Drawing.Point(5, 63);
+            this._accessionNumber.Margin = new System.Windows.Forms.Padding(2);
+            this._accessionNumber.Mask = "";
+            this._accessionNumber.Name = "_accessionNumber";
+            this._accessionNumber.Size = new System.Drawing.Size(136, 41);
+            this._accessionNumber.TabIndex = 20;
+            this._accessionNumber.Value = null;
+            // 
+            // _reasonForStudy
+            // 
+            this._reasonForStudy.LabelText = "Reason For Study";
+            this._reasonForStudy.Location = new System.Drawing.Point(5, 108);
+            this._reasonForStudy.Margin = new System.Windows.Forms.Padding(2);
+            this._reasonForStudy.Mask = "";
+            this._reasonForStudy.Name = "_reasonForStudy";
+            this._reasonForStudy.Size = new System.Drawing.Size(136, 41);
+            this._reasonForStudy.TabIndex = 21;
+            this._reasonForStudy.Value = null;
             // 
             // _schedulingRequestDateTime
             // 
             this._schedulingRequestDateTime.LabelText = "Schedule For";
-            this._schedulingRequestDateTime.Location = new System.Drawing.Point(145, 63);
+            this._schedulingRequestDateTime.Location = new System.Drawing.Point(144, 63);
             this._schedulingRequestDateTime.Margin = new System.Windows.Forms.Padding(2);
             this._schedulingRequestDateTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
             this._schedulingRequestDateTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
@@ -198,71 +216,56 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._schedulingRequestDateTime.TabIndex = 15;
             this._schedulingRequestDateTime.Value = null;
             // 
-            // _orderingPhysician
-            // 
-            this._orderingPhysician.DataSource = null;
-            this._orderingPhysician.DisplayMember = "";
-            this._orderingPhysician.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._orderingPhysician.LabelText = "Ordering Physician";
-            this._orderingPhysician.Location = new System.Drawing.Point(145, 108);
-            this._orderingPhysician.Margin = new System.Windows.Forms.Padding(2);
-            this._orderingPhysician.Name = "_orderingPhysician";
-            this._orderingPhysician.Size = new System.Drawing.Size(136, 41);
-            this._orderingPhysician.TabIndex = 12;
-            this._orderingPhysician.Value = null;
-            // 
-            // _priority
-            // 
-            this._priority.DataSource = null;
-            this._priority.DisplayMember = "";
-            this._priority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._priority.LabelText = "Priority";
-            this._priority.Location = new System.Drawing.Point(145, 18);
-            this._priority.Margin = new System.Windows.Forms.Padding(2);
-            this._priority.Name = "_priority";
-            this._priority.Size = new System.Drawing.Size(136, 41);
-            this._priority.TabIndex = 14;
-            this._priority.Value = null;
-            // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.textField7);
-            this.groupBox2.Controls.Add(this.textField5);
+            this.groupBox2.Controls.Add(this._mpsState);
+            this.groupBox2.Controls.Add(this._mpsPerformerStaff);
+            this.groupBox2.Controls.Add(this._mpsScheduledPerformerStaff);
             this.groupBox2.Controls.Add(this._diagnosticServiceBreakdown);
-            this.groupBox2.Controls.Add(this.comboBoxField1);
-            this.groupBox2.Controls.Add(this.textField4);
-            this.groupBox2.Controls.Add(this.dateTimeField3);
-            this.groupBox2.Controls.Add(this.dateTimeField4);
-            this.groupBox2.Controls.Add(this.dateTimeField2);
-            this.groupBox2.Controls.Add(this.dateTimeField1);
+            this.groupBox2.Controls.Add(this._modality);
+            this.groupBox2.Controls.Add(this._mpsEndTime);
+            this.groupBox2.Controls.Add(this._mpsStartTime);
+            this.groupBox2.Controls.Add(this._mpsScheduledEndTime);
+            this.groupBox2.Controls.Add(this._mpsScheduledStartTime);
             this.groupBox2.Location = new System.Drawing.Point(3, 213);
             this.groupBox2.Name = "groupBox2";
             this.groupBox2.Size = new System.Drawing.Size(722, 212);
             this.groupBox2.TabIndex = 18;
             this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Modality Procedure Steps";
+            this.groupBox2.Text = "Requested Procedures and Procedure Steps";
             // 
-            // textField7
+            // _mpsState
             // 
-            this.textField7.LabelText = "Performer Staff";
-            this.textField7.Location = new System.Drawing.Point(581, 63);
-            this.textField7.Margin = new System.Windows.Forms.Padding(2);
-            this.textField7.Mask = "";
-            this.textField7.Name = "textField7";
-            this.textField7.Size = new System.Drawing.Size(136, 41);
-            this.textField7.TabIndex = 11;
-            this.textField7.Value = null;
+            this._mpsState.LabelText = "State";
+            this._mpsState.Location = new System.Drawing.Point(581, 18);
+            this._mpsState.Margin = new System.Windows.Forms.Padding(2);
+            this._mpsState.Mask = "";
+            this._mpsState.Name = "_mpsState";
+            this._mpsState.Size = new System.Drawing.Size(136, 41);
+            this._mpsState.TabIndex = 12;
+            this._mpsState.Value = null;
             // 
-            // textField5
+            // _mpsPerformerStaff
             // 
-            this.textField5.LabelText = "Scheduled Performer Staff";
-            this.textField5.Location = new System.Drawing.Point(439, 63);
-            this.textField5.Margin = new System.Windows.Forms.Padding(2);
-            this.textField5.Mask = "";
-            this.textField5.Name = "textField5";
-            this.textField5.Size = new System.Drawing.Size(136, 41);
-            this.textField5.TabIndex = 10;
-            this.textField5.Value = null;
+            this._mpsPerformerStaff.LabelText = "Performer Staff";
+            this._mpsPerformerStaff.Location = new System.Drawing.Point(581, 63);
+            this._mpsPerformerStaff.Margin = new System.Windows.Forms.Padding(2);
+            this._mpsPerformerStaff.Mask = "";
+            this._mpsPerformerStaff.Name = "_mpsPerformerStaff";
+            this._mpsPerformerStaff.Size = new System.Drawing.Size(136, 41);
+            this._mpsPerformerStaff.TabIndex = 11;
+            this._mpsPerformerStaff.Value = null;
+            // 
+            // _mpsScheduledPerformerStaff
+            // 
+            this._mpsScheduledPerformerStaff.LabelText = "Scheduled Performer Staff";
+            this._mpsScheduledPerformerStaff.Location = new System.Drawing.Point(439, 63);
+            this._mpsScheduledPerformerStaff.Margin = new System.Windows.Forms.Padding(2);
+            this._mpsScheduledPerformerStaff.Mask = "";
+            this._mpsScheduledPerformerStaff.Name = "_mpsScheduledPerformerStaff";
+            this._mpsScheduledPerformerStaff.Size = new System.Drawing.Size(136, 41);
+            this._mpsScheduledPerformerStaff.TabIndex = 10;
+            this._mpsScheduledPerformerStaff.Value = null;
             // 
             // _diagnosticServiceBreakdown
             // 
@@ -271,7 +274,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._diagnosticServiceBreakdown.Margin = new System.Windows.Forms.Padding(2);
             this._diagnosticServiceBreakdown.MenuModel = null;
             this._diagnosticServiceBreakdown.Name = "_diagnosticServiceBreakdown";
-            this._diagnosticServiceBreakdown.Selection = selection4;
+            this._diagnosticServiceBreakdown.Selection = selection5;
+            this._diagnosticServiceBreakdown.ShowRootLines = false;
             this._diagnosticServiceBreakdown.ShowToolbar = false;
             this._diagnosticServiceBreakdown.Size = new System.Drawing.Size(430, 183);
             this._diagnosticServiceBreakdown.TabIndex = 10;
@@ -280,98 +284,85 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._diagnosticServiceBreakdown.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._diagnosticServiceBreakdown.Tree = null;
             // 
-            // comboBoxField1
+            // _modality
             // 
-            this.comboBoxField1.DataSource = null;
-            this.comboBoxField1.DisplayMember = "";
-            this.comboBoxField1.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.comboBoxField1.LabelText = "State";
-            this.comboBoxField1.Location = new System.Drawing.Point(581, 18);
-            this.comboBoxField1.Margin = new System.Windows.Forms.Padding(2);
-            this.comboBoxField1.Name = "comboBoxField1";
-            this.comboBoxField1.Size = new System.Drawing.Size(136, 41);
-            this.comboBoxField1.TabIndex = 8;
-            this.comboBoxField1.Value = null;
+            this._modality.LabelText = "Modality";
+            this._modality.Location = new System.Drawing.Point(439, 18);
+            this._modality.Margin = new System.Windows.Forms.Padding(2);
+            this._modality.Mask = "";
+            this._modality.Name = "_modality";
+            this._modality.Size = new System.Drawing.Size(136, 41);
+            this._modality.TabIndex = 6;
+            this._modality.Value = null;
             // 
-            // textField4
+            // _mpsEndTime
             // 
-            this.textField4.LabelText = "Modality";
-            this.textField4.Location = new System.Drawing.Point(439, 18);
-            this.textField4.Margin = new System.Windows.Forms.Padding(2);
-            this.textField4.Mask = "";
-            this.textField4.Name = "textField4";
-            this.textField4.Size = new System.Drawing.Size(136, 41);
-            this.textField4.TabIndex = 6;
-            this.textField4.Value = null;
+            this._mpsEndTime.LabelText = "End Time";
+            this._mpsEndTime.Location = new System.Drawing.Point(581, 160);
+            this._mpsEndTime.Margin = new System.Windows.Forms.Padding(2);
+            this._mpsEndTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._mpsEndTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+            this._mpsEndTime.Name = "_mpsEndTime";
+            this._mpsEndTime.Nullable = true;
+            this._mpsEndTime.ShowTime = true;
+            this._mpsEndTime.Size = new System.Drawing.Size(136, 41);
+            this._mpsEndTime.TabIndex = 4;
+            this._mpsEndTime.Value = null;
             // 
-            // dateTimeField3
+            // _mpsStartTime
             // 
-            this.dateTimeField3.LabelText = "End Time";
-            this.dateTimeField3.Location = new System.Drawing.Point(581, 160);
-            this.dateTimeField3.Margin = new System.Windows.Forms.Padding(2);
-            this.dateTimeField3.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
-            this.dateTimeField3.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
-            this.dateTimeField3.Name = "dateTimeField3";
-            this.dateTimeField3.Nullable = true;
-            this.dateTimeField3.ShowTime = false;
-            this.dateTimeField3.Size = new System.Drawing.Size(136, 41);
-            this.dateTimeField3.TabIndex = 4;
-            this.dateTimeField3.Value = null;
+            this._mpsStartTime.LabelText = "Start Time";
+            this._mpsStartTime.Location = new System.Drawing.Point(581, 108);
+            this._mpsStartTime.Margin = new System.Windows.Forms.Padding(2);
+            this._mpsStartTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._mpsStartTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+            this._mpsStartTime.Name = "_mpsStartTime";
+            this._mpsStartTime.Nullable = true;
+            this._mpsStartTime.ShowTime = true;
+            this._mpsStartTime.Size = new System.Drawing.Size(136, 41);
+            this._mpsStartTime.TabIndex = 3;
+            this._mpsStartTime.Value = null;
             // 
-            // dateTimeField4
+            // _mpsScheduledEndTime
             // 
-            this.dateTimeField4.LabelText = "Start Time";
-            this.dateTimeField4.Location = new System.Drawing.Point(581, 108);
-            this.dateTimeField4.Margin = new System.Windows.Forms.Padding(2);
-            this.dateTimeField4.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
-            this.dateTimeField4.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
-            this.dateTimeField4.Name = "dateTimeField4";
-            this.dateTimeField4.Nullable = true;
-            this.dateTimeField4.ShowTime = false;
-            this.dateTimeField4.Size = new System.Drawing.Size(136, 41);
-            this.dateTimeField4.TabIndex = 3;
-            this.dateTimeField4.Value = null;
+            this._mpsScheduledEndTime.LabelText = "Scheduled End Time";
+            this._mpsScheduledEndTime.Location = new System.Drawing.Point(439, 160);
+            this._mpsScheduledEndTime.Margin = new System.Windows.Forms.Padding(2);
+            this._mpsScheduledEndTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._mpsScheduledEndTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+            this._mpsScheduledEndTime.Name = "_mpsScheduledEndTime";
+            this._mpsScheduledEndTime.Nullable = true;
+            this._mpsScheduledEndTime.ShowTime = true;
+            this._mpsScheduledEndTime.Size = new System.Drawing.Size(136, 41);
+            this._mpsScheduledEndTime.TabIndex = 1;
+            this._mpsScheduledEndTime.Value = null;
             // 
-            // dateTimeField2
+            // _mpsScheduledStartTime
             // 
-            this.dateTimeField2.LabelText = "Scheduled End Time";
-            this.dateTimeField2.Location = new System.Drawing.Point(439, 160);
-            this.dateTimeField2.Margin = new System.Windows.Forms.Padding(2);
-            this.dateTimeField2.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
-            this.dateTimeField2.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
-            this.dateTimeField2.Name = "dateTimeField2";
-            this.dateTimeField2.Nullable = true;
-            this.dateTimeField2.ShowTime = false;
-            this.dateTimeField2.Size = new System.Drawing.Size(136, 41);
-            this.dateTimeField2.TabIndex = 1;
-            this.dateTimeField2.Value = null;
-            // 
-            // dateTimeField1
-            // 
-            this.dateTimeField1.LabelText = "Scheduled Start Time";
-            this.dateTimeField1.Location = new System.Drawing.Point(439, 108);
-            this.dateTimeField1.Margin = new System.Windows.Forms.Padding(2);
-            this.dateTimeField1.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
-            this.dateTimeField1.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
-            this.dateTimeField1.Name = "dateTimeField1";
-            this.dateTimeField1.Nullable = true;
-            this.dateTimeField1.ShowTime = false;
-            this.dateTimeField1.Size = new System.Drawing.Size(136, 41);
-            this.dateTimeField1.TabIndex = 0;
-            this.dateTimeField1.Value = null;
+            this._mpsScheduledStartTime.LabelText = "Scheduled Start Time";
+            this._mpsScheduledStartTime.Location = new System.Drawing.Point(439, 108);
+            this._mpsScheduledStartTime.Margin = new System.Windows.Forms.Padding(2);
+            this._mpsScheduledStartTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
+            this._mpsScheduledStartTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
+            this._mpsScheduledStartTime.Name = "_mpsScheduledStartTime";
+            this._mpsScheduledStartTime.Nullable = true;
+            this._mpsScheduledStartTime.ShowTime = true;
+            this._mpsScheduledStartTime.Size = new System.Drawing.Size(136, 41);
+            this._mpsScheduledStartTime.TabIndex = 0;
+            this._mpsScheduledStartTime.Value = null;
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this._visitNumber);
             this.groupBox1.Controls.Add(this._ambulatoryStatus);
             this.groupBox1.Controls.Add(this._admissionType);
-            this.groupBox1.Controls.Add(this._visitStatus);
-            this.groupBox1.Controls.Add(this._visitNumberAssigningAuthority);
-            this.groupBox1.Controls.Add(this._dischargeDateTime);
-            this.groupBox1.Controls.Add(this._preadmitNumber);
-            this.groupBox1.Controls.Add(this._admitDateTime);
+            this.groupBox1.Controls.Add(this._site);
             this.groupBox1.Controls.Add(this._patientType);
+            this.groupBox1.Controls.Add(this._visitStatus);
             this.groupBox1.Controls.Add(this._patientClass);
+            this.groupBox1.Controls.Add(this._visitNumber);
+            this.groupBox1.Controls.Add(this._dischargeDateTime);
+            this.groupBox1.Controls.Add(this._preAdmitNumber);
+            this.groupBox1.Controls.Add(this._admitDateTime);
             this.groupBox1.Controls.Add(this._vip);
             this.groupBox1.Location = new System.Drawing.Point(297, 3);
             this.groupBox1.Name = "groupBox1";
@@ -379,6 +370,96 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.groupBox1.TabIndex = 17;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Visit Info";
+            // 
+            // _ambulatoryStatus
+            // 
+            this._ambulatoryStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this._ambulatoryStatus.AutoSize = true;
+            this._ambulatoryStatus.LabelText = "Ambulatory Status";
+            this._ambulatoryStatus.Location = new System.Drawing.Point(5, 154);
+            this._ambulatoryStatus.Margin = new System.Windows.Forms.Padding(2);
+            this._ambulatoryStatus.Mask = "";
+            this._ambulatoryStatus.Name = "_ambulatoryStatus";
+            this._ambulatoryStatus.Size = new System.Drawing.Size(363, 40);
+            this._ambulatoryStatus.TabIndex = 28;
+            this._ambulatoryStatus.Value = null;
+            // 
+            // _admissionType
+            // 
+            this._admissionType.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this._admissionType.AutoSize = true;
+            this._admissionType.LabelText = "Admission Type";
+            this._admissionType.Location = new System.Drawing.Point(287, 64);
+            this._admissionType.Margin = new System.Windows.Forms.Padding(2);
+            this._admissionType.Mask = "";
+            this._admissionType.Name = "_admissionType";
+            this._admissionType.Size = new System.Drawing.Size(136, 40);
+            this._admissionType.TabIndex = 27;
+            this._admissionType.Value = null;
+            // 
+            // _site
+            // 
+            this._site.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this._site.AutoSize = true;
+            this._site.LabelText = "Site";
+            this._site.Location = new System.Drawing.Point(145, 18);
+            this._site.Margin = new System.Windows.Forms.Padding(2);
+            this._site.Mask = "";
+            this._site.Name = "_site";
+            this._site.Size = new System.Drawing.Size(136, 40);
+            this._site.TabIndex = 26;
+            this._site.Value = null;
+            // 
+            // _patientType
+            // 
+            this._patientType.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this._patientType.AutoSize = true;
+            this._patientType.LabelText = "Patient Type";
+            this._patientType.Location = new System.Drawing.Point(145, 64);
+            this._patientType.Margin = new System.Windows.Forms.Padding(2);
+            this._patientType.Mask = "";
+            this._patientType.Name = "_patientType";
+            this._patientType.Size = new System.Drawing.Size(136, 40);
+            this._patientType.TabIndex = 25;
+            this._patientType.Value = null;
+            // 
+            // _visitStatus
+            // 
+            this._visitStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this._visitStatus.AutoSize = true;
+            this._visitStatus.LabelText = "Visit Status";
+            this._visitStatus.Location = new System.Drawing.Point(5, 109);
+            this._visitStatus.Margin = new System.Windows.Forms.Padding(2);
+            this._visitStatus.Mask = "";
+            this._visitStatus.Name = "_visitStatus";
+            this._visitStatus.Size = new System.Drawing.Size(136, 40);
+            this._visitStatus.TabIndex = 24;
+            this._visitStatus.Value = null;
+            // 
+            // _patientClass
+            // 
+            this._patientClass.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
+            this._patientClass.AutoSize = true;
+            this._patientClass.LabelText = "Patient Class";
+            this._patientClass.Location = new System.Drawing.Point(5, 64);
+            this._patientClass.Margin = new System.Windows.Forms.Padding(2);
+            this._patientClass.Mask = "";
+            this._patientClass.Name = "_patientClass";
+            this._patientClass.Size = new System.Drawing.Size(136, 40);
+            this._patientClass.TabIndex = 23;
+            this._patientClass.Value = null;
             // 
             // _visitNumber
             // 
@@ -395,72 +476,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._visitNumber.TabIndex = 12;
             this._visitNumber.Value = null;
             // 
-            // _ambulatoryStatus
-            // 
-            this._ambulatoryStatus.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._ambulatoryStatus.AutoSize = true;
-            this._ambulatoryStatus.DataSource = null;
-            this._ambulatoryStatus.DisplayMember = "";
-            this._ambulatoryStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._ambulatoryStatus.LabelText = "Ambulatory Status";
-            this._ambulatoryStatus.Location = new System.Drawing.Point(5, 153);
-            this._ambulatoryStatus.Margin = new System.Windows.Forms.Padding(2);
-            this._ambulatoryStatus.Name = "_ambulatoryStatus";
-            this._ambulatoryStatus.Size = new System.Drawing.Size(324, 41);
-            this._ambulatoryStatus.TabIndex = 21;
-            this._ambulatoryStatus.Value = null;
-            // 
-            // _admissionType
-            // 
-            this._admissionType.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._admissionType.DataSource = null;
-            this._admissionType.DisplayMember = "";
-            this._admissionType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._admissionType.LabelText = "Admission Type";
-            this._admissionType.Location = new System.Drawing.Point(287, 63);
-            this._admissionType.Margin = new System.Windows.Forms.Padding(2);
-            this._admissionType.Name = "_admissionType";
-            this._admissionType.Size = new System.Drawing.Size(136, 41);
-            this._admissionType.TabIndex = 22;
-            this._admissionType.Value = null;
-            // 
-            // _visitStatus
-            // 
-            this._visitStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._visitStatus.AutoSize = true;
-            this._visitStatus.DataSource = null;
-            this._visitStatus.DisplayMember = "";
-            this._visitStatus.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._visitStatus.LabelText = "Visit Status";
-            this._visitStatus.Location = new System.Drawing.Point(5, 108);
-            this._visitStatus.Margin = new System.Windows.Forms.Padding(2);
-            this._visitStatus.Name = "_visitStatus";
-            this._visitStatus.Size = new System.Drawing.Size(136, 41);
-            this._visitStatus.TabIndex = 19;
-            this._visitStatus.Value = null;
-            // 
-            // _visitNumberAssigningAuthority
-            // 
-            this._visitNumberAssigningAuthority.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._visitNumberAssigningAuthority.AutoSize = true;
-            this._visitNumberAssigningAuthority.DataSource = null;
-            this._visitNumberAssigningAuthority.DisplayMember = "";
-            this._visitNumberAssigningAuthority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._visitNumberAssigningAuthority.LabelText = "Site";
-            this._visitNumberAssigningAuthority.Location = new System.Drawing.Point(145, 18);
-            this._visitNumberAssigningAuthority.Margin = new System.Windows.Forms.Padding(2);
-            this._visitNumberAssigningAuthority.Name = "_visitNumberAssigningAuthority";
-            this._visitNumberAssigningAuthority.Size = new System.Drawing.Size(136, 41);
-            this._visitNumberAssigningAuthority.TabIndex = 13;
-            this._visitNumberAssigningAuthority.Value = null;
-            // 
             // _dischargeDateTime
             // 
             this._dischargeDateTime.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
@@ -473,25 +488,25 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._dischargeDateTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
             this._dischargeDateTime.Name = "_dischargeDateTime";
             this._dischargeDateTime.Nullable = true;
-            this._dischargeDateTime.ShowTime = false;
+            this._dischargeDateTime.ShowTime = true;
             this._dischargeDateTime.Size = new System.Drawing.Size(136, 41);
             this._dischargeDateTime.TabIndex = 15;
             this._dischargeDateTime.Value = null;
             // 
-            // _preadmitNumber
+            // _preAdmitNumber
             // 
-            this._preadmitNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            this._preAdmitNumber.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this._preadmitNumber.AutoSize = true;
-            this._preadmitNumber.LabelText = "Pre-Admit Number";
-            this._preadmitNumber.Location = new System.Drawing.Point(287, 18);
-            this._preadmitNumber.Margin = new System.Windows.Forms.Padding(2);
-            this._preadmitNumber.Mask = "";
-            this._preadmitNumber.Name = "_preadmitNumber";
-            this._preadmitNumber.Size = new System.Drawing.Size(136, 40);
-            this._preadmitNumber.TabIndex = 16;
-            this._preadmitNumber.Value = null;
+            this._preAdmitNumber.AutoSize = true;
+            this._preAdmitNumber.LabelText = "Pre-Admit Number";
+            this._preAdmitNumber.Location = new System.Drawing.Point(287, 18);
+            this._preAdmitNumber.Margin = new System.Windows.Forms.Padding(2);
+            this._preAdmitNumber.Mask = "";
+            this._preAdmitNumber.Name = "_preAdmitNumber";
+            this._preAdmitNumber.Size = new System.Drawing.Size(136, 40);
+            this._preAdmitNumber.TabIndex = 16;
+            this._preAdmitNumber.Value = null;
             // 
             // _admitDateTime
             // 
@@ -506,49 +521,15 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._admitDateTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
             this._admitDateTime.Name = "_admitDateTime";
             this._admitDateTime.Nullable = true;
-            this._admitDateTime.ShowTime = false;
+            this._admitDateTime.ShowTime = true;
             this._admitDateTime.Size = new System.Drawing.Size(136, 42);
             this._admitDateTime.TabIndex = 14;
             this._admitDateTime.Value = null;
             // 
-            // _patientType
-            // 
-            this._patientType.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._patientType.AutoSize = true;
-            this._patientType.DataSource = null;
-            this._patientType.DisplayMember = "";
-            this._patientType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._patientType.LabelText = "Patient Type";
-            this._patientType.Location = new System.Drawing.Point(145, 63);
-            this._patientType.Margin = new System.Windows.Forms.Padding(2);
-            this._patientType.Name = "_patientType";
-            this._patientType.Size = new System.Drawing.Size(136, 41);
-            this._patientType.TabIndex = 20;
-            this._patientType.Value = null;
-            // 
-            // _patientClass
-            // 
-            this._patientClass.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this._patientClass.AutoSize = true;
-            this._patientClass.DataSource = null;
-            this._patientClass.DisplayMember = "";
-            this._patientClass.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this._patientClass.LabelText = "Patient Class";
-            this._patientClass.Location = new System.Drawing.Point(5, 63);
-            this._patientClass.Margin = new System.Windows.Forms.Padding(2);
-            this._patientClass.Name = "_patientClass";
-            this._patientClass.Size = new System.Drawing.Size(136, 41);
-            this._patientClass.TabIndex = 18;
-            this._patientClass.Value = null;
-            // 
             // _vip
             // 
             this._vip.AutoSize = true;
-            this._vip.Location = new System.Drawing.Point(334, 153);
+            this._vip.Location = new System.Drawing.Point(373, 154);
             this._vip.Name = "_vip";
             this._vip.Padding = new System.Windows.Forms.Padding(0, 16, 0, 0);
             this._vip.Size = new System.Drawing.Size(49, 33);
@@ -580,34 +561,34 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.SplitContainer splitContainer1;
         private ClearCanvas.Desktop.View.WinForms.BindingTreeView _diagnosticServiceBreakdown;
         private ClearCanvas.Controls.WinForms.DateTimeField _schedulingRequestDateTime;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _priority;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _orderingFacility;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _orderingPhysician;
         private System.Windows.Forms.GroupBox groupBox1;
         private ClearCanvas.Controls.WinForms.TextField _visitNumber;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _ambulatoryStatus;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _admissionType;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _visitStatus;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _visitNumberAssigningAuthority;
         private ClearCanvas.Controls.WinForms.DateTimeField _dischargeDateTime;
-        private ClearCanvas.Controls.WinForms.TextField _preadmitNumber;
+        private ClearCanvas.Controls.WinForms.TextField _preAdmitNumber;
         private ClearCanvas.Controls.WinForms.DateTimeField _admitDateTime;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _patientType;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _patientClass;
         private System.Windows.Forms.CheckBox _vip;
         private System.Windows.Forms.GroupBox groupBox2;
-        private ClearCanvas.Controls.WinForms.DateTimeField dateTimeField1;
-        private ClearCanvas.Controls.WinForms.TextField textField4;
-        private ClearCanvas.Controls.WinForms.DateTimeField dateTimeField3;
-        private ClearCanvas.Controls.WinForms.DateTimeField dateTimeField4;
-        private ClearCanvas.Controls.WinForms.DateTimeField dateTimeField2;
-        private ClearCanvas.Controls.WinForms.ComboBoxField comboBoxField1;
-        private ClearCanvas.Controls.WinForms.TextField textField7;
-        private ClearCanvas.Controls.WinForms.TextField textField5;
-        private ClearCanvas.Controls.WinForms.ComboBoxField comboBoxField2;
-        private ClearCanvas.Controls.WinForms.TextField textField8;
-        private ClearCanvas.Controls.WinForms.TextField textField3;
-        private ClearCanvas.Controls.WinForms.TextField textField2;
+        private ClearCanvas.Controls.WinForms.DateTimeField _mpsScheduledStartTime;
+        private ClearCanvas.Controls.WinForms.TextField _modality;
+        private ClearCanvas.Controls.WinForms.DateTimeField _mpsEndTime;
+        private ClearCanvas.Controls.WinForms.DateTimeField _mpsStartTime;
+        private ClearCanvas.Controls.WinForms.DateTimeField _mpsScheduledEndTime;
+        private ClearCanvas.Controls.WinForms.TextField _mpsPerformerStaff;
+        private ClearCanvas.Controls.WinForms.TextField _mpsScheduledPerformerStaff;
+        private ClearCanvas.Controls.WinForms.TextField _reasonForStudy;
+        private ClearCanvas.Controls.WinForms.TextField _accessionNumber;
+        private ClearCanvas.Controls.WinForms.TextField _placerNumber;
         private System.Windows.Forms.GroupBox groupBox3;
+        private ClearCanvas.Controls.WinForms.TextField _orderingFacility;
+        private ClearCanvas.Controls.WinForms.TextField _orderingPhysician;
+        private ClearCanvas.Controls.WinForms.TextField _priority;
+        private ClearCanvas.Controls.WinForms.TextField _cancelReason;
+        private ClearCanvas.Controls.WinForms.TextField _admissionType;
+        private ClearCanvas.Controls.WinForms.TextField _site;
+        private ClearCanvas.Controls.WinForms.TextField _patientType;
+        private ClearCanvas.Controls.WinForms.TextField _visitStatus;
+        private ClearCanvas.Controls.WinForms.TextField _patientClass;
+        private ClearCanvas.Controls.WinForms.TextField _ambulatoryStatus;
+        private ClearCanvas.Controls.WinForms.TextField _mpsState;
     }
 }

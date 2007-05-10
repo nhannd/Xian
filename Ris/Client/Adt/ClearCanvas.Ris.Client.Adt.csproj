@@ -44,7 +44,6 @@
     <Compile Include="BiographyDocumentComponent.cs" />
     <Compile Include="BiographyNoteComponent.cs" />
     <Compile Include="CancelOrderComponent.cs" />
-    <Compile Include="BiographyOrderHistoryTable.cs" />
     <Compile Include="BiographyOrderHistoryComponent.cs" />
     <Compile Include="BiographyDocumentTable.cs" />
     <Compile Include="BiographyNoteTable.cs" />

@@ -54,5 +54,23 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         GetOrdersWorkListResponse GetOrdersWorkList(GetOrdersWorkListRequest request);
+
+        /// <summary>
+        /// Get all the orders for a patient
+        /// </summary>
+        /// <param name="request"><see cref="ListOrderForPatientRequest"/></param>
+        /// <returns><see cref="ListOrderForPatientResponse"/></returns>
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        ListOrdersForPatientResponse ListOrdersForPatient(ListOrdersForPatientRequest request);
+
+        /// <summary>
+        /// Get all the orders for a patient
+        /// </summary>
+        /// <param name="request"><see cref="LoadOrderDetailRequest"/></param>
+        /// <returns><see cref="LoadOrderDetailResponse"/></returns>
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        LoadOrderDetailResponse LoadOrderDetail(LoadOrderDetailRequest request);
     }
 }

@@ -95,15 +95,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             //TODO: remove this after adding the criteria into GetOrdersWorkListRequest
             //TODO: add validation to criteria that can throw a RequestValidationException
-            ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
-
+            //ModalityProcedureStepSearchCriteria criteria = new ModalityProcedureStepSearchCriteria();
+            
             OrderEntryAssembler assembler = new OrderEntryAssembler();
             return new GetOrdersWorkListResponse(
-                CollectionUtils.Map<WorklistItem, OrderSummary, List<OrderSummary>>(
-                    PersistenceContext.GetBroker<IModalityWorklistBroker>().GetWorklist(criteria, request.PatientProfileAuthority),
-                    delegate(WorklistItem item)
+                CollectionUtils.Map<Order, OrderSummary, List<OrderSummary>>(
+                    PersistenceContext.GetBroker<IOrderBroker>().FindAll(),
+                    delegate(Order order)
                     {
-                        return assembler.CreateOrderSummary(item, this.PersistenceContext);
+                        return assembler.CreateOrderSummary(order, this.PersistenceContext);
                     }));
         }
 
@@ -153,5 +153,34 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             return new PlaceOrderResponse(order.GetRef());
         }
+
+        [ReadOperation]
+        public ListOrdersForPatientResponse ListOrdersForPatient(ListOrdersForPatientRequest request)
+        {
+            OrderSearchCriteria criteria = new OrderSearchCriteria();
+
+            PatientProfile profile = (PatientProfile) PersistenceContext.Load(request.PatientProfileRef);
+            criteria.Patient.EqualTo(profile.Patient);
+            
+            OrderEntryAssembler assembler = new OrderEntryAssembler();
+            return new ListOrdersForPatientResponse(
+                CollectionUtils.Map<Order, OrderSummary, List<OrderSummary>>(
+                    PersistenceContext.GetBroker<IOrderBroker>().Find(criteria),
+                    delegate(Order order)
+                    {
+                        return assembler.CreateOrderSummary(order, this.PersistenceContext);
+                    }));
+        }
+
+        [ReadOperation]
+        public LoadOrderDetailResponse LoadOrderDetail(LoadOrderDetailRequest request)
+        {
+            OrderEntryAssembler assembler = new OrderEntryAssembler();
+
+            Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
+
+            return new LoadOrderDetailResponse(assembler.CreateOrderDetail(order, this.PersistenceContext));
+        }
+
     }
 }

@@ -11,29 +11,25 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         public OrderSummaryTable()
         {
-            this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnMRN,
-                delegate(OrderSummary summary) { return String.Format("{0} {1}", summary.MrnAssigningAuthority, summary.MrnId); }));
-
-            //TODO: Formatting for PersonNameDetail
-            //this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnName,
-            //    delegate(OrderSummary summary) { return Format.Custom(summary.PatientName); }));
-            this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnName,
-                delegate(OrderSummary summary) { return String.Format("{0}, {1}", summary.PatientName.FamilyName, summary.PatientName.GivenName); }));
-
-            this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnVisitNumber,
-                delegate(OrderSummary summary) { return String.Format("{0} {1}", summary.VisitAssigningAuthority, summary.VisitId); }));
+            this.Columns.Add(new TableColumn<OrderSummary, string>("Scheduled Requested For",
+                delegate(OrderSummary order) { return Format.DateTime(order.SchedulingRequestDateTime); }));
             this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnAccessionNumber,
-                delegate(OrderSummary summary) { return summary.AccessionNumber; }));
+                delegate(OrderSummary order) { return order.AccessionNumber; }));
             this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnDiagnosticService,
-                delegate(OrderSummary summary) { return summary.DiagnosticServiceName; }));
-            this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnProcedure,
-                delegate(OrderSummary summary) { return summary.RequestedProcedureName; }));
-            this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnScheduledStep,
-                delegate(OrderSummary summary) { return summary.ModalityProcedureStepName; }));
-            this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnModality,
-                delegate(OrderSummary summary) { return summary.ModalityName; }));
+                delegate(OrderSummary order) { return order.DiagnosticServiceName; }));
             this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnPriority,
-                delegate(OrderSummary summary) { return summary.OrderPriority.Value; }));
+                delegate(OrderSummary order) { return order.OrderPriority.Value; }));
+
+            //TODO PatientNameDetail formatting
+            this.Columns.Add(new TableColumn<OrderSummary, string>("Ordered by",
+                delegate(OrderSummary order) { return String.Format("{0}, {1}", order.OrderingPractitioner.PersonNameDetail.FamilyName, order.OrderingPractitioner.PersonNameDetail.GivenName); }));
+
+            this.Columns.Add(new TableColumn<OrderSummary, string>("Ordered From",
+                delegate(OrderSummary order) { return order.OrderingFacility; }));
+            this.Columns.Add(new TableColumn<OrderSummary, string>("Reason for Study",
+                delegate(OrderSummary order) { return order.ReasonForStudy; }));
+            this.Columns.Add(new TableColumn<OrderSummary, string>(SR.ColumnCreatedOn,
+                delegate(OrderSummary order) { return Format.Date(order.EnteredDateTime); }));
         }
     }
 }

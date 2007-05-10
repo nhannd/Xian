@@ -251,6 +251,13 @@
     <Compile Include="RegistrationWorkflow\LoadPatientProfileForBiographyResponse.cs" />
     <Compile Include="RegistrationWorkflow\LoadWorklistPreviewRequest.cs" />
     <Compile Include="RegistrationWorkflow\LoadWorklistPreviewResponse.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\ModalityProcedureStepSummary.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\LoadOrderDetailRequest.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\LoadOrderDetailResponse.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\RequestedProcedureSummary.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\OrderDetail.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\ListOrdersForPatientRequest.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\ListOrdersForPatientResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ModalityProcedureStepTypeDetail.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\DiagnosticServiceDetail.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\DiagnosticServiceSummary.cs" />
