@@ -79,6 +79,8 @@ namespace ClearCanvas.Ris.Client.Admin
         private List<AuthorityGroupTableEntry> _authorityGroups;
         private SelectableAuthorityGroupTable _table;
 
+        private UserSummary _userSummary;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -96,6 +98,14 @@ namespace ClearCanvas.Ris.Client.Admin
             _isNew = false;
             _userRef = userRef;
             _table = new SelectableAuthorityGroupTable();
+        }
+
+        /// <summary>
+        /// Returns the user summary for use by the caller of this component
+        /// </summary>
+        public UserSummary UserSummary
+        {
+            get { return _userSummary; }
         }
 
         public override void Start()
@@ -217,10 +227,12 @@ namespace ClearCanvas.Ris.Client.Admin
                         if (_isNew)
                         {
                             AddUserResponse response = service.AddUser(new AddUserRequest(_userDetail));
+                            _userSummary = response.UserSummary;
                         }
                         else
                         {
                             UpdateUserResponse response = service.UpdateUser(new UpdateUserRequest(_userRef, _userDetail));
+                            _userSummary = response.UserSummary;
                         }
                     });
 

@@ -160,6 +160,10 @@ namespace ClearCanvas.Ris.Client.Admin
             UserEditorComponent editor = new UserEditorComponent();
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Host.DesktopWindow, editor, SR.TitleAddUser);
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+                _userTable.Items.Add(editor.UserSummary);
+            }
         }
 
         public void UpdateSelectedUser()
@@ -169,6 +173,11 @@ namespace ClearCanvas.Ris.Client.Admin
             UserEditorComponent editor = new UserEditorComponent(_selectedUser.EntityRef);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Host.DesktopWindow, editor, SR.TitleUpdateUser);
+
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+                _userTable.Items.Replace(delegate(UserSummary u) { return u.EntityRef.Equals(editor.UserSummary.EntityRef); }, editor.UserSummary);
+            }
         }
 
         public void LoadUserTable()
