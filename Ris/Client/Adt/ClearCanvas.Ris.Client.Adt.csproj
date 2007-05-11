@@ -199,6 +199,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
+    <EmbeddedResource Include="Icons\Delete.png" />
     <EmbeddedResource Include="TechnologistPreview.html" />
     <EmbeddedResource Include="Icons\AlertClock.png" />
     <EmbeddedResource Include="Icons\AlertMessenger.png" />

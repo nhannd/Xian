@@ -28,7 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(BiographyDocumentComponentControl));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this._documentList = new ClearCanvas.Desktop.View.WinForms.TableView();
@@ -72,6 +72,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // splitContainer1.Panel2
             // 
+            this.splitContainer1.Panel2.AutoScroll = true;
             this.splitContainer1.Panel2.Controls.Add(this.tableLayoutPanel1);
             this.splitContainer1.Size = new System.Drawing.Size(853, 716);
             this.splitContainer1.SplitterDistance = 239;
@@ -84,7 +85,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._documentList.MenuModel = null;
             this._documentList.Name = "_documentList";
             this._documentList.ReadOnly = false;
-            this._documentList.Selection = selection2;
+            this._documentList.Selection = selection1;
             this._documentList.Size = new System.Drawing.Size(853, 239);
             this._documentList.TabIndex = 0;
             this._documentList.Table = null;

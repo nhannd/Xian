@@ -58,13 +58,10 @@ namespace ClearCanvas.Ris.Client.Adt
             
             // Create component for each tab
             BiographyOrderHistoryComponent orderHistoryComponent = new BiographyOrderHistoryComponent(_profileRef);
-
             BiographyDocumentComponent documentComponent = new BiographyDocumentComponent();
-
-            StackTabComponentContainer noteComponent = new StackTabComponentContainer(StackStyle.ShowMultiple);
-            noteComponent.Pages.Add(new TabPage("Notes", new BiographyNoteComponent(_patientProfile.Notes)));
-            noteComponent.Pages.Add(new TabPage("Patient Comments/Feedback", new BiographyNoteComponent(_patientProfile.Notes)));
-
+            BiographyNoteComponent noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
+            BiographyNoteComponent feedbackComponent = new BiographyNoteComponent(_patientProfile.Notes);
+            
             StackTabComponentContainer testStackComponent = new StackTabComponentContainer(StackStyle.ShowMultiple);
             testStackComponent.Pages.Add(new TabPage("Test1", new PatientSearchComponent()));
             testStackComponent.Pages.Add(new TabPage("Test2", new PatientSearchComponent()));
@@ -82,6 +79,7 @@ namespace ClearCanvas.Ris.Client.Adt
             TabComponentContainer tabContainer2 = new TabComponentContainer();
             tabContainer2.Pages.Add(new TabPage("Documents", documentComponent));
             tabContainer2.Pages.Add(new TabPage("Notes", noteComponent));
+            tabContainer2.Pages.Add(new TabPage("Patient Feedback", feedbackComponent));
             tabContainer2.Pages.Add(new TabPage("Test - Stack1", testStackComponent));
             tabContainer2.Pages.Add(new TabPage("Test - Stack2", testStackComponent2));
 
