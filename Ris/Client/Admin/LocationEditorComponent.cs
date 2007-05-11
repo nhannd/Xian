@@ -33,6 +33,8 @@ namespace ClearCanvas.Ris.Client.Admin
         private EntityRef _locationRef;
         private bool _isNew;
 
+        private LocationSummary _locationSummary;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -45,6 +47,11 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             _isNew = false;
             _locationRef = locationRef;
+        }
+
+        public LocationSummary LocationSummary
+        {
+            get { return _locationSummary; }
         }
 
         public override void Start()
@@ -222,6 +229,7 @@ namespace ClearCanvas.Ris.Client.Admin
                         {
                             AddLocationResponse response = service.AddLocation(new AddLocationRequest(_locationDetail));
                             _locationRef = response.Location.LocationRef;
+                            _locationSummary = response.Location;
                         });
                 }
                 else
@@ -231,6 +239,7 @@ namespace ClearCanvas.Ris.Client.Admin
                         {
                             UpdateLocationResponse response = service.UpdateLocation(new UpdateLocationRequest(_locationRef, _locationDetail));
                             _locationRef = response.Location.LocationRef;
+                            _locationSummary = response.Location;
                         });
                 }
             }
