@@ -5,7 +5,7 @@
       <generator class="guid.comb"/>
     </id>
     <version name="Version" column="Version_"/>
-    <property name="UserName" column="UserName_" type="String" length="30" not-null="true"/>
+    <property name="UserName" column="UserName_" type="String" length="30" not-null="true" unique="true"/>
     <set name="AuthorityGroups" table="AuthorityGroupUser_" lazy="true" cascade="all" access="nosetter.camelcase-underscore">
       <key column="UserOID_"/>
       <many-to-many column="AuthorityGroupOID_" class="AuthorityGroup" fetch="join"/>

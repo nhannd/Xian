@@ -10,8 +10,8 @@
     <many-to-one name="Visit" class="Visit" column="VisitOID_" not-null="true"/>
 
     <!-- Placer may need to be more than simple string (eg may need a namespace or assigning authority ) -->
-    <property name="PlacerNumber" column="PlacerNumber_" type="String" length="30"/>
-    <property name="AccessionNumber" column="AccessionNumber_" type="String" length="30" not-null="true"/>
+    <property name="PlacerNumber" column="PlacerNumber_" type="String" length="30" unique="true"/>
+    <property name="AccessionNumber" column="AccessionNumber_" type="String" length="30" not-null="true" unique="true"/>
  
     <many-to-one name="DiagnosticService" class="DiagnosticService" column="DiagnosticServiceOID_" not-null="true" fetch="join"/>
 

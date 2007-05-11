@@ -6,7 +6,7 @@
     </id>
     <version name="Version" column="Version_"/>
 
-    <property name="Name" column="Name_" type="String" length ="1024" not-null="true"/>
+    <property name="Name" column="Name_" type="String" length ="1024" not-null="true" unique="true"/>
     <property name="Description" column="Description_" type="String" length ="1024"/>
     <property name="Severity" column="Severity_" type="ClearCanvas.Healthcare.Hibernate.NoteSeverityEnumHbm, ClearCanvas.Healthcare.Hibernate" length="40" not-null="true"/>
 
