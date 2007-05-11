@@ -28,6 +28,8 @@ namespace ClearCanvas.Ris.Client.Admin
         private EntityRef _modalityRef;
         private bool _isNew;
 
+        private ModalitySummary _modalitySummary;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -40,6 +42,17 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             _isNew = false;
             _modalityRef = modalityRef;
+        }
+
+        /// <summary>
+        /// Gets the summary object that is returned from the add/edit operation
+        /// </summary>
+        public ModalitySummary ModalitySummary
+        {
+            get
+            {
+                return _modalitySummary;
+            }
         }
 
         public override void Start()
@@ -112,17 +125,16 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 try
                 {
-                    if (SaveChanges())
-                    {
-                        this.ExitCode = ApplicationComponentExitCode.Normal;
-                        Host.Exit();
-                    }
+                    SaveChanges();
+                    this.ExitCode = ApplicationComponentExitCode.Normal;
                 }
                 catch (Exception e)
                 {
                     ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                    this.ExitCode = ApplicationComponentExitCode.Error;
                 }
             }
+            Host.Exit();
         }
 
         public void Cancel()
@@ -138,31 +150,24 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #endregion
 
-        private bool SaveChanges()
+        private void SaveChanges()
         {
-            try
-            {
-                Platform.GetService<IModalityAdminService>(
-                    delegate(IModalityAdminService service)
+            Platform.GetService<IModalityAdminService>(
+                delegate(IModalityAdminService service)
+                {
+                    if (_isNew)
                     {
-                        if (_isNew)
-                        {
-                            AddModalityResponse response = service.AddModality(new AddModalityRequest(_modalityDetail));
-                            _modalityRef = response.Modality.ModalityRef;
-                        }
-                        else
-                        {
-                            UpdateModalityResponse response = service.UpdateModality(new UpdateModalityRequest(_modalityRef, _modalityDetail));
-                            _modalityRef = response.Modality.ModalityRef;
-                        }
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-
-            return true;
+                        AddModalityResponse response = service.AddModality(new AddModalityRequest(_modalityDetail));
+                        _modalityRef = response.Modality.ModalityRef;
+                        _modalitySummary = response.Modality;
+                    }
+                    else
+                    {
+                        UpdateModalityResponse response = service.UpdateModality(new UpdateModalityRequest(_modalityRef, _modalityDetail));
+                        _modalityRef = response.Modality.ModalityRef;
+                        _modalitySummary = response.Modality;
+                    }
+                });
         }
 
         public event EventHandler AcceptEnabledChanged
