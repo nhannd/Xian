@@ -21,6 +21,10 @@ namespace ClearCanvas.Ris.Client.Admin
         private StaffDetail _staffDetail;
         private PractitionerDetail _practitionerDetail;
 
+        // return values for staff/practitioners
+        private StaffSummary _staffSummary;
+        private PractitionerSummary _practitionerSummary;
+
         private bool _isNew;
 
         private StaffDetailsEditorComponent _detailsEditor;
@@ -58,6 +62,22 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             get { return _isStaffMode; }
             set { _isStaffMode = value; }
+        }
+
+        /// <summary>
+        /// Gets summary of staff that was added or edited
+        /// </summary>
+        public StaffSummary StaffSummary
+        {
+            get { return _staffSummary; }
+        }
+
+        /// <summary>
+        /// Gets summary of practitioner that was added or edited
+        /// </summary>
+        public PractitionerSummary PractitionerSummary
+        {
+            get { return _practitionerSummary; }
         }
 
         public override void Start()
@@ -158,11 +178,13 @@ namespace ClearCanvas.Ris.Client.Admin
                             {
                                 AddStaffResponse response = service.AddStaff(new AddStaffRequest(_staffDetail));
                                 _staffRef = response.Staff.StaffRef;
+                                _staffSummary = response.Staff;
                             }
                             else
                             {
                                 UpdateStaffResponse response = service.UpdateStaff(new UpdateStaffRequest(_staffRef, _staffDetail));
                                 _staffRef = response.Staff.StaffRef;
+                                _staffSummary = response.Staff;
                             }
                         });
                 }
@@ -175,11 +197,13 @@ namespace ClearCanvas.Ris.Client.Admin
                             {
                                 AddPractitionerResponse response = service.AddPractitioner(new AddPractitionerRequest(_practitionerDetail));
                                 _practitionerRef = response.Practitioner.StaffRef;
+                                _practitionerSummary = response.Practitioner;
                             }
                             else
                             {
                                 UpdatePractitionerResponse response = service.UpdatePractitioner(new UpdatePractitionerRequest(_practitionerRef, _practitionerDetail));
                                 _practitionerRef = response.Practitioner.StaffRef;
+                                _practitionerSummary = response.Practitioner;
                             }
                         });
                 }

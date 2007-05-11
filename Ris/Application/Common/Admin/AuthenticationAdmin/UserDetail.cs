@@ -12,13 +12,13 @@ namespace ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin
         public UserDetail(string userId, PersonNameDetail userName, List<AuthorityGroupSummary> authorityGroups)
         {
             UserId = userId;
-            UserName = userName;
+            Name = userName;
             AuthorityGroups = authorityGroups;
         }
 
         public UserDetail()
         {
-            UserName = new PersonNameDetail();
+            Name = new PersonNameDetail();
             AuthorityGroups = new List<AuthorityGroupSummary>();
         }
 
@@ -26,9 +26,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin
         public string UserId;
 
         [DataMember]
-        public PersonNameDetail UserName;
+        public PersonNameDetail Name;
 
         [DataMember]
         public List<AuthorityGroupSummary> AuthorityGroups;
+
+        [DataMember]
+        public EntityRef StaffRef;
     }
 }

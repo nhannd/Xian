@@ -8,11 +8,14 @@ namespace ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin
     [DataContract]
     public class UserSummary : DataContractBase
     {
-        public UserSummary(EntityRef entityRef, string userId, PersonNameDetail userName)
+        public UserSummary(EntityRef entityRef, string userId)
         {
             EntityRef = entityRef;
             UserId = userId;
-            UserName = userName;
+        }
+
+        public UserSummary()
+        {
         }
         
         [DataMember]
@@ -20,8 +23,5 @@ namespace ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin
 
         [DataMember]
         public string UserId;
-
-        [DataMember]
-        public PersonNameDetail UserName;
     }
 }

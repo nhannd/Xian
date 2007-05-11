@@ -70,13 +70,27 @@ namespace ClearCanvas.Ris.Client.Admin
         private PagingController<StaffSummary> _pagingController;
         private PagingActionModel<StaffSummary> _pagingActionHandler;
 
-        private ListAllStaffsRequest _listRequest;
+        private ListStaffRequest _listRequest;
+        private string _firstName;
+        private string _lastName;
+
+        private bool _dialogMode;
+
 
         /// <summary>
         /// Constructor
         /// </summary>
         public StaffSummaryComponent()
         {
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="dialogMode">Indicates whether the component will be shown in a dialog box or not</param>
+        public StaffSummaryComponent(bool dialogMode)
+        {
+            _dialogMode = dialogMode;
         }
 
         public override void Start()
@@ -96,6 +110,8 @@ namespace ClearCanvas.Ris.Client.Admin
             InitialisePaging();
             _staffActionHandler.Merge(_pagingActionHandler);
 
+            _listRequest = new ListStaffRequest();
+
             base.Start();
         }
 
@@ -104,18 +120,17 @@ namespace ClearCanvas.Ris.Client.Admin
             _pagingController = new PagingController<StaffSummary>(
                 delegate(int firstRow, int maxRows)
                 {
-                    ListAllStaffsResponse listResponse = null;
+                    ListStaffResponse listResponse = null;
 
                     try
                     {
                         Platform.GetService<IStaffAdminService>(
                             delegate(IStaffAdminService service)
                             {
-                                ListAllStaffsRequest listRequest = _listRequest;
-                                listRequest.PageRequest.FirstRow = firstRow;
-                                listRequest.PageRequest.MaxRows = maxRows;
+                                _listRequest.PageRequest.FirstRow = firstRow;
+                                _listRequest.PageRequest.MaxRows = maxRows;
 
-                                listResponse = service.ListAllStaffs(listRequest);
+                                listResponse = service.ListStaff(_listRequest);
                             });
                     }
                     catch (Exception e)
@@ -229,6 +244,24 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #region Presentation Model
 
+        public bool ShowAcceptCancelButtons
+        {
+            get { return _dialogMode; }
+            set { _dialogMode = value; }
+        }
+
+        public string FirstName
+        {
+            get { return _firstName; }
+            set { _firstName = value; }
+        }
+
+        public string LastName
+        {
+            get { return _lastName; }
+            set { _lastName = value; }
+        }
+
         public ITable Staffs
         {
             get { return _staffTable; }
@@ -254,6 +287,10 @@ namespace ClearCanvas.Ris.Client.Admin
             StaffEditorComponent editor = new StaffEditorComponent(true);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Host.DesktopWindow, editor, SR.TitleAddStaff);
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+                _staffTable.Items.Add(editor.StaffSummary);
+            }
         }
 
         public void AddPractitioner()
@@ -261,6 +298,10 @@ namespace ClearCanvas.Ris.Client.Admin
             StaffEditorComponent editor = new StaffEditorComponent(false);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Host.DesktopWindow, editor, SR.TitleAddPractitioner);
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+                _staffTable.Items.Add(editor.PractitionerSummary);
+            }
         }
 
         public void UpdateSelectedStaff()
@@ -274,20 +315,61 @@ namespace ClearCanvas.Ris.Client.Admin
                 editor = new StaffEditorComponent(_selectedStaff.StaffRef, true);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleUpdateStaff);
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    _staffTable.Items.Replace(
+                        delegate(StaffSummary s) { return s.StaffRef.Equals(editor.StaffSummary.StaffRef); },
+                        editor.StaffSummary);
+                }
             }
             else
             {
                 editor = new StaffEditorComponent(_selectedStaff.StaffRef, false);
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleUpdatePractitioner);
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    _staffTable.Items.Replace(
+                        delegate(StaffSummary s) { return s.StaffRef.Equals(editor.PractitionerSummary.StaffRef); },
+                        editor.PractitionerSummary);
+                }
             }
         }
 
-        public void LoadStaffTable()
+        public void DoubleClickSelectedStaff()
         {
-            _listRequest = new ListAllStaffsRequest();
+            // double-click behaviour is different depending on whether we're running as a dialog box or not
+            if (_dialogMode)
+                Accept();
+            else
+                UpdateSelectedStaff();
+        }
+
+
+        public void Search()
+        {
+            _listRequest.FirstName = _firstName;
+            _listRequest.LastName = _lastName;
+
             _staffTable.Items.Clear();
             _staffTable.Items.AddRange(_pagingController.GetFirst());
+        }
+
+        public bool AcceptEnabled
+        {
+            get { return _selectedStaff != null; }
+        }
+
+        public void Accept()
+        {
+            this.ExitCode = ApplicationComponentExitCode.Normal;
+            this.Host.Exit();
+        }
+
+        public void Cancel()
+        {
+            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            this.Host.Exit();
         }
 
         #endregion

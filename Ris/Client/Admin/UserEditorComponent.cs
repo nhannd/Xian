@@ -7,6 +7,8 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -153,74 +155,50 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        public bool IsUserIdEditable
+        public bool IsUserIdReadOnly
         {
-            get { return _isNew; }
+            get { return !_isNew; }
         }
 
-        public string FamilyName
+        public string StaffName
         {
-            get { return _userDetail.UserName.FamilyName; }
-            set
-            {
-                _userDetail.UserName.FamilyName = value;
-                this.Modified = true;
-            }
-        }
-
-        public string GivenName
-        {
-            get { return _userDetail.UserName.GivenName; }
-            set
-            {
-                _userDetail.UserName.GivenName = value;
-                this.Modified = true;
-            }
-        }
-
-        public string Prefix
-        {
-            get { return _userDetail.UserName.Prefix; }
-            set
-            {
-                _userDetail.UserName.Prefix = value;
-                this.Modified = true;
-            }
-        }
-
-        public string Suffix
-        {
-            get { return _userDetail.UserName.Suffix; }
-            set
-            {
-                _userDetail.UserName.Suffix = value;
-                this.Modified = true;
-            }
-        }
-
-        public string MiddleName
-        {
-            get { return _userDetail.UserName.MiddleName; }
-            set
-            {
-                _userDetail.UserName.MiddleName = value;
-                this.Modified = true;
-            }
-        }
-
-        public string Degree
-        {
-            get { return _userDetail.UserName.Degree; }
-            set
-            {
-                _userDetail.UserName.Degree = value;
-                this.Modified = true;
-            }
+            get { return _userDetail.StaffRef == null ? "" : string.Format("{0}, {1}", _userDetail.Name.FamilyName, _userDetail.Name.GivenName); }
         }
 
         public ITable Groups
         {
             get { return _table; }
+        }
+
+        public void SetStaff()
+        {
+            StaffSummaryComponent staffComponent = new StaffSummaryComponent(true);
+            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, staffComponent, "Select Staff");
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+                StaffSummary staffSummary = (StaffSummary)staffComponent.SelectedStaff.Item;
+                _userDetail.StaffRef = staffSummary.StaffRef;
+                _userDetail.Name = staffSummary.PersonNameDetail;
+
+                this.NotifyPropertyChanged("StaffName");
+                this.NotifyPropertyChanged("ClearStaffEnabled");
+                this.Modified = true;
+            }
+        }
+
+        public bool ClearStaffEnabled
+        {
+            get { return _userDetail.StaffRef != null; }
+        }
+
+        public void ClearStaff()
+        {
+            _userDetail.StaffRef = null;
+            _userDetail.Name = new PersonNameDetail();
+
+            this.NotifyPropertyChanged("StaffName");
+            this.NotifyPropertyChanged("ClearStaffEnabled");
+            this.Modified = true;
         }
 
         public void Accept()

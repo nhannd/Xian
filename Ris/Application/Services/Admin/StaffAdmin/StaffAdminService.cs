@@ -51,13 +51,18 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         }
 
         [ReadOperation]
-        public ListAllStaffsResponse ListAllStaffs(ListAllStaffsRequest request)
+        public ListStaffResponse ListStaff(ListStaffRequest request)
         {
             StaffSearchCriteria criteria = new StaffSearchCriteria();
+            if (!string.IsNullOrEmpty(request.FirstName))
+                criteria.Name.GivenName.StartsWith(request.FirstName);
+            if (!string.IsNullOrEmpty(request.LastName))
+                criteria.Name.FamilyName.StartsWith(request.LastName);
+
             SearchResultPage page = new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows);
 
             StaffAssembler assembler = new StaffAssembler();
-            return new ListAllStaffsResponse(
+            return new ListStaffResponse(
                 CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
                     PersistenceContext.GetBroker<IStaffBroker>().Find(criteria, page),
                     delegate(Staff s)

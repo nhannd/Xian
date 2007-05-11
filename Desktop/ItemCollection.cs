@@ -89,6 +89,23 @@ namespace ClearCanvas.Desktop
             }
         }
 
+        /// <summary>
+        /// Sets any items in the collection matching the specified constraint to the specified new value. 
+        /// </summary>
+        /// <param name="constraint"></param>
+        /// <param name="newValue"></param>
+        public void Replace(Predicate<TItem> constraint, TItem newValue)
+        {
+            for (int i = 0; i < this.Count; i++)
+            {
+                if (constraint(_list[i]))
+                {
+                    // this assignment will automatically fire a notification event
+                    this[i] = newValue;
+                }
+            }
+        }
+
         #region IItemCollection members
 
         public event EventHandler<ItemEventArgs> ItemsChanged

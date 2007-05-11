@@ -6,6 +6,7 @@ using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
 {
@@ -13,14 +14,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
     {
         internal UserSummary GetUserSummary(User user)
         {
-            return new UserSummary(
-                user.GetRef(),
-                user.UserName,
-                new PersonNameDetail()
-                );
+            UserSummary summary = new UserSummary();
+            summary.EntityRef = user.GetRef();
+            summary.UserId = user.UserName;
+
+            return summary;
         }
 
-        internal UserDetail GetUserDetail(User user)
+        internal UserDetail GetUserDetail(User user, Staff staff)
         {
             AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
             List<AuthorityGroupSummary> groups = new List<AuthorityGroupSummary>();
@@ -29,11 +30,18 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
                 groups.Add(assembler.GetAuthorityGroupSummary(authorityGroup));
             }
 
-            return new UserDetail(
-                user.UserName,
-                new PersonNameDetail(),
-                groups
-                );
+            UserDetail userDetail = new UserDetail();
+            userDetail.UserId = user.UserName;
+            userDetail.AuthorityGroups = groups;
+
+            if(staff != null)
+            {
+                PersonNameAssembler pnAssembler = new PersonNameAssembler();
+                userDetail.Name = pnAssembler.CreatePersonNameDetail(staff.Name);
+                userDetail.StaffRef = staff.GetRef();
+            }
+
+            return userDetail;
         }
 
         internal void UpdateUser(User user, UserDetail detail, IPersistenceContext context)

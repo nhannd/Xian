@@ -169,7 +169,7 @@
     <value>Inactive Date</value>
   </data>
   <data name="ColumnLicenseNumber" xml:space="preserve">
-    <value>LicenseNumber</value>
+    <value>License #</value>
   </data>
   <data name="ColumnMiddleName" xml:space="preserve">
     <value>Middle Name</value>

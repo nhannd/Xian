@@ -23,7 +23,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         /// <param name="request"><see cref="ListAllStaffsRequest"/></param>
         /// <returns><see cref="ListAllStaffsResponse"/></returns>
         [OperationContract]
-        ListAllStaffsResponse ListAllStaffs(ListAllStaffsRequest request);
+        ListStaffResponse ListStaff(ListStaffRequest request);
 
         /// <summary>
         /// Add a new staff.  A staff with the same name as an existing staff cannnot be added.

@@ -12,10 +12,11 @@ namespace ClearCanvas.Ris.Client.Admin
             this.Columns.Add(new TableColumn<UserSummary, string>(SR.ColumnUserId,
                 delegate(UserSummary user) { return user.UserId; },
                 1.0f));
-
+            /*
             this.Columns.Add(new TableColumn<UserSummary, string>(SR.ColumnUserName,
                 delegate(UserSummary user) { return string.Format("{0}, {1}", user.UserName.FamilyName, user.UserName.GivenName); },
                 1.0f));
+             */
         }
     }
 }

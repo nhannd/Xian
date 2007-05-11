@@ -8,6 +8,8 @@ using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
 {
@@ -37,8 +39,19 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         public LoadUserForEditResponse LoadUserForEdit(LoadUserForEditRequest request)
         {
             User user = (User)PersistenceContext.Load(request.UserRef);
+            Staff staff = null;
+            try
+            {
+                IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
+                staff = staffBroker.FindStaffForUser(user.UserName);
+            }
+            catch (EntityNotFoundException)
+            {
+                // no staff for user
+            }
+
             UserAssembler assembler = new UserAssembler();
-            return new LoadUserForEditResponse(user.GetRef(), assembler.GetUserDetail(user));
+            return new LoadUserForEditResponse(user.GetRef(), assembler.GetUserDetail(user, staff));
         }
 
         [ReadOperation]
@@ -86,6 +99,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
             assembler.UpdateUser(user, request.UserDetail, PersistenceContext);
 
             PersistenceContext.Lock(user, DirtyState.New);
+
+            // create staff association
+            if (request.UserDetail.StaffRef != null)
+            {
+                IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
+                Staff staff = staffBroker.Load(request.UserDetail.StaffRef);
+                staff.User = user;
+            }
+
             PersistenceContext.SynchState();
 
             return new AddUserResponse(user.GetRef(), assembler.GetUserSummary(user));
@@ -98,7 +120,23 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
             UserAssembler assembler = new UserAssembler();
             assembler.UpdateUser(user, request.UserDetail, PersistenceContext);
 
-            PersistenceContext.Lock(user, DirtyState.Dirty);
+            IStaffBroker staffBroker = PersistenceContext.GetBroker<IStaffBroker>();
+            try
+            {
+                Staff staff = staffBroker.FindStaffForUser(user.UserName);
+                staff.User = null;  // dissociate any previously associated staff
+            }
+            catch (EntityNotFoundException)
+            {
+                // no previously associated staff
+            }
+
+            // create staff association
+            if (request.UserDetail.StaffRef != null)
+            {
+                Staff staff = staffBroker.Load(request.UserDetail.StaffRef);
+                staff.User = user;
+            }
 
             return new UpdateUserResponse(assembler.GetUserSummary(user));
         }

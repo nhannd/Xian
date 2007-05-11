@@ -7,14 +7,12 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
 {
     [DataContract]
-    public class ListAllStaffsResponse : DataContractBase
+    public class ListStaffRequest : PagedDataContractBase
     {
-        public ListAllStaffsResponse(List<StaffSummary> staffs)
-        {
-            this.Staffs = staffs;
-        }
+        [DataMember]
+        public string FirstName;
 
         [DataMember]
-        public List<StaffSummary> Staffs;
+        public string LastName;
     }
 }

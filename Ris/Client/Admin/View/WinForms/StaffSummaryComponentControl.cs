@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Controls.WinForms;
 
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {
@@ -31,16 +32,41 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
             _staffs.Table = _component.Staffs;
             _staffs.DataBindings.Add("Selection", _component, "SelectedStaff", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _firstName.DataBindings.Add("Value", _component, "FirstName", true, DataSourceUpdateMode.OnPropertyChanged);
+            _lastName.DataBindings.Add("Value", _component, "LastName", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _okButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
+            _okButton.DataBindings.Add("Enabled", _component, "AcceptEnabled");
+            _cancelButton.DataBindings.Add("Visible", _component, "ShowAcceptCancelButtons");
         }
 
         private void _staffs_Load(object sender, EventArgs e)
         {
-            _component.LoadStaffTable();
+            //_component.LoadStaffTable();
         }
 
         private void _staffs_ItemDoubleClicked(object sender, EventArgs e)
         {
-            _component.UpdateSelectedStaff();
+            _component.DoubleClickSelectedStaff();
+        }
+
+        private void _searchButton_Click(object sender, EventArgs e)
+        {
+            using (new CursorManager(Cursors.WaitCursor))
+            {
+                _component.Search();
+            }
+        }
+
+        private void _okButton_Click(object sender, EventArgs e)
+        {
+            _component.Accept();        
+        }
+
+        private void _cancelButton_Click(object sender, EventArgs e)
+        {
+            _component.Cancel();
         }
     }
 }

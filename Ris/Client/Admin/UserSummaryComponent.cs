@@ -17,7 +17,7 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
-    [MenuAction("launch", "global-menus/Admin/Authentication/Users")]
+    [MenuAction("launch", "global-menus/Admin/Users")]
     [ClickHandler("launch", "Launch")]
     [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
     //[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin)]

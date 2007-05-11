@@ -214,7 +214,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to LicenseNumber.
+        ///   Looks up a localized string similar to License #.
         /// </summary>
         internal static string ColumnLicenseNumber {
             get {
