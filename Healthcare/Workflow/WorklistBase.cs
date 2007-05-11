@@ -51,4 +51,12 @@ namespace ClearCanvas.Healthcare.Workflow
 
         #endregion
     }
+
+    public abstract class WorklistBase<T> : WorklistBase where T : IPersistenceBroker
+    {
+        protected static T GetBroker(IPersistenceContext context)
+        {
+            return context.GetBroker<T>();
+        }
+    }
 }

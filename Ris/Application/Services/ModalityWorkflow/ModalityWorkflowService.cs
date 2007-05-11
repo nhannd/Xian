@@ -47,9 +47,10 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         [ReadOperation]
         public GetWorklistItemResponse GetWorklistItem(GetWorklistItemRequest request)
         {
-            ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
-            WorklistItem result = PersistenceContext.GetBroker<IModalityWorklistBroker>().GetWorklistItem(request.ProcedureStepRef, request.PatientProfileAuthority);
-            return new GetWorklistItemResponse(assembler.CreateModalityWorklistItem(result, this.PersistenceContext));
+            throw new NotImplementedException();
+            //ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
+            //WorklistItem result = PersistenceContext.GetBroker<IModalityWorklistBroker>().GetWorklistItem(request.ProcedureStepRef, request.PatientProfileAuthority);
+            //return new GetWorklistItemResponse(assembler.CreateModalityWorklistItem(result, this.PersistenceContext));
         }
 
         [ReadOperation]

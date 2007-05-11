@@ -9,12 +9,18 @@ namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IModalityWorklistBroker : IPersistenceBroker
     {
-        IList<WorklistItem> GetWorklist(string worklistClassName);
-        IList<WorklistItem> GetWorklist(ModalityProcedureStepSearchCriteria criteria, string patientProfileAuthority);
+        IList<WorklistItem> GetScheduledWorklist();
+        IList<WorklistItem> GetCheckedInWorklist();
+        IList<WorklistItem> GetInProgressWorklist();
+        IList<WorklistItem> GetSuspendedWorklist();
+        IList<WorklistItem> GetCompletedWorklist();
+        IList<WorklistItem> GetCancelledWorklist();
 
-        WorklistItem GetWorklistItem(string worklistClassName);
-        WorklistItem GetWorklistItem(EntityRef mpsRef, string patientProfileAuthority);
-
-        int GetWorklistCount(string WorklistClassName);
+        int GetScheduledWorklistCount();
+        int GetCheckedInWorklistCount();
+        int GetInProgressWorklistCount();
+        int GetSuspendedWorklistCount();
+        int GetCompletedWorklistCount();
+        int GetCancelledWorklistCount();
     }
 }

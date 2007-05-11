@@ -18,77 +18,88 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
     public class Worklists
     {
-        public abstract class ModalityWorklist : WorklistBase
+        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        public class Scheduled : WorklistBase<IModalityWorklistBroker>
         {
-            public abstract string WorklistClassName { get; }
-
             public override IList GetWorklist(IPersistenceContext context)
             {
-                IModalityWorklistBroker broker = context.GetBroker<IModalityWorklistBroker>();
-                IList<WorklistItem> worklist = broker.GetWorklist(this.WorklistClassName);
-                return (IList)worklist;
+                return (IList)GetBroker(context).GetScheduledWorklist();
             }
 
             public override int GetWorklistCount(IPersistenceContext context)
             {
-                IModalityWorklistBroker broker = context.GetBroker<IModalityWorklistBroker>();
-                return broker.GetWorklistCount(this.WorklistClassName);
+                return GetBroker(context).GetScheduledWorklistCount();
             }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class Scheduled : ModalityWorklist
+        public class CheckedIn : WorklistBase<IModalityWorklistBroker>
         {
-            public override string WorklistClassName
+            public override IList GetWorklist(IPersistenceContext context)
             {
-                get { return "ClearCanvas.Healthcare.Workflow.Modality.Worklists+Scheduled"; }
+                return (IList)GetBroker(context).GetCheckedInWorklist();
+            }
+
+            public override int GetWorklistCount(IPersistenceContext context)
+            {
+                return GetBroker(context).GetCheckedInWorklistCount();
             }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class CheckedIn : ModalityWorklist
+        public class InProgress : WorklistBase<IModalityWorklistBroker>
         {
-            public override string WorklistClassName
+            public override IList GetWorklist(IPersistenceContext context)
             {
-                get { return "ClearCanvas.Healthcare.Workflow.Modality.Worklists+CheckedIn"; }
+                return (IList)GetBroker(context).GetInProgressWorklist();
+            }
+
+            public override int GetWorklistCount(IPersistenceContext context)
+            {
+                return GetBroker(context).GetInProgressWorklistCount();
             }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class InProgress : ModalityWorklist
+        public class Suspended : WorklistBase<IModalityWorklistBroker>
         {
-            public override string WorklistClassName
+            public override IList GetWorklist(IPersistenceContext context)
             {
-                get { return "ClearCanvas.Healthcare.Workflow.Modality.Worklists+InProgress"; }
+                return (IList)GetBroker(context).GetSuspendedWorklist();
+            }
+
+            public override int GetWorklistCount(IPersistenceContext context)
+            {
+                return GetBroker(context).GetSuspendedWorklistCount();
+            }
+       }
+
+        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        public class Cancelled : WorklistBase<IModalityWorklistBroker>
+        {
+            public override IList GetWorklist(IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetCancelledWorklist();
+            }
+
+            public override int GetWorklistCount(IPersistenceContext context)
+            {
+                return GetBroker(context).GetCancelledWorklistCount();
             }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class Suspended : ModalityWorklist
+        public class Completed : WorklistBase<IModalityWorklistBroker>
         {
-            public override string WorklistClassName
+            public override IList GetWorklist(IPersistenceContext context)
             {
-                get { return "ClearCanvas.Healthcare.Workflow.Modality.Worklists+Suspended"; }
+                return (IList)GetBroker(context).GetCompletedWorklist();
+            }
+
+            public override int GetWorklistCount(IPersistenceContext context)
+            {
+                return GetBroker(context).GetCompletedWorklistCount();
             }
         }
-
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class Cancelled : ModalityWorklist
-        {
-            public override string WorklistClassName
-            {
-                get { return "ClearCanvas.Healthcare.Workflow.Modality.Worklists+Cancelled"; }
-            }
-        }
-
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class Completed : ModalityWorklist
-        {
-            public override string WorklistClassName
-            {
-                get { return "ClearCanvas.Healthcare.Workflow.Modality.Worklists+Completed"; }
-            }
-        }
-
     }
 }

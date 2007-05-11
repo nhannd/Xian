@@ -21,82 +21,72 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
     public class Worklists
     {
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class Scheduled : WorklistBase
+        public class Scheduled : WorklistBase<IRegistrationWorklistBroker>
         {
             public override IList GetWorklist(IPersistenceContext context)
             {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return (IList)broker.GetScheduledWorklist();
+                return (IList)GetBroker(context).GetScheduledWorklist();
             }
 
             public override int GetWorklistCount(IPersistenceContext context)
             {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return broker.GetScheduledWorklistCount();
+                return GetBroker(context).GetScheduledWorklistCount();
             }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class CheckIn : WorklistBase
+        public class CheckIn : WorklistBase<IRegistrationWorklistBroker>
         {
             public override IList GetWorklist(IPersistenceContext context)
             {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return (IList)broker.GetCheckInWorklist();
+                return (IList)GetBroker(context).GetCheckInWorklist();
             }
 
             public override int GetWorklistCount(IPersistenceContext context)
             {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return broker.GetCheckInWorklistCount();
+                return GetBroker(context).GetCheckInWorklistCount();
             }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class InProgress : WorklistBase
+        public class InProgress : WorklistBase<IRegistrationWorklistBroker>
         {
             public override IList GetWorklist(IPersistenceContext context)
             {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return (IList)broker.GetInProgressWorklist();
+                return (IList)GetBroker(context).GetInProgressWorklist();
             }
 
             public override int GetWorklistCount(IPersistenceContext context)
             {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return broker.GetInProgressWorklistCount();
+                return GetBroker(context).GetInProgressWorklistCount();
             }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class Completed : WorklistBase
+        public class Completed : WorklistBase<IRegistrationWorklistBroker>
         {
             public override IList GetWorklist(IPersistenceContext context)
             {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return (IList)broker.GetCompletedWorklist();
+                return (IList)GetBroker(context).GetCompletedWorklist();
             }
 
             public override int GetWorklistCount(IPersistenceContext context)
             {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return broker.GetCompletedWorklistCount();
+                return GetBroker(context).GetCompletedWorklistCount();
             }
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class Cancelled : WorklistBase
+        public class Cancelled : WorklistBase<IRegistrationWorklistBroker>
         {
             public override IList GetWorklist(IPersistenceContext context)
             {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return (IList)broker.GetCancelledWorklist();
+                return (IList)GetBroker(context).GetCancelledWorklist();
             }
 
             public override int GetWorklistCount(IPersistenceContext context)
             {
-                IRegistrationWorklistBroker broker = context.GetBroker<IRegistrationWorklistBroker>();
-                return broker.GetCancelledWorklistCount();
+                return GetBroker(context).GetCancelledWorklistCount();
             }
         }
     }
