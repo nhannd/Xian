@@ -19,17 +19,13 @@ namespace ClearCanvas.Controls.WinForms
         {
             InitializeComponent();
 
-            if (this.DesignMode)
-                return;
-
-            _dateTimePicker.Format = DateTimePickerFormat.Custom;
-            _dateTimePicker.CustomFormat = Format.DateFormat;
+            // JR: this.DesignMode is not valid in the constructor - moved the date format stuff into DateTimeField_Load
 
             _checkBox.CheckedChanged += new EventHandler(CheckBoxCheckedChangedEventHandler);
             _dateTimePicker.ValueChanged += new EventHandler(DateTimePickerValueChangedEventHandler);
         }
 
-        private void  DateTimePickerValueChangedEventHandler(object sender, EventArgs e)
+        private void DateTimePickerValueChangedEventHandler(object sender, EventArgs e)
         {
             FireValueChanged();
         }
@@ -122,6 +118,9 @@ namespace ClearCanvas.Controls.WinForms
         {
             if (this.DesignMode)
                 return;
+
+            _dateTimePicker.Format = DateTimePickerFormat.Custom;
+            _dateTimePicker.CustomFormat = Format.DateFormat;
         }
     }
 }

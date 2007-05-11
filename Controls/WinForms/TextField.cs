@@ -38,6 +38,19 @@ namespace ClearCanvas.Controls.WinForms
             }
         }
 
+        [DefaultValue(false)]
+        public bool ReadOnly
+        {
+            get
+            {
+                return _textBox.ReadOnly;
+            }
+            set
+            {
+                _textBox.ReadOnly = value;
+            }
+        }
+
         public event EventHandler ValueChanged
         {
             add { _textBox.TextChanged += value; }
