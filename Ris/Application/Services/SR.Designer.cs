@@ -115,6 +115,15 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Current user must be associated with a Staff in order to perform this operation.
+        /// </summary>
+        internal static string ExceptionNoStaffForUser {
+            get {
+                return ResourceManager.GetString("ExceptionNoStaffForUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A note category with name {0} already exists.
         /// </summary>
         internal static string ExceptionNoteCategoryAlreadyExist {

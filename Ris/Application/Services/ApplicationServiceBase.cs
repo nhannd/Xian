@@ -5,6 +5,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using System.Threading;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -14,7 +15,7 @@ namespace ClearCanvas.Ris.Application.Services
 
         /// <summary>
         /// Obtains the staff associated with the current user.  If no <see cref="Staff"/> is associated with the current user,
-        /// a <see cref="EntityNotFoundException"/> is thrown.
+        /// a <see cref="RequestValidationException"/> is thrown.
         /// </summary>
         protected Staff CurrentUserStaff
         {
@@ -22,7 +23,14 @@ namespace ClearCanvas.Ris.Application.Services
             {
                 if (_currentUserStaff == null)
                 {
-                    _currentUserStaff = PersistenceContext.GetBroker<IStaffBroker>().FindStaffForUser(Thread.CurrentPrincipal.Identity.Name);
+                    try
+                    {
+                        _currentUserStaff = PersistenceContext.GetBroker<IStaffBroker>().FindStaffForUser(Thread.CurrentPrincipal.Identity.Name);
+                    }
+                    catch (EntityNotFoundException)
+                    {
+                        throw new RequestValidationException(SR.ExceptionNoStaffForUser);
+                    }
                 }
 
                 return _currentUserStaff;

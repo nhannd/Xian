@@ -147,4 +147,7 @@
   <data name="ExceptionFamilyNameMissing" xml:space="preserve">
     <value>A family name must be provided</value>
   </data>
+  <data name="ExceptionNoStaffForUser" xml:space="preserve">
+    <value>Current user must be associated with a Staff in order to perform this operation</value>
+  </data>
 </root>
