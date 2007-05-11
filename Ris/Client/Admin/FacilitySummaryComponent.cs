@@ -184,6 +184,11 @@ namespace ClearCanvas.Ris.Client.Admin
             FacilityEditorComponent editor = new FacilityEditorComponent();
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Host.DesktopWindow, editor, SR.TitleAddFacility);
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+                _facilityTable.Items.Add(_selectedFacility = editor.FacilitySummary);
+                FacilitySelectionChanged();
+            }
         }
 
         public void UpdateSelectedFacility()
@@ -194,6 +199,10 @@ namespace ClearCanvas.Ris.Client.Admin
             FacilityEditorComponent editor = new FacilityEditorComponent(_selectedFacility.FacilityRef);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Host.DesktopWindow, editor, SR.TitleUpdateFacility);
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+                _facilityTable.Items.Replace(delegate(FacilitySummary f) { return f.FacilityRef.Equals(editor.FacilitySummary.FacilityRef); }, editor.FacilitySummary);
+            }
         }
 
         public void LoadFacilityTable()
@@ -211,6 +220,8 @@ namespace ClearCanvas.Ris.Client.Admin
                 _facilityActionHandler.Edit.Enabled = true;
             else
                 _facilityActionHandler.Edit.Enabled = false;
+
+            NotifyPropertyChanged("SelectedFacility");
         }
     }
 }

@@ -28,6 +28,8 @@ namespace ClearCanvas.Ris.Client.Admin
         private EntityRef _facilityRef;
         private bool _isNew;
 
+        private FacilitySummary _facilitySummary;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -40,6 +42,11 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             _isNew = false;
             _facilityRef = facilityRef;
+        }
+
+        public FacilitySummary FacilitySummary
+        {
+            get { return _facilitySummary; }
         }
 
         public override void Start()
@@ -147,11 +154,13 @@ namespace ClearCanvas.Ris.Client.Admin
                         {
                             AddFacilityResponse response = service.AddFacility(new AddFacilityRequest(_facilityDetail));
                             _facilityRef = response.Facility.FacilityRef;
+                            _facilitySummary = response.Facility;
                         }
                         else
                         {
                             UpdateFacilityResponse response = service.UpdateFacility(new UpdateFacilityRequest(_facilityRef, _facilityDetail));
                             _facilityRef = response.Facility.FacilityRef;
+                            _facilitySummary = response.Facility;
                         }
                     });
             }
