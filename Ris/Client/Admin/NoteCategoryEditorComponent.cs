@@ -33,6 +33,8 @@ namespace ClearCanvas.Ris.Client.Admin
         private EntityRef _noteCategoryRef;
         private bool _isNew;
 
+        private NoteCategorySummary _noteCategorySummary;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -45,6 +47,11 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             _isNew = false;
             _noteCategoryRef = noteCategoryRef;
+        }
+
+        public NoteCategorySummary NoteCategorySummary
+        {
+            get { return _noteCategorySummary; }
         }
 
         public override void Start()
@@ -183,11 +190,13 @@ namespace ClearCanvas.Ris.Client.Admin
                         {
                             AddNoteCategoryResponse response = service.AddNoteCategory(new AddNoteCategoryRequest(_noteCategoryDetail));
                             _noteCategoryRef = response.NoteCategory.NoteCategoryRef;
+                            _noteCategorySummary = response.NoteCategory;
                         }
                         else
                         {
                             UpdateNoteCategoryResponse response = service.UpdateNoteCategory(new UpdateNoteCategoryRequest(_noteCategoryRef, _noteCategoryDetail));
                             _noteCategoryRef = response.NoteCategory.NoteCategoryRef;
+                            _noteCategorySummary = response.NoteCategory;
                         }
                     });
             }

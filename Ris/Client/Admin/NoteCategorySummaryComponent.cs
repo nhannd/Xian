@@ -161,6 +161,11 @@ namespace ClearCanvas.Ris.Client.Admin
             NoteCategoryEditorComponent editor = new NoteCategoryEditorComponent();
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Host.DesktopWindow, editor, SR.TitleAddNoteCategory);
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+                _noteCategoryTable.Items.Add(_selectedNoteCategory = editor.NoteCategorySummary);
+                NoteCategorySelectionChanged();
+            }
         }
 
         public void UpdateSelectedNoteCategory()
@@ -171,6 +176,12 @@ namespace ClearCanvas.Ris.Client.Admin
             NoteCategoryEditorComponent editor = new NoteCategoryEditorComponent(_selectedNoteCategory.NoteCategoryRef);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                 this.Host.DesktopWindow, editor, SR.TitleUpdateNoteCategory);
+            if (exitCode == ApplicationComponentExitCode.Normal)
+            {
+                _noteCategoryTable.Items.Replace(
+                    delegate(NoteCategorySummary s) { return s.NoteCategoryRef.Equals(editor.NoteCategorySummary.NoteCategoryRef); },
+                    editor.NoteCategorySummary);
+            }
         }
 
         public void LoadNoteCategoryTable()
@@ -188,6 +199,8 @@ namespace ClearCanvas.Ris.Client.Admin
                 _noteCategoryActionHandler.Edit.Enabled = true;
             else
                 _noteCategoryActionHandler.Edit.Enabled = false;
+
+            NotifyPropertyChanged("SelectedNoteCategory");
         }
 
     }
