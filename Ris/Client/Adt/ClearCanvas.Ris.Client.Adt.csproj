@@ -42,11 +42,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BiographyDocumentComponent.cs" />
+    <Compile Include="BiographyFeedbackComponent.cs" />
     <Compile Include="BiographyNoteComponent.cs" />
     <Compile Include="CancelOrderComponent.cs" />
     <Compile Include="BiographyOrderHistoryComponent.cs" />
     <Compile Include="BiographyDocumentTable.cs" />
     <Compile Include="BiographyNoteTable.cs" />
+    <Compile Include="BiographyFeedbackTable.cs" />
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
     <Compile Include="RequestedProcedureCheckInTable.cs" />
     <Compile Include="OrderSummaryTable.cs" />

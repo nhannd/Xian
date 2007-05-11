@@ -47,6 +47,13 @@
       <DependentUpon>BiographyDocumentComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="BiographyDocumentComponentView.cs" />
+    <Compile Include="BiographyFeedbackComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="BiographyFeedbackComponentControl.Designer.cs">
+      <DependentUpon>BiographyFeedbackComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BiographyFeedbackComponentView.cs" />
     <Compile Include="BiographyNoteComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -308,6 +315,10 @@
     <EmbeddedResource Include="Resources\NextSmall.png" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="BiographyFeedbackComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>BiographyFeedbackComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Resources\PreviousSmall.PNG" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

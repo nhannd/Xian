@@ -29,8 +29,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection3 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection4 = new ClearCanvas.Desktop.Selection();
             this._orderList = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
@@ -55,6 +55,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._visitNumber = new ClearCanvas.Controls.WinForms.TextField();
             this._preAdmitNumber = new ClearCanvas.Controls.WinForms.TextField();
             this._vip = new System.Windows.Forms.CheckBox();
+            this._documentPage = new System.Windows.Forms.TabPage();
             this._billingPage = new System.Windows.Forms.TabPage();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this._mpsScheduledEndTime = new ClearCanvas.Controls.WinForms.TextField();
@@ -67,7 +68,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._diagnosticServiceBreakdown = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this._modality = new ClearCanvas.Controls.WinForms.TextField();
-            this._documentPage = new System.Windows.Forms.TabPage();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -84,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderList.MenuModel = null;
             this._orderList.Name = "_orderList";
             this._orderList.ReadOnly = false;
-            this._orderList.Selection = selection1;
+            this._orderList.Selection = selection3;
             this._orderList.Size = new System.Drawing.Size(826, 239);
             this._orderList.TabIndex = 0;
             this._orderList.Table = null;
@@ -115,6 +115,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // tabControl1
             // 
+            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+                        | System.Windows.Forms.AnchorStyles.Left)
+                        | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this._orderPage);
             this.tabControl1.Controls.Add(this._visitPage);
             this.tabControl1.Controls.Add(this._documentPage);
@@ -122,7 +125,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tabControl1.Location = new System.Drawing.Point(310, 4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(513, 404);
+            this.tabControl1.Size = new System.Drawing.Size(516, 421);
             this.tabControl1.TabIndex = 24;
             // 
             // _orderPage
@@ -138,7 +141,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderPage.Location = new System.Drawing.Point(4, 22);
             this._orderPage.Name = "_orderPage";
             this._orderPage.Padding = new System.Windows.Forms.Padding(3);
-            this._orderPage.Size = new System.Drawing.Size(505, 378);
+            this._orderPage.Size = new System.Drawing.Size(508, 395);
             this._orderPage.TabIndex = 0;
             this._orderPage.Text = "Order";
             this._orderPage.UseVisualStyleBackColor = true;
@@ -255,7 +258,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._visitPage.Location = new System.Drawing.Point(4, 22);
             this._visitPage.Name = "_visitPage";
             this._visitPage.Padding = new System.Windows.Forms.Padding(3);
-            this._visitPage.Size = new System.Drawing.Size(505, 378);
+            this._visitPage.Size = new System.Drawing.Size(508, 395);
             this._visitPage.TabIndex = 1;
             this._visitPage.Text = "Visit";
             this._visitPage.UseVisualStyleBackColor = true;
@@ -402,6 +405,16 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._vip.Text = "VIP?";
             this._vip.UseVisualStyleBackColor = true;
             // 
+            // _documentPage
+            // 
+            this._documentPage.Location = new System.Drawing.Point(4, 22);
+            this._documentPage.Name = "_documentPage";
+            this._documentPage.Padding = new System.Windows.Forms.Padding(3);
+            this._documentPage.Size = new System.Drawing.Size(505, 378);
+            this._documentPage.TabIndex = 3;
+            this._documentPage.Text = "Document";
+            this._documentPage.UseVisualStyleBackColor = true;
+            // 
             // _billingPage
             // 
             this._billingPage.Location = new System.Drawing.Point(4, 22);
@@ -522,7 +535,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._diagnosticServiceBreakdown.Margin = new System.Windows.Forms.Padding(2);
             this._diagnosticServiceBreakdown.MenuModel = null;
             this._diagnosticServiceBreakdown.Name = "_diagnosticServiceBreakdown";
-            this._diagnosticServiceBreakdown.Selection = selection2;
+            this._diagnosticServiceBreakdown.Selection = selection4;
             this._diagnosticServiceBreakdown.ShowRootLines = false;
             this._diagnosticServiceBreakdown.ShowToolbar = false;
             this._diagnosticServiceBreakdown.Size = new System.Drawing.Size(278, 183);
@@ -549,16 +562,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._modality.Size = new System.Drawing.Size(136, 41);
             this._modality.TabIndex = 6;
             this._modality.Value = null;
-            // 
-            // _documentPage
-            // 
-            this._documentPage.Location = new System.Drawing.Point(4, 22);
-            this._documentPage.Name = "_documentPage";
-            this._documentPage.Padding = new System.Windows.Forms.Padding(3);
-            this._documentPage.Size = new System.Drawing.Size(505, 378);
-            this._documentPage.TabIndex = 3;
-            this._documentPage.Text = "Document";
-            this._documentPage.UseVisualStyleBackColor = true;
             // 
             // BiographyOrderHistoryComponentControl
             // 

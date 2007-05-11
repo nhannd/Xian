@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Adt
             BiographyOrderHistoryComponent orderHistoryComponent = new BiographyOrderHistoryComponent(_profileRef);
             BiographyDocumentComponent documentComponent = new BiographyDocumentComponent();
             BiographyNoteComponent noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
-            BiographyNoteComponent feedbackComponent = new BiographyNoteComponent(_patientProfile.Notes);
+            BiographyFeedbackComponent feedbackComponent = new BiographyFeedbackComponent();
             
             StackTabComponentContainer testStackComponent = new StackTabComponentContainer(StackStyle.ShowMultiple);
             testStackComponent.Pages.Add(new TabPage("Test1", new PatientSearchComponent()));

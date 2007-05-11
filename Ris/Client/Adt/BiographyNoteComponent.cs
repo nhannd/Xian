@@ -38,9 +38,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            _noteTable.Items.AddRange(_noteList);
-
             base.Start();
+
+            _noteTable.Items.AddRange(_noteList);
         }
 
         public override void Stop()

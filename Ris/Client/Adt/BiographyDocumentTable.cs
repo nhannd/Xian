@@ -35,7 +35,7 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         public string Category;
-        public DateTime DocumentDate;
+        public DateTime? DocumentDate;
         public string Institution;
         public string Reason;
         public int Pages;
@@ -48,8 +48,8 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         public BiographyDocumentTable()
         {
-            this.Columns.Add(new TableColumn<DocumentSummary, DateTime>("Date",
-                delegate(DocumentSummary summary) { return summary.DocumentDate; }, 0.2f));
+            this.Columns.Add(new TableColumn<DocumentSummary, string>("Date",
+                delegate(DocumentSummary summary) { return Format.Date(summary.DocumentDate); }, 0.2f));
             this.Columns.Add(new TableColumn<DocumentSummary, string>("Category",
                 delegate(DocumentSummary summary) { return summary.Category; }, 0.2f));
             this.Columns.Add(new TableColumn<DocumentSummary, string>("Institution",

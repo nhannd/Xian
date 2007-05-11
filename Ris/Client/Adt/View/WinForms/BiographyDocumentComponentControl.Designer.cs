@@ -37,7 +37,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this._previewButton = new System.Windows.Forms.Button();
-            this._documentDate = new ClearCanvas.Controls.WinForms.DateTimeField();
             this._category = new System.Windows.Forms.Label();
             this._reason = new ClearCanvas.Controls.WinForms.TextField();
             this._institution = new ClearCanvas.Controls.WinForms.TextField();
@@ -48,6 +47,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._prevPageButton = new System.Windows.Forms.Button();
             this._pageIndicator = new System.Windows.Forms.TextBox();
             this._printPreviewDialog = new System.Windows.Forms.PrintPreviewDialog();
+            this._documentDate = new ClearCanvas.Controls.WinForms.TextField();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -111,10 +111,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // panel3
             // 
+            this.panel3.Controls.Add(this._documentDate);
             this.panel3.Controls.Add(this.label2);
             this.panel3.Controls.Add(this.label1);
             this.panel3.Controls.Add(this._previewButton);
-            this.panel3.Controls.Add(this._documentDate);
             this.panel3.Controls.Add(this._category);
             this.panel3.Controls.Add(this._reason);
             this.panel3.Controls.Add(this._institution);
@@ -152,20 +152,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._previewButton.UseVisualStyleBackColor = true;
             this._previewButton.Click += new System.EventHandler(this._previewButton_Click);
             // 
-            // _documentDate
-            // 
-            this._documentDate.LabelText = "Document Date:";
-            this._documentDate.Location = new System.Drawing.Point(2, 94);
-            this._documentDate.Margin = new System.Windows.Forms.Padding(2);
-            this._documentDate.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
-            this._documentDate.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
-            this._documentDate.Name = "_documentDate";
-            this._documentDate.Nullable = false;
-            this._documentDate.ShowTime = false;
-            this._documentDate.Size = new System.Drawing.Size(150, 41);
-            this._documentDate.TabIndex = 6;
-            this._documentDate.Value = null;
-            // 
             // _category
             // 
             this._category.AutoSize = true;
@@ -183,6 +169,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._reason.Margin = new System.Windows.Forms.Padding(2);
             this._reason.Mask = "";
             this._reason.Name = "_reason";
+            this._reason.ReadOnly = true;
             this._reason.Size = new System.Drawing.Size(226, 41);
             this._reason.TabIndex = 6;
             this._reason.Value = null;
@@ -194,6 +181,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._institution.Margin = new System.Windows.Forms.Padding(2);
             this._institution.Mask = "";
             this._institution.Name = "_institution";
+            this._institution.ReadOnly = true;
             this._institution.Size = new System.Drawing.Size(150, 41);
             this._institution.TabIndex = 0;
             this._institution.Value = null;
@@ -278,6 +266,18 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._printPreviewDialog.Name = "_printPreviewDialog";
             this._printPreviewDialog.Visible = false;
             // 
+            // _documentDate
+            // 
+            this._documentDate.LabelText = "Document Date:";
+            this._documentDate.Location = new System.Drawing.Point(2, 94);
+            this._documentDate.Margin = new System.Windows.Forms.Padding(2);
+            this._documentDate.Mask = "";
+            this._documentDate.Name = "_documentDate";
+            this._documentDate.ReadOnly = true;
+            this._documentDate.Size = new System.Drawing.Size(150, 41);
+            this._documentDate.TabIndex = 59;
+            this._documentDate.Value = null;
+            // 
             // BiographyDocumentComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -306,7 +306,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.PrintPreviewDialog _printPreviewDialog;
         private System.Windows.Forms.Panel panel3;
-        private ClearCanvas.Controls.WinForms.DateTimeField _documentDate;
         private System.Windows.Forms.Label _category;
         private ClearCanvas.Controls.WinForms.TextField _reason;
         private ClearCanvas.Controls.WinForms.TextField _institution;
@@ -319,5 +318,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button _previewButton;
         private System.Windows.Forms.PictureBox _previewImage;
+        private ClearCanvas.Controls.WinForms.TextField _documentDate;
     }
 }

@@ -29,19 +29,17 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void InitializeComponent()
         {
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            this._noteTable = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this._noteTable = new ClearCanvas.Desktop.View.WinForms.DecoratedTableView();
             this.SuspendLayout();
             // 
             // _noteTable
             // 
-            this._noteTable.AutoSize = true;
             this._noteTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this._noteTable.Location = new System.Drawing.Point(0, 0);
             this._noteTable.MenuModel = null;
             this._noteTable.Name = "_noteTable";
             this._noteTable.ReadOnly = false;
             this._noteTable.Selection = selection1;
-            this._noteTable.ShowToolbar = false;
             this._noteTable.Size = new System.Drawing.Size(434, 269);
             this._noteTable.TabIndex = 0;
             this._noteTable.Table = null;
@@ -57,12 +55,12 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.Name = "BiographyNoteComponentControl";
             this.Size = new System.Drawing.Size(434, 269);
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
 
-        private ClearCanvas.Desktop.View.WinForms.TableView _noteTable;
+        private ClearCanvas.Desktop.View.WinForms.DecoratedTableView _noteTable;
+
     }
 }

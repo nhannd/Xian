@@ -90,9 +90,9 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _selectedDocument == null ? "" : _selectedDocument.Institution; }
         }
 
-        public DateTime DocumentDate
+        public string DocumentDate
         {
-            get { return _selectedDocument == null ? new DateTime() : _selectedDocument.DocumentDate; }
+            get { return _selectedDocument == null ? "" : Format.Date(_selectedDocument.DocumentDate); }
         }
 
         public string Reason
