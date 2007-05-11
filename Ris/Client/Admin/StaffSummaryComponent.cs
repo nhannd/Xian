@@ -62,13 +62,12 @@ namespace ClearCanvas.Ris.Client.Admin
         private StaffSummary _selectedStaff;
         private StaffTable _staffTable;
 
-        private ActionModelRoot _staffActionHandler;
-        private ClickAction _addStaffAction;
-        private ClickAction _addPractitionerAction;
-        private ClickAction _editAction;
+        private SimpleActionModel _staffActionHandler;
+        private readonly string _addStaffKey = "AddStaff";
+        private readonly string _addPractionerKey = "AddPractitioner";
+        private readonly string _updateStaffKey = "UpdateStaff";
 
         private PagingController<StaffSummary> _pagingController;
-        private PagingActionModel<StaffSummary> _pagingActionHandler;
 
         private ListStaffRequest _listRequest;
         private string _firstName;
@@ -99,23 +98,20 @@ namespace ClearCanvas.Ris.Client.Admin
             //_staffAdminService.PractitionerChanged += PractitionerChangedEventHandler;
 
             _staffTable = new StaffTable();
-            _staffActionHandler = new ActionModelRoot();
-            _addPractitionerAction = CreateAction(SR.TitleAddPractitioner, "Icons.Add.png", AddPractitioner);
-            _addStaffAction = CreateAction(SR.TitleAddStaff, "Icons.Add.png", AddStaff);
-            _editAction = CreateAction(SR.TitleUpdateStaff, "Icons.Edit.png", UpdateSelectedStaff);
-            _staffActionHandler.InsertAction(_addPractitionerAction);
-            _staffActionHandler.InsertAction(_addStaffAction);
-            _staffActionHandler.InsertAction(_editAction);
 
-            InitialisePaging();
-            _staffActionHandler.Merge(_pagingActionHandler);
+            _staffActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            _staffActionHandler.AddAction(_addStaffKey, SR.TitleAddPractitioner, "Icons.Add.png", SR.TitleAddPractitioner, AddPractitioner);
+            _staffActionHandler.AddAction(_addPractionerKey, SR.TitleAddStaff, "Icons.Add.png", SR.TitleAddStaff, AddStaff);
+            _staffActionHandler.AddAction(_updateStaffKey, SR.TitleUpdateStaff, "Icons.Edit.png", SR.TitleUpdateStaff,UpdateSelectedStaff);
+
+            InitialisePaging(_staffActionHandler);
 
             _listRequest = new ListStaffRequest();
 
             base.Start();
         }
 
-        private void InitialisePaging()
+        private void InitialisePaging(ActionModelNode actionModelNode)
         {
             _pagingController = new PagingController<StaffSummary>(
                 delegate(int firstRow, int maxRows)
@@ -142,7 +138,11 @@ namespace ClearCanvas.Ris.Client.Admin
                 }
             );
 
-            _pagingActionHandler = new PagingActionModel<StaffSummary>(_pagingController, _staffTable);
+            if (actionModelNode != null)
+            {
+                actionModelNode.Merge(new PagingActionModel<StaffSummary>(_pagingController, _staffTable));
+                
+            }
         }
 
         public override void Stop()
@@ -377,22 +377,9 @@ namespace ClearCanvas.Ris.Client.Admin
         private void StaffSelectionChanged()
         {
             if (_selectedStaff != null)
-                _editAction.Enabled = true;
+                _staffActionHandler[_updateStaffKey].Enabled = true;
             else
-                _editAction.Enabled = false;
-        }
-
-        private ClickAction CreateAction(string name, string icon, ClickHandlerDelegate handler)
-        {
-            IResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
-            ClickAction action = new ClickAction(name, new ActionPath(string.Format("root/{0}", name), resolver), ClickActionFlags.None, resolver);
-            action.Tooltip = name;
-            action.Label = name;
-            action.IconSet = new IconSet(IconScheme.Colour, icon, icon, icon);
-            action.Enabled = true;
-            action.SetClickHandler(handler);
-
-            return action;
+                _staffActionHandler[_updateStaffKey].Enabled = false;
         }
     }
 }

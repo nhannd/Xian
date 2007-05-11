@@ -63,12 +63,11 @@ namespace ClearCanvas.Ris.Client.Admin
         private UserSummary _selectedUser;
         private UserTable _userTable;
 
-        private ActionModelRoot _userActionHandler;
-        private ClickAction _addUserAction;
-        private ClickAction _editUserAction;
+        private SimpleActionModel _userActionHandler;
+        private readonly string _addUserKey = "AddUser";
+        private readonly string _updateUserKey = "UpdateUser";
 
         private IPagingController<UserSummary> _pagingController;
-        private PagingActionModel<UserSummary> _pagingActionHandler;
 
         private ListUsersRequest _listRequest;
 
@@ -82,19 +81,17 @@ namespace ClearCanvas.Ris.Client.Admin
         public override void Start()
         {
             _userTable = new UserTable();
-            _userActionHandler = new ActionModelRoot();
-            _addUserAction = CreateAction(SR.TitleAddUser, "Icons.Add.png", AddUser);
-            _editUserAction = CreateAction(SR.TitleUpdateUser, "Icons.Edit.png", UpdateSelectedUser);
-            _userActionHandler.InsertAction(_addUserAction);
-            _userActionHandler.InsertAction(_editUserAction);
 
-            InitialisePaging();
-            _userActionHandler.Merge(_pagingActionHandler);
+            _userActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            _userActionHandler.AddAction(_addUserKey, SR.TitleAddUser, "Icons.Add.png", SR.TitleAddUser, AddUser);
+            _userActionHandler.AddAction(_updateUserKey, SR.TitleUpdateUser, "Icons.Edit.png", SR.TitleUpdateUser, UpdateSelectedUser);
+
+            InitialisePaging(_userActionHandler);
 
             base.Start();
         }
 
-        private void InitialisePaging()
+        private void InitialisePaging(ActionModelNode actionModelNode)
         {
             _pagingController = new PagingController<UserSummary>(
                 delegate(int firstRow, int maxRows)
@@ -123,7 +120,10 @@ namespace ClearCanvas.Ris.Client.Admin
                 }
             );
 
-            _pagingActionHandler = new PagingActionModel<UserSummary>(_pagingController, _userTable);
+            if (actionModelNode != null)
+            {
+                actionModelNode.Merge(new PagingActionModel<UserSummary>(_pagingController, _userTable));
+            }
         }
 
         public override void Stop()
@@ -142,7 +142,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public ActionModelNode UserListActionModel
         {
-            get { return _userActionHandler; }
+            get { return (ActionModelNode)_userActionHandler; }
         }
 
         public ISelection SelectedUser
@@ -193,22 +193,9 @@ namespace ClearCanvas.Ris.Client.Admin
         private void UserSelectionChanged()
         {
             if (_selectedUser != null)
-                _editUserAction.Enabled = true;
+                _userActionHandler[_updateUserKey].Enabled = true;
             else
-                _editUserAction.Enabled = false;
-        }
-
-        private ClickAction CreateAction(string name, string icon, ClickHandlerDelegate handler)
-        {
-            IResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
-            ClickAction action = new ClickAction(name, new ActionPath(string.Format("root/{0}", name), resolver), ClickActionFlags.None, resolver);
-            action.Tooltip = name;
-            action.Label = name;
-            action.IconSet = new IconSet(IconScheme.Colour, icon, icon, icon);
-            action.Enabled = true;
-            action.SetClickHandler(handler);
-
-            return action;
+                _userActionHandler[_updateUserKey].Enabled = false;
         }
     }
 }

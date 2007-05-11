@@ -63,12 +63,11 @@ namespace ClearCanvas.Ris.Client.Admin
         private AuthorityGroupSummary _selectedAuthorityGroup;
         private AuthorityGroupTable _authorityGroupTable;
 
-        private ActionModelRoot _authorityGroupActionHandler;
-        private ClickAction _addAuthorityGroupAction;
-        private ClickAction _editAuthorityGroupAction;
+        private SimpleActionModel _authorityGroupActionHandler;
+        private readonly string _addAuthorityGroupKey = "AddAuthorityGroup";
+        private readonly string _updateAuthorityGroupKey = "UpdateAuthorityGroup";
 
         private IPagingController<AuthorityGroupSummary> _pagingController;
-        private PagingActionModel<AuthorityGroupSummary> _pagingActionHandler;
 
         private ListAuthorityGroupsRequest _listRequest;
 
@@ -82,19 +81,17 @@ namespace ClearCanvas.Ris.Client.Admin
         public override void Start()
         {
             _authorityGroupTable = new AuthorityGroupTable();
-            _authorityGroupActionHandler = new ActionModelRoot();
-            _addAuthorityGroupAction = CreateAction(SR.TitleAddUser, "Icons.Add.png", AddAuthorityGroup);
-            _editAuthorityGroupAction = CreateAction(SR.TitleUpdateAuthorityGroup, "Icons.Edit.png", UpdateSelectedAuthorityGroup);
-            _authorityGroupActionHandler.InsertAction(_addAuthorityGroupAction);
-            _authorityGroupActionHandler.InsertAction(_editAuthorityGroupAction);
 
-            InitialisePaging();
-            _authorityGroupActionHandler.Merge(_pagingActionHandler);
+            _authorityGroupActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            _authorityGroupActionHandler.AddAction(_addAuthorityGroupKey, SR.TitleAddUser, "Icons.Add.png", SR.TitleAddAuthorityGroup, AddAuthorityGroup);
+            _authorityGroupActionHandler.AddAction(_updateAuthorityGroupKey, SR.TitleUpdateAuthorityGroup, "Icons.Edit.png", SR.TitleUpdateAuthorityGroup, UpdateSelectedAuthorityGroup);
+
+            InitialisePaging(_authorityGroupActionHandler);
 
             base.Start();
         }
 
-        private void InitialisePaging()
+        private void InitialisePaging(ActionModelNode actionModelNode)
         {
             _pagingController = new PagingController<AuthorityGroupSummary>(
                 delegate(int firstRow, int maxRows)
@@ -115,7 +112,10 @@ namespace ClearCanvas.Ris.Client.Admin
                 }
             );
 
-            _pagingActionHandler = new PagingActionModel<AuthorityGroupSummary>(_pagingController, _authorityGroupTable);
+            if (actionModelNode != null)
+            {
+                actionModelNode.Merge(new PagingActionModel<AuthorityGroupSummary>(_pagingController, _authorityGroupTable));
+            }
         }
 
         public override void Stop()
@@ -179,22 +179,9 @@ namespace ClearCanvas.Ris.Client.Admin
         private void AuthorityGroupSelectionChanged()
         {
             if (_selectedAuthorityGroup != null)
-                _editAuthorityGroupAction.Enabled = true;
+                _authorityGroupActionHandler[_updateAuthorityGroupKey].Enabled = true;
             else
-                _editAuthorityGroupAction.Enabled = false;
-        }
-
-        private ClickAction CreateAction(string name, string icon, ClickHandlerDelegate handler)
-        {
-            IResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
-            ClickAction action = new ClickAction(name, new ActionPath(string.Format("root/{0}", name), resolver), ClickActionFlags.None, resolver);
-            action.Tooltip = name;
-            action.Label = name;
-            action.IconSet = new IconSet(IconScheme.Colour, icon, icon, icon);
-            action.Enabled = true;
-            action.SetClickHandler(handler);
-
-            return action;
+                _authorityGroupActionHandler[_updateAuthorityGroupKey].Enabled = false;
         }
     }
 }
