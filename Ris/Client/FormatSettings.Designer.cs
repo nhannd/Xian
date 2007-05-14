@@ -75,7 +75,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Default display format for person names
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Default display format for person names")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("%F, %G %M")]
         public string PersonNameDefaultFormat {
@@ -84,7 +88,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Default display format for healthcard numbers
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Default display format for healthcard numbers")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("%A %N %V")]
         public string HealthcardDefaultFormat {
@@ -93,7 +101,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Default display format for addresses
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Default display format for addresses")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("%S, %V %P %Z")]
         public string AddressDefaultFormat {
@@ -102,7 +114,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Country-code to suppress in display (all other country codes will be shown)
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Country-code to suppress in display (all other country codes will be shown)")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("1")]
         public string TelephoneNumberSuppressCountryCode {
@@ -111,7 +127,11 @@ namespace ClearCanvas.Ris.Client {
             }
         }
         
+        /// <summary>
+        /// Default display format for telephone numbers
+        /// </summary>
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Configuration.SettingsDescriptionAttribute("Default display format for telephone numbers")]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("%c (%A) %N %X")]
         public string TelephoneNumberDefaultFormat {
