@@ -292,7 +292,7 @@
     <value>Patient not found</value>
   </data>
   <data name="MessageUnreconciledRecordsAlert" xml:space="preserve">
-    <value>{0}. {1} has unreconciled records</value>
+    <value>{0} has unreconciled records</value>
   </data>
   <data name="TextUnknownValue" xml:space="preserve">
     <value>Unknown</value>

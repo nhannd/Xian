@@ -74,5 +74,50 @@ namespace ClearCanvas.Ris.Client {
                 return ((string)(this["TelephoneNumberFullMask"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("%F, %G %M")]
+        public string PersonNameDefaultFormat {
+            get {
+                return ((string)(this["PersonNameDefaultFormat"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("%A %N %V")]
+        public string HealthcardDefaultFormat {
+            get {
+                return ((string)(this["HealthcardDefaultFormat"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("%S, %V %P %Z")]
+        public string AddressDefaultFormat {
+            get {
+                return ((string)(this["AddressDefaultFormat"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("1")]
+        public string TelephoneNumberSuppressCountryCode {
+            get {
+                return ((string)(this["TelephoneNumberSuppressCountryCode"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("%c (%A) %N %X")]
+        public string TelephoneNumberDefaultFormat {
+            get {
+                return ((string)(this["TelephoneNumberDefaultFormat"]));
+            }
+        }
     }
 }

@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -22,7 +23,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             //TODO PatientNameDetail formatting
             this.Columns.Add(new TableColumn<OrderSummary, string>("Ordered by",
-                delegate(OrderSummary order) { return String.Format("{0}, {1}", order.OrderingPractitioner.PersonNameDetail.FamilyName, order.OrderingPractitioner.PersonNameDetail.GivenName); }));
+                delegate(OrderSummary order) { return PersonNameFormat.Format(order.OrderingPractitioner.PersonNameDetail); }));
 
             this.Columns.Add(new TableColumn<OrderSummary, string>("Ordered From",
                 delegate(OrderSummary order) { return order.OrderingFacility; }));

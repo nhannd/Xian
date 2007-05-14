@@ -6,6 +6,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -24,9 +25,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 SR.ColumnPractitioner,
                 delegate(VisitPractitionerDetail vp)
                 {
-                    //TODO: PersonNameDetail formatting
-                    //return Format.Custom(vp.Practitioner.PersonNameDetail);
-                    return String.Format("{0}, {1}", vp.Practitioner.PersonNameDetail.FamilyName, vp.Practitioner.PersonNameDetail.GivenName);
+                    return PersonNameFormat.Format(vp.Practitioner.PersonNameDetail);
                 },
                 2.5f));
             this.Columns.Add(new TableColumn<VisitPractitionerDetail, string>(

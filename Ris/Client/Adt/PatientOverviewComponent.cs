@@ -10,6 +10,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -119,8 +120,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Name
         {
-            //TODO: PersonNameDetail formatting
-            get { return String.Format("{0}, {1}", _patientProfile.Name.FamilyName, _patientProfile.Name.GivenName); }
+            get { return PersonNameFormat.Format(_patientProfile.Name); }
         }
 
         public string Mrn

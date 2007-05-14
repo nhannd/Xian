@@ -56,16 +56,16 @@ namespace ClearCanvas.Ris.Client.Adt
                    delegate(CancelOrderTableEntry entry, bool value) { entry.Checked = value; }, 0.3f));
             this.Columns.Add(
                 new TableColumn<CancelOrderTableEntry, string>(SR.ColumnAccessionNumber,
-                    delegate(CancelOrderTableEntry entry) { return Format.Custom(entry.CancelOrderTableItem.AccessionNumber); }, 0.75f));
+                    delegate(CancelOrderTableEntry entry) { return entry.CancelOrderTableItem.AccessionNumber; }, 0.75f));
             this.Columns.Add(
                 new TableColumn<CancelOrderTableEntry, string>(SR.ColumnDiagnosticService,
-                    delegate(CancelOrderTableEntry entry) { return Format.Custom(entry.CancelOrderTableItem.DiagnosticServiceName); }, 1.5f));
+                    delegate(CancelOrderTableEntry entry) { return entry.CancelOrderTableItem.DiagnosticServiceName; }, 1.5f));
             this.Columns.Add(
                 new TableColumn<CancelOrderTableEntry, string>(SR.ColumnScheduledRequestDate,
                     delegate(CancelOrderTableEntry entry) { return Format.Date(entry.CancelOrderTableItem.SchedulingRequestDate); }, 0.75f));
             this.Columns.Add(
                 new TableColumn<CancelOrderTableEntry, string>(SR.ColumnPriority,
-                    delegate(CancelOrderTableEntry entry) { return Format.Custom(entry.CancelOrderTableItem.Priority.Value); }, 0.3f));
+                    delegate(CancelOrderTableEntry entry) { return entry.CancelOrderTableItem.Priority.Value; }, 0.3f));
         }
     }
 }

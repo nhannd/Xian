@@ -16,6 +16,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.PatientReconciliation;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -219,18 +220,22 @@ namespace ClearCanvas.Ris.Client.Adt
 
             foreach (RICSummary summary in ricList)
             {
-                DateTime datePart = summary.ModalityProcedureStepScheduledTime.Value.Date;
+                //DateTime datePart = summary.ModalityProcedureStepScheduledTime.Value.Date;
+                if (summary.ModalityProcedureStepScheduledTime != null)
+                {
+                    DateTime datePart = summary.ModalityProcedureStepScheduledTime.Value.Date;
 
-                if (datePart == today)
-                    ricForToday.Add(summary);
-                else if (datePart == today.AddDays(-1))
-                    ricForYesterday.Add(summary);
-                else if (datePart == today.AddDays(1))
-                    ricForTomorrow.Add(summary);
-                else if (datePart.CompareTo(today) < 0)
-                    ricForPast.Add(summary);
-                else
-                    ricForFuture.Add(summary);
+                    if (datePart == today)
+                        ricForToday.Add(summary);
+                    else if (datePart == today.AddDays(-1))
+                        ricForYesterday.Add(summary);
+                    else if (datePart == today.AddDays(1))
+                        ricForTomorrow.Add(summary);
+                    else if (datePart.CompareTo(today) < 0)
+                        ricForPast.Add(summary);
+                    else
+                        ricForFuture.Add(summary);
+                }
             }
 
             Comparison<RICSummary> summaryComparer = new Comparison<RICSummary>(CompareRICSummary);
@@ -287,14 +292,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string ReconciliationMessage
         {
-            //TODO: PersonNameDetail formatting
-            get { return String.Format(SR.MessageUnreconciledRecordsAlert, _worklistPreview.Name.GivenName.Substring(0, 1), _worklistPreview.Name.FamilyName); }
+            get { return String.Format(SR.MessageUnreconciledRecordsAlert, PersonNameFormat.Format(_worklistPreview.Name, "%g. %F")); }
         }
 
         public string Name
         {
-            //TODO: PersonNameDetail formatting
-            get { return String.Format("{0}, {1}", _worklistPreview.Name.FamilyName, _worklistPreview.Name.GivenName); }
+            get { return PersonNameFormat.Format(_worklistPreview.Name); }
         }
 
         public string DateOfBirth
@@ -309,8 +312,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Healthcard
         {
-            //TODO: HealthcardDetail formatting
-            get { return String.Format("{0} {1} {2}", _worklistPreview.Healthcard.AssigningAuthority, _worklistPreview.Healthcard.Id, _worklistPreview.Healthcard.VersionCode); }
+            get { return HealthcardFormat.Format(_worklistPreview.Healthcard); }
         }
 
         public string Sex
@@ -320,57 +322,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string CurrentHomeAddress
         {
-            //TODO: AddressDetail formatting
-            //get { return Format.Custom(_worklistPreview.CurrentHomeAddress); }
-            get
-            {
-                if (_worklistPreview.CurrentHomeAddress == null)
-                    return "";
-
-                StringBuilder sb = new StringBuilder();
-                if (!String.IsNullOrEmpty(_worklistPreview.CurrentHomeAddress.Unit))
-                {
-                    sb.Append(_worklistPreview.CurrentHomeAddress.Unit);
-                    sb.Append("-");
-                }
-                sb.AppendFormat("{0}, {1} {2} {3}",
-                    _worklistPreview.CurrentHomeAddress.Street,
-                    _worklistPreview.CurrentHomeAddress.City,
-                    _worklistPreview.CurrentHomeAddress.Province,
-                    _worklistPreview.CurrentHomeAddress.PostalCode);
-
-                return sb.ToString();
-            }
+            get { return _worklistPreview.CurrentHomeAddress == null ? "" : AddressFormat.Format(_worklistPreview.CurrentHomeAddress); }
         }
 
         public string CurrentHomePhone
         {
-            //TODO: TelephoneDetail formatting
-            //get { return Format.Custom(_worklistPreview.CurrentHomePhone); }
-            get {
-                if (_worklistPreview.CurrentHomePhone == null)
-                    return "";
-
-                StringBuilder sb = new StringBuilder();
-                if (!String.IsNullOrEmpty(_worklistPreview.CurrentHomePhone.CountryCode))
-                {
-                    sb.Append(_worklistPreview.CurrentHomePhone.CountryCode);
-                    sb.Append(" ");
-                }
-
-                sb.Append(string.Format("({0}) {1}-{2}",
-                    _worklistPreview.CurrentHomePhone.AreaCode,
-                    _worklistPreview.CurrentHomePhone.Number.Substring(0, 3),
-                    _worklistPreview.CurrentHomePhone.Number.Substring(3)));
-
-                if (!String.IsNullOrEmpty(_worklistPreview.CurrentHomePhone.Extension))
-                {
-                    sb.Append(" x");
-                    sb.Append(_worklistPreview.CurrentHomePhone.Extension);
-                }
-
-                return sb.ToString();
-            }
+            get { return _worklistPreview.CurrentHomePhone == null ? "" : TelephoneFormat.Format(_worklistPreview.CurrentHomePhone); }
         }
 
         public bool HasMoreBasicInfo

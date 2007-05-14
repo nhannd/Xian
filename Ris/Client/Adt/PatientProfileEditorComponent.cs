@@ -8,6 +8,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -85,7 +86,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         _profile = response.PatientDetail;
 
                         this.Host.SetTitle(
-                            string.Format(SR.TitlePatientComponent, Format.Custom(_profile.Name), _profile.Mrn));
+                            string.Format(SR.TitlePatientComponent, PersonNameFormat.Format(_profile.Name), _profile.Mrn));
                     }
                 });
 

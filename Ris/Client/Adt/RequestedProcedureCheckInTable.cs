@@ -56,13 +56,13 @@ namespace ClearCanvas.Ris.Client.Adt
                    delegate(RequestedProcedureCheckInTableEntry entry, bool value) { entry.Checked = value; }, 0.30f));
             this.Columns.Add(
                 new TableColumn<RequestedProcedureCheckInTableEntry, string>("Requested Procedures",
-                    delegate(RequestedProcedureCheckInTableEntry entry) { return Format.Custom(entry.CheckInTableItem.RequestedProcedureName); }, 1.0f));
+                    delegate(RequestedProcedureCheckInTableEntry entry) { return entry.CheckInTableItem.RequestedProcedureName; }, 1.0f));
             this.Columns.Add(
                 new TableColumn<RequestedProcedureCheckInTableEntry, string>("Scheduling Date",
                 delegate(RequestedProcedureCheckInTableEntry entry) { return Format.Date(entry.CheckInTableItem.SchedulingDate); }, 0.5f));
             this.Columns.Add(
                 new TableColumn<RequestedProcedureCheckInTableEntry, string>("Ordering Facility",
-                delegate(RequestedProcedureCheckInTableEntry entry) { return Format.Custom(entry.CheckInTableItem.OrderingFacility); }, 0.5f));
+                delegate(RequestedProcedureCheckInTableEntry entry) { return entry.CheckInTableItem.OrderingFacility; }, 0.5f));
         }
     }
 }

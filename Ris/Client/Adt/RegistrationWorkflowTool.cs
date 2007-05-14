@@ -10,6 +10,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using System.Collections;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -98,7 +99,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     RequestedProcedureCheckInComponent checkInComponent = new RequestedProcedureCheckInComponent(item);
                     ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                        desktopWindow, checkInComponent, String.Format("Checking in {0}", Format.Custom(item.Name)));
+                        desktopWindow, checkInComponent, String.Format("Checking in {0}", PersonNameFormat.Format(item.Name)));
 
                     if (exitCode == ApplicationComponentExitCode.Normal)
                     {
@@ -146,7 +147,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     CancelOrderComponent cancelOrderComponent = new CancelOrderComponent(item.PatientProfileRef);
                     ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                        desktopWindow, cancelOrderComponent, String.Format("Cancel Order for {0}", Format.Custom(item.Name)));
+                        desktopWindow, cancelOrderComponent, String.Format("Cancel Order for {0}", PersonNameFormat.Format(item.Name)));
 
                     if (exitCode == ApplicationComponentExitCode.Normal)
                     {

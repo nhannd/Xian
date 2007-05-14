@@ -28,7 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt
                   delegate(PatientProfileSummary profile) { return profile.Healthcard; }, 1.0f));
             this.Columns.Add(
               new TableColumn<PatientProfileSummary, string>(SR.ColumnDateOfBirth,
-                  delegate(PatientProfileSummary profile) { return Format.Custom(profile.DateOfBirth); }, 1.0f));
+                  delegate(PatientProfileSummary profile) { return Format.Date(profile.DateOfBirth); }, 1.0f));
             this.Columns.Add(
               new TableColumn<PatientProfileSummary, string>(SR.ColumnSex,
                   delegate(PatientProfileSummary profile) { return profile.Sex.Value; }, 0.5f));

@@ -109,20 +109,5 @@ namespace ClearCanvas.Desktop
         {
             return dt == null ? "" : dt.Value.ToString(DateTimeFormat);
         }
-
-        /// <summary>
-        /// Formats the specified object.  For now, this method just calls the object's ToString() method.
-        /// In future, we may want to add the ability to hook in formatting overrides via extension points.
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
-        public static string Custom(object obj)
-        {
-            if (obj is IFormattable)
-            {
-                return (obj as IFormattable).ToString(null, null);
-            }
-            return (obj == null ? "" : obj.ToString());
-        }
     }
 }

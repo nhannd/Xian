@@ -89,7 +89,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                             if (checkInStep != null)
                                 mpsStatus = "Checked In";
                             else
-                                mpsStatus = activityStatusTable[earliestMPS.State].Value;   
+                                mpsStatus = activityStatusTable[earliestMPS.State].Value;
+                        }
+                        else
+                        {
+                            Console.WriteLine("Problems houston");
                         }
 
 

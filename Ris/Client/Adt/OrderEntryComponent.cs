@@ -16,6 +16,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -270,12 +271,11 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get
             {
-                //TODO: PersonNameDetail formatting
                 List<string> physicianStrings = new List<string>();
                 physicianStrings.Add("");
                 physicianStrings.AddRange(
                     CollectionUtils.Map<PractitionerSummary, string, List<string>>(_orderingPhysicianChoices,
-                            delegate(PractitionerSummary p) { return String.Format("{0}, {1}", p.PersonNameDetail.FamilyName, p.PersonNameDetail.GivenName); }));
+                            delegate(PractitionerSummary p) { return PersonNameFormat.Format(p.PersonNameDetail); }));
 
                 return physicianStrings;
             }
@@ -283,12 +283,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string SelectedOrderingPhysician
         {
-            get { return _selectedOrderingPhysician == null ? "" : Format.Custom(_selectedOrderingPhysician.PersonNameDetail); }
+            get { return _selectedOrderingPhysician == null ? "" : PersonNameFormat.Format(_selectedOrderingPhysician.PersonNameDetail); }
             set
             {
                 _selectedOrderingPhysician = (value == "") ? null :
                    CollectionUtils.SelectFirst<PractitionerSummary>(_orderingPhysicianChoices,
-                       delegate(PractitionerSummary p) { return String.Format("{0}, {1}", p.PersonNameDetail.FamilyName, p.PersonNameDetail.GivenName) == value; });
+                       delegate(PractitionerSummary p) { return PersonNameFormat.Format(p.PersonNameDetail) == value; });
             }
         }
 

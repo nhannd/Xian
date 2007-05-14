@@ -11,6 +11,7 @@ using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -54,7 +55,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
                         //TODO: PersonNameDetail formatting
                         this.Host.SetTitle(string.Format(SR.TitleVisitSummaryComponent,
-                            String.Format("{0}, {1}", response.PatientDetail.Name.FamilyName, response.PatientDetail.Name.GivenName), 
+                            PersonNameFormat.Format(response.PatientDetail.Name), 
                             String.Format("{0} {1}", response.PatientDetail.MrnAssigningAuthority, response.PatientDetail.Mrn)));                    
                     });
 

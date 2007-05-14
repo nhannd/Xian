@@ -6,6 +6,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Common;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -17,10 +18,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(RICSummary item) { return item.RequestedProcedureName; }));
 
             //TODO: PersonNameDetail formatting
-            //this.Columns.Add(new TableColumn<RICSummary, string>("Ordering Physician",
-            //    delegate(RICSummary item) { return Format.Custom(item.OrderingPractitioner); }));
             this.Columns.Add(new TableColumn<RICSummary, string>("Ordering Physician",
-                delegate(RICSummary item) { return String.Format("{0}, {1}", item.OrderingPractitioner.FamilyName, item.OrderingPractitioner.GivenName); }));
+                delegate(RICSummary item) { return PersonNameFormat.Format(item.OrderingPractitioner, "%F, %G"); }));
 
             this.Columns.Add(new TableColumn<RICSummary, string>("Insurance",
                 delegate(RICSummary item) { return item.Insurance; }));

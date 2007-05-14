@@ -45,6 +45,7 @@
   <ItemGroup>
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
+    <Compile Include="Formatting\AddressFormat.cs" />
     <Compile Include="AddressSettings.cs" />
     <Compile Include="AddressSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -67,6 +68,7 @@
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+    <Compile Include="Formatting\HealthcardFormat.cs" />
     <Compile Include="IDropContext.cs" />
     <Compile Include="IDropHandler.cs" />
     <Compile Include="IFolder.cs" />
@@ -78,8 +80,10 @@
     <Compile Include="NoteTable.cs" />
     <Compile Include="PagingActionModel.cs" />
     <Compile Include="PagingController.cs" />
+    <Compile Include="Formatting\PersonNameFormat.cs" />
     <Compile Include="RemoteServiceProvider.cs" />
     <Compile Include="SessionManager.cs" />
+    <Compile Include="Formatting\TelephoneFormat.cs" />
     <Compile Include="WorkflowFolderSystem.cs" />
     <Compile Include="PhoneNumberEditorComponent.cs" />
     <Compile Include="PhoneNumbersSummaryComponent.cs" />

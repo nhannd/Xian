@@ -1,5 +1,5 @@
 ﻿<?xml version='1.0' encoding='utf-8'?>
-<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client.Common" GeneratedClassName="FormatSettings">
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client" GeneratedClassName="FormatSettings">
   <Profiles />
   <Settings>
     <Setting Name="HealthcardNumberMask" Description="Mask used on healthcard number input fields" Type="System.String" Scope="Application">
@@ -13,6 +13,21 @@
     </Setting>
     <Setting Name="TelephoneNumberFullMask" Description="Mask used on full telephone number input fields" Type="System.String" Scope="Application">
       <Value Profile="(Default)">(000) 000-0000</Value>
+    </Setting>
+    <Setting Name="PersonNameDefaultFormat" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">%F, %G %M</Value>
+    </Setting>
+    <Setting Name="HealthcardDefaultFormat" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">%A %N %V</Value>
+    </Setting>
+    <Setting Name="AddressDefaultFormat" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">%S, %V %P %Z</Value>
+    </Setting>
+    <Setting Name="TelephoneNumberSuppressCountryCode" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">1</Value>
+    </Setting>
+    <Setting Name="TelephoneNumberDefaultFormat" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">%c (%A) %N %X</Value>
     </Setting>
   </Settings>
 </SettingsFile>
