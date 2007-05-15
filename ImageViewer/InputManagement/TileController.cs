@@ -292,8 +292,9 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		private bool ProcessTrackMessage(TrackMousePositionMessage trackMessage)
 		{
 			this.Location = trackMessage.Location;
-
-			if (_startMousePoint != trackMessage.Location)
+						
+			if (Math.Abs(_startMousePoint.X - this.Location.X) > 2 ||
+				Math.Abs(_startMousePoint.Y - this.Location.Y) > 2)
 				_contextMenuEnabled = false;
 
 			if (this.CaptureHandler != null)
