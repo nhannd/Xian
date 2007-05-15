@@ -40,6 +40,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 			}
 			catch (Exception e)
 			{
+				Platform.Log(e);
 				//we throw a serializable, non-FaultException-derived exception so that the 
 				//client channel *does* get closed.
 				string message = SR.ExceptionFailedToGetServerConfiguration;
@@ -56,6 +57,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 			}
 			catch (Exception e)
 			{
+				Platform.Log(e);
 				//we throw a serializable, non-FaultException-derived exception so that the 
 				//client channel *does* get closed.
 				string message = SR.ExceptionFailedToUpdateServerConfiguration;

@@ -40,6 +40,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
+				Platform.Log(e);
 				string message = SR.ExceptionErrorProcessingRetrieveStarted;
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
 				throw new LocalDataStoreException(exceptionMessage);
@@ -54,6 +55,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
+				Platform.Log(e);
 				string message = String.Format(SR.ExceptionErrorProcessingReceivedFile, filesReceivedInformation.FileName);
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
 				throw new LocalDataStoreException(exceptionMessage);
@@ -68,6 +70,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
+				Platform.Log(e);
 				string message = SR.ExceptionErrorProcessingReceiveError;
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
 				throw new LocalDataStoreException(exceptionMessage);
@@ -82,6 +85,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
+				Platform.Log(e); 
 				string message = SR.ExceptionErrorProcessingSendStarted;
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
 				throw new LocalDataStoreException(exceptionMessage);
@@ -96,6 +100,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
+				Platform.Log(e);
 				string message = String.Format(SR.ExceptionErrorProcessingSentFile, sentFileInformation.FileName);
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
 				throw new LocalDataStoreException(exceptionMessage);
@@ -110,6 +115,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
+				Platform.Log(e);
 				string message = SR.ExceptionErrorProcessingSendError;
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
 				throw new LocalDataStoreException(exceptionMessage);
@@ -124,6 +130,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
+				Platform.Log(e);
 				string message = SR.ExceptionErrorProcessingImportRequest;
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
 				throw new LocalDataStoreException(exceptionMessage);
@@ -138,6 +145,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
+				Platform.Log(e); 
 				string message = SR.ExceptionErrorProcessingReindexRequest;
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
 				throw new LocalDataStoreException(exceptionMessage);
