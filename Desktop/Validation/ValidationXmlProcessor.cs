@@ -37,7 +37,7 @@ namespace ClearCanvas.Desktop.Validation
         public static void ProcessXml(ApplicationComponent target)
         {
             ResourceResolver rr = new ResourceResolver(target.GetType().Assembly);
-            string resourceName = string.Format("{0}.cfg.xml", target.GetType().Name);
+            string resourceName = string.Format("{0}.val.xml", target.GetType().Name);
             try
             {
                 using (Stream xmlStream = rr.OpenResource(resourceName))

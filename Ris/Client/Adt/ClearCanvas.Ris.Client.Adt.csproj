@@ -216,10 +216,10 @@
     <EmbeddedResource Include="Icons\FolderOpenMedium.png" />
     <EmbeddedResource Include="Icons\FolderOpenSmall.png" />
     <EmbeddedResource Include="Icons\Edit.png" />
-    <EmbeddedResource Include="PatientProfileAdditionalInfoEditorComponent.cfg.xml" />
+    <EmbeddedResource Include="PatientProfileAdditionalInfoEditorComponent.val.xml" />
     <EmbeddedResource Include="RegistrationPreview.html" />
-    <EmbeddedResource Include="OrderEntryComponent.cfg.xml" />
-    <EmbeddedResource Include="PatientProfileDetailsEditorComponent.cfg.xml" />
+    <EmbeddedResource Include="OrderEntryComponent.val.xml" />
+    <EmbeddedResource Include="PatientProfileDetailsEditorComponent.val.xml" />
     <EmbeddedResource Include="PatientProfileDiff.html" />
     <EmbeddedResource Include="Icons\HL7QueueProcessItemToolMedium.png" />
     <EmbeddedResource Include="Icons\HL7QueueProcessItemToolLarge.png" />

@@ -138,10 +138,10 @@
     <EmbeddedResource Include="Icons\Edit.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="AddressesSummaryComponent.cfg.xml" />
+    <EmbeddedResource Include="AddressesSummaryComponent.val.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="EmailAddressEditorComponent.cfg.xml" />
+    <EmbeddedResource Include="EmailAddressEditorComponent.val.xml" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AddressSettings.settings">
@@ -156,7 +156,7 @@
     <None Include="RisClient.bat" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="ContactPersonEditorComponent.cfg.xml" />
+    <EmbeddedResource Include="ContactPersonEditorComponent.val.xml" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\Previous.png" />
