@@ -700,7 +700,7 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to New Order.
+        ///   Looks up a localized string similar to New Order for {0} {1}.
         /// </summary>
         internal static string TitleNewOrder {
             get {

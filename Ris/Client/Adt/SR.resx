@@ -331,7 +331,7 @@
     <value>JScript Window</value>
   </data>
   <data name="TitleNewOrder" xml:space="preserve">
-    <value>New Order</value>
+    <value>New Order for {0} {1}</value>
   </data>
   <data name="TitleNewPatient" xml:space="preserve">
     <value>New Patient</value>

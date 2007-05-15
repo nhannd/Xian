@@ -81,22 +81,22 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
-                NewOrder(item.PatientProfileRef, context.DesktopWindow);
+                NewOrder(item, context.DesktopWindow);
             }
             else if (this.ContextBase is IRegistrationPreviewToolContext)
             {
                 IRegistrationPreviewToolContext context = (IRegistrationPreviewToolContext)this.ContextBase;
-                NewOrder(context.WorklistItem.PatientProfileRef, context.DesktopWindow);
+                NewOrder(context.WorklistItem, context.DesktopWindow);
             }
         }
 
-        private void NewOrder(EntityRef profileRef, IDesktopWindow desktopWindow)
+        private void NewOrder(RegistrationWorklistItem worklistItem, IDesktopWindow desktopWindow)
         {
-            OrderEntryComponent component = new OrderEntryComponent(profileRef);
+            OrderEntryComponent component = new OrderEntryComponent(worklistItem.PatientProfileRef);
             ApplicationComponent.LaunchAsWorkspace(
                 desktopWindow,
                 component,
-                SR.TitleNewOrder,
+                string.Format(SR.TitleNewOrder, PersonNameFormat.Format(worklistItem.Name), worklistItem.MrnID),
                 null);
         }
     }
