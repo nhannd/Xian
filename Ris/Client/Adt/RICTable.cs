@@ -17,7 +17,6 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Columns.Add(new TableColumn<RICSummary, string>("Requested Procedure",
                 delegate(RICSummary item) { return item.RequestedProcedureName; }));
 
-            //TODO: PersonNameDetail formatting
             this.Columns.Add(new TableColumn<RICSummary, string>("Ordering Physician",
                 delegate(RICSummary item) { return PersonNameFormat.Format(item.OrderingPractitioner, "%F, %G"); }));
 

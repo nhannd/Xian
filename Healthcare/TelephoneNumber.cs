@@ -13,7 +13,7 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// TelephoneNumber component
     /// </summary>
-	public partial class TelephoneNumber : IFormattable
+	public partial class TelephoneNumber
 	{
         private void CustomInitialize()
         {
@@ -40,43 +40,6 @@ namespace ClearCanvas.Healthcare {
                 ((this._equipment == default(TelephoneEquipment)) ? (that._equipment == default(TelephoneEquipment)) : this._equipment.Equals(that._equipment)) &&
                 true;
 
-        }
-
-
-        #region IFormattable Members
-
-        public string ToString(string format, IFormatProvider formatProvider)
-        {
-            // TODO interpret the format string according to custom-defined format characters
-            StringBuilder sb = new StringBuilder();
-            if (!String.IsNullOrEmpty(this.CountryCode) && !this.CountryCode.Equals(TelephoneNumber.DefaultCountryCode))
-            {
-                sb.Append("+");
-                sb.Append(this.CountryCode);
-                sb.Append(" ");
-            }
-            
-            sb.Append(string.Format("({0}) {1}-{2}", this.AreaCode, this.Number.Substring(0, 3), this.Number.Substring(3)));
-            
-            if (!String.IsNullOrEmpty(this.Extension))
-            {
-                sb.Append(" x");
-                sb.Append(this.Extension);
-            }
-
-            return sb.ToString();
-        }
-
-        #endregion
-
-        public override string ToString()
-        {
-            return this.ToString(null, null);
-        }
-
-        public static string DefaultCountryCode
-        {
-            get { return TelephoneNumberSettings.Default.DefaultCountryCode; }
         }
     }
 }

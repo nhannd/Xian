@@ -128,12 +128,6 @@
     <Compile Include="Staff.cs" />
     <Compile Include="TelephoneEquipment.cs" />
     <Compile Include="TelephoneNumber.cs" />
-    <Compile Include="TelephoneNumberSettings.cs" />
-    <Compile Include="TelephoneNumberSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>TelephoneNumberSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="TelephoneUse.cs" />
     <Compile Include="TranscriptionStep.cs" />
     <Compile Include="VerificationStep.cs" />
@@ -179,10 +173,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="TelephoneNumberSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>TelephoneNumberSettings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Content Include="Alert\AddressAlert.cfg.xml" />
