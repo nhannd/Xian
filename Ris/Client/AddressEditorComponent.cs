@@ -21,7 +21,6 @@ namespace ClearCanvas.Ris.Client
     {
         private AddressDetail _address;
         private IList<EnumValueInfo> _addressTypes;
-        private AddressSettings _settings;
 
         public AddressEditorComponent(AddressDetail address, IList<EnumValueInfo> addressTypes)
         {
@@ -42,7 +41,6 @@ namespace ClearCanvas.Ris.Client
         public override void Start()
         {
             base.Start();
-            _settings = new AddressSettings();
         }
 
         public string Street
@@ -87,7 +85,7 @@ namespace ClearCanvas.Ris.Client
 
         public ICollection<string> ProvinceChoices
         {
-            get { return _settings.ProvinceChoices; }
+            get { return AddressSettings.Default.ProvinceChoices; }
         }
 
         public string Country
@@ -102,7 +100,7 @@ namespace ClearCanvas.Ris.Client
 
         public ICollection<string> CountryChoices
         {
-            get { return _settings.CountryChoices; }
+            get { return AddressSettings.Default.CountryChoices; }
         }
 
         public string PostalCode
