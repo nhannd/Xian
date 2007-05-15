@@ -207,7 +207,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				progressItem.Identifier = Guid.NewGuid();
 				progressItem.AllowedCancellationOperations = CancellationFlags.Cancel;
-				progressItem.StartTime = DateTime.Now;
+				progressItem.StartTime = Platform.Time;
 				progressItem.LastActive = progressItem.StartTime;
 
 				progressItem.NumberOfFailedImports = 0;

@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						return;
 					}
 
-					jobInformation.ProgressItem.LastActive = DateTime.Now;
+					jobInformation.ProgressItem.LastActive = Platform.Time;
 
 					bool updateProgress = false;
 

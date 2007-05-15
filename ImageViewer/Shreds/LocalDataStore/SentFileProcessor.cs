@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					progressItem = new SendProgressItem();
 					progressItem.Identifier = Guid.NewGuid();
-					progressItem.StartTime = DateTime.Now;
+					progressItem.StartTime = Platform.Time;
 					progressItem.LastActive = progressItem.StartTime;
 					progressItem.ToAETitle = toAETitle;
 					progressItem.StudyInformation = studyInformation;
@@ -166,8 +166,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 								if (progressItem.StatusMessage == SR.MessagePending)
 									progressItem.StatusMessage = "";
-								
-								progressItem.LastActive = DateTime.Now;
+
+								progressItem.LastActive = Platform.Time;
 								++progressItem.NumberOfFilesExported;
 								LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem.Clone());
 							}
@@ -188,7 +188,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						{
 							SendProgressItem progressItem = GetProgressItem(information.ToAETitle, information.StudyInformation);
 							progressItem.StudyInformation = information.StudyInformation;
-							progressItem.LastActive = DateTime.Now; 
+							progressItem.LastActive = Platform.Time; 
 							progressItem.StatusMessage = SR.MessagePending;
 							LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem.Clone());
 						}
@@ -204,7 +204,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						{
 							SendProgressItem progressItem = GetProgressItem(errorInformation.ToAETitle, errorInformation.StudyInformation);
 							progressItem.StudyInformation = errorInformation.StudyInformation;
-							progressItem.LastActive = DateTime.Now;
+							progressItem.LastActive = Platform.Time;
 							progressItem.StatusMessage = errorInformation.ErrorMessage;
 							LocalDataStoreActivityPublisher.Instance.SendProgressChanged(progressItem.Clone());
 						}

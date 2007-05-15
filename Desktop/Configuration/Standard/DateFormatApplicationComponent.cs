@@ -106,7 +106,7 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 		{
 			get
 			{
-				return DateTime.Now.ToString(this.DateFormat);
+				return Platform.Time.ToString(this.DateFormat);
 			}
 		}
 

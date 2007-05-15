@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					{
 						_activeJobInformation.ProgressItem.Identifier = Guid.NewGuid();
 						_activeJobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Cancel;
-						_activeJobInformation.ProgressItem.StartTime = DateTime.Now;
+						_activeJobInformation.ProgressItem.StartTime = Platform.Time;
 						_activeJobInformation.ProgressItem.LastActive = _activeJobInformation.ProgressItem.StartTime;
 						_activeJobInformation.ProgressItem.Cancelled = false;
 						_activeJobInformation.ProgressItem.Removed = false;

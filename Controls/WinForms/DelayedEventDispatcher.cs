@@ -20,6 +20,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Reflection;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Controls.WinForms
 {
@@ -117,7 +118,7 @@ namespace ClearCanvas.Controls.WinForms
       // Save the event state.
       this._recentEventArgs = args;
       this._recentSender = sender;
-      this._recentEventTime = DateTime.Now;
+	  this._recentEventTime = Platform.Time;
       
       // If postponing is disabled, raise the event directly.
       if (!this.DelayEnabled)
@@ -133,7 +134,7 @@ namespace ClearCanvas.Controls.WinForms
       // a TreeView, for example, will display the new node in a selected state before 
       // the AfterClick event is raised.
       if (!this._delayMouseEvents && (GetAsyncKeyState(this._vkLeftButton) != 0))
-        this._recentEventTime = DateTime.Now - this._delay - TimeSpan.FromMilliseconds(100);
+		  this._recentEventTime = Platform.Time - this._delay - TimeSpan.FromMilliseconds(100);
     }
 
 
@@ -196,7 +197,7 @@ namespace ClearCanvas.Controls.WinForms
       if (this._recentEventArgs == null)
         return;
 
-      TimeSpan elapsed = DateTime.Now - this._recentEventTime;
+	TimeSpan elapsed = Platform.Time - this._recentEventTime;
       if (elapsed < this._delay)
         return;
     

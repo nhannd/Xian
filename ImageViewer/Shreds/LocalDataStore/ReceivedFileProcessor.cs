@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						progressItem = new InternalReceiveProgressItem();
 						progressItem.Identifier = Guid.NewGuid();
 						progressItem.AllowedCancellationOperations = CancellationFlags.Clear;
-						progressItem.StartTime = DateTime.Now;
+						progressItem.StartTime = Platform.Time;
 						progressItem.LastActive = progressItem.StartTime;
 
 						progressItem.FromAETitle = fromAETitle;
@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					ImportedSopInstanceInformation importedSopInformation = null;
 
-					progressItem.LastActive = DateTime.Now;
+					progressItem.LastActive = Platform.Time;
 
 					if (receivedFileImportInformation.CompletedStage == DicomFileImporter.ImportStage.FileParsed)
 					{
@@ -268,7 +268,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					lock (progressItem)
 					{
 						progressItem.StudyInformation = information.StudyInformation;
-						progressItem.LastActive = DateTime.Now;
+						progressItem.LastActive = Platform.Time;
 						progressItem.TerminalErrorMessage = null;
 						progressItem.StatusMessage = SR.MessagePending;
 						LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(progressItem.Clone());
@@ -285,7 +285,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					lock (progressItem)
 					{
 						progressItem.StudyInformation = errorInformation.StudyInformation;
-						progressItem.LastActive = DateTime.Now;
+						progressItem.LastActive = Platform.Time;
 						progressItem.TerminalErrorMessage = errorInformation.ErrorMessage;
 						this.FormatErrorMessage(progressItem, new Exception(errorInformation.ErrorMessage));
 						LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(progressItem.Clone());
