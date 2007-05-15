@@ -673,18 +673,4 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			set { _fileImportBehaviour = value; }
 		}
 	}
-
-	[DataContract]
-	public class LocalDataStoreFaultException : FaultException
-	{
-		public LocalDataStoreFaultException()
-			: base()
-		{
-		}
-
-		public LocalDataStoreFaultException(string message)
-			: base(message)
-		{
-		}
-	}
 }

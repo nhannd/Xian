@@ -5,9 +5,24 @@ using System.ServiceModel;
 
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
+	[Serializable]
+	internal class LocalDataStoreException : Exception
+	{
+		public LocalDataStoreException(string message)
+			: base(message)
+		{
+		}
+
+		protected LocalDataStoreException(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{ 
+		}
+	}
+
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall, ConcurrencyMode = ConcurrencyMode.Multiple)]
 	public class LocalDataStoreServiceType : ILocalDataStoreService
 	{
@@ -27,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				string message = SR.ExceptionErrorProcessingRetrieveStarted;
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
-				throw new LocalDataStoreFaultException(exceptionMessage);
+				throw new LocalDataStoreException(exceptionMessage);
 			}
 		}
 
@@ -41,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				string message = String.Format(SR.ExceptionErrorProcessingReceivedFile, filesReceivedInformation.FileName);
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
-				throw new LocalDataStoreFaultException(exceptionMessage);
+				throw new LocalDataStoreException(exceptionMessage);
 			}
 		}
 
@@ -55,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				string message = SR.ExceptionErrorProcessingReceiveError;
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
-				throw new LocalDataStoreFaultException(exceptionMessage);
+				throw new LocalDataStoreException(exceptionMessage);
 			}
 		}
 
@@ -69,7 +84,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				string message = SR.ExceptionErrorProcessingSendStarted;
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
-				throw new LocalDataStoreFaultException(exceptionMessage);
+				throw new LocalDataStoreException(exceptionMessage);
 			}
 		}
 
@@ -83,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				string message = String.Format(SR.ExceptionErrorProcessingSentFile, sentFileInformation.FileName);
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
-				throw new LocalDataStoreFaultException(exceptionMessage);
+				throw new LocalDataStoreException(exceptionMessage);
 			}
 		}
 
@@ -97,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				string message = SR.ExceptionErrorProcessingSendError;
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
-				throw new LocalDataStoreFaultException(exceptionMessage);
+				throw new LocalDataStoreException(exceptionMessage);
 			}
 		}
 
@@ -111,7 +126,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				string message = SR.ExceptionErrorProcessingImportRequest;
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
-				throw new LocalDataStoreFaultException(exceptionMessage);
+				throw new LocalDataStoreException(exceptionMessage);
 			}
 		}
 
@@ -125,7 +140,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				string message = SR.ExceptionErrorProcessingReindexRequest;
 				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
-				throw new LocalDataStoreFaultException(exceptionMessage);
+				throw new LocalDataStoreException(exceptionMessage);
 			}
 		}
 

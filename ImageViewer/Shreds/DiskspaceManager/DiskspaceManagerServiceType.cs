@@ -5,10 +5,25 @@ using System.ServiceModel;
 
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Services.DiskspaceManager;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 {
-    [ServiceBehavior(InstanceContextMode=InstanceContextMode.PerCall)]
+	[Serializable]
+	internal class DiskspaceManagerException : Exception
+	{
+		public DiskspaceManagerException(string message)
+			: base(message)
+		{
+		}
+
+		protected DiskspaceManagerException(SerializationInfo info, StreamingContext context)
+			: base(info, context)
+		{ 
+		}
+	}
+	
+	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
     public class DiskspaceManagerServiceType : IDiskspaceManagerService
     {
         public DiskspaceManagerServiceType()
@@ -19,12 +34,34 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
 		public ServiceInformation GetServiceInformation()
 		{
-			return DiskspaceManagerProcessor.Instance.GetServiceInformation();
+			try
+			{
+				return DiskspaceManagerProcessor.Instance.GetServiceInformation();
+			}
+			catch (Exception e)
+			{
+				//we throw a serializable, non-FaultException-derived exception so that the 
+				//client channel *does* get closed.
+				string message = SR.ExceptionFailedToGetServerConfiguration;
+				message += "\nDetail: " + e.Message;
+				throw new DiskspaceManagerException(message);
+			}
 		}
 
 		public void UpdateServiceConfiguration(ServiceConfiguration newConfiguration)
 		{
-			DiskspaceManagerProcessor.Instance.UpdateServiceConfiguration(newConfiguration);
+			try
+			{
+				DiskspaceManagerProcessor.Instance.UpdateServiceConfiguration(newConfiguration);
+			}
+			catch (Exception e)
+			{
+				//we throw a serializable, non-FaultException-derived exception so that the 
+				//client channel *does* get closed.
+				string message = SR.ExceptionFailedToUpdateServerConfiguration;
+				message += "\nDetail: " + e.Message;
+				throw new DiskspaceManagerException(message);
+			}
 		}
 
 		#endregion

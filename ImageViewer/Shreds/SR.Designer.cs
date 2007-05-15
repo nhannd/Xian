@@ -223,11 +223,38 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to get Server configuration..
+        /// </summary>
+        internal static string ExceptionFailedToGetServerConfiguration {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToGetServerConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error has occurred while attempting to import the file into the local file store..
         /// </summary>
         internal static string ExceptionFailedToImportFile {
             get {
                 return ResourceManager.GetString("ExceptionFailedToImportFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to initiate a retrieval of the specified items..
+        /// </summary>
+        internal static string ExceptionFailedToInitiateRetrieve {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToInitiateRetrieve", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to initiate a send of the specified items..
+        /// </summary>
+        internal static string ExceptionFailedToInitiateSend {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToInitiateSend", resourceCulture);
             }
         }
         
@@ -246,6 +273,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         internal static string ExceptionFailedToRemoveSubscriber {
             get {
                 return ResourceManager.GetString("ExceptionFailedToRemoveSubscriber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to update Server configuration..
+        /// </summary>
+        internal static string ExceptionFailedToUpdateServerConfiguration {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToUpdateServerConfiguration", resourceCulture);
             }
         }
         

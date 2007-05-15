@@ -26,7 +26,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			catch (Exception e)
 			{
 				string message = String.Format("{0}\nDetail: {1}", SR.ExceptionFailedToAddSubscriber, e.Message);
-				throw new LocalDataStoreFaultException(message);
+				//in the unlikely event of an exception, throw a FaultException, so that the client channel doesn't get closed.
+				throw new FaultException(message);
 			}
 		}
 
@@ -38,8 +39,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
-				string message = String.Format("{0}\nDetail: {1}", SR.ExceptionFailedToAddSubscriber, e.Message);
-				throw new LocalDataStoreFaultException(message);
+				string message = String.Format("{0}\nDetail: {1}", SR.ExceptionFailedToRemoveSubscriber, e.Message);
+				//in the unlikely event of an exception, throw a FaultException, so that the client channel doesn't get closed.
+				throw new FaultException(message);
 			}
 
 		}

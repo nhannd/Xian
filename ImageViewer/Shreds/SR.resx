@@ -171,14 +171,26 @@
   <data name="ExceptionFailedToAddSubscriber" xml:space="preserve">
     <value>Failed to add subscriber to the Local DataStore Activity Monitor service.</value>
   </data>
+  <data name="ExceptionFailedToGetServerConfiguration" xml:space="preserve">
+    <value>Failed to get Server configuration.</value>
+  </data>
   <data name="ExceptionFailedToImportFile" xml:space="preserve">
     <value>An error has occurred while attempting to import the file into the local file store.</value>
+  </data>
+  <data name="ExceptionFailedToInitiateRetrieve" xml:space="preserve">
+    <value>Failed to initiate a retrieval of the specified items.</value>
+  </data>
+  <data name="ExceptionFailedToInitiateSend" xml:space="preserve">
+    <value>Failed to initiate a send of the specified items.</value>
   </data>
   <data name="ExceptionFailedToParseFile" xml:space="preserve">
     <value>An error has occurred while attempting to parse the file.</value>
   </data>
   <data name="ExceptionFailedToRemoveSubscriber" xml:space="preserve">
     <value>Failed to remove subscriber from the Local DataStore Activity Monitor service.</value>
+  </data>
+  <data name="ExceptionFailedToUpdateServerConfiguration" xml:space="preserve">
+    <value>Failed to update Server configuration.</value>
   </data>
   <data name="ExceptionImporterAlreadyStarted" xml:space="preserve">
     <value>The file importer has already been started.</value>
