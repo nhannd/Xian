@@ -125,13 +125,13 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Mrn
         {
-            get { return String.Format("Mrn: {0} {1}", _patientProfile.MrnAssigningAuthority, _patientProfile.Mrn); }
+            get { return String.Format("Mrn: {0}", MrnFormat.Format(_patientProfile.Mrn)); }
         }
 
         public string HealthCard
         {
             get { return _patientProfile == null ? "" : 
-                String.Format("Healthcard: {0} {1} {2}", _patientProfile.HealthcardAssigningAuthority, _patientProfile.Healthcard, _patientProfile.HealthcardVC); }
+                String.Format("Healthcard: {0}", HealthcardFormat.Format(_patientProfile.Healthcard)); }
         }
 
         public string AgeSex

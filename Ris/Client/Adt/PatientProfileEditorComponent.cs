@@ -70,8 +70,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     if (_isNew)
                     {
                         _profile = new PatientProfileDetail();
-                        _profile.MrnAssigningAuthority = "UHN";    // TODO remove this hack
-                        _profile.HealthcardAssigningAuthority = "Ontario";    // TODO remove this hack
+                        _profile.Mrn.AssigningAuthority = "UHN";    // TODO remove this hack
+                        _profile.Healthcard.AssigningAuthority = "Ontario";    // TODO remove this hack
                         _profile.Sex = formData.SexChoices[0];
                         _profile.Religion = formData.ReligionChoices[0];
                         _profile.PrimaryLanguage = formData.PrimaryLanguageChoices[0];
@@ -86,7 +86,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         _profile = response.PatientDetail;
 
                         this.Host.SetTitle(
-                            string.Format(SR.TitlePatientComponent, PersonNameFormat.Format(_profile.Name), _profile.Mrn));
+                            string.Format(SR.TitlePatientComponent, PersonNameFormat.Format(_profile.Name), MrnFormat.Format(_profile.Mrn)));
                     }
                 });
 

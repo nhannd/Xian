@@ -7,6 +7,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -26,8 +27,8 @@ namespace ClearCanvas.Ris.Client.Adt
             if (_patientProfile != null)
             {
                 return String.Format(SR.TitlePatientComponent,
-                    String.Format("{0}, {1}", _patientProfile.Name.FamilyName, _patientProfile.Name.GivenName),
-                    String.Format("{0} {1}", _patientProfile.MrnAssigningAuthority, _patientProfile.Mrn));
+                    PersonNameFormat.Format(_patientProfile.Name),
+                    MrnFormat.Format(_patientProfile.Mrn));
             }
 
             return SR.TitlePatientProfile;   // doesn't matter, cause the component will set the title when it starts

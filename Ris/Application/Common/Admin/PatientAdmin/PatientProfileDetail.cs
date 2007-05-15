@@ -11,6 +11,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
     {
         public PatientProfileDetail()
         {
+            this.Mrn = new MrnDetail();
+            this.Healthcard = new HealthcardDetail();
             this.Addresses = new List<AddressDetail>();
             this.ContactPersons = new List<ContactPersonDetail>();
             this.EmailAddresses = new List<EmailAddressDetail>();
@@ -20,22 +22,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.PatientAdmin
         }
 
         [DataMember]
-        public string Mrn;
+        public MrnDetail Mrn;
 
         [DataMember]
-        public string MrnAssigningAuthority;
-
-        [DataMember]
-        public string Healthcard;
-
-        [DataMember]
-        public string HealthcardAssigningAuthority;
-
-        [DataMember]
-        public string HealthcardVC;
-
-        [DataMember]
-        public DateTime? HealthcardExpiry;
+        public HealthcardDetail Healthcard;
 
         [DataMember]
         public PersonNameDetail Name;

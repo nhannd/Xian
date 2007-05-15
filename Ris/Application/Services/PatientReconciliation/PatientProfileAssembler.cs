@@ -14,11 +14,9 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
         public PatientProfileSummary CreatePatientProfileSummary(PatientProfile profile, IPersistenceContext context)
         {
             PatientProfileSummary summary = new PatientProfileSummary();
-
-            summary.AssigningAuthority = profile.Mrn.AssigningAuthority;
+            summary.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
             summary.DateOfBirth = profile.DateOfBirth;
             summary.Healthcard = profile.Healthcard.Id;
-            summary.Mrn = profile.Mrn.Id;
             summary.Name = profile.Name.ToString();
             summary.PatientRef = profile.Patient.GetRef();
             summary.ProfileRef = profile.GetRef();

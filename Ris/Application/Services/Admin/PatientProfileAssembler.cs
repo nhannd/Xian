@@ -16,13 +16,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         {
             PatientProfileDetail detail = new PatientProfileDetail();
 
-            detail.Mrn = profile.Mrn.Id;
-            detail.MrnAssigningAuthority = profile.Mrn.AssigningAuthority;
-
-            detail.Healthcard = profile.Healthcard.Id;
-            detail.HealthcardAssigningAuthority = profile.Healthcard.AssigningAuthority;
-            detail.HealthcardVC = profile.Healthcard.VersionCode;
-            detail.HealthcardExpiry = profile.Healthcard.ExpiryDate;
+            detail.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
+            detail.Healthcard = new HealthcardDetail(profile.Healthcard.Id, profile.Healthcard.AssigningAuthority,
+                profile.Healthcard.VersionCode, profile.Healthcard.ExpiryDate);
 
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             detail.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
@@ -86,13 +82,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
         public void UpdatePatientProfile(PatientProfile profile, PatientProfileDetail detail, IPersistenceContext context)
         {
-            profile.Mrn.Id = detail.Mrn;
-            profile.Mrn.AssigningAuthority = detail.MrnAssigningAuthority;
+            profile.Mrn.Id = detail.Mrn.Id;
+            profile.Mrn.AssigningAuthority = detail.Mrn.AssigningAuthority;
 
-            profile.Healthcard.Id = detail.Healthcard;
-            profile.Healthcard.AssigningAuthority = detail.HealthcardAssigningAuthority;
-            profile.Healthcard.VersionCode = detail.HealthcardVC;
-            profile.Healthcard.ExpiryDate = detail.HealthcardExpiry;
+            profile.Healthcard.Id = detail.Healthcard.Id;
+            profile.Healthcard.AssigningAuthority = detail.Healthcard.AssigningAuthority;
+            profile.Healthcard.VersionCode = detail.Healthcard.VersionCode;
+            profile.Healthcard.ExpiryDate = detail.Healthcard.ExpiryDate;
 
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             nameAssembler.UpdatePersonName(detail.Name, profile.Name);

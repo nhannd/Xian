@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Workflow;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
@@ -15,8 +16,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             //TODO: Detail of ReportingWorklistItem not defined
             item.ProcedureStepRef = result.ProcedureStep;
-            item.MrnAssigningAuthority = result.Mrn.AssigningAuthority;
-            item.MrnID = result.Mrn.Id;
+            item.Mrn = new MrnDetail(result.Mrn.Id, result.Mrn.AssigningAuthority);
 
             PersonNameAssembler assembler = new PersonNameAssembler();
             item.PersonNameDetail = assembler.CreatePersonNameDetail(result.PatientName);

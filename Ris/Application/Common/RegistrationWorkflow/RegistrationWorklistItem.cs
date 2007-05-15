@@ -18,8 +18,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             EnumValueInfo sex)
         {
             this.PatientProfileRef = patientProfileRef;
-            this.MrnID = mrnID;
-            this.MrnAssigningAuthority = mrnAssigningAuthority;
+            this.Mrn = new MrnDetail(mrnID, mrnAssigningAuthority);
             this.Name = name;
             this.Healthcard = healthcard;
             this.DateOfBirth = dateOfBirth;
@@ -30,10 +29,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         public EntityRef PatientProfileRef;
 
         [DataMember]
-        public string MrnID;
-
-        [DataMember]
-        public string MrnAssigningAuthority;
+        public MrnDetail Mrn;
 
         [DataMember]
         public PersonNameDetail Name;

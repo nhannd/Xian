@@ -139,5 +139,14 @@ namespace ClearCanvas.Ris.Client {
                 return ((string)(this["TelephoneNumberDefaultFormat"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("%A %N")]
+        public string MrnDefaultFormat {
+            get {
+                return ((string)(this["MrnDefaultFormat"]));
+            }
+        }
     }
 }

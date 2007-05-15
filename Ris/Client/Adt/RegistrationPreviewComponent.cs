@@ -307,7 +307,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Mrn
         {
-            get { return String.Format("{0} {1}", _worklistPreview.MrnAssigningAuthority, _worklistPreview.MrnID); }
+            get { return MrnFormat.Format(_worklistPreview.Mrn); }
         }
 
         public string Healthcard

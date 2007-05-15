@@ -69,6 +69,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
     <Compile Include="Formatting\HealthcardFormat.cs" />
+    <Compile Include="Formatting\MrnFormat.cs" />
     <Compile Include="IDropContext.cs" />
     <Compile Include="IDropHandler.cs" />
     <Compile Include="IFolder.cs" />

@@ -16,10 +16,7 @@ namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
         public EntityRef ProfileRef;
 
         [DataMember]
-        public string AssigningAuthority;
-
-        [DataMember]
-        public string Mrn;
+        public MrnDetail Mrn;
 
         [DataMember]
         public string Name;

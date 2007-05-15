@@ -13,9 +13,9 @@ namespace ClearCanvas.Ris.Client.Adt
         public RegistrationWorklistTable()
         {
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnSite,
-                delegate(RegistrationWorklistItem item) { return item.MrnAssigningAuthority; }, 0.5f));
+                delegate(RegistrationWorklistItem item) { return item.Mrn.AssigningAuthority; }, 0.5f));
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnMRN,
-                delegate(RegistrationWorklistItem item) { return item.MrnID; }, 1.0f));
+                delegate(RegistrationWorklistItem item) { return item.Mrn.Id; }, 1.0f));
             
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnName,
                 delegate(RegistrationWorklistItem item) { return PersonNameFormat.Format(item.Name); }, 2.0f));

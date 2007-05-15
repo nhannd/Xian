@@ -16,10 +16,10 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             this.Columns.Add(
                 new TableColumn<PatientProfileSummary, string>(SR.ColumnSite,
-                    delegate(PatientProfileSummary profile) { return profile.AssigningAuthority; }, 0.5f));
+                    delegate(PatientProfileSummary profile) { return profile.Mrn.AssigningAuthority; }, 0.5f));
             this.Columns.Add(
                new TableColumn<PatientProfileSummary, string>(SR.ColumnMRN,
-                   delegate(PatientProfileSummary profile) { return profile.Mrn; }, 1.0f));
+                   delegate(PatientProfileSummary profile) { return profile.Mrn.Id; }, 1.0f));
             this.Columns.Add(
               new TableColumn<PatientProfileSummary, string>(SR.ColumnName,
                   delegate(PatientProfileSummary profile) { return profile.Name; }, 2.0f));

@@ -56,7 +56,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         //TODO: PersonNameDetail formatting
                         this.Host.SetTitle(string.Format(SR.TitleVisitSummaryComponent,
                             PersonNameFormat.Format(response.PatientDetail.Name), 
-                            String.Format("{0} {1}", response.PatientDetail.MrnAssigningAuthority, response.PatientDetail.Mrn)));                    
+                            MrnFormat.Format(response.PatientDetail.Mrn)));                    
                     });
 
                 _visitTable = new VisitSummaryTable();

@@ -132,7 +132,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
         {
             PatientProfile profile = (PatientProfile)PersistenceContext.Load(request.PatientProfileRef, EntityLoadFlags.CheckVersion);
 
-            CheckForDuplicateMrn(request.PatientDetail.Mrn, request.PatientDetail.MrnAssigningAuthority, profile);
+            CheckForDuplicateMrn(request.PatientDetail.Mrn.Id, request.PatientDetail.Mrn.AssigningAuthority, profile);
 
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             assembler.UpdatePatientProfile(profile, request.PatientDetail, PersistenceContext);
@@ -148,7 +148,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             Patient patient = new Patient();
             patient.AddProfile(profile);
 
-            CheckForDuplicateMrn(request.PatientDetail.Mrn, request.PatientDetail.MrnAssigningAuthority, profile);
+            CheckForDuplicateMrn(request.PatientDetail.Mrn.Id, request.PatientDetail.Mrn.AssigningAuthority, profile);
 
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             assembler.UpdatePatientProfile(profile, request.PatientDetail, PersistenceContext);

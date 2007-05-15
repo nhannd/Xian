@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Client.Adt
             ApplicationComponent.LaunchAsWorkspace(
                 desktopWindow,
                 component,
-                string.Format(SR.TitleNewOrder, PersonNameFormat.Format(worklistItem.Name), worklistItem.MrnID),
+                string.Format(SR.TitleNewOrder, PersonNameFormat.Format(worklistItem.Name), MrnFormat.Format(worklistItem.Mrn)),
                 null);
         }
     }
