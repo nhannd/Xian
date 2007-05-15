@@ -28,7 +28,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			return this.Context.SelectedServers == null || this.Context.SelectedServers.Servers == null || this.Context.SelectedServers.Servers.Count == 0;
 		}
 
-        private void VerifyServer()
+		private void VerifyServer()
+		{
+			BlockingOperation.Run(this.InternalVerifyServer);
+		}
+
+        private void InternalVerifyServer()
         {
             if (this.NoServersSelected())
             {
@@ -45,10 +50,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             {
 				foreach (Server server in this.Context.SelectedServers.Servers)
                 {
-                    if (client.Verify(server.GetApplicationEntity()))
-						msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", server.Path);
-                    else
-						msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", server.Path);
+					bool succeeded = false;
+					try
+					{
+						succeeded = client.Verify(server.GetApplicationEntity());
+					}
+					catch (Exception e)
+					{
+						Platform.Log(e);
+					}
+					finally
+					{
+						if (succeeded)
+							msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultSuccess + "\r\n", server.Path);
+						else
+							msgText.AppendFormat(SR.MessageCEchoVerificationSingleServerResultFail + "\r\n", server.Path);
+					}
                 }
             }
             msgText.AppendFormat("\r\n");

@@ -127,7 +127,7 @@ namespace ClearCanvas.Dicom.Network
         /// Service Class only.
         /// </summary>
         /// <param name="serverAE">The AE parameters of the remote AE server.</param>
-        /// <returns></returns>
+        /// <returns>Whether or not verification was successful.</returns>
         public bool Verify(ApplicationEntity serverAE)
         {
             try
@@ -164,11 +164,7 @@ namespace ClearCanvas.Dicom.Network
             }
             catch (DicomRuntimeApplicationException e)
             {
-                OFCondition condition = e.Condition;
-                if (DicomHelper.CompareConditions(condition, OffisDcm.DUL_REQUESTASSOCIATIONFAILED))
-                    return false;
-                else
-                    throw new NetworkDicomException(OffisConditionParser.GetTextString(serverAE, e), e);
+				throw new NetworkDicomException(OffisConditionParser.GetTextString(serverAE, e), e);
             }
         }
 
