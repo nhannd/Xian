@@ -27,7 +27,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
 
-			LocalDataStoreService.Instance.Start();
+			try
+			{
+				LocalDataStoreService.Instance.Start();
+			}
+			catch (Exception e)
+			{
+				Platform.Log(e);
+			}
 
 			StartNetPipeHost<LocalDataStoreServiceType, ILocalDataStoreService>(_localDataStoreEndpointName, SR.LocalDataStoreService);
 			StartNetPipeHost<LocalDataStoreActivityMonitorServiceType, ILocalDataStoreActivityMonitorService>(_localDataStoreActivityMonitorEndpointName, SR.LocalDataStoreActivityMonitorService);
@@ -38,7 +45,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			StopHost(_localDataStoreEndpointName);
 			StopHost(_localDataStoreActivityMonitorEndpointName);
 
-			LocalDataStoreService.Instance.Stop();
+			try
+			{
+				LocalDataStoreService.Instance.Stop();
+			}
+			catch (Exception e)
+			{
+				Platform.Log(e);
+			}
 
 			Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
 		}
