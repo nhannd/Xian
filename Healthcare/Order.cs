@@ -94,10 +94,47 @@ namespace ClearCanvas.Healthcare {
 		{
 		}
 
+        /// <summary>
+        /// Cancels the order.
+        /// </summary>
+        /// <param name="reason"></param>
         public void Cancel(OrderCancelReason reason)
         {
-            this.CancelReason = reason;
+            if (this.Status != OrderStatus.SC)
+            {
 
+                this.Status = OrderStatus.CA;
+                this.CancelReason = reason;
+
+                DiscontinuePendingProcedureSteps();
+            }
+            else
+            {
+                throw new HealthcareWorkflowException("Only orders in the SC status can be canceled");
+            }
+        }
+
+        /// <summary>
+        /// Discontinues the order.
+        /// </summary>
+        /// <param name="reason"></param>
+        public void Discontinue(OrderCancelReason reason)
+        {
+            if (this.Status == OrderStatus.IP)
+            {
+                this.Status = OrderStatus.DC;
+                this.CancelReason = reason;
+
+                DiscontinuePendingProcedureSteps();
+            }
+            else
+            {
+                throw new HealthcareWorkflowException("Only orders in the IP status can be discontinued");
+            }
+        }
+
+        private void DiscontinuePendingProcedureSteps()
+        {
             foreach (RequestedProcedure rp in this.RequestedProcedures)
             {
                 foreach (ProcedureStep ps in rp.ProcedureSteps)
@@ -107,7 +144,7 @@ namespace ClearCanvas.Healthcare {
                         ps.Discontinue();
                     }
                 }
-            }        
+            }
         }
 
 		#region Object overrides

@@ -32,6 +32,7 @@
     <!-- Indications.... may need to be a coded-value, not sure yet -->
     <property name="ReasonForStudy" column="ReasonForStudy_" type="String" length="200"/>
     <property name="Priority" column="Priority_" type="ClearCanvas.Healthcare.Hibernate.OrderPriorityEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+    <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.OrderStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
     <property name="CancelReason" column="CancelReason_" type="ClearCanvas.Healthcare.Hibernate.OrderCancelReasonEnumHbm, ClearCanvas.Healthcare.Hibernate"/>
 
     <set name="RequestedProcedures" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">

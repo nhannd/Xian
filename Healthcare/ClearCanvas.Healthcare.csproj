@@ -57,6 +57,7 @@
     <Compile Include="OrderCancelReason.cs" />
     <Compile Include="NoteCategory.cs" />
     <Compile Include="NoteSeverity.cs" />
+    <Compile Include="OrderStatus.cs" />
     <Compile Include="PatientReconciliationException.cs">
       <SubType>Code</SubType>
     </Compile>

@@ -161,6 +161,7 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Mappings\OrderCancelReasonEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\OrderStatusEnum.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />
