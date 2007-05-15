@@ -38,7 +38,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 				this.MenuModel = _component.ContextMenuModel;
 			}
 
-            _aeTreeView.MouseDown += new MouseEventHandler(AETreeView_Click);
+			_aeTreeView.MouseDown += new MouseEventHandler(AETreeView_Click);
+			_aeTreeView.AfterSelect += new TreeViewEventHandler(AETreeView_AfterSelect);
 
 			_component.ServerTree.RootNode.LocalDataStoreNode.Updated += new EventHandler(OnLocalDataStoreNodeUpdated);
 			BuildServerTreeView(_aeTreeView, _component.ServerTree);
@@ -79,16 +80,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             _component.SetSelection(_lastClickedNode.Tag as IServerTreeNode);
         }
 
+		void AETreeView_AfterSelect(object sender, TreeViewEventArgs e)
+		{
+			if (_lastClickedNode != e.Node)
+			{
+				_lastClickedNode = _aeTreeView.SelectedNode;
+				_component.SetSelection(e.Node.Tag as IServerTreeNode);
+			}
+		}
 
-        void AETreeView_Click(object sender, EventArgs e)
-        {
-            _lastClickedNode = _aeTreeView.GetNodeAt(((MouseEventArgs)e).X, ((MouseEventArgs)e).Y);
-            if (_lastClickedNode == null)
-                return;
-            _aeTreeView.SelectedNode = _lastClickedNode;
-            IServerTreeNode dataNode = _lastClickedNode.Tag as IServerTreeNode;
-            _component.SetSelection(dataNode);
-        }
+		void AETreeView_Click(object sender, EventArgs e)
+		{
+			TreeNode treeNode = _aeTreeView.GetNodeAt(((MouseEventArgs)e).X, ((MouseEventArgs)e).Y);
+			if (treeNode == null || treeNode == _lastClickedNode)
+				return;
+
+			_aeTreeView.SelectedNode = _lastClickedNode = treeNode;
+			_component.SetSelection(_lastClickedNode.Tag as IServerTreeNode);
+		}
 
         /// <summary>
         /// Builds the root and first-level of the tree
@@ -256,9 +265,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             {
                 underPointerNode.BackColor = Color.DarkBlue;
                 underPointerNode.ForeColor = Color.White;
-                
-                _lastMouseOverNode = underPointerNode;
-            }
+		
+				_lastMouseOverNode = underPointerNode;
+			}
         }
 
         private void treeView_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
