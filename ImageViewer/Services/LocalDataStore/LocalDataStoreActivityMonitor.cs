@@ -563,7 +563,29 @@ namespace ClearCanvas.ImageViewer.Services
 			try
 			{
 				client.Open();
-				client.Cancel(information);
+				//because of the WCF buffer size, we need to break this request down into reasonable batches.
+				List<Guid> progressIdentifiers = new List<Guid>(information.ProgressItemIdentifiers);
+				List<Guid> batchList = new List<Guid>();
+				
+				int batchSize = 500;
+
+				while (progressIdentifiers.Count > 0)
+				{
+					batchList.Add(progressIdentifiers[0]);
+					progressIdentifiers.RemoveAt(0);
+
+					if (batchList.Count >= batchSize || progressIdentifiers.Count == 0)
+					{
+						CancelProgressItemInformation batchCancellation = new CancelProgressItemInformation();
+						batchCancellation.CancellationFlags = information.CancellationFlags;
+						batchCancellation.ProgressItemIdentifiers = batchList;
+
+						client.Cancel(batchCancellation);
+
+						batchList.Clear();
+					}
+				}
+
 				client.Close();
 			}
 			catch
