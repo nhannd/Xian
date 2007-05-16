@@ -152,39 +152,22 @@ namespace ClearCanvas.Enterprise.Hibernate
             return this.Load(entityRef, this.DefaultEntityLoadFlags);
         }
 
-        /// <summary>
-        /// Loads the specified entity into this context
-        /// </summary>
-        /// <param name="entityRef"></param>
-        /// <param name="flags"></param>
-        /// <returns></returns>
         public virtual Entity Load(EntityRef entityRef, EntityLoadFlags flags)
         {
-            Entity entity = null;
-
             try
             {
-                // use Session.Load(...) rather than Session.Get(...), because Session.Get will always 
-                // resolve a lazy proxy, whether necessary or not, which is obviously undesirable
+                // use a proxy if EntityLoadFlags.Proxy is specified and EntityLoadFlags.CheckVersion is not specified (CheckVersion overrides Proxy)
+                bool useProxy = (flags & EntityLoadFlags.CheckVersion) == 0 && (flags & EntityLoadFlags.Proxy) == EntityLoadFlags.Proxy;
+                Entity entity = useProxy ?
+                    (Entity)this.Session.Load(EntityRefUtils.GetClass(entityRef), EntityRefUtils.GetOID(entityRef), LockMode.None)
+                    : (Entity)this.Session.Get(EntityRefUtils.GetClass(entityRef), EntityRefUtils.GetOID(entityRef));
 
-                // Session.Load with LockMode.None will simply return a proxy.  If we do not need to do
-                // version checking, then a proxy is sufficient- hence this provides a good performance optimization.
-                // However, the downside is that if the OID does not exist, this will not be known until later,
-                // when the proxy is resolved.  If the proxy is never resolved, and the non-existent entity
-                // is referenced in a relationship, the violation of integrity constraints will not become apparent
-                // until the session is flushed.
+                // check version if necessary
+                if ((flags & EntityLoadFlags.CheckVersion) == EntityLoadFlags.CheckVersion && !EntityRefUtils.GetVersion(entityRef).Equals(entity.Version))
+                    throw new EntityVersionException(EntityRefUtils.GetOID(entityRef), null);
 
-                // Session.Load with LockMode.Read will force the proxy to be resolved- this is necessary
-                // in order to read the Version property for version checking
-                entity = (Entity)this.Session.Load(EntityRefUtils.GetClass(entityRef), EntityRefUtils.GetOID(entityRef),
-                    (flags & EntityLoadFlags.CheckVersion) != 0 ? LockMode.Read : LockMode.None);
+                return entity;
 
-                // if the Proxy flag was not specified, then initialize the full object
-                if ((flags & EntityLoadFlags.Proxy) == 0)
-                {
-                    if (!NHibernateUtil.IsInitialized(entity))
-                        NHibernateUtil.Initialize(entity);
-                }
             }
             catch (ObjectNotFoundException hibernateException)
             {
@@ -193,14 +176,6 @@ namespace ClearCanvas.Enterprise.Hibernate
                 // if LockMode.None was used and the entity is proxied, no exception is thrown
                 throw new EntityNotFoundException(hibernateException);
             }
-
-            // check version if necessary
-            if ((flags & EntityLoadFlags.CheckVersion) != 0 && !EntityRefUtils.GetVersion(entityRef).Equals(entity.Version))
-                throw new EntityVersionException(EntityRefUtils.GetOID(entityRef), null);
-
-            System.Diagnostics.Debug.Assert(entity != null);
-
-            return entity;
         }
 
         public bool IsProxyLoaded(Entity entity)
