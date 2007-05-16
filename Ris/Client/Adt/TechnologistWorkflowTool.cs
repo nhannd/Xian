@@ -75,32 +75,13 @@ namespace ClearCanvas.Ris.Client.Adt
         #endregion
     }
 
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Taunt")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Taunt")]
-    [ClickHandler("apply", "Apply")]
-    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(Folders.CheckedInTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
-    public class TauntTool : TechnologistWorkflowTool
-    {
-        public TauntTool()
-            : base("CheckInProcedure")
-        {
-        }
-
-        protected override bool Execute(ModalityWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
-        {
-            Platform.ShowMessageBox("You're a tool!");
-            return true;
-        }
-    }
-
     [MenuAction("apply", "folderexplorer-items-contextmenu/Start")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Start")]
+    [IconSet("apply", IconScheme.Colour, "Start.png", "Start.png", "Start.png")]
     [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(Folders.CheckedInTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
+    [ExtensionOf(typeof(Folders.InProgressTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
     public class StartTool : TechnologistWorkflowTool
     {
         public StartTool()
@@ -118,6 +99,10 @@ namespace ClearCanvas.Ris.Client.Adt
                         service.StartProcedure(new StartProcedureRequest(item.ProcedureStepRef));
                     });
 
+                IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
+                    delegate(IFolder f) { return f is Folders.InProgressTechnologistWorkflowFolder; });
+                folder.RefreshCount();
+
                 return true;
             }
             catch (Exception e)
@@ -130,10 +115,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
     [MenuAction("apply", "folderexplorer-items-contextmenu/Complete")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Complete")]
+    [IconSet("apply", IconScheme.Colour, "Complete.png", "Complete.png", "Complete.png")]
     [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(Folders.CheckedInTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
+    [ExtensionOf(typeof(Folders.CompletedTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
     public class CompleteTool : TechnologistWorkflowTool
     {
         public CompleteTool()
@@ -151,6 +137,10 @@ namespace ClearCanvas.Ris.Client.Adt
                         service.CompleteProcedure(new CompleteProcedureRequest(item.ProcedureStepRef));
                     });
 
+                IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
+                    delegate(IFolder f) { return f is Folders.CompletedTechnologistWorkflowFolder; });
+                folder.RefreshCount();
+
                 return true;
             }
             catch (Exception e)
@@ -163,10 +153,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
     [MenuAction("apply", "folderexplorer-items-contextmenu/Cancel")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel")]
+    [IconSet("apply", IconScheme.Colour, "Cancel.png", "Cancel.png", "Cancel.png")]
     [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(Folders.CheckedInTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
+    [ExtensionOf(typeof(Folders.CancelledTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
     public class CancelTool : TechnologistWorkflowTool
     {
         public CancelTool()
@@ -184,6 +175,10 @@ namespace ClearCanvas.Ris.Client.Adt
                         service.CancelProcedure(new CancelProcedureRequest(item.ProcedureStepRef));
                     });
 
+                IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
+                    delegate(IFolder f) { return f is Folders.CancelledTechnologistWorkflowFolder; });
+                folder.RefreshCount();
+
                 return true;
             }
             catch (Exception e)
@@ -196,10 +191,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
     [MenuAction("apply", "folderexplorer-items-contextmenu/Suspend")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Suspend")]
+    [IconSet("apply", IconScheme.Colour, "Suspend.png", "Suspend.png", "Suspend.png")]
     [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(Folders.CheckedInTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
+    [ExtensionOf(typeof(Folders.SuspendedTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
     public class SuspendTool : TechnologistWorkflowTool
     {
         public SuspendTool()
@@ -216,6 +212,48 @@ namespace ClearCanvas.Ris.Client.Adt
                     {
                         service.SuspendProcedure(new SuspendProcedureRequest(item.ProcedureStepRef));
                     });
+
+                IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
+                    delegate(IFolder f) { return f is Folders.SuspendedTechnologistWorkflowFolder; });
+                folder.RefreshCount();
+
+                return true;
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, desktopWindow);
+                return false;
+            }
+        }
+    }
+
+    [MenuAction("apply", "folderexplorer-items-contextmenu/Resume")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/Resume")]
+    [IconSet("apply", IconScheme.Colour, "Resume.png", "Resume.png", "Resume.png")]
+    [ClickHandler("apply", "Apply")]
+    [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+    [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
+    //[ExtensionOf(typeof(Folders.CheckedInTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
+    public class ResumeTool : TechnologistWorkflowTool
+    {
+        public ResumeTool()
+            : base("ResumeProcedure")
+        {
+        }
+
+        protected override bool Execute(ModalityWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+        {
+            try
+            {
+                Platform.GetService<IModalityWorkflowService>(
+                    delegate(IModalityWorkflowService service)
+                    {
+                        service.ResumeProcedure(new ResumeProcedureRequest(item.ProcedureStepRef));
+                    });
+
+                IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
+                    delegate(IFolder f) { return f is Folders.InProgressTechnologistWorkflowFolder; });
+                folder.RefreshCount();
 
                 return true;
             }

@@ -29,6 +29,9 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         SuspendProcedureResponse SuspendProcedure(SuspendProcedureRequest request);
 
         [OperationContract]
+        ResumeProcedureResponse ResumeProcedure(ResumeProcedureRequest request);
+
+        [OperationContract]
         CompleteProcedureResponse CompleteProcedure(CompleteProcedureRequest request);
 
         [OperationContract]

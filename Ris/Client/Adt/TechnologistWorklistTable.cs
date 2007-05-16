@@ -37,20 +37,6 @@ namespace ClearCanvas.Ris.Client.Adt
             priorityColumn.Visible = false;
             this.Columns.Add(priorityColumn);
 
-            //this.Columns.Add(new TableColumn<ModalityWorklistItem, string>("Priority",
-            //    delegate(ModalityWorklistItem item) { return item.Priority.Value; },
-            //    0.5f));
-
-            //this.Columns.Add(new SummaryTableColumn<ModalityWorklistItem, string>("Requested Procedure Step",
-            //    delegate(ModalityWorklistItem item) { return item.RequestedProcedureStepName; },
-            //    0.5f,
-            //    1));
-
-            //this.Columns.Add(new SummaryTableColumn<ModalityWorklistItem, string>("Modality Procedure Step",
-            //    delegate(ModalityWorklistItem item) { return item.ModalityProcedureStepName; },
-            //    0.5f,
-            //    1));
-
             this.Columns.Add(new DecoratedTableColumn<ModalityWorklistItem, string>("Procedure Description",
                 delegate(ModalityWorklistItem item) 
                 { 
@@ -60,27 +46,6 @@ namespace ClearCanvas.Ris.Client.Adt
                 ProcedureDescriptionRow));
 
             this.OutlineColorSelector = delegate(object o)
-            {
-                ModalityWorklistItem item = o as ModalityWorklistItem;
-                if (item != null)
-                {
-                    //if (item.MrnID == "7001222")
-                    if (item.Priority.Code != "R")
-                    {
-                        return "Gray";
-                    }
-                    else
-                    {
-                        return "Empty";
-                    }
-                }
-                else
-                {
-                    return "Empty";
-                }
-            };
-
-            this.BackgroundColorSelector = delegate(object o)
             {
                 ModalityWorklistItem item = o as ModalityWorklistItem;
                 if (item != null)
@@ -102,7 +67,27 @@ namespace ClearCanvas.Ris.Client.Adt
                 }
             };
 
-            this.Sort(new TableSortParams(priorityColumn, true));
+            //this.BackgroundColorSelector = delegate(object o)
+            //{
+            //    ModalityWorklistItem item = o as ModalityWorklistItem;
+            //    if (item != null)
+            //    {
+            //        switch (item.Priority.Code)
+            //        {
+            //            case "S":
+            //                return "Red";
+            //            case "A":
+            //                return "Yellow";
+            //            case "R":
+            //            default:
+            //                return "Empty";
+            //        }
+            //    }
+            //    else
+            //    {
+            //        return "Empty";
+            //    }
+            //};
         }
     }
 }

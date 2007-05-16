@@ -12,16 +12,18 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 {
     public abstract class ModalityOperation
     {
+        public abstract void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow);
+        public abstract bool CanExecute(ModalityProcedureStep mps);
     }
 
     public class StartModalityProcedureStepOperation : ModalityOperation
     {
-        public void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
+        public override void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
         {
             mps.Start(currentUserStaff);
         }
 
-        public bool CanExecute(ModalityProcedureStep mps)
+        public override bool CanExecute(ModalityProcedureStep mps)
         {
             return mps.State == ActivityStatus.SC;
         }
@@ -29,40 +31,53 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
     public class CompleteModalityProcedureStepOperation : ModalityOperation
     {
-        public void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
+        public override void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
         {
             mps.Complete(currentUserStaff);
         }
 
-        public bool CanExecute(ModalityProcedureStep mps)
+        public override bool CanExecute(ModalityProcedureStep mps)
         {
-            return mps.State == ActivityStatus.SC || mps.State == ActivityStatus.IP;
+            return mps.State == ActivityStatus.IP;
         }
     }
 
     public class CancelModalityProcedureStepOperation : ModalityOperation
     {
-        public void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
+        public override void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
         {
             mps.Discontinue();
         }
 
-        public bool CanExecute(ModalityProcedureStep mps)
+        public override bool CanExecute(ModalityProcedureStep mps)
         {
-            return mps.State == ActivityStatus.SC || mps.State == ActivityStatus.IP;
+            return mps.State == ActivityStatus.SC || mps.State == ActivityStatus.IP || mps.State == ActivityStatus.SU;
         }
     }
 
     public class SuspendModalityProcedureStepOperation : ModalityOperation
     {
-        public void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
+        public override void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
         {
             mps.Suspend();
         }
 
-        public bool CanExecute(ModalityProcedureStep mps)
+        public override bool CanExecute(ModalityProcedureStep mps)
         {
-            return mps.State == ActivityStatus.SC || mps.State == ActivityStatus.IP;
+            return mps.State == ActivityStatus.IP;
+        }
+    }
+
+    public class ResumeModalityProcedureStepOperation : ModalityOperation
+    {
+        public override void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
+        {
+            mps.Resume();
+        }
+
+        public override bool CanExecute(ModalityProcedureStep mps)
+        {
+            return mps.State == ActivityStatus.SU;
         }
     }
 }

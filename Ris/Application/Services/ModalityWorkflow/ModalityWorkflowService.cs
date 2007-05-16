@@ -12,6 +12,7 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Healthcare.Workflow;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
@@ -57,14 +58,14 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         [ReadOperation]
         public LoadWorklistItemPreviewResponse LoadWorklistItemPreview(LoadWorklistItemPreviewRequest request)
         {
-            IModalityProcedureStepBroker spsBroker = PersistenceContext.GetBroker<IModalityProcedureStepBroker>();
-            IRequestedProcedureBroker rpBroker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
-            IOrderBroker orderBroker = PersistenceContext.GetBroker<IOrderBroker>();
-            IPatientBroker patientBroker = PersistenceContext.GetBroker<IPatientBroker>();
+            //IModalityWorklistPreviewBroker broker = PersistenceContext.GetBroker<IModalityWorklistPreviewBroker>();
+            //ModalityWorklistPreview preview = broker.GetPreview(request.ProcedureStepRef);
+            //ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
+            //return new LoadWorklistItemPreviewResponse(assembler.CreateWorklistPreview(preview));
 
-            ModalityProcedureStep sps = spsBroker.Load(request.ProcedureStepRef);
             ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
-            return new LoadWorklistItemPreviewResponse(assembler.CreateWorklistPreview(sps, request.PatientProfileAuthority));
+            ModalityProcedureStep mps = (ModalityProcedureStep)PersistenceContext.Load(request.ProcedureStepRef);
+            return new LoadWorklistItemPreviewResponse(assembler.CreateWorklistPreview(mps, request.PatientProfileAuthority));
         }
 
         [ReadOperation]
@@ -77,9 +78,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         [OperationEnablement("CanStartProcedure")]
         public StartProcedureResponse StartProcedure(StartProcedureRequest request)
         {
-            ModalityProcedureStep modalityProcedureStep = (ModalityProcedureStep)PersistenceContext.Load(request.ModalityProcedureStepRef);
-            StartModalityProcedureStepOperation op = new StartModalityProcedureStepOperation();
-            op.Execute(modalityProcedureStep, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            ExecuteOperation(new StartModalityProcedureStepOperation(), request.ModalityProcedureStepRef);
             return new StartProcedureResponse();
         }
 
@@ -87,19 +86,23 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         [OperationEnablement("CanSuspendProcedure")]
         public SuspendProcedureResponse SuspendProcedure(SuspendProcedureRequest request)
         {
-            ModalityProcedureStep modalityProcedureStep = (ModalityProcedureStep)PersistenceContext.Load(request.ModalityProcedureStepRef);
-            SuspendModalityProcedureStepOperation op = new SuspendModalityProcedureStepOperation();
-            op.Execute(modalityProcedureStep, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            ExecuteOperation(new SuspendModalityProcedureStepOperation(), request.ModalityProcedureStepRef);
             return new SuspendProcedureResponse();
+        }
+
+        [UpdateOperation]
+        [OperationEnablement("CanResumeProcedure")]
+        public ResumeProcedureResponse ResumeProcedure(ResumeProcedureRequest request)
+        {
+            ExecuteOperation(new ResumeModalityProcedureStepOperation(), request.ModalityProcedureStepRef);
+            return new ResumeProcedureResponse();
         }
 
         [UpdateOperation]
         [OperationEnablement("CanCompleteProcedure")]
         public CompleteProcedureResponse CompleteProcedure(CompleteProcedureRequest request)
         {
-            ModalityProcedureStep modalityProcedureStep = (ModalityProcedureStep)PersistenceContext.Load(request.ModalityProcedureStepRef);
-            CompleteModalityProcedureStepOperation op = new CompleteModalityProcedureStepOperation();
-            op.Execute(modalityProcedureStep, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            ExecuteOperation(new CompleteModalityProcedureStepOperation(), request.ModalityProcedureStepRef);
             return new CompleteProcedureResponse();
         }
 
@@ -107,60 +110,46 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         [OperationEnablement("CanCancelProcedure")]
         public CancelProcedureResponse CancelProcedure(CancelProcedureRequest request)
         {
-            ModalityProcedureStep modalityProcedureStep = (ModalityProcedureStep)PersistenceContext.Load(request.ModalityProcedureStepRef);
-            CancelModalityProcedureStepOperation op = new CancelModalityProcedureStepOperation();
-            op.Execute(modalityProcedureStep, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            ExecuteOperation(new CancelModalityProcedureStepOperation(), request.ModalityProcedureStepRef);
             return new CancelProcedureResponse();
         }
 
         public bool CanStartProcedure(IWorklistItemKey itemKey)
         {
-            if (itemKey is WorklistItemKey)
-            {
-                ModalityProcedureStep modalityProcedureStep = (ModalityProcedureStep)PersistenceContext.Load(((WorklistItemKey)itemKey).ModalityProcedureStep);
-                StartModalityProcedureStepOperation op = new StartModalityProcedureStepOperation();
-                return op.CanExecute(modalityProcedureStep);
-            }
-            else
-            {
-                return false;
-            }
+            return CanExcecuteOperation(new StartModalityProcedureStepOperation(), itemKey);
         }
 
         public bool CanSuspendProcedure(IWorklistItemKey itemKey)
         {
-            if (itemKey is WorklistItemKey)
-            {
-                ModalityProcedureStep modalityProcedureStep = (ModalityProcedureStep)PersistenceContext.Load(((WorklistItemKey)itemKey).ModalityProcedureStep);
-                SuspendModalityProcedureStepOperation op = new SuspendModalityProcedureStepOperation();
-                return op.CanExecute(modalityProcedureStep);
-            }
-            else
-            {
-                return false;
-            }
+            return CanExcecuteOperation(new SuspendModalityProcedureStepOperation(), itemKey);
+        }
+
+        public bool CanResumeProcedure(IWorklistItemKey itemKey)
+        {
+            return CanExcecuteOperation(new ResumeModalityProcedureStepOperation(), itemKey);
         }
 
         public bool CanCompleteProcedure(IWorklistItemKey itemKey)
         {
-            if (itemKey is WorklistItemKey)
-            {
-                ModalityProcedureStep modalityProcedureStep = (ModalityProcedureStep)PersistenceContext.Load(((WorklistItemKey)itemKey).ModalityProcedureStep);
-                CompleteModalityProcedureStepOperation op = new CompleteModalityProcedureStepOperation();
-                return op.CanExecute(modalityProcedureStep);
-            }
-            else
-            {
-                return false;
-            }
+            return CanExcecuteOperation(new CompleteModalityProcedureStepOperation(), itemKey);
         }
 
         public bool CanCancelProcedure(IWorklistItemKey itemKey)
         {
+            return CanExcecuteOperation(new CancelModalityProcedureStepOperation(), itemKey);
+        }
+
+        private void ExecuteOperation(ModalityOperation op, EntityRef modalityProcedureStepRef)
+        {
+            ModalityProcedureStep modalityProcedureStep = (ModalityProcedureStep)PersistenceContext.Load(modalityProcedureStepRef);
+            op.Execute(modalityProcedureStep, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+        }
+
+        private bool CanExcecuteOperation(ModalityOperation op, IWorklistItemKey itemKey)
+        {
             if (itemKey is WorklistItemKey)
             {
                 ModalityProcedureStep modalityProcedureStep = (ModalityProcedureStep)PersistenceContext.Load(((WorklistItemKey)itemKey).ModalityProcedureStep);
-                CancelModalityProcedureStepOperation op = new CancelModalityProcedureStepOperation();
                 return op.CanExecute(modalityProcedureStep);
             }
             else
@@ -168,6 +157,5 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                 return false;
             }
         }
-
     }
 }

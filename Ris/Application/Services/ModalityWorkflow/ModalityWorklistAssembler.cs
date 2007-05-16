@@ -40,15 +40,27 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         {
             ModalityWorklistPreview preview = new ModalityWorklistPreview();
 
-            //TODO: Technologist workflow hasn't been fully defined yet, only pass back the PatientProfile now
+            preview.ProcedureStepRef = mps.GetRef();
+
             foreach (PatientProfile profile in mps.RequestedProcedure.Order.Patient.Profiles)
             {
                 if (profile.Mrn.AssigningAuthority.Equals(patientProfileAuthority))
                 {
-                    preview.PatientProfile = profile.GetRef();
+                    preview.PatientProfileRef = profile.GetRef();
+
+                    preview.Healthcard = new HealthcardAssembler().CreateHealthcardDetail(profile.Healthcard);
+                    preview.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
+                    preview.Name = new PersonNameAssembler().CreatePersonNameDetail(profile.Name);
+                    preview.Sex = profile.Sex.ToString();
+                    preview.DateOfBirth = profile.DateOfBirth;
+
                     break;
                 }
             }
+
+            //TODO: Technologist workflow hasn't been fully defined yet, only pass back the PatientProfile now
+            preview.AlertNotifications = new List<AlertNotificationDetail>();
+            preview.HasReconciliationCandidates = false;
 
             return preview;
         }

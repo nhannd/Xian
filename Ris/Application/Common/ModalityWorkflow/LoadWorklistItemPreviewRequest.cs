@@ -9,6 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     [DataContract]
     public class LoadWorklistItemPreviewRequest : DataContractBase
     {
+        public LoadWorklistItemPreviewRequest(EntityRef procedureStepRef, string patientProfileAuthority)
+        {
+            this.ProcedureStepRef = procedureStepRef;
+            this.PatientProfileAuthority = patientProfileAuthority;
+        }
+
         [DataMember]
         public EntityRef ProcedureStepRef;
 

@@ -183,6 +183,8 @@
     <Compile Include="Admin\VisitAdmin\VisitLocationDetail.cs" />
     <Compile Include="Admin\VisitAdmin\VisitPractitionerDetail.cs" />
     <Compile Include="Admin\VisitAdmin\VisitSummary.cs" />
+    <Compile Include="ModalityWorkflow\ResumeProcedureRequest.cs" />
+    <Compile Include="ModalityWorkflow\ResumeProcedureResponse.cs" />
     <Compile Include="MrnDetail.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="ContactPersonDetail.cs" />
