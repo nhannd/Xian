@@ -171,9 +171,8 @@ namespace ClearCanvas.Enterprise.Hibernate
             }
             catch (ObjectNotFoundException hibernateException)
             {
-                // note that we will only get here if LockMode.Read was used in the above block,
-                // or the entity is not proxied
-                // if LockMode.None was used and the entity is proxied, no exception is thrown
+                // note that we will only get here if useProxy == false in the above block
+                // if the entity is proxied, verification of its existence is deferred until the proxy is realized
                 throw new EntityNotFoundException(hibernateException);
             }
         }
