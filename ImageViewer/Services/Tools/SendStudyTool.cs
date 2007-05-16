@@ -84,6 +84,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				}
 
 				client.Close();
+
+				LocalDataStoreActivityMonitorComponentManager.ShowSendReceiveActivityComponent(this.Context.DesktopWindow);
 			}
 			catch (EndpointNotFoundException)
 			{
