@@ -520,7 +520,7 @@ namespace ClearCanvas.ImageViewer
 			}
 			else if (failedImages > 0 || totalImages == 0)
 			{
-				string msg = String.Format(SR.ExceptionLoadPartialFailure, failedImages, totalImages);
+				string msg = String.Format(SR.ExceptionLoadPartialFailure, totalImages - failedImages, totalImages);
 				OpenStudyException ex = new OpenStudyException(msg);
 				ex.TotalImages = totalImages;
 				ex.FailedImages = failedImages;
