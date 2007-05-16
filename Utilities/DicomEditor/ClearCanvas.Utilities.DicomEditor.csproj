@@ -104,51 +104,19 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\ReloadSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\PreviousSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\NextSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\EditSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\ReplicateSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\CreateSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DeleteSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\RevertSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\SaveToolLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\SaveToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\SaveToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\QuickAnonymizeToolLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\QuickAnonymizeToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\QuickAnonymizeToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\DicomEditorSmall.png" />
+    <EmbeddedResource Include="Icons\DicomEditorToolSmall.png" />
     <EmbeddedResource Include="Icons\DicomEditorToolLarge.png" />
     <EmbeddedResource Include="Icons\DicomEditorToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AddToolSmall.png" />
+    <EmbeddedResource Include="Icons\AnonymizeToolSmall.png" />
+    <EmbeddedResource Include="Icons\CopyToolSmall.png" />
+    <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
+    <EmbeddedResource Include="Icons\NextToolSmall.png" />
+    <EmbeddedResource Include="Icons\PreviousToolSmall.png" />
+    <EmbeddedResource Include="Icons\SaveToolSmall.png" />
+    <EmbeddedResource Include="Icons\UndoToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -67,7 +67,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\OpenStudySmall.png" />
+    <EmbeddedResource Include="Icons\OpenToolLarge.png" />
+    <EmbeddedResource Include="Icons\OpenToolMedium.png" />
+    <EmbeddedResource Include="Icons\OpenToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -25,7 +25,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		public static void SetTitleBarStyle(TitleBar titleBar)
 		{
-			titleBar.BackColor = ClearCanvasLightBlue;
+			titleBar.BackColor = ClearCanvasDarkBlue;
 			titleBar.ForeColor = Color.White;
 			titleBar.GradientActiveColor = ClearCanvasDarkBlue;
 			titleBar.GradientColoring = Crownwood.DotNetMagic.Controls.GradientColoring.LightBackToGradientColor;

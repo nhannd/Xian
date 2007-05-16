@@ -6,6 +6,7 @@ using System.Data;
 using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 {
@@ -18,6 +19,7 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
             Platform.CheckForNullReference(component, "component");
             InitializeComponent();
 
+			ClearCanvasStyle.SetTitleBarStyle(_dicomEditorTitleBar);
             _dicomEditorComponent = component;
 
             _dicomTagTable.ToolStripItemDisplayStyle = ToolStripItemDisplayStyle.ImageAndText;

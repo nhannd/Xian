@@ -15,7 +15,7 @@ namespace ClearCanvas.Utilities.DicomEditor
     [ClickHandler("activate", "Create")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [Tooltip("activate", "TooltipCreate")]
-    [IconSet("activate", IconScheme.Colour, "Icons.CreateSmall.png", "Icons.CreateSmall.png", "Icons.CreateSmall.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]
     [ExtensionOf(typeof(DicomEditorToolExtensionPoint))]
     class CreateTool : Tool<DicomEditorComponent.DicomEditorToolContext>
     {

@@ -13,7 +13,7 @@ namespace ClearCanvas.Utilities.DicomEditor
     [ButtonAction("activate", "dicomeditor-contextmenu/ToolbarQuickAnonymize")]
 	[MenuAction("activate", "dicomeditor-toolbar/MenuQuickAnonymize")]
 	[Tooltip("activate", "TooltipQuickAnonymize")]
-    [IconSet("activate", IconScheme.Colour, "Icons.QuickAnonymizeToolSmall.png", "Icons.QuickAnonymizeToolMedium.png", "Icons.QuickAnonymizeToolLarge.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png")]
     [ClickHandler("activate", "Apply")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 

@@ -68,8 +68,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			// 
 			// _contextMenu
 			// 
+			this._contextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._contextMenu.Name = "_contextMenu";
-			this._contextMenu.Size = new System.Drawing.Size(61, 4);
+			this._contextMenu.Size = new System.Drawing.Size(153, 26);
 			// 
 			// _imageList
 			// 

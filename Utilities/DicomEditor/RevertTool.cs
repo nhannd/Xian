@@ -15,7 +15,7 @@ namespace ClearCanvas.Utilities.DicomEditor
     [ClickHandler("activate", "Revert")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [Tooltip("activate", "TooltipRevert")]
-    [IconSet("activate", IconScheme.Colour, "Icons.RevertSmall.png", "Icons.RevertSmall.png", "Icons.RevertSmall.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.UndoToolSmall.png", "Icons.UndoToolSmall.png", "Icons.UndoToolSmall.png")]
     [ExtensionOf(typeof(DicomEditorToolExtensionPoint))]
     class RevertTool : Tool<DicomEditorComponent.DicomEditorToolContext>
     {

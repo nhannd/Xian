@@ -14,7 +14,7 @@ namespace ClearCanvas.Utilities.DicomEditor
     [ClickHandler("activate", "Next")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [Tooltip("activate", "TooltipNext")]
-    [IconSet("activate", IconScheme.Colour, "Icons.NextSmall.png", "Icons.NextSmall.png", "Icons.NextSmall.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.NextToolSmall.png", "Icons.NextToolSmall.png", "Icons.NextToolSmall.png")]
     [ExtensionOf(typeof(DicomEditorToolExtensionPoint))]
     class NextTool : Tool<DicomEditorComponent.DicomEditorToolContext>
     {

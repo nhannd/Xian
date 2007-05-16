@@ -42,8 +42,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// 
 			// _contextMenu
 			// 
+			this._contextMenu.ImageScalingSize = new System.Drawing.Size(24, 24);
 			this._contextMenu.Name = "_contextMenu";
-			this._contextMenu.Size = new System.Drawing.Size(61, 4);
+			this._contextMenu.Size = new System.Drawing.Size(153, 26);
 			this._contextMenu.Opened += new System.EventHandler(this._contextMenu_Opened);
 			this._contextMenu.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this._contextMenu_Closed);
 			this._contextMenu.Opening += new System.ComponentModel.CancelEventHandler(this._contextMenu_Opening);
