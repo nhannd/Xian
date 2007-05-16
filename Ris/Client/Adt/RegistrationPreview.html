@@ -70,24 +70,77 @@ if(component.WorklistPreview != null)
     <% } %>
   </tr>
 </table>
+<% 
+    var hasRecentRIC = component.RecentRIC.Items.Count > 0;
+    var hasFutureRIC = component.FutureRIC.Items.Count > 0;
+    var hasPastRIC = component.PastRIC.Items.Count > 0;
+    var showRecentTableHeading = hasRecentRIC;
+    var showFutureTableHeading = hasFutureRIC && !showRecentTableHeading;
+    var showPastTableHeading = hasPastRIC && !showRecentTableHeading && !showFutureTableHeading;
+    if (hasRecentRIC || hasFutureRIC || hasPastRIC) {    
+%>
 <p>&nbsp;</p>
-<% if(component.RIC.Items.Count > 0) { %>
 <table width="640" border="0">
-  <tr class="sectionheading">
-    <td colspan="6">Request for Imaging Consultation</td>
-  </tr>
-  <tr class="tableheading">
-  <% for(var column in component.RIC.Columns) { %>
-  <td width="<%= column.WidthPercent %>%"><%= column.Name %></td>
-  <% } %>
-  </tr>
-  <% var i = 0; %>
-  <% for(var ric in component.RIC.Items) {%>
-  <tr class="row<%= (i++) % 2 %>"><% for(var column in component.RIC.Columns) {%>
-    <td><%= column.GetValue(ric) %></td>
+  <% if(component.RecentRIC.Items.Count > 0) { %>
+      <tr class="sectionheading">
+        <td colspan="6">Recent Request for Imaging Consultation</td>
+      </tr>
+      <% if (showRecentTableHeading) { %>
+          <tr class="tableheading">
+          <% for(var column in component.RecentRIC.Columns) { %>
+          <td width="<%= column.WidthPercent %>%"><%= column.Name %></td>
+          <% } %>
+          </tr>
       <% } %>
-  </tr>
+      <% var i = 0; %>
+      <% for(var ric in component.RecentRIC.Items) {%>
+      <tr class="row<%= (i++) % 2 %>"><% for(var column in component.RecentRIC.Columns) {%>
+        <td><%= column.GetValue(ric) %></td>
+          <% } %>
+      </tr>
+      <% } %>
   <% } %>
+  
+    <% if(component.FutureRIC.Items.Count > 0) { %>
+      <tr class="sectionheading">
+        <td colspan="6">Future Request for Imaging Consultation</td>
+      </tr>
+      <% if (showFutureTableHeading) { %>
+          <tr class="tableheading">
+          <% for(var column in component.FutureRIC.Columns) { %>
+          <td width="<%= column.WidthPercent %>%"><%= column.Name %></td>
+          <% } %>
+          </tr>
+      <% } %>
+      <% var i = 0; %>
+      <% for(var ric in component.FutureRIC.Items) {%>
+      <tr class="row<%= (i++) % 2 %>"><% for(var column in component.FutureRIC.Columns) {%>
+        <td><%= column.GetValue(ric) %></td>
+          <% } %>
+      </tr>
+      <% } %>
+    <% } %>
+  
+    <% if(component.PastRIC.Items.Count > 0) { %>
+      <tr class="sectionheading">
+        <td colspan="6">Past Request for Imaging Consultation</td>
+      </tr>
+      <% if (showPastTableHeading) { %>
+          <tr class="tableheading">
+          <% for(var column in component.PastRIC.Columns) { %>
+          <td width="<%= column.WidthPercent %>%"><%= column.Name %></td>
+          <% } %>
+          </tr>
+      <% } %>
+      <% var i = 0; %>
+      <% for(var ric in component.PastRIC.Items) {%>
+      <tr class="row<%= (i++) % 2 %>"><% for(var column in component.PastRIC.Columns) {%>
+        <td><%= column.GetValue(ric) %></td>
+          <% } %>
+      </tr>
+      <% } %>
+    <% } %>
+  
     <% if(component.MoreRICCount > 0) { %>
     <tr class="additionalentriescount">
         <td colspan="6"><%= amr.GetHTML(component.MenuModel, "NewOrders", "(" + component.MoreRICCount + " more...)") %></td>
@@ -95,8 +148,8 @@ if(component.WorklistPreview != null)
     <% } %>
 </table>
 <% } %>
-<p>&nbsp;</p>
 <% if(component.HasAlert) { %>
+<p>&nbsp;</p>
 <table width="640" border="0">
   <tr class="sectionheading">
     <td colspan="1">Alerts</td>

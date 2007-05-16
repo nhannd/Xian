@@ -70,8 +70,14 @@ namespace ClearCanvas.Ris.Client.Adt
         private RegistrationWorklistItem _worklistItem;
         private RegistrationWorklistPreview _worklistPreview;
 
-        private int _maxRICDisplay;
-        private RICTable _RICTable;
+        List<RICSummary> _recentRIC;
+        List<RICSummary> _futureRIC;
+        List<RICSummary> _pastRIC;
+
+        private int _maxRIC;
+        private RICTable _recentRICTable;
+        private RICTable _futureRICTable;
+        private RICTable _pastRICTable;
 
         private ToolSet _toolSet;
 
@@ -92,7 +98,6 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _showHeader = showHeader;
             _showReconciliationAlert = showReconciliationAlert;
-            _maxRICDisplay = 10;
         }
 
         public RegistrationWorklistItem WorklistItem
@@ -108,15 +113,18 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public int MaxRIC
-        {
-            get { return _maxRICDisplay; }
-            set { _maxRICDisplay = value; } 
-        }
-
         public override void Start()
         {
-            _RICTable = new RICTable();
+            _maxRIC = 10;
+
+            _recentRICTable = new RICTable();
+            _futureRICTable = new RICTable();
+            _pastRICTable = new RICTable();
+
+            _recentRIC = new List<RICSummary>();
+            _futureRIC = new List<RICSummary>();
+            _pastRIC = new List<RICSummary>();
+
             _toolSet = new ToolSet(new RegistrationPreviewToolExtensionPoint(), new RegistrationPreviewToolContext(this));
 
             UpdateDisplay();
@@ -137,7 +145,14 @@ namespace ClearCanvas.Ris.Client.Adt
             if (_worklistPreview != null)
             {
                 _worklistPreview = null;
-                _RICTable.Items.Clear();
+
+                _recentRICTable.Items.Clear();
+                _futureRICTable.Items.Clear();
+                _pastRICTable.Items.Clear();
+
+                _recentRIC.Clear();
+                _futureRIC.Clear();
+                _pastRIC.Clear();
 
                 // clear current preview
                 NotifyAllPropertiesChanged();
@@ -191,12 +206,41 @@ namespace ClearCanvas.Ris.Client.Adt
             if (args.Reason == BackgroundTaskTerminatedReason.Completed)
             {
                 _worklistPreview = (RegistrationWorklistPreview)args.Result;
-                _worklistPreview.RICs = SortRICSummaryList(_worklistPreview.RICs);
 
-                foreach (RICSummary summary in _worklistPreview.RICs)
+                DateTime? startOfToday = Platform.Time.Date;
+                DateTime? startOfTomorrow = startOfToday.Value.AddDays(1);
+                DateTime? endOfTomorrow = startOfToday.Value.AddDays(2);
+                DateTime? startOfYesterday = startOfToday.Value.AddDays(-1);
+
+                _recentRIC = SelectScheduledRICByTime(_worklistPreview.RICs, startOfToday, startOfTomorrow);
+                _recentRIC.AddRange(SelectScheduledRICByTime(_worklistPreview.RICs, startOfTomorrow, endOfTomorrow));
+                _recentRIC.AddRange(SelectScheduledRICByTime(_worklistPreview.RICs, startOfYesterday, startOfToday));
+
+                _futureRIC = SelectScheduledRICByTime(_worklistPreview.RICs, endOfTomorrow, null);
+                _pastRIC = SelectScheduledRICByTime(_worklistPreview.RICs, null, startOfYesterday);
+
+                int remainingRIC = _maxRIC;
+
+                foreach (RICSummary summary in _recentRIC)
                 {
-                    _RICTable.Items.Add(summary);
-                    if (_RICTable.Items.Count >= this._maxRICDisplay)
+                    _recentRICTable.Items.Add(summary);
+                    if (_recentRICTable.Items.Count >= remainingRIC)
+                        break;
+                }
+
+                remainingRIC -= _recentRICTable.Items.Count;
+                foreach (RICSummary summary in _futureRIC)
+                {
+                    _futureRICTable.Items.Add(summary);
+                    if (_futureRICTable.Items.Count >= remainingRIC)
+                        break;
+                }
+
+                remainingRIC -= _futureRICTable.Items.Count;
+                foreach (RICSummary summary in _pastRIC)
+                {
+                    _pastRICTable.Items.Add(summary);
+                    if (_pastRICTable.Items.Count >= remainingRIC)
                         break;
                 }
 
@@ -208,55 +252,38 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private List<RICSummary> SortRICSummaryList(List<RICSummary> ricList)
+        private List<RICSummary> SelectScheduledRICByTime(List<RICSummary> target, DateTime? startTime, DateTime? endTime)
         {
-            List<RICSummary> ricForToday = new List<RICSummary>();
-            List<RICSummary> ricForTomorrow = new List<RICSummary>();
-            List<RICSummary> ricForFuture = new List<RICSummary>();
-            List<RICSummary> ricForYesterday = new List<RICSummary>();
-            List<RICSummary> ricForPast = new List<RICSummary>();
-
-            DateTime today = Platform.Time.Date;
-
-            foreach (RICSummary summary in ricList)
-            {
-                //DateTime datePart = summary.ModalityProcedureStepScheduledTime.Value.Date;
-                if (summary.ModalityProcedureStepScheduledTime != null)
+            List<RICSummary> selectedList = CollectionUtils.Select<RICSummary, List<RICSummary>>(target,
+                delegate(RICSummary summary)
                 {
-                    DateTime datePart = summary.ModalityProcedureStepScheduledTime.Value.Date;
+                    if (summary.ModalityProcedureStepScheduledTime == null)
+                        return false;
 
-                    if (datePart == today)
-                        ricForToday.Add(summary);
-                    else if (datePart == today.AddDays(-1))
-                        ricForYesterday.Add(summary);
-                    else if (datePart == today.AddDays(1))
-                        ricForTomorrow.Add(summary);
-                    else if (datePart.CompareTo(today) < 0)
-                        ricForPast.Add(summary);
-                    else
-                        ricForFuture.Add(summary);
-                }
-            }
+                    bool inRange = true;
+                    if (startTime != null && summary.ModalityProcedureStepScheduledTime < startTime)
+                        inRange = false;
 
-            Comparison<RICSummary> summaryComparer = new Comparison<RICSummary>(CompareRICSummary);
-            ricForToday.Sort(summaryComparer);
-            ricForYesterday.Sort(summaryComparer);
-            ricForTomorrow.Sort(summaryComparer);
-            ricForPast.Sort(summaryComparer);
-            ricForFuture.Sort(summaryComparer);
+                    if (endTime != null && summary.ModalityProcedureStepScheduledTime > endTime)
+                        inRange = false;
 
-            List<RICSummary> sortedList = new List<RICSummary>();
-            sortedList.AddRange(ricForToday);
-            sortedList.AddRange(ricForTomorrow);
-            sortedList.AddRange(ricForFuture);
-            sortedList.AddRange(ricForYesterday);
-            sortedList.AddRange(ricForPast);
+                    return inRange;
+                });
 
-            return sortedList;
+            selectedList.Sort(new Comparison<RICSummary>(CompareRICSummary));
+
+            return selectedList;
         }
 
         private int CompareRICSummary(RICSummary summary1, RICSummary summary2)
         {
+            if (summary1.ModalityProcedureStepScheduledTime == null && summary2.ModalityProcedureStepScheduledTime == null)
+                return 0;
+            else if (summary1.ModalityProcedureStepScheduledTime == null)
+                return 1;
+            else if (summary2.ModalityProcedureStepScheduledTime == null)
+                return -1;
+
             return summary1.ModalityProcedureStepScheduledTime.Value.CompareTo(summary2.ModalityProcedureStepScheduledTime.Value);
         }
 
@@ -340,14 +367,29 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public ITable RIC
+        public ITable RecentRIC
         {
-            get { return _RICTable; }
+            get { return _recentRICTable; }
+        }
+
+        public ITable FutureRIC
+        {
+            get { return _futureRICTable; }
+        }
+
+        public ITable PastRIC
+        {
+            get { return _pastRICTable; }
         }
 
         public int MoreRICCount
         {
-            get { return _worklistPreview.RICs.Count - _RICTable.Items.Count; }
+            get 
+            { 
+                return _recentRIC.Count - _recentRICTable.Items.Count
+                     + _futureRIC.Count - _futureRICTable.Items.Count
+                     + _pastRIC.Count - _pastRICTable.Items.Count; 
+            }
         }
 
         public IList<AlertNotificationDetail> AlertNotifications
@@ -383,19 +425,17 @@ namespace ClearCanvas.Ris.Client.Adt
         public string GetAlertTooltip(AlertNotificationDetail detail)
         {
             string alertTooltip = "";
-            string patientName = String.Format("{0}. {1}"
-                , _worklistPreview.Name.GivenName.Substring(0, 1)
-                , _worklistPreview.Name.FamilyName);
+            string patientName = PersonNameFormat.Format(_worklistPreview.Name, "%g. %F");
 
             switch (detail.Type)
             {
                 case "Note Alert":
-                    alertTooltip = String.Format("{0} has high severity notes: \r\n{1}"
+                    alertTooltip = String.Format(SR.MessageAlertHighSeverityNote
                         , patientName
                         , StringUtilities.Combine<string>(detail.Reasons, "\r\n"));
                     break;
                 case "Language Alert":
-                    alertTooltip = String.Format("{0} speaks: {1}"
+                    alertTooltip = String.Format(SR.MessageAlertLanguageNotEnglish
                         , patientName
                         , StringUtilities.Combine<string>(detail.Reasons, ", "));
                     break;

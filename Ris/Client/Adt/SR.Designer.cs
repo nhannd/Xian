@@ -259,6 +259,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Insurance.
+        /// </summary>
+        internal static string ColumnInsurance {
+            get {
+                return ResourceManager.GetString("ColumnInsurance", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Location.
         /// </summary>
         internal static string ColumnLocation {
@@ -309,6 +318,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string ColumnNumber {
             get {
                 return ResourceManager.GetString("ColumnNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Ordering Physician.
+        /// </summary>
+        internal static string ColumnOrderingPhysician {
+            get {
+                return ResourceManager.GetString("ColumnOrderingPhysician", resourceCulture);
             }
         }
         
@@ -376,11 +394,29 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Requested Procedure.
+        /// </summary>
+        internal static string ColumnRequestedProcedure {
+            get {
+                return ResourceManager.GetString("ColumnRequestedProcedure", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Role.
         /// </summary>
         internal static string ColumnRole {
             get {
                 return ResourceManager.GetString("ColumnRole", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Scheduled For.
+        /// </summary>
+        internal static string ColumnScheduledFor {
+            get {
+                return ResourceManager.GetString("ColumnScheduledFor", resourceCulture);
             }
         }
         
@@ -565,6 +601,24 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} has high severity notes: \r\n{1}.
+        /// </summary>
+        internal static string MessageAlertHighSeverityNote {
+            get {
+                return ResourceManager.GetString("MessageAlertHighSeverityNote", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} speaks: {1}.
+        /// </summary>
+        internal static string MessageAlertLanguageNotEnglish {
+            get {
+                return ResourceManager.GetString("MessageAlertLanguageNotEnglish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this visit?.
         /// </summary>
         internal static string MessageDeleteSelectedVisit {
@@ -601,11 +655,56 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Not Scheduled.
+        /// </summary>
+        internal static string TextNotScheduled {
+            get {
+                return ResourceManager.GetString("TextNotScheduled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Today {0}.
+        /// </summary>
+        internal static string TextTodayTime {
+            get {
+                return ResourceManager.GetString("TextTodayTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tomorrow {0}.
+        /// </summary>
+        internal static string TextTomorrowTime {
+            get {
+                return ResourceManager.GetString("TextTomorrowTime", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unknown.
         /// </summary>
         internal static string TextUnknownValue {
             get {
                 return ResourceManager.GetString("TextUnknownValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} days ago.
+        /// </summary>
+        internal static string TextXDaysAgo {
+            get {
+                return ResourceManager.GetString("TextXDaysAgo", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Yesterday {0}.
+        /// </summary>
+        internal static string TextYesterdayTime {
+            get {
+                return ResourceManager.GetString("TextYesterdayTime", resourceCulture);
             }
         }
         

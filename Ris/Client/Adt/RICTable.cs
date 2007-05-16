@@ -14,49 +14,47 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         public RICTable()
         {
-            this.Columns.Add(new TableColumn<RICSummary, string>("Requested Procedure",
+            this.Columns.Add(new TableColumn<RICSummary, string>(SR.ColumnRequestedProcedure,
                 delegate(RICSummary item) { return item.RequestedProcedureName; }));
-
-            this.Columns.Add(new TableColumn<RICSummary, string>("Ordering Physician",
+            this.Columns.Add(new TableColumn<RICSummary, string>(SR.ColumnOrderingPhysician,
                 delegate(RICSummary item) { return PersonNameFormat.Format(item.OrderingPractitioner, "%F, %G"); }));
-
-            this.Columns.Add(new TableColumn<RICSummary, string>("Insurance",
+            this.Columns.Add(new TableColumn<RICSummary, string>(SR.ColumnInsurance,
                 delegate(RICSummary item) { return item.Insurance; }));
-            this.Columns.Add(new TableColumn<RICSummary, string>("Scheduled For",
+            this.Columns.Add(new TableColumn<RICSummary, string>(SR.ColumnScheduledFor,
                 delegate(RICSummary item) { return FormatRequestedProcedureScheduledTime(item.ModalityProcedureStepScheduledTime); }));
-            this.Columns.Add(new TableColumn<RICSummary, string>("Facility",
+            this.Columns.Add(new TableColumn<RICSummary, string>(SR.ColumnFacility,
                 delegate(RICSummary item) { return item.PerformingFacility; }));
-            this.Columns.Add(new TableColumn<RICSummary, string>("Status",
+            this.Columns.Add(new TableColumn<RICSummary, string>(SR.ColumnStatus,
                 delegate(RICSummary item) { return item.Status; }));
         }
 
-        private string FormatRequestedProcedureScheduledTime(DateTime? scheduledTime)
+        protected string FormatRequestedProcedureScheduledTime(DateTime? scheduledTime)
         {
+            if (scheduledTime == null)
+                return SR.TextNotScheduled;
+
             DateTime today = Platform.Time.Date;
             DateTime datePart = scheduledTime.Value.Date;
 
             if (datePart == today)
             {
-                return String.Format("Today {0}", Format.Time(scheduledTime));
+                return String.Format(SR.TextTodayTime, Format.Time(scheduledTime));
             }
             else if (datePart == today.AddDays(-1))
             {
-                return String.Format("Yesterday {0}", Format.Time(scheduledTime));
+                return String.Format(SR.TextYesterdayTime, Format.Time(scheduledTime));
             }
             else if (datePart == today.AddDays(1))
             {
-                return String.Format("Tomorrow {0}", Format.Time(scheduledTime));
+                return String.Format(SR.TextTomorrowTime, Format.Time(scheduledTime));
             }
             else if (datePart.CompareTo(today) < 0)
             {
                 TimeSpan ts = today.Subtract(datePart);
-                if (ts.Days <= 1)
-                    return String.Format("{0} day ago", ts.Days);
-                else
-                    return String.Format("{0} days ago", ts.Days);
+                return String.Format(SR.TextXDaysAgo, ts.Days);
             }
 
             return Format.DateTime(scheduledTime);
         }
-   }
+    }
 }

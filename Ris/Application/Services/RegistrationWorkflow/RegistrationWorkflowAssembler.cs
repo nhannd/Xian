@@ -35,79 +35,71 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IPatientProfileBroker profileBroker = context.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = profileBroker.Load(item.PatientProfileRef);
 
-            return new RegistrationWorklistPreview(
-                item.PatientProfileRef,
-                profile.Mrn.Id,
-                profile.Mrn.AssigningAuthority,
-                nameAssembler.CreatePersonNameDetail(profile.Name),
-                healthcardAssembler.CreateHealthcardDetail(profile.Healthcard),
-                profile.DateOfBirth,
-                sexEnumTable[profile.Sex].Value,
-                addressAssembler.CreateAddressDetail(profile.CurrentHomeAddress, context),
-                addressAssembler.CreateAddressDetail(profile.CurrentWorkAddress, context),
-                phoneAssembler.CreateTelephoneDetail(profile.CurrentHomePhone, context),
-                phoneAssembler.CreateTelephoneDetail(profile.CurrentWorkPhone, context),
-                CollectionUtils.Map<TelephoneNumber, TelephoneDetail, List<TelephoneDetail>>(
-                    profile.TelephoneNumbers,
-                    delegate(TelephoneNumber phone)
-                    {
-                        return phoneAssembler.CreateTelephoneDetail(phone, context);
-                    }),
-                CollectionUtils.Map<Address, AddressDetail, List<AddressDetail>>(
-                    profile.Addresses,
-                    delegate(Address address)
-                    {
-                        return addressAssembler.CreateAddressDetail(address, context);
-                    }),
-                CollectionUtils.Map<RequestedProcedure, RICSummary, List<RICSummary>>(
+            RegistrationWorklistPreview preview = new RegistrationWorklistPreview();
+            preview.PatientProfileRef = item.PatientProfileRef;
+            preview.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
+            preview.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
+            preview.Healthcard = healthcardAssembler.CreateHealthcardDetail(profile.Healthcard);
+            preview.DateOfBirth = profile.DateOfBirth;
+            preview.Sex = sexEnumTable[profile.Sex].Value;
+            preview.CurrentHomeAddress = addressAssembler.CreateAddressDetail(profile.CurrentHomeAddress, context);
+            preview.CurrentWorkAddress = addressAssembler.CreateAddressDetail(profile.CurrentWorkAddress, context);
+            preview.CurrentHomePhone = phoneAssembler.CreateTelephoneDetail(profile.CurrentHomePhone, context);
+            preview.CurrentWorkPhone = phoneAssembler.CreateTelephoneDetail(profile.CurrentWorkPhone, context);
+            preview.AlertNotifications = alertNotifications;
+            preview.HasReconciliationCandidates = hasReconciliationCandidates;
+
+            preview.TelephoneNumbers = CollectionUtils.Map<TelephoneNumber, TelephoneDetail, List<TelephoneDetail>>(profile.TelephoneNumbers,
+                delegate(TelephoneNumber phone)
+                {
+                    return phoneAssembler.CreateTelephoneDetail(phone, context);
+                });
+
+            preview.Addresses = CollectionUtils.Map<Address, AddressDetail, List<AddressDetail>>(profile.Addresses,
+                delegate(Address address)
+                {
+                    return addressAssembler.CreateAddressDetail(address, context);
+                });
+
+            preview.RICs = CollectionUtils.Map<RequestedProcedure, RICSummary, List<RICSummary>>(
                     context.GetBroker<IRegistrationWorklistBroker>().GetRequestedProcedureForPatientPreview(profile.Patient),
                     delegate(RequestedProcedure rp)
                     {
-                        ModalityProcedureStep earliestMPS = null;
-                        CheckInProcedureStep checkInStep = null;
-                        DateTime? earliestMPSScheduledTime = Platform.Time;
-                        foreach (ProcedureStep ps in rp.ProcedureSteps)
-                        {
-                            if (ps is ModalityProcedureStep && ps.Scheduling != null)
+                        CheckInProcedureStep cps = (CheckInProcedureStep)CollectionUtils.SelectFirst<ProcedureStep>(rp.ProcedureSteps,
+                            delegate(ProcedureStep step)
                             {
-                                if (earliestMPS == null ||
-                                    ps.Scheduling.StartTime != null && ps.Scheduling.StartTime.Value.CompareTo(earliestMPS.Scheduling.StartTime) < 0)
-                                {
-                                    earliestMPS = ps as ModalityProcedureStep;
-                                }
-                            }
-                            else if (ps is CheckInProcedureStep)
-                            {
-                                if (ps.State == ActivityStatus.IP)
-                                    checkInStep = ps as CheckInProcedureStep;
-                            }
-                        }
+                                return step is CheckInProcedureStep;    
+                            });
 
-                        string mpsStatus = "";
-                        if (earliestMPS != null)
+                        bool mpsInProgress = CollectionUtils.Contains<ProcedureStep>(rp.ProcedureSteps,
+                            delegate(ProcedureStep step)
+                            {
+                                return (step is ModalityProcedureStep && step.State == ActivityStatus.IP);
+                            });
+
+                        string rpStatus = "";
+                        DateTime? scheduledTime = null;
+                        if (cps != null)
                         {
-                            if (checkInStep != null)
-                                mpsStatus = "Checked In";
+                            if (cps.Scheduling != null)
+                                scheduledTime = cps.Scheduling.StartTime;
+
+                            if (cps.State == ActivityStatus.IP)
+                                rpStatus = mpsInProgress ? activityStatusTable[ActivityStatus.IP].Value : SR.TextCheckedIn;
                             else
-                                mpsStatus = activityStatusTable[earliestMPS.State].Value;
-                        }
-                        else
-                        {
-                            Console.WriteLine("Problems houston");
-                        }
-
+                                rpStatus = activityStatusTable[cps.State].Value;
+                        } 
 
                         return new RICSummary(
                             rp.Type.Name,
                             nameAssembler.CreatePersonNameDetail(rp.Order.OrderingPractitioner.Name),
                             "N/A",
-                            earliestMPS == null ? null : earliestMPS.Scheduling.StartTime,
+                            scheduledTime,
                             "N/A",
-                            mpsStatus);
-                    }),
-                alertNotifications,
-                hasReconciliationCandidates
-                );       
+                            rpStatus);
+                    });
+
+            return preview;
         }
 
         public PatientProfileSearchCriteria CreatePatientProfileSearchCriteria(PatientProfileSearchData criteria)

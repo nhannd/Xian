@@ -158,5 +158,14 @@ namespace ClearCanvas.Ris.Application.Services {
                 return ResourceManager.GetString("ExceptionStaffAlreadyExist", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Checked In.
+        /// </summary>
+        internal static string TextCheckedIn {
+            get {
+                return ResourceManager.GetString("TextCheckedIn", resourceCulture);
+            }
+        }
     }
 }

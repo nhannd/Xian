@@ -150,4 +150,7 @@
   <data name="ExceptionNoStaffForUser" xml:space="preserve">
     <value>Current user must be associated with a Staff in order to perform this operation</value>
   </data>
+  <data name="TextCheckedIn" xml:space="preserve">
+    <value>Checked In</value>
+  </data>
 </root>

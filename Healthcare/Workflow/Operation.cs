@@ -5,6 +5,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Workflow;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Workflow
 {
@@ -19,12 +20,20 @@ namespace ClearCanvas.Healthcare.Workflow
         {
             public void Execute(RequestedProcedure rp, Staff currentUserStaff, IWorkflow workflow)
             {
-                CheckInProcedureStep cps = new CheckInProcedureStep(rp);
+                CheckInProcedureStep cps = (CheckInProcedureStep) CollectionUtils.SelectFirst<ProcedureStep>(rp.ProcedureSteps,
+                        delegate(ProcedureStep step)
+                        {
+                            return step is CheckInProcedureStep;
+                        });
 
-                // The CheckIn Step should be completed when the mps start
+                // The CPS should be created when each RP of an order is created, but just in case it's not
+                if (cps == null)
+                {
+                    cps = new CheckInProcedureStep(rp);
+                    workflow.AddActivity(cps);
+                }
+
                 cps.Start(currentUserStaff);
-
-                workflow.AddActivity(cps);
             }
         }
 

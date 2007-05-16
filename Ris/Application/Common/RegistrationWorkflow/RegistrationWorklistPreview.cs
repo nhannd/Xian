@@ -9,41 +9,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class RegistrationWorklistPreview : DataContractBase
     {
-        public RegistrationWorklistPreview(
-                EntityRef patientProfileRef,
-                string mrnID,
-                string mrnAssigningAuthority,
-                PersonNameDetail name,
-                HealthcardDetail healthcard,
-                DateTime? dateOfBirth,
-                string sex,
-                AddressDetail currentHomeAddress,
-                AddressDetail currentWorkAddress,
-                TelephoneDetail currentHomePhone,
-                TelephoneDetail currentWorkPhone,
-                List<TelephoneDetail> telephoneNumbers,
-                List<AddressDetail> addresses,
-                List<RICSummary> ricList,
-                List<AlertNotificationDetail> alertNotifications,
-                bool hasReconciliationCandidates)
-        {
-            this.PatientProfileRef = patientProfileRef;
-            this.Mrn = new MrnDetail(mrnID, mrnAssigningAuthority);
-            this.Name = name;
-            this.Healthcard = healthcard;
-            this.DateOfBirth = dateOfBirth;
-            this.Sex = sex;
-            this.CurrentHomeAddress = currentHomeAddress;
-            this.CurrentWorkAddress = currentWorkAddress;
-            this.CurrentHomePhone = currentHomePhone;
-            this.CurrentWorkPhone = currentWorkPhone;
-            this.TelephoneNumbers = telephoneNumbers;
-            this.Addresses = addresses;
-            this.RICs = ricList;
-            this.AlertNotifications = alertNotifications;
-            this.HasReconciliationCandidates = hasReconciliationCandidates;
-        }
-
         [DataMember]
         public EntityRef PatientProfileRef;
 

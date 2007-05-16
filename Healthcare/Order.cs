@@ -67,6 +67,12 @@ namespace ClearCanvas.Healthcare {
             foreach (RequestedProcedureType rpt in diagnosticService.RequestedProcedureTypes)
             {
                 RequestedProcedure rp = new RequestedProcedure(order, rpt, string.Format("{0}", ++rpIndex));
+
+                // Created and scheduled a checkin step for each RP, each RP should only ever has one CPS
+                CheckInProcedureStep cps = new CheckInProcedureStep(rp);
+                cps.Scheduling.StartTime = schedulingRequestDateTime;
+                rp.ProcedureSteps.Add(cps);
+
                 order.RequestedProcedures.Add(rp);
 
                 // add scheduled procedure steps according to the diagnostic service breakdown
@@ -100,7 +106,7 @@ namespace ClearCanvas.Healthcare {
         /// <param name="reason"></param>
         public void Cancel(OrderCancelReason reason)
         {
-            if (this.Status != OrderStatus.SC)
+            if (this.Status == OrderStatus.SC)
             {
 
                 this.Status = OrderStatus.CA;

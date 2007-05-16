@@ -158,15 +158,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IPatientProfileBroker patientProfileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = patientProfileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
 
-            OrderSearchCriteria criteria = new OrderSearchCriteria();
-            criteria.Patient.EqualTo(profile.Patient);
-            criteria.CancelReason.EqualTo(OrderCancelReason.None);
-
             OrderPriorityEnumTable orderPriorityEnumTable = PersistenceContext.GetBroker<IOrderPriorityEnumBroker>().Load();
 
             return new GetDataForCancelOrderTableResponse(
                 CollectionUtils.Map<Order, CancelOrderTableItem, List<CancelOrderTableItem>>(
-                    PersistenceContext.GetBroker<IOrderBroker>().Find(criteria),
+                    PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetOrderForCancel(profile.Patient),
                     delegate(Order o)
                     {
                         return new CancelOrderTableItem(o.GetRef(), 
@@ -209,55 +205,16 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IRegistrationWorklistBroker broker = this.PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
 
             PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).PatientProfile, EntityLoadFlags.Proxy);
-            return broker.GetRequestedProcedureForCheckIn(profile.Patient).Count > 0;
-
-            //IOrderBroker orderBroker = this.CurrentContext.GetBroker<IOrderBroker>();
-            //IRequestedProcedureBroker rpBroker = this.CurrentContext.GetBroker<IRequestedProcedureBroker>();
-            //IModalityProcedureStepBroker mpsBroker = this.CurrentContext.GetBroker<IModalityProcedureStepBroker>();
-
-            //OrderSearchCriteria criteria = new OrderSearchCriteria();
-            //criteria.Patient.EqualTo(profile.Patient);
-            //foreach (Order order in orderBroker.Find(criteria))
-            //{
-            //    orderBroker.LoadRequestedProceduresForOrder(order);
-            //    foreach (RequestedProcedure rp in order.RequestedProcedures)
-            //    {
-            //        ModalityProcedureStepSearchCriteria mpsCriteria = new ModalityProcedureStepSearchCriteria();
-            //        mpsCriteria.State.EqualTo(ActivityStatus.SC);
-            //        //TODO: add date filter for mpsCriteria 
-            //        //mpsCriteria.Scheduling.StartTime.Between(Platform.Time.Date, Platform.Time.Date.AddDays(1));
-            //        foreach (ModalityProcedureStep mps in mpsBroker.Find(mpsCriteria))
-            //        {
-            //            foreach (CheckInProcedureStep cps in mps.RequestedProcedure.CheckInProcedureSteps)
-            //            {
-            //                //TODO: add date filter for cps date range for today
-            //                //return after we found the first RequestedProcedure that can be CheckIn
-            //                return true;
-            //            }
-            //        }
-            //    }
-            //}        
+            return broker.GetRequestedProcedureForCheckInCount(profile.Patient) > 0;
         }
 
         public bool CanCancelOrder(IWorklistItemKey itemKey)
         {
-            try
-            {
-                IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
-                IOrderBroker orderBroker = this.PersistenceContext.GetBroker<IOrderBroker>();
+            IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
+            IRegistrationWorklistBroker broker = this.PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
 
-                PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).PatientProfile, EntityLoadFlags.CheckVersion);
-
-                OrderSearchCriteria criteria = new OrderSearchCriteria();
-                criteria.Patient.EqualTo(profile.Patient);
-                criteria.CancelReason.EqualTo(OrderCancelReason.None);
-
-                return (orderBroker.FindOne(criteria) != null);
-            }
-            catch (EntityNotFoundException)
-            {
-                return false;
-            }
+            PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).PatientProfile, EntityLoadFlags.CheckVersion);
+            return broker.GetOrderForCancelCount(profile.Patient) > 0;
         }
 
         /// <summary>
