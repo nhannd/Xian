@@ -18,7 +18,6 @@ using Crownwood.DotNetMagic.Controls;
 using Crownwood.DotNetMagic.Forms;
 using System.Reflection;
 using System.Drawing.Drawing2D;
-using ClearCanvas.Desktop.View.WinForms.Renderers;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -49,7 +48,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             _desktopWindow.WorkspaceManager.Workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(OnWorkspaceRemoved);
             _desktopWindow.WorkspaceManager.ActiveWorkspaceChanged += new EventHandler<WorkspaceActivationChangedEventArgs>(OnWorkspaceActivated);
 
-            _dockingManager = new DockingManager(this._toolStripContainer.ContentPanel, VisualStyle.Office2007Black);
+            _dockingManager = new DockingManager(this._toolStripContainer.ContentPanel, VisualStyle.IDE2005);
             _dockingManager.ActiveColor = SystemColors.Control;
             _dockingManager.InnerControl = _tabbedGroups;
 			_dockingManager.TabControlCreated += new DockingManager.TabControlCreatedHandler(OnDockingManagerTabControlCreated);
@@ -65,9 +64,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_workspaceViewManager = new WorkspaceViewManager(this, _tabbedGroups);
 			_shelfViewManager = new ShelfViewManager(_desktopWindow.ShelfManager, _dockingManager);
 
-			_toolbar.Renderer = new ClearCanvasToolStripRenderer();
 			_toolbar.Stretch = true;
-			_mainMenu.Renderer = new ClearCanvasToolStripRenderer();
 
 			RebuildMenusAndToolbars();
         }

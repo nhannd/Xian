@@ -94,12 +94,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\SendStudySmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\RetrieveStudySmall.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\CancelSmall.png" />
   </ItemGroup>
   <ItemGroup>
@@ -113,6 +107,14 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\ClearAllSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RetrieveStudyToolLarge.png" />
+    <EmbeddedResource Include="Icons\RetrieveStudyToolMedium.png" />
+    <EmbeddedResource Include="Icons\RetrieveStudyToolSmall.png" />
+    <EmbeddedResource Include="Icons\SendStudyToolLarge.png" />
+    <EmbeddedResource Include="Icons\SendStudyToolMedium.png" />
+    <EmbeddedResource Include="Icons\SendStudyToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

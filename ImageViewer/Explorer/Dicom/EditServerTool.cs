@@ -13,11 +13,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     [ClickHandler("activate", "EditServer")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipEdit")]
-    [IconSet("activate", IconScheme.Colour, "Icons.Edit.png", "Icons.Edit.png", "Icons.Edit.png")]
+    [IconSet("activate", IconScheme.Colour, "Icons.EditToolSmall.png", "Icons.EditToolMedium.png", "Icons.EditToolLarge.png")]
     [ExtensionOf(typeof(AENavigatorToolExtensionPoint))]
-    public class ServerEditTool : AENavigatorTool
+    public class EditServerTool : AENavigatorTool
     {
-        public ServerEditTool()
+        public EditServerTool()
         {
         }
 

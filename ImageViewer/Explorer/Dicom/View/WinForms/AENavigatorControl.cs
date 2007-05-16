@@ -22,7 +22,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             InitializeComponent();
 
             _component = component;
-            ServerTreeUpdated += new EventHandler(OnServerTreeUpdated);
+
+			ClearCanvasStyle.SetTitleBarStyle(_titleBar);
+			
+			ServerTreeUpdated += new EventHandler(OnServerTreeUpdated);
             this._aeTreeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.treeView_ItemDrag);
             this._aeTreeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeView_DragEnter);
             this._aeTreeView.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView_DragOver);

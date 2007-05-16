@@ -66,12 +66,12 @@
     <Compile Include="DicomServerGroupEditComponent.cs" />
     <Compile Include="DicomExplorerConfigurationPageProvider.cs" />
     <Compile Include="SearchPanelComponent.cs" />
-    <Compile Include="ServerAddTool.cs" />
-    <Compile Include="ServerDeleteTool.cs" />
-    <Compile Include="ServerEditTool.cs" />
-    <Compile Include="ServerGroupAddTool.cs" />
+    <Compile Include="AddServerTool.cs" />
+    <Compile Include="DeleteServerTool.cs" />
+    <Compile Include="EditServerTool.cs" />
+    <Compile Include="AddServerGroupTool.cs" />
     <Compile Include="ServerTree.cs" />
-    <Compile Include="ServerVerifyTool.cs" />
+    <Compile Include="VerifyServerTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -128,15 +128,6 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\DeleteStudySmall.png" />
-    <EmbeddedResource Include="Icons\OpenStudySmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\Add.png" />
-    <EmbeddedResource Include="Icons\AddGroup.png" />
-    <EmbeddedResource Include="Icons\Delete.png" />
-    <EmbeddedResource Include="Icons\Edit.png" />
-    <EmbeddedResource Include="Icons\Verify.png" />
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -149,6 +140,28 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>DicomExplorerConfigurationSettings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AddServerGroupToolLarge.png" />
+    <EmbeddedResource Include="Icons\AddServerGroupToolMedium.png" />
+    <EmbeddedResource Include="Icons\AddServerGroupToolSmall.png" />
+    <EmbeddedResource Include="Icons\AddServerToolLarge.png" />
+    <EmbeddedResource Include="Icons\AddServerToolMedium.png" />
+    <EmbeddedResource Include="Icons\AddServerToolSmall.png" />
+    <EmbeddedResource Include="Icons\DeleteToolLarge.png" />
+    <EmbeddedResource Include="Icons\DeleteToolMedium.png" />
+    <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
+    <EmbeddedResource Include="Icons\EditToolLarge.png" />
+    <EmbeddedResource Include="Icons\EditToolMedium.png" />
+    <EmbeddedResource Include="Icons\EditToolSmall.png" />
+    <EmbeddedResource Include="Icons\VerifyServerToolLarge.png" />
+    <EmbeddedResource Include="Icons\VerifyServerToolMedium.png" />
+    <EmbeddedResource Include="Icons\VerifyServerToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\OpenToolLarge.png" />
+    <EmbeddedResource Include="Icons\OpenToolMedium.png" />
+    <EmbeddedResource Include="Icons\OpenToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

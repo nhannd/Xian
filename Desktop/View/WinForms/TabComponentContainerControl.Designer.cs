@@ -43,7 +43,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._tabControl.PositionTop = true;
 			this._tabControl.ShowDropSelect = false;
 			this._tabControl.Size = new System.Drawing.Size(772, 447);
-			this._tabControl.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2003;
+			this._tabControl.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			this._tabControl.TabIndex = 0;
 			this._tabControl.TextTips = true;
 			// 

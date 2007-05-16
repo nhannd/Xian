@@ -13,11 +13,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     [ClickHandler("activate", "AddNewServerGroup")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipAddServerGroup")]
-    [IconSet("activate", IconScheme.Colour, "Icons.AddGroup.png", "Icons.AddGroup.png", "Icons.AddGroup.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.AddServerGroupToolSmall.png", "Icons.AddServerGroupToolMedium.png", "Icons.AddServerGroupToolLarge.png")]
     [ExtensionOf(typeof(AENavigatorToolExtensionPoint))]
-    public class ServerGroupAddTool : AENavigatorTool
+    public class AddServerGroupTool : AENavigatorTool
     {
-        public ServerGroupAddTool()
+        public AddServerGroupTool()
         {
         }
 

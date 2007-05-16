@@ -13,11 +13,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     [ClickHandler("activate", "DeleteServerServerGroup")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipDelete")]
-    [IconSet("activate", IconScheme.Colour, "Icons.Delete.png", "Icons.Delete.png", "Icons.Delete.png")]
+    [IconSet("activate", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
     [ExtensionOf(typeof(AENavigatorToolExtensionPoint))]
-    public class ServerDeleteTool : AENavigatorTool
+    public class DeleteServerTool : AENavigatorTool
     {
-        public ServerDeleteTool()
+        public DeleteServerTool()
         {
         }
 

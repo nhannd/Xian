@@ -77,7 +77,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             tc.ControlBottomOffset = 3;
             tc.ControlLeftOffset = 3;
             tc.ControlRightOffset = 3;
-            tc.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2003;
+            tc.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
         }
     }
 }

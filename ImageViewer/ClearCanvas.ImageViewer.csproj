@@ -415,7 +415,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram1.cd" />
     <None Include="ClassDiagrams\Annotations.cd" />
     <None Include="ClassDiagrams\CompositeGraphics.cd" />
     <None Include="ClassDiagrams\Graphics.cd" />

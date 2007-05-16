@@ -62,6 +62,7 @@
       <DependentUpon>BindingTreeView.cs</DependentUpon>
     </Compile>
     <Compile Include="BlockingOperationView.cs" />
+    <Compile Include="ClearCanvasStyle.cs" />
     <Compile Include="DecoratedTableView.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -123,8 +124,6 @@
       <DependentUpon>ProgressDialogComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ProgressDialogComponentView.cs" />
-    <Compile Include="Renderers\ClearCanvasColorTable.cs" />
-    <Compile Include="Renderers\ClearCanvasToolStripRenderer.cs" />
     <Compile Include="SplitComponentContainerControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

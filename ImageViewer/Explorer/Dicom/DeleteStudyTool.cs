@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[ClickHandler("activate", "DeleteStudy")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipDeleteStudy")]
-	[IconSet("activate", IconScheme.Colour, "Icons.DeleteStudySmall.png", "Icons.DeleteStudySmall.png", "Icons.DeleteStudySmall.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class DeleteStudyTool : StudyBrowserTool
 	{

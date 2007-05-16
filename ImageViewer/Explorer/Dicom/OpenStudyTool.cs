@@ -15,7 +15,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	[ClickHandler("activate", "OpenStudy")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipOpenStudy")]
-	[IconSet("activate", IconScheme.Colour, "Icons.OpenStudySmall.png", "Icons.OpenStudySmall.png", "Icons.OpenStudySmall.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.OpenToolSmall.png", "Icons.OpenToolSmall.png", "Icons.OpenToolSmall.png")]
 	[ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
 	public class OpenStudyTool : StudyBrowserTool
 	{

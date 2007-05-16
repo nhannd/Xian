@@ -19,6 +19,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 
             _component = component;
 
+			ClearCanvasStyle.SetTitleBarStyle(_titleBar);
+
 			_receiveTable.ToolStripItemDisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
 			_receiveTable.Table = _component.ReceiveTable;
 

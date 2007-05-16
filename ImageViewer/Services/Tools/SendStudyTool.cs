@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
     [ClickHandler("activate", "SendStudy")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [Tooltip("activate", "TooltipSendStudy")]
-    [IconSet("activate", IconScheme.Colour, "Icons.SendStudySmall.png", "Icons.SendStudySmall.png", "Icons.SendStudySmall.png")]
+	[IconSet("activate", IconScheme.Colour, "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png")]
     [ExtensionOf(typeof(StudyBrowserToolExtensionPoint))]
     public class SendStudyTool : StudyBrowserTool
     {

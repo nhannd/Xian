@@ -42,7 +42,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._tabbedGroupsControl.ProminentLeaf = null;
             this._tabbedGroupsControl.ResizeBarColor = System.Drawing.SystemColors.Control;
             this._tabbedGroupsControl.Size = new System.Drawing.Size(434, 348);
-            this._tabbedGroupsControl.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2003;
+            this._tabbedGroupsControl.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
             this._tabbedGroupsControl.TabIndex = 0;
             this._tabbedGroupsControl.TabControlCreated += new Crownwood.DotNetMagic.Controls.TabbedGroups.TabControlCreatedHandler(this.OnTabControlCreated);
             // 

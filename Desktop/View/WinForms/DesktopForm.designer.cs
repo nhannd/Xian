@@ -99,7 +99,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this._tabbedGroups.ProminentLeaf = null;
 			this._tabbedGroups.ResizeBarColor = System.Drawing.SystemColors.Control;
 			this._tabbedGroups.Size = new System.Drawing.Size(792, 512);
-			this._tabbedGroups.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black;
+			this._tabbedGroups.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			this._tabbedGroups.TabIndex = 0;
 			// 
 			// DesktopForm
@@ -113,7 +113,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.MainMenuStrip = this._mainMenu;
 			this.Name = "DesktopForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black;
+			this.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			this._toolStripContainer.ContentPanel.ResumeLayout(false);
 			this._toolStripContainer.TopToolStripPanel.ResumeLayout(false);
 			this._toolStripContainer.TopToolStripPanel.PerformLayout();

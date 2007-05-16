@@ -23,6 +23,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			Platform.CheckForNullReference(component, "component");
 			InitializeComponent();
 
+			ClearCanvasStyle.SetTitleBarStyle(_resultsTitleBar);
+
 			_studyBrowserComponent = component;
 			_studyBrowserComponent.SelectedServerChanged += new EventHandler(OnSelectedServerChanged);
 

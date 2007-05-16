@@ -55,7 +55,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			this.Name = "DialogBoxForm";
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-			this.Style = Crownwood.DotNetMagic.Common.VisualStyle.Office2007Black;
+			this.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
 			this.Text = "ApplicationComponentHostDialogForm";
 			this.ResumeLayout(false);
 

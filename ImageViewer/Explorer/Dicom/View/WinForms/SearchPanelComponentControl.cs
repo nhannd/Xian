@@ -30,6 +30,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this.AcceptButton = _searchButton;
             _component = component;
 
+			ClearCanvasStyle.SetTitleBarStyle(_titleBar);
+
 			_modalityPicker.SetAvailableModalities(_component.AvailableSearchModalities);
 
 			_bindingSource = new BindingSource();
