@@ -202,13 +202,11 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					return testItem.Identifier.Equals(e.Item.Identifier);
 				});
 
-			bool sort = false;
 			if (index >= 0)
 			{
 				if (e.Item.Removed)
 				{
 					_receiveTable.Items.Remove(_receiveTable.Items[index]);
-					sort = true;
 				}
 				else
 				{
@@ -221,12 +219,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				if (!e.Item.Removed)
 				{
 					_receiveTable.Items.Add(new ReceiveQueueItem(e.Item));
-					sort = true;
 				}
 			}
-
-			if (sort)
-				_receiveTable.Sort();
 		}
 
 		private string FormatString(string input)
