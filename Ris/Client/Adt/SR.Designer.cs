@@ -556,6 +556,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot determine enablement for operation: {0}.
+        /// </summary>
+        internal static string ExceptionOperationEnablementUnknown {
+            get {
+                return ResourceManager.GetString("ExceptionOperationEnablementUnknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this visit?.
         /// </summary>
         internal static string MessageDeleteSelectedVisit {

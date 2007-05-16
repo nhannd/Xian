@@ -21,5 +21,17 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 
         [OperationContract]
         GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
+
+        [OperationContract]
+        StartProcedureResponse StartProcedure(StartProcedureRequest request);
+
+        [OperationContract]
+        SuspendProcedureResponse SuspendProcedure(SuspendProcedureRequest request);
+
+        [OperationContract]
+        CompleteProcedureResponse CompleteProcedure(CompleteProcedureRequest request);
+
+        [OperationContract]
+        CancelProcedureResponse CancelProcedure(CancelProcedureRequest request);
     }
 }

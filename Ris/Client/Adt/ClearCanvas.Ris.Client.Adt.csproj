@@ -95,6 +95,7 @@
     <Compile Include="TechnologistWorkflowFolderBase.cs" />
     <Compile Include="TechnologistWorkflowFolderSystem.cs" />
     <Compile Include="TechnologistWorkflowFolderSystemTool.cs" />
+    <Compile Include="TechnologistWorkflowTool.cs" />
     <Compile Include="TechnologistWorklistTable.cs" />
     <Compile Include="VisitEditorComponent.cs" />
     <Compile Include="VisitDetailsEditorComponent.cs" />

@@ -197,6 +197,13 @@
     <Compile Include="Login\ILoginService.cs" />
     <Compile Include="Login\LoginRequest.cs" />
     <Compile Include="Login\LoginResponse.cs" />
+    <Compile Include="ModalityWorkflow\SuspendProcedureRequest.cs" />
+    <Compile Include="ModalityWorkflow\SuspendProcedureResponse.cs" />
+    <Compile Include="ModalityWorkflow\CompleteProcedureRequest.cs" />
+    <Compile Include="ModalityWorkflow\CompleteProcedureResponse.cs" />
+    <Compile Include="ModalityWorkflow\CancelProcedureRequest.cs" />
+    <Compile Include="ModalityWorkflow\CancelProcedureResponse.cs" />
+    <Compile Include="ModalityWorkflow\StartProcedureResponse.cs" />
     <Compile Include="ModalityWorkflow\ExecuteOperationRequest.cs" />
     <Compile Include="ModalityWorkflow\GetOperationEnablementRequest.cs" />
     <Compile Include="ModalityWorkflow\GetOperationEnablementResponse.cs" />
@@ -212,6 +219,7 @@
     <Compile Include="ModalityWorkflow\ModalityWorklistItem.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistPreview.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistSearchData.cs" />
+    <Compile Include="ModalityWorkflow\StartProcedureRequest.cs" />
     <Compile Include="NoteDetail.cs" />
     <Compile Include="PagedDataContractBase.cs" />
     <Compile Include="PageRequestDetail.cs" />

@@ -282,6 +282,9 @@
   <data name="ExceptionFailedToSave" xml:space="preserve">
     <value>An error occured while attempting to save changes to this item</value>
   </data>
+  <data name="ExceptionOperationEnablementUnknown" xml:space="preserve">
+    <value>Cannot determine enablement for operation: {0}</value>
+  </data>
   <data name="MessageDeleteSelectedVisit" xml:space="preserve">
     <value>Are you sure you want to delete this visit?</value>
   </data>

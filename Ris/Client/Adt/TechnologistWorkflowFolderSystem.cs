@@ -1,11 +1,12 @@
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using System.Collections.Generic;
-using ClearCanvas.Desktop;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -25,6 +26,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
         ICollection<ModalityWorklistItem> SelectedItems { get; }
         event EventHandler SelectedItemsChanged;
+
+        IEnumerable Folders { get; }
+        IFolder SelectedFolder { get; }
 
         IDesktopWindow DesktopWindow { get; }
     }
@@ -71,6 +75,16 @@ namespace ClearCanvas.Ris.Client.Adt
                 return _owner.GetOperationEnablement(operationClass);
             }
 
+            public IEnumerable Folders
+            {
+                get { return _owner.Folders; }
+            }
+
+            public IFolder SelectedFolder
+            {
+                get { return _owner.SelectedFolder; }
+            }
+
             #endregion
         }
 
@@ -102,7 +116,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private ToolSet _itemToolSet;
         private ToolSet _folderToolSet;
         private IDictionary<string, bool> _workflowEnablement;
-        private Folders.SearchFolder _searchFolder;
+        //private Folders.SearchFolder _searchFolder;
 
         public TechnologistWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
             : base(folderExplorer)
@@ -127,7 +141,15 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public bool GetOperationEnablement(string operationName)
         {
-            return _workflowEnablement == null ? false : _workflowEnablement[operationName];
+            try
+            {
+                return _workflowEnablement == null ? false : _workflowEnablement[operationName];
+            }
+            catch (KeyNotFoundException e)
+            {
+                Platform.Log(string.Format(SR.ExceptionOperationEnablementUnknown, operationName), LogLevel.Error);
+                return false;
+            }
         }
 
         private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
@@ -145,7 +167,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 Platform.GetService<IModalityWorkflowService>(
                     delegate(IModalityWorkflowService service)
                     {
-                        //TODO: Get operation enablement from the service
+                        GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem));
+                        _workflowEnablement = response.OperationEnablementDictionary;
                     });
             }
             catch (Exception ex)

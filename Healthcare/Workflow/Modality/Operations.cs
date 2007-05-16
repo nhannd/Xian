@@ -1,65 +1,68 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Workflow;
-using ClearCanvas.Common;
 using System.Collections;
-using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Enterprise.Core;
+using System.Collections.Generic;
+
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Workflow.Modality
 {
-    public class Operations
+    public abstract class ModalityOperation
     {
-        public abstract class ModalityOperation
+    }
+
+    public class StartModalityProcedureStepOperation : ModalityOperation
+    {
+        public void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
         {
-            protected ModalityProcedureStep LoadStep(EntityRef stepRef, IPersistenceContext context)
-            {
-                return context.GetBroker<IModalityProcedureStepBroker>().Load(stepRef, EntityLoadFlags.CheckVersion);
-            }
+            mps.Start(currentUserStaff);
         }
 
-        public class StartModalityProcedureStep : ModalityOperation
+        public bool CanExecute(ModalityProcedureStep mps)
         {
-            public void Execute(EntityRef rpRef, Staff currentUserStaff, IWorkflow workflow)
-            {
-                ModalityProcedureStep mps = LoadStep(rpRef, workflow.CurrentContext);
-                mps.Start(currentUserStaff);
-            }
+            return mps.State == ActivityStatus.SC;
+        }
+    }
 
-            public bool CanExecute(ModalityProcedureStep step)
-            {
-                return step.State == ActivityStatus.SC;
-            }
+    public class CompleteModalityProcedureStepOperation : ModalityOperation
+    {
+        public void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
+        {
+            mps.Complete(currentUserStaff);
         }
 
-        public class CompleteModalityProcedureStep : ModalityOperation
+        public bool CanExecute(ModalityProcedureStep mps)
         {
-            public void Execute(EntityRef rpRef, Staff currentUserStaff, IWorkflow workflow)
-            {
-                ModalityProcedureStep mps = LoadStep(rpRef, workflow.CurrentContext);
-                mps.Complete(currentUserStaff);
-            }
+            return mps.State == ActivityStatus.SC || mps.State == ActivityStatus.IP;
+        }
+    }
 
-            public bool CanExecute(ModalityProcedureStep step)
-            {
-                return step.State == ActivityStatus.SC || step.State == ActivityStatus.IP;
-            }
+    public class CancelModalityProcedureStepOperation : ModalityOperation
+    {
+        public void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
+        {
+            mps.Discontinue();
         }
 
-        public class CancelModalityProcedureStep : ModalityOperation
+        public bool CanExecute(ModalityProcedureStep mps)
         {
-            public void Execute(EntityRef rpRef, Staff currentUserStaff, IWorkflow workflow)
-            {
-                ModalityProcedureStep mps = LoadStep(rpRef, workflow.CurrentContext);
-                mps.Discontinue();
-            }
+            return mps.State == ActivityStatus.SC || mps.State == ActivityStatus.IP;
+        }
+    }
 
-            public bool CanExecute(ModalityProcedureStep step)
-            {
-                return step.State == ActivityStatus.SC || step.State == ActivityStatus.IP;
-            }
+    public class SuspendModalityProcedureStepOperation : ModalityOperation
+    {
+        public void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
+        {
+            mps.Suspend();
+        }
+
+        public bool CanExecute(ModalityProcedureStep mps)
+        {
+            return mps.State == ActivityStatus.SC || mps.State == ActivityStatus.IP;
         }
     }
 }

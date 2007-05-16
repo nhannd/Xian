@@ -9,17 +9,17 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 {
     public class WorklistItemKey : IWorklistItemKey
     {
-        private EntityRef _procedureStep;
+        private EntityRef _modalityProcedureStep;
 
-        public WorklistItemKey(EntityRef procedureStep)
+        public WorklistItemKey(EntityRef modalityProcedureStep)
         {
-            _procedureStep = procedureStep;
+            _modalityProcedureStep = modalityProcedureStep;
         }
 
-        public EntityRef ProcedureStep
+        public EntityRef ModalityProcedureStep
         {
-            get { return _procedureStep; }
-            set { _procedureStep = value; }
+            get { return _modalityProcedureStep; }
+            set { _modalityProcedureStep = value; }
         }
     }
 
@@ -56,7 +56,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
         public EntityRef ModalityProcedureStepRef
         {
-            get { return (this.Key as WorklistItemKey).ProcedureStep; }
+            get { return (this.Key as WorklistItemKey).ModalityProcedureStep; }
         }
 
         public CompositeIdentifier Mrn
