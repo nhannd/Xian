@@ -235,10 +235,10 @@
     <value>The specified keystroke is already in use.  The assignment has been ignored.</value>
   </data>
   <data name="ExceptionLoadCompleteFailure" xml:space="preserve">
-    <value>ClearCanvas was unable to load any of the images in the study you requested.  Please contact your PACS administrator, or check the log.</value>
+    <value>ClearCanvas was unable to load any of the images you requested.  Please contact your PACS administrator, or check the log.</value>
   </data>
   <data name="ExceptionLoadPartialFailure" xml:space="preserve">
-    <value>ClearCanvas was only able to load {0} of the {1} images in the study you requested.  Please contact your PACS administrator, or check the log.</value>
+    <value>ClearCanvas was only able to load {0} of the {1} images you requested.  Please contact your PACS administrator, or check the log.</value>
   </data>
   <data name="ExceptionLUTIndexOutOfRange" xml:space="preserve">
     <value>LUT index out of range (index = {0}).</value>

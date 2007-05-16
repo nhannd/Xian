@@ -72,29 +72,27 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 		{
 			DiagnosticImageViewerComponent viewer = new DiagnosticImageViewerComponent();
 
-			int successfulLoadAttempts = 0;
-			int successfulImagesInLoadFailure = 0;
-
 			string[] files = BuildFileList();
 
 			if (files.Length == 0)
 				return;
 
 			bool cancelled = false;
-
+			bool anyFailures = false;
+			int successfulImagesInLoadFailure = 0;
+			
 			try
 			{
 				viewer.LoadImages(files, this.Context.DesktopWindow, out cancelled);
-				successfulLoadAttempts++;
 			}
 			catch (OpenStudyException e)
 			{
-				successfulImagesInLoadFailure += e.SuccessfulImages;
+				anyFailures = true;
+				successfulImagesInLoadFailure = e.SuccessfulImages;
 				ExceptionHandler.Report(e, this.Context.DesktopWindow);
 			}
 
-			if (cancelled || 
-				(successfulLoadAttempts == 0 && successfulImagesInLoadFailure == 0))
+			if (cancelled || (anyFailures && successfulImagesInLoadFailure == 0))
 				return;
 
 			ApplicationComponent.LaunchAsWorkspace(
@@ -119,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.Tools
 				if (File.Exists(path))
 					fileList.Add(path);
 				else if (Directory.Exists(path))
-					fileList.AddRange(Directory.GetFiles(path, "*.dcm", SearchOption.AllDirectories));
+					fileList.AddRange(Directory.GetFiles(path, "*.*", SearchOption.AllDirectories));
 			}
 
 			return fileList.ToArray();

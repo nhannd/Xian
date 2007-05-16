@@ -412,7 +412,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ClearCanvas was unable to load any of the images in the study you requested.  Please contact your PACS administrator, or check the log..
+        ///   Looks up a localized string similar to ClearCanvas was unable to load any of the images you requested.  Please contact your PACS administrator, or check the log..
         /// </summary>
         public static string ExceptionLoadCompleteFailure {
             get {
@@ -421,7 +421,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ClearCanvas was only able to load {0} of the {1} images in the study you requested.  Please contact your PACS administrator, or check the log..
+        ///   Looks up a localized string similar to ClearCanvas was only able to load {0} of the {1} images you requested.  Please contact your PACS administrator, or check the log..
         /// </summary>
         public static string ExceptionLoadPartialFailure {
             get {
