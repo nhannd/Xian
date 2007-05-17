@@ -14,13 +14,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 	[ButtonAction("clearSelected", "send-queue-toolbar/ClearSelected")]
 	[MenuAction("clearSelected", "send-queue-contextmenu/Clear")]
 	[Tooltip("clearSelected", "TooltipClearSelected")]
-	[IconSet("clearSelected", IconScheme.Colour, "Icons.ClearSelectedSmall.png", "Icons.ClearSelectedSmall.png", "Icons.ClearSelectedSmall.png")]
+	[IconSet("clearSelected", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 	[ClickHandler("clearSelected", "ClearSelected")]
 	[EnabledStateObserver("clearSelected", "ClearSelectedEnabled", "ClearSelectedEnabledChanged")]
 
 	[ButtonAction("clearAll", "send-queue-toolbar/ClearAll")]
 	[Tooltip("clearAll", "TooltipClearAll")]
-	[IconSet("clearAll", IconScheme.Colour, "Icons.ClearAllSmall.png", "Icons.ClearAllSmall.png", "Icons.ClearAllSmall.png")]
+	[IconSet("clearAll", IconScheme.Colour, "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png")]
 	[ClickHandler("clearAll", "ClearAll")]
 	[EnabledStateObserver("clearAll", "ClearAllEnabled", "ClearAllEnabledChanged")]
 

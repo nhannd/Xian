@@ -14,19 +14,17 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 	[MenuAction("cancel", "dicom-file-import-contextmenu/Cancel")]
 	[Tooltip("cancel", "Cancel")]
-	[IconSet("cancel", IconScheme.Colour, "Icons.CancelSmall.png", "Icons.CancelSmall.png", "Icons.CancelSmall.png")]
 	[ClickHandler("cancel", "Cancel")]
 	[EnabledStateObserver("cancel", "CancelEnabled", "CancelEnabledChanged")]
 
 	[MenuAction("clear", "dicom-file-import-contextmenu/Clear")]
 	[Tooltip("clear", "Clear")]
-	[IconSet("clear", IconScheme.Colour, "Icons.ClearSmall.png", "Icons.ClearSmall.png", "Icons.ClearSmall.png")]
 	[ClickHandler("clear", "Clear")]
 	[EnabledStateObserver("clear", "ClearEnabled", "ClearEnabledChanged")]
 
 	[ButtonAction("clearInactive", "dicom-file-import-toolbar/ClearInactive")]
 	[Tooltip("clearInactive", "TooltipClearInactive")]
-	[IconSet("clearInactive", IconScheme.Colour, "Icons.ClearInactiveSmall.png", "Icons.ClearInactiveSmall.png", "Icons.ClearInactiveSmall.png")]
+	[IconSet("clearInactive", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
 	[ClickHandler("clearInactive", "ClearInactive")]
 	[EnabledStateObserver("clearInactive", "ClearInactiveEnabled", "ClearInactiveEnabledChanged")]
 
