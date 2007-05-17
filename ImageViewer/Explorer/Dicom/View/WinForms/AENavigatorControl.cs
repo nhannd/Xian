@@ -44,8 +44,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_aeTreeView.MouseDown += new MouseEventHandler(AETreeView_Click);
 			_aeTreeView.AfterSelect += new TreeViewEventHandler(AETreeView_AfterSelect);
 
-			_component.ServerTree.RootNode.LocalDataStoreNode.Updated += new EventHandler(OnLocalDataStoreNodeUpdated);
+			if (_component.ShowLocalDataStoreNode)
+				_component.ServerTree.RootNode.LocalDataStoreNode.Updated += new EventHandler(OnLocalDataStoreNodeUpdated);
+			
 			BuildServerTreeView(_aeTreeView, _component.ServerTree);
+			_aeTreeView.SelectedNode = _lastClickedNode;
+			_component.SetSelection(_lastClickedNode.Tag as IServerTreeNode);
         }
 
 		void OnLocalDataStoreNodeUpdated(object sender, EventArgs e)
@@ -112,14 +116,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             treeView.Nodes.Clear();
             treeView.ShowNodeToolTips = true;
 
-            // build the localdatastorenode
-            TreeNode localDataStoreTreeNode = new TreeNode(dicomServerTree.RootNode.LocalDataStoreNode.Name);
-            localDataStoreTreeNode.Tag = dicomServerTree.RootNode.LocalDataStoreNode;
-            localDataStoreTreeNode.ToolTipText = dicomServerTree.RootNode.LocalDataStoreNode.ToString();
-            SetIcon(dicomServerTree.RootNode.LocalDataStoreNode, localDataStoreTreeNode);
-            treeView.Nodes.Add(localDataStoreTreeNode);
-            treeView.SelectedNode = localDataStoreTreeNode;
-            _lastClickedNode = localDataStoreTreeNode;
+			if (_component.ShowLocalDataStoreNode)
+			{
+				// build the localdatastorenode
+				TreeNode localDataStoreTreeNode = new TreeNode(dicomServerTree.RootNode.LocalDataStoreNode.Name);
+				localDataStoreTreeNode.Tag = dicomServerTree.RootNode.LocalDataStoreNode;
+				localDataStoreTreeNode.ToolTipText = dicomServerTree.RootNode.LocalDataStoreNode.ToString();
+				SetIcon(dicomServerTree.RootNode.LocalDataStoreNode, localDataStoreTreeNode);
+				treeView.Nodes.Add(localDataStoreTreeNode);
+				_lastClickedNode = localDataStoreTreeNode;
+			}
 
             // build the default server group
             TreeNode firstServerGroup = new TreeNode(dicomServerTree.RootNode.ServerGroupNode.Name);
@@ -127,9 +133,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             firstServerGroup.ToolTipText = dicomServerTree.RootNode.ServerGroupNode.ToString();
             SetIcon(dicomServerTree.RootNode.ServerGroupNode, firstServerGroup);
             treeView.Nodes.Add(firstServerGroup);
-
             BuildNextTreeLevel(firstServerGroup);
-        }
+
+			if (!_component.ShowLocalDataStoreNode)
+				_lastClickedNode = firstServerGroup;
+		}
 
         private void BuildNextTreeLevel(TreeNode serverGroupUITreeNode)
         {

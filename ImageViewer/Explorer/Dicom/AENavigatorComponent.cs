@@ -105,13 +105,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         private ClickHandlerDelegate _defaultActionHandler;
 		private bool _showTools;
 		private bool _showTitlebar;
+		private bool _showLocalDataStoreNode;
 
 		private static String _myServersTitle = SR.TitleMyServers;
 		private static String _myDatastoreTitle = SR.TitleMyDataStore;
         private static String _myServersRoot = "MyServersRoot";
         private static String _myServersXmlFile = "DicomAEServers.xml";
 
-        public ServerTree ServerTree
+		public ServerTree ServerTree
         {
             get { return _serverTree; }
             set { _serverTree = value; }
@@ -150,7 +151,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			get { return _showTitlebar; }
 		}
-		
+
+		public bool ShowLocalDataStoreNode
+		{
+			get { return _showLocalDataStoreNode; }
+		}
+
 		public static String MyServersTitle
         {
             get { return AENavigatorComponent._myServersTitle; }
@@ -173,14 +179,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         #endregion
 
-        public AENavigatorComponent() : this(true, true)
+        public AENavigatorComponent() : this(true, true, true)
         {
         }
 
-		public AENavigatorComponent(bool showTools, bool showTitlebar)
+		public AENavigatorComponent(bool showTools, bool showTitlebar, bool showLocalDataStoreNode)
 		{
 			_showTools = showTools;
 			_showTitlebar = showTitlebar;
+			_showLocalDataStoreNode = showLocalDataStoreNode;
 
 			_selectedServers = new AEServerGroup();
 			_serverTree = new ServerTree();
