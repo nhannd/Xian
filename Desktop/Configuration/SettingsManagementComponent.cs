@@ -192,10 +192,10 @@ namespace ClearCanvas.Desktop.Configuration
 
             _settingsPropertiesActionModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 
-            _saveAllAction = _settingsPropertiesActionModel.AddAction("saveall", SR.LabelSaveAll, "SaveAll.png",
+            _saveAllAction = _settingsPropertiesActionModel.AddAction("saveall", SR.LabelSaveAll, "SaveToolSmall.png",
                 delegate() { SaveModifiedSettings(false); });
 
-            _editAction = _settingsPropertiesActionModel.AddAction("edit", SR.LabelEdit, "Edit.png",
+            _editAction = _settingsPropertiesActionModel.AddAction("edit", SR.LabelEdit, "EditToolSmall.png",
                delegate() { EditProperty(_selectedSettingsProperty); });
 
             _resetAction = _settingsPropertiesActionModel.AddAction("reset", SR.LabelReset, null,

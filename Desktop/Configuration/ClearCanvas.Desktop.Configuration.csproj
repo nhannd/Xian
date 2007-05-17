@@ -92,10 +92,8 @@
     <EmbeddedResource Include="Standard\CustomDateFormatSettings.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\SaveAll.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\Edit.png" />
+    <EmbeddedResource Include="Icons\EditToolSmall.png" />
+    <EmbeddedResource Include="Icons\SaveToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
