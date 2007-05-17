@@ -134,6 +134,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             SetIcon(dicomServerTree.RootNode.ServerGroupNode, firstServerGroup);
             treeView.Nodes.Add(firstServerGroup);
             BuildNextTreeLevel(firstServerGroup);
+			
+			firstServerGroup.Expand();//expand main group by default.
 
 			if (!_component.ShowLocalDataStoreNode)
 				_lastClickedNode = firstServerGroup;
