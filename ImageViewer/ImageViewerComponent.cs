@@ -439,7 +439,8 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <param name="files">A list of file paths.</param>
 		/// <param name="desktop">The desktop window.  This is necessary for
-		/// a progress bar to be shown.</param>
+		/// a progress bar to be shown.  If <b>null</b>, no progress bar
+		/// will be shown.</param>
 		/// <param name="cancelled">A value that indicates whether the operation
 		/// was cancelled.</param>
 		/// <exception cref="OpenStudyException">One or more images could not be opened.</exception>
@@ -447,7 +448,6 @@ namespace ClearCanvas.ImageViewer
 		public void LoadImages(string[] files, IDesktopWindow desktop, out bool cancelled)
 		{
 			Platform.CheckForNullReference(files, "files");
-			Platform.CheckForNullReference(desktop, "desktop");
 
 			LocalImageLoader loader = new LocalImageLoader(this);
 			loader.Load(files, desktop, out cancelled);
