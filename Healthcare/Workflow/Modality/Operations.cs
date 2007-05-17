@@ -33,12 +33,19 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
     {
         public override void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
         {
-            mps.Complete(currentUserStaff);
+            if (mps.State == ActivityStatus.IP)
+            {
+                mps.Complete();
+            }
+            else if (mps.State == ActivityStatus.SC)
+            {
+                mps.Complete(currentUserStaff);
+            }
         }
 
         public override bool CanExecute(ModalityProcedureStep mps)
         {
-            return mps.State == ActivityStatus.IP;
+            return mps.State == ActivityStatus.IP || mps.State == ActivityStatus.SC;
         }
     }
 

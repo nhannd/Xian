@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
             ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
             ModalityProcedureStep mps = (ModalityProcedureStep)PersistenceContext.Load(request.ProcedureStepRef);
-            return new LoadWorklistItemPreviewResponse(assembler.CreateWorklistPreview(mps, request.PatientProfileAuthority));
+            return new LoadWorklistItemPreviewResponse(assembler.CreateWorklistPreview(mps, request.PatientProfileAuthority, PersistenceContext));
         }
 
         [ReadOperation]

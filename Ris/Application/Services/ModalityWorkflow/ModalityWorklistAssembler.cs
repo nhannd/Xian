@@ -9,6 +9,11 @@ using ClearCanvas.Workflow;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Workflow.Brokers;
+using ClearCanvas.Healthcare.PatientReconciliation;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
@@ -36,7 +41,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             return item;
         }
 
-        public ModalityWorklistPreview CreateWorklistPreview(ModalityProcedureStep mps, string patientProfileAuthority)
+        public ModalityWorklistPreview CreateWorklistPreview(ModalityProcedureStep mps, string patientProfileAuthority, IPersistenceContext context)
         {
             ModalityWorklistPreview preview = new ModalityWorklistPreview();
 
@@ -51,16 +56,109 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                     preview.Healthcard = new HealthcardAssembler().CreateHealthcardDetail(profile.Healthcard);
                     preview.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
                     preview.Name = new PersonNameAssembler().CreatePersonNameDetail(profile.Name);
-                    preview.Sex = profile.Sex.ToString();
+                    SexEnumTable sexTable = context.GetBroker<ISexEnumBroker>().Load();
+                    preview.Sex = sexTable[profile.Sex].Value;
                     preview.DateOfBirth = profile.DateOfBirth;
+
+                    IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)(new PatientReconciliationStrategyExtensionPoint()).CreateExtension();
+                    IList<PatientProfileMatch> matches = strategy.FindReconciliationMatches(profile, context);
+
+                    preview.HasReconciliationCandidates = matches.Count > 0;
 
                     break;
                 }
             }
 
+            // Order level details
+            preview.AccessionNumber = mps.RequestedProcedure.Order.AccessionNumber;
+            OrderPriorityEnumTable priorityTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
+            preview.Priority = priorityTable[mps.RequestedProcedure.Order.Priority].Value;
+            preview.OrderingPhysician = new PractitionerAssembler().CreatePractitionerDetail(mps.RequestedProcedure.Order.OrderingPractitioner, context);
+            preview.Facility = new FacilityAssembler().CreateFacilityDetail(mps.RequestedProcedure.Order.OrderingFacility);
+
+            //preview.DSBreakdown = new List<string>();
+            List<ProcedureStep> mpsList = new List<ProcedureStep>();
+            foreach (RequestedProcedure rp in mps.RequestedProcedure.Order.RequestedProcedures)
+            {
+                mpsList.AddRange(CollectionUtils.Select<ProcedureStep, List<ProcedureStep>>(rp.ProcedureSteps,
+                    delegate(ProcedureStep procedureStep)
+                    {
+                        return procedureStep is ModalityProcedureStep;
+                    }));
+            }
+
+            ActivityStatusEnumTable activityStatusTable = context.GetBroker<IActivityStatusEnumBroker>().Load();
+            preview.DSBreakdown = CollectionUtils.Map<ModalityProcedureStep, DiagnosticServiceBreakdownSummary, List<DiagnosticServiceBreakdownSummary>>(
+                mpsList,
+                delegate(ModalityProcedureStep siblingMps)
+                {
+                    return new DiagnosticServiceBreakdownSummary(siblingMps.RequestedProcedure.Order.DiagnosticService.Name,
+                        siblingMps.RequestedProcedure.Type.Name,
+                        siblingMps.Name,
+                        activityStatusTable[siblingMps.State].Value,
+                        siblingMps.Equals(mps));
+                });
+
+            preview.MpsName = mps.Name;
+            preview.Modality = new ModalityAssembler().CreateModalityDetail(mps.Modality);
+            preview.Status = activityStatusTable[mps.State].Value;
+            preview.DiscontinueReason = "";
+            
+            StaffAssembler staffAssembler = new StaffAssembler();
+            preview.AssignedStaff = mps.AssignedStaff == null
+                ? null
+                : staffAssembler.CreateStaffDetail(mps.AssignedStaff, context);
+            preview.PerformingStaff = mps.PerformingStaff == null
+                ? null
+                : staffAssembler.CreateStaffDetail(mps.PerformingStaff, context);
+            
+            preview.ScheduledStartTime = mps.Scheduling.StartTime;
+            preview.ScheduledEndTime = mps.Scheduling.EndTime;
+            preview.StartTime = mps.StartTime;
+            preview.EndTime = mps.EndTime;
+
+            PersonNameAssembler nameAssembler = new PersonNameAssembler();
+            preview.RICs = CollectionUtils.Map<RequestedProcedure, RICSummary, List<RICSummary>>(
+                    context.GetBroker<IRegistrationWorklistBroker>().GetRequestedProcedureForPatientPreview(mps.RequestedProcedure.Order.Patient),
+                    delegate(RequestedProcedure rp)
+                    {
+                        CheckInProcedureStep cps = (CheckInProcedureStep)CollectionUtils.SelectFirst<ProcedureStep>(rp.ProcedureSteps,
+                            delegate(ProcedureStep step)
+                            {
+                                return step is CheckInProcedureStep;
+                            });
+
+                        bool mpsInProgress = CollectionUtils.Contains<ProcedureStep>(rp.ProcedureSteps,
+                            delegate(ProcedureStep step)
+                            {
+                                return (step is ModalityProcedureStep && step.State == ActivityStatus.IP);
+                            });
+
+                        string rpStatus = "";
+                        DateTime? scheduledTime = null;
+                        if (cps != null)
+                        {
+                            if (cps.Scheduling != null)
+                                scheduledTime = cps.Scheduling.StartTime;
+
+                            if (cps.State == ActivityStatus.IP)
+                                rpStatus = mpsInProgress ? activityStatusTable[ActivityStatus.IP].Value : SR.TextCheckedIn;
+                            else
+                                rpStatus = activityStatusTable[cps.State].Value;
+                        }
+
+                        return new RICSummary(
+                            rp.Type.Name,
+                            nameAssembler.CreatePersonNameDetail(rp.Order.OrderingPractitioner.Name),
+                            "N/A",
+                            scheduledTime,
+                            "N/A",
+                            rpStatus);
+                    });
+
             //TODO: Technologist workflow hasn't been fully defined yet, only pass back the PatientProfile now
             preview.AlertNotifications = new List<AlertNotificationDetail>();
-            preview.HasReconciliationCandidates = false;
+
 
             return preview;
         }

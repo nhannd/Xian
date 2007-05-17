@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
@@ -18,6 +20,22 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
             HealthcardDetail healthcard,
             DateTime? dateOfBirth,
             string sex,
+            string accessionNumber,
+            string priority,
+            PractitionerDetail orderingPhysician,
+            FacilityDetail facility,
+            List<DiagnosticServiceBreakdownSummary> dsBreakdown,
+            string mpsName,
+            ModalityDetail modality,
+            string status,
+            string discontinueReason,
+            StaffDetail assignedStaff,
+            StaffDetail performingStaff,
+            DateTime? scheduledStartTime,
+            DateTime? scheduledEndTime,
+            DateTime? startTime,
+            DateTime? endTime,
+            List<RICSummary> rics,
             List<AlertNotificationDetail> alertNotifications,
             bool hasReconciliationCandidates)
         {
@@ -28,6 +46,22 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
             this.Healthcard = healthcard;
             this.DateOfBirth = dateOfBirth;
             this.Sex = sex;
+            this.AccessionNumber = accessionNumber;
+            this.Priority = priority;
+            this.OrderingPhysician = orderingPhysician;
+            this.Facility = facility;
+            this.DSBreakdown = dsBreakdown;
+            this.MpsName = mpsName;
+            this.Modality = modality;
+            this.Status = status;
+            this.DiscontinueReason = discontinueReason;
+            this.AssignedStaff = assignedStaff;
+            this.PerformingStaff = performingStaff;
+            this.ScheduledStartTime = scheduledStartTime;
+            this.ScheduledEndTime = scheduledEndTime;
+            this.StartTime = startTime;
+            this.EndTime = endTime;
+            this.RICs = rics;
             this.AlertNotifications = alertNotifications;
             this.HasReconciliationCandidates = hasReconciliationCandidates;
         }
@@ -57,25 +91,53 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         [DataMember]
         public string Sex;
 
-        //[DataMember]
-        //public AddressDetail CurrentHomeAddress;
+        [DataMember]
+        public string AccessionNumber;
 
-        //[DataMember]
-        //public AddressDetail CurrentWorkAddress;
+        [DataMember]
+        public string Priority;
 
-        //[DataMember]
-        //public TelephoneDetail CurrentHomePhone;
+        [DataMember]
+        public PractitionerDetail OrderingPhysician;
 
-        //[DataMember]
-        //public TelephoneDetail CurrentWorkPhone;
+        [DataMember]
+        public FacilityDetail Facility;
 
-        //[DataMember]
-        //public List<TelephoneDetail> TelephoneNumbers;
+        [DataMember]
+        public List<DiagnosticServiceBreakdownSummary> DSBreakdown;
 
-        //[DataMember]
-        //public List<AddressDetail> Addresses;
+        [DataMember]
+        public string MpsName;
 
-        // Tech preview items here
+        [DataMember]
+        public ModalityDetail Modality;
+
+        [DataMember]
+        public string Status;
+
+        [DataMember]
+        public string DiscontinueReason;
+
+        [DataMember]
+        public StaffDetail AssignedStaff;
+
+        [DataMember]
+        public StaffDetail PerformingStaff;
+
+        [DataMember]
+        public DateTime? ScheduledStartTime;
+
+        [DataMember]
+        public DateTime? ScheduledEndTime;
+
+        [DataMember]
+        public DateTime? StartTime;
+
+        [DataMember]
+        public DateTime? EndTime;
+
+        [DataMember]
+        public List<RICSummary> RICs;
 
         [DataMember]
         public List<AlertNotificationDetail> AlertNotifications;
@@ -84,3 +146,4 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         public bool HasReconciliationCandidates;
     }
 }
+

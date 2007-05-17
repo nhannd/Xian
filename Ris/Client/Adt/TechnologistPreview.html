@@ -1,92 +1,211 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<title>Untitled Document</title>
-<link href="http://172.16.10.167/RisTemplates/default.css" rel="stylesheet" type="text/css" />
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+    <title>Untitled Document</title>
+    <link href="http://172.16.10.167/RisTemplates/default.css" rel="stylesheet" type="text/css" />
 </head>
-
 <body>
-<% 
+    <% 
 var component = this.Component;
 var amr = this.ActionModelRenderer;
 if(component.WorklistPreview != null)
 {%>
-<% if(component.ShowHeader) { %>
-<table width="640" border="0">
-  <tr>
-    <td width="422" class="pageheading"><%= component.Name %></td>
-    <!--<td rowspan="2" width="202"><img src="http://clearcanvas.ca/images/clearcanvas_logo.png" alt="ClearCanvas Inc." width="210" height="64" align="left" /></td>-->
-    <td rowspan="2" width="202"><img src="http://172.16.10.167/RisTemplates/logo.jpg" alt="UHN/MSH" align="left" /></td>
-  </tr>
-  <tr>
-    <td class="pageheading2"><%= component.Mrn %></td>
-  </tr>
-</table>
-<p>&nbsp;</p>
-<% } // end-if(component.ShowHeader) %>
-
-<% if(component.ShowReconciliationAlert) { %>
-<div class="alert">
-<ul>
-   <li><%= component.ReconciliationMessage %></li>
-</ul>
-</div>
-<% } // end-if(component.ShowReconciliationAlert) %>
-
-<table width="640" border="0">
-  <tr class="sectionheading">
-    <td colspan="4">Basic Information </td>
-  </tr>
-  <tr>
-    <td width="120" class="propertyname">Name</td>
-    <td width="200"><%= component.Name %></td>
-    <td width="63" class="propertyname">MRN</td>
-    <td width="229"><%= component.Mrn %></td>
-  </tr>
-  <tr>
-    <td width="120" class="propertyname">Date of Birth</td>
-    <td width="200"><%= component.DateOfBirth %></td>
-    <td width="63" class="propertyname">Sex</td>
-    <td width="229"><%= component.Sex %></td>
-  </tr>
-  <tr>
-    <td class="propertyname">Healthcard # </td>
-    <td><%= component.Healthcard %></td>
-    <td class="propertyname">&nbsp;</td>
-    <td>&nbsp;</td>
-  </tr>
-<!--  <tr>
-    <td class="propertyname">Home Phone</td>
-    <td colspan="3"><%= component.CurrentHomePhone %></td>
-  </tr>
-  <tr>
-    <td class="propertyname">Home Address</td>
-    <td colspan="3"><%= component.CurrentHomeAddress %></td>
-  </tr>
-  <tr class="additionalentriescount">
-    <% if(component.HasMoreBasicInfo) { %>
-    <td colspan="4"><%= amr.GetHTML(component.MenuModel, "Details", "more...") %></td>
-    <% } %>
-  </tr>
--->
-</table>
-<!-- TECH PREVIEW HERE -->
-<p>&nbsp;</p>
-<% if(component.HasAlert) { %>
-<table width="640" border="0">
-  <tr class="sectionheading">
-    <td colspan="1">Alerts</td>
-  </tr>
-  <tr>
-    <td>
-      <% for(var alert in component.AlertNotifications) {%>
-      <img width="50" border="0" src="<%= component.GetAlertImageURI(alert) %>" alt="<%= component.GetAlertTooltip(alert) %>" align="left"/>
+    <% if(component.ShowHeader) { %>
+    <table width="640" border="0">
+        <tr>
+            <td width="422" class="pageheading">
+                <%= component.Name %>
+            </td>
+            <!--<td rowspan="2" width="202"><img src="http://clearcanvas.ca/images/clearcanvas_logo.png" alt="ClearCanvas Inc." width="210" height="64" align="left" /></td>-->
+            <td rowspan="2" width="202">
+                <img src="http://172.16.10.167/RisTemplates/logo.jpg" alt="UHN/MSH" align="left" /></td>
+        </tr>
+        <tr>
+            <td class="pageheading2">
+                <%= component.Mrn %>
+            </td>
+        </tr>
+    </table>
+    <p>
+        &nbsp;</p>
+    <% } // end-if(component.ShowHeader) %>
+    <% if(component.ShowReconciliationAlert) { %>
+    <div class="alert">
+        <ul>
+            <li>
+                <%= component.ReconciliationMessage %>
+            </li>
+        </ul>
+    </div>
+    <% } // end-if(component.ShowReconciliationAlert) %>
+    <table width="640" border="0">
+        <tr class="sectionheading">
+            <td colspan="4">
+                Basic Information
+            </td>
+        </tr>
+        <tr>
+            <td width="120" class="propertyname">Name</td>
+            <td width="200"><%= component.Name %></td>
+            <td width="63" class="propertyname">MRN</td>
+            <td width="229"><%= component.Mrn %>
+            </td>
+        </tr>
+        <tr>
+            <td width="120" class="propertyname">Date of Birth</td>
+            <td width="200"><%= component.DateOfBirth %></td>
+            <td width="63" class="propertyname">Sex</td>
+            <td width="229"><%= component.Sex %></td>
+        </tr>
+        <tr>
+            <td class="propertyname">Healthcard #</td>
+            <td><%= component.Healthcard %></td>
+            <td class="propertyname">&nbsp;</td>
+            <td>&nbsp;</td>
+        </tr>
+    </table>
+    <p>&nbsp;</p>
+    <table width="640" border="0">
+        <tr class="sectionheading">
+            <td colspan="4">Imaging Consultation Overview</td>
+        </tr>
+        <tr>
+            <td width="120" class="propertyname">Accession Number</td>
+            <td width="200"><%= component.AccessionNumber %></td>
+            <td width="120" class="propertyname">Priority</td>
+            <td width="200"><%= component.Priority %></td>
+        </tr>
+        <tr>
+            <td width="120" class="propertyname">Ordering Physician</td>
+            <td width="200"><%= component.OrderingPhysician %></td>
+            <td width="120" class="propertyname">Facility</td>
+            <td width="200"><%= component.Facility %></td>
+        </tr>
+    </table>
+    <table width="640" border="0">
+        <tr>
+            <td colspan="4" class="propertyname">Diagnostic Service Breakdown</td>
+        </tr>
+        <% var i = 0; %>
+        <% for(var dsRow in component.DSBreakdown.Items) {%>
+        <tr class="row<%= (i++) % 2 %>"><% for(var column in component.DSBreakdown.Columns) {%>
+        <td><%= column.GetValue(dsRow) %></td>
+          <% } %>
+        </tr>
+        <% } %>
+        
+    </table>
+    <p>&nbsp;</p>
+    <table width="640" border="0">
+        <tr class="sectionheading">
+            <td colspan="4">Selected MPS Details</td>
+        </tr>
+        <tr>
+            <td width="120" class="propertyname">Name</td>
+            <td width="200"><%= component.MPSName %></td>
+            <td width="120" class="propertyname">Modality</td>
+            <td width="200"><%= component.Modality %></td>
+        </tr>
+        <tr>
+            <td width="120"  class="propertyname">Status</td>
+            <td width="200"><%= component.Status %></td>
+        </tr>
+        <% if(component.DiscontinueReason != "") { %>
+        <tr>
+            <td width="120" class="propertyname">Discontinue Reason</td>
+            <td colspan="3"><%= component.DiscontinueReason %></td>
+        </tr>
+        <% } %>
+        <tr>
+            <td width="120"  class="propertyname">Assigned Staff</td>
+            <td width="200"><%= component.AssignedStaff %></td>
+            <td width="120" class="propertyname">Performing Staff</td>
+            <td width="200"><%= component.PerformingStaff %></td>
+        </tr>
+        <tr>
+            <td width="120"  class="propertyname">Scheduled Start Time</td>
+            <td width="200"><%= component.ScheduledStartTime %></td>
+            <td width="120" class="propertyname">Scheduled End Time</td>
+            <td width="200"><%= component.ScheduledEndTime %></td>
+        </tr>
+        <tr>
+            <td width="120"  class="propertyname">Start Time</td>
+            <td width="200"><%= component.StartTime %></td>
+            <td width="120" class="propertyname">End Time</td>
+            <td width="200"><%= component.EndTime %></td>
+        </tr>
+            <!--
+            Name
+            Type
+            Modality
+            Assigned Staff
+            Performing Staff
+            Status
+            Scheduled Start Time
+            Scheduled End Time
+            Start Time
+            End Time
+            Discontinue Reason
+            Requested Procedure Type
+            Diagnostic Service
+            Ordering Author
+            Facility
+            Priority
+            
+            -->
+    </table>
+    <p>&nbsp;</p>
+    <% if(component.PreviousRICs.Items.Count > 0) { %>
+    <table width="640" border="0">
+        <tr class="sectionheading">
+            <td colspan="6">
+                Previous Requests for Imaging Consultation
+            </td>
+        </tr>
+      <% var i = 0; %>
+      <% for(var ric in component.PreviousRICs.Items) {%>
+      <tr class="row<%= (i++) % 2 %>"><% for(var column in component.PreviousRICs.Columns) {%>
+        <td><%= column.GetValue(ric) %></td>
+          <% } %>
+      </tr>
       <% } %>
-    </td>
-  </tr>
-</table>
-<% } %>
-<%} // end-if(component != null)%>    
+    </table>
+    <p>&nbsp;</p>
+    <% } %>
+    <% if(component.UpcomingRICs.Items.Count > 0) { %>
+    <table width="640" border="0">
+        <tr class="sectionheading">
+            <td colspan="6">
+                Upcoming Requests for Imaging Consultation
+            </td>
+        </tr>
+        <% var i = 0; %>
+        <% for(var ric in component.UpcomingRICs.Items) {%>
+        <tr class="row<%= (i++) % 2 %>"><% for(var column in component.UpcomingRICs.Columns) {%>
+        <td><%= column.GetValue(ric) %></td>
+          <% } %>
+        </tr>
+        <% } %>
+    </table>
+    <p>&nbsp;</p>
+    <% } %>
+    <% if(component.HasAlert) { %>
+    <table width="640" border="0">
+        <tr class="sectionheading">
+            <td colspan="1">
+                Alerts</td>
+        </tr>
+        <tr>
+            <td>
+                <% for(var alert in component.AlertNotifications) {%>
+                <img width="50" border="0" src="<%= component.GetAlertImageURI(alert) %>" alt="<%= component.GetAlertTooltip(alert) %>"
+                    align="left" />
+                <% } %>
+            </td>
+        </tr>
+    </table>
+    <% } %>
+    <%} // end-if(component != null)%>
 </body>
 </html>

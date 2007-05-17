@@ -10,6 +10,8 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -38,6 +40,28 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(TechnologistPreviewComponentViewExtensionPoint))]
     public class TechnologistPreviewComponent : ApplicationComponent
     {
+        public class DSBreakdownTable : Table<DiagnosticServiceBreakdownSummary>
+        {
+            public DSBreakdownTable()
+            {
+                this.Columns.Add(new TableColumn<DiagnosticServiceBreakdownSummary, string>("BLAH",
+                    delegate(DiagnosticServiceBreakdownSummary dsb) { return dsb.DiagnosticServiceName; }, 
+                    1.0f));
+                this.Columns.Add(new TableColumn<DiagnosticServiceBreakdownSummary, string>("BLAH",
+                    delegate(DiagnosticServiceBreakdownSummary dsb) { return dsb.RequestedProcedureName; },
+                    1.0f));
+                this.Columns.Add(new TableColumn<DiagnosticServiceBreakdownSummary, string>("BLAH",
+                    delegate(DiagnosticServiceBreakdownSummary dsb) { return dsb.ModalityProcedureStepName; },
+                    1.0f));
+                this.Columns.Add(new TableColumn<DiagnosticServiceBreakdownSummary, string>("BLAH",
+                    delegate(DiagnosticServiceBreakdownSummary dsb) { return dsb.ModalityProcedureStepStatus; },
+                    1.0f));
+                this.Columns.Add(new TableColumn<DiagnosticServiceBreakdownSummary, string>("BLAH",
+                    delegate(DiagnosticServiceBreakdownSummary dsb) { return dsb.Active ? "*" : ""; },
+                    1.0f));
+            }
+        }
+
         class TechnologistPreviewToolContext : ToolContext, ITechnologistPreviewToolContext
         {
             private TechnologistPreviewComponent _component;
@@ -68,6 +92,14 @@ namespace ClearCanvas.Ris.Client.Adt
         private ModalityWorklistItem _worklistItem;
         private ModalityWorklistPreview _worklistPreview;
 
+        private List<RICSummary> _previousRIC;
+        private List<RICSummary> _upcomingRIC;
+        private List<DiagnosticServiceBreakdownSummary> _dsBreakdown;
+
+        private RICTable _previousRICTable;
+        private RICTable _upcomingRICTable;
+        private DSBreakdownTable _dsBreakdownTable;
+
         private ToolSet _toolSet;
 
         private BackgroundTask _previewLoadTask;
@@ -89,6 +121,17 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
+            _previousRICTable = new RICTable();
+            _upcomingRICTable = new RICTable();
+
+            _previousRIC = new List<RICSummary>();
+            _upcomingRIC = new List<RICSummary>();
+
+            _dsBreakdownTable = new DSBreakdownTable();
+
+            _dsBreakdown = new List<DiagnosticServiceBreakdownSummary>();
+
+
             _toolSet = new ToolSet(new TechnologistPreviewToolExtensionPoint(), new TechnologistPreviewToolContext(this));
 
             UpdateDisplay();
@@ -122,6 +165,15 @@ namespace ClearCanvas.Ris.Client.Adt
             if (_worklistPreview != null)
             {
                 _worklistPreview = null;
+
+                _previousRICTable.Items.Clear();
+                _upcomingRICTable.Items.Clear();
+
+                _previousRIC.Clear();
+                _upcomingRIC.Clear();
+
+                _dsBreakdownTable.Items.Clear();
+                _dsBreakdown.Clear();
 
                 // clear current preview
                 NotifyAllPropertiesChanged();
@@ -175,6 +227,28 @@ namespace ClearCanvas.Ris.Client.Adt
             if (args.Reason == BackgroundTaskTerminatedReason.Completed)
             {
                 _worklistPreview = (ModalityWorklistPreview)args.Result;
+
+                _previousRIC.AddRange(CollectionUtils.Select<RICSummary>(
+                    _worklistPreview.RICs,
+                    delegate(RICSummary summary)
+                    {
+                        return summary.ModalityProcedureStepScheduledTime < Platform.Time;
+                    }));
+
+                _upcomingRIC.AddRange(CollectionUtils.Select<RICSummary>(
+                    _worklistPreview.RICs,
+                    delegate(RICSummary summary)
+                    {
+                        return summary.ModalityProcedureStepScheduledTime > Platform.Time;
+                    }));
+
+                _upcomingRICTable.Items.AddRange(_upcomingRIC);
+                _upcomingRICTable.Sort(new TableSortParams(_upcomingRICTable.Columns[3], true));
+                _previousRICTable.Items.AddRange(_previousRIC);
+                _previousRICTable.Sort(new TableSortParams(_previousRICTable.Columns[3], true));
+
+                _dsBreakdown.AddRange(_worklistPreview.DSBreakdown);
+                _dsBreakdownTable.Items.AddRange(_worklistPreview.DSBreakdown);
 
                 NotifyAllPropertiesChanged();
             }
@@ -253,7 +327,122 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get { return (_worklistPreview != null && _worklistPreview.AlertNotifications.Count > 0); }
         }
-        
+
+        public string AccessionNumber
+        {
+            get { return _worklistPreview.AccessionNumber; }
+        }
+
+        public string Priority
+        {
+            get { return _worklistPreview.Priority; }
+        }
+
+        public string OrderingPhysician
+        {
+            get { return PersonNameFormat.Format(_worklistPreview.OrderingPhysician.PersonNameDetail); }
+        }
+
+        public string Facility
+        {
+            get { return _worklistPreview.Facility.Name; }
+        }
+
+        public ITable DSBreakdown
+        {
+            get { return _dsBreakdownTable; }
+        }
+
+        public string MPSName
+        {
+            get { return _worklistPreview.MpsName; }
+        }
+
+        public string Modality
+        {
+            get { return _worklistPreview.Modality.Name; }
+        }
+
+        public string Status
+        {
+            get { return _worklistPreview.Status; }
+        }
+
+        public string DiscontinueReason
+        {
+            get { return _worklistPreview.DiscontinueReason; }
+        }
+
+        public string AssignedStaff
+        {
+            get 
+            { 
+                return _worklistPreview.AssignedStaff == null 
+                    ? "None"
+                    : PersonNameFormat.Format(_worklistPreview.AssignedStaff.PersonNameDetail); 
+            }
+        }
+
+        public string PerformingStaff
+        {
+            get
+            {
+                return _worklistPreview.PerformingStaff == null
+                    ? "None"
+                    : PersonNameFormat.Format(_worklistPreview.PerformingStaff.PersonNameDetail);
+            }
+        }
+
+        public string ScheduledStartTime
+        {
+            get 
+            { 
+                return _worklistPreview.ScheduledStartTime.HasValue 
+                    ? Format.DateTime(_worklistPreview.ScheduledStartTime.Value)
+                    : string.Empty; 
+            }
+        }
+
+        public string ScheduledEndTime
+        {
+            get
+            {
+                return _worklistPreview.ScheduledEndTime.HasValue
+                    ? Format.DateTime(_worklistPreview.ScheduledEndTime.Value)
+                    : string.Empty;
+            }
+        }
+
+        public string StartTime
+        {
+            get
+            {
+                return _worklistPreview.StartTime.HasValue
+                    ? Format.DateTime(_worklistPreview.StartTime.Value)
+                    : string.Empty;
+            }
+        }
+
+        public string EndTime
+        {
+            get
+            {
+                return _worklistPreview.EndTime.HasValue
+                    ? Format.DateTime(_worklistPreview.EndTime.Value)
+                    : string.Empty;
+            }
+        }
+
+        public ITable PreviousRICs
+        {
+            get { return _previousRICTable; }
+        }
+
+        public ITable UpcomingRICs
+        {
+            get { return _upcomingRICTable; }
+        }
+
         public string GetAlertImageURI(AlertNotificationDetail detail)
         {
             string alertImageURI = "";
