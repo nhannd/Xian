@@ -20,7 +20,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public CheckedInTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Checked In")
+            : base(folderSystem, "Checked In", new DropHandlerExtensionPoint())
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Modality.Worklists+CheckedIn";
         }
@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public InProgressTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "In Progress")
+            : base(folderSystem, "In Progress", new DropHandlerExtensionPoint())
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Modality.Worklists+InProgress";
         }
@@ -48,7 +48,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public CompletedTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Completed")
+            : base(folderSystem, "Completed", new DropHandlerExtensionPoint())
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Modality.Worklists+Completed";
         }
@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public SuspendedTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Suspended")
+            : base(folderSystem, "Suspended", new DropHandlerExtensionPoint())
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Modality.Worklists+Suspended";
         }
@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public CancelledTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Cancelled")
+            : base(folderSystem, "Cancelled", new DropHandlerExtensionPoint())
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Modality.Worklists+Cancelled";
         }

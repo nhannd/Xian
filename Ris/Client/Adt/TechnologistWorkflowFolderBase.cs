@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private string _worklistClassName;
 
-        public TechnologistWorkflowFolderBase(TechnologistWorkflowFolderSystem folderSystem, string folderName)
+        public TechnologistWorkflowFolderBase(TechnologistWorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<ModalityWorklistItem>> dropHandlerExtensionPoint)
             : base(folderSystem, folderName, new ModalityWorklistTable())
         {
             _folderSystem = folderSystem;
@@ -86,7 +86,17 @@ namespace ClearCanvas.Ris.Client.Adt
             _openIconSet = new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenMedium.png");
             this.IconSet = _closedIconSet;
             this.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
+            if (dropHandlerExtensionPoint != null)
+            {
+                this.InitDragDropHandling(dropHandlerExtensionPoint, new DropContext(this));
+            }
         }
+
+        public TechnologistWorkflowFolderBase(TechnologistWorkflowFolderSystem folderSystem, string folderName)
+            : this(folderSystem, folderName, null)
+        {
+        }
+
 
         public string WorklistClassName
         {
