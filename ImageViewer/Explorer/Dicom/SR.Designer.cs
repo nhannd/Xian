@@ -374,7 +374,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete the following studies?\n\n{0}.
+        ///   Looks up a localized string similar to Are you sure you want to delete the {0} selected studies?.
         /// </summary>
         internal static string MessageConfirmDeleteStudies {
             get {
@@ -383,7 +383,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete {0}?.
+        ///   Looks up a localized string similar to Are you sure you want to delete the selected study?.
         /// </summary>
         internal static string MessageConfirmDeleteStudy {
             get {
@@ -420,7 +420,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The following studies are in use:\n\n{0}\n\nPlease close before deleting..
+        ///   Looks up a localized string similar to {0} of the selected studies are in use.  Please close all relevant workspaces before deleting..
         /// </summary>
         internal static string MessageStudiesInUse {
             get {
@@ -429,7 +429,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The study {0} is in use.\nPlease close before deleting..
+        ///   Looks up a localized string similar to The selected study is currently in use.  Please close all relevant workspaces before deleting..
         /// </summary>
         internal static string MessageStudyInUse {
             get {

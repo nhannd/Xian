@@ -88,16 +88,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private bool ConfirmDeletion()
 		{
-			string aggregateStudyString = GetAggregateStudyString(this.Context.SelectedStudies);
-			string msg;
-
+			string message;
 			if (this.Context.SelectedStudies.Count == 1)
-				msg = String.Format(SR.MessageConfirmDeleteStudy, aggregateStudyString);
+				message = SR.MessageConfirmDeleteStudy;
 			else
-				msg = String.Format(SR.MessageConfirmDeleteStudies, aggregateStudyString);
+				message = String.Format(SR.MessageConfirmDeleteStudies, this.Context.SelectedStudies.Count);
 
-			msg = msg.Replace("\\n", "\n");
-			DialogBoxAction action = this.Context.DesktopWindow.ShowMessageBox(msg, MessageBoxActions.YesNo);
+			DialogBoxAction action = this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.YesNo);
 
 			if (action == DialogBoxAction.Yes)
 				return true;
@@ -116,17 +113,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (studiesInUse.Count == 0)
 				return false;
 
-			string aggregateStudyString = GetAggregateStudyString(studiesInUse);
-			string msg;
+			string message;
 
 			// Notify the user
 			if (this.Context.SelectedStudies.Count == 1)
-				msg = String.Format(SR.MessageStudyInUse, aggregateStudyString);
+				message = SR.MessageStudyInUse;
 			else
-				msg = String.Format(SR.MessageStudiesInUse, aggregateStudyString);
+				message = String.Format(SR.MessageStudiesInUse, this.Context.SelectedStudies.Count);
 
-			msg = msg.Replace("\\n", "\n");
-			this.Context.DesktopWindow.ShowMessageBox(msg, MessageBoxActions.Ok);
+			this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
 
 			return true;
 		}
@@ -169,19 +164,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 
 			return imageViewers;
-		}
-
-		private string GetAggregateStudyString(IEnumerable<StudyItem> studyItems)
-		{
-			string aggregateStudyString = StringUtilities.Combine<StudyItem>(
-				studyItems,
-				"\n",
-				delegate(StudyItem studyItem)
-				{
-					return studyItem.ToString();
-				});
-
-			return aggregateStudyString;
 		}
 	}
 }
