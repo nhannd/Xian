@@ -22,7 +22,7 @@ namespace ClearCanvas.Common.Utilities
         private BlockingQueue<InvokeDelegate> _queue;
         private BackgroundWorker _queueProcessor;
 
-		object _threadExitingLock = new object(); 
+		private object _threadExitingLock = new object(); 
         
 		/// <summary>
 		/// Constructor.  The object must be constructed on the thread that events should be marshaled to.
