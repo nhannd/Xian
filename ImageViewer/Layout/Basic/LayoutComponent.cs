@@ -175,16 +175,44 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
                 return;
 
 			IPhysicalWorkspace physicalWorkspace = this.ImageViewer.PhysicalWorkspace;
+			ILogicalWorkspace logicalWorkspace = this.ImageViewer.LogicalWorkspace;
+
 			UndoableCommand command = new UndoableCommand(physicalWorkspace);
 			command.Name = SR.CommandLayoutImageBoxes;
 			command.BeginState = physicalWorkspace.CreateMemento();
 
-            physicalWorkspace.SetImageBoxGrid(_imageBoxRows, _imageBoxColumns);
+			int oldRows = physicalWorkspace.Rows;
+			int oldColumns = physicalWorkspace.Columns;
+			KeyValuePair<IDisplaySet, int>[,] oldDisplaySets = new KeyValuePair<IDisplaySet, int>[oldRows, oldColumns];
+			for (int row = 0; row < oldRows; ++row)
+			{
+				for (int column = 0; column < oldColumns; ++column)
+				{
+					IImageBox imageBox = physicalWorkspace[row, column];
+					oldDisplaySets[row, column] = new KeyValuePair<IDisplaySet, int>(imageBox.DisplaySet, imageBox.TopLeftPresentationImageIndex);
+				}
+			}
+
+			physicalWorkspace.SetImageBoxGrid(_imageBoxRows, _imageBoxColumns);
 
             foreach (ImageBox imageBox in physicalWorkspace.ImageBoxes)
                 imageBox.SetTileGrid(_tileRows, _tileColumns);
 
-            LayoutManager.FillPhysicalWorkspace(physicalWorkspace, physicalWorkspace.LogicalWorkspace);
+			// Try to keep existing display sets in the same row/column position.
+			for (int row = 0; row < physicalWorkspace.Rows && row < oldRows; ++row)
+			{
+				for (int column = 0; column < physicalWorkspace.Columns && column < oldColumns; ++column)
+				{
+					KeyValuePair<IDisplaySet, int> kvp = oldDisplaySets[row, column];
+					if (kvp.Key != null)
+					{
+						IImageBox imageBox = physicalWorkspace[row, column];
+						imageBox.DisplaySet = kvp.Key;
+						imageBox.TopLeftPresentationImageIndex = kvp.Value;
+					}
+				}
+			}
+
             physicalWorkspace.Draw();
 			physicalWorkspace.SelectDefaultImageBox();
 

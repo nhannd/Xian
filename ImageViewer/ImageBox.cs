@@ -146,16 +146,6 @@ namespace ClearCanvas.ImageViewer
 			get { return _displaySet as IDisplaySet; }
 			set
 			{
-				// Don't bother if the existing value is the same as the new value
-				// and if the tile layout hasn't changed.  Note that if the tile
-				// layout has changed, then we can't just return, since we
-				// need to reassign the images to all the tiles.
-				//if (_displaySet == value && !_layoutRefreshRequired)
-				//	return;
-
-				//if (value.PresentationImages.Count == 0)
-				//	throw new InvalidOperationException("A DisplaySet must have at least one PresentationImage in it before it can be put in an ImageBox");
-
 				// Break association with the old display set (should we dispose too?)
 				if (_displaySet != null)
 				{

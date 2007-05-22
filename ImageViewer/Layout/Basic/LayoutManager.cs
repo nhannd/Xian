@@ -294,7 +294,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				physicalWorkspace.ImageBoxes[i].SetTileGrid(configuration.TileRows, configuration.TileColumns);
 		}
 
-		static public void FillPhysicalWorkspace(IPhysicalWorkspace physicalWorkspace, ILogicalWorkspace logicalWorkspace)
+		private void FillPhysicalWorkspace(IPhysicalWorkspace physicalWorkspace, ILogicalWorkspace logicalWorkspace)
 		{
 			int imageSetIndex = 0;
 			int displaySetIndex = 0;

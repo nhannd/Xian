@@ -99,6 +99,30 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
+		/// Returns the image box at a specified row & column index.
+		/// </summary>
+		/// <param name="row">the zero-based row index of the image box to retrieve</param>
+		/// <param name="column">the zero-based column index of the image box to retrieve</param>
+		/// <returns>the image box at the specified row and column indices</returns>
+		/// <remarks>This method is only valid if <see cref="SetImageBoxGrid"/> has been called and/or the 
+		/// layout is, in fact, rectangular.</remarks>
+		/// <exception cref="InvalidOperationException">Thrown if the layout is not currently rectangular</exception>
+		/// <exception cref="ArgumentOutOfRangeException">Thrown if either of the row/column indices are out of range</exception>
+		public IImageBox this[int row, int column]
+		{
+			get
+			{
+				if (this.Rows <= 0 || this.Columns <= 0)
+					throw new InvalidOperationException(SR.ExceptionLayoutIsNotRectangular);
+
+				Platform.CheckArgumentRange(row, 0, this.Rows - 1, "row");
+				Platform.CheckArgumentRange(column, 0, this.Columns - 1, "column");
+				
+				return this.ImageBoxes[row * this.Columns + column];
+			}
+		}
+
+		/// <summary>
 		/// Gets the associated <see cref="IImageViewer"/>.
 		/// </summary>
 		public IImageViewer ImageViewer

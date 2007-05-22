@@ -52,6 +52,16 @@ namespace ClearCanvas.ImageViewer
 		int Columns { get; }
 
 		/// <summary>
+		/// Returns the image box at a specified row & column index.
+		/// </summary>
+		/// <param name="row">the zero-based row index of the image box to retrieve</param>
+		/// <param name="column">the zero-based column index of the image box to retrieve</param>
+		/// <returns>the image box at the specified row and column indices</returns>
+		/// <remarks>This method is only valid if <see cref="SetImageBoxGrid"/> has been called and/or the 
+		/// layout is, in fact, rectangular.</remarks>
+		IImageBox this[int row, int column] { get; }
+
+		/// <summary>
 		/// Occurs when all changes to image box collection are complete.
 		/// </summary>
 		/// <remarks>

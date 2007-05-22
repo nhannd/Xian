@@ -234,6 +234,9 @@
   <data name="ExceptionKeyStrokeAssignmentInUse" xml:space="preserve">
     <value>The specified keystroke is already in use.  The assignment has been ignored.</value>
   </data>
+  <data name="ExceptionLayoutIsNotRectangular" xml:space="preserve">
+    <value>The layout of the physical workspace is either non-rectangular or has not been set.</value>
+  </data>
   <data name="ExceptionLoadCompleteFailure" xml:space="preserve">
     <value>ClearCanvas was unable to load any of the images you requested.  Please contact your PACS administrator, or check the log.</value>
   </data>
