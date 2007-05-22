@@ -2,27 +2,16 @@ using System;
 using System.Collections;
 using System.Text;
 
-using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
-
 
 namespace ClearCanvas.Healthcare {
 
 
     /// <summary>
-    /// InterpretationStep entity
+    /// Report entity
     /// </summary>
-	public partial class InterpretationStep : ReportingProcedureStep
+	public partial class Report : ClearCanvas.Enterprise.Core.Entity
 	{
-        public InterpretationStep(RequestedProcedure procedure)
-            :base(procedure, null)
-        {
-        }
-
-        public InterpretationStep(ReportingProcedureStep previousStep)
-            :base(previousStep)
-        {
-        }
 	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
@@ -31,11 +20,6 @@ namespace ClearCanvas.Healthcare {
 		private void CustomInitialize()
 		{
 		}
-
-        public override string Name
-        {
-            get { return "Interpretation"; }
-        }
 		
 		#region Object overrides
 		

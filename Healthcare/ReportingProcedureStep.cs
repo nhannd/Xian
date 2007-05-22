@@ -8,19 +8,27 @@ namespace ClearCanvas.Healthcare
 {
     public abstract class ReportingProcedureStep : ProcedureStep
     {
+        private Report _report;
+
         public ReportingProcedureStep()
         {
         }
 
-        public ReportingProcedureStep(RequestedProcedure procedure)
+        public ReportingProcedureStep(RequestedProcedure procedure, Report report)
             :base(procedure)
         {
+            _report = report;
         }
 
         public ReportingProcedureStep(ReportingProcedureStep previousStep)
-            :base(previousStep.RequestedProcedure)
+            :this(previousStep.RequestedProcedure, previousStep.Report)
         {
-            // todo: inherit report from previous step
+        }
+
+        public Report Report
+        {
+            get { return _report; }
+            set { _report = value; }
         }
     }
 }
