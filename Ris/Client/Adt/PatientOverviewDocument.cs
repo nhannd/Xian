@@ -62,27 +62,18 @@ namespace ClearCanvas.Ris.Client.Adt
             BiographyDocumentComponent documentComponent = new BiographyDocumentComponent();
             BiographyNoteComponent noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
             BiographyFeedbackComponent feedbackComponent = new BiographyFeedbackComponent();
-            
-            StackTabComponentContainer testStackComponent = new StackTabComponentContainer(StackStyle.ShowMultiple);
-            testStackComponent.Pages.Add(new TabPage("Test1", new PatientSearchComponent()));
-            testStackComponent.Pages.Add(new TabPage("Test2", new PatientSearchComponent()));
-            testStackComponent.Pages.Add(new TabPage("Test3", new PatientSearchComponent()));
+            IApplicationComponent demographicComponent = GetDemographicComponent(_patientProfile);
 
-            StackTabComponentContainer testStackComponent2 = new StackTabComponentContainer(StackStyle.ShowOneOnly);
-            testStackComponent2.Pages.Add(new TabPage("Test1", new PatientSearchComponent()));
-            testStackComponent2.Pages.Add(new TabPage("Test2", new PatientSearchComponent()));
-            testStackComponent2.Pages.Add(new TabPage("Test3", new PatientSearchComponent()));
 
             // Create tab and tab groups
             TabComponentContainer tabContainer1 = new TabComponentContainer();
-            tabContainer1.Pages.Add(new TabPage("Order History", orderHistoryComponent));
+            tabContainer1.Pages.Add(new TabPage(SR.TitleOrders, orderHistoryComponent));
 
             TabComponentContainer tabContainer2 = new TabComponentContainer();
-            tabContainer2.Pages.Add(new TabPage("Documents", documentComponent));
-            tabContainer2.Pages.Add(new TabPage("Notes", noteComponent));
-            tabContainer2.Pages.Add(new TabPage("Patient Feedback", feedbackComponent));
-            tabContainer2.Pages.Add(new TabPage("Test - Stack1", testStackComponent));
-            tabContainer2.Pages.Add(new TabPage("Test - Stack2", testStackComponent2));
+            tabContainer2.Pages.Add(new TabPage(SR.TitleDemographic, demographicComponent));
+            tabContainer2.Pages.Add(new TabPage(SR.TitleDocuments, documentComponent));
+            tabContainer2.Pages.Add(new TabPage(SR.TitleNotes, noteComponent));
+            tabContainer2.Pages.Add(new TabPage(SR.TitlePatientFeedbacks, feedbackComponent));
 
             TabGroupComponentContainer tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
             tabGroupContainer.AddTabGroup(new TabGroup(tabContainer1, 0.5f));
@@ -90,9 +81,51 @@ namespace ClearCanvas.Ris.Client.Adt
 
             // Construct the Patient Biography page
             return new SplitComponentContainer(
-                new SplitPane("Summary", new PatientOverviewComponent(_profileRef, _patientProfile, alertNotifications, hasReconciliationCandidates), true),
-                new SplitPane("Pages", tabGroupContainer, 0.8f),
+                new SplitPane("", new PatientOverviewComponent(_profileRef, _patientProfile, alertNotifications, hasReconciliationCandidates), true),
+                new SplitPane("", tabGroupContainer, 0.8f),
                 SplitOrientation.Horizontal);
         }
-    }
+
+        private IApplicationComponent GetDemographicComponent(PatientProfileDetail patientProfile)
+        {
+            AddressesSummaryComponent addressesSummary = null;
+            PhoneNumbersSummaryComponent phoneNumbersSummary = null;
+            EmailAddressesSummaryComponent emailAddressesSummary = null;
+            ContactPersonsSummaryComponent contactPersonsSummary = null;
+
+            try
+            {
+                Platform.GetService<IPatientAdminService>(
+                    delegate(IPatientAdminService service)
+                    {
+                        LoadPatientProfileEditorFormDataResponse response = service.LoadPatientProfileEditorFormData(new LoadPatientProfileEditorFormDataRequest());
+
+                        addressesSummary = new AddressesSummaryComponent(response.AddressTypeChoices);
+                        phoneNumbersSummary = new PhoneNumbersSummaryComponent(response.PhoneTypeChoices);
+                        emailAddressesSummary = new EmailAddressesSummaryComponent();
+                        contactPersonsSummary = new ContactPersonsSummaryComponent(response.ContactPersonTypeChoices, response.ContactPersonRelationshipChoices);
+                    });
+            }
+            catch (Exception e)
+            {
+                // TODO: Report this...
+            }
+
+            addressesSummary.Subject = patientProfile.Addresses;
+            phoneNumbersSummary.Subject = patientProfile.TelephoneNumbers;
+            emailAddressesSummary.Subject = patientProfile.EmailAddresses;
+            contactPersonsSummary.Subject = patientProfile.ContactPersons;
+
+            TabComponentContainer demographicCollectionTabContainer = new TabComponentContainer();
+            demographicCollectionTabContainer.Pages.Add(new TabPage("Addresses", addressesSummary));
+            demographicCollectionTabContainer.Pages.Add(new TabPage("Phone Numbers", phoneNumbersSummary));
+            demographicCollectionTabContainer.Pages.Add(new TabPage("Email Addresses", emailAddressesSummary));
+            demographicCollectionTabContainer.Pages.Add(new TabPage("Contact Persons", contactPersonsSummary));
+
+            return new SplitComponentContainer(
+                new SplitPane("PersonalInfo", new BiographyDemographicComponent(_patientProfile), true),
+                new SplitPane("Collections", demographicCollectionTabContainer, 0.8f),
+                SplitOrientation.Horizontal);
+        }
+    }    
 }

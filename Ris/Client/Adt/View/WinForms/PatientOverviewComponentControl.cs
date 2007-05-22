@@ -49,10 +49,5 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             }
 
         }
-
-        private void _moreButton_Click(object sender, EventArgs e)
-        {
-            _component.ShowPatientDemographicsDialog();
-        }
     }
 }

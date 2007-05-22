@@ -29,12 +29,23 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            ClearCanvas.Desktop.Selection selection3 = new ClearCanvas.Desktop.Selection();
-            ClearCanvas.Desktop.Selection selection4 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
             this._orderList = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this._orderPage = new System.Windows.Forms.TabPage();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this._mpsScheduledEndTime = new ClearCanvas.Controls.WinForms.TextField();
+            this._mpsEndTime = new ClearCanvas.Controls.WinForms.TextField();
+            this._mpsStartTime = new ClearCanvas.Controls.WinForms.TextField();
+            this._mpsScheduledStartTime = new ClearCanvas.Controls.WinForms.TextField();
+            this._mpsState = new ClearCanvas.Controls.WinForms.TextField();
+            this._mpsPerformerStaff = new ClearCanvas.Controls.WinForms.TextField();
+            this._mpsScheduledPerformerStaff = new ClearCanvas.Controls.WinForms.TextField();
+            this._diagnosticServiceBreakdown = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
+            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
+            this._modality = new ClearCanvas.Controls.WinForms.TextField();
             this._schedulingRequestDateTime = new ClearCanvas.Controls.WinForms.TextField();
             this._orderingFacility = new ClearCanvas.Controls.WinForms.TextField();
             this._orderingPhysician = new ClearCanvas.Controls.WinForms.TextField();
@@ -57,24 +68,13 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._vip = new System.Windows.Forms.CheckBox();
             this._documentPage = new System.Windows.Forms.TabPage();
             this._billingPage = new System.Windows.Forms.TabPage();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this._mpsScheduledEndTime = new ClearCanvas.Controls.WinForms.TextField();
-            this._mpsEndTime = new ClearCanvas.Controls.WinForms.TextField();
-            this._mpsStartTime = new ClearCanvas.Controls.WinForms.TextField();
-            this._mpsScheduledStartTime = new ClearCanvas.Controls.WinForms.TextField();
-            this._mpsState = new ClearCanvas.Controls.WinForms.TextField();
-            this._mpsPerformerStaff = new ClearCanvas.Controls.WinForms.TextField();
-            this._mpsScheduledPerformerStaff = new ClearCanvas.Controls.WinForms.TextField();
-            this._diagnosticServiceBreakdown = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
-            this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this._modality = new ClearCanvas.Controls.WinForms.TextField();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this._orderPage.SuspendLayout();
-            this._visitPage.SuspendLayout();
             this.groupBox2.SuspendLayout();
+            this._visitPage.SuspendLayout();
             this.SuspendLayout();
             // 
             // _orderList
@@ -84,8 +84,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderList.MenuModel = null;
             this._orderList.Name = "_orderList";
             this._orderList.ReadOnly = false;
-            this._orderList.Selection = selection3;
-            this._orderList.Size = new System.Drawing.Size(826, 239);
+            this._orderList.Selection = selection1;
+            this._orderList.Size = new System.Drawing.Size(589, 239);
             this._orderList.TabIndex = 0;
             this._orderList.Table = null;
             this._orderList.ToolbarModel = null;
@@ -108,28 +108,26 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this.splitContainer1.Panel2.AutoScroll = true;
             this.splitContainer1.Panel2.Controls.Add(this.tabControl1);
-            this.splitContainer1.Panel2.Controls.Add(this.groupBox2);
-            this.splitContainer1.Size = new System.Drawing.Size(826, 668);
+            this.splitContainer1.Size = new System.Drawing.Size(589, 586);
             this.splitContainer1.SplitterDistance = 239;
             this.splitContainer1.TabIndex = 1;
             // 
             // tabControl1
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
             this.tabControl1.Controls.Add(this._orderPage);
             this.tabControl1.Controls.Add(this._visitPage);
             this.tabControl1.Controls.Add(this._documentPage);
             this.tabControl1.Controls.Add(this._billingPage);
-            this.tabControl1.Location = new System.Drawing.Point(310, 4);
+            this.tabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControl1.Location = new System.Drawing.Point(0, 0);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(516, 421);
+            this.tabControl1.Size = new System.Drawing.Size(589, 343);
             this.tabControl1.TabIndex = 24;
             // 
             // _orderPage
             // 
+            this._orderPage.Controls.Add(this.groupBox2);
             this._orderPage.Controls.Add(this._schedulingRequestDateTime);
             this._orderPage.Controls.Add(this._orderingFacility);
             this._orderPage.Controls.Add(this._orderingPhysician);
@@ -141,10 +139,148 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderPage.Location = new System.Drawing.Point(4, 22);
             this._orderPage.Name = "_orderPage";
             this._orderPage.Padding = new System.Windows.Forms.Padding(3);
-            this._orderPage.Size = new System.Drawing.Size(508, 395);
+            this._orderPage.Size = new System.Drawing.Size(581, 317);
             this._orderPage.TabIndex = 0;
-            this._orderPage.Text = "Order";
+            this._orderPage.Text = "Order Details";
             this._orderPage.UseVisualStyleBackColor = true;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Controls.Add(this._mpsScheduledEndTime);
+            this.groupBox2.Controls.Add(this._mpsEndTime);
+            this.groupBox2.Controls.Add(this._mpsStartTime);
+            this.groupBox2.Controls.Add(this._mpsScheduledStartTime);
+            this.groupBox2.Controls.Add(this._mpsState);
+            this.groupBox2.Controls.Add(this._mpsPerformerStaff);
+            this.groupBox2.Controls.Add(this._mpsScheduledPerformerStaff);
+            this.groupBox2.Controls.Add(this._diagnosticServiceBreakdown);
+            this.groupBox2.Controls.Add(this._modality);
+            this.groupBox2.Location = new System.Drawing.Point(6, 96);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(564, 211);
+            this.groupBox2.TabIndex = 36;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Requested Procedures and Procedure Steps";
+            // 
+            // _mpsScheduledEndTime
+            // 
+            this._mpsScheduledEndTime.LabelText = "Scheduled End Time";
+            this._mpsScheduledEndTime.Location = new System.Drawing.Point(279, 160);
+            this._mpsScheduledEndTime.Margin = new System.Windows.Forms.Padding(2);
+            this._mpsScheduledEndTime.Mask = "";
+            this._mpsScheduledEndTime.Name = "_mpsScheduledEndTime";
+            this._mpsScheduledEndTime.ReadOnly = true;
+            this._mpsScheduledEndTime.Size = new System.Drawing.Size(136, 41);
+            this._mpsScheduledEndTime.TabIndex = 16;
+            this._mpsScheduledEndTime.Value = null;
+            // 
+            // _mpsEndTime
+            // 
+            this._mpsEndTime.LabelText = "End Time";
+            this._mpsEndTime.Location = new System.Drawing.Point(419, 160);
+            this._mpsEndTime.Margin = new System.Windows.Forms.Padding(2);
+            this._mpsEndTime.Mask = "";
+            this._mpsEndTime.Name = "_mpsEndTime";
+            this._mpsEndTime.ReadOnly = true;
+            this._mpsEndTime.Size = new System.Drawing.Size(136, 41);
+            this._mpsEndTime.TabIndex = 15;
+            this._mpsEndTime.Value = null;
+            // 
+            // _mpsStartTime
+            // 
+            this._mpsStartTime.LabelText = "Start Time";
+            this._mpsStartTime.Location = new System.Drawing.Point(419, 108);
+            this._mpsStartTime.Margin = new System.Windows.Forms.Padding(2);
+            this._mpsStartTime.Mask = "";
+            this._mpsStartTime.Name = "_mpsStartTime";
+            this._mpsStartTime.ReadOnly = true;
+            this._mpsStartTime.Size = new System.Drawing.Size(136, 41);
+            this._mpsStartTime.TabIndex = 14;
+            this._mpsStartTime.Value = null;
+            // 
+            // _mpsScheduledStartTime
+            // 
+            this._mpsScheduledStartTime.LabelText = "Scheduled Start Time";
+            this._mpsScheduledStartTime.Location = new System.Drawing.Point(281, 108);
+            this._mpsScheduledStartTime.Margin = new System.Windows.Forms.Padding(2);
+            this._mpsScheduledStartTime.Mask = "";
+            this._mpsScheduledStartTime.Name = "_mpsScheduledStartTime";
+            this._mpsScheduledStartTime.ReadOnly = true;
+            this._mpsScheduledStartTime.Size = new System.Drawing.Size(136, 41);
+            this._mpsScheduledStartTime.TabIndex = 13;
+            this._mpsScheduledStartTime.Value = null;
+            // 
+            // _mpsState
+            // 
+            this._mpsState.LabelText = "State";
+            this._mpsState.Location = new System.Drawing.Point(419, 18);
+            this._mpsState.Margin = new System.Windows.Forms.Padding(2);
+            this._mpsState.Mask = "";
+            this._mpsState.Name = "_mpsState";
+            this._mpsState.ReadOnly = true;
+            this._mpsState.Size = new System.Drawing.Size(136, 41);
+            this._mpsState.TabIndex = 12;
+            this._mpsState.Value = null;
+            // 
+            // _mpsPerformerStaff
+            // 
+            this._mpsPerformerStaff.LabelText = "Performer Staff";
+            this._mpsPerformerStaff.Location = new System.Drawing.Point(419, 63);
+            this._mpsPerformerStaff.Margin = new System.Windows.Forms.Padding(2);
+            this._mpsPerformerStaff.Mask = "";
+            this._mpsPerformerStaff.Name = "_mpsPerformerStaff";
+            this._mpsPerformerStaff.ReadOnly = true;
+            this._mpsPerformerStaff.Size = new System.Drawing.Size(136, 41);
+            this._mpsPerformerStaff.TabIndex = 11;
+            this._mpsPerformerStaff.Value = null;
+            // 
+            // _mpsScheduledPerformerStaff
+            // 
+            this._mpsScheduledPerformerStaff.LabelText = "Scheduled Performer Staff";
+            this._mpsScheduledPerformerStaff.Location = new System.Drawing.Point(279, 63);
+            this._mpsScheduledPerformerStaff.Margin = new System.Windows.Forms.Padding(2);
+            this._mpsScheduledPerformerStaff.Mask = "";
+            this._mpsScheduledPerformerStaff.Name = "_mpsScheduledPerformerStaff";
+            this._mpsScheduledPerformerStaff.ReadOnly = true;
+            this._mpsScheduledPerformerStaff.Size = new System.Drawing.Size(136, 41);
+            this._mpsScheduledPerformerStaff.TabIndex = 10;
+            this._mpsScheduledPerformerStaff.Value = null;
+            // 
+            // _diagnosticServiceBreakdown
+            // 
+            this._diagnosticServiceBreakdown.AllowDrop = true;
+            this._diagnosticServiceBreakdown.ImageList = this.imageList1;
+            this._diagnosticServiceBreakdown.Location = new System.Drawing.Point(5, 18);
+            this._diagnosticServiceBreakdown.Margin = new System.Windows.Forms.Padding(2);
+            this._diagnosticServiceBreakdown.MenuModel = null;
+            this._diagnosticServiceBreakdown.Name = "_diagnosticServiceBreakdown";
+            this._diagnosticServiceBreakdown.Selection = selection2;
+            this._diagnosticServiceBreakdown.ShowRootLines = false;
+            this._diagnosticServiceBreakdown.ShowToolbar = false;
+            this._diagnosticServiceBreakdown.Size = new System.Drawing.Size(270, 183);
+            this._diagnosticServiceBreakdown.TabIndex = 10;
+            this._diagnosticServiceBreakdown.ToolbarModel = null;
+            this._diagnosticServiceBreakdown.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._diagnosticServiceBreakdown.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            this._diagnosticServiceBreakdown.Tree = null;
+            // 
+            // imageList1
+            // 
+            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
+            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
+            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
+            // 
+            // _modality
+            // 
+            this._modality.LabelText = "Modality";
+            this._modality.Location = new System.Drawing.Point(279, 18);
+            this._modality.Margin = new System.Windows.Forms.Padding(2);
+            this._modality.Mask = "";
+            this._modality.Name = "_modality";
+            this._modality.ReadOnly = true;
+            this._modality.Size = new System.Drawing.Size(136, 41);
+            this._modality.TabIndex = 6;
+            this._modality.Value = null;
             // 
             // _schedulingRequestDateTime
             // 
@@ -161,7 +297,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _orderingFacility
             // 
             this._orderingFacility.LabelText = "Ordering Facility";
-            this._orderingFacility.Location = new System.Drawing.Point(145, 139);
+            this._orderingFacility.Location = new System.Drawing.Point(425, 49);
             this._orderingFacility.Margin = new System.Windows.Forms.Padding(2);
             this._orderingFacility.Mask = "";
             this._orderingFacility.Name = "_orderingFacility";
@@ -173,7 +309,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _orderingPhysician
             // 
             this._orderingPhysician.LabelText = "Ordering Physician";
-            this._orderingPhysician.Location = new System.Drawing.Point(145, 94);
+            this._orderingPhysician.Location = new System.Drawing.Point(425, 4);
             this._orderingPhysician.Margin = new System.Windows.Forms.Padding(2);
             this._orderingPhysician.Mask = "";
             this._orderingPhysician.Name = "_orderingPhysician";
@@ -197,7 +333,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _cancelReason
             // 
             this._cancelReason.LabelText = "Cancel Reason";
-            this._cancelReason.Location = new System.Drawing.Point(5, 139);
+            this._cancelReason.Location = new System.Drawing.Point(285, 49);
             this._cancelReason.Margin = new System.Windows.Forms.Padding(2);
             this._cancelReason.Mask = "";
             this._cancelReason.Name = "_cancelReason";
@@ -233,7 +369,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _reasonForStudy
             // 
             this._reasonForStudy.LabelText = "Reason For Study";
-            this._reasonForStudy.Location = new System.Drawing.Point(5, 95);
+            this._reasonForStudy.Location = new System.Drawing.Point(285, 5);
             this._reasonForStudy.Margin = new System.Windows.Forms.Padding(2);
             this._reasonForStudy.Mask = "";
             this._reasonForStudy.Name = "_reasonForStudy";
@@ -258,7 +394,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._visitPage.Location = new System.Drawing.Point(4, 22);
             this._visitPage.Name = "_visitPage";
             this._visitPage.Padding = new System.Windows.Forms.Padding(3);
-            this._visitPage.Size = new System.Drawing.Size(508, 395);
+            this._visitPage.Size = new System.Drawing.Size(581, 317);
             this._visitPage.TabIndex = 1;
             this._visitPage.Text = "Visit";
             this._visitPage.UseVisualStyleBackColor = true;
@@ -410,7 +546,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._documentPage.Location = new System.Drawing.Point(4, 22);
             this._documentPage.Name = "_documentPage";
             this._documentPage.Padding = new System.Windows.Forms.Padding(3);
-            this._documentPage.Size = new System.Drawing.Size(505, 378);
+            this._documentPage.Size = new System.Drawing.Size(581, 317);
             this._documentPage.TabIndex = 3;
             this._documentPage.Text = "Document";
             this._documentPage.UseVisualStyleBackColor = true;
@@ -420,148 +556,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._billingPage.Location = new System.Drawing.Point(4, 22);
             this._billingPage.Name = "_billingPage";
             this._billingPage.Padding = new System.Windows.Forms.Padding(3);
-            this._billingPage.Size = new System.Drawing.Size(505, 378);
+            this._billingPage.Size = new System.Drawing.Size(581, 317);
             this._billingPage.TabIndex = 2;
             this._billingPage.Text = "Billing";
             this._billingPage.UseVisualStyleBackColor = true;
-            // 
-            // groupBox2
-            // 
-            this.groupBox2.Controls.Add(this._mpsScheduledEndTime);
-            this.groupBox2.Controls.Add(this._mpsEndTime);
-            this.groupBox2.Controls.Add(this._mpsStartTime);
-            this.groupBox2.Controls.Add(this._mpsScheduledStartTime);
-            this.groupBox2.Controls.Add(this._mpsState);
-            this.groupBox2.Controls.Add(this._mpsPerformerStaff);
-            this.groupBox2.Controls.Add(this._mpsScheduledPerformerStaff);
-            this.groupBox2.Controls.Add(this._diagnosticServiceBreakdown);
-            this.groupBox2.Controls.Add(this._modality);
-            this.groupBox2.Location = new System.Drawing.Point(3, 3);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(291, 405);
-            this.groupBox2.TabIndex = 18;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Requested Procedures and Procedure Steps";
-            // 
-            // _mpsScheduledEndTime
-            // 
-            this._mpsScheduledEndTime.LabelText = "Scheduled End Time";
-            this._mpsScheduledEndTime.Location = new System.Drawing.Point(7, 352);
-            this._mpsScheduledEndTime.Margin = new System.Windows.Forms.Padding(2);
-            this._mpsScheduledEndTime.Mask = "";
-            this._mpsScheduledEndTime.Name = "_mpsScheduledEndTime";
-            this._mpsScheduledEndTime.ReadOnly = true;
-            this._mpsScheduledEndTime.Size = new System.Drawing.Size(136, 41);
-            this._mpsScheduledEndTime.TabIndex = 16;
-            this._mpsScheduledEndTime.Value = null;
-            // 
-            // _mpsEndTime
-            // 
-            this._mpsEndTime.LabelText = "End Time";
-            this._mpsEndTime.Location = new System.Drawing.Point(147, 352);
-            this._mpsEndTime.Margin = new System.Windows.Forms.Padding(2);
-            this._mpsEndTime.Mask = "";
-            this._mpsEndTime.Name = "_mpsEndTime";
-            this._mpsEndTime.ReadOnly = true;
-            this._mpsEndTime.Size = new System.Drawing.Size(136, 41);
-            this._mpsEndTime.TabIndex = 15;
-            this._mpsEndTime.Value = null;
-            // 
-            // _mpsStartTime
-            // 
-            this._mpsStartTime.LabelText = "Start Time";
-            this._mpsStartTime.Location = new System.Drawing.Point(147, 300);
-            this._mpsStartTime.Margin = new System.Windows.Forms.Padding(2);
-            this._mpsStartTime.Mask = "";
-            this._mpsStartTime.Name = "_mpsStartTime";
-            this._mpsStartTime.ReadOnly = true;
-            this._mpsStartTime.Size = new System.Drawing.Size(136, 41);
-            this._mpsStartTime.TabIndex = 14;
-            this._mpsStartTime.Value = null;
-            // 
-            // _mpsScheduledStartTime
-            // 
-            this._mpsScheduledStartTime.LabelText = "Scheduled Start Time";
-            this._mpsScheduledStartTime.Location = new System.Drawing.Point(7, 300);
-            this._mpsScheduledStartTime.Margin = new System.Windows.Forms.Padding(2);
-            this._mpsScheduledStartTime.Mask = "";
-            this._mpsScheduledStartTime.Name = "_mpsScheduledStartTime";
-            this._mpsScheduledStartTime.ReadOnly = true;
-            this._mpsScheduledStartTime.Size = new System.Drawing.Size(136, 41);
-            this._mpsScheduledStartTime.TabIndex = 13;
-            this._mpsScheduledStartTime.Value = null;
-            // 
-            // _mpsState
-            // 
-            this._mpsState.LabelText = "State";
-            this._mpsState.Location = new System.Drawing.Point(147, 210);
-            this._mpsState.Margin = new System.Windows.Forms.Padding(2);
-            this._mpsState.Mask = "";
-            this._mpsState.Name = "_mpsState";
-            this._mpsState.ReadOnly = true;
-            this._mpsState.Size = new System.Drawing.Size(136, 41);
-            this._mpsState.TabIndex = 12;
-            this._mpsState.Value = null;
-            // 
-            // _mpsPerformerStaff
-            // 
-            this._mpsPerformerStaff.LabelText = "Performer Staff";
-            this._mpsPerformerStaff.Location = new System.Drawing.Point(147, 255);
-            this._mpsPerformerStaff.Margin = new System.Windows.Forms.Padding(2);
-            this._mpsPerformerStaff.Mask = "";
-            this._mpsPerformerStaff.Name = "_mpsPerformerStaff";
-            this._mpsPerformerStaff.ReadOnly = true;
-            this._mpsPerformerStaff.Size = new System.Drawing.Size(136, 41);
-            this._mpsPerformerStaff.TabIndex = 11;
-            this._mpsPerformerStaff.Value = null;
-            // 
-            // _mpsScheduledPerformerStaff
-            // 
-            this._mpsScheduledPerformerStaff.LabelText = "Scheduled Performer Staff";
-            this._mpsScheduledPerformerStaff.Location = new System.Drawing.Point(5, 255);
-            this._mpsScheduledPerformerStaff.Margin = new System.Windows.Forms.Padding(2);
-            this._mpsScheduledPerformerStaff.Mask = "";
-            this._mpsScheduledPerformerStaff.Name = "_mpsScheduledPerformerStaff";
-            this._mpsScheduledPerformerStaff.ReadOnly = true;
-            this._mpsScheduledPerformerStaff.Size = new System.Drawing.Size(136, 41);
-            this._mpsScheduledPerformerStaff.TabIndex = 10;
-            this._mpsScheduledPerformerStaff.Value = null;
-            // 
-            // _diagnosticServiceBreakdown
-            // 
-            this._diagnosticServiceBreakdown.AllowDrop = true;
-            this._diagnosticServiceBreakdown.ImageList = this.imageList1;
-            this._diagnosticServiceBreakdown.Location = new System.Drawing.Point(5, 18);
-            this._diagnosticServiceBreakdown.Margin = new System.Windows.Forms.Padding(2);
-            this._diagnosticServiceBreakdown.MenuModel = null;
-            this._diagnosticServiceBreakdown.Name = "_diagnosticServiceBreakdown";
-            this._diagnosticServiceBreakdown.Selection = selection4;
-            this._diagnosticServiceBreakdown.ShowRootLines = false;
-            this._diagnosticServiceBreakdown.ShowToolbar = false;
-            this._diagnosticServiceBreakdown.Size = new System.Drawing.Size(278, 183);
-            this._diagnosticServiceBreakdown.TabIndex = 10;
-            this._diagnosticServiceBreakdown.ToolbarModel = null;
-            this._diagnosticServiceBreakdown.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._diagnosticServiceBreakdown.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
-            this._diagnosticServiceBreakdown.Tree = null;
-            // 
-            // imageList1
-            // 
-            this.imageList1.ColorDepth = System.Windows.Forms.ColorDepth.Depth8Bit;
-            this.imageList1.ImageSize = new System.Drawing.Size(16, 16);
-            this.imageList1.TransparentColor = System.Drawing.Color.Transparent;
-            // 
-            // _modality
-            // 
-            this._modality.LabelText = "Modality";
-            this._modality.Location = new System.Drawing.Point(5, 210);
-            this._modality.Margin = new System.Windows.Forms.Padding(2);
-            this._modality.Mask = "";
-            this._modality.Name = "_modality";
-            this._modality.ReadOnly = true;
-            this._modality.Size = new System.Drawing.Size(136, 41);
-            this._modality.TabIndex = 6;
-            this._modality.Value = null;
             // 
             // BiographyOrderHistoryComponentControl
             // 
@@ -569,15 +567,15 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.Name = "BiographyOrderHistoryComponentControl";
-            this.Size = new System.Drawing.Size(826, 668);
+            this.Size = new System.Drawing.Size(589, 586);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
             this.splitContainer1.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this._orderPage.ResumeLayout(false);
+            this.groupBox2.ResumeLayout(false);
             this._visitPage.ResumeLayout(false);
             this._visitPage.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -586,12 +584,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private ClearCanvas.Desktop.View.WinForms.TableView _orderList;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private ClearCanvas.Desktop.View.WinForms.BindingTreeView _diagnosticServiceBreakdown;
-        private System.Windows.Forms.GroupBox groupBox2;
-        private ClearCanvas.Controls.WinForms.TextField _modality;
-        private ClearCanvas.Controls.WinForms.TextField _mpsPerformerStaff;
-        private ClearCanvas.Controls.WinForms.TextField _mpsScheduledPerformerStaff;
-        private ClearCanvas.Controls.WinForms.TextField _mpsState;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage _orderPage;
         private System.Windows.Forms.TabPage _visitPage;
@@ -613,13 +605,19 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.CheckBox _vip;
         private System.Windows.Forms.TabPage _billingPage;
         private System.Windows.Forms.ImageList imageList1;
-        private ClearCanvas.Controls.WinForms.TextField _mpsScheduledStartTime;
-        private ClearCanvas.Controls.WinForms.TextField _mpsScheduledEndTime;
-        private ClearCanvas.Controls.WinForms.TextField _mpsEndTime;
-        private ClearCanvas.Controls.WinForms.TextField _mpsStartTime;
         private ClearCanvas.Controls.WinForms.TextField _schedulingRequestDateTime;
         private ClearCanvas.Controls.WinForms.TextField _dischargeDateTime;
         private ClearCanvas.Controls.WinForms.TextField _admitDateTime;
         private System.Windows.Forms.TabPage _documentPage;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private ClearCanvas.Controls.WinForms.TextField _mpsScheduledEndTime;
+        private ClearCanvas.Controls.WinForms.TextField _mpsEndTime;
+        private ClearCanvas.Controls.WinForms.TextField _mpsStartTime;
+        private ClearCanvas.Controls.WinForms.TextField _mpsScheduledStartTime;
+        private ClearCanvas.Controls.WinForms.TextField _mpsState;
+        private ClearCanvas.Controls.WinForms.TextField _mpsPerformerStaff;
+        private ClearCanvas.Controls.WinForms.TextField _mpsScheduledPerformerStaff;
+        private ClearCanvas.Desktop.View.WinForms.BindingTreeView _diagnosticServiceBreakdown;
+        private ClearCanvas.Controls.WinForms.TextField _modality;
     }
 }

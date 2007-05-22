@@ -7,7 +7,7 @@ using ClearCanvas.Enterprise;
 
 namespace ClearCanvas.Ris.Client
 {
-    class ContactPersonTable : Table<ContactPersonDetail>
+    public class ContactPersonTable : Table<ContactPersonDetail>
     {
         public ContactPersonTable()
         {

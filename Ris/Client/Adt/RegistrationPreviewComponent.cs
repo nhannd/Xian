@@ -115,7 +115,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            _maxRIC = 10;
+            _maxRIC = 8;
 
             _recentRICTable = new RICTable();
             _futureRICTable = new RICTable();
@@ -319,7 +319,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string ReconciliationMessage
         {
-            get { return String.Format(SR.MessageUnreconciledRecordsAlert, PersonNameFormat.Format(_worklistPreview.Name, "%g. %F")); }
+            get { return String.Format(SR.MessageAlertUnreconciledRecords, PersonNameFormat.Format(_worklistPreview.Name, "%g. %F")); }
         }
 
         public string Name
@@ -432,12 +432,15 @@ namespace ClearCanvas.Ris.Client.Adt
                 case "Note Alert":
                     alertTooltip = String.Format(SR.MessageAlertHighSeverityNote
                         , patientName
-                        , StringUtilities.Combine<string>(detail.Reasons, "\r\n"));
+                        , StringUtilities.Combine<string>(detail.Reasons, ", "));
                     break;
                 case "Language Alert":
                     alertTooltip = String.Format(SR.MessageAlertLanguageNotEnglish
                         , patientName
                         , StringUtilities.Combine<string>(detail.Reasons, ", "));
+                    break;
+                case "Reconciliation Alert":
+                    alertTooltip = String.Format(SR.MessageAlertUnreconciledRecords, patientName);
                     break;
                 default:
                     break;

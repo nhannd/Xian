@@ -40,6 +40,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BiographyDemographicComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="BiographyDemographicComponentControl.Designer.cs">
+      <DependentUpon>BiographyDemographicComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="BiographyDemographicComponentView.cs" />
     <Compile Include="BiographyDocumentComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -315,6 +322,10 @@
     <EmbeddedResource Include="Resources\NextSmall.png" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="BiographyDemographicComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>BiographyDemographicComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="BiographyFeedbackComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BiographyFeedbackComponentControl.cs</DependentUpon>

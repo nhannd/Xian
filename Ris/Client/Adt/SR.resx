@@ -298,10 +298,13 @@
     <value>Cannot determine enablement for operation: {0}</value>
   </data>
   <data name="MessageAlertHighSeverityNote" xml:space="preserve">
-    <value>{0} has high severity notes: \r\n{1}</value>
+    <value>{0} has high severity notes: {1}</value>
   </data>
   <data name="MessageAlertLanguageNotEnglish" xml:space="preserve">
     <value>{0} speaks: {1}</value>
+  </data>
+  <data name="MessageAlertUnreconciledRecords" xml:space="preserve">
+    <value>{0} has unreconciled records</value>
   </data>
   <data name="MessageDeleteSelectedVisit" xml:space="preserve">
     <value>Are you sure you want to delete this visit?</value>
@@ -311,9 +314,6 @@
   </data>
   <data name="MessagePatientNotFound" xml:space="preserve">
     <value>Patient not found</value>
-  </data>
-  <data name="MessageUnreconciledRecordsAlert" xml:space="preserve">
-    <value>{0} has unreconciled records</value>
   </data>
   <data name="TextNotScheduled" xml:space="preserve">
     <value>Not Scheduled</value>
@@ -339,8 +339,14 @@
   <data name="TitleConfirmReconciliation" xml:space="preserve">
     <value>Confirm Reconciliation</value>
   </data>
+  <data name="TitleDemographic" xml:space="preserve">
+    <value>Demographic</value>
+  </data>
   <data name="TitleDetail" xml:space="preserve">
     <value>Detail</value>
+  </data>
+  <data name="TitleDocuments" xml:space="preserve">
+    <value>Documents</value>
   </data>
   <data name="TitleEditPatient" xml:space="preserve">
     <value>Edit Patient</value>
@@ -372,11 +378,17 @@
   <data name="TitleNewPatient" xml:space="preserve">
     <value>New Patient</value>
   </data>
+  <data name="TitleNotes" xml:space="preserve">
+    <value>Notes</value>
+  </data>
   <data name="TitleOrders" xml:space="preserve">
     <value>Orders</value>
   </data>
   <data name="TitlePatientComponent" xml:space="preserve">
     <value>Patient - {0} {1}</value>
+  </data>
+  <data name="TitlePatientFeedbacks" xml:space="preserve">
+    <value>Patient Feedbacks</value>
   </data>
   <data name="TitlePatientProfile" xml:space="preserve">
     <value>Patient Profile</value>

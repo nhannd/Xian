@@ -42,7 +42,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._ageSex = new System.Windows.Forms.Label();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._name = new System.Windows.Forms.Label();
-            this._moreButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this._picture)).BeginInit();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -176,7 +175,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this.tableLayoutPanel2.SetColumnSpan(this.flowLayoutPanel1, 2);
             this.flowLayoutPanel1.Controls.Add(this._name);
-            this.flowLayoutPanel1.Controls.Add(this._moreButton);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(0);
@@ -194,18 +192,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._name.Size = new System.Drawing.Size(134, 23);
             this._name.TabIndex = 1;
             this._name.Text = "Patient name";
-            // 
-            // _moreButton
-            // 
-            this._moreButton.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this._moreButton.Location = new System.Drawing.Point(140, 3);
-            this._moreButton.Margin = new System.Windows.Forms.Padding(2);
-            this._moreButton.Name = "_moreButton";
-            this._moreButton.Size = new System.Drawing.Size(61, 20);
-            this._moreButton.TabIndex = 13;
-            this._moreButton.Text = "More >>";
-            this._moreButton.UseVisualStyleBackColor = true;
-            this._moreButton.Click += new System.EventHandler(this._moreButton_Click);
             // 
             // PatientOverviewComponentControl
             // 
@@ -240,7 +226,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private Label _dateOfBirth;
         private FlowLayoutPanel flowLayoutPanel1;
         private Label _name;
-        private Button _moreButton;
 
 
     }

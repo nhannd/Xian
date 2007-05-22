@@ -40,6 +40,12 @@ namespace ClearCanvas.Ris.Client
         public override void Start()
         {
             base.Start();
+
+            if (_contactPerson.Relationship == null)
+                _contactPerson.Relationship = _contactRelationshipChoices[0];
+ 
+            if (_contactPerson.Type == null)
+                _contactPerson.Type = _contactTypeChoices[0];
         }
 
         public override void Stop()

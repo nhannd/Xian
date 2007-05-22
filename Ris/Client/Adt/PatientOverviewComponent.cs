@@ -220,24 +220,22 @@ namespace ClearCanvas.Ris.Client.Adt
         private string GetAlertTooltip(AlertNotificationDetail detail)
         {
             string alertTooltip = "";
-            string patientName = String.Format("{0}. {1}"
-                , _patientProfile.Name.GivenName.Substring(0, 1)
-                , _patientProfile.Name.FamilyName);
+            string patientName = PersonNameFormat.Format(_patientProfile.Name, "%g. %F");
 
             switch (detail.Type)
             {
                 case "Note Alert":
-                    alertTooltip = String.Format("{0} has high severity notes: {1}"
+                    alertTooltip = String.Format(SR.MessageAlertHighSeverityNote
                         , patientName
-                        , StringUtilities.Combine<string>(detail.Reasons, "\r\n"));
+                        , StringUtilities.Combine<string>(detail.Reasons, ", "));
                     break;
                 case "Language Alert":
-                    alertTooltip = String.Format("{0} speaks: {1}"
+                    alertTooltip = String.Format(SR.MessageAlertLanguageNotEnglish
                         , patientName
                         , StringUtilities.Combine<string>(detail.Reasons, ", "));
                     break;
                 case "Reconciliation Alert":
-                    alertTooltip = String.Format(SR.MessageUnreconciledRecordsAlert, _patientProfile.Name.GivenName.Substring(0, 1), _patientProfile.Name.FamilyName);
+                    alertTooltip = String.Format(SR.MessageAlertUnreconciledRecords, patientName);
                     break;
                 default:
                     break;
@@ -245,16 +243,5 @@ namespace ClearCanvas.Ris.Client.Adt
 
             return alertTooltip;
         }
-
-        public void ShowPatientDemographicsDialog()
-        {
-            //TODO: ShowPatientDemographicsDialog
-            // This is to illustrate the concept only, eventually we want to show some dialog/form other than the editor
-            ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow,
-                new PatientProfileEditorComponent(_profileRef),
-                SR.TitleEditPatient);
-        }
-
     }
 }

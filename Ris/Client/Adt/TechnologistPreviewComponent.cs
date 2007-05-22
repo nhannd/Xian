@@ -290,7 +290,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string ReconciliationMessage
         {
-            get { return String.Format(SR.MessageUnreconciledRecordsAlert, PersonNameFormat.Format(_worklistPreview.Name, "%g. %F")); }
+            get { return String.Format(SR.MessageAlertUnreconciledRecords, PersonNameFormat.Format(_worklistPreview.Name, "%g. %F")); }
         }
 
         public string Name

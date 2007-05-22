@@ -601,7 +601,7 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to {0} has high severity notes: \r\n{1}.
+        ///   Looks up a localized string similar to {0} has high severity notes: {1}.
         /// </summary>
         internal static string MessageAlertHighSeverityNote {
             get {
@@ -615,6 +615,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string MessageAlertLanguageNotEnglish {
             get {
                 return ResourceManager.GetString("MessageAlertLanguageNotEnglish", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} has unreconciled records.
+        /// </summary>
+        internal static string MessageAlertUnreconciledRecords {
+            get {
+                return ResourceManager.GetString("MessageAlertUnreconciledRecords", resourceCulture);
             }
         }
         
@@ -642,15 +651,6 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string MessagePatientNotFound {
             get {
                 return ResourceManager.GetString("MessagePatientNotFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} has unreconciled records.
-        /// </summary>
-        internal static string MessageUnreconciledRecordsAlert {
-            get {
-                return ResourceManager.GetString("MessageUnreconciledRecordsAlert", resourceCulture);
             }
         }
         
@@ -727,11 +727,29 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Demographic.
+        /// </summary>
+        internal static string TitleDemographic {
+            get {
+                return ResourceManager.GetString("TitleDemographic", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Detail.
         /// </summary>
         internal static string TitleDetail {
             get {
                 return ResourceManager.GetString("TitleDetail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Documents.
+        /// </summary>
+        internal static string TitleDocuments {
+            get {
+                return ResourceManager.GetString("TitleDocuments", resourceCulture);
             }
         }
         
@@ -826,6 +844,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Notes.
+        /// </summary>
+        internal static string TitleNotes {
+            get {
+                return ResourceManager.GetString("TitleNotes", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Orders.
         /// </summary>
         internal static string TitleOrders {
@@ -840,6 +867,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string TitlePatientComponent {
             get {
                 return ResourceManager.GetString("TitlePatientComponent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Patient Feedbacks.
+        /// </summary>
+        internal static string TitlePatientFeedbacks {
+            get {
+                return ResourceManager.GetString("TitlePatientFeedbacks", resourceCulture);
             }
         }
         

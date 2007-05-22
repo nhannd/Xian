@@ -30,63 +30,44 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         {
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this._addressList = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // _addressList
             // 
             this._addressList.AutoSize = true;
             this._addressList.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._addressList.Location = new System.Drawing.Point(5, 5);
-            this._addressList.Margin = new System.Windows.Forms.Padding(5, 5, 25, 5);
+            this._addressList.Location = new System.Drawing.Point(0, 0);
+            this._addressList.Margin = new System.Windows.Forms.Padding(4, 4, 19, 4);
             this._addressList.MenuModel = null;
             this._addressList.MultiLine = true;
             this._addressList.MultiSelect = false;
             this._addressList.Name = "_addressList";
             this._addressList.ReadOnly = false;
             this._addressList.Selection = selection1;
-            this._addressList.Size = new System.Drawing.Size(142, 135);
-            this._addressList.TabIndex = 1;
+            this._addressList.Size = new System.Drawing.Size(129, 118);
+            this._addressList.TabIndex = 2;
             this._addressList.Table = null;
             this._addressList.ToolbarModel = null;
             this._addressList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._addressList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this._addressList.ItemDoubleClicked += new System.EventHandler(this._addressList_ItemDoubleClicked);
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this._addressList, 0, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 145F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(172, 145);
-            this.tableLayoutPanel1.TabIndex = 6;
             // 
             // AddressesSummaryControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Controls.Add(this._addressList);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "AddressesSummaryControl";
-            this.Size = new System.Drawing.Size(172, 145);
-            this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
+            this.Size = new System.Drawing.Size(129, 118);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private ClearCanvas.Desktop.View.WinForms.TableView _addressList;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+
     }
 }

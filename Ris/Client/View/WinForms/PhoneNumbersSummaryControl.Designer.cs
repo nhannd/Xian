@@ -29,61 +29,44 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private void InitializeComponent()
         {
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._phoneNumbers = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // tableLayoutPanel1
-            // 
-            this.tableLayoutPanel1.ColumnCount = 1;
-            this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.Controls.Add(this._phoneNumbers, 0, 0);
-            this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
-            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(4);
-            this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 2;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(199, 140);
-            this.tableLayoutPanel1.TabIndex = 6;
             // 
             // _phoneNumbers
             // 
+            this._phoneNumbers.AutoSize = true;
             this._phoneNumbers.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._phoneNumbers.Location = new System.Drawing.Point(5, 5);
-            this._phoneNumbers.Margin = new System.Windows.Forms.Padding(5, 5, 25, 5);
+            this._phoneNumbers.Location = new System.Drawing.Point(0, 0);
+            this._phoneNumbers.Margin = new System.Windows.Forms.Padding(4, 4, 19, 4);
             this._phoneNumbers.MenuModel = null;
             this._phoneNumbers.MultiSelect = false;
             this._phoneNumbers.Name = "_phoneNumbers";
             this._phoneNumbers.ReadOnly = false;
             this._phoneNumbers.Selection = selection1;
-            this._phoneNumbers.Size = new System.Drawing.Size(169, 130);
-            this._phoneNumbers.TabIndex = 1;
+            this._phoneNumbers.Size = new System.Drawing.Size(149, 114);
+            this._phoneNumbers.TabIndex = 2;
             this._phoneNumbers.Table = null;
             this._phoneNumbers.ToolbarModel = null;
             this._phoneNumbers.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._phoneNumbers.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
-            this._phoneNumbers.ItemDoubleClicked += new System.EventHandler(this._phoneNumbers_ItemDoubleClicked);
             // 
             // PhoneNumbersSummaryControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.Controls.Add(this._phoneNumbers);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.Name = "PhoneNumbersSummaryControl";
-            this.Size = new System.Drawing.Size(199, 140);
-            this.tableLayoutPanel1.ResumeLayout(false);
+            this.Size = new System.Drawing.Size(149, 114);
             this.ResumeLayout(false);
+            this.PerformLayout();
 
         }
 
         #endregion
 
         private ClearCanvas.Desktop.View.WinForms.TableView _phoneNumbers;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+
     }
 }

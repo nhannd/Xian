@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BiographyDemographicComponent.cs" />
     <Compile Include="BiographyDocumentComponent.cs" />
     <Compile Include="BiographyFeedbackComponent.cs" />
     <Compile Include="BiographyNoteComponent.cs" />
@@ -202,6 +203,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
+    <EmbeddedResource Include="Icons\CheckSmall.png" />
     <EmbeddedResource Include="Icons\Cancel.png" />
     <EmbeddedResource Include="Icons\Complete.png" />
     <EmbeddedResource Include="Icons\Resume.png" />
