@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Client
 
         public ICollection<string> ProvinceChoices
         {
-            get { return AddressSettings.Default.ProvinceChoices; }
+            get { return AddressEditorComponentSettings.Default.ProvinceChoices; }
         }
 
         public string Country
@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Client
 
         public ICollection<string> CountryChoices
         {
-            get { return AddressSettings.Default.CountryChoices; }
+            get { return AddressEditorComponentSettings.Default.CountryChoices; }
         }
 
         public string PostalCode

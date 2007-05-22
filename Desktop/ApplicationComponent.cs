@@ -97,7 +97,7 @@ namespace ClearCanvas.Desktop
         private event EventHandler _allPropertiesChanged;
         private event PropertyChangedEventHandler _propertyChanged;
 
-        private IValidationRuleSet _validation;
+        private ValidationRuleSet _validation;
         private bool _showValidationErrors;
         private event EventHandler _showValidationErrorsChanged;
 
@@ -111,9 +111,6 @@ namespace ClearCanvas.Desktop
             
             // default empty validation rule set
             _validation = new ValidationRuleSet();
-
-            // load validation rules
-            ValidationXmlProcessor.ProcessXml(this);
         }
 
         /// <summary>
@@ -159,7 +156,7 @@ namespace ClearCanvas.Desktop
             EventsHelper.Fire(_allPropertiesChanged, this, EventArgs.Empty);
         }
 
-        public IValidationRuleSet Validation
+        public ValidationRuleSet Validation
         {
             get { return _validation; }
             set { _validation = value; }

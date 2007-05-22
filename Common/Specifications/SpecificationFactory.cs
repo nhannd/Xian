@@ -19,6 +19,14 @@ namespace ClearCanvas.Common.Specifications
                 _xmlDoc.Load(xml);
             }
 
+            public SingleDocumentSource(TextReader xml)
+            {
+                _xmlDoc = new XmlDocument();
+                _xmlDoc.Load(xml);
+            }
+
+
+
             #region ISpecificationXmlSource Members
 
             public XmlElement GetSpecificationXml(string id)
@@ -56,6 +64,12 @@ namespace ClearCanvas.Common.Specifications
             :this(new SingleDocumentSource(xml))
         {
         }
+
+        public SpecificationFactory(TextReader xml)
+            : this(new SingleDocumentSource(xml))
+        {
+        }
+
 
         public SpecificationFactory(ISpecificationXmlSource xmlSource)
         {

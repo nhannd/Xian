@@ -10,10 +10,10 @@ namespace ClearCanvas.Ris.Client
     /// </summary>
     [SettingsGroupDescriptionAttribute("Provides lists of countries and provinces")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-    internal sealed partial class AddressSettings
+    internal sealed partial class AddressEditorComponentSettings
     {
 
-        public AddressSettings()
+        public AddressEditorComponentSettings()
         {
         }
 

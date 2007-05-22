@@ -142,6 +142,8 @@ namespace ClearCanvas.Ris.Client.Adt
         /// </summary>
         public OrderEntryComponent(EntityRef patientProfileRef)
         {
+            this.Validation.Add(OrderEntryComponentSettings.Default.ValidationRules);
+
             _patientProfileRef = patientProfileRef;
         }
 

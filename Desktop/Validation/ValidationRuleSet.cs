@@ -2,7 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
+using System.IO;
+
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Desktop.Validation
 {
@@ -19,6 +22,19 @@ namespace ClearCanvas.Desktop.Validation
         public ValidationRuleSet()
         {
             _rules = new List<IValidationRule>();
+        }
+
+        public void Add(string xmlSpecifications)
+        {
+            using (TextReader xml = new StringReader(xmlSpecifications))
+            {
+                SpecificationFactory specFactory = new SpecificationFactory(xml);
+                IDictionary<string, ISpecification> specs = specFactory.GetAllSpecifications();
+                foreach (KeyValuePair<string, ISpecification> kvp in specs)
+                {
+                    this.Add(new ValidationRule(kvp.Key, kvp.Value));
+                }
+            }
         }
 
         #region IValidationRuleSet members

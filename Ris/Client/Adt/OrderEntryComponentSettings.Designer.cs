@@ -8,16 +8,16 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Ris.Client {
+namespace ClearCanvas.Ris.Client.Adt {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class AddressSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class OrderEntryComponentSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static AddressSettings defaultInstance = ((AddressSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new AddressSettings())));
+        private static OrderEntryComponentSettings defaultInstance = ((OrderEntryComponentSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new OrderEntryComponentSettings())));
         
-        public static AddressSettings Default {
+        public static OrderEntryComponentSettings Default {
             get {
                 return defaultInstance;
             }
@@ -25,19 +25,10 @@ namespace ClearCanvas.Ris.Client {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("Canada")]
-        public string Countries {
+        [global::System.Configuration.DefaultSettingValueAttribute("OrderEntryComponent.val.xml")]
+        public string ValidationRules {
             get {
-                return ((string)(this["Countries"]));
-            }
-        }
-        
-        [global::System.Configuration.ApplicationScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("ON, AB, BC, MB, NB, NL, NS, PE, QC, SK, NT, NU, YT")]
-        public string Provinces {
-            get {
-                return ((string)(this["Provinces"]));
+                return ((string)(this["ValidationRules"]));
             }
         }
     }

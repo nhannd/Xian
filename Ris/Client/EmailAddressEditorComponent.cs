@@ -30,6 +30,8 @@ namespace ClearCanvas.Ris.Client
         public EmailAddressEditorComponent(EmailAddressDetail emailAddress)
         {
             _emailAddress = emailAddress;
+
+            this.Validation.Add(EmailAddressEditorComponentSettings.Default.ValidationRules);
         }
 
         public override void Start()

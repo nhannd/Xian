@@ -45,12 +45,30 @@
   <ItemGroup>
     <Compile Include="AddressEditorComponent.cs" />
     <Compile Include="AddressesSummaryComponent.cs" />
-    <Compile Include="Formatting\AddressFormat.cs" />
-    <Compile Include="AddressSettings.cs" />
-    <Compile Include="AddressSettings.Designer.cs">
+    <Compile Include="AddressesSummaryComponentSettings.cs" />
+    <Compile Include="AddressesSummaryComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>AddressSettings.settings</DependentUpon>
+      <DependentUpon>AddressesSummaryComponentSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ContactPersonEditorComponentSettings.cs" />
+    <Compile Include="ContactPersonEditorComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ContactPersonEditorComponentSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="EmailAddressEditorComponentSettings.cs" />
+    <Compile Include="EmailAddressEditorComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>EmailAddressEditorComponentSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="Formatting\AddressFormat.cs" />
+    <Compile Include="AddressEditorComponentSettings.cs" />
+    <Compile Include="AddressEditorComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>AddressEditorComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="AddressTable.cs" />
     <Compile Include="ContactPersonEditorComponent.cs" />
@@ -145,11 +163,23 @@
     <EmbeddedResource Include="EmailAddressEditorComponent.val.xml" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="AddressSettings.settings">
+    <None Include="AddressEditorComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>AddressSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>AddressEditorComponentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="AddressesSummaryComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>AddressesSummaryComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
+    <None Include="ContactPersonEditorComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ContactPersonEditorComponentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="EmailAddressEditorComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>EmailAddressEditorComponentSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="FormatSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>

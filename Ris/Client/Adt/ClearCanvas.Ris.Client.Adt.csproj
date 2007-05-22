@@ -33,6 +33,7 @@
       <HintPath>..\..\..\ReferencedAssemblies\Iesi.Collections.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -51,6 +52,18 @@
     <Compile Include="BiographyNoteTable.cs" />
     <Compile Include="BiographyFeedbackTable.cs" />
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
+    <Compile Include="OrderEntryComponentSettings.cs" />
+    <Compile Include="OrderEntryComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>OrderEntryComponentSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="PatientProfileDetailsEditorComponentSettings.cs" />
+    <Compile Include="PatientProfileDetailsEditorComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PatientProfileDetailsEditorComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="RequestedProcedureCheckInTable.cs" />
     <Compile Include="OrderSummaryTable.cs" />
     <Compile Include="CancelOrderTable.cs" />
@@ -235,6 +248,17 @@
     <EmbeddedResource Include="Icons\VisitSummaryToolLarge.png" />
     <EmbeddedResource Include="Icons\VisitSummaryToolMedium.png" />
     <EmbeddedResource Include="Icons\VisitSummaryToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="OrderEntryComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>OrderEntryComponentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="PatientProfileDetailsEditorComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PatientProfileDetailsEditorComponentSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

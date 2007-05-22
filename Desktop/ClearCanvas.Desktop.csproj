@@ -165,7 +165,6 @@
     <Compile Include="Validation\IValidationRule.cs" />
     <Compile Include="Validation\NoNodesContainerValidationStrategy.cs" />
     <Compile Include="Validation\ValidationRulesSettings.cs" />
-    <Compile Include="Validation\ValidationXmlProcessor.cs" />
     <Compile Include="Validation\ValidationResult.cs" />
     <Compile Include="Validation\ValidationRuleSet.cs" />
     <Compile Include="Validation\ValidationRule.cs" />

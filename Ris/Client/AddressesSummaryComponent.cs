@@ -29,6 +29,8 @@ namespace ClearCanvas.Ris.Client
 
         public AddressesSummaryComponent(IList<EnumValueInfo> addressTypes)
         {
+            this.Validation.Add(AddressesSummaryComponentSettings.Default.ValidationRules);
+
             _addresses = new AddressTable();
 
             _addressActionHandler = new CrudActionModel();
@@ -86,8 +88,8 @@ namespace ClearCanvas.Ris.Client
         public void AddAddress()
         {
             AddressDetail address = new AddressDetail();
-            address.Province = CollectionUtils.FirstElement<string>(AddressSettings.Default.ProvinceChoices);
-            address.Country = CollectionUtils.FirstElement<string>(AddressSettings.Default.CountryChoices);
+            address.Province = CollectionUtils.FirstElement<string>(AddressEditorComponentSettings.Default.ProvinceChoices);
+            address.Country = CollectionUtils.FirstElement<string>(AddressEditorComponentSettings.Default.CountryChoices);
             address.Type = _addressTypes[0];
 
             AddressEditorComponent editor = new AddressEditorComponent(address, _addressTypes);

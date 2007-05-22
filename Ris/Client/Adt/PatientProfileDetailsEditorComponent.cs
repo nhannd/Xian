@@ -32,6 +32,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public PatientProfileDetailsEditorComponent(List<EnumValueInfo> sexChoices)
         {
+            this.Validation.Add(PatientProfileDetailsEditorComponentSettings.Default.ValidationRules);
+
             _sexChoices = sexChoices;
         }
 
