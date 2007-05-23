@@ -21,7 +21,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
     public class RegistrationWorkflowAssembler
     {
         public RegistrationWorklistPreview CreateRegistrationWorklistPreview(RegistrationWorklistItem item
-            , bool hasReconciliationCandidates
             , List<AlertNotificationDetail> alertNotifications
             , IPersistenceContext context)
         {
@@ -47,7 +46,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             preview.CurrentHomePhone = phoneAssembler.CreateTelephoneDetail(profile.CurrentHomePhone, context);
             preview.CurrentWorkPhone = phoneAssembler.CreateTelephoneDetail(profile.CurrentWorkPhone, context);
             preview.AlertNotifications = alertNotifications;
-            preview.HasReconciliationCandidates = hasReconciliationCandidates;
 
             preview.TelephoneNumbers = CollectionUtils.Map<TelephoneNumber, TelephoneDetail, List<TelephoneDetail>>(profile.TelephoneNumbers,
                 delegate(TelephoneNumber phone)

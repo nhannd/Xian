@@ -67,15 +67,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         public LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request)
         {
             PatientProfile profile = (PatientProfile)PersistenceContext.Load(request.WorklistItem.PatientProfileRef);
-            List<AlertNotificationDetail> alertNotifications = GetPatientAlertNotifications(profile.Patient, this.PersistenceContext);
 
-            IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)(new PatientReconciliationStrategyExtensionPoint()).CreateExtension();
-            IList<PatientProfileMatch> matches = strategy.FindReconciliationMatches(profile, PersistenceContext);
+            List<AlertNotificationDetail> alertNotifications = new List<AlertNotificationDetail>();            
+            alertNotifications.AddRange(GetAlertNotifications(profile.Patient, this.PersistenceContext));
+            alertNotifications.AddRange(GetAlertNotifications(profile, this.PersistenceContext));
 
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
             return new LoadWorklistPreviewResponse(assembler.CreateRegistrationWorklistPreview(
                 request.WorklistItem,
-                matches.Count > 0,
                 alertNotifications,
                 this.PersistenceContext));
         }
@@ -88,15 +87,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             PatientProfile profile = broker.Load(request.PatientProfileRef);
             PatientProfileAssembler assembler = new PatientProfileAssembler();
 
-            IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)(new PatientReconciliationStrategyExtensionPoint()).CreateExtension();
-            IList<PatientProfileMatch> matches = strategy.FindReconciliationMatches(profile, PersistenceContext);
+            List<AlertNotificationDetail> alertNotifications = new List<AlertNotificationDetail>();
+            alertNotifications.AddRange(GetAlertNotifications(profile.Patient, this.PersistenceContext));
+            alertNotifications.AddRange(GetAlertNotifications(profile, this.PersistenceContext));
 
             return new LoadPatientProfileForBiographyResponse(
                 profile.Patient.GetRef(), 
                 profile.GetRef(), 
                 assembler.CreatePatientProfileDetail(profile, PersistenceContext),
-                GetPatientAlertNotifications(profile.Patient, this.PersistenceContext),
-                matches.Count > 0);
+                alertNotifications);
         }
 
 
@@ -218,26 +217,40 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         /// <summary>
-        /// Helper method to test a patient with alerts that implement the PatientAlertExtensionPoint
+        /// Helper method to test a Patient or Patient Profile with alerts that implement the PatientAlertExtensionPoint and PatientProfileAlertExtensionPoint
         /// </summary>
         /// <param name="subject"></param>
         /// <param name="context"></param>
         /// <returns>a list of alert notification detail if each alert test succeeds</returns>
-        private List<AlertNotificationDetail> GetPatientAlertNotifications(Patient subject, IPersistenceContext context)
+        private List<AlertNotificationDetail> GetAlertNotifications(Entity subject, IPersistenceContext context)
         {
             AlertAssembler assembler = new AlertAssembler();
             List<AlertNotificationDetail> results = new List<AlertNotificationDetail>();
 
-            foreach (IPatientAlert patientAlertTests in PatientAlertHelper.Instance.GetAlertTests())
+            if (subject is Patient)
             {
-                IAlertNotification testResult = patientAlertTests.Test(subject, context);
-                if (testResult != null)
+                foreach (IPatientAlert patientAlertTests in PatientAlertHelper.Instance.GetAlertTests())
                 {
-                    results.Add(assembler.CreateAlertNotification(testResult));
+                    IAlertNotification testResult = patientAlertTests.Test(subject as Patient, context);
+                    if (testResult != null)
+                    {
+                        results.Add(assembler.CreateAlertNotification(testResult));
+                    }
+                }
+            }
+            else if (subject is PatientProfile)
+            {
+                foreach (IPatientProfileAlert profileAlertTests in PatientProfileAlertHelper.Instance.GetAlertTests())
+                {
+                    IAlertNotification testResult = profileAlertTests.Test(subject as PatientProfile, context);
+                    if (testResult != null)
+                    {
+                        results.Add(assembler.CreateAlertNotification(testResult));
+                    }
                 }
             }
 
             return results;
-        }    
+        }
     }
 }

@@ -6,9 +6,9 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Alert
 {
-    public abstract class PatientAlert : IPatientAlert
+    public abstract class PatientAlertBase : IPatientAlert
     {
-        protected PatientAlert()
+        protected PatientAlertBase()
         {
         }
 

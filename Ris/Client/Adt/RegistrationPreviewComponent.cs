@@ -64,9 +64,6 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private bool _showHeader;
-        private bool _showReconciliationAlert;
-
         private RegistrationWorklistItem _worklistItem;
         private RegistrationWorklistPreview _worklistPreview;
 
@@ -87,17 +84,7 @@ namespace ClearCanvas.Ris.Client.Adt
         /// Constructor
         /// </summary>
         public RegistrationPreviewComponent()
-            :this(true, true)
         {
-        }
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public RegistrationPreviewComponent(bool showHeader, bool showReconciliationAlert)
-        {
-            _showHeader = showHeader;
-            _showReconciliationAlert = showReconciliationAlert;
         }
 
         public RegistrationWorklistItem WorklistItem
@@ -257,15 +244,22 @@ namespace ClearCanvas.Ris.Client.Adt
             List<RICSummary> selectedList = CollectionUtils.Select<RICSummary, List<RICSummary>>(target,
                 delegate(RICSummary summary)
                 {
-                    if (summary.ModalityProcedureStepScheduledTime == null)
-                        return false;
-
                     bool inRange = true;
-                    if (startTime != null && summary.ModalityProcedureStepScheduledTime < startTime)
-                        inRange = false;
 
-                    if (endTime != null && summary.ModalityProcedureStepScheduledTime > endTime)
-                        inRange = false;
+                    if (startTime == null && endTime == null && summary.ModalityProcedureStepScheduledTime == null)
+                        return true;
+
+                    if (summary.ModalityProcedureStepScheduledTime != null)
+                    {
+                        if (startTime != null && summary.ModalityProcedureStepScheduledTime < startTime)
+                            return false;
+
+                        if (endTime != null && summary.ModalityProcedureStepScheduledTime > endTime)
+                            return false;
+
+                        if (startTime == null && endTime == null)
+                            return false;
+                    }
 
                     return inRange;
                 });
@@ -297,29 +291,6 @@ namespace ClearCanvas.Ris.Client.Adt
         public RegistrationWorklistPreview WorklistPreview
         {
             get { return _worklistPreview; }
-        }
-
-        public bool ShowHeader
-        {
-            get { return _showHeader; }
-            set { _showHeader = value; }
-        }
-
-        public bool ShowReconciliationAlert
-        {
-            get
-            {
-                if (_showReconciliationAlert && _worklistPreview != null)
-                {
-                    return _worklistPreview.HasReconciliationCandidates;
-                }
-                return false;
-            }
-        }
-
-        public string ReconciliationMessage
-        {
-            get { return String.Format(SR.MessageAlertUnreconciledRecords, PersonNameFormat.Format(_worklistPreview.Name, "%g. %F")); }
         }
 
         public string Name
@@ -401,7 +372,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get { return (_worklistPreview != null && _worklistPreview.AlertNotifications.Count > 0); }
         }
-        
+
         public string GetAlertImageURI(AlertNotificationDetail detail)
         {
             string alertImageURI = "";
@@ -409,13 +380,19 @@ namespace ClearCanvas.Ris.Client.Adt
             switch (detail.Type)
             {
                 case "Note Alert":
-                    alertImageURI = "http://172.16.10.167/RisTemplates/note.png";
+                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertPen.png";
                     break;
                 case "Language Alert":
-                    alertImageURI = "http://172.16.10.167/RisTemplates/language.png";
+                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertWorld.png";
+                    break;
+                case "Reconciliation Alert":
+                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertMessenger.png";
+                    break;
+                case "Schedule Alert":
+                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertClock.jpg";
                     break;
                 default:
-                    alertImageURI = "http://172.16.10.167/RisTemplates/healthcare3.jpg";
+                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertMessenger.jpg";
                     break;
             }
 

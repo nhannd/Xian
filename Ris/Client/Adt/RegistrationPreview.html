@@ -12,32 +12,25 @@ var component = this.Component;
 var amr = this.ActionModelRenderer;
 if(component.WorklistPreview != null)
 {%>
-<% if(component.ShowHeader) { %>
 <table width="640" border="0">
   <tr>
     <td width="422" class="pageheading"><%= component.Name %></td>
     <!--<td rowspan="2" width="202"><img src="http://clearcanvas.ca/images/clearcanvas_logo.png" alt="ClearCanvas Inc." width="210" height="64" align="left" /></td>-->
-    <td rowspan="2" width="202"><img src="http://172.16.10.167/RisTemplates/logo.jpg" alt="UHN/MSH" align="left" /></td>
+    <td rowspan="2" width="202">
+        <% if(component.HasAlert) { %>
+              <% for(var alert in component.AlertNotifications) {%>
+                  <img width="50" border="0" src="<%= component.GetAlertImageURI(alert) %>" alt="<%= component.GetAlertTooltip(alert) %>" align="right"/>
+              <% } %>
+        <% } %>
+    </td>
   </tr>
   <tr>
     <td class="pageheading2"><%= component.Mrn %></td>
   </tr>
 </table>
+
 <p>&nbsp;</p>
-<% } // end-if(component.ShowHeader) %>
-
-<% if(component.ShowReconciliationAlert) { %>
-<div class="alert">
-<ul>
-   <li><%= component.ReconciliationMessage %></li>
-</ul>
-</div>
-<% } // end-if(component.ShowReconciliationAlert) %>
-
 <table width="640" border="0">
-  <tr class="sectionheading">
-    <td colspan="4">Basic Information </td>
-  </tr>
   <tr>
     <td width="120" class="propertyname">Name</td>
     <td width="200"><%= component.Name %></td>
@@ -143,26 +136,11 @@ if(component.WorklistPreview != null)
   
     <% if(component.MoreRICCount > 0) { %>
     <tr class="additionalentriescount">
-        <td colspan="6"><%= amr.GetHTML(component.MenuModel, "NewOrders", "(" + component.MoreRICCount + " more...)") %></td>
+        <td colspan="6"><%= amr.GetHTML(component.MenuModel, "Details", "(" + component.MoreRICCount + " more...)") %></td>
     </tr>
     <% } %>
 </table>
 <% } %>
-<% if(component.HasAlert) { %>
-<p>&nbsp;</p>
-<table width="640" border="0">
-  <tr class="sectionheading">
-    <td colspan="1">Alerts</td>
-  </tr>
-  <tr>
-    <td>
-      <% for(var alert in component.AlertNotifications) {%>
-      <img width="50" border="0" src="<%= component.GetAlertImageURI(alert) %>" alt="<%= component.GetAlertTooltip(alert) %>" align="left"/>
-      <% } %>
-    </td>
-  </tr>
-</table>
-<% } %>
-<%} // end-if(component != null)%>    
+<%} // end-if(component.WorklistPreview != null)%>    
 </body>
 </html>

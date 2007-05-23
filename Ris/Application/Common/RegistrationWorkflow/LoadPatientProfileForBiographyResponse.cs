@@ -14,14 +14,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             EntityRef patientRef, 
             EntityRef patientProfileRef, 
             PatientProfileDetail patientDetail, 
-            List<AlertNotificationDetail> alertNotifications,
-            bool hasReconciliationCandidates)
+            List<AlertNotificationDetail> alertNotifications)
         {
             this.PatientRef = patientRef;
             this.PatientProfileRef = patientProfileRef;
             this.PatientDetail = patientDetail;
             this.AlertNotifications = alertNotifications;
-            this.HasReconciliationCandidates = hasReconciliationCandidates;
         }
 
         [DataMember]
@@ -35,8 +33,5 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 
         [DataMember]
         public List<AlertNotificationDetail> AlertNotifications;
-
-        [DataMember]
-        public bool HasReconciliationCandidates;
     }
 }

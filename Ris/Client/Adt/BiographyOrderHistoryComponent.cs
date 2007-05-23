@@ -346,7 +346,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     else if (mps.State.Code == "IP")
                         return new IconSet(IconScheme.Colour, "AlertClock.png", "AlertClock.png", "AlertClock.png");
                     else if (mps.State.Code == "CM")
-                        return new IconSet(IconScheme.Colour, "CompleteSmall.png", "CompleteSmall.png", "CompleteSmall.png");
+                        return new IconSet(IconScheme.Colour, "CheckSmall.png", "CheckSmall.png", "CheckSmall.png");
                     else if (mps.State.Code == "DC")
                         return new IconSet(IconScheme.Colour, "Delete.png", "Delete.png", "Delete.png");
 

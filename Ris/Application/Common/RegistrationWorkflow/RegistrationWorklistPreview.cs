@@ -50,9 +50,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 
         [DataMember]
         public List<AlertNotificationDetail> AlertNotifications;
-
-        [DataMember]
-        public bool HasReconciliationCandidates;
     }
 }
 

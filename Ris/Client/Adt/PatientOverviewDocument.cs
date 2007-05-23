@@ -37,7 +37,6 @@ namespace ClearCanvas.Ris.Client.Adt
         protected override IApplicationComponent GetComponent()
         {
             List<AlertNotificationDetail> alertNotifications = null;
-            bool hasReconciliationCandidates = false;
 
             try
             {
@@ -48,7 +47,6 @@ namespace ClearCanvas.Ris.Client.Adt
                         _profileRef = response.PatientProfileRef;
                         _patientProfile = response.PatientDetail;
                         alertNotifications = response.AlertNotifications;
-                        hasReconciliationCandidates = response.HasReconciliationCandidates;
                     });
 
             }
@@ -81,7 +79,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             // Construct the Patient Biography page
             return new SplitComponentContainer(
-                new SplitPane("", new PatientOverviewComponent(_profileRef, _patientProfile, alertNotifications, hasReconciliationCandidates), true),
+                new SplitPane("", new PatientOverviewComponent(_profileRef, _patientProfile, alertNotifications), true),
                 new SplitPane("", tabGroupContainer, 0.8f),
                 SplitOrientation.Horizontal);
         }

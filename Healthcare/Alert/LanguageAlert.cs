@@ -9,8 +9,8 @@ using ClearCanvas.Healthcare.Brokers;
 
 namespace ClearCanvas.Healthcare.Alert
 {
-    [ExtensionOf(typeof(PatientAlertExtensionPoint))]
-    class LanguageAlert : PatientAlert
+    [ExtensionOf(typeof(PatientProfileAlertExtensionPoint))]
+    class LanguageAlert : PatientProfileAlertBase
     {
         private class LanguageAlertNotification : AlertNotification
         {
@@ -20,20 +20,16 @@ namespace ClearCanvas.Healthcare.Alert
             }
         }
 
-        public override IAlertNotification Test(Patient patient, IPersistenceContext context)
+        public override IAlertNotification Test(PatientProfile profile, IPersistenceContext context)
         {
             LanguageAlertNotification alertNotification = new LanguageAlertNotification();
             SpokenLanguageEnumTable languageEnumTable = context.GetBroker<ISpokenLanguageEnumBroker>().Load();
 
-            List<string> languagesSpoken = new List<string>();
-            foreach (PatientProfile profile in patient.Profiles)
+            if (profile.PrimaryLanguage != SpokenLanguage.en)
             {
-                if (profile.PrimaryLanguage != SpokenLanguage.en)
-                    alertNotification.Reasons.Add(languageEnumTable[profile.PrimaryLanguage].Value);
-            }
-
-            if (alertNotification.Reasons.Count > 0)
+                alertNotification.Reasons.Add(languageEnumTable[profile.PrimaryLanguage].Value);
                 return alertNotification;
+            }
 
             return null;
         }

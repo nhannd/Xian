@@ -76,7 +76,6 @@ namespace ClearCanvas.Ris.Client.Adt
         private EntityRef _profileRef;
         private PatientProfileDetail _patientProfile;
         private List<AlertNotificationDetail> _alertNotifications;
-        private bool _hasReconciliationCandidates;
 
         private ToolSet _toolSet;
         private ResourceResolver _resourceResolver;
@@ -87,13 +86,11 @@ namespace ClearCanvas.Ris.Client.Adt
         public PatientOverviewComponent(
             EntityRef profileRef, 
             PatientProfileDetail patientProfile, 
-            List<AlertNotificationDetail> alertNotifications,
-            bool hasReconciliationCandidates)
+            List<AlertNotificationDetail> alertNotifications)
         {
             _profileRef = profileRef;
             _patientProfile = patientProfile;
             _alertNotifications = alertNotifications;
-            _hasReconciliationCandidates = hasReconciliationCandidates;
 
             _resourceResolver = new ResourceResolver(this.GetType().Assembly);
         }
@@ -174,14 +171,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
                 foreach (AlertNotificationDetail detail in _alertNotifications)
                 {
-                    alertListItems.Add(new AlertListItem(detail.Type, GetAlertTooltip(detail), GetAlertIcon(detail)));
-                }
-
-                // Display Reconciliation Alert as one of the Alert List Items
-                if (_hasReconciliationCandidates)
-                {
-                    AlertNotificationDetail detail = new AlertNotificationDetail();
-                    detail.Type = "Reconciliation Alert";
                     alertListItems.Add(new AlertListItem(detail.Type, GetAlertTooltip(detail), GetAlertIcon(detail)));
                 }
 

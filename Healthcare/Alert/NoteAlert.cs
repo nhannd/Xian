@@ -11,7 +11,7 @@ using ClearCanvas.Enterprise.Core;
 namespace ClearCanvas.Healthcare.Alert
 {
     [ExtensionOf(typeof(PatientAlertExtensionPoint))]
-    public class NoteAlert : PatientAlert
+    public class NoteAlert : PatientAlertBase
     {
         private class NoteAlertNotification : AlertNotification
         {

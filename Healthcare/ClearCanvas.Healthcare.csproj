@@ -45,7 +45,10 @@
     <Compile Include="*.gen.cs" />
     <Compile Include="Alert\AddressAlert.cs" />
     <Compile Include="Alert\AlertNotification.cs" />
-    <Compile Include="Alert\PatientAlert.cs" />
+    <Compile Include="Alert\PatientProfileAlertBase.cs" />
+    <Compile Include="Alert\IPatientProfileAlert.cs" />
+    <Compile Include="Alert\PatientAlertBase.cs" />
+    <Compile Include="Alert\ReconciliationAlert.cs" />
     <Compile Include="Alert\IAlertNotification.cs" />
     <Compile Include="Alert\IPatientAlert.cs" />
     <Compile Include="Brokers\IStaffBroker.cs" />
