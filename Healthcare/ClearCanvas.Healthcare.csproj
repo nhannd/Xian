@@ -57,6 +57,7 @@
     <Compile Include="Alert\IAlert.cs" />
     <Compile Include="Alert\LanguageAlert.cs" />
     <Compile Include="Alert\NoteAlert.cs" />
+    <Compile Include="DiagnosticServiceTreeNode.cs" />
     <Compile Include="OrderCancelReason.cs" />
     <Compile Include="NoteCategory.cs" />
     <Compile Include="NoteSeverity.cs" />
