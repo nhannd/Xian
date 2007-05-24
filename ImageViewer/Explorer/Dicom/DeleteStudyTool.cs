@@ -117,9 +117,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			// Notify the user
 			if (this.Context.SelectedStudies.Count == 1)
-				message = SR.MessageStudyInUse;
+			{
+				message = SR.MessageSelectedStudyInUse;
+			}
 			else
-				message = String.Format(SR.MessageStudiesInUse, this.Context.SelectedStudies.Count);
+			{
+				if (studiesInUse.Count == 1)
+					message = SR.MessageOneOfSelectedStudiesInUse;
+				else
+					message = String.Format(SR.MessageSomeOfSelectedStudiesInUse, studiesInUse.Count);
+			}
 
 			this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
 

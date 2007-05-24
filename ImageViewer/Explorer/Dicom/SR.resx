@@ -239,14 +239,17 @@ Please change the dates and try again.</value>
   <data name="MessageNoServersSelected" xml:space="preserve">
     <value>No servers have been selected.  Please select at least one server and try again.</value>
   </data>
+  <data name="MessageOneOfSelectedStudiesInUse" xml:space="preserve">
+    <value>One of the selected studies is in use.  Please close all relevant workspaces before deleting.</value>
+  </data>
+  <data name="MessageSelectedStudyInUse" xml:space="preserve">
+    <value>The selected study is currently in use.  Please close all relevant workspaces before deleting.</value>
+  </data>
   <data name="MessageServerPortMustBePositiveInteger" xml:space="preserve">
     <value>The Port must be a positive integer value.  Please enter a valid Port.</value>
   </data>
-  <data name="MessageStudiesInUse" xml:space="preserve">
+  <data name="MessageSomeOfSelectedStudiesInUse" xml:space="preserve">
     <value>{0} of the selected studies are in use.  Please close all relevant workspaces before deleting.</value>
-  </data>
-  <data name="MessageStudyInUse" xml:space="preserve">
-    <value>The selected study is currently in use.  Please close all relevant workspaces before deleting.</value>
   </data>
   <data name="MessageUnableToCreateStorageDirectory" xml:space="preserve">
     <value>Unable to create storage directory; cannot retrieve study.</value>

@@ -411,6 +411,24 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to One of the selected studies is in use.  Please close all relevant workspaces before deleting..
+        /// </summary>
+        internal static string MessageOneOfSelectedStudiesInUse {
+            get {
+                return ResourceManager.GetString("MessageOneOfSelectedStudiesInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected study is currently in use.  Please close all relevant workspaces before deleting..
+        /// </summary>
+        internal static string MessageSelectedStudyInUse {
+            get {
+                return ResourceManager.GetString("MessageSelectedStudyInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The Port must be a positive integer value.  Please enter a valid Port..
         /// </summary>
         internal static string MessageServerPortMustBePositiveInteger {
@@ -422,18 +440,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         /// <summary>
         ///   Looks up a localized string similar to {0} of the selected studies are in use.  Please close all relevant workspaces before deleting..
         /// </summary>
-        internal static string MessageStudiesInUse {
+        internal static string MessageSomeOfSelectedStudiesInUse {
             get {
-                return ResourceManager.GetString("MessageStudiesInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The selected study is currently in use.  Please close all relevant workspaces before deleting..
-        /// </summary>
-        internal static string MessageStudyInUse {
-            get {
-                return ResourceManager.GetString("MessageStudyInUse", resourceCulture);
+                return ResourceManager.GetString("MessageSomeOfSelectedStudiesInUse", resourceCulture);
             }
         }
         
