@@ -18,22 +18,26 @@ namespace ClearCanvas.Healthcare.Workflow
 
         public class CheckIn : Operation
         {
-            public void Execute(RequestedProcedure rp, Staff currentUserStaff, IWorkflow workflow)
+            public void Execute(Order o, Staff currentUserStaff, IWorkflow workflow)
             {
-                CheckInProcedureStep cps = (CheckInProcedureStep) CollectionUtils.SelectFirst<ProcedureStep>(rp.ProcedureSteps,
-                        delegate(ProcedureStep step)
+                CollectionUtils.ForEach<RequestedProcedure>(o.RequestedProcedures, new Action<RequestedProcedure>(
+                    delegate(RequestedProcedure rp)
+                    {
+                        CheckInProcedureStep cps = (CheckInProcedureStep)CollectionUtils.SelectFirst<ProcedureStep>(rp.ProcedureSteps,
+                                delegate(ProcedureStep step)
+                                {
+                                    return step is CheckInProcedureStep;
+                                });
+
+                        // The CPS should be created when each RP of an order is created, but just in case it's not
+                        if (cps == null)
                         {
-                            return step is CheckInProcedureStep;
-                        });
+                            cps = new CheckInProcedureStep(rp);
+                            workflow.AddActivity(cps);
+                        }
 
-                // The CPS should be created when each RP of an order is created, but just in case it's not
-                if (cps == null)
-                {
-                    cps = new CheckInProcedureStep(rp);
-                    workflow.AddActivity(cps);
-                }
-
-                cps.Start(currentUserStaff);
+                        cps.Start(currentUserStaff);
+                    }));
             }
         }
 

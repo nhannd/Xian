@@ -322,6 +322,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Ordering Facility.
+        /// </summary>
+        internal static string ColumnOrderingFacility {
+            get {
+                return ResourceManager.GetString("ColumnOrderingFacility", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Ordering Physician.
         /// </summary>
         internal static string ColumnOrderingPhysician {
@@ -394,11 +403,11 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Requested Procedure.
+        ///   Looks up a localized string similar to Requested Procedures.
         /// </summary>
-        internal static string ColumnRequestedProcedure {
+        internal static string ColumnRequestedProcedures {
             get {
-                return ResourceManager.GetString("ColumnRequestedProcedure", resourceCulture);
+                return ResourceManager.GetString("ColumnRequestedProcedures", resourceCulture);
             }
         }
         
@@ -700,11 +709,11 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Yesterday {0}.
+        ///   Looks up a localized string similar to Yesterday.
         /// </summary>
-        internal static string TextYesterdayTime {
+        internal static string TextYesterday {
             get {
-                return ResourceManager.GetString("TextYesterdayTime", resourceCulture);
+                return ResourceManager.GetString("TextYesterday", resourceCulture);
             }
         }
         

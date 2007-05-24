@@ -121,7 +121,7 @@ namespace ClearCanvas.Ris.Client.Adt
             foreach (RequestedProcedureCheckInTableEntry entry in _requestedProcedureCheckInTable.Items)
             {
                 if (entry.Checked)
-                    _selectedRequestedProcedures.Add(entry.CheckInTableItem.RequestedProcedureRef);
+                    _selectedRequestedProcedures.Add(entry.CheckInTableItem.OrderRef);
             }      
         }
 

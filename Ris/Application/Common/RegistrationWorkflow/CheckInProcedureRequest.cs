@@ -9,12 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class CheckInProcedureRequest : DataContractBase
     {
-        public CheckInProcedureRequest(List<EntityRef> requestedProcedures)
+        public CheckInProcedureRequest(List<EntityRef> orders)
         {
-            this.RequestedProcedures = requestedProcedures;
+            this.Orders = orders;
         }
 
         [DataMember]
-        public List<EntityRef> RequestedProcedures;
+        public List<EntityRef> Orders;
     }
 }

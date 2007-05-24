@@ -67,13 +67,11 @@ namespace ClearCanvas.Ris.Client.Adt
         private RegistrationWorklistItem _worklistItem;
         private RegistrationWorklistPreview _worklistPreview;
 
-        List<RICSummary> _recentRIC;
-        List<RICSummary> _futureRIC;
+        List<RICSummary> _activeRIC;
         List<RICSummary> _pastRIC;
 
         private int _maxRIC;
-        private RICTable _recentRICTable;
-        private RICTable _futureRICTable;
+        private RICTable _activeRICTable;
         private RICTable _pastRICTable;
 
         private ToolSet _toolSet;
@@ -102,14 +100,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            _maxRIC = 8;
+            _maxRIC = 20;
 
-            _recentRICTable = new RICTable();
-            _futureRICTable = new RICTable();
+            _activeRICTable = new RICTable();
             _pastRICTable = new RICTable();
 
-            _recentRIC = new List<RICSummary>();
-            _futureRIC = new List<RICSummary>();
+            _activeRIC = new List<RICSummary>();
             _pastRIC = new List<RICSummary>();
 
             _toolSet = new ToolSet(new RegistrationPreviewToolExtensionPoint(), new RegistrationPreviewToolContext(this));
@@ -133,12 +129,10 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 _worklistPreview = null;
 
-                _recentRICTable.Items.Clear();
-                _futureRICTable.Items.Clear();
+                _activeRICTable.Items.Clear();
                 _pastRICTable.Items.Clear();
 
-                _recentRIC.Clear();
-                _futureRIC.Clear();
+                _activeRIC.Clear();
                 _pastRIC.Clear();
 
                 // clear current preview
@@ -194,36 +188,32 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 _worklistPreview = (RegistrationWorklistPreview)args.Result;
 
-                DateTime? startOfToday = Platform.Time.Date;
-                DateTime? startOfTomorrow = startOfToday.Value.AddDays(1);
-                DateTime? endOfTomorrow = startOfToday.Value.AddDays(2);
-                DateTime? startOfYesterday = startOfToday.Value.AddDays(-1);
+                DateTime today = Platform.Time.Date;
 
-                _recentRIC = SelectScheduledRICByTime(_worklistPreview.RICs, startOfToday, startOfTomorrow);
-                _recentRIC.AddRange(SelectScheduledRICByTime(_worklistPreview.RICs, startOfTomorrow, endOfTomorrow));
-                _recentRIC.AddRange(SelectScheduledRICByTime(_worklistPreview.RICs, startOfYesterday, startOfToday));
+                _activeRIC = CollectionUtils.Select<RICSummary, List<RICSummary>>(_worklistPreview.RICs,
+                    delegate(RICSummary summary)
+                    {
+                        return (summary.ScheduledTime == null || summary.ScheduledTime.Value.CompareTo(today) >= 0);
+                    });
 
-                _futureRIC = SelectScheduledRICByTime(_worklistPreview.RICs, endOfTomorrow, null);
-                _pastRIC = SelectScheduledRICByTime(_worklistPreview.RICs, null, startOfYesterday);
+                _pastRIC = CollectionUtils.Select<RICSummary, List<RICSummary>>(_worklistPreview.RICs,
+                    delegate(RICSummary summary)
+                    {
+                        return (summary.ScheduledTime != null && summary.ScheduledTime.Value.CompareTo(today) < 0);
+                    });
+
+                _activeRIC = (List<RICSummary>) CollectionUtils.Sort(_activeRIC, RICSummary.ActiveScheduledTimeComparer);
+                _pastRIC = (List<RICSummary>) CollectionUtils.Sort<RICSummary>(_pastRIC, RICSummary.ActiveScheduledTimeComparer);
 
                 int remainingRIC = _maxRIC;
-
-                foreach (RICSummary summary in _recentRIC)
+                foreach (RICSummary summary in _activeRIC)
                 {
-                    _recentRICTable.Items.Add(summary);
-                    if (_recentRICTable.Items.Count >= remainingRIC)
+                    _activeRICTable.Items.Add(summary);
+                    if (_activeRICTable.Items.Count >= remainingRIC)
                         break;
                 }
 
-                remainingRIC -= _recentRICTable.Items.Count;
-                foreach (RICSummary summary in _futureRIC)
-                {
-                    _futureRICTable.Items.Add(summary);
-                    if (_futureRICTable.Items.Count >= remainingRIC)
-                        break;
-                }
-
-                remainingRIC -= _futureRICTable.Items.Count;
+                remainingRIC -= _activeRICTable.Items.Count;
                 foreach (RICSummary summary in _pastRIC)
                 {
                     _pastRICTable.Items.Add(summary);
@@ -237,48 +227,6 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 ExceptionHandler.Report(args.Exception, this.Host.DesktopWindow);
             }
-        }
-
-        private List<RICSummary> SelectScheduledRICByTime(List<RICSummary> target, DateTime? startTime, DateTime? endTime)
-        {
-            List<RICSummary> selectedList = CollectionUtils.Select<RICSummary, List<RICSummary>>(target,
-                delegate(RICSummary summary)
-                {
-                    bool inRange = true;
-
-                    if (startTime == null && endTime == null && summary.ModalityProcedureStepScheduledTime == null)
-                        return true;
-
-                    if (summary.ModalityProcedureStepScheduledTime != null)
-                    {
-                        if (startTime != null && summary.ModalityProcedureStepScheduledTime < startTime)
-                            return false;
-
-                        if (endTime != null && summary.ModalityProcedureStepScheduledTime > endTime)
-                            return false;
-
-                        if (startTime == null && endTime == null)
-                            return false;
-                    }
-
-                    return inRange;
-                });
-
-            selectedList.Sort(new Comparison<RICSummary>(CompareRICSummary));
-
-            return selectedList;
-        }
-
-        private int CompareRICSummary(RICSummary summary1, RICSummary summary2)
-        {
-            if (summary1.ModalityProcedureStepScheduledTime == null && summary2.ModalityProcedureStepScheduledTime == null)
-                return 0;
-            else if (summary1.ModalityProcedureStepScheduledTime == null)
-                return 1;
-            else if (summary2.ModalityProcedureStepScheduledTime == null)
-                return -1;
-
-            return summary1.ModalityProcedureStepScheduledTime.Value.CompareTo(summary2.ModalityProcedureStepScheduledTime.Value);
         }
 
         #region Presentation Model
@@ -338,14 +286,9 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public ITable RecentRIC
+        public ITable ActiveRIC
         {
-            get { return _recentRICTable; }
-        }
-
-        public ITable FutureRIC
-        {
-            get { return _futureRICTable; }
+            get { return _activeRICTable; }
         }
 
         public ITable PastRIC
@@ -357,8 +300,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             get 
             { 
-                return _recentRIC.Count - _recentRICTable.Items.Count
-                     + _futureRIC.Count - _futureRICTable.Items.Count
+                return _activeRIC.Count - _activeRICTable.Items.Count
                      + _pastRIC.Count - _pastRICTable.Items.Count; 
             }
         }

@@ -220,13 +220,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region Query for worklist operation
 
-        public IList<RequestedProcedure> GetRequestedProcedureForCheckIn(Patient patient)
+        public IList<Order> GetOrdersForCheckIn(Patient patient)
         {
-            List<RequestedProcedure> results = new List<RequestedProcedure>();
-            string hqlQuery = "select distinct rp from CheckInProcedureStep cps" +
+            List<Order> results = new List<Order>();
+            string hqlQuery = "select distinct o from CheckInProcedureStep cps" +
                         " join cps.RequestedProcedure rp" +
                         " join rp.Order o" +
-                        " join o.DiagnosticService ds" +
                         " join o.Patient p" +
                         _hqlMainCondition +
                         " and p = :patient";
@@ -239,19 +238,18 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             IList list = DoQuery(hqlQuery, parameters);
             foreach (object tuple in list)
             {
-                RequestedProcedure item = (RequestedProcedure)tuple;
+                Order item = (Order)tuple;
                 results.Add(item);
             }
 
             return results;
         }
 
-        public int GetRequestedProcedureForCheckInCount(Patient patient)
+        public int GetOrdersForCheckInCount(Patient patient)
         {
-            string hqlQuery = "select count(distinct rp) from CheckInProcedureStep cps" +
+            string hqlQuery = "select count(distinct o) from CheckInProcedureStep cps" +
                         " join cps.RequestedProcedure rp" +
                         " join rp.Order o" +
-                        " join o.DiagnosticService ds" +
                         " join o.Patient p" +
                         _hqlMainCondition +
                         " and p = :patient";
@@ -265,13 +263,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return (int)list[0];
         }
 
-        public IList<Order> GetOrderForCancel(Patient patient)
+        public IList<Order> GetOrdersForCancel(Patient patient)
         {
             List<Order> results = new List<Order>();
             string hqlQuery = "select distinct o from CheckInProcedureStep cps" +
                         " join cps.RequestedProcedure rp" +
                         " join rp.Order o" +
-                        " join o.DiagnosticService ds" +
                         " join o.Patient p" +
                         " where (cps.State = :cpsState1 or cps.State = :cpsState2)" +
                         " and cps.Scheduling.StartTime between :cpsSchedulingStartTimeBegin and :cpsSchedulingStartTimeEnd" +
@@ -295,12 +292,11 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return results;
         }
 
-        public int GetOrderForCancelCount(Patient patient)
+        public int GetOrdersForCancelCount(Patient patient)
         {
             string hqlQuery = "select count(distinct o) from CheckInProcedureStep cps" +
                         " join cps.RequestedProcedure rp" +
                         " join rp.Order o" +
-                        " join o.DiagnosticService ds" +
                         " join o.Patient p" +
                         " where (cps.State = :cpsState1 or cps.State = :cpsState2)" +
                         " and cps.Scheduling.StartTime between :cpsSchedulingStartTimeBegin and :cpsSchedulingStartTimeEnd" +
@@ -322,10 +318,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region Query for Preview
 
-        public IList<RequestedProcedure> GetRequestedProcedureForPatientPreview(Patient patient)
+        public IList<Order> GetOrdersForPatientPreview(Patient patient)
         {
-            List<RequestedProcedure> results = new List<RequestedProcedure>();
-            string hqlQuery = "select distinct rp from ModalityProcedureStep mps" +
+            List<Order> results = new List<Order>();
+            string hqlQuery = "select distinct o from ModalityProcedureStep mps" +
                         " join mps.RequestedProcedure rp" +
                         " join rp.Order o" +
                         " join o.Patient p" +
@@ -340,7 +336,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             IList list = DoQuery(hqlQuery, parameters);
             foreach (object tuple in list)
             {
-                RequestedProcedure item = (RequestedProcedure)tuple;
+                Order item = (Order)tuple;
                 results.Add(item);
             }
 

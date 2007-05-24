@@ -112,15 +112,23 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             PatientProfile profile = profileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
 
             return new GetDataForCheckInTableResponse(
-                CollectionUtils.Map<RequestedProcedure, CheckInTableItem, List<CheckInTableItem>>(
-                    PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetRequestedProcedureForCheckIn(profile.Patient),
-                    delegate(RequestedProcedure rp)
+                CollectionUtils.Map<Order, CheckInTableItem, List<CheckInTableItem>>(
+                    PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetOrdersForCheckIn(profile.Patient),
+                    delegate(Order o)
                     {
-                        return new CheckInTableItem(
-                            rp.GetRef(),
-                            rp.Type.Name,
-                            rp.Order.SchedulingRequestDateTime,
-                            rp.Order.OrderingFacility.Name);
+                        CheckInTableItem item = new CheckInTableItem();
+                        item.OrderRef = o.GetRef();
+                        item.RequestedProcedureNames = StringUtilities.Combine<string>(
+                            CollectionUtils.Map<RequestedProcedure, string>(o.RequestedProcedures, 
+                                delegate(RequestedProcedure rp) 
+                                { 
+                                    return rp.Type.Name; 
+                                }),
+                            "/");
+                        item.SchedulingDate = o.SchedulingRequestDateTime;
+                        item.OrderingFacility = o.OrderingFacility.Name;
+
+                        return item;
                     }));
         }
 
@@ -128,12 +136,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [OperationEnablement("CanCheckInProcedure")]
         public CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
         {
-            IRequestedProcedureBroker broker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
+            IOrderBroker broker = PersistenceContext.GetBroker<IOrderBroker>();
             Operations.CheckIn op = new Operations.CheckIn();
-            foreach (EntityRef rpRef in request.RequestedProcedures)
+            foreach (EntityRef orderRef in request.Orders)
             {
-                RequestedProcedure rp = broker.Load(rpRef, EntityLoadFlags.CheckVersion);
-                op.Execute(rp, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+                Order o = broker.Load(orderRef, EntityLoadFlags.CheckVersion);
+                op.Execute(o, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
             }
 
             return new CheckInProcedureResponse();
@@ -161,14 +169,23 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             return new GetDataForCancelOrderTableResponse(
                 CollectionUtils.Map<Order, CancelOrderTableItem, List<CancelOrderTableItem>>(
-                    PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetOrderForCancel(profile.Patient),
+                    PersistenceContext.GetBroker<IRegistrationWorklistBroker>().GetOrdersForCancel(profile.Patient),
                     delegate(Order o)
                     {
-                        return new CancelOrderTableItem(o.GetRef(), 
-                            o.AccessionNumber,
-                            o.DiagnosticService.Name,
-                            o.SchedulingRequestDateTime,
-                            new EnumValueInfo(o.Priority.ToString(), orderPriorityEnumTable[o.Priority].Value));
+                        CancelOrderTableItem item = new CancelOrderTableItem();
+                        item.OrderRef = o.GetRef();
+                        item.AccessionNumber = o.AccessionNumber;
+                        item.SchedulingRequestDate = o.SchedulingRequestDateTime;
+                        item.Priority = new EnumValueInfo(o.Priority.ToString(), orderPriorityEnumTable[o.Priority].Value);
+                        item.RequestedProcedureNames = StringUtilities.Combine<string>(
+                            CollectionUtils.Map<RequestedProcedure, string>(o.RequestedProcedures,
+                                delegate(RequestedProcedure rp)
+                                {
+                                    return rp.Type.Name;
+                                }),
+                            "/");
+
+                        return item;
                     }),
                 CollectionUtils.Map<OrderCancelReasonEnum, EnumValueInfo, List<EnumValueInfo>>(
                     PersistenceContext.GetBroker<IOrderCancelReasonEnumBroker>().Load().Items,
@@ -204,7 +221,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IRegistrationWorklistBroker broker = this.PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
 
             PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).PatientProfile, EntityLoadFlags.Proxy);
-            return broker.GetRequestedProcedureForCheckInCount(profile.Patient) > 0;
+            return broker.GetOrdersForCheckInCount(profile.Patient) > 0;
         }
 
         public bool CanCancelOrder(IWorklistItemKey itemKey)
@@ -213,7 +230,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IRegistrationWorklistBroker broker = this.PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
 
             PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).PatientProfile, EntityLoadFlags.CheckVersion);
-            return broker.GetOrderForCancelCount(profile.Patient) > 0;
+            return broker.GetOrdersForCancelCount(profile.Patient) > 0;
         }
 
         /// <summary>

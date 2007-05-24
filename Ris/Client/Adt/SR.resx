@@ -204,6 +204,9 @@
   <data name="ColumnNumber" xml:space="preserve">
     <value>Number</value>
   </data>
+  <data name="ColumnOrderingFacility" xml:space="preserve">
+    <value>Ordering Facility</value>
+  </data>
   <data name="ColumnOrderingPhysician" xml:space="preserve">
     <value>Ordering Physician</value>
   </data>
@@ -228,8 +231,8 @@
   <data name="ColumnProcedure" xml:space="preserve">
     <value>Procedure</value>
   </data>
-  <data name="ColumnRequestedProcedure" xml:space="preserve">
-    <value>Requested Procedure</value>
+  <data name="ColumnRequestedProcedures" xml:space="preserve">
+    <value>Requested Procedures</value>
   </data>
   <data name="ColumnRole" xml:space="preserve">
     <value>Role</value>
@@ -330,8 +333,8 @@
   <data name="TextXDaysAgo" xml:space="preserve">
     <value>{0} days ago</value>
   </data>
-  <data name="TextYesterdayTime" xml:space="preserve">
-    <value>Yesterday {0}</value>
+  <data name="TextYesterday" xml:space="preserve">
+    <value>Yesterday</value>
   </data>
   <data name="TitleAddVisit" xml:space="preserve">
     <value>Add Visit...</value>

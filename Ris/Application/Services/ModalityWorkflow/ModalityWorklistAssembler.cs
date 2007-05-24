@@ -117,43 +117,45 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             preview.StartTime = mps.StartTime;
             preview.EndTime = mps.EndTime;
 
+            OrderStatusEnumTable orderStatusTable = context.GetBroker<IOrderStatusEnumBroker>().Load();
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            preview.RICs = CollectionUtils.Map<RequestedProcedure, RICSummary, List<RICSummary>>(
-                    context.GetBroker<IRegistrationWorklistBroker>().GetRequestedProcedureForPatientPreview(mps.RequestedProcedure.Order.Patient),
-                    delegate(RequestedProcedure rp)
+            preview.RICs = CollectionUtils.Map<Order, RICSummary, List<RICSummary>>(
+                    context.GetBroker<IRegistrationWorklistBroker>().GetOrdersForPatientPreview(mps.RequestedProcedure.Order.Patient),
+                    delegate(Order o)
                     {
-                        CheckInProcedureStep cps = (CheckInProcedureStep)CollectionUtils.SelectFirst<ProcedureStep>(rp.ProcedureSteps,
-                            delegate(ProcedureStep step)
+                        RICSummary summary = new RICSummary();
+                        summary.OrderingFacility = o.OrderingFacility.Name;
+                        summary.OrderingPractitioner = nameAssembler.CreatePersonNameDetail(o.OrderingPractitioner.Name);
+                        summary.Insurance = "";
+                        summary.Status = orderStatusTable[o.Status].Value;
+
+                        summary.RequestedProcedureName = StringUtilities.Combine<string>(
+                            CollectionUtils.Map<RequestedProcedure, string>(o.RequestedProcedures,
+                                delegate(RequestedProcedure rp)
+                                {
+                                    return rp.Type.Name;
+                                }),
+                            "/");
+
+
+                        List<DateTime?> listScheduledTime = CollectionUtils.Map<RequestedProcedure, DateTime?, List<DateTime?>>(o.RequestedProcedures,
+                            delegate(RequestedProcedure rp)
                             {
-                                return step is CheckInProcedureStep;
+                                CheckInProcedureStep cps = (CheckInProcedureStep)CollectionUtils.SelectFirst<ProcedureStep>(rp.ProcedureSteps,
+                                    delegate(ProcedureStep step)
+                                    {
+                                        return step is CheckInProcedureStep;
+                                    });
+
+                                return cps.Scheduling.StartTime;
                             });
 
-                        bool mpsInProgress = CollectionUtils.Contains<ProcedureStep>(rp.ProcedureSteps,
-                            delegate(ProcedureStep step)
-                            {
-                                return (step is ModalityProcedureStep && step.State == ActivityStatus.IP);
-                            });
+                        if (listScheduledTime.Count > 1)
+                            listScheduledTime.Sort(new Comparison<DateTime?>(RICSummary.CompreMoreRecent));
 
-                        string rpStatus = "";
-                        DateTime? scheduledTime = null;
-                        if (cps != null)
-                        {
-                            if (cps.Scheduling != null)
-                                scheduledTime = cps.Scheduling.StartTime;
+                        summary.ScheduledTime = CollectionUtils.FirstElement<DateTime?>(listScheduledTime);
 
-                            if (cps.State == ActivityStatus.IP)
-                                rpStatus = mpsInProgress ? activityStatusTable[ActivityStatus.IP].Value : SR.TextCheckedIn;
-                            else
-                                rpStatus = activityStatusTable[cps.State].Value;
-                        }
-
-                        return new RICSummary(
-                            rp.Type.Name,
-                            nameAssembler.CreatePersonNameDetail(rp.Order.OrderingPractitioner.Name),
-                            "N/A",
-                            scheduledTime,
-                            "N/A",
-                            rpStatus);
+                        return summary;
                     });
 
             //TODO: Technologist workflow hasn't been fully defined yet, only pass back the PatientProfile now

@@ -64,56 +64,34 @@ if(component.WorklistPreview != null)
   </tr>
 </table>
 <% 
-    var hasRecentRIC = component.RecentRIC.Items.Count > 0;
-    var hasFutureRIC = component.FutureRIC.Items.Count > 0;
+    var hasActiveRIC = component.ActiveRIC.Items.Count > 0;
     var hasPastRIC = component.PastRIC.Items.Count > 0;
-    var showRecentTableHeading = hasRecentRIC;
-    var showFutureTableHeading = hasFutureRIC && !showRecentTableHeading;
-    var showPastTableHeading = hasPastRIC && !showRecentTableHeading && !showFutureTableHeading;
-    if (hasRecentRIC || hasFutureRIC || hasPastRIC) {    
+    var showActiveTableHeading = hasActiveRIC;
+    var showPastTableHeading = hasPastRIC && !showActiveTableHeading;
+    if (hasActiveRIC || hasPastRIC) {    
 %>
 <p>&nbsp;</p>
 <table width="640" border="0">
-  <% if(component.RecentRIC.Items.Count > 0) { %>
+  <% if(component.ActiveRIC.Items.Count > 0) { %>
       <tr class="sectionheading">
-        <td colspan="6">Recent Request for Imaging Consultation</td>
+        <td colspan="6">Active Request for Imaging Consultation</td>
       </tr>
-      <% if (showRecentTableHeading) { %>
+      <% if (showActiveTableHeading) { %>
           <tr class="tableheading">
-          <% for(var column in component.RecentRIC.Columns) { %>
+          <% for(var column in component.ActiveRIC.Columns) { %>
           <td width="<%= column.WidthPercent %>%"><%= column.Name %></td>
           <% } %>
           </tr>
       <% } %>
       <% var i = 0; %>
-      <% for(var ric in component.RecentRIC.Items) {%>
-      <tr class="row<%= (i++) % 2 %>"><% for(var column in component.RecentRIC.Columns) {%>
+      <% for(var ric in component.ActiveRIC.Items) {%>
+      <tr class="row<%= (i++) % 2 %>"><% for(var column in component.ActiveRIC.Columns) {%>
         <td><%= column.GetValue(ric) %></td>
           <% } %>
       </tr>
       <% } %>
   <% } %>
-  
-    <% if(component.FutureRIC.Items.Count > 0) { %>
-      <tr class="sectionheading">
-        <td colspan="6">Future Request for Imaging Consultation</td>
-      </tr>
-      <% if (showFutureTableHeading) { %>
-          <tr class="tableheading">
-          <% for(var column in component.FutureRIC.Columns) { %>
-          <td width="<%= column.WidthPercent %>%"><%= column.Name %></td>
-          <% } %>
-          </tr>
-      <% } %>
-      <% var i = 0; %>
-      <% for(var ric in component.FutureRIC.Items) {%>
-      <tr class="row<%= (i++) % 2 %>"><% for(var column in component.FutureRIC.Columns) {%>
-        <td><%= column.GetValue(ric) %></td>
-          <% } %>
-      </tr>
-      <% } %>
-    <% } %>
-  
+
     <% if(component.PastRIC.Items.Count > 0) { %>
       <tr class="sectionheading">
         <td colspan="6">Past Request for Imaging Consultation</td>

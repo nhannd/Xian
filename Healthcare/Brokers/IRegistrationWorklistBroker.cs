@@ -21,12 +21,12 @@ namespace ClearCanvas.Healthcare.Brokers
         int GetCompletedWorklistCount();
         int GetCancelledWorklistCount();
 
-        IList<RequestedProcedure> GetRequestedProcedureForCheckIn(Patient patient);
-        int GetRequestedProcedureForCheckInCount(Patient patient);
+        IList<Order> GetOrdersForCheckIn(Patient patient);
+        int GetOrdersForCheckInCount(Patient patient);
 
-        IList<Order> GetOrderForCancel(Patient patient);
-        int GetOrderForCancelCount(Patient patient);
+        IList<Order> GetOrdersForCancel(Patient patient);
+        int GetOrdersForCancelCount(Patient patient);
 
-        IList<RequestedProcedure> GetRequestedProcedureForPatientPreview(Patient patient);
+        IList<Order> GetOrdersForPatientPreview(Patient patient);
     }
 }

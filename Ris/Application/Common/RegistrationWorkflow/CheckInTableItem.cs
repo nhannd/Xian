@@ -9,19 +9,11 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class CheckInTableItem : DataContractBase
     {
-        public CheckInTableItem(EntityRef rpRef, string rpName, DateTime? schedulingDate, string orderingFacility)
-        {
-            this.RequestedProcedureRef = rpRef;
-            this.RequestedProcedureName = rpName;
-            this.SchedulingDate = schedulingDate;
-            this.OrderingFacility = orderingFacility;
-        }
+        [DataMember]
+        public EntityRef OrderRef;
 
         [DataMember]
-        public EntityRef RequestedProcedureRef;
-
-        [DataMember]
-        public string RequestedProcedureName;
+        public string RequestedProcedureNames;
 
         [DataMember]
         public DateTime? SchedulingDate;

@@ -58,8 +58,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 new TableColumn<CancelOrderTableEntry, string>(SR.ColumnAccessionNumber,
                     delegate(CancelOrderTableEntry entry) { return entry.CancelOrderTableItem.AccessionNumber; }, 0.75f));
             this.Columns.Add(
-                new TableColumn<CancelOrderTableEntry, string>(SR.ColumnDiagnosticService,
-                    delegate(CancelOrderTableEntry entry) { return entry.CancelOrderTableItem.DiagnosticServiceName; }, 1.5f));
+                new TableColumn<CancelOrderTableEntry, string>(SR.ColumnRequestedProcedures,
+                    delegate(CancelOrderTableEntry entry) { return entry.CancelOrderTableItem.RequestedProcedureNames; }, 1.5f));
             this.Columns.Add(
                 new TableColumn<CancelOrderTableEntry, string>(SR.ColumnScheduledRequestDate,
                     delegate(CancelOrderTableEntry entry) { return Format.Date(entry.CancelOrderTableItem.SchedulingRequestDate); }, 0.75f));

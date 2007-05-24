@@ -232,14 +232,14 @@ namespace ClearCanvas.Ris.Client.Adt
                     _worklistPreview.RICs,
                     delegate(RICSummary summary)
                     {
-                        return summary.ModalityProcedureStepScheduledTime < Platform.Time;
+                        return summary.ScheduledTime < Platform.Time;
                     }));
 
                 _upcomingRIC.AddRange(CollectionUtils.Select<RICSummary>(
                     _worklistPreview.RICs,
                     delegate(RICSummary summary)
                     {
-                        return summary.ModalityProcedureStepScheduledTime > Platform.Time;
+                        return summary.ScheduledTime > Platform.Time;
                     }));
 
                 _upcomingRICTable.Items.AddRange(_upcomingRIC);
