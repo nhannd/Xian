@@ -1,6 +1,6 @@
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
-    partial class RequestedProcedureCheckInComponentControl
+    partial class CheckInOrderComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -29,25 +29,25 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void InitializeComponent()
         {
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            this._requestedProcedureTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this._orderTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
             this._okButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // _requestedProcedureTableView
+            // _orderTableView
             // 
-            this._requestedProcedureTableView.Location = new System.Drawing.Point(7, 11);
-            this._requestedProcedureTableView.MenuModel = null;
-            this._requestedProcedureTableView.Name = "_requestedProcedureTableView";
-            this._requestedProcedureTableView.ReadOnly = false;
-            this._requestedProcedureTableView.Selection = selection1;
-            this._requestedProcedureTableView.ShowToolbar = false;
-            this._requestedProcedureTableView.Size = new System.Drawing.Size(469, 219);
-            this._requestedProcedureTableView.TabIndex = 0;
-            this._requestedProcedureTableView.Table = null;
-            this._requestedProcedureTableView.ToolbarModel = null;
-            this._requestedProcedureTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._requestedProcedureTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            this._orderTableView.Location = new System.Drawing.Point(7, 11);
+            this._orderTableView.MenuModel = null;
+            this._orderTableView.Name = "_orderTableView";
+            this._orderTableView.ReadOnly = false;
+            this._orderTableView.Selection = selection1;
+            this._orderTableView.ShowToolbar = false;
+            this._orderTableView.Size = new System.Drawing.Size(469, 219);
+            this._orderTableView.TabIndex = 0;
+            this._orderTableView.Table = null;
+            this._orderTableView.ToolbarModel = null;
+            this._orderTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._orderTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
             // _okButton
             // 
@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._cancelButton.UseVisualStyleBackColor = true;
             this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
             // 
-            // RequestedProcedureCheckInComponentControl
+            // CheckInOrderComponentControl
             // 
             this.AcceptButton = this._okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -77,8 +77,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.CancelButton = this._cancelButton;
             this.Controls.Add(this._cancelButton);
             this.Controls.Add(this._okButton);
-            this.Controls.Add(this._requestedProcedureTableView);
-            this.Name = "RequestedProcedureCheckInComponentControl";
+            this.Controls.Add(this._orderTableView);
+            this.Name = "CheckInOrderComponentControl";
             this.Size = new System.Drawing.Size(484, 272);
             this.ResumeLayout(false);
 
@@ -86,7 +86,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Desktop.View.WinForms.TableView _requestedProcedureTableView;
+        private ClearCanvas.Desktop.View.WinForms.TableView _orderTableView;
         private System.Windows.Forms.Button _okButton;
         private System.Windows.Forms.Button _cancelButton;
     }

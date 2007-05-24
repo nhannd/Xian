@@ -15,35 +15,35 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 namespace ClearCanvas.Ris.Client.Adt
 {
     /// <summary>
-    /// Extension point for views onto <see cref="RequestedProcedureCheckInComponent"/>
+    /// Extension point for views onto <see cref="CheckInOrderComponent"/>
     /// </summary>
     [ExtensionPoint]
-    public class RequestedProcedureCheckInComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    public class CheckInOrderComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
     /// <summary>
-    /// RequestedProcedureCheckInComponent class
+    /// CheckInOrderComponent class
     /// </summary>
-    [AssociateView(typeof(RequestedProcedureCheckInComponentViewExtensionPoint))]
-    public class RequestedProcedureCheckInComponent : ApplicationComponent
+    [AssociateView(typeof(CheckInOrderComponentViewExtensionPoint))]
+    public class CheckInOrderComponent : ApplicationComponent
     {
         private RegistrationWorklistItem _worklistItem;
-        private RequestedProcedureCheckInTable _requestedProcedureCheckInTable;
-        private List<EntityRef> _selectedRequestedProcedures;
+        private CheckInOrderTable _checkInOrderTable;
+        private List<EntityRef> _selectedOrders;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public RequestedProcedureCheckInComponent(RegistrationWorklistItem item)
+        public CheckInOrderComponent(RegistrationWorklistItem item)
         {
             _worklistItem = item;
         }
 
         public override void Start()
         {
-            _selectedRequestedProcedures = new List<EntityRef>();
-            _requestedProcedureCheckInTable = new RequestedProcedureCheckInTable();
+            _selectedOrders = new List<EntityRef>();
+            _checkInOrderTable = new CheckInOrderTable();
 
             try
             {
@@ -51,12 +51,12 @@ namespace ClearCanvas.Ris.Client.Adt
                     delegate(IRegistrationWorkflowService service)
                     {
                         GetDataForCheckInTableResponse response = service.GetDataForCheckInTable(new GetDataForCheckInTableRequest(_worklistItem.PatientProfileRef));
-                        _requestedProcedureCheckInTable.Items.AddRange(
-                            CollectionUtils.Map<CheckInTableItem, RequestedProcedureCheckInTableEntry>(response.CheckInTableItems,
+                        _checkInOrderTable.Items.AddRange(
+                            CollectionUtils.Map<CheckInTableItem, CheckInOrderTableEntry>(response.CheckInTableItems,
                                     delegate(CheckInTableItem item)
                                     {
-                                        RequestedProcedureCheckInTableEntry entry = new RequestedProcedureCheckInTableEntry(item);
-                                        entry.CheckedChanged += new EventHandler(RequestedProcedureCheckedStateChangedEventHandler);
+                                        CheckInOrderTableEntry entry = new CheckInOrderTableEntry(item);
+                                        entry.CheckedChanged += new EventHandler(OrderCheckedStateChangedEventHandler);
                                         return entry;
                                     }));
                     });
@@ -67,9 +67,9 @@ namespace ClearCanvas.Ris.Client.Adt
             }
 
             // Special case for 1 Requested Procedure.  Check the item right away
-            if (_requestedProcedureCheckInTable.Items.Count == 1)
+            if (_checkInOrderTable.Items.Count == 1)
             {
-                _requestedProcedureCheckInTable.Items[0].Checked = true;
+                _checkInOrderTable.Items[0].Checked = true;
             }
 
             base.Start();
@@ -82,14 +82,14 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Presentation Model
 
-        public ITable RequestedProcedureTable
+        public ITable OrderTable
         {
-            get { return _requestedProcedureCheckInTable; }
+            get { return _checkInOrderTable; }
         }
 
-        public List<EntityRef> SelectedRequestedProcedures
+        public List<EntityRef> SelectedOrders
         {
-            get { return _selectedRequestedProcedures; }
+            get { return _selectedOrders; }
         }
 
         #endregion
@@ -117,11 +117,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void SaveChanges()
         {
-            // Get the list of RequestedProcedure EntityRef from the table
-            foreach (RequestedProcedureCheckInTableEntry entry in _requestedProcedureCheckInTable.Items)
+            // Get the list of Order EntityRef from the table
+            foreach (CheckInOrderTableEntry entry in _checkInOrderTable.Items)
             {
                 if (entry.Checked)
-                    _selectedRequestedProcedures.Add(entry.CheckInTableItem.OrderRef);
+                    _selectedOrders.Add(entry.CheckInTableItem.OrderRef);
             }      
         }
 
@@ -142,9 +142,9 @@ namespace ClearCanvas.Ris.Client.Adt
             remove { this.ModifiedChanged -= value; }
         }
 
-        private void RequestedProcedureCheckedStateChangedEventHandler(object sender, EventArgs e)
+        private void OrderCheckedStateChangedEventHandler(object sender, EventArgs e)
         {
-            foreach (RequestedProcedureCheckInTableEntry entry in _requestedProcedureCheckInTable.Items)
+            foreach (CheckInOrderTableEntry entry in _checkInOrderTable.Items)
             {
                 if (entry.Checked)
                 {

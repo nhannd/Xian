@@ -9,20 +9,20 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="RequestedProcedureCheckInComponent"/>
+    /// Provides a Windows Forms view onto <see cref="CheckInOrderComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(RequestedProcedureCheckInComponentViewExtensionPoint))]
-    public class RequestedProcedureCheckInComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(CheckInOrderComponentViewExtensionPoint))]
+    public class CheckInOrderComponentView : WinFormsView, IApplicationComponentView
     {
-        private RequestedProcedureCheckInComponent _component;
-        private RequestedProcedureCheckInComponentControl _control;
+        private CheckInOrderComponent _component;
+        private CheckInOrderComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (RequestedProcedureCheckInComponent)component;
+            _component = (CheckInOrderComponent)component;
         }
 
         #endregion
@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new RequestedProcedureCheckInComponentControl(_component);
+                    _control = new CheckInOrderComponentControl(_component);
                 }
                 return _control;
             }

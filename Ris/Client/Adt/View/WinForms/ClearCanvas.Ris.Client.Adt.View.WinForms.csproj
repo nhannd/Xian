@@ -82,6 +82,13 @@
       <DependentUpon>BiographyOrderHistoryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="BiographyOrderHistoryComponentView.cs" />
+    <Compile Include="CheckInOrderComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CheckInOrderComponentControl.designer.cs">
+      <DependentUpon>CheckInOrderComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CheckInOrderComponentView.cs" />
     <Compile Include="PatientOverviewComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -161,13 +168,6 @@
       <DependentUpon>FolderOptionComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Folders\FolderOptionComponentView.cs" />
-    <Compile Include="RequestedProcedureCheckInComponentControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="RequestedProcedureCheckInComponentControl.Designer.cs">
-      <DependentUpon>RequestedProcedureCheckInComponentControl.cs</DependentUpon>
-    </Compile>
-    <Compile Include="RequestedProcedureCheckInComponentView.cs" />
     <Compile Include="TechnologistPreviewComponentView.cs">
     </Compile>
     <Compile Include="SR.Designer.cs">
@@ -290,10 +290,6 @@
       <DependentUpon>PatientSearchComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="RequestedProcedureCheckInComponentControl.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>RequestedProcedureCheckInComponentControl.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="VisitDetailsEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>VisitDetailsEditorComponentControl.cs</DependentUpon>
@@ -329,6 +325,10 @@
     <EmbeddedResource Include="BiographyFeedbackComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BiographyFeedbackComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CheckInOrderComponentControl.resx">
+      <DependentUpon>CheckInOrderComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\PreviousSmall.PNG" />
   </ItemGroup>

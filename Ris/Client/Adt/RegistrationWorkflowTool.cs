@@ -97,7 +97,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 try
                 {
-                    RequestedProcedureCheckInComponent checkInComponent = new RequestedProcedureCheckInComponent(item);
+                    CheckInOrderComponent checkInComponent = new CheckInOrderComponent(item);
                     ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                         desktopWindow, checkInComponent, String.Format("Checking in {0}", PersonNameFormat.Format(item.Name)));
 
@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         Platform.GetService<IRegistrationWorkflowService>(
                             delegate(IRegistrationWorkflowService service)
                             {
-                                service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedRequestedProcedures));
+                                service.CheckInProcedure(new CheckInProcedureRequest(checkInComponent.SelectedOrders));
                             });
 
                         IFolder checkInFolder = CollectionUtils.SelectFirst<IFolder>(folders,

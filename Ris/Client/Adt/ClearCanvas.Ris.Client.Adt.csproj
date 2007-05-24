@@ -51,6 +51,8 @@
     <Compile Include="BiographyDocumentTable.cs" />
     <Compile Include="BiographyNoteTable.cs" />
     <Compile Include="BiographyFeedbackTable.cs" />
+    <Compile Include="CheckInOrderComponent.cs" />
+    <Compile Include="CheckInOrderTable.cs" />
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
     <Compile Include="OrderEntryComponentSettings.cs" />
     <Compile Include="OrderEntryComponentSettings.Designer.cs">
@@ -64,7 +66,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PatientProfileDetailsEditorComponentSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="RequestedProcedureCheckInTable.cs" />
     <Compile Include="OrderSummaryTable.cs" />
     <Compile Include="CancelOrderTable.cs" />
     <Compile Include="Folders\FolderOptionComponent.cs" />
@@ -102,7 +103,6 @@
     <Compile Include="RegistrationWorkflowFolderSystemTool.cs" />
     <Compile Include="RegistrationWorkflowTool.cs" />
     <Compile Include="RegistrationWorklistTable.cs" />
-    <Compile Include="RequestedProcedureCheckInComponent.cs" />
     <Compile Include="RICTable.cs" />
     <Compile Include="TechnologistHomeTool.cs" />
     <Compile Include="TechnologistPreviewComponent.cs" />
