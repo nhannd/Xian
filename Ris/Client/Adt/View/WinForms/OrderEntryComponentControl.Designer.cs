@@ -31,6 +31,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.components = new System.ComponentModel.Container();
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection3 = new ClearCanvas.Desktop.Selection();
             this._visitTable = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.label1 = new System.Windows.Forms.Label();
             this._diagnosticService = new ClearCanvas.Controls.WinForms.ComboBoxField();
@@ -43,6 +44,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._cancelButton = new System.Windows.Forms.Button();
             this._schedulingRequestDateTime = new ClearCanvas.Controls.WinForms.DateTimeField();
             this._scheduleOrder = new System.Windows.Forms.CheckBox();
+            this._diagnosticServiceTree = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
             this.SuspendLayout();
             // 
             // _visitTable
@@ -77,7 +79,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._diagnosticService.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._diagnosticService.LabelText = "Diagnostic Service";
             this._diagnosticService.Location = new System.Drawing.Point(20, 179);
-            this._diagnosticService.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._diagnosticService.Margin = new System.Windows.Forms.Padding(2);
             this._diagnosticService.Name = "_diagnosticService";
             this._diagnosticService.Size = new System.Drawing.Size(194, 41);
             this._diagnosticService.TabIndex = 2;
@@ -100,7 +102,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderingPhysician.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._orderingPhysician.LabelText = "Ordering Physician";
             this._orderingPhysician.Location = new System.Drawing.Point(250, 240);
-            this._orderingPhysician.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._orderingPhysician.Margin = new System.Windows.Forms.Padding(2);
             this._orderingPhysician.Name = "_orderingPhysician";
             this._orderingPhysician.Size = new System.Drawing.Size(150, 41);
             this._orderingPhysician.TabIndex = 5;
@@ -113,7 +115,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._orderingFacility.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._orderingFacility.LabelText = "Ordering Facility";
             this._orderingFacility.Location = new System.Drawing.Point(250, 308);
-            this._orderingFacility.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._orderingFacility.Margin = new System.Windows.Forms.Padding(2);
             this._orderingFacility.Name = "_orderingFacility";
             this._orderingFacility.Size = new System.Drawing.Size(150, 41);
             this._orderingFacility.TabIndex = 6;
@@ -126,7 +128,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._priority.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this._priority.LabelText = "Priority";
             this._priority.Location = new System.Drawing.Point(250, 179);
-            this._priority.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._priority.Margin = new System.Windows.Forms.Padding(2);
             this._priority.Name = "_priority";
             this._priority.Size = new System.Drawing.Size(150, 41);
             this._priority.TabIndex = 7;
@@ -151,7 +153,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _placeOrderButton
             // 
             this._placeOrderButton.Location = new System.Drawing.Point(486, 405);
-            this._placeOrderButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._placeOrderButton.Margin = new System.Windows.Forms.Padding(2);
             this._placeOrderButton.Name = "_placeOrderButton";
             this._placeOrderButton.Size = new System.Drawing.Size(79, 19);
             this._placeOrderButton.TabIndex = 9;
@@ -162,7 +164,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // _cancelButton
             // 
             this._cancelButton.Location = new System.Drawing.Point(569, 405);
-            this._cancelButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._cancelButton.Margin = new System.Windows.Forms.Padding(2);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(56, 19);
             this._cancelButton.TabIndex = 10;
@@ -174,7 +176,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             this._schedulingRequestDateTime.LabelText = "Requested Schedule Time";
             this._schedulingRequestDateTime.Location = new System.Drawing.Point(250, 383);
-            this._schedulingRequestDateTime.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._schedulingRequestDateTime.Margin = new System.Windows.Forms.Padding(2);
             this._schedulingRequestDateTime.Maximum = new System.DateTime(9998, 12, 31, 0, 0, 0, 0);
             this._schedulingRequestDateTime.Minimum = new System.DateTime(1753, 1, 1, 0, 0, 0, 0);
             this._schedulingRequestDateTime.Name = "_schedulingRequestDateTime";
@@ -194,10 +196,27 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._scheduleOrder.Text = "Schedule Order";
             this._scheduleOrder.UseVisualStyleBackColor = true;
             // 
+            // _diagnosticServiceTree
+            // 
+            this._diagnosticServiceTree.AllowDrop = true;
+            this._diagnosticServiceTree.Location = new System.Drawing.Point(667, 22);
+            this._diagnosticServiceTree.Margin = new System.Windows.Forms.Padding(2);
+            this._diagnosticServiceTree.MenuModel = null;
+            this._diagnosticServiceTree.Name = "_diagnosticServiceTree";
+            this._diagnosticServiceTree.Selection = selection3;
+            this._diagnosticServiceTree.ShowToolbar = false;
+            this._diagnosticServiceTree.Size = new System.Drawing.Size(475, 402);
+            this._diagnosticServiceTree.TabIndex = 13;
+            this._diagnosticServiceTree.ToolbarModel = null;
+            this._diagnosticServiceTree.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._diagnosticServiceTree.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            this._diagnosticServiceTree.Tree = null;
+            // 
             // OrderEntryComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._diagnosticServiceTree);
             this.Controls.Add(this._scheduleOrder);
             this.Controls.Add(this._schedulingRequestDateTime);
             this.Controls.Add(this._cancelButton);
@@ -210,9 +229,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.Controls.Add(this._diagnosticService);
             this.Controls.Add(this.label1);
             this.Controls.Add(this._visitTable);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "OrderEntryComponentControl";
-            this.Size = new System.Drawing.Size(665, 450);
+            this.Size = new System.Drawing.Size(1175, 450);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -232,5 +251,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.Button _cancelButton;
         private ClearCanvas.Controls.WinForms.DateTimeField _schedulingRequestDateTime;
         private System.Windows.Forms.CheckBox _scheduleOrder;
+        private ClearCanvas.Desktop.View.WinForms.BindingTreeView _diagnosticServiceTree;
     }
 }

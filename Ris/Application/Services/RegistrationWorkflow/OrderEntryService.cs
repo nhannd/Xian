@@ -48,6 +48,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             PractitionerAssembler practitionerAssembler = new PractitionerAssembler();
 
+            DiagnosticServiceTreeNodeSearchCriteria topLevelDiagnosticServiceTreeCriteria = new DiagnosticServiceTreeNodeSearchCriteria();
+            topLevelDiagnosticServiceTreeCriteria.Parent.IsNull();
+            topLevelDiagnosticServiceTreeCriteria.DisplayOrder.SortAsc(0);
+
             // TODO: figure out how to determine which physicians are "ordering" physicians
             return new GetOrderEntryFormDataResponse(
                 CollectionUtils.Map<DiagnosticService, DiagnosticServiceSummary, List<DiagnosticServiceSummary>>(
@@ -55,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     delegate(DiagnosticService ds)
                     {
                         return orderEntryAssembler.CreateDiagnosticServiceSummary(ds);
-                    }), 
+                    }),
                 CollectionUtils.Map<Facility, FacilitySummary, List<FacilitySummary>>(
                     PersistenceContext.GetBroker<IFacilityBroker>().FindAll(),
                     delegate(Facility f)
@@ -74,7 +78,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     {
                         EnumValueInfo orderPriority = new EnumValueInfo(opEnum.Code.ToString(), opEnum.Value);
                         return orderPriority;
+                    }),
+                CollectionUtils.Map<DiagnosticServiceTreeNode, DiagnosticServiceTreeItem, List<DiagnosticServiceTreeItem>>(
+                    PersistenceContext.GetBroker<IDiagnosticServiceTreeNodeBroker>().Find(topLevelDiagnosticServiceTreeCriteria),
+                    delegate(DiagnosticServiceTreeNode n)
+                    {
+                        return orderEntryAssembler.CreateDiagnosticServiceTreeItem(n);
                     })
+
                 );
         }
 
@@ -180,6 +191,26 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
 
             return new LoadOrderDetailResponse(assembler.CreateOrderDetail(order, this.PersistenceContext));
+        }
+
+        [ReadOperation]
+        public GetDiagnosticServiceSubTreeResponse GetDiagnosticServiceSubTree(GetDiagnosticServiceSubTreeRequest request)
+        {
+            DiagnosticServiceTreeNode node = (DiagnosticServiceTreeNode)PersistenceContext.Load(request.NodeRef, EntityLoadFlags.Proxy);
+
+            DiagnosticServiceTreeNodeSearchCriteria subTreeCriteria = new DiagnosticServiceTreeNodeSearchCriteria();
+            subTreeCriteria.Parent.EqualTo(node);
+            subTreeCriteria.DisplayOrder.SortAsc(0);
+
+            OrderEntryAssembler assembler = new OrderEntryAssembler();
+
+            return new GetDiagnosticServiceSubTreeResponse(
+                CollectionUtils.Map<DiagnosticServiceTreeNode, DiagnosticServiceTreeItem, List<DiagnosticServiceTreeItem>>(
+                    PersistenceContext.GetBroker<IDiagnosticServiceTreeNodeBroker>().Find(subTreeCriteria),
+                    delegate(DiagnosticServiceTreeNode n)
+                    {
+                        return assembler.CreateDiagnosticServiceTreeItem(n);
+                    }));
         }
 
     }

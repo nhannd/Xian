@@ -14,12 +14,14 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
             List<DiagnosticServiceSummary> diagnosticServiceChoices,
             List<FacilitySummary> orderingFacilityChoices,
             List<PractitionerSummary> orderingPhysicianChoices,
-            List<EnumValueInfo> orderPriorityChoices)
+            List<EnumValueInfo> orderPriorityChoices,
+            List<DiagnosticServiceTreeItem> topLevelDiagnosticServiceTree)
         {
             this.DiagnosticServiceChoices = diagnosticServiceChoices;
             this.OrderingFacilityChoices = orderingFacilityChoices;
             this.OrderingPhysicianChoices = orderingPhysicianChoices;
             this.OrderPriorityChoices = orderPriorityChoices;
+            this.TopLevelDiagnosticServiceTree = topLevelDiagnosticServiceTree;
         }
 
         [DataMember]
@@ -33,5 +35,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 
         [DataMember]
         public List<EnumValueInfo> OrderPriorityChoices;
+
+        [DataMember]
+        public List<DiagnosticServiceTreeItem> TopLevelDiagnosticServiceTree;
     }
 }

@@ -134,6 +134,9 @@ namespace ClearCanvas.Ris.Client.Adt
         private Tree<RequestedProcedureTypeDetail> _diagnosticServiceBreakdown;
         private object _selectedDiagnosticServiceBreakdownItem;
 
+        private Tree<DiagnosticServiceTreeItem> _diagnosticServiceTree;
+        private object _selectedDiagnosticServiceTreeItem;
+
         private bool _scheduleOrder;
         private DateTime _schedulingRequestDateTime;
 
@@ -166,6 +169,23 @@ namespace ClearCanvas.Ris.Client.Adt
                         _priorityChoices = formChoicesResponse.OrderPriorityChoices;
 
                         _selectedPriority = _priorityChoices[0];
+
+                        //_diagnosticServiceBreakdown = new Tree<RequestedProcedureTypeDetail>(
+                        //    new TreeItemBinding<RequestedProcedureTypeDetail>(
+                        //        delegate(RequestedProcedureTypeDetail rpt) { return rpt.Name; },
+                        //        delegate(RequestedProcedureTypeDetail rpt)
+                        //        {
+                        //            return new Tree<ModalityProcedureStepTypeDetail>(
+                        //                new TreeItemBinding<ModalityProcedureStepTypeDetail>(
+                        //                    delegate(ModalityProcedureStepTypeDetail spt) { return spt.Name; }),
+                        //                    rpt.ModalityProcedureStepTypes);
+                        //        }), diagnosticServiceDetail.RequestedProcedureTypes);
+
+                        TreeItemBinding<DiagnosticServiceTreeItem> binding = new TreeItemBinding<DiagnosticServiceTreeItem>(
+                                delegate(DiagnosticServiceTreeItem ds) { return ds.Description; },
+                                ExpandDiagnosticServiceTree);
+                        binding.CanHaveSubTreeHandler = delegate(DiagnosticServiceTreeItem ds) { return ds.DiagnosticService == null; };
+                        _diagnosticServiceTree = new Tree<DiagnosticServiceTreeItem>(binding, formChoicesResponse.TopLevelDiagnosticServiceTree);
                     });
 
                 _schedulingRequestDateTime = Platform.Time;
@@ -306,6 +326,11 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _diagnosticServiceBreakdown; }
         }
 
+        public ITree DiagnosticServiceTree
+        {
+            get { return _diagnosticServiceTree; }
+        }
+
         public ISelection SelectedDiagnosticServiceBreakdownItem
         {
             get { return _selectedDiagnosticServiceBreakdownItem == null ? Selection.Empty : new Selection(_selectedDiagnosticServiceBreakdownItem); }
@@ -407,6 +432,33 @@ namespace ClearCanvas.Ris.Client.Adt
             }
 
             EventsHelper.Fire(_diagnosticServiceChanged, this, EventArgs.Empty);
+        }
+
+        private ITree ExpandDiagnosticServiceTree(DiagnosticServiceTreeItem item)
+        {
+            try
+            {
+                ITree subtree = null;
+
+                Platform.GetService<IOrderEntryService>(
+                    delegate(IOrderEntryService service)
+                    {
+                        GetDiagnosticServiceSubTreeResponse response = service.GetDiagnosticServiceSubTree(new GetDiagnosticServiceSubTreeRequest(item.NodeRef));
+
+                        TreeItemBinding<DiagnosticServiceTreeItem> binding = new TreeItemBinding<DiagnosticServiceTreeItem>(
+                                delegate(DiagnosticServiceTreeItem ds) { return ds.Description; },
+                                ExpandDiagnosticServiceTree);
+                        binding.CanHaveSubTreeHandler = delegate(DiagnosticServiceTreeItem ds) { return ds.DiagnosticService == null; };
+                        subtree = new Tree<DiagnosticServiceTreeItem>(binding, response.DiagnosticServiceSubTree);
+                    });
+
+                return subtree;
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                return null;
+            }
         }
     }
 }

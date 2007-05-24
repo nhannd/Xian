@@ -95,6 +95,14 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     }));
         }
 
+        public DiagnosticServiceTreeItem CreateDiagnosticServiceTreeItem(DiagnosticServiceTreeNode node)
+        {
+            return new DiagnosticServiceTreeItem(
+                node.GetRef(),
+                node.Description,
+                node.DiagnosticService == null ? null : CreateDiagnosticServiceDetail(node.DiagnosticService));
+        }
+
         public RequestedProcedureSummary CreateRequestedProcedureDetail(RequestedProcedure rp, IPersistenceContext context)
         {
             RequestedProcedureSummary detail = new RequestedProcedureSummary();

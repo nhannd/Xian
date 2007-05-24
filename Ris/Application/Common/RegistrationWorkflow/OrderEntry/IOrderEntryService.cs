@@ -72,5 +72,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         LoadOrderDetailResponse LoadOrderDetail(LoadOrderDetailRequest request);
+
+        [OperationContract]
+        GetDiagnosticServiceSubTreeResponse GetDiagnosticServiceSubTree(GetDiagnosticServiceSubTreeRequest request);
     }
 }
