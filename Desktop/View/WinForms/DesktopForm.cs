@@ -17,7 +17,6 @@ using Crownwood.DotNetMagic.Docking;
 using Crownwood.DotNetMagic.Controls;
 using Crownwood.DotNetMagic.Forms;
 using System.Reflection;
-using System.Drawing.Drawing2D;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -63,8 +62,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			
 			_workspaceViewManager = new WorkspaceViewManager(this, _tabbedGroups);
 			_shelfViewManager = new ShelfViewManager(_desktopWindow.ShelfManager, _dockingManager);
-
-			_toolbar.Stretch = true;
 
 			RebuildMenusAndToolbars();
         }
