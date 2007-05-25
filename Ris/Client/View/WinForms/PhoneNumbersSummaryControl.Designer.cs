@@ -49,6 +49,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._phoneNumbers.ToolbarModel = null;
             this._phoneNumbers.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._phoneNumbers.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this._phoneNumbers.ItemDoubleClicked += new System.EventHandler(this._phoneNumbers_ItemDoubleClicked);
             // 
             // PhoneNumbersSummaryControl
             // 
@@ -56,7 +57,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.Controls.Add(this._phoneNumbers);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "PhoneNumbersSummaryControl";
             this.Size = new System.Drawing.Size(149, 114);
             this.ResumeLayout(false);

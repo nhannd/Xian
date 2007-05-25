@@ -50,6 +50,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._addressList.ToolbarModel = null;
             this._addressList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._addressList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this._addressList.ItemDoubleClicked += new System.EventHandler(this._addressList_ItemDoubleClicked);
             // 
             // AddressesSummaryControl
             // 
@@ -57,7 +58,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
             this.Controls.Add(this._addressList);
-            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Margin = new System.Windows.Forms.Padding(2);
             this.Name = "AddressesSummaryControl";
             this.Size = new System.Drawing.Size(129, 118);
             this.ResumeLayout(false);

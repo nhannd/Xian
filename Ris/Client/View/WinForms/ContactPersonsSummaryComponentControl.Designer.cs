@@ -47,6 +47,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._contactPersonList.ToolbarModel = null;
             this._contactPersonList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._contactPersonList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this._contactPersonList.ItemDoubleClicked += new System.EventHandler(this._contactPersonList_ItemDoubleClicked);
             // 
             // ContactPersonsSummaryComponentControl
             // 

@@ -36,5 +36,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // move the error icon up to the top of the table, rather than the middle
             this.ErrorProvider.SetIconAlignment(_contactPersonList, ErrorIconAlignment.TopRight);
         }
+
+        private void _contactPersonList_ItemDoubleClicked(object sender, EventArgs e)
+        {
+            _component.UpdateSelectedContactPerson();
+        }
     }
 }

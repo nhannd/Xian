@@ -47,6 +47,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._emailAddressList.ToolbarModel = null;
             this._emailAddressList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._emailAddressList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this._emailAddressList.ItemDoubleClicked += new System.EventHandler(this._emailAddressList_ItemDoubleClicked);
             // 
             // EmailAddressesSummaryComponentControl
             // 

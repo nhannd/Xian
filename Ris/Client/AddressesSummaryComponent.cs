@@ -108,8 +108,6 @@ namespace ClearCanvas.Ris.Client
             if (_currentAddressSelection == null) return;
 
             AddressDetail address = (AddressDetail) _currentAddressSelection.Clone();
-            address.Type = _addressTypes[0];
-
             AddressEditorComponent editor = new AddressEditorComponent(address, _addressTypes);
             ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateAddress);
             if (exitCode == ApplicationComponentExitCode.Normal)
