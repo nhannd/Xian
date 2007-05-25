@@ -66,6 +66,13 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>PatientProfileDetailsEditorComponentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="PerformedProcedureComponent.cs" />
+    <Compile Include="PerformedProcedureComponentSettings.cs" />
+    <Compile Include="PerformedProcedureComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>PerformedProcedureComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="OrderSummaryTable.cs" />
     <Compile Include="CancelOrderTable.cs" />
     <Compile Include="Folders\FolderOptionComponent.cs" />
@@ -258,6 +265,10 @@
     <None Include="PatientProfileDetailsEditorComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>PatientProfileDetailsEditorComponentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="PerformedProcedureComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>PerformedProcedureComponentSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -125,6 +125,13 @@
     </Compile>
     <Compile Include="PatientProfileAdditionalInfoEditorComponentView.cs" />
     <Compile Include="PatientProfileDiffComponentView.cs" />
+    <Compile Include="PerformedProcedureComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="PerformedProcedureComponentControl.Designer.cs">
+      <DependentUpon>PerformedProcedureComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="PerformedProcedureComponentView.cs" />
     <Compile Include="ReconciliationConfirmComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -325,6 +332,10 @@
     <EmbeddedResource Include="BiographyFeedbackComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>BiographyFeedbackComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="PerformedProcedureComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PerformedProcedureComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CheckInOrderComponentControl.resx">
       <DependentUpon>CheckInOrderComponentControl.cs</DependentUpon>
