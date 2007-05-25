@@ -1,0 +1,87 @@
+body {
+	font-family: Verdana, Arial, Helvetica, sans-serif;
+	font-size: 14px;
+}
+
+p  {
+   margin-top: 2px;
+   margin-bottom: 2px;
+}
+
+.tableheading {
+	font-weight: bold;
+	background-color: #FFFFFF;
+	color: #000000;
+}
+.propertyname {
+	font-weight: bold;
+}
+.tabledefault {
+	border-top-style: none;
+	border-right-style: none;
+	border-bottom-style: none;
+	border-left-style: none;
+}
+.sectionheading {
+	font-size: 18px;
+	font-weight: bold;
+	color: #FFFFFF;
+	background-color: #A8D8F4;
+}
+.pageheading {
+	font-size: 24px;
+	font-weight: bold;
+}
+.pageheading2 {
+
+	font-size: 18px;
+	font-weight: bold;
+}
+
+.discrepancy {
+	text-decoration: underline;
+	color: red;
+}
+
+tr.row0  {
+	background-color: #EEEEEE;
+}
+tr.row1  {
+	background-color: #FFFFFF;
+}
+
+div.alert ul{
+   border: 0;
+   color: #FF0000;
+   font-weight: bold;
+   font-size: 21px;
+   margin: 0;
+   padding: 0;
+   list-style-type: none;
+   margin-left: 0.5em;
+}
+
+div.alert li
+{
+background-image: url(alert.gif);
+background-repeat: no-repeat;
+background-position: 0 .25em;
+padding-left: 1em;
+}
+
+div.alert{
+   border: medium solid #FF0000;
+   padding-top: 3px;
+   padding-bottom: 3px;
+   margin-top: 10px;
+   margin-bottom: 10px;
+   width: 630px;
+}
+
+.additionalentriescount {
+   text-align: right;
+   font-size: 12px;
+}
+
+
+
