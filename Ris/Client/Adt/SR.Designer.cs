@@ -718,6 +718,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Addresses.
+        /// </summary>
+        internal static string TitleAddresses {
+            get {
+                return ResourceManager.GetString("TitleAddresses", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Visit....
         /// </summary>
         internal static string TitleAddVisit {
@@ -732,6 +741,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string TitleConfirmReconciliation {
             get {
                 return ResourceManager.GetString("TitleConfirmReconciliation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Contact Persons.
+        /// </summary>
+        internal static string TitleContactPersons {
+            get {
+                return ResourceManager.GetString("TitleContactPersons", resourceCulture);
             }
         }
         
@@ -768,6 +786,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string TitleEditPatient {
             get {
                 return ResourceManager.GetString("TitleEditPatient", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Email Addresses.
+        /// </summary>
+        internal static string TitleEmailAddresses {
+            get {
+                return ResourceManager.GetString("TitleEmailAddresses", resourceCulture);
             }
         }
         
@@ -912,6 +939,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string TitlePatientVisits {
             get {
                 return ResourceManager.GetString("TitlePatientVisits", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Phone Numbers.
+        /// </summary>
+        internal static string TitlePhoneNumbers {
+            get {
+                return ResourceManager.GetString("TitlePhoneNumbers", resourceCulture);
             }
         }
         

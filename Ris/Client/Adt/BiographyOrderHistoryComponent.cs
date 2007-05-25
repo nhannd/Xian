@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Desktop.Trees;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.PatientBiography;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -53,8 +53,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
             try
             {
-                Platform.GetService<IOrderEntryService>(
-                    delegate(IOrderEntryService service)
+                Platform.GetService<IPatientBiographyService>(
+                    delegate(IPatientBiographyService service)
                     {
                         ListOrdersForPatientResponse response = service.ListOrdersForPatient(new ListOrdersForPatientRequest(_patientProfileRef));
                         _orderList.Items.AddRange(response.Orders);
@@ -280,8 +280,8 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 if (_selectedOrder != null)
                 {
-                    Platform.GetService<IOrderEntryService>(
-                        delegate(IOrderEntryService service)
+                    Platform.GetService<IPatientBiographyService>(
+                        delegate(IPatientBiographyService service)
                         {
                             LoadOrderDetailResponse response = service.LoadOrderDetail(new LoadOrderDetailRequest(_selectedOrder.OrderRef));
                             _orderDetail = response.OrderDetail;

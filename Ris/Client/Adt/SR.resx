@@ -336,11 +336,17 @@
   <data name="TextYesterday" xml:space="preserve">
     <value>Yesterday</value>
   </data>
+  <data name="TitleAddresses" xml:space="preserve">
+    <value>Addresses</value>
+  </data>
   <data name="TitleAddVisit" xml:space="preserve">
     <value>Add Visit...</value>
   </data>
   <data name="TitleConfirmReconciliation" xml:space="preserve">
     <value>Confirm Reconciliation</value>
+  </data>
+  <data name="TitleContactPersons" xml:space="preserve">
+    <value>Contact Persons</value>
   </data>
   <data name="TitleDemographic" xml:space="preserve">
     <value>Demographic</value>
@@ -353,6 +359,9 @@
   </data>
   <data name="TitleEditPatient" xml:space="preserve">
     <value>Edit Patient</value>
+  </data>
+  <data name="TitleEmailAddresses" xml:space="preserve">
+    <value>Email Addresses</value>
   </data>
   <data name="TitleFolderCancelledToday" xml:space="preserve">
     <value>CancelledToday</value>
@@ -401,6 +410,9 @@
   </data>
   <data name="TitlePatientVisits" xml:space="preserve">
     <value>Patient Visits</value>
+  </data>
+  <data name="TitlePhoneNumbers" xml:space="preserve">
+    <value>Phone Numbers</value>
   </data>
   <data name="TitlePreview" xml:space="preserve">
     <value>Preview</value>

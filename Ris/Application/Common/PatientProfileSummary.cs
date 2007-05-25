@@ -4,7 +4,7 @@ using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
-namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
+namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
     public class PatientProfileSummary : DataContractBase
@@ -19,10 +19,10 @@ namespace ClearCanvas.Ris.Application.Common.PatientReconciliation
         public MrnDetail Mrn;
 
         [DataMember]
-        public string Name;
+        public PersonNameDetail Name;
 
         [DataMember]
-        public string Healthcard;
+        public HealthcardDetail Healthcard;
 
         [DataMember]
         public DateTime DateOfBirth;

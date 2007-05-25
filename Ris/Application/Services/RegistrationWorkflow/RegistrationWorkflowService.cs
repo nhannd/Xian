@@ -80,26 +80,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         }
 
         [ReadOperation]
-        public LoadPatientProfileForBiographyResponse LoadPatientProfileForBiography(LoadPatientProfileForBiographyRequest request)
-        {
-            IPatientProfileBroker broker = PersistenceContext.GetBroker<IPatientProfileBroker>();
-
-            PatientProfile profile = broker.Load(request.PatientProfileRef);
-            PatientProfileAssembler assembler = new PatientProfileAssembler();
-
-            List<AlertNotificationDetail> alertNotifications = new List<AlertNotificationDetail>();
-            alertNotifications.AddRange(GetAlertNotifications(profile.Patient, this.PersistenceContext));
-            alertNotifications.AddRange(GetAlertNotifications(profile, this.PersistenceContext));
-
-            return new LoadPatientProfileForBiographyResponse(
-                profile.Patient.GetRef(), 
-                profile.GetRef(), 
-                assembler.CreatePatientProfileDetail(profile, PersistenceContext),
-                alertNotifications);
-        }
-
-
-        [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
             return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.WorklistItem.PatientProfileRef)));
@@ -229,7 +209,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
             IRegistrationWorklistBroker broker = this.PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
 
-            PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).PatientProfile, EntityLoadFlags.CheckVersion);
+            PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).PatientProfile, EntityLoadFlags.Proxy);
             return broker.GetOrdersForCancelCount(profile.Patient) > 0;
         }
 

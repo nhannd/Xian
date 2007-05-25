@@ -60,7 +60,6 @@
     <Compile Include="Admin\AuthenticationAdmin\UserAssembler.cs" />
     <Compile Include="Admin\ModalityAssembler.cs" />
     <Compile Include="Admin\NoteCategoryAdmin\NoteCategoryAdminService.cs" />
-    <Compile Include="Admin\PatientProfileAssembler.cs" />
     <Compile Include="Admin\PractitionerAssembler.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceAdminService.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceBatchImporter.cs" />
@@ -87,7 +86,8 @@
     <Compile Include="IApplicationServiceLayer.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorkflowService.cs" />
     <Compile Include="ModalityWorkflow\ModalityWorklistAssembler.cs" />
-    <Compile Include="PatientReconciliation\PatientProfileAssembler.cs" />
+    <Compile Include="PatientBiography\PatientBiographyService.cs" />
+    <Compile Include="PatientProfileAssembler.cs" />
     <Compile Include="PatientReconciliation\PatientProfileDiffAssembler.cs" />
     <Compile Include="PatientReconciliation\PatientReconciliationService.cs" />
     <Compile Include="PatientReconciliation\ReconciliationCandidateAssembler.cs" />

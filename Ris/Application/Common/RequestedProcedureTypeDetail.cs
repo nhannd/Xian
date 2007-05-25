@@ -4,9 +4,8 @@ using System.Text;
 using System.Runtime.Serialization;
 
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
 
-namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
+namespace ClearCanvas.Ris.Application.Common
 {
     [DataContract]
     public class RequestedProcedureTypeDetail : DataContractBase

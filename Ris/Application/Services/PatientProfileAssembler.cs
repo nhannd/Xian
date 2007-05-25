@@ -1,24 +1,41 @@
 using System;
-
-using ClearCanvas.Healthcare;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 using System.Collections.Generic;
-using ClearCanvas.Ris.Application.Common;
+using System.Text;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Services.Admin;
 
-namespace ClearCanvas.Ris.Application.Services.Admin
+namespace ClearCanvas.Ris.Application.Services
 {
     public class PatientProfileAssembler
     {
+        public PatientProfileSummary CreatePatientProfileSummary(PatientProfile profile, IPersistenceContext context)
+        {
+            PersonNameAssembler nameAssembler = new PersonNameAssembler();
+            HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
+
+            PatientProfileSummary summary = new PatientProfileSummary();
+            summary.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
+            summary.DateOfBirth = profile.DateOfBirth;
+            summary.Healthcard = healthcardAssembler.CreateHealthcardDetail(profile.Healthcard);
+            summary.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
+            summary.PatientRef = profile.Patient.GetRef();
+            summary.ProfileRef = profile.GetRef();
+            summary.Sex = new EnumValueInfo(profile.Sex.ToString(), context.GetBroker<ISexEnumBroker>().Load()[profile.Sex].Value);
+
+            return summary;
+        }
+
         public PatientProfileDetail CreatePatientProfileDetail(PatientProfile profile, IPersistenceContext context)
         {
             PatientProfileDetail detail = new PatientProfileDetail();
 
             detail.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
-            detail.Healthcard = new HealthcardDetail(profile.Healthcard.Id, profile.Healthcard.AssigningAuthority,
-                profile.Healthcard.VersionCode, profile.Healthcard.ExpiryDate);
+
+            HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
+            detail.Healthcard = healthcardAssembler.CreateHealthcardDetail(profile.Healthcard);
 
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             detail.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
@@ -103,7 +120,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
             TelephoneNumberAssembler telephoneAssembler = new TelephoneNumberAssembler();
             profile.TelephoneNumbers.Clear();
-            foreach (TelephoneDetail t in detail.TelephoneNumbers) 
+            foreach (TelephoneDetail t in detail.TelephoneNumbers)
             {
                 profile.TelephoneNumbers.Add(telephoneAssembler.CreateTelephoneNumber(t));
             }
@@ -125,9 +142,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             EmailAddressAssembler emailAssembler = new EmailAddressAssembler();
             profile.EmailAddresses.Clear();
             foreach (EmailAddressDetail e in detail.EmailAddresses)
-	        {
-                profile.EmailAddresses.Add(emailAssembler.CreateEmailAddress(e));    
-	        }
+            {
+                profile.EmailAddresses.Add(emailAssembler.CreateEmailAddress(e));
+            }
 
             NoteAssembler noteAssembler = new NoteAssembler();
             profile.Patient.Notes.Clear();

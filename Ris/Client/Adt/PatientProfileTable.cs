@@ -7,6 +7,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common.PatientReconciliation;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -22,10 +23,10 @@ namespace ClearCanvas.Ris.Client.Adt
                    delegate(PatientProfileSummary profile) { return profile.Mrn.Id; }, 1.0f));
             this.Columns.Add(
               new TableColumn<PatientProfileSummary, string>(SR.ColumnName,
-                  delegate(PatientProfileSummary profile) { return profile.Name; }, 2.0f));
+                  delegate(PatientProfileSummary profile) { return PersonNameFormat.Format(profile.Name); }, 2.0f));
             this.Columns.Add(
               new TableColumn<PatientProfileSummary, string>(SR.ColumnHealthcardNumber,
-                  delegate(PatientProfileSummary profile) { return profile.Healthcard; }, 1.0f));
+                  delegate(PatientProfileSummary profile) { return HealthcardFormat.Format(profile.Healthcard); }, 1.0f));
             this.Columns.Add(
               new TableColumn<PatientProfileSummary, string>(SR.ColumnDateOfBirth,
                   delegate(PatientProfileSummary profile) { return Format.Date(profile.DateOfBirth); }, 1.0f));

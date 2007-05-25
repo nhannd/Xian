@@ -1,12 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+
+using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common.PatientBiography;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -40,10 +40,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
             try
             {
-                Platform.GetService<IRegistrationWorkflowService>(
-                    delegate(IRegistrationWorkflowService service)
+                Platform.GetService<IPatientBiographyService>(
+                    delegate(IPatientBiographyService service)
                     {
-                        LoadPatientProfileForBiographyResponse response = service.LoadPatientProfileForBiography(new LoadPatientProfileForBiographyRequest(_profileRef));
+                        LoadPatientProfileResponse response = service.LoadPatientProfile(new LoadPatientProfileRequest(_profileRef));
                         _profileRef = response.PatientProfileRef;
                         _patientProfile = response.PatientDetail;
                         alertNotifications = response.AlertNotifications;
@@ -60,8 +60,7 @@ namespace ClearCanvas.Ris.Client.Adt
             BiographyDocumentComponent documentComponent = new BiographyDocumentComponent();
             BiographyNoteComponent noteComponent = new BiographyNoteComponent(_patientProfile.Notes);
             BiographyFeedbackComponent feedbackComponent = new BiographyFeedbackComponent();
-            IApplicationComponent demographicComponent = GetDemographicComponent(_patientProfile);
-
+            BiographyDemographicComponent demographicComponent = new BiographyDemographicComponent(_profileRef, _patientProfile);
 
             // Create tab and tab groups
             TabComponentContainer tabContainer1 = new TabComponentContainer();
@@ -81,48 +80,6 @@ namespace ClearCanvas.Ris.Client.Adt
             return new SplitComponentContainer(
                 new SplitPane("", new PatientOverviewComponent(_profileRef, _patientProfile, alertNotifications), true),
                 new SplitPane("", tabGroupContainer, 0.8f),
-                SplitOrientation.Horizontal);
-        }
-
-        private IApplicationComponent GetDemographicComponent(PatientProfileDetail patientProfile)
-        {
-            AddressesSummaryComponent addressesSummary = null;
-            PhoneNumbersSummaryComponent phoneNumbersSummary = null;
-            EmailAddressesSummaryComponent emailAddressesSummary = null;
-            ContactPersonsSummaryComponent contactPersonsSummary = null;
-
-            try
-            {
-                Platform.GetService<IPatientAdminService>(
-                    delegate(IPatientAdminService service)
-                    {
-                        LoadPatientProfileEditorFormDataResponse response = service.LoadPatientProfileEditorFormData(new LoadPatientProfileEditorFormDataRequest());
-
-                        addressesSummary = new AddressesSummaryComponent(response.AddressTypeChoices);
-                        phoneNumbersSummary = new PhoneNumbersSummaryComponent(response.PhoneTypeChoices);
-                        emailAddressesSummary = new EmailAddressesSummaryComponent();
-                        contactPersonsSummary = new ContactPersonsSummaryComponent(response.ContactPersonTypeChoices, response.ContactPersonRelationshipChoices);
-                    });
-            }
-            catch (Exception e)
-            {
-                // TODO: Report this...
-            }
-
-            addressesSummary.Subject = patientProfile.Addresses;
-            phoneNumbersSummary.Subject = patientProfile.TelephoneNumbers;
-            emailAddressesSummary.Subject = patientProfile.EmailAddresses;
-            contactPersonsSummary.Subject = patientProfile.ContactPersons;
-
-            TabComponentContainer demographicCollectionTabContainer = new TabComponentContainer();
-            demographicCollectionTabContainer.Pages.Add(new TabPage("Addresses", addressesSummary));
-            demographicCollectionTabContainer.Pages.Add(new TabPage("Phone Numbers", phoneNumbersSummary));
-            demographicCollectionTabContainer.Pages.Add(new TabPage("Email Addresses", emailAddressesSummary));
-            demographicCollectionTabContainer.Pages.Add(new TabPage("Contact Persons", contactPersonsSummary));
-
-            return new SplitComponentContainer(
-                new SplitPane("PersonalInfo", new BiographyDemographicComponent(_patientProfile), true),
-                new SplitPane("Collections", demographicCollectionTabContainer, 0.8f),
                 SplitOrientation.Horizontal);
         }
     }    

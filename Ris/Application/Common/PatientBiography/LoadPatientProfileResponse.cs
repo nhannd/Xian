@@ -1,16 +1,14 @@
 using System;
 using System.Runtime.Serialization;
-
-using ClearCanvas.Enterprise.Common;
 using System.Collections.Generic;
-using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
+using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
+namespace ClearCanvas.Ris.Application.Common.PatientBiography
 {
     [DataContract]
-    public class LoadPatientProfileForBiographyResponse : DataContractBase
+    public class LoadPatientProfileResponse : DataContractBase
     {
-        public LoadPatientProfileForBiographyResponse(
+        public LoadPatientProfileResponse(
             EntityRef patientRef, 
             EntityRef patientProfileRef, 
             PatientProfileDetail patientDetail, 
