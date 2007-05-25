@@ -9,7 +9,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
     [DataContract]
     public class DiagnosticServiceTreeItem : DataContractBase
     {
-        public DiagnosticServiceTreeItem(EntityRef nodeRef, string description, DiagnosticServiceDetail diagnosticService)
+        public DiagnosticServiceTreeItem(EntityRef nodeRef, string description, DiagnosticServiceSummary diagnosticService)
         {
             this.NodeRef = nodeRef;
             this.Description = description;
@@ -22,10 +22,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         [DataMember]
         public string Description;
 
-        //[DataMember]
-        //public List<DiagnosticServiceTreeItem> Children;
-
         [DataMember]
-        public DiagnosticServiceDetail DiagnosticService;
+        public DiagnosticServiceSummary DiagnosticService;
     }
 }

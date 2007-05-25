@@ -125,7 +125,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private List<EnumValueInfo> _priorityChoices;
 
         private VisitSummary _selectedVisit;
-        private DiagnosticServiceSummary _selectedDiagnosticService;
+        //private DiagnosticServiceSummary _selectedDiagnosticService;
         private FacilitySummary _selectedFacility;
         private PractitionerSummary _selectedOrderingPhysician;
         private EnumValueInfo _selectedPriority;
@@ -135,7 +135,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private object _selectedDiagnosticServiceBreakdownItem;
 
         private Tree<DiagnosticServiceTreeItem> _diagnosticServiceTree;
-        private object _selectedDiagnosticServiceTreeItem;
+        private DiagnosticServiceTreeItem _selectedDiagnosticServiceTreeItem;
 
         private bool _scheduleOrder;
         private DateTime _schedulingRequestDateTime;
@@ -169,17 +169,6 @@ namespace ClearCanvas.Ris.Client.Adt
                         _priorityChoices = formChoicesResponse.OrderPriorityChoices;
 
                         _selectedPriority = _priorityChoices[0];
-
-                        //_diagnosticServiceBreakdown = new Tree<RequestedProcedureTypeDetail>(
-                        //    new TreeItemBinding<RequestedProcedureTypeDetail>(
-                        //        delegate(RequestedProcedureTypeDetail rpt) { return rpt.Name; },
-                        //        delegate(RequestedProcedureTypeDetail rpt)
-                        //        {
-                        //            return new Tree<ModalityProcedureStepTypeDetail>(
-                        //                new TreeItemBinding<ModalityProcedureStepTypeDetail>(
-                        //                    delegate(ModalityProcedureStepTypeDetail spt) { return spt.Name; }),
-                        //                    rpt.ModalityProcedureStepTypes);
-                        //        }), diagnosticServiceDetail.RequestedProcedureTypes);
 
                         TreeItemBinding<DiagnosticServiceTreeItem> binding = new TreeItemBinding<DiagnosticServiceTreeItem>(
                                 delegate(DiagnosticServiceTreeItem ds) { return ds.Description; },
@@ -231,20 +220,37 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public string SelectedDiagnosticService
+        public object SelectedDiagnosticService
         {
-            get { return _selectedDiagnosticService == null ? "" : _selectedDiagnosticService.Name; }
+            get
+            {
+                return _selectedDiagnosticServiceTreeItem == null
+                    ? null
+                    : _selectedDiagnosticServiceTreeItem.DiagnosticService == null 
+                        ? null
+                        : _selectedDiagnosticServiceTreeItem.DiagnosticService.Name;
+            }
+        }
+
+        public ISelection SelectedDiagnosticServiceTreeItem
+        {
+            get { return _selectedDiagnosticServiceTreeItem == null ? Selection.Empty : new Selection(_selectedDiagnosticServiceTreeItem); }
             set
             {
-                DiagnosticServiceSummary diagnosticService = (value == "") ? null :
-                    CollectionUtils.SelectFirst<DiagnosticServiceSummary>(_diagnosticServiceChoices,
-                            delegate(DiagnosticServiceSummary ds) { return ds.Name == value; });
+                _selectedDiagnosticServiceTreeItem = value.Item as DiagnosticServiceTreeItem;
+                UpdateDiagnosticServiceBreakdown();
+                
+                //DiagnosticServiceSummary diagnosticService = _selectedDiagnosticServiceTreeItem == null ? null : _selectedDiagnosticServiceTreeItem.DiagnosticService;
 
-                if (diagnosticService == null || !diagnosticService.Equals(_selectedDiagnosticService))
-                {
-                    _selectedDiagnosticService = diagnosticService;
-                    UpdateDiagnosticServiceBreakdown();
-                }
+                //if (diagnosticService != null && diagnosticService.Equals(_selectedDiagnosticService))
+                //{
+                //    // Do nothing
+                //}
+                //else
+                //{
+                //    _selectedDiagnosticService = diagnosticService;
+                //    UpdateDiagnosticServiceBreakdown();
+                //}
             }
         }
 
@@ -368,7 +374,8 @@ namespace ClearCanvas.Ris.Client.Adt
                         PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(
                             _selectedVisit.Patient,
                             _selectedVisit.entityRef,
-                            _selectedDiagnosticService.DiagnosticServiceRef,
+                            //_selectedDiagnosticService.DiagnosticServiceRef,
+                            _selectedDiagnosticServiceTreeItem.DiagnosticService.DiagnosticServiceRef,
                             _selectedPriority,
                             _selectedOrderingPhysician.StaffRef,
                             _selectedFacility.FacilityRef,
@@ -397,9 +404,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void UpdateDiagnosticServiceBreakdown()
         {
-            if (_selectedDiagnosticService == null)
+            //if (_selectedDiagnosticService == null)
+            if(_selectedDiagnosticServiceTreeItem == null || _selectedDiagnosticServiceTreeItem.DiagnosticService == null)
             {
-                _diagnosticServiceBreakdown = null;
+                //_diagnosticServiceBreakdown = null;
+                _diagnosticServiceBreakdown = new Tree<RequestedProcedureTypeDetail>(new TreeItemBinding<RequestedProcedureTypeDetail>());
             }
             else
             {
@@ -410,7 +419,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     Platform.GetService<IOrderEntryService>(
                         delegate(IOrderEntryService service)
                         {
-                            LoadDiagnosticServiceBreakdownResponse response = service.LoadDiagnosticServiceBreakdown(new LoadDiagnosticServiceBreakdownRequest(_selectedDiagnosticService.DiagnosticServiceRef));
+                            //LoadDiagnosticServiceBreakdownResponse response = service.LoadDiagnosticServiceBreakdown(new LoadDiagnosticServiceBreakdownRequest(_selectedDiagnosticService.DiagnosticServiceRef));
+                            LoadDiagnosticServiceBreakdownResponse response = service.LoadDiagnosticServiceBreakdown(new LoadDiagnosticServiceBreakdownRequest(_selectedDiagnosticServiceTreeItem.DiagnosticService.DiagnosticServiceRef));
                             diagnosticServiceDetail = response.DiagnosticServiceDetail;
 
                             _diagnosticServiceBreakdown = new Tree<RequestedProcedureTypeDetail>(

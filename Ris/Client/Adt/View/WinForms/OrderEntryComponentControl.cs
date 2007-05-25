@@ -32,13 +32,13 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _visitTable.DataBindings.Add("Selection", _component, "SelectedVisit", true, DataSourceUpdateMode.OnPropertyChanged);
             this.ErrorProvider.SetIconAlignment(_visitTable, ErrorIconAlignment.TopRight);
 
-            _diagnosticService.DataSource = _component.DiagnosticServiceChoices;
-            _diagnosticService.DataBindings.Add("Value", _component, "SelectedDiagnosticService", true, DataSourceUpdateMode.OnPropertyChanged);
+            _diagnosticServiceTree.Tree = _component.DiagnosticServiceTree;
+            _diagnosticServiceTree.DataBindings.Add("Selection", _component, "SelectedDiagnosticServiceTreeItem", true, DataSourceUpdateMode.OnPropertyChanged);
+            _selectedDiagnosticService.DataBindings.Add("Text", _component, "SelectedDiagnosticService", true, DataSourceUpdateMode.OnPropertyChanged);
+
             _component.DiagnosticServiceChanged += new EventHandler(DiagnosticServiceChangedEventHandler);
 
             _diagnosticServiceBreakdown.DataBindings.Add("Selection", _component, "SelectedDiagnosticServiceBreakdownItem", true, DataSourceUpdateMode.OnPropertyChanged);
-
-            _diagnosticServiceTree.Tree = _component.DiagnosticServiceTree;
 
             _priority.DataSource = _component.PriorityChoices;
             _priority.DataBindings.Add("Value", _component, "SelectedPriority", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -55,6 +55,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void DiagnosticServiceChangedEventHandler(object sender, EventArgs e)
         {
+            _diagnosticServiceBreakdown.ResetText();
             _diagnosticServiceBreakdown.Tree = _component.DiagnosticServiceBreakdown;
             _diagnosticServiceBreakdown.ExpandAll();
         }
