@@ -7,6 +7,8 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Desktop;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
@@ -32,12 +34,19 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
             _folderContentsTableView.Table = _component.FolderContentsTable;
             _component.SelectedFolderChanged += new EventHandler(_component_SelectedFolderChanged);
+            _component.SuppressSelectionChanged += new EventHandler(_component_SuppressSelectionChanged);
 
             //_folderContentsTableView.DataBindings.Add("Table", _component, "FolderContentsTable", true, DataSourceUpdateMode.Never);
             _folderContentsTableView.DataBindings.Add("Selection", _component, "SelectedItems", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _folderContentsTableView.MenuModel = _component.ItemsContextMenuModel;
             _folderContentsTableView.ToolbarModel = _component.ItemsToolbarModel;
+        }
+
+        void _component_SuppressSelectionChanged(object sender, EventArgs e)
+        {
+            ItemEventArgs<bool> ea = (ItemEventArgs<bool>)e;
+            _folderContentsTableView.SuppressSelectionChangedEvent = (bool) ea.Item;
         }
 
         private void _component_SelectedFolderChanged(object sender, EventArgs e)

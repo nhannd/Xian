@@ -27,6 +27,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private bool _multiLine;
 
         private bool _delaySelectionChangeNotification = true; // see bug 386
+        private bool _surpressSelectionChangedEvent = false;
 
 		public TableView()
 		{
@@ -39,6 +40,13 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         #region Design Time properties
+
+        [DefaultValue(false)]
+        public bool SuppressSelectionChangedEvent
+        {
+            get { return _surpressSelectionChangedEvent; }
+            set { _surpressSelectionChangedEvent = value; }
+        }
 
         [DefaultValue(true)]
         public bool ReadOnly
@@ -385,6 +393,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void _dataGridView_SelectionChanged(object sender, EventArgs e)
         {
+            if (_surpressSelectionChangedEvent)
+                return;
+
             if (_delaySelectionChangeNotification)
             {
                 // fix Bug 386: rather than firing our own _selectionChanged event immediately, post delayed notification
@@ -472,6 +483,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void NotifySelectionChanged()
         {
+            if (_surpressSelectionChangedEvent)
+                return;
+
             // notify clients of this class of a *real* selection change
             EventsHelper.Fire(_selectionChanged, this, EventArgs.Empty);
         }

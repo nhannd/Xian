@@ -124,8 +124,6 @@ namespace ClearCanvas.Ris.Client
 
             if (CanQuery())
             {
-                NotifyRefreshBegin();
-
                 _queryItemsTask = new BackgroundTask(
                     delegate(IBackgroundTaskContext taskContext)
                     {
@@ -150,11 +148,15 @@ namespace ClearCanvas.Ris.Client
         {
             if(args.Reason == BackgroundTaskTerminatedReason.Completed)
             {
+                NotifyRefreshBegin();
+
                 IList<TItem> items = (IList<TItem>)args.Result;
                 _isPopulated = true;
                 _itemsTable.Items.Clear();
                 _itemsTable.Items.AddRange(items);
                 _itemsTable.Sort();
+
+                NotifyRefreshFinish();
             }
             else
             {
@@ -165,8 +167,6 @@ namespace ClearCanvas.Ris.Client
             _queryItemsTask.Terminated -= OnQueryItemsCompleted;
             _queryItemsTask.Dispose();
             _queryItemsTask = null;
-
-            NotifyRefreshFinish();
 
             this.RestartRefreshTimer();
         }

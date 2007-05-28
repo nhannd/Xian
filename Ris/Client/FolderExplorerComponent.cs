@@ -117,6 +117,7 @@ namespace ClearCanvas.Ris.Client
         private ISelection _selectedItems = Selection.Empty;
         private ISelection _selectedItemsBeforeRefresh = Selection.Empty;
         private event EventHandler _selectedItemsChanged;
+        private event EventHandler _suppressSelectionChangedEvent;
 
         private ToolSet _tools;
 
@@ -225,6 +226,12 @@ namespace ClearCanvas.Ris.Client
             remove { _selectedItemsChanged -= value; }
         }
 
+        public event EventHandler SuppressSelectionChanged
+        {
+            add { _suppressSelectionChangedEvent += value; }
+            remove { _suppressSelectionChangedEvent -= value; }
+        }
+
         public event EventHandler FolderIconChanged
         {
             add { _folderIconChanged += value; }
@@ -297,23 +304,35 @@ namespace ClearCanvas.Ris.Client
 
         void OnSelectedFolderRefreshBegin(object sender, EventArgs e)
         {
+            EventsHelper.Fire(_suppressSelectionChangedEvent, this, new ItemEventArgs<bool>(true));
+
             _selectedItemsBeforeRefresh = _selectedItems;
         }
 
         void OnSelectedFolderRefreshFinish(object sender, EventArgs e)
         {
-            if (!_selectedItems.Equals(_selectedItemsBeforeRefresh))
+            EventsHelper.Fire(_suppressSelectionChangedEvent, this, new ItemEventArgs<bool>(false));
+
+            object sameObjFound = CollectionUtils.SelectFirst<object>(_selectedFolder.ItemsTable.Items,
+                delegate(object obj)
+                {
+                    return obj.Equals(_selectedItemsBeforeRefresh.Item);
+                });
+
+            Selection newSelection = Selection.Empty;
+            if (sameObjFound != null)
             {
-                object sameObjFound = CollectionUtils.SelectFirst<object>(_selectedFolder.ItemsTable.Items,
-                    delegate(object obj)
-                    {
-                        return obj.Equals(_selectedItemsBeforeRefresh.Item);
-                    });
-
-                if (sameObjFound != null)
-                    this.SelectedItems = new Selection(sameObjFound);
-
+                newSelection = new Selection(sameObjFound);
             }
+            else if (_selectedFolder.ItemsTable.Items.Count > 0)
+            {
+                newSelection = new Selection(_selectedFolder.ItemsTable.Items[0]);
+            }
+
+            // Normally we check if _selectedItems is the same as new selection, but we must force a selected items changed event 
+            // because the detail of the selection may have changed after a refresh
+            _selectedItems = newSelection;
+            EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
         }
 
         private DragDropKind CanFolderAcceptDrop(IFolder folder, object dropData, DragDropKind kind)
