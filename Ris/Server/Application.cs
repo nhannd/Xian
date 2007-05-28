@@ -72,7 +72,8 @@ namespace ClearCanvas.Ris.Server
                     Console.WriteLine("Mounting service " + serviceClass.Name);
 
                     // create service host
-                    Uri uri = new Uri(string.Format("{0}/{1}", baseAddress, a.ServiceContract.FullName));
+					Uri uri = new Uri(new Uri(baseAddress), a.ServiceContract.FullName);
+					
                     ServiceHost host = new ServiceHost(serviceClass, uri);
 
                     // add behaviour to grab AOP proxied service instance
