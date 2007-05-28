@@ -43,15 +43,16 @@ if(!Object.prototype.toJsml)
         var xml = "";
         for(var prop in this)
         {
-            if(this.hasOwnProperty(prop))
-                xml += "<"+prop+">"+this[prop].toJsml()+"</"+prop+">";
+            // check that the prop belongs to this object (not its prototype) and that the value is non-null and is not a function
+            if(this.hasOwnProperty(prop) && this[prop] && !(this[prop] instanceof Function))
+                xml += JSML.create(this[prop], prop);
         }
         return xml;
     }
     
     Array.prototype.toJsml = function()
     {
-        return this.reduce("", function(jsml, item) { return jsml + "<item>"+item.toJsml()+"</item>"; });
+        return this.reduce("", function(jsml, item) { return jsml + JSML.create(item, "item"); });
     }
     
     Boolean.prototype.toJsml = function () {
@@ -138,11 +139,11 @@ var JSML = {
             var subElements = getChildNodes(xmlNode).select(function(n) { return n.nodeType == 1; });   // select element nodes
             if(subElements.length > 0)  // node contains elements
             {
-                // if more than one sub element, do they all have the same name?
-                if(subElements.length > 1 &&
-                    subElements.select(function(node) { return node.nodeName != subElements[0].nodeName; }).length == 0)
+                // check if its an array
+                var arrayAttr = xmlNode.attributes.getNamedItem("array");
+                if(arrayAttr && arrayAttr.text == "true")
                 {
-                    // yes - then assume they are an array and collect them in an array
+                    // yes - then acollect them in an array
                     return subElements.reduce([], function(a, node) { a.push(toObj(node)); return a; });
                 }
                 else
@@ -159,12 +160,19 @@ var JSML = {
             }
         }
         
-        var dom = parseXml(jsml);
-        return dom.documentElement ? toObj(dom.documentElement) : null;
+        if(jsml && jsml.length)
+        {
+            var dom = parseXml(jsml);
+            return dom.documentElement ? toObj(dom.documentElement) : null;
+        }
+        else
+        {
+            return null;
+        }
     },
     
-    create: function(obj, rootTag)
+    create: function(obj, tagName)
     {
-        return "<"+rootTag+">"+obj.toJsml()+"</"+rootTag+">";
-    }
+        return '<'+tagName+(obj.isArray?' array="true"':'')+'>'+obj.toJsml()+'</'+tagName+'>';
+    }    
 };

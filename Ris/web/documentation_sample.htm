@@ -1,0 +1,106 @@
+<html>
+	<head>
+	    <script src="array.js"></script>
+	    <script src="jsml.js"></script>
+	    <script src="ui.js"></script>
+	    <script src="ris.js"></script>
+		<script>
+		    var data;
+		    var relTable;
+		    
+		    function initPage()
+		    {
+		        // if running in a plain old browser, call setData 
+				if(!window.external)
+				    setData(null);
+		    }
+		    
+		    function setData(jsml)
+		    {
+			    data = JSML.parse(jsml) || {};
+			    myForm.lastName.value = data.lastName || "";
+			    myForm.firstName.value = data.firstName || "";
+			    
+			    data.relatives = data.relatives || [];
+			    
+			    // create relatives table
+		        relTable = new Table(relativesTable,
+				    [ // columns
+				    {heading: "Name", getter: function(item) { return item.name; }},
+				    {heading: "Relationship", getter: function(item) { return item.relationship; }},
+				    {heading: "Doctor", getter: function(item) { return item.doctor; }}
+				    ], data.relatives);
+		    }
+		    
+		    function getData()
+		    {
+		        data.lastName = myForm.lastName.value;
+		        data.firstName =  myForm.firstName.value;
+				return JSML.create(data, "data");
+		    }
+
+			function onFindStaff()
+			{
+			    var query = myForm.relativeDoctor.value || "";
+			    var result = Ris.resolveStaffName(query);
+			    if(result)
+			        myForm.relativeDoctor.value = result;
+			}
+			
+			function onAddRelative()
+			{
+			    data.relatives.add( {
+			        name: myForm.relativeName.value,
+			        relationship: myForm.relationship.value,
+			        doctor: myForm.relativeDoctor.value });
+			}
+			
+			function onDeleteRelative()
+			{
+			    if(confirm("Deleted selected relatives?"))
+			    {
+			        relTable.getSelectedItems().each(
+			            function(item)
+			            {
+			                data.relatives.remove(item);
+			            });
+			    }
+			}
+		</script>
+	</head>
+	<body onload="javascript: initPage()">
+	
+		<form id="myForm">
+		<p>Personal Data</p>
+		<p>
+		    Last Name<input type="text" id="lastName"/>
+		    First Name<input type="text" id="firstName"/>
+		</p>
+		<p></p>
+		<p>Relatives</p>
+		<p>
+		    Name<input type="text" id="relativeName"/>
+		    Relationship
+		    <select id="relationship">
+		            <option value="Mother">Mother</option>
+					<option value="Father">Father</option>
+					<option value="Child">Child</option>
+					<option value="Sibling">Sibling</option>
+	        </select>
+	        Doctor<input type="text" id="relativeDoctor"/><input type="button" value="Find" onclick="javascript: onFindStaff()" />
+		</p>
+		<p>
+		    <input type="button" value="Add" onclick="javascript: onAddRelative()" />
+		    <input type="button" value="Delete" onclick="javascript: onDeleteRelative()" />
+		</p>
+			<table id="relativesTable">
+			  <tr bgcolor="lightskyblue">
+			    <td></td>
+				<td>Name</td>
+				<td>Relationship</td>
+				<td>Doctor</td>
+			  </tr>
+			</table>
+		</form>
+	</body>
+</html>
