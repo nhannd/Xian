@@ -109,8 +109,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			IList<StudyItem> studiesInUse = GetStudiesInUse();
 
+			Dictionary<string, string> setStudyUidsInUse = new Dictionary<string, string>();
+			foreach (StudyItem item in studiesInUse)
+				setStudyUidsInUse[item.StudyInstanceUID] = item.StudyInstanceUID;
+
 			// No studies in use.  Just return.
-			if (studiesInUse.Count == 0)
+			if (setStudyUidsInUse.Count == 0)
 				return false;
 
 			string message;
@@ -122,10 +126,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 			else
 			{
-				if (studiesInUse.Count == 1)
+				if (setStudyUidsInUse.Count == 1)
 					message = SR.MessageOneOfSelectedStudiesInUse;
 				else
-					message = String.Format(SR.MessageSomeOfSelectedStudiesInUse, studiesInUse.Count);
+					message = String.Format(SR.MessageSomeOfSelectedStudiesInUse, setStudyUidsInUse.Count);
 			}
 
 			this.Context.DesktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);
