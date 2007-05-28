@@ -120,6 +120,20 @@
       <DependentUpon>FolderExplorerComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="FolderExplorerComponentView.cs" />
+    <Compile Include="StaffDetailsEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StaffDetailsEditorComponentControl.designer.cs">
+      <DependentUpon>StaffDetailsEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StaffDetailsEditorComponentView.cs" />
+    <Compile Include="StaffSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="StaffSummaryComponentControl.designer.cs">
+      <DependentUpon>StaffSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="StaffSummaryComponentView.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +205,14 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PhoneNumbersSummaryControl.resx">
       <DependentUpon>PhoneNumbersSummaryControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StaffDetailsEditorComponentControl.resx">
+      <DependentUpon>StaffDetailsEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="StaffSummaryComponentControl.resx">
+      <DependentUpon>StaffSummaryComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>

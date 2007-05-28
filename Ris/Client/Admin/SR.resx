@@ -270,12 +270,6 @@
   <data name="TitleAddNoteCategory" xml:space="preserve">
     <value>Add Note Category</value>
   </data>
-  <data name="TitleAddPractitioner" xml:space="preserve">
-    <value>Add Practitioner</value>
-  </data>
-  <data name="TitleAddStaff" xml:space="preserve">
-    <value>Add Staff</value>
-  </data>
   <data name="TitleAddUser" xml:space="preserve">
     <value>Add User</value>
   </data>
@@ -318,12 +312,6 @@
   <data name="TitleNoteCategories" xml:space="preserve">
     <value>Note Categories</value>
   </data>
-  <data name="TitlePractitioner" xml:space="preserve">
-    <value>Practitioner</value>
-  </data>
-  <data name="TitleStaff" xml:space="preserve">
-    <value>Staff</value>
-  </data>
   <data name="TitleUpdateAuthorityGroup" xml:space="preserve">
     <value>Update Authority Group</value>
   </data>
@@ -341,12 +329,6 @@
   </data>
   <data name="TitleUpdateNoteCategory" xml:space="preserve">
     <value>Update Note Category</value>
-  </data>
-  <data name="TitleUpdatePractitioner" xml:space="preserve">
-    <value>Update Practitioner</value>
-  </data>
-  <data name="TitleUpdateStaff" xml:space="preserve">
-    <value>Update Staff</value>
   </data>
   <data name="TitleUpdateUser" xml:space="preserve">
     <value>Update User</value>

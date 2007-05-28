@@ -8,7 +8,7 @@ using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common.Admin;
 
-namespace ClearCanvas.Ris.Client.Admin
+namespace ClearCanvas.Ris.Client
 {
     /// <summary>
     /// Extension point for views onto <see cref="StaffDetailsEditorComponent"/>

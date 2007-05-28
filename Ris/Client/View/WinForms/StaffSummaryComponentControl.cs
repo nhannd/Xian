@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Controls.WinForms;
 
-namespace ClearCanvas.Ris.Client.Admin.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="StaffSummaryComponent"/>

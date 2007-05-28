@@ -11,7 +11,7 @@ using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.PractitionerAdmin;
 
-namespace ClearCanvas.Ris.Client.Admin
+namespace ClearCanvas.Ris.Client
 {
     public class StaffEditorComponent : NavigatorComponentContainer
     {

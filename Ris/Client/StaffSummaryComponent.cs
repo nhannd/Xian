@@ -15,7 +15,7 @@ using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Ris.Client.Admin
+namespace ClearCanvas.Ris.Client
 {
     [MenuAction("launch", "global-menus/Admin/Staff")]
     [ClickHandler("launch", "Launch")]

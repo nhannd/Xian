@@ -520,24 +520,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Practitioner.
-        /// </summary>
-        internal static string TitleAddPractitioner {
-            get {
-                return ResourceManager.GetString("TitleAddPractitioner", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Add Staff.
-        /// </summary>
-        internal static string TitleAddStaff {
-            get {
-                return ResourceManager.GetString("TitleAddStaff", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Add User.
         /// </summary>
         internal static string TitleAddUser {
@@ -664,24 +646,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Practitioner.
-        /// </summary>
-        internal static string TitlePractitioner {
-            get {
-                return ResourceManager.GetString("TitlePractitioner", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Staff.
-        /// </summary>
-        internal static string TitleStaff {
-            get {
-                return ResourceManager.GetString("TitleStaff", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Update Authority Group.
         /// </summary>
         internal static string TitleUpdateAuthorityGroup {
@@ -732,24 +696,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleUpdateNoteCategory {
             get {
                 return ResourceManager.GetString("TitleUpdateNoteCategory", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Update Practitioner.
-        /// </summary>
-        internal static string TitleUpdatePractitioner {
-            get {
-                return ResourceManager.GetString("TitleUpdatePractitioner", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Update Staff.
-        /// </summary>
-        internal static string TitleUpdateStaff {
-            get {
-                return ResourceManager.GetString("TitleUpdateStaff", resourceCulture);
             }
         }
         

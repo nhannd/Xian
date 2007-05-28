@@ -259,6 +259,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to License #.
+        /// </summary>
+        internal static string ColumnLicenseNumber {
+            get {
+                return ResourceManager.GetString("ColumnLicenseNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Location.
         /// </summary>
         internal static string ColumnLocation {
@@ -511,6 +520,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An error occured while attempting to save changes to this item.
+        /// </summary>
+        internal static string ExceptionFailedToSave {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToSave", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid user name or password.
         /// </summary>
         internal static string ExceptionInvalidUserNamePassword {
@@ -646,6 +664,24 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Practitioner.
+        /// </summary>
+        internal static string TitleAddPractitioner {
+            get {
+                return ResourceManager.GetString("TitleAddPractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Staff.
+        /// </summary>
+        internal static string TitleAddStaff {
+            get {
+                return ResourceManager.GetString("TitleAddStaff", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Delete.
         /// </summary>
         internal static string TitleDelete {
@@ -673,11 +709,29 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Practitioner.
+        /// </summary>
+        internal static string TitlePractitioner {
+            get {
+                return ResourceManager.GetString("TitlePractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Previous Page.
         /// </summary>
         internal static string TitlePrevious {
             get {
                 return ResourceManager.GetString("TitlePrevious", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Staff.
+        /// </summary>
+        internal static string TitleStaff {
+            get {
+                return ResourceManager.GetString("TitleStaff", resourceCulture);
             }
         }
         
@@ -723,6 +777,24 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleUpdatePhoneNumber {
             get {
                 return ResourceManager.GetString("TitleUpdatePhoneNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Practitioner.
+        /// </summary>
+        internal static string TitleUpdatePractitioner {
+            get {
+                return ResourceManager.GetString("TitleUpdatePractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Staff.
+        /// </summary>
+        internal static string TitleUpdateStaff {
+            get {
+                return ResourceManager.GetString("TitleUpdateStaff", resourceCulture);
             }
         }
     }

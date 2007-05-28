@@ -1,7 +1,7 @@
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.Admin;
 
-namespace ClearCanvas.Ris.Client.Admin
+namespace ClearCanvas.Ris.Client
 {
     class StaffTable : Table<StaffSummary>
     {

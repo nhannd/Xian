@@ -103,6 +103,10 @@
     <Compile Include="RemoteServiceProvider.cs" />
     <Compile Include="SessionManager.cs" />
     <Compile Include="Formatting\TelephoneFormat.cs" />
+    <Compile Include="StaffDetailsEditorComponent.cs" />
+    <Compile Include="StaffEditorComponent.cs" />
+    <Compile Include="StaffSummaryComponent.cs" />
+    <Compile Include="StaffTable.cs" />
     <Compile Include="WorkflowFolderSystem.cs" />
     <Compile Include="PhoneNumberEditorComponent.cs" />
     <Compile Include="PhoneNumbersSummaryComponent.cs" />

@@ -27,6 +27,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _component = component;
 
+            _procedureReport.ObjectForScripting = _component.ScriptObject;
             _procedureReport.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(_procedureReport_DocumentCompleted);
             // TODO add .NET databindings to _component
 

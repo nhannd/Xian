@@ -6,6 +6,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using System.Runtime.InteropServices;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -34,6 +35,7 @@ namespace ClearCanvas.Ris.Client.Adt
         }
     }
 
+
     /// <summary>
     /// Extension point for views onto <see cref="PerformedProcedureComponent"/>
     /// </summary>
@@ -49,10 +51,39 @@ namespace ClearCanvas.Ris.Client.Adt
     public class PerformedProcedureComponent : ApplicationComponent
     {
         /// <summary>
+        /// The script callback is an object that is made available to the web browser so that
+        /// the javascript code can invoke methods on the host.  It must be COM-visible.
+        /// </summary>
+        [ComVisible(true)]
+        public class ScriptCallback
+        {
+            private PerformedProcedureComponent _component;
+
+            public ScriptCallback(PerformedProcedureComponent component)
+            {
+                _component = component;
+            }
+
+            public void ShowMessageBox(string message)
+            {
+                _component.Host.ShowMessageBox(message, MessageBoxActions.Ok);
+            }
+
+            public string LookupStaff(string search)
+            {
+                return "";
+            }
+        }
+
+        private ScriptCallback _scriptCallback;
+
+
+        /// <summary>
         /// Constructor
         /// </summary>
         public PerformedProcedureComponent()
         {
+            _scriptCallback = new ScriptCallback(this);
         }
 
         public override void Start()
@@ -81,6 +112,11 @@ namespace ClearCanvas.Ris.Client.Adt
                 PerformedProcedureComponentSettings.Default.ReportData = value;
                 PerformedProcedureComponentSettings.Default.Save();
             }
+        }
+
+        public ScriptCallback ScriptObject
+        {
+            get { return _scriptCallback; }
         }
 
         public void Close()
