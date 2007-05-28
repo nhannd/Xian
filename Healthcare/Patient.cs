@@ -63,39 +63,5 @@ namespace ClearCanvas.Healthcare {
             profile.Patient = this;
             this.Profiles.Add(profile);
         }
-
-        /// <summary>
-        /// Reconciles the specified patient to this patient
-        /// </summary>
-        /// <param name="other"></param>
-        public void Reconcile(Patient other)
-        {
-            if (PatientIdentifierConflictsFound(other))
-                throw new PatientReconciliationException("assigning authority conflict - cannot reconcile");
-            
-            // Move profiles from the other patient to this patient
-            ArrayList otherProfiles = new ArrayList(other.Profiles);
-            foreach (PatientProfile profile in otherProfiles)
-            {
-                this.AddProfile(profile);
-            }
-        }
-
-        /// <summary>
-        /// Returns true if any profiles for the other patient and any profiles for this patient
-        /// have an Mrn with the same assigning authority.
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        private bool PatientIdentifierConflictsFound(Patient other)
-        {
-            foreach (PatientProfile x in this.Profiles)
-                foreach (PatientProfile y in other.Profiles)
-                    if (x.Mrn.AssigningAuthority.Equals(y.Mrn.AssigningAuthority))
-                        return true;
-
-            return false;
-        }
-
 	}
 }

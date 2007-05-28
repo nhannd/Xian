@@ -11,6 +11,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common;
 using System.Security.Permissions;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Healthcare.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
 {
@@ -98,11 +99,8 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
             if (patients.Count < 2)
                 throw new RequestValidationException(SR.ExceptionReconciliationRequiresAtLeast2Patients);
 
-            // reconcile all patients
-            for (int i = 1; i < patients.Count; i++)
-            {
-                patients[0].Reconcile(patients[i]);
-            }
+            Operations.ReconcilePatient op = new Operations.ReconcilePatient();
+            op.Execute(patients, this.PersistenceContext);
 
             return new ReconcilePatientsResponse();
         }
