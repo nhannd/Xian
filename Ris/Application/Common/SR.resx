@@ -123,7 +123,4 @@
   <data name="ExceptionEnablementMethodNotFound" xml:space="preserve">
     <value>Cannot find enablement method {0} for {1}</value>
   </data>
-  <data name="ExceptionHL7Processing" xml:space="preserve">
-    <value>Cannot process HL7 message</value>
-  </data>
 </root>

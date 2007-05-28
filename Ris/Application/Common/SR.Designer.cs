@@ -77,14 +77,5 @@ namespace ClearCanvas.Ris.Application.Common {
                 return ResourceManager.GetString("ExceptionEnablementMethodNotFound", resourceCulture);
             }
         }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Cannot process HL7 message.
-        /// </summary>
-        internal static string ExceptionHL7Processing {
-            get {
-                return ResourceManager.GetString("ExceptionHL7Processing", resourceCulture);
-            }
-        }
     }
 }

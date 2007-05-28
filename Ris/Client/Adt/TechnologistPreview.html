@@ -87,14 +87,7 @@ if(component.WorklistPreview != null)
         <tr>
             <td colspan="4" class="propertyname">Diagnostic Service Breakdown</td>
         </tr>
-        <% var i = 0; %>
-        <% for(var dsRow in component.DSBreakdown.Items) {%>
-        <tr class="row<%= (i++) % 2 %>"><% for(var column in component.DSBreakdown.Columns) {%>
-        <td><%= column.GetValue(dsRow) %></td>
-          <% } %>
-        </tr>
-        <% } %>
-        
+        <%= component.DSBreakdownHTML %>
     </table>
     <p>&nbsp;</p>
     <table width="640" border="0">

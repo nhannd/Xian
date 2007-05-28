@@ -198,7 +198,6 @@
     <Compile Include="EmailAddressDetail.cs" />
     <Compile Include="EnumValueInfo.cs" />
     <Compile Include="HealthcardDetail.cs" />
-    <Compile Include="HL7ProcessingException.cs" />
     <Compile Include="ImportException.cs" />
     <Compile Include="Login\ILoginService.cs" />
     <Compile Include="Login\LoginRequest.cs" />

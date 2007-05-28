@@ -40,28 +40,6 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(TechnologistPreviewComponentViewExtensionPoint))]
     public class TechnologistPreviewComponent : ApplicationComponent
     {
-        public class DSBreakdownTable : Table<DiagnosticServiceBreakdownSummary>
-        {
-            public DSBreakdownTable()
-            {
-                this.Columns.Add(new TableColumn<DiagnosticServiceBreakdownSummary, string>("BLAH",
-                    delegate(DiagnosticServiceBreakdownSummary dsb) { return dsb.DiagnosticServiceName; }, 
-                    1.0f));
-                this.Columns.Add(new TableColumn<DiagnosticServiceBreakdownSummary, string>("BLAH",
-                    delegate(DiagnosticServiceBreakdownSummary dsb) { return dsb.RequestedProcedureName; },
-                    1.0f));
-                this.Columns.Add(new TableColumn<DiagnosticServiceBreakdownSummary, string>("BLAH",
-                    delegate(DiagnosticServiceBreakdownSummary dsb) { return dsb.ModalityProcedureStepName; },
-                    1.0f));
-                this.Columns.Add(new TableColumn<DiagnosticServiceBreakdownSummary, string>("BLAH",
-                    delegate(DiagnosticServiceBreakdownSummary dsb) { return dsb.ModalityProcedureStepStatus; },
-                    1.0f));
-                this.Columns.Add(new TableColumn<DiagnosticServiceBreakdownSummary, string>("BLAH",
-                    delegate(DiagnosticServiceBreakdownSummary dsb) { return dsb.Active ? "*" : ""; },
-                    1.0f));
-            }
-        }
-
         class TechnologistPreviewToolContext : ToolContext, ITechnologistPreviewToolContext
         {
             private TechnologistPreviewComponent _component;
@@ -98,7 +76,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private RICTable _previousRICTable;
         private RICTable _upcomingRICTable;
-        private DSBreakdownTable _dsBreakdownTable;
 
         private ToolSet _toolSet;
 
@@ -126,8 +103,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
             _previousRIC = new List<RICSummary>();
             _upcomingRIC = new List<RICSummary>();
-
-            _dsBreakdownTable = new DSBreakdownTable();
 
             _dsBreakdown = new List<DiagnosticServiceBreakdownSummary>();
 
@@ -172,7 +147,6 @@ namespace ClearCanvas.Ris.Client.Adt
                 _previousRIC.Clear();
                 _upcomingRIC.Clear();
 
-                _dsBreakdownTable.Items.Clear();
                 _dsBreakdown.Clear();
 
                 // clear current preview
@@ -248,7 +222,16 @@ namespace ClearCanvas.Ris.Client.Adt
                 _previousRICTable.Sort(new TableSortParams(_previousRICTable.Columns[3], true));
 
                 _dsBreakdown.AddRange(_worklistPreview.DSBreakdown);
-                _dsBreakdownTable.Items.AddRange(_worklistPreview.DSBreakdown);
+                //_dsBreakdown.Sort(
+                //    delegate(DiagnosticServiceBreakdownSummary x, DiagnosticServiceBreakdownSummary y)
+                //    {
+                //        return x.ModalityProcedureStepName.CompareTo(y.ModalityProcedureStepName);
+                //    });
+                //_dsBreakdown.Sort(
+                //    delegate(DiagnosticServiceBreakdownSummary x, DiagnosticServiceBreakdownSummary y)
+                //    {
+                //        return x.RequestedProcedureName.CompareTo(y.RequestedProcedureName);
+                //    });
 
                 NotifyAllPropertiesChanged();
             }
@@ -348,9 +331,51 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _worklistPreview.Facility.Name; }
         }
 
-        public ITable DSBreakdown
+        public string DSBreakdownHTML
         {
-            get { return _dsBreakdownTable; }
+            get
+            {
+                StringBuilder sb = new StringBuilder();
+
+                bool firstRow = true;
+                string rpName = "";
+                int i = 0;
+                foreach (DiagnosticServiceBreakdownSummary ds in _dsBreakdown)
+                {
+                    sb.Append(string.Format("<tr class=\"row{0}\"", i++ % 2));
+                    if (ds.Active)
+                    {
+                        sb.Append(" class=\"activeDS\"");
+                    }
+                    sb.Append(">");
+                    if (firstRow)
+                    {
+                        sb.Append(string.Format("<td class=\"node\">{0}</td>", ds.DiagnosticServiceName));
+                        firstRow = false;
+                    }
+                    else
+                    {
+                        sb.Append("<td class=\"blankNode\"></td>");
+                    }
+
+                    if (ds.RequestedProcedureName.Equals(rpName))
+                    {
+                        sb.Append("<td class=\"blankNode\"></td>");
+                    }
+                    else
+                    {
+                        sb.Append(string.Format("<td class=\"spacerNode\">{0}</td>", ds.RequestedProcedureName));
+                        rpName = ds.RequestedProcedureName;
+                    }
+
+                    sb.Append(string.Format("<td class=\"node\">{0}</td>", ds.ModalityProcedureStepName));
+                    sb.Append(string.Format("<td>{0}</td>", ds.ModalityProcedureStepStatus));
+                    sb.Append(ds.Active ? "<td>*</td>" : "<td></td>");
+                    sb.Append("</tr>");
+                }
+
+                return sb.ToString();
+            }
         }
 
         public string MPSName
