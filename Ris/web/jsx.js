@@ -117,3 +117,23 @@ if(!Array.prototype.remove)
 		return (i > -1) ? this.removeAt(i) : null;
 	};
 }
+
+if(!String.prototype.escapeHTML)
+{
+    // from Prototype.js library (www.prototypejs.org)
+    String.prototype.escapeHTML = function()
+    {
+        var div = document.createElement('div');
+        var text = document.createTextNode(this);
+        div.appendChild(text);
+        return div.innerHTML;
+    }
+    
+    // from Prototype.js library (www.prototypejs.org)
+    String.prototype.unescapeHTML = function()
+    {
+        var div = document.createElement('div');
+        div.innerHTML = this.stripTags();
+        return div.childNodes[0].nodeValue;
+    }
+}

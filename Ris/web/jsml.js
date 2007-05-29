@@ -84,7 +84,7 @@ if(!Object.prototype.toJsml)
     };
     
     String.prototype.toJsml = function () {
-
+/*
         // If the string contains no control characters, no quote characters, and no
         // backslash characters, then we can simply return it.
         // Otherwise we must also replace the offending characters with safe
@@ -102,7 +102,8 @@ if(!Object.prototype.toJsml)
                     (c % 16).toString(16);
             }) + '"';
         }
-        return this;
+*/        
+        return this.escapeHTML();   // works for XML too
     };
 };
 
@@ -119,7 +120,7 @@ var JSML = {
                  dom = new ActiveXObject('Microsoft.XMLDOM');
                  dom.async = false;
                  if (!dom.loadXML(xml)) // parse error ..
-                    throw new Exception(dom.parseError.reason + dom.parseError.srcText);
+                    throw (dom.parseError.reason + dom.parseError.srcText);
                  return dom;
            }
         }

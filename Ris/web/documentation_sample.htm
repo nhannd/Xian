@@ -1,6 +1,8 @@
-<html>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-	    <script src="array.js"></script>
+        <link href="default.css" rel="stylesheet" type="text/css" />
+	    <script src="jsx.js"></script>
 	    <script src="jsml.js"></script>
 	    <script src="ui.js"></script>
 	    <script src="ris.js"></script>
@@ -18,22 +20,28 @@
 		    function setData(jsml)
 		    {
 			    data = JSML.parse(jsml) || {};
+			    var myForm = document.getElementById("myForm");
 			    myForm.lastName.value = data.lastName || "";
 			    myForm.firstName.value = data.firstName || "";
 			    
 			    data.relatives = data.relatives || [];
 			    
 			    // create relatives table
-		        relTable = new Table(relativesTable,
-				    [ // columns
-				    {heading: "Name", getter: function(item) { return item.name; }},
-				    {heading: "Relationship", getter: function(item) { return item.relationship; }},
-				    {heading: "Doctor", getter: function(item) { return item.doctor; }}
-				    ], data.relatives);
+		        relTable = new Table(document.getElementById("relativesTable"),["name", "relationship", "doctor"]);
+		        relTable.rowCycleClassNames = ["row0", "row1"];
+		        relTable.formatCell = function(cell)
+		        {
+		            if(cell.propertyName == "doctor" && !cell.item.doctor)
+		            {
+		                cell.htmlCell.innerHTML = "N/A";
+		            }
+		        }
+		        relTable.bindItems(data.relatives);
 		    }
 		    
 		    function getData()
 		    {
+			    var myForm = document.getElementById("myForm");
 		        data.lastName = myForm.lastName.value;
 		        data.firstName =  myForm.firstName.value;
 				return JSML.create(data, "data");
@@ -41,6 +49,7 @@
 
 			function onFindStaff()
 			{
+			    var myForm = document.getElementById("myForm");
 			    var query = myForm.relativeDoctor.value || "";
 			    var result = Ris.resolveStaffName(query);
 			    if(result)
@@ -49,6 +58,7 @@
 			
 			function onAddRelative()
 			{
+			    var myForm = document.getElementById("myForm");
 			    data.relatives.add( {
 			        name: myForm.relativeName.value,
 			        relationship: myForm.relationship.value,
@@ -57,14 +67,23 @@
 			
 			function onDeleteRelative()
 			{
-			    if(confirm("Deleted selected relatives?"))
+			    var checkedItems = relTable.getCheckedItems();
+			    if(checkedItems.length > 0)
 			    {
-			        relTable.getSelectedItems().each(
-			            function(item)
-			            {
-			                data.relatives.remove(item);
-			            });
+			        if(confirm("Deleted selected relatives?"))
+			        {
+			            checkedItems.each(function(item) { data.relatives.remove(item); });
+			        }
 			    }
+			    else
+			    {
+			        alert("Nothing selected");
+			    }
+			}
+			function onRelativesCheckAllNone()
+			{
+			    var allNoneCheckBox = document.getElementById("relativesCheckAllNone");
+			    data.relatives.each(function(item) { relTable.setItemCheckState(item, allNoneCheckBox.checked); });
 			}
 		</script>
 	</head>
@@ -94,11 +113,11 @@
 		    <input type="button" value="Delete" onclick="javascript: onDeleteRelative()" />
 		</p>
 			<table id="relativesTable">
-			  <tr bgcolor="lightskyblue">
-			    <td></td>
-				<td>Name</td>
-				<td>Relationship</td>
-				<td>Doctor</td>
+			  <tr>
+			    <td><input id="relativesCheckAllNone" type="checkbox" onclick="javascript: onRelativesCheckAllNone()" />All/None</td>
+				<td class="tableheading">Name</td>
+				<td class="tableheading">Relationship</td>
+				<td class="tableheading">Doctor</td>
 			  </tr>
 			</table>
 		</form>
