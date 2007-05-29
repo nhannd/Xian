@@ -326,7 +326,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 });
 
             binding.ResourceResolverProvider = delegate(RequestedProcedureSummary rp) { return new ResourceResolver(this.GetType().Assembly); };
-            binding.IconSetProvider = delegate(RequestedProcedureSummary rp) { return new IconSet(IconScheme.Colour, "OpenItemSmall.png", "OpenItemMedium.png", "OpenItemLarge.png"); };
+			binding.IconSetProvider = delegate(RequestedProcedureSummary rp) { return new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenLarge.png"); };
             
             return binding;
         }
@@ -342,13 +342,13 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(ModalityProcedureStepSummary mps)
                 {
                     if (mps.State.Code == "SC")
-                        return new IconSet(IconScheme.Colour, "Edit.png", "Edit.png", "Edit.png");
+						return new IconSet(IconScheme.Colour, "EditToolSmall.png", "EditToolSmall.png", "EditToolSmall.png");
                     else if (mps.State.Code == "IP")
                         return new IconSet(IconScheme.Colour, "AlertClock.png", "AlertClock.png", "AlertClock.png");
                     else if (mps.State.Code == "CM")
                         return new IconSet(IconScheme.Colour, "CheckSmall.png", "CheckSmall.png", "CheckSmall.png");
                     else if (mps.State.Code == "DC")
-                        return new IconSet(IconScheme.Colour, "Delete.png", "Delete.png", "Delete.png");
+						return new IconSet(IconScheme.Colour, "DeleteToolSmall.png", "DeleteToolSmall.png", "DeleteToolSmall.png");
 
                     return null;
                 };

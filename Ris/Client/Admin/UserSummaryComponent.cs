@@ -83,8 +83,8 @@ namespace ClearCanvas.Ris.Client.Admin
             _userTable = new UserTable();
 
             _userActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            _userActionHandler.AddAction(_addUserKey, SR.TitleAddUser, "Icons.Add.png", SR.TitleAddUser, AddUser);
-            _userActionHandler.AddAction(_updateUserKey, SR.TitleUpdateUser, "Icons.Edit.png", SR.TitleUpdateUser, UpdateSelectedUser);
+			_userActionHandler.AddAction(_addUserKey, SR.TitleAddUser, "Icons.AddToolSmall.png", SR.TitleAddUser, AddUser);
+			_userActionHandler.AddAction(_updateUserKey, SR.TitleUpdateUser, "Icons.EditToolSmall.png", SR.TitleUpdateUser, UpdateSelectedUser);
 
             InitialisePaging(_userActionHandler);
 

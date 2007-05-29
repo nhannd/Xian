@@ -170,72 +170,70 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\PatientReconciliationToolLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\PatientReconciliationToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\PatientReconciliationToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\HomeToolLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\HomeToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\HomeToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\SearchToolLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\SearchToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\SearchToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\PatientAddToolLarge.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\PatientAddToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="PatientPreview.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\PatientAddToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\PatientEditToolMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\OpenItemLarge.png" />
-    <EmbeddedResource Include="Icons\OpenItemMedium.png" />
-    <EmbeddedResource Include="Icons\OpenItemSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\PatientOpenToolLarge.png" />
-    <EmbeddedResource Include="Icons\PatientOpenToolMedium.png" />
-    <EmbeddedResource Include="Icons\PatientOpenToolSmall.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="actionmodels.xml" />
+    <EmbeddedResource Include="Icons\ProcessMessageToolLarge.png" />
+    <EmbeddedResource Include="Icons\ProcessMessageToolMedium.png" />
+    <EmbeddedResource Include="Icons\ProcessMessageToolSmall.png" />
+    <EmbeddedResource Include="Icons\SearchFolderClosedLarge.png" />
+    <EmbeddedResource Include="Icons\SearchFolderClosedMedium.png" />
+    <EmbeddedResource Include="Icons\SearchFolderClosedSmall.png" />
+    <EmbeddedResource Include="Icons\SearchFolderOpenLarge.png" />
+    <EmbeddedResource Include="Icons\SearchFolderOpenMedium.png" />
+    <EmbeddedResource Include="Icons\SearchFolderOpenSmall.png" />
+    <EmbeddedResource Include="Icons\CheckInToolLarge.png" />
+    <EmbeddedResource Include="Icons\CheckInToolMedium.png" />
+    <EmbeddedResource Include="Icons\CheckInToolSmall.png" />
+    <EmbeddedResource Include="Icons\AddToolLarge.png" />
+    <EmbeddedResource Include="Icons\AddToolMedium.png" />
+    <EmbeddedResource Include="Icons\CompleteToolLarge.png" />
+    <EmbeddedResource Include="Icons\CompleteToolMedium.png" />
+    <EmbeddedResource Include="Icons\ResumeToolLarge.png" />
+    <EmbeddedResource Include="Icons\ResumeToolMedium.png" />
+    <EmbeddedResource Include="Icons\StartToolLarge.png" />
+    <EmbeddedResource Include="Icons\StartToolMedium.png" />
+    <EmbeddedResource Include="Icons\SuspendToolLarge.png" />
+    <EmbeddedResource Include="Icons\SuspendToolMedium.png" />
+    <EmbeddedResource Include="Icons\DeleteToolLarge.png" />
+    <EmbeddedResource Include="Icons\DeleteToolMedium.png" />
+    <EmbeddedResource Include="Icons\SearchPatientToolLarge.png" />
+    <EmbeddedResource Include="Icons\SearchPatientToolMedium.png" />
+    <EmbeddedResource Include="Icons\SearchPatientToolSmall.png" />
+    <EmbeddedResource Include="Icons\PatientDetailsToolLarge.png" />
+    <EmbeddedResource Include="Icons\PatientDetailsToolMedium.png" />
+    <EmbeddedResource Include="Icons\PatientDetailsToolSmall.png" />
+    <EmbeddedResource Include="Icons\EditPatientToolMedium.png" />
+    <EmbeddedResource Include="Icons\EditPatientToolSmall.png" />
+    <EmbeddedResource Include="Icons\EditPatientToolToolLarge.png" />
+    <EmbeddedResource Include="Icons\ReconcilePatientToolLarge.png" />
+    <EmbeddedResource Include="Icons\ReconcilePatientToolMedium.png" />
+    <EmbeddedResource Include="Icons\ReconcilePatientToolSmall.png" />
+    <EmbeddedResource Include="Icons\RegistrationHomeToolLarge.png" />
+    <EmbeddedResource Include="Icons\RegistrationHomeToolMedium.png" />
+    <EmbeddedResource Include="Icons\RegistrationHomeToolSmall.png" />
+    <EmbeddedResource Include="Icons\TechnologistHomeToolLarge.png" />
+    <EmbeddedResource Include="Icons\TechnologistHomeToolMedium.png" />
+    <EmbeddedResource Include="Icons\TechnologistHomeToolSmall.png" />
+    <EmbeddedResource Include="Icons\AddPatientToolLarge.png" />
+    <EmbeddedResource Include="Icons\AddPatientToolMedium.png" />
+    <EmbeddedResource Include="Icons\AddPatientToolSmall.png" />
+    <EmbeddedResource Include="Icons\FolderClosedLarge.png" />
+    <EmbeddedResource Include="Icons\FolderOpenLarge.png" />
+    <EmbeddedResource Include="Icons\CompleteToolSmall.png" />
+    <EmbeddedResource Include="Icons\SuspendToolSmall.png" />
+    <EmbeddedResource Include="Icons\ResumeToolSmall.png" />
+    <EmbeddedResource Include="Icons\StartToolSmall.png" />
+    <EmbeddedResource Include="Icons\EditToolSmall.png" />
+    <EmbeddedResource Include="Icons\AddToolSmall.png" />
+    <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
     <EmbeddedResource Include="Icons\CheckSmall.png" />
-    <EmbeddedResource Include="Icons\Cancel.png" />
-    <EmbeddedResource Include="Icons\Complete.png" />
-    <EmbeddedResource Include="Icons\Resume.png" />
-    <EmbeddedResource Include="Icons\Start.png" />
-    <EmbeddedResource Include="Icons\Suspend.png" />
-    <EmbeddedResource Include="Icons\Delete.png" />
     <EmbeddedResource Include="TechnologistPreview.html" />
     <EmbeddedResource Include="Icons\AlertClock.png" />
     <EmbeddedResource Include="Icons\AlertMessenger.png" />
     <EmbeddedResource Include="Icons\AlertPen.png" />
     <EmbeddedResource Include="Icons\AlertWorld.png" />
-    <EmbeddedResource Include="Icons\Add.png" />
     <EmbeddedResource Include="Icons\NoteTestToolLarge.png" />
     <EmbeddedResource Include="Icons\NoteTestToolMedium.png" />
     <EmbeddedResource Include="Icons\NoteTestToolSmall.png" />
@@ -243,15 +241,11 @@
     <EmbeddedResource Include="Icons\FolderClosedSmall.png" />
     <EmbeddedResource Include="Icons\FolderOpenMedium.png" />
     <EmbeddedResource Include="Icons\FolderOpenSmall.png" />
-    <EmbeddedResource Include="Icons\Edit.png" />
     <EmbeddedResource Include="PatientProfileAdditionalInfoEditorComponent.val.xml" />
     <EmbeddedResource Include="RegistrationPreview.html" />
     <EmbeddedResource Include="OrderEntryComponent.val.xml" />
     <EmbeddedResource Include="PatientProfileDetailsEditorComponent.val.xml" />
     <EmbeddedResource Include="PatientProfileDiff.html" />
-    <EmbeddedResource Include="Icons\HL7QueueProcessItemToolMedium.png" />
-    <EmbeddedResource Include="Icons\HL7QueueProcessItemToolLarge.png" />
-    <EmbeddedResource Include="Icons\HL7QueueProcessItemToolSmall.png" />
     <EmbeddedResource Include="Icons\VisitSummaryToolLarge.png" />
     <EmbeddedResource Include="Icons\VisitSummaryToolMedium.png" />
     <EmbeddedResource Include="Icons\VisitSummaryToolSmall.png" />

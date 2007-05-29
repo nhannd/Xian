@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Start()
         {
             _documentActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            _documentActionHandler.AddAction("AddDocument", "Add Document", "Add.png", "Add Document",
+			_documentActionHandler.AddAction("AddDocument", "Add Document", "AddToolSmall.png", "Add Document",
                 delegate() { Platform.ShowMessageBox("Start importing a scan/fax document"); });
 
             AddDummyDocuments();

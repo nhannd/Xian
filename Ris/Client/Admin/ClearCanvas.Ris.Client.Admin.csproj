@@ -94,11 +94,6 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\AddPatientMedium.png" />
-    <EmbeddedResource Include="Icons\EditPatientMedium.png" />
-    <EmbeddedResource Include="Icons\FindPatientMedium.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
@@ -106,16 +101,15 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\Add.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\Edit.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\Delete.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\SaveAll.png" />
+    <EmbeddedResource Include="Icons\AddToolLarge.png" />
+    <EmbeddedResource Include="Icons\AddToolMedium.png" />
+    <EmbeddedResource Include="Icons\AddToolSmall.png" />
+    <EmbeddedResource Include="Icons\DeleteToolLarge.png" />
+    <EmbeddedResource Include="Icons\DeleteToolMedium.png" />
+    <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
+    <EmbeddedResource Include="Icons\EditToolLarge.png" />
+    <EmbeddedResource Include="Icons\EditToolMedium.png" />
+    <EmbeddedResource Include="Icons\EditToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

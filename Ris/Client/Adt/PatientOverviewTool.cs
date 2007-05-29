@@ -17,7 +17,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [ClickHandler("view1", "View")]
     [EnabledStateObserver("view1", "Enabled", "EnabledChanged")]
     [Tooltip("view1", "Open patient details")]
-    [IconSet("view1", IconScheme.Colour, "PatientOpenToolSmall.png", "PatientOpenToolMedium.png", "PatientOpenToolLarge.png")]
+	[IconSet("view1", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
 
     [MenuAction("view3", "RegistrationPreview-menu/Details")]
     [ButtonAction("view3", "folderexplorer-items-toolbar/Details")]
@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [ClickHandler("view3", "View")]
     [EnabledStateObserver("view3", "Enabled", "EnabledChanged")]
     [Tooltip("view3", "Open patient details")]
-    [IconSet("view3", IconScheme.Colour, "OpenItemSmall.png", "OpenItemMedium.png", "OpenItemLarge.png")]
+	[IconSet("view3", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
 
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]

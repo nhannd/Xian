@@ -18,15 +18,15 @@ namespace ClearCanvas.Ris.Client
         {
             if (add)
             {
-                this.AddAction("Add", SR.TitleAdd, "Icons.Add.png");
+				this.AddAction("Add", SR.TitleAdd, "Icons.AddToolSmall.png");
             }
             if (edit)
             {
-                this.AddAction("Edit", SR.TitleEdit, "Icons.Edit.png");
+				this.AddAction("Edit", SR.TitleEdit, "Icons.EditToolSmall.png");
             }
             if (delete)
             {
-                this.AddAction("Delete", SR.TitleDelete, "Icons.Delete.png");
+				this.AddAction("Delete", SR.TitleDelete, "Icons.DeleteToolSmall.png");
             }
         }
 

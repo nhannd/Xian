@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [MenuAction("launch", "global-menus/Go/Technologist Home")]
     [ButtonAction("launch", "global-toolbars/Go/Technologist Home")]
     [Tooltip("launch", "Technologist Home")]
-    [IconSet("launch", IconScheme.Colour, "Icons.HomeToolSmall.png", "Icons.HomeToolMedium.png", "Icons.HomeToolLarge.png")]
+	[IconSet("launch", IconScheme.Colour, "Icons.TechnologistHomeToolSmall.png", "Icons.TechnologistHomeToolMedium.png", "Icons.TechnologistHomeToolLarge.png")]
     [ClickHandler("launch", "Launch")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class TechnologistHomeTool : Tool<IDesktopToolContext>

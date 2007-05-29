@@ -152,15 +152,6 @@
     <EmbeddedResource Include="AcquisitionWorkflowPreview.html" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\Add.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\Delete.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Icons\Edit.png" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="AddressesSummaryComponent.val.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -194,8 +185,13 @@
     <EmbeddedResource Include="ContactPersonEditorComponent.val.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Icons\Previous.png" />
-    <EmbeddedResource Include="Icons\Next.png" />
+    <EmbeddedResource Include="Icons\AddToolSmall.png" />
+    <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
+    <EmbeddedResource Include="Icons\EditToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\NextPageToolSmall.png" />
+    <EmbeddedResource Include="Icons\PreviousPageToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

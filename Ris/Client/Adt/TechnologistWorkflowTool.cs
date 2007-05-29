@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
     [MenuAction("apply", "folderexplorer-items-contextmenu/Start")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Start")]
-    [IconSet("apply", IconScheme.Colour, "Start.png", "Start.png", "Start.png")]
+	[IconSet("apply", IconScheme.Colour, "StartToolSmall.png", "StartToolMedium.png", "StartToolLarge.png")]
     [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
@@ -115,7 +115,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
     [MenuAction("apply", "folderexplorer-items-contextmenu/Complete")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Complete")]
-    [IconSet("apply", IconScheme.Colour, "Complete.png", "Complete.png", "Complete.png")]
+	[IconSet("apply", IconScheme.Colour, "CompleteToolSmall.png", "CompleteToolMedium.png", "CompleteToolLarge.png")]
     [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
@@ -153,7 +153,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
     [MenuAction("apply", "folderexplorer-items-contextmenu/Cancel")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel")]
-    [IconSet("apply", IconScheme.Colour, "Cancel.png", "Cancel.png", "Cancel.png")]
+	[IconSet("apply", IconScheme.Colour, "DeleteToolSmall.png", "DeleteToolMedium.png", "DeleteToolLarge.png")]
     [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
@@ -191,7 +191,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
     [MenuAction("apply", "folderexplorer-items-contextmenu/Suspend")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Suspend")]
-    [IconSet("apply", IconScheme.Colour, "Suspend.png", "Suspend.png", "Suspend.png")]
+	[IconSet("apply", IconScheme.Colour, "SuspendToolSmall.png", "SuspendToolMedium.png", "SuspendToolLarge.png")]
     [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
@@ -229,7 +229,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
     [MenuAction("apply", "folderexplorer-items-contextmenu/Resume")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/Resume")]
-    [IconSet("apply", IconScheme.Colour, "Resume.png", "Resume.png", "Resume.png")]
+	[IconSet("apply", IconScheme.Colour, "ResumeToolSmall.png", "ResumeToolMedium.png", "ResumeToolLarge.png")]
     [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]

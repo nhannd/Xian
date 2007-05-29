@@ -100,9 +100,9 @@ namespace ClearCanvas.Ris.Client
             _staffTable = new StaffTable();
 
             _staffActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            _staffActionHandler.AddAction(_addStaffKey, SR.TitleAddPractitioner, "Icons.Add.png", SR.TitleAddPractitioner, AddPractitioner);
-            _staffActionHandler.AddAction(_addPractionerKey, SR.TitleAddStaff, "Icons.Add.png", SR.TitleAddStaff, AddStaff);
-            _staffActionHandler.AddAction(_updateStaffKey, SR.TitleUpdateStaff, "Icons.Edit.png", SR.TitleUpdateStaff,UpdateSelectedStaff);
+            _staffActionHandler.AddAction(_addStaffKey, SR.TitleAddPractitioner, "Icons.AddToolSmall.png", SR.TitleAddPractitioner, AddPractitioner);
+			_staffActionHandler.AddAction(_addPractionerKey, SR.TitleAddStaff, "Icons.AddToolSmall.png", SR.TitleAddStaff, AddStaff);
+			_staffActionHandler.AddAction(_updateStaffKey, SR.TitleUpdateStaff, "Icons.EditToolSmall.png", SR.TitleUpdateStaff, UpdateSelectedStaff);
 
             InitialisePaging(_staffActionHandler);
 

@@ -19,7 +19,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [ClickHandler("edit1", "Apply")]
     [EnabledStateObserver("edit1", "Enabled", "EnabledChanged")]
     [Tooltip("edit1", "Edit Patient Information")]
-    [IconSet("edit1", IconScheme.Colour, "Icons.PatientEditToolMedium.png", "Icons.PatientEditToolMedium.png", "Icons.PatientEditToolMedium.png")]
+	[IconSet("edit1", IconScheme.Colour, "Icons.EditPatientToolSmall.png", "Icons.EditPatientToolMedium.png", "Icons.EditPatientToolLarge.png")]
     [ActionPermission("edit1", ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
 
     [ButtonAction("edit3", "folderexplorer-items-toolbar/Edit")]
@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [ClickHandler("edit3", "Apply")]
     [EnabledStateObserver("edit3", "Enabled", "EnabledChanged")]
     [Tooltip("edit3", "Edit Patient Information")]
-    [IconSet("edit3", IconScheme.Colour, "Icons.PatientEditToolMedium.png", "Icons.PatientEditToolMedium.png", "Icons.PatientEditToolMedium.png")]
+    [IconSet("edit3", IconScheme.Colour, "Icons.EditPatientToolSmall.png", "Icons.EditPatientToolMedium.png", "Icons.EditPatientToolLarge.png")]
     [ActionPermission("edit3", ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
 
     [ExtensionOf(typeof(PatientOverviewToolExtensionPoint))]

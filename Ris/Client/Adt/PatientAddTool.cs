@@ -14,7 +14,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [MenuAction("apply", "global-menus/Patient/New Patient...")]
     [ButtonAction("apply", "global-toolbars/Patient/PatientAddTool")]
     [Tooltip("apply", "New Patient")]
-    [IconSet("apply", IconScheme.Colour, "Icons.PatientAddToolSmall.png", "Icons.PatientAddToolMedium.png", "Icons.PatientAddToolLarge.png")]
+	[IconSet("apply", IconScheme.Colour, "Icons.AddPatientToolSmall.png", "Icons.AddPatientToolMedium.png", "Icons.AddPatientToolLarge.png")]
     [ClickHandler("apply", "Apply")]
     [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
 

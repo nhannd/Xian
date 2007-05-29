@@ -22,10 +22,10 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             : base(folderSystem, "Scheduled")
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "Edit.png", "Option",
+			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
-            
-            this.OpenIconSet = new IconSet(IconScheme.Colour, "OpenItemSmall.png", "OpenItemMedium.png", "OpenItemLarge.png");
+
+			this.OpenIconSet = new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenLarge.png");
             this.IconSet = this.OpenIconSet;
 
             this.RefreshTime = 30000;
@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             : base(folderSystem, "Checked In", new DropHandlerExtensionPoint())
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "Edit.png", "Option",
+			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 30000;
@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             : base(folderSystem, "In Progress")
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "Edit.png", "Option",
+			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 30000;
@@ -99,7 +99,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             : base(folderSystem, "Completed")
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "Edit.png", "Option",
+			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 30000;
@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             : base(folderSystem, "Cancelled", new DropHandlerExtensionPoint())
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "Edit.png", "Option",
+			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 30000;
@@ -151,8 +151,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         public SearchFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Search")
         {
-            this.OpenIconSet = new IconSet(IconScheme.Colour, "SearchToolSmall.png", "SearchToolMedium.png", "SearchToolLarge.png");
-            this.ClosedIconSet = this.OpenIconSet;
+			this.OpenIconSet = new IconSet(IconScheme.Colour, "SearchFolderOpenSmall.png", "SearchFolderOpenMedium.png", "SearchFolderOpenLarge.png");
+			this.ClosedIconSet = new IconSet(IconScheme.Colour, "SearchFolderClosedSmall.png", "SearchFolderClosedMedium.png", "SearchFolderClosedLarge.png");
             this.IconSet = this.OpenIconSet;
 
             this.RefreshTime = 0;

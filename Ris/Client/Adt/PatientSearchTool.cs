@@ -12,7 +12,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [ButtonAction("search", "folderexplorer-folders-toolbar/Search")]
     [ButtonAction("search", "folders-toolbar/Search")]
     [Tooltip("search", "Search for a patient")]
-    [IconSet("search", IconScheme.Colour, "Icons.SearchToolSmall.png", "Icons.SearchToolMedium.png", "Icons.SearchToolLarge.png")]
+	[IconSet("search", IconScheme.Colour, "Icons.SearchPatientToolSmall.png", "Icons.SearchPatientToolMedium.png", "Icons.SearchPatientToolLarge.png")]
     [ClickHandler("search", "Search")]
 
     [ExtensionOf(typeof(RegistrationWorkflowFolderToolExtensionPoint))]

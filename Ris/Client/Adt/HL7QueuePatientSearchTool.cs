@@ -17,14 +17,14 @@ namespace ClearCanvas.Ris.Client.Adt
     [ClickHandler("view1", "View")]
     [EnabledStateObserver("view1", "Enabled", "EnabledChanged")]
     [Tooltip("view1", "Open patient details")]
-    [IconSet("view1", IconScheme.Colour, "PatientOpenToolSmall.png", "PatientOpenToolMedium.png", "PatientOpenToolLarge.png")]
+	[IconSet("view1", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
 
     [MenuAction("view2", "hl7Queue-contextmenu/View Details")]
     [ButtonAction("view2", "hl7Queue-toolbar/Details")]
     [ClickHandler("view2", "View")]
     [EnabledStateObserver("view2", "Enabled", "EnabledChanged")]
     [Tooltip("view2", "Open patient details")]
-    [IconSet("view2", IconScheme.Colour, "OpenItemSmall.png", "OpenItemMedium.png", "OpenItemLarge.png")]
+	[IconSet("view2", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolSmall.png", "PatientDetailsToolSmall.png")]
 
     [ExtensionOf(typeof(HL7QueueToolExtensionPoint))]
     public class HL7QueuePatientSearchTool : Tool<IHL7QueueToolContext>

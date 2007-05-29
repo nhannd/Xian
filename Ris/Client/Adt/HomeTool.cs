@@ -15,7 +15,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [MenuAction("launch", "global-menus/Go/Registration Home")]
     [ButtonAction("launch", "global-toolbars/Go/Registration Home")]
     [Tooltip("launch", "Registration Home")]
-    [IconSet("launch", IconScheme.Colour, "Icons.HomeToolSmall.png", "Icons.HomeToolMedium.png", "Icons.HomeToolLarge.png")]
+	[IconSet("launch", IconScheme.Colour, "Icons.RegistrationHomeToolSmall.png", "Icons.RegistrationHomeToolMedium.png", "Icons.RegistrationHomeToolLarge.png")]
     [ClickHandler("launch", "Launch")]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class HomeTool : Tool<IDesktopToolContext>

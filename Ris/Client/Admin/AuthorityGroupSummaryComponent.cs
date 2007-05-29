@@ -83,8 +83,8 @@ namespace ClearCanvas.Ris.Client.Admin
             _authorityGroupTable = new AuthorityGroupTable();
 
             _authorityGroupActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            _authorityGroupActionHandler.AddAction(_addAuthorityGroupKey, SR.TitleAddUser, "Icons.Add.png", SR.TitleAddAuthorityGroup, AddAuthorityGroup);
-            _authorityGroupActionHandler.AddAction(_updateAuthorityGroupKey, SR.TitleUpdateAuthorityGroup, "Icons.Edit.png", SR.TitleUpdateAuthorityGroup, UpdateSelectedAuthorityGroup);
+            _authorityGroupActionHandler.AddAction(_addAuthorityGroupKey, SR.TitleAddUser, "Icons.AddToolSmall.png", SR.TitleAddAuthorityGroup, AddAuthorityGroup);
+            _authorityGroupActionHandler.AddAction(_updateAuthorityGroupKey, SR.TitleUpdateAuthorityGroup, "Icons.EditToolSmall.png", SR.TitleUpdateAuthorityGroup, UpdateSelectedAuthorityGroup);
 
             InitialisePaging(_authorityGroupActionHandler);
 

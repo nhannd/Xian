@@ -18,8 +18,8 @@ namespace ClearCanvas.Ris.Client
             _controller = controller;
             _table = table;
 
-            this.AddAction("Previous", SR.TitlePrevious, "Icons.Previous.png");
-            this.AddAction("Next", SR.TitleNext, "Icons.Next.png");
+			this.AddAction("Previous", SR.TitlePrevious, "Icons.PreviousPageToolSmall.png");
+            this.AddAction("Next", SR.TitleNext, "Icons.NextPageToolSmall.png");
 
             Next.SetClickHandler(delegate { PageChangeActionHandler(_controller.GetNext()); });
             Previous.SetClickHandler(delegate { PageChangeActionHandler(_controller.GetPrev()); });

@@ -17,7 +17,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [ClickHandler("process", "Process")]
     [EnabledStateObserver("process", "Enabled", "EnabledChanged")]
     [Tooltip("process", "Process Message")]
-    [IconSet("process", IconScheme.Colour, "HL7QueueProcessItemToolSmall.png", "HL7QueueProcessItemToolMedium.png", "HL7QueueProcessItemToolLarge.png")]
+	[IconSet("process", IconScheme.Colour, "ProcessMessageToolSmall.png", "ProcessMessageToolMedium.png", "ProcessMessageToolLarge.png")]
 
     [ExtensionOf(typeof(HL7QueueToolExtensionPoint))]
     public class HL7QueueProcessItemTool : Tool<IHL7QueueToolContext>
