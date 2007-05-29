@@ -21,36 +21,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         #region IStaffAdminService Members
 
         [ReadOperation]
-        public FindStaffsResponse FindStaffs(FindStaffsRequest request)
-        {
-            if (string.IsNullOrEmpty(request.FamilyName))
-            {
-                throw new RequestValidationException(SR.ExceptionFamilyNameMissing);
-            }
-
-            StaffSearchCriteria criteria = new StaffSearchCriteria();
-            criteria.Name.FamilyName.Like(StringCriteriaWithWildcardAppendedTo(request.FamilyName));
-            if (request.GivenName != null)
-            {
-                criteria.Name.GivenName.Like(StringCriteriaWithWildcardAppendedTo(request.GivenName));
-            }
-
-            StaffAssembler assembler = new StaffAssembler();
-            return new FindStaffsResponse(
-                CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
-                    PersistenceContext.GetBroker<IStaffBroker>().Find(criteria),
-                    delegate(Staff s)
-                    {
-                        return assembler.CreateStaffSummary(s);
-                    }));
-        }
-
-        private string StringCriteriaWithWildcardAppendedTo(string name)
-        {
-            return name.IndexOf('%') < 0 ? name + "%" : name;
-        }
-
-        [ReadOperation]
         public ListStaffResponse ListStaff(ListStaffRequest request)
         {
             StaffSearchCriteria criteria = new StaffSearchCriteria();

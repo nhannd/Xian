@@ -9,11 +9,16 @@
 		<script>
 		    var data;
 		    var relTable;
+		    var validation = new Validation();
 		    
 		    function initPage()
 		    {
-		        // if running in a plain old browser, call setData 
-				if(!window.external)
+			    var myForm = document.getElementById("myForm");
+		        validation.addValidator(myForm.lastName,
+		            function() { return myForm.lastName.value ? "" : "last name required"; });
+		    
+		        // if the Ris object is not defined, we are running in a plain old browser, so call setData manually
+				if(!Ris)
 				    setData(null);
 		    }
 		    
@@ -29,11 +34,11 @@
 			    // create relatives table
 		        relTable = new Table(document.getElementById("relativesTable"),["name", "relationship", "doctor"]);
 		        relTable.rowCycleClassNames = ["row0", "row1"];
-		        relTable.formatCell = function(cell)
+		        relTable.formatCell = function(sender, args)
 		        {
-		            if(cell.propertyName == "doctor" && !cell.item.doctor)
+		            if(args.propertyName == "doctor" && !args.item.doctor)
 		            {
-		                cell.htmlCell.innerHTML = "N/A";
+		                args.htmlCell.innerHTML = "N/A";
 		            }
 		        }
 		        relTable.bindItems(data.relatives);
@@ -58,6 +63,7 @@
 			
 			function onAddRelative()
 			{
+			    validation.showErrors(true);
 			    var myForm = document.getElementById("myForm");
 			    data.relatives.add( {
 			        name: myForm.relativeName.value,

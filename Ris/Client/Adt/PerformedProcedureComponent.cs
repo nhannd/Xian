@@ -7,6 +7,8 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using System.Runtime.InteropServices;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -64,14 +66,39 @@ namespace ClearCanvas.Ris.Client.Adt
                 _component = component;
             }
 
-            public void ShowMessageBox(string message)
+            public bool Confirm(string message, string type)
+            {
+                if (string.IsNullOrEmpty(type))
+                    type = "okcancel";
+                type = type.ToLower();
+
+                if (type == MessageBoxActions.OkCancel.ToString().ToLower())
+                {
+                    return _component.Host.ShowMessageBox(message, MessageBoxActions.OkCancel) == DialogBoxAction.Ok;
+                }
+                else if (type == MessageBoxActions.YesNo.ToString().ToLower())
+                {
+                    return _component.Host.ShowMessageBox(message, MessageBoxActions.YesNo) == DialogBoxAction.Yes;
+                }
+                else
+                {
+                    throw new NotSupportedException("Type must be YesNo or OkCancel");
+                }
+            }
+
+            public void Alert(string message)
             {
                 _component.Host.ShowMessageBox(message, MessageBoxActions.Ok);
             }
 
-            public string LookupStaff(string search)
+            public string ResolveStaffName(string search)
             {
-                return "";
+                StaffSummary staff = null;
+                if (StaffFinder.ResolveNameInteractive(search, _component.Host.DesktopWindow, out staff))
+                {
+                    return PersonNameFormat.Format(staff.PersonNameDetail);
+                }
+                return null;
             }
         }
 

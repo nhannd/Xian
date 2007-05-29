@@ -154,8 +154,6 @@
     <Compile Include="Admin\PractitionerAdmin\UpdatePractitionerResponse.cs" />
     <Compile Include="Admin\StaffAdmin\AddStaffRequest.cs" />
     <Compile Include="Admin\StaffAdmin\AddStaffResponse.cs" />
-    <Compile Include="Admin\StaffAdmin\FindStaffsRequest.cs" />
-    <Compile Include="Admin\StaffAdmin\FindStaffsResponse.cs" />
     <Compile Include="Admin\StaffAdmin\ListStaffRequest.cs" />
     <Compile Include="Admin\StaffAdmin\ListStaffResponse.cs" />
     <Compile Include="Admin\StaffAdmin\IStaffAdminService.cs" />

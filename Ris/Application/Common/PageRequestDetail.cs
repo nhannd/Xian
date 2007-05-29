@@ -16,6 +16,12 @@ namespace ClearCanvas.Ris.Application.Common
             MaxRows = PageRequestDetail.Ignore;
         }
 
+        public PageRequestDetail(int firstRow, int maxRows)
+        {
+            this.FirstRow = firstRow;
+            this.MaxRows = maxRows;
+        }
+
         [DataMember]
         public int FirstRow;
 

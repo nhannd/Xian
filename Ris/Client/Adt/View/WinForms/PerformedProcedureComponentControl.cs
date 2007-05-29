@@ -41,11 +41,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         void _procedureReport_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
         {
-            string data = _component.ReportData;
-            if (!string.IsNullOrEmpty(data))
-            {
-                _procedureReport.Document.InvokeScript("setData", new object[] { data });
-            }
+             _procedureReport.Document.InvokeScript("setData", new object[] { _component.ReportData });
         }
 
         private void _saveButton_Click(object sender, EventArgs e)

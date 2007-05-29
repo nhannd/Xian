@@ -10,14 +10,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
     public interface IStaffAdminService
     {
         /// <summary>
-        /// Search for staffs by name
-        /// </summary>
-        /// <param name="request"><see cref="FindStaffsRequest"/></param>
-        /// <returns><see cref="FindStaffsResponse"/></returns>
-        [OperationContract]
-        FindStaffsResponse FindStaffs(FindStaffsRequest request);
-
-        /// <summary>
         /// Summary list of all staffs
         /// </summary>
         /// <param name="request"><see cref="ListAllStaffsRequest"/></param>

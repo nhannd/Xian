@@ -28,7 +28,7 @@ if(!Array.prototype.add){
 		var i = this.length;
 		this[i] = obj;
 		if(this.itemAdded)
-			this.itemAdded(obj, i);
+			this.itemAdded(this, {item: obj, index: i});
 	};
 }
 
@@ -103,7 +103,7 @@ if(!Array.prototype.removeAt)
 	{
 		var obj = this.splice(i, 1);
 		if(this.itemRemoved)
-			this.itemRemoved(obj, i);
+			this.itemRemoved(this, {item: obj, index: i});
 		return obj;
 	};
 }

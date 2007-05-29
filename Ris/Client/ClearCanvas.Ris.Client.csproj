@@ -105,6 +105,7 @@
     <Compile Include="Formatting\TelephoneFormat.cs" />
     <Compile Include="StaffDetailsEditorComponent.cs" />
     <Compile Include="StaffEditorComponent.cs" />
+    <Compile Include="StaffFinder.cs" />
     <Compile Include="StaffSummaryComponent.cs" />
     <Compile Include="StaffTable.cs" />
     <Compile Include="WorkflowFolderSystem.cs" />

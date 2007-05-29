@@ -59,8 +59,8 @@ function Table(htmlTable, propNames, items)
 	    
 	    // bind to events on the items array
 	    var table = this;
-	    this.items.itemAdded = function(obj, index) { table._addRow(obj); }
-	    this.items.itemRemoved = function(obj, index) { table._removeRow(index+1); }
+	    this.items.itemAdded = function(sender, args) { table._addRow(args.item); }
+	    this.items.itemRemoved = function(sender, args) { table._removeRow(args.index+1); }
     	
 	    // init table with items array
 	    this.items.each(function(item) { table._addRow(item); });
@@ -93,7 +93,7 @@ function Table(htmlTable, propNames, items)
 		    
 		// fire custom formatting event    
 		if(this.formatRow)
-		    this.formatRow({ htmlRow: tr, rowIndex: index-1, item: obj });
+		    this.formatRow(this, { htmlRow: tr, rowIndex: index-1, item: obj });
 		
 		// add checkbox cell at start of row
 		var td = tr.insertCell(0);
@@ -106,9 +106,11 @@ function Table(htmlTable, propNames, items)
 		for(var i=0; i < this.propNames.length; i++)
 		{
 			td = tr.insertCell(i+1);
+			// by default, set cell content to the value of the specified property of the object
 			td.innerHTML = ((obj[this.propNames[i]] || "")+"").escapeHTML();
+			// fire custom formatting event, which may itself set the innerHTML property to override default cell content
 			if(this.formatCell)
-			    this.formatCell( { htmlCell: td, propertyName: this.propNames[i], item: obj, rowIndex: index-1, colIndex: i });
+			    this.formatCell(this, { htmlCell: td, propertyName: this.propNames[i], item: obj, rowIndex: index-1, colIndex: i });
 		}
 	}
 	this._removeRow = function(index)
@@ -124,4 +126,52 @@ function Table(htmlTable, propNames, items)
 	
 	// bind this table to items array
 	this.bindItems(items || []);
+}
+
+function Validation()
+{
+    this._validators = [];
+    
+    this.addValidator = function(htmlElement, errorFunc)
+    {
+        var validator = { img: document.createElement("img"), div: document.createElement("div"), errorCallback: errorFunc };
+        validator.img.src = "error.gif";
+        validator.img.alt = "Error";
+        validator.div.style.visibility = "hidden";
+        
+        validator.div.appendChild(validator.img);
+        htmlElement.parentNode.insertBefore(validator.div, htmlElement);
+        
+        this._validators.add( validator );
+    }
+    
+    this.hasErrors = function()
+    {
+        return this._validators.select(
+            function(validator) {
+                var message = validator.errorCallback();
+                return message && message.length > 0;
+            }).length > 0;
+    }
+    
+    this.showErrors = function(show)
+    {
+        this._validators.each(
+            function(validator)
+            {
+                if(show)
+                {
+                    var message = validator.errorCallback();
+                    if(message && message.length > 0)
+                    {
+                        validator.img.alt = message;
+                        validator.div.style.visibility = "visible";
+                    }
+                    else
+                        validator.div.style.visibility = "hidden";
+                }
+                else
+                    validator.div.style.visibility = "hidden";
+            });
+    }
 }

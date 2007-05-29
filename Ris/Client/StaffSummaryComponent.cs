@@ -109,6 +109,12 @@ namespace ClearCanvas.Ris.Client
             _listRequest = new ListStaffRequest();
 
             base.Start();
+
+            // if the last name or first name properties are valued, generate an initial search
+            if (!string.IsNullOrEmpty(_lastName) || !string.IsNullOrEmpty(_firstName))
+            {
+                Search();
+            }
         }
 
         private void InitialisePaging(ActionModelNode actionModelNode)
