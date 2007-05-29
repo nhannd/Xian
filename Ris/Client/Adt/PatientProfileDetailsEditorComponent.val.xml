@@ -25,7 +25,7 @@
   </spec>
 
   <spec id="HealthcardProvince">
-    <not-null test="$.HealthcardProvince"/>
+    <not-null test="$.HealthcardProvince" failMessage="Healthcard province is required"/>
   </spec>
 
   <spec id="HealthcardVersionCode">

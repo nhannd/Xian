@@ -37,11 +37,11 @@ namespace ClearCanvas.Ris.Client.Formatting
             // G g F f M m
             string result = format;
             result = result.Replace("%G", pn.GivenName == null ? "" : pn.GivenName);
-            result = result.Replace("%g", pn.GivenName == null ? "" : pn.GivenName.Substring(0, 1));
+            result = result.Replace("%g", pn.GivenName == null || pn.GivenName.Length == 0 ? "" : pn.GivenName.Substring(0, 1));
             result = result.Replace("%F", pn.FamilyName == null ? "" : pn.FamilyName);
-            result = result.Replace("%f", pn.FamilyName == null ? "" : pn.FamilyName.Substring(0, 1));
+            result = result.Replace("%f", pn.FamilyName == null || pn.FamilyName.Length == 0 ? "" : pn.FamilyName.Substring(0, 1));
             result = result.Replace("%M", pn.MiddleName == null ? "" : pn.MiddleName);
-            result = result.Replace("%m", pn.MiddleName == null ? "" : pn.MiddleName.Substring(0, 1));
+            result = result.Replace("%m", pn.MiddleName == null || pn.MiddleName.Length == 0 ? "" : pn.MiddleName.Substring(0, 1));
 
             return result.Trim();
         }

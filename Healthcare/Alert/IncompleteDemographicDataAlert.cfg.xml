@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<specifications>
+
+  <spec id="LastName">
+    <not-null test="$.Name.FamilyName" failMessage="family name is required"/>
+  </spec>
+
+  <spec id="FirstName">
+    <not-null test="$.Name.GivenName" failMessage="given name is required"/>
+  </spec>
+
+  <spec id="Healthcard">
+    <not-null test="$.Healthcard" failMessage="healthcard info is required"/>
+    <not-null test="$.Healthcard.Id" failMessage="healthcard ID is required"/>
+    <not-null test="$.Healthcard.AssigningAuthority" failMessage="healthcard assigning authority is required"/>
+  </spec>
+
+  <spec id="Addresses">
+    <true test="$.Addresses.Count > 0" failMessage="a residential address is required"/>
+    <any test="$.Addresses" failMessage="a residential address is required">
+      <true test="$.Type.ToString() == 'R'"/>
+    </any>
+  </spec>
+
+  <spec id="TelephoneNumbers">
+    <count test="$.TelephoneNumbers" min="1" failMessage="a residential telephone number is required"/>
+    <any test="$.TelephoneNumbers" failMessage="a residential telephone number is required">
+      <true test="$.Equipment.ToString() == 'PH'"/>
+      <true test="$.Use.ToString() == 'PRN'"/>
+    </any>
+  </spec>
+
+</specifications>

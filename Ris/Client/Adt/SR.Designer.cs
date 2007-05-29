@@ -619,6 +619,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} has incomplete demographic data: {1}.
+        /// </summary>
+        internal static string MessageAlertIncompleteDemographicData {
+            get {
+                return ResourceManager.GetString("MessageAlertIncompleteDemographicData", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} speaks: {1}.
         /// </summary>
         internal static string MessageAlertLanguageNotEnglish {

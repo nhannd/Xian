@@ -331,10 +331,10 @@ namespace ClearCanvas.Ris.Client.Adt
                     alertImageURI = "http://172.16.10.167/RisTemplates/AlertMessenger.png";
                     break;
                 case "Schedule Alert":
-                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertClock.jpg";
+                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertClock.png";
                     break;
                 default:
-                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertMessenger.jpg";
+                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertMessenger.png";
                     break;
             }
 
@@ -351,7 +351,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 case "Note Alert":
                     alertTooltip = String.Format(SR.MessageAlertHighSeverityNote
                         , patientName
-                        , StringUtilities.Combine<string>(detail.Reasons, ", "));
+                        , StringUtilities.Combine<string>(detail.Reasons,
+                        ", "));
                     break;
                 case "Language Alert":
                     alertTooltip = String.Format(SR.MessageAlertLanguageNotEnglish
@@ -361,7 +362,13 @@ namespace ClearCanvas.Ris.Client.Adt
                 case "Reconciliation Alert":
                     alertTooltip = String.Format(SR.MessageAlertUnreconciledRecords, patientName);
                     break;
+                case "Incomplete demographic data alert":
+                    alertTooltip = String.Format(SR.MessageAlertIncompleteDemographicData
+                        , patientName,
+                        StringUtilities.Combine<string>(detail.Reasons, ", "));
+                    break;
                 default:
+                    alertTooltip = StringUtilities.Combine<string>(detail.Reasons, ", ");
                     break;
             }
 

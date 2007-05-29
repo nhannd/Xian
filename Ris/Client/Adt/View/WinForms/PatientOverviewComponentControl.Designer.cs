@@ -57,9 +57,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._alertList.LargeImageList = this._alertIcons;
             this._alertList.Location = new System.Drawing.Point(500, 0);
             this._alertList.Margin = new System.Windows.Forms.Padding(0);
+            this._alertList.MultiSelect = false;
             this._alertList.Name = "_alertList";
             this._alertList.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this._alertList.RightToLeftLayout = true;
+            this._alertList.Scrollable = false;
             this._alertList.ShowItemToolTips = true;
             this._alertList.Size = new System.Drawing.Size(500, 76);
             this._alertList.SmallImageList = this._alertIcons;

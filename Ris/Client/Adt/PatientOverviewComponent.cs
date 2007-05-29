@@ -226,7 +226,13 @@ namespace ClearCanvas.Ris.Client.Adt
                 case "Reconciliation Alert":
                     alertTooltip = String.Format(SR.MessageAlertUnreconciledRecords, patientName);
                     break;
+                case "Incomplete demographic data alert":
+                    alertTooltip = String.Format(SR.MessageAlertIncompleteDemographicData
+                        , patientName,
+                        StringUtilities.Combine<string>(detail.Reasons, ", "));
+                    break;
                 default:
+                    alertTooltip = StringUtilities.Combine<string>(detail.Reasons, ", ");
                     break;
             }
 

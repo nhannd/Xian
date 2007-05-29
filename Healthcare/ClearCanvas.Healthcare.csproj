@@ -43,8 +43,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="*.gen.cs" />
-    <Compile Include="Alert\AddressAlert.cs" />
     <Compile Include="Alert\AlertNotification.cs" />
+    <Compile Include="Alert\IncompleteDemographicDataAlert.cs" />
     <Compile Include="Alert\PatientProfileAlertBase.cs" />
     <Compile Include="Alert\IPatientProfileAlert.cs" />
     <Compile Include="Alert\PatientAlertBase.cs" />
@@ -181,7 +181,7 @@
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Alert\AddressAlert.cfg.xml" />
+    <EmbeddedResource Include="Alert\IncompleteDemographicDataAlert.cfg.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -25,9 +25,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
-			this.OpenIconSet = new IconSet(IconScheme.Colour, "FolderOpenSmall.png", "FolderOpenMedium.png", "FolderOpenLarge.png");
-            this.IconSet = this.OpenIconSet;
-
             this.RefreshTime = 30000;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled";
         }
@@ -153,7 +150,10 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
 			this.OpenIconSet = new IconSet(IconScheme.Colour, "SearchFolderOpenSmall.png", "SearchFolderOpenMedium.png", "SearchFolderOpenLarge.png");
 			this.ClosedIconSet = new IconSet(IconScheme.Colour, "SearchFolderClosedSmall.png", "SearchFolderClosedMedium.png", "SearchFolderClosedLarge.png");
-            this.IconSet = this.OpenIconSet;
+            if (this.IsOpen)
+                this.IconSet = this.OpenIconSet;
+            else
+                this.IconSet = this.ClosedIconSet;
 
             this.RefreshTime = 0;
             //this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Search";

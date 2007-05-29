@@ -303,6 +303,9 @@
   <data name="MessageAlertHighSeverityNote" xml:space="preserve">
     <value>{0} has high severity notes: {1}</value>
   </data>
+  <data name="MessageAlertIncompleteDemographicData" xml:space="preserve">
+    <value>{0} has incomplete demographic data: {1}</value>
+  </data>
   <data name="MessageAlertLanguageNotEnglish" xml:space="preserve">
     <value>{0} speaks: {1}</value>
   </data>

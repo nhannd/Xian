@@ -37,8 +37,13 @@ namespace ClearCanvas.Healthcare.PatientReconciliation
             IList<PatientProfileMatch> highMatches = PatientProfileMatch.CreateList(targetProfile, broker.Find(high), PatientProfileMatch.ScoreValue.High);
 
             PatientProfileSearchCriteria moderateViaName = new PatientProfileSearchCriteria();
-            moderateViaName.Name.FamilyName.EqualTo(targetProfile.Name.FamilyName);
-            moderateViaName.Name.GivenName.EqualTo(targetProfile.Name.GivenName);
+
+            if (targetProfile.Name.FamilyName != null && targetProfile.Name.FamilyName.Length > 0)
+                moderateViaName.Name.FamilyName.EqualTo(targetProfile.Name.FamilyName);
+
+            if (targetProfile.Name.GivenName != null && targetProfile.Name.GivenName.Length > 0)
+                moderateViaName.Name.GivenName.EqualTo(targetProfile.Name.GivenName);
+
             moderateViaName.DateOfBirth.EqualTo(targetProfile.DateOfBirth);
             moderateViaName.Sex.EqualTo(targetProfile.Sex);
 
