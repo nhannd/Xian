@@ -160,6 +160,15 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A user with user ID &apos;{0}&apos; already exists.
+        /// </summary>
+        internal static string ExceptionUserIDAlreadyExists {
+            get {
+                return ResourceManager.GetString("ExceptionUserIDAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Checked In.
         /// </summary>
         internal static string TextCheckedIn {

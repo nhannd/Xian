@@ -153,4 +153,7 @@
   <data name="TextCheckedIn" xml:space="preserve">
     <value>Checked In</value>
   </data>
+  <data name="ExceptionUserIDAlreadyExists" xml:space="preserve">
+    <value>A user with user ID '{0}' already exists</value>
+  </data>
 </root>

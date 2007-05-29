@@ -10,6 +10,8 @@ using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common;
+using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
 {
@@ -92,8 +94,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         }
 
         [UpdateOperation]
+        [FaultContract(typeof(RequestValidationException))]
         public AddUserResponse AddUser(AddUserRequest request)
         {
+            if (UserIdExists(request.UserDetail.UserId))
+            {
+                throw new RequestValidationException(string.Format(SR.ExceptionUserIDAlreadyExists, request.UserDetail.UserId));
+            }
+
             User user = new User();
             UserAssembler assembler = new UserAssembler();
             assembler.UpdateUser(user, request.UserDetail, PersistenceContext);
@@ -114,9 +122,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         }
 
         [UpdateOperation]
+        [FaultContract(typeof(RequestValidationException))]
         public UpdateUserResponse UpdateUser(UpdateUserRequest request)
         {
             User user = (User)PersistenceContext.Load(request.UserRef);
+
+            if (user.UserName != request.UserDetail.UserId
+                && UserIdExists(request.UserDetail.UserId))
+            {
+                throw new RequestValidationException(string.Format(SR.ExceptionUserIDAlreadyExists, request.UserDetail.UserId));
+            }
+
             UserAssembler assembler = new UserAssembler();
             assembler.UpdateUser(user, request.UserDetail, PersistenceContext);
 
@@ -167,5 +183,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         }
 
         #endregion
+
+        private bool UserIdExists(string userId)
+        {
+            UserSearchCriteria criteria = new UserSearchCriteria();
+            criteria.UserName.EqualTo(userId);
+
+            IUserBroker broker = PersistenceContext.GetBroker<IUserBroker>();
+            return broker.Count(criteria) > 0;
+        }
     }
 }
