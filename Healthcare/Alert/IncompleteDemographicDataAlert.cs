@@ -23,17 +23,28 @@ namespace ClearCanvas.Healthcare.Alert
             }
         }
 
-        private IDictionary<string, ISpecification> _specs;
-
-        public IncompleteDemographicDataAlert()
-        {
-            LoadSpecifications();
-        }
-
         public override IAlertNotification Test(PatientProfile profile, IPersistenceContext context)
         {
             IncompleteDemographicDataAlertNotification alertNotification = new IncompleteDemographicDataAlertNotification();
-            foreach (KeyValuePair<string, ISpecification> kvp in _specs)
+
+            IDictionary<string, ISpecification> specs;
+
+            try
+            {
+                IncompleteDemographicDataAlertSettings settings = new IncompleteDemographicDataAlertSettings();
+                using (TextReader xml = new StringReader(settings.ValidationRules))
+                {
+                    SpecificationFactory specFactory = new SpecificationFactory(xml);
+                    specs = specFactory.GetAllSpecifications();
+                }
+            }
+            catch (Exception)
+            {
+                // no cfg file for this component
+                specs = new Dictionary<string, ISpecification>();
+            }
+            
+            foreach (KeyValuePair<string, ISpecification> kvp in specs)
             {
                 TestResult result = kvp.Value.Test(profile);
                 if (result.Success == false)
@@ -51,25 +62,6 @@ namespace ClearCanvas.Healthcare.Alert
         }
 
         #region Private Helpers
-
-        private void LoadSpecifications()
-        {
-            ResourceResolver rr = new ResourceResolver(this.GetType().Assembly);
-            string resourceName = string.Format("{0}.cfg.xml", this.GetType().Name);
-            try
-            {
-                using (Stream xmlStream = rr.OpenResource(resourceName))
-                {
-                    SpecificationFactory specFactory = new SpecificationFactory(xmlStream);
-                    _specs = specFactory.GetAllSpecifications();
-                }
-            }
-            catch (Exception)
-            {
-                // no cfg file for this component
-                _specs = new Dictionary<string, ISpecification>();
-            }
-        }
 
         private void ExtractFailureMessage(TestResultReason reason, List<string> failureMessages)
         {

@@ -45,6 +45,12 @@
     <Compile Include="*.gen.cs" />
     <Compile Include="Alert\AlertNotification.cs" />
     <Compile Include="Alert\IncompleteDemographicDataAlert.cs" />
+    <Compile Include="Alert\IncompleteDemographicDataAlertSettings.cs" />
+    <Compile Include="Alert\IncompleteDemographicDataAlertSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>IncompleteDemographicDataAlertSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Alert\PatientProfileAlertBase.cs" />
     <Compile Include="Alert\IPatientProfileAlert.cs" />
     <Compile Include="Alert\PatientAlertBase.cs" />
@@ -178,10 +184,14 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Alert\IncompleteDemographicDataAlertSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>IncompleteDemographicDataAlertSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Alert\IncompleteDemographicDataAlert.cfg.xml" />
+    <EmbeddedResource Include="Alert\IncompleteDemographicDataAlert.val.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
