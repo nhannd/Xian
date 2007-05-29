@@ -333,8 +333,11 @@ namespace ClearCanvas.Ris.Client.Adt
                 case "Schedule Alert":
                     alertImageURI = "http://172.16.10.167/RisTemplates/AlertClock.png";
                     break;
+                case "Incomplete demographic data alert":
+                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertIncompleteData.png";
+                    break;
                 default:
-                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertMessenger.png";
+                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertGeneral.png";
                     break;
             }
 

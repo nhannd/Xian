@@ -198,8 +198,11 @@ namespace ClearCanvas.Ris.Client.Adt
                 case "Schedule Alert":
                     icon = "AlertClock.png";
                     break;
+                case "Incomplete demographic data alert":
+                    icon = "AlertIncompleteData.png";
+                    break;
                 default:
-                    icon = "AlertMessenger.png";
+                    icon = "AlertGeneral.png";
                     break;
             }
 
