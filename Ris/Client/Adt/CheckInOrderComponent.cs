@@ -57,6 +57,10 @@ namespace ClearCanvas.Ris.Client.Adt
                                     {
                                         CheckInOrderTableEntry entry = new CheckInOrderTableEntry(item);
                                         entry.CheckedChanged += new EventHandler(OrderCheckedStateChangedEventHandler);
+
+                                        if (item.OrderRef == _worklistItem.OrderRef)
+                                            entry.Checked = true;
+
                                         return entry;
                                     }));
                     });
@@ -64,12 +68,6 @@ namespace ClearCanvas.Ris.Client.Adt
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-
-            // Special case for 1 Requested Procedure.  Check the item right away
-            if (_checkInOrderTable.Items.Count == 1)
-            {
-                _checkInOrderTable.Items[0].Checked = true;
             }
 
             base.Start();

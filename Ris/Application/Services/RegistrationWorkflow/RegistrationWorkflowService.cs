@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
-            return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.WorklistItem.PatientProfileRef)));
+            return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.WorklistItem.PatientProfileRef, request.WorklistItem.OrderRef)));
         }
 
         [ReadOperation]
@@ -200,7 +200,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
             IRegistrationWorklistBroker broker = this.PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
 
-            PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).PatientProfile, EntityLoadFlags.Proxy);
+            PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).ProfileRef, EntityLoadFlags.Proxy);
             return broker.GetOrdersForCheckInCount(profile.Patient) > 0;
         }
 
@@ -209,7 +209,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
             IRegistrationWorklistBroker broker = this.PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
 
-            PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).PatientProfile, EntityLoadFlags.Proxy);
+            PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).ProfileRef, EntityLoadFlags.Proxy);
             return broker.GetOrdersForCancelCount(profile.Patient) > 0;
         }
 

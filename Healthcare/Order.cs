@@ -81,7 +81,11 @@ namespace ClearCanvas.Healthcare {
                     ModalityProcedureStep sps = new ModalityProcedureStep(rp, spt, spt.DefaultModality);
 
                     if (scheduleOrder)
+                    {
                         sps.Scheduling.StartTime = schedulingRequestDateTime;
+                        if (order.EarliestScheduledDateTime == null || order.EarliestScheduledDateTime.Value.CompareTo(sps.Scheduling.StartTime) > 0)
+                            order.EarliestScheduledDateTime = sps.Scheduling.StartTime;
+                    }
 
                     rp.ProcedureSteps.Add(sps);
                 }

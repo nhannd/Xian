@@ -16,20 +16,20 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(RegistrationWorklistItem item) { return item.Mrn.AssigningAuthority; }, 0.5f));
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnMRN,
                 delegate(RegistrationWorklistItem item) { return item.Mrn.Id; }, 1.0f));
-            
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnName,
-                delegate(RegistrationWorklistItem item) { return PersonNameFormat.Format(item.Name); }, 2.0f));
-
+                delegate(RegistrationWorklistItem item) { return PersonNameFormat.Format(item.Name); }, 1.5f));
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnHealthcardNumber,
                 delegate(RegistrationWorklistItem item) { return item.Healthcard.Id; }, 1.0f));
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnDateOfBirth,
                 delegate(RegistrationWorklistItem item) { return Format.Date(item.DateOfBirth); }, 1.0f));
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnSex,
                 delegate(RegistrationWorklistItem item) { return item.Sex.Value; }, 0.5f));
+            this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnScheduledFor,
+                delegate(RegistrationWorklistItem item) { return Format.Time(item.EarliestScheduledTime); }, 1.0f));
 
-            // Sort the table by Name initially
-            int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<RegistrationWorklistItem> column) 
-                { return column.Name.Equals(SR.ColumnName); });
+            // Sort the table by Scheduled Time initially
+            int sortColumnIndex = this.Columns.FindIndex(delegate(TableColumnBase<RegistrationWorklistItem> column)
+                { return column.Name.Equals(SR.ColumnScheduledFor); });
 
             this.Sort(new TableSortParams(this.Columns[sortColumnIndex], true));
         }

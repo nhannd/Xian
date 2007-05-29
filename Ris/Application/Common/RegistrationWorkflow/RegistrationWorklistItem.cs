@@ -9,24 +9,31 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class RegistrationWorklistItem : DataContractBase
     {
-        public RegistrationWorklistItem(EntityRef patientProfileRef,
+        public RegistrationWorklistItem(EntityRef profileRef,
+            EntityRef orderRef,
             string mrnID,
             string mrnAssigningAuthority,
             PersonNameDetail name,
             HealthcardDetail healthcard,
             DateTime? dateOfBirth,
-            EnumValueInfo sex)
+            EnumValueInfo sex,
+            DateTime? earliestScheduledTime)
         {
-            this.PatientProfileRef = patientProfileRef;
+            this.PatientProfileRef = profileRef;
+            this.OrderRef = orderRef;
             this.Mrn = new MrnDetail(mrnID, mrnAssigningAuthority);
             this.Name = name;
             this.Healthcard = healthcard;
             this.DateOfBirth = dateOfBirth;
             this.Sex = sex;
+            this.EarliestScheduledTime = earliestScheduledTime;
         }
 
         [DataMember]
         public EntityRef PatientProfileRef;
+
+        [DataMember]
+        public EntityRef OrderRef;
 
         [DataMember]
         public MrnDetail Mrn;
@@ -43,18 +50,23 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         [DataMember]
         public EnumValueInfo Sex;
 
+        [DataMember]
+        public DateTime? EarliestScheduledTime;
+
         public override bool Equals(object obj)
         {
             RegistrationWorklistItem that = obj as RegistrationWorklistItem;
             if (that != null)
-                return this.PatientProfileRef.Equals(that.PatientProfileRef);
+                return this.PatientProfileRef.Equals(that.PatientProfileRef)
+                    && (this.OrderRef == null ? true : this.OrderRef.Equals(that.OrderRef));
 
             return false;
         }
 
         public override int GetHashCode()
         {
-            return this.PatientProfileRef.GetHashCode();
+            return this.PatientProfileRef.GetHashCode()
+                + (this.OrderRef == null ? 0 : this.OrderRef.GetHashCode());
         }
     }
 }

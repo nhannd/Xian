@@ -145,7 +145,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 try
                 {
-                    CancelOrderComponent cancelOrderComponent = new CancelOrderComponent(item.PatientProfileRef);
+                    CancelOrderComponent cancelOrderComponent = new CancelOrderComponent(item);
                     ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                         desktopWindow, cancelOrderComponent, String.Format("Cancel Order for {0}", PersonNameFormat.Format(item.Name)));
 

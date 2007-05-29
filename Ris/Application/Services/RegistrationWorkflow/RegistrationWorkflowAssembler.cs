@@ -147,13 +147,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             SexEnum sex = context.GetBroker<ISexEnumBroker>().Load()[domainItem.Sex];
 
             return new RegistrationWorklistItem(
-                domainItem.PatientProfile,
+                domainItem.ProfileRef,
+                domainItem.OrderRef,
                 domainItem.Mrn.Id,
                 domainItem.Mrn.AssigningAuthority,
                 nameAssembler.CreatePersonNameDetail(domainItem.PatientName),
                 healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
                 domainItem.DateOfBirth,
-                new EnumValueInfo(sex.Code.ToString(), sex.Value));
+                new EnumValueInfo(sex.Code.ToString(), sex.Value),
+                domainItem.EarliestScheduledTime);
         }
     }
 }

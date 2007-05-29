@@ -31,12 +31,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             public object Value;
         }
 
-        private const string _hqlSelectWorklist =       "select distinct pp from CheckInProcedureStep cps";
-        private const string _hqlSelectCount =          "select count(distinct pp) from CheckInProcedureStep cps";
+        private const string _hqlSelectWorklist =       "select distinct o from CheckInProcedureStep cps";
+        private const string _hqlSelectCount =          "select count(distinct o) from CheckInProcedureStep cps";
         private const string _hqlJoin =                 " join cps.RequestedProcedure rp" +
-                                                        " join rp.Order o" +
-                                                        " join o.Patient p" +
-                                                        " join p.Profiles pp";
+                                                        " join rp.Order o";
         private const string _hqlMainCondition =        " where cps.State = :cpsState" +
                                                         " and cps.Scheduling.StartTime between :cpsSchedulingStartTimeBegin and :cpsSchedulingStartTimeEnd";
         

@@ -8,35 +8,48 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Workflow;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Workflow.Registration
 {
     public class WorklistItemKey : IWorklistItemKey
     {
-        private EntityRef _patientProfile;
+        private EntityRef _profileRef;
+        private EntityRef _orderRef;
 
-        public WorklistItemKey(EntityRef patientProfile)
+        public WorklistItemKey(EntityRef profileRef, EntityRef orderRef)
         {
-            _patientProfile = patientProfile;
+            _profileRef = profileRef;
+            _orderRef = orderRef;
         }
 
-        public EntityRef PatientProfile
+        public EntityRef ProfileRef
         {
-            get { return _patientProfile; }
-            set { _patientProfile = value; }
+            get { return _profileRef; }
+            set { _profileRef = value; }
+        }
+
+        public EntityRef OrderRef
+        {
+            get { return _orderRef; }
+            set { _orderRef = value; }
         }
     }
 
     public class WorklistItem : WorklistItemBase
     {
+        // PatientProfile data
         private CompositeIdentifier _mrn;
         private PersonName _patientName;
         private HealthcardNumber _healthcardNumber;
         private DateTime? _dateOfBirth;
         private Sex _sex;
 
+        // Order data
+        private DateTime? _earliestScheduledTime;
+
         public WorklistItem(PatientProfile profile)
-            : base(new WorklistItemKey(profile.GetRef()))
+            : base(new WorklistItemKey(profile.GetRef(), null))
         {
             _mrn = profile.Mrn;
             _patientName = profile.Name;
@@ -45,26 +58,60 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             _sex = profile.Sex;
         }
 
+        public WorklistItem(Order order)
+            : base(new WorklistItemKey(null, order.GetRef()))
+        {
+            PatientProfile profile = (PatientProfile)CollectionUtils.SelectFirst<Entity>(order.Patient.Profiles,
+                delegate(Entity entity)
+                {
+                    PatientProfile pp = entity as PatientProfile;
+                    if (pp.Mrn.AssigningAuthority == order.Visit.VisitNumber.AssigningAuthority)
+                        return true;
+
+                    return false;
+                });
+
+            WorklistItemKey thisKey = this.Key as WorklistItemKey;
+            thisKey.ProfileRef = profile.GetRef();
+
+            _mrn = profile.Mrn;
+            _patientName = profile.Name;
+            _healthcardNumber = profile.Healthcard;
+            _dateOfBirth = profile.DateOfBirth;
+            _sex = profile.Sex;
+
+            _earliestScheduledTime = order.EarliestScheduledDateTime;
+        }
+
         public WorklistItem(EntityRef profileRef,
+            EntityRef orderRef,
             CompositeIdentifier mrn,
             PersonName patientName,
             HealthcardNumber healthcard,
             DateTime? dateOfBirth,
-            Sex sex)
-            : base(new WorklistItemKey(profileRef))
+            Sex sex,
+            DateTime? earliestScheduledTime)
+            : base(new WorklistItemKey(profileRef, orderRef))
         {
             _mrn = mrn;
             _patientName = patientName;
             _healthcardNumber = healthcard;
             _dateOfBirth = dateOfBirth;
             _sex = sex;
+
+            _earliestScheduledTime = earliestScheduledTime;
         }
 
         #region Public Properties
 
-        public EntityRef PatientProfile
+        public EntityRef ProfileRef
         {
-            get { return (this.Key as WorklistItemKey).PatientProfile; }
+            get { return (this.Key as WorklistItemKey).ProfileRef; }
+        }
+
+        public EntityRef OrderRef
+        {
+            get { return (this.Key as WorklistItemKey).OrderRef; }
         }
 
         public CompositeIdentifier Mrn
@@ -90,6 +137,11 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         public Sex Sex
         {
             get { return _sex; }
+        }
+
+        public DateTime? EarliestScheduledTime
+        {
+            get { return _earliestScheduledTime; }
         }
 
         #endregion

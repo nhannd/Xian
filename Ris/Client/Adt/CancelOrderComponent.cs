@@ -28,7 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(CancelOrderComponentViewExtensionPoint))]
     public class CancelOrderComponent : ApplicationComponent
     {
-        private EntityRef _patientProfileRef;
+        private RegistrationWorklistItem _worklistItem;
         private CancelOrderTable _cancelOrderTable;
 
         private EnumValueInfo _selectedCancelReason;
@@ -39,9 +39,9 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor
         /// </summary>
-        public CancelOrderComponent(EntityRef patientProfileRef)
+        public CancelOrderComponent(RegistrationWorklistItem item)
         {
-            _patientProfileRef = patientProfileRef;
+            _worklistItem = item;
         }
 
         public override void Start()
@@ -54,13 +54,17 @@ namespace ClearCanvas.Ris.Client.Adt
                 Platform.GetService<IRegistrationWorkflowService>(
                     delegate(IRegistrationWorkflowService service)
                     {
-                        GetDataForCancelOrderTableResponse response = service.GetDataForCancelOrderTable(new GetDataForCancelOrderTableRequest(_patientProfileRef));
+                        GetDataForCancelOrderTableResponse response = service.GetDataForCancelOrderTable(new GetDataForCancelOrderTableRequest(_worklistItem.PatientProfileRef));
                         _cancelOrderTable.Items.AddRange(
                             CollectionUtils.Map<CancelOrderTableItem, CancelOrderTableEntry>(response.CancelOrderTableItems,
                                     delegate(CancelOrderTableItem item)
                                     {
                                         CancelOrderTableEntry entry = new CancelOrderTableEntry(item);
                                         entry.CheckedChanged += new EventHandler(CancelOrderCheckedStateChangedEventHandler);
+
+                                        if (item.OrderRef == _worklistItem.OrderRef)
+                                            entry.Checked = true;
+                                        
                                         return entry;
                                     }));
 
@@ -72,12 +76,6 @@ namespace ClearCanvas.Ris.Client.Adt
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-
-            // Special case for 1 Order.  Check the item right away
-            if (_cancelOrderTable.Items.Count == 1)
-            {
-                _cancelOrderTable.Items[0].Checked = true;
             }
 
             base.Start();
