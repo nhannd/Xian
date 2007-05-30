@@ -52,6 +52,10 @@
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\ClearCanvas.Ris.Client.csproj">
+      <Project>{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}</Project>
+      <Name>ClearCanvas.Ris.Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\ClearCanvas.Ris.Client.Reporting.csproj">
       <Project>{EB579705-2821-45B8-AE5E-EE397BE73ED9}</Project>
       <Name>ClearCanvas.Ris.Client.Reporting</Name>

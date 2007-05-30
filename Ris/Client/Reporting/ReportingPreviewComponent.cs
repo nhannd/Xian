@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Reporting
     /// ReportingPreviewComponent class
     /// </summary>
     [AssociateView(typeof(ReportingPreviewComponentViewExtensionPoint))]
-    public class ReportingPreviewComponent : ApplicationComponent
+    public class ReportingPreviewComponent : HtmlApplicationComponent
     {
         class ReportingPreviewToolContext : ToolContext, IReportingPreviewToolContext
         {
