@@ -5,6 +5,7 @@ using System.Text;
 using ClearCanvas.Dicom.OffisWrapper;
 using System.Runtime.InteropServices;
 using ClearCanvas.Dicom;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
@@ -71,6 +72,7 @@ namespace ClearCanvas.Utilities.DicomEditor
             string vrName;
             int length;
             string value = null;
+            uint vm;
 
             DcmTag tag = null;
             List<DicomEditorTag> dicomDump = new List<DicomEditorTag>();
@@ -83,69 +85,134 @@ namespace ClearCanvas.Utilities.DicomEditor
                 tagName = tag.getTagName();
                 vr = tag.getVR();
                 vrName = vr.getVRName();
-                length = (int)obj.getLength();
+                length = (int)obj.getLength();                
 
                 DcmElement elem = OffisDcm.castToDcmElement(obj);
+                vm = elem.getVM();                
 
-                IntPtr ptr = IntPtr.Zero;
-
-                if (elem != null)
+                if (length == 0)
                 {
-                    if (vr.getEVR() == DcmEVR.EVR_UL)
+                    value = "";
+                }
+                else
+                {                
+                    if (elem != null)
                     {
-                        uint uint32Val;
-                        elem.getUint32(out uint32Val);
-                        value = uint32Val.ToString();
-                    }
-
-                    else if (vr.getEVR() == DcmEVR.EVR_US)
-                    {
-                        ushort ushortVal;
-                        elem.getUint16(out ushortVal);
-                        value = ushortVal.ToString();
-                    }
-                    else if (vr.getEVR() == DcmEVR.EVR_SQ)
-                    {
-                        value = "";
-                        DcmObject sequenceItemObject = elem.nextInContainer(null);
-                        while (sequenceItemObject != null)
+                        if (vr.getEVR() == DcmEVR.EVR_UL)
                         {
-                            DcmTag sequenceItem = sequenceItemObject.getTag();
-                            //adding the Item
-                            DicomEditorTag item = new DicomEditorTag(sequenceItem.getGroup(), 
-                                                         sequenceItem.getElement(),
-                                                         sequenceItem.getTagName(),
-                                                         null,
-                                                         0,
-                                                         null,
-                                                         String.Format("({0:x4},", group) + String.Format("{0:x4})", element),
-                                                         DisplayLevel.SequenceItem);
-                            dicomDump.Add(item);
-
-                            //traversing the tags within the Sequence Item
-                            foreach (DicomEditorTag sequenceTags in GetDicomTags(sequenceItemObject.nextInContainer(null), sequenceItemObject, item.Key.ParentKeyString.Trim() + item.Key.DisplayKey.Trim(), DisplayLevel.SequenceItemAttribute))
+                            if (vm == 1)
                             {
-                                dicomDump.Add(new DicomEditorTag(sequenceTags));
+                                uint uint32Val;
+                                elem.getUint32(out uint32Val);
+                                value = uint32Val.ToString();
                             }
-                                                       
-                            sequenceItemObject = sequenceItemObject.nextInContainer(sequenceItemObject);
+                            else
+                            {
+                                IntPtr usptr = IntPtr.Zero;
+                                elem.getUint32Array(ref usptr);
+                                int arrayLength = (int)vm * 4;
+
+                                byte[] bytes = this.ReadRawTag(usptr, arrayLength);
+                                string[] display = new string[vm];
+
+                                for (int j = 0; j <= vm - 1; j++)
+                                {
+                                    display[j] = BitConverter.ToUInt32(bytes, 4*j).ToString();                                
+                                }
+                                value = StringUtilities.Combine<string>(display, @"\");
+                            }
                         }
-                    }
-                    else
-                    {
-                        elem.getString(ref ptr);
-                        value = Marshal.PtrToStringAnsi(ptr);
+
+                        else if (vr.getEVR() == DcmEVR.EVR_US)
+                        {
+                            if (vm == 1)
+                            {
+                                ushort ushortVal;
+                                elem.getUint16(out ushortVal);
+                                value = ushortVal.ToString();
+                            }
+                            else
+                            {
+                                IntPtr usptr = IntPtr.Zero;
+                                elem.getUint16Array(ref usptr);
+                                int arrayLength = (int)vm * 2;
+
+                                byte[] bytes = this.ReadRawTag(usptr, arrayLength);
+                                string[] display = new string[vm];
+
+                                for (int j = 0; j <= vm - 1; j++)
+                                {
+                                    display[j] = BitConverter.ToUInt16(bytes, 2 * j).ToString();
+                                }
+
+                                value = StringUtilities.Combine<string>(display, @"\");
+                            }
+                        }
+                        else if (vr.getEVR() == DcmEVR.EVR_SQ)
+                        {
+                            value = "";
+                            DcmObject sequenceItemObject = elem.nextInContainer(null);
+                            while (sequenceItemObject != null)
+                            {
+                                DcmTag sequenceItem = sequenceItemObject.getTag();
+                                //adding the Item
+                                DicomEditorTag item = new DicomEditorTag(sequenceItem.getGroup(), 
+                                                             sequenceItem.getElement(),
+                                                             sequenceItem.getTagName(),
+                                                             null,
+                                                             0,
+                                                             null,
+                                                             String.Format("({0:x4},", group) + String.Format("{0:x4})", element),
+                                                             DisplayLevel.SequenceItem);
+                                dicomDump.Add(item);
+
+                                //traversing the tags within the Sequence Item
+                                foreach (DicomEditorTag sequenceTags in GetDicomTags(sequenceItemObject.nextInContainer(null), sequenceItemObject, item.Key.ParentKeyString.Trim() + item.Key.DisplayKey.Trim(), DisplayLevel.SequenceItemAttribute))
+                                {
+                                    dicomDump.Add(new DicomEditorTag(sequenceTags));
+                                }
+                                                           
+                                sequenceItemObject = sequenceItemObject.nextInContainer(sequenceItemObject);
+                            }
+                        }
+                        else if (vr.getEVR() == DcmEVR.EVR_UNKNOWN || vr.getEVR() == DcmEVR.EVR_OB)
+                        {
+                            IntPtr uknptr = IntPtr.Zero;
+                            elem.getUint8Array(ref uknptr);
+
+                            //22 was chosen to match the output of the Offis dcmdump.exe utility
+                            if (length <= 22) 
+                            {
+                                value = StringUtilities.Combine<byte>(this.ReadRawTag(uknptr, length), @"\", delegate(byte b) { return String.Format("{0:x2}", b); });
+                            }
+                            else
+                            {
+                                value = StringUtilities.Combine<byte>(this.ReadRawTag(uknptr, 22), @"\", delegate(byte b) { return String.Format("{0:x2}", b); }) + "...";
+                            }
+                        }                        
+                        else
+                        {
+                            IntPtr ptr = IntPtr.Zero;
+                            elem.getString(ref ptr);
+                            value = Marshal.PtrToStringAnsi(ptr);
+                        }
                     }
                 }
 
-                //if (!tag.isUnknownVR())
-                //{
-                    dicomDump.Add(new DicomEditorTag(group, element, tagName, vrName, length, value, parent, displayLevel));
-                //}
+                dicomDump.Add(new DicomEditorTag(group, element, tagName, vrName, length, value, parent, displayLevel));
+                
 
                 obj = container.nextInContainer(obj);
             }
             return dicomDump;
+        }
+
+        private byte[] ReadRawTag(IntPtr ptr, int length)
+        {
+            byte[] bytes = new byte[length];
+            Marshal.Copy(ptr, bytes, 0, length);
+
+            return bytes;
         }
     }
 }

@@ -214,7 +214,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 			_dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingLength, delegate(DicomEditorTag d) { return d.Length.ToString(); }));
 			_dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingValue, delegate(DicomEditorTag d) { return d.Value; }, delegate(DicomEditorTag d, string value)
 			{
-                                                                                                                                                                if (!d.Key.DisplayKey.Contains(",0000)") && d.Vr != "SQ")
+                                                                                                                                                                if (this.IsTagEditable(d))
                                                                                                                                                                 {
                                                                                                                                                                     d.Value = value;
                                                                                                                                                                     this.ChangeTagValue();
@@ -304,6 +304,13 @@ namespace ClearCanvas.Utilities.DicomEditor
                 //_dicomTagData.Items[index].Value = groupLength.ToString();
                 _dicomTagData.Items[index] = new DicomEditorTag(originalGroupLengthTag.Group, originalGroupLengthTag.Element, originalGroupLengthTag.TagName, originalGroupLengthTag.Vr, originalGroupLengthTag.Length, groupLength.ToString(), null, DisplayLevel.Attribute);
             }
+        }
+
+        private bool IsTagEditable(DicomEditorTag tag)
+        {
+            ICollection<string> unEditableVRList = new string[] { "SQ", @"??", "OB", "OW"};
+
+            return !unEditableVRList.Contains(tag.Vr) && tag.Key.ParentKeyString == null && !tag.Key.DisplayKey.Contains(",0000)") && !tag.Key.DisplayKey.Contains("(0002,") && !((tag.Vr == "UL" || tag.Vr == "US") && tag.Value.Contains(@"\"));
         }
 
         #region INotifyPropertyChanged Members
