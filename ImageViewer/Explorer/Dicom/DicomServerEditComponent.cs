@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -142,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             get 
             {
-                return _serverTree.CurrentNode.IsServer && _serverName.Equals(AENavigatorComponent.MyDatastoreTitle) ? true : false; 
+				return _serverTree.CurrentNode.IsLocalDataStore;
             }
         }
 

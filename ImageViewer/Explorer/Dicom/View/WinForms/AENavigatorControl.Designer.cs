@@ -1,3 +1,4 @@
+using System;
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
 	partial class AENavigatorControl
@@ -16,6 +17,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			if (disposing && (components != null))
 			{
 				components.Dispose();
+
+				if (_component.ShowLocalDataStoreNode && _component.ServerTree.RootNode.LocalDataStoreNode.DicomServerConfigurationProvider != null)
+					_component.ServerTree.RootNode.LocalDataStoreNode.DicomServerConfigurationProvider.Changed -= new EventHandler(OnLocalDataStoreNodeUpdated);
+
 			}
 			base.Dispose(disposing);
 		}
@@ -64,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._aeTreeView.Size = new System.Drawing.Size(300, 247);
 			this._aeTreeView.StateImageList = this._imageList;
 			this._aeTreeView.TabIndex = 3;
-			this._aeTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this._aeTreeView_NodeMouseDoubleClick);
+			this._aeTreeView.NodeMouseDoubleClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.TreeViewNodeMouseDoubleClick);
 			// 
 			// _contextMenu
 			// 

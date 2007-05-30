@@ -156,11 +156,8 @@
   <data name="DicomStudyBrowserToolsRetrieveStudy" xml:space="preserve">
     <value>Retrieve</value>
   </data>
-  <data name="ExampleGroup" xml:space="preserve">
-    <value>Example Group</value>
-  </data>
-  <data name="ExampleServer" xml:space="preserve">
-    <value>Example Server</value>
+  <data name="ExceptionServerObjectIsNotQueryable" xml:space="preserve">
+    <value>The specified server object is not queryable.</value>
   </data>
   <data name="FormatServerGroupNameConflict" xml:space="preserve">
     <value>The Server Group Name ({0}) conflicts with {1}.
@@ -172,13 +169,6 @@ Please choose another Server Name.</value>
   </data>
   <data name="FormatStudiesFound" xml:space="preserve">
     <value>{0} studies found on {1}</value>
-  </data>
-  <data name="FormatTooltipServerDetails" xml:space="preserve">
-    <value>Server Name: {0}
-AE Title: {1}
-Host: {2}
-Listening Port: {3}
-Location: {4}</value>
   </data>
   <data name="FormatUnableToQueryServer" xml:space="preserve">
     <value>Unable to Query server {0}:  {1}</value>

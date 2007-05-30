@@ -16,6 +16,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -107,11 +108,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private bool _showTitlebar;
 		private bool _showLocalDataStoreNode;
 
-		private static String _myServersTitle = SR.TitleMyServers;
-		private static String _myDatastoreTitle = SR.TitleMyDataStore;
-        private static String _myServersRoot = "MyServersRoot";
-        private static String _myServersXmlFile = "DicomAEServers.xml";
-
 		public ServerTree ServerTree
         {
             get { return _serverTree; }
@@ -157,26 +153,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _showLocalDataStoreNode; }
 		}
 
-		public static String MyServersTitle
-        {
-            get { return AENavigatorComponent._myServersTitle; }
-        }
-
-        public static String MyDatastoreTitle
-        {
-            get { return AENavigatorComponent._myDatastoreTitle; }
-        }
-
-        public static String MyServersRoot
-        {
-            get { return AENavigatorComponent._myServersRoot; }
-        }
-
-        public static String MyServersXmlFile
-        {
-            get { return AENavigatorComponent._myServersXmlFile; }
-        }
-
         #endregion
 
         public AENavigatorComponent() : this(true, true, true)
@@ -191,10 +167,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			_selectedServers = new AEServerGroup();
 			_serverTree = new ServerTree();
+			_serverTree.RootNode.LocalDataStoreNode.DicomServerConfigurationProvider = DicomServerConfigurationHelper.GetDicomServerConfigurationProvider();
 
 			if (_serverTree.CurrentNode != null && _serverTree.CurrentNode.IsServer || _serverTree.CurrentNode.IsLocalDataStore)
 			{
-				_selectedServers.Servers.Add(_serverTree.CurrentNode as Server);
+				_selectedServers.Servers.Add(_serverTree.CurrentNode);
 				_selectedServers.Name = _serverTree.CurrentNode.Name;
 				_selectedServers.GroupID = _serverTree.CurrentNode.ParentPath + "/" + _selectedServers.Name;
 			}
@@ -202,14 +179,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		public void SetSelection(IServerTreeNode dataNode)
         {
-            if (dataNode.IsServer)
+			if (dataNode.IsServer || dataNode.IsLocalDataStore)
             {
-				Server server = dataNode as Server;
 				_selectedServers = new AEServerGroup();
-				_selectedServers.Servers.Add(server);
-				_selectedServers.Name = server.Name;
-				_selectedServers.GroupID = server.Path;
-				_serverTree.CurrentNode = server;
+				_selectedServers.Servers.Add(dataNode);
+				_selectedServers.Name = dataNode.Name;
+				_selectedServers.GroupID = dataNode.Path;
+				_serverTree.CurrentNode = dataNode;
 				FireSelectedServerChangedEvent();
             }
             else if (dataNode.IsServerGroup)
@@ -259,26 +235,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             remove { _selectedServerChanged -= value; }
         }
 
-		private void QueryAESettings()
-		{
-			DicomServerServiceClient serviceClient = new DicomServerServiceClient();
-
-			try
-			{
-				DicomServerConfiguration serverConfiguration = serviceClient.GetServerConfiguration();
-				LocalApplicationEntity.UpdateSettings(serverConfiguration.AETitle, serverConfiguration.Port);
-				serviceClient.Close();
-			}
-			catch (Exception e)
-			{
-				serviceClient.Abort();
-				Platform.Log(e, LogLevel.Warn);
-			}
-		}
-
         private bool isMovingInvalid(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
         {
-            if (movingDataNode.Name.Equals(_myServersTitle) || movingDataNode.Name.Equals(_myDatastoreTitle) || movingDataNode.Path.Equals(destinationNode.Path))
+            if (movingDataNode.Name.Equals(_serverTree.MyServersTitle) || movingDataNode.Name.Equals(_serverTree.MyDatastoreTitle) || movingDataNode.Path.Equals(destinationNode.Path))
                 return true;
 
             foreach (Server server in (destinationNode as ServerGroup).ChildServers)
@@ -308,13 +267,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             _toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomaenavigator-toolbar", _toolSet.Actions);
             _contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomaenavigator-contextmenu", _toolSet.Actions);
 
-			LocalApplicationEntity.SettingsUpdated += new EventHandler(_serverTree.OnUpdateLocalDataStoreNode);
-			QueryAESettings();
+			//immediately update the dicom server configuration (local datastore node)
+			try
+			{
+				_serverTree.RootNode.LocalDataStoreNode.DicomServerConfigurationProvider.Refresh();
+			}
+			catch (Exception e)
+			{
+				Platform.Log(e);
+			}
 		}
 
         public override void Stop()
         {
-			LocalApplicationEntity.SettingsUpdated -= new EventHandler(_serverTree.OnUpdateLocalDataStoreNode);
             base.Stop();
         }
 

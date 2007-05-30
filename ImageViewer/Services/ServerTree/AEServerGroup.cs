@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.ImageViewer.Explorer.Dicom
+namespace ClearCanvas.ImageViewer.Services.ServerTree
 {
 	public class AEServerGroup
 	{

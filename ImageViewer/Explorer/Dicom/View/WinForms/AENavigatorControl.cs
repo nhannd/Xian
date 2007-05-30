@@ -11,12 +11,20 @@ using ClearCanvas.Controls.WinForms;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
 	public partial class AENavigatorControl : UserControl
 	{
-        public AENavigatorControl(AENavigatorComponent component)
+		private AENavigatorComponent _component;
+		private TreeNode _lastClickedNode;
+		private ActionModelNode _toolbarModel;
+		private ActionModelNode _menuModel;
+		private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
+		private TreeNode _lastMouseOverNode = null;
+
+		public AENavigatorControl(AENavigatorComponent component)
 		{
             Platform.CheckForNullReference(component, "component");
             InitializeComponent();
@@ -26,10 +34,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			ClearCanvasStyle.SetTitleBarStyle(_titleBar);
 			
 			ServerTreeUpdated += new EventHandler(OnServerTreeUpdated);
-            this._aeTreeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.treeView_ItemDrag);
-            this._aeTreeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.treeView_DragEnter);
-            this._aeTreeView.DragOver += new System.Windows.Forms.DragEventHandler(this.treeView_DragOver);
-            this._aeTreeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.treeView_DragDrop);
+            this._aeTreeView.ItemDrag += new System.Windows.Forms.ItemDragEventHandler(this.TreeViewItemDrag);
+            this._aeTreeView.DragEnter += new System.Windows.Forms.DragEventHandler(this.TreeViewDragEnter);
+            this._aeTreeView.DragOver += new System.Windows.Forms.DragEventHandler(this.TreeViewDragOver);
+            this._aeTreeView.DragDrop += new System.Windows.Forms.DragEventHandler(this.TreeViewDragDrop);
 
 			this._titleBar.Visible = _component.ShowTitlebar;
 			this._serverTools.Visible = _component.ShowTools;
@@ -41,23 +49,87 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 				this.MenuModel = _component.ContextMenuModel;
 			}
 
-			_aeTreeView.MouseDown += new MouseEventHandler(AETreeView_Click);
-			_aeTreeView.AfterSelect += new TreeViewEventHandler(AETreeView_AfterSelect);
+			_aeTreeView.MouseDown += new MouseEventHandler(AETreeViewClick);
+			_aeTreeView.AfterSelect += new TreeViewEventHandler(AETreeViewAfterSelect);
 
-			if (_component.ShowLocalDataStoreNode)
-				_component.ServerTree.RootNode.LocalDataStoreNode.Updated += new EventHandler(OnLocalDataStoreNodeUpdated);
-			
+			if (_component.ShowLocalDataStoreNode && _component.ServerTree.RootNode.LocalDataStoreNode.DicomServerConfigurationProvider != null)
+				_component.ServerTree.RootNode.LocalDataStoreNode.DicomServerConfigurationProvider.Changed += new EventHandler(OnLocalDataStoreNodeUpdated);
+
 			BuildServerTreeView(_aeTreeView, _component.ServerTree);
-			_aeTreeView.SelectedNode = _lastClickedNode;
+			SelectNode(_lastClickedNode);
 			_component.SetSelection(_lastClickedNode.Tag as IServerTreeNode);
         }
 
-		void OnLocalDataStoreNodeUpdated(object sender, EventArgs e)
+		private ActionModelNode ToolbarModel
+		{
+			get { return _toolbarModel; }
+			set
+			{
+				_toolbarModel = value;
+				ToolStripBuilder.Clear(_serverTools.Items);
+				if (_toolbarModel != null)
+				{
+					ToolStripBuilder.BuildToolbar(_serverTools.Items, _toolbarModel.ChildNodes, _toolStripItemDisplayStyle);
+
+					foreach (ToolStripItem item in _serverTools.Items)
+						item.DisplayStyle = _toolStripItemDisplayStyle;
+				}
+			}
+		}
+
+		private ActionModelNode MenuModel
+		{
+			get { return _menuModel; }
+			set
+			{
+				_menuModel = value;
+				ToolStripBuilder.Clear(_contextMenu.Items);
+				if (_menuModel != null)
+				{
+					ToolStripBuilder.BuildMenu(_contextMenu.Items, _menuModel.ChildNodes);
+				}
+			}
+		}
+
+		private ToolStripItemDisplayStyle ToolStripItemDisplayStyle
+		{
+			get { return _toolStripItemDisplayStyle; }
+			set { _toolStripItemDisplayStyle = value; }
+		}
+
+		private event EventHandler ServerTreeUpdated
+		{
+			add { _component.ServerTree.ServerTreeUpdated += value; }
+			remove { _component.ServerTree.ServerTreeUpdated -= value; }
+		}
+
+		//It is *very* important to keep the SelectedNode of the TreeView and _lastClickNode synchronized,
+		//and not only that, but _lastClickedNode must be set first, otherwise some odd behaviour can occur.
+		//Please use this method to set the SelectedNode in order to avoid these issues.  Because of the 
+		//sheer amount of usage of the _lastClickedNode, it is just easier to do things this way at the moment.
+		private void SelectNode(TreeNode selectNode)
+		{
+			_aeTreeView.SelectedNode = _lastClickedNode = selectNode;
+		}
+
+		//This method keeps the _lastClickedNode and the TreeView in sync when the user navigates with the cursor keys.
+		//This is another part of the reason why we need to use SelectNode to keep the 2 members synchronized.  Otherwise,
+		//some very strange behaviour can occur.
+		private void AETreeViewAfterSelect(object sender, TreeViewEventArgs e)
+		{
+			if (_lastClickedNode != e.Node)
+			{
+				_lastClickedNode = _aeTreeView.SelectedNode;
+				_component.SetSelection(e.Node.Tag as IServerTreeNode);
+			}
+		}
+
+		private void OnLocalDataStoreNodeUpdated(object sender, EventArgs e)
 		{
 			_aeTreeView.Nodes[0].ToolTipText = _component.ServerTree.RootNode.LocalDataStoreNode.ToString();
 		}
 
-        void OnServerTreeUpdated(object sender, EventArgs e)
+        private void OnServerTreeUpdated(object sender, EventArgs e)
         {
             if (_lastClickedNode == null)
                 return;
@@ -73,9 +145,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             }
             else if (_component.UpdateType == (int)ServerUpdateType.Delete)
             {
-                _aeTreeView.SelectedNode = _lastClickedNode.Parent;
-                _lastClickedNode.Remove();
-                _lastClickedNode = _aeTreeView.SelectedNode;
+				TreeNode removeNode = _lastClickedNode;
+				SelectNode(_lastClickedNode.Parent);
+				removeNode.Remove();
             }
             else if (_component.UpdateType == (int)ServerUpdateType.Edit)
             {
@@ -84,25 +156,17 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 _lastClickedNode.Tag = dataNode;
                 _lastClickedNode.ToolTipText = dataNode.ToString();
             }
+
             _component.SetSelection(_lastClickedNode.Tag as IServerTreeNode);
         }
 
-		void AETreeView_AfterSelect(object sender, TreeViewEventArgs e)
-		{
-			if (_lastClickedNode != e.Node)
-			{
-				_lastClickedNode = _aeTreeView.SelectedNode;
-				_component.SetSelection(e.Node.Tag as IServerTreeNode);
-			}
-		}
-
-		void AETreeView_Click(object sender, EventArgs e)
+		private void AETreeViewClick(object sender, EventArgs e)
 		{
 			TreeNode treeNode = _aeTreeView.GetNodeAt(((MouseEventArgs)e).X, ((MouseEventArgs)e).Y);
 			if (treeNode == null || treeNode == _lastClickedNode)
 				return;
 
-			_aeTreeView.SelectedNode = _lastClickedNode = treeNode;
+			SelectNode(treeNode);
 			_component.SetSelection(_lastClickedNode.Tag as IServerTreeNode);
 		}
 
@@ -174,18 +238,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
             if (browserNode == null)
 				return;
 
-            if (browserNode.IsServer || browserNode.IsLocalDataStore)
+            if (browserNode.IsLocalDataStore)
 			{
-                if (browserNode.Name == AENavigatorComponent.MyDatastoreTitle)
-				{
-					treeNode.ImageIndex = 0;
-					treeNode.SelectedImageIndex = 0;
-				}
-				else
-				{
-					treeNode.ImageIndex = 1;
-					treeNode.SelectedImageIndex = 1;
-				}
+				treeNode.ImageIndex = 0;
+				treeNode.SelectedImageIndex = 0;
+			}
+			else if (browserNode.IsServer)
+			{
+				treeNode.ImageIndex = 1;
+				treeNode.SelectedImageIndex = 1;
 			}
 			else
 			{
@@ -194,67 +255,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			}
 		}
 
-        private AENavigatorComponent _component;
-        private TreeNode _lastClickedNode;
-        private ActionModelNode _toolbarModel;
-        private ActionModelNode _menuModel;
-        private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
-        private TreeNode _lastMouseOverNode = null;
 
-        public ActionModelNode ToolbarModel
-        {
-            get { return _toolbarModel; }
-            set
-            {
-                _toolbarModel = value;
-                ToolStripBuilder.Clear(_serverTools.Items);
-                if (_toolbarModel != null)
-                {
-                    ToolStripBuilder.BuildToolbar(_serverTools.Items, _toolbarModel.ChildNodes, _toolStripItemDisplayStyle);
 
-                    foreach (ToolStripItem item in _serverTools.Items)
-                        item.DisplayStyle = _toolStripItemDisplayStyle;
-                }
-            }
-        }
-
-        public ActionModelNode MenuModel
-        {
-            get { return _menuModel; }
-            set
-            {
-                _menuModel = value;
-                ToolStripBuilder.Clear(_contextMenu.Items);
-                if (_menuModel != null)
-                {
-                    ToolStripBuilder.BuildMenu(_contextMenu.Items, _menuModel.ChildNodes);
-                }
-            }
-        }
-
-        public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
-        {
-            get { return _toolStripItemDisplayStyle; }
-            set { _toolStripItemDisplayStyle = value; }
-        }
-
-        public event EventHandler ServerTreeUpdated
-        {
-            add { _component.ServerTree.ServerTreeUpdated += value; }
-            remove { _component.ServerTree.ServerTreeUpdated -= value; }
-        }
-
-        private void treeView_ItemDrag(object sender, System.Windows.Forms.ItemDragEventArgs e)
+        private void TreeViewItemDrag(object sender, System.Windows.Forms.ItemDragEventArgs e)
         {
             DoDragDrop(e.Item, DragDropEffects.Move);
         }
 
-        private void treeView_DragEnter(object sender, System.Windows.Forms.DragEventArgs e)
+        private void TreeViewDragEnter(object sender, System.Windows.Forms.DragEventArgs e)
         {
             e.Effect = DragDropEffects.Move;
         }
 
-        private void treeView_DragOver(object sender, DragEventArgs e)
+        private void TreeViewDragOver(object sender, DragEventArgs e)
         {
             // precondition
             TreeNode underPointerNode = _aeTreeView.GetNodeAt(_aeTreeView.PointToClient(new Point(e.X, e.Y)));
@@ -283,7 +296,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			}
         }
 
-        private void treeView_DragDrop(object sender, System.Windows.Forms.DragEventArgs e)
+        private void TreeViewDragDrop(object sender, System.Windows.Forms.DragEventArgs e)
         {
            if (e.Data.GetDataPresent("System.Windows.Forms.TreeNode", false))
             {
@@ -314,21 +327,21 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
                 if (!_component.NodeMoved(destinationNode.Tag as IServerTreeNode, draggingNode.Tag as IServerTreeNode))
                     return;
 
-                draggingNode.Remove();
-                _lastClickedNode = destinationNode;
-
-                // build up the destination
-                destinationNode.Nodes.Clear();
-                BuildNextTreeLevel(_lastClickedNode);
-                destinationNode.Expand(); 
-                _aeTreeView.SelectedNode = _lastClickedNode;
+				SelectNode(destinationNode);
+				draggingNode.Remove();
+				
+			   // build up the destination
+				destinationNode.Nodes.Clear();
+				BuildNextTreeLevel(_lastClickedNode);
+				destinationNode.Expand();
+			
+			   _component.SetSelection(_lastClickedNode.Tag as IServerTreeNode);
             }
         }
 
-        private void _aeTreeView_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        private void TreeViewNodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            _lastClickedNode = e.Node;
-            _aeTreeView.SelectedNode = _lastClickedNode;
+			SelectNode(e.Node);
             IServerTreeNode dataNode = _lastClickedNode.Tag as IServerTreeNode;
             _component.SetSelection(dataNode);
             _component.NodeDoubleClick();

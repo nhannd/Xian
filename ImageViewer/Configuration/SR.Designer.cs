@@ -79,6 +79,24 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to retrieve the Local Dicom Server configuration (AE title, port) likely because the service is not running.  Please ensure the service is running and try again..
+        /// </summary>
+        internal static string ExceptionDicomServerConfigurationRefreshFailed {
+            get {
+                return ResourceManager.GetString("ExceptionDicomServerConfigurationRefreshFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to update the Local Dicom Server configuration likely because the service is not running.  Please ensure the service is running and try again..
+        /// </summary>
+        internal static string ExceptionDicomServerConfigurationUpdateFailed {
+            get {
+                return ResourceManager.GetString("ExceptionDicomServerConfigurationUpdateFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to bytes.
         /// </summary>
         internal static string LabelBytes {

@@ -16,7 +16,6 @@ using ClearCanvas.Server.ShredHost;
 using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using ClearCanvas.ImageViewer.Shreds.DicomServer.ServerTree;
 using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
@@ -197,9 +196,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			try
 			{
-				ClearCanvas.ImageViewer.Shreds.DicomServer.ServerTree.ServerTree serverTree = new ClearCanvas.ImageViewer.Shreds.DicomServer.ServerTree.ServerTree();
-				List<ClearCanvas.ImageViewer.Shreds.DicomServer.ServerTree.Server> servers = serverTree.RootNode.ServerGroupNode.ChildServers;
-				foreach (ClearCanvas.ImageViewer.Shreds.DicomServer.ServerTree.Server server in servers)
+				ClearCanvas.ImageViewer.Services.ServerTree.ServerTree serverTree = new ClearCanvas.ImageViewer.Services.ServerTree.ServerTree();
+				List<ClearCanvas.ImageViewer.Services.ServerTree.IServerTreeNode> servers = serverTree.FindChildServers(serverTree.RootNode.ServerGroupNode as ClearCanvas.ImageViewer.Services.ServerTree.ServerGroup);
+				foreach (ClearCanvas.ImageViewer.Services.ServerTree.Server server in servers)
 				{
 					if (server.AETitle == info.Request.MoveDestination)
 					{

@@ -80,10 +80,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (this.Context.SelectedStudy == null)
 				return;
 
-			if (this.Context.SelectedServerGroup.IsLocalDatastore)
-				this.Enabled = true;
-			else
-				this.Enabled = false;
+			this.Enabled = this.Context.SelectedServerGroup.IsLocalDatastore;
 		}
 
 		private bool ConfirmDeletion()

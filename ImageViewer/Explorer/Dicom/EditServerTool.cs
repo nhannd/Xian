@@ -5,6 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -54,8 +55,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         protected override void OnSelectedServerChanged(object sender, EventArgs e)
         {
-            this.Enabled = !this.Context.ServerTree.CurrentNode.Name.Equals(AENavigatorComponent.MyDatastoreTitle)
-                            && !this.Context.ServerTree.CurrentNode.Name.Equals(AENavigatorComponent.MyServersTitle);
+        	//enabled if it is a server or server group and is not the "My Servers" root node
+			this.Enabled = (this.Context.ServerTree.CurrentNode.IsServer || this.Context.ServerTree.CurrentNode.IsServerGroup) &&
+							this.Context.ServerTree.CurrentNode != this.Context.ServerTree.RootNode.ServerGroupNode;
         }
     }
 }

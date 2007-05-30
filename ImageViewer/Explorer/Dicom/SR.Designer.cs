@@ -178,20 +178,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Example Group.
+        ///   Looks up a localized string similar to The specified server object is not queryable..
         /// </summary>
-        internal static string ExampleGroup {
+        internal static string ExceptionServerObjectIsNotQueryable {
             get {
-                return ResourceManager.GetString("ExampleGroup", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Example Server.
-        /// </summary>
-        internal static string ExampleServer {
-            get {
-                return ResourceManager.GetString("ExampleServer", resourceCulture);
+                return ResourceManager.GetString("ExceptionServerObjectIsNotQueryable", resourceCulture);
             }
         }
         
@@ -221,19 +212,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string FormatStudiesFound {
             get {
                 return ResourceManager.GetString("FormatStudiesFound", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Server Name: {0}
-        ///AE Title: {1}
-        ///Host: {2}
-        ///Listening Port: {3}
-        ///Location: {4}.
-        /// </summary>
-        internal static string FormatTooltipServerDetails {
-            get {
-                return ResourceManager.GetString("FormatTooltipServerDetails", resourceCulture);
             }
         }
         

@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             set { this["HostName"] = value; }
         }
 
-        [ConfigurationProperty("AETitle", DefaultValue = "AETITLE")]
+        [ConfigurationProperty("AETitle", DefaultValue = "CLEARCANVAS")]
         public string AETitle
         {
             get { return (string)this["AETitle"]; }

@@ -11,6 +11,7 @@ using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using ClearCanvas.Dicom.Network;
 using System.ServiceModel;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {

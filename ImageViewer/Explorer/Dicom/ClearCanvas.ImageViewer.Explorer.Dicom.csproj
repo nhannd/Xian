@@ -54,7 +54,6 @@
   <ItemGroup>
     <Compile Include="AENavigatorComponent.cs" />
     <Compile Include="AENavigatorTool.cs" />
-    <Compile Include="AEServerGroup.cs" />
     <Compile Include="DicomExplorerConfigurationApplicationComponent.cs" />
     <Compile Include="DicomExplorerConfigurationSettings.cs" />
     <Compile Include="DicomExplorerConfigurationSettings.Designer.cs">
@@ -70,7 +69,6 @@
     <Compile Include="DeleteServerTool.cs" />
     <Compile Include="EditServerTool.cs" />
     <Compile Include="AddServerGroupTool.cs" />
-    <Compile Include="ServerTree.cs" />
     <Compile Include="VerifyServerTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

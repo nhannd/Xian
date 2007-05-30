@@ -15,6 +15,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Services;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using System.Collections.ObjectModel;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -156,7 +157,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private SearchPanelComponent _searchPanelComponent;
 
-		private IStudyFinder _studyFinder;
 		private Dictionary<string, SearchResult> _searchResults;
 		private Table<StudyItem> _currentStudyList;
 		
@@ -297,11 +297,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			_selectedServerGroup = selectedServerGroup;
 
-			if (selectedServerGroup.IsLocalDatastore)
-				_studyFinder = ImageViewerComponent.StudyFinders["DICOM_LOCAL"];
-			else
-				_studyFinder = ImageViewerComponent.StudyFinders["DICOM_REMOTE"];
-
 			if (!_searchResults.ContainsKey(_selectedServerGroup.GroupID))
 			{
 				SearchResult searchResult = new SearchResult();
@@ -396,7 +391,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 		private QueryParameters PrepareQueryParameters()
 		{
-			Platform.CheckMemberIsSet(_studyFinder, "StudyFinder");
 			Platform.CheckMemberIsSet(_searchPanelComponent, "SearchPanelComponent");
 
 			// create patient's name query key
@@ -450,17 +444,32 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		{
 			StudyItemList aggregateStudyItemList = new StudyItemList();
 
-			foreach (Server server in _selectedServerGroup.Servers)
+			foreach (IServerTreeNode serverNode in _selectedServerGroup.Servers)
 			{
 				try
 				{
-					StudyItemList serverStudyItemList = _studyFinder.Query(server.GetApplicationEntity(), queryParams);
+					StudyItemList serverStudyItemList;
+
+					if (serverNode.IsLocalDataStore)
+					{
+						serverStudyItemList = ImageViewerComponent.StudyFinders["DICOM_LOCAL"].Query(queryParams);
+					}
+					else if (serverNode.IsServer)
+					{
+						Server server = serverNode as Server;
+						serverStudyItemList = ImageViewerComponent.StudyFinders["DICOM_REMOTE"].Query(new ApplicationEntity(new HostName(server.Host), new AETitle(server.AETitle), new ListeningPort(server.Port)), queryParams);
+					}
+					else
+					{
+						throw new Exception(SR.ExceptionServerObjectIsNotQueryable);
+					}
+
 					aggregateStudyItemList.AddRange(serverStudyItemList);
 				}
 				catch (Exception e)
 				{
 					// keep track of the failed server names and exceptions
-					failedServerInfo.Add(new KeyValuePair<string, Exception>(server.Name, e));
+					failedServerInfo.Add(new KeyValuePair<string, Exception>(serverNode.Name, e));
 				}
 			}
 
@@ -598,7 +607,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			parameters["StudyInstanceUid"] = studyUids;
 
 			StudyItemList list = new StudyItemList();
-			list = _studyFinder.Query(parameters);
+			list = ImageViewerComponent.StudyFinders["DICOM_LOCAL"].Query(parameters);
 
 			foreach (StudyItem item in list)
 			{

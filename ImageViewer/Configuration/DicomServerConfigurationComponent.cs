@@ -27,35 +27,27 @@ namespace ClearCanvas.ImageViewer.Configuration
         private string _aeTitle;
         private int _port;
         private string _storageDir;
-
-        private DicomServerServiceClient _serviceClient;
+		private bool _enabled;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public DicomServerConfigurationComponent()
         {
-        }
+		}
 
         public override void Start()
         {
-            ConnectToClient();
-            base.Start();
+			Refresh();
+			base.Start();
         }
 
         public override void Stop()
         {
-            // Always close the client.
-            if (_serviceClient != null)
-            {
-                _serviceClient.Close();
-                _serviceClient = null;
-            }
-
             base.Stop();
         }
 
-        public void ConnectToClient()
+        public void Refresh()
         {
 			BlockingOperation.Run(this.ConnectToClientInternal);
 			SignalPropertyChanged();
@@ -65,14 +57,13 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			try
 			{
-				_serviceClient = new DicomServerServiceClient();
-				DicomServerConfiguration serverConfiguration = _serviceClient.GetServerConfiguration();
-				_serviceClient.Close();
+				_enabled = true;
+				DicomServerConfigurationHelper.Refresh(true);
 
-				_hostName = serverConfiguration.HostName;
-				_aeTitle = serverConfiguration.AETitle;
-				_port = serverConfiguration.Port;
-				_storageDir = serverConfiguration.InterimStorageDirectory;
+				_hostName = DicomServerConfigurationHelper.Host;
+				_aeTitle = DicomServerConfigurationHelper.AETitle;
+				_port = DicomServerConfigurationHelper.Port;
+				_storageDir = DicomServerConfigurationHelper.InterimStorageDirectory;
 			}
 			catch
 			{
@@ -80,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 				_aeTitle = "";
 				_port = 0;
 				_storageDir = "";
-				_serviceClient = null;
+				_enabled = false;
 
 				this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToRetrieveServerSettings, MessageBoxActions.Ok);
 			}
@@ -88,27 +79,14 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         public override void Save()
         {
-            if (_serviceClient != null)
+            try
             {
-                try
-                {
-					DicomServerConfiguration newConfiguration = new DicomServerConfiguration();
-					newConfiguration.HostName = _hostName;
-					newConfiguration.AETitle = _aeTitle;
-					newConfiguration.Port = _port;
-					newConfiguration.InterimStorageDirectory = _storageDir;
-
-                    _serviceClient = new DicomServerServiceClient();
-					_serviceClient.UpdateServerConfiguration(newConfiguration);
-                    _serviceClient.Close();
-
-                    LocalApplicationEntity.UpdateSettings(_aeTitle, _port);
-                }
-                catch
-                {
-					this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToUpdateServerSettings, MessageBoxActions.Ok);
-				}
+				DicomServerConfigurationHelper.Update(_hostName, _aeTitle, _port, _storageDir);
             }
+            catch
+            {
+				this.Host.DesktopWindow.ShowMessageBox(SR.MessageFailedToUpdateServerSettings, MessageBoxActions.Ok);
+			}
         }
 
         private void SignalPropertyChanged()
@@ -164,7 +142,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         public bool Enabled
         {
-            get { return _serviceClient != null; }
+			get { return _enabled; }
         }
 
         #endregion

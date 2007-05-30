@@ -49,6 +49,8 @@
     <Compile Include="LocalDataStore\LocalDataStoreActivityMonitorServiceClient.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreServiceClient.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ServerTree\AEServerGroup.cs" />
+    <Compile Include="ServerTree\ServerTree.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

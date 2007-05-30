@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
 
         private void _refreshButton_Click(object sender, EventArgs e)
         {
-            _component.ConnectToClient();
+            _component.Refresh();
         }
     }
 }

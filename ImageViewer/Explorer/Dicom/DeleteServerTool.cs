@@ -5,6 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
@@ -33,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 serverTree.DeleteDicomServer();
 				this.Context.UpdateType = (int)ServerUpdateType.None; 
             }
-            else
+            else if (serverTree.CurrentNode.IsServerGroup)
             {
                 if (Platform.ShowMessageBox(SR.MessageConfirmDeleteServerGroup, MessageBoxActions.YesNo) != DialogBoxAction.Yes)
                     return;
@@ -46,8 +47,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         protected override void OnSelectedServerChanged(object sender, EventArgs e)
         {
-            this.Enabled = !this.Context.ServerTree.CurrentNode.Name.Equals(AENavigatorComponent.MyDatastoreTitle)
-                            && !this.Context.ServerTree.CurrentNode.Name.Equals(AENavigatorComponent.MyServersTitle);
+        	//enable only if it's a server or server group, and is not the "My Servers" root node.
+			this.Enabled = (this.Context.ServerTree.CurrentNode.IsServer || this.Context.ServerTree.CurrentNode.IsServerGroup) &&
+							this.Context.ServerTree.CurrentNode != this.Context.ServerTree.RootNode.ServerGroupNode;
         }
     }
 }

@@ -4,6 +4,7 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {

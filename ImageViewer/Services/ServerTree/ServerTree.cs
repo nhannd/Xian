@@ -3,16 +3,32 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 using System.Xml.Serialization;
-using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Network;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.Explorer.Dicom
+namespace ClearCanvas.ImageViewer.Services.ServerTree
 {
     public class ServerTree
     {
-        public ServerTree()
+		public static readonly string MyServersXmlFileDefault = "DicomAEServers.xml";
+		public static readonly string MyDataStoreTitleDefault = SR.MyDataStoreTitle;
+		public static readonly string MyServersTitleDefault = SR.MyServersTitle;
+		public static readonly string RootNodeName = "Root";
+		public static readonly string MyServersRootName = "MyServersRoot";
+		
+		#region Private fields
+
+		private ServerTreeRoot _rootNode;
+		private IServerTreeNode _currentNode;
+		private event EventHandler _serverTreeUpdated;
+
+		private string _myServersXmlFile = MyServersXmlFileDefault;
+		private string _myDataStoreTitle = MyDataStoreTitleDefault;
+		private string _myServersTitle = MyServersTitleDefault;
+
+		#endregion
+
+		public ServerTree()
         {
             LoadServers();
             CurrentNode = _rootNode.LocalDataStoreNode;
@@ -59,7 +75,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
                 conflictingGroupPath = "";
                 return false;
             }
-                
         }
 
         public void DeleteServerGroup()
@@ -102,17 +117,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             }
         }
 
-        public void SaveDicomServers()
-        {
+		public void SaveDicomServers()
+		{
             XmlSerializer xmlFormat = new XmlSerializer(typeof(ServerTreeRoot), new Type[] { 
                     typeof(ServerGroup),
-                    typeof(LocalDataStore),
                     typeof(Server),
                     typeof(List<ServerGroup>),
                     typeof(List<Server>)
                 });
 
-            Stream fStream = new FileStream(AENavigatorComponent.MyServersXmlFile, FileMode.Create, FileAccess.Write, FileShare.None);
+			Stream fStream = new FileStream(this.MyServersXmlFile, FileMode.Create, FileAccess.Write, FileShare.Read);
             xmlFormat.Serialize(fStream, _rootNode);
             fStream.Close();
             return;
@@ -125,15 +139,26 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             return listOfChildrenServers;
         }
 
-        public void OnUpdateLocalDataStoreNode(object sender, EventArgs e)
-        {
-            _rootNode.LocalDataStoreNode.AETitle = LocalApplicationEntity.AETitle;
-            _rootNode.LocalDataStoreNode.Port = LocalApplicationEntity.Port;
-			SaveDicomServers();
-			_rootNode.LocalDataStoreNode.FireUpdated();
-        }
-
         #region Properties
+
+		public string MyServersXmlFile
+		{
+			get { return _myServersXmlFile; }
+			set { _myServersXmlFile = value; }
+		}
+
+		public string MyDatastoreTitle
+		{
+			get { return _myDataStoreTitle; }
+			set { _myDataStoreTitle = value; }
+		}
+
+		public string MyServersTitle
+		{
+			get { return _myServersTitle; }
+			set { _myServersTitle = value; }
+		}
+
         public IServerTreeNode CurrentNode
         {
             get { return _currentNode; }
@@ -159,15 +184,14 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
             _rootNode = new ServerTreeRoot();
 
-            if (File.Exists(AENavigatorComponent.MyServersXmlFile))
+            if (File.Exists(this.MyServersXmlFile))
             {
-                Stream fStream = File.OpenRead(AENavigatorComponent.MyServersXmlFile);
+				Stream fStream = File.OpenRead(this.MyServersXmlFile);
 
                 using (fStream)
                 {
                     XmlSerializer xmlFormat = new XmlSerializer(typeof(ServerTreeRoot), new Type[] { 
                             typeof(ServerGroup),
-                            typeof(LocalDataStore),
                             typeof(Server),
                             typeof(List<ServerGroup>),
                             typeof(List<Server>)
@@ -182,29 +206,16 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             else
             {
                 // create default entries and save them to disk
-                _rootNode.LocalDataStoreNode = new LocalDataStore(AENavigatorComponent.MyDatastoreTitle, "", ".", GetLocalDataStoreIps(), LocalApplicationEntity.AETitle, LocalApplicationEntity.Port);
-                _rootNode.ServerGroupNode = new ServerGroup(AENavigatorComponent.MyServersTitle, ".");
-                _rootNode.ServerGroupNode.ChildGroups.Add(new ServerGroup(SR.ExampleGroup, "./" + AENavigatorComponent.MyServersTitle));
-                _rootNode.ServerGroupNode.ChildServers.Add(new Server(SR.ExampleServer, SR.SampleLocation, "./" + AENavigatorComponent.MyServersTitle, "localhost", "SAMPLE", 104));
+                _rootNode.ServerGroupNode = new ServerGroup(this.MyServersTitle, ".");
+                _rootNode.ServerGroupNode.ChildGroups.Add(new ServerGroup(SR.ExampleGroup, "./" + this.MyServersTitle));
+                _rootNode.ServerGroupNode.ChildServers.Add(new Server(SR.ExampleServer, SR.ExampleLocation, "./" + this.MyServersTitle, "localhost", "SAMPLE", 104));
                 SaveDicomServers();
             }
 
-            return; 
+			_rootNode.LocalDataStoreNode = new LocalDataStore(this.MyDatastoreTitle, ".");
         }
-        private string GetLocalDataStoreIps()
-        {
-            string hostname = System.Net.Dns.GetHostName();
-            System.Net.IPAddress[] ips = System.Net.Dns.GetHostAddresses(hostname);
-            StringBuilder ipstring = new StringBuilder();
-            foreach (System.Net.IPAddress ip in ips)
-            {
-                ipstring.Append(ip.ToString() + ", ");
-            }
-            ipstring.Remove(ipstring.Length - 2, 2);
 
-            return ipstring.ToString();  
-        }
-        private IServerTreeNode FindParentGroup(IServerTreeNode node)
+		private IServerTreeNode FindParentGroup(IServerTreeNode node)
         {
             if (node.ParentPath.Equals("."))
                 return _rootNode.ServerGroupNode;
@@ -318,20 +329,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             {
                 list.Add(server);
             }
-
-            return;
         }
 
-        private void LoadDefaultServers()
-        {
-
-        }
-        #endregion
-
-        #region Private fields
-        private ServerTreeRoot _rootNode;
-        private IServerTreeNode _currentNode;
-        private event EventHandler _serverTreeUpdated;
         #endregion
     }
 
@@ -355,7 +354,9 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         {
         }
 
-        public LocalDataStore LocalDataStoreNode;
+		[NonSerialized]
+		[XmlIgnore]
+		public LocalDataStore LocalDataStoreNode;
         public ServerGroup ServerGroupNode;
 
         #region IServerTreeNode Members
@@ -387,7 +388,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public string Name
         {
-            get { return "Root"; }
+            get { return ServerTree.RootNodeName; }
         }
 
         public string ParentPath
@@ -411,12 +412,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     [Serializable]
     public class ServerGroup : IServerTreeNode
     {
-        public ServerGroup()
-            : this(AENavigatorComponent.MyServersRoot, ".")
-        {
-        }
+		protected ServerGroup()
+			: this(ServerTree.MyServersRootName, ".")
+		{
+		}
 
-        public ServerGroup(string name, string pathToParent)
+		public ServerGroup(string name, string pathToParent)
         {
             NameOfGroup = name;
             PathToParent = pathToParent;
@@ -522,30 +523,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
     {
         public Server()
         {
-
         }
 
-        public Server(string name, string location, string path, string host, string aeTitle, int port)
+        public Server(string name, string location, string pathToParent, string host, string aeTitle, int port)
         {
             NameOfServer = name;
             Location = location;
-            PathToParent = path;
+            PathToParent = pathToParent;
             PathToServer = PathToParent + "/" + NameOfServer;
             Host = host;
             AETitle = aeTitle;
             Port = port;
         }
 
-        public ApplicationEntity GetApplicationEntity()
-        {
-            return new ApplicationEntity(new HostName(Host), new AETitle(AETitle), new ListeningPort(Port));
-        }
-
         public override string ToString()
         {
-            ApplicationEntity ae = GetApplicationEntity();
             StringBuilder aeDescText = new StringBuilder();
-			aeDescText.AppendFormat(SR.FormatTooltipServerDetails, Name, ae.AE, ae.Host, ae.Port, Location);
+			aeDescText.AppendFormat(SR.FormatServerDetails, this.Name, this.AETitle, this.Host, this.Port, this.Location);
             return aeDescText.ToString();
         }
 
@@ -608,46 +602,104 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
         #endregion
     }
 
-    [Serializable]
-    public class LocalDataStore : Server, IServerTreeNode
+	public interface IDicomServerConfigurationProvider
+	{
+		string Host { get; }
+		string AETitle { get; }
+		int Port { get; }
+		string InterimStorageDirectory { get; }
+
+		bool NeedsRefresh { get; }
+		void Refresh();
+
+		event EventHandler Changed;
+	}
+
+	public class LocalDataStore : IServerTreeNode
     {
-		private event EventHandler _updated;
+		private string _name;
+		private string _path;
+		private string _parentPath;
 
-        public LocalDataStore()
-        {
+		private IDicomServerConfigurationProvider _dicomServerConfigurationProvider;
 
-        }
-
-        public LocalDataStore(string name, string location, string path, string host, string aeTitle, int port)
-            : base(name, location, path, host, aeTitle, port)
-        {
-
-        }
-
-		public event EventHandler Updated
-		{
-			add { _updated += value; }
-			remove { _updated -= value; }
+		public LocalDataStore()
+		{ 
 		}
-		
+
+		public LocalDataStore(string name, string pathToParent)
+        {
+			_name = name;
+			_parentPath = pathToParent;
+			_path = _parentPath + "/" + _name;
+        }
+
+		public IDicomServerConfigurationProvider DicomServerConfigurationProvider
+		{
+			get { return _dicomServerConfigurationProvider; }
+			set { _dicomServerConfigurationProvider = value; }
+		}
+
+		public override string ToString()
+		{
+			StringBuilder aeDescText = new StringBuilder();
+			if (_dicomServerConfigurationProvider == null || _dicomServerConfigurationProvider.NeedsRefresh)
+				aeDescText.AppendFormat(SR.LocalDataStoreConfigurationUnavailable);
+			else
+				aeDescText.AppendFormat(SR.FormatLocalDataStoreDetails, _name, _dicomServerConfigurationProvider.AETitle, _dicomServerConfigurationProvider.Host, _dicomServerConfigurationProvider.Port, _dicomServerConfigurationProvider.InterimStorageDirectory);
+
+			return aeDescText.ToString();
+		}
+
 		#region IServerTreeNode Members
 
-        public new bool IsLocalDataStore
-        {
-            get { return true; }
-        }
-
-        public new bool IsServer
-        {
-            get { return true; }
-        }
-
-        #endregion
-
-		public void FireUpdated()
+		public bool IsLocalDataStore
 		{
-			EventsHelper.Fire(_updated, this, EventArgs.Empty);
+			get { return true; }
 		}
+
+		public bool IsServer
+		{
+			get { return false; }
+		}
+
+		public bool IsServerGroup
+		{
+			get { return false;	}
+		}
+
+		public bool IsRoot
+		{
+			get { return false; }
+		}
+
+		public string ParentPath
+		{
+			get { return _parentPath; }
+		}
+
+		public string Path
+		{
+			get { return _path; }
+		}
+
+		public string Name
+		{
+			get { return _name; }
+		}
+
+		public bool CanAddAsChild(IServerTreeNode node)
+		{
+			return false;
+		}
+
+		public void ChangeParentPath(string newParentPath)
+		{
+			_parentPath = newParentPath;
+			_path = newParentPath + "/" + _name;
+		}
+
+		#endregion
 	}
 }
 
