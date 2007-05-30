@@ -38,7 +38,7 @@ namespace ClearCanvas.Ris.Client.Adt
     /// TechnologistPreviewComponent class
     /// </summary>
     [AssociateView(typeof(TechnologistPreviewComponentViewExtensionPoint))]
-    public class TechnologistPreviewComponent : ApplicationComponent
+    public class TechnologistPreviewComponent : HtmlApplicationComponent
     {
         class TechnologistPreviewToolContext : ToolContext, ITechnologistPreviewToolContext
         {
@@ -475,13 +475,13 @@ namespace ClearCanvas.Ris.Client.Adt
             switch (detail.Type)
             {
                 case "Note Alert":
-                    alertImageURI = "http://172.16.10.167/RisTemplates/note.png";
+                    alertImageURI = Server + "/Images/note.png";
                     break;
                 case "Language Alert":
-                    alertImageURI = "http://172.16.10.167/RisTemplates/language.png";
+                    alertImageURI = Server + "/Images/language.png";
                     break;
                 default:
-                    alertImageURI = "http://172.16.10.167/RisTemplates/healthcare3.jpg";
+                    alertImageURI = Server + "/Images/healthcare3.jpg";
                     break;
             }
 

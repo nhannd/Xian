@@ -88,6 +88,7 @@
     </Compile>
     <Compile Include="Formatting\HealthcardFormat.cs" />
     <Compile Include="Formatting\MrnFormat.cs" />
+    <Compile Include="HtmlApplicationComponent.cs" />
     <Compile Include="IDropContext.cs" />
     <Compile Include="IDropHandler.cs" />
     <Compile Include="IFolder.cs" />
@@ -108,6 +109,12 @@
     <Compile Include="StaffFinder.cs" />
     <Compile Include="StaffSummaryComponent.cs" />
     <Compile Include="StaffTable.cs" />
+    <Compile Include="WebResourcesSettings.cs" />
+    <Compile Include="WebResourcesSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>WebResourcesSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="WorkflowFolderSystem.cs" />
     <Compile Include="PhoneNumberEditorComponent.cs" />
     <Compile Include="PhoneNumbersSummaryComponent.cs" />
@@ -181,6 +188,10 @@
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="RisClient.bat" />
+    <None Include="WebResourcesSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>WebResourcesSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="ContactPersonEditorComponent.val.xml" />

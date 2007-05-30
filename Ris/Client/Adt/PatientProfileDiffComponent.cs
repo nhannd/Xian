@@ -23,7 +23,7 @@ namespace ClearCanvas.Ris.Client.Adt
     /// PatientProfileDiffComponent class
     /// </summary>
     [AssociateView(typeof(PatientProfileDiffComponentViewExtensionPoint))]
-    public class PatientProfileDiffComponent : ApplicationComponent
+    public class PatientProfileDiffComponent : HtmlApplicationComponent
     {
         public class Field
         {

@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Client.Adt
     /// RegistrationPreviewComponent class
     /// </summary>
     [AssociateView(typeof(RegistrationPreviewComponentViewExtensionPoint))]
-    public class RegistrationPreviewComponent : ApplicationComponent
+    public class RegistrationPreviewComponent : HtmlApplicationComponent
     {
         class RegistrationPreviewToolContext : ToolContext, IRegistrationPreviewToolContext
         {
@@ -322,22 +322,22 @@ namespace ClearCanvas.Ris.Client.Adt
             switch (detail.Type)
             {
                 case "Note Alert":
-                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertPen.png";
+                    alertImageURI = Server + "/Images/AlertPen.png";
                     break;
                 case "Language Alert":
-                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertWorld.png";
+                    alertImageURI = Server + "/Images/AlertWorld.png";
                     break;
                 case "Reconciliation Alert":
-                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertMessenger.png";
+                    alertImageURI = Server + "/Images/AlertMessenger.png";
                     break;
                 case "Schedule Alert":
-                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertClock.png";
+                    alertImageURI = Server + "/Images/AlertClock.png";
                     break;
                 case "Incomplete demographic data alert":
-                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertIncompleteData.png";
+                    alertImageURI = Server + "/Images/AlertIncompleteData.png";
                     break;
                 default:
-                    alertImageURI = "http://172.16.10.167/RisTemplates/AlertGeneral.png";
+                    alertImageURI = Server + "/Images/AlertGeneral.png";
                     break;
             }
 

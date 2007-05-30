@@ -1,14 +1,16 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
+<%
+var component = this.Component;
+var amr = this.ActionModelRenderer;
+%>
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
     <title>Untitled Document</title>
-    <link href="http://172.16.10.167/RisTemplates/default.css" rel="stylesheet" type="text/css" />
+    <link href="<%= component.Server %>/Styles/default.css" rel="stylesheet" type="text/css" />
 </head>
 <body>
-    <% 
-var component = this.Component;
-var amr = this.ActionModelRenderer;
+<% 
 if(component.WorklistPreview != null)
 {%>
     <% if(component.ShowHeader) { %>
@@ -17,9 +19,7 @@ if(component.WorklistPreview != null)
             <td width="422" class="pageheading">
                 <%= component.Name %>
             </td>
-            <!--<td rowspan="2" width="202"><img src="http://clearcanvas.ca/images/clearcanvas_logo.png" alt="ClearCanvas Inc." width="210" height="64" align="left" /></td>-->
-            <td rowspan="2" width="202">
-                <img src="http://172.16.10.167/RisTemplates/logo.jpg" alt="UHN/MSH" align="left" /></td>
+            <td rowspan="2" width="202"><img src="<%= component.Server %>/Images/logo.jpg" alt="UHN/MSH" align="left" /></td>
         </tr>
         <tr>
             <td class="pageheading2">
