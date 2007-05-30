@@ -1,3 +1,7 @@
+// create a global $ function that acts as an alias for document.getElementById
+var $ = function(id) { return document.getElementById(id); }
+
+
 /*
     Augments the javascript Array prototype with a number of convenience and functional-style methods, and some events.
     The following methods are added:
@@ -83,6 +87,18 @@ if(!Array.prototype.select)
     }
 }
 
+// returns the first element of this array that satisfies the specified predicate function, or null
+if(!Array.prototype.find)
+{
+    Array.prototype.find = function(func)
+    {
+        for(var i = 0; i < this.length; i++)
+            if(func(this[i]))
+                return this[i];
+        return null;
+    }
+}
+
 // returns the index of the specified object, or -1 if not found
 if(!Array.prototype.indexOf)
 {
@@ -137,3 +153,4 @@ if(!String.prototype.escapeHTML)
         return div.childNodes[0].nodeValue;
     }
 }
+

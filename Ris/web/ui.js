@@ -1,18 +1,22 @@
 /*
-    Table
+    DynamicTable
     
-    The Table class wraps an HTML DOM table element so that it functions as a dynamically generated table.  It binds the
-    table to an array of items, such that additions or removals from the items array automatically update the table.
+    The DynamicTable.createTable method accepts an HTML DOM table element as input and augments it with properties and methods
+    that allow it to function as a dynamically generated table.  It binds the table to an array of items, such that additions
+    or removals from the items array automatically update the table.
     
     It is assumed that the HTML table contains exactly one header row and exactly one column (the leftmost column) reserved
     for checkboxes, and the table must conform to this layout or the Table class will not function correctly.
     The Table class does not touch the header row.
     
-    Constructor:
-        Table(htmlTable, items, propNames)
-            htmlTable - the DOM TABLE element that this Table will bind to
-            propNames - an array of property names which maps properties of the items to columns of the table
+    DynamicTable.createTable(htmlTable, items, propNames)
+            htmlTable - the DOM TABLE element to augment
+            columns - an array of column objects that maps properties of the items to columns of the table. A column object
+                has the following properties:
+                    property - the name of the property on the item to which this column maps
             items (optional) - the array of items that this table will bind to
+            
+    DynamicTable.createTable returns the htmlTable element with the following properties, methods, and events added to it:
             
     Properties:
         items - the array of items to which the table is bound. Do not set this property - use bindItems() method instead.
@@ -31,27 +35,44 @@
         
     Events:
         formatRow - fired when a new row is added to the table.
-            The event object contains the properties:   htmlRow - the DOM TR element
+            To attach an event handler, use the following syntax: table.formatRow = function(sender, args) {...}
+            The args object contains the properties:   htmlRow - the DOM TR element
                                                         rowIndex - the index of the row added
                                                         item - the item that this row represents
                                                         
         formatCell - fired when a new cell is added to the table.
-            The event object contains the properties:   htmlCell - the DOM TD element                                        
+            To attach an event handler, use the following syntax: table.formatCell = function(sender, args) {...}
+            The args object contains the properties:   htmlCell - the DOM TD element                                        
                                                         rowIndex - the row index of the cell
                                                         colIndex - the col index of the cell
                                                         item - the item that this row represents
-                                                        propertyName - the property of the item that the column holds
+                                                        column - the column object to which this cell is mapped
     
     
 */
-function Table(htmlTable, propNames, items)
-{
-	this.htmlTable = htmlTable;
-	this.propNames = propNames || [];
-	this.checkBoxes = [];
-	this.rowCycleClassNames = [];
+
+var DynamicTable = {
+    createTable: function(htmlTable, columns, items)
+    {
+        htmlTable._columns = columns;
+        htmlTable._checkBoxes = [];
+        htmlTable.rowCycleClassNames = [];
+
+        for(var prop in TableMixIn)
+            htmlTable[prop] = TableMixIn[prop];
+            
+        if(items)
+            htmlTable.bindItems(items);
+            
+        return htmlTable;
+    }
+};
+
+// defines the methods that DynamicTable will mix-in to the DOM table object
+var TableMixIn = {
 	
-	this.bindItems = function(items)
+	
+	bindItems: function(items)
 	{
 	    this._removeAllRows();
 	    
@@ -65,27 +86,30 @@ function Table(htmlTable, propNames, items)
 	    // init table with items array
 	    this.items.each(function(item) { table._addRow(item); });
 	    
-	}
-	this.getCheckedItems = function()
+	},
+	
+	getCheckedItems: function()
 	{
 		var result = [];
-		for(var i=0; i < this.htmlTable.rows.length; i++)
+		for(var i=0; i < this.rows.length; i++)
 		{
-			if(this.checkBoxes[i] && this.checkBoxes[i].checked)
+			if(this._checkBoxes[i] && this._checkBoxes[i].checked)
 				result.add(this.items[i-1]);
 		}
 		return result;
-	}
-	this.setItemCheckState = function(item, checked)
+	},
+	
+	setItemCheckState: function(item, checked)
 	{
 	    var rowIndex = this.items.indexOf(item) + 1;
 	    if(rowIndex > 0)
-	        this.checkBoxes[rowIndex].checked = checked;
-	}
-	this._addRow = function(obj)
+	        this._checkBoxes[rowIndex].checked = checked;
+	},
+	
+	_addRow: function(obj)
 	{
-		var index = this.htmlTable.rows.length;
-		var tr = this.htmlTable.insertRow(index);
+		var index = this.rows.length;
+		var tr = this.insertRow(index);
 		
 		// apply row cyclic css class to row
 		if(this.rowCycleClassNames && this.rowCycleClassNames.length > 0)
@@ -100,78 +124,75 @@ function Table(htmlTable, propNames, items)
 		var checkBox = document.createElement("input");
 		checkBox.type = "checkbox";
 		td.appendChild(checkBox);
-		this.checkBoxes[index] = checkBox;
+		this._checkBoxes[index] = checkBox;
 		
 		// add other cells
-		for(var i=0; i < this.propNames.length; i++)
+		for(var i=0; i < this._columns.length; i++)
 		{
 			td = tr.insertCell(i+1);
-			// by default, set cell content to the value of the specified property of the object
-			td.innerHTML = ((obj[this.propNames[i]] || "")+"").escapeHTML();
-			// fire custom formatting event, which may itself set the innerHTML property to override default cell content
-			if(this.formatCell)
-			    this.formatCell(this, { htmlCell: td, propertyName: this.propNames[i], item: obj, rowIndex: index-1, colIndex: i });
+			this._renderCell(index+1, i, td, obj);
 		}
-	}
-	this._removeRow = function(index)
+	},
+	
+	_renderCell: function(row, col, td, obj)
 	{
-		this.htmlTable.deleteRow(index);
-		this.checkBoxes.removeAt(index);
-	}
-	this._removeAllRows = function()
+		// by default, set cell content to the value of the specified property of the object
+		td.innerHTML = ((obj[this._columns[col].property] || "")+"").escapeHTML();
+		// fire custom formatting event, which may itself set the innerHTML property to override default cell content
+		if(this.formatCell)
+		    this.formatCell(this, { htmlCell: td, column: this._columns[col], item: obj, rowIndex: row, colIndex: col });
+	},
+	
+	_removeRow: function(index)
 	{
-	    for(var i=this.htmlTable.rows.length-1; i > 0; i--)
+		this.deleteRow(index);
+		this._checkBoxes.removeAt(index);
+	},
+	
+	_removeAllRows: function()
+	{
+	    for(var i=this.rows.length-1; i > 0; i--)
 	        this._removeRow(i);
 	}
-	
-	// bind this table to items array
-	this.bindItems(items || []);
-}
+};
+
+var EditableTableMixIn = {
+	_renderCell: function(row, col, td, obj)
+	{
+		// by default, set cell content to the value of the specified property of the object
+		td.innerHTML = ((obj[this._columns[col]] || "")+"").escapeHTML();
+		// fire custom formatting event, which may itself set the innerHTML property to override default cell content
+		if(this.formatCell)
+		    this.formatCell(this, { htmlCell: td, propertyName: this._columns[col], item: obj, rowIndex: row, colIndex: col });
+	}
+};
+
 
 function Validation()
 {
     this._validators = [];
     
-    this.addValidator = function(htmlElement, errorFunc)
+    this.show = function(htmlElement, message)
     {
-        var validator = { img: document.createElement("img"), div: document.createElement("div"), errorCallback: errorFunc };
-        validator.img.src = "error.gif";
-        validator.img.alt = "Error";
-        validator.div.style.visibility = "hidden";
+        // see if there is already a validator for this element
+        var validator = this._validators.find(function(v) { return v.element == htmlElement; });   
         
-        validator.div.appendChild(validator.img);
-        htmlElement.parentNode.insertBefore(validator.div, htmlElement);
-        
-        this._validators.add( validator );
+        // if not, create one
+        if(!validator)
+        {
+            validator = { element: htmlElement, img: document.createElement("img") };
+            validator.img.src = "warning.gif";
+            validator.img.width = validator.img.height = 20;
+            this._validators.add( validator );
+            
+            htmlElement.parentNode.insertBefore(validator.img, htmlElement.nextSibling);       
+        }
+        validator.img.alt = message;
+        validator.img.style.visibility = (message && message.length) ? "visible" : "hidden";
     }
     
-    this.hasErrors = function()
+    this.hideAll = function(htmlElement, message)
     {
-        return this._validators.select(
-            function(validator) {
-                var message = validator.errorCallback();
-                return message && message.length > 0;
-            }).length > 0;
-    }
-    
-    this.showErrors = function(show)
-    {
-        this._validators.each(
-            function(validator)
-            {
-                if(show)
-                {
-                    var message = validator.errorCallback();
-                    if(message && message.length > 0)
-                    {
-                        validator.img.alt = message;
-                        validator.div.style.visibility = "visible";
-                    }
-                    else
-                        validator.div.style.visibility = "hidden";
-                }
-                else
-                    validator.div.style.visibility = "hidden";
-            });
+        this._validators.each(function(validator) {  validator.img.style.visibility = "hidden"; });
     }
 }

@@ -1,22 +1,17 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-        <link href="default.css" rel="stylesheet" type="text/css" />
+        <!--<link href="default.css" rel="stylesheet" type="text/css" />-->
 	    <script src="jsx.js"></script>
 	    <script src="jsml.js"></script>
 	    <script src="ui.js"></script>
 	    <script src="ris.js"></script>
 		<script>
 		    var data;
-		    var relTable;
 		    var validation = new Validation();
-		    
+	    
 		    function initPage()
 		    {
-			    var myForm = document.getElementById("myForm");
-		        validation.addValidator(myForm.lastName,
-		            function() { return myForm.lastName.value ? "" : "last name required"; });
-		    
 		        // if the Ris object is not defined, we are running in a plain old browser, so call setData manually
 				if(!Ris)
 				    setData(null);
@@ -25,18 +20,18 @@
 		    function setData(jsml)
 		    {
 			    data = JSML.parse(jsml) || {};
-			    var myForm = document.getElementById("myForm");
+			    var myForm = $("myForm");
 			    myForm.lastName.value = data.lastName || "";
 			    myForm.firstName.value = data.firstName || "";
 			    
 			    data.relatives = data.relatives || [];
 			    
 			    // create relatives table
-		        relTable = new Table(document.getElementById("relativesTable"),["name", "relationship", "doctor"]);
+		        var relTable = DynamicTable.createTable($("relativesTable"), [{property: "name"}, {property: "relationship"}, {property: "doctor"}]);
 		        relTable.rowCycleClassNames = ["row0", "row1"];
 		        relTable.formatCell = function(sender, args)
 		        {
-		            if(args.propertyName == "doctor" && !args.item.doctor)
+		            if(args.column.property == "doctor" && !args.item.doctor)
 		            {
 		                args.htmlCell.innerHTML = "N/A";
 		            }
@@ -46,7 +41,7 @@
 		    
 		    function getData()
 		    {
-			    var myForm = document.getElementById("myForm");
+			    var myForm = $("myForm");
 		        data.lastName = myForm.lastName.value;
 		        data.firstName =  myForm.firstName.value;
 				return JSML.create(data, "data");
@@ -54,7 +49,7 @@
 
 			function onFindStaff()
 			{
-			    var myForm = document.getElementById("myForm");
+			    var myForm = $("myForm");
 			    var query = myForm.relativeDoctor.value || "";
 			    var result = Ris.resolveStaffName(query);
 			    if(result)
@@ -63,8 +58,7 @@
 			
 			function onAddRelative()
 			{
-			    validation.showErrors(true);
-			    var myForm = document.getElementById("myForm");
+			    var myForm = $("myForm");
 			    data.relatives.add( {
 			        name: myForm.relativeName.value,
 			        relationship: myForm.relationship.value,
@@ -73,7 +67,7 @@
 			
 			function onDeleteRelative()
 			{
-			    var checkedItems = relTable.getCheckedItems();
+			    var checkedItems = $("relativesTable").getCheckedItems();
 			    if(checkedItems.length > 0)
 			    {
 			        if(confirm("Deleted selected relatives?"))
@@ -88,8 +82,13 @@
 			}
 			function onRelativesCheckAllNone()
 			{
-			    var allNoneCheckBox = document.getElementById("relativesCheckAllNone");
-			    data.relatives.each(function(item) { relTable.setItemCheckState(item, allNoneCheckBox.checked); });
+			    data.relatives.each(function(item) { $("relativesTable").setItemCheckState(item, $("relativesCheckAllNone").checked); });
+			}
+			function updateValidation()
+			{
+			    var myForm = $("myForm");
+			    validation.show(myForm.lastName, myForm.lastName.value ? "" : "Last name is required");
+			    validation.show(myForm.firstName, myForm.firstName.value ? "" : "First name is required");
 			}
 		</script>
 	</head>
@@ -98,8 +97,8 @@
 		<form id="myForm">
 		<p>Personal Data</p>
 		<p>
-		    Last Name<input type="text" id="lastName"/>
-		    First Name<input type="text" id="firstName"/>
+		    Last Name<input type="text" id="lastName" onchange="updateValidation()"/>
+		    First Name<input type="text" id="firstName" onchange="updateValidation()"/>
 		</p>
 		<p></p>
 		<p>Relatives</p>
@@ -117,6 +116,7 @@
 		<p>
 		    <input type="button" value="Add" onclick="javascript: onAddRelative()" />
 		    <input type="button" value="Delete" onclick="javascript: onDeleteRelative()" />
+		    <input type="button" value="Update Validation" onclick="javascript: updateValidation()" />
 		</p>
 			<table id="relativesTable">
 			  <tr>
