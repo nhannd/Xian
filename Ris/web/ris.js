@@ -25,7 +25,7 @@ if(window.external)
         }
     };
     
-    // redefine some window functions to use Ris versions
+    // redefine some browser functions to use Ris versions
     window.confirm = Ris.confirm;
     window.alert = Ris.alert;
 }

@@ -27,16 +27,44 @@
 			    data.relatives = data.relatives || [];
 			    
 			    // create relatives table
-		        var relTable = DynamicTable.createTable($("relativesTable"), [{property: "name"}, {property: "relationship"}, {property: "doctor"}]);
+		        //var relTable = DynamicTable.createTable($("relativesTable"), ["name","relationship","doctor"]);
+		        var relTable = DynamicTable.createTable($("relativesTable"), { editInPlace: true },
+		             [
+		                {
+		                    cellType: "text",
+		                    getValue: function(item) { return item.name; },
+		                    setValue: function(item, value) { item.name = value; }
+		                },
+		                {
+		                    cellType: "choice",
+		                    choices: ["Mother", "Father", "Child", "Sibling"],
+		                    getValue: function(item) { return item.relationship; },
+		                    setValue: function(item, value) { item.relationship = value; }
+		                },
+		                {
+		                    cellType: "lookup",
+		                    getValue: function(item) { return item.doctor; },
+		                    setValue: function(item, value) { item.doctor = value; },
+		                    lookup: function(query) { return Ris.resolveStaffName(query); }
+		                },
+		                {
+		                    cellType: "checkbox",
+		                    getValue: function(item) { return item.isBlood; },
+		                    setValue: function(item, value) { item.isBlood = value; }
+		                }
+		             ]);
 		        relTable.rowCycleClassNames = ["row0", "row1"];
-		        relTable.formatCell = function(sender, args)
+		        relTable.validation = validation;   // share validation with the rest of the form
+		        
+		        relTable.validateRow = function(sender, args)
 		        {
-		            if(args.column.property == "doctor" && !args.item.doctor)
-		            {
-		                args.htmlCell.innerHTML = "N/A";
-		            }
+		            if(!args.item.doctor)
+		                args.error = "Doctor is required";
 		        }
+		        
 		        relTable.bindItems(data.relatives);
+		        
+		        updateValidation();
 		    }
 		    
 		    function getData()
@@ -47,22 +75,14 @@
 				return JSML.create(data, "data");
 		    }
 
-			function onFindStaff()
+			function showValidation(show)
 			{
-			    var myForm = $("myForm");
-			    var query = myForm.relativeDoctor.value || "";
-			    var result = Ris.resolveStaffName(query);
-			    if(result)
-			        myForm.relativeDoctor.value = result;
+			    validation.setVisible(show);
 			}
 			
 			function onAddRelative()
 			{
-			    var myForm = $("myForm");
-			    data.relatives.add( {
-			        name: myForm.relativeName.value,
-			        relationship: myForm.relationship.value,
-			        doctor: myForm.relativeDoctor.value });
+			    data.relatives.add( {} );   // add an empty item
 			}
 			
 			function onDeleteRelative()
@@ -87,8 +107,8 @@
 			function updateValidation()
 			{
 			    var myForm = $("myForm");
-			    validation.show(myForm.lastName, myForm.lastName.value ? "" : "Last name is required");
-			    validation.show(myForm.firstName, myForm.firstName.value ? "" : "First name is required");
+			    validation.setError(myForm.lastName, myForm.lastName.value ? "" : "Last name is required");
+			    validation.setError(myForm.firstName, myForm.firstName.value ? "" : "First name is required");
 			}
 		</script>
 	</head>
@@ -97,33 +117,22 @@
 		<form id="myForm">
 		<p>Personal Data</p>
 		<p>
-		    Last Name<input type="text" id="lastName" onchange="updateValidation()"/>
-		    First Name<input type="text" id="firstName" onchange="updateValidation()"/>
+		    Last Name<input type="text" id="lastName" onkeyup="updateValidation()"/>
+		    First Name<input type="text" id="firstName" onkeyup="updateValidation()"/>
 		</p>
 		<p></p>
 		<p>Relatives</p>
 		<p>
-		    Name<input type="text" id="relativeName"/>
-		    Relationship
-		    <select id="relationship">
-		            <option value="Mother">Mother</option>
-					<option value="Father">Father</option>
-					<option value="Child">Child</option>
-					<option value="Sibling">Sibling</option>
-	        </select>
-	        Doctor<input type="text" id="relativeDoctor"/><input type="button" value="Find" onclick="javascript: onFindStaff()" />
-		</p>
-		<p>
 		    <input type="button" value="Add" onclick="javascript: onAddRelative()" />
 		    <input type="button" value="Delete" onclick="javascript: onDeleteRelative()" />
-		    <input type="button" value="Update Validation" onclick="javascript: updateValidation()" />
 		</p>
-			<table id="relativesTable">
+			<table id="relativesTable" border="1">
 			  <tr>
 			    <td><input id="relativesCheckAllNone" type="checkbox" onclick="javascript: onRelativesCheckAllNone()" />All/None</td>
 				<td class="tableheading">Name</td>
 				<td class="tableheading">Relationship</td>
 				<td class="tableheading">Doctor</td>
+				<td class="tableheading">Is Blood</td>
 			  </tr>
 			</table>
 		</form>
