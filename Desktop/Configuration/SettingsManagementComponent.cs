@@ -198,10 +198,10 @@ namespace ClearCanvas.Desktop.Configuration
             _editAction = _settingsPropertiesActionModel.AddAction("edit", SR.LabelEdit, "EditToolSmall.png",
                delegate() { EditProperty(_selectedSettingsProperty); });
 
-            _resetAction = _settingsPropertiesActionModel.AddAction("reset", SR.LabelReset, null,
+            _resetAction = _settingsPropertiesActionModel.AddAction("reset", SR.LabelReset, "ResetToolSmall.png",
                delegate() { ResetPropertyValue(_selectedSettingsProperty); });
 
-            _resetAllAction = _settingsPropertiesActionModel.AddAction("resetall", SR.LabelResetAll, null,
+            _resetAllAction = _settingsPropertiesActionModel.AddAction("resetall", SR.LabelResetAll, "ResetAllToolSmall.png",
                 delegate() { ResetAllPropertyValues(); });
 
         }
