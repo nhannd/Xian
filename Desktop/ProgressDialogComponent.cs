@@ -182,8 +182,9 @@ namespace ClearCanvas.Desktop
 
                 switch (e.Reason)
                 {
-                    case BackgroundTaskTerminatedReason.Completed:
                     case BackgroundTaskTerminatedReason.Exception:
+                        throw e.Exception;
+                    case BackgroundTaskTerminatedReason.Completed:
                     case BackgroundTaskTerminatedReason.Cancelled:
                     default:
                         if (this.ProgressBarStyle == ProgressBarStyle.Marquee)
@@ -192,7 +193,6 @@ namespace ClearCanvas.Desktop
                             _progressBarStyle = ProgressBarStyle.Blocks;
                             _progressBar = this.ProgressBarMaximum;
                         }
-                        break;
                         break;
                 }
                 

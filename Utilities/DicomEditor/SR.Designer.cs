@@ -259,6 +259,15 @@ namespace ClearCanvas.Utilities.DicomEditor {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to DICOM Dump operation failed.  File(s) in selection may not be DICOM..
+        /// </summary>
+        internal static string MessageFailedDump {
+            get {
+                return ResourceManager.GetString("MessageFailedDump", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to This tool is only valid when a DICOM Image is selected..
         /// </summary>
         internal static string MessagePleaseSelectAnImage {

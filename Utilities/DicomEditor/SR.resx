@@ -183,6 +183,9 @@
   <data name="MessageDumpProgressBar" xml:space="preserve">
     <value>Processing Files...</value>
   </data>
+  <data name="MessageFailedDump" xml:space="preserve">
+    <value>DICOM Dump operation failed.  File(s) in selection may not be DICOM.</value>
+  </data>
   <data name="MessagePleaseSelectAnImage" xml:space="preserve">
     <value>This tool is only valid when a DICOM Image is selected.</value>
   </data>

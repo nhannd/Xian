@@ -124,7 +124,14 @@ namespace ClearCanvas.Utilities.DicomEditor
                             userCancelled = true;
                             return;
                         }
-                        dumps.Add(accessor.LoadDicomDump(file));
+                        try
+                        {
+                            dumps.Add(accessor.LoadDicomDump(file));
+                        }
+                        catch (GeneralDicomException e)
+                        {
+                            backgroundcontext.Error(e);
+                        }
                         backgroundcontext.ReportProgress(new BackgroundTaskProgress((int)(((double)(i + 1) / (double)files.Count) * 100.0), SR.MessageDumpProgressBar));
                         i++;
                     }
@@ -132,9 +139,17 @@ namespace ClearCanvas.Utilities.DicomEditor
                     backgroundcontext.Complete(null);
                 }, true);
 
-                ProgressDialog.Show(task, context.DesktopWindow, true);
-                if (userCancelled == true)
+                try
+                {
+                    ProgressDialog.Show(task, context.DesktopWindow, true);
+                    if (userCancelled == true)
+                        return;
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, SR.MessageFailedDump, context.DesktopWindow);                    
                     return;
+                }
 
                 if (_component == null)
                 {
