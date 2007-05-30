@@ -307,9 +307,14 @@
     <Compile Include="ReportingWorkflow\CompleteInterpretationForTranscriptionRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationForVerificationRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteVerificationRequest.cs" />
+    <Compile Include="ReportingWorkflow\GetOperationEnablementRequest.cs" />
+    <Compile Include="ReportingWorkflow\GetOperationEnablementResponse.cs" />
+    <Compile Include="ReportingWorkflow\GetWorklistCountRequest.cs" />
+    <Compile Include="ReportingWorkflow\GetWorklistCountResponse.cs" />
     <Compile Include="ReportingWorkflow\GetWorklistRequest.cs" />
     <Compile Include="ReportingWorkflow\GetWorklistResponse.cs" />
     <Compile Include="ReportingWorkflow\IReportingWorkflowService.cs" />
+    <Compile Include="ReportingWorkflow\ReportingWorklistPreview.cs" />
     <Compile Include="ReportingWorkflow\ReportingWorklistItem.cs" />
     <Compile Include="ReportingWorkflow\ReportingWorklistSearchCriteria.cs" />
     <Compile Include="ReportingWorkflow\ScheduleInterpretationRequest.cs" />

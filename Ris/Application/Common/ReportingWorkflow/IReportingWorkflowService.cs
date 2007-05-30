@@ -10,6 +10,13 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         GetWorklistResponse GetWorklist(GetWorklistRequest request);
 
         [OperationContract]
+        GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request);
+
+        [OperationContract]
+        GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
+
+
+        [OperationContract]
         void ScheduleInterpretation(ScheduleInterpretationRequest request);
 
         [OperationContract]

@@ -21,3 +21,6 @@ copy "..\..\..\..\Ris\Client\Adt\View\WinForms\bin\%1\ClearCanvas.Ris.Client.Adt
 
 ::copy "..\..\..\..\Ris\Client\Modality\bin\%1\ClearCanvas.Ris.Client.Modality.dll" .\plugins
 ::copy "..\..\..\..\Ris\Client\Modality\View\WinForms\bin\%1\ClearCanvas.Ris.Client.Modality.View.WinForms.dll" .\plugins
+
+copy "..\..\..\..\Ris\Client\Reporting\bin\%1\ClearCanvas.Ris.Client.Reporting.dll" .\plugins
+copy "..\..\..\..\Ris\Client\Reporting\View\WinForms\bin\%1\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" .\plugins

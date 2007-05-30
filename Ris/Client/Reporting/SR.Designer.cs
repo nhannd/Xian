@@ -59,5 +59,14 @@ namespace ClearCanvas.Ris.Client.Reporting {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Radiologist Home.
+        /// </summary>
+        internal static string TitleRadiologistHome {
+            get {
+                return ResourceManager.GetString("TitleRadiologistHome", resourceCulture);
+            }
+        }
     }
 }

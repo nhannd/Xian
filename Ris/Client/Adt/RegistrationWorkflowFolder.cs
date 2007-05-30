@@ -5,12 +5,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Client;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Desktop.Tables;
-using System.Collections;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -103,7 +98,6 @@ namespace ClearCanvas.Ris.Client.Adt
             :this(folderSystem, folderName, null)
         {
         }
-
 
         public string WorklistClassName
         {

@@ -18,21 +18,40 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
     [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
     public class ReportingWorkflowService : WorkflowServiceBase, IReportingWorkflowService
     {
+        public ReportingWorkflowService()
+        {
+            _worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Reporting.WorklistExtensionPoint();
+        }
+
         #region IReportingWorkflowService Members
 
         [ReadOperation]
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
-            ReportingWorklistAssembler assembler = new ReportingWorklistAssembler();
-            ReportingProcedureStepSearchCriteria criteria = assembler.CreateSearchCriteria(request.SearchCriteria);
+            //ReportingWorklistAssembler assembler = new ReportingWorklistAssembler();
+            //ReportingProcedureStepSearchCriteria criteria = assembler.CreateSearchCriteria(request.SearchCriteria);
 
-            return new GetWorklistResponse(
-                CollectionUtils.Map<ReportingWorklistQueryResult, ReportingWorklistItem, List<ReportingWorklistItem>>(
-                    PersistenceContext.GetBroker<IReportingWorklistBroker>().GetWorklist(request.StepClass, criteria),
-                    delegate(ReportingWorklistQueryResult queryResult)
-                    {
-                        return assembler.CreateReportingWorklistItem(queryResult);
-                    }));
+            //return new GetWorklistResponse(
+            //    CollectionUtils.Map<ReportingWorklistQueryResult, ReportingWorklistItem, List<ReportingWorklistItem>>(
+            //        PersistenceContext.GetBroker<IReportingWorklistBroker>().GetWorklist(request.StepClass, criteria),
+            //        delegate(ReportingWorklistQueryResult queryResult)
+            //        {
+            //            return assembler.CreateReportingWorklistItem(queryResult);
+            //        }));
+
+            return new GetWorklistResponse(new List<ReportingWorklistItem>());
+        }
+
+        [ReadOperation]
+        public GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request)
+        {
+            return new GetWorklistCountResponse(GetWorklistCount(request.WorklistClassName));
+        }
+
+        [ReadOperation]
+        public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
+        {
+            return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.WorklistItem.ProcedureStepRef)));
         }
 
         [UpdateOperation]

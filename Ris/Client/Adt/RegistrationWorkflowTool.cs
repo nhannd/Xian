@@ -1,15 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using System.Collections;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt

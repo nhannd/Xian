@@ -49,6 +49,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Configu
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Configuration.View.WinForms", "..\..\Desktop\Configuration\View\WinForms\ClearCanvas.Desktop.Configuration.View.WinForms.csproj", "{1AC0E6EC-4E65-4B90-936B-7174B870A30F}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Reporting", "Reporting\ClearCanvas.Ris.Client.Reporting.csproj", "{EB579705-2821-45B8-AE5E-EE397BE73ED9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Client.Reporting.View.WinForms", "Reporting\View\WinForms\ClearCanvas.Ris.Client.Reporting.View.WinForms.csproj", "{5F4CE71B-C674-415C-BD56-7A955E40F309}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +127,14 @@ Global
 		{1AC0E6EC-4E65-4B90-936B-7174B870A30F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1AC0E6EC-4E65-4B90-936B-7174B870A30F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1AC0E6EC-4E65-4B90-936B-7174B870A30F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EB579705-2821-45B8-AE5E-EE397BE73ED9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EB579705-2821-45B8-AE5E-EE397BE73ED9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EB579705-2821-45B8-AE5E-EE397BE73ED9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EB579705-2821-45B8-AE5E-EE397BE73ED9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5F4CE71B-C674-415C-BD56-7A955E40F309}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5F4CE71B-C674-415C-BD56-7A955E40F309}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5F4CE71B-C674-415C-BD56-7A955E40F309}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5F4CE71B-C674-415C-BD56-7A955E40F309}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

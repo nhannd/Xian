@@ -10,25 +10,25 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client.Reporting
 {
     [ExtensionPoint]
-    public class RegistrationWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
+    public class ReportingWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 
     [ExtensionPoint]
-    public class RegistrationWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
+    public class ReportingWorkflowFolderToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 
-    public interface IRegistrationWorkflowItemToolContext : IToolContext
+    public interface IReportingWorkflowItemToolContext : IToolContext
     {
         bool GetWorkflowOperationEnablement(string operationClass);
 
-        ICollection<RegistrationWorklistItem> SelectedItems { get; }
+        ICollection<ReportingWorklistItem> SelectedItems { get; }
         event EventHandler SelectedItemsChanged;
 
         IEnumerable Folders { get; }
@@ -37,33 +37,31 @@ namespace ClearCanvas.Ris.Client.Adt
         IDesktopWindow DesktopWindow { get; }
     }
 
-    public interface IRegistrationWorkflowFolderToolContext : IToolContext
+    public interface IReportingWorkflowFolderToolContext : IToolContext
     {
-        PatientProfileSearchData SearchCriteria { set; }
-
         event EventHandler SelectedFolderChanged;
         IDesktopWindow DesktopWindow { get; }
     }
 
-    public class RegistrationWorkflowFolderSystem : WorkflowFolderSystem<RegistrationWorklistItem>
+    public class ReportingWorkflowFolderSystem : WorkflowFolderSystem<ReportingWorklistItem>
     {
-        class RegistrationWorkflowItemToolContext : ToolContext, IRegistrationWorkflowItemToolContext
+        class ReportingWorkflowItemToolContext : ToolContext, IReportingWorkflowItemToolContext
         {
-            private RegistrationWorkflowFolderSystem _owner;
+            private ReportingWorkflowFolderSystem _owner;
 
-            public RegistrationWorkflowItemToolContext(RegistrationWorkflowFolderSystem owner)
+            public ReportingWorkflowItemToolContext(ReportingWorkflowFolderSystem owner)
             {
                 _owner = owner;
             }
 
-            #region IRegistrationWorkflowItemToolContext Members
+            #region IReportingWorkflowItemToolContext Members
 
             public IDesktopWindow DesktopWindow
             {
                 get { return _owner.DesktopWindow; }
             }
 
-            public ICollection<RegistrationWorklistItem> SelectedItems
+            public ICollection<ReportingWorklistItem> SelectedItems
             {
                 get { return _owner.SelectedItems; }
             }
@@ -92,21 +90,16 @@ namespace ClearCanvas.Ris.Client.Adt
             #endregion
         }
 
-        class RegistrationWorkflowFolderToolContext : ToolContext, IRegistrationWorkflowFolderToolContext
+        class ReportingWorkflowFolderToolContext : ToolContext, IReportingWorkflowFolderToolContext
         {
-            private RegistrationWorkflowFolderSystem _owner;
+            private ReportingWorkflowFolderSystem _owner;
 
-            public RegistrationWorkflowFolderToolContext(RegistrationWorkflowFolderSystem owner)
+            public ReportingWorkflowFolderToolContext(ReportingWorkflowFolderSystem owner)
             {
                 _owner = owner;
             }
 
-            #region IRegistrationWorkflowItemToolContext Members
-
-            public PatientProfileSearchData SearchCriteria
-            {
-                set { _owner.SearchCriteria = value as PatientProfileSearchData; }
-            }
+            #region IReportingWorkflowItemToolContext Members
 
             public event EventHandler SelectedFolderChanged
             {
@@ -125,34 +118,18 @@ namespace ClearCanvas.Ris.Client.Adt
         private ToolSet _itemToolSet;
         private ToolSet _folderToolSet;
         private IDictionary<string, bool> _workflowEnablment;
-        private Folders.SearchFolder _searchFolder;
 
-        public PatientProfileSearchData SearchCriteria
-        {
-            get { return (_searchFolder == null ? null : _searchFolder.SearchCriteria); }
-            set 
-            {
-                _searchFolder.SearchCriteria = value;
-                SelectedFolder = _searchFolder;
-            }
-        }
-
-        public RegistrationWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
+        public ReportingWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
             :base(folderExplorer)
         {
             // important to initialize service before adding any folders, because folders may access service
 
             this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
 
-            this.AddFolder(new Folders.ScheduledFolder(this));
-            this.AddFolder(new Folders.CheckedInFolder(this));
-            this.AddFolder(new Folders.InProgressFolder(this));
-            this.AddFolder(new Folders.CompletedFolder(this));
-            this.AddFolder(new Folders.CancelledFolder(this));
-            this.AddFolder(_searchFolder = new Folders.SearchFolder(this));
+            this.AddFolder(new Folders.TestFolder(this));
 
-            _itemToolSet = new ToolSet(new RegistrationWorkflowItemToolExtensionPoint(), new RegistrationWorkflowItemToolContext(this));
-            _folderToolSet = new ToolSet(new RegistrationWorkflowFolderToolExtensionPoint(), new RegistrationWorkflowFolderToolContext(this));
+            _itemToolSet = new ToolSet(new ReportingWorkflowItemToolExtensionPoint(), new ReportingWorkflowItemToolContext(this));
+            _folderToolSet = new ToolSet(new ReportingWorkflowFolderToolExtensionPoint(), new ReportingWorkflowFolderToolContext(this));
 
             folderExplorer.AddItemActions(_itemToolSet.Actions);
             folderExplorer.AddFolderActions(_folderToolSet.Actions);
@@ -165,7 +142,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
         {
-            RegistrationWorklistItem selectedItem = CollectionUtils.FirstElement<RegistrationWorklistItem>(this.SelectedItems);
+            ReportingWorklistItem selectedItem = CollectionUtils.FirstElement<ReportingWorklistItem>(this.SelectedItems);
             if (selectedItem == null)
             {
                 _workflowEnablment = null;
@@ -177,8 +154,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 BlockingOperation.Run(
                     delegate()
                     {
-                        Platform.GetService<IRegistrationWorkflowService>(
-                            delegate(IRegistrationWorkflowService service)
+                        Platform.GetService<IReportingWorkflowService>(
+                            delegate(IReportingWorkflowService service)
                             {
                                 GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem));
                                 _workflowEnablment = response.OperationEnablementDictionary;
