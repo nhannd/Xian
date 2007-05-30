@@ -168,16 +168,15 @@ namespace ClearCanvas.Utilities.DicomEditor
                 this.Vr = "";
                 this.VrEnabled = true;
             }
+      
+            this.AcceptEnabled = this.AllowTagAddition();                        
+        }
 
-            if (this.Group == "0000" || this.TagName.StartsWith("Illegal") || this.Element == "0000" )
-            {
-                this.AcceptEnabled = false;
-            }
-            else
-            {
-                this.AcceptEnabled = true;
-            }
-            
+        private bool AllowTagAddition()
+        {
+            ICollection<string> badGroups = new string[] {"0000", "0001", "0003"};
+
+            return !(badGroups.Contains(this.Group) || this.TagName.StartsWith("Illegal") || this.Element == "0000");
         }
     }
 }
