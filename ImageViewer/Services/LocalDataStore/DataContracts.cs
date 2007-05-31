@@ -673,4 +673,29 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			set { _fileImportBehaviour = value; }
 		}
 	}
+
+	[DataContract]
+	public class LocalDataStoreServiceConfiguration
+	{
+		private string _storageDirectory;
+		private string _badFileDirectory;
+
+		public LocalDataStoreServiceConfiguration()
+		{
+		}
+
+		[DataMember(IsRequired = true)]
+		public string StorageDirectory
+		{
+			get { return _storageDirectory; }
+			set { _storageDirectory = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string BadFileDirectory
+		{
+			get { return _badFileDirectory; }
+			set { _badFileDirectory = value; }
+		}
+	}
 }

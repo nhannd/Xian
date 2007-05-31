@@ -205,6 +205,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to retrieve the Local Data Store configuration parameters..
+        /// </summary>
+        internal static string ExceptionErrorRetrievingLocalDataStoreConfiguration {
+            get {
+                return ResourceManager.GetString("ExceptionErrorRetrievingLocalDataStoreConfiguration", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occurred while attempting to clear the inactive items..
         /// </summary>
         internal static string ExceptionErrorWhileAttemptingToClearInactiveItems {

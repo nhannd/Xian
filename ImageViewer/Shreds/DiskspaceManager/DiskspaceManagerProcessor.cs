@@ -6,10 +6,9 @@ using System.Management;
 using System.Threading;
 
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.Server.ShredHost;
 using ClearCanvas.ImageViewer.Services.DiskspaceManager;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 {
@@ -19,12 +18,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
 		private static DiskspaceManagerProcessor _instance;
 
-		private object _settingsSyncLock = new object();
+		private object _threadSyncLock = new object();
 		private Thread _processingThread;
+		private bool _stop;
+		private bool _settingsChanged;
+
+		private object _settingsSyncLock = new object();
+		private DMDriveInfo _currentDriveInfo;
+
 		private DiskspaceManagerData _diskspaceManagerData;
-		private ClearCanvas.Common.Utilities.Timer _timer;
-		private EventWaitHandle _stopSignal;
-		private EventWaitHandle _checkSignal;
 
 		#endregion
 
@@ -47,54 +49,27 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             }
 		}
 
-		public DMDriveInfo CurrentDriveInfo
-		{
-			get
-			{
-				foreach (DMDriveInfo dmDriveInfo in _diskspaceManagerData.DriveInfoList)
-				{
-					if (dmDriveInfo.DriveName.StartsWith(DiskspaceManagerSettings.Instance.DriveName, StringComparison.CurrentCultureIgnoreCase))
-						return dmDriveInfo;
-				}
-
-				return null;
-			}
-		}
-
         public void StartProcessor()
         {
             try
             {
-                _stopSignal = new EventWaitHandle(false, EventResetMode.ManualReset);
-                _checkSignal = new EventWaitHandle(false, EventResetMode.AutoReset);
-                
                 _diskspaceManagerData = new DiskspaceManagerData();
-                if (_diskspaceManagerData.DriveInfoList != null && _diskspaceManagerData.DriveInfoList.Count > 0)
-                {
-                    if (!_diskspaceManagerData.DriveInfoList[0].DriveName.Equals(DiskspaceManagerSettings.Instance.DriveName, StringComparison.CurrentCultureIgnoreCase))
-                    {
-                        DiskspaceManagerSettings.Instance.DriveName = _diskspaceManagerData.DriveInfoList[0].DriveName;
-                        DiskspaceManagerSettings.Save();
-                    }
-                }
-                else
-                {
-                    if (!DiskspaceManagerSettings.Instance.DriveName.Equals(""))
-                    {
-                        DiskspaceManagerSettings.Instance.DriveName = "";
-                        DiskspaceManagerSettings.Save();
-                    }
-                }
+
+				_diskspaceManagerData.OrderedStudyListReadyEvent += ValidateStudyHandler;
+				_diskspaceManagerData.DeleteStudyInDBCompletedEvent += DeleteStudyCompletedHandler;
 
                 if (!FindDiskspaceManagerDBAccessExtensionPoint())
                     return;
 
-                _stopSignal.Reset();
-                _checkSignal.Reset();
-                // start up processing thread
-                _processingThread = new Thread(new ThreadStart(StartDiskspaceManager));
-				_processingThread.Start();
+				lock (_threadSyncLock)
+				{
+					_stop = false;
+					// start up processing thread
+					_processingThread = new Thread(new ThreadStart(StartDiskspaceManager));
+					_processingThread.Start();
 
+					Monitor.Wait(_threadSyncLock); //wait for the thread to actually start.
+				}
             }
             catch (Exception e)
             {
@@ -106,14 +81,21 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
         {
             try
             {
-                _diskspaceManagerData.DeleteStudyInDBCompletedEvent -= DeleteStudyCompletedHandler;
-                _diskspaceManagerData.OrderedStudyListReadyEvent -= ValidateStudyHandler;
-                _stopSignal.Set();
-                _checkSignal.Reset();
-			
-				// wait for processing thread to finish
-				_processingThread.Join();
-				_processingThread = null;
+				if (_processingThread != null)
+				{
+					lock (_threadSyncLock)
+					{
+						_stop = true;
+						Monitor.Pulse(_threadSyncLock);
+					}
+
+					// wait for processing thread to finish
+					_processingThread.Join();
+					_processingThread = null;
+				}
+
+				_diskspaceManagerData.DeleteStudyInDBCompletedEvent -= DeleteStudyCompletedHandler;
+				_diskspaceManagerData.OrderedStudyListReadyEvent -= ValidateStudyHandler;
 			}
             catch (Exception e)
             {
@@ -121,86 +103,122 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
             }
         }
 
-        private void StartDiskspaceManager()
-        {
-			_timer = new ClearCanvas.Common.Utilities.Timer(this.OnTimer, 60000, _diskspaceManagerData.CheckingFrequency);
-
-            _diskspaceManagerData.OrderedStudyListReadyEvent += ValidateStudyHandler;
-            _diskspaceManagerData.DeleteStudyInDBCompletedEvent += DeleteStudyCompletedHandler;
-
-			do
+		private void StartDiskspaceManager()
+		{
+			lock (_threadSyncLock)
 			{
-				lock (_settingsSyncLock)
+				Monitor.Pulse(_threadSyncLock); //signal that the thread has actually started.
+
+				do
 				{
+					_settingsChanged = false;
+
+					UpdateCurrentDriveInfo();
 					CheckConfigurationSettings();
 					CheckDiskspace();
+
+					int waitTime = 5000;
+					lock (_settingsSyncLock)
+					{
+						//there is currently no shred startup order, so we wait 
+						//5 seconds until the Local Data Store service is up and running.
+						if (_currentDriveInfo != null)
+							waitTime = _diskspaceManagerData.CheckingFrequency;
+					}
+
+					Monitor.Wait(_threadSyncLock, waitTime);
+					
+					if (_stop)
+						break;
+
+					if (_settingsChanged || _currentDriveInfo == null)
+						continue;
+
+					if (_diskspaceManagerData.ReachHighWaterMark)
+					{
+						_diskspaceManagerData.IsProcessing = true;
+						_diskspaceManagerData.FireOrderedStudyListRequired();
+					}
+				}
+				while (!_stop);
+			}
+		}
+
+		public void UpdateCurrentDriveInfo()
+		{
+			string driveName = null;
+			LocalDataStoreServiceClient client = new LocalDataStoreServiceClient();
+			try
+			{
+				client.Open();
+
+				LocalDataStoreServiceConfiguration configuration = client.GetConfiguration();
+				driveName = Path.GetPathRoot(configuration.StorageDirectory);
+				driveName = driveName.TrimEnd(new char[] { Platform.PathSeparator });
+
+				client.Close();
+			}
+			catch (Exception e)
+			{
+				client.Abort();
+				Platform.Log(e);
+				driveName = null;
+			}
+
+			lock (_settingsSyncLock)
+			{
+				if (driveName != null)
+				{
+					foreach (DMDriveInfo dmDriveInfo in _diskspaceManagerData.DriveInfoList)
+					{
+						if (String.Compare(dmDriveInfo.DriveName, driveName, true) == 0)
+						{
+							_currentDriveInfo = dmDriveInfo;
+							return;
+						}
+					}
 				}
 
-				if (!_checkSignal.WaitOne(0, true) || _diskspaceManagerData.IsProcessing)
-					continue;
+				_currentDriveInfo = null;
+			}
+		}
 
-				if (_diskspaceManagerData.ReachHighWaterMark)
+		private void CheckConfigurationSettings()
+		{
+			lock (_settingsSyncLock)
+			{
+				_diskspaceManagerData.CheckingFrequency = DiskspaceManagerSettings.Instance.CheckFrequency * 60000;
+
+				if (_currentDriveInfo != null)
 				{
-					_diskspaceManagerData.IsProcessing = true;
-					_diskspaceManagerData.FireOrderedStudyListRequired();
+					_currentDriveInfo.LowWatermark = DiskspaceManagerSettings.Instance.LowWatermark;
+					_currentDriveInfo.HighWatermark = DiskspaceManagerSettings.Instance.HighWatermark;
 				}
 			}
-			while (!_stopSignal.WaitOne(1000, true));
-
-			_timer.Dispose();
-			_timer = null;
-        }
-
-        private void OnTimer()
-        {
-            _checkSignal.Set();
-        }
-
-        private void CheckConfigurationSettings()
-        {
-            if (_diskspaceManagerData.CheckingFrequency != DiskspaceManagerSettings.Instance.CheckFrequency * 60000)
-            {
-                _diskspaceManagerData.CheckingFrequency = DiskspaceManagerSettings.Instance.CheckFrequency * 60000;
-                _timer.Dispose();
-                _timer = null;
-                _timer = new ClearCanvas.Common.Utilities.Timer(this.OnTimer, _diskspaceManagerData.CheckingFrequency, _diskspaceManagerData.CheckingFrequency);
-                _checkSignal.Reset();
-            }
-            foreach (DMDriveInfo dmDriveInfo in _diskspaceManagerData.DriveInfoList)
-            {
-                if (dmDriveInfo.DriveName.StartsWith(DiskspaceManagerSettings.Instance.DriveName, StringComparison.CurrentCultureIgnoreCase))
-                {
-                    if (dmDriveInfo.LowWatermark != DiskspaceManagerSettings.Instance.LowWatermark)
-                        dmDriveInfo.LowWatermark = DiskspaceManagerSettings.Instance.LowWatermark;
-                    if (dmDriveInfo.HighWatermark != DiskspaceManagerSettings.Instance.HighWatermark)
-                        dmDriveInfo.HighWatermark = DiskspaceManagerSettings.Instance.HighWatermark;
-                }
-            }
-        }
+		}
 
         private void CheckDiskspace()
         {
-            if (_diskspaceManagerData == null || _diskspaceManagerData.DriveInfoList == null || _diskspaceManagerData.DriveInfoList.Count <= 0)
-                return;
+			if (_diskspaceManagerData == null || _diskspaceManagerData.DriveInfoList == null || _diskspaceManagerData.DriveInfoList.Count <= 0)
+				return;
 
-            foreach (DMDriveInfo dmDriveInfo in _diskspaceManagerData.DriveInfoList)
-            {
-                dmDriveInfo.init();
-                ManagementObject drive = new ManagementObject("win32_logicaldisk.deviceid='" + dmDriveInfo.DriveName + "'");
-                drive.Get();
-                dmDriveInfo.DriveSize = long.Parse(drive["Size"].ToString());
-                dmDriveInfo.UsedSpace = dmDriveInfo.DriveSize - long.Parse(drive["FreeSpace"].ToString());
+			foreach (DMDriveInfo dmDriveInfo in _diskspaceManagerData.DriveInfoList)
+			{
+				dmDriveInfo.init();
+				ManagementObject drive = new ManagementObject("win32_logicaldisk.deviceid='" + dmDriveInfo.DriveName + "'");
+				drive.Get();
+				dmDriveInfo.DriveSize = long.Parse(drive["Size"].ToString());
+				dmDriveInfo.UsedSpace = dmDriveInfo.DriveSize - long.Parse(drive["FreeSpace"].ToString());
 
 				// debug data
-                // Platform.Log("    Checking diskspace on drive (" + dmDriveInfo.DriveName + ") : " + dmDriveInfo.UsedSpace + "/" + dmDriveInfo.DriveSize
-                //    + " (" + dmDriveInfo.UsedSpacePercentage + "%) (Watermark: " + dmDriveInfo.LowWatermark + " ~ " + dmDriveInfo.HighWatermark + ")");
-            }
-
+				// Platform.Log("    Checking diskspace on drive (" + dmDriveInfo.DriveName + ") : " + dmDriveInfo.UsedSpace + "/" + dmDriveInfo.DriveSize
+				//    + " (" + dmDriveInfo.UsedSpacePercentage + "%) (Watermark: " + dmDriveInfo.LowWatermark + " ~ " + dmDriveInfo.HighWatermark + ")");
+			}
         }
 
         private void DeleteStudyCompletedHandler(object sender, EventArgs args)
         {
-            _diskspaceManagerData.IsProcessing = false;
+			_diskspaceManagerData.IsProcessing = false;
         }
 
         private void ValidateStudyHandler(object sender, EventArgs args)
@@ -211,21 +229,21 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
         private void ValidateOrderedStudyList()
         {
-            //Platform.Log("    Validation for DICOM files on drive:");
-            foreach (DMStudyItem studyItem in _diskspaceManagerData.OrderedStudyList)
-            {
-                CheckStudyItem(studyItem);
-                if (_diskspaceManagerData.EnoughDeletedFiles)
-                    break;
-            }
-            foreach (DMDriveInfo dmDriveInfo in _diskspaceManagerData.DriveInfoList)
-            {
-                if (!dmDriveInfo.ReachHighWaterMark)
-                    continue;
-                Platform.Log("    Validation for drive " + dmDriveInfo.DriveName + " Studies found: " + dmDriveInfo.DeletedStudyNumber + "; Used Space: " + dmDriveInfo.DeletedFileSpace
-                    + " (" + dmDriveInfo.UsedSpacePercentage + "%) (Watermark: " + dmDriveInfo.LowWatermark + " ~ " + dmDriveInfo.HighWatermark + ")");
-            }
-            return;
+			//Platform.Log("    Validation for DICOM files on drive:");
+			foreach (DMStudyItem studyItem in _diskspaceManagerData.OrderedStudyList)
+			{
+				CheckStudyItem(studyItem);
+				if (_diskspaceManagerData.EnoughDeletedFiles)
+					break;
+			}
+			foreach (DMDriveInfo dmDriveInfo in _diskspaceManagerData.DriveInfoList)
+			{
+				if (!dmDriveInfo.ReachHighWaterMark)
+					continue;
+
+				Platform.Log("    Validation for drive " + dmDriveInfo.DriveName + " Studies found: " + dmDriveInfo.DeletedStudyNumber + "; Used Space: " + dmDriveInfo.DeletedFileSpace
+					+ " (" + dmDriveInfo.UsedSpacePercentage + "%) (Watermark: " + dmDriveInfo.LowWatermark + " ~ " + dmDriveInfo.HighWatermark + ")");
+			}
         }
 
         private void CheckStudyItem(DMStudyItem studyItem)
@@ -280,19 +298,18 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
         #region IDiskspaceManagerService Members
 
-		public ServiceInformation GetServiceInformation()
+		public DiskspaceManagerServiceInformation GetServiceInformation()
         {
 			// need to synchronize reading of the properties from currentDriveInfo object.
 			lock (_settingsSyncLock)
 			{
-				DMDriveInfo currentDriveInfo = this.CurrentDriveInfo;
-				if (currentDriveInfo == null || String.IsNullOrEmpty(currentDriveInfo.DriveName))
+				if (_currentDriveInfo == null)
 					throw new InvalidDataException(SR.ExceptionUnableToDetermineDrive);
 
-				ServiceInformation returnInformation = new ServiceInformation();
-				returnInformation.DriveName = DiskspaceManagerSettings.Instance.DriveName;
-				returnInformation.DriveSize = currentDriveInfo.DriveSize;
-				returnInformation.UsedSpace = currentDriveInfo.UsedSpace;
+				DiskspaceManagerServiceInformation returnInformation = new DiskspaceManagerServiceInformation();
+				returnInformation.DriveName = _currentDriveInfo.DriveName;
+				returnInformation.DriveSize = _currentDriveInfo.DriveSize;
+				returnInformation.UsedSpace = _currentDriveInfo.UsedSpace;
 				returnInformation.LowWatermark = DiskspaceManagerSettings.Instance.LowWatermark;
 				returnInformation.HighWatermark = DiskspaceManagerSettings.Instance.HighWatermark;
 				returnInformation.CheckFrequency = DiskspaceManagerSettings.Instance.CheckFrequency;
@@ -301,16 +318,25 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 			}
         }
 
-		public void UpdateServiceConfiguration(ServiceConfiguration newConfiguration)
+		public void UpdateServiceConfiguration(DiskspaceManagerServiceConfiguration newConfiguration)
         {
 			lock (_settingsSyncLock)
 			{
-				//DiskspaceManagerSettings.Instance.DriveName = newConfiguration.DriveName; //not configurable right now.
 				DiskspaceManagerSettings.Instance.LowWatermark = newConfiguration.LowWatermark;
 				DiskspaceManagerSettings.Instance.HighWatermark = newConfiguration.HighWatermark;
 				DiskspaceManagerSettings.Instance.CheckFrequency = newConfiguration.CheckFrequency;
 				DiskspaceManagerSettings.Save();
 			}
+
+			//don't block on this call, just in case the diskspace manager is currently operating.
+			ThreadPool.QueueUserWorkItem(delegate(object nothing)
+			{
+				lock (_threadSyncLock)
+				{
+					_settingsChanged = true;
+					Monitor.Pulse(_threadSyncLock);
+				}
+			});
         }
 
 		#endregion

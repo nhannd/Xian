@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
 		#region IDiskspaceManagerService Members
 
-		public ServiceInformation GetServiceInformation()
+		public DiskspaceManagerServiceInformation GetServiceInformation()
 		{
 			try
 			{
@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 			}
 		}
 
-		public void UpdateServiceConfiguration(ServiceConfiguration newConfiguration)
+		public void UpdateServiceConfiguration(DiskspaceManagerServiceConfiguration newConfiguration)
 		{
 			try
 			{

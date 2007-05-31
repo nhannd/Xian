@@ -12,12 +12,12 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
 		{
 		}
 
-		public ServiceInformation GetServiceInformation()
+		public DiskspaceManagerServiceInformation GetServiceInformation()
 		{
 			return base.Channel.GetServiceInformation();
 		}
 
-		public void UpdateServiceConfiguration(ServiceConfiguration newConfiguration)
+		public void UpdateServiceConfiguration(DiskspaceManagerServiceConfiguration newConfiguration)
 		{
 			base.Channel.UpdateServiceConfiguration(newConfiguration);
 		}

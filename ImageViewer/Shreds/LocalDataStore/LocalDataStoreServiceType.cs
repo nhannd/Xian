@@ -122,6 +122,21 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 		}
 
+		public LocalDataStoreServiceConfiguration GetConfiguration()
+		{
+			try
+			{
+				return LocalDataStoreService.Instance.GetConfiguration();
+			}
+			catch (Exception e)
+			{
+				Platform.Log(e);
+				string message = SR.ExceptionErrorRetrievingLocalDataStoreConfiguration;
+				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
+				throw new LocalDataStoreException(exceptionMessage);
+			}
+		}
+
 		public Guid Import(FileImportRequest request)
 		{
 			try

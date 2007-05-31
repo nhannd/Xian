@@ -7,13 +7,13 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
 {
 
 	[DataContract]
-	public class ServiceConfiguration
+	public class DiskspaceManagerServiceConfiguration
 	{
         private float _lowWatermark;
         private float _highWatermark;
         private int _checkFrequency;
 
-		public ServiceConfiguration()
+		public DiskspaceManagerServiceConfiguration()
 		{
 		}
 
@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
     }
 
 	[DataContract]
-	public class ServiceInformation
+	public class DiskspaceManagerServiceInformation
 	{
         private string _driveName;
 		private long _driveSize;
@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
         private float _highWatermark;
         private int _checkFrequency;
 
-		public ServiceInformation()
+		public DiskspaceManagerServiceInformation()
 		{ 
 		}
 

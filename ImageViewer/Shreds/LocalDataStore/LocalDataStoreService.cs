@@ -21,8 +21,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		private ImportProcessor _importProcessor;
 		private ReindexProcessor _reindexProcessor;
 
-		private string _storageFolder = null;
-		private string _badFileFolder = null;
+		private string _storageDirectory = null;
+		private string _badFileDirectory = null;
 		private uint _sendReceiveImportConcurrency;
 		private uint _databaseUpdateFrequencyMilliseconds;
 
@@ -155,14 +155,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			get { return _dicomFileImporter; }
 		}
 
-		public string StorageFolder
+		public string StorageDirectory
 		{
-			get { return _storageFolder; }
+			get { return _storageDirectory; }
 		}
 
-		public string BadFileFolder
+		public string BadFileDirectory
 		{
-			get { return _badFileFolder; }
+			get { return _badFileDirectory; }
 		}
 
 		public uint SendReceiveImportConcurrency
@@ -185,19 +185,19 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			try
 			{
-				_storageFolder = InitializeStorageFolder(LocalDataStoreServiceSettings.Instance.StorageFolder);
-				if (_storageFolder == null)
+				_storageDirectory = InitializeStorageDirectory(LocalDataStoreServiceSettings.Instance.StorageDirectory);
+				if (_storageDirectory == null)
 				{
-					_storageFolder = InitializeStorageFolder(LocalDataStoreServiceSettings.DefaultStorageFolder);
-					if (_storageFolder == null)
+					_storageDirectory = InitializeStorageDirectory(LocalDataStoreServiceSettings.DefaultStorageDirectory);
+					if (_storageDirectory == null)
 						throw new Exception(SR.ExceptionStorageDirectoryDoesNotExist);
 				}
 
-				_badFileFolder = InitializeStorageFolder(LocalDataStoreServiceSettings.Instance.BadFileFolder);
-				if (_badFileFolder == null)
+				_badFileDirectory = InitializeStorageDirectory(LocalDataStoreServiceSettings.Instance.BadFileDirectory);
+				if (_badFileDirectory == null)
 				{
-					_badFileFolder = InitializeStorageFolder(LocalDataStoreServiceSettings.DefaultBadFileFolder);
-					if (_badFileFolder == null)
+					_badFileDirectory = InitializeStorageDirectory(LocalDataStoreServiceSettings.DefaultBadFileDirectory);
+					if (_badFileDirectory == null)
 						throw new Exception(SR.ExceptionBadFileStorageDirectoryDoesNotExist);
 				}
 
@@ -224,21 +224,21 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 		}
 
-		private string InitializeStorageFolder(string folderPath)
+		private string InitializeStorageDirectory(string directoryPath)
 		{
 			string returnPath = null;
 
 			try
 			{
-				if (!folderPath.EndsWith("\\"))
-					folderPath += "\\";
+				if (!directoryPath.EndsWith("\\"))
+					directoryPath += "\\";
 
-				if (!Directory.Exists(folderPath))
+				if (!Directory.Exists(directoryPath))
 				{
-					Directory.CreateDirectory(folderPath);
+					Directory.CreateDirectory(directoryPath);
 				}
 
-				returnPath = folderPath;
+				returnPath = directoryPath;
 			}
 			catch (Exception e)
 			{
@@ -335,6 +335,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			CheckDisabled();
 			_sentFileProcessor.SendError(errorInformation);
+		}
+
+		public LocalDataStoreServiceConfiguration GetConfiguration()
+		{
+			LocalDataStoreServiceConfiguration configuration = new LocalDataStoreServiceConfiguration();
+			configuration.StorageDirectory = this.StorageDirectory;
+			configuration.BadFileDirectory = this.BadFileDirectory;
+			return configuration;
 		}
 
 		public Guid Import(FileImportRequest request)

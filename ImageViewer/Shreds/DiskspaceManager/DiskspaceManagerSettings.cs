@@ -44,13 +44,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
         #region Public Properties
 
-        [ConfigurationProperty("DriveName", DefaultValue = "")]
-        public string DriveName
-        {
-            get { return (string)this["DriveName"]; }
-            set { this["DriveName"] = value; }
-        }
-
         [ConfigurationProperty("LowWatermark", DefaultValue = "60.0")]
         public float LowWatermark
         {
@@ -78,7 +71,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
         {
             DiskspaceManagerSettings clone = new DiskspaceManagerSettings();
 
-            clone.DriveName = _instance.DriveName;
             clone.LowWatermark = _instance.LowWatermark;
             clone.HighWatermark = _instance.HighWatermark;
             clone.CheckFrequency = _instance.CheckFrequency;

@@ -3,9 +3,8 @@ using System.Collections.Generic;
 using System.Text;
 using System.ComponentModel;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Desktop
+namespace ClearCanvas.Common.Utilities
 {
     /// <summary>
     /// Allows the background thread to communicate with the <see cref="BackgroundTask"/> object.

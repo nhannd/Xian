@@ -44,6 +44,11 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			base.Channel.SendError(errorInformation);
 		}
 
+		public LocalDataStoreServiceConfiguration GetConfiguration()
+		{
+			return base.Channel.GetConfiguration();
+		}
+
 		public Guid Import(FileImportRequest request)
 		{
 			return base.Channel.Import(request);

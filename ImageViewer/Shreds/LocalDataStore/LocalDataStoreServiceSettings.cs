@@ -8,8 +8,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
 	internal sealed class LocalDataStoreServiceSettings : ShredConfigSection
 	{
-		public const string DefaultStorageFolder = @"c:\dicom_datastore\filestore\";
-		public const string DefaultBadFileFolder = @"c:\dicom_datastore\badfiles\";
+		public const string DefaultStorageDirectory = @"c:\dicom_datastore\filestore\";
+		public const string DefaultBadFileDirectory = @"c:\dicom_datastore\badfiles\";
 		public const uint DefaultSendReceiveImportConcurrency = 2;
 		public const uint DefaultDatabaseUpdateFrequencyMilliseconds = 5000;
 
@@ -49,18 +49,18 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		#region Public Properties
 
-		[ConfigurationProperty("StorageFolder", DefaultValue = LocalDataStoreServiceSettings.DefaultStorageFolder)]
-		public string StorageFolder
+		[ConfigurationProperty("StorageDirectory", DefaultValue = LocalDataStoreServiceSettings.DefaultStorageDirectory)]
+		public string StorageDirectory
 		{
-			get { return (string)this["StorageFolder"]; }
-			set { this["StorageFolder"] = value; }
+			get { return (string)this["StorageDirectory"]; }
+			set { this["StorageDirectory"] = value; }
 		}
 
-		[ConfigurationProperty("BadFileFolder", DefaultValue = LocalDataStoreServiceSettings.DefaultBadFileFolder)]
-		public string BadFileFolder
+		[ConfigurationProperty("BadFileDirectory", DefaultValue = LocalDataStoreServiceSettings.DefaultBadFileDirectory)]
+		public string BadFileDirectory
 		{
-			get { return (string)this["BadFileFolder"]; }
-			set { this["BadFileFolder"] = value; }
+			get { return (string)this["BadFileDirectory"]; }
+			set { this["BadFileDirectory"] = value; }
 		}
 
 		[ConfigurationProperty("SendReceiveImportConcurrency", DefaultValue = LocalDataStoreServiceSettings.DefaultSendReceiveImportConcurrency)]
@@ -83,9 +83,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			LocalDataStoreServiceSettings clone = new LocalDataStoreServiceSettings();
 
-			clone.StorageFolder = _instance.StorageFolder;
-			clone.BadFileFolder = _instance.BadFileFolder;
+			clone.StorageDirectory = _instance.StorageDirectory;
+			clone.BadFileDirectory = _instance.BadFileDirectory;
 			clone.SendReceiveImportConcurrency = _instance.SendReceiveImportConcurrency;
+			clone.DatabaseUpdateFrequencyMilliseconds = _instance.DatabaseUpdateFrequencyMilliseconds;
 
 			return clone;
 		}

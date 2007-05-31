@@ -345,7 +345,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			/// An unsophisticated way to provide a mutually exclusive lock on a file that is about to get
 			/// written to (or deleted or copied over) by any one of the threads in the import thread pool.
 			/// This is really only for the (very unlikely) case where you 'receive' the same image at the same
-			/// time from multiple sources.  For example, you could be importing from a folder at the same time
+			/// time from multiple sources.  For example, you could be importing from a directory at the same time
 			/// as you are retrieving a study, at the same time some other server is sending to you, and identical
 			/// images could be coming in from all 3 places.
 			/// </summary>
@@ -494,7 +494,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 						if (fileImportInformation.BadFileBehaviour == BadFileBehaviour.Move)
 						{
-							string storedFile = String.Format("{0}{1}", LocalDataStoreService.Instance.BadFileFolder, System.IO.Path.GetRandomFileName());
+							string storedFile = String.Format("{0}{1}", LocalDataStoreService.Instance.BadFileDirectory, System.IO.Path.GetRandomFileName());
 							System.IO.File.Move(fileImportInformation.SourceFile, storedFile);
 							((IFileImportInformation)fileImportInformation).StoredFile = storedFile;
 
@@ -558,7 +558,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					sourceUri.Scheme = "file";
 					sourceUri.Path = fileImportInformation.SourceFile;
 
-					string storedFile = String.Format("{0}{1}\\{2}.dcm", LocalDataStoreService.Instance.StorageFolder,
+					string storedFile = String.Format("{0}{1}\\{2}.dcm", LocalDataStoreService.Instance.StorageDirectory,
 																				fileImportInformation.StudyInstanceUid,
 																				fileImportInformation.SopInstanceUid);
 

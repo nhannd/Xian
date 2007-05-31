@@ -79,6 +79,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		#endregion
 
 		/// <summary>
+		/// Gets the Local Data Store service configuration parameters.
+		/// </summary>
+		/// <returns>the Local Data Store configuration parameters.</returns>
+		[OperationContract]
+		LocalDataStoreServiceConfiguration GetConfiguration();
+
+		/// <summary>
 		/// Requests that a set of files/folders be imported into the Local Data Store.
 		/// </summary>
 		/// <param name="request">the request information</param>

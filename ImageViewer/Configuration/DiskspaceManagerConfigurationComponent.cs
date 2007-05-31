@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 			try
 			{
-				ServiceInformation serviceInformation = serviceClient.GetServiceInformation();
+				DiskspaceManagerServiceInformation serviceInformation = serviceClient.GetServiceInformation();
 				serviceClient.Close();
 
 				_driveName = serviceInformation.DriveName;
@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 			try
 			{
 				serviceClient.Open();
-				ServiceConfiguration newConfiguration = new ServiceConfiguration();
+				DiskspaceManagerServiceConfiguration newConfiguration = new DiskspaceManagerServiceConfiguration();
                 newConfiguration.LowWatermark = _lowWatermark;
                 newConfiguration.HighWatermark = _highWatermark;
                 newConfiguration.CheckFrequency = _checkFrequency;

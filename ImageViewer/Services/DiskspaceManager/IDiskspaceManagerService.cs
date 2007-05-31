@@ -10,9 +10,9 @@ namespace ClearCanvas.ImageViewer.Services.DiskspaceManager
 	public interface IDiskspaceManagerService
 	{
 		[OperationContract]
-		ServiceInformation GetServiceInformation();
+		DiskspaceManagerServiceInformation GetServiceInformation();
 
 		[OperationContract]
-		void UpdateServiceConfiguration(ServiceConfiguration newConfiguration);
+		void UpdateServiceConfiguration(DiskspaceManagerServiceConfiguration newConfiguration);
 	}
 }

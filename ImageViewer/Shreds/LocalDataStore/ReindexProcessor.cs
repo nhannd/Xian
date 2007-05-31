@@ -294,7 +294,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					}
 
 					List<string> filePaths = new List<string>();
-					filePaths.Add(LocalDataStoreService.Instance.StorageFolder);
+					filePaths.Add(LocalDataStoreService.Instance.StorageDirectory);
 
 					lock (_syncLock)
 					{

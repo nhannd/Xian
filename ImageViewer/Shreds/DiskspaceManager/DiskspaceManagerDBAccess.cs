@@ -2,8 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom.DataStore.NHibernateDriver;
@@ -106,9 +104,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
                     deletedSpace += studyItem.UsedSpace;
                     studyItem.Status = DiskspaceManagerStatus.DeletedFromDatabase;
                     string fileName = studyItem.SopItemList[0].LocationUri;
-                    string studyFolder = fileName.Substring(0, fileName.IndexOf(studyItem.StudyInstanceUID) + studyItem.StudyInstanceUID.Length);
+                    string studyDirectory = fileName.Substring(0, fileName.IndexOf(studyItem.StudyInstanceUID) + studyItem.StudyInstanceUID.Length);
                     Platform.Log("    Deleted study " + deletedNumber + ") DicomFiles: " + studyItem.SopItemList.Count + "; UsedSpace: "
-                        + studyItem.UsedSpace + "; StudyInstanceUid: " + studyItem.StudyInstanceUID + "; StudyFolder: " + studyFolder);
+                        + studyItem.UsedSpace + "; StudyInstanceUid: " + studyItem.StudyInstanceUID + "; StudyDirectory: " + studyDirectory);
                 }
                 catch (Exception e)
                 {
