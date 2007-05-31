@@ -46,7 +46,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
-
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
             return new GetWorklistResponse(
                 CollectionUtils.Map<WorklistItem, RegistrationWorklistItem, List<RegistrationWorklistItem>>(

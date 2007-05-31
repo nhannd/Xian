@@ -24,6 +24,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                 delegate(ReportingWorklistItem item) { return item.RequestedProcedureName; }));
             this.Columns.Add(new TableColumn<ReportingWorklistItem, string>("Priority",
                 delegate(ReportingWorklistItem item) { return item.Priority; }));
+            this.Columns.Add(new TableColumn<ReportingWorklistItem, string>("Status",
+                delegate(ReportingWorklistItem item) { return item.ActivityStatus.Value; }));
         }
     }
 }

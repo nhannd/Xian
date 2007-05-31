@@ -16,15 +16,48 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting.Folders
 {
-    public class TestFolder : ReportingWorkflowFolder
+    public class ScheduledInterpretationFolder : ReportingWorkflowFolder
     {
-        public TestFolder(ReportingWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Test")
+        public ScheduledInterpretationFolder(ReportingWorkflowFolderSystem folderSystem)
+            : base(folderSystem, "Scheduled Interpretation")
         {
-            this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ScheduledInterpretation";
+        }
+    }
 
-            this.RefreshTime = 0;
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+Test";
+    public class MyInterpretationFolder : ReportingWorkflowFolder
+    {
+        public MyInterpretationFolder(ReportingWorkflowFolderSystem folderSystem)
+            : base(folderSystem, "My Interpretation")
+        {
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+MyInterpretation";
+        }
+    }
+
+    public class MyTranscriptionFolder : ReportingWorkflowFolder
+    {
+        public MyTranscriptionFolder(ReportingWorkflowFolderSystem folderSystem)
+            : base(folderSystem, "My Transcription")
+        {
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+MyTranscription";
+        }
+    }
+
+    public class MyVerificationFolder : ReportingWorkflowFolder
+    {
+        public MyVerificationFolder(ReportingWorkflowFolderSystem folderSystem)
+            : base(folderSystem, "My Verification")
+        {
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+MyVerification";
+        }
+    }
+
+    public class MyVerifiedFolder : ReportingWorkflowFolder
+    {
+        public MyVerifiedFolder(ReportingWorkflowFolderSystem folderSystem)
+            : base(folderSystem, "My Verified")
+        {
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+MyVerified";
         }
     }
 }

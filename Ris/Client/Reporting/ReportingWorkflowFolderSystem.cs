@@ -126,7 +126,11 @@ namespace ClearCanvas.Ris.Client.Reporting
 
             this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
 
-            this.AddFolder(new Folders.TestFolder(this));
+            this.AddFolder(new Folders.ScheduledInterpretationFolder(this));
+            this.AddFolder(new Folders.MyInterpretationFolder(this));
+            this.AddFolder(new Folders.MyTranscriptionFolder(this));
+            this.AddFolder(new Folders.MyVerificationFolder(this));
+            this.AddFolder(new Folders.MyVerifiedFolder(this));
 
             _itemToolSet = new ToolSet(new ReportingWorkflowItemToolExtensionPoint(), new ReportingWorkflowItemToolContext(this));
             _folderToolSet = new ToolSet(new ReportingWorkflowFolderToolExtensionPoint(), new ReportingWorkflowFolderToolContext(this));

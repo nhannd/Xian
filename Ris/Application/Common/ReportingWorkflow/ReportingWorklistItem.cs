@@ -32,6 +32,6 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public string Priority;
 
         [DataMember]
-        public string ActivityStatusCode;
+        public EnumValueInfo ActivityStatus;
     }
 }

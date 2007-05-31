@@ -43,10 +43,10 @@ namespace ClearCanvas.Healthcare.Workflow
     {
         #region IWorklist Members
 
-        public virtual IList GetWorklist(IPersistenceContext context)
+        public virtual IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
         { return null; }
 
-        public virtual int GetWorklistCount(IPersistenceContext context)
+        public virtual int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
         { return -1; }
 
         #endregion

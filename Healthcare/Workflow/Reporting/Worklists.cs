@@ -6,10 +6,10 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Workflow;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Reporting
 {
@@ -21,18 +21,72 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
     public class Worklists
     {
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class Test : WorklistBase<IReportingWorklistBroker>
+        public class ScheduledInterpretation : WorklistBase<IReportingWorklistBroker>
         {
-            public override IList GetWorklist(IPersistenceContext context)
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
-                //return (IList)GetBroker(context).GetWorklist();
-                return new List<WorklistItem>();
+                return (IList)GetBroker(context).GetScheduledInterpretationWorklist();
             }
 
-            public override int GetWorklistCount(IPersistenceContext context)
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
-                //return GetBroker(context).GetScheduledWorklistCount();
-                return 0;
+                return GetBroker(context).GetScheduledInterpretationWorklistCount();
+            }
+        }
+
+        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        public class MyInterpretation : WorklistBase<IReportingWorklistBroker>
+        {
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetMyInterpretationWorklist(currentUserStaff);
+            }
+
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return GetBroker(context).GetMyInterpretationWorklistCount(currentUserStaff);
+            }
+        }
+
+        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        public class MyTranscription : WorklistBase<IReportingWorklistBroker>
+        {
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetMyTranscriptionWorklist(currentUserStaff);
+            }
+
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return GetBroker(context).GetMyTranscriptionWorklistCount(currentUserStaff);
+            }
+        }
+
+        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        public class MyVerification : WorklistBase<IReportingWorklistBroker>
+        {
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetMyVerificationWorklist(currentUserStaff);
+            }
+
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return GetBroker(context).GetMyVerificationWorklistCount(currentUserStaff);
+            }
+        }
+
+        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        public class MyVerified : WorklistBase<IReportingWorklistBroker>
+        {
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetMyVerifiedWorklist(currentUserStaff);
+            }
+
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return GetBroker(context).GetMyVerifiedWorklistCount(currentUserStaff);
             }
         }
 

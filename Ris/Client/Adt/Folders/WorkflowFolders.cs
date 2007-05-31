@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
-            this.RefreshTime = 30000;
+            this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled";
         }
 
@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
-            this.RefreshTime = 30000;
+            this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn";
         }
 
@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
-            this.RefreshTime = 30000;
+            this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+InProgress";
         }
 
@@ -99,7 +99,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
-            this.RefreshTime = 30000;
+            this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Completed";
         }
 
@@ -127,7 +127,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
-            this.RefreshTime = 30000;
+            this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Cancelled";
         }
 

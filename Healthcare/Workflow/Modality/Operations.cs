@@ -41,6 +41,8 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             {
                 mps.Complete(currentUserStaff);
             }
+
+            workflow.AddActivity(new InterpretationStep(mps.RequestedProcedure));
         }
 
         public override bool CanExecute(ModalityProcedureStep mps)

@@ -62,13 +62,13 @@ namespace ClearCanvas.Ris.Application.Services
         protected IList GetWorklist(string worklistClassName)
         {
             IWorklist worklist = (IWorklist)_worklistExtPoint.CreateExtension(new ClassNameExtensionFilter(worklistClassName));
-            return worklist.GetWorklist(this.PersistenceContext);
+            return worklist.GetWorklist(this.CurrentUserStaff, this.PersistenceContext);
         }
 
         protected int GetWorklistCount(string worklistClassName)
         {
             IWorklist worklist = (IWorklist)_worklistExtPoint.CreateExtension(new ClassNameExtensionFilter(worklistClassName));
-            return worklist.GetWorklistCount(this.PersistenceContext);
+            return worklist.GetWorklistCount(this.CurrentUserStaff, this.PersistenceContext);
         }
 
         protected Dictionary<string, bool> GetOperationEnablement(IWorklistItemKey itemKey)

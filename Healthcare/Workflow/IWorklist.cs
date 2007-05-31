@@ -19,8 +19,8 @@ namespace ClearCanvas.Healthcare.Workflow
 
     public interface IWorklist
     {
-        IList GetWorklist(IPersistenceContext context);
-        int GetWorklistCount(IPersistenceContext context);
+        IList GetWorklist(Staff currentUserStaff, IPersistenceContext context);
+        int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context);
     }
 
 }

@@ -23,12 +23,12 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         [ExtensionOf(typeof(WorklistExtensionPoint))]
         public class Scheduled : WorklistBase<IRegistrationWorklistBroker>
         {
-            public override IList GetWorklist(IPersistenceContext context)
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
                 return (IList)GetBroker(context).GetScheduledWorklist();
             }
 
-            public override int GetWorklistCount(IPersistenceContext context)
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
                 return GetBroker(context).GetScheduledWorklistCount();
             }
@@ -37,12 +37,12 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         [ExtensionOf(typeof(WorklistExtensionPoint))]
         public class CheckIn : WorklistBase<IRegistrationWorklistBroker>
         {
-            public override IList GetWorklist(IPersistenceContext context)
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
                 return (IList)GetBroker(context).GetCheckInWorklist();
             }
 
-            public override int GetWorklistCount(IPersistenceContext context)
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
                 return GetBroker(context).GetCheckInWorklistCount();
             }
@@ -51,12 +51,12 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         [ExtensionOf(typeof(WorklistExtensionPoint))]
         public class InProgress : WorklistBase<IRegistrationWorklistBroker>
         {
-            public override IList GetWorklist(IPersistenceContext context)
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
                 return (IList)GetBroker(context).GetInProgressWorklist();
             }
 
-            public override int GetWorklistCount(IPersistenceContext context)
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
                 return GetBroker(context).GetInProgressWorklistCount();
             }
@@ -65,12 +65,12 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         [ExtensionOf(typeof(WorklistExtensionPoint))]
         public class Completed : WorklistBase<IRegistrationWorklistBroker>
         {
-            public override IList GetWorklist(IPersistenceContext context)
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
                 return (IList)GetBroker(context).GetCompletedWorklist();
             }
 
-            public override int GetWorklistCount(IPersistenceContext context)
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
                 return GetBroker(context).GetCompletedWorklistCount();
             }
@@ -79,12 +79,12 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         [ExtensionOf(typeof(WorklistExtensionPoint))]
         public class Cancelled : WorklistBase<IRegistrationWorklistBroker>
         {
-            public override IList GetWorklist(IPersistenceContext context)
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
                 return (IList)GetBroker(context).GetCancelledWorklist();
             }
 
-            public override int GetWorklistCount(IPersistenceContext context)
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
                 return GetBroker(context).GetCancelledWorklistCount();
             }

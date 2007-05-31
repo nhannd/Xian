@@ -6,39 +6,97 @@ using Iesi.Collections;
 using ClearCanvas.Common;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Workflow;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Healthcare.Workflow.Reporting
 {
     public class WorklistItemKey : IWorklistItemKey
     {
-        private EntityRef _procedureStep;
+        private EntityRef _reportingProcedureStep;
 
-        public WorklistItemKey(EntityRef procedureStep)
+        public WorklistItemKey(EntityRef reportingProcedureStep)
         {
-            _procedureStep = procedureStep;
+            _reportingProcedureStep = reportingProcedureStep;
         }
 
-        public EntityRef ProcedureStep
+        public EntityRef ReportingProcedureStep
         {
-            get { return _procedureStep; }
-            set { _procedureStep = value; }
+            get { return _reportingProcedureStep; }
+            set { _reportingProcedureStep = value; }
         }
     }
 
     public class WorklistItem : WorklistItemBase
     {
-        public WorklistItem(EntityRef step)
-            : base(new WorklistItemKey(step))
+        private CompositeIdentifier _mrn;
+        private PersonName _patientName;
+        private string _accessionNumber;
+        private OrderPriority _priority;
+        private string _requestedProcedureName;
+        private string _diagnosticServiceName;
+        private ActivityStatus _activityStatus;
+
+        public WorklistItem(
+            ReportingProcedureStep reportingProcedureStep,
+            CompositeIdentifier mrn,
+            PersonName patientName,
+            string accessionNumber,
+            OrderPriority priority,
+            string requestedProcedureName,
+            string diagnosticServiceName,
+            ActivityStatus activityStatus)
+            : base(new WorklistItemKey(reportingProcedureStep.GetRef()))
         {
+            _mrn = mrn;
+            _patientName = patientName;
+            _accessionNumber = accessionNumber;
+            _priority = priority;
+            _requestedProcedureName = requestedProcedureName;
+            _diagnosticServiceName = diagnosticServiceName;
+            _activityStatus = activityStatus;
         }
 
         #region Public Properties
 
-        public EntityRef ProcedureStep
+        public EntityRef ProcedureStepRef
         {
-            get { return (this.Key as WorklistItemKey).ProcedureStep; }
+            get { return (this.Key as WorklistItemKey).ReportingProcedureStep; }
+        }
+
+        public CompositeIdentifier Mrn
+        {
+            get { return _mrn; }
+        }
+
+        public PersonName PatientName
+        {
+            get { return _patientName; }
+        }
+
+        public string AccessionNumber
+        {
+            get { return _accessionNumber; }
+        }
+
+        public OrderPriority Priority
+        {
+            get { return _priority; }
+        }
+
+        public string RequestedProcedureName
+        {
+            get { return _requestedProcedureName; }
+        }
+
+        public string DiagnosticServiceName
+        {
+            get { return _diagnosticServiceName; }
+        }
+
+        public ActivityStatus ActivityStatus
+        {
+            get { return _activityStatus; }
         }
 
         #endregion
