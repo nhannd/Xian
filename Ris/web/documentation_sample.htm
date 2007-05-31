@@ -8,7 +8,7 @@
 	    <script src="ris.js"></script>
 		<script>
 		    var data;
-		    var validation = new Validation();
+		    var errorProvider = new ErrorProvider();
 	    
 		    function initPage()
 		    {
@@ -27,8 +27,8 @@
 			    data.relatives = data.relatives || [];
 			    
 			    // create relatives table
-		        //var relTable = DynamicTable.createTable($("relativesTable"), ["name","relationship","doctor"]);
-		        var relTable = DynamicTable.createTable($("relativesTable"), { editInPlace: true },
+		        //var relTable = Table.createTable($("relativesTable"), ["name","relationship","doctor"]);
+		        var relTable = Table.createTable($("relativesTable"), { editInPlace: true },
 		             [
 		                {
 		                    cellType: "text",
@@ -54,12 +54,17 @@
 		                }
 		             ]);
 		        relTable.rowCycleClassNames = ["row0", "row1"];
-		        relTable.validation = validation;   // share validation with the rest of the form
+		        relTable.errorProvider = errorProvider;   // share validation with the rest of the form
 		        
-		        relTable.validateRow = function(sender, args)
+		        relTable.validateItem = function(sender, args)
 		        {
+		            var errors = [];
+		            if(!args.item.name)
+		                errors.add("Name is required");
 		            if(!args.item.doctor)
-		                args.error = "Doctor is required";
+		                errors.add("Doctor is required");
+		                
+		            args.error = errors.join("\n");
 		        }
 		        
 		        relTable.bindItems(data.relatives);
@@ -77,7 +82,7 @@
 
 			function showValidation(show)
 			{
-			    validation.setVisible(show);
+			    errorProvider.setVisible(show);
 			}
 			
 			function onAddRelative()
@@ -107,8 +112,8 @@
 			function updateValidation()
 			{
 			    var myForm = $("myForm");
-			    validation.setError(myForm.lastName, myForm.lastName.value ? "" : "Last name is required");
-			    validation.setError(myForm.firstName, myForm.firstName.value ? "" : "First name is required");
+			    errorProvider.setError(myForm.lastName, myForm.lastName.value ? "" : "Last name is required");
+			    errorProvider.setError(myForm.firstName, myForm.firstName.value ? "" : "First name is required");
 			}
 		</script>
 	</head>

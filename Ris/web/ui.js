@@ -1,15 +1,17 @@
 /*
-    DynamicTable
+    Table
     
-    The DynamicTable.createTable method accepts an HTML DOM table element as input and augments it with properties and methods
-    that allow it to function as a dynamically generated table.  It binds the table to an array of items, such that additions
-    or removals from the items array automatically update the table.
+    The Table object augments a standard HTML DOM table with dynamic functionality. 
     
-    It is assumed that the HTML table contains exactly one header row and exactly one column (the leftmost column) reserved
-    for checkboxes, and the table must conform to this layout or the Table class will not function correctly.
-    The Table class does not touch the header row.
+    createTable(htmlTable, options, columns, items)
+        accepts an HTML DOM table element as input and augments it with properties and methods
+        that allow it to function as a dynamically generated table.  It binds the table to an array of items, such that additions
+        or removals from the items array automatically update the table.
     
-    DynamicTable.createTable(htmlTable, options, columns, items)
+        It is assumed that the HTML table initially contains exactly one header row and exactly one column (the leftmost column)
+        reserved for checkboxes, and the table must conform to this layout or the Table class will not function correctly.
+        The Table class does not modify the header row.
+    
             htmlTable - the DOM TABLE element to augment.
             
             options - an object specifying options for the table.
@@ -27,60 +29,63 @@
                         *note: this may also be populated with a custom value (e.g. "myCellType"), in which case you must handle
                          the renderCell event and do custom rendering.
                     choices: an array of strings - used only by the "combo" cell type
+                    lookup: function(query) - used only the the "lookup" cell type - returns the result of the query, or null if not found
                          
             items (optional) - the array of items that this table will bind to. See also the bindItems() method.
             
-    DynamicTable.createTable returns the htmlTable element with the following properties, methods, and events added to it:
+        createTable returns the htmlTable element with the following properties, methods, and events added to it:
+                
+        Properties:
+            items - the array of items to which the table is bound. Do not set this property - use bindItems() method instead.
+            rowCycleClassNames - an array of CSS class names that will be applied cyclically to rows as they are added
+            errorProvider - the ErrorProvider object used by the table. You may set this property to your own ErrorProvider instance
+                (e.g. so that the table shares the same ErrorProvider object as the rest of the page)
+                  
+        Methods:      
+            bindItems(items)
+                items - an array of items that this table will bind to
+                  
+            getCheckedItems()
+                returns an array containing the items that are currently checked
+                
+            setItemCheckState(item, checked)
+                item - the item whose check state to set
+                checked - boolean check state
+                
+            updateValidation()
+                refreshes the validation state of the table - typically this only needs to be called from a custom
+                rendering event handler
             
-    Properties:
-        items - the array of items to which the table is bound. Do not set this property - use bindItems() method instead.
-        rowCycleClassNames - an array of CSS class names that will be applied cyclically to rows as they are added
-        validation - the Validation object used by the table. You may set this property to your own Validation instance
-            (e.g. so that the table shares the same Validation object as the rest of the page)
-              
-    Methods:      
-        bindItems(items)
-            items - an array of items that this table will bind to
-              
-        getCheckedItems()
-            returns an array containing the items that are currently checked
-            
-        setItemCheckState(item, checked)
-            item - the item whose check state to set
-            checked - boolean check state
-            
-        updateValidation()
-            refreshes the validation state of the table - typically this only needs to be called from a custom rendering event handler
-        
-    Events:
-        renderRow - fired when a new row is added to the table.
-            To attach an event handler, use the following syntax: table.renderRow = function(sender, args) {...}
-            The args object contains the properties:   htmlRow - the DOM TR element
-                                                        rowIndex - the index of the row added
-                                                        item - the item that this row represents
-                                                        
-        renderCell - fired when a new cell is added to the table.
-            To attach an event handler, use the following syntax: table.renderCell = function(sender, args) {...}
-            The args object contains the properties:   htmlCell - the DOM TD element                                        
-                                                        rowIndex - the row index of the cell
-                                                        colIndex - the col index of the cell
-                                                        item - the item that this row represents
-                                                        column - the column object to which this cell is mapped
-                                                        
-        validateRow - fired to validate a row of the table.
-            To attach an event handler, use the following syntax: table.validateRow = function(sender, args) {...}
-            The args object contains the properties:   item - the item that this row represents
-                                                        error - the handler should set this to a string error message if there is an error to report
-    
-    
+        Events:
+            renderRow - fired when a new row is added to the table.
+                To attach an event handler, use the following syntax: table.renderRow = function(sender, args) {...}
+                The args object contains the properties:   htmlRow - the DOM TR element
+                                                            rowIndex - the index of the row added
+                                                            item - the item that this row represents
+                                                            
+            renderCell - fired when a new cell is added to the table.
+                To attach an event handler, use the following syntax: table.renderCell = function(sender, args) {...}
+                The args object contains the properties:   htmlCell - the DOM TD element                                        
+                                                            rowIndex - the row index of the cell
+                                                            colIndex - the col index of the cell
+                                                            item - the item that this row represents
+                                                            column - the column object to which this cell is mapped
+                                                            
+            validateItem - fired to validate an item in the table.
+                To attach an event handler, use the following syntax: table.validateItem = function(sender, args) {...}
+                The args object contains the properties:   item - the item to be validated
+                                                           error - the handler should set this to a string error message
+                                                            if there is an error to report
 */
 
-var DynamicTable = {
+var Table = {
+
+
     createTable: function(htmlTable, options, columns, items)
     {
         htmlTable._columns = columns;
         htmlTable._checkBoxes = [];
-        htmlTable.validation = new Validation();
+        htmlTable.errorProvider = new ErrorProvider();
         htmlTable.rowCycleClassNames = [];
 
         // mix in methods
@@ -99,7 +104,7 @@ var DynamicTable = {
         return htmlTable;
     },
     
-    // defines the methods that DynamicTable will mix-in to the DOM table object
+    // defines the methods that DHTML will mix-in to the DOM table object
     _tableMixIn : {
     	
     	
@@ -143,11 +148,11 @@ var DynamicTable = {
 	    {
             for(var i=1; i < this.rows.length; i++) // skip header row
             {
-                if(this.validateRow)
+                if(this.validateItem)
                 {
                     var args = {item: this.items[i-1], error: ""};
-                    this.validateRow(this, args);
-                    this.validation.setError(this._checkBoxes[i], args.error);
+                    this.validateItem(this, args);
+                    this.errorProvider.setError(this._checkBoxes[i], args.error);
                 }
             }
 	    },
@@ -172,8 +177,8 @@ var DynamicTable = {
 		    td.appendChild(checkBox);
 		    this._checkBoxes[index] = checkBox;
     		
-		    // add validation image next to checkbox
-		    this.validation.setError(checkBox, "");
+		    // add errorProvider image next to checkbox
+		    this.errorProvider.setError(checkBox, "");
     		
 		    // add other cells
 		    for(var i=0; i < this._columns.length; i++)
@@ -258,29 +263,39 @@ var DynamicTable = {
 		    else
 		    if(column.cellType == "lookup")
 		    {
+		        // define a helper to do the lookup
+                function doLookup()
+                {
+                    var result = column.lookup(input.value || "");
+                    if(result)
+                    {
+                        column.setValue(obj, result);
+ 		                input.value = column.getValue(obj) || "";
+                        table.updateValidation();
+                    }
+                }
+                
                 var input = document.createElement("input");
                 td.appendChild(input);
 		        input.value = value || "";
                 input.onkeyup = function()
                 {
-                    // any manual edit clears the underlying item
-                    column.setValue(obj, null);
-                    table.updateValidation();
-                }
-                 
-                var findButton = document.createElement("button");
-                td.appendChild(findButton);
-                findButton.value = "Find";
-                findButton.onclick = function()
-                {
-                    var result = column.lookup(input.value || "");
-	                if(result)
-	                {
-	                    input.value = result;
-	                    column.setValue(obj, result);
+                    if(event.keyCode == 13) // pressing ENTER key executes lookup
+                        doLookup();
+                    else
+                    {
+                        // any manual edit clears the underlying item
+                        column.setValue(obj, null);
                         table.updateValidation();
-	                }
+                    }
                 }
+                
+                var findButton = document.createElement("input");
+                findButton.type = "button";
+                findButton.value = "Find";
+                td.appendChild(findButton);
+                findButton.onclick = doLookup;
+                 
 		    }
     		
 		    // fire custom formatting event, which may itself set the innerHTML property to override default cell content
@@ -291,13 +306,14 @@ var DynamicTable = {
 };
 
 /*
-    Validation
+    ErrorProvider
     
-    The Validation class provides the ability to show an error icon and error message next to any HTML DOM element.
+    The ErrorProvider class provides the ability to show an error icon and error message next to any HTML DOM element.
+    It is analogous to the WinForms ErrorProvider class.
     
     Constructor
     
-    Validation(visible) - constructs an instance of a Validation object, specifying whether validation errors
+    ErrorProvider(visible) - constructs an instance of a ErrorProvider object, specifying whether errors
         are initially visible on the page.
     
     
@@ -311,48 +327,47 @@ var DynamicTable = {
         returns true if any htmlElement has a non-null error message
         
     setVisible(visible)
-        visible - specifies whether validation errors should be visible or hidden
+        visible - specifies whether errors should be visible or hidden
 */
-function Validation(visible)
+function ErrorProvider(visible)
 {
-    this._validators = [];
+    this._providers = [];
     this._visible = visible ? true : false;
     
     this.setError = function(htmlElement, message)
     {
-        // see if there is already a validator for this element
-        var validator = this._validators.find(function(v) { return v.element == htmlElement; });   
+        // see if there is already a provider for this element
+        var provider = this._providers.find(function(v) { return v.element == htmlElement; });   
         
         // if not, create one
-        if(!validator)
+        if(!provider)
         {
-            validator = { 
+            provider = { 
                 element: htmlElement,
                 img: document.createElement("img"),
                 hasError: function() { return (this.img.alt && this.img.alt.length); }
                 };
-            validator.img.src = "warning.gif";
-            validator.img.width = validator.img.height = 20;
-            this._validators.add( validator );
+            provider.img.src = "errorprovider.gif";
+            this._providers.add( provider );
             
-            htmlElement.parentNode.insertBefore(validator.img, htmlElement.nextSibling);       
+            htmlElement.parentNode.insertBefore(provider.img, htmlElement.nextSibling);       
         }
-        validator.img.alt = message;
-        validator.img.style.visibility = (validator.hasError() && this._visible) ? "visible" : "hidden";
+        provider.img.alt = message;
+        provider.img.style.visibility = (provider.hasError() && this._visible) ? "visible" : "hidden";
     }
     
     this.hasErrors = function()
     {
-        return this._validators.find(function(validator) { return validator.hasError(); }) ? true : false;
+        return this._providers.find(function(provider) { return provider.hasError(); }) ? true : false;
     }
     
     this.setVisible = function(visible)
     {
         this._visible = visible;
-        this._validators.each(
-            function(validator)
+        this._providers.each(
+            function(provider)
             {
-                validator.img.style.visibility = (visible && validator.hasError()) ? "visible" : "hidden";
+                provider.img.style.visibility = (visible && provider.hasError()) ? "visible" : "hidden";
             });
     }
 }
