@@ -30,6 +30,7 @@
                          the renderCell event and do custom rendering.
                     choices: an array of strings - used only by the "combo" cell type
                     lookup: function(query) - used only the the "lookup" cell type - returns the result of the query, or null if not found
+                    size: the size of the column, in characters
                          
             items (optional) - the array of items that this table will bind to. See also the bindItems() method.
             
@@ -165,7 +166,7 @@ var Table = {
 		    // apply row cyclic css class to row
 		    if(this.rowCycleClassNames && this.rowCycleClassNames.length > 0)
 		        tr.className = this.rowCycleClassNames[(index-1)%(this.rowCycleClassNames.length)];
-    		    
+
 		    // fire custom formatting event    
 		    if(this.renderRow)
 		        this.renderRow(this, { htmlRow: tr, rowIndex: index-1, item: obj });
@@ -233,13 +234,18 @@ var Table = {
 		        var input = document.createElement("input");
 		        td.appendChild(input);
 		        input.value = value || "";
-		        input.onkeyup = function() { column.setValue(obj, this.value); table.updateValidation(); }
+		        if(column.size) input.size = column.size;
+		        input.onkeyup = input.onchange = function() { column.setValue(obj, this.value); table.updateValidation(); }
+		        
+		        // allow the ultimate format to be determined by the column rather than the user
+		        input.onblur = function() { this.value = column.getValue(obj) || ""; }
 		    }
 		    else
-		    if(["choice", "combo", "dropdown", "enum", "list", "listbox"].indexOf(column.cellType) > -1)
+		    if(["choice", "combobox", "dropdown", "enum", "list", "listbox"].indexOf(column.cellType) > -1)
 		    {
 		        var input = document.createElement("select");
 		        td.appendChild(input);
+		        if(column.size) input.style.width = column.size + "pc"; // set width in chars
 		        column.choices.each(
 		            function(choice)
 		            {
@@ -257,6 +263,7 @@ var Table = {
 		        var input = document.createElement("input");
 		        input.type = "checkbox";
 		        td.appendChild(input);
+		        if(column.size) input.size = column.size;
 		        input.checked = value ? true : false;
 		        input.onclick = input.onchange = function() { column.setValue(obj, this.checked ? true : false); table.updateValidation(); }
 		    }
@@ -277,6 +284,7 @@ var Table = {
                 
                 var input = document.createElement("input");
                 td.appendChild(input);
+		        if(column.size) input.size = column.size;
 		        input.value = value || "";
                 input.onkeyup = function()
                 {

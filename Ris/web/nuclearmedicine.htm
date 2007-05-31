@@ -1,0 +1,301 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <link href="default.css" rel="stylesheet" type="text/css" />
+        <title>Nuclear Medicine</title>
+	    <script src="jsx.js"></script>
+	    <script src="jsml.js"></script>
+	    <script src="ui.js"></script>
+	    <script src="ris.js"></script>
+		<script>
+		
+            var radioPharms = 
+            [		
+                "Tc 99m Macro-aggregated albumin (MAA)",
+                "Tc 99m Bicisate (ECD)",
+                "Tc 99m Damaged RBC's",
+                "Tc 99m Disofenin",
+                "Tc 99m DMSA",
+                "Tc 99m Exametazime (HMPAO)",
+                "Tc 99m Gluceptate (GH)",
+                "Tc 99m MAG3",
+                "Tc 99m Medronate (MDP)",
+                "Tc 99m Pentetate (DTPA)",
+                "Tc 99m Pertechnetate",
+                "Tc 99m Pyrophosphate",
+                "Tc 99m RBC's",
+                "Tc 99m Sestamibi",
+                "Tc 99m Sulphur Colloid",
+                "Tc 99m Tetrafosmine",
+                "Tc 99m WBC's",
+                "Cold Pyrophosphate",
+                "C 14 Urea",
+                "Co 57 with IF",
+                "Cr 51 Chromic Chloride",
+                "Cr 51 RBC's",
+                "F 18 FDG",
+                "Fe 59 Ferrous Citrate",
+                "Ga 67 Gallium Citrate",
+                "I 123 MIBG",
+                "I 123 Sodium Iodide",
+                "I 125 Human Serum Albumin",
+                "I 125 Iothalamate",
+                "I 131 Hippuran",
+                "I 131 MIBG",
+                "I 131 NP59",
+                "I 131 Sodium Iodide",
+                "In 111 DTPA",
+                "In 111 Pentetreotide (octreotide)",
+                "In 111 Platelets",
+                "In 111 RBC's",
+                "In 111 WBC's",
+                "P 32 Sodium Phosphate",
+                "S 89 Strontium Chloride",
+                "Tl 201",
+                "Xe 133",
+                "Y 90 Colloid",
+                "Co 57 without IF"
+            ];
+
+            var drugs = 
+            [
+                "AMINOPHYLLINE",
+                "CAPTOPRIL",
+                "CCK",
+                "CIMETIDINE",
+                "DEXAMETHAZONE",
+                "DOBUTAMINE",
+                "DIAMOX",
+                "DIPYRAMIDOLE(PERSANTINE)",
+                "LASIX",
+                "LUGOL'S IODINE",
+                "NITROGLYCERINE",
+                "PERCID(FAMOTIDINE)",
+                "PYROPHOSPHATE(COLD)",
+                "THYROGEN",
+                "TYLENOL",
+                "VITAMIN B12",
+                "MORPHINE"
+            ];
+		
+		
+		
+		    var data;
+		    var errorProvider = new ErrorProvider();
+	    
+		    function onBodyLoad()
+		    {
+		        // if the Ris object is not defined, we are running in a plain old browser, so call setData manually
+				if(!Ris)
+				    setData(null);
+		    }
+		    
+		    function setData(jsml)
+		    {
+			    data = JSML.parse(jsml) || {};
+			    data.injections = data.injections || [];
+			    data.scans = data.scans || [];
+
+		        var injectionsTable = Table.createTable($("injectionsTable"), { editInPlace: true },
+		             [
+		                {   // Injection
+		                    cellType: "choice",
+		                    choices: radioPharms,
+		                    getValue: function(item) { return item.injection; },
+		                    setValue: function(item, value) { item.injection = value; }
+		                },
+		                {   // Activity
+		                    cellType: "text",
+		                    size: 4,
+		                    getValue: function(item) { return item.activity; },
+		                    setValue: function(item, value) { item.activity = parseFloat(value); }
+		                },
+		                {   // Units
+		                    cellType: "choice",
+		                    choices: ["capsule(s)", "GBq", "kBq", "MBq", "vial"],
+		                    getValue: function(item) { return item.units; },
+		                    setValue: function(item, value) { item.units = value; }
+		                },
+		                {   // Admin Site
+		                    cellType: "choice",
+		                    choices: ["Antecubital Fossa", "Buttocks", "Deltoid", "Foot", "Forearm", "Hand", "Wrist"],
+		                    getValue: function(item) { return item.bodySite; },
+		                    setValue: function(item, value) { item.bodySite = value; }
+		                },
+		                {   // Left
+		                    cellType: "bool",
+		                    getValue: function(item) { return item.left; },
+		                    setValue: function(item, value) { item.left = value; }
+		                },
+		                {   // Right
+		                    cellType: "bool",
+		                    getValue: function(item) { return item.right; },
+		                    setValue: function(item, value) { item.right = value; }
+		                },
+		                {   // Admin method
+		                    cellType: "choice",
+		                    choices: ["IM", "inhalation", "IV", "PO"],
+		                    getValue: function(item) { return item.method; },
+		                    setValue: function(item, value) { item.method = value; }
+		                },
+		                {   // time
+		                    cellType: "text",
+		                    getValue: function(item) { return item.time; },
+		                    setValue: function(item, value) { alert(value); item.time = Date.parse(value); }
+		                },
+		                {   // Admin staff
+		                    cellType: "lookup",
+		                    lookup: function(query) { return Ris.resolveStaffName(query); },
+		                    getValue: function(item) { return item.staff; },
+		                    setValue: function(item, value) { item.staff = value; }
+		                }
+		             ]);
+		             
+		        injectionsTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        injectionsTable.validateItem = function(sender, args)
+		        {
+		            var errors = [];
+		            if(!(parseInt(args.item.repeatCount) > 0))
+		                errors.add("Repeat count must be a positive integer");
+		            if(!args.item.reason)
+		                errors.add("Reason is required");
+		                
+		            args.error = errors.join("\n");
+		        }
+		        injectionsTable.bindItems(data.injections);
+		        
+		        var scansTable = Table.createTable($("scansTable"), { editInPlace: true },
+		             [
+		                {   // Start time
+		                    cellType: "text",
+		                    getValue: function(item) { return item.startTime; },
+		                    setValue: function(item, value) { item.startTime = value; }
+		                },
+		                {   // Stop time
+		                    cellType: "text",
+		                    getValue: function(item) { return item.stopTime; },
+		                    setValue: function(item, value) { item.stopTime = value; }
+		                },
+		                {   // Exam Location
+		                    cellType: "lookup",
+		                    lookup: function(query) { return "TODO"; },
+		                    getValue: function(item) { return item.units; },
+		                    setValue: function(item, value) { item.units = value; }
+		                }
+		             ]);
+		             
+		        scansTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        scansTable.validateItem = function(sender, args)
+		        {
+		            var errors = [];
+		            if(!(parseInt(args.item.repeatCount) > 0))
+		                errors.add("Repeat count must be a positive integer");
+		            if(!args.item.reason)
+		                errors.add("Reason is required");
+		                
+		            args.error = errors.join("\n");
+		        }
+		        scansTable.bindItems(data.scans);
+		    }
+		    
+		    function getData()
+		    {
+				return JSML.create(data, "data");
+		    }
+
+			function showValidation(show)
+			{
+			    errorProvider.setVisible(show);
+			}
+			
+			function onAddInjection()
+			{
+			    data.injections.add( {} );   // add an empty item
+			}
+			
+			function onDeleteInjection()
+			{
+			    var checkedItems = $("injectionsTable").getCheckedItems();
+			    if(checkedItems.length > 0)
+			    {
+			        if(confirm("Deleted selected injections?"))
+			        {
+			            checkedItems.each(function(item) { data.injections.remove(item); });
+			        }
+			    }
+			    else
+			    {
+			        alert("Nothing selected");
+			    }
+			}
+			function onInjectionsCheckAllNone()
+			{
+			    data.injections.each(function(item) { $("injectionsTable").setItemCheckState(item, $("injectionsCheckAllNone").checked); });
+			}
+			
+			
+			function onAddScan()
+			{
+			    data.scans.add( {} );   // add an empty item
+			}
+			
+			function onDeleteScan()
+			{
+			    var checkedItems = $("scansTable").getCheckedItems();
+			    if(checkedItems.length > 0)
+			    {
+			        if(confirm("Deleted selected scans?"))
+			        {
+			            checkedItems.each(function(item) { data.scans.remove(item); });
+			        }
+			    }
+			    else
+			    {
+			        alert("Nothing selected");
+			    }
+			}
+			function onScansCheckAllNone()
+			{
+			    data.scans.each(function(item) { $("scansTable").setItemCheckState(item, $("scansCheckAllNone").checked); });
+			}
+		</script>
+	</head>
+	<body onload="javascript: onBodyLoad()">
+	
+		<form id="myForm">
+		<p class="sectionheading">Injections</p>
+		<p>
+		    <input type="button" value="Add" onclick="javascript: onAddInjection()" />
+		    <input type="button" value="Delete" onclick="javascript: onDeleteInjection()" />
+		</p>
+			<table id="injectionsTable">
+			  <tr>
+			    <td><input id="injectionsCheckAllNone" type="checkbox" onclick="javascript: onInjectionsCheckAllNone()" /></td>
+				<td class="tableheading">Name</td>
+				<td class="tableheading">Activity</td>
+				<td class="tableheading">Units</td>
+				<td class="tableheading">Admin. Site</td>
+				<td class="tableheading">L</td>
+				<td class="tableheading">R</td>
+				<td class="tableheading">Method</td>
+				<td class="tableheading">Time</td>
+				<td class="tableheading">Admin. By</td>
+			  </tr>
+			</table>
+		<p></p>
+		<p class="sectionheading">Scans</p>
+		<p>
+		    <input type="button" value="Add" onclick="javascript: onAddScan()" />
+		    <input type="button" value="Delete" onclick="javascript: onDeleteScan()" />
+		</p>
+			<table id="scansTable" border="1">
+			  <tr>
+			    <td><input id="scansCheckAllNone" type="checkbox" onclick="javascript: onScansCheckAllNone()" />All/None</td>
+				<td class="tableheading">Start Time</td>
+				<td class="tableheading">Stop Time</td>
+				<td class="tableheading">Exam Location</td>
+			  </tr>
+			</table>
+		</form>
+	</body>
+</html>

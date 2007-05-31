@@ -1,0 +1,136 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <link href="default.css" rel="stylesheet" type="text/css" />
+        <title>Breast Imaging</title>
+	    <script src="jsx.js"></script>
+	    <script src="jsml.js"></script>
+	    <script src="ui.js"></script>
+	    <script src="ris.js"></script>
+		<script>
+		    var data;
+		    var errorProvider = new ErrorProvider();
+	    
+		    function onBodyLoad()
+		    {
+		        // if the Ris object is not defined, we are running in a plain old browser, so call setData manually
+				if(!Ris)
+				    setData(null);
+		    }
+		    
+		    function setData(jsml)
+		    {
+			    data = JSML.parse(jsml) || {};
+			    var myForm = $("myForm");
+			    myForm.studyType.value = data.studyType || "";
+			    myForm.filmsUsedCount.value = data.filmsUsedCount || "";
+			    
+			    data.repeats = data.repeats || [];
+			    
+		        var repeatsTable = Table.createTable($("repeatsTable"), { editInPlace: true },
+		             [
+		                {   // Repeats
+		                    cellType: "text",
+		                    getValue: function(item) { return item.repeatCount; },
+		                    setValue: function(item, value) { item.repeatCount = value; }
+		                },
+		                {   // reason
+		                    cellType: "choice",
+		                    choices: ["artifacts", "equipment failure", "motion", "positioning", "processor", "technique"],
+		                    getValue: function(item) { return item.reason; },
+		                    setValue: function(item, value) { item.reason = value; }
+		                }
+		             ]);
+		             
+		        repeatsTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        
+		        repeatsTable.validateItem = function(sender, args)
+		        {
+		            var errors = [];
+		            if(!(parseInt(args.item.repeatCount) > 0))
+		                errors.add("Repeat count must be a positive integer");
+		            if(!args.item.reason)
+		                errors.add("Reason is required");
+		                
+		            args.error = errors.join("\n");
+		        }
+		        
+		        repeatsTable.bindItems(data.repeats);
+		        
+		        updateValidation();
+		    }
+		    
+		    function getData()
+		    {
+			    var myForm = $("myForm");
+		        data.studyType = myForm.studyType.value;
+		        data.filmsUsedCount =  myForm.filmsUsedCount.value;
+				return JSML.create(data, "data");
+		    }
+
+			function showValidation(show)
+			{
+			    errorProvider.setVisible(show);
+			}
+			
+			function onAddRepeat()
+			{
+			    data.repeats.add( {} );   // add an empty item
+			}
+			
+			function onDeleteRepeat()
+			{
+			    var checkedItems = $("repeatsTable").getCheckedItems();
+			    if(checkedItems.length > 0)
+			    {
+			        if(confirm("Deleted selected repeats?"))
+			        {
+			            checkedItems.each(function(item) { data.repeats.remove(item); });
+			        }
+			    }
+			    else
+			    {
+			        alert("Nothing selected");
+			    }
+			}
+			function onRepeatsCheckAllNone()
+			{
+			    data.repeats.each(function(item) { $("repeatsTable").setItemCheckState(item, $("repeatsCheckAllNone").checked); });
+			}
+			function updateValidation()
+			{
+			    var myForm = $("myForm");
+			    errorProvider.setError(myForm.studyType, myForm.studyType.value ? "" : "Study type required");
+			    errorProvider.setError(myForm.filmsUsedCount, (parseInt(myForm.filmsUsedCount.value) > 0) ? "" : "Number of films used must be a positive integer");
+			}
+		</script>
+	</head>
+	<body onload="javascript: onBodyLoad()">
+	
+		<form id="myForm">
+		<p class="sectionheading">Study</p>
+		<p>
+		    Study Type
+		    <select id="studyType" onchange="updateValidation()">
+		        <option value="Analog">Analog</option>
+		        <option value="Digital">Digital</option>
+		    </select>
+		    
+		    Number of Films Used<input type="text" id="filmsUsedCount" onkeyup="updateValidation()"/>
+		</p>
+		<p></p>
+		<p class="sectionheading">Repeats</p>
+		<p>
+		    <input type="button" value="Add" onclick="javascript: onAddRepeat()" />
+		    <input type="button" value="Delete" onclick="javascript: onDeleteRepeat()" />
+		</p>
+			<table id="repeatsTable" border="0">
+			  <tr>
+			    <td><input id="repeatsCheckAllNone" type="checkbox" onclick="javascript: onRepeatsCheckAllNone()" />All/None</td>
+				<td class="tableheading">Repeats</td>
+				<td class="tableheading">Reason</td>
+			  </tr>
+			</table>
+		</form>
+	</body>
+</html>
