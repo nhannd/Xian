@@ -68,7 +68,8 @@
 		Inputs="@(AllSwigOutputFiles)"
 		Outputs="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll">
 		<MakeDir Directories="$(SwigOutputCsharpDir)\$(Configuration)" Condition="!Exists('$(SwigOutputCsharpDir)\$(Configuration)')" />
-		<Csc Sources="$(SwigOutputCsharpDir)\*.cs" OutputAssembly="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll" TargetType="library" EmitDebugInformation="$(CscEmitDebugInformation)" />
+		<Csc Sources="$(SwigOutputCsharpDir)\*.cs" OutputAssembly="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll" TargetType="library" EmitDebugInformation="$(CscEmitDebugInformation)" Condition=" '$(KeyFile)' == '' "/>
+                <Csc Sources="$(SwigOutputCsharpDir)\*.cs" DelaySign="true" KeyFile="$(KeyFile)" OutputAssembly="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll" TargetType="library" EmitDebugInformation="$(CscEmitDebugInformation)" Condition=" '$(KeyFile)' != '' And Exists('$(KeyFile)') "/>  
 	</Target>
 	<Target Name="Clean">
 		<Delete Files="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll" Condition="Exists('$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll')" />
