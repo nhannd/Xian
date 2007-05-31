@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Client {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("localhost/RIS")]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS")]
         public string BaseUrl {
             get {
                 return ((string)(this["BaseUrl"]));
