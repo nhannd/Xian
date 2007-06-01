@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			if (this.ImageViewerToolComponent == null)
 			{
 				// create and initialize the layout component
-				this.ImageViewerToolComponent = new VolumeComponent(GetSubjectImageViewer());
+				this.ImageViewerToolComponent = new VolumeComponent(GetActiveImageViewer());
 
 				// launch the layout component in a shelf
 				// note that the component is thrown away when the shelf is closed by the user
