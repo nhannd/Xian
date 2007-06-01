@@ -14,29 +14,40 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
     {
         public abstract class ReportingOperation
         {
-            protected ReportingProcedureStep LoadStep(EntityRef stepRef, IPersistenceContext context)
-            {
-                // it is extremly important that we get the actual object and not a proxy here
-                // if a proxy is returned, then it cannot be cast to a subclass
-                // (eg InterpretationStep s = (InterpretationStep)rps; will fail even if we know that rps is an interpretation step)
-                return context.GetBroker<IReportingProcedureStepBroker>().Load(stepRef, EntityLoadFlags.CheckVersion);
-            }
+            public abstract void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow);
+            public abstract bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff);
         }
 
         public class ClaimInterpretation : ReportingOperation
         {
-            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
+            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                InterpretationStep interpretation = (InterpretationStep)LoadStep(procedureStepRef, workflow.CurrentContext);
+                InterpretationStep interpretation = step as InterpretationStep;
                 interpretation.Assign(currentUserStaff);
+            }
+
+            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+            {
+                if (step is InterpretationStep == false)
+                    return false;
+
+                // step already started
+                if (step.State != ActivityStatus.SC)
+                    return false;
+
+                // step already claim by the same staff
+                if (step.AssignedStaff != null && step.AssignedStaff.Equals(currentUserStaff))
+                    return false;
+
+                return true;
             }
         }
 
         public class StartInterpretation : ReportingOperation
         {
-            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
+            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                InterpretationStep interpretation = (InterpretationStep)LoadStep(procedureStepRef, workflow.CurrentContext);
+                InterpretationStep interpretation = (InterpretationStep)step;
 
                 // if not assigned, assign
                 if (interpretation.AssignedStaff == null)
@@ -45,33 +56,63 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 }
                 interpretation.Start(currentUserStaff);
             }
+
+            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+            {
+                if (step is InterpretationStep == false)
+                    return false;
+
+                // step already started
+                if (step.State != ActivityStatus.SC)
+                    return false;
+
+                // step is not claimed or is assigned to someone else
+                if (step.AssignedStaff == null || step.AssignedStaff.Equals(currentUserStaff) == false)
+                    return false;
+
+                return true;
+            }
         }
 
         public abstract class CompleteInterpretationBase : ReportingOperation
         {
-            public virtual void Execute(ReportingProcedureStep step, IWorkflow workflow)
+            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                InterpretationStep interpretation = (InterpretationStep)step;
+                InterpretationStep interpretation = step as InterpretationStep;
                 interpretation.Complete();
+            }
+
+            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+            {
+                if (step is InterpretationStep == false)
+                    return false;
+
+                // step is not started or has been cancelled/completed
+                if (step.State != ActivityStatus.IP)
+                    return false;
+
+                // step is assigned to someone else
+                if (step.AssignedStaff != null && step.AssignedStaff.Equals(currentUserStaff) == false)
+                    return false;
+
+                return true;
             }
         }
 
         public class CompleteInterpretationForTranscription : CompleteInterpretationBase
         {
-            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
+            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                ReportingProcedureStep step = LoadStep(procedureStepRef, workflow.CurrentContext);
-                base.Execute(step, workflow);
+                base.Execute(step, currentUserStaff, workflow);
                 workflow.AddActivity(new TranscriptionStep(step));
             }
         }
 
         public class CompleteInterpretationForVerification : CompleteInterpretationBase
         {
-            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
+            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                ReportingProcedureStep step = LoadStep(procedureStepRef, workflow.CurrentContext);
-                base.Execute(step, workflow);
+                base.Execute(step, currentUserStaff, workflow);
 
                 InterpretationStep interpretation = (InterpretationStep)step;
                 VerificationStep verification = new VerificationStep(interpretation);
@@ -83,10 +124,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CompleteInterpretationAndVerify : CompleteInterpretationBase
         {
-            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
+            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                ReportingProcedureStep step = LoadStep(procedureStepRef, workflow.CurrentContext);
-                base.Execute(step, workflow);
+                base.Execute(step, currentUserStaff, workflow);
 
                 InterpretationStep interpretation = (InterpretationStep)step;
                 VerificationStep verification = new VerificationStep(interpretation);
@@ -99,9 +139,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CancelPendingTranscription : ReportingOperation
         {
-            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
+            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                TranscriptionStep transcription = (TranscriptionStep)LoadStep(procedureStepRef, workflow.CurrentContext);
+                TranscriptionStep transcription = step as TranscriptionStep;
                 transcription.Discontinue();
 
                 InterpretationStep interpretation = new InterpretationStep(transcription);
@@ -111,13 +151,29 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
                 workflow.AddActivity(interpretation);
             }
+
+            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+            {
+                if (step is TranscriptionStep == false)
+                    return false;
+
+                // step already completed or cancelled
+                if (step.State == ActivityStatus.CM || step.State == ActivityStatus.DC)
+                    return false;
+
+                // step already claim by the same staff
+                if (step.AssignedStaff != null && step.AssignedStaff.Equals(currentUserStaff))
+                    return false;
+
+                return true;
+            }
         }
 
         public class StartVerification : ReportingOperation
         {
-            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
+            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                VerificationStep verification = (VerificationStep)LoadStep(procedureStepRef, workflow.CurrentContext);
+                VerificationStep verification = step as VerificationStep;
 
                 // if not assigned, assign
                 if (verification.AssignedStaff == null)
@@ -126,16 +182,48 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 }
                 verification.Start(currentUserStaff);
             }
+
+            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+            {
+                if (step is VerificationStep == false)
+                    return false;
+
+                // step already started
+                if (step.State != ActivityStatus.SC)
+                    return false;
+
+                // step is assigned to someone else
+                if (step.AssignedStaff != null && step.AssignedStaff.Equals(currentUserStaff) == false)
+                    return false;
+
+                return true;
+            }
         }
 
         public class CompleteVerification : ReportingOperation
         {
-            public void Execute(EntityRef procedureStepRef, Staff currentUserStaff, IWorkflow workflow)
+            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                VerificationStep verification = (VerificationStep)LoadStep(procedureStepRef, workflow.CurrentContext);
+                VerificationStep verification = step as VerificationStep;
 
                 // this operation is legal even if the step was never started, therefore need to supply the performer
                 verification.Complete(currentUserStaff);
+            }
+
+            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+            {
+                if (step is VerificationStep == false)
+                    return false;
+
+                // step is not started or has been cancelled/completed
+                if (step.State != ActivityStatus.IP)
+                    return false;
+
+                // step is assigned to someone else
+                if (step.AssignedStaff != null && step.AssignedStaff.Equals(currentUserStaff) == false)
+                    return false;
+
+                return true;
             }
         }
     }

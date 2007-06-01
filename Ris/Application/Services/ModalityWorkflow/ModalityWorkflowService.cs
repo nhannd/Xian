@@ -116,27 +116,27 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
         public bool CanStartProcedure(IWorklistItemKey itemKey)
         {
-            return CanExcecuteOperation(new StartModalityProcedureStepOperation(), itemKey);
+            return CanExecuteOperation(new StartModalityProcedureStepOperation(), itemKey);
         }
 
         public bool CanSuspendProcedure(IWorklistItemKey itemKey)
         {
-            return CanExcecuteOperation(new SuspendModalityProcedureStepOperation(), itemKey);
+            return CanExecuteOperation(new SuspendModalityProcedureStepOperation(), itemKey);
         }
 
         public bool CanResumeProcedure(IWorklistItemKey itemKey)
         {
-            return CanExcecuteOperation(new ResumeModalityProcedureStepOperation(), itemKey);
+            return CanExecuteOperation(new ResumeModalityProcedureStepOperation(), itemKey);
         }
 
         public bool CanCompleteProcedure(IWorklistItemKey itemKey)
         {
-            return CanExcecuteOperation(new CompleteModalityProcedureStepOperation(), itemKey);
+            return CanExecuteOperation(new CompleteModalityProcedureStepOperation(), itemKey);
         }
 
         public bool CanCancelProcedure(IWorklistItemKey itemKey)
         {
-            return CanExcecuteOperation(new CancelModalityProcedureStepOperation(), itemKey);
+            return CanExecuteOperation(new CancelModalityProcedureStepOperation(), itemKey);
         }
 
         private void ExecuteOperation(ModalityOperation op, EntityRef modalityProcedureStepRef)
@@ -145,7 +145,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             op.Execute(modalityProcedureStep, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
         }
 
-        private bool CanExcecuteOperation(ModalityOperation op, IWorklistItemKey itemKey)
+        private bool CanExecuteOperation(ModalityOperation op, IWorklistItemKey itemKey)
         {
             if (itemKey is WorklistItemKey)
             {

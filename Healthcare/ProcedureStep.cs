@@ -44,6 +44,9 @@ namespace ClearCanvas.Healthcare
             if (this.State != ActivityStatus.SC)
                 throw new WorkflowException("Only procedure steps in the scheduled status can be assigned");
 
+            if (this.Scheduling == null)
+                this.Scheduling = new ActivityScheduling();
+            
             this.Scheduling.Performer = new ProcedureStepPerformer(performer);
         }
 
@@ -54,7 +57,7 @@ namespace ClearCanvas.Healthcare
         {
             get
             {
-                return this.Scheduling.Performer != null ?
+                return this.Scheduling != null && this.Scheduling.Performer != null ?
                   ((ProcedureStepPerformer)this.Scheduling.Performer).Staff : null;
             }
         }

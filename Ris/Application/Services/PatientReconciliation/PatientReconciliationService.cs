@@ -12,6 +12,7 @@ using ClearCanvas.Common;
 using System.Security.Permissions;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Healthcare.Workflow;
+using ClearCanvas.Healthcare.Workflow.Registration;
 
 namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
 {

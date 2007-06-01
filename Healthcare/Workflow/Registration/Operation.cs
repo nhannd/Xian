@@ -7,16 +7,16 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Workflow;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Healthcare.Workflow
+namespace ClearCanvas.Healthcare.Workflow.Registration
 {
     public class Operations
     {
-        public abstract class Operation
+        public abstract class RegistrationOperation
         {
 
         }
 
-        public class CheckIn : Operation
+        public class CheckIn : RegistrationOperation
         {
             public void Execute(Order o, Staff currentUserStaff, IWorkflow workflow)
             {
@@ -41,7 +41,7 @@ namespace ClearCanvas.Healthcare.Workflow
             }
         }
 
-        public class Cancel : Operation
+        public class Cancel : RegistrationOperation
         {
             public void Execute(Order order, OrderCancelReason reason)
             {
@@ -49,7 +49,7 @@ namespace ClearCanvas.Healthcare.Workflow
             }
         }
 
-        public class ReconcilePatient : Operation
+        public class ReconcilePatient : RegistrationOperation
         {
             public void Execute(List<Patient> patientsToReconcile, IPersistenceContext context)
             {

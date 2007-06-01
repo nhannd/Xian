@@ -27,6 +27,11 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
 
     public class MyInterpretationFolder : ReportingWorkflowFolder
     {
+        [ExtensionPoint]
+        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
+        {
+        }
+
         public MyInterpretationFolder(ReportingWorkflowFolderSystem folderSystem)
             : base(folderSystem, "My Interpretation")
         {
@@ -36,6 +41,11 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
 
     public class MyTranscriptionFolder : ReportingWorkflowFolder
     {
+        [ExtensionPoint]
+        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
+        {
+        }
+
         public MyTranscriptionFolder(ReportingWorkflowFolderSystem folderSystem)
             : base(folderSystem, "My Transcription")
         {
@@ -45,6 +55,11 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
 
     public class MyVerificationFolder : ReportingWorkflowFolder
     {
+        [ExtensionPoint]
+        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
+        {
+        }
+
         public MyVerificationFolder(ReportingWorkflowFolderSystem folderSystem)
             : base(folderSystem, "My Verification")
         {
@@ -54,6 +69,11 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
 
     public class MyVerifiedFolder : ReportingWorkflowFolder
     {
+        [ExtensionPoint]
+        public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
+        {
+        }
+
         public MyVerifiedFolder(ReportingWorkflowFolderSystem folderSystem)
             : base(folderSystem, "My Verified")
         {

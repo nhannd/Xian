@@ -52,14 +52,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             " join p.Profiles pp";
 
         private const string _hqlCommunualWorklistCondition =
-            " where rps.State = :rpsState and rps.Performer is NULL";
+            " where rps.State = :rpsState and rps.Scheduling.Performer is NULL";
 
         private const string _hqlMySingleStateCondition =
-            " where rps.State = :rpsState and rps.Performer = :performingStaff";
+            " where rps.State = :rpsState and rps.Scheduling.Performer = :performingStaff";
 
         private const string _hqlMyDualStateCondition =
             " where (rps.State = :rpsState or rps.State = :rpsState2)" +
-            " and rps.Performer = :performingStaff";
+            " and rps.Scheduling.Performer = :performingStaff";
 
 
         #region Query helpers
@@ -166,7 +166,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, _hqlJoin, _hqlMySingleStateCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
-            parameters.Add(new QueryParameter("rpsState", "SC"));
+            parameters.Add(new QueryParameter("rpsState", "CM"));
             parameters.Add(new QueryParameter("performingStaff", performingStaff));
 
             return GetWorklist(hqlQuery, parameters);

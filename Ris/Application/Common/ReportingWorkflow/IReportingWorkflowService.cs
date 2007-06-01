@@ -17,9 +17,6 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 
 
         [OperationContract]
-        void ScheduleInterpretation(ScheduleInterpretationRequest request);
-
-        [OperationContract]
         void ClaimInterpretation(ClaimInterpretationRequest request);
 
         [OperationContract]

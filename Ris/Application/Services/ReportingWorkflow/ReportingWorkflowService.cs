@@ -4,13 +4,14 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.Workflow;
 using ClearCanvas.Healthcare.Workflow.Reporting;
-using ClearCanvas.Workflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
@@ -28,17 +29,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [ReadOperation]
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
-            //ReportingWorklistAssembler assembler = new ReportingWorklistAssembler();
-            //ReportingProcedureStepSearchCriteria criteria = assembler.CreateSearchCriteria(request.SearchCriteria);
-
-            //return new GetWorklistResponse(
-            //    CollectionUtils.Map<ReportingWorklistQueryResult, ReportingWorklistItem, List<ReportingWorklistItem>>(
-            //        PersistenceContext.GetBroker<IReportingWorklistBroker>().GetWorklist(request.StepClass, criteria),
-            //        delegate(ReportingWorklistQueryResult queryResult)
-            //        {
-            //            return assembler.CreateReportingWorklistItem(queryResult);
-            //        }));
-
             ReportingWorklistAssembler assembler = new ReportingWorklistAssembler();
             return new GetWorklistResponse(
                 CollectionUtils.Map<WorklistItem, ReportingWorklistItem, List<ReportingWorklistItem>>(
@@ -62,62 +52,127 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [UpdateOperation]
-        public void ScheduleInterpretation(ScheduleInterpretationRequest request)
-        {
-            IRequestedProcedureBroker broker = PersistenceContext.GetBroker<IRequestedProcedureBroker>();
-            RequestedProcedure rp = broker.Load(request.ProcedureRef, EntityLoadFlags.Proxy);
-            InterpretationStep interpretation = new InterpretationStep(rp);
-            PersistenceContext.Lock(interpretation, DirtyState.New);
-        }
-
-        [UpdateOperation]
+        [OperationEnablement("CanClaimInterpretation")]
         public void ClaimInterpretation(ClaimInterpretationRequest request)
         {
-            //ExecuteOperation(request.WorklistItem, new Operations.ClaimInterpretation());
+            ExecuteOperation(new Operations.ClaimInterpretation(), request.WorklistItem.ProcedureStepRef);
         }
 
         [UpdateOperation]
+        [OperationEnablement("CanStartInterpretation")]
         public void StartInterpretation(StartInterpretationRequest request)
         {
-            //ExecuteOperation(request.WorklistItem, new Operations.StartInterpretation());
+            ExecuteOperation(new Operations.StartInterpretation(), request.WorklistItem.ProcedureStepRef);
         }
 
         [UpdateOperation]
+        [OperationEnablement("CanCompleteInterpretationForTranscription")]
         public void CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request)
         {
-            //ExecuteOperation(request.WorklistItem, new Operations.CompleteInterpretationForTranscription());
+            ExecuteOperation(new Operations.CompleteInterpretationForTranscription(), request.WorklistItem.ProcedureStepRef);
         }
 
         [UpdateOperation]
+        [OperationEnablement("CanCompleteInterpretationForVerification")]
         public void CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request)
         {
-            //ExecuteOperation(request.WorklistItem, new Operations.CompleteInterpretationForVerification());
+            ExecuteOperation(new Operations.CompleteInterpretationForVerification(), request.WorklistItem.ProcedureStepRef);
         }
 
         [UpdateOperation]
+        [OperationEnablement("CanCompleteInterpretationAndVerify")]
         public void CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request)
         {
-            //ExecuteOperation(request.WorklistItem, new Operations.CompleteInterpretationAndVerify());
+            ExecuteOperation(new Operations.CompleteInterpretationAndVerify(), request.WorklistItem.ProcedureStepRef);
         }
 
         [UpdateOperation]
+        [OperationEnablement("CanCancelPendingTranscription")]
         public void CancelPendingTranscription(CancelPendingTranscriptionRequest request)
         {
-            //ExecuteOperation(request.WorklistItem, new Operations.CancelPendingTranscription());
+            ExecuteOperation(new Operations.CancelPendingTranscription(), request.WorklistItem.ProcedureStepRef);
         }
 
         [UpdateOperation]
+        [OperationEnablement("CanStartVerification")]
         public void StartVerification(StartVerificationRequest request)
         {
-            //ExecuteOperation(request.WorklistItem, new Operations.StartVerification());
+            ExecuteOperation(new Operations.StartVerification(), request.WorklistItem.ProcedureStepRef);
         }
 
         [UpdateOperation]
+        [OperationEnablement("CanCompleteVerification")]
         public void CompleteVerification(CompleteVerificationRequest request)
         {
-            //ExecuteOperation(request.WorklistItem, new Operations.CompleteVerification());
+            ExecuteOperation(new Operations.CompleteVerification(), request.WorklistItem.ProcedureStepRef);
         }
 
         #endregion
+
+        #region OperationEnablement Helpers
+
+        public bool CanClaimInterpretation(IWorklistItemKey itemKey)
+        {
+            return CanExecuteOperation(new Operations.ClaimInterpretation(), itemKey);
+        }
+
+        public bool CanStartInterpretation(IWorklistItemKey itemKey)
+        {
+            return CanExecuteOperation(new Operations.StartInterpretation(), itemKey);
+        }
+
+        public bool CanCompleteInterpretationForTranscription(IWorklistItemKey itemKey)
+        {
+            return CanExecuteOperation(new Operations.CompleteInterpretationForTranscription(), itemKey);
+        }
+
+        public bool CanCompleteInterpretationForVerification(IWorklistItemKey itemKey)
+        {
+            return CanExecuteOperation(new Operations.CompleteInterpretationForVerification(), itemKey);
+        }
+
+        public bool CanCompleteInterpretationAndVerify(IWorklistItemKey itemKey)
+        {
+            return CanExecuteOperation(new Operations.CompleteInterpretationAndVerify(), itemKey);
+        }
+
+        public bool CanCancelPendingTranscription(IWorklistItemKey itemKey)
+        {
+            return CanExecuteOperation(new Operations.CancelPendingTranscription(), itemKey);
+        }
+
+        public bool CanStartVerification(IWorklistItemKey itemKey)
+        {
+            return CanExecuteOperation(new Operations.StartVerification(), itemKey);
+        }
+
+        public bool CanCompleteVerification(IWorklistItemKey itemKey)
+        {
+            return CanExecuteOperation(new Operations.CompleteVerification(), itemKey);
+        }
+
+        #endregion
+
+        private void ExecuteOperation(Operations.ReportingOperation op, EntityRef stepRef)
+        {
+            // it is extremly important that we get the actual object and not a proxy here
+            // if a proxy is returned, then it cannot be cast to a subclass
+            // (eg InterpretationStep s = (InterpretationStep)rps; will fail even if we know that rps is an interpretation step)
+            ReportingProcedureStep step = (ReportingProcedureStep)PersistenceContext.Load(stepRef, EntityLoadFlags.CheckVersion);
+            op.Execute(step, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+        }
+
+        private bool CanExecuteOperation(Operations.ReportingOperation op, IWorklistItemKey itemKey)
+        {
+            if (itemKey is WorklistItemKey)
+            {
+                ReportingProcedureStep step = (ReportingProcedureStep)PersistenceContext.Load(((WorklistItemKey)itemKey).ReportingProcedureStep);
+                return op.CanExecute(step, this.CurrentUserStaff);
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

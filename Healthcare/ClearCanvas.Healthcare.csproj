@@ -149,7 +149,7 @@
     <Compile Include="VisitPractitioner.cs" />
     <Compile Include="VisitPractitionerRole.cs" />
     <Compile Include="VisitStatus.cs" />
-    <Compile Include="Workflow\Operation.cs" />
+    <Compile Include="Workflow\Registration\Operation.cs" />
     <Compile Include="Workflow\Registration\WorklistItem.cs" />
     <Compile Include="Workflow\Registration\Worklists.cs" />
     <Compile Include="Workflow\IWorklist.cs" />

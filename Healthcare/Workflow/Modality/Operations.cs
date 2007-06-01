@@ -7,6 +7,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Workflow;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Workflow.Modality
 {
@@ -42,7 +43,26 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
                 mps.Complete(currentUserStaff);
             }
 
-            workflow.AddActivity(new InterpretationStep(mps.RequestedProcedure));
+            // Note: this is a simplify model.  In reality, we want to create the Interpretation step earlier (perhaps when an MPS starts)
+            // so the radiologist can starts interpreting as soon as the technologist finish some part of the scan
+            bool requestedProcedureStillInProgress =
+                CollectionUtils.Contains<ProcedureStep>(mps.RequestedProcedure.ProcedureSteps,
+                delegate(ProcedureStep ps)
+                {
+                    ModalityProcedureStep thisMPS = ps as ModalityProcedureStep;
+                    if (thisMPS == null)
+                        return false;
+
+                    if (thisMPS.State == ActivityStatus.SC ||
+                        thisMPS.State == ActivityStatus.IP ||
+                        thisMPS.State == ActivityStatus.SU)
+                        return true;
+
+                    return false;
+                });
+
+            if (requestedProcedureStillInProgress == false)
+                workflow.AddActivity(new InterpretationStep(mps.RequestedProcedure));
         }
 
         public override bool CanExecute(ModalityProcedureStep mps)
