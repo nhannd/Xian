@@ -16,7 +16,45 @@ namespace ClearCanvas.Desktop.View.WinForms
             Toolbar
         }
 
-        public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripItemDisplayStyle displayStyle)
+        public class ToolStripBuilderStyle
+        {
+            private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
+            private ToolStripItemAlignment _toolStripItemAlignment = ToolStripItemAlignment.Left;
+            private TextImageRelation _textImageRelation = TextImageRelation.ImageBeforeText;
+
+            public ToolStripBuilderStyle(ToolStripItemDisplayStyle toolStripItemDisplayStyle, ToolStripItemAlignment toolStripItemAlignment, TextImageRelation textImageRelation)
+            {
+                _toolStripItemAlignment = toolStripItemAlignment;
+                _toolStripItemDisplayStyle = toolStripItemDisplayStyle;
+                _textImageRelation = textImageRelation;
+            }
+
+            public ToolStripBuilderStyle(ToolStripItemDisplayStyle toolStripItemDisplayStyle)
+            {
+                _toolStripItemDisplayStyle = toolStripItemDisplayStyle;
+            }
+
+            public ToolStripBuilderStyle()
+            {
+            }
+
+            public ToolStripItemAlignment ToolStripAlignment
+            {
+                get { return _toolStripItemAlignment; }
+            }
+
+            public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
+            {
+                get { return _toolStripItemDisplayStyle; }
+            }
+
+            public TextImageRelation TextImageRelation
+            {
+                get { return _textImageRelation; }
+            }
+        }
+
+        public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle)
         {
             foreach (ActionModelNode node in nodes)
             {
@@ -27,14 +65,22 @@ namespace ClearCanvas.Desktop.View.WinForms
                     button.Tag = node;
 
                     // By default, only display the image on the button
-                    button.DisplayStyle = displayStyle;
+                    button.DisplayStyle = builderStyle.ToolStripItemDisplayStyle;
+                    button.Alignment = builderStyle.ToolStripAlignment;
+                    button.TextImageRelation = builderStyle.TextImageRelation;
+
                     parentItemCollection.Add(button);
                 }
                 else
                 {
-                    BuildToolbar(parentItemCollection, node.ChildNodes, displayStyle);
+                    BuildToolbar(parentItemCollection, node.ChildNodes, builderStyle);
                 }
             }
+        }
+
+        public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripItemDisplayStyle toolStripItemDisplayStyle)
+        {
+            BuildToolbar(parentItemCollection, nodes, new ToolStripBuilderStyle(toolStripItemDisplayStyle));
         }
 
         public static void BuildMenu(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes)

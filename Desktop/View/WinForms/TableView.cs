@@ -22,7 +22,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private ActionModelNode _toolbarModel;
         private ActionModelNode _menuModel;
-		private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
+
+        private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
+        private ToolStripItemAlignment _toolStripItemAlignment = ToolStripItemAlignment.Right;
+        private TextImageRelation _textImageRelation = TextImageRelation.ImageBeforeText;
+
         private ITable _table;
         private bool _multiLine;
 
@@ -37,6 +41,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             // setting the minimum column width > 100 pixels
             // therefore, turn off the auto-generate and create the columns ourselves
             _dataGridView.AutoGenerateColumns = false;
+
+            //_toolStripItemAlignment = TableViewSettings.Default.TableViewToolStripItemAlignment == "Right" 
+            //    ? ToolStripItemAlignment.Right 
+            //    : ToolStripItemAlignment.Left;
+            _toolStripItemAlignment = TableViewSettings.Default.ToolStripItemAlignment;
+            _textImageRelation = TableViewSettings.Default.ToolStripItemTextImageRelation;
         }
 
         #region Design Time properties
@@ -83,10 +93,11 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+        [Description("Deprecated: Controlled by application setting")]
         public RightToLeft ToolStripRightToLeft
         {
-            get { return _toolStrip.RightToLeft; }
-            set { _toolStrip.RightToLeft = value; }
+            get { return RightToLeft.No; }
+            set { }
         }
 
         public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
@@ -123,19 +134,15 @@ namespace ClearCanvas.Desktop.View.WinForms
                 ToolStripBuilder.Clear(_toolStrip.Items);
                 if (_toolbarModel != null)
                 {
-                    if (_toolStrip.RightToLeft == RightToLeft.Yes)
+                    if (_toolStripItemAlignment == ToolStripItemAlignment.Right)
                     {
-                        ActionModelNode[] childNodesCopy = new ActionModelNode[_toolbarModel.ChildNodes.Count];
-                        for (int i = 0; i < _toolbarModel.ChildNodes.Count; i++)
-                        {
-                            childNodesCopy[childNodesCopy.Length - i - 1] = _toolbarModel.ChildNodes[i];
-                        }
-                        ToolStripBuilder.BuildToolbar(_toolStrip.Items, childNodesCopy, _toolStripItemDisplayStyle);
+                        _toolbarModel.ChildNodes.Reverse();
                     }
-                    else
-                    {
-                        ToolStripBuilder.BuildToolbar(_toolStrip.Items, _toolbarModel.ChildNodes, _toolStripItemDisplayStyle);
-                    }
+
+                    ToolStripBuilder.BuildToolbar(
+                        _toolStrip.Items,
+                        _toolbarModel.ChildNodes, 
+                        new ToolStripBuilder.ToolStripBuilderStyle(_toolStripItemDisplayStyle, _toolStripItemAlignment, _textImageRelation));
                 }
             }
         }
