@@ -3,11 +3,17 @@
 	<head>
         <link href="default.css" rel="stylesheet" type="text/css" />
         <title>Breast Imaging</title>
-	    <script src="jsx.js"></script>
-	    <script src="jsml.js"></script>
-	    <script src="ui.js"></script>
-	    <script src="ris.js"></script>
-		<script>
+        <link href="default.css" rel="stylesheet" type="text/css" />
+        <link href="calendar/calendar-system.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="calendar/calendar.js"></script>
+        <script type="text/javascript" src="calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="calendar/lang/calendar-en.js"></script>
+        <script type="text/javascript" src="calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="jsx.js"></script>
+	    <script type="text/javascript" src="jsml.js"></script>
+	    <script type="text/javascript" src="ui.js"></script>
+	    <script type="text/javascript" src="ris.js"></script>
+		<script type="text/javascript" >
 		    var data;
 		    var errorProvider = new ErrorProvider();
 	    
@@ -16,6 +22,11 @@
 		        // if the Ris object is not defined, we are running in a plain old browser, so call setData manually
 				if(!Ris)
 				    setData(null);
+				    
+                Calendar.setup({
+                    inputField     :    "filmsUsedCount",
+                    ifFormat       :    "%Y-%m-%d %H:%M"
+                });
 		    }
 		    
 		    function setData(jsml)
@@ -124,7 +135,7 @@
 		    <input type="button" value="Add" onclick="javascript: onAddRepeat()" />
 		    <input type="button" value="Delete" onclick="javascript: onDeleteRepeat()" />
 		</p>
-			<table id="repeatsTable" border="0">
+			<table id="repeatsTable" border="0" width="100%">
 			  <tr>
 			    <td><input id="repeatsCheckAllNone" type="checkbox" onclick="javascript: onRepeatsCheckAllNone()" />All/None</td>
 				<td class="tableheading">Repeats</td>

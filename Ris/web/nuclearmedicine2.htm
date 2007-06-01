@@ -1,13 +1,18 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-        <link href="default.css" rel="stylesheet" type="text/css" />
         <title>Nuclear Medicine</title>
-	    <script src="jsx.js"></script>
-	    <script src="jsml.js"></script>
-	    <script src="ui.js"></script>
-	    <script src="ris.js"></script>
-		<script>
+        <link href="default.css" rel="stylesheet" type="text/css" />
+        <link href="calendar/calendar-system.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="calendar/calendar.js"></script>
+        <script type="text/javascript" src="calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="calendar/lang/calendar-en.js"></script>
+        <script type="text/javascript" src="calendar/calendar-setup.js"></script>
+        <script type="text/javascript" src="jsx.js"></script>
+	    <script type="text/javascript" src="jsml.js"></script>
+	    <script type="text/javascript" src="ui.js"></script>
+	    <script type="text/javascript" src="ris.js"></script>
+		<script type="text/javascript" >
 		
             var radioPharms = 
             [		
@@ -95,7 +100,7 @@
 			    data = JSML.parse(jsml) || {};
 			    data.injections = data.injections || [];
 			    data.scans = data.scans || [];
-		        var injectionsTable = Table.createTable($("injectionsTable"), { editInPlace: true },
+		        var injectionsTable = Table.createTable($("injectionsTable"), { editInPlace: true, flow: true },
 		             [
 		                {   label: "Injection",
 		                    cellType: "choice",
@@ -138,18 +143,23 @@
 		                    setValue: function(item, value) { item.method = value; }
 		                },
 		                {   label: "Time",
-		                    cellType: "text",
+		                    cellType: "date",
 		                    getValue: function(item) { return item.time; },
-		                    setValue: function(item, value) { alert(value); item.time = Date.parse(value); }
+		                    setValue: function(item, value) { item.time = value; }
 		                },
 		                {   label: "Admin By",
 		                    cellType: "lookup",
 		                    lookup: function(query) { return Ris.resolveStaffName(query); },
 		                    getValue: function(item) { return item.staff; },
 		                    setValue: function(item, value) { item.staff = value; }
+		                },
+		                {   label: "XXX",
+		                    cellType: "bool",
+		                    getValue: function(item) { return item.xxx; },
+		                    setValue: function(item, value) { item.xxx = value; }
 		                }
 		             ]);
-		             
+		        
 		        injectionsTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 		        injectionsTable.validateItem = function(sender, args)
 		        {
@@ -270,15 +280,15 @@
 			<table id="injectionsTable" border="1" width="100%">
 			  <tr>
 			    <td><input id="injectionsCheckAllNone" type="checkbox" onclick="javascript: onInjectionsCheckAllNone()" /></td>
-				<td class="tableheading">Name</td>
-				<td class="tableheading">Activity</td>
+				<td class="tableheading">Injection Details</td>
+<!--				<td class="tableheading">Activity</td>
 				<td class="tableheading">Units</td>
 				<td class="tableheading">Admin. Site</td>
 				<td class="tableheading">L</td>
 				<td class="tableheading">R</td>
 				<td class="tableheading">Method</td>
 				<td class="tableheading">Time</td>
-				<td class="tableheading">Admin. By</td>
+				<td class="tableheading">Admin. By</td> -->
 			  </tr>
 			</table>
 		<p></p>

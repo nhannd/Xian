@@ -88,6 +88,7 @@ var Table = {
         htmlTable._checkBoxes = [];
         htmlTable.errorProvider = new ErrorProvider();
         htmlTable.rowCycleClassNames = [];
+        htmlTable._options = options;
 
         // mix in methods
         for(var prop in this._tableMixIn)
@@ -181,11 +182,28 @@ var Table = {
 		    // add errorProvider image next to checkbox
 		    this.errorProvider.setError(checkBox, "");
     		
-		    // add other cells
-		    for(var i=0; i < this._columns.length; i++)
+            if(this._options.flow)
+            {
+			    td = tr.insertCell(1);
+ 		        for(var i=0; i < this._columns.length; i++)
+		        {
+		            var div = document.createElement("div");
+		            td.appendChild(div);
+		            div.style.cssFloat = div.style.styleFloat = "left";
+		            div.style.margin = "4px";
+		            div.innerHTML = "<td>"+this._columns[i].label+"</td><br>";
+    		        
+			        this._renderCell(index+1, i, div, obj);
+		        }
+		    }
+		    else
 		    {
-			    td = tr.insertCell(i+1);
-			    this._renderCell(index+1, i, td, obj);
+		        // add other cells
+		        for(var i=0; i < this._columns.length; i++)
+		        {
+			        td = tr.insertCell(i+1);
+			        this._renderCell(index+1, i, td, obj);
+		        }
 		    }
 	    },
 	
@@ -229,7 +247,7 @@ var Table = {
 	        var column = this._columns[col];
 		    var value = this._getCellValue(column, obj);
 		    var table = this;
-		    if(column.cellType == "text")
+		    if(["text"].indexOf(column.cellType) > -1)
 		    {
 		        var input = document.createElement("input");
 		        td.appendChild(input);
@@ -239,6 +257,26 @@ var Table = {
 		        
 		        // allow the ultimate format to be determined by the column rather than the user
 		        input.onblur = function() { this.value = column.getValue(obj) || ""; }
+		    }
+		    else
+		    if(["date", "datetime"].indexOf(column.cellType) > -1)
+		    {
+		        var input = document.createElement("input");
+		        td.appendChild(input);
+		        input.value = value || "";
+		        if(column.size) input.size = column.size;
+		        //input.onkeyup = input.onchange = function() { column.setValue(obj, this.value); table.updateValidation(); }
+		        
+	            input.onclick = function()
+	            {
+                    DateInput.show(this, column.getValue(obj),   // pass the current value of the object
+                        function(date, dateString)                              // pass a callback 
+                        {
+                            input.value = dateString || "";
+                            column.setValue(obj, date);
+                            table.updateValidation();
+                        });
+	            }
 		    }
 		    else
 		    if(["choice", "combobox", "dropdown", "enum", "list", "listbox"].indexOf(column.cellType) > -1)
@@ -379,3 +417,41 @@ function ErrorProvider(visible)
             });
     }
 }
+
+var DateInput = 
+{
+    show: function(atElement, initialDate, callback)
+    {
+        this._callback = callback;
+        var c = this._getCalendar();
+        c.setDate(initialDate || new Date());
+        c.showAtElement(atElement);
+    },
+    _getCalendar: function()
+    {
+        if(this._calendar == null)
+        {
+            var format = "%m %d, %Y";
+            this._calendar = new Calendar(
+                0,
+                null,
+                function(cal, dateString)
+                {
+        	        if(cal.dateClicked)
+        	        {
+        	            if(DateInput._callback) DateInput._callback(cal.date, dateString);
+                        cal.callCloseHandler();
+                    }
+                },
+                function(cal)
+                {
+                    cal.hide();
+                    DateInput._callback = null;
+                });
+            this._calendar.setDateFormat(format);
+            this._calendar.create();
+        }
+        return this._calendar;
+    }
+};
+
