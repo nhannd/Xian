@@ -32,17 +32,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._showModalityListButton = new System.Windows.Forms.Button();
 			this._contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this._modalitiesString = new System.Windows.Forms.Label();
+			this._label = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
 			// _showModalityListButton
 			// 
-			this._showModalityListButton.Anchor = System.Windows.Forms.AnchorStyles.Right;
-			this._showModalityListButton.Location = new System.Drawing.Point(168, 4);
+			this._showModalityListButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this._showModalityListButton.Location = new System.Drawing.Point(161, 17);
 			this._showModalityListButton.Margin = new System.Windows.Forms.Padding(2);
 			this._showModalityListButton.Name = "_showModalityListButton";
 			this._showModalityListButton.Size = new System.Drawing.Size(25, 18);
 			this._showModalityListButton.TabIndex = 2;
 			this._showModalityListButton.TabStop = false;
+			this._showModalityListButton.Text = "...";
 			this._showModalityListButton.UseVisualStyleBackColor = true;
 			this._showModalityListButton.Click += new System.EventHandler(this.OnShowModalityListClick);
 			// 
@@ -55,31 +57,43 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._contextMenuStrip.Name = "contextMenuStrip1";
 			this._contextMenuStrip.ShowImageMargin = false;
 			this._contextMenuStrip.ShowItemToolTips = false;
-			this._contextMenuStrip.Size = new System.Drawing.Size(128, 26);
+			this._contextMenuStrip.Size = new System.Drawing.Size(36, 4);
 			// 
 			// _modalitiesString
 			// 
-			this._modalitiesString.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Left | System.Windows.Forms.AnchorStyles.Right)));
+			this._modalitiesString.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
 			this._modalitiesString.AutoEllipsis = true;
 			this._modalitiesString.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this._modalitiesString.Enabled = false;
-			this._modalitiesString.Location = new System.Drawing.Point(3, 4);
+			this._modalitiesString.Location = new System.Drawing.Point(3, 18);
 			this._modalitiesString.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
 			this._modalitiesString.Name = "_modalitiesString";
-			this._modalitiesString.Size = new System.Drawing.Size(161, 18);
+			this._modalitiesString.Size = new System.Drawing.Size(156, 18);
 			this._modalitiesString.TabIndex = 1;
+			// 
+			// _label
+			// 
+			this._label.AutoSize = true;
+			this._label.Location = new System.Drawing.Point(2, 0);
+			this._label.Name = "_label";
+			this._label.Size = new System.Drawing.Size(29, 13);
+			this._label.TabIndex = 3;
+			this._label.Text = "label";
 			// 
 			// ModalityPicker
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.AutoSize = true;
+			this.Controls.Add(this._label);
 			this.Controls.Add(this._modalitiesString);
 			this.Controls.Add(this._showModalityListButton);
 			this.Margin = new System.Windows.Forms.Padding(2);
 			this.Name = "ModalityPicker";
-			this.Size = new System.Drawing.Size(195, 28);
+			this.Size = new System.Drawing.Size(187, 38);
 			this.ResumeLayout(false);
+			this.PerformLayout();
 
 		}
 
@@ -88,6 +102,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		private System.Windows.Forms.Button _showModalityListButton;
 		private System.Windows.Forms.ContextMenuStrip _contextMenuStrip;
 		private System.Windows.Forms.Label _modalitiesString;
+		private System.Windows.Forms.Label _label;
 
 	}
 }

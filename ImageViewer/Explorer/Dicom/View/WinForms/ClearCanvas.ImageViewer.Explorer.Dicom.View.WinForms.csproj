@@ -180,7 +180,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>DicomExplorerConfigurationApplicationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Icons\ExpandRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Icons\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _accessionNumber; }
 			set
 			{
-				_accessionNumber = value;
+				_accessionNumber = (value == null) ? "" : value;
 				NotifyPropertyChanged("AccessionNumber");
 			}
 		}
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _patientID; }
 			set
 			{
-				_patientID = value;
+				_patientID = (value == null) ? "" : value;
 				NotifyPropertyChanged("PatientID");
 			}
 		}
@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _firstName; }
 			set
 			{
-				_firstName = value;
+				_firstName = (value == null) ? "" : value;
 				NotifyPropertyChanged("FirstName");
 			}
 		}
@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _lastName; }
 			set
 			{
-				_lastName = value;
+				_lastName = (value == null) ? "" : value;
 				NotifyPropertyChanged("LastName");
 			}
 		}
@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _studyDescription; }
 			set
 			{
-				_studyDescription = value;
+				_studyDescription = (value == null) ? "" : value;
 				NotifyPropertyChanged("StudyDescription");
 			}
 		}

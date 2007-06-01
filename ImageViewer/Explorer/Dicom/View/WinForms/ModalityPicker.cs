@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 			_contextMenuStrip.Items.Add(new ToolStripControlHost(_modalityPicker));
 
-			_showModalityListButton.Image = IconFactory.CreateIcon("ExpandRight.png", new ResourceResolver(this.GetType().Assembly));
+			//_showModalityListButton.Image = IconFactory.CreateIcon("ExpandRight.png", new ResourceResolver(this.GetType().Assembly));
 
 			_availableModalitiesSet = false;
 			_availableModalities = new List<string>();
@@ -54,6 +54,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			{
 				SetCheckedModalities(value);
 			}
+		}
+
+		public string LabelText
+		{
+			get { return _label.Text; }
+			set { _label.Text = value; }
 		}
 
 		public void SetAvailableModalities(ICollection<string> modalities)

@@ -37,11 +37,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_bindingSource = new BindingSource();
 			_bindingSource.DataSource = _component;
 
-			_lastName.DataBindings.Add("Text", _bindingSource, "LastName", true, DataSourceUpdateMode.OnPropertyChanged);
-			_firstName.DataBindings.Add("Text", _bindingSource, "FirstName", true, DataSourceUpdateMode.OnPropertyChanged);
-			_accessionNumber.DataBindings.Add("Text", _bindingSource, "AccessionNumber", true, DataSourceUpdateMode.OnPropertyChanged);
-			_patientID.DataBindings.Add("Text", _bindingSource, "PatientID", true, DataSourceUpdateMode.OnPropertyChanged);
-			_studyDescription.DataBindings.Add("Text", _bindingSource, "StudyDescription", true, DataSourceUpdateMode.OnPropertyChanged);
+			_lastName.DataBindings.Add("Value", _bindingSource, "LastName", true, DataSourceUpdateMode.OnPropertyChanged);
+			_firstName.DataBindings.Add("Value", _bindingSource, "FirstName", true, DataSourceUpdateMode.OnPropertyChanged);
+			_accessionNumber.DataBindings.Add("Value", _bindingSource, "AccessionNumber", true, DataSourceUpdateMode.OnPropertyChanged);
+			_patientID.DataBindings.Add("Value", _bindingSource, "PatientID", true, DataSourceUpdateMode.OnPropertyChanged);
+			_studyDescription.DataBindings.Add("Value", _bindingSource, "StudyDescription", true, DataSourceUpdateMode.OnPropertyChanged);
 			_titleBar.DataBindings.Add("Text", _bindingSource, "Title", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_studyDateFrom.DataBindings.Add("Value", _bindingSource, "StudyDateFrom", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -92,6 +92,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		private void OnClearButonClicked(object sender, EventArgs e)
 		{
 			_component.Clear();
+		}
+
+		private void SearchPanelComponentControl_Load(object sender, EventArgs e)
+		{
+
 		}
     }
 }
