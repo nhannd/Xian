@@ -23,20 +23,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
                 CollectionUtils.ForEach<RequestedProcedure>(o.RequestedProcedures, new Action<RequestedProcedure>(
                     delegate(RequestedProcedure rp)
                     {
-                        CheckInProcedureStep cps = (CheckInProcedureStep)CollectionUtils.SelectFirst<ProcedureStep>(rp.ProcedureSteps,
-                                delegate(ProcedureStep step)
-                                {
-                                    return step is CheckInProcedureStep;
-                                });
-
-                        // The CPS should be created when each RP of an order is created, but just in case it's not
-                        if (cps == null)
-                        {
-                            cps = new CheckInProcedureStep(rp);
-                            workflow.AddActivity(cps);
-                        }
-
-                        cps.Start(currentUserStaff);
+                        rp.Start(currentUserStaff);
                     }));
             }
         }

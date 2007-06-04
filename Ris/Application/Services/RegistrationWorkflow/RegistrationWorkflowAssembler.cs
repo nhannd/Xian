@@ -29,7 +29,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             TelephoneNumberAssembler phoneAssembler = new TelephoneNumberAssembler();
             AddressAssembler addressAssembler = new AddressAssembler();
             SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
-            OrderStatusEnumTable orderStatusTable = context.GetBroker<IOrderStatusEnumBroker>().Load();
 
             IPatientProfileBroker profileBroker = context.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = profileBroker.Load(item.PatientProfileRef);
@@ -67,7 +66,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         summary.OrderingFacility = o.OrderingFacility.Name;
                         summary.OrderingPractitioner = nameAssembler.CreatePersonNameDetail(o.OrderingPractitioner.Name);
                         summary.Insurance = "";
-                        summary.Status = orderStatusTable[o.Status].Value;
+                        summary.Status = GetRequestedProcedureStatus(o, context);
 
                         summary.RequestedProcedureName = StringUtilities.Combine<string>(
                             CollectionUtils.Map<RequestedProcedure, string>(o.RequestedProcedures, 
@@ -156,6 +155,31 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 domainItem.DateOfBirth,
                 new EnumValueInfo(sex.Code.ToString(), sex.Value),
                 domainItem.EarliestScheduledTime);
+        }
+
+        private string GetRequestedProcedureStatus(Order order, IPersistenceContext context)
+        {
+            ActivityStatusEnumTable activityStatusTable = context.GetBroker<IActivityStatusEnumBroker>().Load();
+
+            if (order.IsAllRequestedProcedureScheduled)
+            {
+                return activityStatusTable[ActivityStatus.SC].Value;
+            }
+            else if (order.IsAllRequestedProcedureDiscontinued)
+            {
+                return activityStatusTable[ActivityStatus.DC].Value;
+            }
+            else if (order.IsAllRequestedProcedureCompletedOrDiscontinued)
+            {
+                return activityStatusTable[ActivityStatus.CM].Value;
+            }
+            else
+            {
+                if (order.IsMPSStarted)
+                    return activityStatusTable[ActivityStatus.IP].Value;
+                else
+                    return SR.TextCheckedIn;
+            }
         }
     }
 }

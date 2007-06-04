@@ -157,7 +157,56 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
-		#region Object overrides
+        public bool IsMPSStarted
+        {
+            get
+            {
+                return CollectionUtils.Contains<RequestedProcedure>(this.RequestedProcedures,
+                    delegate(RequestedProcedure rp)
+                    {
+                        return rp.IsMpsStarted == true;
+                    });
+            }
+        }
+
+        public bool IsAllRequestedProcedureScheduled
+        {
+            get
+            {
+                return CollectionUtils.TrueForAll<RequestedProcedure>(this.RequestedProcedures,
+                    delegate(RequestedProcedure rp)
+                    {
+                        return rp.Status == ActivityStatus.SC;
+                    });
+            }
+        }
+
+        public bool IsAllRequestedProcedureDiscontinued
+        {
+            get
+            {
+                return CollectionUtils.TrueForAll<RequestedProcedure>(this.RequestedProcedures,
+                    delegate(RequestedProcedure rp)
+                    {
+                        return rp.Status == ActivityStatus.DC;
+                    });
+            }
+        }
+
+
+        public bool IsAllRequestedProcedureCompletedOrDiscontinued
+        {
+            get
+            {
+                return CollectionUtils.TrueForAll<RequestedProcedure>(this.RequestedProcedures,
+                    delegate(RequestedProcedure rp)
+                    {
+                        return rp.Status == ActivityStatus.DC || rp.Status == ActivityStatus.CM;
+                    });
+            }
+        }
+
+        #region Object overrides
 		
 		public override bool Equals(object that)
 		{

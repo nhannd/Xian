@@ -22,6 +22,9 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         public override void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
         {
             mps.Start(currentUserStaff);
+
+            if (mps.RequestedProcedure.Status == ActivityStatus.SC)
+                mps.RequestedProcedure.Start(currentUserStaff);
         }
 
         public override bool CanExecute(ModalityProcedureStep mps)
@@ -43,26 +46,14 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
                 mps.Complete(currentUserStaff);
             }
 
-            // Note: this is a simplify model.  In reality, we want to create the Interpretation step earlier (perhaps when an MPS starts)
-            // so the radiologist can starts interpreting as soon as the technologist finish some part of the scan
-            bool requestedProcedureStillInProgress =
-                CollectionUtils.Contains<ProcedureStep>(mps.RequestedProcedure.ProcedureSteps,
-                delegate(ProcedureStep ps)
-                {
-                    ModalityProcedureStep thisMPS = ps as ModalityProcedureStep;
-                    if (thisMPS == null)
-                        return false;
+            if (mps.RequestedProcedure.IsAllMpsCompletedOrDiscontinued)
+            {
+                mps.RequestedProcedure.Complete(currentUserStaff);
 
-                    if (thisMPS.State == ActivityStatus.SC ||
-                        thisMPS.State == ActivityStatus.IP ||
-                        thisMPS.State == ActivityStatus.SU)
-                        return true;
-
-                    return false;
-                });
-
-            if (requestedProcedureStillInProgress == false)
+                // Note: this is a simplify model.  In reality, we want to create the Interpretation step earlier (perhaps when an MPS starts)
+                // so the radiologist can starts interpreting as soon as the technologist finish some part of the scan
                 workflow.AddActivity(new InterpretationStep(mps.RequestedProcedure));
+            }
         }
 
         public override bool CanExecute(ModalityProcedureStep mps)
@@ -76,6 +67,15 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
         public override void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
         {
             mps.Discontinue();
+
+            if (mps.RequestedProcedure.IsAllMpsDiscontinued)
+            {
+                mps.RequestedProcedure.Discontinue();
+            }
+            else if (mps.RequestedProcedure.IsAllMpsCompletedOrDiscontinued)
+            {
+                mps.RequestedProcedure.Complete(currentUserStaff);
+            }
         }
 
         public override bool CanExecute(ModalityProcedureStep mps)
