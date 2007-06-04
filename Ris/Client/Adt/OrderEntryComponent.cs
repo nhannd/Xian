@@ -37,23 +37,15 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Initialize()
         {
             base.Initialize();
+            _enabled = false;   // disable by default
+
             if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
-                _enabled = false;   // disable by default
                 ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate(object sender, EventArgs args)
                 {
                     this.Enabled = (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
                         && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
                 };
-            }
-            else if (this.ContextBase is IRegistrationPreviewToolContext)
-            {
-                IRegistrationPreviewToolContext context = (IRegistrationPreviewToolContext)this.ContextBase;
-                this.Enabled = (context.WorklistItem != null && context.WorklistItem.PatientProfileRef != null);
-            }
-            else
-            {
-                _enabled = true;
             }
         }
 
@@ -82,23 +74,31 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
                 RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
-                NewOrder(item, context.DesktopWindow);
-            }
-            else if (this.ContextBase is IRegistrationPreviewToolContext)
-            {
-                IRegistrationPreviewToolContext context = (IRegistrationPreviewToolContext)this.ContextBase;
-                NewOrder(context.WorklistItem, context.DesktopWindow);
+                NewOrder(item, context);
             }
         }
 
-        private void NewOrder(RegistrationWorklistItem worklistItem, IDesktopWindow desktopWindow)
+        private void NewOrder(RegistrationWorklistItem worklistItem, IRegistrationWorkflowItemToolContext context)
         {
             OrderEntryComponent component = new OrderEntryComponent(worklistItem.PatientProfileRef);
             ApplicationComponent.LaunchAsWorkspace(
-                desktopWindow,
+                context.DesktopWindow,
                 component,
                 string.Format(SR.TitleNewOrder, PersonNameFormat.Format(worklistItem.Name), MrnFormat.Format(worklistItem.Mrn)),
-                null);
+                delegate(IApplicationComponent c) 
+                {
+                    if (c.ExitCode == ApplicationComponentExitCode.Normal)
+                    {
+                        // Refresh the schedule folder is a new folder is placed
+                        IFolder scheduledFolder = CollectionUtils.SelectFirst<IFolder>(context.Folders,
+                            delegate(IFolder f) { return f is Folders.ScheduledFolder; });
+
+                        if (scheduledFolder.IsOpen)
+                            scheduledFolder.Refresh();
+                        else
+                            scheduledFolder.RefreshCount();
+                    }
+                });
         }
     }
 
