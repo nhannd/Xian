@@ -60,11 +60,7 @@ namespace ClearCanvas.Ris.Client.Adt
                                     delegate(CancelOrderTableItem item)
                                     {
                                         CancelOrderTableEntry entry = new CancelOrderTableEntry(item);
-                                        entry.CheckedChanged += new EventHandler(CancelOrderCheckedStateChangedEventHandler);
-
-                                        if (item.OrderRef == _worklistItem.OrderRef)
-                                            entry.Checked = true;
-                                        
+                                        entry.CheckedChanged += new EventHandler(CancelOrderCheckedStateChangedEventHandler);                                        
                                         return entry;
                                     }));
 
@@ -72,6 +68,15 @@ namespace ClearCanvas.Ris.Client.Adt
                         _cancelReasonChoices = response.CancelReasonChoices;
                         _selectedCancelReason = _cancelReasonChoices[0];
                     });
+
+                CancelOrderTableEntry selectedEntry = CollectionUtils.SelectFirst<CancelOrderTableEntry>(_cancelOrderTable.Items,
+                    delegate(CancelOrderTableEntry entry)
+                    {
+                        return entry.CancelOrderTableItem.OrderRef == _worklistItem.OrderRef;
+                    });
+
+                if (selectedEntry != null)
+                    selectedEntry.Checked = true;
             }
             catch (Exception e)
             {

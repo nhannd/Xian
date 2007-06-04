@@ -57,13 +57,18 @@ namespace ClearCanvas.Ris.Client.Adt
                                     {
                                         CheckInOrderTableEntry entry = new CheckInOrderTableEntry(item);
                                         entry.CheckedChanged += new EventHandler(OrderCheckedStateChangedEventHandler);
-
-                                        if (item.OrderRef == _worklistItem.OrderRef)
-                                            entry.Checked = true;
-
                                         return entry;
                                     }));
                     });
+
+                CheckInOrderTableEntry selectedEntry = CollectionUtils.SelectFirst<CheckInOrderTableEntry>(_checkInOrderTable.Items,
+                    delegate(CheckInOrderTableEntry entry)
+                    {
+                        return entry.CheckInTableItem.OrderRef == _worklistItem.OrderRef;
+                    });
+
+                if (selectedEntry != null)
+                    selectedEntry.Checked = true;
             }
             catch (Exception e)
             {
