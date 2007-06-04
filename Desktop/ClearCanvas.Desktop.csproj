@@ -247,7 +247,6 @@
     <None Include="Tools\Tools.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="ExceptionPolicies\" />
     <Folder Include="Tools\Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
