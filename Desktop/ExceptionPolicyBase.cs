@@ -1,6 +1,6 @@
 using System;
 
-namespace ClearCanvas.Common
+namespace ClearCanvas.Desktop
 {
     public class ExceptionPolicyBase : IExceptionPolicy
     {

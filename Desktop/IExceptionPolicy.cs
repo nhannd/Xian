@@ -1,7 +1,9 @@
 using System;
 using System.Collections.Generic;
 
-namespace ClearCanvas.Common
+using ClearCanvas.Common;
+
+namespace ClearCanvas.Desktop
 {
     [ExtensionPoint()]
     public sealed class ExceptionPolicyExtensionPoint : ExtensionPoint<IExceptionPolicy> { }

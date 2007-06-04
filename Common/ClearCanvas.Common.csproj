@@ -105,13 +105,10 @@
     <Compile Include="Configuration\ConfigurationStoreSettingsProvider.cs" />
     <Compile Include="Configuration\IConfigurationStore.cs" />
     <Compile Include="Configuration\SettingsClassMetaDataReader.cs" />
-    <Compile Include="ExceptionPolicyBase.cs" />
-    <Compile Include="ExceptionPolicyFactory.cs" />
     <Compile Include="ExtensionPoint.cs" />
     <Compile Include="ExtensionSettings.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="IExceptionPolicy.cs" />
     <Compile Include="IExtensionPoint.cs" />
     <Compile Include="IMessageBox.cs" />
     <Compile Include="Auditing\Auditor.cs" />

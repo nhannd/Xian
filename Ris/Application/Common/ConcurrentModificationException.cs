@@ -21,15 +21,4 @@ namespace ClearCanvas.Ris.Application.Common
         {
         }
     }
-
-    [ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
-    [ExceptionPolicyFor(typeof(ConcurrentModificationException))]
-    [ExceptionPolicyFor(typeof(FaultException<ConcurrentModificationException>))]
-    public class ConcurrentModificationExceptionPolicy : ExceptionPolicyBase
-    {
-        public override ExceptionReport Handle(Exception e, string userMessage)
-        {
-            return base.Handle(e, userMessage);
-        }
-    }
 }

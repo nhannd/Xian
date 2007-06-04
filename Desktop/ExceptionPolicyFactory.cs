@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-//using System.ServiceModel;
 
-namespace ClearCanvas.Common
+namespace ClearCanvas.Desktop
 {
     public class ExceptionPolicyFactory
     {
