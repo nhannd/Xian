@@ -1,6 +1,8 @@
 // create a global $ function that acts as an alias for document.getElementById
 var $ = function(id) { return document.getElementById(id); }
 
+var membersOf = function(obj) { var a = []; for(var k in obj) a.add(k); return a; }
+
 
 /*
     Augments the javascript Array prototype with a number of convenience and functional-style methods, and some events.
@@ -153,4 +155,42 @@ if(!String.prototype.escapeHTML)
         return div.childNodes[0].nodeValue;
     }
 }
+
+// add some decent date serialization support
+if(!Date.prototype.toISOString)
+{
+    Date.prototype.toISOString = function () {
+
+        function f(n) {
+            // Format integers to have at least two digits.
+            return n < 10 ? '0' + n : n;
+        }
+
+        return this.getFullYear() + '-' +
+                f(this.getMonth() + 1) + '-' +
+                f(this.getDate()) + 'T' +
+                f(this.getHours()) + ':' +
+                f(this.getMinutes()) + ':' +
+                f(this.getSeconds());
+    }
+    
+    Date.parseISOString = function(isoDateString)
+    {
+        var y = isoDateString.substring(0, 4);
+        var m = isoDateString.substring(5, 7) - 1;
+        var d = isoDateString.substring(8, 10);
+        var h = isoDateString.substring(11, 13);
+        var n = isoDateString.substring(14, 16);
+        var s = isoDateString.substring(17, 19);
+        
+        var date = new Date();
+        date.setFullYear(y);
+        date.setMonth(m);
+        date.setDate(d);
+        date.setHours(h, n, s);
+        return date;
+   };
+}
+    
+
 

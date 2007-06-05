@@ -1,3 +1,5 @@
+var _IE = document.all;
+
 /*
     Table
     
@@ -25,10 +27,16 @@
                 For an edit-in-place table, the column object must be a complex object with the following properties:
                     getValue: function(item) - a function that returns the value of the cell for the specified item
                     setValue: function(item, value) - a function that sets the value of the item from the cell value
-                    cellType: a string indicating the type of cell (e.g. "text", "combo", "checkbox", "lookup" and others...)
+                    getError: function(item) - a function that returns a validation error message to display in the cell,
+                        or null if the item is valid
+                    cellType: a string indicating the type of cell (e.g. "text", "choice", "checkbox", "lookup", "datetime" and others...)
                         *note: this may also be populated with a custom value (e.g. "myCellType"), in which case you must handle
                          the renderCell event and do custom rendering.
-                    choices: an array of strings - used only by the "combo" cell type
+                    choices: an array of strings - used only by the "choice" cell type. In addition to strings, the array
+                        may contain objects with the properties 'group' and 'choices'.  In this case, the object represents
+                        a group of choices (HTML optgroup) - 'group' is the name of the group, and 'choices' is an array
+                        specifying the choices within that group.  The 'choices' array is processed recursively, allowing
+                        for a hierarchical structure of choices of abitrary depth.
                     lookup: function(query) - used only the the "lookup" cell type - returns the result of the query, or null if not found
                     size: the size of the column, in characters
                          
@@ -149,13 +157,28 @@ var Table = {
 	    updateValidation: function()
 	    {
             for(var i=1; i < this.rows.length; i++) // skip header row
+                this._validateRow(i);
+	    },
+	    
+	    _validateRow: function(rowIndex)
+	    {
+	        // validate each column
+	        var obj = this.items[rowIndex-1];
+	        for(var c=0; c < this._columns.length; c++)
+		    {
+		        var column = this._columns[c];
+		        if(column.getError)
+		        {
+		            this.errorProvider.setError(this.rows[rowIndex]._errorElements[c], column.getError(obj));
+		        }
+		    }
+
+            // fire the validateItem event, which validates the item as a whole
+            if(this.validateItem)
             {
-                if(this.validateItem)
-                {
-                    var args = {item: this.items[i-1], error: ""};
-                    this.validateItem(this, args);
-                    this.errorProvider.setError(this._checkBoxes[i], args.error);
-                }
+                var args = {item: obj, error: ""};
+                this.validateItem(this, args);
+                this.errorProvider.setError(this._checkBoxes[rowIndex], args.error);
             }
 	    },
     	
@@ -182,29 +205,43 @@ var Table = {
 		    // add errorProvider image next to checkbox
 		    this.errorProvider.setError(checkBox, "");
     		
-            if(this._options.flow)
-            {
-			    td = tr.insertCell(1);
- 		        for(var i=0; i < this._columns.length; i++)
+		    var containerCell;  // used by "flow" style
+	        for(var i=0; i < this._columns.length; i++)
+	        {
+	            var cell = null;
+	            if(this._options.flow)
+	            {
+                    // add one containerCell to the table, and flow each of the "columns" inside of it
+	                containerCell = containerCell || tr.insertCell(1);
+	                
+	                // the cell is not technically a cell in this case, but rather a div
+	                cell = document.createElement("div");
+	                containerCell.appendChild(cell);
+	                cell.style.cssFloat = cell.style.styleFloat = "left";
+	                cell.style.margin = "4px";
+	                cell.innerHTML = this._columns[i].label+"<br>";
+	            }
+	            else
+	            {
+		            // add one cell for each column
+			        cell = tr.insertCell(i+1);
+	            }
+		        
+		        this._renderCell(index, i, cell, obj);
+		        
+		        // set cell error provider if the column has an error function
+		        if(this._columns[i].getError)
 		        {
-		            var div = document.createElement("div");
-		            td.appendChild(div);
-		            div.style.cssFloat = div.style.styleFloat = "left";
-		            div.style.margin = "4px";
-		            div.innerHTML = "<td>"+this._columns[i].label+"</td><br>";
-    		        
-			        this._renderCell(index+1, i, div, obj);
+		            var errorElement = cell.lastChild;  // the HTML element where the error will be shown
+		            this.errorProvider.setError(errorElement, "");
+		            
+		            // cache the errorElement in an array in the TR, so we can reference it later
+		            tr._errorElements = tr._errorElements || [];
+		            tr._errorElements[i] = errorElement;
 		        }
-		    }
-		    else
-		    {
-		        // add other cells
-		        for(var i=0; i < this._columns.length; i++)
-		        {
-			        td = tr.insertCell(i+1);
-			        this._renderCell(index+1, i, td, obj);
-		        }
-		    }
+	        }
+	        
+	        this._validateRow(index);
 	    },
 	
 	    _renderCell: function(row, col, td, obj)
@@ -216,7 +253,7 @@ var Table = {
     		
 		    // fire custom formatting event, which may itself set the innerHTML property to override default cell content
 		    if(this.renderCell)
-		        this.renderCell(this, { htmlCell: td, column: this._columns[col], item: obj, rowIndex: row, colIndex: col });
+		        this.renderCell(this, { htmlCell: td, column: this._columns[col], item: obj, itemIndex: row-1, colIndex: col });
 	    },
     	
 	    _getCellValue: function(column, obj)
@@ -253,7 +290,7 @@ var Table = {
 		        td.appendChild(input);
 		        input.value = value || "";
 		        if(column.size) input.size = column.size;
-		        input.onkeyup = input.onchange = function() { column.setValue(obj, this.value); table.updateValidation(); }
+		        input.onkeyup = input.onchange = function() { column.setValue(obj, this.value); table._onCellUpdate(row, col); }
 		        
 		        // allow the ultimate format to be determined by the column rather than the user
 		        input.onblur = function() { this.value = column.getValue(obj) || ""; }
@@ -263,37 +300,76 @@ var Table = {
 		    {
 		        var input = document.createElement("input");
 		        td.appendChild(input);
-		        input.value = value || "";
+		        input.value = value ? DateInput.format(value) : "";
 		        if(column.size) input.size = column.size;
-		        //input.onkeyup = input.onchange = function() { column.setValue(obj, this.value); table.updateValidation(); }
 		        
-	            input.onclick = function()
+		        // if user types directly into field, use the DateInput object to try and parse the results
+		        input.onkeyup = function()
+		        {
+		            // if user blanked out the field, set the value to null, otherwise parse field
+		            column.setValue(obj, (this.value && this.value.length) ? DateInput.parse(this.value) : null );
+		            table._onCellUpdate(row, col);
+		        }
+		        
+		        // allow the ultimate format to be determined by the column rather than the user
+		        input.onblur = function() { this.value = column.getValue(obj) ? DateInput.format(column.getValue(obj)) : ""; }
+		        
+		        // launch calendar on click
+                var findButton = document.createElement("input");
+                findButton.type = "button";
+                findButton.value = "...";
+                td.appendChild(findButton);
+                findButton.onclick = function()
 	            {
-                    DateInput.show(this, column.getValue(obj),   // pass the current value of the object
+                    DateInput.show(input, column.getValue(obj),   // pass the current value of the object
                         function(date, dateString)                              // pass a callback 
                         {
                             input.value = dateString || "";
                             column.setValue(obj, date);
-                            table.updateValidation();
+                            table._onCellUpdate(row, col);
                         });
 	            }
 		    }
 		    else
 		    if(["choice", "combobox", "dropdown", "enum", "list", "listbox"].indexOf(column.cellType) > -1)
 		    {
+		        // define a function to populate the dropdown
+		        function addOptions(parent, items)
+		        {
+		            items.each(
+		                function(item)
+		                {
+		                    if(typeof(item) == "string")
+		                    {
+		                        var option = document.createElement("option");
+		                        option.value = item;
+		                        option.innerHTML = item.escapeHTML();
+		                        parent.appendChild(option);
+		                    }
+		                    else if(item.group) 
+		                    {
+		                        var group = document.createElement("optgroup");
+		                        group.label = item.group;
+		                        parent.appendChild(group);
+		                        addOptions(group, item.choices);
+		                    }
+		                });
+		        }
+		    
 		        var input = document.createElement("select");
 		        td.appendChild(input);
 		        if(column.size) input.style.width = column.size + "pc"; // set width in chars
-		        column.choices.each(
-		            function(choice)
-		            {
-		                var option = document.createElement("option");
-		                option.value = choice;
-		                option.innerHTML = choice.escapeHTML();
-		                input.appendChild(option);
-		            });
+		        
+		        // choices may be an array, or a function that returns an array
+		        var choices = (typeof(column.choices) == "function") ? column.choices(obj) : column.choices;
+		        addOptions(input, choices);
+		        
 		        input.value = value || "";
-		        input.onchange = function() { column.setValue(obj, this.value); table.updateValidation(); }
+		        input.onchange = function()
+		        {
+		            column.setValue(obj, (this.value && this.value.length)? this.value : null);
+		            table._onCellUpdate(row, col);
+		        }
 		    }
 		    else
 		    if(["check","checkbox","bool","boolean"].indexOf(column.cellType) > -1)
@@ -303,7 +379,7 @@ var Table = {
 		        td.appendChild(input);
 		        if(column.size) input.size = column.size;
 		        input.checked = value ? true : false;
-		        input.onclick = input.onchange = function() { column.setValue(obj, this.checked ? true : false); table.updateValidation(); }
+		        input.onclick = input.onchange = function() { column.setValue(obj, this.checked ? true : false); table._onCellUpdate(row, col); }
 		    }
 		    else
 		    if(column.cellType == "lookup")
@@ -316,7 +392,7 @@ var Table = {
                     {
                         column.setValue(obj, result);
  		                input.value = column.getValue(obj) || "";
-                        table.updateValidation();
+                        table._onCellUpdate(row, col);
                     }
                 }
                 
@@ -332,13 +408,13 @@ var Table = {
                     {
                         // any manual edit clears the underlying item
                         column.setValue(obj, null);
-                        table.updateValidation();
+                        table._onCellUpdate(row, col);
                     }
                 }
                 
                 var findButton = document.createElement("input");
                 findButton.type = "button";
-                findButton.value = "Find";
+                findButton.value = "...";
                 td.appendChild(findButton);
                 findButton.onclick = doLookup;
                  
@@ -346,7 +422,12 @@ var Table = {
     		
 		    // fire custom formatting event, which may itself set the innerHTML property to override default cell content
 		    if(this.renderCell)
-		        this.renderCell(this, { htmlCell: td, column: this._columns[col], item: obj, rowIndex: row, colIndex: col });
+		        this.renderCell(this, { htmlCell: td, column: this._columns[col], item: obj, itemIndex: row-1, colIndex: col });
+	    },
+	    
+	    _onCellUpdate: function(row, col)
+	    {
+	        this._validateRow(row);
 	    }
     }
 };
@@ -398,7 +479,7 @@ function ErrorProvider(visible)
             
             htmlElement.parentNode.insertBefore(provider.img, htmlElement.nextSibling);       
         }
-        provider.img.alt = message;
+        provider.img.alt = message || "";
         provider.img.style.visibility = (provider.hasError() && this._visible) ? "visible" : "hidden";
     }
     
@@ -418,6 +499,35 @@ function ErrorProvider(visible)
     }
 }
 
+/*
+    DateInput
+    
+    The DateInput class provides the ability to show a calendar next to any HTML DOM element, and receive
+    a callback with the selected value from the calendar.
+    
+    DateInput relies on the jscalendar library from www.dynarch.com.  These scripts must be included on the 
+    page prior to this file.
+    
+    Because a Calendar is a relatively expensive object to create, DateInput is designed as a singleton class
+    that manages a single instance of a Calendar.  The calendar can only be opened next to one input field at
+    a time.  This is sufficient for most use cases.
+    
+    Methods
+    
+    show(atElement, initialDate, callback)
+        atElement - the element (eg input field) that serves as the anchor point for the calendar
+        initialDate - the date to initialize the calendar to
+        callback - function(date, dateString) is a function that is called when the user clicks a date
+            in the calendar.  The function is passed both a Date object and a formatted date string for convenience.
+        
+    parse(dateString)
+        attempts to parse the specified string and return a Date object.  If parsing fails, a date object
+        set to "now" is returned (this behaviour is not ideal, but that is the jscalendar behaviour) 
+        
+    format(date)
+        formats the specified date object according to the default format string.  DateInput attempts to
+        obtain the default format string from the Ris object, if this object is available.
+*/
 var DateInput = 
 {
     show: function(atElement, initialDate, callback)
@@ -427,11 +537,21 @@ var DateInput =
         c.setDate(initialDate || new Date());
         c.showAtElement(atElement);
     },
+    
+    parse: function(dateString)
+    {
+        return Date.parseDate(dateString, this._getCalendar().dateFormat);
+    },
+    
+    format: function(date)
+    {
+        return date.print(this._getCalendar().dateFormat);
+    },
+    
     _getCalendar: function()
     {
         if(this._calendar == null)
         {
-            var format = "%m %d, %Y";
             this._calendar = new Calendar(
                 0,
                 null,
@@ -448,10 +568,42 @@ var DateInput =
                     cal.hide();
                     DateInput._callback = null;
                 });
-            this._calendar.setDateFormat(format);
+            this._calendar.showsTime = true;
+            
+            // if the Ris object is defined, use it's formatting
+            if(Ris)
+            {
+                var format = this._convertFormat(Ris.getDateTimeFormat());
+                this._calendar.setDateFormat(format);
+            }
+            
             this._calendar.create();
         }
         return this._calendar;
+    }, 
+    
+    // convert .NET format to jscalendar (www.dynarch.com) format 
+    _convertFormat: function(format)
+    {
+        return format
+            .replace(/dddd/g, "%a")
+            .replace(/ddd/g, "%A")
+            .replace(/dd/g, "%z")   // use an intermediate substitution here
+            .replace(/d/g, "%e")
+            .replace(/MMMM/g, "%B")
+            .replace(/MMM/g, "%b")
+            .replace(/MM/g, "%m")
+            .replace(/HH/g, "%w")   // use an intermediate substitution here
+            .replace(/H/g, "%k")
+            .replace(/hh/g, "%I")
+            .replace(/h/g, "%l")
+            .replace(/mm/g, "%M")
+            .replace(/tt/g, "%p")
+            .replace(/ss/g, "%S")
+            .replace(/yyyy/g, "%Y")
+            .replace(/yy/g, "%y")
+            .replace(/%z/g, "%d")   // replace intermediate substitutions
+            .replace(/%w/g, "%H");  // replace intermediate substitutions
     }
 };
 

@@ -61,22 +61,8 @@ if(!Object.prototype.toJsml)
 
 
     Date.prototype.toJsml = function () {
-
-        // Ultimately, this method will be equivalent to the date.toISOString method.
-
-        function f(n) {
-            // Format integers to have at least two digits.
-            return n < 10 ? '0' + n : n;
-        }
-
-        return '"' + this.getFullYear() + '-' +
-                f(this.getMonth() + 1) + '-' +
-                f(this.getDate()) + 'T' +
-                f(this.getHours()) + ':' +
-                f(this.getMinutes()) + ':' +
-                f(this.getSeconds()) + '"';
+        return this.toISOString();
     };
-
 
     Number.prototype.toJsml = function () {
     // JSON numbers must be finite. Encode non-finite numbers as null.
@@ -134,7 +120,7 @@ var JSML = {
             return a;
         }
         
-        // converst a JSML fragment to a Javascript object
+        // convert a JSML fragment to a Javascript object
         function toObj(xmlNode)
         {
             var subElements = getChildNodes(xmlNode).select(function(n) { return n.nodeType == 1; });   // select element nodes
@@ -157,8 +143,25 @@ var JSML = {
             {
                 // find the first non-empty text node
                 var textNodes = getChildNodes(xmlNode).select(function(n) { return n.nodeType==3 && n.nodeValue.match(/[^ \f\n\r\t\v]/); });
-                return textNodes.length > 0 ? textNodes[0].nodeValue : null;
+                var value = textNodes.length > 0 ? textNodes[0].nodeValue : null;
+                return value ? parseValue(value) : null;
             }
+        }
+        
+        // deserialize value to an object
+        function parseValue(str)
+        {
+            if(str.match(/^[+-]?\d+$/))
+                return parseInt(str);
+            if(str.match(/^[+-]?\d*\.?\d+$/))
+                return parseFloat(str);
+            if(str.match(/^(true|false)$/i))
+                return str.toLowerCase() == "true";
+            if(str.match(/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}$/))
+                return Date.parseISOString(str);
+            
+            // treat it as a string
+            return str;
         }
         
         if(jsml && jsml.length)

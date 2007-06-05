@@ -22,6 +22,21 @@ if(window.external)
         resolveStaffName: function(query)
         {
             return window.external.ResolveStaffName(query || "");
+        },
+        
+        getDateFormat: function()
+        {
+            return window.external.DateFormat;
+        },
+        
+        getTimeFormat: function()
+        {
+            return window.external.TimeFormat;
+        },
+        
+        getDateTimeFormat: function()
+        {
+            return window.external.DateTimeFormat;
         }
     };
     
