@@ -9,11 +9,14 @@ using ClearCanvas.Desktop.Tools;
 using System.Runtime.InteropServices;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("apply", "global-menus/MenuTools/Performed Procedure")]
-    [ClickHandler("apply", "Apply")]
+    [MenuAction("bi", "global-menus/MenuTools/Breast Imaging")]
+    [ClickHandler("bi", "BreastImaging")]
+    [MenuAction("nm", "global-menus/MenuTools/Nuclear Medicine")]
+    [ClickHandler("nm", "NucMed")]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
     public class PPTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
@@ -24,16 +27,22 @@ namespace ClearCanvas.Ris.Client.Adt
         {
         }
 
-        public void Apply()
+        public void BreastImaging()
         {
-            if (_component == null)
-            {
-                _component = new PerformedProcedureComponent();
-                ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow,
-                    _component,
-                    "Performed Procedure",
-                    delegate(IApplicationComponent c) { _component = null; });
-            }
+            Apply("http://localhost/breastimaging.htm");
+        }
+        public void NucMed()
+        {
+            Apply("http://localhost/nuclearmedicine2.htm");
+        }
+
+        public void Apply(string url)
+        {
+            _component = new PerformedProcedureComponent(url);
+            ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow,
+                _component,
+                url,
+                delegate(IApplicationComponent c) {  });
         }
     }
 
@@ -100,17 +109,49 @@ namespace ClearCanvas.Ris.Client.Adt
                 }
                 return null;
             }
+
+            public string DateFormat
+            {
+                get { return Format.DateFormat; }
+            }
+
+            public string TimeFormat
+            {
+                get { return Format.TimeFormat; }
+            }
+
+            public string DateTimeFormat
+            {
+                get { return Format.DateTimeFormat; }
+            }
+
+            public string GetData(string tag)
+            {
+                // TODO retrieve data associated with tag
+                return PerformedProcedureComponentSettings.Default.ReportData;
+            }
+
+            public void SetData(string tag, string data)
+            {
+                // TODO set data associated with tag
+                PerformedProcedureComponentSettings.Default.ReportData = data;
+            }
+
         }
 
         private ScriptCallback _scriptCallback;
+        private string _url;
+        private event EventHandler _beforeAccept;
 
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PerformedProcedureComponent()
+        public PerformedProcedureComponent(string url)
         {
             _scriptCallback = new ScriptCallback(this);
+            _url = url;
+
         }
 
         public override void Start()
@@ -126,19 +167,14 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Presentation Model
 
+        public event EventHandler BeforeAccept
+        {
+            add { _beforeAccept += value; }
+            remove { _beforeAccept -= value; }
+        }
         public string ReportPageUrl
         {
-            get { return PerformedProcedureComponentSettings.Default.ReportPageUrl; }
-        }
-
-        public string ReportData
-        {
-            get { return PerformedProcedureComponentSettings.Default.ReportData; }
-            set
-            {
-                PerformedProcedureComponentSettings.Default.ReportData = value;
-                PerformedProcedureComponentSettings.Default.Save();
-            }
+            get { return _url; }
         }
 
         public ScriptCallback ScriptObject
@@ -146,8 +182,29 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _scriptCallback; }
         }
 
-        public void Close()
+        public void Validate()
         {
+            this.ShowValidation(!this.ValidationVisible);
+        }
+
+        public void Accept()
+        {
+            if (this.HasValidationErrors)
+            {
+                this.ShowValidation(true);
+            }
+            else
+            {
+                EventsHelper.Fire(_beforeAccept, this, EventArgs.Empty);
+
+                this.ExitCode = ApplicationComponentExitCode.Normal;
+                this.Host.Exit();
+            }
+        }
+
+        public void Cancel()
+        {
+            this.ExitCode = ApplicationComponentExitCode.Cancelled;
             this.Host.Exit();
         }
 
