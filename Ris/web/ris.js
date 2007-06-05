@@ -37,6 +37,16 @@ if(window.external)
         getDateTimeFormat: function()
         {
             return window.external.DateTimeFormat;
+        },
+        
+        getData: function(tag)
+        {
+            return window.external.GetData(tag);
+        },
+        
+        setData: function(tag, data)
+        {
+            window.external.SetData(tag, data);
         }
     };
     

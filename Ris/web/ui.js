@@ -151,7 +151,9 @@ var Table = {
 	    {
 	        var rowIndex = this.items.indexOf(item) + 1;
 	        if(rowIndex > 0)
+	        {
 	            this._checkBoxes[rowIndex].checked = checked;
+	        }
 	    },
     	
 	    updateValidation: function()
@@ -265,6 +267,12 @@ var Table = {
     	
 	    _removeRow: function(index)
 	    {
+	        // remove any error providers for this row
+	        var row = this.rows[index];
+	        var errorProvider = this.errorProvider;
+	        row._errorElements.each(function(element) { errorProvider.remove(element); });
+	        
+	        // remove the row and row checkbox
 		    this.deleteRow(index);
 		    this._checkBoxes.removeAt(index);
 	    },
@@ -481,6 +489,14 @@ function ErrorProvider(visible)
         }
         provider.img.alt = message || "";
         provider.img.style.visibility = (provider.hasError() && this._visible) ? "visible" : "hidden";
+    }
+    
+    this.remove = function(htmlElement)
+    {
+        // see if there is a provider for this element
+        var provider = this._providers.find(function(v) { return v.element == htmlElement; });   
+        if(provider)
+            this._providers.remove(provider);
     }
     
     this.hasErrors = function()

@@ -90,15 +90,7 @@
 	    
 		    function onBodyLoad()
 		    {
-		        // if the Ris object is not defined, we are running in a plain old browser, so call setData manually
-				if(!Ris)
-				    setData(null);
-		    }
-		    
-		    function setData(jsml)
-		    {
-   
-			    data = JSML.parse(jsml) || {};
+			    data = Ris ? JSML.parse(Ris.getData("ExamDetails")) : {};
 			    data.injections = data.injections || [];
 			    data.scans = data.scans || [];
 		        var injectionsTable = Table.createTable($("injectionsTable"), { editInPlace: true, flow: true },
@@ -165,59 +157,60 @@
 		             ]);
 		        
 		        injectionsTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-		        injectionsTable.validateItem = function(sender, args)
-		        {
-		            var errors = [];
-		            //if(!(args.item.left || args.item.right))
-		            //    errors.add("L or R is required");
-		                
-		            args.error = errors.join("\n");
-		        }
 		        injectionsTable.bindItems(data.injections);
 		        
-		        var scansTable = Table.createTable($("scansTable"), { editInPlace: true },
+		        var scansTable = Table.createTable($("scansTable"), { editInPlace: true, flow: true },
 		             [
-		                {   // Start time
-		                    cellType: "text",
+		                {   label: "Start Time",
+		                    cellType: "datetime",
 		                    getValue: function(item) { return item.startTime; },
-		                    setValue: function(item, value) { item.startTime = value; }
+		                    setValue: function(item, value) { item.startTime = value; },
+		                    getError: function(item) { return item.startTime ? null : "Start time required"; }
 		                },
-		                {   // Stop time
-		                    cellType: "text",
+		                {   label: "Stop Time",
+		                    cellType: "datetime",
 		                    getValue: function(item) { return item.stopTime; },
-		                    setValue: function(item, value) { item.stopTime = value; }
+		                    setValue: function(item, value) { item.stopTime = value; },
+		                    getError: function(item)
+		                    {
+		                        if(!item.stopTime)
+		                            return "Stop time required";
+		                        if(item.stopTime <= item.startTime)
+		                            return "Stop time must be later than start time";
+		                        return null;
+		                    }
 		                },
-		                {   // Exam Location
+		                {   label: "Location",
 		                    cellType: "lookup",
 		                    lookup: function(query) { return "TODO"; },
-		                    getValue: function(item) { return item.units; },
-		                    setValue: function(item, value) { item.units = value; }
+		                    getValue: function(item) { return item.location; },
+		                    setValue: function(item, value) { item.location = value; },
+		                    getError: function(item) { return item.location ? null : "Location required"; }
 		                }
 		             ]);
 		             
 		        scansTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
-		        scansTable.validateItem = function(sender, args)
-		        {
-		            var errors = [];
-		            if(!(parseFloat(args.item.activity) > 0))
-		                errors.add("Activity is required");
-		            if(!args.item.time)
-		                errors.add("Time is required");
-		                
-		            args.error = errors.join("\n");
-		        }
 		        scansTable.bindItems(data.scans);
 		    }
 		    
-		    function getData()
+		    //////////////////////////////////////////////////////////////////////////
+		    // RIS integration API
+		    function hasValidationErrors()
 		    {
-				return JSML.create(data, "data");
+		        return errorProvider.hasErrors();
 		    }
 
 			function showValidation(show)
 			{
 			    errorProvider.setVisible(show);
 			}
+			
+		    function saveData()
+		    {
+				return Ris.setData("ExamDetails", JSML.create(data, "data"));
+		    }
+		    //////////////////////////////////////////////////////////////////////////
+		    
 			
 			function onAddInjection()
 			{
@@ -232,6 +225,7 @@
 			        if(confirm("Deleted selected injections?"))
 			        {
 			            checkedItems.each(function(item) { data.injections.remove(item); });
+			            $("injectionsCheckAllNone").checked = false;
 			        }
 			    }
 			    else
@@ -258,6 +252,7 @@
 			        if(confirm("Deleted selected scans?"))
 			        {
 			            checkedItems.each(function(item) { data.scans.remove(item); });
+			            $("scansCheckAllNone").checked = false;
 			        }
 			    }
 			    else
@@ -283,14 +278,6 @@
 			  <tr>
 			    <td><input id="injectionsCheckAllNone" type="checkbox" onclick="javascript: onInjectionsCheckAllNone()" /></td>
 				<td class="tableheading">Injection Details</td>
-<!--				<td class="tableheading">Activity</td>
-				<td class="tableheading">Units</td>
-				<td class="tableheading">Admin. Site</td>
-				<td class="tableheading">L</td>
-				<td class="tableheading">R</td>
-				<td class="tableheading">Method</td>
-				<td class="tableheading">Time</td>
-				<td class="tableheading">Admin. By</td> -->
 			  </tr>
 			</table>
 		<p></p>
@@ -301,10 +288,8 @@
 		</p>
 			<table id="scansTable" border="1">
 			  <tr>
-			    <td><input id="scansCheckAllNone" type="checkbox" onclick="javascript: onScansCheckAllNone()" />All/None</td>
-				<td class="tableheading">Start Time</td>
-				<td class="tableheading">Stop Time</td>
-				<td class="tableheading">Exam Location</td>
+			    <td><input id="scansCheckAllNone" type="checkbox" onclick="javascript: onScansCheckAllNone()" /></td>
+				<td class="tableheading">Scan Details</td>
 			  </tr>
 			</table>
 		</form>
