@@ -106,6 +106,36 @@ OFCondition findAndGetRawStringFromItem(DcmItem& item,
 	return status;
 }
 
+DcmItem*    findAndGetSequenceItemFromItem(DcmItem& item,
+					   const DcmTagKey& seqTagKey,
+					   const signed long itemNum=0)
+{
+	DcmItem *newItem = NULL;
+	/* find the item */
+        OFCondition status = item.findAndGetSequenceItem(seqTagKey, newItem, itemNum); 
+	if (status.good())
+	{
+            return newItem;
+	}
+
+	return NULL;
+}
+
+DcmElement*    findAndGetElementFromItem(DcmItem& item,
+					 const DcmTagKey& seqTagKey,
+					 const OFBool searchIntoSub=OFFalse) 
+{
+	DcmElement *element = NULL;
+	/* find the element */
+        OFCondition status = item.findAndGetElement(seqTagKey, element, searchIntoSub); 
+	if (status.good())
+	{
+            return element;
+	}
+
+	return NULL;
+}
+
 %}
 
 namespace std
