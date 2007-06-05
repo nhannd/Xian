@@ -15,29 +15,31 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         [OperationContract]
         GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
 
+        [OperationContract]
+        ClaimInterpretationResponse ClaimInterpretation(ClaimInterpretationRequest request);
 
         [OperationContract]
-        void ClaimInterpretation(ClaimInterpretationRequest request);
+        StartInterpretationResponse StartInterpretation(StartInterpretationRequest request);
 
         [OperationContract]
-        void StartInterpretation(StartInterpretationRequest request);
+        EditInterpretationResponse EditInterpretation(EditInterpretationRequest request);
 
         [OperationContract]
-        void CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request);
+        CompleteInterpretationForTranscriptionResponse CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request);
 
         [OperationContract]
-        void CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request);
+        CompleteInterpretationForVerificationResponse CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request);
 
         [OperationContract]
-        void CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request);
+        CompleteInterpretationAndVerifyResponse CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request);
 
         [OperationContract]
-        void CancelPendingTranscription(CancelPendingTranscriptionRequest request);
+        CancelPendingTranscriptionResponse CancelPendingTranscription(CancelPendingTranscriptionRequest request);
 
         [OperationContract]
-        void StartVerification(StartVerificationRequest request);
+        StartVerificationResponse StartVerification(StartVerificationRequest request);
 
         [OperationContract]
-        void CompleteVerification(CompleteVerificationRequest request);
+        CompleteVerificationResponse CompleteVerification(CompleteVerificationRequest request);
     }
 }

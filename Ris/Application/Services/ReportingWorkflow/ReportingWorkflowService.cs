@@ -53,58 +53,66 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         [UpdateOperation]
         [OperationEnablement("CanClaimInterpretation")]
-        public void ClaimInterpretation(ClaimInterpretationRequest request)
+        public ClaimInterpretationResponse ClaimInterpretation(ClaimInterpretationRequest request)
         {
-            ExecuteOperation(new Operations.ClaimInterpretation(), request.WorklistItem.ProcedureStepRef);
+            return new ClaimInterpretationResponse(ExecuteOperation(new Operations.ClaimInterpretation(), request.WorklistItem.ProcedureStepRef));
         }
 
         [UpdateOperation]
         [OperationEnablement("CanStartInterpretation")]
-        public void StartInterpretation(StartInterpretationRequest request)
+        public StartInterpretationResponse StartInterpretation(StartInterpretationRequest request)
         {
-            ExecuteOperation(new Operations.StartInterpretation(), request.WorklistItem.ProcedureStepRef);
+            return new StartInterpretationResponse(ExecuteOperation(new Operations.StartInterpretation(), request.WorklistItem.ProcedureStepRef));
+        }
+
+        [UpdateOperation]
+        [OperationEnablement("CanStartInterpretation")]
+        public EditInterpretationResponse EditInterpretation(EditInterpretationRequest request)
+        {
+            EntityRef updatedStepRef = ExecuteOperation(new Operations.StartInterpretation(), request.WorklistItem.ProcedureStepRef);
+            return new EditInterpretationResponse(updatedStepRef, "Report content not implemented");
         }
 
         [UpdateOperation]
         [OperationEnablement("CanCompleteInterpretationForTranscription")]
-        public void CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request)
+        public CompleteInterpretationForTranscriptionResponse CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request)
         {
-            ExecuteOperation(new Operations.CompleteInterpretationForTranscription(), request.WorklistItem.ProcedureStepRef);
+            return new CompleteInterpretationForTranscriptionResponse(ExecuteOperation(new Operations.CompleteInterpretationForTranscription(), request.WorklistItem.ProcedureStepRef));
         }
 
         [UpdateOperation]
         [OperationEnablement("CanCompleteInterpretationForVerification")]
-        public void CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request)
+        public CompleteInterpretationForVerificationResponse CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request)
         {
-            ExecuteOperation(new Operations.CompleteInterpretationForVerification(), request.WorklistItem.ProcedureStepRef);
+            return new CompleteInterpretationForVerificationResponse(ExecuteOperation(new Operations.CompleteInterpretationForVerification(), request.WorklistItem.ProcedureStepRef));
         }
 
         [UpdateOperation]
         [OperationEnablement("CanCompleteInterpretationAndVerify")]
-        public void CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request)
+        public CompleteInterpretationAndVerifyResponse CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request)
         {
-            ExecuteOperation(new Operations.CompleteInterpretationAndVerify(), request.WorklistItem.ProcedureStepRef);
+            return new CompleteInterpretationAndVerifyResponse(ExecuteOperation(new Operations.CompleteInterpretationAndVerify(), request.WorklistItem.ProcedureStepRef));
         }
 
         [UpdateOperation]
         [OperationEnablement("CanCancelPendingTranscription")]
-        public void CancelPendingTranscription(CancelPendingTranscriptionRequest request)
+        public CancelPendingTranscriptionResponse CancelPendingTranscription(CancelPendingTranscriptionRequest request)
         {
-            ExecuteOperation(new Operations.CancelPendingTranscription(), request.WorklistItem.ProcedureStepRef);
+            return new CancelPendingTranscriptionResponse(ExecuteOperation(new Operations.CancelPendingTranscription(), request.WorklistItem.ProcedureStepRef));
         }
 
         [UpdateOperation]
         [OperationEnablement("CanStartVerification")]
-        public void StartVerification(StartVerificationRequest request)
+        public StartVerificationResponse StartVerification(StartVerificationRequest request)
         {
-            ExecuteOperation(new Operations.StartVerification(), request.WorklistItem.ProcedureStepRef);
+            return new StartVerificationResponse(ExecuteOperation(new Operations.StartVerification(), request.WorklistItem.ProcedureStepRef));
         }
 
         [UpdateOperation]
         [OperationEnablement("CanCompleteVerification")]
-        public void CompleteVerification(CompleteVerificationRequest request)
+        public CompleteVerificationResponse CompleteVerification(CompleteVerificationRequest request)
         {
-            ExecuteOperation(new Operations.CompleteVerification(), request.WorklistItem.ProcedureStepRef);
+            return new CompleteVerificationResponse(ExecuteOperation(new Operations.CompleteVerification(), request.WorklistItem.ProcedureStepRef));
         }
 
         #endregion
@@ -153,13 +161,17 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         #endregion
 
-        private void ExecuteOperation(Operations.ReportingOperation op, EntityRef stepRef)
+        private EntityRef ExecuteOperation(Operations.ReportingOperation op, EntityRef stepRef)
         {
             // it is extremly important that we get the actual object and not a proxy here
             // if a proxy is returned, then it cannot be cast to a subclass
             // (eg InterpretationStep s = (InterpretationStep)rps; will fail even if we know that rps is an interpretation step)
             ReportingProcedureStep step = (ReportingProcedureStep)PersistenceContext.Load(stepRef, EntityLoadFlags.CheckVersion);
             op.Execute(step, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+            // The step will change after the operation, return the updated EntityRef
+            ProcedureStep updatedStep = (ProcedureStep) PersistenceContext.Load(stepRef, EntityLoadFlags.Proxy);
+            return updatedStep.GetRef();
         }
 
         private bool CanExecuteOperation(Operations.ReportingOperation op, IWorklistItemKey itemKey)

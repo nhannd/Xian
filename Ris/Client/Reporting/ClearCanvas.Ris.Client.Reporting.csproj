@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="Folders\WorkflowFolders.cs" />
     <Compile Include="HomeTool.cs" />
+    <Compile Include="InterpretationComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportingPreviewComponent.cs" />
     <Compile Include="ReportingWorkflowTool.cs" />
@@ -122,6 +123,9 @@
     <EmbeddedResource Include="Icons\RadiologistHomeToolLarge.png" />
     <EmbeddedResource Include="Icons\RadiologistHomeToolMedium.png" />
     <EmbeddedResource Include="Icons\RadiologistHomeToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\EditToolSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

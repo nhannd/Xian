@@ -111,11 +111,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetCheckInWorklist()
         {
-            string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition);
+            string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition, _hqlMPSNotStartedSubQuery);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("cpsState", "IP"));
             AddMainQueryParameters(parameters);
+            AddSubQueryParameters(parameters);
 
             return GetWorklist(hqlQuery, parameters);
         }
@@ -171,11 +172,12 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetCheckInWorklistCount()
         {
-            string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition);
+            string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition, _hqlMPSNotStartedSubQuery);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("cpsState", "IP"));
             AddMainQueryParameters(parameters);
+            AddSubQueryParameters(parameters);
 
             return GetWorklistCount(hqlQuery, parameters);
         }

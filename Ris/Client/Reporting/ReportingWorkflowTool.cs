@@ -8,6 +8,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 
@@ -79,8 +80,8 @@ namespace ClearCanvas.Ris.Client.Reporting
             #endregion
         }
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Claim")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Claim")]
+        [MenuAction("apply", "folderexplorer-items-contextmenu/Claim Interpretation")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Claim Interpretation")]
         [ClickHandler("apply", "Apply")]
         [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
@@ -116,32 +117,66 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Start Interpretation")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Start Interpretation")]
+        [MenuAction("apply", "folderexplorer-items-contextmenu/Edit Interpretation")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Edit Interpretation")]
         [ClickHandler("apply", "Apply")]
-        [IconSet("apply", IconScheme.Colour, "Icons.StartToolSmall.png", "Icons.StartToolMedium.png", "Icons.StartToolLarge.png")]
+        [IconSet("apply", IconScheme.Colour, "Icons.EditToolSmall.png", "Icons.EditToolSmall.png", "Icons.EditToolSmall.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
         [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-        public class StartInterpretationTool : WorkflowItemTool
+        public class EditInterpretationTool : WorkflowItemTool
         {
-            public StartInterpretationTool()
-                : base("StartInterpretation")
+            private Dictionary<EntityRef, IWorkspace> _workspaceDictionary;
+
+            public EditInterpretationTool()
+                : base("EditInterpretation")
             {
+                _workspaceDictionary = new Dictionary<EntityRef, IWorkspace>();
+            }
+
+            private string GetWorkspaceTitle(ReportingWorklistItem item)
+            {
+                return String.Format("{0} - {1}", PersonNameFormat.Format(item.PersonNameDetail), item.RequestedProcedureName);
             }
 
             protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
             {
                 try
                 {
-                    Platform.GetService<IReportingWorkflowService>(
-                        delegate(IReportingWorkflowService service)
-                        {
-                            service.StartInterpretation(new StartInterpretationRequest(item));
-                        });
+                    if (_workspaceDictionary.ContainsKey(item.ProcedureStepRef))
+                    {
+                        _workspaceDictionary[item.ProcedureStepRef].Activate();
+                    }
+                    else
+                    {
+                        string reportContent = "";
 
-                    IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.MyInterpretationFolder; });
-                    myInterpretationFolder.Refresh();
+                        Platform.GetService<IReportingWorkflowService>(
+                            delegate(IReportingWorkflowService service)
+                            {
+                                EditInterpretationResponse response = service.EditInterpretation(new EditInterpretationRequest(item));
+                                item.ProcedureStepRef = response.ReportingStepRef;
+                                reportContent = response.ReportContent;
+                            });
+
+                        IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                            delegate(IFolder f) { return f is Folders.MyInterpretationFolder; });
+                        myInterpretationFolder.Refresh();
+
+                        IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(desktopWindow,
+                            new InterpretationComponent(item, reportContent, folders),
+                            GetWorkspaceTitle(item),
+                            delegate(IApplicationComponent c)
+                            {
+                                if (c.ExitCode == ApplicationComponentExitCode.Normal)
+                                {
+                                    myInterpretationFolder.Refresh();
+                                }
+
+                                _workspaceDictionary.Remove(item.ProcedureStepRef);
+                            });
+
+                        _workspaceDictionary[item.ProcedureStepRef] = workspace;
+                    }                    
 
                     return true;
                 }

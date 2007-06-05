@@ -307,6 +307,16 @@
     <Compile Include="ReportingWorkflow\CompleteInterpretationForTranscriptionRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationForVerificationRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteVerificationRequest.cs" />
+    <Compile Include="ReportingWorkflow\CancelPendingTranscriptionResponse.cs" />
+    <Compile Include="ReportingWorkflow\ClaimInterpretationResponse.cs" />
+    <Compile Include="ReportingWorkflow\CompleteInterpretationAndVerifyResponse.cs" />
+    <Compile Include="ReportingWorkflow\CompleteInterpretationForTranscriptionResponse.cs" />
+    <Compile Include="ReportingWorkflow\CompleteInterpretationForVerificationResponse.cs" />
+    <Compile Include="ReportingWorkflow\CompleteVerificationResponse.cs" />
+    <Compile Include="ReportingWorkflow\EditInterpretationRequest.cs" />
+    <Compile Include="ReportingWorkflow\EditInterpretationResponse.cs" />
+    <Compile Include="ReportingWorkflow\StartVerificationResponse.cs" />
+    <Compile Include="ReportingWorkflow\StartInterpretationResponse.cs" />
     <Compile Include="ReportingWorkflow\GetOperationEnablementRequest.cs" />
     <Compile Include="ReportingWorkflow\GetOperationEnablementResponse.cs" />
     <Compile Include="ReportingWorkflow\GetWorklistCountRequest.cs" />

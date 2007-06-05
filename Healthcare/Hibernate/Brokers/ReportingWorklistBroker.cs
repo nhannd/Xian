@@ -80,33 +80,19 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         private int GetWorklistCount(string hqlQuery, List<QueryParameter> parameters)
         {
-            try
-            {
-                IList list = DoQuery(hqlQuery, parameters);
-                return (int)list[0];
-            }
-            catch (Exception e)
-            {
-                return 0;
-            }
+            IList list = DoQuery(hqlQuery, parameters);
+            return (int)list[0];
         }
 
         private IList DoQuery(string hqlQuery, List<QueryParameter> parameters)
         {
-            try
+            IQuery query = this.Context.CreateHibernateQuery(hqlQuery);
+            foreach (QueryParameter param in parameters)
             {
-                IQuery query = this.Context.CreateHibernateQuery(hqlQuery);
-                foreach (QueryParameter param in parameters)
-                {
-                    query.SetParameter(param.Name, param.Value);
-                }
+                query.SetParameter(param.Name, param.Value);
+            }
 
-                return query.List();
-            }
-            catch (Exception e)
-            {
-                return null;
-            }
+            return query.List();
         }
 
         #endregion

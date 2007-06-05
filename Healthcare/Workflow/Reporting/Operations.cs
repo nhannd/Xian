@@ -54,7 +54,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 {
                     interpretation.Assign(currentUserStaff);
                 }
-                interpretation.Start(currentUserStaff);
+
+                if (interpretation.State == ActivityStatus.SC)
+                {
+                    interpretation.Start(currentUserStaff);
+                }
             }
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
@@ -62,8 +66,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 if (step is InterpretationStep == false)
                     return false;
 
-                // step already started
-                if (step.State != ActivityStatus.SC)
+                // step is completed/cancelled
+                if (step.State != ActivityStatus.SC && step.State != ActivityStatus.IP)
                     return false;
 
                 // step is not claimed or is assigned to someone else
