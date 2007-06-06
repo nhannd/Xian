@@ -313,13 +313,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Ser
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Samples.WebBrowser", "Samples\Browser\ClearCanvas.ImageViewer.Samples.WebBrowser.csproj", "{99C5FEC1-FC30-4767-8D52-5D2EBB82F46B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Samples.WebBrowser", "Samples\WebBrowser\ClearCanvas.ImageViewer.Samples.WebBrowser.csproj", "{99C5FEC1-FC30-4767-8D52-5D2EBB82F46B}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Samples.WebBrowser.View.WinForms", "Samples\Browser\View\WinForms\ClearCanvas.ImageViewer.Samples.WebBrowser.View.WinForms.csproj", "{7689F968-523F-4737-A72C-DB7507A3C68A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Samples.WebBrowser.View.WinForms", "Samples\WebBrowser\View\WinForms\ClearCanvas.ImageViewer.Samples.WebBrowser.View.WinForms.csproj", "{7689F968-523F-4737-A72C-DB7507A3C68A}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
