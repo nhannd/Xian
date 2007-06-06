@@ -2,10 +2,10 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="ClearCanvas.Ris.Client.Adt" GeneratedClassName="PerformedProcedureComponentSettings">
   <Profiles />
   <Settings>
-    <Setting Name="ReportData" Type="System.String" Scope="User">
+    <Setting Name="DetailsData" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="ReportPageUrl" Type="System.String" Scope="Application">
+    <Setting Name="DetailsPageUrl" Type="System.String" Scope="Application">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

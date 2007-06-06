@@ -26,21 +26,21 @@ namespace ClearCanvas.Ris.Client.Adt {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ReportData {
+        public string DetailsData {
             get {
-                return ((string)(this["ReportData"]));
+                return ((string)(this["DetailsData"]));
             }
             set {
-                this["ReportData"] = value;
+                this["DetailsData"] = value;
             }
         }
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string ReportPageUrl {
+        public string DetailsPageUrl {
             get {
-                return ((string)(this["ReportPageUrl"]));
+                return ((string)(this["DetailsPageUrl"]));
             }
         }
     }

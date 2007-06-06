@@ -65,9 +65,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _browser.ObjectForScripting = _component.ScriptObject;
             _browser.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(_procedureReport_DocumentCompleted);
 
-            if (!string.IsNullOrEmpty(_component.ReportPageUrl))
+            if (!string.IsNullOrEmpty(_component.DetailsPageUrl))
             {
-                _browser.Url = new Uri(_component.ReportPageUrl);
+                _browser.Url = new Uri(_component.DetailsPageUrl);
             }
 
             _component.ValidationVisibleChanged += new EventHandler(_component_ValidationVisibleChanged);

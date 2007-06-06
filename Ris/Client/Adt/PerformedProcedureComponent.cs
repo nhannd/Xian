@@ -13,10 +13,8 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("bi", "global-menus/MenuTools/Breast Imaging")]
-    [ClickHandler("bi", "BreastImaging")]
-    [MenuAction("nm", "global-menus/MenuTools/Nuclear Medicine")]
-    [ClickHandler("nm", "NucMed")]
+    [MenuAction("apply", "global-menus/MenuTools/Perform Procedure")]
+    [ClickHandler("apply", "Apply")]
 
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
     public class PPTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
@@ -27,21 +25,12 @@ namespace ClearCanvas.Ris.Client.Adt
         {
         }
 
-        public void BreastImaging()
+        public void Apply()
         {
-            Apply("http://localhost/breastimaging.htm");
-        }
-        public void NucMed()
-        {
-            Apply("http://localhost/nuclearmedicine2.htm");
-        }
-
-        public void Apply(string url)
-        {
-            _component = new PerformedProcedureComponent(url);
+            _component = new PerformedProcedureComponent();
             ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow,
                 _component,
-                url,
+                "Perform Procedure",
                 delegate(IApplicationComponent c) {  });
         }
     }
@@ -128,35 +117,31 @@ namespace ClearCanvas.Ris.Client.Adt
             public string GetData(string tag)
             {
                 // TODO retrieve data associated with tag
-                return PerformedProcedureComponentSettings.Default.ReportData;
+                return PerformedProcedureComponentSettings.Default.DetailsData;
             }
 
             public void SetData(string tag, string data)
             {
                 // TODO set data associated with tag
-                PerformedProcedureComponentSettings.Default.ReportData = data;
+                PerformedProcedureComponentSettings.Default.DetailsData = data;
             }
 
         }
 
         private ScriptCallback _scriptCallback;
-        private string _url;
         private event EventHandler _beforeAccept;
 
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PerformedProcedureComponent(string url)
+        public PerformedProcedureComponent()
         {
             _scriptCallback = new ScriptCallback(this);
-            _url = url;
-
         }
 
         public override void Start()
         {
-            // TODO prepare the component for its live phase
             base.Start();
         }
 
@@ -172,9 +157,9 @@ namespace ClearCanvas.Ris.Client.Adt
             add { _beforeAccept += value; }
             remove { _beforeAccept -= value; }
         }
-        public string ReportPageUrl
+        public string DetailsPageUrl
         {
-            get { return _url; }
+            get { return PerformedProcedureComponentSettings.Default.DetailsPageUrl; }
         }
 
         public ScriptCallback ScriptObject

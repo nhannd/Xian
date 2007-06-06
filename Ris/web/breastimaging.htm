@@ -1,23 +1,26 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-        <link href="default.css" rel="stylesheet" type="text/css" />
         <title>Breast Imaging</title>
         <link href="css/default.css" rel="stylesheet" type="text/css" />
         <link href="js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript" src="js/calendar/calendar.js"></script>
         <script type="text/javascript" src="js/calendar/lang/calendar-en.js"></script>
         <script type="text/javascript" src="js/jsx.js"></script>
-	<script type="text/javascript" src="js/jsml.js"></script>
-	<script type="text/javascript" src="js/ui.js"></script>
-	<script type="text/javascript" src="js/ris.js"></script>
-	<script type="text/javascript" >
-		    var data;
+	    <script type="text/javascript" src="js/jsml.js"></script>
+	    <script type="text/javascript" src="js/ui.js"></script>
+	    <script type="text/javascript" src="js/ris.js"></script>
+	    <script type="text/javascript" >
+		    var data = {};
 		    var errorProvider = new ErrorProvider();
 	    
 		    function onBodyLoad()
 		    {
-			    data = Ris ? JSML.parse(Ris.getData("ExamDetails")) : {};
+		        if(Ris)
+		        {
+			        data = JSML.parse(Ris.getData("ExamDetails")) || {};
+			    }
+			    
 			    var myForm = $("myForm");
 			    myForm.studyType.value = data.studyType || "";
 			    myForm.filmsUsedCount.value = data.filmsUsedCount || "";

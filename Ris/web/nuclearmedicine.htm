@@ -7,10 +7,10 @@
         <script type="text/javascript" src="js/calendar/calendar.js"></script>
         <script type="text/javascript" src="js/calendar/lang/calendar-en.js"></script>
         <script type="text/javascript" src="js/jsx.js"></script>
-	<script type="text/javascript" src="js/jsml.js"></script>
-	<script type="text/javascript" src="js/ui.js"></script>
-	<script type="text/javascript" src="js/ris.js"></script>
-	<script type="text/javascript" >
+	    <script type="text/javascript" src="js/jsml.js"></script>
+	    <script type="text/javascript" src="js/ui.js"></script>
+	    <script type="text/javascript" src="js/ris.js"></script>
+	    <script type="text/javascript" >
 		
             var radioPharms = 
             [		
@@ -83,12 +83,16 @@
 		
 		
 		
-		    var data;
+		    var data = {};
 		    var errorProvider = new ErrorProvider();
 	    
 		    function onBodyLoad()
 		    {
-			    data = Ris ? JSML.parse(Ris.getData("ExamDetails")) : {};
+		        if(Ris)
+		        {
+			        data = JSML.parse(Ris.getData("ExamDetails")) || {};
+			    }
+			    
 			    data.injections = data.injections || [];
 			    data.scans = data.scans || [];
 		        var injectionsTable = Table.createTable($("injectionsTable"), { editInPlace: true, flow: true },
