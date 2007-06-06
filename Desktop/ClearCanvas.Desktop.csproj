@@ -72,7 +72,7 @@
     <Compile Include="ExceptionHandlingContext.cs" />
     <Compile Include="ExceptionPolicyFactory.cs" />
     <Compile Include="IExceptionPolicy.cs" />
-    <Compile Include="IExceptonHandlingContext.cs" />
+    <Compile Include="IExceptionHandlingContext.cs" />
     <Compile Include="StackTabComponentContainer.cs" />
     <Compile Include="TabGroup.cs" />
     <Compile Include="TabGroupComponentContainer.cs" />
