@@ -243,6 +243,12 @@
   <data name="ExceptionUnableToDetermineDrive" xml:space="preserve">
     <value>Unrecoverable Error: unable to determine drive.</value>
   </data>
+  <data name="FormatCheckUsage" xml:space="preserve">
+    <value>Checking disk usage - Used Space(%): {0:F2}, High Watermark(%): {1:F2}, Low Watermark(%): {2:F2}</value>
+  </data>
+  <data name="FormatDeletionRequest" xml:space="preserve">
+    <value>Requesting deletion of {0} studies; Expected space freed (bytes): {1}</value>
+  </data>
   <data name="FormatEnumeratingFile" xml:space="preserve">
     <value>Enumerating: {0}</value>
   </data>
@@ -286,6 +292,9 @@ Please check the service logs for more details.</value>
   <data name="LocalDataStoreServices" xml:space="preserve">
     <value>Local Data Store Services</value>
   </data>
+  <data name="MessageBeginDeleting" xml:space="preserve">
+    <value>High Watermark reached; begin removing studies</value>
+  </data>
   <data name="MessageCancelled" xml:space="preserve">
     <value>Cancelled.</value>
   </data>
@@ -318,6 +327,9 @@ Please check the service logs for more details.</value>
   </data>
   <data name="MessageNoFilesToReindex" xml:space="preserve">
     <value>Complete.  No files could be found to reindex.</value>
+  </data>
+  <data name="MessageNothingToDelete" xml:space="preserve">
+    <value>No studies could be found in the datastore to delete</value>
   </data>
   <data name="MessagePausingActiveImportJobs" xml:space="preserve">
     <value>Pausing active import jobs ...</value>

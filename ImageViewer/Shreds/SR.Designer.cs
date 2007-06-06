@@ -439,6 +439,24 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Checking disk usage - Used Space(%): {0:F2}, High Watermark(%): {1:F2}, Low Watermark(%): {2:F2}.
+        /// </summary>
+        internal static string FormatCheckUsage {
+            get {
+                return ResourceManager.GetString("FormatCheckUsage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Requesting deletion of {0} studies; Expected space freed (bytes): {1}.
+        /// </summary>
+        internal static string FormatDeletionRequest {
+            get {
+                return ResourceManager.GetString("FormatDeletionRequest", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Enumerating: {0}.
         /// </summary>
         internal static string FormatEnumeratingFile {
@@ -566,6 +584,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to High Watermark reached; begin removing studies.
+        /// </summary>
+        internal static string MessageBeginDeleting {
+            get {
+                return ResourceManager.GetString("MessageBeginDeleting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cancelled..
         /// </summary>
         internal static string MessageCancelled {
@@ -661,6 +688,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         internal static string MessageNoFilesToReindex {
             get {
                 return ResourceManager.GetString("MessageNoFilesToReindex", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No studies could be found in the datastore to delete.
+        /// </summary>
+        internal static string MessageNothingToDelete {
+            get {
+                return ResourceManager.GetString("MessageNothingToDelete", resourceCulture);
             }
         }
         
