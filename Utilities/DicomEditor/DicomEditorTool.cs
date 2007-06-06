@@ -112,6 +112,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                 DicomFileAccessor accessor = new DicomFileAccessor();
 
                 bool userCancelled = false;
+                
                 BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext backgroundcontext)
                 {
                     int i = 0;
@@ -130,7 +131,8 @@ namespace ClearCanvas.Utilities.DicomEditor
                         }
                         catch (GeneralDicomException e)
                         {
-                            backgroundcontext.Error(e);
+                            backgroundcontext.Error(e);                            
+                            return;
                         }
                         backgroundcontext.ReportProgress(new BackgroundTaskProgress((int)(((double)(i + 1) / (double)files.Count) * 100.0), SR.MessageDumpProgressBar));
                         i++;
@@ -141,15 +143,16 @@ namespace ClearCanvas.Utilities.DicomEditor
 
                 try
                 {
-                    ProgressDialog.Show(task, context.DesktopWindow, true);
-                    if (userCancelled == true)
-                        return;
+                    ProgressDialog.Show(task, context.DesktopWindow, true);                   
                 }
                 catch (Exception e)
-                {
+                {                    
                     ExceptionHandler.Report(e, SR.MessageFailedDump, context.DesktopWindow);                    
                     return;
                 }
+
+                if (userCancelled == true)
+                    return;
 
                 if (_component == null)
                 {

@@ -50,10 +50,14 @@ namespace ClearCanvas.Desktop
         /// <param name="progressBarStyle">Show the progressbar using Marquee style</param>
         public static void Show(BackgroundTask task, IDesktopWindow desktopWindow, bool autoClose, ProgressBarStyle progressBarStyle)
         {
-            ApplicationComponent.LaunchAsDialog(
+            ProgressDialogComponent progressComponent = new ProgressDialogComponent(task, autoClose, progressBarStyle);
+            ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(
                 desktopWindow,
-                new ProgressDialogComponent(task, autoClose, progressBarStyle),
+                progressComponent,
                 Application.ApplicationName);
+
+            if (result == ApplicationComponentExitCode.Error)
+                throw progressComponent.TaskException;
         }
     }
 }

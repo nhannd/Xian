@@ -24,6 +24,7 @@ namespace ClearCanvas.Desktop
     {
         private BackgroundTask _task;
         private bool _autoClose;
+        private Exception _exception;
 
         private int _progressBar;
         private string _progressMessage;
@@ -42,6 +43,11 @@ namespace ClearCanvas.Desktop
         {
             add { _progressTerminateEvent += value; }
             remove { _progressTerminateEvent -= value; }
+        }
+
+        public Exception TaskException
+        {
+            get { return _exception; }
         }
 
         /// <summary>
@@ -179,11 +185,15 @@ namespace ClearCanvas.Desktop
             {
                 _marqueeSpeed = 0;
                 _enableCancel = true;
-
+                
                 switch (e.Reason)
                 {
                     case BackgroundTaskTerminatedReason.Exception:
-                        throw e.Exception;
+                        _exception = e.Exception;                        
+                        this.ExitCode = ApplicationComponentExitCode.Error;
+                        Host.Exit();
+
+                        break;                        
                     case BackgroundTaskTerminatedReason.Completed:
                     case BackgroundTaskTerminatedReason.Cancelled:
                     default:
