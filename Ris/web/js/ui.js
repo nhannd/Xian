@@ -482,7 +482,8 @@ function ErrorProvider(visible)
                 img: document.createElement("img"),
                 hasError: function() { return (this.img.alt && this.img.alt.length); }
                 };
-            provider.img.src = "errorprovider.gif";
+            //alert("images/errorprovider.gif");
+            provider.img.src = "images/errorprovider.gif";
             this._providers.add( provider );
             
             htmlElement.parentNode.insertBefore(provider.img, htmlElement.nextSibling);       
