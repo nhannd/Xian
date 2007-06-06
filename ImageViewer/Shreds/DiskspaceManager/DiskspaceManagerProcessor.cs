@@ -152,13 +152,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 		{
 			_currentDriveInfo.Refresh();
 
-			Platform.Log(String.Format("Checking disk usage - Used Space(%): {0:F2}, High Watermark(%): {1:F2}, Low Watermark(%): {2:F2}",
-				_currentDriveInfo.UsedSpacePercentage, _currentDriveInfo.HighWatermark, _currentDriveInfo.LowWatermark));
+			Platform.Log(String.Format(SR.FormatCheckUsage, _currentDriveInfo.UsedSpacePercentage, _currentDriveInfo.HighWatermark, _currentDriveInfo.LowWatermark));
 		}
 
 		private bool RemoveStudies()
 		{
-			Platform.Log("High Watermark reached; begin removing studies");
+			Platform.Log(SR.MessageBeginDeleting);
 
 			IDataStoreReader reader = SingleSessionDataAccessLayer.GetIDataStoreReader();
 			List<IStudy> studies = new List<IStudy>(reader.GetStudies());
@@ -207,7 +206,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
 			if (deleteStudyUids.Count == 0)
 			{
-				Platform.Log("No studies could be found in the datastore to delete"); 
+				Platform.Log(SR.MessageNothingToDelete); 
 				return false;
 			}
 
@@ -216,7 +215,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 			request.InstanceLevel = InstanceLevel.Study;
 			request.InstanceUids = deleteStudyUids;
 
-			Platform.Log(String.Format("Requesting deletion of {0} studies; Expected space freed (bytes): {1}", deleteStudyUids.Count, totalExpectedFreeSpace));
+			Platform.Log(String.Format(SR.FormatDeletionRequest, deleteStudyUids.Count, totalExpectedFreeSpace));
 
 			try
 			{
