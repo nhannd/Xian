@@ -34,6 +34,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeleteStudyTool.cs" />
     <Compile Include="DicomFileImportActivityTool.cs" />
     <Compile Include="DicomFileImportApplicationComponent.cs" />
     <Compile Include="DicomFileImportCancelTool.cs" />

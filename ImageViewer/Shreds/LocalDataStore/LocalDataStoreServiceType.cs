@@ -137,6 +137,21 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 		}
 
+		public void DeleteInstances(DeleteInstancesRequest request)
+		{
+			try
+			{
+				LocalDataStoreService.Instance.DeleteInstances(request);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(e);
+				string message = SR.ExceptionErrorProcessingDeleteRequest;
+				string exceptionMessage = String.Format("{0}\nDetail:{1}", message, e.Message);
+				throw new LocalDataStoreException(exceptionMessage);
+			}
+		}
+
 		public Guid Import(FileImportRequest request)
 		{
 			try

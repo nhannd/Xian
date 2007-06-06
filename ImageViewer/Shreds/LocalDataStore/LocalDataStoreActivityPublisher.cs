@@ -54,6 +54,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			FireEvent("SopInstanceImported", information);
 		}
 
+		public void InstanceDeleted(DeletedInstanceInformation information)
+		{
+			FireEvent("InstanceDeleted", information);
+		}
+
 		#endregion
 	}
 }

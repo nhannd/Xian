@@ -5,7 +5,7 @@ using NHibernate;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public class DataStoreWriter : IDataStoreWriter
+    public class DataStoreWriter : IDataStoreWriter, IDataStoreCleaner
     {
         #region Handcoded Members
 
@@ -221,5 +221,35 @@ namespace ClearCanvas.Dicom.DataStore
         }
 
         #endregion
-    }
+
+		#region IDataStoreCleaner Members
+
+		public void ClearAllStudies()
+		{
+			ITransaction transaction = null;
+			ISession session = null;
+
+			try
+			{
+				session = this.SessionFactory.OpenSession();
+				transaction = session.BeginTransaction();
+				session.Delete("from Study");
+				transaction.Commit();
+			}
+			catch
+			{
+				if (transaction != null)
+					transaction.Rollback();
+
+				throw;
+			}
+			finally
+			{
+				if (session != null)
+					session.Close();
+			}
+		}
+
+		#endregion
+	}
 }

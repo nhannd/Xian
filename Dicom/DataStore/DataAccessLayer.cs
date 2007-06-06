@@ -30,7 +30,7 @@ namespace ClearCanvas.Dicom.DataStore
             get { return _dataStoreReaders; }
             set { _dataStoreReaders = value; }
         }
-	
+
         private static Configuration HibernateConfiguration
         {
             get { return _hibernateConfiguration; }
@@ -122,6 +122,11 @@ namespace ClearCanvas.Dicom.DataStore
                 return dataStoreWriter;
             }
         }
+
+		public static IDataStoreCleaner GetIDataStoreCleaner()
+		{
+			return (IDataStoreCleaner)GetIDataStoreWriter();
+		}
 
         public static IDicomPersistentStore GetIDicomPersistentStore()
         {

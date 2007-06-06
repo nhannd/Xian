@@ -133,6 +133,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string MenuDeleteStudy {
+            get {
+                return ResourceManager.GetString("MenuDeleteStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Import Activity Monitor.
         /// </summary>
         internal static string MenuDicomFileImportActivity {
@@ -224,11 +233,39 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete the {0} selected studies?.
+        /// </summary>
+        internal static string MessageConfirmDeleteStudies {
+            get {
+                return ResourceManager.GetString("MessageConfirmDeleteStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to delete the selected study?.
+        /// </summary>
+        internal static string MessageConfirmDeleteStudy {
+            get {
+                return ResourceManager.GetString("MessageConfirmDeleteStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to You have selected multiple servers to send to.  Are you sure you want to continue?.
         /// </summary>
         internal static string MessageConfirmSendToMultipleServers {
             get {
                 return ResourceManager.GetString("MessageConfirmSendToMultipleServers", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to delete the selected studies because the Local Data Store service is not running.
+        ///Please ensure the ClearCanvas server is running or contact your system administrator for assistance..
+        /// </summary>
+        internal static string MessageDeleteLocalDataStoreServiceNotRunning {
+            get {
+                return ResourceManager.GetString("MessageDeleteLocalDataStoreServiceNotRunning", resourceCulture);
             }
         }
         
@@ -287,7 +324,16 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to start Reindex operation..
+        ///   Looks up a localized string similar to Failed to start delete operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator..
+        /// </summary>
+        internal static string MessageFailedToStartDelete {
+            get {
+                return ResourceManager.GetString("MessageFailedToStartDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to start reindex operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator..
         /// </summary>
         internal static string MessageFailedToStartReindex {
             get {
@@ -342,6 +388,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to One of the selected studies is in use.  Please close all relevant workspaces before deleting..
+        /// </summary>
+        internal static string MessageOneOfSelectedStudiesInUse {
+            get {
+                return ResourceManager.GetString("MessageOneOfSelectedStudiesInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to reindex the Local Data Store because the Local Data Store service is not running.
         ///Please ensure the ClearCanvas server is running or contact your system administrator for assistance..
         /// </summary>
@@ -371,12 +426,30 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The selected study is currently in use.  Please close all relevant workspaces before deleting..
+        /// </summary>
+        internal static string MessageSelectedStudyInUse {
+            get {
+                return ResourceManager.GetString("MessageSelectedStudyInUse", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to send the selected studies because the Dicom Server service is not running.
         ///Please ensure the ClearCanvas server is running or contact your system administrator for assistance..
         /// </summary>
         internal static string MessageSendDicomServerServiceNotRunning {
             get {
                 return ResourceManager.GetString("MessageSendDicomServerServiceNotRunning", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} of the selected studies are in use.  Please close all relevant workspaces before deleting..
+        /// </summary>
+        internal static string MessageSomeOfSelectedStudiesInUse {
+            get {
+                return ResourceManager.GetString("MessageSomeOfSelectedStudiesInUse", resourceCulture);
             }
         }
         
@@ -561,6 +634,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Delete.
+        /// </summary>
+        internal static string ToolbarDeleteStudy {
+            get {
+                return ResourceManager.GetString("ToolbarDeleteStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Retrieve.
         /// </summary>
         internal static string ToolbarRetrieveStudy {
@@ -602,6 +684,15 @@ namespace ClearCanvas.ImageViewer.Services.Tools {
         internal static string TooltipClearSelected {
             get {
                 return ResourceManager.GetString("TooltipClearSelected", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Delete study.
+        /// </summary>
+        internal static string TooltipDeleteStudy {
+            get {
+                return ResourceManager.GetString("TooltipDeleteStudy", resourceCulture);
             }
         }
         

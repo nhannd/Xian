@@ -7,6 +7,7 @@ using ClearCanvas.Common;
 using System.Threading;
 using NHibernate.Cfg;
 using NHibernate;
+using ClearCanvas.Dicom.DataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
@@ -14,46 +15,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 	{
 		private class ReindexProcessor : ImportProcessorBase
 		{
-			private static class DatabaseCleaner
-			{
-				static Configuration _configuration;
-				static ISessionFactory _sessionFactory;
-
-				static DatabaseCleaner()
-				{
-					_configuration = new Configuration();
-					_configuration.Configure("ClearCanvas.Dicom.DataStore.cfg.xml");
-					_configuration.AddAssembly("ClearCanvas.Dicom.DataStore");
-					_sessionFactory = _configuration.BuildSessionFactory();
-				}
-
-				public static void ClearAllStudies()
-				{
-					ITransaction transaction = null;
-					ISession session = null;
-
-					try
-					{
-						session = _sessionFactory.OpenSession();
-						transaction = session.BeginTransaction();
-						session.Delete("from Study");
-						transaction.Commit();
-					}
-					catch
-					{
-						if (transaction != null)
-							transaction.Rollback();
-
-						throw;
-					}
-					finally
-					{
-						if (session != null)
-							session.Close();
-					}
-				}
-			}
-
 			private LocalDataStoreService _parent;
 
 			private object _syncLock = new object();
@@ -168,9 +129,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							//the stop operation on another thread, we would cause a deadlock.
 							WaitCallback resumeImportsDelegate = delegate(object nothing)
 							{
-								//the reindex database updates will have to complete before returning from this function.
-								_parent.Importer.ActivateImportQueue(DicomFileImporter.DedicatedImportQueue.Default);
-
+								_parent.ReserveState(ServiceState.Importing);
+								_parent.ActivateState();
+								
 								lock (_syncLock)
 								{
 									_active = false;
@@ -224,6 +185,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					if (_active)
 						return; //don't throw an exception, just ignore it.
 
+					// We don't want to actually stop the running imports from this thread because the 
+					// WCF connection could time out.  Instead, let's just reserve the 'Reindexing' state and activate it
+					// on the processing thread.  This will throw an exception if we cannot reserve the state.
+					_parent.ReserveState(ServiceState.Reindexing);
 					_active = true;
 					NewJobInformation(false);
 				}
@@ -245,7 +210,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						}
 					}
 
-					_parent.Importer.ActivateImportQueue(DicomFileImporter.DedicatedImportQueue.Reindex);
+					//the 'reindex' state has already been reserved, let's activate it.
+					_parent.ActivateState();
 
 					bool clearFailed = false;
 
@@ -266,7 +232,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							}
 						}
 
-						DatabaseCleaner.ClearAllStudies();
+						DataAccessLayer.GetIDataStoreCleaner().ClearAllStudies();
 					}
 					catch (Exception e)
 					{

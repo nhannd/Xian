@@ -21,6 +21,9 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 		[OperationContract(IsOneWay = true)]
 		void SopInstanceImported(ImportedSopInstanceInformation information);
+
+		[OperationContract(IsOneWay = true)]
+		void InstanceDeleted(DeletedInstanceInformation information);
 	}
 
 	[ServiceContract(	SessionMode = SessionMode.Required,

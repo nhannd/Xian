@@ -252,15 +252,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete.
-        /// </summary>
-        internal static string MenuDeleteStudy {
-            get {
-                return ResourceManager.GetString("MenuDeleteStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
         internal static string MenuEdit {
@@ -352,24 +343,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete the {0} selected studies?.
-        /// </summary>
-        internal static string MessageConfirmDeleteStudies {
-            get {
-                return ResourceManager.GetString("MessageConfirmDeleteStudies", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Are you sure you want to delete the selected study?.
-        /// </summary>
-        internal static string MessageConfirmDeleteStudy {
-            get {
-                return ResourceManager.GetString("MessageConfirmDeleteStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The date range you have selected is invalid because the &apos;from date&apos; is after the &apos;to date&apos;.
         ///Please change the dates and try again..
         /// </summary>
@@ -389,38 +362,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to One of the selected studies is in use.  Please close all relevant workspaces before deleting..
-        /// </summary>
-        internal static string MessageOneOfSelectedStudiesInUse {
-            get {
-                return ResourceManager.GetString("MessageOneOfSelectedStudiesInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The selected study is currently in use.  Please close all relevant workspaces before deleting..
-        /// </summary>
-        internal static string MessageSelectedStudyInUse {
-            get {
-                return ResourceManager.GetString("MessageSelectedStudyInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The Port must be a positive integer value.  Please enter a valid Port..
         /// </summary>
         internal static string MessageServerPortMustBePositiveInteger {
             get {
                 return ResourceManager.GetString("MessageServerPortMustBePositiveInteger", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to {0} of the selected studies are in use.  Please close all relevant workspaces before deleting..
-        /// </summary>
-        internal static string MessageSomeOfSelectedStudiesInUse {
-            get {
-                return ResourceManager.GetString("MessageSomeOfSelectedStudiesInUse", resourceCulture);
             }
         }
         
@@ -659,15 +605,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete.
-        /// </summary>
-        internal static string ToolbarDeleteStudy {
-            get {
-                return ResourceManager.GetString("ToolbarDeleteStudy", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
         internal static string ToolbarEdit {
@@ -718,15 +655,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom {
         internal static string TooltipDelete {
             get {
                 return ResourceManager.GetString("TooltipDelete", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Delete study.
-        /// </summary>
-        internal static string TooltipDeleteStudy {
-            get {
-                return ResourceManager.GetString("TooltipDeleteStudy", resourceCulture);
             }
         }
         

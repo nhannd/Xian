@@ -283,9 +283,41 @@ namespace ClearCanvas.Dicom.DataStore
 
         public IList<IStudy> GetStudies()
         {
-            // TO DO
-            return null;
-        }
+			IList<IStudy> studiesList = new List<IStudy>();
+
+			//
+			// prepare the HQL query string
+			//
+			StringBuilder selectCommandString = new StringBuilder(1024);
+			selectCommandString.AppendFormat("FROM Study ORDER BY StoreTime_ ");
+
+			//
+			// submit the HQL query
+			//
+			IList studiesFound = null;
+			ITransaction transaction = null;
+			try
+			{
+				transaction = this.Session.BeginTransaction();
+
+				IQuery query = this.Session.CreateQuery(selectCommandString.ToString());
+				studiesFound = query.List();
+			}
+			catch (Exception ex)
+			{
+				if (null != transaction)
+					transaction.Rollback();
+				throw ex;
+			}
+
+			foreach (object element in studiesFound)
+			{
+				Study study = element as Study;
+				studiesList.Add(study);
+			}
+
+			return studiesList;
+		}
 
         #endregion
     }

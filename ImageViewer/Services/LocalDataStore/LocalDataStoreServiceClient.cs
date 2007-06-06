@@ -49,6 +49,11 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			return base.Channel.GetConfiguration();
 		}
 
+		public void DeleteInstances(DeleteInstancesRequest request)
+		{
+			base.Channel.DeleteInstances(request);
+		}
+
 		public Guid Import(FileImportRequest request)
 		{
 			return base.Channel.Import(request);

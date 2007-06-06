@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 	}
 	
 	[ServiceBehavior(InstanceContextMode = InstanceContextMode.PerCall)]
-    public class DiskspaceManagerServiceType : IDiskspaceManagerService
+    public sealed class DiskspaceManagerServiceType : IDiskspaceManagerService
     {
         public DiskspaceManagerServiceType()
         {

@@ -115,6 +115,33 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot delete the specified study (StudyInstanceUid = {0}) because it could not be found in the data store..
+        /// </summary>
+        internal static string ExceptionCannotDeleteStudyDoesNotExist {
+            get {
+                return ResourceManager.GetString("ExceptionCannotDeleteStudyDoesNotExist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot perform deletion while reindex is in progress..
+        /// </summary>
+        internal static string ExceptionCannotDeleteWhileReindexIsInProgress {
+            get {
+                return ResourceManager.GetString("ExceptionCannotDeleteWhileReindexIsInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot perform a reindex operation while a deletion is in progress..
+        /// </summary>
+        internal static string ExceptionCannotReindexWhileDeletionIsInProgress {
+            get {
+                return ResourceManager.GetString("ExceptionCannotReindexWhileDeletionIsInProgress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot start a new import operation while reindex is still running..
         /// </summary>
         internal static string ExceptionCannotStartNewImportJobWhileReindexing {
@@ -124,11 +151,29 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified drive &apos;{0}&apos; is not available or does not exist..
+        /// </summary>
+        internal static string ExceptionDriveIsNotValid {
+            get {
+                return ResourceManager.GetString("ExceptionDriveIsNotValid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An error occurred while attempting to refresh the Local Data Store activities..
         /// </summary>
         internal static string ExceptionErrorAttemptingToRefresh {
             get {
                 return ResourceManager.GetString("ExceptionErrorAttemptingToRefresh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to process delete request..
+        /// </summary>
+        internal static string ExceptionErrorProcessingDeleteRequest {
+            get {
+                return ResourceManager.GetString("ExceptionErrorProcessingDeleteRequest", resourceCulture);
             }
         }
         
@@ -228,6 +273,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         internal static string ExceptionFailedToAddSubscriber {
             get {
                 return ResourceManager.GetString("ExceptionFailedToAddSubscriber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to delete study (StudyInstanceUid = {0}) from the data store.  Please check the service log for details..
+        /// </summary>
+        internal static string ExceptionFailedToDeleteStudy {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToDeleteStudy", resourceCulture);
             }
         }
         
@@ -336,6 +390,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         internal static string ExceptionNoValidFilesHaveBeenSpecifiedToImport {
             get {
                 return ResourceManager.GetString("ExceptionNoValidFilesHaveBeenSpecifiedToImport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Only study level deletion is currently supported..
+        /// </summary>
+        internal static string ExceptionOnlyStudyLevelDeletionCurrentlySupported {
+            get {
+                return ResourceManager.GetString("ExceptionOnlyStudyLevelDeletionCurrentlySupported", resourceCulture);
             }
         }
         
@@ -553,6 +616,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         internal static string MessageFileHasBeenDeleted {
             get {
                 return ResourceManager.GetString("MessageFileHasBeenDeleted", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Import has been paused waiting for delete operation to complete..
+        /// </summary>
+        internal static string MessageImportPausedForDelete {
+            get {
+                return ResourceManager.GetString("MessageImportPausedForDelete", resourceCulture);
             }
         }
         

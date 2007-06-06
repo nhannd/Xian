@@ -182,9 +182,6 @@ Please choose another Server Name.</value>
   <data name="MenuDelete" xml:space="preserve">
     <value>Delete</value>
   </data>
-  <data name="MenuDeleteStudy" xml:space="preserve">
-    <value>Delete</value>
-  </data>
   <data name="MenuEdit" xml:space="preserve">
     <value>Edit</value>
   </data>
@@ -216,12 +213,6 @@ Are you sure you want to continue?</value>
   <data name="MessageConfirmDeleteServerGroup" xml:space="preserve">
     <value>Are you sure you want to delete the selected server group?</value>
   </data>
-  <data name="MessageConfirmDeleteStudies" xml:space="preserve">
-    <value>Are you sure you want to delete the {0} selected studies?</value>
-  </data>
-  <data name="MessageConfirmDeleteStudy" xml:space="preserve">
-    <value>Are you sure you want to delete the selected study?</value>
-  </data>
   <data name="MessageFromDateIsGreaterThanToDate" xml:space="preserve">
     <value>The date range you have selected is invalid because the 'from date' is after the 'to date'.
 Please change the dates and try again.</value>
@@ -229,17 +220,8 @@ Please change the dates and try again.</value>
   <data name="MessageNoServersSelected" xml:space="preserve">
     <value>No servers have been selected.  Please select at least one server and try again.</value>
   </data>
-  <data name="MessageOneOfSelectedStudiesInUse" xml:space="preserve">
-    <value>One of the selected studies is in use.  Please close all relevant workspaces before deleting.</value>
-  </data>
-  <data name="MessageSelectedStudyInUse" xml:space="preserve">
-    <value>The selected study is currently in use.  Please close all relevant workspaces before deleting.</value>
-  </data>
   <data name="MessageServerPortMustBePositiveInteger" xml:space="preserve">
     <value>The Port must be a positive integer value.  Please enter a valid Port.</value>
-  </data>
-  <data name="MessageSomeOfSelectedStudiesInUse" xml:space="preserve">
-    <value>{0} of the selected studies are in use.  Please close all relevant workspaces before deleting.</value>
   </data>
   <data name="MessageUnableToCreateStorageDirectory" xml:space="preserve">
     <value>Unable to create storage directory; cannot retrieve study.</value>
@@ -319,9 +301,6 @@ Please change the dates and try again.</value>
   <data name="ToolbarDelete" xml:space="preserve">
     <value>Delete</value>
   </data>
-  <data name="ToolbarDeleteStudy" xml:space="preserve">
-    <value>Delete</value>
-  </data>
   <data name="ToolbarEdit" xml:space="preserve">
     <value>Edit</value>
   </data>
@@ -339,9 +318,6 @@ Please change the dates and try again.</value>
   </data>
   <data name="TooltipDelete" xml:space="preserve">
     <value>Delete server or server group</value>
-  </data>
-  <data name="TooltipDeleteStudy" xml:space="preserve">
-    <value>Delete study</value>
   </data>
   <data name="TooltipEdit" xml:space="preserve">
     <value>Edit server or server group</value>

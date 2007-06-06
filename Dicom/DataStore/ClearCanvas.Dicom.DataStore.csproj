@@ -68,6 +68,7 @@
     <Compile Include="DicomUri.cs" />
     <Compile Include="DictionaryEntry.cs" />
     <Compile Include="FileRemover.cs" />
+    <Compile Include="IDataStoreCleaner.cs" />
     <Compile Include="IDataStoreReader.cs" />
     <Compile Include="IDataStoreWriter.cs" />
     <Compile Include="IDicomDictionary.cs" />

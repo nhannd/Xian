@@ -309,7 +309,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					client.Store(this.DestinationAE, this.SopInstanceFilenamesList, this.SopClasses, this.TransferSyntaxes);
 					this.ParcelTransferState = ParcelTransferState.Completed;
 				}
-				catch (Exception e)
+				catch
 				{
 					this.ParcelTransferState = ParcelTransferState.Error;
 					throw;

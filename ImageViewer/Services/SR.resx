@@ -126,6 +126,9 @@
   <data name="ExampleServer" xml:space="preserve">
     <value>Example Server</value>
   </data>
+  <data name="ExceptionActivityMonitorConnectionLost" xml:space="preserve">
+    <value>The connection to the Local Data Store Activity Monitor has been lost.</value>
+  </data>
   <data name="FormatLocalDataStoreDetails" xml:space="preserve">
     <value>Server Name: {0}
 AE Title: {1}

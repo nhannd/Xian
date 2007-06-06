@@ -6,14 +6,15 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 using System.Collections.ObjectModel;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Explorer.Dicom;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
+using System.ServiceModel;
 
-
-namespace ClearCanvas.ImageViewer.Explorer.Dicom
+namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	[ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarDeleteStudy")]
 	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuDeleteStudy")]
@@ -45,22 +46,36 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (!ConfirmDeletion())
 				return;
 
-			foreach (StudyItem item in this.Context.SelectedStudies)
+			List<string> deleteStudies = new List<string>();
+			foreach(StudyItem item in this.Context.SelectedStudies)
+				deleteStudies.Add(item.StudyInstanceUID);
+
+			DeleteInstancesRequest request = new DeleteInstancesRequest();
+			request.DeletePriority = DeletePriority.High;
+			request.InstanceLevel = InstanceLevel.Study;
+			request.InstanceUids = deleteStudies;
+
+			try
 			{
-				Uid studyInstanceUid = new Uid(item.StudyInstanceUID);
-				IStudy study = DataAccessLayer.GetIDataStoreReader().GetStudy(studyInstanceUid);
-
-				try
-				{
-					DataAccessLayer.GetIDataStoreWriter().RemoveStudy(study);
-				}
-				catch (Exception e)
-				{
-					ExceptionHandler.Report(e, SR.MessageUnableToDeleteStudy, this.Context.DesktopWindow);
-				}
+				LocalDataStoreDeletionHelper.DeleteInstancesAndWait(request, 1000,
+					delegate(LocalDataStoreDeletionHelper.DeletionProgressInformation progressInformation)
+					{
+						//wait as long as it takes.
+						return true;
+					});
 			}
-
-			this.Context.RefreshStudyList();
+			catch (EndpointNotFoundException)
+			{
+				Platform.ShowMessageBox(SR.MessageDeleteLocalDataStoreServiceNotRunning);
+			}
+			catch (LocalDataStoreDeletionHelper.ConnectionLostException e)
+			{
+				ExceptionHandler.Report(e, this.Context.DesktopWindow);
+			}
+			catch (Exception e)
+			{
+				ExceptionHandler.Report(e, SR.MessageFailedToStartDelete, this.Context.DesktopWindow);
+			}
 		}
 
 		protected override void OnSelectedStudyChanged(object sender, EventArgs e)

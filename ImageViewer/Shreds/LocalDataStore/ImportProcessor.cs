@@ -16,60 +16,67 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			private LocalDataStoreService _parent;
 
 			private object _syncLock = new object();
-			private bool _paused;
+			private ServiceState _parentState;
 			private List<FileImportJobInformation> _importJobs;
 			
 			public ImportProcessor(LocalDataStoreService parent)
 			{
 				_importJobs = new List<FileImportJobInformation>();
+
 				_parent = parent;
-				_paused = false;
+				_parentState = _parent._state;
+
 				_parent.CancelEvent += new EventHandler<ItemEventArgs<CancelProgressItemInformation>>(OnCancel);
 				_parent.RepublishEvent += new EventHandler(OnRepublish);
 				_parent.ClearInactiveEvent += new EventHandler(OnClearInactive);
-				_parent.Importer.ImportThreadPoolSwitched += new EventHandler<ItemEventArgs<DicomFileImporter.DedicatedImportQueue>>(OnImportThreadPoolSwitched);
+				_parent.StateActivated += new EventHandler<ItemEventArgs<ServiceState>>(OnImportServiceStateChanged);
 			}
 
 			protected new void ProcessFileImportResults(DicomFileImporter.FileImportInformation results)
 			{
 				FileImportInformation information = (FileImportInformation)results;
-
 				base.ProcessFileImportResults(results);
 
 				lock (_syncLock)
 				{
+					if (_parentState == ServiceState.Importing)
+						return;
+
 					lock (information.FileImportJobInformation)
 					{
-						if (_paused && !information.FileImportJobInformation.ProgressItem.IsImportComplete() && !information.FileImportJobInformation.ProgressItem.Cancelled)
+						if (!information.FileImportJobInformation.ProgressItem.IsImportComplete() && !information.FileImportJobInformation.ProgressItem.Cancelled)
 						{
-							information.FileImportJobInformation.ProgressItem.StatusMessage = SR.MessageImportPausedForReindex;
+							if (_parentState == ServiceState.Reindexing)
+								information.FileImportJobInformation.ProgressItem.StatusMessage = SR.MessageImportPausedForReindex;
+							else //when neither import queue is active, it's a delete operation.
+								information.FileImportJobInformation.ProgressItem.StatusMessage = SR.MessageImportPausedForDelete;
+
 							UpdateProgress(information.FileImportJobInformation.ProgressItem);
 						}
 					}
 				}
 			}
 
-			private void OnImportThreadPoolSwitched(object sender, ItemEventArgs<DicomFileImporter.DedicatedImportQueue> args)
+			private void OnImportServiceStateChanged(object sender, ItemEventArgs<ServiceState> args)
 			{
 				lock (_syncLock)
 				{
-					if (args.Item != DicomFileImporter.DedicatedImportQueue.Reindex)
-					{
-						_paused = false;
-					}
-					else
-					{
-						_paused = true;
+					_parentState = args.Item;
+					if (_parentState == ServiceState.Importing)
+						return;
 
-						foreach (FileImportJobInformation jobInformation in _importJobs)
+					foreach (FileImportJobInformation jobInformation in _importJobs)
+					{
+						lock (jobInformation)
 						{
-							lock (jobInformation)
+							if (!jobInformation.ProgressItem.IsImportComplete() && !jobInformation.ProgressItem.Cancelled)
 							{
-								if (!jobInformation.ProgressItem.IsImportComplete() && !jobInformation.ProgressItem.Cancelled)
-								{
+								if (_parentState == ServiceState.Reindexing)
 									jobInformation.ProgressItem.StatusMessage = SR.MessageImportPausedForReindex;
-									UpdateProgress(jobInformation.ProgressItem);
-								}
+								else //when neither import queue is active, it's a delete operation.
+									jobInformation.ProgressItem.StatusMessage = SR.MessageImportPausedForDelete;
+
+								UpdateProgress(jobInformation.ProgressItem);
 							}
 						}
 					}
@@ -179,7 +186,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			protected override void AddToImportQueue(ImportProcessorBase.FileImportInformation fileImportInformation)
 			{
-				_parent.Importer.Enqueue(fileImportInformation, this.ProcessFileImportResults, DicomFileImporter.DedicatedImportQueue.Default);
+				_parent.Importer.Enqueue(fileImportInformation, this.ProcessFileImportResults, DicomFileImporter.DedicatedImportQueue.Import);
 			}
 
 			protected override void ClearJob(FileImportJobInformation jobInformation)

@@ -8,7 +8,7 @@ using System.ComponentModel;
 using ClearCanvas.Common;
 using System.Threading;
 
-namespace ClearCanvas.ImageViewer.Services
+namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 {
 	/// <summary>
 	/// This is a singleton class that manages one connection to the LocalDataStoreActivityMonitorService for all application components.
@@ -57,6 +57,11 @@ namespace ClearCanvas.ImageViewer.Services
 				_parent.OnSopInstanceImported(information);
 			}
 
+			public void InstanceDeleted(DeletedInstanceInformation information)
+			{
+				_parent.OnInstanceDeleted(information);
+			}
+
 			#endregion
 		}
 
@@ -67,6 +72,7 @@ namespace ClearCanvas.ImageViewer.Services
 		private event EventHandler<ItemEventArgs<ImportProgressItem>> _importProgressUpdate;
 		private event EventHandler<ItemEventArgs<ReindexProgressItem>> _reindexProgressUpdate;
 		private event EventHandler<ItemEventArgs<ImportedSopInstanceInformation>> _sopInstanceImported;
+		private event EventHandler<ItemEventArgs<DeletedInstanceInformation>> _instanceDeleted;
 
 		private event EventHandler _lostConnection;
 		private event EventHandler _connected;
@@ -242,6 +248,29 @@ namespace ClearCanvas.ImageViewer.Services
 			}
 		}
 
+		public event EventHandler<ItemEventArgs<DeletedInstanceInformation>> InstanceDeleted
+		{
+			add
+			{
+				lock (_subscriptionLock)
+				{
+					_instanceDeleted += value;
+				}
+
+				Startup();
+			}
+			remove
+			{
+				lock (_subscriptionLock)
+				{
+					_instanceDeleted -= value;
+				}
+
+				if (!this.AnySubscribers)
+					ShutDown();
+			}
+		}
+
 		public event EventHandler LostConnection
 		{
 			add
@@ -276,7 +305,8 @@ namespace ClearCanvas.ImageViewer.Services
 						_receiveProgressUpdate != null ||
 						_reindexProgressUpdate != null ||
 						_sendProgressUpdate != null ||
-						_sopInstanceImported != null);
+						_sopInstanceImported != null ||
+						_instanceDeleted != null);
 				}
 			}
 		}
@@ -403,6 +433,18 @@ namespace ClearCanvas.ImageViewer.Services
 			{
 				EventsHelper.Fire(_sopInstanceImported, this, new ItemEventArgs<ImportedSopInstanceInformation>(information));
 			});
+		}
+
+		internal void OnInstanceDeleted(DeletedInstanceInformation information)
+		{
+			if (!this.AnySubscribers || _marshaler == null)
+				return;
+
+			_marshaler.QueueInvoke(delegate()
+			{
+				EventsHelper.Fire(_instanceDeleted, this, new ItemEventArgs<DeletedInstanceInformation>(information));
+			});
+
 		}
 
 		private void OnLostConnection()

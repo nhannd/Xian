@@ -135,11 +135,26 @@
   <data name="ExceptionCancellationOfAtLeastOneItemFailed" xml:space="preserve">
     <value>Cancellation of at least one of the specified items has failed.</value>
   </data>
+  <data name="ExceptionCannotDeleteStudyDoesNotExist" xml:space="preserve">
+    <value>Cannot delete the specified study (StudyInstanceUid = {0}) because it could not be found in the data store.</value>
+  </data>
+  <data name="ExceptionCannotDeleteWhileReindexIsInProgress" xml:space="preserve">
+    <value>Cannot perform deletion while reindex is in progress.</value>
+  </data>
+  <data name="ExceptionCannotReindexWhileDeletionIsInProgress" xml:space="preserve">
+    <value>Cannot perform a reindex operation while a deletion is in progress.</value>
+  </data>
   <data name="ExceptionCannotStartNewImportJobWhileReindexing" xml:space="preserve">
     <value>Cannot start a new import operation while reindex is still running.</value>
   </data>
+  <data name="ExceptionDriveIsNotValid" xml:space="preserve">
+    <value>The specified drive '{0}' is not available or does not exist.</value>
+  </data>
   <data name="ExceptionErrorAttemptingToRefresh" xml:space="preserve">
     <value>An error occurred while attempting to refresh the Local Data Store activities.</value>
+  </data>
+  <data name="ExceptionErrorProcessingDeleteRequest" xml:space="preserve">
+    <value>Failed to process delete request.</value>
   </data>
   <data name="ExceptionErrorProcessingImportRequest" xml:space="preserve">
     <value>An error has occurred while attempting to process the file import request.</value>
@@ -173,6 +188,9 @@
   </data>
   <data name="ExceptionFailedToAddSubscriber" xml:space="preserve">
     <value>Failed to add subscriber to the Local DataStore Activity Monitor service.</value>
+  </data>
+  <data name="ExceptionFailedToDeleteStudy" xml:space="preserve">
+    <value>Failed to delete study (StudyInstanceUid = {0}) from the data store.  Please check the service log for details.</value>
   </data>
   <data name="ExceptionFailedToGetServerConfiguration" xml:space="preserve">
     <value>Failed to get Server configuration.</value>
@@ -209,6 +227,9 @@
   </data>
   <data name="ExceptionNoValidFilesHaveBeenSpecifiedToImport" xml:space="preserve">
     <value>No valid files have been specified to import.</value>
+  </data>
+  <data name="ExceptionOnlyStudyLevelDeletionCurrentlySupported" xml:space="preserve">
+    <value>Only study level deletion is currently supported.</value>
   </data>
   <data name="ExceptionServiceHasBeenDisabled" xml:space="preserve">
     <value>Unable to process request. The service has been disabled.</value>
@@ -282,6 +303,9 @@ Please check the service logs for more details.</value>
   </data>
   <data name="MessageFileHasBeenDeleted" xml:space="preserve">
     <value>  The file has been deleted.</value>
+  </data>
+  <data name="MessageImportPausedForDelete" xml:space="preserve">
+    <value>Import has been paused waiting for delete operation to complete.</value>
   </data>
   <data name="MessageImportPausedForReindex" xml:space="preserve">
     <value>Import has been paused waiting for reindex to complete.</value>

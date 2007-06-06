@@ -11,6 +11,13 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
 	internal sealed partial class LocalDataStoreService : ILocalDataStoreService
 	{
+		public enum ServiceState
+		{ 
+			Importing = 0,
+			Deleting,
+			Reindexing
+		}
+
 		private static LocalDataStoreService _instance;
 
 		private bool _disabled;
@@ -20,6 +27,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		private ReceivedFileProcessor _receivedFileProcessor;
 		private ImportProcessor _importProcessor;
 		private ReindexProcessor _reindexProcessor;
+		private InstanceDeletionProcessor _deletionProcessor; 
 
 		private string _storageDirectory = null;
 		private string _badFileDirectory = null;
@@ -40,6 +48,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		private object _cancelEventLock = new object(); 
 		private event EventHandler<ItemEventArgs<CancelProgressItemInformation>> _cancelEvent;
+
+		private object _stateSyncLock = new object();
+		private event EventHandler<ItemEventArgs<ServiceState>> _stateActivated;
+		ServiceState _state;
 
 		private LocalDataStoreService()
 		{
@@ -150,6 +162,66 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 		}
 
+		private event EventHandler<ItemEventArgs<ServiceState>> StateActivated
+		{
+			add
+			{
+				lock (_stateSyncLock)
+				{
+					_stateActivated += value;
+				}
+			}
+			remove
+			{
+				lock (_stateSyncLock)
+				{
+					_stateActivated -= value;
+				}
+			}
+		}
+
+		public void ReserveState(ServiceState newState)
+		{
+			lock (_stateSyncLock)
+			{
+				if (_state == newState)
+					return;
+
+				switch (newState)
+				{
+					case ServiceState.Reindexing:
+						{
+							if (_state == ServiceState.Deleting)
+								throw new Exception(SR.ExceptionCannotReindexWhileDeletionIsInProgress);
+						}
+						break;	
+					case ServiceState.Deleting:
+						{
+							if (_state == ServiceState.Reindexing)
+								throw new Exception(SR.ExceptionCannotDeleteWhileReindexIsInProgress);
+						}
+						break;	
+				}
+
+				_state = newState;
+			}
+		}
+
+		public void ActivateState()
+		{
+			lock (_stateSyncLock)
+			{
+				if (_state == ServiceState.Deleting)
+					_dicomFileImporter.ActivateImportQueue(DicomFileImporter.DedicatedImportQueue.None);
+				else if (_state == ServiceState.Reindexing)
+					_dicomFileImporter.ActivateImportQueue(DicomFileImporter.DedicatedImportQueue.Reindex);
+				else
+					_dicomFileImporter.ActivateImportQueue(DicomFileImporter.DedicatedImportQueue.Import);
+
+				EventsHelper.Fire(_stateActivated, this, new ItemEventArgs<ServiceState>(_state));
+			}
+		}
+
 		public DicomFileImporter Importer
 		{
 			get { return _dicomFileImporter; }
@@ -157,12 +229,24 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		public string StorageDirectory
 		{
-			get { return _storageDirectory; }
+			get
+			{
+				if (!System.IO.Directory.Exists(_storageDirectory))
+					System.IO.Directory.CreateDirectory(_storageDirectory);
+
+				return _storageDirectory; 
+			}
 		}
 
 		public string BadFileDirectory
 		{
-			get { return _badFileDirectory; }
+			get
+			{
+				if (!System.IO.Directory.Exists(_badFileDirectory))
+					System.IO.Directory.CreateDirectory(_badFileDirectory);
+				
+				return _badFileDirectory; 
+			}
 		}
 
 		public uint SendReceiveImportConcurrency
@@ -216,6 +300,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				_receivedFileProcessor = new ReceivedFileProcessor(this);
 				_importProcessor = new ImportProcessor(this);
 				_reindexProcessor = new ReindexProcessor(this);
+				_deletionProcessor = new InstanceDeletionProcessor(this);
 			}
 			catch (Exception e)
 			{
@@ -343,6 +428,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			configuration.StorageDirectory = this.StorageDirectory;
 			configuration.BadFileDirectory = this.BadFileDirectory;
 			return configuration;
+		}
+
+		public void DeleteInstances(DeleteInstancesRequest request)
+		{
+			CheckDisabled();
+			_deletionProcessor.DeleteInstances(request);
 		}
 
 		public Guid Import(FileImportRequest request)

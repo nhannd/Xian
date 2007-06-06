@@ -86,6 +86,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		LocalDataStoreServiceConfiguration GetConfiguration();
 
 		/// <summary>
+		/// Requests that a collection of instances (study, series, sop) be deleted from the Local Data Store.
+		/// </summary>
+		/// <param name="request">the deletion request information</param>
+		[OperationContract]
+		void DeleteInstances(DeleteInstancesRequest request);
+
+		/// <summary>
 		/// Requests that a set of files/folders be imported into the Local Data Store.
 		/// </summary>
 		/// <param name="request">the request information</param>

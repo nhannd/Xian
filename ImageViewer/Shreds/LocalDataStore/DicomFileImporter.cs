@@ -18,7 +18,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 		{
 			public enum DedicatedImportQueue
 			{
-				Default = 0,
+				None = 0,
+				Import,
 				Reindex
 			}
 
@@ -393,9 +394,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				_parseFileThreadPool = new ParseFileThreadPool(this);
 
 				_importThreadPools = new Dictionary<DedicatedImportQueue, ImportFileThreadPool>();
-				_importThreadPools.Add(DedicatedImportQueue.Default, new ImportFileThreadPool(this));
+				_importThreadPools.Add(DedicatedImportQueue.Import, new ImportFileThreadPool(this));
 				_importThreadPools.Add(DedicatedImportQueue.Reindex, new ImportFileThreadPool(this));
-				_activeImportThreadPool = DedicatedImportQueue.Default;
+				_activeImportThreadPool = DedicatedImportQueue.Import;
 
 				_databaseUpdateItems = new List<ImportJobInformation>();
 
@@ -836,7 +837,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			public void Start()
 			{
 				_parseFileThreadPool.Start();
-				_importThreadPools[DedicatedImportQueue.Default].Start();
+				_importThreadPools[_activeImportThreadPool].Start();
 
 				StartDatabaseThread();
 			}
@@ -860,14 +861,19 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					if (_activeImportThreadPool == queue)
 						return;
 
-					_importThreadPools[_activeImportThreadPool].Stop();
-
-					//make sure all pending database updates have been processed by restarting the database thread.
-					StopDatabaseThread();
-					StartDatabaseThread();
+					if (_activeImportThreadPool != DedicatedImportQueue.None)
+					{
+						_importThreadPools[_activeImportThreadPool].Stop();
+						StopDatabaseThread();
+					}
 
 					_activeImportThreadPool = queue;
-					_importThreadPools[_activeImportThreadPool].Start();
+
+					if (_activeImportThreadPool != DedicatedImportQueue.None)
+					{
+						StartDatabaseThread();
+						_importThreadPools[_activeImportThreadPool].Start();
+					}
 
 					EventsHelper.Fire(_importThreadPoolSwitched, this, new ItemEventArgs<DedicatedImportQueue>(_activeImportThreadPool));
 				}

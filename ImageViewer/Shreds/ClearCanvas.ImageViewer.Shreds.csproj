@@ -52,8 +52,7 @@
     <Compile Include="DicomServer\DicomSessionObjects.cs" />
     <Compile Include="DicomServer\Parcel.cs" />
     <Compile Include="DicomServer\SendParcel.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerData.cs" />
-    <Compile Include="DiskspaceManager\DiskspaceManagerDBAccess.cs" />
+    <Compile Include="DiskspaceManager\DMDriveInfo.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerExtension.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerProcessor.cs" />
     <Compile Include="DiskspaceManager\DiskspaceManagerServiceType.cs" />
@@ -61,6 +60,7 @@
     <Compile Include="LocalDataStore\DicomFileImporter.cs" />
     <Compile Include="LocalDataStore\ImportProcessor.cs" />
     <Compile Include="LocalDataStore\ImportProcessorBase.cs" />
+    <Compile Include="LocalDataStore\InstanceDeletionProcessor.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreActivityMonitor.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreActivityMonitorServiceType.cs" />
     <Compile Include="LocalDataStore\LocalDataStoreActivityPublisher.cs" />

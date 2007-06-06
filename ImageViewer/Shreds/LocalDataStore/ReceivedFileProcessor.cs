@@ -256,7 +256,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			public void ProcessReceivedFileInformation(StoreScpReceivedFileInformation receivedFileInformation)
 			{
-				_parent.Importer.Enqueue(new ReceivedFileImportInformation(receivedFileInformation.FileName, receivedFileInformation.AETitle), this.ProcessFileImportResults, DicomFileImporter.DedicatedImportQueue.Default);
+				_parent.Importer.Enqueue(new ReceivedFileImportInformation(receivedFileInformation.FileName, receivedFileInformation.AETitle), this.ProcessFileImportResults, DicomFileImporter.DedicatedImportQueue.Import);
 			}
 
 			public void RetrieveStarted(RetrieveStudyInformation information)

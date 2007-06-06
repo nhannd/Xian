@@ -8,6 +8,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 {
     internal class DiskspaceManagerSettings : ShredConfigSection
     {
+		public const float LowWaterMarkDefault = 60F;
+		public const float HighWaterMarkDefault = 80F;
+		public const int CheckFrequencyDefault = 10;
+
         private static DiskspaceManagerSettings _instance;
 
         private DiskspaceManagerSettings()
@@ -44,21 +48,21 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
         #region Public Properties
 
-        [ConfigurationProperty("LowWatermark", DefaultValue = "60.0")]
+		[ConfigurationProperty("LowWatermark", DefaultValue = LowWaterMarkDefault)]
         public float LowWatermark
         {
             get { return (float)this["LowWatermark"]; }
             set { this["LowWatermark"] = value; }
         }
 
-        [ConfigurationProperty("HighWatermark", DefaultValue = "80.0")]
+        [ConfigurationProperty("HighWatermark", DefaultValue = HighWaterMarkDefault)]
         public float HighWatermark
         {
             get { return (float)this["HighWatermark"]; }
             set { this["HighWatermark"] = value; }
         }
 
-        [ConfigurationProperty("CheckFrequency", DefaultValue = "10")]
+        [ConfigurationProperty("CheckFrequency", DefaultValue = CheckFrequencyDefault)]
         public int CheckFrequency
         {
             get { return (int)this["CheckFrequency"]; }

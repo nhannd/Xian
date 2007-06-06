@@ -14,6 +14,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		Clear = 2
 	}
 
+	public enum InstanceLevel
+	{ 
+		Study = 0,
+		Series,
+		Sop
+	}
+
 	[DataContract]
 	public class RetrieveStudyInformation
 	{
@@ -671,6 +678,127 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		{
 			get { return _fileImportBehaviour; }
 			set { _fileImportBehaviour = value; }
+		}
+	}
+
+	[DataContract]
+	public class InstanceInformation
+	{
+		private InstanceLevel _instanceLevel;
+		private string _instanceUid;
+
+		public InstanceInformation()
+		{ 
+		}
+
+		[DataMember(IsRequired = true)]
+		public InstanceLevel InstanceLevel
+		{
+			get { return _instanceLevel; }
+			set { _instanceLevel = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string InstanceUid
+		{
+			get { return _instanceUid; }
+			set { _instanceUid = value; }
+		}
+
+		public void CopyTo(InstanceInformation other)
+		{
+			other.InstanceLevel = this.InstanceLevel;
+			other.InstanceUid = this.InstanceUid;
+		}
+
+		public InstanceInformation Clone()
+		{
+			InstanceInformation clone = new InstanceInformation();
+			CopyTo(clone);
+			return clone;
+		}
+	}
+
+	[DataContract]
+	public class DeletedInstanceInformation : InstanceInformation
+	{
+		private string _errorMessage;
+		private long _totalFreedSpace;
+
+		public DeletedInstanceInformation()
+		{ 
+		}
+
+		public bool Failed
+		{
+			get { return _errorMessage != null; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public string ErrorMessage
+		{
+			get { return _errorMessage; }
+			set { _errorMessage = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public long TotalFreedSpace
+		{
+			get { return _totalFreedSpace; }
+			set { _totalFreedSpace = value; }
+		}
+
+		public void CopyTo(DeletedInstanceInformation other)
+		{
+			other.ErrorMessage = this.ErrorMessage;
+			other.TotalFreedSpace = this.TotalFreedSpace;
+			base.CopyTo(other);
+		}
+
+		public DeletedInstanceInformation Clone()
+		{
+			DeletedInstanceInformation clone = new DeletedInstanceInformation();
+			CopyTo(clone);
+			return clone;
+		}
+	}
+
+	public enum DeletePriority
+	{ 
+		Low = 0,
+		High
+	}
+
+	[DataContract]
+	public class DeleteInstancesRequest
+	{
+		private DeletePriority _deletePriority;
+		private InstanceLevel _instanceLevel;
+		private IEnumerable<string> _instanceUids;
+
+		public DeleteInstancesRequest()
+		{ 
+		}
+
+		[DataMember(IsRequired = true)]
+		public DeletePriority DeletePriority
+		{
+			get { return _deletePriority; }
+			set { _deletePriority = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public InstanceLevel InstanceLevel
+		{
+			get { return _instanceLevel; }
+			set { _instanceLevel = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public IEnumerable<string> InstanceUids
+		{
+			get { return _instanceUids; }
+			set { _instanceUids = value; }
 		}
 	}
 

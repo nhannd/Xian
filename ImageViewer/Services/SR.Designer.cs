@@ -88,6 +88,15 @@ namespace ClearCanvas.ImageViewer.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The connection to the Local Data Store Activity Monitor has been lost..
+        /// </summary>
+        internal static string ExceptionActivityMonitorConnectionLost {
+            get {
+                return ResourceManager.GetString("ExceptionActivityMonitorConnectionLost", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Server Name: {0}
         ///AE Title: {1}
         ///Host: {2}

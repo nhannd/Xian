@@ -141,6 +141,9 @@
   <data name="ImportDicomFiles" xml:space="preserve">
     <value>Import</value>
   </data>
+  <data name="MenuDeleteStudy" xml:space="preserve">
+    <value>Delete</value>
+  </data>
   <data name="MenuDicomFileImportActivity" xml:space="preserve">
     <value>Import Activity Monitor</value>
   </data>
@@ -172,8 +175,18 @@
     <value>Cancelling a reindex operation will cause your data store to be out of sync with the files stored on your local machine.
 Do you want to cancel the reindex operation anyway?</value>
   </data>
+  <data name="MessageConfirmDeleteStudies" xml:space="preserve">
+    <value>Are you sure you want to delete the {0} selected studies?</value>
+  </data>
+  <data name="MessageConfirmDeleteStudy" xml:space="preserve">
+    <value>Are you sure you want to delete the selected study?</value>
+  </data>
   <data name="MessageConfirmSendToMultipleServers" xml:space="preserve">
     <value>You have selected multiple servers to send to.  Are you sure you want to continue?</value>
+  </data>
+  <data name="MessageDeleteLocalDataStoreServiceNotRunning" xml:space="preserve">
+    <value>Failed to delete the selected studies because the Local Data Store service is not running.
+Please ensure the ClearCanvas server is running or contact your system administrator for assistance.</value>
   </data>
   <data name="MessageFailedToImportSelection" xml:space="preserve">
     <value>Failed to initiate an import of the selected items.</value>
@@ -193,8 +206,11 @@ Do you want to cancel the reindex operation anyway?</value>
   <data name="MessageFailedToSendStudy" xml:space="preserve">
     <value>Failed to initiate sending of the selected items.</value>
   </data>
+  <data name="MessageFailedToStartDelete" xml:space="preserve">
+    <value>Failed to start delete operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator.</value>
+  </data>
   <data name="MessageFailedToStartReindex" xml:space="preserve">
-    <value>Failed to start Reindex operation.</value>
+    <value>Failed to start reindex operation, possibly because a conflicting operation is currently running.  If this problem persists, please contact your system administrator.</value>
   </data>
   <data name="MessageImportLocalDataStoreServiceNotRunning" xml:space="preserve">
     <value>Failed to import the selected items because the Local Data Store service is not running.
@@ -212,6 +228,9 @@ Please ensure the ClearCanvas server is running or contact your system administr
   <data name="MessageOneMinuteAgo" xml:space="preserve">
     <value>1 minute ago</value>
   </data>
+  <data name="MessageOneOfSelectedStudiesInUse" xml:space="preserve">
+    <value>One of the selected studies is in use.  Please close all relevant workspaces before deleting.</value>
+  </data>
   <data name="MessageReindexLocalDataStoreServiceNotRunning" xml:space="preserve">
     <value>Failed to reindex the Local Data Store because the Local Data Store service is not running.
 Please ensure the ClearCanvas server is running or contact your system administrator for assistance.</value>
@@ -223,9 +242,15 @@ Please ensure the ClearCanvas server is running or contact your system administr
   <data name="MessageSelectDestination" xml:space="preserve">
     <value>Please select a destination.</value>
   </data>
+  <data name="MessageSelectedStudyInUse" xml:space="preserve">
+    <value>The selected study is currently in use.  Please close all relevant workspaces before deleting.</value>
+  </data>
   <data name="MessageSendDicomServerServiceNotRunning" xml:space="preserve">
     <value>Failed to send the selected studies because the Dicom Server service is not running.
 Please ensure the ClearCanvas server is running or contact your system administrator for assistance.</value>
+  </data>
+  <data name="MessageSomeOfSelectedStudiesInUse" xml:space="preserve">
+    <value>{0} of the selected studies are in use.  Please close all relevant workspaces before deleting.</value>
   </data>
   <data name="TitleAvailable" xml:space="preserve">
     <value>Available</value>
@@ -287,6 +312,9 @@ Please ensure the ClearCanvas server is running or contact your system administr
   <data name="TitleTo" xml:space="preserve">
     <value>To</value>
   </data>
+  <data name="ToolbarDeleteStudy" xml:space="preserve">
+    <value>Delete</value>
+  </data>
   <data name="ToolbarRetrieveStudy" xml:space="preserve">
     <value>Retrieve</value>
   </data>
@@ -301,6 +329,9 @@ Please ensure the ClearCanvas server is running or contact your system administr
   </data>
   <data name="TooltipClearSelected" xml:space="preserve">
     <value>Clear Selected Item(s)</value>
+  </data>
+  <data name="TooltipDeleteStudy" xml:space="preserve">
+    <value>Delete study</value>
   </data>
   <data name="TooltipImportDicomFiles" xml:space="preserve">
     <value>Import dicom files from the local file system</value>
