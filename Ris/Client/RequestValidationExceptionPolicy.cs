@@ -2,21 +2,24 @@ using System;
 using System.ServiceModel;
 
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
 
-namespace ClearCanvas.Desktop.ExceptionPolicies
+namespace ClearCanvas.Ris.Client
 {
     [ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
     [ExceptionPolicyFor(typeof(RequestValidationException))]
     [ExceptionPolicyFor(typeof(FaultException<RequestValidationException>))]
-    public class RequestValidationExceptionPolicy : ExceptionPolicyBase
+    public class RequestValidationExceptionPolicy : IExceptionPolicy
     {
-        public override ExceptionReport Handle(Exception e, string userMessage)
+        public void Handle(Exception e, IExceptionHandlingContext context)
         {
-            string message = string.IsNullOrEmpty(userMessage) ? e.Message : userMessage;
-            message = message + " (Handled by RequestValidationPolicy)";
+            string message = 
+                string.IsNullOrEmpty(context.UserMessage) == false
+                    ? string.Format("{0}: {1}", context.UserMessage, e.Message)
+                    : e.Message;
 
-            return new ExceptionReport(message, ExceptionReportAction.ReportInDialog);
+            context.ShowMessageBox(message);
         }
     }
 }

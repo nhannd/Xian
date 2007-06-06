@@ -123,6 +123,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
 
         [UpdateOperation]
         [FaultContract(typeof(RequestValidationException))]
+        [FaultContract(typeof(ConcurrentModificationException))]
         public UpdateUserResponse UpdateUser(UpdateUserRequest request)
         {
             User user = (User)PersistenceContext.Load(request.UserRef);
@@ -171,6 +172,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         }
 
         [UpdateOperation]
+        [FaultContract(typeof(ConcurrentModificationException))]
         public UpdateAuthorityGroupResponse UpdateAuthorityGroup(UpdateAuthorityGroupRequest request)
         {
             AuthorityGroup authorityGroup = (AuthorityGroup)PersistenceContext.Load(request.AuthorityGroupRef);

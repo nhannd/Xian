@@ -69,9 +69,10 @@
     <Compile Include="Actions\ValueObserverAttribute.cs" />
     <Compile Include="Actions\VisibleStateObserverAttribute.cs" />
     <Compile Include="BlockingOperation.cs" />
-    <Compile Include="ExceptionPolicyBase.cs" />
+    <Compile Include="ExceptionHandlingContext.cs" />
     <Compile Include="ExceptionPolicyFactory.cs" />
     <Compile Include="IExceptionPolicy.cs" />
+    <Compile Include="IExceptonHandlingContext.cs" />
     <Compile Include="StackTabComponentContainer.cs" />
     <Compile Include="TabGroup.cs" />
     <Compile Include="TabGroupComponentContainer.cs" />

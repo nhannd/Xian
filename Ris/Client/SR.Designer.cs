@@ -556,6 +556,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This item was updated by another user.  Changes will be lost..
+        /// </summary>
+        internal static string MessageConcurrentModification {
+            get {
+                return ResourceManager.GetString("MessageConcurrentModification", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Are you sure you want to delete this address?.
         /// </summary>
         internal static string MessageDeleteSelectedAddress {

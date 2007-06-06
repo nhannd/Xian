@@ -1,60 +1,55 @@
 using System;
-using System.Collections.Generic;
 
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
-    [ExtensionPoint()]
+    ///<summary>
+    ///</summary>
+    [ExtensionPoint]
     public sealed class ExceptionPolicyExtensionPoint : ExtensionPoint<IExceptionPolicy> { }
 
     /// <summary>
-    /// 
+    /// Provides Exception specific handling policies
     /// </summary>
+    /// <example>
+    /// <code>
+    /// [ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
+    /// [ExceptionPolicyFor(typeof(FooException))]
+    /// public class FooExceptionPolicy : IExceptionPolicy
+    /// {
+    ///     ...
+    /// }
+    /// </code>
+    /// </example>
     public interface IExceptionPolicy
     {
-        ExceptionReport Handle(Exception e);
-        ExceptionReport Handle(Exception e, string userMessage);
+        ///<summary>
+        /// Handles the specified Exception
+        ///</summary>
+        ///<param name="e"></param>
+        ///<param name="exceptonHandlingContext"></param>
+        void Handle(Exception e, IExceptionHandlingContext exceptonHandlingContext);
     }
 
-    public enum ExceptionReportAction
-    {
-        ReportInDialog,
-        Ignore
-    }
-
-    public class ExceptionReport
-    {
-        public ExceptionReport(string message, ExceptionReportAction action)
-        {
-            _message = message;
-            _action = action;
-        }
-
-        private ExceptionReportAction _action;
-        private string _message;
-
-        public ExceptionReportAction Action
-        {
-            get { return _action; }
-        }
-
-        public string Message
-        {
-            get { return _message; }
-        }
-    }
-
+    ///<summary>
+    /// Specifies an exception type to which an <see cref="IExceptionPolicy"/> applies
+    ///</summary>
     [AttributeUsage(AttributeTargets.Class, Inherited = false, AllowMultiple = true)]
     public sealed class ExceptionPolicyForAttribute : Attribute
     {
-        private Type _exceptionType;
+        private readonly Type _exceptionType;
 
+        ///<summary>
+        ///</summary>
+        ///<param name="exceptionType"></param>
         public ExceptionPolicyForAttribute(Type exceptionType)
         {
             _exceptionType = exceptionType;
         }
 
+        ///<summary>
+        ///</summary>
         public Type ExceptionType
         {
             get { return _exceptionType; }

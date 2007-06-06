@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Server
                 // wrap in ConcurrentModificationException will be used in the fault contract
                 if (error is EntityVersionException)
                 {
-                    error = new ConcurrentModificationException(error);
+                    error = new ConcurrentModificationException(error.Message);
                 }
 
 

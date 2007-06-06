@@ -282,6 +282,9 @@
   <data name="FormatNoteCategory" xml:space="preserve">
     <value>{0} - Severity {1}</value>
   </data>
+  <data name="MessageConcurrentModification" xml:space="preserve">
+    <value>This item was updated by another user.  Changes will be lost.</value>
+  </data>
   <data name="MessageDeleteSelectedAddress" xml:space="preserve">
     <value>Are you sure you want to delete this address?</value>
   </data>
