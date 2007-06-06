@@ -598,6 +598,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					newStudies.Add(studyUid);
 			}
 
+			bool refreshTitle = false;
+
 			Table<StudyItem> studyTable = _searchResults[_selectedServerGroup.GroupID].StudyList;
 
 			if (newStudies.Count > 0)
@@ -616,7 +618,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				{
 					//don't need to check this again, it's just paranoia
 					if (!StudyExists(item.StudyInstanceUID))
+					{
 						studyTable.Items.Add(item);
+						refreshTitle = true;
+					}
 				}
 			}
 
@@ -631,11 +636,15 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				if (foundIndex >= 0)
 				{
 					studyTable.Items.RemoveAt(foundIndex);
+					refreshTitle = true;
 				}
 			}
 
 			_setStudiesArrived.Clear();
 			_setStudiesDeleted.Clear();
+
+			if (!refreshTitle)
+				return;
 
 			//update the search results title.
 			_searchResults[_selectedServerGroup.GroupID].ResultsTitle = 
