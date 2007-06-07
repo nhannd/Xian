@@ -4,20 +4,12 @@ using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Healthcare.Alert
 {
-
-    // TODO add a description of the purpose of the settings group here
-    [SettingsGroupDescription("")]
+    [SettingsGroupDescription("Configures the Incomplete Patient Demographic Data alert")]
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class IncompleteDemographicDataAlertSettings
     {
         public IncompleteDemographicDataAlertSettings()
         {
-            ApplicationSettingsRegister.Instance.RegisterInstance(this);
-        }
-
-        ~IncompleteDemographicDataAlertSettings()
-        {
-            ApplicationSettingsRegister.Instance.UnregisterInstance(this);
         }
     }
 }
