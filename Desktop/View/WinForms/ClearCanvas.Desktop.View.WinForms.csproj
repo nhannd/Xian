@@ -176,12 +176,6 @@
     <Compile Include="TableView.Designer.cs">
       <DependentUpon>TableView.cs</DependentUpon>
     </Compile>
-    <Compile Include="TableViewSettings.cs" />
-    <Compile Include="TableViewSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>TableViewSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="ToolStripBuilder.cs" />
     <Compile Include="BindingTreeLevelManager.cs" />
     <Compile Include="WinFormsView.cs" />
@@ -288,10 +282,6 @@
       <LastGenOutput>DesktopViewSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Resources\Stop.gif" />
-    <None Include="TableViewSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>TableViewSettings.Designer.cs</LastGenOutput>
-    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

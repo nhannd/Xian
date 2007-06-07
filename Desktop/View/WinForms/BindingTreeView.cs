@@ -28,6 +28,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ActionModelNode _toolbarModel;
         private ActionModelNode _menuModel;
         private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
+        private ToolStripItemAlignment _toolStripItemAlignment = ToolStripItemAlignment.Right;
+        private TextImageRelation _textImageRelation = TextImageRelation.ImageBeforeText;
 
         /// <summary>
         /// Constructor
@@ -35,6 +37,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         public BindingTreeView()
         {
             InitializeComponent();
+
+            _toolStripItemAlignment = DesktopViewSettings.Default.LocalToolStripItemAlignment;
+            _textImageRelation = DesktopViewSettings.Default.LocalToolStripItemTextImageRelation;
         }
 
         /// <summary>
@@ -146,10 +151,11 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _treeCtrl.ImageList = value; }
         }
 
+        [Description("Deprecated: Controlled by application setting")]
         public RightToLeft ToolStripRightToLeft
         {
-            get { return _toolStrip.RightToLeft; }
-            set { _toolStrip.RightToLeft = value; }
+            get { return RightToLeft.No; }
+            set { }
         }
 
         public ToolStripItemDisplayStyle ToolStripItemDisplayStyle
@@ -450,19 +456,15 @@ namespace ClearCanvas.Desktop.View.WinForms
                 ToolStripBuilder.Clear(_toolStrip.Items);
                 if (_toolbarModel != null)
                 {
-                    if (_toolStrip.RightToLeft == RightToLeft.Yes)
+                    if (_toolStripItemAlignment == ToolStripItemAlignment.Right)
                     {
-                        ActionModelNode[] childNodesCopy = new ActionModelNode[_toolbarModel.ChildNodes.Count];
-                        for (int i = 0; i < _toolbarModel.ChildNodes.Count; i++)
-                        {
-                            childNodesCopy[childNodesCopy.Length - i - 1] = _toolbarModel.ChildNodes[i];
-                        }
-                        ToolStripBuilder.BuildToolbar(_toolStrip.Items, childNodesCopy, _toolStripItemDisplayStyle);
+                        _toolbarModel.ChildNodes.Reverse();
                     }
-                    else
-                    {
-                        ToolStripBuilder.BuildToolbar(_toolStrip.Items, _toolbarModel.ChildNodes, _toolStripItemDisplayStyle);
-                    }
+
+                    ToolStripBuilder.BuildToolbar(
+                        _toolStrip.Items,
+                        _toolbarModel.ChildNodes,
+                        new ToolStripBuilder.ToolStripBuilderStyle(_toolStripItemDisplayStyle, _toolStripItemAlignment, _textImageRelation));
                 }
             }
         }

@@ -42,11 +42,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             // therefore, turn off the auto-generate and create the columns ourselves
             _dataGridView.AutoGenerateColumns = false;
 
-            //_toolStripItemAlignment = TableViewSettings.Default.TableViewToolStripItemAlignment == "Right" 
-            //    ? ToolStripItemAlignment.Right 
-            //    : ToolStripItemAlignment.Left;
-            _toolStripItemAlignment = TableViewSettings.Default.ToolStripItemAlignment;
-            _textImageRelation = TableViewSettings.Default.ToolStripItemTextImageRelation;
+            _toolStripItemAlignment = DesktopViewSettings.Default.LocalToolStripItemAlignment;
+            _textImageRelation = DesktopViewSettings.Default.LocalToolStripItemTextImageRelation;
         }
 
         #region Design Time properties

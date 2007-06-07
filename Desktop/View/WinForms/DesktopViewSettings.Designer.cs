@@ -58,5 +58,23 @@ namespace ClearCanvas.Desktop.View.WinForms {
                 this["PrimaryScreenRectangle"] = value;
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("Left")]
+        public global::System.Windows.Forms.ToolStripItemAlignment LocalToolStripItemAlignment {
+            get {
+                return ((global::System.Windows.Forms.ToolStripItemAlignment)(this["LocalToolStripItemAlignment"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("ImageBeforeText")]
+        public global::System.Windows.Forms.TextImageRelation LocalToolStripItemTextImageRelation {
+            get {
+                return ((global::System.Windows.Forms.TextImageRelation)(this["LocalToolStripItemTextImageRelation"]));
+            }
+        }
     }
 }
