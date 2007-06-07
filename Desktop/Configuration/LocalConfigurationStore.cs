@@ -9,6 +9,7 @@ using System.Collections.Specialized;
 using System.Xml;
 using System.IO;
 using System.ComponentModel;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Configuration
 {
@@ -28,7 +29,7 @@ namespace ClearCanvas.Desktop.Configuration
 
 		public LocalConfigurationStore()
 		{
-		}
+        }
 
 		/// <summary>
 		/// Determines how a particular property should be serialized based on its type.
@@ -260,12 +261,12 @@ namespace ClearCanvas.Desktop.Configuration
 		/// <param name="instanceKey">ignored</param>
 		/// <param name="values">returns only those values that are different from the property defaults</param>
 		/// <exception cref="NotSupportedException">will be thrown if the user is specified</exception>
-		public void LoadSettingsValues(Type settingsClass, string user, string instanceKey, IDictionary<string, string> values)
+        public Dictionary<string, string> LoadSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey)
 		{
 			if (!String.IsNullOrEmpty(user))
 				throw new NotSupportedException(SR.ExceptionOnlyDefaultProfileSupported);
 
-			string groupName = SettingsClassMetaDataReader.GetGroupName(settingsClass);
+            Type settingsClass = Type.GetType(group.AssemblyQualifiedTypeName);
 			ICollection<PropertyInfo> properties = SettingsClassMetaDataReader.GetSettingsProperties(settingsClass);
 
 			System.Configuration.Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
@@ -274,10 +275,13 @@ namespace ClearCanvas.Desktop.Configuration
 			List<PropertyInfo> userScopedProperties;
 			SplitPropertiesByScope(properties, out applicationScopedProperties, out userScopedProperties);
 
+            Dictionary<string, string> values = new Dictionary<string, string>();
 			if (applicationScopedProperties.Count > 0)
-				GetNonDefaultSettings(this.GetApplicationSettingsGroup(configuration, false), groupName, applicationScopedProperties, values);
+				GetNonDefaultSettings(this.GetApplicationSettingsGroup(configuration, false), group.Name, applicationScopedProperties, values);
 			if (userScopedProperties.Count > 0)
-				GetNonDefaultSettings(this.GetUserSettingsGroup(configuration, false), groupName, userScopedProperties, values);
+                GetNonDefaultSettings(this.GetUserSettingsGroup(configuration, false), group.Name, userScopedProperties, values);
+
+            return values;
 		}
 
 		/// <summary>
@@ -289,13 +293,13 @@ namespace ClearCanvas.Desktop.Configuration
 		/// <param name="instanceKey">ignored</param>
 		/// <param name="values">contains the values to be stored</param>
 		/// <exception cref="NotSupportedException">will be thrown if the user is specified</exception>
-		public void SaveSettingsValues(Type settingsClass, string user, string instanceKey, IDictionary<string, string> values)
+        public void SaveSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey, Dictionary<string, string> values)
 		{
 			if (!String.IsNullOrEmpty(user))
 				throw new NotSupportedException(SR.ExceptionOnlyDefaultProfileSupported);
 
-			string groupName = SettingsClassMetaDataReader.GetGroupName(settingsClass);
-			ICollection<PropertyInfo> properties = SettingsClassMetaDataReader.GetSettingsProperties(settingsClass);
+            Type settingsClass = Type.GetType(group.AssemblyQualifiedTypeName);
+            ICollection<PropertyInfo> properties = SettingsClassMetaDataReader.GetSettingsProperties(settingsClass);
 
 			System.Configuration.Configuration configuration = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
 
@@ -307,9 +311,9 @@ namespace ClearCanvas.Desktop.Configuration
 
 			bool modified = false;
 			if (applicationScopedProperties.Count > 0)
-				modified = StoreSettings(this.GetApplicationSettingsGroup(configuration, true), groupName, applicationScopedProperties, values, changedValues);
+                modified = StoreSettings(this.GetApplicationSettingsGroup(configuration, true), group.Name, applicationScopedProperties, values, changedValues);
 			if (userScopedProperties.Count > 0)
-				modified |= StoreSettings(this.GetUserSettingsGroup(configuration, true), groupName, userScopedProperties, values, changedValues);
+                modified |= StoreSettings(this.GetUserSettingsGroup(configuration, true), group.Name, userScopedProperties, values, changedValues);
 
 			if (modified)
 			{
@@ -325,7 +329,7 @@ namespace ClearCanvas.Desktop.Configuration
 		/// <param name="user"></param>
 		/// <param name="instanceKey"></param>
 		/// <exception cref="NotSupportedException">always thrown</exception>
-		public void RemoveUserSettings(Type settingsClass, string user, string instanceKey)
+        public void RemoveUserSettings(SettingsGroupDescriptor group, string user, string instanceKey)
 		{
 			throw new NotSupportedException(SR.ExceptionRemoveUserSettingNotSupported);
 		}
@@ -337,11 +341,30 @@ namespace ClearCanvas.Desktop.Configuration
 		/// <param name="user"></param>
 		/// <param name="instanceKey"></param>
 		/// <exception cref="NotSupportedException">always thrown</exception>
-		public void UpgradeUserSettings(Type settingsClass, string user, string instanceKey)
+        public void UpgradeUserSettings(SettingsGroupDescriptor group, string user, string instanceKey)
 		{
 			throw new NotSupportedException(SR.ExceptionUpgradeNotSupported);
 		}
 
-		#endregion
-	}
+        /// <summary>
+        /// Returns settings groups installed on local machine
+        /// </summary>
+        /// <returns></returns>
+        public IList<SettingsGroupDescriptor> ListSettingsGroups()
+        {
+            return SettingsGroupDescriptor.ListInstalledSettingsGroups();
+        }
+
+        /// <summary>
+        /// Returns settings properties for specified group, assuming plugin containing group resides on local machine
+        /// </summary>
+        /// <param name="group"></param>
+        /// <returns></returns>
+        public IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group)
+        {
+            return SettingsPropertyDescriptor.ListSettingsProperties(group);
+        }
+
+        #endregion
+    }
 }

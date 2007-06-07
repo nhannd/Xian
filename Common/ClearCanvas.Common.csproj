@@ -105,6 +105,8 @@
     <Compile Include="Configuration\ConfigurationStoreSettingsProvider.cs" />
     <Compile Include="Configuration\IConfigurationStore.cs" />
     <Compile Include="Configuration\SettingsClassMetaDataReader.cs" />
+    <Compile Include="Configuration\SettingsGroupDescriptor.cs" />
+    <Compile Include="Configuration\SettingsPropertyDescriptor.cs" />
     <Compile Include="ExtensionPoint.cs" />
     <Compile Include="ExtensionSettings.cs">
       <SubType>Code</SubType>

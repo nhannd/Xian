@@ -4,7 +4,7 @@ using System.Text;
 using System.Xml;
 using System.IO;
 
-namespace ClearCanvas.Enterprise.Common
+namespace ClearCanvas.Enterprise.Configuration
 {
     class SettingsParser
     {

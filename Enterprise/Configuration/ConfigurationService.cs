@@ -7,6 +7,10 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Configuration.Brokers;
 using ClearCanvas.Enterprise.Core;
 using System.Threading;
+using System.Configuration;
+using ClearCanvas.Common.Configuration;
+using System.Reflection;
+using System.Security.Permissions;
 
 namespace ClearCanvas.Enterprise.Configuration
 {
@@ -16,10 +20,34 @@ namespace ClearCanvas.Enterprise.Configuration
     {
         #region IConfigurationService Members
 
+        // this method is only available for administration
+        [PrincipalPermission(SecurityAction.Demand, Role=AuthorityTokens.ConfigurationAdmin)]
+        public List<SettingsGroupInfo> ListSettingsGroups()
+        {
+            return CollectionUtils.Map<SettingsGroupDescriptor, SettingsGroupInfo, List<SettingsGroupInfo>>(
+                SettingsGroupDescriptor.ListInstalledSettingsGroups(),
+                delegate(SettingsGroupDescriptor desc)
+                {
+                    return new SettingsGroupInfo(desc);
+                });
+        }
+
+        // this method is only available for administration
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.ConfigurationAdmin)]
+        public List<SettingsPropertyInfo> ListSettingsProperties(SettingsGroupInfo group)
+        {
+            return CollectionUtils.Map<SettingsPropertyDescriptor, SettingsPropertyInfo, List<SettingsPropertyInfo>>(
+                SettingsPropertyDescriptor.ListSettingsProperties(group.ToDescriptor()),
+                delegate(SettingsPropertyDescriptor desc)
+                {
+                    return new SettingsPropertyInfo(desc);
+                });
+        }
+
         // because this service is invoked by the framework, rather than by the application,
         // it is safest to use a new persistence scope
         [ReadOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
-        public string LoadDocument(string name, Version version, string user, string instanceKey)
+        public Dictionary<string, string> LoadSettingsValues(string name, Version version, string user, string instanceKey)
         {
             CheckReadAccess(user);
 
@@ -29,12 +57,16 @@ namespace ClearCanvas.Enterprise.Configuration
                 ConfigurationDocumentSearchCriteria criteria = BuildCurrentVersionCriteria(name, version, user, instanceKey);
                 ConfigurationDocument document = broker.FindOne(criteria);
 
-                return document.DocumentText;
+                SettingsParser parser = new SettingsParser();
+                Dictionary<string, string> values = new Dictionary<string,string>();
+                parser.FromXml(document.DocumentText, values);
 
+                return values;
             }
             catch (EntityNotFoundException)
             {
-                throw new ConfigurationDocumentNotFoundException(SR.ExceptionConfigurationDocumentNotFound);
+                // no stored values
+                return new Dictionary<string, string>();
             }
         }
 
@@ -43,7 +75,7 @@ namespace ClearCanvas.Enterprise.Configuration
         // because this service is invoked by the framework, rather than by the application,
         // it is safest to use a new persistence scope
         [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
-        public void SaveDocument(string name, Version version, string user, string instanceKey, string documentText)
+        public void SaveSettingsValues(string name, Version version, string user, string instanceKey, Dictionary<string, string> values)
         {
             CheckWriteAccess(user);
 
@@ -63,7 +95,8 @@ namespace ClearCanvas.Enterprise.Configuration
             }
 
             // save the text
-            document.DocumentText = documentText;
+            SettingsParser parser = new SettingsParser();
+            document.DocumentText = parser.ToXml(values);
         }
 /*
         // because this service is invoked by the framework, rather than by the application,
@@ -108,7 +141,7 @@ namespace ClearCanvas.Enterprise.Configuration
         // because this service is invoked by the framework, rather than by the application,
         // it is safest to use a new persistence scope
         [UpdateOperation(PersistenceScopeOption = PersistenceScopeOption.RequiresNew)]
-        public void RemoveDocument(string name, Version version, string user, string instanceKey)
+        public void RemoveSettingsValues(string name, Version version, string user, string instanceKey)
         {
             CheckWriteAccess(user);
    
@@ -121,7 +154,7 @@ namespace ClearCanvas.Enterprise.Configuration
             }
             catch (EntityNotFoundException)
             {
-                // no document
+                // no document - nothing to remove
             }
         }
 
@@ -205,6 +238,7 @@ namespace ClearCanvas.Enterprise.Configuration
 
             return criteria;
         }
+
 
     }
 }

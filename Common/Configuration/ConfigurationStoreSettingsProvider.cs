@@ -48,13 +48,19 @@ namespace ClearCanvas.Common.Configuration
             string settingsKey = (string)context["SettingsKey"];
             string user = Thread.CurrentPrincipal.Identity.Name;
 
-            Dictionary<string, string> storedValues = new Dictionary<string, string>();
-
             // load shared values
-            _store.LoadSettingsValues(settingsClass, null, settingsKey, storedValues);
+            Dictionary<string, string> storedValues = _store.LoadSettingsValues(
+                new SettingsGroupDescriptor(settingsClass), null, settingsKey);
+
+            // load user values
+            Dictionary<string, string> userValues = _store.LoadSettingsValues(
+                new SettingsGroupDescriptor(settingsClass), user, settingsKey);
 
             // overwrite shared values with user values, if they exist
-            _store.LoadSettingsValues(settingsClass, user, settingsKey, storedValues);
+            foreach (KeyValuePair<string, string> kvp in userValues)
+            {
+                storedValues[kvp.Key] = kvp.Value;
+            }
 
             // Create new collection of values
             SettingsPropertyValueCollection values = new SettingsPropertyValueCollection();
@@ -98,7 +104,7 @@ namespace ClearCanvas.Common.Configuration
             string user = Thread.CurrentPrincipal.Identity.Name;
 
             // must call this method even if valuesToStore is empty (in which case the stored values are cleared)
-            _store.SaveSettingsValues(settingsClass, user, settingsKey, valuesToStore);
+            _store.SaveSettingsValues(new SettingsGroupDescriptor(settingsClass), user, settingsKey, valuesToStore);
         }
 
         private bool IsUserScoped(SettingsProperty settingsProperty)
@@ -133,7 +139,7 @@ namespace ClearCanvas.Common.Configuration
             string settingsKey = (string)context["SettingsKey"];
             string user = Thread.CurrentPrincipal.Identity.Name;
 
-            _store.RemoveUserSettings(settingsClass, user, settingsKey);
+            _store.RemoveUserSettings(new SettingsGroupDescriptor(settingsClass), user, settingsKey);
         }
 
         /// <summary>
@@ -150,7 +156,7 @@ namespace ClearCanvas.Common.Configuration
 
             // here we just upgrade the settings in the store... the .net framework will call GetPropertyValues again
             // to obtain the new values
-            _store.UpgradeUserSettings(settingsClass, user, settingsKey);
+            _store.UpgradeUserSettings(new SettingsGroupDescriptor(settingsClass), user, settingsKey);
         }
 
         #endregion

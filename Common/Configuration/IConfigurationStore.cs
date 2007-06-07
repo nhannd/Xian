@@ -11,27 +11,41 @@ namespace ClearCanvas.Common.Configuration
     public interface IConfigurationStore
     {
         /// <summary>
+        /// Lists all settings groups for which this configuration store maintains settings values.  Generally
+        /// this corresponds to the the list of all types derived from <see cref="ApplicationSettingsBase"/> found
+        /// in all installed plugins and related assemblies.
+        /// </summary>
+        /// <returns></returns>
+        IList<SettingsGroupDescriptor> ListSettingsGroups();
+
+        /// <summary>
+        /// Lists the settings properties for the specified settings group.
+        /// </summary>
+        /// <param name="group"></param>
+        /// <returns></returns>
+        IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group);
+
+
+        /// <summary>
         /// Obtains the settings values for the specified settings class, user and instance key.
-        /// Places the values into the specified dictionary.  Only adds values for settings
-        /// that differ from the default value as specified by the settings class.
+        /// Only returns values for settings that differ from the default value as specified by the settings class.
         /// </summary>
         /// <param name="settingsClass"></param>
         /// <param name="user"></param>
         /// <param name="instanceKey"></param>
-        /// <param name="values"></param>
-        void LoadSettingsValues(Type settingsClass, string user, string instanceKey, IDictionary<string, string> values);
+        Dictionary<string, string> LoadSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey);
 
         /// <summary>
         /// Store the settings values for the specified settings class, for the current user and
-        /// specified instance key.  The dictionary contains only values that differ from the default
-        /// values as specified by the settings class.  Only these values should be stored.  Any previously
-        /// stored settings values that are not contained in the dictionary should be removed from the store.
+        /// specified instance key.  The dictionary should contain only values that differ from the default
+        /// values as specified by the settings class, as only these values should be stored.  Any previously
+        /// stored settings values that are not contained in the dictionary will be removed from the store.
         /// </summary>
         /// <param name="settingsClass"></param>
         /// <param name="user"></param>
         /// <param name="instanceKey"></param>
         /// <param name="values"></param>
-        void SaveSettingsValues(Type settingsClass, string user, string instanceKey, IDictionary<string, string> values);
+        void SaveSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey, Dictionary<string, string> values);
 
         /// <summary>
         /// Removes user settings from this group, effectively causing them to be reset to their shared default
@@ -40,7 +54,7 @@ namespace ClearCanvas.Common.Configuration
         /// <param name="settingsClass"></param>
         /// <param name="user"></param>
         /// <param name="instanceKey"></param>
-        void RemoveUserSettings(Type settingsClass, string user, string instanceKey);
+        void RemoveUserSettings(SettingsGroupDescriptor group, string user, string instanceKey);
 
         /// <summary>
         /// Upgrades user settings in the group, effectively importing any settings saved in a previous version
@@ -49,6 +63,6 @@ namespace ClearCanvas.Common.Configuration
         /// <param name="settingsClass"></param>
         /// <param name="user"></param>
         /// <param name="instanceKey"></param>
-        void UpgradeUserSettings(Type settingsClass, string user, string instanceKey);
+        void UpgradeUserSettings(SettingsGroupDescriptor group, string user, string instanceKey);
     }
 }

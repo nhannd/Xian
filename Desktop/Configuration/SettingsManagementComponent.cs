@@ -69,43 +69,41 @@ namespace ClearCanvas.Desktop.Configuration
 
         public class SettingsProperty
         {
-            private PropertyInfo _propertyInfo;
+            private SettingsPropertyDescriptor _descriptor;
             private string _value;
             private string _startingValue;
-            private string _defaultValue;
 
             private event EventHandler _valueChanged;
 
-            public SettingsProperty(PropertyInfo propertyInfo, string value)
+            public SettingsProperty(SettingsPropertyDescriptor descriptor, string value)
             {
-                _propertyInfo = propertyInfo;
+                _descriptor = descriptor;
                 _startingValue = _value = value;
-                _defaultValue = SettingsClassMetaDataReader.GetDefaultValue(_propertyInfo);
             }
 
             public string Name
             {
-                get { return _propertyInfo.Name; }
+                get { return _descriptor.Name; }
             }
 
             public string TypeName
             {
-                get { return _propertyInfo.PropertyType.FullName; }
+                get { return _descriptor.TypeName; }
             }
 
             public string Description
             {
-                get { return SettingsClassMetaDataReader.GetDescription(_propertyInfo); }
+                get { return _descriptor.Description; }
             }
 
-            public string Scope
+            public SettingScope Scope
             {
-                get { return SettingsClassMetaDataReader.IsAppScoped(_propertyInfo) ? "Application" : "User"; }
+                get { return _descriptor.Scope; }
             }
 
             public string DefaultValue
             {
-                get { return _defaultValue; }
+                get { return _descriptor.DefaultValue; }
             }
 
             public string Value
@@ -129,7 +127,7 @@ namespace ClearCanvas.Desktop.Configuration
 
             public bool UsingDefaultValue
             {
-                get { return _value == _defaultValue; }
+                get { return _value == _descriptor.DefaultValue; }
             }
 
             public bool Dirty
@@ -142,8 +140,8 @@ namespace ClearCanvas.Desktop.Configuration
 
         private IConfigurationStore _configStore;
 
-        private Table<Type> _settingsGroupTable;
-        private Type _selectedSettingsGroup;
+        private Table<SettingsGroupDescriptor> _settingsGroupTable;
+        private SettingsGroupDescriptor _selectedSettingsGroup;
         private event EventHandler _selectedSettingsGroupChanged;
 
         private Table<SettingsProperty> _settingsPropertiesTable;
@@ -165,13 +163,13 @@ namespace ClearCanvas.Desktop.Configuration
             _configStore = configStore;
 
             // define the structure of the settings group table
-            _settingsGroupTable = new Table<Type>();
-            _settingsGroupTable.Columns.Add(new TableColumn<Type, string>("Group",
-                delegate(Type t) { return SettingsClassMetaDataReader.GetGroupName(t); }));
-            _settingsGroupTable.Columns.Add(new TableColumn<Type, string>("Version",
-                delegate(Type t) { return SettingsClassMetaDataReader.GetVersion(t).ToString(); }));
-            _settingsGroupTable.Columns.Add(new TableColumn<Type, string>("Description",
-                delegate(Type t) { return SettingsClassMetaDataReader.GetGroupDescription(t); }));
+            _settingsGroupTable = new Table<SettingsGroupDescriptor>();
+            _settingsGroupTable.Columns.Add(new TableColumn<SettingsGroupDescriptor, string>("Group",
+                delegate(SettingsGroupDescriptor t) { return t.Name; }));
+            _settingsGroupTable.Columns.Add(new TableColumn<SettingsGroupDescriptor, string>("Version",
+                delegate(SettingsGroupDescriptor t) { return t.Version.ToString(); }));
+            _settingsGroupTable.Columns.Add(new TableColumn<SettingsGroupDescriptor, string>("Description",
+                delegate(SettingsGroupDescriptor t) { return t.Description; }));
 
 
             // define the settings properties table
@@ -181,7 +179,7 @@ namespace ClearCanvas.Desktop.Configuration
             _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Description",
                delegate(SettingsProperty p) { return p.Description; }));
             _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Scope",
-                delegate(SettingsProperty p) { return p.Scope; }));
+                delegate(SettingsProperty p) { return p.Scope.ToString(); }));
             _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Type",
                 delegate(SettingsProperty p) { return p.TypeName; }));
             _settingsPropertiesTable.Columns.Add(new TableColumn<SettingsProperty, string>("Default Value",
@@ -208,15 +206,9 @@ namespace ClearCanvas.Desktop.Configuration
 
         public override void Start()
         {
-            foreach (PluginInfo plugin in Platform.PluginManager.Plugins)
+            foreach (SettingsGroupDescriptor group in _configStore.ListSettingsGroups())
             {
-                foreach (Type t in plugin.Assembly.GetTypes())
-                {
-                    if (t.IsSubclassOf(typeof(ApplicationSettingsBase)) && !t.IsAbstract)
-                    {
-                        _settingsGroupTable.Items.Add(t);
-                    }
-                }
+                _settingsGroupTable.Items.Add(group);
             }
 
             base.Start();
@@ -224,8 +216,6 @@ namespace ClearCanvas.Desktop.Configuration
 
         public override void Stop()
         {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
             base.Stop();
         }
 
@@ -247,7 +237,7 @@ namespace ClearCanvas.Desktop.Configuration
             get { return new Selection(_selectedSettingsGroup); }
             set
             {
-                Type settingsClass = (Type)value.Item;
+                SettingsGroupDescriptor settingsClass = (SettingsGroupDescriptor)value.Item;
                 if (settingsClass != _selectedSettingsGroup)
                 {
                     // save any changes before changing _selectedSettingsGroup
@@ -314,10 +304,10 @@ namespace ClearCanvas.Desktop.Configuration
 
             if (_selectedSettingsGroup != null)
             {
-                Dictionary<string, string> values = new Dictionary<string, string>();
-                _configStore.LoadSettingsValues(_selectedSettingsGroup,
-                    null, null, // load the default profile
-                    values);    
+                Dictionary<string, string> values = _configStore.LoadSettingsValues(
+                    _selectedSettingsGroup,
+                    null, null // load the default profile
+                    );    
 
                 FillSettingsPropertiesTable(values);
             }
@@ -343,7 +333,8 @@ namespace ClearCanvas.Desktop.Configuration
 
 				try
 				{
-					_configStore.SaveSettingsValues(_selectedSettingsGroup,
+					_configStore.SaveSettingsValues(
+                        _selectedSettingsGroup,
 						null, null,    // save to the default profile
 						values);
 				}
@@ -409,9 +400,9 @@ namespace ClearCanvas.Desktop.Configuration
         private void FillSettingsPropertiesTable(IDictionary<string, string> storedValues)
         {
             _settingsPropertiesTable.Items.Clear();
-            foreach (PropertyInfo pi in SettingsClassMetaDataReader.GetSettingsProperties(_selectedSettingsGroup))
+            foreach (SettingsPropertyDescriptor pi in _configStore.ListSettingsProperties(_selectedSettingsGroup))
             {
-                string value = storedValues.ContainsKey(pi.Name) ? storedValues[pi.Name] : SettingsClassMetaDataReader.GetDefaultValue(pi);
+                string value = storedValues.ContainsKey(pi.Name) ? storedValues[pi.Name] : pi.DefaultValue;
                 SettingsProperty property = new SettingsProperty(pi, value);
                 property.ValueChanged += SettingsPropertyValueChangedEventHandler;
                 _settingsPropertiesTable.Items.Add(property);

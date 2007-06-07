@@ -7,6 +7,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
 using System.ServiceModel;
 using System.ServiceModel.Security;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Common
 {
@@ -17,99 +18,135 @@ namespace ClearCanvas.Enterprise.Common
     [ExtensionOf(typeof(ConfigurationStoreExtensionPoint))]
     public class EnterpriseConfigurationStore : IConfigurationStore
     {
+        private IList<SettingsGroupDescriptor> _remoteGroups;
+
         public EnterpriseConfigurationStore()
         {
         }
 
         #region IConfigurationStore Members
 
-        public string LoadDocument(string name, Version version, string user, string instanceKey)
+        public Dictionary<string, string> LoadSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey)
         {
-            string document = null;
+            Dictionary<string, string> values = new Dictionary<string,string>();
+
             Platform.GetService<IConfigurationService>(
                 delegate(IConfigurationService service)
                 {
-                    document = service.LoadDocument(name, version, user, instanceKey);
+                    values = service.LoadSettingsValues(group.Name, group.Version, user, instanceKey);
                 });
 
-            return document;
+            return values;
         }
 
-        public void SaveDocument(string name, Version version, string user, string instanceKey, string documentText)
+        public void SaveSettingsValues(SettingsGroupDescriptor group, string user, string instanceKey, Dictionary<string, string> values)
         {
             Platform.GetService<IConfigurationService>(
                 delegate(IConfigurationService service)
                 {
-                    service.SaveDocument(name, version, user, instanceKey, documentText);
+                    service.SaveSettingsValues(group.Name, group.Version, user, instanceKey, values);
                 });
         }
 
-        public void LoadSettingsValues(Type settingsClass, string user, string instanceKey, IDictionary<string, string> values)
+        public void RemoveUserSettings(SettingsGroupDescriptor group, string user, string instanceKey)
         {
-            try
-            {
-                string xml = LoadDocument(
-                    SettingsClassMetaDataReader.GetGroupName(settingsClass),
-                    SettingsClassMetaDataReader.GetVersion(settingsClass),
-                    user,
-                    instanceKey);
-
-                SettingsParser parser = new SettingsParser();
-                parser.FromXml(xml, values);
-            }
-            catch (ConfigurationDocumentNotFoundException)
-            {
-                // no saved settings
-            }
-            catch (FaultException<ConfigurationDocumentNotFoundException>)
-            {
-                // no saved settings
-            }
+            Platform.GetService<IConfigurationService>(
+                delegate(IConfigurationService service)
+                {
+                    service.RemoveSettingsValues(
+                        group.Name,
+                        group.Version,
+                        user,
+                        instanceKey);
+                });
         }
 
-        public void SaveSettingsValues(Type settingsClass, string user, string instanceKey, IDictionary<string, string> values)
-        {
-            SettingsParser parser = new SettingsParser();
-            string xml = parser.ToXml(values);
-
-            SaveDocument(
-                SettingsClassMetaDataReader.GetGroupName(settingsClass),
-                SettingsClassMetaDataReader.GetVersion(settingsClass),
-                user,
-                instanceKey,
-                xml);
-        }
-
-        public void RemoveUserSettings(Type settingsClass, string user, string instanceKey)
-        {
-            try
-            {
-                Platform.GetService<IConfigurationService>(
-                    delegate(IConfigurationService service)
-                    {
-                        service.RemoveDocument(
-                            SettingsClassMetaDataReader.GetGroupName(settingsClass),
-                            SettingsClassMetaDataReader.GetVersion(settingsClass),
-                            user,
-                            instanceKey);
-                    });
-            }
-            catch (ConfigurationDocumentNotFoundException)
-            {
-                // no saved settings
-            }
-            catch (FaultException<ConfigurationDocumentNotFoundException>)
-            {
-                // no saved settings
-            }
-        }
-
-        public void UpgradeUserSettings(Type settingsClass, string user, string instanceKey)
+        public void UpgradeUserSettings(SettingsGroupDescriptor group, string user, string instanceKey)
         {
             // TODO implement this later
             throw new NotImplementedException();
         }
 
+        public IList<SettingsGroupDescriptor> ListSettingsGroups()
+        {
+            // init remote groups if not initialized
+            if (_remoteGroups == null)
+            {
+                _remoteGroups = ListSettingsGroupsRemote();
+            }
+
+            // add remote groups
+            List<SettingsGroupDescriptor> groups = new List<SettingsGroupDescriptor>(_remoteGroups);
+
+            // HACK: add local groups
+            // this is probably a bad security practice in a production environment, because local plugins may not be trusted
+            // but for development it makes things easier
+            IList<SettingsGroupDescriptor> localGroups = SettingsGroupDescriptor.ListInstalledSettingsGroups();
+            foreach (SettingsGroupDescriptor group in localGroups)
+            {
+                if (!groups.Contains(group))
+                    groups.Add(group);
+            }
+
+            return groups;
+        }
+
+        public IList<SettingsPropertyDescriptor> ListSettingsProperties(SettingsGroupDescriptor group)
+        {
+            // init remote groups if not initialized
+            if (_remoteGroups == null)
+            {
+                _remoteGroups = ListSettingsGroupsRemote();
+            }
+
+            // if the group is remote, get properties from remote
+            if (_remoteGroups.Contains(group))
+            {
+                return ListSettingsPropertiesRemote(group);
+            }
+            else
+            {
+                // group is local
+                return SettingsPropertyDescriptor.ListSettingsProperties(group);
+            }
+        }
+
         #endregion
+
+        private IList<SettingsGroupDescriptor> ListSettingsGroupsRemote()
+        {
+            List<SettingsGroupInfo> groups = null;
+
+            Platform.GetService<IConfigurationService>(
+                delegate(IConfigurationService service)
+                {
+                    groups = service.ListSettingsGroups();
+                });
+
+            return CollectionUtils.Map<SettingsGroupInfo, SettingsGroupDescriptor, List<SettingsGroupDescriptor>>(
+                groups,
+                delegate(SettingsGroupInfo info)
+                {
+                    return info.ToDescriptor();
+                });
+        }
+
+        private IList<SettingsPropertyDescriptor> ListSettingsPropertiesRemote(SettingsGroupDescriptor group)
+        {
+            List<SettingsPropertyInfo> properties = null;
+
+            Platform.GetService<IConfigurationService>(
+                delegate(IConfigurationService service)
+                {
+                    properties = service.ListSettingsProperties(new SettingsGroupInfo(group));
+                });
+
+            return CollectionUtils.Map<SettingsPropertyInfo, SettingsPropertyDescriptor, List<SettingsPropertyDescriptor>>(
+                properties,
+                delegate(SettingsPropertyInfo info)
+                {
+                    return info.ToDescriptor();
+                });
+        }
     }
 }

@@ -10,6 +10,13 @@ using System.Resources;
 
 namespace ClearCanvas.Common.Configuration
 {
+    [Serializable]
+    public enum SettingScope
+    {
+        Application,
+        User
+    }
+
     /// <summary>
     /// Utility class for reading meta-data associated with a settings class
     /// (a subclass of <see cref="SettingsBase"/>)
@@ -139,6 +146,41 @@ namespace ClearCanvas.Common.Configuration
                 property.GetCustomAttributes(typeof(SettingsDescriptionAttribute), false));
 
             return a == null ? "" : a.Description;
+        }
+
+        /// <summary>
+        /// Returns a string describing the scope of the property.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public static SettingScope GetScope(PropertyInfo property)
+        {
+            if(IsAppScoped(property))
+                return SettingScope.Application;
+            if(IsUserScoped(property))
+                return SettingScope.User;
+
+            throw new Exception("Settings scope not defined");
+        }
+
+        /// <summary>
+        /// Returns the name of the settings property.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public static string GetName(PropertyInfo property)
+        {
+            return property.Name;
+        }
+
+        /// <summary>
+        /// Returns the <see cref="Type"/> of the settings property.
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
+        public static Type GetType(PropertyInfo property)
+        {
+            return property.PropertyType;
         }
 
         /// <summary>
