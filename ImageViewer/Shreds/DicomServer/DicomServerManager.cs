@@ -576,7 +576,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					information.StudyInformation.PatientId = study.PatientId;
 					information.StudyInformation.PatientsName = study.PatientsName;
 					DateTime studyDate;
-					DateParser.Parse(study.StudyDate, out studyDate);
+					DateParser.Parse(study.StudyDateRaw, out studyDate);
 					information.StudyInformation.StudyDate = studyDate;
 					information.StudyInformation.StudyDescription = study.StudyDescription;
 				}

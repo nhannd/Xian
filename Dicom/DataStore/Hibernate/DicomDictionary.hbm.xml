@@ -5,7 +5,8 @@
       <generator class="guid.comb">
       </generator>
     </id>
-	<list name="DictionaryEntries" table="DictionaryEntries_" lazy="false" access="nosetter.camelcase-underscore">
+    <property name="DictionaryName" column="DictionaryName_" type="string" length="256" not-null="true" unique="true" />
+    <list name="DictionaryEntries" table="DictionaryEntries_" lazy="false" access="nosetter.camelcase-underscore">
 		<key column="EntryOid_" />
 		<index column="Index_" />
 		<composite-element class="ClearCanvas.Dicom.DataStore.DictionaryEntry, ClearCanvas.Dicom.DataStore">

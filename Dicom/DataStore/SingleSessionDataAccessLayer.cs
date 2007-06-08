@@ -17,7 +17,7 @@ namespace ClearCanvas.Dicom.DataStore
         private static Dictionary<ISessionFactory, ISession> _sessions;
         private static Dictionary<ISession, IDataStoreReader> _dataStores;
         private static Dictionary<ISession, IDataStoreWriter> _dataStoreWriteAccessors;
-        private static IDicomDictionary _dicomDictionary;
+		private static Dictionary<string, IDicomDictionary> _dicomDictionaries;
         private static Configuration _hibernateConfiguration;
 
         private static Dictionary<Thread, ISessionFactory> SessionFactories
@@ -40,7 +40,7 @@ namespace ClearCanvas.Dicom.DataStore
             get { return _dataStoreWriteAccessors; }
         }
 
-        private static Configuration HibernateConfiguration
+		private static Configuration HibernateConfiguration
         {
             get { return _hibernateConfiguration; }
         }
@@ -117,6 +117,7 @@ namespace ClearCanvas.Dicom.DataStore
             _sessions = new Dictionary<ISessionFactory, ISession>();
             _dataStores = new Dictionary<ISession, IDataStoreReader>();
             _dataStoreWriteAccessors = new Dictionary<ISession, IDataStoreWriter>();
+			_dicomDictionaries = new Dictionary<string, IDicomDictionary>();
         }
 
         // TODO:
@@ -179,15 +180,20 @@ namespace ClearCanvas.Dicom.DataStore
             }
         }
 
-        public static IDicomDictionary GetIDicomDictionary()
-        {
-            if (null == _dicomDictionary)
-                _dicomDictionary = new DicomDictionary(SingleSessionDataAccessLayer.CurrentFactory.OpenSession());
+		public static IDicomDictionary GetIDicomDictionary()
+		{
+			return GetIDicomDictionary(DicomDictionary.DefaultDictionaryName);
+		}
 
-            return _dicomDictionary;
-        }
+		public static IDicomDictionary GetIDicomDictionary(string dictionaryName)
+		{
+			if (!_dicomDictionaries.ContainsKey(dictionaryName))
+				_dicomDictionaries[dictionaryName] = new DicomDictionary(SingleSessionDataAccessLayer.CurrentFactory.OpenSession(), dictionaryName);
 
-        public static IDicomPersistentStore GetIDicomPersistentStore()
+			return _dicomDictionaries[dictionaryName];
+		}
+		
+		public static IDicomPersistentStore GetIDicomPersistentStore()
         {
             return new SingleSessionDicomImageStore();
         }

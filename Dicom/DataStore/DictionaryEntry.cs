@@ -38,7 +38,6 @@ namespace ClearCanvas.Dicom.DataStore
         private TagName _tagName;
         private Path _path;
         private bool _isComputed;
-
 		private string _valueRepresentation;
         #endregion
     }

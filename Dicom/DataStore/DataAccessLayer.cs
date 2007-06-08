@@ -17,7 +17,7 @@ namespace ClearCanvas.Dicom.DataStore
         private static Configuration _hibernateConfiguration;
         private static Dictionary<ISessionFactory, IDataStoreReader> _dataStoreReaders;
         private static Dictionary<ISessionFactory, IDataStoreWriter> _dataStoreWriters;
-        private static DicomDictionary _dicomDictionary;
+		private static Dictionary<string, IDicomDictionary> _dicomDictionaries;
 
         private static Dictionary<ISessionFactory, IDataStoreWriter> DataStoreWriters
         {
@@ -91,6 +91,7 @@ namespace ClearCanvas.Dicom.DataStore
             _sessionFactories = new Dictionary<Thread, ISessionFactory>();
             _dataStoreReaders = new Dictionary<ISessionFactory, IDataStoreReader>();
             _dataStoreWriters = new Dictionary<ISessionFactory, IDataStoreWriter>();
+			_dicomDictionaries = new Dictionary<string, IDicomDictionary>();
         }
 
         public static IDataStoreReader GetIDataStoreReader()
@@ -133,13 +134,17 @@ namespace ClearCanvas.Dicom.DataStore
             return new DicomImageStore();
         }
 
-        public static IDicomDictionary GetIDicomDictionary()
-        {
-            if (null == _dicomDictionary)
-                _dicomDictionary = new DicomDictionary(DataAccessLayer.CurrentFactory.OpenSession());
+		public static IDicomDictionary GetIDicomDictionary()
+		{
+			return GetIDicomDictionary(DicomDictionary.DefaultDictionaryName);
+		}
 
-            return _dicomDictionary;
-        }
+		public static IDicomDictionary GetIDicomDictionary(string dictionaryName)
+		{
+			if (!_dicomDictionaries.ContainsKey(dictionaryName))
+				_dicomDictionaries[dictionaryName] = new DicomDictionary(DataAccessLayer.CurrentFactory.OpenSession(), dictionaryName);
 
-    }
+			return _dicomDictionaries[dictionaryName];
+		}
+	}
 }

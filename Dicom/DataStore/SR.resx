@@ -135,4 +135,13 @@
   <data name="ExceptionUriCannotBeNullOrEmpty" xml:space="preserve">
     <value>The Uri cannot be null or empty.</value>
   </data>
+  <data name="FormatDicomDictionaryFailedToLoad" xml:space="preserve">
+    <value>Failed to load Dicom dictionary with name '{0}'.</value>
+  </data>
+  <data name="FormatSpecifiedColumnDoesNotExistForPath" xml:space="preserve">
+    <value>A corresponding column does not exist in the dictionary for path '{0}'.</value>
+  </data>
+  <data name="FormatSpecifiedColumnDoesNotExistForTag" xml:space="preserve">
+    <value>A corresponding column does not exist in the dictionary for tag '{0}'.</value>
+  </data>
 </root>

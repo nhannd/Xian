@@ -39,16 +39,22 @@ namespace ClearCanvas.Dicom.DataStore
             set { _studyId = value; }
         }
 
-        public virtual string StudyTime
+		public virtual string StudyTimeRaw
         {
-            get { return _studyTime; }
-            set { _studyTime = value; }
+            get { return _studyTimeRaw; }
+            set { _studyTimeRaw = value; }
         }
 
-        public virtual string StudyDate
+		public virtual DateTime? StudyDate
+		{
+			get { return _studyDate; }
+			set { _studyDate = value; }
+		}
+
+        public virtual string StudyDateRaw
         {
-            get { return _studyDate; }
-            set { _studyDate = value; }
+            get { return _studyDateRaw; }
+            set { _studyDateRaw = value; }
         }
 
         public virtual string AccessionNumber
@@ -99,10 +105,10 @@ namespace ClearCanvas.Dicom.DataStore
             set { _patientsSex = value; }
         }
 
-        public virtual string PatientsBirthDate
+        public virtual string PatientsBirthDateRaw
         {
-            get { return _patientsBirthDate; }
-            set { _patientsBirthDate = value; }
+            get { return _patientsBirthDateRaw; }
+            set { _patientsBirthDateRaw = value; }
         }
 
         public virtual string SpecificCharacterSet
@@ -163,8 +169,9 @@ namespace ClearCanvas.Dicom.DataStore
 		Guid _studyOid;
         string _procedureCodeSequenceCodingSchemeDesignator;
         string _studyId;
-        string _studyTime;
-        string _studyDate;
+		string _studyTimeRaw;
+		DateTime? _studyDate;
+		string _studyDateRaw;
         string _accessionNumber;
         string _studyInstanceUid;
         string _studyDescription;
@@ -175,7 +182,7 @@ namespace ClearCanvas.Dicom.DataStore
         PersonName _patientsName;
         byte[] _patientsNameRaw;
         string _patientsSex;
-        string _patientsBirthDate;
+		string _patientsBirthDateRaw;
         ISet _internalSeries;
 
 		#endregion //Private Fields

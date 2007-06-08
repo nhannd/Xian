@@ -115,12 +115,15 @@ namespace ClearCanvas.Dicom.DataStore
             //
 
             cond = sopInstanceDataset.findAndGetOFString(Dcm.StudyDate, stringValue);
-            if (cond.good())
-                study.StudyDate = stringValue.ToString();
+			if (cond.good())
+			{
+				study.StudyDateRaw = stringValue.ToString();
+				study.StudyDate = DateParser.Parse(study.StudyDateRaw);
+			}
 
             cond = sopInstanceDataset.findAndGetOFString(Dcm.StudyTime, stringValue);
             if (cond.good())
-                study.StudyTime = stringValue.ToString();
+                study.StudyTimeRaw = stringValue.ToString();
 
             cond = sopInstanceDataset.findAndGetOFString(Dcm.StudyDescription, stringValue);
             if (cond.good())
@@ -144,7 +147,7 @@ namespace ClearCanvas.Dicom.DataStore
 
             cond = sopInstanceDataset.findAndGetOFString(Dcm.PatientsBirthDate, stringValue);
             if (cond.good())
-                study.PatientsBirthDate = stringValue.ToString();
+                study.PatientsBirthDateRaw = stringValue.ToString();
 
             cond = sopInstanceDataset.findAndGetOFStringArray(Dcm.SpecificCharacterSet, stringValue);
             if (cond.good())

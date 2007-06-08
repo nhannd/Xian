@@ -4,70 +4,93 @@ using System.Collections.Generic;
 using System.Text;
 using NHibernate;
 using Iesi.Collections;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public class DicomDictionary : IDicomDictionary
+    internal class DicomDictionary : IDicomDictionary
     {
+		internal static readonly string DefaultDictionaryName = "default-unicode";
+		internal static readonly string DefaultQueryDictionaryName = "study-query-unicode";
+		internal static readonly string DefaultResultsDictionaryName = "study-query-results-unicode";
+
         #region Handcoded Members
 
-        public DicomDictionary(ISession session)
+		internal DicomDictionary(ISession session)
+			: this(session, DefaultDictionaryName)
+		{ 
+		}
+
+		public DicomDictionary(ISession session, string dictionaryName)
         {
-            _session = session;
-            _pathToColumnDictionary = new Dictionary<string, DictionaryEntry>();
+			Platform.CheckForEmptyString(dictionaryName, "dictionaryName");
+
+			_dictionaryName = dictionaryName;
+			_pathToColumnDictionary = new Dictionary<string, DictionaryEntry>();
             _tagNameToColumnDictionary = new Dictionary<string, DictionaryEntry>();
 
             // load the dictionary entries from the database
-            Load();
-
-            _session.Clear();
-            _session.Close();
+            Load(session);
         }
 
+		public string DictionaryName
+		{
+			get { return _dictionaryName; }
+		}
+	
         #region Private Members
-        private DicomDictionary()
-        {
 
+		private DicomDictionary()
+        {
         }
 
-        private void Load()
+        private void Load(ISession session)
         {
-
             IList containers = null;
-            try
-            {
-                containers = this.Session.CreateCriteria(typeof(DicomDictionaryContainer))
-                    .SetFetchMode("DictionaryEntries_", FetchMode.Eager)
-                    .List();
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
+			try
+			{
+				containers = session.CreateCriteria(typeof(DicomDictionaryContainer))
+					.SetFetchMode("DictionaryEntries_", FetchMode.Eager)
+					.List();
+			}
+			catch (Exception ex)
+			{
+				throw ex;
+			}
+			finally
+			{
+				session.Clear();
+				session.Close();
+			}	
 
             if (null == containers || containers.Count < 1)
             {
 				throw new Exception(SR.ExceptionDicomDictionaryFailedToLoad);
             }
 
-            DicomDictionaryContainer dictionaryContainer = containers[0] as DicomDictionaryContainer;
+			foreach (DicomDictionaryContainer container in containers)
+			{
+				if (container.DictionaryName == _dictionaryName)
+				{
+					for (int i = 0; i < container.DictionaryEntries.Count; ++i)
+					{
+						DictionaryEntry entry = container.DictionaryEntries[i] as DictionaryEntry;
+						_tagNameToColumnDictionary.Add(entry.TagName, entry);
+						_pathToColumnDictionary.Add(entry.Path, entry);
+					}
 
-            for (int i = 0; i < dictionaryContainer.DictionaryEntries.Count; ++i)
-            {
-                DictionaryEntry entry = dictionaryContainer.DictionaryEntries[i] as DictionaryEntry;
-                _tagNameToColumnDictionary.Add(entry.TagName, entry);
-                _pathToColumnDictionary.Add(entry.Path, entry);
-            }
+					return;
+				}
+			}
+
+			throw new Exception(String.Format(SR.FormatDicomDictionaryFailedToLoad, _dictionaryName));
         }
 
-        private ISession _session;
-        private ISession Session
-        {
-            get { return _session; }
-        }
-        private Dictionary<string, DictionaryEntry> _tagNameToColumnDictionary = null;
+		private string _dictionaryName;
+		private Dictionary<string, DictionaryEntry> _tagNameToColumnDictionary = null;
         private Dictionary<string, DictionaryEntry> _pathToColumnDictionary = null;
-        #endregion
+
+		#endregion
         #endregion
 
         #region IDicomDictionary Members
@@ -87,7 +110,7 @@ namespace ClearCanvas.Dicom.DataStore
             if (_tagNameToColumnDictionary.ContainsKey(tagName))
                 return _tagNameToColumnDictionary[tagName];
             else
-                throw new Exception("Fix this!");
+                throw new Exception(String.Format(SR.FormatSpecifiedColumnDoesNotExistForTag, tagName.ToString()));
         }
 
         public DictionaryEntry GetColumn(Path path)
@@ -95,9 +118,9 @@ namespace ClearCanvas.Dicom.DataStore
             if (_pathToColumnDictionary.ContainsKey(path))
                 return _pathToColumnDictionary[path];
             else
-                throw new Exception("Fix this!");
+				throw new Exception(String.Format(SR.FormatSpecifiedColumnDoesNotExistForPath, path.ToString()));
         }
 
-        #endregion
-    }
+		#endregion
+	}
 }

@@ -113,5 +113,32 @@ namespace ClearCanvas.Dicom.DataStore {
                 return ResourceManager.GetString("ExceptionUriCannotBeNullOrEmpty", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to load Dicom dictionary with name &apos;{0}&apos;..
+        /// </summary>
+        internal static string FormatDicomDictionaryFailedToLoad {
+            get {
+                return ResourceManager.GetString("FormatDicomDictionaryFailedToLoad", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A corresponding column does not exist in the dictionary for path &apos;{0}&apos;..
+        /// </summary>
+        internal static string FormatSpecifiedColumnDoesNotExistForPath {
+            get {
+                return ResourceManager.GetString("FormatSpecifiedColumnDoesNotExistForPath", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A corresponding column does not exist in the dictionary for tag &apos;{0}&apos;..
+        /// </summary>
+        internal static string FormatSpecifiedColumnDoesNotExistForTag {
+            get {
+                return ResourceManager.GetString("FormatSpecifiedColumnDoesNotExistForTag", resourceCulture);
+            }
+        }
     }
 }

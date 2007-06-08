@@ -294,7 +294,52 @@ namespace ClearCanvas.Dicom.DataStore
             return studyFound;
         }
 
-        public ReadOnlyQueryResultCollection StudyQuery(QueryKey queryKey)
+		public IList<IStudy> GetStudies()
+		{
+			IList<IStudy> studiesList = new List<IStudy>();
+
+			//
+			// prepare the HQL query string
+			//
+			StringBuilder selectCommandString = new StringBuilder(1024);
+			selectCommandString.AppendFormat("FROM Study ORDER BY StoreTime_ ");
+
+			//
+			// submit the HQL query
+			//
+			IList studiesFound = null;
+			ISession session = null;
+			ITransaction transaction = null;
+			try
+			{
+				session = this.SessionFactory.OpenSession();
+				transaction = session.BeginTransaction();
+
+				IQuery query = session.CreateQuery(selectCommandString.ToString());
+				studiesFound = query.List();
+			}
+			catch (Exception ex)
+			{
+				if (null != transaction)
+					transaction.Rollback();
+				throw ex;
+			}
+			finally
+			{
+				if (null != session)
+					session.Close();
+			}
+
+			foreach (object element in studiesFound)
+			{
+				Study study = element as Study;
+				studiesList.Add(study);
+			}
+
+			return studiesList;
+		}
+		
+		public ReadOnlyQueryResultCollection StudyQuery(QueryKey queryKey)
         {
             if (null == queryKey)
 				throw new System.ArgumentNullException("queryKey", SR.ExceptionStudyQueryNullKey);
@@ -306,12 +351,14 @@ namespace ClearCanvas.Dicom.DataStore
 
 			bool whereClauseAdded = false;
 
+			IDicomDictionary queryDictionary = DataAccessLayer.GetIDicomDictionary(DicomDictionary.DefaultQueryDictionaryName);
+
             foreach (DicomTag tag in queryKey.DicomTags)
             {
                 if (queryKey[tag].Length > 0)
                 {
                     Path path = new Path(tag.ToString());
-                    DictionaryEntry column = DataAccessLayer.GetIDicomDictionary().GetColumn(path);
+					DictionaryEntry column = queryDictionary.GetColumn(path);
 
 					if (column.IsComputed)
 						continue;
@@ -373,51 +420,6 @@ namespace ClearCanvas.Dicom.DataStore
 			return CompileResults(queryKey, studiesFound);
 		}
 
-        public IList<IStudy> GetStudies()
-        {
-            IList<IStudy> studiesList = new List<IStudy>();
-
-            //
-            // prepare the HQL query string
-            //
-            StringBuilder selectCommandString = new StringBuilder(1024);
-            selectCommandString.AppendFormat("FROM Study ORDER BY StoreTime_ ");
-
-            //
-            // submit the HQL query
-            //
-            IList studiesFound = null;
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-
-                IQuery query = session.CreateQuery(selectCommandString.ToString());
-                studiesFound = query.List();
-            }
-            catch (Exception ex)
-            {
-                if (null != transaction)
-                    transaction.Rollback();
-                throw ex;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-
-            foreach (object element in studiesFound)
-            {
-                Study study = element as Study;
-                studiesList.Add(study);
-            }
-
-            return studiesList;
-        }
-
         private ReadOnlyQueryResultCollection CompileResults(QueryKey queryKey, IList studiesFound)
 		{
 			// 
@@ -430,17 +432,19 @@ namespace ClearCanvas.Dicom.DataStore
 				Study study = element as Study;
 				QueryResult result = new QueryResult();
 
+				IDicomDictionary resultsDictionary = DataAccessLayer.GetIDicomDictionary(DicomDictionary.DefaultResultsDictionaryName);
+
 				foreach (PropertyInfo pi in study.GetType().GetProperties())
 				{
 					string fieldName = pi.Name;
-					if (DataAccessLayer.GetIDicomDictionary().Contains(new TagName(fieldName)))
+					if (resultsDictionary.Contains(new TagName(fieldName)))
 					{
 						// ensure that property actually has a value
 						object fieldValue = pi.GetValue(study, null);
 						if (null == fieldValue)
 							continue;
 
-						DictionaryEntry col = DataAccessLayer.GetIDicomDictionary().GetColumn(new TagName(fieldName));
+						DictionaryEntry col = resultsDictionary.GetColumn(new TagName(fieldName));
 						DicomTag tag = new DicomTag(col.Path.GetLastPathElementAsInt32());
 						result.Add(tag, fieldValue.ToString());
 					}
@@ -539,22 +543,22 @@ namespace ClearCanvas.Dicom.DataStore
 				//When a dicom date is specified with no '-', it is to be taken as an exact date.
 				if (!isRange)
 				{
-					dateRangeQueryBuilder.AppendFormat("( CONVERT(datetime, {0}) = CONVERT(datetime, '{1}') )", columnName + "_", fromDate.ToString());
+					dateRangeQueryBuilder.AppendFormat("( {0} = '{1}' )", columnName + "_", fromDate.ToString());
 				}
 				else
 				{
-					dateRangeQueryBuilder.AppendFormat("( CONVERT(datetime, {0}) IS NOT NULL AND CONVERT(datetime, {0}) >= CONVERT(datetime, '{1}') )", columnName + "_", fromDate);
+					dateRangeQueryBuilder.AppendFormat("( {0} IS NOT NULL AND {0} >= '{1}' )", columnName + "_", fromDate);
 				}
 			}
 
 			if (toDate != "")
 			{
 				if (fromDate == "")
-					dateRangeQueryBuilder.AppendFormat("( CONVERT(datetime, {0}) IS NULL OR ", columnName + "_");
+					dateRangeQueryBuilder.AppendFormat("( {0} IS NULL OR ", columnName + "_");
 				else
 					dateRangeQueryBuilder.AppendFormat(" AND (");
 
-				dateRangeQueryBuilder.AppendFormat("CONVERT(datetime, {0}) <= CONVERT(datetime, '{1}') )", columnName + "_", toDate);
+				dateRangeQueryBuilder.AppendFormat("{0} <= '{1}' )", columnName + "_", toDate);
 			}
 
 			returnBuilder.AppendFormat("({0})", dateRangeQueryBuilder.ToString());

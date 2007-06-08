@@ -77,8 +77,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreStudy.PatientsBirthDate != null)
-                    return this.DataStoreStudy.PatientsBirthDate;
+                if (this.DataStoreStudy.PatientsBirthDateRaw != null)
+                    return this.DataStoreStudy.PatientsBirthDateRaw;
                 else
                     return "";
             }
@@ -113,8 +113,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreStudy.StudyDate != null)
-                    return this.DataStoreStudy.StudyDate;
+				if (this.DataStoreStudy.StudyDateRaw != null)
+                    return this.DataStoreStudy.StudyDateRaw;
                 else
                     return "";
             }
@@ -125,8 +125,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreStudy.StudyTime != null)
-                    return this.DataStoreStudy.StudyTime;
+                if (this.DataStoreStudy.StudyTimeRaw != null)
+                    return this.DataStoreStudy.StudyTimeRaw;
                 else
 					return "";
             }

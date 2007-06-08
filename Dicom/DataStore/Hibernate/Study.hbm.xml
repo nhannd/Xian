@@ -7,8 +7,9 @@
     </id>
     <property name="ProcedureCodeSequenceCodingSchemeDesignator" column="ProcedureCodeSequenceCodingSchemeDesignator_" type="string" length="16" />
     <property name="StudyId" column="StudyId_" type="string" length="16" />
-    <property name="StudyTime" column="StudyTime_" type="string" length="16" />
-    <property name="StudyDate" column="StudyDate_" type="string" length="26" />
+    <property name="StudyTimeRaw" column="StudyTimeRaw_" type="string" length="16" />
+    <property name="StudyDate" column="StudyDate_" type="DateTime" />
+    <property name="StudyDateRaw" column="StudyDateRaw_" type="string" length="26" />
     <property name="AccessionNumber" column="AccessionNumber_" type="string" length="16" />
     <property name="StudyInstanceUid" column="StudyInstanceUid_" type="string" length="64" not-null="true" unique="true" />	
     <property name="StudyDescription" column="StudyDescription_" type="string" length="64" />
@@ -23,7 +24,7 @@
       <property name="InternalPatientId" column="PatientId_" type="string" length="64" />
     </component>
     <property name="PatientsSex" column="PatientsSex_" type="string" length="16" />
-    <property name="PatientsBirthDate" column="PatientsBirthDate_" type="string" length="16" />
+    <property name="PatientsBirthDateRaw" column="PatientsBirthDateRaw_" type="string" length="16" />
     <set name="InternalSeries" table="Series_" lazy="false" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
       <key column="StudyOid_" />
       <one-to-many class="Series" />

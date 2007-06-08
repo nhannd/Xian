@@ -19,13 +19,19 @@ namespace ClearCanvas.Dicom.DataStore
             set { _entryOid = value; }
         }
 
-        public virtual IList DictionaryEntries
+		public virtual string DictionaryName
+		{
+			get { return _dictionaryName; }
+			set { _dictionaryName = value; }
+		}
+
+		public virtual IList DictionaryEntries
         {
             get { return _dictionaryEntries; }
         }
 
         private IList _dictionaryEntries;
+		private string _dictionaryName;
         private Guid _entryOid;
-
     }
 }

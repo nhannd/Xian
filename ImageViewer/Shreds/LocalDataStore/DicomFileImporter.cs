@@ -522,7 +522,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					setImportInformation.StudyInstanceUid = setImportInformation.Study.StudyInstanceUid;
 					setImportInformation.SeriesInstanceUid = setImportInformation.Series.SeriesInstanceUid;
 					setImportInformation.SopInstanceUid = setImportInformation.SopInstance.SopInstanceUid;
-					setImportInformation.StudyDate = fileImportInformation.Study.StudyDate;
+					setImportInformation.StudyDate = fileImportInformation.Study.StudyDateRaw;
 					setImportInformation.PatientId = fileImportInformation.Study.PatientId;
 					setImportInformation.PatientsName = (fileImportInformation.Study.PatientsName == null) ? "" : fileImportInformation.Study.PatientsName.ToString();
 					setImportInformation.StudyDescription = fileImportInformation.Study.StudyDescription;
