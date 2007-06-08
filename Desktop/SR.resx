@@ -138,6 +138,9 @@
   <data name="ExceptionAssociateViewAttributeNotSpecified" xml:space="preserve">
     <value>An AssociateViewAttribute must be specified for the input Type in order to create the Associated View.</value>
   </data>
+  <data name="ExceptionCannotLoadExceptionDialogSetting" xml:space="preserve">
+    <value>Cannot load exception dialog settings - defaulting to detailed view</value>
+  </data>
   <data name="ExceptionCannotSetPaneAfterContainerStarted" xml:space="preserve">
     <value>Cannot set pane after container has been started.</value>
   </data>

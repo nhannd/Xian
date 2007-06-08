@@ -48,7 +48,19 @@ namespace ClearCanvas.Desktop
 
         public void ShowMessageBox(string message)
         {
-            if(ExceptionHandlerSettings.Default.ShowStackTraceInDialog)
+            bool showStackTraceInDialog = true;
+
+            try
+            {
+                showStackTraceInDialog = ExceptionHandlerSettings.Default.ShowStackTraceInDialog;
+            }
+            catch (Exception e)
+            {
+                Platform.Log(e);
+                ShowExceptionDialog(e, SR.ExceptionCannotLoadExceptionDialogSetting);
+            }
+
+            if(showStackTraceInDialog)
             {
                 ShowExceptionDialog(_exception, message);
             }

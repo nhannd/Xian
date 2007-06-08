@@ -124,6 +124,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot load exception dialog settings - defaulting to detailed view.
+        /// </summary>
+        public static string ExceptionCannotLoadExceptionDialogSetting {
+            get {
+                return ResourceManager.GetString("ExceptionCannotLoadExceptionDialogSetting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Cannot set pane after container has been started..
         /// </summary>
         public static string ExceptionCannotSetPaneAfterContainerStarted {
