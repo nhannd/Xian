@@ -206,9 +206,16 @@ namespace ClearCanvas.Desktop.Configuration
 
         public override void Start()
         {
-            foreach (SettingsGroupDescriptor group in _configStore.ListSettingsGroups())
+            try
             {
-                _settingsGroupTable.Items.Add(group);
+                foreach (SettingsGroupDescriptor group in _configStore.ListSettingsGroups())
+                {
+                    _settingsGroupTable.Items.Add(group);
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
 
             base.Start();
@@ -304,12 +311,19 @@ namespace ClearCanvas.Desktop.Configuration
 
             if (_selectedSettingsGroup != null)
             {
-                Dictionary<string, string> values = _configStore.LoadSettingsValues(
-                    _selectedSettingsGroup,
-                    null, null // load the default profile
-                    );    
+                try
+                {
+                    Dictionary<string, string> values = _configStore.LoadSettingsValues(
+                            _selectedSettingsGroup,
+                            null, null // load the default profile
+                            );
 
-                FillSettingsPropertiesTable(values);
+                    FillSettingsPropertiesTable(values);
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                }
             }
         }
 
@@ -337,15 +351,15 @@ namespace ClearCanvas.Desktop.Configuration
                         _selectedSettingsGroup,
 						null, null,    // save to the default profile
 						values);
-				}
+
+                    // refresh the table so that properties are no longer marked dirty
+                    FillSettingsPropertiesTable(values);
+                    UpdateActionEnablement();
+                }
 				catch (Exception e)
 				{
 					ExceptionHandler.Report(e, SR.MessageSaveSettingFailed, this.Host.DesktopWindow);
 				}
-
-                // refresh the table so that properties are no longer marked dirty
-                FillSettingsPropertiesTable(values);
-                UpdateActionEnablement();
             }
         }
 
