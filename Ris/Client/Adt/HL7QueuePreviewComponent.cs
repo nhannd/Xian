@@ -1,19 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-
-using Iesi.Collections;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
 using ClearCanvas.Ris.Client;
-using ClearCanvas.Ris.Application.Common.Admin;
 
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -37,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Adt
     /// <summary>
     /// Extension point for views onto <see cref="HL7QueuePreviewComponent"/>
     /// </summary>
-    [ExtensionPoint()]
+    [ExtensionPoint]
     public class HL7QueuePreviewComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
@@ -50,7 +46,7 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         class HL7QueueToolContext : ToolContext, IHL7QueueToolContext
         {
-            private HL7QueuePreviewComponent _component;
+            private readonly HL7QueuePreviewComponent _component;
 
             public HL7QueueToolContext(HL7QueuePreviewComponent component)
             {
@@ -143,33 +139,40 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void InitialiseFormData()
         {
-            Platform.GetService<IHL7QueueService>(
-                delegate(IHL7QueueService service)
-                {
-                    GetHL7QueueFormDataRequest formRequest = new GetHL7QueueFormDataRequest();
-                    GetHL7QueueFormDataResponse formResponse = service.GetHL7QueueFormData(formRequest);
-
-                    if (formResponse != null)
+            try
+            {
+                Platform.GetService<IHL7QueueService>(
+                    delegate(IHL7QueueService service)
                     {
-                        _directionChoices = formResponse.DirectionChoices;
-                        _peerChoices = formResponse.PeerChoices;
-                        _statusChoices = formResponse.StatusCodeChoices;
-                        _typeChoices = formResponse.MessageTypeChoices;
+                        GetHL7QueueFormDataRequest formRequest = new GetHL7QueueFormDataRequest();
+                        GetHL7QueueFormDataResponse formResponse = service.GetHL7QueueFormData(formRequest);
 
-                        _direction = _directionChoices[0];
-                        _peer = _peerChoices[0];
-                        _status = _statusChoices[0];
-                        _type = _typeChoices[0];
-                    }
-                    else
-                    {
-                        _directionChoices = new List<EnumValueInfo>();
-                        _peerChoices = new List<EnumValueInfo>();
-                        _statusChoices = new List<EnumValueInfo>();
-                        _typeChoices = new List<string>();
-                    }
+                        if (formResponse != null)
+                        {
+                            _directionChoices = formResponse.DirectionChoices;
+                            _peerChoices = formResponse.PeerChoices;
+                            _statusChoices = formResponse.StatusCodeChoices;
+                            _typeChoices = formResponse.MessageTypeChoices;
 
-                });
+                            _direction = _directionChoices[0];
+                            _peer = _peerChoices[0];
+                            _status = _statusChoices[0];
+                            _type = _typeChoices[0];
+                        }
+                        else
+                        {
+                            _directionChoices = new List<EnumValueInfo>();
+                            _peerChoices = new List<EnumValueInfo>();
+                            _statusChoices = new List<EnumValueInfo>();
+                            _typeChoices = new List<string>();
+                        }
+
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, Host.DesktopWindow);
+            }
         }
 
         private void InitialisePaging()
@@ -177,19 +180,30 @@ namespace ClearCanvas.Ris.Client.Adt
             _pagingController = new PagingController<HL7QueueItemSummary>(
                 delegate(int firstRow, int maxRows)
                 {
-                    ListHL7QueueItemsResponse listResponse = null;
+                    IList<HL7QueueItemSummary> hl7QueueItems = null;
 
-                    Platform.GetService<IHL7QueueService>(
-                        delegate(IHL7QueueService service)
-                        {
-                            ListHL7QueueItemsRequest listRequest = _listRequest;
-                            listRequest.PageRequest.FirstRow = firstRow;
-                            listRequest.PageRequest.MaxRows = maxRows;
+                    try
+                    {
+                        ListHL7QueueItemsResponse listResponse = null;
 
-                            listResponse = service.ListHL7QueueItems(listRequest);
-                        });
+                        Platform.GetService<IHL7QueueService>(
+                            delegate(IHL7QueueService service)
+                            {
+                                ListHL7QueueItemsRequest listRequest = _listRequest;
+                                listRequest.PageRequest.FirstRow = firstRow;
+                                listRequest.PageRequest.MaxRows = maxRows;
 
-                    return listResponse.QueueItems;
+                                listResponse = service.ListHL7QueueItems(listRequest);
+                            });
+
+                        hl7QueueItems = listResponse.QueueItems;
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, Host.DesktopWindow);
+                    }
+
+                    return hl7QueueItems;
                 }
             );
             _pagingActionHandler = new PagingActionModel<HL7QueueItemSummary>(_pagingController, _queue);

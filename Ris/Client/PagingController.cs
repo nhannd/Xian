@@ -1,8 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -14,7 +10,7 @@ namespace ClearCanvas.Ris.Client
         private int _pageSize;
         private int _currentPageNumber;
         private bool _hasNext;
-        private PageSearchDelegate<T> _searchDelegate;
+        private readonly PageSearchDelegate<T> _searchDelegate;
         public event QueryEventHandler OnInitialQueryEvent;
 
         public PagingController(int pageSize, PageSearchDelegate<T> searchDelegate)
@@ -74,7 +70,7 @@ namespace ClearCanvas.Ris.Client
         private IList<T> DoQuery(int firstRow)
         {
             IList<T> results;
-            results = _searchDelegate(firstRow, _pageSize + 1);
+            results = _searchDelegate(firstRow, _pageSize + 1) ?? new List<T>();
 
             if (results.Count == _pageSize + 1)
             {
@@ -113,7 +109,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        private int FirstPage()
+        private static int FirstPage()
         {
             return 0;
         }

@@ -96,19 +96,30 @@ namespace ClearCanvas.Ris.Client.Admin
             _pagingController = new PagingController<AuthorityGroupSummary>(
                 delegate(int firstRow, int maxRows)
                 {
-                    ListAuthorityGroupsResponse listResponse = null;
+                    List<AuthorityGroupSummary> authorityGroups = null;
 
-                    Platform.GetService<IAuthenticationAdminService>(
-                        delegate(IAuthenticationAdminService service)
-                        {
-                            ListAuthorityGroupsRequest listRequest = _listRequest;
-                            listRequest.PageRequest.FirstRow = firstRow;
-                            listRequest.PageRequest.MaxRows = maxRows;
+                    try
+                    {
+                        ListAuthorityGroupsResponse listResponse = null;
 
-                            listResponse = service.ListAuthorityGroups(listRequest);
-                        });
+                        Platform.GetService<IAuthenticationAdminService>(
+                            delegate(IAuthenticationAdminService service)
+                            {
+                                ListAuthorityGroupsRequest listRequest = _listRequest;
+                                listRequest.PageRequest.FirstRow = firstRow;
+                                listRequest.PageRequest.MaxRows = maxRows;
 
-                    return listResponse.AuthorityGroups;
+                                listResponse = service.ListAuthorityGroups(listRequest);
+                            });
+
+                        authorityGroups = listResponse.AuthorityGroups;
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, Host.DesktopWindow);
+                    }
+
+                    return authorityGroups;
                 }
             );
 

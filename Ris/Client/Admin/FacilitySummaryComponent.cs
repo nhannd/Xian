@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -8,11 +7,8 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 
-using ClearCanvas.Enterprise;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
-using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -96,10 +92,12 @@ namespace ClearCanvas.Ris.Client.Admin
             _pagingController = new PagingController<FacilitySummary>(
                 delegate(int firstRow, int maxRows)
                 {
-                    ListAllFacilitiesResponse listResponse = null;
+                    IList<FacilitySummary> facilities = null;
 
                     try
                     {
+                        ListAllFacilitiesResponse listResponse = null;
+
                         Platform.GetService<IFacilityAdminService>(
                             delegate(IFacilityAdminService service)
                             {
@@ -109,13 +107,15 @@ namespace ClearCanvas.Ris.Client.Admin
 
                                 listResponse = service.ListAllFacilities(listRequest);
                             });
+
+                        facilities = listResponse.Facilities;
                     }
                     catch (Exception e)
                     {
                         ExceptionHandler.Report(e, this.Host.DesktopWindow);
                     }
 
-                    return listResponse.Facilities;
+                    return facilities;
                 }
             );
 

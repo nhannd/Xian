@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -8,11 +7,8 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 
-using ClearCanvas.Enterprise;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin.NoteCategoryAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -96,10 +92,12 @@ namespace ClearCanvas.Ris.Client.Admin
             _pagingController = new PagingController<NoteCategorySummary>(
                 delegate(int firstRow, int maxRows)
                 {
-                    ListAllNoteCategoriesResponse listResponse = null;
+                    IList<NoteCategorySummary> noteCategories = null;
 
                     try
                     {
+                        ListAllNoteCategoriesResponse listResponse = null;
+
                         Platform.GetService<INoteCategoryAdminService>(
                             delegate(INoteCategoryAdminService service)
                             {
@@ -109,13 +107,15 @@ namespace ClearCanvas.Ris.Client.Admin
 
                                 listResponse = service.ListAllNoteCategories(listRequest);
                             });
+
+                        noteCategories = listResponse.NoteCategories;
                     }
                     catch (Exception e)
                     {
                         ExceptionHandler.Report(e, this.Host.DesktopWindow);
                     }
 
-                    return listResponse.NoteCategories;
+                    return noteCategories;
                 }
             );
 

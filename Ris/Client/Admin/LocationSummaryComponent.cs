@@ -96,10 +96,12 @@ namespace ClearCanvas.Ris.Client.Admin
             _pagingController = new PagingController<LocationSummary>(
                 delegate(int firstRow, int maxRows)
                 {
-                    ListAllLocationsResponse listResponse = null;
+                    IList<LocationSummary> locations = null;
 
                     try
                     {
+                        ListAllLocationsResponse listResponse = null;
+
                         Platform.GetService<ILocationAdminService>(
                             delegate(ILocationAdminService service)
                             {
@@ -109,13 +111,15 @@ namespace ClearCanvas.Ris.Client.Admin
 
                                 listResponse = service.ListAllLocations(listRequest);
                             });
+
+                        locations = listResponse.Locations;
                     }
                     catch (Exception e)
                     {
                         ExceptionHandler.Report(e, this.Host.DesktopWindow);
                     }
 
-                    return listResponse.Locations;
+                    return locations;
                 }
             );
 

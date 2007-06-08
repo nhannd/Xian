@@ -96,10 +96,12 @@ namespace ClearCanvas.Ris.Client.Admin
             _pagingController = new PagingController<UserSummary>(
                 delegate(int firstRow, int maxRows)
                 {
-                    ListUsersResponse listResponse = null;
+                    IList<UserSummary> users = null;
 
                     try
                     {
+                        ListUsersResponse listResponse = null;
+
                         Platform.GetService<IAuthenticationAdminService>(
                             delegate(IAuthenticationAdminService service)
                             {
@@ -110,13 +112,14 @@ namespace ClearCanvas.Ris.Client.Admin
                                 listResponse = service.ListUsers(listRequest);
                             });
 
+                        users = listResponse.Users;
                     }
                     catch (Exception e)
                     {
                         ExceptionHandler.Report(e, this.Host.DesktopWindow);
                     }
-
-                    return listResponse.Users;
+                        
+                    return users;
                 }
             );
 
