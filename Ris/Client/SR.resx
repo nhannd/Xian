@@ -273,6 +273,9 @@
   <data name="FormatNoteCategory" xml:space="preserve">
     <value>{0} - Severity {1}</value>
   </data>
+  <data name="MessageAccessDenied" xml:space="preserve">
+    <value>You do not have the authority to complete this request.</value>
+  </data>
   <data name="MessageCommunicationError" xml:space="preserve">
     <value>A communication error occured while attempting to contact the server.  See log for details.</value>
   </data>

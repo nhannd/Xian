@@ -529,6 +529,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You do not have the authority to complete this request..
+        /// </summary>
+        internal static string MessageAccessDenied {
+            get {
+                return ResourceManager.GetString("MessageAccessDenied", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A communication error occured while attempting to contact the server.  See log for details..
         /// </summary>
         internal static string MessageCommunicationError {

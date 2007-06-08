@@ -18,7 +18,7 @@ namespace ClearCanvas.Desktop
             public void Handle(Exception e, IExceptionHandlingContext context)
             {
                 context.Log(e);
-                context.ShowMessageBox(e, ExceptionHandlingMessageBoxType.Detailed);
+                context.ShowMessageBox(e.Message, true);
             }
         }
 

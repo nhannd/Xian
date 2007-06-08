@@ -69,6 +69,12 @@
     <Compile Include="Actions\ValueObserverAttribute.cs" />
     <Compile Include="Actions\VisibleStateObserverAttribute.cs" />
     <Compile Include="BlockingOperation.cs" />
+    <Compile Include="ExceptionHandlerSettings.cs" />
+    <Compile Include="ExceptionHandlerSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ExceptionHandlerSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ExceptionHandlingContext.cs" />
     <Compile Include="ExceptionPolicyFactory.cs" />
     <Compile Include="IExceptionPolicy.cs" />
@@ -241,6 +247,10 @@
     <None Include="ApplicationComponents.cd" />
     <None Include="ClassDiagrams\UndoRedo.cd" />
     <None Include="Desktop.cd" />
+    <None Include="ExceptionHandlerSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ExceptionHandlerSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="FormatSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>

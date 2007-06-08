@@ -39,13 +39,13 @@ namespace ClearCanvas.Desktop
         ///<summary>
         ///</summary>
         ///<param name="e"></param>
-        ///<param name="userMessage"></param>
+        ///<param name="contextualMessage"></param>
         ///<param name="desktopWindow"></param>
         ///<param name="abortDelegate"></param>
-        public static void Report(Exception e, string userMessage, IDesktopWindow desktopWindow, AbortOperationDelegate abortDelegate)
+        public static void Report(Exception e, string contextualMessage, IDesktopWindow desktopWindow, AbortOperationDelegate abortDelegate)
         {
             ExceptionPolicyFactory.GetPolicy(e.GetType()).
-                Handle(e, new ExceptionHandlingContext(userMessage, desktopWindow, abortDelegate));
+                Handle(e, new ExceptionHandlingContext(e, contextualMessage, desktopWindow, abortDelegate));
         }
     }
 }

@@ -6,6 +6,7 @@ using System.ServiceModel;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common;
+using System.ServiceModel.Security;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -23,12 +24,8 @@ namespace ClearCanvas.Ris.Client
             // only log this if debugging
             context.Log(e, LogLevel.Debug);
 
-            string message =
-                string.IsNullOrEmpty(context.UserMessage) == false
-                    ? string.Format("{0}: {1}", context.UserMessage, e.Message)
-                    : e.Message;
-
-            context.ShowMessageBox(message);
+            // report to user
+            context.ShowMessageBox(e.Message, true);
         }
     }
 
@@ -46,12 +43,8 @@ namespace ClearCanvas.Ris.Client
             // only log this if debugging
             context.Log(e, LogLevel.Debug);
 
-            string message =
-                string.IsNullOrEmpty(context.UserMessage) == false
-                    ? string.Format("{0}: {1}", context.UserMessage, SR.MessageConcurrentModification)
-                    : SR.MessageConcurrentModification;
-
-            context.ShowMessageBox(message);
+            // report to user
+            context.ShowMessageBox(SR.MessageConcurrentModification, true);
 
             // this exception is not recoverable
             context.Abort();
@@ -67,8 +60,11 @@ namespace ClearCanvas.Ris.Client
     {
         public void Handle(Exception e, IExceptionHandlingContext context)
         {
+            // log this as an error
             context.Log(e, LogLevel.Error);
-            context.ShowMessageBox(SR.MessageTimeout);
+
+            // report to user
+            context.ShowMessageBox(SR.MessageTimeout, true);
         }
     }
 
@@ -82,9 +78,28 @@ namespace ClearCanvas.Ris.Client
         public void Handle(Exception e, IExceptionHandlingContext context)
         {
             context.Log(e, LogLevel.Error);
-            context.ShowMessageBox(SR.MessageCommunicationError);
+            context.ShowMessageBox(SR.MessageCommunicationError, true);
         }
     }
+
+    /// <summary>
+    /// Policy for Security Access exceptions
+    /// </summary>
+    [ExtensionOf(typeof(ExceptionPolicyExtensionPoint))]
+    [ExceptionPolicyFor(typeof(SecurityAccessDeniedException))]
+    public class SecurityAccessDeniedExceptionPolicy : IExceptionPolicy
+    {
+        public void Handle(Exception e, IExceptionHandlingContext context)
+        {
+            context.Log(e, LogLevel.Debug);
+            context.ShowMessageBox(SR.MessageAccessDenied, true);
+
+            // this exception is not recoverable
+            // (well, technically it is, but we don't want to encourage retries !!!)
+            context.Abort();
+        }
+    }
+
 
 
 }

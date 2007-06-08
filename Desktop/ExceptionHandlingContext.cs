@@ -5,13 +5,15 @@ namespace ClearCanvas.Desktop
 {
     internal class ExceptionHandlingContext : IExceptionHandlingContext
     {
+        private Exception _exception;
         private readonly IDesktopWindow _desktopWindow;
-        private readonly string _userMessage;
+        private readonly string _contextualMessage;
         private readonly AbortOperationDelegate _abortDelegate;
 
-        public ExceptionHandlingContext(string userMessage, IDesktopWindow desktopWindow, AbortOperationDelegate abortOperationDelegate)
+        public ExceptionHandlingContext(Exception e, string contextualMessage, IDesktopWindow desktopWindow, AbortOperationDelegate abortOperationDelegate)
         {
-            _userMessage = userMessage;
+            _exception = e;
+            _contextualMessage = contextualMessage;
             _desktopWindow = desktopWindow;
             _abortDelegate = abortOperationDelegate;
         }
@@ -21,9 +23,9 @@ namespace ClearCanvas.Desktop
             get { return _desktopWindow; }
         }
 
-        public string UserMessage
+        public string ContextualMessage
         {
-            get { return _userMessage; }
+            get { return _contextualMessage; }
         }
 
         public void Log(Exception e)
@@ -46,33 +48,32 @@ namespace ClearCanvas.Desktop
 
         public void ShowMessageBox(string message)
         {
-            ShowSimpleMessageBox(message);
-        }
-
-        public void ShowMessageBox(Exception e, ExceptionHandlingMessageBoxType type)
-        {
-            switch (type)
+            if(ExceptionHandlerSettings.Default.ShowStackTraceInDialog)
             {
-                case ExceptionHandlingMessageBoxType.Simple:
-                    ShowSimpleMessageBox(e.Message);
-                    break;
-                case ExceptionHandlingMessageBoxType.Detailed:
-                    ShowDetailedMessageBox(e);
-                    break;
+                ShowExceptionDialog(_exception, message);
+            }
+            else
+            {
+                _desktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);            
             }
         }
 
-        private void ShowDetailedMessageBox(Exception e)
+        public void ShowMessageBox(string detailMessage, bool prependContextualMessage)
+        {
+            string message =
+                string.IsNullOrEmpty(_contextualMessage) || prependContextualMessage == false
+                    ? detailMessage
+                    : string.Format("{0}: {1}", _contextualMessage, detailMessage);
+
+            ShowMessageBox(message);
+        }
+
+        private void ShowExceptionDialog(Exception e, string message)
         {
             ApplicationComponent.LaunchAsDialog(
                 _desktopWindow,
-                new ExceptionHandlerComponent(e, _userMessage),
+                new ExceptionHandlerComponent(e, message),
                 Application.ApplicationName);
-        }
-
-        private void ShowSimpleMessageBox(string message)
-        {
-            _desktopWindow.ShowMessageBox(message, MessageBoxActions.Ok);            
         }
     }
 }
