@@ -511,38 +511,11 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Unable to contact RIS server.
-        /// </summary>
-        internal static string ExceptionFailedToContactRisServer {
-            get {
-                return ResourceManager.GetString("ExceptionFailedToContactRisServer", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An error occured while attempting to save changes to this item.
         /// </summary>
         internal static string ExceptionFailedToSave {
             get {
                 return ResourceManager.GetString("ExceptionFailedToSave", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Invalid user name or password.
-        /// </summary>
-        internal static string ExceptionInvalidUserNamePassword {
-            get {
-                return ResourceManager.GetString("ExceptionInvalidUserNamePassword", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Timed-out while attempting to login.
-        /// </summary>
-        internal static string ExceptionLoginTimeout {
-            get {
-                return ResourceManager.GetString("ExceptionLoginTimeout", resourceCulture);
             }
         }
         
@@ -556,7 +529,16 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to This item was updated by another user.  Changes will be lost..
+        ///   Looks up a localized string similar to A communication error occured while attempting to contact the server.  See log for details..
+        /// </summary>
+        internal static string MessageCommunicationError {
+            get {
+                return ResourceManager.GetString("MessageCommunicationError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Your request cannot be processed because one or more items have been modified by another user..
         /// </summary>
         internal static string MessageConcurrentModification {
             get {
@@ -588,6 +570,33 @@ namespace ClearCanvas.Ris.Client {
         internal static string MessageDeleteSelectedPhoneNumber {
             get {
                 return ResourceManager.GetString("MessageDeleteSelectedPhoneNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid user name or password.
+        /// </summary>
+        internal static string MessageInvalidUserNamePassword {
+            get {
+                return ResourceManager.GetString("MessageInvalidUserNamePassword", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Timed-out while attempting to login.
+        /// </summary>
+        internal static string MessageLoginTimeout {
+            get {
+                return ResourceManager.GetString("MessageLoginTimeout", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The request timed out. See log for details..
+        /// </summary>
+        internal static string MessageTimeout {
+            get {
+                return ResourceManager.GetString("MessageTimeout", resourceCulture);
             }
         }
         

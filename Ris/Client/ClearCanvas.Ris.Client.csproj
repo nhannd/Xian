@@ -51,7 +51,6 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>AddressesSummaryComponentSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="ConcurrentModificationExceptionPolicy.cs" />
     <Compile Include="ContactPersonEditorComponentSettings.cs" />
     <Compile Include="ContactPersonEditorComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -64,6 +63,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>EmailAddressEditorComponentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="ExceptionPolicies.cs" />
     <Compile Include="Formatting\AddressFormat.cs" />
     <Compile Include="AddressEditorComponentSettings.cs" />
     <Compile Include="AddressEditorComponentSettings.Designer.cs">
@@ -103,7 +103,6 @@
     <Compile Include="PagingController.cs" />
     <Compile Include="Formatting\PersonNameFormat.cs" />
     <Compile Include="RemoteServiceProvider.cs" />
-    <Compile Include="RequestValidationExceptionPolicy.cs" />
     <Compile Include="SessionManager.cs" />
     <Compile Include="Formatting\TelephoneFormat.cs" />
     <Compile Include="StaffDetailsEditorComponent.cs" />

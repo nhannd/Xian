@@ -40,15 +40,15 @@ namespace ClearCanvas.Ris.Client
                         }
                         catch (CommunicationException)
                         {
-                            Platform.ShowMessageBox(SR.ExceptionFailedToContactRisServer);
+                            Platform.ShowMessageBox(SR.MessageCommunicationError);
                         }
                         catch (TimeoutException)
                         {
-                            Platform.ShowMessageBox(SR.ExceptionLoginTimeout);
+                            Platform.ShowMessageBox(SR.MessageLoginTimeout);
                         }
                         catch (Exception)
                         {
-                            Platform.ShowMessageBox(SR.ExceptionInvalidUserNamePassword);
+                            Platform.ShowMessageBox(SR.MessageInvalidUserNamePassword);
                         }
                     }
                     else
