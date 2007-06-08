@@ -278,17 +278,19 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	public class ImportProgressItem : FileOperationProgressItem
 	{
 		private string _description;
+
 		private int _totalFilesToImport;
-		private int _numberOfFailedImports;
+
+		private int _numberOfParseFailures;
+		private int _numberOfImportFailures;
+		private int _numberOfDataStoreCommitFailures;
+
+		private int _numberOfFilesParsed;
 		private int _numberOfFilesImported;
 		private int _numberOfFilesCommittedToDataStore;
 
 		public ImportProgressItem()
 		{
-			_totalFilesToImport = 0;
-			_numberOfFailedImports = 0;
-			_numberOfFilesImported = 0;
-			_numberOfFilesCommittedToDataStore = 0;
 		}
 
 		[DataMember(IsRequired = true)]
@@ -306,6 +308,13 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		}
 
 		[DataMember(IsRequired = true)]
+		public int NumberOfFilesParsed
+		{
+			get { return _numberOfFilesParsed; }
+			set { _numberOfFilesParsed = value; }
+		}
+
+		[DataMember(IsRequired = true)]
 		public int NumberOfFilesImported
 		{
 			get { return _numberOfFilesImported; }
@@ -320,27 +329,67 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		}
 
 		[DataMember(IsRequired = true)]
-		public int NumberOfFailedImports
+		public int NumberOfParseFailures
 		{
-			get { return _numberOfFailedImports; }
-			set { _numberOfFailedImports = value; }
+			get { return _numberOfParseFailures; }
+			set { _numberOfParseFailures = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public int NumberOfImportFailures
+		{
+			get { return _numberOfImportFailures; }
+			set { _numberOfImportFailures = value; }
+		}
+
+		[DataMember(IsRequired = true)]
+		public int NumberOfDataStoreCommitFailures
+		{
+			get { return _numberOfDataStoreCommitFailures; }
+			set { _numberOfDataStoreCommitFailures = value; }
+		}
+
+		public int TotalImportFailures
+		{
+			get { return this.NumberOfImportFailures + this.NumberOfParseFailures; }
+		}
+
+		public int TotalDataStoreCommitFailures
+		{
+			get { return this.TotalImportFailures + this.NumberOfDataStoreCommitFailures; }
+		}
+
+		public int TotalImportsProcessed
+		{
+			get { return this.NumberOfFilesImported + this.TotalImportFailures; }
+		}
+
+		public int TotalDataStoreCommitsProcessed
+		{
+			get { return this.NumberOfFilesCommittedToDataStore + this.TotalDataStoreCommitFailures; }
 		}
 
 		public bool IsImportComplete()
 		{
-			return TotalFilesToImport == (this.NumberOfFilesImported + this.NumberOfFailedImports);
+			return TotalFilesToImport == this.TotalImportsProcessed;
 		}
 
 		public bool IsComplete()
 		{
-			return TotalFilesToImport == (this.NumberOfFilesCommittedToDataStore + this.NumberOfFailedImports);
+			return TotalFilesToImport == this.TotalDataStoreCommitsProcessed;
 		}
 
 		public void CopyTo(ImportProgressItem progressItem)
 		{
 			progressItem.Description = this.Description;
+
 			progressItem.TotalFilesToImport = this.TotalFilesToImport;
-			progressItem.NumberOfFailedImports = this.NumberOfFailedImports;
+
+			progressItem.NumberOfParseFailures = this.NumberOfParseFailures;
+			progressItem.NumberOfImportFailures = this.NumberOfImportFailures;
+			progressItem.NumberOfDataStoreCommitFailures = this.NumberOfDataStoreCommitFailures;
+
+			progressItem.NumberOfFilesParsed = this.NumberOfFilesParsed;
 			progressItem.NumberOfFilesImported = this.NumberOfFilesImported;
 			progressItem.NumberOfFilesCommittedToDataStore = this.NumberOfFilesCommittedToDataStore;
 
@@ -350,8 +399,14 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		public void CopyFrom(ImportProgressItem progressItem)
 		{
 			this.Description = progressItem.Description;
+
 			this.TotalFilesToImport = progressItem.TotalFilesToImport;
-			this.NumberOfFailedImports = progressItem.NumberOfFailedImports;
+
+			this.NumberOfParseFailures = progressItem.NumberOfParseFailures;
+			this.NumberOfImportFailures = progressItem.NumberOfImportFailures;
+			this.NumberOfDataStoreCommitFailures = progressItem.NumberOfDataStoreCommitFailures;
+
+			this.NumberOfFilesParsed = progressItem.NumberOfFilesParsed;
 			this.NumberOfFilesImported = progressItem.NumberOfFilesImported;
 			this.NumberOfFilesCommittedToDataStore = progressItem.NumberOfFilesCommittedToDataStore;
 
@@ -755,7 +810,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			base.CopyTo(other);
 		}
 
-		public DeletedInstanceInformation Clone()
+		public new DeletedInstanceInformation Clone()
 		{
 			DeletedInstanceInformation clone = new DeletedInstanceInformation();
 			CopyTo(clone);

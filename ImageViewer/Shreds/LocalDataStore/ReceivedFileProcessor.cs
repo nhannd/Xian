@@ -134,10 +134,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						progressItem.LastActive = progressItem.StartTime;
 
 						progressItem.FromAETitle = fromAETitle;
-						progressItem.NumberOfFilesReceived = 0;
-						progressItem.NumberOfFilesImported = 0;
-						progressItem.TotalFilesToImport = 0; //not applicable for receives, since we really don't know how many we will get.
-						progressItem.NumberOfFailedImports = 0;
 						progressItem.StudyInformation = studyInformation;
 
 						_receiveProgressItems.Add(progressItem);
@@ -150,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			private void FormatErrorMessage(InternalReceiveProgressItem progressItem, Exception error)
 			{
 				string message = progressItem.TerminalErrorMessage != null ? progressItem.TerminalErrorMessage : error.Message;
-				int errors = progressItem.NumberOfFailedImports;
+				int errors = progressItem.TotalDataStoreCommitFailures;
 				if (progressItem.TerminalErrorMessage != null)
 					++errors;
 
@@ -173,11 +169,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 
 				bool exists;
-				bool updateProgress = false;
-
 				InternalReceiveProgressItem progressItem = GetReceiveProgressItem(receivedFileImportInformation, out exists);
-				if (!exists)
-					updateProgress = true;
 
 				lock (progressItem)
 				{
@@ -188,69 +180,60 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					progressItem.LastActive = Platform.Time;
 
-					if (receivedFileImportInformation.CompletedStage == DicomFileImporter.ImportStage.FileParsed)
+					if (receivedFileImportInformation.Failed)
 					{
-						if (results.Failed)
+						//When a failure is reported, it is because the 'next' stage failed, hence the stage 
+						//that was attempted did not get completed.  This is why the logic below is the way it is.
+						switch (results.CompletedStage)
 						{
-							++progressItem.NumberOfFailedImports;
-							this.FormatErrorMessage(progressItem, results.Error);
-							Platform.Log(results.Error);
+							case DicomFileImporter.ImportStage.FileParsed:
+								++progressItem.NumberOfImportFailures;
+								break;
+							case DicomFileImporter.ImportStage.FileMoved:
+								++progressItem.NumberOfDataStoreCommitFailures;
+								break;
 						}
-						else
+
+						this.FormatErrorMessage(progressItem, results.Error);
+						Platform.Log(results.Error);
+					}
+					else if (receivedFileImportInformation.CompletedStage == DicomFileImporter.ImportStage.FileParsed)
+					{
+						++progressItem.NumberOfFilesParsed;
+						++progressItem.NumberOfFilesReceived;
+					}
+					else if (receivedFileImportInformation.CompletedStage == DicomFileImporter.ImportStage.FileMoved)
+					{
+						if (!exists)
 						{
+							++progressItem.NumberOfFilesParsed;
+							++progressItem.NumberOfFilesReceived;
+						}
+
+						++progressItem.NumberOfFilesImported;
+					}
+					else
+					{
+						if (!exists)
+						{
+							++progressItem.NumberOfFilesParsed;
 							++progressItem.NumberOfFilesReceived;
 							++progressItem.NumberOfFilesImported;
 						}
 
-						updateProgress = true;
-					}
-					else if (receivedFileImportInformation.CompletedStage == DicomFileImporter.ImportStage.FileMoved)
-					{
-						if (results.Failed)
-						{
-							++progressItem.NumberOfFailedImports;
-							this.FormatErrorMessage(progressItem, results.Error);
-							Platform.Log(results.Error);
-							updateProgress = true;
-						}
-						else
-						{
-							//nothing to do.
-						}
-					}
-					else
-					{
-						if (results.Failed)
-						{
-							++progressItem.NumberOfFailedImports;
-							this.FormatErrorMessage(progressItem, results.Error);
-							Platform.Log(results.Error);
-						}
-						else
-						{
-							if (!exists)
-							{
-								++progressItem.NumberOfFilesReceived;
-								++progressItem.NumberOfFilesImported;
-							}
+						++progressItem.NumberOfFilesCommittedToDataStore;
 
-							++progressItem.NumberOfFilesCommittedToDataStore;
-
-							importedSopInformation = new ImportedSopInstanceInformation();
-							importedSopInformation.StudyInstanceUid = receivedFileImportInformation.StudyInstanceUid;
-							importedSopInformation.SeriesInstanceUid = receivedFileImportInformation.SeriesInstanceUid;
-							importedSopInformation.SopInstanceUid = receivedFileImportInformation.SopInstanceUid;
-							importedSopInformation.SopInstanceFileName = receivedFileImportInformation.StoredFile;
-						}
-
-						updateProgress = true;
+						importedSopInformation = new ImportedSopInstanceInformation();
+						importedSopInformation.StudyInstanceUid = receivedFileImportInformation.StudyInstanceUid;
+						importedSopInformation.SeriesInstanceUid = receivedFileImportInformation.SeriesInstanceUid;
+						importedSopInformation.SopInstanceUid = receivedFileImportInformation.SopInstanceUid;
+						importedSopInformation.SopInstanceFileName = receivedFileImportInformation.StoredFile;
 					}
 
 					if (importedSopInformation != null)
 						LocalDataStoreActivityPublisher.Instance.SopInstanceImported(importedSopInformation);
 
-					if (updateProgress)
-						LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(progressItem.Clone());
+					LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(progressItem.Clone());
 				}
 			}
 

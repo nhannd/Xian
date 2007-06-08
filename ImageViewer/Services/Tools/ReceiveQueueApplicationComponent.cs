@@ -293,7 +293,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			column = new TableColumn<ReceiveQueueItem, int>(
 					SR.TitleFailed,
-					delegate(ReceiveQueueItem item) { return item.NumberOfFailedImports; },
+					delegate(ReceiveQueueItem item) { return item.TotalDataStoreCommitFailures; },
 					0.5f);
 
 			_receiveTable.Columns.Add(column);

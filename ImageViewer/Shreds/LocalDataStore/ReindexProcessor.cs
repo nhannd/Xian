@@ -50,10 +50,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						_activeJobInformation.ProgressItem.LastActive = _activeJobInformation.ProgressItem.StartTime;
 						_activeJobInformation.ProgressItem.Cancelled = false;
 						_activeJobInformation.ProgressItem.Removed = false;
-						_activeJobInformation.ProgressItem.NumberOfFailedImports = 0;
-						_activeJobInformation.ProgressItem.NumberOfFilesImported = 0;
-						_activeJobInformation.ProgressItem.TotalFilesToImport = 0;
-						_activeJobInformation.ProgressItem.NumberOfFilesCommittedToDataStore = 0;
 						
 						if (!inactive)
 							_activeJobInformation.ProgressItem.StatusMessage = SR.MessagePending;

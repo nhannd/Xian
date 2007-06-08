@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			_reindexProgressControl.DataBindings.Add("TotalToProcess", bindingSource, "TotalToProcess", true, DataSourceUpdateMode.OnPropertyChanged);
 			_reindexProgressControl.DataBindings.Add("TotalProcessed", bindingSource, "TotalProcessed", true, DataSourceUpdateMode.OnPropertyChanged);
 			_reindexProgressControl.DataBindings.Add("AvailableCount", bindingSource, "AvailableCount", true, DataSourceUpdateMode.OnPropertyChanged);
-			_reindexProgressControl.DataBindings.Add("FailedSteps", bindingSource, "BadFiles", true, DataSourceUpdateMode.OnPropertyChanged);
+			_reindexProgressControl.DataBindings.Add("FailedSteps", bindingSource, "FailedSteps", true, DataSourceUpdateMode.OnPropertyChanged);
 			_reindexProgressControl.DataBindings.Add("CancelEnabled", bindingSource, "CancelEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
 			_reindexProgressControl.CancelButtonClicked += delegate(object sender, EventArgs args) { _component.Cancel(); };

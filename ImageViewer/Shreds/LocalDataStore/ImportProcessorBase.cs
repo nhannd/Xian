@@ -156,11 +156,23 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					jobInformation.ProgressItem.LastActive = Platform.Time;
 
-					bool updateProgress = false;
-
 					if (results.Failed)
 					{
-						++jobInformation.ProgressItem.NumberOfFailedImports;
+						//When a failure is reported, it is because the 'next' stage failed, hence the stage 
+						//that was attempted did not get completed.  This is why the logic below is the way it is.
+						switch (results.CompletedStage)
+						{ 
+							case DicomFileImporter.ImportStage.NotStarted:
+								++jobInformation.ProgressItem.NumberOfParseFailures;
+								break;
+							case DicomFileImporter.ImportStage.FileParsed:
+								++jobInformation.ProgressItem.NumberOfImportFailures;
+								break;
+							case DicomFileImporter.ImportStage.FileMoved:
+								++jobInformation.ProgressItem.NumberOfDataStoreCommitFailures;
+								break;
+						}
+
 						Platform.Log(results.Error);
 
 						if (jobInformation.ProgressItem.IsImportComplete())
@@ -175,9 +187,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
 						}
 
-						updateProgress = true;
-
 						AddNextFileToImportQueue(jobInformation);
+					}
+					else if (results.CompletedStage == DicomFileImporter.ImportStage.FileParsed)
+					{
+						++jobInformation.ProgressItem.NumberOfFilesParsed;
 					}
 					else if (results.CompletedStage == DicomFileImporter.ImportStage.FileMoved)
 					{
@@ -188,8 +202,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							jobInformation.ProgressItem.StatusMessage = SR.MessageWaitingForFilesToBecomeAvailable;
 							jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
 						}
-
-						updateProgress = true;
 
 						AddNextFileToImportQueue(jobInformation);
 					}
@@ -203,8 +215,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							jobInformation.ProgressItem.StatusMessage = SR.MessageComplete;
 						}
 
-						updateProgress = true;
-
 						importedSopInformation = new ImportedSopInstanceInformation();
 						importedSopInformation.StudyInstanceUid = results.StudyInstanceUid;
 						importedSopInformation.SeriesInstanceUid = results.SeriesInstanceUid;
@@ -215,8 +225,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					if (importedSopInformation != null)
 						LocalDataStoreActivityPublisher.Instance.SopInstanceImported(importedSopInformation);
 
-					if (updateProgress)
-						UpdateProgress(jobInformation.ProgressItem);
+					UpdateProgress(jobInformation.ProgressItem);
 				}
 			}
 

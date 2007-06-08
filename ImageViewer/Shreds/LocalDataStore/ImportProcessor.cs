@@ -216,12 +216,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				progressItem.AllowedCancellationOperations = CancellationFlags.Cancel;
 				progressItem.StartTime = Platform.Time;
 				progressItem.LastActive = progressItem.StartTime;
-
-				progressItem.NumberOfFailedImports = 0;
-				progressItem.NumberOfFilesImported = 0;
-				progressItem.TotalFilesToImport = 0;
-				progressItem.NumberOfFilesCommittedToDataStore = 0;
-
 				progressItem.StatusMessage = SR.MessagePending;
 
 				FileImportJobInformation jobInformation = new FileImportJobInformation(progressItem, request.FileImportBehaviour, request.BadFileBehaviour);

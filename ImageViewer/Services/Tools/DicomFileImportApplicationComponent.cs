@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private string _selectedStatusMessage;
 		private int _selectedTotalProcessed;
 		private int _selectedTotalToProcess;
-		private int _selectedBadFiles;
+		private int _selectedFailedSteps;
 		private int _selectedAvailableCount;
 		private bool _selectedCancelEnabled;
 		private bool _selectedClearEnabled;
@@ -214,7 +214,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			this.SelectedTotalProcessed = 0;
 			this.SelectedAvailableCount = 0;
 			this.SelectedTotalToProcess = 0;
-			this.SelectedBadFiles = 0;
+			this.SelectedFailedSteps = 0;
 			this.SelectedCancelEnabled = false;
 			this.SelectedStatusMessage = "";
 		}
@@ -230,8 +230,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			{
 				this.SelectedTotalToProcess = _selectedProgressItem.TotalFilesToImport;
 				this.SelectedAvailableCount = _selectedProgressItem.NumberOfFilesCommittedToDataStore;
-				this.SelectedBadFiles = _selectedProgressItem.NumberOfFailedImports;
-				this.SelectedTotalProcessed = _selectedProgressItem.NumberOfFailedImports + _selectedProgressItem.NumberOfFilesImported;
+				this.SelectedFailedSteps = _selectedProgressItem.TotalDataStoreCommitFailures;
+				this.SelectedTotalProcessed = _selectedProgressItem.TotalImportsProcessed;
 				this.SelectedStatusMessage = _selectedProgressItem.StatusMessage;
 				this.SelectedCancelEnabled = (_selectedProgressItem.AllowedCancellationOperations & CancellationFlags.Cancel) == CancellationFlags.Cancel;
 				this.SelectedClearEnabled = (_selectedProgressItem.AllowedCancellationOperations & CancellationFlags.Clear) == CancellationFlags.Clear;
@@ -391,19 +391,19 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 		}
 
-		public int SelectedBadFiles
+		public int SelectedFailedSteps
 		{
 			get
 			{
-				return _selectedBadFiles;
+				return _selectedFailedSteps;
 			}
 			protected set
 			{
-				if (value == _selectedBadFiles)
+				if (value == _selectedFailedSteps)
 					return;
 
-				_selectedBadFiles = value;
-				this.NotifyPropertyChanged("SelectedBadFiles");
+				_selectedFailedSteps = value;
+				this.NotifyPropertyChanged("SelectedFailedSteps");
 			}
 		}
 

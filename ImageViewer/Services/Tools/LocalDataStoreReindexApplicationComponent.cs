@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		private string _statusMessage;
 		private int _totalProcessed;
 		private int _totalToProcess;
-		private int _badFiles;
+		private int _failedSteps;
 		private int _availableCount;
 		private bool _cancelEnabled;
 
@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			this.TotalProcessed = 0;
 			this.TotalToProcess = 0;
 			this.AvailableCount = 0;
-			this.BadFiles = 0;
+			this.FailedSteps = 0;
 			this.CancelEnabled = false;
 		}
 
@@ -55,10 +55,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			_reindexProgress.CopyFrom(e.Item);
 
 			this.StatusMessage = _reindexProgress.StatusMessage;
-			this.TotalProcessed = _reindexProgress.NumberOfFailedImports + _reindexProgress.NumberOfFilesImported;
+			this.TotalProcessed = _reindexProgress.TotalImportsProcessed;
 			this.TotalToProcess = _reindexProgress.TotalFilesToImport;
 			this.AvailableCount = _reindexProgress.NumberOfFilesCommittedToDataStore;
-			this.BadFiles = _reindexProgress.NumberOfFailedImports;
+			this.FailedSteps = _reindexProgress.TotalDataStoreCommitFailures;
 			this.CancelEnabled = (_reindexProgress.AllowedCancellationOperations & CancellationFlags.Cancel) == CancellationFlags.Cancel;
 		}
 
@@ -147,19 +147,19 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 		}
 
-		public int BadFiles
+		public int FailedSteps
 		{
 			get
 			{
-				return _badFiles;
+				return _failedSteps;
 			}
 			protected set
 			{
-				if (value == _badFiles)
+				if (value == _failedSteps)
 					return;
 
-				_badFiles = value;
-				this.NotifyPropertyChanged("BadFiles");
+				_failedSteps = value;
+				this.NotifyPropertyChanged("FailedSteps");
 			}
 		}
 
