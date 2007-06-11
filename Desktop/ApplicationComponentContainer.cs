@@ -32,7 +32,9 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// The behaviour of this property depends on the <see cref="ValidationStrategy"/> property
+        /// The behaviour of this property depends on the <see cref="ValidationStrategy"/> property.
+        /// Invoking this property may cause any unstarted components in the container to be started,
+        /// which means that it may throw exceptions.
         /// </summary>
         public override bool HasValidationErrors
         {
@@ -43,7 +45,9 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// The behaviour of this property depends on the <see cref="ValidationStrategy"/> property
+        /// The behaviour of this property depends on the <see cref="ValidationStrategy"/> property.
+        /// Invoking this property may cause any unstarted components in the container to be started,
+        /// which means that it may throw exceptions.
         /// </summary>
         /// <param name="show"></param>
         public override void ShowValidation(bool show)

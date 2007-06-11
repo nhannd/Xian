@@ -29,6 +29,10 @@ namespace ClearCanvas.Desktop
         /// Executes the specified application component in a new workspace.  The exit callback will be invoked
         /// when the workspace is closed.
         /// </summary>
+        /// <remarks>
+        /// If the specified component throws an exception from it's <see cref="Start"/> method, that exception
+        /// will be propagate to the caller of this method and the component will not be launched.
+        /// </remarks>
         /// <param name="desktopWindow">The desktop window in which the workspace will run</param>
         /// <param name="component">The application component to launch</param>
         /// <param name="title">The title of the workspace</param>
@@ -52,6 +56,10 @@ namespace ClearCanvas.Desktop
         /// Executes the specified application component in a new shelf.  The exit callback will be invoked
         /// when the shelf is closed.
         /// </summary>
+        /// <remarks>
+        /// If the specified component throws an exception from it's <see cref="Start"/> method, that exception
+        /// will be propagate to the caller of this method and the component will not be launched.
+        /// </remarks>
         /// <param name="desktopWindow">The desktop window in which the shelf will run</param>
         /// <param name="component">The application component to launch</param>
         /// <param name="title">The title of the shelf</param>
@@ -74,6 +82,10 @@ namespace ClearCanvas.Desktop
         /// Executes the specified application component in a modal dialog box.  This call will block until
         /// the dialog box is closed.
         /// </summary>
+        /// <remarks>
+        /// If the specified component throws an exception from it's <see cref="Start"/> method, that exception
+        /// will be propagate to the caller of this method and the component will not be launched.
+        /// </remarks>
         /// <param name="desktopWindow">The desktop window in which the shelf will run</param>
         /// <param name="component">The application component to launch</param>
         /// <param name="title">The title of the shelf</param>
