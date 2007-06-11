@@ -126,10 +126,10 @@ namespace ClearCanvas.Dicom
         public static OFCondition FindAndGetRawStringFromItem(DcmItem dcmItem, DcmTagKey tagKey, out byte[] rawBytes)
         {
             int lengthRequiredOfArray = 0;
-            OffisDcm.findAndGetRawStringFromItemGetLength(dcmItem, Dcm.PatientsName, ref lengthRequiredOfArray, false);
+            OffisDcm.findAndGetRawStringFromItemGetLength(dcmItem, tagKey, ref lengthRequiredOfArray, false);
 
             rawBytes = new byte[lengthRequiredOfArray];
-            OFCondition cond = OffisDcm.findAndGetRawStringFromItem(dcmItem, Dcm.PatientsName, rawBytes, ref lengthRequiredOfArray, false);
+            OFCondition cond = OffisDcm.findAndGetRawStringFromItem(dcmItem, tagKey, rawBytes, ref lengthRequiredOfArray, false);
             return cond;
         }
 	}
