@@ -58,6 +58,7 @@ namespace ClearCanvas.Desktop
         {
 			Platform.CheckForNullReference(component, "component");
             _host = new Host(this, component, exitCallback);
+            _host.StartComponent();
         }
 
         /// <summary>
@@ -74,7 +75,6 @@ namespace ClearCanvas.Desktop
         {
 			Platform.CheckForNullReference(desktopWindow, "desktopWindow");
             base.Initialize(desktopWindow);
-            _host.StartComponent();
         }
 
         protected override void Dispose(bool disposing)

@@ -194,9 +194,20 @@ namespace ClearCanvas.Desktop
             if (index > -1 && index < _pages.Count)
             {
                 _current = index;
-                EnsureStarted(_pages[_current]);
 
-                EventsHelper.Fire(_currentPageChanged, this, new EventArgs());
+                try
+                {
+                    EnsureStarted(_pages[_current]);
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                }
+                finally
+                {
+                    // inform view that page has changed
+                    EventsHelper.Fire(_currentPageChanged, this, new EventArgs());
+                }
             }
         }
 
