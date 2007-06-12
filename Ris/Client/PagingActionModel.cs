@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
 
@@ -9,20 +10,24 @@ namespace ClearCanvas.Ris.Client
 {
     public class PagingActionModel<T> : SimpleActionModel
     {
-        IPagingController<T> _controller;
-        Table<T> _table;
+        private delegate IList<T> PageResultsDelegate();
 
-        public PagingActionModel(IPagingController<T> controller, Table<T> table)
+        private readonly IDesktopWindow _desktopWindow;
+        private readonly IPagingController<T> _controller;
+        private readonly Table<T> _table;
+
+        public PagingActionModel(IPagingController<T> controller, Table<T> table, IDesktopWindow desktopWindow)
             : base(new ResourceResolver(typeof(PagingActionModel<T>).Assembly))
         {
             _controller = controller;
             _table = table;
+            _desktopWindow = desktopWindow;
 
-			this.AddAction("Previous", SR.TitlePrevious, "Icons.PreviousPageToolSmall.png");
-            this.AddAction("Next", SR.TitleNext, "Icons.NextPageToolSmall.png");
+			AddAction("Previous", SR.TitlePrevious, "Icons.PreviousPageToolSmall.png");
+            AddAction("Next", SR.TitleNext, "Icons.NextPageToolSmall.png");
 
-            Next.SetClickHandler(delegate { PageChangeActionHandler(_controller.GetNext()); });
-            Previous.SetClickHandler(delegate { PageChangeActionHandler(_controller.GetPrev()); });
+            Next.SetClickHandler(OnNext);
+            Previous.SetClickHandler(OnPrevious);
 
             Next.Enabled = _controller.HasNext;
             Previous.Enabled = _controller.HasPrev;  // can't go back from first
@@ -30,11 +35,29 @@ namespace ClearCanvas.Ris.Client
             _controller.OnInitialQueryEvent += this.UpdateActionAvailability;
         }
 
-        private void PageChangeActionHandler(IList<T> results)
+        private void OnNext()
         {
-            _table.Items.Clear();
-            _table.Items.AddRange(results);
-            UpdateActionAvailability();
+            PageChangeActionHandler(delegate {return _controller.GetNext(); });
+        }
+
+        private void OnPrevious()
+        {
+            PageChangeActionHandler(delegate { return _controller.GetPrev(); });
+        }
+
+        private void PageChangeActionHandler(PageResultsDelegate pageResults)
+        {
+            try
+            {
+                IList<T> results = pageResults();
+                _table.Items.Clear();
+                _table.Items.AddRange(results);
+                UpdateActionAvailability();
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, _desktopWindow);
+            }
         }
 
         private void UpdateActionAvailability()

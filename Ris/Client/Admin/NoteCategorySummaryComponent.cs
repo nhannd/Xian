@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Client.Admin
                 }
             );
 
-            _pagingActionHandler = new PagingActionModel<NoteCategorySummary>(_pagingController, _noteCategoryTable);
+            _pagingActionHandler = new PagingActionModel<NoteCategorySummary>(_pagingController, _noteCategoryTable, Host.DesktopWindow);
         }
 
         public override void Stop()

@@ -206,7 +206,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     return hl7QueueItems;
                 }
             );
-            _pagingActionHandler = new PagingActionModel<HL7QueueItemSummary>(_pagingController, _queue);
+            _pagingActionHandler = new PagingActionModel<HL7QueueItemSummary>(_pagingController, _queue, Host.DesktopWindow);
             _pagingController.PageSize = 35;
         }
 

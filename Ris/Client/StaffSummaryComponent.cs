@@ -146,7 +146,7 @@ namespace ClearCanvas.Ris.Client
 
             if (actionModelNode != null)
             {
-                actionModelNode.Merge(new PagingActionModel<StaffSummary>(_pagingController, _staffTable));
+                actionModelNode.Merge(new PagingActionModel<StaffSummary>(_pagingController, _staffTable, Host.DesktopWindow));
                 
             }
         }
