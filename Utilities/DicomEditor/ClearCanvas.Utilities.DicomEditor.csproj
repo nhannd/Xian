@@ -49,7 +49,6 @@
     <Compile Include="DeleteTool.cs" />
     <Compile Include="DicomEditorCreateToolComponent.cs" />
     <Compile Include="DicomEditorTag.cs" />
-    <Compile Include="DicomEditorTagKey.cs" />
     <Compile Include="DicomFileAccessor.cs" />
     <Compile Include="DisplayedDumpChangedEventArgs.cs" />
     <Compile Include="DisplayLevel.cs" />

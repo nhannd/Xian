@@ -13,13 +13,13 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         public void InsertEditItem(EditItem item)
         {
-            foreach (EditItem i in _editItemList.FindAll(delegate(EditItem ei) { return ei.Key.Equals(item.Key); }))
+            foreach (EditItem i in _editItemList.FindAll(delegate(EditItem ei) { return ei.UidKey == item.UidKey; }))
             {
                 _editItemList.Remove(i);
             }
             _editItemList.Add(item);
 
-            _editItemList.Sort(delegate(EditItem one, EditItem two) { return one.Key.SortKey.CompareTo(two.Key.SortKey); });
+            //_editItemList.Sort(delegate(EditItem one, EditItem two) { return one.SortKey(SortType.GroupElement).CompareTo(two.SortKey(SortType.GroupElement)); });
         }
 
         public IEnumerable<EditItem> EditItems
@@ -32,9 +32,9 @@ namespace ClearCanvas.Utilities.DicomEditor
             _editItemList.Clear();
         }
 
-        public void ClearEditsForKey(DicomEditorTagKey Key)
+        public void ClearEditsForKey(string key)
         {
-            EditItem item = _editItemList.Find(delegate(EditItem e) { return e.Key.Equals(Key); });
+            EditItem item = _editItemList.Find(delegate(EditItem e) { return e.UidKey == key; });
             if (item != null)
             {
                 _editItemList.Remove(item);
@@ -55,12 +55,12 @@ namespace ClearCanvas.Utilities.DicomEditor
         {
             _editTag = EditTag;
             _editType = Type;
-            _key = EditTag.Key;
+            _uidKey = EditTag.UidKey;
         }
 
-        public DicomEditorTagKey Key
+        public string UidKey
         {
-            get { return _key; }
+            get { return _uidKey; }
         }
 
         public DicomEditorTag EditTag
@@ -75,7 +75,7 @@ namespace ClearCanvas.Utilities.DicomEditor
             set { _editType = value; }
         }
 
-        private DicomEditorTagKey _key;
+        private string _uidKey;
         private DicomEditorTag _editTag;
         private EditType _editType;
 

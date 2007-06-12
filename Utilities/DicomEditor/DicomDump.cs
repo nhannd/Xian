@@ -31,7 +31,7 @@ namespace ClearCanvas.Utilities.DicomEditor
         {
             get 
             { 
-                _processedtaglist.Sort(delegate(DicomEditorTag one, DicomEditorTag two) { return one.Key.SortKey.CompareTo(two.Key.SortKey); });
+                _processedtaglist.Sort(delegate(DicomEditorTag one, DicomEditorTag two) { return one.SortKey(SortType.GroupElement).CompareTo(two.SortKey(SortType.GroupElement)); });
                 return _processedtaglist;
             }
         }
@@ -41,21 +41,20 @@ namespace ClearCanvas.Utilities.DicomEditor
             get { return _changeset.EditItems; }
         }
 
-        public bool TagExists(DicomEditorTagKey Key)
+        public bool TagExists(string uidKey)
         {
-            return _processedtaglist.Find(delegate (DicomEditorTag d) { return Key.Equals(d.Key); }) == null ? false : true;
+            return _processedtaglist.Find(delegate (DicomEditorTag d) { return uidKey ==  d.UidKey; }) == null ? false : true;
         }
 
-        public DicomEditorTag GetOriginalTag(DicomEditorTagKey Key)
+        public DicomEditorTag GetOriginalTag(string uidKey)
         {
-            //retire this soon - use the actual object
-            return _rawtaglist.Find(delegate(DicomEditorTag d) { return Key.Equals(d.Key); });
+            return _rawtaglist.Find(delegate(DicomEditorTag d) { return uidKey == d.UidKey; });
         }
 
         public void AddEditItem(EditItem item)
         {
-            _changeset.ClearEditsForKey(item.Key);
-           if (TagExistsInRaw(item.Key))
+            _changeset.ClearEditsForKey(item.UidKey);
+           if (TagExistsInRaw(item.UidKey))
             {
                 if (item.Type == EditType.Create)
                 {
@@ -126,35 +125,35 @@ namespace ClearCanvas.Utilities.DicomEditor
                     {
                         case EditType.Create:
                             _processedtaglist.Add(i.EditTag);
-                            AdjustGroupLengths(i.EditTag.Group, i.Key, 8 + i.EditTag.Length);
+                            AdjustGroupLengths(i.EditTag.Group, i.UidKey, 8 + i.EditTag.Length);
                             break;
                         case EditType.Update:
-                            tag = _processedtaglist.Find(delegate(DicomEditorTag d) { return d.Key.Equals(i.Key); });
+                            tag = _processedtaglist.Find(delegate(DicomEditorTag d) { return d.UidKey.Equals(i.UidKey); });
                             //if ((_rawtaglist.Find(delegate(DicomTag d) { return d.Key.Equals(i.Key); }) != null) || tag.Key != null)
                             //{
                             if (tag != null)
                             {
                                 _processedtaglist.Remove(tag);
                                 _processedtaglist.Add(i.EditTag);
-                                AdjustGroupLengths(i.EditTag.Group, i.Key, i.EditTag.Length - tag.Length);
+                                AdjustGroupLengths(i.EditTag.Group, i.UidKey, i.EditTag.Length - tag.Length);
                             }
                             else
                             {
                                 _processedtaglist.Add(i.EditTag);
-                                AdjustGroupLengths(i.EditTag.Group, i.Key, i.EditTag.Length);
+                                AdjustGroupLengths(i.EditTag.Group, i.UidKey, i.EditTag.Length);
                             }
                             //}
                             break;
                         case EditType.Delete:
-                            tag = _processedtaglist.Find(delegate(DicomEditorTag d) { return d.Key.Equals(i.Key); });
+                            tag = _processedtaglist.Find(delegate(DicomEditorTag d) { return d.UidKey == i.UidKey; });
                             while (tag != null)
                             {
                                 //if ((_rawtaglist.Find(delegate(DicomTag d) { return d.Key.Equals(i.Key); }) != null) || tag.Key != null)
                                 //{
                                 _processedtaglist.Remove(tag);
-                                AdjustGroupLengths(tag.Group, i.Key, -8 - tag.Length);
+                                AdjustGroupLengths(tag.Group, i.UidKey, -8 - tag.Length);
                                 //}
-                                tag = _processedtaglist.Find(delegate(DicomEditorTag d) { return d.Key.Equals(i.Key); });
+                                tag = _processedtaglist.Find(delegate(DicomEditorTag d) { return d.UidKey == i.UidKey; });
                             }
                             break;
                     }
@@ -163,11 +162,11 @@ namespace ClearCanvas.Utilities.DicomEditor
             }
         }
 
-        private void AdjustGroupLengths(ushort Group, DicomEditorTagKey Key, int LengthChange)
+        private void AdjustGroupLengths(ushort Group, string uidKey, int LengthChange)
         {
             
-            DicomEditorTagKey groupLengthKey = new DicomEditorTagKey(Group, 0, Key.ParentKeyString, Key.DisplayLevel);
-            DicomEditorTag tag = _processedtaglist.Find(delegate(DicomEditorTag d) { return d.Key.Equals(groupLengthKey); });
+            string groupLengthKey = DicomEditorTag.GenerateUidSearchKey(Group, 0, null);
+            DicomEditorTag tag = _processedtaglist.Find(delegate(DicomEditorTag d) { return d.UidKey == groupLengthKey; });
             if (tag != null)
             {
                 int groupLength = int.Parse(tag.Value) + LengthChange;
@@ -175,9 +174,9 @@ namespace ClearCanvas.Utilities.DicomEditor
             }
         }
 
-        private bool TagExistsInRaw(DicomEditorTagKey Key)
+        private bool TagExistsInRaw(string uidKey)
         {
-            return _rawtaglist.Find(delegate(DicomEditorTag d) { return Key.Equals(d.Key); }) == null ? false : true;
+            return _rawtaglist.Find(delegate(DicomEditorTag d) { return uidKey == d.UidKey; }) == null ? false : true;
         }
         
         private List<DicomEditorTag> _rawtaglist;

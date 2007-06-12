@@ -74,10 +74,10 @@ namespace ClearCanvas.Utilities.DicomEditor
 
             foreach (DicomEditorTag tag in _supplement55AnonymizeTagList)
             {
-                if (this.Context.DisplayedDump.TagExists(tag.Key))
+                if (this.Context.DisplayedDump.TagExists(tag.UidKey))
                 {
-                    //UGLY EXCEPTION - Since PatientID is a Type 1 Attribute - it cannot be null
-                    if (tag.Key.DisplayKey == "(0010,0020)")
+                    //EXCEPTION - Since PatientID is a Type 1 Attribute - it cannot be null
+                    if (tag.DisplayKey == "(0010,0020)")
                     {
                         tag.Value = "PatientID ";
                         tag.Length = 10;

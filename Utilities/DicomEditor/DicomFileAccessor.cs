@@ -63,7 +63,7 @@ namespace ClearCanvas.Utilities.DicomEditor
             return new DicomDump(dicomDump, File);
         }
 
-        private List<DicomEditorTag> GetDicomTags(DcmObject obj, DcmObject container, string parent, DisplayLevel displayLevel)
+        private List<DicomEditorTag> GetDicomTags(DcmObject obj, DcmObject container, DicomEditorTag parent, DisplayLevel displayLevel)
         {
             string tagName;
             ushort group;
@@ -79,11 +79,14 @@ namespace ClearCanvas.Utilities.DicomEditor
 
             while (obj != null)
             {
+                //used exclusively in the SQ case
+                DicomEditorTag dicomTag = null;
+
                 tag = obj.getTag();
+                vr = tag.getVR();                
                 group = tag.getGroup();
                 element = tag.getElement();
                 tagName = tag.getTagName();
-                vr = tag.getVR();
                 vrName = vr.getVRName();
                 length = (int)obj.getLength();                
 
@@ -151,6 +154,9 @@ namespace ClearCanvas.Utilities.DicomEditor
                         else if (vr.getEVR() == DcmEVR.EVR_SQ)
                         {
                             value = "";
+                            
+                            dicomTag = new DicomEditorTag(group, element, tagName, vrName, length, value, parent, displayLevel);
+
                             DcmObject sequenceItemObject = elem.nextInContainer(null);
                             while (sequenceItemObject != null)
                             {
@@ -162,12 +168,12 @@ namespace ClearCanvas.Utilities.DicomEditor
                                                              null,
                                                              0,
                                                              null,
-                                                             String.Format("({0:x4},", group) + String.Format("{0:x4})", element),
+                                                             dicomTag,
                                                              DisplayLevel.SequenceItem);
                                 dicomDump.Add(item);
 
                                 //traversing the tags within the Sequence Item
-                                foreach (DicomEditorTag sequenceTags in GetDicomTags(sequenceItemObject.nextInContainer(null), sequenceItemObject, item.Key.ParentKeyString.Trim() + item.Key.DisplayKey.Trim(), DisplayLevel.SequenceItemAttribute))
+                                foreach (DicomEditorTag sequenceTags in GetDicomTags(sequenceItemObject.nextInContainer(null), sequenceItemObject, item, DisplayLevel.SequenceItemAttribute))
                                 {
                                     dicomDump.Add(new DicomEditorTag(sequenceTags));
                                 }
@@ -199,8 +205,14 @@ namespace ClearCanvas.Utilities.DicomEditor
                     }
                 }
 
-                dicomDump.Add(new DicomEditorTag(group, element, tagName, vrName, length, value, parent, displayLevel));
-                
+                if (dicomTag == null)
+                {
+                    dicomDump.Add(new DicomEditorTag(group, element, tagName, vrName, length, value, parent, displayLevel));
+                }
+                else
+                {
+                    dicomDump.Add(dicomTag);
+                }                
 
                 obj = container.nextInContainer(obj);
             }

@@ -208,10 +208,10 @@ namespace ClearCanvas.Utilities.DicomEditor
         public DicomEditorComponent()
         {
             _dicomTagData = new Table<DicomEditorTag>();
-			_dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingGroupElement, delegate(DicomEditorTag d) { return d.Key.DisplayKey; }, null, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return one.Key.SortKey.CompareTo(two.Key.SortKey); }));
-			_dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingTagName, delegate(DicomEditorTag d) { return d.TagName; }));
-			_dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingVR, delegate(DicomEditorTag d) { return d.Vr; }));
-			_dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingLength, delegate(DicomEditorTag d) { return d.Length.ToString(); }));
+            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingGroupElement, delegate(DicomEditorTag d) { return d.DisplayKey; }, null, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return this.TagCompare(one, two, SortType.GroupElement); }));
+            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingTagName, delegate(DicomEditorTag d) { return d.TagName; }, null, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return this.TagCompare(one, two, SortType.TagName); }));
+            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingVR, delegate(DicomEditorTag d) { return d.Vr; }, null, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return this.TagCompare(one, two, SortType.Vr); }));
+            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingLength, delegate(DicomEditorTag d) { return d.Length.ToString(); }, null, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return this.TagCompare(one, two, SortType.Length); }));
 			_dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingValue, delegate(DicomEditorTag d) { return d.Value; }, delegate(DicomEditorTag d, string value)
 			{
                                                                                                                                                                 if (this.IsTagEditable(d))
@@ -219,7 +219,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                                                                                                                                                                     d.Value = value;
                                                                                                                                                                     this.ChangeTagValue();
                                                                                                                                                                 }
-                                                                                                                                                              }));
+                                                                                                                                                            }, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return this.TagCompare(one, two, SortType.Value); }));
 
             _title = "";
             _loadedDicomDumps = new List<DicomDump>();
@@ -292,13 +292,13 @@ namespace ClearCanvas.Utilities.DicomEditor
             this.ApplyEdit(tag, EditType.Update, false);
 
             //while ApplyEditToCurrent already updates the underlying length this is needed to prevent flicker
-            DicomEditorTag original = _displayedDump.GetOriginalTag(new DicomEditorTagKey(tag.Key));
-            DicomEditorTagKey groupLengthKey = new DicomEditorTagKey(tag.Group, 0, tag.Key.ParentKeyString, tag.Key.DisplayLevel);
+            DicomEditorTag original = _displayedDump.GetOriginalTag(tag.UidKey);
+            string groupLengthKey = DicomEditorTag.GenerateUidSearchKey(tag.Group, 0, tag.ParentTag);
 
-            DicomEditorTag originalGroupLengthTag = this._displayedDump.GetOriginalTag(new DicomEditorTagKey(groupLengthKey));
+            DicomEditorTag originalGroupLengthTag = this._displayedDump.GetOriginalTag(groupLengthKey);
             if (originalGroupLengthTag != null)
             {
-                int index = _dicomTagData.Items.FindIndex(delegate(DicomEditorTag d) { return d.Key.Equals(groupLengthKey); });
+                int index = _dicomTagData.Items.FindIndex(delegate(DicomEditorTag d) { return d.UidKey == groupLengthKey; });
 
                 int groupLength = int.Parse(originalGroupLengthTag.Value) + tag.Length - original.Length;
                 //_dicomTagData.Items[index].Value = groupLength.ToString();
@@ -310,7 +310,12 @@ namespace ClearCanvas.Utilities.DicomEditor
         {
             ICollection<string> unEditableVRList = new string[] { "SQ", @"??", "OB", "OW"};
 
-            return !unEditableVRList.Contains(tag.Vr) && tag.Key.ParentKeyString == null && !tag.Key.DisplayKey.Contains(",0000)") && !tag.Key.DisplayKey.Contains("(0002,") && !((tag.Vr == "UL" || tag.Vr == "US") && tag.Value.Contains(@"\"));
+            return !unEditableVRList.Contains(tag.Vr) && tag.ParentTag == null && !tag.DisplayKey.Contains(",0000)") && !tag.DisplayKey.Contains("(0002,") && !((tag.Vr == "UL" || tag.Vr == "US") && tag.Value.Contains(@"\"));
+        }
+
+        private int TagCompare(DicomEditorTag one, DicomEditorTag two, SortType type)
+        {
+            return one.SortKey(type).CompareTo(two.SortKey(type));
         }
 
         #region INotifyPropertyChanged Members
