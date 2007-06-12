@@ -12,6 +12,7 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 using System.ServiceModel;
+using System.Security.Permissions;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
 {
@@ -22,6 +23,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         #region IAuthorityAdminService Members
 
         [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role=ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
         public ListUsersResponse ListUsers(ListUsersRequest request)
         {
             UserSearchCriteria criteria = new UserSearchCriteria();
@@ -38,6 +40,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         }
 
         [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
         public LoadUserForEditResponse LoadUserForEdit(LoadUserForEditRequest request)
         {
             User user = (User)PersistenceContext.Load(request.UserRef);
@@ -56,7 +59,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
             return new LoadUserForEditResponse(user.GetRef(), assembler.GetUserDetail(user, staff));
         }
 
+
         [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
         public ListAuthorityGroupsResponse ListAuthorityGroups(ListAuthorityGroupsRequest request)
         {
             AuthorityGroupSearchCriteria criteria = new AuthorityGroupSearchCriteria();
@@ -73,6 +79,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         }
 
         [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
         public LoadAuthorityGroupForEditResponse LoadAuthorityGroupForEdit(LoadAuthorityGroupForEditRequest request)
         {
             AuthorityGroup authorityGroup = (AuthorityGroup)PersistenceContext.Load(request.AuthorityGroupRef);
@@ -81,6 +88,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         }
 
         [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
         public ListAuthorityTokensResponse ListAuthorityTokens(ListAuthorityTokensRequest request)
         {
             AuthorityTokenAssembler assembler = new AuthorityTokenAssembler();
@@ -94,7 +102,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         }
 
         [UpdateOperation]
-        [FaultContract(typeof(RequestValidationException))]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
         public AddUserResponse AddUser(AddUserRequest request)
         {
             if (UserIdExists(request.UserDetail.UserId))
@@ -122,8 +130,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         }
 
         [UpdateOperation]
-        [FaultContract(typeof(RequestValidationException))]
-        [FaultContract(typeof(ConcurrentModificationException))]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
         public UpdateUserResponse UpdateUser(UpdateUserRequest request)
         {
             User user = (User)PersistenceContext.Load(request.UserRef);
@@ -159,6 +166,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         }
 
         [UpdateOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
         public AddAuthorityGroupResponse AddAuthorityGroup(AddAuthorityGroupRequest request)
         {
             AuthorityGroup authorityGroup = new AuthorityGroup();
@@ -172,7 +180,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         }
 
         [UpdateOperation]
-        [FaultContract(typeof(ConcurrentModificationException))]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
         public UpdateAuthorityGroupResponse UpdateAuthorityGroup(UpdateAuthorityGroupRequest request)
         {
             AuthorityGroup authorityGroup = (AuthorityGroup)PersistenceContext.Load(request.AuthorityGroupRef);

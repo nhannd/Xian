@@ -21,6 +21,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
         #region IModalityAdminService Members
 
         [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.ModalityAdmin)]
         public ListAllModalitiesResponse ListAllModalities(ListAllModalitiesRequest request)
         {
             ModalitySearchCriteria criteria = new ModalitySearchCriteria();
@@ -37,6 +38,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
         }
 
         [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.ModalityAdmin)]
         public LoadModalityForEditResponse LoadModalityForEdit(LoadModalityForEditRequest request)
         {
             // note that the version of the ModalityRef is intentionally ignored here (default behaviour of ReadOperation)

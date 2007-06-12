@@ -21,6 +21,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         #region IStaffAdminService Members
 
         [ReadOperation]
+        // note: this operation is not protected with ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin
+        // because it is used in non-admin situations - perhaps we need to create a separate operation???
         public ListStaffResponse ListStaff(ListStaffRequest request)
         {
             StaffSearchCriteria criteria = new StaffSearchCriteria();
@@ -42,6 +44,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         }
 
         [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin)]
         public LoadStaffForEditResponse LoadStaffForEdit(LoadStaffForEditRequest request)
         {
             // note that the version of the StaffRef is intentionally ignored here (default behaviour of ReadOperation)

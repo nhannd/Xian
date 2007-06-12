@@ -25,6 +25,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         /// </summary>
         /// <returns></returns>
         [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.LocationAdmin)]
         public ListAllLocationsResponse ListAllLocations(ListAllLocationsRequest request)
         {
             LocationSearchCriteria criteria = new LocationSearchCriteria();
@@ -54,6 +55,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         }
 
         [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.LocationAdmin)]
         public LoadLocationForEditResponse LoadLocationForEdit(LoadLocationForEditRequest request)
         {
             // note that the version of the LocationRef is intentionally ignored here (default behaviour of ReadOperation)

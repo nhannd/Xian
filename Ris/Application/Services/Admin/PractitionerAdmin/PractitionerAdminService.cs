@@ -26,10 +26,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
         {
             //Note: FamilyName should never be null because the null reference check is done by WCF using the DataMember IsRequired attribute
             PractitionerSearchCriteria criteria = new PractitionerSearchCriteria();
-            criteria.Name.FamilyName.Like(StringCriteriaWithWildcardAppendedTo(request.FamilyName));
+            criteria.Name.FamilyName.StartsWith(request.FamilyName);
             if (request.GivenName != null)
             {
-                criteria.Name.GivenName.Like(StringCriteriaWithWildcardAppendedTo(request.GivenName));
+                criteria.Name.GivenName.StartsWith(request.GivenName);
             }
 
             PractitionerAssembler assembler = new PractitionerAssembler();
@@ -40,11 +40,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
                     {
                         return assembler.CreatePractitionerSummary(p);
                     }));
-        }
-
-        private string StringCriteriaWithWildcardAppendedTo(string surname)
-        {
-            return surname.IndexOf('%') < 0 ? surname + "%" : surname;
         }
 
         [ReadOperation]
@@ -61,6 +56,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PractitionerAdmin
         }
 
         [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.PractitionerAdmin)]
         public LoadPractitionerForEditResponse LoadPractitionerForEdit(LoadPractitionerForEditRequest request)
         {
             // note that the version of the PractitionerRef is intentionally ignored here (default behaviour of ReadOperation)

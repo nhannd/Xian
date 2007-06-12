@@ -21,6 +21,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         #region IFacilityAdminService Members
 
         [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FacilityAdmin)]
         public ListAllFacilitiesResponse ListAllFacilities(ListAllFacilitiesRequest request)
         {
             FacilitySearchCriteria criteria = new FacilitySearchCriteria();
@@ -37,6 +38,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         }
 
         [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FacilityAdmin)]
         public LoadFacilityForEditResponse LoadFacilityForEdit(LoadFacilityForEditRequest request)
         {
             // note that the version of the FacilityRef is intentionally ignored here (default behaviour of ReadOperation)

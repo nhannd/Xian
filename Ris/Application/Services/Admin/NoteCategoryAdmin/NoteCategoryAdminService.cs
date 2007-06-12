@@ -25,6 +25,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         /// </summary>
         /// <returns></returns>
         [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
         public ListAllNoteCategoriesResponse ListAllNoteCategories(ListAllNoteCategoriesRequest request)
         {
             NoteCategorySearchCriteria criteria = new NoteCategorySearchCriteria();
@@ -57,6 +58,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         }
 
         [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
         public LoadNoteCategoryForEditResponse LoadNoteCategoryForEdit(LoadNoteCategoryForEditRequest request)
         {
             // note that the version of the NoteCategoryRef is intentionally ignored here (default behaviour of ReadOperation)
