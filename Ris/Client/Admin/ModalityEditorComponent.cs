@@ -57,26 +57,19 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            try
+            if (_isNew)
             {
-                if (_isNew)
-                {
-                    _modalityDetail = new ModalityDetail();
-                }
-                else
-                {
-                    Platform.GetService<IModalityAdminService>(
-                        delegate(IModalityAdminService service)
-                        {
-                            LoadModalityForEditResponse response = service.LoadModalityForEdit(new LoadModalityForEditRequest(_modalityRef));
-                            _modalityRef = response.ModalityRef;
-                            _modalityDetail = response.ModalityDetail;
-                        });
-                }
+                _modalityDetail = new ModalityDetail();
             }
-            catch (Exception e)
+            else
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                Platform.GetService<IModalityAdminService>(
+                    delegate(IModalityAdminService service)
+                    {
+                        LoadModalityForEditResponse response = service.LoadModalityForEdit(new LoadModalityForEditRequest(_modalityRef));
+                        _modalityRef = response.ModalityRef;
+                        _modalityDetail = response.ModalityDetail;
+                    });
             }
 
             base.Start();
@@ -126,15 +119,18 @@ namespace ClearCanvas.Ris.Client.Admin
                 try
                 {
                     SaveChanges();
-                    this.ExitCode = ApplicationComponentExitCode.Normal;
+                    Host.Exit();
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                    this.ExitCode = ApplicationComponentExitCode.Error;
+                    ExceptionHandler.Report(e, SR.ExceptionSaveModality, this.Host.DesktopWindow,
+                        delegate()
+                        {
+                            this.ExitCode = ApplicationComponentExitCode.Error;
+                            this.Host.Exit();
+                        });
                 }
             }
-            Host.Exit();
         }
 
         public void Cancel()

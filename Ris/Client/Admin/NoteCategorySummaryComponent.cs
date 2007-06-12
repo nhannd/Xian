@@ -25,13 +25,22 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             if (_workspace == null)
             {
-                NoteCategorySummaryComponent component = new NoteCategorySummaryComponent();
+                try
+                {
+                    NoteCategorySummaryComponent component = new NoteCategorySummaryComponent();
 
-                _workspace = ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    component,
-                    SR.TitleNoteCategories,
-                    delegate(IApplicationComponent c) { _workspace = null; });
+                    _workspace = ApplicationComponent.LaunchAsWorkspace(
+                        this.Context.DesktopWindow,
+                        component,
+                        SR.TitleNoteCategories,
+                        delegate(IApplicationComponent c) { _workspace = null; });
+
+                }
+                catch (Exception e)
+                {
+                    // could not launch component
+                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
+                }
             }
             else
             {
@@ -61,8 +70,6 @@ namespace ClearCanvas.Ris.Client.Admin
         private PagingController<NoteCategorySummary> _pagingController;
         private PagingActionModel<NoteCategorySummary> _pagingActionHandler;
 
-        private ListAllNoteCategoriesRequest _listRequest;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -72,8 +79,6 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            //_noteCategoryAdminService.NoteCategoryChanged += NoteCategoryChangedEventHandler;
-
             _noteCategoryTable = new NoteCategoryTable();
             _noteCategoryActionHandler = new CrudActionModel();
             _noteCategoryActionHandler.Add.SetClickHandler(AddNoteCategory);
@@ -84,6 +89,8 @@ namespace ClearCanvas.Ris.Client.Admin
             InitialisePaging();
             _noteCategoryActionHandler.Merge(_pagingActionHandler);
 
+            LoadNoteCategoryTable();
+
             base.Start();
         }
 
@@ -92,30 +99,19 @@ namespace ClearCanvas.Ris.Client.Admin
             _pagingController = new PagingController<NoteCategorySummary>(
                 delegate(int firstRow, int maxRows)
                 {
-                    IList<NoteCategorySummary> noteCategories = null;
+                    ListAllNoteCategoriesResponse listResponse = null;
 
-                    try
-                    {
-                        ListAllNoteCategoriesResponse listResponse = null;
+                    Platform.GetService<INoteCategoryAdminService>(
+                        delegate(INoteCategoryAdminService service)
+                        {
+                            ListAllNoteCategoriesRequest listRequest = new ListAllNoteCategoriesRequest();
+                            listRequest.PageRequest.FirstRow = firstRow;
+                            listRequest.PageRequest.MaxRows = maxRows;
 
-                        Platform.GetService<INoteCategoryAdminService>(
-                            delegate(INoteCategoryAdminService service)
-                            {
-                                ListAllNoteCategoriesRequest listRequest = _listRequest;
-                                listRequest.PageRequest.FirstRow = firstRow;
-                                listRequest.PageRequest.MaxRows = maxRows;
+                            listResponse = service.ListAllNoteCategories(listRequest);
+                        });
 
-                                listResponse = service.ListAllNoteCategories(listRequest);
-                            });
-
-                        noteCategories = listResponse.NoteCategories;
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                    }
-
-                    return noteCategories;
+                    return listResponse.NoteCategories;
                 }
             );
 
@@ -124,15 +120,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Stop()
         {
-            //_noteCategoryAdminService.NoteCategoryChanged -= NoteCategoryChangedEventHandler;
-            
             base.Stop();
         }
 
-        //TODO: NoteCategoryChangedEventHandler
-        //private void NoteCategoryChangedEventHandler(object sender, EntityChangeEventArgs e)
-        //{
-        //}
 
         #region Presentation Model
 
@@ -158,35 +148,52 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void AddNoteCategory()
         {
-            NoteCategoryEditorComponent editor = new NoteCategoryEditorComponent();
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, SR.TitleAddNoteCategory);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            try
             {
-                _noteCategoryTable.Items.Add(_selectedNoteCategory = editor.NoteCategorySummary);
-                NoteCategorySelectionChanged();
+                NoteCategoryEditorComponent editor = new NoteCategoryEditorComponent();
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleAddNoteCategory);
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    _noteCategoryTable.Items.Add(_selectedNoteCategory = editor.NoteCategorySummary);
+                    NoteCategorySelectionChanged();
+                }
+
+            }
+            catch (Exception e)
+            {
+                // could not launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
         public void UpdateSelectedNoteCategory()
         {
-            // can occur if user double clicks while holding control
-            if (_selectedNoteCategory == null) return;
-
-            NoteCategoryEditorComponent editor = new NoteCategoryEditorComponent(_selectedNoteCategory.NoteCategoryRef);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, SR.TitleUpdateNoteCategory);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            try
             {
-                _noteCategoryTable.Items.Replace(
-                    delegate(NoteCategorySummary s) { return s.NoteCategoryRef.Equals(editor.NoteCategorySummary.NoteCategoryRef); },
-                    editor.NoteCategorySummary);
+                // can occur if user double clicks while holding control
+                if (_selectedNoteCategory == null) return;
+
+                NoteCategoryEditorComponent editor = new NoteCategoryEditorComponent(_selectedNoteCategory.NoteCategoryRef);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleUpdateNoteCategory);
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    _noteCategoryTable.Items.Replace(
+                        delegate(NoteCategorySummary s) { return s.NoteCategoryRef.Equals(editor.NoteCategorySummary.NoteCategoryRef); },
+                        editor.NoteCategorySummary);
+                }
+
+            }
+            catch (Exception e)
+            {
+                // could not launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
-        public void LoadNoteCategoryTable()
+        private void LoadNoteCategoryTable()
         {
-            _listRequest = new ListAllNoteCategoriesRequest();
             _noteCategoryTable.Items.Clear();
             _noteCategoryTable.Items.AddRange(_pagingController.GetFirst());
         }

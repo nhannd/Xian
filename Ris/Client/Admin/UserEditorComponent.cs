@@ -110,40 +110,31 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            try
-            {
-                Platform.GetService<IAuthenticationAdminService>(
-                    delegate(IAuthenticationAdminService service)
+            Platform.GetService<IAuthenticationAdminService>(
+                delegate(IAuthenticationAdminService service)
+                {
+                    ListAuthorityGroupsResponse authorityGroupsResponse = service.ListAuthorityGroups(new ListAuthorityGroupsRequest());
+
+                    _authorityGroups = CollectionUtils.Map<AuthorityGroupSummary, AuthorityGroupTableEntry, List<AuthorityGroupTableEntry>>(
+                        authorityGroupsResponse.AuthorityGroups,
+                        delegate(AuthorityGroupSummary summary)
+                        {                            
+                            return new AuthorityGroupTableEntry(summary, this.OnAuthorityGroupChecked);
+                        });
+
+                    if (_isNew)
                     {
-                        ListAuthorityGroupsResponse authorityGroupsResponse = service.ListAuthorityGroups(new ListAuthorityGroupsRequest());
+                        _userDetail = new UserDetail();
+                    }
+                    else
+                    {
+                        LoadUserForEditResponse response = service.LoadUserForEdit(new LoadUserForEditRequest(_userRef));
+                        _userRef = response.UserRef;
+                        _userDetail = response.UserDetail;
+                    }
 
-                        _authorityGroups = CollectionUtils.Map<AuthorityGroupSummary, AuthorityGroupTableEntry, List<AuthorityGroupTableEntry>>(
-                            authorityGroupsResponse.AuthorityGroups,
-                            delegate(AuthorityGroupSummary summary)
-                            {                            
-                                return new AuthorityGroupTableEntry(summary, this.OnAuthorityGroupChecked);
-                            });
-
-                        if (_isNew)
-                        {
-                            _userDetail = new UserDetail();
-                        }
-                        else
-                        {
-                            LoadUserForEditResponse response = service.LoadUserForEdit(new LoadUserForEditRequest(_userRef));
-                            _userRef = response.UserRef;
-                            _userDetail = response.UserDetail;
-                        }
-
-                        InitialiseTable();
-                    });
-
-            }
-            catch (Exception e)
-            {
-                
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+                    InitialiseTable();
+                });
 
             base.Start();
         }
@@ -236,14 +227,13 @@ namespace ClearCanvas.Ris.Client.Admin
                         }
                     });
 
-                this.ExitCode = ApplicationComponentExitCode.Normal;
                 this.Host.Exit();
             }
             catch (Exception e)
             {
                 ExceptionHandler.Report(
                     e, 
-                    string.Format("Cannot {0} user", _isNew ? "add" : "update"), 
+                    SR.ExceptionSaveUser, 
                     this.Host.DesktopWindow,
                     delegate()
                     {

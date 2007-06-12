@@ -37,7 +37,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         private void _users_Load(object sender, EventArgs e)
         {
-            _component.LoadUserTable();
         }
 
         private void _users_ItemDoubleClicked(object sender, EventArgs e)

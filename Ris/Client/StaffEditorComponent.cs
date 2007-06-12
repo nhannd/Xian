@@ -82,73 +82,65 @@ namespace ClearCanvas.Ris.Client
 
         public override void Start()
         {
-            try
+            if (_isStaffMode)
             {
-                if (_isStaffMode)
-                {
-                    Platform.GetService<IStaffAdminService>(
-                        delegate(IStaffAdminService service)
+                Platform.GetService<IStaffAdminService>(
+                    delegate(IStaffAdminService service)
+                    {
+                        LoadStaffEditorFormDataResponse formDataResponse = service.LoadStaffEditorFormData(new LoadStaffEditorFormDataRequest());
+
+                        string rootPath = _isStaffMode ? SR.TitleStaff : SR.TitlePractitioner;
+                        this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new StaffDetailsEditorComponent(_isStaffMode)));
+                        this.Pages.Add(new NavigatorPage(rootPath + "/Addresses", _addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)));
+                        this.Pages.Add(new NavigatorPage(rootPath + "/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)));
+
+                        this.ValidationStrategy = new AllNodesContainerValidationStrategy();
+
+                        if (_isNew)
                         {
-                            LoadStaffEditorFormDataResponse formDataResponse = service.LoadStaffEditorFormData(new LoadStaffEditorFormDataRequest());
-
-                            string rootPath = _isStaffMode ? SR.TitleStaff : SR.TitlePractitioner;
-                            this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new StaffDetailsEditorComponent(_isStaffMode)));
-                            this.Pages.Add(new NavigatorPage(rootPath + "/Addresses", _addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)));
-                            this.Pages.Add(new NavigatorPage(rootPath + "/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)));
-
-                            this.ValidationStrategy = new AllNodesContainerValidationStrategy();
-
-                            if (_isNew)
-                            {
-                                _staffDetail = new StaffDetail();
-                            }
-                            else
-                            {
-                                LoadStaffForEditResponse response = service.LoadStaffForEdit(new LoadStaffForEditRequest(_staffRef));
-                                _staffRef = response.StaffRef;
-                                _staffDetail = response.StaffDetail;
-                            }
-
-                            _detailsEditor.StaffDetail = _staffDetail;
-                            _addressesSummary.Subject = _staffDetail.Addresses;
-                            _phoneNumbersSummary.Subject = _staffDetail.TelephoneNumbers;
-                        });
-                }
-                else
-                {
-                    Platform.GetService<IPractitionerAdminService>(
-                        delegate(IPractitionerAdminService service)
+                            _staffDetail = new StaffDetail();
+                        }
+                        else
                         {
-                            LoadPractitionerEditorFormDataResponse formDataResponse = service.LoadPractitionerEditorFormData(new LoadPractitionerEditorFormDataRequest());
+                            LoadStaffForEditResponse response = service.LoadStaffForEdit(new LoadStaffForEditRequest(_staffRef));
+                            _staffRef = response.StaffRef;
+                            _staffDetail = response.StaffDetail;
+                        }
 
-                            string rootPath = _isStaffMode ? SR.TitleStaff : SR.TitlePractitioner;
-                            this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new StaffDetailsEditorComponent(_isStaffMode)));
-                            this.Pages.Add(new NavigatorPage(rootPath + "/Addresses", _addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)));
-                            this.Pages.Add(new NavigatorPage(rootPath + "/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)));
-
-                            this.ValidationStrategy = new AllNodesContainerValidationStrategy();
-
-                            if (_isNew)
-                            {
-                                _practitionerDetail = new PractitionerDetail();
-                            }
-                            else
-                            {
-                                LoadPractitionerForEditResponse response = service.LoadPractitionerForEdit(new LoadPractitionerForEditRequest(_practitionerRef));
-                                _practitionerRef = response.PractitionerRef;
-                                _practitionerDetail = response.PractitionerDetail;
-                            }
-
-                            _detailsEditor.PractitionerDetail = _practitionerDetail;
-                            _addressesSummary.Subject = _practitionerDetail.Addresses;
-                            _phoneNumbersSummary.Subject = _practitionerDetail.TelephoneNumbers;
-                        });
-                }
-
+                        _detailsEditor.StaffDetail = _staffDetail;
+                        _addressesSummary.Subject = _staffDetail.Addresses;
+                        _phoneNumbersSummary.Subject = _staffDetail.TelephoneNumbers;
+                    });
             }
-            catch (Exception e)
+            else
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                Platform.GetService<IPractitionerAdminService>(
+                    delegate(IPractitionerAdminService service)
+                    {
+                        LoadPractitionerEditorFormDataResponse formDataResponse = service.LoadPractitionerEditorFormData(new LoadPractitionerEditorFormDataRequest());
+
+                        string rootPath = _isStaffMode ? SR.TitleStaff : SR.TitlePractitioner;
+                        this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new StaffDetailsEditorComponent(_isStaffMode)));
+                        this.Pages.Add(new NavigatorPage(rootPath + "/Addresses", _addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)));
+                        this.Pages.Add(new NavigatorPage(rootPath + "/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)));
+
+                        this.ValidationStrategy = new AllNodesContainerValidationStrategy();
+
+                        if (_isNew)
+                        {
+                            _practitionerDetail = new PractitionerDetail();
+                        }
+                        else
+                        {
+                            LoadPractitionerForEditResponse response = service.LoadPractitionerForEdit(new LoadPractitionerForEditRequest(_practitionerRef));
+                            _practitionerRef = response.PractitionerRef;
+                            _practitionerDetail = response.PractitionerDetail;
+                        }
+
+                        _detailsEditor.PractitionerDetail = _practitionerDetail;
+                        _addressesSummary.Subject = _practitionerDetail.Addresses;
+                        _phoneNumbersSummary.Subject = _practitionerDetail.TelephoneNumbers;
+                    });
             }
 
             base.Start();
@@ -208,15 +200,17 @@ namespace ClearCanvas.Ris.Client
                         });
                 }
 
-                this.ExitCode = ApplicationComponentExitCode.Normal;
+                this.Host.Exit();
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow);
-                this.ExitCode = ApplicationComponentExitCode.Error;
+                ExceptionHandler.Report(e, SR.ExceptionSaveStaff, this.Host.DesktopWindow,
+                    delegate()
+                    {
+                        this.ExitCode = ApplicationComponentExitCode.Error;
+                        this.Host.Exit();
+                    });
             }
-
-            this.Host.Exit();
         }
 
         public override void Cancel()

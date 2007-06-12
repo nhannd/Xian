@@ -270,6 +270,9 @@
   <data name="ExceptionFailedToSave" xml:space="preserve">
     <value>An error occured while attempting to save changes to this item</value>
   </data>
+  <data name="ExceptionSaveStaff" xml:space="preserve">
+    <value>Unable to save Staff</value>
+  </data>
   <data name="FormatNoteCategory" xml:space="preserve">
     <value>{0} - Severity {1}</value>
   </data>

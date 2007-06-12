@@ -25,13 +25,22 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             if (_workspace == null)
             {
-                FacilitySummaryComponent component = new FacilitySummaryComponent();
+                try
+                {
+                    FacilitySummaryComponent component = new FacilitySummaryComponent();
 
-                _workspace = ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    component,
-                    SR.TitleFacilities,
-                    delegate(IApplicationComponent c) { _workspace = null; });
+                    _workspace = ApplicationComponent.LaunchAsWorkspace(
+                        this.Context.DesktopWindow,
+                        component,
+                        SR.TitleFacilities,
+                        delegate(IApplicationComponent c) { _workspace = null; });
+
+                }
+                catch (Exception e)
+                {
+                    // could not launch component
+                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
+                }
             }
             else
             {
@@ -61,8 +70,6 @@ namespace ClearCanvas.Ris.Client.Admin
         private PagingController<FacilitySummary> _pagingController;
         private PagingActionModel<FacilitySummary> _pagingActionHandler;
 
-        private ListAllFacilitiesRequest _listRequest;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -72,8 +79,6 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            //_facilityAdminService.FacilityChanged += FacilityChangedEventHandler;
-
             _facilityTable = new FacilityTable();
             _facilityActionHandler = new CrudActionModel();
             _facilityActionHandler.Add.SetClickHandler(AddFacility);
@@ -84,6 +89,8 @@ namespace ClearCanvas.Ris.Client.Admin
             InitialisePaging();
             _facilityActionHandler.Merge(_pagingActionHandler);
 
+            LoadFacilityTable();
+
             base.Start();
         }
 
@@ -92,30 +99,19 @@ namespace ClearCanvas.Ris.Client.Admin
             _pagingController = new PagingController<FacilitySummary>(
                 delegate(int firstRow, int maxRows)
                 {
-                    IList<FacilitySummary> facilities = null;
+                    ListAllFacilitiesResponse listResponse = null;
 
-                    try
-                    {
-                        ListAllFacilitiesResponse listResponse = null;
+                    Platform.GetService<IFacilityAdminService>(
+                        delegate(IFacilityAdminService service)
+                        {
+                            ListAllFacilitiesRequest listRequest = new ListAllFacilitiesRequest();
+                            listRequest.PageRequest.FirstRow = firstRow;
+                            listRequest.PageRequest.MaxRows = maxRows;
 
-                        Platform.GetService<IFacilityAdminService>(
-                            delegate(IFacilityAdminService service)
-                            {
-                                ListAllFacilitiesRequest listRequest = _listRequest;
-                                listRequest.PageRequest.FirstRow = firstRow;
-                                listRequest.PageRequest.MaxRows = maxRows;
+                            listResponse = service.ListAllFacilities(listRequest);
+                        });
 
-                                listResponse = service.ListAllFacilities(listRequest);
-                            });
-
-                        facilities = listResponse.Facilities;
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                    }
-
-                    return facilities;
+                    return listResponse.Facilities;
                 }
             );
 
@@ -124,38 +120,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Stop()
         {
-            //_facilityAdminService.FacilityChanged -= FacilityChangedEventHandler; 
-            
             base.Stop();
         }
 
-        //TODO: FacilityChangedEventHandler
-        //private void FacilityChangedEventHandler(object sender, EntityChangeEventArgs e)
-        //{
-        //    // check if the facility with this oid is in the list
-        //    int index = _facilityTable.Items.FindIndex(delegate(Facility f) { return e.EntityRef.RefersTo(f); });
-        //    if (index > -1)
-        //    {
-        //        if (e.ChangeType == EntityChangeType.Update)
-        //        {
-        //            Facility f = _facilityAdminService.LoadFacility((EntityRef<Facility>)e.EntityRef);
-        //            _facilityTable.Items[index] = f;
-        //        }
-        //        else if (e.ChangeType == EntityChangeType.Delete)
-        //        {
-        //            _facilityTable.Items.RemoveAt(index);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (e.ChangeType == EntityChangeType.Create)
-        //        {
-        //            Facility f = _facilityAdminService.LoadFacility((EntityRef<Facility>)e.EntityRef);
-        //            if (f != null)
-        //                _facilityTable.Items.Add(f);
-        //        }
-        //    }
-        //}
 
         #region Presentation Model
 
@@ -181,38 +148,54 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void AddFacility()
         {
-            FacilityEditorComponent editor = new FacilityEditorComponent();
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, SR.TitleAddFacility);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            try
             {
-                _facilityTable.Items.Add(_selectedFacility = editor.FacilitySummary);
-                FacilitySelectionChanged();
+                FacilityEditorComponent editor = new FacilityEditorComponent();
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleAddFacility);
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    _facilityTable.Items.Add(_selectedFacility = editor.FacilitySummary);
+                    FacilitySelectionChanged();
+                }
+
+            }
+            catch (Exception e)
+            {
+                // could not launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
         public void UpdateSelectedFacility()
         {
-            // can occur if user double clicks while holding control
-            if (_selectedFacility == null) return;
-
-            FacilityEditorComponent editor = new FacilityEditorComponent(_selectedFacility.FacilityRef);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, SR.TitleUpdateFacility);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            try
             {
-                _facilityTable.Items.Replace(delegate(FacilitySummary f) { return f.FacilityRef.Equals(editor.FacilitySummary.FacilityRef); }, editor.FacilitySummary);
+                // can occur if user double clicks while holding control
+                if (_selectedFacility == null) return;
+
+                FacilityEditorComponent editor = new FacilityEditorComponent(_selectedFacility.FacilityRef);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleUpdateFacility);
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    _facilityTable.Items.Replace(delegate(FacilitySummary f) { return f.FacilityRef.Equals(editor.FacilitySummary.FacilityRef); }, editor.FacilitySummary);
+                }
+            }
+            catch (Exception e)
+            {
+                // could not launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
-        public void LoadFacilityTable()
+        #endregion
+
+        private void LoadFacilityTable()
         {
-            _listRequest = new ListAllFacilitiesRequest();
             _facilityTable.Items.Clear();
             _facilityTable.Items.AddRange(_pagingController.GetFirst());
         }
-
-        #endregion
 
         private void FacilitySelectionChanged()
         {

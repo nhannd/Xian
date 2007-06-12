@@ -103,38 +103,32 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            try
-            {
-                Platform.GetService<IAuthenticationAdminService>(
-                    delegate(IAuthenticationAdminService service)
+            Platform.GetService<IAuthenticationAdminService>(
+                delegate(IAuthenticationAdminService service)
+                {
+                    ListAuthorityTokensResponse authorityTokenResponse = service.ListAuthorityTokens(new ListAuthorityTokensRequest());
+
+                    _authorityTokens = CollectionUtils.Map<AuthorityTokenSummary, AuthorityTokenTableEntry, List<AuthorityTokenTableEntry>>(
+                        authorityTokenResponse.AuthorityTokens,
+                        delegate(AuthorityTokenSummary summary)
+                        {
+                            return new AuthorityTokenTableEntry(summary, this.OnAuthorityTokenChecked);
+                        });
+
+                    if (_isNew)
                     {
-                        ListAuthorityTokensResponse authorityTokenResponse = service.ListAuthorityTokens(new ListAuthorityTokensRequest());
+                        _authorityGroupDetail = new AuthorityGroupDetail();
+                    }
+                    else
+                    {
+                        LoadAuthorityGroupForEditResponse response = service.LoadAuthorityGroupForEdit(new LoadAuthorityGroupForEditRequest(_authorityGroupRef));
+                        _authorityGroupRef = response.AuthorityGroupRef;
+                        _authorityGroupDetail = response.AuthorityGroupDetail;
+                    }
 
-                        _authorityTokens = CollectionUtils.Map<AuthorityTokenSummary, AuthorityTokenTableEntry, List<AuthorityTokenTableEntry>>(
-                            authorityTokenResponse.AuthorityTokens,
-                            delegate(AuthorityTokenSummary summary)
-                            {
-                                return new AuthorityTokenTableEntry(summary, this.OnAuthorityTokenChecked);
-                            });
+                    InitialiseTable();
+                });
 
-                        if (_isNew)
-                        {
-                            _authorityGroupDetail = new AuthorityGroupDetail();
-                        }
-                        else
-                        {
-                            LoadAuthorityGroupForEditResponse response = service.LoadAuthorityGroupForEdit(new LoadAuthorityGroupForEditRequest(_authorityGroupRef));
-                            _authorityGroupRef = response.AuthorityGroupRef;
-                            _authorityGroupDetail = response.AuthorityGroupDetail;
-                        }
-
-                        InitialiseTable();
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
             base.Start();
         }
 
@@ -183,15 +177,17 @@ namespace ClearCanvas.Ris.Client.Admin
                         }
                     });
 
-                this.ExitCode = ApplicationComponentExitCode.Normal;
+                this.Host.Exit();
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                this.ExitCode = ApplicationComponentExitCode.Error;
+                ExceptionHandler.Report(e, SR.ExceptionSaveAuthorityGroup, this.Host.DesktopWindow,
+                    delegate()
+                    {
+                        this.ExitCode = ApplicationComponentExitCode.Error;
+                        this.Host.Exit();
+                    });
             }
-
-            this.Host.Exit();
         }
 
         public bool AcceptEnabled

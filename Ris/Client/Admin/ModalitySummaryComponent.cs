@@ -25,13 +25,22 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             if (_workspace == null)
             {
-                ModalitySummaryComponent component = new ModalitySummaryComponent();
+                try
+                {
+                    ModalitySummaryComponent component = new ModalitySummaryComponent();
 
-                _workspace = ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    component,
-                    SR.TitleModalities,
-                    delegate(IApplicationComponent c) { _workspace = null; });
+                    _workspace = ApplicationComponent.LaunchAsWorkspace(
+                        this.Context.DesktopWindow,
+                        component,
+                        SR.TitleModalities,
+                        delegate(IApplicationComponent c) { _workspace = null; });
+
+                }
+                catch (Exception e)
+                {
+                    // could not launch editor
+                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
+                }
             }
             else
             {
@@ -61,8 +70,6 @@ namespace ClearCanvas.Ris.Client.Admin
         private PagingController<ModalitySummary> _pagingController;
         private PagingActionModel<ModalitySummary> _pagingActionHandler;
 
-        private ListAllModalitiesRequest _listRequest;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -72,8 +79,6 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            //_modalityAdminService.ModalityChanged += ModalityChangedEventHandler;
-
             _modalityTable = new ModalityTable();
             _modalityActionHandler = new CrudActionModel();
             _modalityActionHandler.Add.SetClickHandler(AddModality);
@@ -84,6 +89,8 @@ namespace ClearCanvas.Ris.Client.Admin
             InitialisePaging();
             _modalityActionHandler.Merge(_pagingActionHandler);
 
+            LoadModalityTable();
+
             base.Start();
         }
 
@@ -92,30 +99,19 @@ namespace ClearCanvas.Ris.Client.Admin
             _pagingController = new PagingController<ModalitySummary>(
                 delegate(int firstRow, int maxRows)
                 {
-                    IList<ModalitySummary> modalities = null;
+                    ListAllModalitiesResponse listResponse = null;
 
-                    try
-                    {
-                        ListAllModalitiesResponse listResponse = null;
+                    Platform.GetService<IModalityAdminService>(
+                        delegate(IModalityAdminService service)
+                        {
+                            ListAllModalitiesRequest listRequest = new ListAllModalitiesRequest(false);
+                            listRequest.PageRequest.FirstRow = firstRow;
+                            listRequest.PageRequest.MaxRows = maxRows;
 
-                        Platform.GetService<IModalityAdminService>(
-                            delegate(IModalityAdminService service)
-                            {
-                                ListAllModalitiesRequest listRequest = _listRequest;
-                                listRequest.PageRequest.FirstRow = firstRow;
-                                listRequest.PageRequest.MaxRows = maxRows;
+                            listResponse = service.ListAllModalities(listRequest);
+                        });
 
-                                listResponse = service.ListAllModalities(listRequest);
-                            });
-
-                        modalities = listResponse.Modalities;
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                    }
-
-                    return modalities;
+                    return listResponse.Modalities;
                 }
             );
 
@@ -124,38 +120,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Stop()
         {
-            //_modalityAdminService.ModalityChanged -= ModalityChangedEventHandler;
-
             base.Stop();
         }
-
-        //TODO: ModalityChangedEventHandler
-        //private void ModalityChangedEventHandler(object sender, EntityChangeEventArgs e)
-        //{
-        //    // check if the modality with this oid is in the list
-        //    int index = _modalityTable.Items.FindIndex(delegate(Modality m) { return e.EntityRef.RefersTo(m); });
-        //    if (index > -1)
-        //    {
-        //        if (e.ChangeType == EntityChangeType.Update)
-        //        {
-        //            Modality m = _modalityAdminService.LoadModality((EntityRef<Modality>)e.EntityRef);
-        //            _modalityTable.Items[index] = m;
-        //        }
-        //        else if (e.ChangeType == EntityChangeType.Delete)
-        //        {
-        //            _modalityTable.Items.RemoveAt(index);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (e.ChangeType == EntityChangeType.Create)
-        //        {
-        //            Modality m = _modalityAdminService.LoadModality((EntityRef<Modality>)e.EntityRef);
-        //            if (m != null)
-        //                _modalityTable.Items.Add(m);
-        //        }
-        //    }
-        //}
 
         #region Presentation Model
 
@@ -181,38 +147,55 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void AddModality()
         {
-            ModalityEditorComponent editor = new ModalityEditorComponent();
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, SR.TitleAddModality);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            try
             {
-                _modalityTable.Items.Add(_selectedModality = editor.ModalitySummary);
-                ModalitySelectionChanged();
+                ModalityEditorComponent editor = new ModalityEditorComponent();
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleAddModality);
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    _modalityTable.Items.Add(_selectedModality = editor.ModalitySummary);
+                    ModalitySelectionChanged();
+                }
+
+            }
+            catch (Exception e)
+            {
+                // could not launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
         public void UpdateSelectedModality()
         {
-            // can occur if user double clicks while holding control
-            if (_selectedModality == null) return;
-
-            ModalityEditorComponent editor = new ModalityEditorComponent(_selectedModality.ModalityRef);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, SR.TitleUpdateModality);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            try
             {
-                _modalityTable.Items.Replace(delegate(ModalitySummary m) { return m.ModalityRef.Equals(editor.ModalitySummary.ModalityRef); }, editor.ModalitySummary);
+                // can occur if user double clicks while holding control
+                if (_selectedModality == null) return;
+
+                ModalityEditorComponent editor = new ModalityEditorComponent(_selectedModality.ModalityRef);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleUpdateModality);
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    _modalityTable.Items.Replace(delegate(ModalitySummary m) { return m.ModalityRef.Equals(editor.ModalitySummary.ModalityRef); }, editor.ModalitySummary);
+                }
+
+            }
+            catch (Exception e)
+            {
+                // could not launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
-        public void LoadModalityTable()
+        #endregion
+
+        private void LoadModalityTable()
         {
-            _listRequest = new ListAllModalitiesRequest(false);
             _modalityTable.Items.Clear();
             _modalityTable.Items.AddRange(_pagingController.GetFirst());
         }
-
-        #endregion
 
         private void ModalitySelectionChanged()
         {

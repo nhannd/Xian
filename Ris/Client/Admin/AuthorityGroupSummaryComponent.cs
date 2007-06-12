@@ -20,7 +20,6 @@ namespace ClearCanvas.Ris.Client.Admin
     [MenuAction("launch", "global-menus/Admin/Authority Groups")]
     [ClickHandler("launch", "Launch")]
     [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
-    //[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class AuthorityGroupSummaryTool : Tool<IDesktopToolContext>
@@ -31,13 +30,20 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             if (_workspace == null)
             {
-                AuthorityGroupSummaryComponent component = new AuthorityGroupSummaryComponent();
+                try
+                {
+                    AuthorityGroupSummaryComponent component = new AuthorityGroupSummaryComponent();
 
-                _workspace = ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    component,
-                    SR.TitleAuthorityGroup,
-                    delegate(IApplicationComponent c) { _workspace = null; });
+                    _workspace = ApplicationComponent.LaunchAsWorkspace(
+                        this.Context.DesktopWindow,
+                        component,
+                        SR.TitleAuthorityGroup,
+                        delegate(IApplicationComponent c) { _workspace = null; });
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
+                }
             }
             else
             {
@@ -69,8 +75,6 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private IPagingController<AuthorityGroupSummary> _pagingController;
 
-        private ListAuthorityGroupsRequest _listRequest;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -88,6 +92,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
             InitialisePaging(_authorityGroupActionHandler);
 
+            LoadAuthorityGroupTable();
+
             base.Start();
         }
 
@@ -96,30 +102,19 @@ namespace ClearCanvas.Ris.Client.Admin
             _pagingController = new PagingController<AuthorityGroupSummary>(
                 delegate(int firstRow, int maxRows)
                 {
-                    List<AuthorityGroupSummary> authorityGroups = null;
+                    ListAuthorityGroupsResponse listResponse = null;
 
-                    try
-                    {
-                        ListAuthorityGroupsResponse listResponse = null;
+                    Platform.GetService<IAuthenticationAdminService>(
+                        delegate(IAuthenticationAdminService service)
+                        {
+                            ListAuthorityGroupsRequest listRequest = new ListAuthorityGroupsRequest();
+                            listRequest.PageRequest.FirstRow = firstRow;
+                            listRequest.PageRequest.MaxRows = maxRows;
 
-                        Platform.GetService<IAuthenticationAdminService>(
-                            delegate(IAuthenticationAdminService service)
-                            {
-                                ListAuthorityGroupsRequest listRequest = _listRequest;
-                                listRequest.PageRequest.FirstRow = firstRow;
-                                listRequest.PageRequest.MaxRows = maxRows;
+                            listResponse = service.ListAuthorityGroups(listRequest);
+                        });
 
-                                listResponse = service.ListAuthorityGroups(listRequest);
-                            });
-
-                        authorityGroups = listResponse.AuthorityGroups;
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, Host.DesktopWindow);
-                    }
-
-                    return authorityGroups;
+                    return listResponse.AuthorityGroups;
                 }
             );
 
@@ -160,31 +155,44 @@ namespace ClearCanvas.Ris.Client.Admin
 
         #endregion
 
-        public void LoadAuthorityGroupTable()
+        private void LoadAuthorityGroupTable()
         {
-            _listRequest = new ListAuthorityGroupsRequest();
             _authorityGroupTable.Items.Clear();
             _authorityGroupTable.Items.AddRange(_pagingController.GetFirst());
         }
 
         public void AddAuthorityGroup()
         {
-            AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent();
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, SR.TitleAddAuthorityGroup);
+            try
+            {
+                AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent();
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleAddAuthorityGroup);
 
-            LoadAuthorityGroupTable();
+                LoadAuthorityGroupTable();
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         public void UpdateSelectedAuthorityGroup()
         {
-            if (_selectedAuthorityGroup == null) return;
+            try
+            {
+                if (_selectedAuthorityGroup == null) return;
 
-            AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent(_selectedAuthorityGroup.EntityRef);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, SR.TitleUpdateAuthorityGroup);
+                AuthorityGroupEditorComponent editor = new AuthorityGroupEditorComponent(_selectedAuthorityGroup.EntityRef);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleUpdateAuthorityGroup);
 
-            LoadAuthorityGroupTable();
+                LoadAuthorityGroupTable();
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         private void AuthorityGroupSelectionChanged()

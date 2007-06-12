@@ -36,7 +36,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         private void _authorityGroups_Load(object sender, EventArgs e)
         {
-            _component.LoadAuthorityGroupTable();
         }
 
         private void _authorityGroups_ItemDoubleClicked(object sender, EventArgs e)

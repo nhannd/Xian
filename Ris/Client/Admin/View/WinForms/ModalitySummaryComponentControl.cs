@@ -35,7 +35,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         private void _modalities_Load(object sender, EventArgs e)
         {
-            _component.LoadModalityTable();
         }
 
         private void _modalities_ItemDoubleClicked(object sender, EventArgs e)

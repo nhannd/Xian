@@ -198,26 +198,23 @@
   <data name="ColumnUserName" xml:space="preserve">
     <value>Name</value>
   </data>
-  <data name="ExceptionConcurrencyDiagnosticServiceNotSaved" xml:space="preserve">
-    <value>The diagnostic service was modified by another user.  Your changes could not be saved.</value>
+  <data name="ExceptionSaveAuthorityGroup" xml:space="preserve">
+    <value>Unable to save Authority Group</value>
   </data>
-  <data name="ExceptionConcurrencyFacilityNotSaved" xml:space="preserve">
-    <value>The facility was modified by another user.  Your changes could not be saved.</value>
+  <data name="ExceptionSaveFacility" xml:space="preserve">
+    <value>Unable to save Facility</value>
   </data>
-  <data name="ExceptionConcurrencyLocationNotSaved" xml:space="preserve">
-    <value>The location was modified by another user.  Your changes could not be saved.</value>
+  <data name="ExceptionSaveLocation" xml:space="preserve">
+    <value>Unable to save Location</value>
   </data>
-  <data name="ExceptionConcurrencyModalityNotSaved" xml:space="preserve">
-    <value>The modality was modified by another user.  Your changes could not be saved.</value>
+  <data name="ExceptionSaveModality" xml:space="preserve">
+    <value>Unable to save Modality</value>
   </data>
-  <data name="ExceptionConcurrencyPractitionerNotSaved" xml:space="preserve">
-    <value>The practitioner was modified by another user.  Your changes could not be saved.</value>
+  <data name="ExceptionSaveNoteCategory" xml:space="preserve">
+    <value>Unable to save Note Category</value>
   </data>
-  <data name="ExceptionConcurrencyStaffNotSaved" xml:space="preserve">
-    <value>The staff was modified by another user.  Your changes could not be saved.</value>
-  </data>
-  <data name="ExceptionFailedToSave" xml:space="preserve">
-    <value>An error occured while attempting to save changes to this item</value>
+  <data name="ExceptionSaveUser" xml:space="preserve">
+    <value>Unable to save User</value>
   </data>
   <data name="LabelEdit" xml:space="preserve">
     <value>Edit</value>

@@ -56,40 +56,32 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            try
+            if (_isNew)
             {
-                if (_isNew)
-                {
-                    _noteCategoryDetail = new NoteCategoryDetail();
-                }
-                else
-                {
-                    Platform.GetService<INoteCategoryAdminService>(
-                        delegate(INoteCategoryAdminService service)
-                        {
-                            LoadNoteCategoryForEditResponse response = service.LoadNoteCategoryForEdit(new LoadNoteCategoryForEditRequest(_noteCategoryRef));
-                            _noteCategoryRef = response.NoteCategoryRef;
-                            _noteCategoryDetail = response.NoteCategoryDetail;
-                        });
-                }
-
+                _noteCategoryDetail = new NoteCategoryDetail();
+            }
+            else
+            {
                 Platform.GetService<INoteCategoryAdminService>(
                     delegate(INoteCategoryAdminService service)
                     {
-                        GetNoteCategoryEditFormDataResponse response = service.GetNoteCategoryEditFormData(new GetNoteCategoryEditFormDataRequest());
-                        _severityChoices = response.SeverityChoices;
-
-                        if (_isNew && _noteCategoryDetail.Severity == null && response.SeverityChoices.Count > 0)
-                        {
-                            _noteCategoryDetail.Severity = response.SeverityChoices[0];
-                        }
+                        LoadNoteCategoryForEditResponse response = service.LoadNoteCategoryForEdit(new LoadNoteCategoryForEditRequest(_noteCategoryRef));
+                        _noteCategoryRef = response.NoteCategoryRef;
+                        _noteCategoryDetail = response.NoteCategoryDetail;
                     });
-                
             }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+
+            Platform.GetService<INoteCategoryAdminService>(
+                delegate(INoteCategoryAdminService service)
+                {
+                    GetNoteCategoryEditFormDataResponse response = service.GetNoteCategoryEditFormData(new GetNoteCategoryEditFormDataRequest());
+                    _severityChoices = response.SeverityChoices;
+
+                    if (_isNew && _noteCategoryDetail.Severity == null && response.SeverityChoices.Count > 0)
+                    {
+                        _noteCategoryDetail.Severity = response.SeverityChoices[0];
+                    }
+                });
 
             base.Start();
         }
@@ -156,12 +148,16 @@ namespace ClearCanvas.Ris.Client.Admin
                 try
                 {
                     SaveChanges();
-                    this.ExitCode = ApplicationComponentExitCode.Normal;
                     Host.Exit();
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                    ExceptionHandler.Report(e, SR.ExceptionSaveNoteCategory, this.Host.DesktopWindow,
+                        delegate()
+                        {
+                            this.ExitCode = ApplicationComponentExitCode.Error;
+                            this.Host.Exit();
+                        });
                 }
             }
         }
@@ -181,29 +177,22 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private void SaveChanges()
         {
-            try
-            {
-                Platform.GetService<INoteCategoryAdminService>(
-                    delegate(INoteCategoryAdminService service)
+            Platform.GetService<INoteCategoryAdminService>(
+                delegate(INoteCategoryAdminService service)
+                {
+                    if (_isNew)
                     {
-                        if (_isNew)
-                        {
-                            AddNoteCategoryResponse response = service.AddNoteCategory(new AddNoteCategoryRequest(_noteCategoryDetail));
-                            _noteCategoryRef = response.NoteCategory.NoteCategoryRef;
-                            _noteCategorySummary = response.NoteCategory;
-                        }
-                        else
-                        {
-                            UpdateNoteCategoryResponse response = service.UpdateNoteCategory(new UpdateNoteCategoryRequest(_noteCategoryRef, _noteCategoryDetail));
-                            _noteCategoryRef = response.NoteCategory.NoteCategoryRef;
-                            _noteCategorySummary = response.NoteCategory;
-                        }
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+                        AddNoteCategoryResponse response = service.AddNoteCategory(new AddNoteCategoryRequest(_noteCategoryDetail));
+                        _noteCategoryRef = response.NoteCategory.NoteCategoryRef;
+                        _noteCategorySummary = response.NoteCategory;
+                    }
+                    else
+                    {
+                        UpdateNoteCategoryResponse response = service.UpdateNoteCategory(new UpdateNoteCategoryRequest(_noteCategoryRef, _noteCategoryDetail));
+                        _noteCategoryRef = response.NoteCategory.NoteCategoryRef;
+                        _noteCategorySummary = response.NoteCategory;
+                    }
+                });
         }
 
         public event EventHandler AcceptEnabledChanged

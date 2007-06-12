@@ -304,65 +304,56 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The diagnostic service was modified by another user.  Your changes could not be saved..
+        ///   Looks up a localized string similar to Unable to save Authority Group.
         /// </summary>
-        internal static string ExceptionConcurrencyDiagnosticServiceNotSaved {
+        internal static string ExceptionSaveAuthorityGroup {
             get {
-                return ResourceManager.GetString("ExceptionConcurrencyDiagnosticServiceNotSaved", resourceCulture);
+                return ResourceManager.GetString("ExceptionSaveAuthorityGroup", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The facility was modified by another user.  Your changes could not be saved..
+        ///   Looks up a localized string similar to Unable to save Facility.
         /// </summary>
-        internal static string ExceptionConcurrencyFacilityNotSaved {
+        internal static string ExceptionSaveFacility {
             get {
-                return ResourceManager.GetString("ExceptionConcurrencyFacilityNotSaved", resourceCulture);
+                return ResourceManager.GetString("ExceptionSaveFacility", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The location was modified by another user.  Your changes could not be saved..
+        ///   Looks up a localized string similar to Unable to save Location.
         /// </summary>
-        internal static string ExceptionConcurrencyLocationNotSaved {
+        internal static string ExceptionSaveLocation {
             get {
-                return ResourceManager.GetString("ExceptionConcurrencyLocationNotSaved", resourceCulture);
+                return ResourceManager.GetString("ExceptionSaveLocation", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The modality was modified by another user.  Your changes could not be saved..
+        ///   Looks up a localized string similar to Unable to save Modality.
         /// </summary>
-        internal static string ExceptionConcurrencyModalityNotSaved {
+        internal static string ExceptionSaveModality {
             get {
-                return ResourceManager.GetString("ExceptionConcurrencyModalityNotSaved", resourceCulture);
+                return ResourceManager.GetString("ExceptionSaveModality", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The practitioner was modified by another user.  Your changes could not be saved..
+        ///   Looks up a localized string similar to Unable to save Note Category.
         /// </summary>
-        internal static string ExceptionConcurrencyPractitionerNotSaved {
+        internal static string ExceptionSaveNoteCategory {
             get {
-                return ResourceManager.GetString("ExceptionConcurrencyPractitionerNotSaved", resourceCulture);
+                return ResourceManager.GetString("ExceptionSaveNoteCategory", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The staff was modified by another user.  Your changes could not be saved..
+        ///   Looks up a localized string similar to Unable to save User.
         /// </summary>
-        internal static string ExceptionConcurrencyStaffNotSaved {
+        internal static string ExceptionSaveUser {
             get {
-                return ResourceManager.GetString("ExceptionConcurrencyStaffNotSaved", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to An error occured while attempting to save changes to this item.
-        /// </summary>
-        internal static string ExceptionFailedToSave {
-            get {
-                return ResourceManager.GetString("ExceptionFailedToSave", resourceCulture);
+                return ResourceManager.GetString("ExceptionSaveUser", resourceCulture);
             }
         }
         

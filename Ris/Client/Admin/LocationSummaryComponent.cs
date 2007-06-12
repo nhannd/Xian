@@ -29,13 +29,22 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             if (_workspace == null)
             {
-                LocationSummaryComponent component = new LocationSummaryComponent();
+                try
+                {
+                    LocationSummaryComponent component = new LocationSummaryComponent();
 
-                _workspace = ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    component,
-                    SR.TitleLocations,
-                    delegate(IApplicationComponent c) { _workspace = null; });
+                    _workspace = ApplicationComponent.LaunchAsWorkspace(
+                        this.Context.DesktopWindow,
+                        component,
+                        SR.TitleLocations,
+                        delegate(IApplicationComponent c) { _workspace = null; });
+
+                }
+                catch (Exception e)
+                {
+                    // could not launch component
+                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
+                }
             }
             else
             {
@@ -65,8 +74,6 @@ namespace ClearCanvas.Ris.Client.Admin
         private PagingController<LocationSummary> _pagingController;
         private PagingActionModel<LocationSummary> _pagingActionHandler;
 
-        private ListAllLocationsRequest _listRequest;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -76,8 +83,6 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            //_locationAdminService.LocationChanged += LocationChangedEventHandler;
-
             _locationTable = new LocationTable();
             _locationActionHandler = new CrudActionModel();
             _locationActionHandler.Add.SetClickHandler(AddLocation);
@@ -88,6 +93,8 @@ namespace ClearCanvas.Ris.Client.Admin
             InitialisePaging();
             _locationActionHandler.Merge(_pagingActionHandler);
 
+            LoadLocationTable();
+
             base.Start();
         }
 
@@ -96,30 +103,19 @@ namespace ClearCanvas.Ris.Client.Admin
             _pagingController = new PagingController<LocationSummary>(
                 delegate(int firstRow, int maxRows)
                 {
-                    IList<LocationSummary> locations = null;
+                    ListAllLocationsResponse listResponse = null;
 
-                    try
-                    {
-                        ListAllLocationsResponse listResponse = null;
+                    Platform.GetService<ILocationAdminService>(
+                        delegate(ILocationAdminService service)
+                        {
+                            ListAllLocationsRequest listRequest = new ListAllLocationsRequest(false);
+                            listRequest.PageRequest.FirstRow = firstRow;
+                            listRequest.PageRequest.MaxRows = maxRows;
 
-                        Platform.GetService<ILocationAdminService>(
-                            delegate(ILocationAdminService service)
-                            {
-                                ListAllLocationsRequest listRequest = _listRequest;
-                                listRequest.PageRequest.FirstRow = firstRow;
-                                listRequest.PageRequest.MaxRows = maxRows;
+                            listResponse = service.ListAllLocations(listRequest);
+                        });
 
-                                listResponse = service.ListAllLocations(listRequest);
-                            });
-
-                        locations = listResponse.Locations;
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                    }
-
-                    return locations;
+                    return listResponse.Locations;
                 }
             );
 
@@ -128,38 +124,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Stop()
         {
-            //_locationAdminService.LocationChanged -= LocationChangedEventHandler;
-            
             base.Stop();
         }
-
-        //TODO: LocationChangedEventHandler
-        //private void LocationChangedEventHandler(object sender, EntityChangeEventArgs e)
-        //{
-        //    // check if the location with this oid is in the list
-        //    int index = _locationTable.Items.FindIndex(delegate(Location loc) { return e.EntityRef.RefersTo(loc); });
-        //    if (index > -1)
-        //    {
-        //        if (e.ChangeType == EntityChangeType.Update)
-        //        {
-        //            Location loc = _locationAdminService.LoadLocation((EntityRef<Location>)e.EntityRef);
-        //            _locationTable.Items[index] = loc;
-        //        }
-        //        else if (e.ChangeType == EntityChangeType.Delete)
-        //        {
-        //            _locationTable.Items.RemoveAt(index);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (e.ChangeType == EntityChangeType.Create)
-        //        {
-        //            Location loc = _locationAdminService.LoadLocation((EntityRef<Location>)e.EntityRef);
-        //            if (loc != null)
-        //                _locationTable.Items.Add(loc);
-        //        }
-        //    }
-        //}
 
         #region Presentation Model
 
@@ -185,38 +151,54 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void AddLocation()
         {
-            LocationEditorComponent editor = new LocationEditorComponent();
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, SR.TitleAddLocation);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            try
             {
-                _locationTable.Items.Add(_selectedLocation = editor.LocationSummary);
-                LocationSelectionChanged();
+                LocationEditorComponent editor = new LocationEditorComponent();
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleAddLocation);
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    _locationTable.Items.Add(_selectedLocation = editor.LocationSummary);
+                    LocationSelectionChanged();
+                }
+            }
+            catch (Exception e)
+            {
+                // could not launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
         public void UpdateSelectedLocation()
         {
-            // can occur if user double clicks while holding control
-            if (_selectedLocation == null) return;
-
-            LocationEditorComponent editor = new LocationEditorComponent(_selectedLocation.LocationRef);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, SR.TitleUpdateLocation);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            try
             {
-                _locationTable.Items.Replace(delegate(LocationSummary l) { return l.LocationRef.Equals(editor.LocationSummary.LocationRef); }, editor.LocationSummary);
+                // can occur if user double clicks while holding control
+                if (_selectedLocation == null) return;
+
+                LocationEditorComponent editor = new LocationEditorComponent(_selectedLocation.LocationRef);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleUpdateLocation);
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    _locationTable.Items.Replace(delegate(LocationSummary l) { return l.LocationRef.Equals(editor.LocationSummary.LocationRef); }, editor.LocationSummary);
+                }
+            }
+            catch (Exception e)
+            {
+                // could not launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
-        public void LoadLocationTable()
+
+        #endregion
+
+        private void LoadLocationTable()
         {
-            _listRequest = new ListAllLocationsRequest(false);
             _locationTable.Items.Clear();
             _locationTable.Items.AddRange(_pagingController.GetFirst());
         }
-
-        #endregion
 
         private void LocationSelectionChanged()
         {

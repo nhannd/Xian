@@ -27,13 +27,22 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             if (_workspace == null)
             {
-                ImportDiagnosticServicesComponent component = new ImportDiagnosticServicesComponent();
+                try
+                {
+                    ImportDiagnosticServicesComponent component = new ImportDiagnosticServicesComponent();
 
-                _workspace = ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    component,
-                    SR.TitleImportDiagnosticServices,
-                    delegate(IApplicationComponent c) { _workspace = null; });
+                    _workspace = ApplicationComponent.LaunchAsWorkspace(
+                        this.Context.DesktopWindow,
+                        component,
+                        SR.TitleImportDiagnosticServices,
+                        delegate(IApplicationComponent c) { _workspace = null; });
+
+                }
+                catch (Exception e)
+                {
+                    // failed to launch component
+                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
+                }
             }
             else
             {
@@ -101,8 +110,6 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return (_batchSize == 0) ? 0 : (int) Math.Ceiling((decimal)_rows.Count / (decimal)_batchSize); }
         }
 
-        #endregion
-
         public void OpenFile()
         {
             if (_filename == null)
@@ -122,18 +129,26 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void StartImport()
         {
-            // Start a background task to import diagnostic services
-            BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context) { ImportDiagnosticService(context); }, true);
+            // create a background task to import diagnostic services
+            BackgroundTask task = new BackgroundTask(
+                delegate(IBackgroundTaskContext context)
+                {
+                    ImportDiagnosticService(context);
+                }, true);
 
             try
             {
+                // run task and block
                 ProgressDialog.Show(task, this.Host.DesktopWindow);
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                // we know that the background task has wrapped up an inner exception, so extract it
+                ExceptionHandler.Report(e.InnerException, e.Message, this.Host.DesktopWindow);
             }
         }
+
+        #endregion
 
         private void ImportDiagnosticService(IBackgroundTaskContext context)
         {

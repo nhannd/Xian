@@ -36,7 +36,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         private void _locations_Load(object sender, EventArgs e)
         {
-            _component.LoadLocationTable();
         }
 
         private void _locations_ItemDoubleClicked(object sender, EventArgs e)

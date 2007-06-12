@@ -26,13 +26,22 @@ namespace ClearCanvas.Ris.Client
         {
             if (_workspace == null)
             {
-                StaffSummaryComponent component = new StaffSummaryComponent();
+                try
+                {
+                    StaffSummaryComponent component = new StaffSummaryComponent();
 
-                _workspace = ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    component,
-                    SR.TitleStaff,
-                    delegate(IApplicationComponent c) { _workspace = null; });
+                    _workspace = ApplicationComponent.LaunchAsWorkspace(
+                        this.Context.DesktopWindow,
+                        component,
+                        SR.TitleStaff,
+                        delegate(IApplicationComponent c) { _workspace = null; });
+
+                }
+                catch (Exception e)
+                {
+                    // failed to launch component
+                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
+                }
             }
             else
             {
@@ -90,9 +99,6 @@ namespace ClearCanvas.Ris.Client
 
         public override void Start()
         {
-            //_staffAdminService.StaffChanged += StaffChangedEventHandler;
-            //_staffAdminService.PractitionerChanged += PractitionerChangedEventHandler;
-
             _staffTable = new StaffTable();
 
             _staffActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
@@ -104,13 +110,14 @@ namespace ClearCanvas.Ris.Client
 
             _listRequest = new ListStaffRequest();
 
-            base.Start();
-
             // if the last name or first name properties are valued, generate an initial search
             if (!string.IsNullOrEmpty(_lastName) || !string.IsNullOrEmpty(_firstName))
             {
-                Search();
+                // do not handle exceptions here - allow to propagate to caller
+                DoSearch();
             }
+
+            base.Start();
         }
 
         private void InitialisePaging(ActionModelNode actionModelNode)
@@ -118,29 +125,18 @@ namespace ClearCanvas.Ris.Client
             _pagingController = new PagingController<StaffSummary>(
                 delegate(int firstRow, int maxRows)
                 {
-                    IList<StaffSummary> staff = null;
+                    ListStaffResponse listResponse = null;
 
-                    try
-                    {
-                        ListStaffResponse listResponse = null;
+                    Platform.GetService<IStaffAdminService>(
+                        delegate(IStaffAdminService service)
+                        {
+                            _listRequest.PageRequest.FirstRow = firstRow;
+                            _listRequest.PageRequest.MaxRows = maxRows;
 
-                        Platform.GetService<IStaffAdminService>(
-                            delegate(IStaffAdminService service)
-                            {
-                                _listRequest.PageRequest.FirstRow = firstRow;
-                                _listRequest.PageRequest.MaxRows = maxRows;
+                            listResponse = service.ListStaff(_listRequest);
+                        });
 
-                                listResponse = service.ListStaff(_listRequest);
-                            });
-
-                        staff = listResponse.Staffs;
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                    }
-
-                    return staff;
+                    return listResponse.Staffs;
                 }
             );
 
@@ -153,98 +149,11 @@ namespace ClearCanvas.Ris.Client
 
         public override void Stop()
         {
-            //_staffAdminService.StaffChanged -= StaffChangedEventHandler;
-            //_staffAdminService.PractitionerChanged -= PractitionerChangedEventHandler;
-
             base.Stop();
         }
 
         #region Event Handler
 
-        //TODO: PractitionerChangedEventHandler
-        //private void PractitionerChangedEventHandler(object sender, EntityChangeEventArgs e)
-        //{
-        //    // check if the staff with this oid is in the list
-        //    int index = _staffTable.Items.FindIndex(delegate(Staff s) { return e.EntityRef.RefersTo(s); });
-        //    IPractitionerAdminService practitionerAdminService = ApplicationContext.GetService<IPractitionerAdminService>();
-        //    if (index > -1)
-        //    {
-        //        if (e.ChangeType == EntityChangeType.Update)
-        //        {
-        //            try
-        //            {
-        //                Practitioner p = practitionerAdminService.LoadPractitioner((EntityRef<Practitioner>)e.EntityRef, false);
-        //                _staffTable.Items[index] = p;
-        //            }
-        //            catch (Exception exception)
-        //            {
-        //                ExceptionHandler.Report(exception, this.Host.DesktopWindow);
-        //            }
-        //        }
-        //        else if (e.ChangeType == EntityChangeType.Delete)
-        //        {
-        //            _staffTable.Items.RemoveAt(index);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (e.ChangeType == EntityChangeType.Create)
-        //        {
-        //            try
-        //            {
-        //                Practitioner p = practitionerAdminService.LoadPractitioner((EntityRef<Practitioner>)e.EntityRef, false);
-        //                if (p != null)
-        //                    _staffTable.Items.Add(p);
-        //            }
-        //            catch (Exception exception)
-        //            {
-        //                ExceptionHandler.Report(exception, this.Host.DesktopWindow);
-        //            }
-        //        }
-        //    }
-        //}
-
-        //TODO: StaffChangedEventHandler
-        //private void StaffChangedEventHandler(object sender, EntityChangeEventArgs e)
-        //{
-        //    // check if the staff with this oid is in the list
-        //    int index = _staffTable.Items.FindIndex(delegate(Staff s) { return e.EntityRef.RefersTo(s); });
-        //    if (index > -1)
-        //    {
-        //        if (e.ChangeType == EntityChangeType.Update)
-        //        {
-        //            try
-        //            {
-        //                Staff s = _staffAdminService.LoadStaff((EntityRef<Staff>)e.EntityRef, false);
-        //                _staffTable.Items[index] = s;
-        //            }
-        //            catch (Exception exception)
-        //            {
-        //                ExceptionHandler.Report(exception, this.Host.DesktopWindow);
-        //            }
-        //        }
-        //        else if (e.ChangeType == EntityChangeType.Delete)
-        //        {
-        //            _staffTable.Items.RemoveAt(index);
-        //        }
-        //    }
-        //    else
-        //    {
-        //        if (e.ChangeType == EntityChangeType.Create)
-        //        {
-        //            try
-        //            {
-        //                Staff s = _staffAdminService.LoadStaff((EntityRef<Staff>)e.EntityRef, false);
-        //                if (s != null)
-        //                    _staffTable.Items.Add(s);
-        //            }
-        //            catch (Exception exception)
-        //            {
-        //                ExceptionHandler.Report(exception, this.Host.DesktopWindow);
-        //            }
-        //        }
-        //    }
-        //}
 
         #endregion
 
@@ -290,55 +199,81 @@ namespace ClearCanvas.Ris.Client
 
         public void AddStaff()
         {
-            StaffEditorComponent editor = new StaffEditorComponent(true);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, SR.TitleAddStaff);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            try
             {
-                _staffTable.Items.Add(editor.StaffSummary);
+                StaffEditorComponent editor = new StaffEditorComponent(true);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleAddStaff);
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    _staffTable.Items.Add(editor.StaffSummary);
+                }
+            }
+            catch (Exception e)
+            {
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
         public void AddPractitioner()
         {
-            StaffEditorComponent editor = new StaffEditorComponent(false);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, SR.TitleAddPractitioner);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            try
             {
-                _staffTable.Items.Add(editor.PractitionerSummary);
+                StaffEditorComponent editor = new StaffEditorComponent(false);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleAddPractitioner);
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    _staffTable.Items.Add(editor.PractitionerSummary);
+                }
+
+            }
+            catch (Exception e)
+            {
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
         public void UpdateSelectedStaff()
         {
-            // can occur if user double clicks while holding control
-            if (_selectedStaff == null) return;
+            try
+            {
+                // can occur if user double clicks while holding control
+                if (_selectedStaff == null) return;
 
-            StaffEditorComponent editor;
-            if (_selectedStaff.LicenseNumber == null || _selectedStaff.LicenseNumber == "")
-            {
-                editor = new StaffEditorComponent(_selectedStaff.StaffRef, true);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleUpdateStaff);
-                if (exitCode == ApplicationComponentExitCode.Normal)
+                StaffEditorComponent editor;
+                if (_selectedStaff.LicenseNumber == null || _selectedStaff.LicenseNumber == "")
                 {
-                    _staffTable.Items.Replace(
-                        delegate(StaffSummary s) { return s.StaffRef.Equals(editor.StaffSummary.StaffRef); },
-                        editor.StaffSummary);
+                    editor = new StaffEditorComponent(_selectedStaff.StaffRef, true);
+                    ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                        this.Host.DesktopWindow, editor, SR.TitleUpdateStaff);
+                    if (exitCode == ApplicationComponentExitCode.Normal)
+                    {
+                        _staffTable.Items.Replace(
+                            delegate(StaffSummary s) { return s.StaffRef.Equals(editor.StaffSummary.StaffRef); },
+                            editor.StaffSummary);
+                    }
                 }
+                else
+                {
+                    editor = new StaffEditorComponent(_selectedStaff.StaffRef, false);
+                    ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                        this.Host.DesktopWindow, editor, SR.TitleUpdatePractitioner);
+                    if (exitCode == ApplicationComponentExitCode.Normal)
+                    {
+                        _staffTable.Items.Replace(
+                            delegate(StaffSummary s) { return s.StaffRef.Equals(editor.PractitionerSummary.StaffRef); },
+                            editor.PractitionerSummary);
+                    }
+                }
+
             }
-            else
+            catch (Exception e)
             {
-                editor = new StaffEditorComponent(_selectedStaff.StaffRef, false);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleUpdatePractitioner);
-                if (exitCode == ApplicationComponentExitCode.Normal)
-                {
-                    _staffTable.Items.Replace(
-                        delegate(StaffSummary s) { return s.StaffRef.Equals(editor.PractitionerSummary.StaffRef); },
-                        editor.PractitionerSummary);
-                }
+                // failed to launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
@@ -354,11 +289,15 @@ namespace ClearCanvas.Ris.Client
 
         public void Search()
         {
-            _listRequest.FirstName = _firstName;
-            _listRequest.LastName = _lastName;
-
-            _staffTable.Items.Clear();
-            _staffTable.Items.AddRange(_pagingController.GetFirst());
+            try
+            {
+                DoSearch();
+            }
+            catch (Exception e)
+            {
+                // search failed
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         public bool AcceptEnabled
@@ -379,6 +318,15 @@ namespace ClearCanvas.Ris.Client
         }
 
         #endregion
+
+        private void DoSearch()
+        {
+            _listRequest.FirstName = _firstName;
+            _listRequest.LastName = _lastName;
+
+            _staffTable.Items.Clear();
+            _staffTable.Items.AddRange(_pagingController.GetFirst());
+        }
 
         private void StaffSelectionChanged()
         {

@@ -35,7 +35,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         private void _facilities_Load(object sender, EventArgs e)
         {
-            _component.LoadFacilityTable();
         }
 
         private void _facilities_ItemDoubleClicked(object sender, EventArgs e)

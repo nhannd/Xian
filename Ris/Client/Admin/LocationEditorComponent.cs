@@ -56,40 +56,33 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            try
+            if (_isNew)
             {
-                if (_isNew)
-                {
-                    _locationDetail = new LocationDetail();
-                }
-                else
-                {
-                    Platform.GetService<ILocationAdminService>(
-                        delegate(ILocationAdminService service)
-                        {
-                                LoadLocationForEditResponse response = service.LoadLocationForEdit(new LoadLocationForEditRequest(_locationRef));
-                                _locationRef = response.LocationRef;
-                                _locationDetail = response.LocationDetail;
-                        });
-                }
-            
-                Platform.GetService<IFacilityAdminService>(
-                    delegate(IFacilityAdminService service)
+                _locationDetail = new LocationDetail();
+            }
+            else
+            {
+                Platform.GetService<ILocationAdminService>(
+                    delegate(ILocationAdminService service)
                     {
-                        ListAllFacilitiesResponse response = service.ListAllFacilities(new ListAllFacilitiesRequest());
-                        _facilityChoices = response.Facilities;
-
-                        if (_isNew && _locationDetail.Facility == null && response.Facilities.Count > 0)
-                        {
-                            _locationDetail.Facility = response.Facilities[0];
-                        }
+                            LoadLocationForEditResponse response = service.LoadLocationForEdit(new LoadLocationForEditRequest(_locationRef));
+                            _locationRef = response.LocationRef;
+                            _locationDetail = response.LocationDetail;
                     });
+            }
+        
+            Platform.GetService<IFacilityAdminService>(
+                delegate(IFacilityAdminService service)
+                {
+                    ListAllFacilitiesResponse response = service.ListAllFacilities(new ListAllFacilitiesRequest());
+                    _facilityChoices = response.Facilities;
+
+                    if (_isNew && _locationDetail.Facility == null && response.Facilities.Count > 0)
+                    {
+                        _locationDetail.Facility = response.Facilities[0];
+                    }
+                });
                 
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
 
             base.Start();
         }
@@ -195,12 +188,17 @@ namespace ClearCanvas.Ris.Client.Admin
                 try
                 {
                     SaveChanges();
-                    this.ExitCode = ApplicationComponentExitCode.Normal;
+
                     Host.Exit();
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                    ExceptionHandler.Report(e, SR.ExceptionSaveLocation, this.Host.DesktopWindow,
+                        delegate()
+                        {
+                            this.ExitCode = ApplicationComponentExitCode.Error;
+                            this.Host.Exit();
+                        });
                 }
             }
         }
@@ -220,32 +218,25 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private void SaveChanges()
         {
-            try
+            if (_isNew)
             {
-                if (_isNew)
-                {
-                    Platform.GetService<ILocationAdminService>(
-                        delegate(ILocationAdminService service)
-                        {
-                            AddLocationResponse response = service.AddLocation(new AddLocationRequest(_locationDetail));
-                            _locationRef = response.Location.LocationRef;
-                            _locationSummary = response.Location;
-                        });
-                }
-                else
-                {
-                    Platform.GetService<ILocationAdminService>(
-                        delegate(ILocationAdminService service)
-                        {
-                            UpdateLocationResponse response = service.UpdateLocation(new UpdateLocationRequest(_locationRef, _locationDetail));
-                            _locationRef = response.Location.LocationRef;
-                            _locationSummary = response.Location;
-                        });
-                }
+                Platform.GetService<ILocationAdminService>(
+                    delegate(ILocationAdminService service)
+                    {
+                        AddLocationResponse response = service.AddLocation(new AddLocationRequest(_locationDetail));
+                        _locationRef = response.Location.LocationRef;
+                        _locationSummary = response.Location;
+                    });
             }
-            catch (Exception e)
+            else
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                Platform.GetService<ILocationAdminService>(
+                    delegate(ILocationAdminService service)
+                    {
+                        UpdateLocationResponse response = service.UpdateLocation(new UpdateLocationRequest(_locationRef, _locationDetail));
+                        _locationRef = response.Location.LocationRef;
+                        _locationSummary = response.Location;
+                    });
             }
         }
 

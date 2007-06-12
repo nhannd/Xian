@@ -36,7 +36,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         private void _noteCategories_Load(object sender, EventArgs e)
         {
-            _component.LoadNoteCategoryTable();
         }
 
         private void _noteCategories_ItemDoubleClicked(object sender, EventArgs e)

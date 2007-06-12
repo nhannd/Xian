@@ -20,7 +20,6 @@ namespace ClearCanvas.Ris.Client.Admin
     [MenuAction("launch", "global-menus/Admin/Users")]
     [ClickHandler("launch", "Launch")]
     [ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
-    //[ActionPermission("launch", ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin)]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class UserSummaryTool : Tool<IDesktopToolContext>
@@ -31,13 +30,22 @@ namespace ClearCanvas.Ris.Client.Admin
         {
             if (_workspace == null)
             {
-                UserSummaryComponent component = new UserSummaryComponent();
+                try
+                {
+                    UserSummaryComponent component = new UserSummaryComponent();
 
-                _workspace = ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    component,
-                    SR.TitleUser,
-                    delegate(IApplicationComponent c) { _workspace = null; });
+                    _workspace = ApplicationComponent.LaunchAsWorkspace(
+                        this.Context.DesktopWindow,
+                        component,
+                        SR.TitleUser,
+                        delegate(IApplicationComponent c) { _workspace = null; });
+
+                }
+                catch (Exception e)
+                {
+                    // could not launch component
+                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
+                }
             }
             else
             {
@@ -69,8 +77,6 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private IPagingController<UserSummary> _pagingController;
 
-        private ListUsersRequest _listRequest;
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -88,6 +94,8 @@ namespace ClearCanvas.Ris.Client.Admin
 
             InitialisePaging(_userActionHandler);
 
+            LoadUserTable();
+
             base.Start();
         }
 
@@ -96,30 +104,19 @@ namespace ClearCanvas.Ris.Client.Admin
             _pagingController = new PagingController<UserSummary>(
                 delegate(int firstRow, int maxRows)
                 {
-                    IList<UserSummary> users = null;
+                    ListUsersResponse listResponse = null;
 
-                    try
-                    {
-                        ListUsersResponse listResponse = null;
+                    Platform.GetService<IAuthenticationAdminService>(
+                        delegate(IAuthenticationAdminService service)
+                        {
+                            ListUsersRequest listRequest = new ListUsersRequest();
+                            listRequest.PageRequest.FirstRow = firstRow;
+                            listRequest.PageRequest.MaxRows = maxRows;
 
-                        Platform.GetService<IAuthenticationAdminService>(
-                            delegate(IAuthenticationAdminService service)
-                            {
-                                ListUsersRequest listRequest = _listRequest;
-                                listRequest.PageRequest.FirstRow = firstRow;
-                                listRequest.PageRequest.MaxRows = maxRows;
+                            listResponse = service.ListUsers(listRequest);
+                        });
 
-                                listResponse = service.ListUsers(listRequest);
-                            });
-
-                        users = listResponse.Users;
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                    }
-                        
-                    return users;
+                    return listResponse.Users;
                 }
             );
 
@@ -131,8 +128,6 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Stop()
         {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
             base.Stop();
         }
 
@@ -160,38 +155,52 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public void AddUser()
         {
-            UserEditorComponent editor = new UserEditorComponent();
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, SR.TitleAddUser);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            try
             {
-                _userTable.Items.Add(editor.UserSummary);
+                UserEditorComponent editor = new UserEditorComponent();
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleAddUser);
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    _userTable.Items.Add(editor.UserSummary);
+                }
+            }
+            catch (Exception e)
+            {
+                // could not launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
         public void UpdateSelectedUser()
         {
-            if (_selectedUser == null) return;
-
-            UserEditorComponent editor = new UserEditorComponent(_selectedUser.EntityRef);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                this.Host.DesktopWindow, editor, SR.TitleUpdateUser);
-
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            try
             {
-                _userTable.Items.Replace(delegate(UserSummary u) { return u.EntityRef.Equals(editor.UserSummary.EntityRef); }, editor.UserSummary);
+                if (_selectedUser == null) return;
+
+                UserEditorComponent editor = new UserEditorComponent(_selectedUser.EntityRef);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleUpdateUser);
+
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    _userTable.Items.Replace(delegate(UserSummary u) { return u.EntityRef.Equals(editor.UserSummary.EntityRef); }, editor.UserSummary);
+                }
+            }
+            catch (Exception e)
+            {
+                // could not launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
-        public void LoadUserTable()
-        {
-            _listRequest = new ListUsersRequest();
+        #endregion
 
+        private void LoadUserTable()
+        {
             _userTable.Items.Clear();
             _userTable.Items.AddRange(_pagingController.GetFirst());
         }
-
-        #endregion
 
         private void UserSelectionChanged()
         {

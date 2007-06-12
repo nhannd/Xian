@@ -51,26 +51,19 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
-            try
+            if (_isNew)
             {
-                if (_isNew)
-                {
-                    _facilityDetail = new FacilityDetail();
-                }
-                else
-                {
-                    Platform.GetService<IFacilityAdminService>(
-                        delegate(IFacilityAdminService service)
-                        {
-                            LoadFacilityForEditResponse response = service.LoadFacilityForEdit(new LoadFacilityForEditRequest(_facilityRef));
-                            _facilityRef = response.FacilityRef;
-                            _facilityDetail = response.FacilityDetail;
-                        });
-                }
+                _facilityDetail = new FacilityDetail();
             }
-            catch (Exception e)
+            else
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                Platform.GetService<IFacilityAdminService>(
+                    delegate(IFacilityAdminService service)
+                    {
+                        LoadFacilityForEditResponse response = service.LoadFacilityForEdit(new LoadFacilityForEditRequest(_facilityRef));
+                        _facilityRef = response.FacilityRef;
+                        _facilityDetail = response.FacilityDetail;
+                    });
             }
             
             base.Start();
@@ -119,13 +112,33 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 try
                 {
-                    SaveChanges();
-                    this.ExitCode = ApplicationComponentExitCode.Normal;
-                    Host.Exit();
+                    Platform.GetService<IFacilityAdminService>(
+                        delegate(IFacilityAdminService service)
+                        {
+                            if (_isNew)
+                            {
+                                AddFacilityResponse response = service.AddFacility(new AddFacilityRequest(_facilityDetail));
+                                _facilityRef = response.Facility.FacilityRef;
+                                _facilitySummary = response.Facility;
+                            }
+                            else
+                            {
+                                UpdateFacilityResponse response = service.UpdateFacility(new UpdateFacilityRequest(_facilityRef, _facilityDetail));
+                                _facilityRef = response.Facility.FacilityRef;
+                                _facilitySummary = response.Facility;
+                            }
+                        });
+
+                    this.Host.Exit();
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                    ExceptionHandler.Report(e, SR.ExceptionSaveFacility, this.Host.DesktopWindow,
+                        delegate()
+                        {
+                            this.ExitCode = ApplicationComponentExitCode.Error;
+                            this.Host.Exit();
+                        });
                 }
             }
         }
@@ -142,33 +155,6 @@ namespace ClearCanvas.Ris.Client.Admin
         }
 
         #endregion
-
-        private void SaveChanges()
-        {
-            try
-            {
-                Platform.GetService<IFacilityAdminService>(
-                    delegate(IFacilityAdminService service)
-                    {
-                        if (_isNew)
-                        {
-                            AddFacilityResponse response = service.AddFacility(new AddFacilityRequest(_facilityDetail));
-                            _facilityRef = response.Facility.FacilityRef;
-                            _facilitySummary = response.Facility;
-                        }
-                        else
-                        {
-                            UpdateFacilityResponse response = service.UpdateFacility(new UpdateFacilityRequest(_facilityRef, _facilityDetail));
-                            _facilityRef = response.Facility.FacilityRef;
-                            _facilitySummary = response.Facility;
-                        }
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
 
         public event EventHandler AcceptEnabledChanged
         {
