@@ -184,7 +184,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 {
                     verification.Assign(currentUserStaff);
                 }
-                verification.Start(currentUserStaff);
+
+                if (verification.State == ActivityStatus.SC)
+                {
+                    verification.Start(currentUserStaff);
+                }
             }
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
@@ -192,8 +196,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 if (step is VerificationStep == false)
                     return false;
 
-                // step already started
-                if (step.State != ActivityStatus.SC)
+                // step is completed/cancelled
+                if (step.State != ActivityStatus.SC && step.State != ActivityStatus.IP)
                     return false;
 
                 // step is assigned to someone else

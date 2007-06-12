@@ -4,7 +4,7 @@ using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client
 {
     public abstract class Document
     {

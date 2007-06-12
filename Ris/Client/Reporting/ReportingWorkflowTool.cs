@@ -125,28 +125,21 @@ namespace ClearCanvas.Ris.Client.Reporting
         [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
         public class EditInterpretationTool : WorkflowItemTool
         {
-            private Dictionary<EntityRef, IWorkspace> _workspaceDictionary;
-
             public EditInterpretationTool()
                 : base("EditInterpretation")
             {
-                _workspaceDictionary = new Dictionary<EntityRef, IWorkspace>();
-            }
-
-            private string GetWorkspaceTitle(ReportingWorklistItem item)
-            {
-                return String.Format("{0} - {1}", PersonNameFormat.Format(item.PersonNameDetail), item.RequestedProcedureName);
             }
 
             protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
             {
-                try
+                Document doc = DocumentManager.Get(item.ProcedureStepRef);
+                if (doc != null)
                 {
-                    if (_workspaceDictionary.ContainsKey(item.ProcedureStepRef))
-                    {
-                        _workspaceDictionary[item.ProcedureStepRef].Activate();
-                    }
-                    else
+                    doc.Activate();
+                }
+                else
+                {
+                    try
                     {
                         string reportContent = "";
 
@@ -162,29 +155,18 @@ namespace ClearCanvas.Ris.Client.Reporting
                             delegate(IFolder f) { return f is Folders.MyInterpretationFolder; });
                         myInterpretationFolder.Refresh();
 
-                        IWorkspace workspace = ApplicationComponent.LaunchAsWorkspace(desktopWindow,
-                            new InterpretationComponent(item, reportContent, folders),
-                            GetWorkspaceTitle(item),
-                            delegate(IApplicationComponent c)
-                            {
-                                if (c.ExitCode == ApplicationComponentExitCode.Normal)
-                                {
-                                    myInterpretationFolder.Refresh();
-                                }
-
-                                _workspaceDictionary.Remove(item.ProcedureStepRef);
-                            });
-
-                        _workspaceDictionary[item.ProcedureStepRef] = workspace;
-                    }                    
-
-                    return true;
+                        doc = new ReportDocument(item, reportContent, folders, this.Context.DesktopWindow);
+                        doc.Closed += new EventHandler(delegate(object sender, EventArgs e) { myInterpretationFolder.Refresh(); });
+                        doc.Open();
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, desktopWindow);
+                        return false;
+                    }
                 }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, desktopWindow);
-                    return false;
-                }
+
+                return true;
             }
         }
 
@@ -336,40 +318,56 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Start Verification")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Start Verification")]
+        [MenuAction("apply", "folderexplorer-items-contextmenu/Edit Verification")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Edit Verification")]
         [ClickHandler("apply", "Apply")]
         [IconSet("apply", IconScheme.Colour, "Icons.StartToolSmall.png", "Icons.StartToolMedium.png", "Icons.StartToolLarge.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
         [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-        public class StartVerificationTool : WorkflowItemTool
+        public class EditVerificationTool : WorkflowItemTool
         {
-            public StartVerificationTool()
-                : base("StartVerification")
+            public EditVerificationTool()
+                : base("EditVerification")
             {
             }
 
             protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
             {
-                try
+                Document doc = DocumentManager.Get(item.ProcedureStepRef);
+                if (doc != null)
                 {
-                    Platform.GetService<IReportingWorkflowService>(
-                        delegate(IReportingWorkflowService service)
-                        {
-                            service.StartVerification(new StartVerificationRequest(item));
-                        });
-
-                    IFolder myVerificationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.MyVerificationFolder; });
-                    myVerificationFolder.RefreshCount();
-
-                    return true;
+                    doc.Activate();
                 }
-                catch (Exception e)
+                else
                 {
-                    ExceptionHandler.Report(e, desktopWindow);
-                    return false;
+                    try
+                    {
+                        string reportContent = "";
+
+                        Platform.GetService<IReportingWorkflowService>(
+                            delegate(IReportingWorkflowService service)
+                            {
+                                EditVerificationResponse response = service.EditVerification(new EditVerificationRequest(item));
+                                item.ProcedureStepRef = response.ReportingStepRef;
+                                reportContent = response.ReportContent;
+                            });
+
+                        IFolder myVerificationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                            delegate(IFolder f) { return f is Folders.MyVerificationFolder; });
+                        myVerificationFolder.Refresh();
+
+                        doc = new ReportDocument(item, reportContent, folders, this.Context.DesktopWindow);
+                        doc.Closed += new EventHandler(delegate(object sender, EventArgs e) { myVerificationFolder.Refresh(); });
+                        doc.Open();
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, desktopWindow);
+                        return false;
+                    }
                 }
+
+                return true;
             }
         }
 

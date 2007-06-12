@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client
 {
     public static class DocumentManager
     {

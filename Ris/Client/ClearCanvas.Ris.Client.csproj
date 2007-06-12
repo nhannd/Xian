@@ -57,6 +57,8 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>ContactPersonEditorComponentSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="Document.cs" />
+    <Compile Include="DocumentManager.cs" />
     <Compile Include="EmailAddressEditorComponentSettings.cs" />
     <Compile Include="EmailAddressEditorComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>

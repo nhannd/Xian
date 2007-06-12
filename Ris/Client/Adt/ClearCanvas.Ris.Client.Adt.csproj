@@ -89,7 +89,6 @@
     <Compile Include="PatientProfileDiffComponent.cs" />
     <Compile Include="PatientReconciliation.cs" />
     <Compile Include="ReconciliationConfirmComponent.cs" />
-    <Compile Include="Document.cs" />
     <Compile Include="JscriptComponent.cs" />
     <Compile Include="JscriptTool.cs" />
     <Compile Include="PatientAddTool.cs" />
@@ -98,7 +97,6 @@
     <Compile Include="PatientOverviewTool.cs" />
     <Compile Include="PatientProfileEditorComponent.cs" />
     <Compile Include="PatientProfileTable.cs" />
-    <Compile Include="DocumentManager.cs" />
     <Compile Include="PatientOverviewDocument.cs" />
     <Compile Include="ReconciliationComponent.cs" />
     <Compile Include="PatientReconcileTool.cs" />

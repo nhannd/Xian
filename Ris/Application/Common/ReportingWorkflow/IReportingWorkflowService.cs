@@ -40,6 +40,13 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         StartVerificationResponse StartVerification(StartVerificationRequest request);
 
         [OperationContract]
+        EditVerificationResponse EditVerification(EditVerificationRequest request);
+
+        [OperationContract]
         CompleteVerificationResponse CompleteVerification(CompleteVerificationRequest request);
+
+        [OperationContract]
+        SaveReportResponse SaveReport(SaveReportRequest request);
+
     }
 }

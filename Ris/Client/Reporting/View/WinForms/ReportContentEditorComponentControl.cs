@@ -11,16 +11,16 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="InterpretationComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="ReportContentEditorComponent"/>
     /// </summary>
-    public partial class InterpretationComponentControl : ApplicationComponentUserControl
+    public partial class ReportContentEditorComponentControl : ApplicationComponentUserControl
     {
-        private InterpretationComponent _component;
+        private ReportContentEditorComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public InterpretationComponentControl(InterpretationComponent component)
+        public ReportContentEditorComponentControl(ReportContentEditorComponent component)
             :base(component)
         {
             InitializeComponent();
@@ -34,6 +34,10 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             _priority.DataBindings.Add("Value", _component, "Priority", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _report.DataBindings.Add("Value", _component, "Report", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _verifyButton.DataBindings.Add("Enabled", _component, "VerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
+            _sendToVerifyButton.DataBindings.Add("Enabled", _component, "SendToVerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
+            _sendToTranscriptionButton.DataBindings.Add("Enabled", _component, "SendToTranscriptionEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
             _saveButton.DataBindings.Add("Enabled", _component, "SaveEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
         }
 

@@ -1,6 +1,6 @@
 namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 {
-    partial class InterpretationComponentControl
+    partial class ReportContentEditorComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(597, 521);
-            this.tableLayoutPanel1.TabIndex = 1;
+            this.tableLayoutPanel1.TabIndex = 0;
             // 
             // panel1
             // 
@@ -90,7 +90,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._accessionNumber.Name = "_accessionNumber";
             this._accessionNumber.ReadOnly = true;
             this._accessionNumber.Size = new System.Drawing.Size(150, 41);
-            this._accessionNumber.TabIndex = 12;
+            this._accessionNumber.TabIndex = 2;
+            this._accessionNumber.TabStop = false;
             this._accessionNumber.Value = null;
             // 
             // _mrn
@@ -102,7 +103,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._mrn.Name = "_mrn";
             this._mrn.ReadOnly = true;
             this._mrn.Size = new System.Drawing.Size(150, 41);
-            this._mrn.TabIndex = 11;
+            this._mrn.TabIndex = 1;
+            this._mrn.TabStop = false;
             this._mrn.Value = null;
             // 
             // _priority
@@ -114,7 +116,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._priority.Name = "_priority";
             this._priority.ReadOnly = true;
             this._priority.Size = new System.Drawing.Size(150, 41);
-            this._priority.TabIndex = 10;
+            this._priority.TabIndex = 5;
+            this._priority.TabStop = false;
             this._priority.Value = null;
             // 
             // _requestedProcedure
@@ -126,7 +129,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._requestedProcedure.Name = "_requestedProcedure";
             this._requestedProcedure.ReadOnly = true;
             this._requestedProcedure.Size = new System.Drawing.Size(150, 41);
-            this._requestedProcedure.TabIndex = 9;
+            this._requestedProcedure.TabIndex = 4;
+            this._requestedProcedure.TabStop = false;
             this._requestedProcedure.Value = null;
             // 
             // _patientName
@@ -136,7 +140,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._patientName.Location = new System.Drawing.Point(3, 0);
             this._patientName.Name = "_patientName";
             this._patientName.Size = new System.Drawing.Size(190, 31);
-            this._patientName.TabIndex = 8;
+            this._patientName.TabIndex = 0;
             this._patientName.Text = "Patient Name";
             // 
             // _diagnosticService
@@ -148,7 +152,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._diagnosticService.Name = "_diagnosticService";
             this._diagnosticService.ReadOnly = true;
             this._diagnosticService.Size = new System.Drawing.Size(150, 41);
-            this._diagnosticService.TabIndex = 7;
+            this._diagnosticService.TabIndex = 3;
+            this._diagnosticService.TabStop = false;
             this._diagnosticService.Value = null;
             // 
             // panel2
@@ -168,7 +173,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._report.Margin = new System.Windows.Forms.Padding(2);
             this._report.Name = "_report";
             this._report.Size = new System.Drawing.Size(591, 315);
-            this._report.TabIndex = 1;
+            this._report.TabIndex = 0;
             this._report.Value = null;
             // 
             // panel3
@@ -182,14 +187,14 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.panel3.Location = new System.Drawing.Point(3, 474);
             this.panel3.Name = "panel3";
             this.panel3.Size = new System.Drawing.Size(591, 44);
-            this.panel3.TabIndex = 2;
+            this.panel3.TabIndex = 1;
             // 
             // _verifyButton
             // 
             this._verifyButton.Location = new System.Drawing.Point(3, 3);
             this._verifyButton.Name = "_verifyButton";
             this._verifyButton.Size = new System.Drawing.Size(84, 37);
-            this._verifyButton.TabIndex = 20;
+            this._verifyButton.TabIndex = 0;
             this._verifyButton.Text = "Verify";
             this._verifyButton.UseVisualStyleBackColor = true;
             this._verifyButton.Click += new System.EventHandler(this._verifyButton_Click);
@@ -199,7 +204,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._sendToVerifyButton.Location = new System.Drawing.Point(93, 3);
             this._sendToVerifyButton.Name = "_sendToVerifyButton";
             this._sendToVerifyButton.Size = new System.Drawing.Size(84, 37);
-            this._sendToVerifyButton.TabIndex = 21;
+            this._sendToVerifyButton.TabIndex = 1;
             this._sendToVerifyButton.Text = "Send to Verify";
             this._sendToVerifyButton.UseVisualStyleBackColor = true;
             this._sendToVerifyButton.Click += new System.EventHandler(this._sendToVerifyButton_Click);
@@ -209,7 +214,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._sendToTranscriptionButton.Location = new System.Drawing.Point(183, 3);
             this._sendToTranscriptionButton.Name = "_sendToTranscriptionButton";
             this._sendToTranscriptionButton.Size = new System.Drawing.Size(84, 37);
-            this._sendToTranscriptionButton.TabIndex = 22;
+            this._sendToTranscriptionButton.TabIndex = 2;
             this._sendToTranscriptionButton.Text = "Send to Transcription";
             this._sendToTranscriptionButton.UseVisualStyleBackColor = true;
             this._sendToTranscriptionButton.Click += new System.EventHandler(this._sendToTranscriptionButton_Click);
@@ -219,7 +224,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._saveButton.Location = new System.Drawing.Point(273, 3);
             this._saveButton.Name = "_saveButton";
             this._saveButton.Size = new System.Drawing.Size(84, 37);
-            this._saveButton.TabIndex = 23;
+            this._saveButton.TabIndex = 3;
             this._saveButton.Text = "Save";
             this._saveButton.UseVisualStyleBackColor = true;
             this._saveButton.Click += new System.EventHandler(this._saveButton_Click);
@@ -230,17 +235,17 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._cancelButton.Location = new System.Drawing.Point(504, 3);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(84, 37);
-            this._cancelButton.TabIndex = 24;
+            this._cancelButton.TabIndex = 4;
             this._cancelButton.Text = "Cancel";
             this._cancelButton.UseVisualStyleBackColor = true;
             this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
             // 
-            // InterpretationComponentControl
+            // ReportContentEditorComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Name = "InterpretationComponentControl";
+            this.Name = "ReportContentEditorComponentControl";
             this.Size = new System.Drawing.Size(597, 521);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.panel1.ResumeLayout(false);
