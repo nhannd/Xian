@@ -4,6 +4,7 @@ using System.Text;
 
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -52,6 +53,11 @@ namespace ClearCanvas.ImageViewer
 		/// <value>The currently selected <see cref="IPresentationImage"/>, or <b>null</b> if
 		/// no <see cref="IPresentationImage"/> is currently selected.</value>
 		IPresentationImage SelectedPresentationImage { get; }
+
+		/// <summary>
+		/// 
+		/// </summary>
+		IActionSet ExportedActions { get; }
 
         /// <summary>
         /// Gets the <see cref="CommandHistory"/> for this image viewer.

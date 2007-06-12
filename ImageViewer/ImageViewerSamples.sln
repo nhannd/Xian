@@ -30,7 +30,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
-		{7689F968-523F-4737-A72C-DB7507A3C68A} = {7689F968-523F-4737-A72C-DB7507A3C68A}
+		{04FC1910-7D92-4FAF-8D90-B034A4702981} = {04FC1910-7D92-4FAF-8D90-B034A4702981}
+		{E17A6332-468D-4D15-8009-8E9B2BD042E3} = {E17A6332-468D-4D15-8009-8E9B2BD042E3}
 		{36A4206C-5618-4ECA-A123-67D0C1252086} = {36A4206C-5618-4ECA-A123-67D0C1252086}
 		{2F464B93-3631-4886-96A0-D3F493536997} = {2F464B93-3631-4886-96A0-D3F493536997}
 		{99C5FEC1-FC30-4767-8D52-5D2EBB82F46B} = {99C5FEC1-FC30-4767-8D52-5D2EBB82F46B}
@@ -95,6 +96,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 		{9AF0770C-7E9F-483F-8429-D7894F06EB6C} = {9AF0770C-7E9F-483F-8429-D7894F06EB6C}
 		{89DF567B-A0D1-456A-A28F-043FD57D7F9A} = {89DF567B-A0D1-456A-A28F-043FD57D7F9A}
 		{9929C5B6-C13B-4436-9326-955EDE2CA102} = {9929C5B6-C13B-4436-9326-955EDE2CA102}
+		{7689F968-523F-4737-A72C-DB7507A3C68A} = {7689F968-523F-4737-A72C-DB7507A3C68A}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.ExtensionBrowser", "..\Desktop\ExtensionBrowser\ClearCanvas.Desktop.ExtensionBrowser.csproj", "{1BC2A9D5-E0F6-4ACC-876B-C219E0EA2561}"
@@ -325,6 +327,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Sam
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Samples.Filter", "Samples\Filter\ClearCanvas.ImageViewer.Samples.Filter.csproj", "{04FC1910-7D92-4FAF-8D90-B034A4702981}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Samples.Filter.View.WinForms", "Samples\Filter\View\WinForms\ClearCanvas.ImageViewer.Samples.Filter.View.WinForms.csproj", "{E17A6332-468D-4D15-8009-8E9B2BD042E3}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -495,6 +509,14 @@ Global
 		{7689F968-523F-4737-A72C-DB7507A3C68A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7689F968-523F-4737-A72C-DB7507A3C68A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7689F968-523F-4737-A72C-DB7507A3C68A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04FC1910-7D92-4FAF-8D90-B034A4702981}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04FC1910-7D92-4FAF-8D90-B034A4702981}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04FC1910-7D92-4FAF-8D90-B034A4702981}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04FC1910-7D92-4FAF-8D90-B034A4702981}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E17A6332-468D-4D15-8009-8E9B2BD042E3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E17A6332-468D-4D15-8009-8E9B2BD042E3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E17A6332-468D-4D15-8009-8E9B2BD042E3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E17A6332-468D-4D15-8009-8E9B2BD042E3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

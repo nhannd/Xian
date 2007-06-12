@@ -126,6 +126,21 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Public methods
 
+		public PixelData Clone()
+		{
+			return new PixelData(
+				_rows,
+				_columns,
+				_bitsAllocated,
+				_bitsStored,
+				_highBit,
+				_samplesPerPixel,
+				_pixelRepresentation,
+				_planarConfiguration,
+				_photometricInterpretation,
+				(byte[])_pixelData.Clone());
+		}
+
 		/// <summary>
 		/// Gets the pixel value at the specified location.
 		/// </summary>
