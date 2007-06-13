@@ -14,7 +14,56 @@ var amr = this.ActionModelRenderer;
 
 <body>
 <% if(component.WorklistPreview != null) {%>
+<table width="640" border="0">
+  <tr>
+    <td width="422" class="pageheading"><%= component.Name %></td>
+    <td rowspan="2" width="202">
+        <% if(component.HasAlert) { %>
+              <% for(var alert in component.AlertNotifications) {%>
+                  <img width="50" border="0" src="<%= component.GetAlertImageURI(alert) %>" alt="<%= component.GetAlertTooltip(alert) %>" align="right"/>
+              <% } %>
+        <% } %>
+    </td>
+  </tr>
+  <tr>
+    <td class="pageheading2"><%= component.Mrn %></td>
+  </tr>
+</table>
 
-<%} // end-if(component.WorklistPreview != null)%>    
+<p>&nbsp;</p>
+<table width="640" border="0">
+  <tr>
+    <td width="120" class="propertyname">Name</td>
+    <td width="200"><%= component.Name %></td>
+    <td width="63" class="propertyname">MRN</td>
+    <td width="229"><%= component.Mrn %></td>
+  </tr>
+  <tr>
+    <td width="120" class="propertyname">Date of Birth</td>
+    <td width="200"><%= component.DateOfBirth %></td>
+    <td width="63" class="propertyname">Sex</td>
+    <td width="229"><%= component.Sex %></td>
+  </tr>
+  <tr>
+    <td class="propertyname">Healthcard # </td>
+    <td><%= component.Healthcard %></td>
+    <td class="propertyname">&nbsp;</td>
+    <td>&nbsp;</td>
+  </tr>
+</table>
+
+<p>&nbsp;</p>
+<table width="640" border="0">
+    <% if(component.WorklistPreview.ReportContent != null) {%>
+      <tr class="sectionheading">
+        <td>Report Content</td>
+      </tr>
+      <tr>
+        <td><%= component.WorklistPreview.ReportContent %></td>
+      </tr>
+    <%}%>
+</table>
+
+<%} // end-if(component.WorklistPreview != null)%>
 </body>
 </html>

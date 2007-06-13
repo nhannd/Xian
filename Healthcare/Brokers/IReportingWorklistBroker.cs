@@ -19,5 +19,7 @@ namespace ClearCanvas.Healthcare.Brokers
         int GetMyTranscriptionWorklistCount(Staff performingStaff);
         int GetMyVerificationWorklistCount(Staff performingStaff);
         int GetMyVerifiedWorklistCount(Staff performingStaff);
+
+        IList<Report> GetPriorReport(Patient patient);
     }
 }

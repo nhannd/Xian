@@ -24,10 +24,12 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             :base(component)
         {
             InitializeComponent();
-
             _component = component;
 
-            // TODO add .NET databindings to _component
+            _reportList.Table = _component.Reports;
+            _reportList.DataBindings.Add("Selection", _component, "SelectedReport", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _reportContent.DataBindings.Add("Value", _component, "ReportContent", true, DataSourceUpdateMode.OnPropertyChanged);
         }
     }
 }

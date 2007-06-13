@@ -13,6 +13,9 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request);
 
         [OperationContract]
+        LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request);
+
+        [OperationContract]
         GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request);
 
         [OperationContract]
@@ -20,9 +23,6 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 
         [OperationContract]
         StartInterpretationResponse StartInterpretation(StartInterpretationRequest request);
-
-        [OperationContract]
-        EditInterpretationResponse EditInterpretation(EditInterpretationRequest request);
 
         [OperationContract]
         CompleteInterpretationForTranscriptionResponse CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request);
@@ -40,13 +40,15 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         StartVerificationResponse StartVerification(StartVerificationRequest request);
 
         [OperationContract]
-        EditVerificationResponse EditVerification(EditVerificationRequest request);
+        CompleteVerificationResponse CompleteVerification(CompleteVerificationRequest request);
 
         [OperationContract]
-        CompleteVerificationResponse CompleteVerification(CompleteVerificationRequest request);
+        LoadReportForEditResponse LoadReportForEdit(LoadReportForEditRequest request);
 
         [OperationContract]
         SaveReportResponse SaveReport(SaveReportRequest request);
 
+        [OperationContract]
+        GetPriorReportResponse GetPriorReport(GetPriorReportRequest request);
     }
 }

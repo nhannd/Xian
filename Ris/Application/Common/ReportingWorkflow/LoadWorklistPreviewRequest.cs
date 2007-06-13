@@ -7,9 +7,9 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
-    public class EditVerificationRequest : DataContractBase
+    public class LoadWorklistPreviewRequest : DataContractBase
     {
-        public EditVerificationRequest(ReportingWorklistItem item)
+        public LoadWorklistPreviewRequest(ReportingWorklistItem item)
         {
             this.WorklistItem = item;
         }

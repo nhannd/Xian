@@ -25,25 +25,30 @@ namespace ClearCanvas.Ris.Client.Reporting
     [AssociateView(typeof(ReportContentEditorComponentViewExtensionPoint))]
     public class ReportContentEditorComponent : ApplicationComponent
     {
+
         private ReportingWorklistItem _worklistItem;
         private string _reportContent;
+        private bool _readOnly;
+
         private bool _canCompleteInterpretationAndVerify;
         private bool _canCompleteVerification;
         private bool _canCompleteInterpretationForVerification;
         private bool _canCompleteInterpretationForTranscription;
 
-        private IEnumerable _reportingFolders;
+        private event EventHandler _verifyEvent;
+        private event EventHandler _sendToVerifyEvent;
+        private event EventHandler _sendToTranscriptionEvent;
+        private event EventHandler _closeComponentEvent;
 
-        private event EventHandler _closeComponentRequest;
+        public ReportContentEditorComponent(ReportingWorklistItem item)
+            : this(item, false)
+        {
+        }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public ReportContentEditorComponent(ReportingWorklistItem item, string reportContent, IEnumerable folders)
+        public ReportContentEditorComponent(ReportingWorklistItem item, bool readOnly)
         {
             _worklistItem = item;
-            _reportContent = reportContent;
-            _reportingFolders = folders;
+            _readOnly = readOnly;
         }
 
         public override void Start()
@@ -53,11 +58,17 @@ namespace ClearCanvas.Ris.Client.Reporting
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {
-                        GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(_worklistItem));
-                        _canCompleteInterpretationAndVerify = response.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
-                        _canCompleteVerification = response.OperationEnablementDictionary["CompleteVerification"];
-                        _canCompleteInterpretationForVerification = response.OperationEnablementDictionary["CompleteInterpretationForVerification"];
-                        _canCompleteInterpretationForTranscription = response.OperationEnablementDictionary["CompleteInterpretationForTranscription"];
+                        if (_readOnly == false)
+                        {
+                            GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(_worklistItem));
+                            _canCompleteInterpretationAndVerify = enablementResponse.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
+                            _canCompleteVerification = enablementResponse.OperationEnablementDictionary["CompleteVerification"];
+                            _canCompleteInterpretationForVerification = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];
+                            _canCompleteInterpretationForTranscription = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForTranscription"];
+                        }
+
+                        LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(_worklistItem));
+                        _reportContent = response.ReportContent;
                     });
             }
             catch (Exception e)
@@ -73,10 +84,28 @@ namespace ClearCanvas.Ris.Client.Reporting
             base.Stop();
         }
 
-        public event EventHandler CloseComponentRequest
+        public event EventHandler VerifyEvent
         {
-            add { _closeComponentRequest += value; }
-            remove { _closeComponentRequest -= value; }
+            add { _verifyEvent += value; }
+            remove { _verifyEvent -= value; }
+        }
+
+        public event EventHandler SendToVerifyEvent
+        {
+            add { _sendToVerifyEvent += value; }
+            remove { _sendToVerifyEvent -= value; }
+        }
+
+        public event EventHandler SendToTranscriptionEvent
+        {
+            add { _sendToTranscriptionEvent += value; }
+            remove { _sendToTranscriptionEvent -= value; }
+        }
+
+        public event EventHandler CloseComponentEvent
+        {
+            add { _closeComponentEvent += value; }
+            remove { _closeComponentEvent -= value; }
         }
 
         #region Presentation Model
@@ -119,6 +148,11 @@ namespace ClearCanvas.Ris.Client.Reporting
                 _reportContent = value;
                 this.Modified = true;
             }
+        }
+
+        public bool ReadOnly
+        {
+            get { return _readOnly; }
         }
 
         public bool VerifyEnabled
@@ -170,19 +204,14 @@ namespace ClearCanvas.Ris.Client.Reporting
                         });
                 }
 
-                IFolder myVerifiedFolder = CollectionUtils.SelectFirst<IFolder>(_reportingFolders,
-                    delegate(IFolder f) { return f is Folders.MyVerifiedFolder; });
-                myVerifiedFolder.RefreshCount();
-
                 this.ExitCode = ApplicationComponentExitCode.Normal;
+                EventsHelper.Fire(_verifyEvent, this, EventArgs.Empty);
             }
             catch (Exception e)
             {
                 this.ExitCode = ApplicationComponentExitCode.Normal;
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
-
-            EventsHelper.Fire(_closeComponentRequest, this, EventArgs.Empty);
         }
 
         public void SendToVerify()
@@ -195,19 +224,14 @@ namespace ClearCanvas.Ris.Client.Reporting
                         service.CompleteInterpretationForVerification(new CompleteInterpretationForVerificationRequest(_worklistItem));
                     });
 
-                IFolder myVerificationFolder = CollectionUtils.SelectFirst<IFolder>(_reportingFolders,
-                    delegate(IFolder f) { return f is Folders.MyVerificationFolder; });
-                myVerificationFolder.RefreshCount();
-
                 this.ExitCode = ApplicationComponentExitCode.Normal;
+                EventsHelper.Fire(_sendToVerifyEvent, this, EventArgs.Empty);
             }
             catch (Exception e)
             {
                 this.ExitCode = ApplicationComponentExitCode.Error;
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
-
-            EventsHelper.Fire(_closeComponentRequest, this, EventArgs.Empty);
         }
 
         public void SendToTranscription()
@@ -220,11 +244,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                         service.CompleteInterpretationForTranscription(new CompleteInterpretationForTranscriptionRequest(_worklistItem));
                     });
 
-                IFolder myTranscriptionFolder = CollectionUtils.SelectFirst<IFolder>(_reportingFolders,
-                    delegate(IFolder f) { return f is Folders.MyTranscriptionFolder; });
-                myTranscriptionFolder.RefreshCount();
-
                 this.ExitCode = ApplicationComponentExitCode.Normal;
+                EventsHelper.Fire(_sendToTranscriptionEvent, this, EventArgs.Empty);
             }
             catch (Exception e)
             {
@@ -232,7 +253,6 @@ namespace ClearCanvas.Ris.Client.Reporting
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
 
-            EventsHelper.Fire(_closeComponentRequest, this, EventArgs.Empty);
         }
 
         public void Save()
@@ -245,22 +265,20 @@ namespace ClearCanvas.Ris.Client.Reporting
                         SaveReportResponse response = service.SaveReport(new SaveReportRequest(_worklistItem.ProcedureStepRef, this.Report));
                     });
 
-
                 this.ExitCode = ApplicationComponentExitCode.Normal;
+                EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
             }
             catch (Exception e)
             {
                 this.ExitCode = ApplicationComponentExitCode.Error;
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
-
-            EventsHelper.Fire(_closeComponentRequest, this, EventArgs.Empty);
         }
 
         public void Cancel()
         {
             this.ExitCode = ApplicationComponentExitCode.Cancelled;
-            EventsHelper.Fire(_closeComponentRequest, this, EventArgs.Empty);
+            EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
         }
     }
 }

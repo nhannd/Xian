@@ -313,10 +313,13 @@
     <Compile Include="ReportingWorkflow\CompleteInterpretationForTranscriptionResponse.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationForVerificationResponse.cs" />
     <Compile Include="ReportingWorkflow\CompleteVerificationResponse.cs" />
-    <Compile Include="ReportingWorkflow\EditVerificationRequest.cs" />
-    <Compile Include="ReportingWorkflow\EditVerificationResponse.cs" />
-    <Compile Include="ReportingWorkflow\EditInterpretationRequest.cs" />
-    <Compile Include="ReportingWorkflow\EditInterpretationResponse.cs" />
+    <Compile Include="ReportingWorkflow\GetPriorReportRequest.cs" />
+    <Compile Include="ReportingWorkflow\GetPriorReportResponse.cs" />
+    <Compile Include="ReportingWorkflow\LoadReportForEditRequest.cs" />
+    <Compile Include="ReportingWorkflow\LoadReportForEditResponse.cs" />
+    <Compile Include="ReportingWorkflow\LoadWorklistPreviewRequest.cs" />
+    <Compile Include="ReportingWorkflow\LoadWorklistPreviewResponse.cs" />
+    <Compile Include="ReportingWorkflow\ReportSummary.cs" />
     <Compile Include="ReportingWorkflow\SaveReportRequest.cs" />
     <Compile Include="ReportingWorkflow\SaveReportResponse.cs" />
     <Compile Include="ReportingWorkflow\StartVerificationResponse.cs" />

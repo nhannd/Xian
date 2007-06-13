@@ -10,11 +10,42 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Workflow;
 using ClearCanvas.Workflow.Brokers;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
-    public class ReportingWorklistAssembler
+    public class ReportingWorkflowAssembler
     {
+        public ReportingWorklistPreview CreateReportingWorklistPreview(ReportingWorklistItem item, IPersistenceContext context)
+        {
+            PersonNameAssembler nameAssembler = new PersonNameAssembler();
+            HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
+            TelephoneNumberAssembler phoneAssembler = new TelephoneNumberAssembler();
+            AddressAssembler addressAssembler = new AddressAssembler();
+            SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
+
+            ReportingProcedureStep step = (ReportingProcedureStep)context.Load(item.ProcedureStepRef);
+            PatientProfile profile = CollectionUtils.SelectFirst<PatientProfile>(step.RequestedProcedure.Order.Patient.Profiles,
+                delegate(PatientProfile thisProfile)
+                {
+                    if (thisProfile.Mrn.AssigningAuthority == step.RequestedProcedure.Order.Visit.VisitNumber.AssigningAuthority)
+                        return true;
+
+                    return false;
+                });
+           
+            ReportingWorklistPreview preview = new ReportingWorklistPreview();
+
+            preview.ReportContent = (step.Report == null ? null : step.Report.ReportContent);
+            preview.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
+            preview.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
+            preview.Healthcard = healthcardAssembler.CreateHealthcardDetail(profile.Healthcard);
+            preview.DateOfBirth = profile.DateOfBirth;
+            preview.Sex = sexEnumTable[profile.Sex].Value;
+
+            return preview;
+        }
+
         public ReportingWorklistItem CreateReportingWorklistItem(WorklistItem domainItem, IPersistenceContext context)
         {
             ReportingWorklistItem item = new ReportingWorklistItem();

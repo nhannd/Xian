@@ -144,9 +144,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                         Platform.GetService<IReportingWorkflowService>(
                             delegate(IReportingWorkflowService service)
                             {
-                                //TODO Load preview page
-                                //LoadWorklistPreviewResponse response = service.LoadWorklistPreview(new LoadWorklistPreviewRequest(worklistItem));
-                                //taskContext.Complete(response.WorklistPreview);
+                                LoadWorklistPreviewResponse response = service.LoadWorklistPreview(new LoadWorklistPreviewRequest(worklistItem));
+                                taskContext.Complete(response.WorklistPreview);
                             });
 
                     }
@@ -186,6 +185,31 @@ namespace ClearCanvas.Ris.Client.Reporting
         public ReportingWorklistPreview WorklistPreview
         {
             get { return _worklistPreview; }
+        }
+
+        public string Name
+        {
+            get { return PersonNameFormat.Format(_worklistPreview.Name); }
+        }
+
+        public string DateOfBirth
+        {
+            get { return Format.Date(_worklistPreview.DateOfBirth); }
+        }
+
+        public string Mrn
+        {
+            get { return MrnFormat.Format(_worklistPreview.Mrn); }
+        }
+
+        public string Healthcard
+        {
+            get { return HealthcardFormat.Format(_worklistPreview.Healthcard); }
+        }
+
+        public string Sex
+        {
+            get { return _worklistPreview.Sex; }
         }
 
         #endregion

@@ -126,7 +126,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         public class EditInterpretationTool : WorkflowItemTool
         {
             public EditInterpretationTool()
-                : base("EditInterpretation")
+                : base("StartInterpretation")
             {
             }
 
@@ -141,22 +141,28 @@ namespace ClearCanvas.Ris.Client.Reporting
                 {
                     try
                     {
-                        string reportContent = "";
-
                         Platform.GetService<IReportingWorkflowService>(
                             delegate(IReportingWorkflowService service)
                             {
-                                EditInterpretationResponse response = service.EditInterpretation(new EditInterpretationRequest(item));
+                                StartInterpretationResponse response = service.StartInterpretation(new StartInterpretationRequest(item));
                                 item.ProcedureStepRef = response.ReportingStepRef;
-                                reportContent = response.ReportContent;
                             });
 
-                        IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                            delegate(IFolder f) { return f is Folders.MyInterpretationFolder; });
-                        myInterpretationFolder.Refresh();
+                        doc = new ReportDocument(item, folders, false, this.Context.DesktopWindow);
+                        doc.Closed += delegate(object sender, EventArgs e)
+                        {
+                            IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                                delegate(IFolder f) { return f is Folders.MyInterpretationFolder; });
 
-                        doc = new ReportDocument(item, reportContent, folders, this.Context.DesktopWindow);
-                        doc.Closed += new EventHandler(delegate(object sender, EventArgs e) { myInterpretationFolder.Refresh(); });
+                            if (myInterpretationFolder != null)
+                            {
+                                if (myInterpretationFolder.IsOpen)
+                                    myInterpretationFolder.Refresh();
+                                else
+                                    myInterpretationFolder.RefreshCount();
+                            }
+                        };
+
                         doc.Open();
                     }
                     catch (Exception e)
@@ -327,7 +333,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         public class EditVerificationTool : WorkflowItemTool
         {
             public EditVerificationTool()
-                : base("EditVerification")
+                : base("StartVerification")
             {
             }
 
@@ -342,22 +348,28 @@ namespace ClearCanvas.Ris.Client.Reporting
                 {
                     try
                     {
-                        string reportContent = "";
-
                         Platform.GetService<IReportingWorkflowService>(
                             delegate(IReportingWorkflowService service)
                             {
-                                EditVerificationResponse response = service.EditVerification(new EditVerificationRequest(item));
+                                StartVerificationResponse response = service.StartVerification(new StartVerificationRequest(item));
                                 item.ProcedureStepRef = response.ReportingStepRef;
-                                reportContent = response.ReportContent;
                             });
 
-                        IFolder myVerificationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                            delegate(IFolder f) { return f is Folders.MyVerificationFolder; });
-                        myVerificationFolder.Refresh();
+                        doc = new ReportDocument(item, folders, false, this.Context.DesktopWindow);
+                        doc.Closed += delegate(object sender, EventArgs e)
+                        {
+                            IFolder myVerificationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                                delegate(IFolder f) { return f is Folders.MyVerificationFolder; });
 
-                        doc = new ReportDocument(item, reportContent, folders, this.Context.DesktopWindow);
-                        doc.Closed += new EventHandler(delegate(object sender, EventArgs e) { myVerificationFolder.Refresh(); });
+                            if (myVerificationFolder != null)
+                            {
+                                if (myVerificationFolder.IsOpen)
+                                    myVerificationFolder.Refresh();
+                                else
+                                    myVerificationFolder.RefreshCount();
+                            }
+                        };
+
                         doc.Open();
                     }
                     catch (Exception e)

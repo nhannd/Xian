@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [ReadOperation]
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
-            ReportingWorklistAssembler assembler = new ReportingWorklistAssembler();
+            ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
             return new GetWorklistResponse(
                 CollectionUtils.Map<WorklistItem, ReportingWorklistItem, List<ReportingWorklistItem>>(
                     GetWorklist(request.WorklistClassName),
@@ -43,6 +43,13 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request)
         {
             return new GetWorklistCountResponse(GetWorklistCount(request.WorklistClassName));
+        }
+
+        [ReadOperation]
+        public LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request)
+        {
+            ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
+            return new LoadWorklistPreviewResponse(assembler.CreateReportingWorklistPreview(request.WorklistItem, this.PersistenceContext));
         }
 
         [ReadOperation]
@@ -67,17 +74,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             ReportingProcedureStep step = ExecuteOperation(new Operations.StartInterpretation(), request.WorklistItem.ProcedureStepRef);
             PersistenceContext.SynchState();
             return new StartInterpretationResponse(step.GetRef());
-        }
-
-        [UpdateOperation]
-        [OperationEnablement("CanStartInterpretation")]
-        public EditInterpretationResponse EditInterpretation(EditInterpretationRequest request)
-        {
-            ReportingProcedureStep step = ExecuteOperation(new Operations.StartInterpretation(), request.WorklistItem.ProcedureStepRef);
-            string report = (step.Report == null ? "" : step.Report.ReportContent);
-
-            PersistenceContext.SynchState();
-            return new EditInterpretationResponse(step.GetRef(), report);
         }
 
         [UpdateOperation]
@@ -126,23 +122,20 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [UpdateOperation]
-        [OperationEnablement("CanStartVerification")]
-        public EditVerificationResponse EditVerification(EditVerificationRequest request)
-        {
-            ReportingProcedureStep step = ExecuteOperation(new Operations.StartVerification(), request.WorklistItem.ProcedureStepRef);
-            string report = (step.Report == null ? "" : step.Report.ReportContent);
-
-            PersistenceContext.SynchState();
-            return new EditVerificationResponse(step.GetRef(), report);
-        }
-
-        [UpdateOperation]
         [OperationEnablement("CanCompleteVerification")]
         public CompleteVerificationResponse CompleteVerification(CompleteVerificationRequest request)
         {
             ReportingProcedureStep step = ExecuteOperation(new Operations.CompleteVerification(), request.WorklistItem.ProcedureStepRef);
             PersistenceContext.SynchState();
             return new CompleteVerificationResponse(step.GetRef());
+        }
+
+        [ReadOperation]
+        public LoadReportForEditResponse LoadReportForEdit(LoadReportForEditRequest request)
+        {
+            ReportingProcedureStep step = (ReportingProcedureStep)PersistenceContext.Load(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+            string report = (step.Report == null ? "" : step.Report.ReportContent);
+            return new LoadReportForEditResponse(report);
         }
 
         [UpdateOperation]
@@ -162,6 +155,26 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             PersistenceContext.SynchState();
             return new SaveReportResponse(step.GetRef());
+        }
+
+        [ReadOperation]
+        public GetPriorReportResponse GetPriorReport(GetPriorReportRequest request)
+        {
+            ReportingProcedureStep step = (ReportingProcedureStep)PersistenceContext.Load(request.ReportingStepRef, EntityLoadFlags.Proxy);
+
+            IList<Report> listReports = PersistenceContext.GetBroker<IReportingWorklistBroker>().GetPriorReport(step.RequestedProcedure.Order.Patient);
+            List<ReportSummary> listSummary = CollectionUtils.Map<Report, ReportSummary, List<ReportSummary>>(listReports,
+                delegate(Report report)
+                {
+                    ReportSummary summary = new ReportSummary();
+                    summary.ReportRef = report.GetRef();
+                    summary.ReportContent = report.ReportContent;
+                    summary.DiagnosticServiceName = report.Procedure.Order.DiagnosticService.Name;
+                    summary.RequestedProcedureName = report.Procedure.Type.Name;
+                    return summary;
+                });
+
+            return new GetPriorReportResponse(listSummary);
         }
 
         #endregion

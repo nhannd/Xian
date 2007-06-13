@@ -39,6 +39,7 @@
   <ItemGroup>
     <Compile Include="Folders\WorkflowFolders.cs" />
     <Compile Include="HomeTool.cs" />
+    <Compile Include="ReportSummaryTable.cs" />
     <Compile Include="ReportDocument.cs" />
     <Compile Include="PriorReportComponent.cs" />
     <Compile Include="ReportContentEditorComponent.cs" />

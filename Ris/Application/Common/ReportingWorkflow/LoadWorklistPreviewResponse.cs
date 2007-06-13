@@ -7,14 +7,14 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
-    public class EditInterpretationRequest : DataContractBase
+    public class LoadWorklistPreviewResponse : DataContractBase
     {
-        public EditInterpretationRequest(ReportingWorklistItem item)
+        public LoadWorklistPreviewResponse(ReportingWorklistPreview preview)
         {
-            this.WorklistItem = item;
+            this.WorklistPreview = preview;
         }
 
         [DataMember]
-        public ReportingWorklistItem WorklistItem;
+        public ReportingWorklistPreview WorklistPreview;
     }
 }

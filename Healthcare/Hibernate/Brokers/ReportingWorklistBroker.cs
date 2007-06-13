@@ -221,6 +221,30 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #endregion
 
+        public IList<Report> GetPriorReport(Patient patient)
+        {
+            string hqlQuery = "select rep from Report rep" +
+                " join rep.Procedure rp" +
+                " join rp.Type rpt" +
+                " join rp.Order o" +
+                " join o.DiagnosticService ds" +
+                " join o.Patient p" +
+                " where p = :patient";
+
+            List<Report> results = new List<Report>();
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("patient", patient));
+
+            IList list = DoQuery(hqlQuery, parameters);
+            foreach (object tuple in list)
+            {
+                Report item = tuple as Report;
+                results.Add(item);
+            }
+
+            return results;
+        }
+
         #endregion
     }
 }

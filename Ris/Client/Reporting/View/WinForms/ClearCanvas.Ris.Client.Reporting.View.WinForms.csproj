@@ -80,6 +80,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="PriorReportComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>PriorReportComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="ReportContentEditorComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ReportContentEditorComponentControl.cs</DependentUpon>

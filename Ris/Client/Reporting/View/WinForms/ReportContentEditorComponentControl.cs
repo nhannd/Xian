@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             _priority.DataBindings.Add("Value", _component, "Priority", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _report.DataBindings.Add("Value", _component, "Report", true, DataSourceUpdateMode.OnPropertyChanged);
-
+            _report.DataBindings.Add("ReadOnly", _component, "ReadOnly", true, DataSourceUpdateMode.OnPropertyChanged);
             _verifyButton.DataBindings.Add("Enabled", _component, "VerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
             _sendToVerifyButton.DataBindings.Add("Enabled", _component, "SendToVerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
             _sendToTranscriptionButton.DataBindings.Add("Enabled", _component, "SendToTranscriptionEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
