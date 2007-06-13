@@ -192,24 +192,34 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return PersonNameFormat.Format(_worklistPreview.Name); }
         }
 
-        public string DateOfBirth
-        {
-            get { return Format.Date(_worklistPreview.DateOfBirth); }
-        }
-
         public string Mrn
         {
             get { return MrnFormat.Format(_worklistPreview.Mrn); }
         }
 
-        public string Healthcard
+        public string DateOfBirth
         {
-            get { return HealthcardFormat.Format(_worklistPreview.Healthcard); }
+            get { return Format.Date(_worklistPreview.DateOfBirth); }
         }
 
         public string Sex
         {
             get { return _worklistPreview.Sex; }
+        }
+
+        public string AccessionNumber
+        {
+            get { return _worklistPreview.AccessionNumber; }
+        }
+
+        public string RequestedProcedureName
+        {
+            get { return _worklistPreview.RequestedProcedureName; }
+        }
+
+        public string VisitNumber
+        {
+            get { return String.Format("{0} {1}", _worklistPreview.VisitNumberAssigningAuthority, _worklistPreview.VisitNumberId); }
         }
 
         #endregion

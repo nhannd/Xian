@@ -39,19 +39,12 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public override void Start()
         {
-            try
-            {
-                Platform.GetService<IReportingWorkflowService>(
-                    delegate(IReportingWorkflowService service)
-                    {
-                        GetPriorReportResponse response = service.GetPriorReport(new GetPriorReportRequest(_worklistItem.ProcedureStepRef));
-                        _reportList.Items.AddRange(response.Reports);
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            Platform.GetService<IReportingWorkflowService>(
+                delegate(IReportingWorkflowService service)
+                {
+                    GetPriorReportResponse response = service.GetPriorReport(new GetPriorReportRequest(_worklistItem.ProcedureStepRef));
+                    _reportList.Items.AddRange(response.Reports);
+                });
 
             base.Start();
         }

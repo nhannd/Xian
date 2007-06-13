@@ -53,28 +53,21 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public override void Start()
         {
-            try
-            {
-                Platform.GetService<IReportingWorkflowService>(
-                    delegate(IReportingWorkflowService service)
+            Platform.GetService<IReportingWorkflowService>(
+                delegate(IReportingWorkflowService service)
+                {
+                    if (_readOnly == false)
                     {
-                        if (_readOnly == false)
-                        {
-                            GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(_worklistItem));
-                            _canCompleteInterpretationAndVerify = enablementResponse.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
-                            _canCompleteVerification = enablementResponse.OperationEnablementDictionary["CompleteVerification"];
-                            _canCompleteInterpretationForVerification = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];
-                            _canCompleteInterpretationForTranscription = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForTranscription"];
-                        }
+                        GetOperationEnablementResponse enablementResponse = service.GetOperationEnablement(new GetOperationEnablementRequest(_worklistItem));
+                        _canCompleteInterpretationAndVerify = enablementResponse.OperationEnablementDictionary["CompleteInterpretationAndVerify"];
+                        _canCompleteVerification = enablementResponse.OperationEnablementDictionary["CompleteVerification"];
+                        _canCompleteInterpretationForVerification = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForVerification"];
+                        _canCompleteInterpretationForTranscription = enablementResponse.OperationEnablementDictionary["CompleteInterpretationForTranscription"];
+                    }
 
-                        LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(_worklistItem));
-                        _reportContent = response.ReportContent;
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+                    LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(_worklistItem));
+                    _reportContent = response.ReportContent;
+                });
 
             base.Start();
         }
@@ -204,13 +197,13 @@ namespace ClearCanvas.Ris.Client.Reporting
                         });
                 }
 
-                this.ExitCode = ApplicationComponentExitCode.Normal;
                 EventsHelper.Fire(_verifyEvent, this, EventArgs.Empty);
             }
             catch (Exception e)
             {
-                this.ExitCode = ApplicationComponentExitCode.Normal;
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                this.ExitCode = ApplicationComponentExitCode.Error;
+                EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
             }
         }
 
@@ -224,13 +217,13 @@ namespace ClearCanvas.Ris.Client.Reporting
                         service.CompleteInterpretationForVerification(new CompleteInterpretationForVerificationRequest(_worklistItem));
                     });
 
-                this.ExitCode = ApplicationComponentExitCode.Normal;
                 EventsHelper.Fire(_sendToVerifyEvent, this, EventArgs.Empty);
             }
             catch (Exception e)
             {
-                this.ExitCode = ApplicationComponentExitCode.Error;
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                this.ExitCode = ApplicationComponentExitCode.Error;
+                EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
             }
         }
 
@@ -244,15 +237,14 @@ namespace ClearCanvas.Ris.Client.Reporting
                         service.CompleteInterpretationForTranscription(new CompleteInterpretationForTranscriptionRequest(_worklistItem));
                     });
 
-                this.ExitCode = ApplicationComponentExitCode.Normal;
                 EventsHelper.Fire(_sendToTranscriptionEvent, this, EventArgs.Empty);
             }
             catch (Exception e)
             {
-                this.ExitCode = ApplicationComponentExitCode.Error;
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                this.ExitCode = ApplicationComponentExitCode.Error;
+                EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
             }
-
         }
 
         public void Save()
@@ -265,13 +257,13 @@ namespace ClearCanvas.Ris.Client.Reporting
                         SaveReportResponse response = service.SaveReport(new SaveReportRequest(_worklistItem.ProcedureStepRef, this.Report));
                     });
 
-                this.ExitCode = ApplicationComponentExitCode.Normal;
                 EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
             }
             catch (Exception e)
             {
-                this.ExitCode = ApplicationComponentExitCode.Error;
                 ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                this.ExitCode = ApplicationComponentExitCode.Error;
+                EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
             }
         }
 

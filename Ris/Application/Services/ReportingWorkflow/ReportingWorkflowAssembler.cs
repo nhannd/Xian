@@ -11,6 +11,7 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Workflow;
 using ClearCanvas.Workflow.Brokers;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Services.Admin;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
@@ -18,12 +19,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
     {
         public ReportingWorklistPreview CreateReportingWorklistPreview(ReportingWorklistItem item, IPersistenceContext context)
         {
-            PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
-            TelephoneNumberAssembler phoneAssembler = new TelephoneNumberAssembler();
-            AddressAssembler addressAssembler = new AddressAssembler();
-            SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
-
+            SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load(); 
+            
             ReportingProcedureStep step = (ReportingProcedureStep)context.Load(item.ProcedureStepRef);
             PatientProfile profile = CollectionUtils.SelectFirst<PatientProfile>(step.RequestedProcedure.Order.Patient.Profiles,
                 delegate(PatientProfile thisProfile)
@@ -33,16 +30,25 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
                     return false;
                 });
-           
+
             ReportingWorklistPreview preview = new ReportingWorklistPreview();
 
             preview.ReportContent = (step.Report == null ? null : step.Report.ReportContent);
+
+            // PatientProfile Details
             preview.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
-            preview.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
-            preview.Healthcard = healthcardAssembler.CreateHealthcardDetail(profile.Healthcard);
+            preview.Name = new PersonNameAssembler().CreatePersonNameDetail(profile.Name);
             preview.DateOfBirth = profile.DateOfBirth;
             preview.Sex = sexEnumTable[profile.Sex].Value;
 
+            // Order Details
+            preview.AccessionNumber = step.RequestedProcedure.Order.AccessionNumber;
+            preview.RequestedProcedureName = step.RequestedProcedure.Type.Name;
+
+            // Visit Details
+            preview.VisitNumberId = step.RequestedProcedure.Order.Visit.VisitNumber.Id;
+            preview.VisitNumberAssigningAuthority = step.RequestedProcedure.Order.Visit.VisitNumber.AssigningAuthority;
+            
             return preview;
         }
 

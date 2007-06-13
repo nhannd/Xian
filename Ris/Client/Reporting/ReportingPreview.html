@@ -16,14 +16,7 @@ var amr = this.ActionModelRenderer;
 <% if(component.WorklistPreview != null) {%>
 <table width="640" border="0">
   <tr>
-    <td width="422" class="pageheading"><%= component.Name %></td>
-    <td rowspan="2" width="202">
-        <% if(component.HasAlert) { %>
-              <% for(var alert in component.AlertNotifications) {%>
-                  <img width="50" border="0" src="<%= component.GetAlertImageURI(alert) %>" alt="<%= component.GetAlertTooltip(alert) %>" align="right"/>
-              <% } %>
-        <% } %>
-    </td>
+    <td class="pageheading"><%= component.Name %></td>
   </tr>
   <tr>
     <td class="pageheading2"><%= component.Mrn %></td>
@@ -45,10 +38,10 @@ var amr = this.ActionModelRenderer;
     <td width="229"><%= component.Sex %></td>
   </tr>
   <tr>
-    <td class="propertyname">Healthcard # </td>
-    <td><%= component.Healthcard %></td>
-    <td class="propertyname">&nbsp;</td>
-    <td>&nbsp;</td>
+    <td class="propertyname">Visit Number</td>
+    <td><%= component.VisitNumber %></td>
+    <td class="propertyname">Accession Number</td>
+    <td><%= component.AccessionNumber %></td>
   </tr>
 </table>
 
@@ -56,7 +49,7 @@ var amr = this.ActionModelRenderer;
 <table width="640" border="0">
     <% if(component.WorklistPreview.ReportContent != null) {%>
       <tr class="sectionheading">
-        <td>Report Content</td>
+        <td>Report for <%= component.RequestedProcedureName %></td>
       </tr>
       <tr>
         <td><%= component.WorklistPreview.ReportContent %></td>

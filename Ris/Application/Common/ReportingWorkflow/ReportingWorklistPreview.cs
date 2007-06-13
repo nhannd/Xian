@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
@@ -19,14 +20,22 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public PersonNameDetail Name;
 
         [DataMember]
-        public HealthcardDetail Healthcard;
-
-        [DataMember]
         public DateTime? DateOfBirth;
 
         [DataMember]
         public string Sex;
-    
+        
+        [DataMember]
+        public string AccessionNumber;
+
+        [DataMember]
+        public string RequestedProcedureName;
+
+        [DataMember]
+        public string VisitNumberId;
+
+        [DataMember]
+        public string VisitNumberAssigningAuthority;
     }
 }
 

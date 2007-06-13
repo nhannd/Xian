@@ -26,11 +26,19 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             if (_workspace == null)
             {
-                _workspace = ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    BuildComponent(),
-                    SR.TitleRadiologistHome,
-                    delegate(IApplicationComponent c) { _workspace = null; });
+                try
+                {
+                    _workspace = ApplicationComponent.LaunchAsWorkspace(
+                        this.Context.DesktopWindow,
+                        BuildComponent(),
+                        SR.TitleRadiologistHome,
+                        delegate(IApplicationComponent c) { _workspace = null; });
+                }
+                catch (Exception e)
+                {
+                    // could not launch component
+                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
+                }
             }
             else
             {
