@@ -31,9 +31,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 			_action.LabelChanged += _actionLabelChangedHandler;
 			
             this.Text = _action.Label;
-            this.Enabled = _action.Enabled;
             this.Checked = _action.Checked;
-			this.Visible = _action.Visible;
+
+            UpdateVisibility();
+            UpdateEnablement();
 			
 
             this.Click += delegate(object sender, EventArgs e)
@@ -71,12 +72,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void OnActionEnabledChanged(object sender, EventArgs e)
         {
-            this.Enabled = _action.Enabled;
+            UpdateEnablement();
         }
 
 		private void OnActionVisibleChanged(object sender, EventArgs e)
 		{
-			this.Visible = _action.Visible;
+            UpdateVisibility();
 		}
 
 		private void OnActionLabelChanged(object sender, EventArgs e)
@@ -102,6 +103,16 @@ namespace ClearCanvas.Desktop.View.WinForms
                 _action = null;
             }
             base.Dispose(disposing);
+        }
+
+        private void UpdateVisibility()
+        {
+            this.Visible = _action.Visible && (_action.Permissible || DesktopViewSettings.Default.ShowNonPermissibleActions);
+        }
+
+        private void UpdateEnablement()
+        {
+            this.Enabled = _action.Enabled && (_action.Permissible || DesktopViewSettings.Default.EnableNonPermissibleActions);
         }
         
     }

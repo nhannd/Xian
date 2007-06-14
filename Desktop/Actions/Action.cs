@@ -4,6 +4,8 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common.Specifications;
+using System.Threading;
 
 namespace ClearCanvas.Desktop.Actions
 {
@@ -36,6 +38,8 @@ namespace ClearCanvas.Desktop.Actions
 
 		private bool _persistent;
 
+        private ISpecification _permissionSpec;
+
 		/// <summary>
         /// Constructor
         /// </summary>
@@ -53,6 +57,17 @@ namespace ClearCanvas.Desktop.Actions
             _visible = true;
 
 			_persistent = false;
+        }
+
+        /// <summary>
+        /// Gets or sets a <see cref="ISpecification"/> that is tested to establish whether the 
+        /// current user has sufficient privileges to access the action.  The visibility of the
+        /// action is affected.
+        /// </summary>
+        public ISpecification PermissionSpecification
+        {
+            get { return _permissionSpec; }
+            set { _permissionSpec = value; }
         }
 
         #region IAction members
@@ -138,7 +153,10 @@ namespace ClearCanvas.Desktop.Actions
 
 		public bool Visible
 		{
-            get { return _visible; }
+            get
+            {
+                return _visible;
+            }
             set
             {
                 if (value != _visible)
@@ -179,8 +197,21 @@ namespace ClearCanvas.Desktop.Actions
             remove { _tooltipChanged -= value; }
         }
 
+        public bool Permissible
+        {
+            get
+            {
+                // no permission spec, so assume this action is not protected at all
+                if (_permissionSpec == null)
+                    return true;
+
+                // test this action against the permission spec
+                return _permissionSpec.Test(this).Success;
+            }
+        }
 		
 		#endregion
+
 
     }
 }

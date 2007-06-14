@@ -4,6 +4,7 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using System.Security;
 
 namespace ClearCanvas.Desktop.Actions
 {

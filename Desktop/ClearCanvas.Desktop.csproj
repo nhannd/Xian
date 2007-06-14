@@ -64,6 +64,7 @@
     <Compile Include="Actions\KeyboardAction.cs" />
     <Compile Include="Actions\KeyboardActionAttribute.cs" />
     <Compile Include="Actions\LabelValueObserverAttribute.cs" />
+    <Compile Include="PrincipalPermissionSpecification.cs" />
     <Compile Include="Actions\Tests\ActionModelStoreTests.cs" />
     <Compile Include="Actions\TooltipValueObserverAttribute.cs" />
     <Compile Include="Actions\ValueObserverAttribute.cs" />

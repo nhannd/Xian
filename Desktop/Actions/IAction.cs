@@ -78,5 +78,11 @@ namespace ClearCanvas.Desktop.Actions
         /// action path and icon resources when required.
         /// </summary>
         IResourceResolver ResourceResolver { get; }
+
+        /// <summary>
+        /// True if this action is permissible.  Typically this will be implemented to test if the current
+        /// user has sufficient privileges to access this action.
+        /// </summary>
+        bool Permissible { get; }
    }
 }
