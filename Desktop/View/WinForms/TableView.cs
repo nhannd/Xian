@@ -41,9 +41,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             // setting the minimum column width > 100 pixels
             // therefore, turn off the auto-generate and create the columns ourselves
             _dataGridView.AutoGenerateColumns = false;
-
-            _toolStripItemAlignment = DesktopViewSettings.Default.LocalToolStripItemAlignment;
-            _textImageRelation = DesktopViewSettings.Default.LocalToolStripItemTextImageRelation;
         }
 
         #region Design Time properties
@@ -498,6 +495,20 @@ namespace ClearCanvas.Desktop.View.WinForms
         protected DataGridView DataGridView
         {
             get { return _dataGridView; }
+        }
+
+        private void TableView_Load(object sender, EventArgs e)
+        {
+            if(this.DesignMode == false)
+            {
+                _toolStripItemAlignment = DesktopViewSettings.Default.LocalToolStripItemAlignment;
+                _textImageRelation = DesktopViewSettings.Default.LocalToolStripItemTextImageRelation;
+            }
+            else
+            {
+                _toolStripItemAlignment = ToolStripItemAlignment.Left;
+                _textImageRelation = TextImageRelation.ImageBeforeText;                
+            }
         }
 	}
 }

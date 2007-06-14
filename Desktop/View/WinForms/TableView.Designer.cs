@@ -101,6 +101,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.Controls.Add(this._toolStrip);
             this.Name = "TableView";
             this.Size = new System.Drawing.Size(540, 228);
+            this.Load += new System.EventHandler(this.TableView_Load);
             ((System.ComponentModel.ISupportInitialize)(this._bindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this._dataGridView)).EndInit();
             this.ResumeLayout(false);
