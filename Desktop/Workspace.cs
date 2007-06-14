@@ -22,19 +22,14 @@ namespace ClearCanvas.Desktop
 		/// <summary>
 		/// Initializes a new instance of the <see cref="Workspace"/> class.
 		/// </summary>
-		public Workspace(string title)
+		public Workspace(string title, IDesktopWindow desktopWindow)
 		{
             _title = title;
             _commandHistory = new CommandHistory(100);
+            _desktopWindow = desktopWindow;
         }
 
         #region IWorkspace Members
-
-
-        public virtual void Initialize(IDesktopWindow desktopWindow)
-        {
-            _desktopWindow = desktopWindow;
-        }
 
 
         public IDesktopWindow DesktopWindow

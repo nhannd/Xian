@@ -16,11 +16,6 @@ namespace ClearCanvas.Desktop
         event EventHandler TitleChanged;
 
         /// <summary>
-        /// Called by the framework when the workspace is added to a <see cref="WorkspaceManager"/>
-        /// </summary>
-        void Initialize(IDesktopWindow desktopWindow);
-
-        /// <summary>
         /// Gets the desktop window with which the workspace is associated.
         /// </summary>
         IDesktopWindow DesktopWindow { get; }

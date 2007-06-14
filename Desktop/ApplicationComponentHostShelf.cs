@@ -52,9 +52,10 @@ namespace ClearCanvas.Desktop
         private Host _host;
 
 
-        internal ApplicationComponentHostShelf(string title, IApplicationComponent component, ShelfDisplayHint hint,
+        internal ApplicationComponentHostShelf(IDesktopWindow desktopWindow,
+            string title, IApplicationComponent component, ShelfDisplayHint hint,
             ApplicationComponentExitDelegate exitCallback)
-            :base(title, hint)
+            :base(title, hint, desktopWindow)
         {
 			Platform.CheckForNullReference(component, "component");
             _host = new Host(this, component, exitCallback);

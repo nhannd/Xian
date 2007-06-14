@@ -63,10 +63,11 @@ namespace ClearCanvas.Desktop
 
 
         public ApplicationComponentHostWorkspace(
+            IDesktopWindow desktopWindow,
             IApplicationComponent component,
             string title,
             ApplicationComponentExitDelegate exitCallback)
-            :base(title)
+            :base(title, desktopWindow)
         {
 			Platform.CheckForNullReference(component, "component");
 
@@ -83,13 +84,6 @@ namespace ClearCanvas.Desktop
         }
 
         #region IWorkspace Members
-
-        public override void Initialize(IDesktopWindow desktopWindow)
-        {
-			Platform.CheckForNullReference(desktopWindow, "desktopWindow");
-			
-			base.Initialize(desktopWindow);
-        }
 
         public override bool CanClose()
         {

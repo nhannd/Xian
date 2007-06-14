@@ -86,7 +86,6 @@ namespace ClearCanvas.Desktop
 		internal void WorkspaceAdded(IWorkspace workspace)
 		{
             // initialize the new workspace and make it the active workspace
-            workspace.Initialize(_desktopWindow);
             this.ActiveWorkspace = workspace;
 		}
 

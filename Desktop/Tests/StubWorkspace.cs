@@ -34,8 +34,8 @@ namespace ClearCanvas.Desktop.Tests
             #endregion
         }
 
-        public StubWorkspace()
-            : base("Stub")
+        public StubWorkspace(IDesktopWindow window)
+            : base("Stub", window)
         {
         }
 

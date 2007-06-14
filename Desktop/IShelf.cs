@@ -9,12 +9,6 @@ namespace ClearCanvas.Desktop
     /// </summary>
     public interface IShelf : IDisposable
     {
-
-        /// <summary>
-        /// Called by the framework when the shelf is added to a <see cref="ShelfManager"/>
-        /// </summary>
-        void Initialize(IDesktopWindow desktopWindow);
-
         /// <summary>
         /// Gets or sets the desktop window that owns this shelf.  
         /// </summary>

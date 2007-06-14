@@ -47,7 +47,7 @@ namespace ClearCanvas.Desktop
 			Platform.CheckForNullReference(desktopWindow, "desktopWindow");
 			Platform.CheckForNullReference(component, "component");
 
-            IWorkspace workspace = new ApplicationComponentHostWorkspace(component, title, exitCallback);
+            IWorkspace workspace = new ApplicationComponentHostWorkspace(desktopWindow, component, title, exitCallback);
             desktopWindow.WorkspaceManager.Workspaces.Add(workspace);
             return workspace;
         }
@@ -73,7 +73,7 @@ namespace ClearCanvas.Desktop
             ShelfDisplayHint displayHint,
             ApplicationComponentExitDelegate exitCallback)
         {
-            IShelf shelf = new ApplicationComponentHostShelf(title, component, displayHint, exitCallback);
+            IShelf shelf = new ApplicationComponentHostShelf(desktopWindow, title, component, displayHint, exitCallback);
             desktopWindow.ShelfManager.Shelves.Add(shelf);
             return shelf;
         }

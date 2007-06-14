@@ -17,10 +17,11 @@ namespace ClearCanvas.Desktop
         private string _title;
         private ShelfDisplayHint _displayHint;
 
-        public Shelf(string title, ShelfDisplayHint displayHint)
+        public Shelf(string title, ShelfDisplayHint displayHint, IDesktopWindow desktopWindow)
         {
             _title = title;
             _displayHint = displayHint;
+            _desktopWindow = desktopWindow;
         }
 
         /// <summary>

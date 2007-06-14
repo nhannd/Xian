@@ -46,7 +46,6 @@ namespace ClearCanvas.Desktop
 
         internal void ShelfAdded(IShelf shelf)
         {
-            shelf.Initialize(_desktopWindow);
         }
 
         internal void ShelfRemoved(IShelf shelf)
