@@ -67,12 +67,12 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private void OnActionEnabledChanged(object sender, EventArgs e)
         {
-            UpdateVisibility();
-        }
+			UpdateEnablement();
+		}
 
 		private void OnActionVisibleChanged(object sender, EventArgs e)
 		{
-            UpdateEnablement();
+			UpdateVisibility();
 		}
 
 		private void OnActionLabelChanged(object sender, EventArgs e)
