@@ -80,6 +80,11 @@ namespace ClearCanvas.Utilities.DicomEditor
                 }
                 FileDicomImage file = image.ImageSop.NativeDicomObject as FileDicomImage;
 
+                //Fix for Ticket #623 - HH - It turns out that for memory usage optimization the pixel data tag is stripped from the in memory dataset.  
+                //So while there are probably many better ways to address the missing pixel data tag a small hack was introduced because this entire utility will 
+                //be completely refactored in the very near future to make use of the methods the pacs uses to parse the tags.
+                file = new FileDicomImage(file.Filename);
+
                 DicomFileAccessor accessor = new DicomFileAccessor();
 
                 if (_component == null)
