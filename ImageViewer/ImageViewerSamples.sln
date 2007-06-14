@@ -30,15 +30,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
-		{04FC1910-7D92-4FAF-8D90-B034A4702981} = {04FC1910-7D92-4FAF-8D90-B034A4702981}
 		{E17A6332-468D-4D15-8009-8E9B2BD042E3} = {E17A6332-468D-4D15-8009-8E9B2BD042E3}
+		{04FC1910-7D92-4FAF-8D90-B034A4702981} = {04FC1910-7D92-4FAF-8D90-B034A4702981}
+		{7689F968-523F-4737-A72C-DB7507A3C68A} = {7689F968-523F-4737-A72C-DB7507A3C68A}
 		{36A4206C-5618-4ECA-A123-67D0C1252086} = {36A4206C-5618-4ECA-A123-67D0C1252086}
 		{2F464B93-3631-4886-96A0-D3F493536997} = {2F464B93-3631-4886-96A0-D3F493536997}
-		{99C5FEC1-FC30-4767-8D52-5D2EBB82F46B} = {99C5FEC1-FC30-4767-8D52-5D2EBB82F46B}
-		{1B8C0C00-F5E4-42B6-A389-B01717AF9460} = {1B8C0C00-F5E4-42B6-A389-B01717AF9460}
-		{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7} = {26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}
-		{109CD9CB-3A21-4D63-9B22-4FC9C3F38A52} = {109CD9CB-3A21-4D63-9B22-4FC9C3F38A52}
-		{EF1E3BC4-21CA-467A-B84F-9B692846F459} = {EF1E3BC4-21CA-467A-B84F-9B692846F459}
+		{9929C5B6-C13B-4436-9326-955EDE2CA102} = {9929C5B6-C13B-4436-9326-955EDE2CA102}
+		{89DF567B-A0D1-456A-A28F-043FD57D7F9A} = {89DF567B-A0D1-456A-A28F-043FD57D7F9A}
 		{9AF0770C-7E9F-483F-8429-D7894F06EB6C} = {9AF0770C-7E9F-483F-8429-D7894F06EB6C}
 		{1AC0E6EC-4E65-4B90-936B-7174B870A30F} = {1AC0E6EC-4E65-4B90-936B-7174B870A30F}
 		{223DFDC9-B1F5-441D-B659-33F9E55E74A5} = {223DFDC9-B1F5-441D-B659-33F9E55E74A5}
@@ -94,9 +92,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Executa
 		{223DFDC9-B1F5-441D-B659-33F9E55E74A5} = {223DFDC9-B1F5-441D-B659-33F9E55E74A5}
 		{1AC0E6EC-4E65-4B90-936B-7174B870A30F} = {1AC0E6EC-4E65-4B90-936B-7174B870A30F}
 		{9AF0770C-7E9F-483F-8429-D7894F06EB6C} = {9AF0770C-7E9F-483F-8429-D7894F06EB6C}
-		{89DF567B-A0D1-456A-A28F-043FD57D7F9A} = {89DF567B-A0D1-456A-A28F-043FD57D7F9A}
-		{9929C5B6-C13B-4436-9326-955EDE2CA102} = {9929C5B6-C13B-4436-9326-955EDE2CA102}
-		{7689F968-523F-4737-A72C-DB7507A3C68A} = {7689F968-523F-4737-A72C-DB7507A3C68A}
+		{EF1E3BC4-21CA-467A-B84F-9B692846F459} = {EF1E3BC4-21CA-467A-B84F-9B692846F459}
+		{109CD9CB-3A21-4D63-9B22-4FC9C3F38A52} = {109CD9CB-3A21-4D63-9B22-4FC9C3F38A52}
+		{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7} = {26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}
+		{1B8C0C00-F5E4-42B6-A389-B01717AF9460} = {1B8C0C00-F5E4-42B6-A389-B01717AF9460}
+		{99C5FEC1-FC30-4767-8D52-5D2EBB82F46B} = {99C5FEC1-FC30-4767-8D52-5D2EBB82F46B}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.ExtensionBrowser", "..\Desktop\ExtensionBrowser\ClearCanvas.Desktop.ExtensionBrowser.csproj", "{1BC2A9D5-E0F6-4ACC-876B-C219E0EA2561}"
@@ -147,10 +147,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Stu
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 	ProjectSection(ProjectDependencies) = postProject
-		{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8} = {3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}
-		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343} = {F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}
-		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF} = {AD9ECE2B-8268-4115-8DC8-860FBD011FFF}
 		{85100D3E-471C-47C9-9687-ABF25F617ED7} = {85100D3E-471C-47C9-9687-ABF25F617ED7}
+		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF} = {AD9ECE2B-8268-4115-8DC8-860FBD011FFF}
+		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343} = {F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}
+		{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8} = {3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.StudyFinders.Remote", "StudyFinders\Remote\ClearCanvas.ImageViewer.StudyFinders.Remote.csproj", "{4454D96D-8E43-44CB-987B-FCAFCD98BCC0}"
@@ -315,25 +315,34 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Ser
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Samples.WebBrowser", "Samples\WebBrowser\ClearCanvas.ImageViewer.Samples.WebBrowser.csproj", "{99C5FEC1-FC30-4767-8D52-5D2EBB82F46B}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7358A257-782C-4B87-AB3B-D5DEF730AB91}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+	ProjectSection(SolutionItems) = preProject
+		ImageViewerSamples.bat = ImageViewerSamples.bat
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Applets.WebBrowser", "..\Desktop\Applets\WebBrowser\ClearCanvas.Desktop.Applets.WebBrowser.csproj", "{99C5FEC1-FC30-4767-8D52-5D2EBB82F46B}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Samples.WebBrowser.View.WinForms", "Samples\WebBrowser\View\WinForms\ClearCanvas.ImageViewer.Samples.WebBrowser.View.WinForms.csproj", "{7689F968-523F-4737-A72C-DB7507A3C68A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Applets.WebBrowser.View.WinForms", "..\Desktop\Applets\WebBrowser\View\WinForms\ClearCanvas.Desktop.Applets.WebBrowser.View.WinForms.csproj", "{7689F968-523F-4737-A72C-DB7507A3C68A}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Samples.Filter", "Samples\Filter\ClearCanvas.ImageViewer.Samples.Filter.csproj", "{04FC1910-7D92-4FAF-8D90-B034A4702981}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter", "Tools\ImageProcessing\Filter\ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter.csproj", "{04FC1910-7D92-4FAF-8D90-B034A4702981}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Samples.Filter.View.WinForms", "Samples\Filter\View\WinForms\ClearCanvas.ImageViewer.Samples.Filter.View.WinForms.csproj", "{E17A6332-468D-4D15-8009-8E9B2BD042E3}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter.View.WinForms", "Tools\ImageProcessing\Filter\View\WinForms\ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter.View.WinForms.csproj", "{E17A6332-468D-4D15-8009-8E9B2BD042E3}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
