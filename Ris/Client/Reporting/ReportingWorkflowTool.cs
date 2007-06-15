@@ -211,8 +211,8 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Complete for Transcription")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Complete for Transcription")]
+        [MenuAction("apply", "folderexplorer-items-contextmenu/Send to Transcription")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Send to Transcription")]
         [ClickHandler("apply", "Apply")]
         [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
@@ -249,8 +249,8 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Complete for Verification")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Complete for Verification")]
+        [MenuAction("apply", "folderexplorer-items-contextmenu/To be Verified")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/To be Verified")]
         [ClickHandler("apply", "Apply")]
         [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
@@ -276,44 +276,6 @@ namespace ClearCanvas.Ris.Client.Reporting
                     IFolder myVerificationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
                         delegate(IFolder f) { return f is Folders.ToBeVerifiedFolder; });
                     myVerificationFolder.RefreshCount();
-
-                    return true;
-                }
-                catch (Exception e)
-                {
-                    ExceptionHandler.Report(e, desktopWindow);
-                    return false;
-                }
-            }
-        }
-
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Complete and Verify")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Complete and Verify")]
-        [ClickHandler("apply", "Apply")]
-        [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
-        [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-        [ExtensionOf(typeof(Folders.VerifiedFolder.DropHandlerExtensionPoint))]
-        public class CompleteInterpretationAndVerifyTool : WorkflowItemTool
-        {
-            public CompleteInterpretationAndVerifyTool()
-                : base("CompleteInterpretationAndVerify")
-            {
-            }
-
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
-            {
-                try
-                {
-                    Platform.GetService<IReportingWorkflowService>(
-                        delegate(IReportingWorkflowService service)
-                        {
-                            service.CompleteInterpretationAndVerify(new CompleteInterpretationAndVerifyRequest(item));
-                        });
-
-                    IFolder myVerifiedFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.VerifiedFolder; });
-                    myVerifiedFolder.RefreshCount();
 
                     return true;
                 }
@@ -362,29 +324,60 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Complete Verification")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Complete Verification")]
+        [MenuAction("apply", "folderexplorer-items-contextmenu/Verify")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Verify")]
         [ClickHandler("apply", "Apply")]
         [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
         [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
         [ExtensionOf(typeof(Folders.VerifiedFolder.DropHandlerExtensionPoint))]
-        public class CompleteVerificationTool : WorkflowItemTool
+        public class VerifyTool : WorkflowItemTool
         {
-            public CompleteVerificationTool()
-                : base("CompleteVerification")
+            public VerifyTool()
+                : base("Verify")
             {
+            }
+
+            public override bool Enabled
+            {
+                get
+                {
+                    return this.Context.GetWorkflowOperationEnablement("CompleteInterpretationAndVerify") ||
+                        this.Context.GetWorkflowOperationEnablement("CompleteVerification");
+                }
+            }
+
+            public override bool CanAcceptDrop(IDropContext dropContext, ICollection<ReportingWorklistItem> items)
+            {
+                IReportingWorkflowFolderDropContext ctxt = (IReportingWorkflowFolderDropContext)dropContext;
+                return ctxt.GetOperationEnablement("CompleteInterpretationAndVerify") ||
+                    ctxt.GetOperationEnablement("CompleteVerification");
             }
 
             protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
             {
                 try
                 {
-                    Platform.GetService<IReportingWorkflowService>(
-                        delegate(IReportingWorkflowService service)
-                        {
-                            service.CompleteVerification(new CompleteVerificationRequest(item));
-                        });
+                    if (item.StepType == "Interpretation")
+                    {
+                        Platform.GetService<IReportingWorkflowService>(
+                            delegate(IReportingWorkflowService service)
+                            {
+                                service.CompleteInterpretationAndVerify(new CompleteInterpretationAndVerifyRequest(item));
+                            });
+                    }
+                    else if (item.StepType == "Verification")
+                    {
+                        Platform.GetService<IReportingWorkflowService>(
+                            delegate(IReportingWorkflowService service)
+                            {
+                                service.CompleteVerification(new CompleteVerificationRequest(item));
+                            });
+                    }
+                    else // (item.StepType == "Transcription")
+                    {
+                        // Not defined
+                    }
 
                     IFolder myVerifiedFolder = CollectionUtils.SelectFirst<IFolder>(folders,
                         delegate(IFolder f) { return f is Folders.VerifiedFolder; });
