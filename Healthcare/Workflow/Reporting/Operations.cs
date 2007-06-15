@@ -223,8 +223,8 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 if (step is VerificationStep == false)
                     return false;
 
-                // step is not started or has been cancelled/completed
-                if (step.State != ActivityStatus.IP)
+                // step already completed or cancelled
+                if (step.State == ActivityStatus.CM || step.State == ActivityStatus.DC)
                     return false;
 
                 // step is assigned to someone else

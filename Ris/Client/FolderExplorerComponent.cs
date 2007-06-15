@@ -23,6 +23,7 @@ namespace ClearCanvas.Ris.Client
 
         ISelection SelectedItems { get; }
         event EventHandler SelectedItemsChanged;
+        event EventHandler SelectedItemDoubleClicked;
 
         void AddItemActions(IActionSet actions);
         void AddFolderActions(IActionSet actions);
@@ -93,6 +94,12 @@ namespace ClearCanvas.Ris.Client
                 remove { _component.SelectedItemsChanged -= value; }
             }
 
+            public event EventHandler SelectedItemDoubleClicked
+            {
+                add { _component.SelectedItemDoubleClicked += value; }
+                remove { _component.SelectedItemDoubleClicked -= value; }
+            }
+
             public void AddItemActions(IActionSet actions)
             {
                 _component._itemActions = _component._itemActions.Union(actions);
@@ -116,6 +123,7 @@ namespace ClearCanvas.Ris.Client
 
         private ISelection _selectedItems = Selection.Empty;
         private ISelection _selectedItemsBeforeRefresh = Selection.Empty;
+        private event EventHandler _selectedItemDoubleClicked;
         private event EventHandler _selectedItemsChanged;
         private event EventHandler _suppressSelectionChangedEvent;
 
@@ -220,6 +228,12 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
+        public event EventHandler SelectedItemDoubleClicked
+        {
+            add { _selectedItemDoubleClicked += value; }
+            remove { _selectedItemDoubleClicked -= value; }
+        }
+
         public event EventHandler SelectedItemsChanged
         {
             add { _selectedItemsChanged += value; }
@@ -274,6 +288,11 @@ namespace ClearCanvas.Ris.Client
                     amr.Merge(_selectedFolder.MenuModel);
                 return amr;
             }
+        }
+
+        public void OnSelectedItemDoubleClick()
+        {
+            EventsHelper.Fire(_selectedItemDoubleClicked, this, EventArgs.Empty);
         }
 
         #endregion

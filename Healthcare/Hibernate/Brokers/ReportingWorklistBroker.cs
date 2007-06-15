@@ -28,9 +28,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             public object Value;
         }
 
-        private const string _hqlSelectInterpretationWorklist = 
+        private const string _hqlToBeReportedWorklist = 
             "select rps, pp.Mrn, pp.Name, o.AccessionNumber, o.Priority, rpt.Name, ds.Name, rps.State from InterpretationStep rps";
-        private const string _hqlSelectInterpretationCount = 
+        private const string _hqlToBeReportedCount = 
             "select count(*) from InterpretationStep rps";
 
         private const string _hqlSelectTranscriptionWorklist =
@@ -101,9 +101,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region Worklist
 
-        public IList<WorklistItem> GetScheduledInterpretationWorklist()
+        public IList<WorklistItem> GetToBeReportedWorklist()
         {
-            string hqlQuery = String.Concat(_hqlSelectInterpretationWorklist, _hqlJoin, _hqlCommunualWorklistCondition);
+            string hqlQuery = String.Concat(_hqlToBeReportedWorklist, _hqlJoin, _hqlCommunualWorklistCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", "SC"));
@@ -111,9 +111,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetWorklist(hqlQuery, parameters);
         }
 
-        public IList<WorklistItem> GetMyInterpretationWorklist(Staff performingStaff)
+        public IList<WorklistItem> GetInProgressWorklist(Staff performingStaff)
         {
-            string hqlQuery = String.Concat(_hqlSelectInterpretationWorklist, _hqlJoin, _hqlMyDualStateCondition);
+            string hqlQuery = String.Concat(_hqlToBeReportedWorklist, _hqlJoin, _hqlMyDualStateCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", "SC"));
@@ -123,7 +123,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetWorklist(hqlQuery, parameters);
         }
 
-        public IList<WorklistItem> GetMyTranscriptionWorklist(Staff performingStaff)
+        public IList<WorklistItem> GetInTranscriptionWorklist(Staff performingStaff)
         {
             string hqlQuery = String.Concat(_hqlSelectTranscriptionWorklist, _hqlJoin, _hqlMyDualStateCondition);
 
@@ -135,7 +135,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetWorklist(hqlQuery, parameters);
         }
 
-        public IList<WorklistItem> GetMyVerificationWorklist(Staff performingStaff)
+        public IList<WorklistItem> GetToBeVerifiedWorklist(Staff performingStaff)
         {
             string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, _hqlJoin, _hqlMyDualStateCondition);
 
@@ -147,7 +147,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetWorklist(hqlQuery, parameters);
         }
 
-        public IList<WorklistItem> GetMyVerifiedWorklist(Staff performingStaff)
+        public IList<WorklistItem> GetVerifiedWorklist(Staff performingStaff)
         {
             string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, _hqlJoin, _hqlMySingleStateCondition);
 
@@ -162,9 +162,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #region Worklist Count
 
-        public int GetScheduledInterpretationWorklistCount()
+        public int GetToBeReportedWorklistCount()
         {
-            string hqlQuery = String.Concat(_hqlSelectInterpretationCount, _hqlJoin, _hqlCommunualWorklistCondition);
+            string hqlQuery = String.Concat(_hqlToBeReportedCount, _hqlJoin, _hqlCommunualWorklistCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", "SC"));
@@ -172,9 +172,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetWorklistCount(hqlQuery, parameters);
         }
 
-        public int GetMyInterpretationWorklistCount(Staff performingStaff)
+        public int GetInProgressWorklistCount(Staff performingStaff)
         {
-            string hqlQuery = String.Concat(_hqlSelectInterpretationCount, _hqlJoin, _hqlMyDualStateCondition);
+            string hqlQuery = String.Concat(_hqlToBeReportedCount, _hqlJoin, _hqlMyDualStateCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", "SC"));
@@ -184,7 +184,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetWorklistCount(hqlQuery, parameters);
         }
 
-        public int GetMyTranscriptionWorklistCount(Staff performingStaff)
+        public int GetInTranscriptionWorklistCount(Staff performingStaff)
         {
             string hqlQuery = String.Concat(_hqlSelectTranscriptionCount, _hqlJoin, _hqlMyDualStateCondition);
 
@@ -196,7 +196,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetWorklistCount(hqlQuery, parameters);
         }
 
-        public int GetMyVerificationWorklistCount(Staff performingStaff)
+        public int GetToBeVerifiedWorklistCount(Staff performingStaff)
         {
             string hqlQuery = String.Concat(_hqlSelectVerificationCount, _hqlJoin, _hqlMyDualStateCondition);
 
@@ -208,7 +208,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetWorklistCount(hqlQuery, parameters);
         }
 
-        public int GetMyVerifiedWorklistCount(Staff performingStaff)
+        public int GetVerifiedWorklistCount(Staff performingStaff)
         {
             string hqlQuery = String.Concat(_hqlSelectVerificationCount, _hqlJoin, _hqlMySingleStateCondition);
 

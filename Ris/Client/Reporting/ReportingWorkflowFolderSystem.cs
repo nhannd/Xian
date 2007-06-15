@@ -39,6 +39,9 @@ namespace ClearCanvas.Ris.Client.Reporting
 
     public interface IReportingWorkflowFolderToolContext : IToolContext
     {
+        IEnumerable Folders { get; }
+        IFolder SelectedFolder { get; }
+
         event EventHandler SelectedFolderChanged;
         IDesktopWindow DesktopWindow { get; }
     }
@@ -99,7 +102,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 _owner = owner;
             }
 
-            #region IReportingWorkflowItemToolContext Members
+            #region IReportingWorkflowFolderToolContext Members
 
             public event EventHandler SelectedFolderChanged
             {
@@ -110,6 +113,16 @@ namespace ClearCanvas.Ris.Client.Reporting
             public IDesktopWindow DesktopWindow
             {
                 get { return _owner.DesktopWindow; }
+            }
+
+            public IEnumerable Folders
+            {
+                get { return _owner.Folders; }
+            }
+
+            public IFolder SelectedFolder
+            {
+                get { return _owner.SelectedFolder; }
             }
 
             #endregion
@@ -125,12 +138,13 @@ namespace ClearCanvas.Ris.Client.Reporting
             // important to initialize service before adding any folders, because folders may access service
 
             this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
+            this.SelectedItemDoubleClicked += SelectedItemDoubleClickedEventHandler;
 
-            this.AddFolder(new Folders.ScheduledInterpretationFolder(this));
-            this.AddFolder(new Folders.MyInterpretationFolder(this));
-            this.AddFolder(new Folders.MyTranscriptionFolder(this));
-            this.AddFolder(new Folders.MyVerificationFolder(this));
-            this.AddFolder(new Folders.MyVerifiedFolder(this));
+            this.AddFolder(new Folders.ToBeReportedFolder(this));
+            this.AddFolder(new Folders.InProgressFolder(this));
+            this.AddFolder(new Folders.InTranscriptionFolder(this));
+            this.AddFolder(new Folders.ToBeVerifiedFolder(this));
+            this.AddFolder(new Folders.VerifiedFolder(this));
 
             _itemToolSet = new ToolSet(new ReportingWorkflowItemToolExtensionPoint(), new ReportingWorkflowItemToolContext(this));
             _folderToolSet = new ToolSet(new ReportingWorkflowFolderToolExtensionPoint(), new ReportingWorkflowFolderToolContext(this));
@@ -170,6 +184,14 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 ExceptionHandler.Report(ex, this.DesktopWindow);
             }
+        }
+
+        private void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
+        {
+            ReportingWorkflowTool.EditReportTool tool = new ReportingWorkflowTool.EditReportTool();
+            tool.SetContext(new ReportingWorkflowItemToolContext(this));
+            if (tool.Enabled)
+                tool.Apply();
         }
 
         protected override void Dispose(bool disposing)

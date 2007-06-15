@@ -72,6 +72,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             ActivityStatusEnumTable activityStatusTable = context.GetBroker<IActivityStatusEnumBroker>().Load();
             item.ActivityStatus = new EnumValueInfo(domainItem.ActivityStatus.ToString(), activityStatusTable[domainItem.ActivityStatus].Value);
 
+            item.StepType = domainItem.StepType;
+
             return item;
         }
 

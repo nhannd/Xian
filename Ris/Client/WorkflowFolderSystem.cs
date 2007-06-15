@@ -11,6 +11,7 @@ namespace ClearCanvas.Ris.Client
     {
         private IFolderExplorerToolContext _folderExplorer;
         private List<WorkflowFolder<TItem>> _folders;
+        private event EventHandler _selectedItemDoubleClicked;
         private event EventHandler _selectedItemsChanged;
         private event EventHandler _selectedFolderChanged;
 
@@ -21,6 +22,7 @@ namespace ClearCanvas.Ris.Client
             _folderExplorer = folderExplorer;
             _folderExplorer.SelectedFolderChanged += new EventHandler(_folderExplorer_SelectedFolderChanged);
             _folderExplorer.SelectedItemsChanged += new EventHandler(_folderExplorer_SelectedItemsChanged);
+            _folderExplorer.SelectedItemDoubleClicked += new EventHandler(_folderExplorer_SelectedItemDoubleClicked);
         }
 
         ~WorkflowFolderSystem()
@@ -31,6 +33,12 @@ namespace ClearCanvas.Ris.Client
         public IDesktopWindow DesktopWindow
         {
             get { return _folderExplorer.DesktopWindow; }
+        }
+
+        public event EventHandler SelectedItemDoubleClicked
+        {
+            add { _selectedItemDoubleClicked += value; }
+            remove { _selectedItemDoubleClicked -= value; }
         }
 
         public event EventHandler SelectedItemsChanged
@@ -81,6 +89,10 @@ namespace ClearCanvas.Ris.Client
             EventsHelper.Fire(_selectedItemsChanged, this, EventArgs.Empty);
         }
 
+        void _folderExplorer_SelectedItemDoubleClicked(object sender, EventArgs e)
+        {
+            EventsHelper.Fire(_selectedItemDoubleClicked, this, EventArgs.Empty);
+        }
 
         protected void AddFolder(WorkflowFolder<TItem> folder)
         {

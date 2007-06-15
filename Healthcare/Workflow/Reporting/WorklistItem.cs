@@ -36,6 +36,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         private string _requestedProcedureName;
         private string _diagnosticServiceName;
         private ActivityStatus _activityStatus;
+        private string _stepType;
 
         public WorklistItem(
             ReportingProcedureStep reportingProcedureStep,
@@ -55,6 +56,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             _requestedProcedureName = requestedProcedureName;
             _diagnosticServiceName = diagnosticServiceName;
             _activityStatus = activityStatus;
+            _stepType = reportingProcedureStep.Name;
         }
 
         #region Public Properties
@@ -97,6 +99,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         public ActivityStatus ActivityStatus
         {
             get { return _activityStatus; }
+        }
+
+        public string StepType
+        {
+            get { return _stepType; }
         }
 
         #endregion

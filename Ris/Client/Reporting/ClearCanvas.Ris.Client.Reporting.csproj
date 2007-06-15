@@ -37,6 +37,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\WorkflowFolders.cs" />
     <Compile Include="HomeTool.cs" />
     <Compile Include="ReportSummaryTable.cs" />
@@ -129,6 +130,13 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\EditToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RefreshToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\RefreshToolLarge.png" />
+    <EmbeddedResource Include="Icons\RefreshToolMedium.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

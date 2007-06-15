@@ -41,6 +41,9 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         PatientProfileSearchData SearchCriteria { set; }
 
+        IEnumerable Folders { get; }
+        IFolder SelectedFolder { get; }
+
         event EventHandler SelectedFolderChanged;
         IDesktopWindow DesktopWindow { get; }
     }
@@ -119,6 +122,16 @@ namespace ClearCanvas.Ris.Client.Adt
                 get { return _owner.DesktopWindow; }
             }
 
+            public IEnumerable Folders
+            {
+                get { return _owner.Folders; }
+            }
+
+            public IFolder SelectedFolder
+            {
+                get { return _owner.SelectedFolder; }
+            }
+
             #endregion
         }
 
@@ -143,6 +156,7 @@ namespace ClearCanvas.Ris.Client.Adt
             // important to initialize service before adding any folders, because folders may access service
 
             this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
+            this.SelectedItemDoubleClicked += SelectedItemDoubleClickedEventHandler;
 
             this.AddFolder(new Folders.ScheduledFolder(this));
             this.AddFolder(new Folders.CheckedInFolder(this));
@@ -189,6 +203,14 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 ExceptionHandler.Report(ex, this.DesktopWindow);
             }
+        }
+
+        private void SelectedItemDoubleClickedEventHandler(object sender, EventArgs e)
+        {
+            PatientOverviewTool tool = new PatientOverviewTool();
+            tool.SetContext(new RegistrationWorkflowItemToolContext(this));
+            if (tool.Enabled)
+                tool.View();
         }
 
         protected override void Dispose(bool disposing)

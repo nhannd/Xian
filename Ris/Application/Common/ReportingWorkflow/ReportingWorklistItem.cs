@@ -9,7 +9,6 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class ReportingWorklistItem : DataContractBase
     {
-        //TODO: ReportWorklistItem detail not defined
         [DataMember]
         public EntityRef ProcedureStepRef;
 
@@ -33,5 +32,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 
         [DataMember]
         public EnumValueInfo ActivityStatus;
+
+        [DataMember]
+        public string StepType;
     }
 }

@@ -8,17 +8,17 @@ namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IReportingWorklistBroker : IPersistenceBroker
     {
-        IList<WorklistItem> GetScheduledInterpretationWorklist();
-        IList<WorklistItem> GetMyInterpretationWorklist(Staff performingStaff);
-        IList<WorklistItem> GetMyTranscriptionWorklist(Staff performingStaff);
-        IList<WorklistItem> GetMyVerificationWorklist(Staff performingStaff);
-        IList<WorklistItem> GetMyVerifiedWorklist(Staff performingStaff);
+        IList<WorklistItem> GetToBeReportedWorklist();
+        IList<WorklistItem> GetInProgressWorklist(Staff performingStaff);
+        IList<WorklistItem> GetInTranscriptionWorklist(Staff performingStaff);
+        IList<WorklistItem> GetToBeVerifiedWorklist(Staff performingStaff);
+        IList<WorklistItem> GetVerifiedWorklist(Staff performingStaff);
 
-        int GetScheduledInterpretationWorklistCount();
-        int GetMyInterpretationWorklistCount(Staff performingStaff);
-        int GetMyTranscriptionWorklistCount(Staff performingStaff);
-        int GetMyVerificationWorklistCount(Staff performingStaff);
-        int GetMyVerifiedWorklistCount(Staff performingStaff);
+        int GetToBeReportedWorklistCount();
+        int GetInProgressWorklistCount(Staff performingStaff);
+        int GetInTranscriptionWorklistCount(Staff performingStaff);
+        int GetToBeVerifiedWorklistCount(Staff performingStaff);
+        int GetVerifiedWorklistCount(Staff performingStaff);
 
         IList<Report> GetPriorReport(Patient patient);
     }

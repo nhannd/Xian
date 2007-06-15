@@ -37,26 +37,39 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Initialize()
         {
             base.Initialize();
+
             if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
-                //this.Context.DefaultAction = View;
                 ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate(object sender, EventArgs args)
                 {
-                    this.Enabled = (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
-                        && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
+                    this.Enabled = DetermineEnablement();
                 };
+            }
+        }
+
+        private bool DetermineEnablement()
+        {
+            if (this.ContextBase is IRegistrationWorkflowItemToolContext)
+            {
+                return (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
+                    && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
             }
             else if (this.ContextBase is IRegistrationPreviewToolContext)
             {
                 IRegistrationPreviewToolContext context = (IRegistrationPreviewToolContext)this.ContextBase;
-                this.Enabled = (context.WorklistItem != null && context.WorklistItem.PatientProfileRef != null);
+                return (context.WorklistItem != null && context.WorklistItem.PatientProfileRef != null);
             }
 
+            return false;
         }
 
         public bool Enabled
         {
-            get { return _enabled; }
+            get 
+            { 
+                this.Enabled = DetermineEnablement();
+                return _enabled;
+            }
             set
             {
                 if (_enabled != value)

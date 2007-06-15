@@ -60,7 +60,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             IFolder myVerifiedFolder = CollectionUtils.SelectFirst<IFolder>(_reportFolders,
                 delegate(IFolder folder) 
                 { 
-                    return folder is Folders.MyVerifiedFolder;
+                    return folder is Folders.VerifiedFolder;
                 });
 
             if (myVerifiedFolder != null)
@@ -79,7 +79,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             IFolder myVerificationFolder = CollectionUtils.SelectFirst<IFolder>(_reportFolders,
                 delegate(IFolder folder)
                 {
-                    return folder is Folders.MyVerificationFolder;
+                    return folder is Folders.ToBeVerifiedFolder;
                 });
 
             if (myVerificationFolder != null)
@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             IFolder myTranscriptionFolder = CollectionUtils.SelectFirst<IFolder>(_reportFolders,
                 delegate(IFolder folder)
                 {
-                    return folder is Folders.MyTranscriptionFolder;
+                    return folder is Folders.InTranscriptionFolder;
                 });
 
             if (myTranscriptionFolder != null)

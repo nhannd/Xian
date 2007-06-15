@@ -143,6 +143,11 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
+        public bool HasReport
+        {
+            get { return _reportContent != null && _reportContent.Length > 0; }
+        }
+
         public bool ReadOnly
         {
             get { return _readOnly; }
@@ -150,17 +155,17 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public bool VerifyEnabled
         {
-            get { return _canCompleteInterpretationAndVerify || _canCompleteVerification; }
+            get { return this.HasReport && (_canCompleteInterpretationAndVerify || _canCompleteVerification); }
         }
 
         public bool SendToVerifyEnabled
         {
-            get { return _canCompleteInterpretationForVerification; }
+            get { return this.HasReport && _canCompleteInterpretationForVerification; }
         }
 
         public bool SendToTranscriptionEnabled
         {
-            get { return _canCompleteInterpretationForTranscription; }
+            get { return this.HasReport && _canCompleteInterpretationForTranscription; }
         }
 
         public bool SaveEnabled

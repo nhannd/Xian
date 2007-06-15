@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             public virtual void Apply()
             {
                 ReportingWorklistItem item = CollectionUtils.FirstElement<ReportingWorklistItem>(this.Context.SelectedItems);
-                bool success = Execute(item, this.Context.DesktopWindow, this.Context.Folders);
+                bool success = Execute(item, this.Context.DesktopWindow, this.Context.SelectedFolder, this.Context.Folders);
                 if (success)
                 {
                     this.Context.SelectedFolder.Refresh();
@@ -54,7 +54,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 get { return _operationName; }
             }
 
-            protected abstract bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders);
+            protected abstract bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders);
 
             #region IDropHandler<ReportingWorklistItem> Members
 
@@ -68,7 +68,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 IReportingWorkflowFolderDropContext ctxt = (IReportingWorkflowFolderDropContext)dropContext;
                 ReportingWorklistItem item = CollectionUtils.FirstElement<ReportingWorklistItem>(items);
-                bool success = Execute(item, ctxt.DesktopWindow, ctxt.FolderSystem.Folders);
+                bool success = Execute(item, ctxt.DesktopWindow, ctxt.FolderSystem.SelectedFolder, ctxt.FolderSystem.Folders);
                 if (success)
                 {
                     ctxt.FolderSystem.SelectedFolder.Refresh();
@@ -93,7 +93,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
             }
 
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
             {
                 try
                 {
@@ -104,7 +104,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         });
 
                     IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.MyInterpretationFolder; });
+                        delegate(IFolder f) { return f is Folders.InProgressFolder; });
                     myInterpretationFolder.RefreshCount();
 
                     return true;
@@ -117,20 +117,42 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Edit Interpretation")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Edit Interpretation")]
+        [MenuAction("apply", "folderexplorer-items-contextmenu/Edit Report")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Edit Report")]
         [ClickHandler("apply", "Apply")]
         [IconSet("apply", IconScheme.Colour, "Icons.EditToolSmall.png", "Icons.EditToolSmall.png", "Icons.EditToolSmall.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
         [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-        public class EditInterpretationTool : WorkflowItemTool
+        [ExtensionOf(typeof(Folders.InProgressFolder.DropHandlerExtensionPoint))]
+        public class EditReportTool : WorkflowItemTool
         {
-            public EditInterpretationTool()
-                : base("StartInterpretation")
+            public EditReportTool()
+                : base("EditReport")
             {
             }
 
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+            public override bool Enabled
+            {
+                get
+                {
+                    return this.Context.GetWorkflowOperationEnablement("ClaimInterpretation") ||
+                        this.Context.GetWorkflowOperationEnablement("StartInterpretation") ||
+                        this.Context.GetWorkflowOperationEnablement("StartVerification");
+                }
+            }
+
+            public override bool CanAcceptDrop(IDropContext dropContext, ICollection<ReportingWorklistItem> items)
+            {
+                IReportingWorkflowFolderDropContext ctxt = (IReportingWorkflowFolderDropContext)dropContext;
+                ReportingWorklistItem firstItem = CollectionUtils.FirstElement<ReportingWorklistItem>(items);
+
+                return firstItem.StepType == "Interpretation" &&
+                    (ctxt.GetOperationEnablement("ClaimInterpretation") ||
+                    ctxt.GetOperationEnablement("StartInterpretation") ||
+                    ctxt.GetOperationEnablement("StartVerification"));
+            }
+
+            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
             {
                 Document doc = DocumentManager.Get(item.ProcedureStepRef);
                 if (doc != null)
@@ -141,28 +163,41 @@ namespace ClearCanvas.Ris.Client.Reporting
                 {
                     try
                     {
-                        Platform.GetService<IReportingWorkflowService>(
-                            delegate(IReportingWorkflowService service)
-                            {
-                                StartInterpretationResponse response = service.StartInterpretation(new StartInterpretationRequest(item));
-                                item.ProcedureStepRef = response.ReportingStepRef;
-                            });
+                        if (item.StepType == "Interpretation")
+                        {
+                            Platform.GetService<IReportingWorkflowService>(
+                                delegate(IReportingWorkflowService service)
+                                {
+                                    StartInterpretationResponse response = service.StartInterpretation(new StartInterpretationRequest(item));
+                                    item.ProcedureStepRef = response.ReportingStepRef;
+                                });
+                        }
+                        else if (item.StepType == "Verification")
+                        {
+                            Platform.GetService<IReportingWorkflowService>(
+                                delegate(IReportingWorkflowService service)
+                                {
+                                    StartVerificationResponse response = service.StartVerification(new StartVerificationRequest(item));
+                                    item.ProcedureStepRef = response.ReportingStepRef;
+                                });
 
-                        doc = new ReportDocument(item, folders, false, this.Context.DesktopWindow);
+                        }
+                        else // (item.StepType == "Transcription")
+                        {
+                            // Not defined
+                        }
+
+                        bool readOnly = selectedFolder is Folders.InTranscriptionFolder ||
+                            selectedFolder is Folders.VerifiedFolder;
+
+                        doc = new ReportDocument(item, folders, readOnly, desktopWindow);
                         doc.Closed += delegate(object sender, EventArgs e)
                         {
-                            IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                                delegate(IFolder f) { return f is Folders.MyInterpretationFolder; });
-
-                            if (myInterpretationFolder != null)
-                            {
-                                if (myInterpretationFolder.IsOpen)
-                                    myInterpretationFolder.Refresh();
-                                else
-                                    myInterpretationFolder.RefreshCount();
-                            }
-                        };
-
+                            if (selectedFolder.IsOpen)
+                                selectedFolder.Refresh();
+                            else
+                                selectedFolder.RefreshCount();
+                        };                       
                         doc.Open();
                     }
                     catch (Exception e)
@@ -182,6 +217,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
         [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
+        [ExtensionOf(typeof(Folders.InTranscriptionFolder.DropHandlerExtensionPoint))]
         public class CompleteInterpretationForTranscriptionTool : WorkflowItemTool
         {
             public CompleteInterpretationForTranscriptionTool()
@@ -189,7 +225,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
             }
 
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
             {
                 try
                 {
@@ -200,7 +236,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         });
 
                     IFolder myTranscriptionFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.MyTranscriptionFolder; });
+                        delegate(IFolder f) { return f is Folders.InTranscriptionFolder; });
                     myTranscriptionFolder.RefreshCount();
 
                     return true;
@@ -219,6 +255,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
         [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
+        [ExtensionOf(typeof(Folders.ToBeVerifiedFolder.DropHandlerExtensionPoint))]
         public class CompleteInterpretationForVerificationTool : WorkflowItemTool
         {
             public CompleteInterpretationForVerificationTool()
@@ -226,7 +263,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
             }
 
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
             {
                 try
                 {
@@ -237,7 +274,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         });
 
                     IFolder myVerificationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.MyVerificationFolder; });
+                        delegate(IFolder f) { return f is Folders.ToBeVerifiedFolder; });
                     myVerificationFolder.RefreshCount();
 
                     return true;
@@ -256,6 +293,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
         [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
+        [ExtensionOf(typeof(Folders.VerifiedFolder.DropHandlerExtensionPoint))]
         public class CompleteInterpretationAndVerifyTool : WorkflowItemTool
         {
             public CompleteInterpretationAndVerifyTool()
@@ -263,7 +301,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
             }
 
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
             {
                 try
                 {
@@ -274,7 +312,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         });
 
                     IFolder myVerifiedFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.MyVerifiedFolder; });
+                        delegate(IFolder f) { return f is Folders.VerifiedFolder; });
                     myVerifiedFolder.RefreshCount();
 
                     return true;
@@ -300,7 +338,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
             }
 
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
             {
                 try
                 {
@@ -311,7 +349,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         });
 
                     IFolder myTranscriptionFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.MyTranscriptionFolder; });
+                        delegate(IFolder f) { return f is Folders.InTranscriptionFolder; });
                     myTranscriptionFolder.Refresh();
 
                     return true;
@@ -324,71 +362,13 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Edit Verification")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Edit Verification")]
-        [ClickHandler("apply", "Apply")]
-        [IconSet("apply", IconScheme.Colour, "Icons.StartToolSmall.png", "Icons.StartToolMedium.png", "Icons.StartToolLarge.png")]
-        [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-        [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-        public class EditVerificationTool : WorkflowItemTool
-        {
-            public EditVerificationTool()
-                : base("StartVerification")
-            {
-            }
-
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
-            {
-                Document doc = DocumentManager.Get(item.ProcedureStepRef);
-                if (doc != null)
-                {
-                    doc.Activate();
-                }
-                else
-                {
-                    try
-                    {
-                        Platform.GetService<IReportingWorkflowService>(
-                            delegate(IReportingWorkflowService service)
-                            {
-                                StartVerificationResponse response = service.StartVerification(new StartVerificationRequest(item));
-                                item.ProcedureStepRef = response.ReportingStepRef;
-                            });
-
-                        doc = new ReportDocument(item, folders, false, this.Context.DesktopWindow);
-                        doc.Closed += delegate(object sender, EventArgs e)
-                        {
-                            IFolder myVerificationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                                delegate(IFolder f) { return f is Folders.MyVerificationFolder; });
-
-                            if (myVerificationFolder != null)
-                            {
-                                if (myVerificationFolder.IsOpen)
-                                    myVerificationFolder.Refresh();
-                                else
-                                    myVerificationFolder.RefreshCount();
-                            }
-                        };
-
-                        doc.Open();
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, desktopWindow);
-                        return false;
-                    }
-                }
-
-                return true;
-            }
-        }
-
         [MenuAction("apply", "folderexplorer-items-contextmenu/Complete Verification")]
         [ButtonAction("apply", "folderexplorer-items-toolbar/Complete Verification")]
         [ClickHandler("apply", "Apply")]
         [IconSet("apply", IconScheme.Colour, "Icons.CompleteToolSmall.png", "Icons.CompleteToolMedium.png", "Icons.CompleteToolLarge.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
         [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
+        [ExtensionOf(typeof(Folders.VerifiedFolder.DropHandlerExtensionPoint))]
         public class CompleteVerificationTool : WorkflowItemTool
         {
             public CompleteVerificationTool()
@@ -396,7 +376,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
             }
 
-            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
             {
                 try
                 {
@@ -407,7 +387,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         });
 
                     IFolder myVerifiedFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.MyVerifiedFolder; });
+                        delegate(IFolder f) { return f is Folders.VerifiedFolder; });
                     myVerifiedFolder.RefreshCount();
 
                     return true;

@@ -37,6 +37,9 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         //something here
 
+        IEnumerable Folders { get; }
+        IFolder SelectedFolder { get; }
+
         event EventHandler SelectedFolderChanged;
         IDesktopWindow DesktopWindow { get; }
     }
@@ -108,6 +111,16 @@ namespace ClearCanvas.Ris.Client.Adt
             public IDesktopWindow DesktopWindow
             {
                 get { return _owner.DesktopWindow; }
+            }
+
+            public IEnumerable Folders
+            {
+                get { return _owner.Folders; }
+            }
+
+            public IFolder SelectedFolder
+            {
+                get { return _owner.SelectedFolder; }
             }
 
             #endregion

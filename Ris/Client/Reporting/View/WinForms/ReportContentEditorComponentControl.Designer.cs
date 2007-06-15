@@ -205,7 +205,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._sendToVerifyButton.Name = "_sendToVerifyButton";
             this._sendToVerifyButton.Size = new System.Drawing.Size(84, 37);
             this._sendToVerifyButton.TabIndex = 1;
-            this._sendToVerifyButton.Text = "Send to Verify";
+            this._sendToVerifyButton.Text = "To be Verified";
             this._sendToVerifyButton.UseVisualStyleBackColor = true;
             this._sendToVerifyButton.Click += new System.EventHandler(this._sendToVerifyButton_Click);
             // 

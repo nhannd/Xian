@@ -16,68 +16,68 @@ using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting.Folders
 {
-    public class ScheduledInterpretationFolder : ReportingWorkflowFolder
+    public class ToBeReportedFolder : ReportingWorkflowFolder
     {
-        public ScheduledInterpretationFolder(ReportingWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Scheduled Interpretation")
+        public ToBeReportedFolder(ReportingWorkflowFolderSystem folderSystem)
+            : base(folderSystem, "To be Reported")
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ScheduledInterpretation";
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ToBeReported";
         }
     }
 
-    public class MyInterpretationFolder : ReportingWorkflowFolder
+    public class InProgressFolder : ReportingWorkflowFolder
     {
         [ExtensionPoint]
         public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
         {
         }
 
-        public MyInterpretationFolder(ReportingWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "My Interpretation")
+        public InProgressFolder(ReportingWorkflowFolderSystem folderSystem)
+            : base(folderSystem, "In Progress", new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+MyInterpretation";
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+InProgress";
         }
     }
 
-    public class MyTranscriptionFolder : ReportingWorkflowFolder
+    public class InTranscriptionFolder : ReportingWorkflowFolder
     {
         [ExtensionPoint]
         public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
         {
         }
 
-        public MyTranscriptionFolder(ReportingWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "My Transcription")
+        public InTranscriptionFolder(ReportingWorkflowFolderSystem folderSystem)
+            : base(folderSystem, "In Transcription", new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+MyTranscription";
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+InTranscription";
         }
     }
 
-    public class MyVerificationFolder : ReportingWorkflowFolder
+    public class ToBeVerifiedFolder : ReportingWorkflowFolder
     {
         [ExtensionPoint]
         public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
         {
         }
 
-        public MyVerificationFolder(ReportingWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "My Verification")
+        public ToBeVerifiedFolder(ReportingWorkflowFolderSystem folderSystem)
+            : base(folderSystem, "To be Verified", new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+MyVerification";
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ToBeVerified";
         }
     }
 
-    public class MyVerifiedFolder : ReportingWorkflowFolder
+    public class VerifiedFolder : ReportingWorkflowFolder
     {
         [ExtensionPoint]
         public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
         {
         }
 
-        public MyVerifiedFolder(ReportingWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "My Verified")
+        public VerifiedFolder(ReportingWorkflowFolderSystem folderSystem)
+            : base(folderSystem, "Verified", new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+MyVerified";
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+Verified";
         }
     }
 }

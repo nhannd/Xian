@@ -69,5 +69,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         {
             _folderContentsTableView.DoDragDrop(e.Item, DragDropEffects.All);
         }
+
+        private void _folderContentsTableView_ItemDoubleClicked(object sender, EventArgs e)
+        {
+            _component.OnSelectedItemDoubleClick();
+        }
     }
 }

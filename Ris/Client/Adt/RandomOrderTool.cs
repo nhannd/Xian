@@ -70,31 +70,36 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private RegistrationWorklistItem GetRandomPatient()
         {
-            char ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * _randomizer.NextDouble() + 65)));
+            List<RegistrationWorklistItem> worklistItems = new List<RegistrationWorklistItem>();
 
-            PatientProfileSearchData searchData = new PatientProfileSearchData();
-            searchData.FamilyName = ch.ToString();
+            while (worklistItems.Count == 0)
+            {
+                char ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * _randomizer.NextDouble() + 65)));
 
-            List<RegistrationWorklistItem> worklistItems = null;
-            Platform.GetService<IRegistrationWorkflowService>(
-                delegate(IRegistrationWorkflowService service)
-                {
-                    SearchPatientResponse response = service.SearchPatient(new SearchPatientRequest(searchData));
-                    worklistItems = response.WorklistItems;
-                });
+                PatientProfileSearchData searchData = new PatientProfileSearchData();
+                searchData.GivenName = ch.ToString();
 
+                Platform.GetService<IRegistrationWorkflowService>(
+                    delegate(IRegistrationWorkflowService service)
+                    {
+                        SearchPatientResponse response = service.SearchPatient(new SearchPatientRequest(searchData));
+                        worklistItems = response.WorklistItems;
+                    });
+            }
+               
             return ChooseRandom<RegistrationWorklistItem>(worklistItems);
         }
 
         public void RandomOrder()
         {
             IRegistrationWorkflowItemToolContext context = (IRegistrationWorkflowItemToolContext)this.ContextBase;
-            RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
-            if (item == null)
-                item = GetRandomPatient();
 
             try
             {
+                RegistrationWorklistItem item = CollectionUtils.FirstElement<RegistrationWorklistItem>(context.SelectedItems);
+                if (item == null)
+                    item = GetRandomPatient();
+
                 Platform.GetService<IOrderEntryService>(
                     delegate(IOrderEntryService service)
                     {

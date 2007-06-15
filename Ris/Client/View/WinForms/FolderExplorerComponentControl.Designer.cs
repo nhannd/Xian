@@ -91,7 +91,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._folderContentsTableView.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._folderContentsTableView.Location = new System.Drawing.Point(0, 0);
 			this._folderContentsTableView.MenuModel = null;
-			this._folderContentsTableView.Name = "_folderContentsTableView";
+            this._folderContentsTableView.MultiSelect = false;
+            this._folderContentsTableView.Name = "_folderContentsTableView";
 			this._folderContentsTableView.ReadOnly = false;
 			this._folderContentsTableView.Selection = selection2;
 			this._folderContentsTableView.Size = new System.Drawing.Size(350, 493);
@@ -101,6 +102,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 			this._folderContentsTableView.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.ImageAndText;
 			this._folderContentsTableView.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
 			this._folderContentsTableView.ItemDrag += new System.EventHandler<System.Windows.Forms.ItemDragEventArgs>(this._folderContentsTableView_ItemDrag);
+            this._folderContentsTableView.ItemDoubleClicked += new System.EventHandler(this._folderContentsTableView_ItemDoubleClicked);
 			// 
 			// FolderExplorerComponentControl
 			// 
