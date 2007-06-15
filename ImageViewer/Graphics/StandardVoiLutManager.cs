@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				int minPixelValue = _parentImageGraphic.ModalityLUT[_parentImageGraphic.MinPixelValue];
 				int maxPixelValue = _parentImageGraphic.ModalityLUT[_parentImageGraphic.MaxPixelValue];
 
-				windowWidth = (maxPixelValue - minPixelValue);
+				windowWidth = (maxPixelValue - minPixelValue) + 1;
 				windowCenter = Math.Truncate(minPixelValue + windowWidth / 2.0);
 			}
 			else
