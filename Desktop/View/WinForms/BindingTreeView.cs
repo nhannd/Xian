@@ -37,9 +37,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         public BindingTreeView()
         {
             InitializeComponent();
-
-            _toolStripItemAlignment = DesktopViewSettings.Default.LocalToolStripItemAlignment;
-            _textImageRelation = DesktopViewSettings.Default.LocalToolStripItemTextImageRelation;
         }
 
         /// <summary>
@@ -504,6 +501,20 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void _contextMenu_Closed(object sender, ToolStripDropDownClosedEventArgs e)
         {
 
+        }
+
+        private void BindingTreeView_Load(object sender, EventArgs e)
+        {
+            if (this.DesignMode == false)
+            {
+                _toolStripItemAlignment = DesktopViewSettings.Default.LocalToolStripItemAlignment;
+                _textImageRelation = DesktopViewSettings.Default.LocalToolStripItemTextImageRelation;
+            }
+            else
+            {
+                _toolStripItemAlignment = ToolStripItemAlignment.Left;
+                _textImageRelation = TextImageRelation.ImageBeforeText;
+            }
         }
     }
 }
