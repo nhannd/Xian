@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer
 	/// <para>
 	/// It is often desirable to apply an operation across all linked 
 	/// <see cref="IPresentationImage"/> objects.  For
-	/// example, when an image is zoomed, it is expected that all linked images to 
+	/// example, when an image is zoomed, it is expected that all linked images 
 	/// will zoom as well.  When that operation is undone, it is expected that
 	/// it is undone on all of those images.  This class encapsulates that functionality
 	/// so that the plugin developer doesn't have to deal with such details.
@@ -58,9 +58,9 @@ namespace ClearCanvas.ImageViewer
 	/// <para>
 	/// By default, the Framework provides two subclasses of 
 	/// <see cref="ImageOperationApplicator"/> called 
-	/// <see cref="ClearCanvas.ImageViewer.Imaging.WindowLevelApplicator"/>
+	/// <see cref="ClearCanvas.ImageViewer.Imaging.VoiLutOperationApplicator"/>
 	/// and <see cref="ClearCanvas.ImageViewer.Graphics.SpatialTransformApplicator"/> 
-	/// which allow window/level and
+	/// which allow Voi Lut installation/manipulation and 
 	/// zoom/pan/etc. respectively to be applied across all linked images.  If you wish
 	/// to write your own subclass of <see cref="ImageOperationApplicator"/>, it is
 	/// recommended that you model it after those two subclasses.
@@ -165,9 +165,9 @@ namespace ClearCanvas.ImageViewer
 		/// <para>
 		/// By default, the Framework provides two subclasses of 
 		/// <see cref="ImageOperationApplicator"/> called 
-		/// <see cref="ClearCanvas.ImageViewer.Imaging.WindowLevelApplicator"/>
+		/// <see cref="ClearCanvas.ImageViewer.Imaging.VoiLutOperationApplicator"/>
 		/// and <see cref="ClearCanvas.ImageViewer.Graphics.SpatialTransformApplicator"/> 
-		/// which allow window/level and
+		/// which allow Voi Lut installation/manipulation and 
 		/// zoom/pan/etc. respectively to be applied across all linked images.  If you wish
 		/// to write your own subclass of <see cref="ImageOperationApplicator"/>, it is
 		/// recommended that you model it after those two subclasses.

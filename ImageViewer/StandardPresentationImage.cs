@@ -22,8 +22,9 @@ namespace ClearCanvas.ImageViewer
 		IImageGraphicProvider,
 		IImageSopProvider, 
 		ISpatialTransformProvider,
-		IVOILUTLinearProvider,
+		IVoiLutManagerProvider,
 		IAutoVoiLutApplicatorProvider,
+		IVOILUTLinearProvider,
 		IOverlayGraphicsProvider,
 		IAnnotationLayoutProvider
 	{
@@ -104,26 +105,16 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
-		#region IVOILUTLinearProvider Members
+		#region IVoiLutManagerProvider Members
 
-		/// <summary>
-		/// Gets this presentation image's linear VOI LUT.
-		/// </summary>
-		/// <value>An <see cref="IVOILUTLinear"/> or <b>null</b> if the image
-		/// is not grayscale, or if the VOILUT currently installed is not linear.</value>
-		/// <remarks>
-		/// Use <see cref="VoiLutLinear"/> to manipulate window and level.
-		/// </remarks>
-		public virtual IVOILUTLinear VoiLutLinear
+		public IVoiLutManager VoiLutManager
 		{
-			get 
+			get
 			{
-				GrayscaleImageGraphic grayscaleImageGraphic = _imageGraphic as GrayscaleImageGraphic;
+				if (_imageGraphic is IVoiLutManagerProvider)
+					return (_imageGraphic as IVoiLutManagerProvider).VoiLutManager;
 
-				if (grayscaleImageGraphic == null)
-					return null;
-				else
-					return grayscaleImageGraphic.VoiLUTLinear;
+				return null;
 			}
 		}
 
@@ -131,6 +122,14 @@ namespace ClearCanvas.ImageViewer
 
 		#region IAutoLutApplicatorProvider Members
 
+		/// <summary>
+		/// Gets this presentation image's auto Voi Lut Applicator.
+		/// </summary>
+		/// <value>An <see cref="IAutoVoiLutApplicator"/> or <b>null</b> if the image
+		/// is not grayscale.</value>
+		/// <remarks>
+		/// Use <see cref="AutoVoiLutApplicator"/> to cycle through pre-defined Luts.
+		/// </remarks>
 		public IAutoVoiLutApplicator AutoVoiLutApplicator
 		{
 			get
@@ -144,6 +143,29 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		#region IVOILUTLinearProvider Members
+
+		/// <summary>
+		/// Gets this presentation image's linear VOI LUT.
+		/// </summary>
+		/// <value>An <see cref="IVOILUTLinear"/> or <b>null</b> if the image
+		/// is not grayscale, or if the VOILUT currently installed is not linear.</value>
+		/// <remarks>
+		/// Use <see cref="VoiLutLinear"/> to manipulate window and level.
+		/// </remarks>
+		public virtual IVOILUTLinear VoiLutLinear
+		{
+			get
+			{
+				if (_imageGraphic is IVOILUTLinearProvider)
+					return (_imageGraphic as IVOILUTLinearProvider).VoiLutLinear;
+
+				return null;
+			}
+		}
+
+		#endregion
+		
 		#region IOverlayGraphicsProvider
 
 		/// <summary>

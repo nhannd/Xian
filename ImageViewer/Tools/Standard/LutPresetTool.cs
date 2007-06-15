@@ -262,7 +262,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!this.Enabled)
 				return;
 
-			AutoVoiLutOperationApplicator applicator = new AutoVoiLutOperationApplicator(this.SelectedPresentationImage);
+			VoiLutOperationApplicator applicator = new VoiLutOperationApplicator(this.SelectedPresentationImage);
 			UndoableCommand command = new UndoableCommand(applicator);
 			command.Name = SR.CommandAutoVoiLutApplication;
 			command.BeginState = applicator.CreateMemento();

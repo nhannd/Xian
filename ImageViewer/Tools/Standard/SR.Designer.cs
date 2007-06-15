@@ -151,6 +151,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Window/Level Preset.
+        /// </summary>
+        internal static string CommandWindowLevelPreset {
+            get {
+                return ResourceManager.GetString("CommandWindowLevelPreset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Zoom.
         /// </summary>
         internal static string CommandZoom {

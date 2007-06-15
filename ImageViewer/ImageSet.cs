@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections.ObjectModel;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -20,6 +21,7 @@ namespace ClearCanvas.ImageViewer
 		private string _name;
 		private string _patientInfo;
 		private string _uid;
+		private event EventHandler _drawing;
 
 		#endregion
 		
@@ -110,10 +112,20 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
+		/// Fires just before the <see cref="ImageSet"/> is actually drawn/rendered.
+		/// </summary>
+		public event EventHandler Drawing
+		{
+			add { _drawing += value; }
+			remove { _drawing -= value; }
+		}
+
+		/// <summary>
 		/// Draws the <see cref="ImageSet"/>.
 		/// </summary>
 		public void Draw()
 		{
+			OnDrawing();
 			foreach (DisplaySet displaySet in this.DisplaySets)
 				displaySet.Draw();
 		}
@@ -197,6 +209,11 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (e.DisplaySet.Linked)
 				_linkedDisplaySets.Remove(e.DisplaySet);
+		}
+
+		private void OnDrawing()
+		{
+			EventsHelper.Fire(_drawing, this, EventArgs.Empty);
 		}
 	}
 }

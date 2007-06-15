@@ -5,6 +5,7 @@ using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Rendering;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -33,6 +34,8 @@ namespace ClearCanvas.ImageViewer
 		private SceneGraph _sceneGraph;
 		private ISelectableGraphic _selectedGraphic;
 		private IFocussableGraphic _focussedGraphic;
+
+		private event EventHandler _drawing;
 
 		// TODO: Perhaps each layer should have its own ILayerRenderer?  
 		// The idea is to delegate the actual rendering to the layers themselves, since
@@ -336,6 +339,15 @@ namespace ClearCanvas.ImageViewer
 		public abstract IPresentationImage Clone();
 
 		/// <summary>
+		/// Fires just before the <see cref="PresentationImage"/> is actually drawn/rendered.
+		/// </summary>
+		public event EventHandler Drawing
+		{
+			add { _drawing += value; }
+			remove { _drawing -= value; }
+		}
+
+		/// <summary>
 		/// Draws the <see cref="PresentationImage"/>.
 		/// </summary>
 		public void Draw()
@@ -360,6 +372,8 @@ namespace ClearCanvas.ImageViewer
 
 			(this.SceneGraph as SceneGraph).ClientRectangle = drawArgs.ClientRectangle;
 
+			OnDrawing();
+
 			// Let others know that we're about to draw
 			ImageDrawingEventArgs args = new ImageDrawingEventArgs(this);
 			this.ImageViewer.EventBroker.OnImageDrawing(args);
@@ -368,5 +382,10 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		#endregion
+
+		protected virtual void OnDrawing()
+		{
+			EventsHelper.Fire(_drawing, this, EventArgs.Empty);
+		}
 	}
 }

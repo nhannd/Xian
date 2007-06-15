@@ -4,6 +4,8 @@ using System.Text;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Dicom;
+using ClearCanvas.Common.Utilities;
+using System.Diagnostics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -36,8 +38,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private int _bytesPerPixel;
 		private int _planeOffset;
 		private int _stride;
-		private int _minPixelValue;
-		private int _maxPixelValue;
+		private int _absoluteMinPixelValue;
+		private int _absoluteMaxPixelValue;
 
 		#endregion
 
@@ -113,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			CalculateBytesPerPixel();
 			CalculatePlaneOffset();
 			CalculateStride();
-			CalculateMinMaxPixelValue();
+			CalculateAbsolutePixelValueRange();
 		}
 
 		/// <summary>
@@ -122,6 +124,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public byte[] Raw
 		{
 			get { return _pixelData; }
+		}
+
+		/// <summary>
+		/// Returns the absolute minimum possible pixel value for the image based on PixelRepresentation and BitsAllocated.
+		/// </summary>
+		public int AbsoluteMinPixelValue
+		{
+			get { return _absoluteMinPixelValue; }
+		}
+
+		/// <summary>
+		/// Returns the absolute maximum possible pixel value for the image based on PixelRepresentation and BitsAllocated.
+		/// </summary>
+		public int AbsoluteMaxPixelValue
+		{
+			get { return _absoluteMaxPixelValue; }
 		}
 
 		#region Public methods
@@ -370,7 +388,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void SetPixelUnsigned8(int x, int y, int value)
 		{
-			if (value < _minPixelValue || value > _maxPixelValue)
+			if (value < _absoluteMinPixelValue || value > _absoluteMaxPixelValue)
 				throw new ArgumentException("Value is out of range");
 
 			int i = GetIndex(x, y);
@@ -379,7 +397,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void SetPixelSigned8(int x, int y, int value)
 		{
-			if (value < _minPixelValue || value > _maxPixelValue)
+			if (value < _absoluteMinPixelValue || value > _absoluteMaxPixelValue)
 				throw new ArgumentException("Value is out of range");
 
 			if (value >= 0)
@@ -402,7 +420,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void SetPixelUnsigned16(int x, int y, int value)
 		{
-			if (value < _minPixelValue || value > _maxPixelValue)
+			if (value < _absoluteMinPixelValue || value > _absoluteMaxPixelValue)
 				throw new ArgumentException("Value is out of range");
 
 			SetPixel16(x, y, (ushort) value);
@@ -410,7 +428,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void SetPixelSigned16(int x, int y, int value)
 		{
-			if (value < _minPixelValue || value > _maxPixelValue)
+			if (value < _absoluteMinPixelValue || value > _absoluteMaxPixelValue)
 				throw new ArgumentException("Value is out of range");
 
 			if (value >= 0)
@@ -434,17 +452,170 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
-		private void CalculateMinMaxPixelValue()
+		/// <summary>
+		/// Calculates the Minimum and Maximum pixel values from the pixel data efficiently, using unsafe code.
+		/// </summary>
+		/// <param name="minPixelValue">returns the minimum pixel value</param>
+		/// <param name="maxPixelValue">returns the maximum pixel value</param>
+		unsafe public void CalculateMinMaxPixelValue(out int minPixelValue, out int maxPixelValue)
 		{
-			if (_pixelRepresentation == 0)
+			if (_photometricInterpretation != PhotometricInterpretation.Monochrome1 && _photometricInterpretation != PhotometricInterpretation.Monochrome2)
+				throw new InvalidOperationException("Photometric Interpretation must be one of MONOCHROME1 or MONOCHROME2");
+
+#if DEBUG
+			CodeClock clock = new CodeClock();
+			clock.Start();
+#endif
+			if (_pixelRepresentation != 0)
 			{
-				_minPixelValue = 0;
-				_maxPixelValue = (1 << _bitsStored) - 1;
+				if (_bitsAllocated == 8)
+				{
+					fixed (byte* ptr = _pixelData)
+					{
+						byte* pixel = (byte*)ptr;
+
+						byte signMask = (byte)(1 << (_bitsStored - 1));
+						
+						sbyte max, min;
+						max = sbyte.MinValue;
+						min = sbyte.MaxValue;
+						
+						for (int i = 0; i < _rows * _columns; ++i)
+						{
+							sbyte result;
+							if (0 == ((*pixel) & signMask))
+							{
+								result = (sbyte)(*pixel);
+							}
+							else
+							{
+								byte inverted = (byte)(~(*pixel));
+								// Need to mask out the bits greater above the high bit, since they're irrelevant
+								byte mask = (byte)(byte.MaxValue >> (_bitsAllocated - _bitsStored));
+								byte maskedInverted = (byte)(inverted & mask);
+								result = (sbyte)(-(maskedInverted + 1));
+							}
+
+							if (result > max)
+								max = result;
+							else if (result < min)
+								min = result;
+
+							++pixel;
+						}
+
+						maxPixelValue = (int)max;
+						minPixelValue = (int)min;
+					}
+				}
+				else
+				{
+					fixed (byte* ptr = _pixelData)
+					{
+						UInt16* pixel = (UInt16*)ptr;
+
+						UInt16 signMask = (UInt16)(1 << (_bitsStored - 1));
+
+						Int16 max, min;
+						max = Int16.MinValue;
+						min = Int16.MaxValue;
+
+						for (int i = 0; i < _rows * _columns; ++i)
+						{
+							Int16 result;
+							if (0 == ((*pixel) & signMask))
+							{
+								result = (Int16)(*pixel);
+							}
+							else
+							{
+								UInt16 inverted = (UInt16)(~(*pixel));
+								// Need to mask out the bits greater above the high bit, since they're irrelevant
+								UInt16 mask = (UInt16)(UInt16.MaxValue >> (_bitsAllocated - _bitsStored));
+								UInt16 maskedInverted = (UInt16)(inverted & mask);
+								result = (Int16)(-(maskedInverted + 1));
+							}
+
+							if (result > max)
+								max = result;
+							else if (result < min)
+								min = result;
+
+							++pixel;
+						}
+
+						maxPixelValue = (int)max;
+						minPixelValue = (int)min;
+					}
+				}
 			}
 			else
 			{
-				_minPixelValue = -(1 << (_bitsStored - 1));
-				_maxPixelValue = (1 << (_bitsStored - 1)) - 1;
+				if (_bitsAllocated == 8)
+				{
+					fixed (byte* ptr = _pixelData)
+					{
+						byte* pixel = ptr;
+
+						byte max, min;
+						max = min = *pixel;
+
+						for (int i = 1; i < _rows * _columns; ++i)
+						{
+							if (*pixel > max)
+								max = *pixel;
+							else if (*pixel < min)
+								min = *pixel;
+
+							++pixel;
+						}
+
+						maxPixelValue = (int)max;
+						minPixelValue = (int)min;
+					}
+				}
+				else
+				{
+					fixed (byte* ptr = _pixelData)
+					{
+						UInt16* pixel = (UInt16*)ptr;
+
+						UInt16 max, min;
+						max = min = *pixel;
+
+						for (int i = 1; i < _rows * _columns; ++i)
+						{
+							if (*pixel > max)
+								max = *pixel;
+							else if (*pixel < min)
+								min = *pixel;
+
+							++pixel;
+						}
+
+						maxPixelValue = (int)max;
+						minPixelValue = (int)min;
+					}
+				}
+			}
+
+#if DEBUG
+			clock.Stop();
+			Trace.WriteLine(String.Format("Min/Max pixel value calculation took {0:F3} seconds (rows = {1}, columns = {2})", clock.Seconds, _rows, _columns));
+#endif
+		}
+
+		private void CalculateAbsolutePixelValueRange()
+		{
+			if (_pixelRepresentation == 0)
+			{
+				_absoluteMinPixelValue = 0;
+				_absoluteMaxPixelValue = (1 << _bitsStored) - 1;
+			}
+			else
+			{
+				_absoluteMinPixelValue = -(1 << (_bitsStored - 1));
+				_absoluteMaxPixelValue = (1 << (_bitsStored - 1)) - 1;
 			}
 		}
 

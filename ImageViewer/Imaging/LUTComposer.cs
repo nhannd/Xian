@@ -31,6 +31,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public LUTComposer()
 		{
 			this.LUTCollection.ItemAdded += new EventHandler<LUTEventArgs>(OnLUTAdded);
+			this.LUTCollection.ItemChanging += new EventHandler<LUTEventArgs>(OnLUTChanging); 
+			this.LUTCollection.ItemChanged += new EventHandler<LUTEventArgs>(OnLUTChanged);
 		}
 
 		/// <summary>
@@ -176,13 +178,23 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return key.ToString();
 		}
 
+		void OnLUTChanging(object sender, LUTEventArgs e)
+		{
+			e.Lut.LUTChanged -= new EventHandler(OnLutValuesChanged);
+		}
+
+		void OnLUTChanged(object sender, LUTEventArgs e)
+		{
+			OnLUTAdded(sender, e);
+		}
+
 		void OnLUTAdded(object sender, LUTEventArgs e)
 		{
-			e.Lut.LUTChanged += new EventHandler(OnLUTChanged);
+			e.Lut.LUTChanged += new EventHandler(OnLutValuesChanged);
 			_validated = false;
 		}
 
-		void OnLUTChanged(object sender, EventArgs e)
+		void OnLutValuesChanged(object sender, EventArgs e)
 		{
 			_recalculate = true;
 		}

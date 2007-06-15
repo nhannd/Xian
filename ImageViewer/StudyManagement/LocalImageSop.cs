@@ -1175,15 +1175,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				string windowCenterValues;
 				_dicomImage.GetTagArray(Dcm.WindowCenter, out windowCenterValues, out tagExists);
 				if (!tagExists)
-					return new Window[] { new Window(double.NaN, double.NaN) };
+					return new Window[] {};
 
 				string windowWidthValues;
 				_dicomImage.GetTagArray(Dcm.WindowWidth, out windowWidthValues, out tagExists);
 				if (!tagExists)
-					return new Window[] { new Window(double.NaN, double.NaN) };
+					return new Window[] { };
 
 				if (String.IsNullOrEmpty(windowCenterValues) || String.IsNullOrEmpty(windowWidthValues))
-					return new Window[] { new Window(double.NaN, double.NaN) };
+					return new Window[] { };
 
 				List<Window> windows = new List<Window>();
 

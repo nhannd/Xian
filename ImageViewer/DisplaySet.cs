@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using System.Collections.ObjectModel;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -23,6 +24,7 @@ namespace ClearCanvas.ImageViewer
 		private bool _linked = false;
 		private string _name;
 		private string _uid;
+		private event EventHandler _drawing;
 
 		#endregion
 
@@ -252,6 +254,15 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
+		/// Fires when the <see cref="DisplaySet"/> is about the be drawn.
+		/// </summary>
+		public event EventHandler Drawing
+		{
+			add { _drawing += value; }
+			remove { _drawing -= value; }
+		}
+
+		/// <summary>
 		/// Draws the <see cref="DisplaySet"/>.
 		/// </summary>
 		/// <remarks>The <see cref="DisplaySet"/> will only be drawn
@@ -260,6 +271,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (this.Visible)
 			{
+				OnDrawing();
 				foreach (PresentationImage image in this.PresentationImages)
 					image.Draw();
 			}
@@ -289,6 +301,11 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (e.PresentationImage.Linked)
 				_linkedPresentationImages.Remove(e.PresentationImage);
+		}
+
+		protected virtual void OnDrawing()
+		{
+			EventsHelper.Fire(_drawing, this, EventArgs.Empty);
 		}
 	}
 }

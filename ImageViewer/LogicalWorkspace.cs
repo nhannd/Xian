@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer 
 {
@@ -15,6 +16,7 @@ namespace ClearCanvas.ImageViewer
 	{
 		private ImageSetCollection _imageSets = new ImageSetCollection();
         private IImageViewer _imageViewer;
+		private event EventHandler _drawing;
 
         internal LogicalWorkspace(IImageViewer imageViewer)
 		{
@@ -86,10 +88,21 @@ namespace ClearCanvas.ImageViewer
 		#endregion
 
 		/// <summary>
+		/// Fires just before the <see cref="LogicalWorkspace"/> is actually drawn/rendered.
+		/// </summary>
+		public event EventHandler Drawing
+		{
+			add { _drawing += value; }
+			remove { _drawing -= value; }
+		}
+
+		/// <summary>
 		/// Draws the <see cref="LogicalWorkspace"/>.
 		/// </summary>
 		public void Draw()
 		{
+			OnDrawing();
+
 			foreach (ImageSet imageSet in this.ImageSets)
 				imageSet.Draw();
 		}
@@ -100,6 +113,11 @@ namespace ClearCanvas.ImageViewer
 
 			imageSet.ParentLogicalWorkspace = this;
 			imageSet.ImageViewer = this.ImageViewer;
+		}
+
+		private void OnDrawing()
+		{
+			EventsHelper.Fire(_drawing, this, EventArgs.Empty);
 		}
 	}
 }

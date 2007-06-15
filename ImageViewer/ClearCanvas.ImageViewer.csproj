@@ -140,10 +140,16 @@
     <Compile Include="Graphics\IndexedImageGraphic.cs" />
     <Compile Include="Graphics\StandardGrayscaleImageGraphic.cs" />
     <Compile Include="Graphics\StandardPaletteColorImageGraphic.cs" />
-    <Compile Include="Imaging\AutoVoiLutOperationApplicator.cs" />
-    <Compile Include="Imaging\AutoVoiLutMemento.cs" />
+    <Compile Include="Graphics\StandardVoiLutManager.cs" />
+    <Compile Include="Imaging\CalculatedVoiLutLinearState.cs" />
+    <Compile Include="Imaging\HeaderVoiLutLinearState.cs" />
+    <Compile Include="Imaging\VoiLutOperationApplicator.cs" />
+    <Compile Include="Imaging\IVoiLutManager.cs" />
+    <Compile Include="Imaging\IVoiLutManagerProvider.cs" />
+    <Compile Include="Imaging\StandardVoiLutLinearState.cs" />
     <Compile Include="Imaging\IAutoVoiLutApplicator.cs" />
     <Compile Include="Imaging\IAutoVoiLutApplicatorProvider.cs" />
+    <Compile Include="Imaging\IMemorableComposableLutMemento.cs" />
     <Compile Include="Imaging\IVOILUTLinear.cs" />
     <Compile Include="Imaging\LUTCollection.cs" />
     <Compile Include="Imaging\LUTEventArgs.cs" />
@@ -312,7 +318,6 @@
     <Compile Include="Graphics\SpatialTransformApplicator.cs" />
     <Compile Include="Graphics\SpatialTransformMemento.cs" />
     <Compile Include="Imaging\Tests\SpatialTransformTest.cs" />
-    <Compile Include="Imaging\WindowLevelApplicator.cs" />
     <Compile Include="StandardPresentationImage.cs" />
     <Compile Include="Imaging\ComposableLUT.cs" />
     <Compile Include="Imaging\IComposableLUT.cs" />
@@ -329,7 +334,7 @@
     <Compile Include="Imaging\Tests\ModalityLUTLinearTest.cs" />
     <Compile Include="Imaging\Tests\VOILUTLinearTest.cs" />
     <Compile Include="Imaging\VOILUTLinear.cs" />
-    <Compile Include="Imaging\WindowLevelMemento.cs" />
+    <Compile Include="Imaging\VoiLutLinearState.cs" />
     <Compile Include="Annotations\AnnotationBox.cs" />
     <Compile Include="Graphics\GraphicCollection.cs" />
     <Compile Include="Graphics\VectorGraphic.cs" />

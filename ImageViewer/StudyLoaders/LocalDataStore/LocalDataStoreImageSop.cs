@@ -407,7 +407,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             get
             {
 				if (this.DataStoreImageSopInstance.WindowValues == null || this.DataStoreImageSopInstance.WindowValues.Count == 0)
-					return new Window[] { new Window(double.NaN, double.NaN) };
+					return new Window[] { };
 
 				List<Window> windowCentersAndWidths = new List<Window>();
 				

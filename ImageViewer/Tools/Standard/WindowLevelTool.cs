@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	public class WindowLevelTool : MouseImageViewerTool
 	{
 		private UndoableCommand _command;
-		private WindowLevelApplicator _applicator;
+		private VoiLutOperationApplicator _applicator;
 
 		public WindowLevelTool()
 		{
@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				this.SelectedVOILUTLinearProvider.VoiLutLinear == null)
 				return;
 
-			_applicator = new WindowLevelApplicator(this.SelectedPresentationImage);
+			_applicator = new VoiLutOperationApplicator(this.SelectedPresentationImage);
 			_command = new UndoableCommand(_applicator);
 			_command.Name = SR.CommandWindowLevel;
 			_command.BeginState = _applicator.CreateMemento();

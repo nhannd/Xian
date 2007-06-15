@@ -16,6 +16,7 @@ namespace ClearCanvas.Common.Utilities
 		
 		private event EventHandler<TItemEventArgs> _itemAddedEvent;
 		private event EventHandler<TItemEventArgs> _itemRemovedEvent;
+		private event EventHandler<TItemEventArgs> _itemChanging; 
 		private event EventHandler<TItemEventArgs> _itemChangedEvent;
 
 		public ObservableList()
@@ -54,6 +55,12 @@ namespace ClearCanvas.Common.Utilities
 		{
 			add { _itemChangedEvent += value; }
 			remove { _itemChangedEvent -= value; }
+		}
+
+		public virtual event EventHandler<TItemEventArgs> ItemChanging
+		{
+			add { _itemChanging += value; }
+			remove { _itemChanging -= value; }
 		}
 
 		#endregion
@@ -104,9 +111,13 @@ namespace ClearCanvas.Common.Utilities
 			set
 			{
 				Platform.CheckIndexRange(index, 0, this.Count - 1, "index");
-				_list[index] = value;
 
 				TItemEventArgs args = new TItemEventArgs();
+				args.Item = _list[index];
+				OnItemChanging(args);
+				
+				_list[index] = value;
+
 				args.Item = value;
 				OnItemChanged(args);
 			}
@@ -218,6 +229,10 @@ namespace ClearCanvas.Common.Utilities
 			EventsHelper.Fire(_itemRemovedEvent, this, e);
 		}
 
+		private void OnItemChanging(TItemEventArgs e)
+		{
+			EventsHelper.Fire(_itemChanging, this, e);
+		}
 		protected virtual void OnItemChanged(TItemEventArgs e)
 		{
 			EventsHelper.Fire(_itemChangedEvent, this, e);

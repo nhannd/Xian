@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Notify listeners that the LUT has changed.
 		/// </summary>
-		public void NotifyLUTChanged()
+		protected virtual void NotifyLUTChanged()
 		{
 			EventsHelper.Fire(_lutChangedEvent, this, EventArgs.Empty);
 		}

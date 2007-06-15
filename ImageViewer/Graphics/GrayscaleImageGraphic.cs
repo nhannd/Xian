@@ -4,16 +4,20 @@ using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
 	/// A grayscale <see cref="IndexedImageGraphic"/>.
 	/// </summary>
-	public class GrayscaleImageGraphic : IndexedImageGraphic
+	public class GrayscaleImageGraphic : IndexedImageGraphic, IVOILUTLinearProvider
 	{
 		private LUTComposer _lutComposer;
 		private LUTFactory _lutFactory;
+		
+		private int _minPixelValue;
+		private int _maxPixelValue;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="GrayscaleImageGraphic"/>
@@ -86,7 +90,54 @@ namespace ClearCanvas.ImageViewer.Graphics
 				photometricInterpretation,
 				pixelData)
 		{
+			_minPixelValue = int.MinValue;
+			_maxPixelValue = int.MaxValue;
+
 			InstallGrayscaleLUTs(rescaleSlope, rescaleIntercept, photometricInterpretation);
+		}
+
+		/// <summary>
+		/// Returns the minimum pixel value in the image pixel data itself.  Note that on first calling the get method
+		/// of this property, both the minimum and maximum pixel values will be calculated, after which they are cached
+		/// for performance reasons.  So, if the pixel data in this image is variable, the minimum and maximum values 
+		/// must also be updated in order to remain correct.
+		/// </summary>
+		public virtual int MinPixelValue
+		{
+			get
+			{
+				if (_minPixelValue == int.MinValue)
+					this.PixelData.CalculateMinMaxPixelValue(out _minPixelValue, out _maxPixelValue);
+
+				return _minPixelValue;
+			}
+			protected set
+			{
+				Platform.CheckArgumentRange(value, base.PixelData.AbsoluteMinPixelValue, base.PixelData.AbsoluteMaxPixelValue, "value");
+				_minPixelValue = value;
+			}
+		}
+
+		/// <summary>
+		/// Returns the maximum pixel value in the image pixel data itself.  Note that on first calling the get method
+		/// of this property, both the minimum and maximum pixel values will be calculated, after which they are cached
+		/// for performance reasons.  So, if the pixel data in this image is variable, the minimum and maximum values 
+		/// must also be updated in order to remain correct.
+		/// </summary>
+		public virtual int MaxPixelValue
+		{
+			get
+			{
+				if (_maxPixelValue == int.MaxValue)
+					this.PixelData.CalculateMinMaxPixelValue(out _minPixelValue, out _maxPixelValue);
+
+				return _maxPixelValue;
+			}
+			protected set
+			{
+				Platform.CheckArgumentRange(value, base.PixelData.AbsoluteMinPixelValue, base.PixelData.AbsoluteMaxPixelValue, "value");
+				_maxPixelValue = value;
+			}
 		}
 
 		/// <summary>
@@ -103,16 +154,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public IComposableLUT VoiLUT
 		{
 			get { return this.LUTComposer.LUTCollection[1]; }
-		}
-
-		/// <summary>
-		/// Gets the linear VOI LUT.
-		/// </summary>
-		/// <value>The linear VOI LUT or <b>null</b> if the VOI LUT
-		/// is not linear.</value>
-		public IVOILUTLinear VoiLUTLinear
-		{
-			get { return this.VoiLUT as IVOILUTLinear; }
+			protected set
+			{
+				Platform.CheckForNullReference(value, "value");
+				this.LUTComposer.LUTCollection[1] = value; 
+			}
 		}
 
 		/// <summary>
@@ -127,6 +173,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get { return this.LUTComposer.OutputLUT; }
 		}
+
+		#region IVOILUTLinearProvider Members
+
+		/// <summary>
+		/// Gets the linear VOI LUT.
+		/// </summary>
+		/// <value>The linear VOI LUT or <b>null</b> if the VOI LUT
+		/// is not linear.</value>
+		public virtual IVOILUTLinear VoiLutLinear
+		{
+			get { return this.VoiLUT as IVOILUTLinear; }
+		}
+
+		#endregion
 
 		/// <summary>
 		/// Gets the <see cref="LUTComposer"/>.
@@ -165,6 +225,16 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		public static VOILUTLinear NewVoiLutLinear(GrayscaleImageGraphic fromGraphic, VoiLutLinearState state)
+		{
+			return new VOILUTLinear(state, fromGraphic.ModalityLUT.MinOutputValue, fromGraphic.ModalityLUT.MaxOutputValue);
+		}
+
+		public static VOILUTLinear NewVoiLutLinear(GrayscaleImageGraphic fromGraphic)
+		{
+			return new VOILUTLinear(fromGraphic.ModalityLUT.MinOutputValue, fromGraphic.ModalityLUT.MaxOutputValue);
+		}
+
 		private void InstallGrayscaleLUTs(
 			double rescaleSlope, 
 			double rescaleIntercept,
@@ -178,10 +248,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			this.LUTComposer.LUTCollection.Add(modalityLut);
 
-			VOILUTLinear voiLut = new VOILUTLinear(
-				modalityLut.MinOutputValue,
-				modalityLut.MaxOutputValue);
-
+			VOILUTLinear voiLut = NewVoiLutLinear(this);
 			this.LUTComposer.LUTCollection.Add(voiLut);
 
 			PresentationLUT presentationLut = this.LUTFactory.GetPresentationLUT(

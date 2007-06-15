@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -60,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private bool _visible = true;
 		private SpatialTransform _spatialTransform;
 		private Stack<CoordinateSystem> _coordinateSystemStack = new Stack<CoordinateSystem>();
-
+		private event EventHandler _drawing;
 		#endregion
 
 		/// <summary>
@@ -212,12 +213,30 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
+		/// Fires just before the <see cref="Graphic"/> is drawn/rendered.
+		/// </summary>
+		public event EventHandler Drawing
+		{
+			add { _drawing += value; }
+			remove { _drawing -= value; }
+		}
+		
+		/// <summary>
 		/// Draws the <see cref="Graphic"/>.
 		/// </summary>
 		public virtual void Draw()
 		{
 			Platform.CheckMemberIsSet(this.ParentPresentationImage, "PresentationImage");
 			this.ParentPresentationImage.Draw();
+		}
+
+		/// <summary>
+		/// Fires the <see cref="Drawing"/> event.  Should be called by an <see cref="IRenderer"/>
+		/// for each object just before it is drawn/rendered, hence the reason it is public.
+		/// </summary>
+		public virtual void OnDrawing()
+		{
+			EventsHelper.Fire(_drawing, this, EventArgs.Empty);
 		}
 
 		/// <summary>

@@ -31,7 +31,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 
 		public bool AppliesTo(IPresentationImage image)
 		{
-			return (image is IVOILUTLinearProvider);
+			IVOILUTLinearProvider provider = image as IVOILUTLinearProvider;
+			if (provider == null)
+				return false;
+
+			if (provider.VoiLutLinear == null)
+				return false;
+
+			return true;
 		}
 
 		public void Apply(IPresentationImage image)
@@ -40,10 +47,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 
 			IVOILUTLinearProvider provider = image as IVOILUTLinearProvider;
 			Platform.CheckForInvalidCast(provider, "image", "IVOILUTLinearProvider");
-			
-			WindowLevelApplicator applicator = new WindowLevelApplicator(image);
+			Platform.CheckForNullReference(provider.VoiLutLinear, "provider.VoiLutLinear");
+
+			VoiLutOperationApplicator applicator = new VoiLutOperationApplicator(image);
 			UndoableCommand command = new UndoableCommand(applicator);
-			command.Name = SR.CommandWindowLevel;
+			command.Name = SR.CommandWindowLevelPreset;
 			command.BeginState = applicator.CreateMemento();
 
 			provider.VoiLutLinear.WindowWidth = this.WindowWidth;

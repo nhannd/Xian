@@ -139,6 +139,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 			{
 				if (graphic.Visible)
 				{
+					graphic.OnDrawing();
+
 					if (graphic is CompositeGraphic)
 						DrawSceneGraph(graphic as CompositeGraphic, drawableTileRectangle, fastDraw);
 					else if (graphic is ImageGraphic)
@@ -159,9 +161,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 		private void DrawImageGraphic(ImageGraphic imageGraphic, Rectangle clientArea)
 		{
-			if (imageGraphic == null)
-				return;
-
 			CodeClock counter = new CodeClock();
 			counter.Start();
 
