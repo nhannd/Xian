@@ -62,7 +62,6 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			return false;
 		}
 
-
 		public override bool Track(IMouseInformation mouseInformation)
 		{
 			if (_roiGraphic != null)
