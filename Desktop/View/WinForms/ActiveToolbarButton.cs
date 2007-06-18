@@ -36,6 +36,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.Text = _action.Label;
             this.Enabled = _action.Enabled;
             this.ToolTipText = _action.Tooltip;
+			this.Checked = _action.Checked;
 
             UpdateVisibility();
             UpdateEnablement();
