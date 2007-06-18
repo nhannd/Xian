@@ -9,3 +9,7 @@ copy "..\..\..\..\Desktop\Applets\WebBrowser\View\WinForms\bin\%1\ClearCanvas.De
 
 copy "..\..\..\..\ImageViewer\Tools\ImageProcessing\Filter\bin\%1\ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter.dll" ".\plugins"
 copy "..\..\..\..\ImageViewer\Tools\ImageProcessing\Filter\View\WinForms\bin\%1\ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter.View.WinForms.dll" ".\plugins"
+
+copy "..\..\..\..\ReferencedAssemblies\NPlot.dll" ".\plugins"
+copy "..\..\..\..\ImageViewer\Tools\ImageProcessing\RoiHistogram\bin\%1\ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.dll" ".\plugins"
+copy "..\..\..\..\ImageViewer\Tools\ImageProcessing\RoiHistogram\View\WinForms\bin\%1\ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinForms.dll" ".\plugins"

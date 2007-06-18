@@ -12,28 +12,29 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	/// <remarks>
 	/// There is often a need for an <see cref="ApplicationComponent"/> that will
-	/// listen for changes in <see cref="ITile"/> selection and
-	/// <see cref="ImageViewerComponent"/>activation.  For example, the shelf that
-	/// appears when the image layout tool activated has UI elements which should
-	/// be enabled/disabled depending on whether a <see cref="Tile"/> has been selected
-	/// or whether the active workspace contains an <see cref="ImageViewerComponent"/>.
-	/// This base class, in conjunction with <see cref="DesktopImageViewerTool"/>,
-	/// encapsulates that functionality.  If you are developing an 
+	/// listen for changes in <see cref="ImageViewerComponent"/>activation.  
+	/// For example, the shelf that appears when the image layout tool activated 
+	/// has UI elements which should be enabled/disabled depending on whether the 
+	/// active workspace contains an <see cref="ImageViewerComponent"/>.
+	/// This base class encapsulates that functionality.  If you are developing an 
 	/// <see cref="ApplicationComponent"/> that requires that kind of functionality,
 	/// use this as your base class.
 	/// </remarks>
 	public abstract class ImageViewerToolComponent : ApplicationComponent
 	{
+		private IImageViewerToolContext _imageViewerToolContext;
 		private IImageViewer _imageViewer;
-		private event EventHandler _subjectChanged;
+		private event EventHandler _subjectChangedEvent;
 
-		protected ImageViewerToolComponent()
+		protected ImageViewerToolComponent(IImageViewerToolContext imageViewerToolContext)
 		{
-
+			_imageViewerToolContext = imageViewerToolContext;
+			this.ImageViewer = imageViewerToolContext.Viewer;
+			_imageViewerToolContext.DesktopWindow.WorkspaceManager.ActiveWorkspaceChanged += OnWorkspaceActivated;
 		}
 
 		/// <summary>
-		/// Gets/sets the subject <see cref="IImageViewer"/> that this component is associated with.
+		/// Gets the subject <see cref="IImageViewer"/> that this component is associated with.
 		/// </summary>
 		/// <remarks>
 		/// Note that <b>null</b> is a valid value.  Setting this property to null dissociates 
@@ -42,27 +43,22 @@ namespace ClearCanvas.ImageViewer
 		public IImageViewer ImageViewer
 		{
 			get { return _imageViewer; }
-			set
+			private set
 			{
 				if (value != _imageViewer)
 				{
-					// stop listening to the old image viewer, if one was set
-					if (_imageViewer != null)
-					{
-						_imageViewer.EventBroker.DisplaySetSelected -= OnDisplaySetSelected;
-					}
-
+					IImageViewer oldImageViewer = _imageViewer;
 					_imageViewer = value;
 
-					// start listening to the new image viewer, if one has been set
-					if (_imageViewer != null)
-					{
-						_imageViewer.EventBroker.DisplaySetSelected += OnDisplaySetSelected;
-					}
-					OnSubjectChanged();
+					OnActiveImageViewerChanged(
+						new ActiveImageViewerChangedEventArgs(
+						_imageViewer, 
+						oldImageViewer));
 				}
 			}
 		}
+
+		protected abstract void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e);
 
 		/// <summary>
 		/// Occurs when either the selected <see cref="ITile"/> or active
@@ -74,8 +70,8 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public event EventHandler SubjectChanged
 		{
-			add { _subjectChanged += value; }
-			remove { _subjectChanged -= value; }
+			add { _subjectChangedEvent += value; }
+			remove { _subjectChangedEvent -= value; }
 		}
 
 		#region ApplicationComponent overrides
@@ -106,17 +102,18 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		private void OnWorkspaceActivated(object sender, WorkspaceActivationChangedEventArgs e)
+		{
+			IImageViewer imageViewer = ImageViewerComponent.GetAsImageViewer(e.ActivatedWorkspace);
+			this.ImageViewer = imageViewer;
+		}
+
 		/// <summary>
 		/// Raises the <see cref="SubjectChanged"/> event.
 		/// </summary>
 		protected virtual void OnSubjectChanged()
 		{
-			EventsHelper.Fire(_subjectChanged, this, EventArgs.Empty);
-		}
-
-		private void OnDisplaySetSelected(object sender, DisplaySetSelectedEventArgs e)
-		{
-			OnSubjectChanged();
+			EventsHelper.Fire(_subjectChangedEvent, this, EventArgs.Empty);
 		}
 	}
 }

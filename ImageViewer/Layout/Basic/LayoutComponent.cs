@@ -6,6 +6,7 @@ using ClearCanvas.ImageViewer;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
@@ -33,9 +34,9 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         /// <summary>
         /// Constructor
         /// </summary>
-        public LayoutComponent(IImageViewer imageViewer)
+        public LayoutComponent(IImageViewerToolContext imageViewerToolContext)
+			: base(imageViewerToolContext)
         {
-			this.ImageViewer = imageViewer;
         }
 
         #region ApplicationComponent overrides
@@ -251,6 +252,24 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         }
 
         #endregion
+
+		protected override void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e)
+		{
+			// stop listening to the old image viewer, if one was set
+			if (e.DeactivatedImageViewer != null)
+				e.DeactivatedImageViewer.EventBroker.DisplaySetSelected -= OnDisplaySetSelected;
+
+			// start listening to the new image viewer, if one has been set
+			if (e.ActivatedImageViewer != null)
+				e.ActivatedImageViewer.EventBroker.DisplaySetSelected += OnDisplaySetSelected;
+
+			OnSubjectChanged();
+		}
+
+		private void OnDisplaySetSelected(object sender, DisplaySetSelectedEventArgs e)
+		{
+			OnSubjectChanged();
+		}
 
 		protected override void OnSubjectChanged()
 		{

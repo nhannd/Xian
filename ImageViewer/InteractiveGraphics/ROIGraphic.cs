@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public Color Color
 		{
 			get { return this.Roi.Color; }
-			set 
+			private set 
 			{
 				this.Roi.Color = value;
 				this.Callout.Color = value;

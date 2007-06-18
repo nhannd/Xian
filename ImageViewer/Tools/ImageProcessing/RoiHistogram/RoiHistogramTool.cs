@@ -5,28 +5,27 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.BaseTools;
 
-namespace ClearCanvas.ImageViewer.Layout.Basic
+namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram
 {
-	[MenuAction("show", "global-menus/MenuTools/MenuStandard/MenuLayoutManager")]
-    [ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarLayoutManager")]
+	[MenuAction("show", "global-menus/MenuTools/MenuStandard/MenuRoiHistogram")]
+    [ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarRoiHistogram")]
     [ClickHandler("show", "Show")]
-	[IconSet("show", IconScheme.Colour, "Icons.LayoutToolSmall.png", "Icons.LayoutToolMedium.png", "Icons.LayoutToolLarge.png")]
-    [Tooltip("show", "Layout Manager")]
-	[GroupHint("show", "Application.Workspace.Layout.Basic")]
+	[IconSet("show", IconScheme.Colour, "Icons.RoiHistogramToolSmall.png", "Icons.RoiHistogramToolMedium.png", "Icons.RoiHistogramToolLarge.png")]
+	[Tooltip("show", "ROI Histogram")]
 
     /// <summary>
     /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
     /// it so that it reflects the state of the active workspace.
 	/// </summary>
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class LayoutTool : ImageViewerTool
+	public class RoiHistogramTool : ImageViewerTool
 	{
-		private static LayoutComponent _layoutComponent;
+		private static RoiHistogramComponent _roiHistogramComponent;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public LayoutTool()
+		public RoiHistogramTool()
 		{
         }
 
@@ -39,26 +38,27 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         }
 
         /// <summary>
-        /// Shows the layout component in a shelf.  Only one layout component will ever be shown
-        /// at a time, so if there is already a layout component showing, this method does nothing
+        /// Shows the ROI Histogram component in a shelf.  Only one ROI Histogram component will ever be shown
+		/// at a time, so if there is already an ROI Histogram component showing, this method does nothing
         /// </summary>
         public void Show()
 		{
             // check if a layout component is already displayed
-            if (_layoutComponent == null)
+			if (_roiHistogramComponent == null)
             {
                 // create and initialize the layout component
-				_layoutComponent = new LayoutComponent(this.Context);
+				_roiHistogramComponent = new RoiHistogramComponent(this.Context);
 
                 // launch the layout component in a shelf
                 // note that the component is thrown away when the shelf is closed by the user
                 ApplicationComponent.LaunchAsShelf(
                     this.Context.DesktopWindow,
-					_layoutComponent,
-                    SR.TitleLayoutManager,
+					_roiHistogramComponent,
+                    SR.Title,
                     ShelfDisplayHint.DockLeft,// | ShelfDisplayHint.DockAutoHide,
-					delegate(IApplicationComponent component) { _layoutComponent = null; });
+					delegate(IApplicationComponent component) { _roiHistogramComponent = null; });
             }
         }
+
 	}
 }

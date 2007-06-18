@@ -121,6 +121,7 @@
     <Compile Include="Annotations\IAnnotationLayout.cs" />
     <Compile Include="Annotations\StoredAnnotatationLayoutProvider.cs" />
     <Compile Include="Annotations\Tests\AnnotationLayoutStoreTests.cs" />
+    <Compile Include="ActiveImageViewerChangedEventArgs.cs" />
     <Compile Include="Comparers\ComparerBase.cs" />
     <Compile Include="Comparers\AcquisitionNumberComparer.cs" />
     <Compile Include="Comparers\StandardImageSetComparer.cs" />
@@ -132,6 +133,7 @@
     <Compile Include="Comparers\StudyDateComparer.cs" />
     <Compile Include="Comparers\SeriesNumberComparer.cs" />
     <Compile Include="GarbageCollectionTool.cs" />
+    <Compile Include="Graphics\GraphicSelectionChangedEventArgs.cs" />
     <Compile Include="Graphics\GrayscaleImageGraphic.cs" />
     <Compile Include="Graphics\IImageSpatialTransform.cs" />
     <Compile Include="Graphics\ImageSpatialTransformMemento.cs" />
@@ -165,7 +167,6 @@
     <Compile Include="Graphics\ImageSpatialTransform.cs" />
     <Compile Include="Graphics\ISpatialTransform.cs" />
     <Compile Include="Imaging\IVOILUTLinearProvider.cs" />
-    <Compile Include="Graphics\GraphicSelectedEventArgs.cs" />
     <Compile Include="StudyManagement\IImageSopProvider.cs" />
     <Compile Include="Graphics\IOverlayGraphicsProvider.cs" />
     <Compile Include="Graphics\IImageGraphicProvider.cs" />
@@ -184,7 +185,6 @@
     <Compile Include="InteractiveGraphics\SelectedGraphicState.cs" />
     <Compile Include="IImageSet.cs" />
     <Compile Include="ImageSetCollection.cs" />
-    <Compile Include="BaseTools\ComponentImageViewerTool.cs" />
     <Compile Include="ImageViewerToolComponent.cs" />
     <Compile Include="InputManagement\IContextMenuProvider.cs" />
     <Compile Include="InputManagement\ICursorTokenProvider.cs" />

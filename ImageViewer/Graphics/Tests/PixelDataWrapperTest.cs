@@ -215,6 +215,47 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		}
 
 		[Test]
+		public void SetPixelSigned16Indexed()
+		{
+			int columns = 7;
+			int rows = 19;
+			int bitsAllocated = 16;
+			int bitsStored = 16;
+			int highBit = 15;
+			int samplesPerPixel = 1;
+			int pixelRepresentation = 1;
+			int planarConfiguration = 0;
+			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
+			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
+			byte[] pixelData = new byte[imageSize];
+
+			PixelData pixelDataWrapper = new PixelData(
+				rows,
+				columns,
+				bitsAllocated,
+				bitsStored,
+				highBit,
+				samplesPerPixel,
+				pixelRepresentation,
+				planarConfiguration,
+				photometricInterpretation,
+				pixelData);
+
+			int x = 3;
+			int y = 4;
+
+			// Test the API
+			int testValue = -1234;
+			pixelDataWrapper.SetPixel(x, y, testValue);
+			int actualValue = pixelDataWrapper.GetPixel(x, y);
+			Assert.AreEqual(testValue, actualValue);
+
+			int index = y * columns + x;
+			actualValue = pixelDataWrapper.GetPixel(index);
+			Assert.AreEqual(testValue, actualValue);
+		}
+
+		[Test]
 		public void SetPixelRGBTriplet()
 		{
 			int rows = 19;
@@ -412,6 +453,64 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			pixelDataWrapper.SetPixel(0, 0, expectedValue);
 			actualValue = pixelDataWrapper.GetPixel(0, 0);
 			Assert.AreEqual(expectedValue, actualValue);
+		}
+
+		[Test]
+		public void ForEachPixel()
+		{
+			int columns = 5;
+			int rows = 4;
+			int bitsAllocated = 16;
+			int bitsStored = 16;
+			int highBit = 15;
+			int samplesPerPixel = 1;
+			int pixelRepresentation = 1;
+			int planarConfiguration = 0;
+			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
+			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
+			byte[] pixelData = new byte[imageSize];
+
+			PixelData pixelDataWrapper = new PixelData(
+				rows,
+				columns,
+				bitsAllocated,
+				bitsStored,
+				highBit,
+				samplesPerPixel,
+				pixelRepresentation,
+				planarConfiguration,
+				photometricInterpretation,
+				pixelData);
+
+			int i = 0;
+
+			for (int y = 0; y < rows; y++)
+			{
+				for (int x = 0; x < columns; x++)
+				{
+					pixelDataWrapper.SetPixel(x, y, i);
+					i++;
+				}
+			}
+
+			int left = 1, top = 1, right = 3, bottom = 3;
+
+			int pixelCount = 0;
+
+			pixelDataWrapper.ForEachPixel(left, top, right, bottom,
+				delegate(int j, int x, int y, int pixelIndex)
+				{
+					if (j == 0)
+						Assert.AreEqual(6, pixelDataWrapper.GetPixel(pixelIndex));
+					else if (j == 1)
+						Assert.AreEqual(7, pixelDataWrapper.GetPixel(pixelIndex));
+					else if (j == 3)
+						Assert.AreEqual(11, pixelDataWrapper.GetPixel(pixelIndex));
+
+					pixelCount++;
+				});
+
+			Assert.AreEqual(9, pixelCount);
 		}
 	}
 }

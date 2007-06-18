@@ -37,6 +37,36 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			set { _rectangleGraphic.BottomRight = value; }
 		}
 
+		public float Left
+		{
+			get { return this.TopLeft.X; }
+		}
+
+		public float Right
+		{
+			get { return this.BottomRight.X; }
+		}
+
+		public float Top
+		{
+			get { return this.TopLeft.Y; }
+		}
+
+		public float Bottom
+		{
+			get { return this.BottomRight.Y; }
+		}
+
+		public float Width
+		{
+			get { return this.Right - this.Left; }
+		}
+
+		public float Height
+		{
+			get { return this.Bottom - this.Top; }
+		}
+
 		public CursorToken MoveToken
 		{
 			get { return _moveToken; }

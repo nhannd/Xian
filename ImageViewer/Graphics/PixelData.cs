@@ -195,6 +195,31 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		public int GetPixel(int i)
+		{
+			if (_photometricInterpretation == PhotometricInterpretation.Rgb)
+			{
+				return GetPixelRGBInternal(i);
+			}
+			else // MONOCHROME 1,2
+			{
+				if (_bytesPerPixel == 1) // 8 bit
+				{
+					if (_pixelRepresentation != 0) // Signed
+						return (int)GetPixelSigned8(i);
+					else // Unsigned
+						return (int)GetPixelUnsigned8(i);
+				}
+				else // 16 bit
+				{
+					if (_pixelRepresentation != 0) // Signed
+						return (int)GetPixelSigned16(i * _bytesPerPixel);
+					else // Unsigned
+						return (int)GetPixelUnsigned16(i * _bytesPerPixel);
+				}
+			}
+		}
+
 		/// <summary>
 		/// Gets the RGB pixel value at the specified location.
 		/// </summary>
@@ -302,11 +327,31 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return _pixelData[i];
 		}
 
+		private byte GetPixelUnsigned8(int i)
+		{
+			return _pixelData[i];
+		}
+
 		private sbyte GetPixelSigned8(int x, int y)
+		{
+			byte raw = GetPixelUnsigned8(x, y);
+			sbyte result = ConvertToSigned8(raw);
+
+			return result; 
+		}
+
+		private sbyte GetPixelSigned8(int i)
+		{
+			byte raw = GetPixelUnsigned8(i);
+			sbyte result = ConvertToSigned8(raw);
+			
+			return result; 
+		}
+
+		private sbyte ConvertToSigned8(byte raw)
 		{
 			// Create a mask that will pick out the sign bit, which is the high bit
 			byte signMask = (byte)(1 << (_bitsStored - 1));
-			byte raw = GetPixelUnsigned8(x, y);
 			sbyte result;
 
 			// If the sign bit is 0, then just return the raw value,
@@ -327,12 +372,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 				result = (sbyte)(-(maskedInverted + 1));
 			}
 
-			return result; 
+			return result;
 		}
 
 		private ushort GetPixelUnsigned16(int x, int y)
 		{
 			int i = GetIndex(x, y);
+			return GetPixelUnsigned16(i);
+		}
+
+		private ushort GetPixelUnsigned16(int i)
+		{
 			ushort lowbyte = (ushort)_pixelData[i];
 			ushort highbyte = (ushort)_pixelData[i + 1];
 			ushort pixelValue = (ushort)(lowbyte | (highbyte << 8));
@@ -342,9 +392,24 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private short GetPixelSigned16(int x, int y)
 		{
+			ushort raw = GetPixelUnsigned16(x, y);
+			short result = ConvertToSigned16(raw);
+
+			return result;
+		}
+
+		private short GetPixelSigned16(int i)
+		{
+			ushort raw = GetPixelUnsigned16(i);
+			short result = ConvertToSigned16(raw);
+
+			return result;
+		}
+
+		private short ConvertToSigned16(ushort raw)
+		{
 			// Create a mask that will pick out the sign bit, which is the high bit
 			ushort signMask = (ushort)(1 << (_bitsStored - 1));
-			ushort raw = GetPixelUnsigned16(x, y);
 			short result;
 
 			// If the sign bit is 0, then just return the raw value,
@@ -362,23 +427,29 @@ namespace ClearCanvas.ImageViewer.Graphics
 				// Need to mask out the bits greater above the high bit, since they're irrelevant
 				ushort mask = (ushort)(ushort.MaxValue >> (_bitsAllocated - _bitsStored));
 				ushort maskedInverted = (ushort)(inverted & mask);
-				result = (short)(-(maskedInverted+1));
+				result = (short)(-(maskedInverted + 1));
 			}
 
 			return result;
 		}
 
+
 		private int GetPixelRGBInternal(int x, int y)
 		{
 			int i = GetIndex(x, y);
+			int argb = GetPixelRGBInternal(i);
 
+			return argb;
+		}
+
+		private int GetPixelRGBInternal(int i)
+		{
 			int a = 0xff;
 			int r = (int)_pixelData[i];
 			int g = (int)_pixelData[i + _planeOffset];
 			int b = (int)_pixelData[i + 2 * _planeOffset];
 
 			int argb = a << 24 | r << 16 | g << 8 | b;
-
 			return argb;
 		}
 
@@ -603,6 +674,49 @@ namespace ClearCanvas.ImageViewer.Graphics
 			clock.Stop();
 			Trace.WriteLine(String.Format("Min/Max pixel value calculation took {0:F3} seconds (rows = {1}, columns = {2})", clock.Seconds, _rows, _columns));
 #endif
+		}
+
+		public delegate void PixelProcessor(int i, int x, int y, int pixelIndex);
+
+		public void ForEachPixel(PixelProcessor processor)
+		{
+			ForEachPixel(0, 0, _columns - 1, _rows - 1, processor);
+		}
+
+		public void ForEachPixel(
+			int left, int top, int right, int bottom, 
+			PixelProcessor processor)
+		{
+			int i = 0;
+			int temp;
+
+			if (top > bottom)
+			{
+				temp = top;
+				top = bottom;
+				bottom = temp;
+			}
+
+			if (left > right)
+			{
+				temp = left;
+				left = right;
+				right = temp;
+			}
+
+			int pixelIndex = top * _columns + left;
+
+			for (int y = top; y <= bottom; y++)
+			{
+				for (int x = left; x <= right; x++)
+				{
+					processor(i, x, y, pixelIndex);
+					pixelIndex++;
+					i++;
+				}
+
+				pixelIndex += (_columns - right) + left - 1;
+			}
 		}
 
 		private void CalculateAbsolutePixelValueRange()

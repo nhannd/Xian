@@ -216,17 +216,24 @@ namespace ClearCanvas.ImageViewer
 			get { return _selectedGraphic; }
 			set
 			{
+				// If it's the same graphic, then just return
 				if (_selectedGraphic == value)
 					return;
 
+				// Deselect the previously selected graphic
 				if (_selectedGraphic != null)
 					_selectedGraphic.Selected = false;
 
+				ISelectableGraphic deselectedGraphic = _selectedGraphic;
 				_selectedGraphic = value;
 
+				// Let everyone know
 				if (this.ImageViewer != null)
 					if (this.ImageViewer.EventBroker != null)
-						this.ImageViewer.EventBroker.OnGraphicSelected(new GraphicSelectedEventArgs(_selectedGraphic));
+						this.ImageViewer.EventBroker.OnGraphicSelectionChanged(
+							new GraphicSelectionChangedEventArgs(
+							_selectedGraphic,
+							deselectedGraphic));
 			}
 		}
 
@@ -244,9 +251,11 @@ namespace ClearCanvas.ImageViewer
 			get { return _focussedGraphic; }
 			set
 			{
+				// If it's the same graphic, then just return
 				if (_focussedGraphic == value)
 					return;
 
+				// Defocus the previously focussed graphic
 				if (_focussedGraphic != null)
 					_focussedGraphic.Focussed = false;
 

@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler<DisplaySetSelectedEventArgs> _displaySetSelectedEvent;
 		private event EventHandler<TileSelectedEventArgs> _tileSelectedEvent;
 		private event EventHandler<PresentationImageSelectedEventArgs> _presentationImageSelectedEvent;
-		private event EventHandler<GraphicSelectedEventArgs> _graphicSelectedEvent;
+		private event EventHandler<GraphicSelectionChangedEventArgs> _graphicSelectionChangedEvent;
 
 		private event EventHandler<StudyEventArgs> _studyLoadedEvent;
 		private event EventHandler<SopEventArgs> _imageLoadedEvent;
@@ -100,19 +100,20 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Occurs when a <see cref="Graphic"/> in the currently selected
-		/// <see cref="PresentationImage"/>'s scene graph is selected.
+		/// Occurs when the selected <see cref="Graphic"/> in the currently selected
+		/// <see cref="PresentationImage"/>'s scene graph has changed.
 		/// </summary>
-		public event EventHandler<GraphicSelectedEventArgs> GraphicSelected
+		public event EventHandler<GraphicSelectionChangedEventArgs> GraphicSelectionChanged
 		{
-			add { _graphicSelectedEvent += value; }
-			remove { _graphicSelectedEvent -= value; }
+			add { _graphicSelectionChangedEvent += value; }
+			remove { _graphicSelectionChangedEvent -= value; }
 		}
 
-		internal void OnGraphicSelected(GraphicSelectedEventArgs args)
+		internal void OnGraphicSelectionChanged(GraphicSelectionChangedEventArgs args)
 		{
-			EventsHelper.Fire(_graphicSelectedEvent, this, args);
+			EventsHelper.Fire(_graphicSelectionChangedEvent, this, args);
 		}
+
 
 		/// <summary>
 		/// Occurs when a DICOM study is loaded.
