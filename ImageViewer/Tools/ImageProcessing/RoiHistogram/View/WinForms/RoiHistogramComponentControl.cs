@@ -75,8 +75,8 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinFor
 			histogram.Center = false;
 			histogram.BaseWidth = 1.0f;
 			histogram.Filled = true;
-			histogram.Pen = Pens.Blue;
-			histogram.RectangleBrush = new RectangleBrushes.Solid(Color.Blue);
+			histogram.Pen = new Pen(ClearCanvasStyle.ClearCanvasBlue);
+			histogram.RectangleBrush = new RectangleBrushes.Solid(ClearCanvasStyle.ClearCanvasBlue);
 
 			_plotSurface.Add(histogram);
 			_plotSurface.PlotBackColor = Color.Black;
