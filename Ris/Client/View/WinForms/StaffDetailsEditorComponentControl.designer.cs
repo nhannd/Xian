@@ -37,8 +37,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._middleName = new ClearCanvas.Controls.WinForms.TextField();
             this._familyName = new ClearCanvas.Controls.WinForms.TextField();
             this._licenseNumber = new ClearCanvas.Controls.WinForms.TextField();
+            this._isPractitioner = new System.Windows.Forms.CheckBox();
+            this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
+            this.flowLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -46,12 +49,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.tableLayoutPanel1.ColumnCount = 1;
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel2, 0, 1);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 1;
+            this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(471, 143);
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(507, 178);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
             // flowLayoutPanel1
@@ -64,11 +69,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.flowLayoutPanel1.Controls.Add(this._givenName);
             this.flowLayoutPanel1.Controls.Add(this._middleName);
             this.flowLayoutPanel1.Controls.Add(this._familyName);
-            this.flowLayoutPanel1.Controls.Add(this._licenseNumber);
             this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 3);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(465, 137);
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(501, 90);
             this.flowLayoutPanel1.TabIndex = 0;
             // 
             // _prefix
@@ -140,7 +144,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // _licenseNumber
             // 
             this._licenseNumber.LabelText = "License Number";
-            this._licenseNumber.Location = new System.Drawing.Point(2, 92);
+            this._licenseNumber.Location = new System.Drawing.Point(2, 25);
             this._licenseNumber.Margin = new System.Windows.Forms.Padding(2);
             this._licenseNumber.Mask = "";
             this._licenseNumber.Name = "_licenseNumber";
@@ -148,16 +152,39 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._licenseNumber.TabIndex = 6;
             this._licenseNumber.Value = null;
             // 
+            // _isPractitioner
+            // 
+            this._isPractitioner.AutoSize = true;
+            this._isPractitioner.Location = new System.Drawing.Point(3, 3);
+            this._isPractitioner.Name = "_isPractitioner";
+            this._isPractitioner.Size = new System.Drawing.Size(79, 17);
+            this._isPractitioner.TabIndex = 7;
+            this._isPractitioner.Text = "Practitioner";
+            this._isPractitioner.UseVisualStyleBackColor = true;
+            // 
+            // flowLayoutPanel2
+            // 
+            this.flowLayoutPanel2.Controls.Add(this._isPractitioner);
+            this.flowLayoutPanel2.Controls.Add(this._licenseNumber);
+            this.flowLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel2.FlowDirection = System.Windows.Forms.FlowDirection.TopDown;
+            this.flowLayoutPanel2.Location = new System.Drawing.Point(3, 99);
+            this.flowLayoutPanel2.Name = "flowLayoutPanel2";
+            this.flowLayoutPanel2.Size = new System.Drawing.Size(501, 76);
+            this.flowLayoutPanel2.TabIndex = 1;
+            // 
             // StaffDetailsEditorComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "StaffDetailsEditorComponentControl";
-            this.Size = new System.Drawing.Size(471, 143);
+            this.Size = new System.Drawing.Size(507, 178);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel2.ResumeLayout(false);
+            this.flowLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -173,5 +200,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private ClearCanvas.Controls.WinForms.TextField _middleName;
         private ClearCanvas.Controls.WinForms.TextField _familyName;
         private ClearCanvas.Controls.WinForms.TextField _licenseNumber;
+        private System.Windows.Forms.CheckBox _isPractitioner;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
     }
 }

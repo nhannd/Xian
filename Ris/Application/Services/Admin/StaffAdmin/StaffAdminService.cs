@@ -25,22 +25,43 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         // because it is used in non-admin situations - perhaps we need to create a separate operation???
         public ListStaffResponse ListStaff(ListStaffRequest request)
         {
-            StaffSearchCriteria criteria = new StaffSearchCriteria();
-            if (!string.IsNullOrEmpty(request.FirstName))
-                criteria.Name.GivenName.StartsWith(request.FirstName);
-            if (!string.IsNullOrEmpty(request.LastName))
-                criteria.Name.FamilyName.StartsWith(request.LastName);
 
             SearchResultPage page = new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows);
 
             StaffAssembler assembler = new StaffAssembler();
-            return new ListStaffResponse(
-                CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
-                    PersistenceContext.GetBroker<IStaffBroker>().Find(criteria, page),
-                    delegate(Staff s)
-                    {
-                        return assembler.CreateStaffSummary(s);
-                    }));
+
+            if (request.ListOnlyPractitioners)
+            {
+                PractitionerSearchCriteria criteria = new PractitionerSearchCriteria();
+                if (!string.IsNullOrEmpty(request.FirstName))
+                    criteria.Name.GivenName.StartsWith(request.FirstName);
+                if (!string.IsNullOrEmpty(request.LastName))
+                    criteria.Name.FamilyName.StartsWith(request.LastName);
+
+                return new ListStaffResponse(
+                    CollectionUtils.Map<Practitioner, StaffSummary, List<StaffSummary>>(
+                        PersistenceContext.GetBroker<IPractitionerBroker>().Find(criteria, page),
+                        delegate(Practitioner s)
+                        {
+                            return assembler.CreateStaffSummary(s);
+                        }));
+            }
+            else
+            {
+                StaffSearchCriteria criteria = new StaffSearchCriteria();
+                if (!string.IsNullOrEmpty(request.FirstName))
+                    criteria.Name.GivenName.StartsWith(request.FirstName);
+                if (!string.IsNullOrEmpty(request.LastName))
+                    criteria.Name.FamilyName.StartsWith(request.LastName);
+
+                return new ListStaffResponse(
+                    CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
+                        PersistenceContext.GetBroker<IStaffBroker>().Find(criteria, page),
+                        delegate(Staff s)
+                        {
+                            return assembler.CreateStaffSummary(s);
+                        }));
+            }
         }
 
         [ReadOperation]
@@ -81,7 +102,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin)]
         public AddStaffResponse AddStaff(AddStaffRequest request)
         {
-            Staff staff = new Staff();
+            Staff staff = request.IsPractitioner ? new Practitioner() : new Staff();
+
             StaffAssembler assembler = new StaffAssembler();
             assembler.UpdateStaff(request.StaffDetail, staff);
 

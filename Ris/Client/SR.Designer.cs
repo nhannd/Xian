@@ -700,15 +700,6 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Add Practitioner.
-        /// </summary>
-        internal static string TitleAddPractitioner {
-            get {
-                return ResourceManager.GetString("TitleAddPractitioner", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Add Staff.
         /// </summary>
         internal static string TitleAddStaff {
@@ -813,15 +804,6 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleUpdatePhoneNumber {
             get {
                 return ResourceManager.GetString("TitleUpdatePhoneNumber", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Update Practitioner.
-        /// </summary>
-        internal static string TitleUpdatePractitioner {
-            get {
-                return ResourceManager.GetString("TitleUpdatePractitioner", resourceCulture);
             }
         }
         

@@ -13,18 +13,26 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         {
         }
 
-        public ListStaffRequest(string surname, string givenname, PageRequestDetail page)
+        public ListStaffRequest(string surname, string givenname, bool listOnlyPractitioners)
         {
             this.LastName = surname;
             this.FirstName = givenname;
-            this.PageRequest = page;
+            this.ListOnlyPractitioners = listOnlyPractitioners;
         }
 
+        public ListStaffRequest(string surname, string givenname, bool listOnlyPractitioners, PageRequestDetail page)
+            : this(surname, givenname, listOnlyPractitioners)
+        {
+            this.PageRequest = page;
+        }
 
         [DataMember]
         public string FirstName;
 
         [DataMember]
         public string LastName;
+
+        [DataMember]
+        public bool ListOnlyPractitioners;
     }
 }

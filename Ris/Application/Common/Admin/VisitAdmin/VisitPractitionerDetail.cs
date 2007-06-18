@@ -10,7 +10,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.VisitAdmin
     public class VisitPractitionerDetail : DataContractBase
     {
         [DataMember]
-        public PractitionerSummary Practitioner;
+        public StaffSummary Practitioner;
 
         [DataMember]
         public EnumValueInfo Role;

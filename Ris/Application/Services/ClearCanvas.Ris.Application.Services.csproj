@@ -60,7 +60,6 @@
     <Compile Include="Admin\AuthenticationAdmin\UserAssembler.cs" />
     <Compile Include="Admin\ModalityAssembler.cs" />
     <Compile Include="Admin\NoteCategoryAdmin\NoteCategoryAdminService.cs" />
-    <Compile Include="Admin\PractitionerAssembler.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceAdminService.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceBatchImporter.cs" />
     <Compile Include="Admin\FacilityAssembler.cs" />
@@ -70,7 +69,6 @@
     <Compile Include="Admin\LocationAdmin\LocationAdminService.cs" />
     <Compile Include="Admin\ModalityAdmin\ModalityAdminService.cs" />
     <Compile Include="Admin\PatientAdmin\PatientAdminService.cs" />
-    <Compile Include="Admin\PractitionerAdmin\PractitionerAdminService.cs" />
     <Compile Include="Admin\StaffAdmin\StaffAdminService.cs" />
     <Compile Include="Admin\VisitAdmin\VisitAdminService.cs" />
     <Compile Include="Admin\VisitAssembler.cs" />

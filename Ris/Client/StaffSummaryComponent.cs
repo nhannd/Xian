@@ -69,7 +69,6 @@ namespace ClearCanvas.Ris.Client
 
         private SimpleActionModel _staffActionHandler;
         private readonly string _addStaffKey = "AddStaff";
-        private readonly string _addPractionerKey = "AddPractitioner";
         private readonly string _updateStaffKey = "UpdateStaff";
 
         private PagingController<StaffSummary> _pagingController;
@@ -102,8 +101,7 @@ namespace ClearCanvas.Ris.Client
             _staffTable = new StaffTable();
 
             _staffActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            _staffActionHandler.AddAction(_addStaffKey, SR.TitleAddPractitioner, "Icons.AddToolSmall.png", SR.TitleAddPractitioner, AddPractitioner);
-			_staffActionHandler.AddAction(_addPractionerKey, SR.TitleAddStaff, "Icons.AddToolSmall.png", SR.TitleAddStaff, AddStaff);
+            _staffActionHandler.AddAction(_addStaffKey, SR.TitleAddStaff, "Icons.AddToolSmall.png", SR.TitleAddStaff, AddStaff);
 			_staffActionHandler.AddAction(_updateStaffKey, SR.TitleUpdateStaff, "Icons.EditToolSmall.png", SR.TitleUpdateStaff, UpdateSelectedStaff);
 
             InitialisePaging(_staffActionHandler);
@@ -201,33 +199,13 @@ namespace ClearCanvas.Ris.Client
         {
             try
             {
-                StaffEditorComponent editor = new StaffEditorComponent(true);
+                StaffEditorComponent editor = new StaffEditorComponent();
                 ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                     this.Host.DesktopWindow, editor, SR.TitleAddStaff);
                 if (exitCode == ApplicationComponentExitCode.Normal)
                 {
                     _staffTable.Items.Add(editor.StaffSummary);
                 }
-            }
-            catch (Exception e)
-            {
-                // failed to launch editor
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        public void AddPractitioner()
-        {
-            try
-            {
-                StaffEditorComponent editor = new StaffEditorComponent(false);
-                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                    this.Host.DesktopWindow, editor, SR.TitleAddPractitioner);
-                if (exitCode == ApplicationComponentExitCode.Normal)
-                {
-                    _staffTable.Items.Add(editor.PractitionerSummary);
-                }
-
             }
             catch (Exception e)
             {
@@ -243,32 +221,15 @@ namespace ClearCanvas.Ris.Client
                 // can occur if user double clicks while holding control
                 if (_selectedStaff == null) return;
 
-                StaffEditorComponent editor;
-                if (_selectedStaff.LicenseNumber == null || _selectedStaff.LicenseNumber == "")
+                StaffEditorComponent editor = new StaffEditorComponent(_selectedStaff.StaffRef);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleUpdateStaff);
+                if (exitCode == ApplicationComponentExitCode.Normal)
                 {
-                    editor = new StaffEditorComponent(_selectedStaff.StaffRef, true);
-                    ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                        this.Host.DesktopWindow, editor, SR.TitleUpdateStaff);
-                    if (exitCode == ApplicationComponentExitCode.Normal)
-                    {
-                        _staffTable.Items.Replace(
-                            delegate(StaffSummary s) { return s.StaffRef.Equals(editor.StaffSummary.StaffRef); },
-                            editor.StaffSummary);
-                    }
+                    _staffTable.Items.Replace(
+                        delegate(StaffSummary s) { return s.StaffRef.Equals(editor.StaffSummary.StaffRef); },
+                        editor.StaffSummary);
                 }
-                else
-                {
-                    editor = new StaffEditorComponent(_selectedStaff.StaffRef, false);
-                    ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                        this.Host.DesktopWindow, editor, SR.TitleUpdatePractitioner);
-                    if (exitCode == ApplicationComponentExitCode.Normal)
-                    {
-                        _staffTable.Items.Replace(
-                            delegate(StaffSummary s) { return s.StaffRef.Equals(editor.PractitionerSummary.StaffRef); },
-                            editor.PractitionerSummary);
-                    }
-                }
-
             }
             catch (Exception e)
             {

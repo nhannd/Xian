@@ -109,7 +109,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         VisitSummary randomVisit = ChooseRandom<VisitSummary>(visitResponse.Visits);
                         DiagnosticServiceSummary randomDS = ChooseRandom<DiagnosticServiceSummary>(formChoicesResponse.DiagnosticServiceChoices);
                         FacilitySummary randomFacility = ChooseRandom<FacilitySummary>(formChoicesResponse.OrderingFacilityChoices);
-                        PractitionerSummary randomPhysician = ChooseRandom<PractitionerSummary>(formChoicesResponse.OrderingPhysicianChoices);
+                        StaffSummary randomPhysician = ChooseRandom<StaffSummary>(formChoicesResponse.OrderingPhysicianChoices);
                         EnumValueInfo randomPriority = ChooseRandom<EnumValueInfo>(formChoicesResponse.OrderPriorityChoices);
 
                         PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(

@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             OrderDetail detail = new OrderDetail();
 
             VisitAssembler visitAssembler = new VisitAssembler();
-            PractitionerAssembler practitionerAssembler = new PractitionerAssembler();
+            StaffAssembler StaffAssembler = new StaffAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
 
             detail.PatientRef = order.Patient.GetRef();
@@ -35,7 +35,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             detail.DiagnosticService = this.CreateDiagnosticServiceDetail(order.DiagnosticService);
             detail.EnteredDateTime = order.EnteredDateTime;
             detail.SchedulingRequestDateTime = order.SchedulingRequestDateTime;
-            detail.OrderingPractitioner = practitionerAssembler.CreatePractitionerDetail(order.OrderingPractitioner, context);
+            detail.OrderingPractitioner = StaffAssembler.CreateStaffDetail(order.OrderingPractitioner, context);
             detail.OrderingFacility = facilityAssembler.CreateFacilityDetail(order.OrderingFacility);
             detail.ReasonForStudy = order.ReasonForStudy;
             
@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         public OrderSummary CreateOrderSummary(Order order, IPersistenceContext context)
         {
-            PractitionerAssembler practitionerAssembler = new PractitionerAssembler();
+            StaffAssembler StaffAssembler = new StaffAssembler();
 
             OrderSummary summary = new OrderSummary();
 
@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             summary.DiagnosticServiceName = order.DiagnosticService.Name;
             summary.EnteredDateTime = order.EnteredDateTime;
             summary.SchedulingRequestDateTime = order.SchedulingRequestDateTime;
-            summary.OrderingPractitioner = practitionerAssembler.CreatePractitionerDetail(order.OrderingPractitioner, context);
+            summary.OrderingPractitioner = StaffAssembler.CreateStaffDetail(order.OrderingPractitioner, context);
             summary.OrderingFacility = order.OrderingFacility.Name;
             summary.ReasonForStudy = order.ReasonForStudy;
 

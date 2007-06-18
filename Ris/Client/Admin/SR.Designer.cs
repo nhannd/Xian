@@ -565,15 +565,6 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Delete Practitioner.
-        /// </summary>
-        internal static string TitleDeletePractitioner {
-            get {
-                return ResourceManager.GetString("TitleDeletePractitioner", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Delete Staff.
         /// </summary>
         internal static string TitleDeleteStaff {

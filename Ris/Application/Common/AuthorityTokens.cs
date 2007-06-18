@@ -31,9 +31,6 @@ namespace ClearCanvas.Ris.Application.Common
         [AuthorityToken(Description = "Allow administration of notes")]
         public const string NoteAdmin = "NoteAdmin";
 
-        [AuthorityToken(Description = "Allow administration of practitioners")]
-        public const string PractitionerAdmin = "PractitionerAdmin";
-
         [AuthorityToken(Description = "Allow administration of staff")]
         public const string StaffAdmin = "StaffAdmin";
 

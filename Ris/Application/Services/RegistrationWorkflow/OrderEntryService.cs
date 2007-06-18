@@ -46,7 +46,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             OrderEntryAssembler orderEntryAssembler = new OrderEntryAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
-            PractitionerAssembler practitionerAssembler = new PractitionerAssembler();
+            StaffAssembler StaffAssembler = new StaffAssembler();
 
             DiagnosticServiceTreeNodeSearchCriteria topLevelDiagnosticServiceTreeCriteria = new DiagnosticServiceTreeNodeSearchCriteria();
             topLevelDiagnosticServiceTreeCriteria.Parent.IsNull();
@@ -66,11 +66,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     {
                         return facilityAssembler.CreateFacilitySummary(f);
                     }), 
-                CollectionUtils.Map<Practitioner, PractitionerSummary, List<PractitionerSummary>>(
+                CollectionUtils.Map<Practitioner, StaffSummary, List<StaffSummary>>(
                     PersistenceContext.GetBroker<IPractitionerBroker>().FindAll(),
                     delegate(Practitioner p)
                     {
-                        return practitionerAssembler.CreatePractitionerSummary(p);
+                        return StaffAssembler.CreateStaffSummary(p);
                     }),
                 CollectionUtils.Map<OrderPriorityEnum, EnumValueInfo, List<EnumValueInfo>>(
                     PersistenceContext.GetBroker<IOrderPriorityEnumBroker>().Load().Items,

@@ -33,15 +33,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _prefix.DataBindings.Add("Value", _component, "Prefix", true, DataSourceUpdateMode.OnPropertyChanged);
             _suffix.DataBindings.Add("Value", _component, "Suffix", true, DataSourceUpdateMode.OnPropertyChanged);
             _degree.DataBindings.Add("Value", _component, "Degree", true, DataSourceUpdateMode.OnPropertyChanged);
-            if (_component.StaffMode)
-            {
-                _licenseNumber.Visible = false;
-            }
-            else
-            {
-                _licenseNumber.Visible = true;
-                _licenseNumber.DataBindings.Add("Value", _component, "LicenseNumber", true, DataSourceUpdateMode.OnPropertyChanged);
-            }
+            
+            _isPractitioner.DataBindings.Add("Enabled", _component, "NewStaff", true, DataSourceUpdateMode.OnPropertyChanged);
+            _isPractitioner.DataBindings.Add("Checked", _component, "IsPractitioner", true, DataSourceUpdateMode.OnPropertyChanged);
+            
+            _licenseNumber.DataBindings.Add("Enabled", _component, "NewStaff", true, DataSourceUpdateMode.OnPropertyChanged);
+            _licenseNumber.DataBindings.Add("Visible", _component, "IsPractitioner", true, DataSourceUpdateMode.OnPropertyChanged);
+            _licenseNumber.DataBindings.Add("Value", _component, "LicenseNumber", true, DataSourceUpdateMode.OnPropertyChanged);
         }
     }
 }

@@ -9,6 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin
     [DataContract]
     public class StaffDetail : DataContractBase
     {
+        public StaffDetail(PersonNameDetail personNameDetail, List<TelephoneDetail> phoneDetails, List<AddressDetail> addressDetails, string licenseNumber)
+            : this(personNameDetail, phoneDetails, addressDetails)
+        {
+            this.LicenseNumber = licenseNumber;
+        }
+
         public StaffDetail(PersonNameDetail personNameDetail, List<TelephoneDetail> phoneDetails, List<AddressDetail> addressDetails)
         {
             this.PersonNameDetail = personNameDetail;
@@ -31,5 +37,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin
 
         [DataMember]
         public List<AddressDetail> Addresses;
+
+        // Member for Practitioner
+        [DataMember]
+        public string LicenseNumber;
     }
 }

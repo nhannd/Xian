@@ -13,7 +13,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         public GetOrderEntryFormDataResponse(
             List<DiagnosticServiceSummary> diagnosticServiceChoices,
             List<FacilitySummary> orderingFacilityChoices,
-            List<PractitionerSummary> orderingPhysicianChoices,
+            List<StaffSummary> orderingPhysicianChoices,
             List<EnumValueInfo> orderPriorityChoices,
             List<DiagnosticServiceTreeItem> topLevelDiagnosticServiceTree)
         {
@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         public List<FacilitySummary> OrderingFacilityChoices;
 
         [DataMember]
-        public List<PractitionerSummary> OrderingPhysicianChoices;
+        public List<StaffSummary> OrderingPhysicianChoices;
 
         [DataMember]
         public List<EnumValueInfo> OrderPriorityChoices;

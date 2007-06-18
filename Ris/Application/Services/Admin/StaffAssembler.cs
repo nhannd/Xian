@@ -43,7 +43,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                     delegate(Address address)
                     {
                         return addressAssembler.CreateAddressDetail(address, context);
-                    }));
+                    }),
+                    (staff is Practitioner ? (staff as Practitioner).LicenseNumber : "")
+                    );
         }
 
         public void UpdateStaff(StaffDetail detail, Staff staff)
@@ -63,6 +65,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             {
                 addressAssembler.AddAddress(addressDetail, staff.Addresses);
             }
+
+            if (staff is Practitioner)
+                ((Practitioner)staff).LicenseNumber = detail.LicenseNumber;
         }
     }
 }

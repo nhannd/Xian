@@ -8,7 +8,6 @@
     <token name="LocationAdmin"/>
     <token name="ModalityAdmin"/>
     <token name="NoteAdmin"/>
-    <token name="PractitionerAdmin"/>
     <token name="StaffAdmin"/>
     <token name="VisitAdmin"/>
     <token name="UserAdmin"/>

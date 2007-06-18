@@ -25,19 +25,16 @@ namespace ClearCanvas.Ris.Client
     public class StaffDetailsEditorComponent : ApplicationComponent
     {
         private StaffDetail _staffDetail;
-        private PractitionerDetail _practitionerDetail;
-        private bool _isStaffMode;
+        private bool _isPractitioner;
+        private bool _isNew;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public StaffDetailsEditorComponent(bool staffMode)
+        public StaffDetailsEditorComponent(bool isNew)
         {
-            _isStaffMode = staffMode;
-            if (_isStaffMode)
-                _staffDetail = new StaffDetail();
-            else
-                _practitionerDetail = new PractitionerDetail();
+            _staffDetail = new StaffDetail();
+            _isNew = isNew;
         }
 
         public override void Start()
@@ -53,147 +50,99 @@ namespace ClearCanvas.Ris.Client
         public StaffDetail StaffDetail
         {
             get { return _staffDetail; }
-            set { _staffDetail = value; }
+            set 
+            { 
+                _staffDetail = value;
+                if (_staffDetail.LicenseNumber != null && _staffDetail.LicenseNumber != "")
+                    this.IsPractitioner = true;
+            }
         }
 
-        public PractitionerDetail PractitionerDetail
+        #region Presentation Model
+
+        public bool NewStaff
         {
-            get { return _practitionerDetail; }
-            set { _practitionerDetail = value; }
+            get { return _isNew; }
         }
 
-        public bool StaffMode
+        public bool IsPractitioner
         {
-            get { return _isStaffMode; }
+            get { return _isPractitioner; }
+            set 
+            {
+                _isPractitioner = value;
+                if (_isPractitioner == false)
+                    _staffDetail.LicenseNumber = "";
+            }
         }
-
-        #region Staff Presentation Model
 
         public string FamilyName
         {
-            get 
+            get { return _staffDetail.PersonNameDetail.FamilyName; }
+            set 
             {
-                return (_isStaffMode ? _staffDetail.PersonNameDetail.FamilyName 
-                              : _practitionerDetail.PersonNameDetail.FamilyName);
-            }
-            set
-            {
-                if (_isStaffMode)
-                    _staffDetail.PersonNameDetail.FamilyName = value;
-                else
-                    _practitionerDetail.PersonNameDetail.FamilyName = value;
-
+                _staffDetail.PersonNameDetail.FamilyName = value;
                 this.Modified = true;
             }
         }
 
         public string GivenName
         {
-            get
-            {
-                return (_isStaffMode ? _staffDetail.PersonNameDetail.GivenName
-                              : _practitionerDetail.PersonNameDetail.GivenName);
-            }
+            get { return _staffDetail.PersonNameDetail.GivenName; }
             set
             {
-                if (_isStaffMode)
-                    _staffDetail.PersonNameDetail.GivenName = value;
-                else
-                    _practitionerDetail.PersonNameDetail.GivenName = value;
-
+                _staffDetail.PersonNameDetail.GivenName = value;
                 this.Modified = true;
             }
         }
 
         public string MiddleName
         {
-            get
-            {
-                return (_isStaffMode ? _staffDetail.PersonNameDetail.MiddleName
-                              : _practitionerDetail.PersonNameDetail.MiddleName);
-            }
+            get { return _staffDetail.PersonNameDetail.MiddleName; }
             set
             {
-                if (_isStaffMode)
-                    _staffDetail.PersonNameDetail.MiddleName = value;
-                else
-                    _practitionerDetail.PersonNameDetail.MiddleName = value;
-
+                _staffDetail.PersonNameDetail.MiddleName = value;
                 this.Modified = true;
             }
         }
 
         public string Prefix
         {
-            get
-            {
-                return (_isStaffMode ? _staffDetail.PersonNameDetail.Prefix
-                              : _practitionerDetail.PersonNameDetail.Prefix);
-            }
+            get { return _staffDetail.PersonNameDetail.Prefix; }
             set
             {
-                if (_isStaffMode)
-                    _staffDetail.PersonNameDetail.Prefix = value;
-                else
-                    _practitionerDetail.PersonNameDetail.Prefix = value;
-
+                _staffDetail.PersonNameDetail.Prefix = value;
                 this.Modified = true;
             }
         }
 
         public string Suffix
         {
-            get
-            {
-                return (_isStaffMode ? _staffDetail.PersonNameDetail.Suffix
-                              : _practitionerDetail.PersonNameDetail.Suffix);
-            }
+            get { return _staffDetail.PersonNameDetail.Suffix; }
             set
             {
-                if (_isStaffMode)
-                    _staffDetail.PersonNameDetail.Suffix = value;
-                else
-                    _practitionerDetail.PersonNameDetail.Suffix = value;
-
+                _staffDetail.PersonNameDetail.Suffix = value;
                 this.Modified = true;
             }
         }
 
         public string Degree
         {
-            get
-            {
-                return (_isStaffMode ? _staffDetail.PersonNameDetail.Degree
-                              : _practitionerDetail.PersonNameDetail.Degree);
-            }
+            get { return _staffDetail.PersonNameDetail.Degree; }
             set
             {
-                if (_isStaffMode)
-                    _staffDetail.PersonNameDetail.Degree = value;
-                else
-                    _practitionerDetail.PersonNameDetail.Degree = value;
-
+                _staffDetail.PersonNameDetail.Degree = value;
                 this.Modified = true;
             }
         }
 
-        #endregion
-
-        #region Practitioner Presentation Model
-
         public string LicenseNumber
         {
-            get
-            {
-                return (_isStaffMode ? "" : _practitionerDetail.LicenseNumber);
-            }
+            get { return _staffDetail.LicenseNumber; }
             set
             {
-                if (_isStaffMode == false)
-                {
-                    _practitionerDetail.LicenseNumber = value;
-                    this.Modified = true;
-                }
+                _staffDetail.LicenseNumber = value;
+                this.Modified = true;
             }
         }
 

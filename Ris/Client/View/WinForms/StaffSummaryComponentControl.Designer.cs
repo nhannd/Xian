@@ -28,7 +28,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection4 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this._staffs = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
@@ -46,18 +46,18 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             // _staffs
             // 
             this._staffs.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._staffs.Location = new System.Drawing.Point(5, 78);
-            this._staffs.Margin = new System.Windows.Forms.Padding(5);
+            this._staffs.Location = new System.Drawing.Point(4, 62);
+            this._staffs.Margin = new System.Windows.Forms.Padding(4, 4, 4, 4);
             this._staffs.MenuModel = null;
             this._staffs.Name = "_staffs";
             this._staffs.ReadOnly = false;
-            this._staffs.Selection = selection4;
-            this._staffs.Size = new System.Drawing.Size(750, 361);
+            this._staffs.Selection = selection1;
+            this._staffs.Size = new System.Drawing.Size(562, 293);
             this._staffs.TabIndex = 0;
             this._staffs.Table = null;
             this._staffs.ToolbarModel = null;
             this._staffs.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this._staffs.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.Yes;
+            this._staffs.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             this._staffs.Load += new System.EventHandler(this._staffs_Load);
             this._staffs.ItemDoubleClicked += new System.EventHandler(this._staffs_ItemDoubleClicked);
             // 
@@ -70,12 +70,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 3;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(760, 506);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(570, 411);
             this.tableLayoutPanel1.TabIndex = 1;
             // 
             // tableLayoutPanel2
@@ -87,40 +88,42 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.tableLayoutPanel2.Controls.Add(this._lastName, 0, 0);
             this.tableLayoutPanel2.Controls.Add(this._firstName, 1, 0);
             this.tableLayoutPanel2.Controls.Add(this._searchButton, 2, 0);
-            this.tableLayoutPanel2.Location = new System.Drawing.Point(3, 3);
+            this.tableLayoutPanel2.Location = new System.Drawing.Point(2, 2);
+            this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(547, 67);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(410, 54);
             this.tableLayoutPanel2.TabIndex = 1;
             // 
             // _lastName
             // 
             this._lastName.LabelText = "Last Name";
-            this._lastName.Location = new System.Drawing.Point(3, 2);
-            this._lastName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._lastName.Location = new System.Drawing.Point(2, 2);
+            this._lastName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._lastName.Mask = "";
             this._lastName.Name = "_lastName";
-            this._lastName.Size = new System.Drawing.Size(183, 50);
-            this._lastName.TabIndex = 1;
+            this._lastName.Size = new System.Drawing.Size(137, 41);
+            this._lastName.TabIndex = 0;
             this._lastName.Value = null;
             // 
             // _firstName
             // 
             this._firstName.LabelText = "First Name";
-            this._firstName.Location = new System.Drawing.Point(192, 2);
-            this._firstName.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._firstName.Location = new System.Drawing.Point(143, 2);
+            this._firstName.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._firstName.Mask = "";
             this._firstName.Name = "_firstName";
-            this._firstName.Size = new System.Drawing.Size(200, 50);
-            this._firstName.TabIndex = 0;
+            this._firstName.Size = new System.Drawing.Size(150, 41);
+            this._firstName.TabIndex = 1;
             this._firstName.Value = null;
             // 
             // _searchButton
             // 
-            this._searchButton.Location = new System.Drawing.Point(398, 3);
+            this._searchButton.Location = new System.Drawing.Point(297, 2);
+            this._searchButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._searchButton.Name = "_searchButton";
-            this._searchButton.Size = new System.Drawing.Size(75, 23);
+            this._searchButton.Size = new System.Drawing.Size(56, 19);
             this._searchButton.TabIndex = 2;
             this._searchButton.Text = "Search";
             this._searchButton.UseVisualStyleBackColor = true;
@@ -133,39 +136,41 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.flowLayoutPanel1.Controls.Add(this._cancelButton);
             this.flowLayoutPanel1.Controls.Add(this._okButton);
             this.flowLayoutPanel1.FlowDirection = System.Windows.Forms.FlowDirection.RightToLeft;
-            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 447);
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(2, 361);
+            this.flowLayoutPanel1.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
-            this.flowLayoutPanel1.Size = new System.Drawing.Size(754, 56);
-            this.flowLayoutPanel1.TabIndex = 2;
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(566, 46);
+            this.flowLayoutPanel1.TabIndex = 1;
             // 
             // _cancelButton
             // 
-            this._cancelButton.Location = new System.Drawing.Point(676, 3);
+            this._cancelButton.Location = new System.Drawing.Point(508, 2);
+            this._cancelButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._cancelButton.Name = "_cancelButton";
-            this._cancelButton.Size = new System.Drawing.Size(75, 23);
-            this._cancelButton.TabIndex = 0;
+            this._cancelButton.Size = new System.Drawing.Size(56, 19);
+            this._cancelButton.TabIndex = 1;
             this._cancelButton.Text = "Cancel";
             this._cancelButton.UseVisualStyleBackColor = true;
             this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
             // 
             // _okButton
             // 
-            this._okButton.Location = new System.Drawing.Point(595, 3);
+            this._okButton.Location = new System.Drawing.Point(448, 2);
+            this._okButton.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
             this._okButton.Name = "_okButton";
-            this._okButton.Size = new System.Drawing.Size(75, 23);
-            this._okButton.TabIndex = 1;
+            this._okButton.Size = new System.Drawing.Size(56, 19);
+            this._okButton.TabIndex = 0;
             this._okButton.Text = "OK";
             this._okButton.UseVisualStyleBackColor = true;
             this._okButton.Click += new System.EventHandler(this._okButton_Click);
             // 
             // StaffSummaryComponentControl
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.tableLayoutPanel1);
-            this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "StaffSummaryComponentControl";
-            this.Size = new System.Drawing.Size(760, 506);
+            this.Size = new System.Drawing.Size(570, 411);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel2.ResumeLayout(false);
             this.flowLayoutPanel1.ResumeLayout(false);

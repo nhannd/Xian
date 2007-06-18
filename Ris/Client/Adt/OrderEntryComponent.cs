@@ -122,13 +122,13 @@ namespace ClearCanvas.Ris.Client.Adt
         private VisitSummaryTable _visitTable;
         private List<DiagnosticServiceSummary> _diagnosticServiceChoices;
         private List<FacilitySummary> _facilityChoices;
-        private List<PractitionerSummary> _orderingPhysicianChoices;
+        private List<StaffSummary> _orderingPhysicianChoices;
         private List<EnumValueInfo> _priorityChoices;
 
         private VisitSummary _selectedVisit;
         //private DiagnosticServiceSummary _selectedDiagnosticService;
         private FacilitySummary _selectedFacility;
-        private PractitionerSummary _selectedOrderingPhysician;
+        private StaffSummary _selectedOrderingPhysician;
         private EnumValueInfo _selectedPriority;
 
         private event EventHandler _diagnosticServiceChanged;
@@ -303,8 +303,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 List<string> physicianStrings = new List<string>();
                 physicianStrings.Add("");
                 physicianStrings.AddRange(
-                    CollectionUtils.Map<PractitionerSummary, string, List<string>>(_orderingPhysicianChoices,
-                            delegate(PractitionerSummary p) { return PersonNameFormat.Format(p.PersonNameDetail); }));
+                    CollectionUtils.Map<StaffSummary, string, List<string>>(_orderingPhysicianChoices,
+                            delegate(StaffSummary p) { return PersonNameFormat.Format(p.PersonNameDetail); }));
 
                 return physicianStrings;
             }
@@ -316,8 +316,8 @@ namespace ClearCanvas.Ris.Client.Adt
             set
             {
                 _selectedOrderingPhysician = (value == "") ? null :
-                   CollectionUtils.SelectFirst<PractitionerSummary>(_orderingPhysicianChoices,
-                       delegate(PractitionerSummary p) { return PersonNameFormat.Format(p.PersonNameDetail) == value; });
+                   CollectionUtils.SelectFirst<StaffSummary>(_orderingPhysicianChoices,
+                       delegate(StaffSummary p) { return PersonNameFormat.Format(p.PersonNameDetail) == value; });
             }
         }
 

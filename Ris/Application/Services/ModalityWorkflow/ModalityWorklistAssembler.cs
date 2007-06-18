@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             preview.AccessionNumber = mps.RequestedProcedure.Order.AccessionNumber;
             OrderPriorityEnumTable priorityTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
             preview.Priority = priorityTable[mps.RequestedProcedure.Order.Priority].Value;
-            preview.OrderingPhysician = new PractitionerAssembler().CreatePractitionerDetail(mps.RequestedProcedure.Order.OrderingPractitioner, context);
+            preview.OrderingPhysician = new StaffAssembler().CreateStaffDetail(mps.RequestedProcedure.Order.OrderingPractitioner, context);
             preview.Facility = new FacilityAssembler().CreateFacilityDetail(mps.RequestedProcedure.Order.OrderingFacility);
 
             //preview.DSBreakdown = new List<string>();

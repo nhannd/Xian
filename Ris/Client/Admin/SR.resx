@@ -285,9 +285,6 @@
   <data name="TitleDeleteModality" xml:space="preserve">
     <value>Delete Modality</value>
   </data>
-  <data name="TitleDeletePractitioner" xml:space="preserve">
-    <value>Delete Practitioner</value>
-  </data>
   <data name="TitleDeleteStaff" xml:space="preserve">
     <value>Delete Staff</value>
   </data>

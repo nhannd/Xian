@@ -160,7 +160,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         {
             VisitPractitionerDetail detail = new VisitPractitionerDetail();
             
-            detail.Practitioner = new PractitionerAssembler().CreatePractitionerSummary(vp.Practitioner);
+            detail.Practitioner = new StaffAssembler().CreateStaffSummary(vp.Practitioner);
             
             VisitPractitionerRoleEnum role = context.GetBroker<IVisitPractitionerRoleEnumBroker>().Load()[vp.Role];
             detail.Role = new EnumValueInfo(role.Code.ToString(), role.Value);
