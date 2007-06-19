@@ -15,11 +15,9 @@ namespace ClearCanvas.Enterprise.Core
     {
         private object _oid;
         private int _version;
-        private Type _entityClass;
 
         public Entity()
         {
-            _entityClass = this.GetType();
         }
 
         /// <summary>
@@ -45,13 +43,13 @@ namespace ClearCanvas.Enterprise.Core
 
         /// <summary>
         /// Gets the class of this entity.  Note that the class of this entity is not necessarily the same as the
-        /// type of this object, because this object may be an NHibernate proxy.  Therefore, use this method rather
+        /// type of this object, because this object may be a proxy.  Therefore, use this method rather
         /// than <see cref="GetType"/>.
         /// </summary>
         /// <returns></returns>
         public virtual Type GetClass()
         {
-            return _entityClass;
+            return GetRawInstance().GetType();
         }
 
         /// <summary>
@@ -63,7 +61,7 @@ namespace ClearCanvas.Enterprise.Core
             if (_oid == null)
                 throw new InvalidOperationException("Cannot generate entity ref on transient entity");
 
-            return new EntityRef(_entityClass, _oid, _version);
+            return new EntityRef(GetClass(), _oid, _version);
         }
 
         /// <summary>
