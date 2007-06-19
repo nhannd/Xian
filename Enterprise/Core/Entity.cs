@@ -65,5 +65,53 @@ namespace ClearCanvas.Enterprise.Core
 
             return new EntityRef(_entityClass, _oid, _version);
         }
+
+        /// <summary>
+        /// In the case where this object is a proxy, returns the raw instance underlying the proxy.  This
+        /// method must be virtual for correct behaviour, however, it is not intended to be overridden by
+        /// subclasses and is not intended for use by application code.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual Entity GetRawInstance()
+        {
+            return this;
+        }
+
+        /// <summary>
+        /// Performs a downcast on this object to the specified subclass type.  If this object is a proxy,
+        /// a regular C# downcast operation will fail.  Therefore, application code should always use this method
+        /// to perform a safe downcast.
+        /// </summary>
+        /// <typeparam name="TSubclass"></typeparam>
+        /// <returns></returns>
+        public TSubclass Downcast<TSubclass>()
+            where TSubclass : Entity
+        {
+            return (TSubclass)GetRawInstance();
+        }
+
+        /// <summary>
+        /// Subsitute for the C# 'is' operator.  If this object is a proxy, the C# 'is' operator will never
+        /// return true.  Therefore, application code must use this method instead.
+        /// </summary>
+        /// <typeparam name="TSubclass"></typeparam>
+        /// <returns></returns>
+        public bool Is<TSubclass>()
+            where TSubclass : Entity
+        {
+            return GetRawInstance() is TSubclass;
+        }
+
+        /// <summary>
+        /// Subsitute for the C# 'as' operator.  If this object is a proxy, the C# 'as' operator will fail.
+        /// Therefore, application code must use this method instead.
+        /// </summary>
+        /// <typeparam name="TEntity"></typeparam>
+        /// <returns></returns>
+        public TSubclass As<TSubclass>()
+            where TSubclass : Entity
+        {
+            return GetRawInstance() as TSubclass;
+        }
     }
 }
