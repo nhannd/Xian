@@ -175,6 +175,13 @@
       <DependentUpon>FolderOptionComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Folders\FolderOptionComponentView.cs" />
+    <Compile Include="TechnologistDocumentationComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TechnologistDocumentationComponentControl.Designer.cs">
+      <DependentUpon>TechnologistDocumentationComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TechnologistDocumentationComponentView.cs" />
     <Compile Include="TechnologistPreviewComponentView.cs">
     </Compile>
     <Compile Include="SR.Designer.cs">
@@ -346,6 +353,10 @@
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Resources\PreviousSmall.PNG" />
+    <EmbeddedResource Include="TechnologistDocumentationComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TechnologistDocumentationComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

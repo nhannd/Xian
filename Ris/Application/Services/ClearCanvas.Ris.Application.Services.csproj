@@ -78,6 +78,8 @@
     <Compile Include="ContactPersonAssembler.cs" />
     <Compile Include="Admin\NoteCategoryAssembler.cs" />
     <Compile Include="Login\LoginService.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\TechnologistDocumentationAssembler.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\TechnologistDocumentationService.cs" />
     <Compile Include="NoteAssembler.cs" />
     <Compile Include="EmailAddressAssembler.cs" />
     <Compile Include="HealthcardAssembler.cs" />

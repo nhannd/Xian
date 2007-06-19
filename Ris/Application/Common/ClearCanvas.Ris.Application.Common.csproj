@@ -172,6 +172,9 @@
     <Compile Include="ModalityWorkflow\DiagnosticServiceBreakdownSummary.cs" />
     <Compile Include="ModalityWorkflow\ResumeProcedureRequest.cs" />
     <Compile Include="ModalityWorkflow\ResumeProcedureResponse.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\DocumentationPageDetail.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\PerformedProcedureStepDetail.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\ProcedureStepDetail.cs" />
     <Compile Include="MrnDetail.cs" />
     <Compile Include="ConcurrentModificationException.cs" />
     <Compile Include="ContactPersonDetail.cs" />
@@ -329,6 +332,9 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\GetProcedureStepsForWorklistItemRequest.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\GetProcedureStepsForWorklistItemResponse.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\ITechnologistDocumentationService.cs" />
     <Compile Include="TelephoneDetail.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -111,6 +111,11 @@
     <Compile Include="RegistrationWorkflowTool.cs" />
     <Compile Include="RegistrationWorklistTable.cs" />
     <Compile Include="RICTable.cs" />
+    <Compile Include="TechnologistDocumentationComponent.cs" />
+    <Compile Include="TechnologistDocumentationTable.cs" />
+    <Compile Include="TechnologistDocumentationTableItem.cs" />
+    <Compile Include="TechnologistDocumentationTestTool.cs" />
+    <Compile Include="TechnologistDocumentationTool.cs" />
     <Compile Include="TechnologistHomeTool.cs" />
     <Compile Include="TechnologistPreviewComponent.cs" />
     <Compile Include="TechnologistWorkflowFolderBase.cs" />
