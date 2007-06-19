@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.Serialization;
+using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation
@@ -19,6 +20,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
         {
             this.PpsRef = ppsRef;
             this.Blob = blob;
+            this.StartTime = Platform.Time;
         }
 
         [DataMember] 
@@ -26,6 +28,12 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
 
         [DataMember]
         public string Blob;
+
+        [DataMember]
+        public DateTime StartTime;
+
+        [DataMember] 
+        public DateTime? EndTime;
 
         //#region IEquatable
 

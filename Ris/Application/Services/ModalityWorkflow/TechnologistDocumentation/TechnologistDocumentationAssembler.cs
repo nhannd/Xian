@@ -25,6 +25,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             PerformedProcedureStep pps = (PerformedProcedureStep)CollectionUtils.FirstElement(steps);
             PerformedProcedureStepDetail detail = new PerformedProcedureStepDetail();
             detail.PpsRef = pps.GetRef();
+            detail.StartTime = pps.StartTime;
+            detail.EndTime = pps.EndTime;
 
             return detail;
         }

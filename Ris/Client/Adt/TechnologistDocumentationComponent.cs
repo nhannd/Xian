@@ -107,7 +107,6 @@ namespace ClearCanvas.Ris.Client.Adt
         private readonly ScriptCallback _scriptCallback;
         private IList<ProcedureStepDetail> _procedureSteps;
         private readonly TechnologistDocumentationTable _documentationTable;
-        private TechnologistDocumentationTableItem _selectedItem;
 
         private readonly ModalityWorklistItem _workListItem;
 
@@ -127,7 +126,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private event EventHandler _urlChanged;
         private event EventHandler _documentationDataChanged;
 
-        private event EventHandler _beforeAccept;
+        private event EventHandler _beforeDocumentationSaved;
 
         private string _currentData;
 
@@ -158,13 +157,11 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            _documentationTable.ItemCheckAccepted += ItemCheckAccepted;
-            _documentationTable.ItemCheckRejected += ItemCheckRejected;
+            _documentationTable.ItemSelected += OnItemSelected;
+            _documentationTable.ItemDeselected += OnItemDeselected;
+            _documentationTable.ItemSelectionRejected += OnItemSelectionRejected;
 
-            _technologistDocumentationActionHandler.AddAction("Start", "Start", "StartToolSmall.png", "Start",
-                delegate() { StartCheckedProcedures(); });
-            _technologistDocumentationActionHandler.AddAction("Complete", "Complete", "CompleteToolSmall.png", "Complete",
-                delegate() { CompleteCheckedProcedures(); });
+            InitialiseDocumentationTableActions();
 
             LoadProcedureStepsTable();
 
@@ -173,10 +170,90 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Stop()
         {
-            _documentationTable.ItemCheckAccepted -= ItemCheckAccepted;
-            _documentationTable.ItemCheckRejected -= ItemCheckRejected;
+            _documentationTable.ItemSelected -= OnItemSelected;
+            _documentationTable.ItemDeselected -= OnItemDeselected;
+            _documentationTable.ItemSelectionRejected -= OnItemSelectionRejected;
 
             base.Stop();
+        }
+
+        private void InitialiseDocumentationTableActions()
+        {
+            _technologistDocumentationActionHandler.AddAction("StartNow", "Start Now", "StartToolSmall.png", "Start Now",
+                delegate() { StartCheckedProcedures(Platform.Time); });
+            _technologistDocumentationActionHandler.AddAction("Start", "Start ...", "StartToolSmall.png", "Start ...",
+                delegate()
+                {
+                    Platform.ShowMessageBox("Prompt for time here");
+                    DateTime time = Platform.Time;
+                    StartCheckedProcedures(time);
+                });
+
+            _technologistDocumentationActionHandler.AddAction("CompleteNow", "Complete Now", "CompleteToolSmall.png", "Complete Now",
+                delegate() { CompleteCheckedProcedures(Platform.Time); });
+            _technologistDocumentationActionHandler.AddAction("Complete", "Complete ...", "CompleteToolSmall.png", "Complete ...",
+                delegate()
+                {
+                    Platform.ShowMessageBox("Prompt for time here");
+                    DateTime time = DateTime.MaxValue;
+                    CompleteCheckedProcedures(time);
+                });
+
+            ResetActionEnablement();
+        }
+
+        private void ResetActionEnablement()
+        {
+            _technologistDocumentationActionHandler["StartNow"].Enabled = false;
+            _technologistDocumentationActionHandler["Start"].Enabled = false;
+            _technologistDocumentationActionHandler["CompleteNow"].Enabled = false;
+            _technologistDocumentationActionHandler["Complete"].Enabled = false;
+        }
+
+        private void UpdateActionEnablement(string checkedItemStatus)
+        {
+            _technologistDocumentationActionHandler["StartNow"].Enabled = checkedItemStatus == "Scheduled";
+            _technologistDocumentationActionHandler["Start"].Enabled = checkedItemStatus == "Scheduled";
+            _technologistDocumentationActionHandler["CompleteNow"].Enabled = checkedItemStatus == "Started";
+            _technologistDocumentationActionHandler["Complete"].Enabled = checkedItemStatus == "Started";            
+        }
+
+        private void LoadProcedureStepsTable()
+        {
+            // TODO remove dummy stuff
+            if (_workListItem != null)
+            {
+                Platform.GetService<ITechnologistDocumentationService>(
+                    delegate(ITechnologistDocumentationService service)
+                    {
+                        GetProcedureStepsForWorklistItemResponse response =
+                            service.GetProcedureStepsForWorklistItem(
+                                new GetProcedureStepsForWorklistItemRequest(_workListItem));
+
+                        _procedureSteps = response.ProcedureSteps;
+                    });
+            }
+            else
+            {
+                _procedureSteps = new List<ProcedureStepDetail>();
+                _procedureSteps.Add(new ProcedureStepDetail("Procedure 1", "Scheduled", new DocumentationPageDetail("http://localhost/RIS/nuclearmedicine.htm")));
+                _procedureSteps.Add(new ProcedureStepDetail("Procedure 2", "Scheduled", new DocumentationPageDetail("http://localhost/RIS/breastimaging.htm")));
+                _procedureSteps.Add(new ProcedureStepDetail("Procedure 3", "Scheduled", new DocumentationPageDetail("http://localhost/RIS/nuclearmedicine.htm")));
+                _procedureSteps.Add(new ProcedureStepDetail("Procedure 4", "Scheduled", new DocumentationPageDetail("http://localhost/RIS/breastimaging.htm")));
+                _procedureSteps.Add(new ProcedureStepDetail("Procedure 5", "Scheduled", new DocumentationPageDetail("http://localhost/RIS/breastimaging2.htm")));
+                _procedureSteps.Add(new ProcedureStepDetail("Procedure 6", "Scheduled", new DocumentationPageDetail("http://localhost/RIS/breastimaging2.htm")));
+
+                ProcedureStepDetail started =
+                    new ProcedureStepDetail("Procedure 7", "Started", new DocumentationPageDetail("http://localhost/RIS/breastimaging2.htm"));
+                started.PerformedProcedureStep = new PerformedProcedureStepDetail();
+                started.PerformedProcedureStep.StartTime = Platform.Time;
+                _procedureSteps.Add(started);
+            }
+
+            foreach (ProcedureStepDetail step in _procedureSteps)
+            {
+                _documentationTable.Items.Add(new TechnologistDocumentationTableItem(step));
+            }
         }
 
         #region Presentation Model
@@ -208,175 +285,164 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _technologistDocumentationActionHandler; }
         }
 
-        public ISelection SelectedProcedureStep
-        {
-            get { return new Selection(_selectedItem); }
-            set { _selectedItem = (TechnologistDocumentationTableItem)value.Item; }
-        }
-
         public ScriptCallback ScriptObject
         {
             get { return _scriptCallback; }
         }
 
-        public event EventHandler BeforeAccept
+        public event EventHandler BeforeDocumentationSaved
         {
-            add { _beforeAccept += value; }
-            remove { _beforeAccept -= value; }
+            add { _beforeDocumentationSaved += value; }
+            remove { _beforeDocumentationSaved -= value; }
         }
 
         #endregion
 
-        private void ItemCheckRejected(object sender, EventArgs e)
+        #region TechnologistDocumentationTable Event Handlers
+
+        private void OnItemSelectionRejected(object sender, EventArgs e)
         {
             TechnologistDocumentationTableItem item = ((TechnologistDocumentationTable.ItemCheckedEventArgs) e).Item;
+            // just refresh the UI, since it still thinks the item was selected
             _documentationTable.Items.NotifyItemUpdated(item);
         }
 
-        private void ItemCheckAccepted(object sender, EventArgs e)
+        private void OnItemDeselected(object sender, EventArgs e)
         {
-            TechnologistDocumentationTableItem checkedItem = ((TechnologistDocumentationTable.ItemCheckedEventArgs) e).Item;
+            OnItemDeselected(((TechnologistDocumentationTable.ItemCheckedEventArgs)e).Item);
+        }
 
-            if(checkedItem.Selected)            
+        private void OnItemDeselected(TechnologistDocumentationTableItem checkedItem)
+        {
+
+            
+            if (checkedItem.ProcedureStep.Status == "Started")
             {
-                SelectCoDocumentedItems(checkedItem);
-                UpdateTableItemCheckStatuses(checkedItem);
-
-                if (this.DisplayedDocumentationPageUrl == null)
-                {
-                    this.DisplayedDocumentationPageUrl = checkedItem.ProcedureStep.DocumentationPage.Url;
-                }
-
-                if (checkedItem.ProcedureStep.PerformedProcedureStep != null)
-                {
-                    this.CurrentData = checkedItem.ProcedureStep.PerformedProcedureStep.Blob;
-                    if (this.CurrentData != null)
-                    {
-                        EventsHelper.Fire(_documentationDataChanged, this, EventArgs.Empty);
-                    }
-                }
+                IList<TechnologistDocumentationTableItem> toBeUpdated = CheckedItems();
+                toBeUpdated.Add(checkedItem);
+                SaveDocumentation(toBeUpdated);
             }
-            else if (checkedItem.Selected == false)
+
+            ExtendItemSelection(checkedItem, false);
+            if(AnyItemsSelected() == false)
             {
-                SaveDocumentation();
-                DeselectCoDocumentedItems(checkedItem);
-                ConfirmDocumentationUrlStillApplies();
-            }
-            else
-            {
-                // Do nothing - some remaining checked items specify the proper page to display
+                ResetPage();
             }
         }
 
-        private void SaveDocumentation()
+        private void OnItemSelected(object sender, EventArgs e)
         {
-            EventsHelper.Fire(_beforeAccept, this, EventArgs.Empty);
-            foreach (TechnologistDocumentationTableItem item in CheckedItems())
+            OnItemSelected(((TechnologistDocumentationTable.ItemCheckedEventArgs) e).Item);
+        }
+
+        private void OnItemSelected(TechnologistDocumentationTableItem checkedItem)
+        {
+            ExtendItemSelection(checkedItem, true);
+            RefreshTableItemCheckStatuses(checkedItem);
+            UpdateActionEnablement(checkedItem.ProcedureStep.Status);
+            LoadDocumentationPage(checkedItem);
+        }
+
+        private void LoadDocumentationPage(TechnologistDocumentationTableItem checkedItem)
+        {
+            if (this.DisplayedDocumentationPageUrl == null)
             {
-                item.ProcedureStep.PerformedProcedureStep.Blob = CurrentData;
+                this.DisplayedDocumentationPageUrl = checkedItem.ProcedureStep.DocumentationPage.Url;
+            }
+
+            if (checkedItem.ProcedureStep.PerformedProcedureStep != null)
+            {
+                this.CurrentData = checkedItem.ProcedureStep.PerformedProcedureStep.Blob;
+                if (this.CurrentData != null)
+                {
+                    EventsHelper.Fire(_documentationDataChanged, this, EventArgs.Empty);
+                }
             }
         }
 
-        private void SelectCoDocumentedItems(TechnologistDocumentationTableItem checkedItem)
+        private bool AnyItemsSelected()
+        {
+            return CollectionUtils.Contains<TechnologistDocumentationTableItem>(
+                _documentationTable.Items,
+                delegate(TechnologistDocumentationTableItem item) { return item.Selected; });
+        }
+
+        /// <summary>
+        /// Extends selection/deselection to any items previously documented with the selected item
+        /// </summary>
+        /// <param name="checkedItem">The selected item</param>
+        /// <param name="selectionState">true to select, false to deselect</param>
+        private void ExtendItemSelection(TechnologistDocumentationTableItem checkedItem, bool selectionState)
         {
             foreach (TechnologistDocumentationTableItem item in CoDocumentedItems(checkedItem))
             {
-                item.Selected = true;
+                item.Selected = selectionState;
                 _documentationTable.Items.NotifyItemUpdated(item);
-            }   
+            }
         }
 
-        private void UpdateTableItemCheckStatuses(TechnologistDocumentationTableItem checkedItem)
+        private void RefreshTableItemCheckStatuses(TechnologistDocumentationTableItem checkedItem)
         {
+            if (checkedItem == null) return;
+
             foreach (TechnologistDocumentationTableItem item in _documentationTable.Items)
             {
                 item.CanSelect = item.ProcedureStep.CanDocumentWith(checkedItem.ProcedureStep);
                 _documentationTable.Items.NotifyItemUpdated(item);
             }
+
         }
 
-        private void DeselectCoDocumentedItems(TechnologistDocumentationTableItem checkedItem)
+        private void SaveDocumentation(IList<TechnologistDocumentationTableItem> items)
         {
-            foreach (TechnologistDocumentationTableItem item in CoDocumentedItems(checkedItem))
+            EventsHelper.Fire(_beforeDocumentationSaved, this, EventArgs.Empty);
+            foreach (TechnologistDocumentationTableItem item in items)
             {
-                item.Selected = false;
-                _documentationTable.Items.NotifyItemUpdated(item);
+                if (item.ProcedureStep.PerformedProcedureStep != null)
+                    item.ProcedureStep.PerformedProcedureStep.Blob = CurrentData;
             }
         }
 
-        private void ConfirmDocumentationUrlStillApplies()
+        private void ResetPage()
         {
-            bool anyItemsStillSelected = 
-                CollectionUtils.Contains<TechnologistDocumentationTableItem>(
-                    _documentationTable.Items,
-                    delegate(TechnologistDocumentationTableItem item) { return item.Selected; });
-
-            if(anyItemsStillSelected == false)
+            // make all items selectable and update display
+            foreach (TechnologistDocumentationTableItem item in _documentationTable.Items)
             {
-                // make all items selectable and update display
-                foreach (TechnologistDocumentationTableItem item in _documentationTable.Items)
+                if (item.CanSelect == false)
                 {
-                    if (item.CanSelect == false)
-                    {
-                        item.CanSelect = true;
-                        _documentationTable.Items.NotifyItemUpdated(item);
-                    }                   
+                    item.CanSelect = true;
+                    _documentationTable.Items.NotifyItemUpdated(item);
                 }
-
-                // remove documentation page
-                this.DisplayedDocumentationPageUrl = null;
-                this.CurrentData = null;
             }
+
+            ResetActionEnablement();
+
+            // remove documentation page
+            this.DisplayedDocumentationPageUrl = null;
+            this.CurrentData = null;
         }
 
-        private void LoadProcedureStepsTable()
-        {
-            // TODO remove dummy stuff
-            if (_workListItem != null)
-            {
-                Platform.GetService<ITechnologistDocumentationService>(
-                    delegate(ITechnologistDocumentationService service)
-                        {
-                            GetProcedureStepsForWorklistItemResponse response =
-                                service.GetProcedureStepsForWorklistItem(
-                                    new GetProcedureStepsForWorklistItemRequest(_workListItem));
-
-                            _procedureSteps = response.ProcedureSteps;
-                        });
-            }
-            else
-            {
-                _procedureSteps = new List<ProcedureStepDetail>();
-                _procedureSteps.Add(new ProcedureStepDetail("Scheduled", new DocumentationPageDetail("http://localhost/RIS/nuclearmedicine.htm")));
-                _procedureSteps.Add(new ProcedureStepDetail("Scheduled", new DocumentationPageDetail("http://localhost/RIS/breastimaging.htm")));
-                _procedureSteps.Add(new ProcedureStepDetail("Scheduled", new DocumentationPageDetail("http://localhost/RIS/nuclearmedicine.htm")));
-                _procedureSteps.Add(new ProcedureStepDetail("Scheduled", new DocumentationPageDetail("http://localhost/RIS/breastimaging.htm")));
-                _procedureSteps.Add(new ProcedureStepDetail("Scheduled", new DocumentationPageDetail("http://localhost/RIS/breastimaging2.htm")));
-                _procedureSteps.Add(new ProcedureStepDetail("Scheduled", new DocumentationPageDetail("http://localhost/RIS/breastimaging2.htm")));
-                _procedureSteps.Add(new ProcedureStepDetail("Started", new DocumentationPageDetail("http://localhost/RIS/breastimaging2.htm")));
-            }
-
-            foreach (ProcedureStepDetail step in _procedureSteps)
-            {
-                _documentationTable.Items.Add(new TechnologistDocumentationTableItem(step));
-            }
-        }
+        #endregion
 
         // "Complete" action handler
-        private void CompleteCheckedProcedures()
+        private void CompleteCheckedProcedures(DateTime time)
         {
             //UpdateSelectedStatuses("Completed");
             foreach (TechnologistDocumentationTableItem item in CheckedItems())
             {
                 item.ProcedureStep.Status = "Completed";
+                item.ProcedureStep.PerformedProcedureStep.EndTime = time;
                 _documentationTable.Items.NotifyItemUpdated(item);
             }
+
+            UpdateActionEnablement("Completed");
         }
 
         // "Start" action handler
-        private void StartCheckedProcedures()
+        private void StartCheckedProcedures(DateTime time)
         {
             PerformedProcedureStepDetail pps = new PerformedProcedureStepDetail();
+            pps.StartTime = time;
 
             foreach (TechnologistDocumentationTableItem item in CheckedItems())
             {
@@ -385,12 +451,13 @@ namespace ClearCanvas.Ris.Client.Adt
                 _documentationTable.Items.NotifyItemUpdated(item);
             }
 
-            TechnologistDocumentationTableItem checkedItem = 
+            TechnologistDocumentationTableItem checkedItem =
                 CollectionUtils.SelectFirst<TechnologistDocumentationTableItem>(
                     _documentationTable.Items,
                     delegate(TechnologistDocumentationTableItem d) { return d.Selected; });
 
-            UpdateTableItemCheckStatuses(checkedItem);
+            RefreshTableItemCheckStatuses(checkedItem);
+            UpdateActionEnablement("Started");
         }
 
         private IList<TechnologistDocumentationTableItem> CheckedItems()

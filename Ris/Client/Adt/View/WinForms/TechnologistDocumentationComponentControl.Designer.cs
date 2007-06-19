@@ -28,7 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection3 = new ClearCanvas.Desktop.Selection();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._cancelButton = new System.Windows.Forms.Button();
@@ -39,6 +39,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._procedureStepsTable = new ClearCanvas.Desktop.View.WinForms.DecoratedTableView();
             this.panel1 = new System.Windows.Forms.Panel();
             this._browser = new System.Windows.Forms.WebBrowser();
+            this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this._splitter.Panel1.SuspendLayout();
@@ -46,6 +47,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._splitter.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.panel1.SuspendLayout();
+            this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -109,7 +111,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // _splitter.Panel2
             // 
-            this._splitter.Panel2.Controls.Add(this.panel1);
+            this._splitter.Panel2.Controls.Add(this.groupBox1);
             this._splitter.Size = new System.Drawing.Size(861, 607);
             this._splitter.SplitterDistance = 241;
             this._splitter.TabIndex = 1;
@@ -150,9 +152,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._procedureStepsTable.Dock = System.Windows.Forms.DockStyle.Fill;
             this._procedureStepsTable.Location = new System.Drawing.Point(3, 3);
             this._procedureStepsTable.MenuModel = null;
+            this._procedureStepsTable.MultiSelect = false;
             this._procedureStepsTable.Name = "_procedureStepsTable";
             this._procedureStepsTable.ReadOnly = false;
-            this._procedureStepsTable.Selection = selection1;
+            this._procedureStepsTable.Selection = selection3;
             this._procedureStepsTable.Size = new System.Drawing.Size(855, 222);
             this._procedureStepsTable.TabIndex = 1;
             this._procedureStepsTable.Table = null;
@@ -166,9 +169,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.panel1.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
             this.panel1.Controls.Add(this._browser);
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Location = new System.Drawing.Point(3, 16);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(861, 362);
+            this.panel1.Size = new System.Drawing.Size(855, 343);
             this.panel1.TabIndex = 0;
             // 
             // _browser
@@ -177,8 +180,20 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._browser.Location = new System.Drawing.Point(0, 0);
             this._browser.MinimumSize = new System.Drawing.Size(20, 20);
             this._browser.Name = "_browser";
-            this._browser.Size = new System.Drawing.Size(857, 358);
+            this._browser.Size = new System.Drawing.Size(851, 339);
             this._browser.TabIndex = 0;
+            // 
+            // groupBox1
+            // 
+            this.groupBox1.AutoSize = true;
+            this.groupBox1.Controls.Add(this.panel1);
+            this.groupBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.groupBox1.Location = new System.Drawing.Point(0, 0);
+            this.groupBox1.Name = "groupBox1";
+            this.groupBox1.Size = new System.Drawing.Size(861, 362);
+            this.groupBox1.TabIndex = 1;
+            this.groupBox1.TabStop = false;
+            this.groupBox1.Text = "Active Item(s) Documentation";
             // 
             // TechnologistDocumentationComponentControl
             // 
@@ -199,6 +214,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel2.ResumeLayout(false);
             this.tableLayoutPanel2.PerformLayout();
             this.panel1.ResumeLayout(false);
+            this.groupBox1.ResumeLayout(false);
+            this.groupBox1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -216,6 +233,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.DecoratedTableView _procedureStepsTable;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.WebBrowser _browser;
+        private System.Windows.Forms.GroupBox groupBox1;
 
     }
 }

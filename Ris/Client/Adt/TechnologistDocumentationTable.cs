@@ -22,52 +22,92 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private event EventHandler _itemCheckAccepted;
-        private event EventHandler _itemCheckRejected;
+        private event EventHandler _itemSelected;
+        private event EventHandler _itemDeselected;
+        private event EventHandler _itemSelectionRejected;
 
         public TechnologistDocumentationTable()
             : base(1)
         {
-            this.Columns.Add(new TableColumn<TechnologistDocumentationTableItem, bool>("Selected",
+            this.Columns.Add(new TableColumn<TechnologistDocumentationTableItem, bool>(
+                "Active?",
                 delegate(TechnologistDocumentationTableItem d) { return d.Selected; },
                 delegate(TechnologistDocumentationTableItem d, bool value)
                    {
                        if (d.CanSelect)
                        {
                            d.Selected = value;
-                           EventsHelper.Fire(_itemCheckAccepted, this, new ItemCheckedEventArgs(d));
+                           if(value)
+                               EventsHelper.Fire(_itemSelected, this, new ItemCheckedEventArgs(d));
+                           else 
+                               EventsHelper.Fire(_itemDeselected, this, new ItemCheckedEventArgs(d));
                        }
                        else
                        {
-                           EventsHelper.Fire(_itemCheckRejected, this, new ItemCheckedEventArgs(d));
+                           EventsHelper.Fire(_itemSelectionRejected, this, new ItemCheckedEventArgs(d));
                        }
                    },
                0.5f));
 
-            this.Columns.Add(new TableColumn<TechnologistDocumentationTableItem, string>("Name",
+            this.Columns.Add(new TableColumn<TechnologistDocumentationTableItem, string>(
+                "Name",
                 delegate(TechnologistDocumentationTableItem d) { return d.ProcedureStep.Name; },
                 7.0f));
 
-            this.Columns.Add(new TableColumn<TechnologistDocumentationTableItem, string>("Status",
-                delegate(TechnologistDocumentationTableItem d) { return d.ProcedureStep.Status; },
-                1.0f));
+            TableColumn<TechnologistDocumentationTableItem, string> statusColumn = 
+                new TableColumn<TechnologistDocumentationTableItem, string>(
+                    "Status",
+                    delegate(TechnologistDocumentationTableItem d) { return d.ProcedureStep.Status; },
+                    1.0f);
+            this.Columns.Add(statusColumn);
+
+            TableColumn<TechnologistDocumentationTableItem, DateTime> startTimeColumn = 
+                new TableColumn<TechnologistDocumentationTableItem, DateTime>(
+                    "Start Time",
+                    delegate(TechnologistDocumentationTableItem d) 
+                    {
+                        if (d.ProcedureStep.PerformedProcedureStep == null) return DateTime.MinValue;
+                        return d.ProcedureStep.PerformedProcedureStep.StartTime;  
+                    },
+                    1.0f);
+            this.Columns.Add(startTimeColumn);
+
+            TableColumn<TechnologistDocumentationTableItem, DateTime> endTimeColumn = 
+                new TableColumn<TechnologistDocumentationTableItem, DateTime>(
+                    "End Time",
+                    delegate(TechnologistDocumentationTableItem d)
+                    {
+                        if (d.ProcedureStep.PerformedProcedureStep == null) return DateTime.MinValue;
+                        return d.ProcedureStep.PerformedProcedureStep.EndTime ?? DateTime.MinValue;
+                    },
+                    1.0f);
+            this.Columns.Add(endTimeColumn);
+
+            this.Sort(new TableSortParams(endTimeColumn, true));
 
             this.BackgroundColorSelector = 
-                delegate(object o) { return (((TechnologistDocumentationTableItem)o).CanSelect) ? "Empty" : "DimGray"; };
+                delegate(object o) { return (((TechnologistDocumentationTableItem)o).CanSelect) ? "Empty" : "LightCyan"; };
+            
             this.OutlineColorSelector =
                 delegate(object o) { return (((TechnologistDocumentationTableItem)o).CanSelect) ? "Empty" : "Red"; };
         }
 
-        public event EventHandler ItemCheckAccepted
+        public event EventHandler ItemSelected
         {
-            add { _itemCheckAccepted += value;  }
-            remove { _itemCheckAccepted -= value; }
+            add { _itemSelected += value;  }
+            remove { _itemSelected -= value; }
         }
 
-        public event EventHandler ItemCheckRejected
+        public event EventHandler ItemDeselected
         {
-            add { _itemCheckRejected += value; }
-            remove { _itemCheckRejected -= value; }
+            add { _itemDeselected += value; }
+            remove { _itemDeselected -= value; }
+        }
+
+        public event EventHandler ItemSelectionRejected
+        {
+            add { _itemSelectionRejected += value; }
+            remove { _itemSelectionRejected -= value; }
         }
     }
 }
