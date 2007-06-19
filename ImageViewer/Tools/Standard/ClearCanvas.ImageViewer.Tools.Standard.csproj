@@ -112,6 +112,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>AvailableLutPresetKeyStrokeSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="LutPresets\PresetVoiLutLinearState.cs" />
     <Compile Include="LutPresets\Tests\VoiLutPresetTests.cs" />
     <Compile Include="LutPresets\VoiLutPresetConfigurationCollection.cs" />
     <Compile Include="LutPresets\VoiLutPreset.cs" />

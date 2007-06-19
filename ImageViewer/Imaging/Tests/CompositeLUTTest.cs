@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.AreEqual(10, modalityLUT[0]);
 			Assert.AreEqual(137, modalityLUT[255]);
 
-			VOILUTLinear voiLUT = new VOILUTLinear(
+			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
 				modalityLUT.MinOutputValue,
 				modalityLUT.MaxOutputValue);
 
@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.AreEqual(200, modalityLUT[0]);
 			Assert.AreEqual(3000, modalityLUT[4095]);
 
-			VOILUTLinear voiLUT = new VOILUTLinear(
+			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
 				modalityLUT.MinOutputValue,
 				modalityLUT.MaxOutputValue);
 
@@ -139,7 +139,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.AreEqual(-1024, modalityLUT[0]);
 			Assert.AreEqual(64511, modalityLUT[65535]);
 
-			VOILUTLinear voiLUT = new VOILUTLinear(
+			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
 				modalityLUT.MinOutputValue,
 				modalityLUT.MaxOutputValue);
 
@@ -193,7 +193,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.AreEqual(-54, modalityLUT[-128]);
 			Assert.AreEqual(73, modalityLUT[127]);
 
-			VOILUTLinear voiLUT = new VOILUTLinear(
+			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
 				modalityLUT.MinOutputValue,
 				modalityLUT.MaxOutputValue);
 
@@ -241,7 +241,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.AreEqual(-2048, modalityLUT[-2048]);
 			Assert.AreEqual(2047, modalityLUT[2047]);
 
-			VOILUTLinear voiLUT = new VOILUTLinear(
+			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
 				modalityLUT.MinOutputValue,
 				modalityLUT.MaxOutputValue);
 
@@ -289,7 +289,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			Assert.AreEqual(-33792, modalityLUT[-32768]);
 			Assert.AreEqual(31743, modalityLUT[32767]);
 
-			VOILUTLinear voiLUT = new VOILUTLinear(
+			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
 				modalityLUT.MinOutputValue,
 				modalityLUT.MaxOutputValue);
 
@@ -325,7 +325,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double windowWidth = 350;
 			double windowLevel = 40;
 
-			VOILUTLinear voiLUT = new VOILUTLinear(0, 4095);
+			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(0, 4095);
 
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;
@@ -352,7 +352,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 				rescaleSlope, 
 				rescaleIntercept);
 
-			VOILUTLinear voiLUT = new VOILUTLinear(
+			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
 				modalityLUT.MinOutputValue,
 				modalityLUT.MaxOutputValue);
 
@@ -382,7 +382,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 				rescaleSlope, 
 				rescaleIntercept);
 
-			VOILUTLinear voiLUT = new VOILUTLinear(
+			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(
 				modalityLUT.MinOutputValue,
 				modalityLUT.MaxOutputValue);
 
@@ -420,7 +420,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 				rescaleSlope, 
 				rescaleIntercept);
 
-			VOILUTLinear voiLUT = new VOILUTLinear(0, 65535);
+			StatefulVoiLutLinear voiLUT = new StatefulVoiLutLinear(0, 65535);
 
 			voiLUT.WindowWidth = windowWidth;
 			voiLUT.WindowCenter = windowLevel;

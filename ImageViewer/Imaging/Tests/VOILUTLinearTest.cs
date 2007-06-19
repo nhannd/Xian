@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double windowWidth = 1;
 			double windowLevel = 11;
 
-			VOILUTLinear lut = new VOILUTLinear(10, 11);
+			StatefulVoiLutLinear lut = new StatefulVoiLutLinear(10, 11);
 
 			lut.WindowWidth = windowWidth;
 			lut.WindowCenter = windowLevel;
@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double windowWidth = 1;
 			double windowLevel = 0;
 
-			VOILUTLinear lut = new VOILUTLinear(-1,	0);
+			StatefulVoiLutLinear lut = new StatefulVoiLutLinear(-1,	0);
 
 			lut.WindowWidth = windowWidth;
 			lut.WindowCenter = windowLevel;
@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double windowWidth = 4096;
 			double windowLevel = 2147;
 
-			VOILUTLinear lut = new VOILUTLinear(100, 4195);
+			StatefulVoiLutLinear lut = new StatefulVoiLutLinear(100, 4195);
 
 			lut.WindowWidth = windowWidth;
 			lut.WindowCenter = windowLevel;
@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double windowWidth = 4096;
 			double windowLevel = 0;
 
-			VOILUTLinear lut = new VOILUTLinear(-2048, 2047);
+			StatefulVoiLutLinear lut = new StatefulVoiLutLinear(-2048, 2047);
 
 			lut.WindowWidth = windowWidth;
 			lut.WindowCenter = windowLevel;
@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double windowWidth = 4096;
 			double windowLevel = 2047;
 
-			VOILUTLinear lut = new VOILUTLinear(0, 4095);
+			StatefulVoiLutLinear lut = new StatefulVoiLutLinear(0, 4095);
 
 			lut.WindowWidth = windowWidth;
 			lut.WindowCenter = windowLevel;
@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double windowWidth = 1;
 			double windowLevel = 0;
 
-			VOILUTLinear lut = new VOILUTLinear(-2048, 2047);
+			StatefulVoiLutLinear lut = new StatefulVoiLutLinear(-2048, 2047);
 
 			lut.WindowWidth = windowWidth;
 			lut.WindowCenter = windowLevel;
@@ -135,7 +135,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double windowWidth = 8192;
 			double windowLevel = 0;
 
-			VOILUTLinear lut = new VOILUTLinear(-2048, 2047);
+			StatefulVoiLutLinear lut = new StatefulVoiLutLinear(-2048, 2047);
 
 			lut.WindowWidth = windowWidth;
 			lut.WindowCenter = windowLevel;
@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double windowWidth = 4096;
 			double windowLevel = 0;
 
-			VOILUTLinear lut = new VOILUTLinear(-2048, 2047);
+			StatefulVoiLutLinear lut = new StatefulVoiLutLinear(-2048, 2047);
 
 			lut.WindowWidth = windowWidth;
 			lut.WindowCenter = windowLevel;
@@ -167,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double windowWidth = 4096;
 			double windowLevel = 0;
 
-			VOILUTLinear lut = new VOILUTLinear(-2048, 2047);
+			StatefulVoiLutLinear lut = new StatefulVoiLutLinear(-2048, 2047);
 
 			lut.WindowWidth = windowWidth;
 			lut.WindowCenter = windowLevel;
@@ -182,7 +182,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double windowWidth = 0;
 			double windowLevel = 0;
 
-			VOILUTLinear lut = new VOILUTLinear(-2048, 2047);
+			StatefulVoiLutLinear lut = new StatefulVoiLutLinear(-2048, 2047);
 
 			lut.WindowWidth = windowWidth;
 			lut.WindowCenter = windowLevel;
@@ -195,7 +195,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double windowWidth = 1;
 			double windowLevel = 0;
 
-			VOILUTLinear lut = new VOILUTLinear(1, 0);
+			StatefulVoiLutLinear lut = new StatefulVoiLutLinear(1, 0);
 
 			lut.WindowWidth = windowWidth;
 			lut.WindowCenter = windowLevel;

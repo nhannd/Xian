@@ -185,6 +185,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		void OnLUTChanged(object sender, LUTEventArgs e)
 		{
+			_recalculate = true;
 			OnLUTAdded(sender, e);
 		}
 

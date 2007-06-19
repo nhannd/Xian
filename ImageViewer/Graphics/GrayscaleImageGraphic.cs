@@ -225,14 +225,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-		public static VOILUTLinear NewVoiLutLinear(GrayscaleImageGraphic fromGraphic, VoiLutLinearState state)
+		public static IStatefulVoiLutLinear NewVoiLutLinear(GrayscaleImageGraphic fromGraphic, IVoiLutLinearState state)
 		{
-			return new VOILUTLinear(state, fromGraphic.ModalityLUT.MinOutputValue, fromGraphic.ModalityLUT.MaxOutputValue);
+			return new StatefulVoiLutLinear(state, fromGraphic.ModalityLUT.MinOutputValue, fromGraphic.ModalityLUT.MaxOutputValue);
 		}
 
-		public static VOILUTLinear NewVoiLutLinear(GrayscaleImageGraphic fromGraphic)
+		public static IStatefulVoiLutLinear NewVoiLutLinear(GrayscaleImageGraphic fromGraphic)
 		{
-			return new VOILUTLinear(fromGraphic.ModalityLUT.MinOutputValue, fromGraphic.ModalityLUT.MaxOutputValue);
+			return new StatefulVoiLutLinear(fromGraphic.ModalityLUT.MinOutputValue, fromGraphic.ModalityLUT.MaxOutputValue);
 		}
 
 		private void InstallGrayscaleLUTs(
@@ -248,7 +248,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			this.LUTComposer.LUTCollection.Add(modalityLut);
 
-			VOILUTLinear voiLut = NewVoiLutLinear(this);
+			IStatefulVoiLutLinear voiLut = NewVoiLutLinear(this);
 			this.LUTComposer.LUTCollection.Add(voiLut);
 
 			PresentationLUT presentationLut = this.LUTFactory.GetPresentationLUT(

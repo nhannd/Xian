@@ -143,8 +143,13 @@
     <Compile Include="Graphics\StandardGrayscaleImageGraphic.cs" />
     <Compile Include="Graphics\StandardPaletteColorImageGraphic.cs" />
     <Compile Include="Graphics\StandardVoiLutManager.cs" />
+    <Compile Include="Imaging\StandardVoiLutLinear.cs" />
     <Compile Include="Imaging\CalculatedVoiLutLinearState.cs" />
     <Compile Include="Imaging\HeaderVoiLutLinearState.cs" />
+    <Compile Include="Imaging\IStatefulVoiLutLinear.cs" />
+    <Compile Include="Imaging\IVoiLutLinearFactory.cs" />
+    <Compile Include="Imaging\IVoiLutLinearState.cs" />
+    <Compile Include="Imaging\VoiLutLinearStateBase.cs" />
     <Compile Include="Imaging\VoiLutOperationApplicator.cs" />
     <Compile Include="Imaging\IVoiLutManager.cs" />
     <Compile Include="Imaging\IVoiLutManagerProvider.cs" />
@@ -333,7 +338,7 @@
     <Compile Include="Imaging\Tests\LUTTest.cs" />
     <Compile Include="Imaging\Tests\ModalityLUTLinearTest.cs" />
     <Compile Include="Imaging\Tests\VOILUTLinearTest.cs" />
-    <Compile Include="Imaging\VOILUTLinear.cs" />
+    <Compile Include="Imaging\StatefulVOILUTLinear.cs" />
     <Compile Include="Imaging\VoiLutLinearState.cs" />
     <Compile Include="Annotations\AnnotationBox.cs" />
     <Compile Include="Graphics\GraphicCollection.cs" />

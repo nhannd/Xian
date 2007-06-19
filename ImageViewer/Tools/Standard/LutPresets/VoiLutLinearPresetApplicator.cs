@@ -3,6 +3,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 {
@@ -10,6 +11,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 	{
 		private int _windowWidth;
 		private int _windowCenter;
+		private string _name;
 
 		public VoiLutLinearPresetApplicator(int windowWidth, int windowCenter)
 		{
@@ -17,6 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 			_windowCenter = windowCenter;
 		}
 
+		
 		public int WindowWidth
 		{
 			get { return _windowWidth; }
@@ -29,33 +32,44 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 
 		#region IVoiLutPresetApplicator Members
 
+		public string Name
+		{
+			get	{ return _name; }
+			set	{ _name = value; }
+		}
+
 		public bool AppliesTo(IPresentationImage image)
 		{
-			IVOILUTLinearProvider provider = image as IVOILUTLinearProvider;
-			if (provider == null)
-				return false;
-
-			if (provider.VoiLutLinear == null)
-				return false;
-
-			return true;
+			return (image is IVoiLutManagerProvider && image is IVOILUTLinearProvider);
 		}
 
 		public void Apply(IPresentationImage image)
 		{
 			Platform.CheckForNullReference(image, "image");
 
-			IVOILUTLinearProvider provider = image as IVOILUTLinearProvider;
-			Platform.CheckForInvalidCast(provider, "image", "IVOILUTLinearProvider");
-			Platform.CheckForNullReference(provider.VoiLutLinear, "provider.VoiLutLinear");
+			IVoiLutManagerProvider provider = image as IVoiLutManagerProvider;
+			Platform.CheckForInvalidCast(provider, "image", "provider");
+			Platform.CheckForNullReference(provider.VoiLutManager, "provider.VoiLutManager");
 
+			IVOILUTLinearProvider lutProvider = image as IVOILUTLinearProvider;
+			Platform.CheckForInvalidCast(lutProvider, "image", "IVOILUTLinearProvider");
+			
 			VoiLutOperationApplicator applicator = new VoiLutOperationApplicator(image);
 			UndoableCommand command = new UndoableCommand(applicator);
 			command.Name = SR.CommandWindowLevelPreset;
 			command.BeginState = applicator.CreateMemento();
 
-			provider.VoiLutLinear.WindowWidth = this.WindowWidth;
-			provider.VoiLutLinear.WindowCenter = this.WindowCenter;
+			PresetVoiLutLinearState state = new PresetVoiLutLinearState(_name, this.WindowWidth, this.WindowCenter);
+			IStatefulVoiLutLinear statefulLut = lutProvider.VoiLutLinear as IStatefulVoiLutLinear;
+			if (statefulLut == null)
+			{
+			    statefulLut = provider.VoiLutManager.CreateStatefulLut(state);
+			    provider.VoiLutManager.InstallVoiLut(statefulLut);
+			}
+			else
+			{
+			    statefulLut.State = state;
+			}
 
 			applicator.ApplyToLinkedImages();
 			command.EndState = applicator.CreateMemento();

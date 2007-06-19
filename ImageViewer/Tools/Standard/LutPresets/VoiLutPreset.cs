@@ -22,7 +22,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 			_name = name;
 			_modalityFilter = modalityFilter;
 			_keyStroke = keyStroke;
+
 			_lutPresetApplicator = lutPresetApplicator;
+			_lutPresetApplicator.Name = _name;
 		}
 
 		#region IVoiLutPreset Members

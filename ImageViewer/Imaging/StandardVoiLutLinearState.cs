@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public sealed class StandardVoiLutLinearState : VoiLutLinearState
+	public class StandardVoiLutLinearState : VoiLutLinearState
 	{
 		private double _windowWidth;
 		private double _windowCenter;
@@ -50,23 +50,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public override IMemorableComposableLutMemento SnapshotMemento()
 		{
-			StandardVoiLutLinearState memento = new StandardVoiLutLinearState();
-			memento._windowCenter = this._windowCenter;
-			memento._windowWidth = this._windowWidth;
-			base.CopyTo(memento);
-			return memento;
+			return new StandardVoiLutLinearState(this.WindowWidth, this.WindowCenter);
 		}
 
-		public override bool Equals(VoiLutLinearState other)
+		public override bool Equals(IVoiLutLinearState other)
 		{
 			if (other == null)
 				return false;
 
 			StandardVoiLutLinearState otherState = other as StandardVoiLutLinearState;
 			if (otherState == null)
-				return false;
-
-			if (!base.Equals(other))
 				return false;
 
 			return (otherState.WindowCenter == this._windowCenter && otherState.WindowWidth == this.WindowWidth);

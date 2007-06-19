@@ -83,10 +83,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			//Right now, this VoiLutManager only understands VoiLutLinear 'auto' luts.  In the
 			//future, it may also be able to apply data luts from the header.
-			VOILUTLinear linearLut = this.VoiLut as VOILUTLinear;
-			if (linearLut != null)
+			IStatefulVoiLutLinear statefulLinearLut = this.VoiLut as IStatefulVoiLutLinear;
+			if (statefulLinearLut != null)
 			{
-				HeaderVoiLutLinearState state = linearLut.State as HeaderVoiLutLinearState;
+				HeaderVoiLutLinearState state = statefulLinearLut.State as HeaderVoiLutLinearState;
 				if (state != null)
 				{
 					int newIndex = state.HeaderLutIndex + 1;
@@ -96,12 +96,60 @@ namespace ClearCanvas.ImageViewer.Graphics
 					if (state.HeaderLutIndex == newIndex)
 						return;
 
-					linearLut.State = new HeaderVoiLutLinearState(newIndex, GetHeaderWindowLevelValues);
+					statefulLinearLut.State = new HeaderVoiLutLinearState(newIndex, GetHeaderWindowLevelValues);
 					return;
 				}
 			}
 
 			this.InstallVoiLut(GrayscaleImageGraphic.NewVoiLutLinear(_parentImageGraphic, new HeaderVoiLutLinearState(0, this.GetHeaderWindowLevelValues)));
+		}
+
+		#endregion
+
+		#region IMemorable Members
+
+		/// <summary>
+		/// Implements the Memento pattern.  This method creates a memento for the Voi
+		/// Lut that is currently applied so that it can be restored by an undo operation.
+		/// </summary>
+		/// <returns>an <see cref="IMemento"/> that is capable of restoring the previous lut state.</returns>
+		public IMemento CreateMemento()
+		{
+			return this.VoiLut.CreateMemento();
+		}
+
+		/// <summary>
+		/// Implements the memento pattern.  This method changes the parent image's Voi Lut based on the
+		/// supplied memento.
+		/// </summary>
+		/// <param name="memento">the memento to use to change the parent image's Voi Lut.</param>
+		public void SetMemento(IMemento memento)
+		{
+			Platform.CheckForNullReference(memento, "memento");
+			IMemorableComposableLutMemento lutMemento = memento as IMemorableComposableLutMemento;
+			Platform.CheckForInvalidCast(lutMemento, "memento", "IMemorableComposableLutMemento");
+
+			if (!this.VoiLut.TrySetMemento(lutMemento))
+				this.InstallVoiLut(lutMemento.RestoreLut(_parentImageGraphic.ModalityLUT.MinOutputValue, _parentImageGraphic.ModalityLUT.MaxOutputValue));
+		}
+
+		#endregion
+
+		#region IVoiLutLinearFactory Members
+
+		public IVOILUTLinear CreateLut()
+		{
+			return StandardGrayscaleImageGraphic.NewVoiLutLinear(_parentImageGraphic);
+		}
+
+		public IStatefulVoiLutLinear CreateStatefulLut()
+		{
+			return StandardGrayscaleImageGraphic.NewVoiLutLinear(_parentImageGraphic);
+		}
+
+		public IStatefulVoiLutLinear CreateStatefulLut(IVoiLutLinearState initialState)
+		{
+			return StandardGrayscaleImageGraphic.NewVoiLutLinear(_parentImageGraphic, initialState);
 		}
 
 		#endregion
@@ -132,34 +180,5 @@ namespace ClearCanvas.ImageViewer.Graphics
 				windowCenter = this.LinearHeaderLuts[headerLutIndex].Center;
 			}
 		}
-
-		#region IMemorable Members
-
-		/// <summary>
-		/// Implements the Memento pattern.  This method creates a memento for the Voi
-		/// Lut that is currently applied so that it can be restored by an undo operation.
-		/// </summary>
-		/// <returns>an <see cref="IMemento"/> that is capable of restoring the previous lut state.</returns>
-		public IMemento CreateMemento()
-		{
-			return this.VoiLut.CreateMemento();
-		}
-
-		/// <summary>
-		/// Implements the memento pattern.  This method changes the parent image's Voi Lut based on the
-		/// supplied memento.
-		/// </summary>
-		/// <param name="memento">the memento to use to change the parent image's Voi Lut.</param>
-		public void SetMemento(IMemento memento)
-		{
-			Platform.CheckForNullReference(memento, "memento");
-			IMemorableComposableLutMemento lutMemento = memento as IMemorableComposableLutMemento;
-			Platform.CheckForInvalidCast(lutMemento, "memento", "IMemorableComposableLutMemento");
-
-			if (!this.VoiLut.TrySetMemento(lutMemento))
-				this.InstallVoiLut(lutMemento.RestoreLut());
-		}
-
-		#endregion
 	}
 }

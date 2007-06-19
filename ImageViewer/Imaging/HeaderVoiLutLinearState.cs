@@ -18,21 +18,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public override IMemorableComposableLutMemento SnapshotMemento()
 		{
-			HeaderVoiLutLinearState memento = new HeaderVoiLutLinearState(base.StateData, base.GetValuesDelegate);
-			base.CopyTo(memento);
-			return memento;
+			return new HeaderVoiLutLinearState(base.StateData, base.GetValuesDelegate);
 		}
 
-		public override bool Equals(VoiLutLinearState other)
+		public override bool Equals(IVoiLutLinearState other)
 		{
 			if (other == null)
 				return false;
 
 			HeaderVoiLutLinearState otherState = other as HeaderVoiLutLinearState;
 			if (otherState == null)
-				return false;
-
-			if (!base.Equals(other))
 				return false;
 
 			return (otherState.HeaderLutIndex == this.HeaderLutIndex);
