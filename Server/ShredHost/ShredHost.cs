@@ -74,10 +74,11 @@ namespace ClearCanvas.Server.ShredHost
             }
 
             Platform.Log("Shred Host stop request received");
+            Platform.Log("Shreds stopped");
             WcfHelper.StopHost(_sed);
-            Platform.Log("ShredHost WCF Service stopped");
             StopShreds();
-            Platform.Log("Completing Shred Host stop");
+
+            Platform.Log("Shred Host WCF service stopped");
 
             _shredInfoList.Clear();
             lock (_lockObject)
