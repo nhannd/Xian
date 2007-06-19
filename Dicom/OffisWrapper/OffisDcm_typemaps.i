@@ -192,8 +192,9 @@
 %typemap(csin) unsigned long& "ref $csinput"
 
 %apply uint *OUTPUT {unsigned long *count};
+//%apply unsigned char *INOUT {unsigned char *value};
 
-/*
+
 %define INPUT_ARRAY_TYPEMAP(TYPE, CTYPE, CSTYPE)
 %typemap(ctype) TYPE *INPUT_ARRAY "CTYPE"
 %typemap(imtype) TYPE *INPUT_ARRAY "CSTYPE"
@@ -202,36 +203,22 @@
 %typemap(in) TYPE *INPUT_ARRAY %{ $1 = ($1_ltype)$input; %}
 %enddef
 
-INPUT_ARRAY_TYPEMAP(const unsigned char,	const unsigned char*,	byte[])
-INPUT_ARRAY_TYPEMAP(const short,			const short*,			short[])
-INPUT_ARRAY_TYPEMAP(const unsigned short,	const unsigned short*,	ushort[])
-INPUT_ARRAY_TYPEMAP(const int,				const int*,				int[])
-INPUT_ARRAY_TYPEMAP(const unsigned int,		const unsigned int*,	uint[])
-INPUT_ARRAY_TYPEMAP(const long,				const long*,			int[])
-INPUT_ARRAY_TYPEMAP(const unsigned long,	const unsigned long*,	uint[])
-INPUT_ARRAY_TYPEMAP(const float,			const float*,			float[])
-INPUT_ARRAY_TYPEMAP(const double,			const double*,			double[])
-
-%apply const unsigned char *INPUT_ARRAY {Uint8 *};
-%apply const unsigned short *INPUT_ARRAY {Uint16 *};
-%apply const short *INPUT_ARRAY {Sint16 *};
-%apply const unsigned int *INPUT_ARRAY {Uint32 *};
-%apply const int *INPUT_ARRAY {Sint32 *};
-%apply const float *INPUT_ARRAY {Float32 *};
-%apply const double *INPUT_ARRAY {Float64 *};
+INPUT_ARRAY_TYPEMAP( unsigned char,	 unsigned char*,	[MarshalAs(UnmanagedType.LPArray)] byte[])
+INPUT_ARRAY_TYPEMAP( short,		 short*,		[MarshalAs(UnmanagedType.LPArray)] short[])
+INPUT_ARRAY_TYPEMAP( unsigned short,	 unsigned short*,	[MarshalAs(UnmanagedType.LPArray)] ushort[])
+INPUT_ARRAY_TYPEMAP( int,		 int*,		        [MarshalAs(UnmanagedType.LPArray)] int[])
+INPUT_ARRAY_TYPEMAP( unsigned int,	 unsigned int*,	        [MarshalAs(UnmanagedType.LPArray)] uint[])
+INPUT_ARRAY_TYPEMAP( long,		 long*,			[MarshalAs(UnmanagedType.LPArray)] int[])
+INPUT_ARRAY_TYPEMAP( unsigned long,	 unsigned long*,	[MarshalAs(UnmanagedType.LPArray)] uint[])
+INPUT_ARRAY_TYPEMAP( float,		 float*,	        [MarshalAs(UnmanagedType.LPArray)] float[])
+INPUT_ARRAY_TYPEMAP( double,		 double*,		[MarshalAs(UnmanagedType.LPArray)] double[])
 
 
+%apply unsigned char *INPUT_ARRAY {unsigned char *value};
+%apply unsigned short *INPUT_ARRAY {unsigned short *value};
+%apply short *INPUT_ARRAY {short *value};
+%apply float *INPUT_ARRAY {float *value};
 
-
-%apply unsigned char *OUTPUT {Uint8 &};
-%apply short *OUTPUT {Sint16 &};
-%apply unsigned int *OUTPUT {Uint32 &};
-%apply int *OUTPUT {Sint32 &};
-%apply int *OUTPUT {long int &};
-%apply float *OUTPUT {Float32 &};
-%apply double *OUTPUT {Float64 &};
-%apply double *OUTPUT {double &};
-*/
 
 // 
 // This macro defines typemaps that are useful when Offis functions
