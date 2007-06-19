@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Gb.
+        ///   Looks up a localized string similar to GB.
         /// </summary>
         internal static string LabelGigabytes {
             get {
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Kb.
+        ///   Looks up a localized string similar to KB.
         /// </summary>
         internal static string LabelKilobytes {
             get {
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Mb.
+        ///   Looks up a localized string similar to MB.
         /// </summary>
         internal static string LabelMegabytes {
             get {
@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Tb.
+        ///   Looks up a localized string similar to TB.
         /// </summary>
         internal static string LabelTerabytes {
             get {

@@ -133,16 +133,16 @@
     <value>bytes</value>
   </data>
   <data name="LabelGigabytes" xml:space="preserve">
-    <value>Gb</value>
+    <value>GB</value>
   </data>
   <data name="LabelKilobytes" xml:space="preserve">
-    <value>Kb</value>
+    <value>KB</value>
   </data>
   <data name="LabelMegabytes" xml:space="preserve">
-    <value>Mb</value>
+    <value>MB</value>
   </data>
   <data name="LabelTerabytes" xml:space="preserve">
-    <value>Tb</value>
+    <value>TB</value>
   </data>
   <data name="MessageFailedToRetrieveDiskspaceManagementSettings" xml:space="preserve">
     <value>Failed to retrieve Diskspace Management settings.  Make sure the ClearCanvas Service is running.</value>
