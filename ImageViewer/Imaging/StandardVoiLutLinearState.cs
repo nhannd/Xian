@@ -29,10 +29,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 			set
 			{
-				if (value < 1)
-					value = 1;
-
-				_windowWidth = value;
+				_windowWidth = Math.Max(1, value);
 			}
 		}
 

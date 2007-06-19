@@ -25,30 +25,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 		}
 
-		/// <summary>	
-		/// Gets the Window Width/Center values from the Dicom Header of the parent image.
-		/// </summary>
-		protected Window[] LinearHeaderLuts
-		{
-			get { return _parentImageGraphic.ImageSop.WindowCenterAndWidth; }
-		}
-
-		/// <summary>
-		/// Returns the number of Linear Header Luts in the Dicom Header of the parent image.
-		/// </summary>
-		protected int NumberOfLinearHeaderLuts
-		{
-			get { return this.AnyLinearHeaderLuts ? this.LinearHeaderLuts.Length : 0; }
-		}
-
-		/// <summary>
-		/// Returns whether or not there are any Linear Header Luts in the Dicom Header of the parent image.
-		/// </summary>
-		protected bool AnyLinearHeaderLuts
-		{
-			get { return !(this.LinearHeaderLuts == null || this.LinearHeaderLuts.Length == 0); }
-		}
-
 		protected IMemorableComposableLut VoiLut
 		{
 			get { return _parentImageGraphic.VoiLUT as IMemorableComposableLut; }
@@ -86,22 +62,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 			IStatefulVoiLutLinear statefulLinearLut = this.VoiLut as IStatefulVoiLutLinear;
 			if (statefulLinearLut != null)
 			{
-				HeaderVoiLutLinearState state = statefulLinearLut.State as HeaderVoiLutLinearState;
+				StandardGrayscaleImageGraphicVoiLutLinearState state = statefulLinearLut.State as StandardGrayscaleImageGraphicVoiLutLinearState;
 				if (state != null)
 				{
-					int newIndex = state.HeaderLutIndex + 1;
-					if (newIndex >= this.NumberOfLinearHeaderLuts)
-						newIndex = 0;
-
-					if (state.HeaderLutIndex == newIndex)
-						return;
-
-					statefulLinearLut.State = new HeaderVoiLutLinearState(newIndex, GetHeaderWindowLevelValues);
+					++state.HeaderLutIndex;
 					return;
 				}
 			}
 
-			this.InstallVoiLut(GrayscaleImageGraphic.NewVoiLutLinear(_parentImageGraphic, new HeaderVoiLutLinearState(0, this.GetHeaderWindowLevelValues)));
+			this.InstallVoiLut(this.CreateStatefulLut(new StandardGrayscaleImageGraphicVoiLutLinearState(0, _parentImageGraphic)));
 		}
 
 		#endregion
@@ -129,8 +98,27 @@ namespace ClearCanvas.ImageViewer.Graphics
 			IMemorableComposableLutMemento lutMemento = memento as IMemorableComposableLutMemento;
 			Platform.CheckForInvalidCast(lutMemento, "memento", "IMemorableComposableLutMemento");
 
-			if (!this.VoiLut.TrySetMemento(lutMemento))
-				this.InstallVoiLut(lutMemento.RestoreLut(_parentImageGraphic.ModalityLUT.MinOutputValue, _parentImageGraphic.ModalityLUT.MaxOutputValue));
+			//A slight hack.  Because some Luts and/or their mementos/states will need access to the image graphic itself,
+			//and because we often use a memento from another image to change the lut state, we swap the graphic member temporarily
+			//until we have successfully altered/installed the lut, then we swap it back.
+			IStandardGrayscaleImageGraphicMemorableComposableLutMemento graphicMemento = lutMemento as IStandardGrayscaleImageGraphicMemorableComposableLutMemento;
+			StandardGrayscaleImageGraphic oldGraphic = null;
+			if (graphicMemento != null)
+			{
+				oldGraphic = graphicMemento.Graphic;
+				graphicMemento.Graphic = _parentImageGraphic;
+			}
+
+			try
+			{
+				if (!this.VoiLut.TrySetMemento(lutMemento))
+					this.InstallVoiLut(lutMemento.RestoreLut(_parentImageGraphic.ModalityLUT.MinOutputValue, _parentImageGraphic.ModalityLUT.MaxOutputValue));
+			}
+			finally
+			{
+				if (graphicMemento != null)
+					graphicMemento.Graphic = oldGraphic;
+			}
 		}
 
 		#endregion
@@ -153,32 +141,5 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		#endregion
-
-		/// <summary>
-		/// Delegate passed to a <see cref="HeaderVoiLutLinearState"/> to get the Window/Level values from the image header on demand.
-		/// If no Luts exist in the header, the minimum and maximum pixel values are calculated from the image pixel data.
-		/// </summary>
-		/// <param name="headerLutIndex">the index of the header lut</param>
-		/// <param name="windowWidth">returns the window width</param>
-		/// <param name="windowCenter">returns the window center</param>
-		protected void GetHeaderWindowLevelValues(int headerLutIndex, out double windowWidth, out double windowCenter)
-		{
-			Platform.CheckArgumentRange(headerLutIndex, 0, this.NumberOfLinearHeaderLuts, "headerLutIndex");
-
-			if (!this.AnyLinearHeaderLuts)
-			{
-				//just computing the min/max pixel value for now.  Could later use an algorithm, possibly via an extension point.
-				int minPixelValue = _parentImageGraphic.ModalityLUT[_parentImageGraphic.MinPixelValue];
-				int maxPixelValue = _parentImageGraphic.ModalityLUT[_parentImageGraphic.MaxPixelValue];
-
-				windowWidth = (maxPixelValue - minPixelValue) + 1;
-				windowCenter = Math.Truncate(minPixelValue + windowWidth / 2.0);
-			}
-			else
-			{
-				windowWidth = this.LinearHeaderLuts[headerLutIndex].Width;
-				windowCenter = this.LinearHeaderLuts[headerLutIndex].Center;
-			}
-		}
 	}
 }

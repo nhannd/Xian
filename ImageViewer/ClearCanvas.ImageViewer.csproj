@@ -141,11 +141,12 @@
     <Compile Include="Graphics\StandardColorImageGraphic.cs" />
     <Compile Include="Graphics\IndexedImageGraphic.cs" />
     <Compile Include="Graphics\StandardGrayscaleImageGraphic.cs" />
+    <Compile Include="Graphics\StandardGrayscaleImageGraphicMemorableComposableLutMemento.cs" />
+    <Compile Include="Graphics\StandardGrayscaleImageGraphicVoiLutLinearStateBase.cs" />
     <Compile Include="Graphics\StandardPaletteColorImageGraphic.cs" />
     <Compile Include="Graphics\StandardVoiLutManager.cs" />
     <Compile Include="Imaging\StandardVoiLutLinear.cs" />
-    <Compile Include="Imaging\CalculatedVoiLutLinearState.cs" />
-    <Compile Include="Imaging\HeaderVoiLutLinearState.cs" />
+    <Compile Include="Graphics\StandardGrayscaleImageGraphicVoiLutLinearState.cs" />
     <Compile Include="Imaging\IStatefulVoiLutLinear.cs" />
     <Compile Include="Imaging\IVoiLutLinearFactory.cs" />
     <Compile Include="Imaging\IVoiLutLinearState.cs" />

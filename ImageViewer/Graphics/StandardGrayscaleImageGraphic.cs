@@ -54,6 +54,30 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return _imageSop; }
 		}
 
+		/// <summary>	
+		/// Gets the Window Width/Center values from the Dicom Header.
+		/// </summary>
+		public Window[] WindowCenterValues
+		{
+			get { return ImageSop.WindowCenterAndWidth; }
+		}
+
+		/// <summary>
+		/// Returns the number of Linear Header Luts in the Dicom Header.
+		/// </summary>
+		public int NumberOfWindowCenterValues
+		{
+			get { return this.AnyWindowCenterValues ? this.WindowCenterValues.Length : 0; }
+		}
+
+		/// <summary>
+		/// Returns whether or not there are any Linear Header Luts.
+		/// </summary>
+		public bool AnyWindowCenterValues
+		{
+			get { return !(this.WindowCenterValues == null || this.WindowCenterValues.Length == 0); }
+		}
+
 		/// <summary>
 		/// Gets the pixel data from the associated <see cref="ImageSop"/>.
 		/// </summary>
@@ -65,6 +89,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		/// <summary>
+		/// Installs a new Voi Lut
+		/// </summary>
+		/// <param name="newLut">the Lut to install</param>
 		public virtual void InstallVoiLut(IComposableLUT newLut)
 		{
 			Platform.CheckForNullReference(newLut, "newLut");
