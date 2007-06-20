@@ -111,15 +111,27 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 			{
 				try
 				{
-					UpdateCurrentDriveInfo();
-					CheckConfigurationSettings();
+					int waitTime = 0;
 
-					int waitTime = 5000;
-					lock (_settingsSyncLock)
+					try
+					{
+						UpdateCurrentDriveInfo();
+						CheckConfigurationSettings();
+					}
+					catch (EndpointNotFoundException e)
 					{
 						//there is currently no shred startup order, so we wait 
 						//5 seconds until the Local Data Store service is up and running.
-						if (_currentDriveInfo != null)
+						waitTime = 5000;
+					}
+					catch (Exception e)
+					{
+						Platform.Log(e);
+					}
+
+					lock (_settingsSyncLock)
+					{
+						if (waitTime == 0)
 							waitTime = _checkingFrequency;
 
 						if (!_stop)
@@ -249,16 +261,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
 				client.Close();
 			}
-			catch (EndpointNotFoundException)
+			catch
 			{
 				client.Abort();
 				driveName = null;
-			}
-			catch (Exception e)
-			{
-				client.Abort();
-				driveName = null;
-				Platform.Log(e);
+				throw;
 			}
 
 			if (driveName != null)
@@ -268,7 +275,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 					try
 					{
 						if (_currentDriveInfo == null || String.Compare(_currentDriveInfo.DriveName, driveName, true) != 0)
-							_currentDriveInfo = new DMDriveInfo(driveName);
+							_currentDriveInfo = new DMDriveInfo(driveName.ToUpper());
 					}
 					catch (Exception e)
 					{

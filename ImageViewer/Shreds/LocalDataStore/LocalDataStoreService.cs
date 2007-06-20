@@ -315,8 +315,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			try
 			{
-				if (!directoryPath.EndsWith("\\"))
-					directoryPath += "\\";
+				directoryPath = Path.GetFullPath(directoryPath);
+
+				string separator = Platform.PathSeparator.ToString();
+				if (!directoryPath.EndsWith(separator))
+					directoryPath += separator;
 
 				if (!Directory.Exists(directoryPath))
 				{
