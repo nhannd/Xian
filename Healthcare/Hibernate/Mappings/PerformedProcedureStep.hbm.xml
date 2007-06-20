@@ -16,5 +16,7 @@
     <component name="Performer" class="ProcedureStepPerformer">
       <many-to-one name="Staff" class="Staff" column="PerformingStaffOID_" not-null="false"/>
     </component>
+    <!-- Filler property until tagging defined -->
+    <property name="Documentation" column="Documentation_" type="String" length="1000"/>
   </class>
 </hibernate-mapping>

@@ -105,20 +105,20 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         private readonly ScriptCallback _scriptCallback;
-        private IList<ProcedureStepDetail> _procedureSteps;
+        private List<ProcedureStepDetail> _procedureSteps;
         private readonly TechnologistDocumentationTable _documentationTable;
 
         private readonly ModalityWorklistItem _workListItem;
 
         private readonly SimpleActionModel _technologistDocumentationActionHandler;
 
-        private string _displatedDocumentationPageUrl;
+        private string _displayedDocumentationPageUrl;
         private string DisplayedDocumentationPageUrl
         {
-            get { return _displatedDocumentationPageUrl; }
+            get { return _displayedDocumentationPageUrl; }
             set
             {
-                _displatedDocumentationPageUrl = value;
+                _displayedDocumentationPageUrl = value;
                 EventsHelper.Fire(_urlChanged, this, EventArgs.Empty);
             }
         }
@@ -214,8 +214,8 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _technologistDocumentationActionHandler["StartNow"].Enabled = checkedItemStatus == "Scheduled";
             _technologistDocumentationActionHandler["Start"].Enabled = checkedItemStatus == "Scheduled";
-            _technologistDocumentationActionHandler["CompleteNow"].Enabled = checkedItemStatus == "Started";
-            _technologistDocumentationActionHandler["Complete"].Enabled = checkedItemStatus == "Started";            
+            _technologistDocumentationActionHandler["CompleteNow"].Enabled = checkedItemStatus == "In Progress";
+            _technologistDocumentationActionHandler["Complete"].Enabled = checkedItemStatus == "In Progress";            
         }
 
         private void LoadProcedureStepsTable()
@@ -244,7 +244,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 _procedureSteps.Add(new ProcedureStepDetail("Procedure 6", "Scheduled", new DocumentationPageDetail("http://localhost/RIS/breastimaging2.htm")));
 
                 ProcedureStepDetail started =
-                    new ProcedureStepDetail("Procedure 7", "Started", new DocumentationPageDetail("http://localhost/RIS/breastimaging2.htm"));
+                    new ProcedureStepDetail("Procedure 7", "In Progress", new DocumentationPageDetail("http://localhost/RIS/breastimaging2.htm"));
                 started.PerformedProcedureStep = new PerformedProcedureStepDetail();
                 started.PerformedProcedureStep.StartTime = Platform.Time;
                 _procedureSteps.Add(started);
@@ -260,7 +260,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public Uri DocumentationPage
         {
-            get { return new Uri(_displatedDocumentationPageUrl ?? "about:blank"); }
+            get { return new Uri(_displayedDocumentationPageUrl ?? "about:blank"); }
         }
 
         public event EventHandler DocumentationPageChanged
@@ -296,6 +296,50 @@ namespace ClearCanvas.Ris.Client.Adt
             remove { _beforeDocumentationSaved -= value; }
         }
 
+        public void Accept()
+        {
+            if (this.HasValidationErrors)
+            {
+                this.ShowValidation(true);
+            }
+            else
+            {
+                try
+                {
+                    SaveChanges();
+                    this.ExitCode = ApplicationComponentExitCode.Normal;
+                    Host.Exit();
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, "Cannot save documentation", this.Host.DesktopWindow, 
+                        delegate 
+                        {
+                            this.ExitCode = ApplicationComponentExitCode.Error;
+                            Host.Exit();
+                        });
+                }
+            }
+        }
+
+        private void SaveChanges()
+        {
+            SaveDocumentation(CheckedItems());
+
+            Platform.GetService<ITechnologistDocumentationService>(
+                delegate(ITechnologistDocumentationService service)
+                {
+                    DocumentProceduresRequest request = new DocumentProceduresRequest(_procedureSteps);
+                    service.DocumentProcedures(request);
+                });
+        }
+
+        public void Cancel()
+        {
+            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            this.Host.Exit();            
+        }
+
         #endregion
 
         #region TechnologistDocumentationTable Event Handlers
@@ -314,14 +358,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void OnItemDeselected(TechnologistDocumentationTableItem checkedItem)
         {
-
-            
-            if (checkedItem.ProcedureStep.Status == "Started")
-            {
-                IList<TechnologistDocumentationTableItem> toBeUpdated = CheckedItems();
-                toBeUpdated.Add(checkedItem);
-                SaveDocumentation(toBeUpdated);
-            }
+            IList<TechnologistDocumentationTableItem> toBeUpdated = CheckedItems();
+            toBeUpdated.Add(checkedItem);
+            SaveDocumentation(toBeUpdated);
 
             ExtendItemSelection(checkedItem, false);
             if(AnyItemsSelected() == false)
@@ -345,6 +384,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void LoadDocumentationPage(TechnologistDocumentationTableItem checkedItem)
         {
+            if (checkedItem.ProcedureStep.Status == "Scheduled") return;
+
             if (this.DisplayedDocumentationPageUrl == null)
             {
                 this.DisplayedDocumentationPageUrl = checkedItem.ProcedureStep.DocumentationPage.Url;
@@ -393,13 +434,16 @@ namespace ClearCanvas.Ris.Client.Adt
 
         }
 
-        private void SaveDocumentation(IList<TechnologistDocumentationTableItem> items)
+        private void SaveDocumentation(IEnumerable<TechnologistDocumentationTableItem> items)
         {
             EventsHelper.Fire(_beforeDocumentationSaved, this, EventArgs.Empty);
             foreach (TechnologistDocumentationTableItem item in items)
             {
                 if (item.ProcedureStep.PerformedProcedureStep != null)
+                {
+                    item.ProcedureStep.Dirty = true;
                     item.ProcedureStep.PerformedProcedureStep.Blob = CurrentData;
+                }
             }
         }
 
@@ -431,6 +475,7 @@ namespace ClearCanvas.Ris.Client.Adt
             foreach (TechnologistDocumentationTableItem item in CheckedItems())
             {
                 item.ProcedureStep.Status = "Completed";
+                item.ProcedureStep.Dirty = true;
                 item.ProcedureStep.PerformedProcedureStep.EndTime = time;
                 _documentationTable.Items.NotifyItemUpdated(item);
             }
@@ -446,7 +491,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
             foreach (TechnologistDocumentationTableItem item in CheckedItems())
             {
-                item.ProcedureStep.Status = "Started";
+                item.ProcedureStep.Status = "In Progress";
+                item.ProcedureStep.Dirty = true;
                 item.ProcedureStep.PerformedProcedureStep = pps;
                 _documentationTable.Items.NotifyItemUpdated(item);
             }
@@ -457,7 +503,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     delegate(TechnologistDocumentationTableItem d) { return d.Selected; });
 
             RefreshTableItemCheckStatuses(checkedItem);
-            UpdateActionEnablement("Started");
+            LoadDocumentationPage(checkedItem);
+            UpdateActionEnablement("In Progress");
         }
 
         private IList<TechnologistDocumentationTableItem> CheckedItems()
@@ -480,7 +527,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(TechnologistDocumentationTableItem item)
                 {
                     return item != documentedItem
-                        && item.ProcedureStep.PerformedProcedureStep == documentedItem.ProcedureStep.PerformedProcedureStep;
+                           && item.ProcedureStep.PerformedProcedureStep.Equals(documentedItem.ProcedureStep.PerformedProcedureStep);
                 });
         }
     }

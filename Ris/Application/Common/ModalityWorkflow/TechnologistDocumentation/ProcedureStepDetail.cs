@@ -1,4 +1,5 @@
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation
 {
@@ -23,7 +24,14 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
             this.Name = name;
             this.Status = status;
             this.DocumentationPage = documentationPage;
+            this.Dirty = false;
         }
+
+        [DataMember] 
+        public EntityRef EntityRef;
+
+        [DataMember] 
+        public bool Dirty;
 
         [DataMember]
         public string Name;

@@ -173,6 +173,8 @@
     <Compile Include="ModalityWorkflow\ResumeProcedureRequest.cs" />
     <Compile Include="ModalityWorkflow\ResumeProcedureResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\DocumentationPageDetail.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\DocumentProceduresRequest.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\DocumentProceduresResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\PerformedProcedureStepDetail.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\ProcedureStepDetail.cs" />
     <Compile Include="MrnDetail.cs" />

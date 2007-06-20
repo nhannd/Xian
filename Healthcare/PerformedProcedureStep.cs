@@ -11,13 +11,30 @@ namespace ClearCanvas.Healthcare
     /// </summary>
     public abstract class PerformedProcedureStep : PerformedStep
     {
+        private string _documentation;
+
         public PerformedProcedureStep(Staff performingStaff)
             : base(new ProcedureStepPerformer(performingStaff))
         {
         }
 
+        public PerformedProcedureStep(Staff performingStaff, string documentation)
+            : base(new ProcedureStepPerformer(performingStaff))
+        {
+            _documentation = documentation;
+        }
+
         public PerformedProcedureStep()
         {
+        }
+
+        /// <summary>
+        /// Placeholder for Documentation pending introduction of "tagging"
+        /// </summary>
+        public string Documentation
+        {
+            get { return _documentation; }
+            set { _documentation = value; }
         }
     }
 }
