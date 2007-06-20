@@ -527,7 +527,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(TechnologistDocumentationTableItem item)
                 {
                     return item != documentedItem
-                           && item.ProcedureStep.PerformedProcedureStep.Equals(documentedItem.ProcedureStep.PerformedProcedureStep);
+                        && Equals(item.ProcedureStep.PerformedProcedureStep, documentedItem.ProcedureStep.PerformedProcedureStep);
                 });
         }
     }
