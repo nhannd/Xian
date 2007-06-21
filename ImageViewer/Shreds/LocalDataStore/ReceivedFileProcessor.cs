@@ -216,19 +216,30 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				ReceivedFileImportInformation receivedFileImportInformation = results as ReceivedFileImportInformation;
 
+				InternalReceiveProgressItem progressItem;
+				bool exists;
+
 				if (results.CompletedStage == DicomFileImporter.ImportStage.NotStarted)
 				{
 					if (results.Failed)
 					{
-						//Not much we can do since we can't relate it to a progress item.  Just log it.
+						//This is a 'special' progress item for things that failed to parse.
+						progressItem = GetReceiveProgressItem(receivedFileImportInformation.SourceAETitle, new StudyInformation(), out exists);
+						lock (progressItem)
+						{
+							progressItem.Pending = false;
+							++progressItem.NumberOfParseFailures;
+							this.FormatErrorMessage(progressItem, receivedFileImportInformation.Error);
+							LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(progressItem.Clone());
+						}
+
 						Platform.Log(results.Error);
 					}
 
 					return;
 				}
 
-				bool exists;
-				InternalReceiveProgressItem progressItem = GetReceiveProgressItem(receivedFileImportInformation, out exists);
+				progressItem = GetReceiveProgressItem(receivedFileImportInformation, out exists);
 
 				lock (progressItem)
 				{
