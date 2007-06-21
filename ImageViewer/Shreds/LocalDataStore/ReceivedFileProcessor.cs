@@ -34,10 +34,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			private class InternalReceiveProgressItem : ReceiveProgressItem
 			{
 				private string _terminalErrorMessage;
+				private bool _pending;
 
 				public InternalReceiveProgressItem()
 				{
-					_terminalErrorMessage = null;	
+					_terminalErrorMessage = null;
+					_pending = true;
 				}
 
 				public string TerminalErrorMessage
@@ -45,11 +47,18 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					get { return _terminalErrorMessage; }
 					set { _terminalErrorMessage = value; }
 				}
+
+				public bool Pending
+				{
+					get { return _pending; }
+					set { _pending = value; }
+				}
 			}
 
 			private LocalDataStoreService _parent;
 			private object _syncLock = new object();
 			private List<InternalReceiveProgressItem> _receiveProgressItems;
+			private System.Threading.Timer _noActivityTimer;
 
 			public ReceivedFileProcessor(LocalDataStoreService parent)
 			{
@@ -57,8 +66,27 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				
 				_parent = parent;
 
+				_parent.StartEvent += new EventHandler(OnStart);
+				_parent.StopEvent += new EventHandler(OnStop);
 				_parent.CancelEvent += new EventHandler<ItemEventArgs<CancelProgressItemInformation>>(OnCancel);
 				_parent.RepublishEvent += new EventHandler(OnRepublish);
+			}
+
+			void OnStart(object sender, EventArgs e)
+			{
+				lock (_syncLock)
+				{
+					_noActivityTimer = new System.Threading.Timer(OnTimer, null, 15000, 15000);
+				}
+			}
+
+			void OnStop(object sender, EventArgs e)
+			{
+				lock (_syncLock)
+				{
+					_noActivityTimer.Dispose();
+					_noActivityTimer = null;
+				}
 			}
 
 			private void OnRepublish(object sender, EventArgs e)
@@ -66,7 +94,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				lock (_syncLock)
 				{
 					foreach (InternalReceiveProgressItem item in _receiveProgressItems)
-						LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(item.Clone());
+					{
+						lock (item)
+						{
+							LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(item.Clone());
+						}
+					}
 				}
 			}
 
@@ -91,6 +124,32 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 							item.Removed = true;
 							LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(item.Clone());
+						}
+					}
+				}
+			}
+
+			private void OnTimer(object nothing)
+			{
+				lock (_syncLock)
+				{
+					if (_noActivityTimer == null)
+						return;
+
+					TimeSpan oneMinute = TimeSpan.FromMinutes(1);
+
+					foreach (InternalReceiveProgressItem item in _receiveProgressItems)
+					{
+						lock(item)
+						{
+							if (item.Pending && Platform.Time.Subtract(item.LastActive) >= oneMinute)
+							{
+								if (item.StatusMessage != SR.MessageRetrieveLikelyFailed)
+								{
+									item.StatusMessage = SR.MessageRetrieveLikelyFailed;
+									LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(item.Clone());
+								}
+							}
 						}
 					}
 				}
@@ -173,8 +232,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				lock (progressItem)
 				{
-					if (progressItem.StatusMessage == SR.MessagePending)
+					if (progressItem.Pending)
+					{
+						progressItem.Pending = false;
 						progressItem.StatusMessage = "";
+					}
 
 					ImportedSopInstanceInformation importedSopInformation = null;
 
@@ -200,14 +262,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					else if (receivedFileImportInformation.CompletedStage == DicomFileImporter.ImportStage.FileParsed)
 					{
 						++progressItem.NumberOfFilesParsed;
-						++progressItem.NumberOfFilesReceived;
 					}
 					else if (receivedFileImportInformation.CompletedStage == DicomFileImporter.ImportStage.FileMoved)
 					{
 						if (!exists)
 						{
 							++progressItem.NumberOfFilesParsed;
-							++progressItem.NumberOfFilesReceived;
 						}
 
 						++progressItem.NumberOfFilesImported;
@@ -217,7 +277,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						if (!exists)
 						{
 							++progressItem.NumberOfFilesParsed;
-							++progressItem.NumberOfFilesReceived;
 							++progressItem.NumberOfFilesImported;
 						}
 
@@ -253,6 +312,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						progressItem.StudyInformation = information.StudyInformation;
 						progressItem.LastActive = Platform.Time;
 						progressItem.TerminalErrorMessage = null;
+						progressItem.Pending = true;
 						progressItem.StatusMessage = SR.MessagePending;
 						LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(progressItem.Clone());
 					}	
@@ -270,6 +330,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						progressItem.StudyInformation = errorInformation.StudyInformation;
 						progressItem.LastActive = Platform.Time;
 						progressItem.TerminalErrorMessage = errorInformation.ErrorMessage;
+						progressItem.Pending = false;
 						this.FormatErrorMessage(progressItem, new Exception(errorInformation.ErrorMessage));
 						LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(progressItem.Clone());
 					}

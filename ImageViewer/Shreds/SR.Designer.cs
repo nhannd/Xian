@@ -719,6 +719,15 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to This operation appears to have failed.  This can be caused by a number of problems including an incorrect Dicom configuration or the local firewall blocking the inbound Dicom port. .
+        /// </summary>
+        internal static string MessageRetrieveLikelyFailed {
+            get {
+                return ResourceManager.GetString("MessageRetrieveLikelyFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Waiting for all files to become available ....
         /// </summary>
         internal static string MessageWaitingForFilesToBecomeAvailable {

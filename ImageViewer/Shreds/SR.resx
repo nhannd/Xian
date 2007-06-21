@@ -337,6 +337,9 @@ Please check the service logs for more details.</value>
   <data name="MessagePending" xml:space="preserve">
     <value>Pending ...</value>
   </data>
+  <data name="MessageRetrieveLikelyFailed" xml:space="preserve">
+    <value>This operation appears to have failed.  This can be caused by a number of problems including an incorrect Dicom configuration (client or server) or the local firewall blocking the inbound Dicom port. </value>
+  </data>
   <data name="MessageWaitingForFilesToBecomeAvailable" xml:space="preserve">
     <value>Waiting for all files to become available ...</value>
   </data>

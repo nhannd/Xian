@@ -496,17 +496,14 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			set { _studyInformation = value; }
 		}
 
-		[DataMember(IsRequired = true)]
 		public int NumberOfFilesReceived
 		{
-			get { return _numberOfFilesReceived; }
-			set { _numberOfFilesReceived = value; }
+			get { return base.NumberOfFilesParsed; }
 		}
 
 		public void CopyTo(ReceiveProgressItem progressItem)
 		{
 			progressItem.FromAETitle = this.FromAETitle;
-			progressItem.NumberOfFilesReceived = this.NumberOfFilesReceived;
 
 			if (this.StudyInformation != null)
 				progressItem.StudyInformation = this.StudyInformation.Clone();
@@ -519,7 +516,6 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		public void CopyFrom(ReceiveProgressItem progressItem)
 		{
 			this.FromAETitle = progressItem.FromAETitle;
-			this.NumberOfFilesReceived = progressItem.NumberOfFilesReceived;
 
 			if (progressItem.StudyInformation != null)
 				this.StudyInformation = progressItem.StudyInformation.Clone();
