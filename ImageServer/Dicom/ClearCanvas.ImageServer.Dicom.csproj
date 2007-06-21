@@ -1,0 +1,137 @@
+﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.50727</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{F65CF657-84A2-435B-9714-D70B99B39AAE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ClearCanvas.Pacs.Dicom</RootNamespace>
+    <AssemblyName>ClearCanvas.Pacs.Dicom</AssemblyName>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;UNIT_TESTS</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="ClearCanvas.Dicom.OffisWrapper, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\Dicom\OffisWrapper\csharp\Debug\ClearCanvas.Dicom.OffisWrapper.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AbstractMessage.cs" />
+    <Compile Include="ApplicationEntity.cs" />
+    <Compile Include="Association.cs" />
+    <Compile Include="AttributeAE.cs" />
+    <Compile Include="AttributeAS.cs" />
+    <Compile Include="AttributeAT.cs" />
+    <Compile Include="AttributeBinary.cs" />
+    <Compile Include="AttributeCS.cs" />
+    <Compile Include="AttributeDA.cs" />
+    <Compile Include="AttributeDS.cs" />
+    <Compile Include="AttributeDT.cs" />
+    <Compile Include="AttributeFD.cs" />
+    <Compile Include="AttributeFL.cs" />
+    <Compile Include="AttributeIS.cs" />
+    <Compile Include="AttributeLO.cs" />
+    <Compile Include="AttributeLT.cs" />
+    <Compile Include="AttributeMultiValueText.cs" />
+    <Compile Include="AttributeOB.cs" />
+    <Compile Include="AttributeOF.cs" />
+    <Compile Include="AttributePN.cs" />
+    <Compile Include="AttributeSH.cs" />
+    <Compile Include="AttributeSingleValueText.cs" />
+    <Compile Include="AttributeSL.cs" />
+    <Compile Include="AttributeSQ.cs" />
+    <Compile Include="AttributeSS.cs" />
+    <Compile Include="AttributeST.cs" />
+    <Compile Include="AttributeTM.cs" />
+    <Compile Include="AttributeUI.cs" />
+    <Compile Include="AttributeUL.cs" />
+    <Compile Include="AttributeUN.cs" />
+    <Compile Include="AttributeUS.cs" />
+    <Compile Include="AttributeUT.cs" />
+    <Compile Include="AttributeOW.cs" />
+    <Compile Include="DicomTagDictionary.cs" />
+    <Compile Include="DicomTags.cs" />
+    <Compile Include="DicomVr.cs" />
+    <Compile Include="AbstractAttribute.cs" />
+    <Compile Include="AttributeCollection.cs" />
+    <Compile Include="Exceptions\DicomException.cs" />
+    <Compile Include="Exceptions\SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="DicomFile.cs" />
+    <Compile Include="IApplicationAcceptor.cs" />
+    <Compile Include="SequenceItem.cs" />
+    <Compile Include="DicomMessage.cs" />
+    <Compile Include="Listener.cs" />
+    <Compile Include="Offis\OffisDcmItem.cs" />
+    <Compile Include="Offis\OffisHelper.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SopClass.cs" />
+    <Compile Include="SR.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="DicomTag.cs" />
+    <Compile Include="Tests\AttributeTests.cs" />
+    <Compile Include="Tests\FileTest.cs" />
+    <Compile Include="TransferSyntax.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Exceptions\SR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SR.resx">
+      <SubType>Designer</SubType>
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>SR.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ClearCanvas.Pacs.Dicom.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Log\" />
+    <Folder Include="Network\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PostBuildEvent>copy $(SolutionDir)..\Dicom\OffisWrapper\cppwrapper\$(ConfigurationName)\OffisDcm.dll $(TargetDir)</PostBuildEvent>
+  </PropertyGroup>
+</Project>

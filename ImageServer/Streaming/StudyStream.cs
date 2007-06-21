@@ -1,0 +1,187 @@
+using System;
+using System.Collections.Generic;
+using System.Collections;
+using System.Text;
+using System.Xml;
+
+using ClearCanvas.ImageServer.Dicom;
+
+namespace ClearCanvas.ImageServer.Streaming
+{
+    public class StudyStream : IEnumerable<SeriesStream>
+    {
+        #region Private members
+
+        private Dictionary<String, SeriesStream> _seriesList = new Dictionary<string, SeriesStream>();
+        private String _studyInstanceUid = null;
+
+        #endregion
+
+        #region Public Properties
+
+        public String StudyInstanceUid
+        {
+            get
+            {
+                if (_studyInstanceUid == null)
+                    return "";
+                return _studyInstanceUid;
+            }
+        }
+
+        #endregion
+
+        #region Constructors
+
+        public StudyStream(String studyInstanceUid)
+        {
+            _studyInstanceUid = studyInstanceUid;
+        }
+
+        public StudyStream()
+        {
+        }
+
+        #endregion
+
+        #region Public Methods
+
+        public SeriesStream this[String seriesInstanceUid]
+        {
+            get
+            {
+                SeriesStream series = null;
+                try
+                {
+                    series = _seriesList[seriesInstanceUid];
+                }
+                catch (KeyNotFoundException) { }
+
+                return series;
+            }
+            set
+            {
+                if (value == null)
+                    _seriesList.Remove(seriesInstanceUid);
+                else
+                {
+                    _seriesList[seriesInstanceUid] = value;
+                }
+            }
+        }
+
+        public bool AddFile(DicomFile theFile)
+        {
+            // Create a copy of the collection without pixel data
+            AttributeCollection data = theFile.DataSet.Copy(false);
+
+            String studyInstanceUid = data[DicomTags.StudyInstanceUID];
+
+            if (_studyInstanceUid == null)
+                _studyInstanceUid = studyInstanceUid;
+            else if (!_studyInstanceUid.Equals(studyInstanceUid))
+                return false;
+
+            String seriesInstanceUid = data[DicomTags.SeriesInstanceUID];
+
+            SeriesStream series = this[seriesInstanceUid];
+
+            if (series == null)
+            {
+                series = new SeriesStream(seriesInstanceUid);
+                this[seriesInstanceUid] = series;
+            }
+
+            String sopInstanceUid = data[DicomTags.SOPInstanceUID];
+
+            InstanceStream instance = series[sopInstanceUid];
+            if (instance != null)
+            {
+                return false;
+            }
+
+            instance = new InstanceStream(data);
+            series[sopInstanceUid] = instance;
+
+            return true;
+        }
+
+        public XmlDocument GetMomento()
+        {
+            XmlDocument theDocument = new XmlDocument();
+
+            XmlElement study = theDocument.CreateElement("Study");
+
+            XmlAttribute studyInstanceUid = theDocument.CreateAttribute("UID");
+			studyInstanceUid.Value = _studyInstanceUid;
+			study.Attributes.Append(studyInstanceUid);
+
+
+			foreach (SeriesStream series in this)
+			{
+				XmlElement seriesElement = series.GetMomento(theDocument);
+
+				study.AppendChild(seriesElement);
+			}
+
+			theDocument.AppendChild(study);
+
+			return theDocument;
+        }
+
+        public void SetMemento(XmlDocument theDocument)
+        {
+            if (!theDocument.HasChildNodes)
+                return;
+
+            XmlNode childNode = theDocument.FirstChild;
+
+            while (childNode != null)
+            {
+                // Just search for the first study node, parse it, then break
+                if (childNode.Name.Equals("Study"))
+                {
+                    _studyInstanceUid = childNode.Attributes["UID"].Value;
+
+                    if (childNode.HasChildNodes)
+                    {
+                        XmlNode seriesNode = childNode.FirstChild;
+
+                        while (seriesNode != null)
+                        {
+                            String seriesInstanceUid = seriesNode.Attributes["UID"].Value;
+
+                            SeriesStream seriesStream = new SeriesStream(seriesInstanceUid);
+
+                            this._seriesList.Add(seriesInstanceUid, seriesStream);
+
+                            seriesStream.SetMemento(seriesNode);
+
+                            // Go to next node in doc
+                            seriesNode = seriesNode.NextSibling;
+                        }
+                    }
+                }
+
+                childNode = childNode.NextSibling;
+            }
+
+
+        }
+
+        #endregion
+
+        #region IEnumerator Implementation
+        public IEnumerator<SeriesStream> GetEnumerator()
+        {
+            return _seriesList.Values.GetEnumerator();   
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        #endregion
+    }
+}
