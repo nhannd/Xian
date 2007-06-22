@@ -177,7 +177,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                VerificationStep verification = step.Is<VerificationStep>();
+                VerificationStep verification = step.Downcast<VerificationStep>();
 
                 // if not assigned, assign
                 if (verification.AssignedStaff == null)
