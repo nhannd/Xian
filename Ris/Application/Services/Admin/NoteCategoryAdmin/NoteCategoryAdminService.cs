@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         public LoadNoteCategoryForEditResponse LoadNoteCategoryForEdit(LoadNoteCategoryForEditRequest request)
         {
             // note that the version of the NoteCategoryRef is intentionally ignored here (default behaviour of ReadOperation)
-            NoteCategory category = (NoteCategory)PersistenceContext.Load(request.NoteCategoryRef);
+            NoteCategory category = PersistenceContext.Load<NoteCategory>(request.NoteCategoryRef);
             NoteCategoryAssembler assembler = new NoteCategoryAssembler();
 
             return new LoadNoteCategoryForEditResponse(category.GetRef(), assembler.CreateNoteCategoryDetail(category, this.PersistenceContext));
@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.NoteAdmin)]
         public UpdateNoteCategoryResponse UpdateNoteCategory(UpdateNoteCategoryRequest request)
         {
-            NoteCategory noteCategory = (NoteCategory)PersistenceContext.Load(request.NoteCategoryRef, EntityLoadFlags.CheckVersion);
+            NoteCategory noteCategory = PersistenceContext.Load<NoteCategory>(request.NoteCategoryRef, EntityLoadFlags.CheckVersion);
 
             NoteCategoryAssembler assembler = new NoteCategoryAssembler();
             assembler.UpdateNoteCategory(request.NoteCategoryDetail, noteCategory);

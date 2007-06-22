@@ -32,7 +32,7 @@ namespace ClearCanvas.Ris.Application.Services.PatientBiography
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             List<PatientProfileSummary> summaries = new List<PatientProfileSummary>();
 
-            PatientProfile sourceProfile = (PatientProfile)PersistenceContext.Load(request.ProfileRef, EntityLoadFlags.Proxy);
+            PatientProfile sourceProfile = PersistenceContext.Load<PatientProfile>(request.ProfileRef, EntityLoadFlags.Proxy);
             Patient patient = sourceProfile.Patient;
             foreach (PatientProfile profile in patient.Profiles)
             {
@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Application.Services.PatientBiography
         {
             OrderSearchCriteria criteria = new OrderSearchCriteria();
 
-            PatientProfile profile = (PatientProfile)PersistenceContext.Load(request.PatientProfileRef);
+            PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef);
             criteria.Patient.EqualTo(profile.Patient);
 
             OrderEntryAssembler assembler = new OrderEntryAssembler();

@@ -92,7 +92,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         {
             // TODO: add validation and throw RequestValidationException as necessary
 
-            visit.Patient = (Patient)context.Load(detail.Patient, EntityLoadFlags.Proxy);
+            visit.Patient = context.Load<Patient>(detail.Patient, EntityLoadFlags.Proxy);
             visit.VisitNumber.Id = detail.VisitNumberId;
             visit.VisitNumber.AssigningAuthority = detail.VisitNumberAssigningAuthority;
 
@@ -107,7 +107,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
             if (detail.Facility != null)
             {
-                visit.Facility = (Facility)context.Load(detail.Facility.FacilityRef, EntityLoadFlags.Proxy);
+                visit.Facility = context.Load<Facility>(detail.Facility.FacilityRef, EntityLoadFlags.Proxy);
             }
             else
             {
@@ -118,7 +118,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             foreach (VisitLocationDetail vlDetail in detail.Locations)
             {
                 visit.Locations.Add(new VisitLocation(
-                    (Location)context.Load(vlDetail.Location.LocationRef, EntityLoadFlags.Proxy),
+                    context.Load<Location>(vlDetail.Location.LocationRef, EntityLoadFlags.Proxy),
                     (VisitLocationRole)Enum.Parse(typeof(VisitLocationRole), vlDetail.Role.Code),
                     vlDetail.StartTime,
                     vlDetail.EndTime));
@@ -128,7 +128,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             foreach (VisitPractitionerDetail vpDetail in detail.Practitioners)
             {
                 visit.Practitioners.Add(new VisitPractitioner(
-                    (Practitioner)context.Load(vpDetail.Practitioner.StaffRef, EntityLoadFlags.Proxy),
+                    context.Load<Practitioner>(vpDetail.Practitioner.StaffRef, EntityLoadFlags.Proxy),
                     (VisitPractitionerRole)Enum.Parse(typeof(VisitPractitionerRole), vpDetail.Role.Code),
                     vpDetail.StartTime,
                     vpDetail.EndTime));

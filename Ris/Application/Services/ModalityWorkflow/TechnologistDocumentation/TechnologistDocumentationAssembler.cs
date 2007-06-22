@@ -110,7 +110,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             PerformedProcedureStep pps;
             if (ppsDetail.PpsRef != null)
             {
-                pps = (PerformedProcedureStep) context.Load(ppsDetail.PpsRef);
+                pps = context.Load<PerformedProcedureStep>(ppsDetail.PpsRef);
             }
             else
             {

@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
             user.AuthorityGroups.Clear();
             foreach (AuthorityGroupSummary group in detail.AuthorityGroups)
             {
-                user.AuthorityGroups.Add((AuthorityGroup)context.Load(group.EntityRef));
+                user.AuthorityGroups.Add(context.Load<AuthorityGroup>(group.EntityRef));
             }
         }
     }

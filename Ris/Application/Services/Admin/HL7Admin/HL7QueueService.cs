@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.HL7Admin)]
         public LoadHL7QueueItemResponse LoadHL7QueueItem(LoadHL7QueueItemRequest request)
         {
-            HL7QueueItem queueItem = (HL7QueueItem)PersistenceContext.Load(request.QueueItemRef);
+            HL7QueueItem queueItem = (HL7QueueItem)PersistenceContext.Load<HL7QueueItem>(request.QueueItemRef);
             HL7QueueItemAssembler assembler = new HL7QueueItemAssembler();
             
             return new LoadHL7QueueItemResponse(
@@ -109,7 +109,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         [ReadOperation]
         public GetReferencedPatientResponse GetReferencedPatient(GetReferencedPatientRequest request)
         {
-            HL7QueueItem queueItem = (HL7QueueItem)PersistenceContext.Load(request.QueueItemRef);
+            HL7QueueItem queueItem = PersistenceContext.Load<HL7QueueItem>(request.QueueItemRef);
 
             IList<string> identifiers;
             string assigningAuthority;
@@ -155,7 +155,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.HL7Admin)]
         public ProcessHL7QueueItemResponse ProcessHL7QueueItem(ProcessHL7QueueItemRequest request)
         {
-            HL7QueueItem queueItem = (HL7QueueItem)PersistenceContext.Load(request.QueueItemRef);
+            HL7QueueItem queueItem = PersistenceContext.Load<HL7QueueItem>(request.QueueItemRef);
 
             try
             {

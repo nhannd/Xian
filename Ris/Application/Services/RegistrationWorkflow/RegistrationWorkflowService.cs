@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request)
         {
-            PatientProfile profile = (PatientProfile)PersistenceContext.Load(request.WorklistItem.PatientProfileRef);
+            PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.WorklistItem.PatientProfileRef);
 
             List<AlertNotificationDetail> alertNotifications = new List<AlertNotificationDetail>();            
             alertNotifications.AddRange(GetAlertNotifications(profile.Patient, this.PersistenceContext));

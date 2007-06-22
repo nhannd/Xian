@@ -42,7 +42,8 @@ namespace ClearCanvas.Enterprise.Core
         /// </summary>
         /// <param name="entityRef"></param>
         /// <returns></returns>
-        Entity Load(EntityRef entityRef);
+        TEntity Load<TEntity>(EntityRef entityRef)
+            where TEntity : Entity;
 
         /// <summary>
         /// Loads the specified entity into this context
@@ -50,7 +51,8 @@ namespace ClearCanvas.Enterprise.Core
         /// <param name="entityRef"></param>
         /// <param name="flags"></param>
         /// <returns></returns>
-        Entity Load(EntityRef entityRef, EntityLoadFlags flags);
+        TEntity Load<TEntity>(EntityRef entityRef, EntityLoadFlags flags)
+            where TEntity : Entity;
 
         bool IsProxyLoaded(Entity entity);
 

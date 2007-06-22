@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
         public void UpdateLocation(LocationDetail detail, Location location, IPersistenceContext context)
         {
-            location.Facility = (Facility)context.Load(detail.Facility.FacilityRef, EntityLoadFlags.Proxy);
+            location.Facility = context.Load<Facility>(detail.Facility.FacilityRef, EntityLoadFlags.Proxy);
             location.Building = detail.Building;
             location.Floor = detail.Floor;
             location.PointOfCare = detail.PointOfCare;

@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
         public LoadUserForEditResponse LoadUserForEdit(LoadUserForEditRequest request)
         {
-            User user = (User)PersistenceContext.Load(request.UserRef);
+            User user = PersistenceContext.Load<User>(request.UserRef);
             Staff staff = null;
             try
             {
@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
         public LoadAuthorityGroupForEditResponse LoadAuthorityGroupForEdit(LoadAuthorityGroupForEditRequest request)
         {
-            AuthorityGroup authorityGroup = (AuthorityGroup)PersistenceContext.Load(request.AuthorityGroupRef);
+            AuthorityGroup authorityGroup = PersistenceContext.Load<AuthorityGroup>(request.AuthorityGroupRef);
             AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
             return new LoadAuthorityGroupForEditResponse(authorityGroup.GetRef(), assembler.GetAuthorityGroupDetail(authorityGroup));
         }
@@ -133,7 +133,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
         public UpdateUserResponse UpdateUser(UpdateUserRequest request)
         {
-            User user = (User)PersistenceContext.Load(request.UserRef);
+            User user = PersistenceContext.Load<User>(request.UserRef);
 
             if (user.UserName != request.UserDetail.UserId
                 && UserIdExists(request.UserDetail.UserId))
@@ -183,7 +183,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.AuthorityGroupAdmin)]
         public UpdateAuthorityGroupResponse UpdateAuthorityGroup(UpdateAuthorityGroupRequest request)
         {
-            AuthorityGroup authorityGroup = (AuthorityGroup)PersistenceContext.Load(request.AuthorityGroupRef);
+            AuthorityGroup authorityGroup = PersistenceContext.Load<AuthorityGroup>(request.AuthorityGroupRef);
             AuthorityGroupAssembler assembler = new AuthorityGroupAssembler();
             assembler.UpdateAuthorityGroup(authorityGroup, request.AuthorityGroupDetail, PersistenceContext);
 

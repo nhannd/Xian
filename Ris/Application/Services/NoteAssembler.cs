@@ -48,10 +48,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                 newNote.TimeStamp = Platform.Time;
 
             if (detail.Category != null)
-                newNote.Category = (NoteCategory)context.Load(detail.Category.NoteCategoryRef, EntityLoadFlags.Proxy);
+                newNote.Category = context.Load<NoteCategory>(detail.Category.NoteCategoryRef, EntityLoadFlags.Proxy);
 
             if (detail.CreatedBy != null)
-                newNote.CreatedBy = (Staff)context.Load(detail.CreatedBy.StaffRef, EntityLoadFlags.Proxy);
+                newNote.CreatedBy = context.Load<Staff>(detail.CreatedBy.StaffRef, EntityLoadFlags.Proxy);
             else
             {
                 //TODO: Services should know which staff is invoking the operation, use that staff instead

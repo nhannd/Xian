@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
         public LoadModalityForEditResponse LoadModalityForEdit(LoadModalityForEditRequest request)
         {
             // note that the version of the ModalityRef is intentionally ignored here (default behaviour of ReadOperation)
-            Modality m = (Modality)PersistenceContext.Load(request.ModalityRef);
+            Modality m = PersistenceContext.Load<Modality>(request.ModalityRef);
             ModalityAssembler assembler = new ModalityAssembler();
 
             return new LoadModalityForEditResponse(m.GetRef(), assembler.CreateModalityDetail(m));
@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.ModalityAdmin)]
         public UpdateModalityResponse UpdateModality(UpdateModalityRequest request)
         {
-            Modality modality = (Modality)PersistenceContext.Load(request.ModalityRef, EntityLoadFlags.CheckVersion);
+            Modality modality = PersistenceContext.Load<Modality>(request.ModalityRef, EntityLoadFlags.CheckVersion);
 
             ModalityAssembler assembler = new ModalityAssembler();
             assembler.UpdateModality(request.ModalityDetail, modality);

@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
         [ReadOperation]
         public ListVisitsForPatientResponse ListVisitsForPatient(ListVisitsForPatientRequest request)
         {
-            PatientProfile profile = (PatientProfile)PersistenceContext.Load(request.PatientProfile);
+            PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfile);
             Patient patient = profile.Patient;
 
             VisitSearchCriteria criteria = new VisitSearchCriteria();
@@ -136,7 +136,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.VisitAdmin)]
         public SaveAdminEditsForVisitResponse SaveAdminEditsForVisit(SaveAdminEditsForVisitRequest request)
         {
-            Visit visit = (Visit)PersistenceContext.Load(request.VisitRef);
+            Visit visit = PersistenceContext.Load<Visit>(request.VisitRef);
 
             VisitAssembler assembler = new VisitAssembler();
             assembler.UpdateVisit(visit, request.VisitDetail, PersistenceContext);

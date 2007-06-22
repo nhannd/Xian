@@ -130,7 +130,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.PatientProfileAdmin)]
         public SaveAdminEditsForPatientProfileResponse SaveAdminEditsForPatientProfile(SaveAdminEditsForPatientProfileRequest request)
         {
-            PatientProfile profile = (PatientProfile)PersistenceContext.Load(request.PatientProfileRef, EntityLoadFlags.CheckVersion);
+            PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef, EntityLoadFlags.CheckVersion);
 
             CheckForDuplicateMrn(request.PatientDetail.Mrn.Id, request.PatientDetail.Mrn.AssigningAuthority, profile);
 

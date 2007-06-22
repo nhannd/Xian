@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
             List<PatientProfileSummary> summaries = new List<PatientProfileSummary>();
             foreach(EntityRef patientRef in request.PatientRefs)
             {
-                Patient patient = (Patient)PersistenceContext.Load(patientRef);
+                Patient patient = PersistenceContext.Load <Patient>(patientRef);
                 foreach (PatientProfile profile in patient.Profiles)
                 {
                     summaries.Add(assembler.CreatePatientProfileSummary(profile, PersistenceContext));
@@ -94,7 +94,7 @@ namespace ClearCanvas.Ris.Application.Services.PatientReconciliation
                 request.PatientRefs,
                 delegate(EntityRef patientRef)
                 {
-                    return (Patient)PersistenceContext.Load(patientRef, EntityLoadFlags.CheckVersion);
+                    return PersistenceContext.Load<Patient>(patientRef, EntityLoadFlags.CheckVersion);
                 });
 
             if (patients.Count < 2)

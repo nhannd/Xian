@@ -40,7 +40,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
             authorityGroup.AuthorityTokens.Clear();
             foreach (AuthorityTokenSummary summary in detail.AuthorityTokens)
             {
-                authorityGroup.AuthorityTokens.Add((AuthorityToken)persistenceContext.Load(summary.EntityRef));
+                authorityGroup.AuthorityTokens.Add(persistenceContext.Load<AuthorityToken>(summary.EntityRef));
             }
         }
     }

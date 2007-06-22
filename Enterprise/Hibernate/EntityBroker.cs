@@ -110,12 +110,12 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         public TEntity Load(EntityRef entityRef)
         {
-            return (TEntity)this.Context.Load(entityRef);
+            return this.Context.Load<TEntity>(entityRef);
         }
 
         public TEntity Load(EntityRef entityRef, EntityLoadFlags flags)
         {
-            return (TEntity)this.Context.Load(entityRef, flags);
+            return this.Context.Load<TEntity>(entityRef, flags);
         }
 
         public virtual void Delete(TEntity entity)

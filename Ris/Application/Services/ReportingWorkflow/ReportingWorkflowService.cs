@@ -133,7 +133,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [ReadOperation]
         public LoadReportForEditResponse LoadReportForEdit(LoadReportForEditRequest request)
         {
-            ReportingProcedureStep step = (ReportingProcedureStep)PersistenceContext.Load(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+            ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
             string report = (step.Report == null ? "" : step.Report.ReportContent);
             return new LoadReportForEditResponse(report);
         }
@@ -141,7 +141,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [UpdateOperation]
         public SaveReportResponse SaveReport(SaveReportRequest request)
         {
-            ReportingProcedureStep step = (ReportingProcedureStep)PersistenceContext.Load(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
+            ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
             if (step.Report != null)
             {
                 step.Report.ReportContent = request.ReportContent;
@@ -160,7 +160,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [ReadOperation]
         public GetPriorReportResponse GetPriorReport(GetPriorReportRequest request)
         {
-            ReportingProcedureStep step = (ReportingProcedureStep)PersistenceContext.Load(request.ReportingStepRef, EntityLoadFlags.Proxy);
+            ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.Proxy);
 
             IList<Report> listReports = PersistenceContext.GetBroker<IReportingWorklistBroker>().GetPriorReport(step.RequestedProcedure.Order.Patient);
             List<ReportSummary> listSummary = CollectionUtils.Map<Report, ReportSummary, List<ReportSummary>>(listReports,
@@ -225,10 +225,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         private ReportingProcedureStep ExecuteOperation(Operations.ReportingOperation op, EntityRef stepRef)
         {
-            // it is extremly important that we get the actual object and not a proxy here
-            // if a proxy is returned, then it cannot be cast to a subclass
-            // (eg InterpretationStep s = (InterpretationStep)rps; will fail even if we know that rps is an interpretation step)
-            ReportingProcedureStep step = (ReportingProcedureStep)PersistenceContext.Load(stepRef, EntityLoadFlags.CheckVersion);
+            ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(stepRef, EntityLoadFlags.CheckVersion);
             op.Execute(step, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
             return step;
         }
@@ -237,7 +234,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         {
             if (itemKey is WorklistItemKey)
             {
-                ReportingProcedureStep step = (ReportingProcedureStep)PersistenceContext.Load(((WorklistItemKey)itemKey).ReportingProcedureStep);
+                ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(((WorklistItemKey)itemKey).ReportingProcedureStep);
                 return op.CanExecute(step, this.CurrentUserStaff);
             }
             else

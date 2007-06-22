@@ -16,7 +16,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         public GetProcedureStepsForWorklistItemResponse GetProcedureStepsForWorklistItem(
             GetProcedureStepsForWorklistItemRequest request)
         {
-            ProcedureStep mps = (ProcedureStep)PersistenceContext.Load(request.WorklistItem.ProcedureStepRef);
+            ProcedureStep mps = PersistenceContext.Load<ProcedureStep>(request.WorklistItem.ProcedureStepRef);
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
 
             IList<ProcedureStep> documentableProcedureSteps =
@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
             foreach (ProcedureStepDetail detail in dirtyProcedureStepDetails)
             {
-                ProcedureStep procedureStep = (ProcedureStep) PersistenceContext.Load(detail.EntityRef);
+                ProcedureStep procedureStep = PersistenceContext.Load<ProcedureStep>(detail.EntityRef);
                 assembler.UpdateProcedureStep(procedureStep, detail, this.CurrentUserStaff, ppsDictionary, PersistenceContext);
             }
 

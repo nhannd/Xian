@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         public LoadFacilityForEditResponse LoadFacilityForEdit(LoadFacilityForEditRequest request)
         {
             // note that the version of the FacilityRef is intentionally ignored here (default behaviour of ReadOperation)
-            Facility f = (Facility)PersistenceContext.Load(request.FacilityRef);
+            Facility f = PersistenceContext.Load<Facility>(request.FacilityRef);
             FacilityAssembler assembler = new FacilityAssembler();
 
             return new LoadFacilityForEditResponse(f.GetRef(), assembler.CreateFacilityDetail(f));
@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.FacilityAdmin)]
         public UpdateFacilityResponse UpdateFacility(UpdateFacilityRequest request)
         {
-            Facility facility = (Facility)PersistenceContext.Load(request.FacilityRef, EntityLoadFlags.CheckVersion);
+            Facility facility = PersistenceContext.Load<Facility>(request.FacilityRef, EntityLoadFlags.CheckVersion);
 
             FacilityAssembler assembler = new FacilityAssembler();
             assembler.UpdateFacility(request.FacilityDetail, facility);

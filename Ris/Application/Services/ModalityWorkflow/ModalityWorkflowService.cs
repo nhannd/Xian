@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             //return new LoadWorklistItemPreviewResponse(assembler.CreateWorklistPreview(preview));
 
             ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
-            ModalityProcedureStep mps = (ModalityProcedureStep)PersistenceContext.Load(request.ProcedureStepRef);
+            ModalityProcedureStep mps = PersistenceContext.Load<ModalityProcedureStep>(request.ProcedureStepRef);
             return new LoadWorklistItemPreviewResponse(assembler.CreateWorklistPreview(mps, request.PatientProfileAuthority, PersistenceContext));
         }
 
@@ -141,7 +141,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
         private void ExecuteOperation(ModalityOperation op, EntityRef modalityProcedureStepRef)
         {
-            ModalityProcedureStep modalityProcedureStep = (ModalityProcedureStep)PersistenceContext.Load(modalityProcedureStepRef);
+            ModalityProcedureStep modalityProcedureStep = PersistenceContext.Load<ModalityProcedureStep>(modalityProcedureStepRef);
             op.Execute(modalityProcedureStep, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
         }
 
@@ -149,7 +149,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         {
             if (itemKey is WorklistItemKey)
             {
-                ModalityProcedureStep modalityProcedureStep = (ModalityProcedureStep)PersistenceContext.Load(((WorklistItemKey)itemKey).ModalityProcedureStep);
+                ModalityProcedureStep modalityProcedureStep = PersistenceContext.Load<ModalityProcedureStep>(((WorklistItemKey)itemKey).ModalityProcedureStep);
                 return op.CanExecute(modalityProcedureStep);
             }
             else

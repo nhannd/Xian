@@ -170,7 +170,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             OrderSearchCriteria criteria = new OrderSearchCriteria();
 
-            PatientProfile profile = (PatientProfile) PersistenceContext.Load(request.PatientProfileRef);
+            PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef);
             criteria.Patient.EqualTo(profile.Patient);
             
             OrderEntryAssembler assembler = new OrderEntryAssembler();
@@ -196,7 +196,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public GetDiagnosticServiceSubTreeResponse GetDiagnosticServiceSubTree(GetDiagnosticServiceSubTreeRequest request)
         {
-            DiagnosticServiceTreeNode node = (DiagnosticServiceTreeNode)PersistenceContext.Load(request.NodeRef, EntityLoadFlags.Proxy);
+            DiagnosticServiceTreeNode node = PersistenceContext.Load<DiagnosticServiceTreeNode>(request.NodeRef, EntityLoadFlags.Proxy);
 
             DiagnosticServiceTreeNodeSearchCriteria subTreeCriteria = new DiagnosticServiceTreeNodeSearchCriteria();
             subTreeCriteria.Parent.EqualTo(node);

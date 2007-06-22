@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         public LoadLocationForEditResponse LoadLocationForEdit(LoadLocationForEditRequest request)
         {
             // note that the version of the LocationRef is intentionally ignored here (default behaviour of ReadOperation)
-            Location l = (Location)PersistenceContext.Load(request.LocationRef);
+            Location l = PersistenceContext.Load<Location>(request.LocationRef);
             LocationAssembler assembler = new LocationAssembler();
 
             return new LoadLocationForEditResponse(l.GetRef(), assembler.CreateLocationDetail(l));
@@ -97,7 +97,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.LocationAdmin)]
         public UpdateLocationResponse UpdateLocation(UpdateLocationRequest request)
         {
-            Location location = (Location)PersistenceContext.Load(request.LocationRef, EntityLoadFlags.CheckVersion);
+            Location location = PersistenceContext.Load<Location>(request.LocationRef, EntityLoadFlags.CheckVersion);
 
             LocationAssembler assembler = new LocationAssembler();
             assembler.UpdateLocation(request.LocationDetail, location, PersistenceContext);

@@ -19,9 +19,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
     {
         public ReportingWorklistPreview CreateReportingWorklistPreview(ReportingWorklistItem item, IPersistenceContext context)
         {
-            SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load(); 
-            
-            ReportingProcedureStep step = (ReportingProcedureStep)context.Load(item.ProcedureStepRef);
+            SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
+
+            ReportingProcedureStep step = context.Load<ReportingProcedureStep>(item.ProcedureStepRef);
             PatientProfile profile = CollectionUtils.SelectFirst<PatientProfile>(step.RequestedProcedure.Order.Patient.Profiles,
                 delegate(PatientProfile thisProfile)
                 {

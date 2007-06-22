@@ -69,7 +69,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         public LoadStaffForEditResponse LoadStaffForEdit(LoadStaffForEditRequest request)
         {
             // note that the version of the StaffRef is intentionally ignored here (default behaviour of ReadOperation)
-            Staff s = (Staff)PersistenceContext.Load(request.StaffRef);
+            Staff s = PersistenceContext.Load<Staff>(request.StaffRef);
             StaffAssembler assembler = new StaffAssembler();
 
             return new LoadStaffForEditResponse(s.GetRef(), assembler.CreateStaffDetail(s, this.PersistenceContext));
@@ -123,7 +123,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin)]
         public UpdateStaffResponse UpdateStaff(UpdateStaffRequest request)
         {
-            Staff staff = (Staff)PersistenceContext.Load(request.StaffRef, EntityLoadFlags.CheckVersion);
+            Staff staff = PersistenceContext.Load<Staff>(request.StaffRef, EntityLoadFlags.CheckVersion);
 
             StaffAssembler assembler = new StaffAssembler();
             assembler.UpdateStaff(request.StaffDetail, staff);

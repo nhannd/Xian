@@ -147,12 +147,14 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// </summary>
         /// <param name="entityRef"></param>
         /// <returns></returns>
-        public virtual Entity Load(EntityRef entityRef)
+        public virtual TEntity Load<TEntity>(EntityRef entityRef)
+            where TEntity : Entity
         {
-            return this.Load(entityRef, this.DefaultEntityLoadFlags);
+            return this.Load<TEntity>(entityRef, this.DefaultEntityLoadFlags);
         }
 
-        public virtual Entity Load(EntityRef entityRef, EntityLoadFlags flags)
+        public virtual TEntity Load<TEntity>(EntityRef entityRef, EntityLoadFlags flags)
+            where TEntity : Entity
         {
             try
             {
@@ -166,7 +168,7 @@ namespace ClearCanvas.Enterprise.Hibernate
                 if ((flags & EntityLoadFlags.CheckVersion) == EntityLoadFlags.CheckVersion && !EntityRefUtils.GetVersion(entityRef).Equals(entity.Version))
                     throw new EntityVersionException(EntityRefUtils.GetOID(entityRef), null);
 
-                return entity;
+                return (TEntity)entity;
 
             }
             catch (ObjectNotFoundException hibernateException)
