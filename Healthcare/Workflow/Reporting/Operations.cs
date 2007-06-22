@@ -22,13 +22,13 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                InterpretationStep interpretation = step as InterpretationStep;
+                InterpretationStep interpretation = step.Downcast<InterpretationStep>();
                 interpretation.Assign(currentUserStaff);
             }
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
             {
-                if (step is InterpretationStep == false)
+                if (step.Is<InterpretationStep>() == false)
                     return false;
 
                 // step already started
@@ -36,7 +36,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                     return false;
 
                 // step already claim by the same staff
-                if (step.AssignedStaff != null && step.AssignedStaff.Equals(currentUserStaff))
+                if (Equals(step.AssignedStaff, currentUserStaff))
                     return false;
 
                 return true;
@@ -47,7 +47,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                InterpretationStep interpretation = (InterpretationStep)step;
+                InterpretationStep interpretation = step.Downcast<InterpretationStep>();
 
                 // if not assigned, assign
                 if (interpretation.AssignedStaff == null)
@@ -63,7 +63,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
             {
-                if (step is InterpretationStep == false)
+                if (step.Is<InterpretationStep>() == false)
                     return false;
 
                 // step is completed/cancelled
@@ -71,7 +71,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                     return false;
 
                 // step is not claimed or is assigned to someone else
-                if (step.AssignedStaff == null || step.AssignedStaff.Equals(currentUserStaff) == false)
+                if (Equals(step.AssignedStaff, currentUserStaff) == false)
                     return false;
 
                 return true;
@@ -82,13 +82,13 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                InterpretationStep interpretation = step as InterpretationStep;
+                InterpretationStep interpretation = step.Downcast<InterpretationStep>();
                 interpretation.Complete();
             }
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
             {
-                if (step is InterpretationStep == false)
+                if (step.Is<InterpretationStep>() == false)
                     return false;
 
                 // step is not started or has been cancelled/completed
@@ -96,7 +96,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                     return false;
 
                 // step is assigned to someone else
-                if (step.AssignedStaff != null && step.AssignedStaff.Equals(currentUserStaff) == false)
+                if (Equals(step.AssignedStaff, currentUserStaff) == false)
                     return false;
 
                 return true;
@@ -118,7 +118,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             {
                 base.Execute(step, currentUserStaff, workflow);
 
-                InterpretationStep interpretation = (InterpretationStep)step;
+                InterpretationStep interpretation = step.Downcast<InterpretationStep>();
                 VerificationStep verification = new VerificationStep(interpretation);
                 verification.Assign(interpretation.PerformingStaff);
 
@@ -132,7 +132,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             {
                 base.Execute(step, currentUserStaff, workflow);
 
-                InterpretationStep interpretation = (InterpretationStep)step;
+                InterpretationStep interpretation = step.Downcast<InterpretationStep>();
                 VerificationStep verification = new VerificationStep(interpretation);
                 verification.Assign(interpretation.PerformingStaff);
                 verification.Complete(interpretation.PerformingStaff);
@@ -145,7 +145,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                TranscriptionStep transcription = step as TranscriptionStep;
+                TranscriptionStep transcription = step.Downcast<TranscriptionStep>();
                 transcription.Discontinue();
 
                 InterpretationStep interpretation = new InterpretationStep(transcription);
@@ -158,7 +158,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
             {
-                if (step is TranscriptionStep == false)
+                if (step.Is<TranscriptionStep>() == false)
                     return false;
 
                 // step already completed or cancelled
@@ -166,7 +166,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                     return false;
 
                 // step already claim by the same staff
-                if (step.AssignedStaff != null && step.AssignedStaff.Equals(currentUserStaff))
+                if (Equals(step.AssignedStaff, currentUserStaff))
                     return false;
 
                 return true;
@@ -177,7 +177,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                VerificationStep verification = step as VerificationStep;
+                VerificationStep verification = step.Is<VerificationStep>();
 
                 // if not assigned, assign
                 if (verification.AssignedStaff == null)
@@ -193,7 +193,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
             {
-                if (step is VerificationStep == false)
+                if (step.Is<VerificationStep>() == false)
                     return false;
 
                 // step is completed/cancelled
@@ -201,7 +201,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                     return false;
 
                 // step is assigned to someone else
-                if (step.AssignedStaff != null && step.AssignedStaff.Equals(currentUserStaff) == false)
+                if (Equals(step.AssignedStaff, currentUserStaff) == false)
                     return false;
 
                 return true;
@@ -212,7 +212,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         {
             public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                VerificationStep verification = step as VerificationStep;
+                VerificationStep verification = step.Downcast<VerificationStep>();
 
                 // this operation is legal even if the step was never started, therefore need to supply the performer
                 verification.Complete(currentUserStaff);
@@ -220,7 +220,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
             {
-                if (step is VerificationStep == false)
+                if (step.Is<VerificationStep>() == false)
                     return false;
 
                 // step already completed or cancelled
@@ -228,7 +228,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                     return false;
 
                 // step is assigned to someone else
-                if (step.AssignedStaff != null && step.AssignedStaff.Equals(currentUserStaff) == false)
+                if (Equals(step.AssignedStaff, currentUserStaff) == false)
                     return false;
 
                 return true;

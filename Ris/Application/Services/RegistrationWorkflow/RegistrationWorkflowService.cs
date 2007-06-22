@@ -199,7 +199,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
             IRegistrationWorklistBroker broker = this.PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
 
-            PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).ProfileRef, EntityLoadFlags.Proxy);
+            PatientProfile profile = profileBroker.Load(((WorklistItemKey)itemKey).ProfileRef, EntityLoadFlags.Proxy);
             return broker.GetOrdersForCheckInCount(profile.Patient) > 0;
         }
 
@@ -208,7 +208,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             IPatientProfileBroker profileBroker = this.PersistenceContext.GetBroker<IPatientProfileBroker>();
             IRegistrationWorklistBroker broker = this.PersistenceContext.GetBroker<IRegistrationWorklistBroker>();
 
-            PatientProfile profile = profileBroker.Load((itemKey as WorklistItemKey).ProfileRef, EntityLoadFlags.Proxy);
+            PatientProfile profile = profileBroker.Load(((WorklistItemKey)itemKey).ProfileRef, EntityLoadFlags.Proxy);
             return broker.GetOrdersForCancelCount(profile.Patient) > 0;
         }
 
@@ -223,22 +223,22 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             AlertAssembler assembler = new AlertAssembler();
             List<AlertNotificationDetail> results = new List<AlertNotificationDetail>();
 
-            if (subject is Patient)
+            if (subject.Is<Patient>())
             {
                 foreach (IPatientAlert patientAlertTests in PatientAlertHelper.Instance.GetAlertTests())
                 {
-                    IAlertNotification testResult = patientAlertTests.Test(subject as Patient, context);
+                    IAlertNotification testResult = patientAlertTests.Test(subject.Downcast<Patient>(), context);
                     if (testResult != null)
                     {
                         results.Add(assembler.CreateAlertNotification(testResult));
                     }
                 }
             }
-            else if (subject is PatientProfile)
+            else if (subject.Is<PatientProfile>())
             {
                 foreach (IPatientProfileAlert profileAlertTests in PatientProfileAlertHelper.Instance.GetAlertTests())
                 {
-                    IAlertNotification testResult = profileAlertTests.Test(subject as PatientProfile, context);
+                    IAlertNotification testResult = profileAlertTests.Test(subject.Downcast<PatientProfile>(), context);
                     if (testResult != null)
                     {
                         results.Add(assembler.CreateAlertNotification(testResult));

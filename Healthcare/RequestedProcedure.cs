@@ -42,11 +42,11 @@ namespace ClearCanvas.Healthcare {
             {
                 if (_cps == null)
                 {
-                    _cps = (CheckInProcedureStep)CollectionUtils.SelectFirst<ProcedureStep>(this.ProcedureSteps,
+                    _cps = CollectionUtils.SelectFirst<ProcedureStep>(this.ProcedureSteps,
                         delegate(ProcedureStep step)
                         {
-                            return step is CheckInProcedureStep;
-                        });
+                            return step.Is<CheckInProcedureStep>();
+                        }).As<CheckInProcedureStep>();
                 }
 
                 return _cps;
@@ -60,7 +60,7 @@ namespace ClearCanvas.Healthcare {
                 return CollectionUtils.Select<ProcedureStep>(this.ProcedureSteps,
                     delegate(ProcedureStep ps)
                     {
-                        return ps is ModalityProcedureStep;
+                        return ps.Is<ModalityProcedureStep>();
                     });
             }
         }
@@ -124,7 +124,7 @@ namespace ClearCanvas.Healthcare {
                 return CollectionUtils.Contains<ProcedureStep>(this.ProcedureSteps,
                     delegate(ProcedureStep ps)
                     {
-                        return (ps is ModalityProcedureStep && ps.State == ActivityStatus.IP);
+                        return (ps.Is<ModalityProcedureStep>() && ps.State == ActivityStatus.IP);
                     });
             }
         }
@@ -148,7 +148,7 @@ namespace ClearCanvas.Healthcare {
                 return CollectionUtils.TrueForAll<ProcedureStep>(this.ModalitySteps,
                     delegate(ProcedureStep ps)
                     {
-                        return (ps is ModalityProcedureStep && (ps.State == ActivityStatus.DC || ps.State == ActivityStatus.CM));
+                        return (ps.Is<ModalityProcedureStep>() && (ps.State == ActivityStatus.DC || ps.State == ActivityStatus.CM));
                     });
             }
         }

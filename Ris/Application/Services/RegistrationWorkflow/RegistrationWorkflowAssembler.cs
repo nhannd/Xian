@@ -80,11 +80,11 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         List<DateTime?> listScheduledTime = CollectionUtils.Map<RequestedProcedure, DateTime?, List<DateTime?>>(o.RequestedProcedures,
                             delegate(RequestedProcedure rp)
                             {
-                                CheckInProcedureStep cps = (CheckInProcedureStep)CollectionUtils.SelectFirst<ProcedureStep>(rp.ProcedureSteps,
+                                CheckInProcedureStep cps = CollectionUtils.SelectFirst<ProcedureStep>(rp.ProcedureSteps,
                                     delegate(ProcedureStep step)
                                     {
-                                        return step is CheckInProcedureStep;
-                                    });
+                                        return step.Is<CheckInProcedureStep>();
+                                    }).Downcast<CheckInProcedureStep>();
 
                                 return cps.Scheduling.StartTime;
                             });

@@ -21,7 +21,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             return new StaffSummary(
                 staff.GetRef(),
                 assembler.CreatePersonNameDetail(staff.Name),
-                (staff is Practitioner ? (staff as Practitioner).LicenseNumber : ""));
+                (staff.Is<Practitioner>() ? (staff.As<Practitioner>()).LicenseNumber : ""));
         }
 
         public StaffDetail CreateStaffDetail(Staff staff, IPersistenceContext context)
@@ -44,7 +44,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                     {
                         return addressAssembler.CreateAddressDetail(address, context);
                     }),
-                    (staff is Practitioner ? (staff as Practitioner).LicenseNumber : "")
+                    (staff.Is<Practitioner>() ? (staff.As<Practitioner>()).LicenseNumber : "")
                     );
         }
 
@@ -66,8 +66,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                 addressAssembler.AddAddress(addressDetail, staff.Addresses);
             }
 
-            if (staff is Practitioner)
-                ((Practitioner)staff).LicenseNumber = detail.LicenseNumber;
+            if (staff.Is<Practitioner>())
+                (staff.As<Practitioner>()).LicenseNumber = detail.LicenseNumber;
         }
     }
 }

@@ -61,17 +61,17 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         public WorklistItem(Order order)
             : base(new WorklistItemKey(null, order.GetRef()))
         {
-            PatientProfile profile = (PatientProfile)CollectionUtils.SelectFirst<Entity>(order.Patient.Profiles,
+            PatientProfile profile = CollectionUtils.SelectFirst<Entity>(order.Patient.Profiles,
                 delegate(Entity entity)
                 {
-                    PatientProfile pp = entity as PatientProfile;
+                    PatientProfile pp = entity.As<PatientProfile>();
                     if (pp.Mrn.AssigningAuthority == order.Visit.VisitNumber.AssigningAuthority)
                         return true;
 
                     return false;
-                });
+                }).Downcast<PatientProfile>();
 
-            WorklistItemKey thisKey = this.Key as WorklistItemKey;
+            WorklistItemKey thisKey = (WorklistItemKey)this.Key;
             thisKey.ProfileRef = profile.GetRef();
 
             _mrn = profile.Mrn;
@@ -106,12 +106,12 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 
         public EntityRef ProfileRef
         {
-            get { return (this.Key as WorklistItemKey).ProfileRef; }
+            get { return ((WorklistItemKey)this.Key).ProfileRef; }
         }
 
         public EntityRef OrderRef
         {
-            get { return (this.Key as WorklistItemKey).OrderRef; }
+            get { return ((WorklistItemKey)this.Key).OrderRef; }
         }
 
         public CompositeIdentifier Mrn

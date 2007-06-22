@@ -238,7 +238,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             IList list = DoQuery(hqlQuery, parameters);
             foreach (object tuple in list)
             {
-                Report item = tuple as Report;
+                Report item = (Report)tuple;
                 results.Add(item);
             }
 

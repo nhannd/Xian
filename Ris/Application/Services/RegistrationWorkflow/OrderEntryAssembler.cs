@@ -114,9 +114,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             foreach (ProcedureStep step in rp.ProcedureSteps)
             {
                 //TODO: include other ProcedureStep in RequestedProcedureSummary
-                if (step is ModalityProcedureStep)
+                if (step.Is<ModalityProcedureStep>())
                 {
-                    detail.ProcedureSteps.Add(this.CreateModalityProcedureStepSummary(step as ModalityProcedureStep, context));
+                    detail.ProcedureSteps.Add(this.CreateModalityProcedureStepSummary(step.Downcast<ModalityProcedureStep>(), context));
                 }
             }
 

@@ -63,7 +63,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public EntityRef ProcedureStepRef
         {
-            get { return (this.Key as WorklistItemKey).ReportingProcedureStep; }
+            get { return ((WorklistItemKey)this.Key).ReportingProcedureStep; }
         }
 
         public CompositeIdentifier Mrn
