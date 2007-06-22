@@ -45,6 +45,8 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			_surface.Draw();
 		}
 
+		#endregion
+
 		private void CreateRenderer()
 		{
 			if (_vtkRenderer == null)
@@ -82,7 +84,6 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			}
 		}
 
-		#endregion
 
 		#region IDisposable Members
 

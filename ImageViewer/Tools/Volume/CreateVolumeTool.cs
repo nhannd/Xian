@@ -21,8 +21,10 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 	[GroupHint("show", "Tools.VolumeImage.Create")]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class CreateVolumeTool : ComponentImageViewerTool
+	public class CreateVolumeTool : ImageViewerTool
 	{
+		private static VolumeComponent _volumeComponent;
+
 		/// <summary>
 		/// Default constructor.  A no-args constructor is required by the
 		/// framework.  Do not remove.
@@ -41,19 +43,19 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 
 		public void Show()
 		{
-			if (this.ImageViewerToolComponent == null)
+			if (_volumeComponent == null)
 			{
 				// create and initialize the layout component
-				this.ImageViewerToolComponent = new VolumeComponent(GetActiveImageViewer());
+				_volumeComponent = new VolumeComponent(this.Context);
 
 				// launch the layout component in a shelf
 				// note that the component is thrown away when the shelf is closed by the user
 				ApplicationComponent.LaunchAsShelf(
 					this.Context.DesktopWindow,
-					this.ImageViewerToolComponent,
+					_volumeComponent,
 					SR.TitleVolumeController,
 					ShelfDisplayHint.DockLeft,
-					delegate(IApplicationComponent component) { this.ImageViewerToolComponent = null; });
+					delegate(IApplicationComponent component) { _volumeComponent = null; });
 			}
 		}
 	}

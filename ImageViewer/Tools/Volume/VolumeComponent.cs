@@ -6,6 +6,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Volume
 {
@@ -26,9 +27,9 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public VolumeComponent(IImageViewer imageViewer)
+		public VolumeComponent(IImageViewerToolContext imageViewerToolContext)
+			: base(imageViewerToolContext)
 		{
-			this.ImageViewer = imageViewer;
 		}
 
 		public bool CreateVolumeEnabled
@@ -127,6 +128,11 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 			imageBox.Draw();
 			imageBox[0, 0].Select();
 
+			OnSubjectChanged();
+		}
+
+		protected override void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e)
+		{
 			OnSubjectChanged();
 		}
 

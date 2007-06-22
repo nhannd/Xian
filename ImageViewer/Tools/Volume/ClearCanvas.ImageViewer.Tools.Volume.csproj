@@ -90,7 +90,7 @@
     <Compile Include="TissueSettingsCollection.cs" />
     <Compile Include="TissueSettingsEventArgs.cs" />
     <Compile Include="VolumeComponent.cs" />
-    <Compile Include="VolumeLayer.cs" />
+    <Compile Include="VolumeGraphic.cs" />
     <Compile Include="VolumeProp.cs" />
     <Compile Include="ZoomVolumeTool.cs" />
     <Compile Include="CreateVolumeTool.cs" />
