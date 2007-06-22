@@ -61,7 +61,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         public WorklistItem(Order order)
             : base(new WorklistItemKey(null, order.GetRef()))
         {
-            PatientProfile profile = CollectionUtils.SelectFirst<Entity>(order.Patient.Profiles,
+            Entity entity = CollectionUtils.SelectFirst<Entity>(order.Patient.Profiles,
                 delegate(Entity entity)
                 {
                     PatientProfile pp = entity.As<PatientProfile>();
@@ -69,7 +69,9 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
                         return true;
 
                     return false;
-                }).Downcast<PatientProfile>();
+                });
+
+            PatientProfile profile = (entity == null ? null : entity.Downcast<PatientProfile>());
 
             WorklistItemKey thisKey = (WorklistItemKey)this.Key;
             thisKey.ProfileRef = profile.GetRef();

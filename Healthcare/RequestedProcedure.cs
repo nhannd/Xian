@@ -17,8 +17,6 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class RequestedProcedure : Entity
 	{
-        private CheckInProcedureStep _cps;
-
         public RequestedProcedure(Order order, RequestedProcedureType type, string index)
         {
             _order = order;
@@ -35,35 +33,6 @@ namespace ClearCanvas.Healthcare {
 		private void CustomInitialize()
 		{
 		}
-
-        private CheckInProcedureStep CheckInStep
-        {
-            get
-            {
-                if (_cps == null)
-                {
-                    _cps = CollectionUtils.SelectFirst<ProcedureStep>(this.ProcedureSteps,
-                        delegate(ProcedureStep step)
-                        {
-                            return step.Is<CheckInProcedureStep>();
-                        }).As<CheckInProcedureStep>();
-                }
-
-                return _cps;
-            }
-        }
-
-        private ICollection<ProcedureStep> ModalitySteps
-        {
-            get
-            {
-                return CollectionUtils.Select<ProcedureStep>(this.ProcedureSteps,
-                    delegate(ProcedureStep ps)
-                    {
-                        return ps.Is<ModalityProcedureStep>();
-                    });
-            }
-        }
 
         #region Public Operations
 
@@ -117,14 +86,40 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
+        public CheckInProcedureStep CheckInStep
+        {
+            get
+            {
+                ProcedureStep step = CollectionUtils.SelectFirst<ProcedureStep>(this.ProcedureSteps,
+                    delegate(ProcedureStep step)
+                    {
+                        return step.Is<CheckInProcedureStep>();
+                    });
+
+                return step == null ? null : step.Downcast<CheckInProcedureStep>();
+            }
+        }
+
+        public ICollection<ProcedureStep> ModalitySteps
+        {
+            get
+            {
+                return CollectionUtils.Select<ProcedureStep>(this.ProcedureSteps,
+                    delegate(ProcedureStep ps)
+                    {
+                        return ps.Is<ModalityProcedureStep>();
+                    });
+            }
+        }
+
         public bool IsMpsStarted
         {
             get
             {
-                return CollectionUtils.Contains<ProcedureStep>(this.ProcedureSteps,
+                return CollectionUtils.Contains<ProcedureStep>(this.ModalitySteps,
                     delegate(ProcedureStep ps)
                     {
-                        return (ps.Is<ModalityProcedureStep>() && ps.State == ActivityStatus.IP);
+                        return (ps.State == ActivityStatus.IP);
                     });
             }
         }
@@ -148,7 +143,7 @@ namespace ClearCanvas.Healthcare {
                 return CollectionUtils.TrueForAll<ProcedureStep>(this.ModalitySteps,
                     delegate(ProcedureStep ps)
                     {
-                        return (ps.Is<ModalityProcedureStep>() && (ps.State == ActivityStatus.DC || ps.State == ActivityStatus.CM));
+                        return (ps.State == ActivityStatus.DC || ps.State == ActivityStatus.CM);
                     });
             }
         }
