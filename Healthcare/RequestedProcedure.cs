@@ -38,13 +38,15 @@ namespace ClearCanvas.Healthcare {
 
         public void Start(Staff currentUserStaff)
         {
+            CheckInProcedureStep cps = this.CheckInStep;
+
             // The CPS should be created when each RP of an order is created, but just in case it's not
-            if (this.CheckInStep == null)
+            if (cps == null)
             {
-                _cps = new CheckInProcedureStep(this);
+                cps = new CheckInProcedureStep(this);
             }
 
-            this.CheckInStep.Start(currentUserStaff);
+            cps.Start(currentUserStaff);
 
             if (this.Order.Status == OrderStatus.SC)
                 this.Order.Status = OrderStatus.IP;
@@ -91,9 +93,9 @@ namespace ClearCanvas.Healthcare {
             get
             {
                 ProcedureStep step = CollectionUtils.SelectFirst<ProcedureStep>(this.ProcedureSteps,
-                    delegate(ProcedureStep step)
+                    delegate(ProcedureStep ps)
                     {
-                        return step.Is<CheckInProcedureStep>();
+                        return ps.Is<CheckInProcedureStep>();
                     });
 
                 return step == null ? null : step.Downcast<CheckInProcedureStep>();
