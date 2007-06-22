@@ -195,12 +195,21 @@ namespace ClearCanvas.Dicom
                     defaultRepertoire = SpecificCharacterSetParser.CharacterSetDatabase["ISO 2022 IR 6"];
             }
 
+			// Here we are accounting for cases where the same character sets are repeated, so
+			// we need to select out the unique ones.  It should never really happen, but it 
+			// does happen with a particular dataset when querying JDicom.
+			List<string> uniqueExtensionRepertoireDefinedTerms = new List<string>();
+			for (int i = 1; i < specificCharacterSetValues.Length; ++i)
+			{ 
+				string value = specificCharacterSetValues[i];
+				if (value != defaultRepertoire.DefinedTerm && !uniqueExtensionRepertoireDefinedTerms.Contains(value))
+					uniqueExtensionRepertoireDefinedTerms.Add(value);
+			}
+
             // parse out the extension repertoires
             extensionRepertoires = new Dictionary<string, CharacterSetInfo>();
-            for (int i = 1; i < specificCharacterSetValues.Length; ++i)
+            foreach(string value in uniqueExtensionRepertoireDefinedTerms)
             {
-                string value = specificCharacterSetValues[i];
-
                 if (SpecificCharacterSetParser.CharacterSetDatabase.ContainsKey(value) && !extensionRepertoires.ContainsKey(value))
                 {
                     // special robustness handling of GB18030 and UTF-8
@@ -220,7 +229,7 @@ namespace ClearCanvas.Dicom
                     // we put in the default repertoire. Technically, it may
                     // not be ISO 2022 IR 6, but ISO_IR 6, but the information
                     // we want to use is the same
-                    extensionRepertoires.Add(value, SpecificCharacterSetParser.CharacterSetDatabase["ISO 2022 IR 6"]);
+					extensionRepertoires.Add(value, SpecificCharacterSetParser.CharacterSetDatabase["ISO 2022 IR 6"]);
                 }
             }
         }
