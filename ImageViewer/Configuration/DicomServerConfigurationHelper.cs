@@ -5,6 +5,8 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.Services.DicomServer;
+using System.Threading;
+using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Configuration
 {
@@ -38,14 +40,24 @@ namespace ClearCanvas.ImageViewer.Configuration
 				get { return DicomServerConfigurationHelper.InterimStorageDirectory; }
 			}
 
+			public bool ConfigurationExists
+			{
+				get { return DicomServerConfigurationHelper.DicomServerConfiguration != null; }
+			}
+
 			public bool NeedsRefresh
 			{
-				get { return DicomServerConfigurationHelper.DicomServerConfiguration == null; }
+				get { return DicomServerConfigurationHelper.NeedsRefresh; }
 			}
 
 			public void Refresh()
 			{
 				DicomServerConfigurationHelper.Refresh();
+			}
+
+			public void RefreshAsync()
+			{
+				DicomServerConfigurationHelper.RefreshAsync();
 			}
 
 			public event EventHandler Changed
@@ -60,6 +72,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 		private static object _syncLock = new object();
 		private static DicomServerConfiguration _configuration;
 		private static event EventHandler _changed;
+		private static bool _refreshing;
 
 		internal static event EventHandler Changed
 		{
@@ -75,6 +88,28 @@ namespace ClearCanvas.ImageViewer.Configuration
 				lock (_syncLock)
 				{
 					_changed -= value;
+				}
+			}
+		}
+
+		internal static bool NeedsRefresh
+		{
+			get
+			{
+				lock (_syncLock)
+				{
+					return !_refreshing && _configuration == null;
+				}
+			}
+		}
+
+		internal static bool Refreshing
+		{
+			get
+			{
+				lock (_syncLock)
+				{
+					return _refreshing;
 				}
 			}
 		}
@@ -100,7 +135,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 				}
 			}
 		}
-
+		
 		public static string Host
 		{
 			get
@@ -142,6 +177,32 @@ namespace ClearCanvas.ImageViewer.Configuration
 			return new DicomServerConfigurationProvider();
 		}
 
+		internal static void RefreshAsync()
+		{
+			RefreshAsync(false);
+		}
+
+		internal static void RefreshAsync(bool force)
+		{
+			if (Refreshing)
+				return;
+				
+			WaitCallback del = delegate(object nothing)
+			{
+				try
+				{
+					Refresh(force);
+				}
+				catch (Exception e)
+				{
+					if (!(e.InnerException is EndpointNotFoundException))
+						Platform.Log(e);
+				}
+			};
+
+			ThreadPool.QueueUserWorkItem(del);
+		}
+
 		internal static void Refresh()
 		{
 			Refresh(false);
@@ -149,8 +210,13 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 		internal static void Refresh(bool force)
 		{
-			if (DicomServerConfiguration != null && !force)
-				return;
+			lock (_syncLock)
+			{
+				if (_refreshing || (_configuration != null && !force))
+					return;
+
+				_refreshing = true;
+			}
 
 			DicomServerServiceClient client = new DicomServerServiceClient();
 
@@ -164,27 +230,34 @@ namespace ClearCanvas.ImageViewer.Configuration
 				client.Abort();
 				throw new Exception(SR.ExceptionDicomServerConfigurationRefreshFailed, e);
 			}
+			finally
+			{
+				lock (_syncLock)
+				{
+					_refreshing = false;
+				}
+			}
 		}
 
 		internal static void Update(string hostName, string aeTitle, int port, string interimStorageDirectory)
 		{
 			DicomServerServiceClient client = new DicomServerServiceClient();
-			
+
 			try
 			{
 				DicomServerConfiguration configuration = new DicomServerConfiguration(hostName, aeTitle, port, interimStorageDirectory);
-				
+
 				client.UpdateServerConfiguration(configuration);
 				client.Close();
-
-				DicomServerConfiguration = configuration;
 			}
 			catch (Exception e)
 			{
-				//we need a refresh now because we can't know if the values changed or not.
-				DicomServerConfiguration = null;
 				client.Abort();
 				throw new Exception(SR.ExceptionDicomServerConfigurationUpdateFailed, e);
+			}
+			finally
+			{ 
+				RefreshAsync(true);
 			}
 		}
 	}

@@ -53,7 +53,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_aeTreeView.AfterSelect += new TreeViewEventHandler(AETreeViewAfterSelect);
 
 			if (_component.ShowLocalDataStoreNode && _component.ServerTree.RootNode.LocalDataStoreNode.DicomServerConfigurationProvider != null)
+			{
+				// A bit cheap, but by doing this we can force a refresh of the tooltip text if the Dicom
+				// Server WCF service hadn't quite started yet when this component was first created.
+				_aeTreeView.MouseEnter += new EventHandler(OnLocalDataStoreNodeUpdated);
 				_component.ServerTree.RootNode.LocalDataStoreNode.DicomServerConfigurationProvider.Changed += new EventHandler(OnLocalDataStoreNodeUpdated);
+			}
 
 			BuildServerTreeView(_aeTreeView, _component.ServerTree);
 			SelectNode(_lastClickedNode);

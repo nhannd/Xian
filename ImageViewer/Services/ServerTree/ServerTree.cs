@@ -610,7 +610,10 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 		string InterimStorageDirectory { get; }
 
 		bool NeedsRefresh { get; }
+		bool ConfigurationExists { get; }
+		
 		void Refresh();
+		void RefreshAsync();
 
 		event EventHandler Changed;
 	}
@@ -643,10 +646,29 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 		public override string ToString()
 		{
 			StringBuilder aeDescText = new StringBuilder();
-			if (_dicomServerConfigurationProvider == null || _dicomServerConfigurationProvider.NeedsRefresh)
+
+			if (_dicomServerConfigurationProvider == null)
+			{
 				aeDescText.AppendFormat(SR.LocalDataStoreConfigurationUnavailable);
+			}
 			else
-				aeDescText.AppendFormat(SR.FormatLocalDataStoreDetails, _name, _dicomServerConfigurationProvider.AETitle, _dicomServerConfigurationProvider.Host, _dicomServerConfigurationProvider.Port, _dicomServerConfigurationProvider.InterimStorageDirectory);
+			{
+				try
+				{
+					if (_dicomServerConfigurationProvider.NeedsRefresh)
+						_dicomServerConfigurationProvider.RefreshAsync();
+
+					if (_dicomServerConfigurationProvider.ConfigurationExists)
+						aeDescText.AppendFormat(SR.FormatLocalDataStoreDetails, _name, _dicomServerConfigurationProvider.AETitle, _dicomServerConfigurationProvider.Host, _dicomServerConfigurationProvider.Port, _dicomServerConfigurationProvider.InterimStorageDirectory);
+					else
+						aeDescText.AppendFormat(SR.LocalDataStoreConfigurationUnavailable);
+				}
+				catch (Exception e)
+				{
+					Platform.Log(e);
+					aeDescText.AppendFormat(SR.LocalDataStoreConfigurationUnavailable);
+				}
+			}
 
 			return aeDescText.ToString();
 		}

@@ -266,16 +266,6 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             _toolSet = new ToolSet(new AENavigatorToolExtensionPoint(), new AENavigatorToolContext(this));
             _toolbarModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomaenavigator-toolbar", _toolSet.Actions);
             _contextMenuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "dicomaenavigator-contextmenu", _toolSet.Actions);
-
-			//immediately update the dicom server configuration (local datastore node)
-			try
-			{
-				_serverTree.RootNode.LocalDataStoreNode.DicomServerConfigurationProvider.Refresh();
-			}
-			catch (Exception e)
-			{
-				Platform.Log(e);
-			}
 		}
 
         public override void Stop()
