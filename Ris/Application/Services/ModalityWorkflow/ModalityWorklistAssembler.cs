@@ -1,19 +1,18 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Workflow.Modality;
-using ClearCanvas.Ris.Application.Services.Admin;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Workflow;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Workflow.Brokers;
-using ClearCanvas.Healthcare.PatientReconciliation;
+
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.PatientReconciliation;
+using ClearCanvas.Healthcare.Workflow.Modality;
+using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Services.Admin;
+using ClearCanvas.Workflow;
+using ClearCanvas.Workflow.Brokers;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
@@ -83,7 +82,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                 mpsList.AddRange(CollectionUtils.Select<ProcedureStep, List<ProcedureStep>>(rp.ProcedureSteps,
                     delegate(ProcedureStep procedureStep)
                     {
-                        return procedureStep is ModalityProcedureStep;
+                        return procedureStep.Is<ModalityProcedureStep>();
                     }));
             }
 
@@ -144,7 +143,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                                 CheckInProcedureStep cps = (CheckInProcedureStep)CollectionUtils.SelectFirst<ProcedureStep>(rp.ProcedureSteps,
                                     delegate(ProcedureStep step)
                                     {
-                                        return step is CheckInProcedureStep;
+                                        return step.Is<CheckInProcedureStep>();
                                     });
 
                                 return cps.Scheduling.StartTime;

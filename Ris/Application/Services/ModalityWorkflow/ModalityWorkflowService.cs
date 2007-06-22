@@ -1,18 +1,14 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using Iesi.Collections;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Healthcare.Workflow;
 using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Healthcare.Workflow;
-using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
@@ -64,7 +60,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             //return new LoadWorklistItemPreviewResponse(assembler.CreateWorklistPreview(preview));
 
             ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
-            ModalityProcedureStep mps = PersistenceContext.Load<ModalityProcedureStep>(request.ProcedureStepRef);
+            ModalityProcedureStep mps = PersistenceContext.Load <ModalityProcedureStep> (request.ProcedureStepRef);
             return new LoadWorklistItemPreviewResponse(assembler.CreateWorklistPreview(mps, request.PatientProfileAuthority, PersistenceContext));
         }
 
