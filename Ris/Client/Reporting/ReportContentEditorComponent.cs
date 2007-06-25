@@ -206,9 +206,12 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                this.ExitCode = ApplicationComponentExitCode.Error;
-                EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
+                ExceptionHandler.Report(e, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
+                    delegate()
+                    {
+                        this.ExitCode = ApplicationComponentExitCode.Error;
+                        EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
+                    });
             }
         }
 
@@ -226,9 +229,12 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                this.ExitCode = ApplicationComponentExitCode.Error;
-                EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
+                ExceptionHandler.Report(e, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
+                    delegate()
+                    {
+                        this.ExitCode = ApplicationComponentExitCode.Error;
+                        EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
+                    });
             }
         }
 
@@ -246,9 +252,12 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                this.ExitCode = ApplicationComponentExitCode.Error;
-                EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
+                ExceptionHandler.Report(e, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
+                    delegate()
+                    {
+                        this.ExitCode = ApplicationComponentExitCode.Error;
+                        EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
+                    });
             }
         }
 
@@ -266,9 +275,12 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                this.ExitCode = ApplicationComponentExitCode.Error;
-                EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
+                ExceptionHandler.Report(e, SR.ExceptionFailedToSaveReport, this.Host.DesktopWindow,
+                    delegate()
+                    {
+                        this.ExitCode = ApplicationComponentExitCode.Error;
+                        EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
+                    });
             }
         }
 

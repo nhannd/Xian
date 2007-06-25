@@ -51,7 +51,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-
             Platform.GetService<IPatientAdminService>(
                 delegate(IPatientAdminService service)
                 {
@@ -117,14 +116,17 @@ namespace ClearCanvas.Ris.Client.Adt
                 try
                 {
                     SaveChanges();
-                    this.ExitCode = ApplicationComponentExitCode.Normal;
+                    this.Host.Exit();
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                    this.ExitCode = ApplicationComponentExitCode.Error;
+                    ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow, 
+                        delegate()
+                        {
+                            this.ExitCode = ApplicationComponentExitCode.Error;
+                            this.Host.Exit();                            
+                        });
                 }
-                this.Host.Exit();
             }
         }
 

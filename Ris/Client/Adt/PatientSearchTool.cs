@@ -43,19 +43,27 @@ namespace ClearCanvas.Ris.Client.Adt
 
                 if (_searchComponent == null)
                 {
-                    _searchComponent = new PatientSearchComponent();
-                    _searchComponent.SearchRequested += SearchRequestedEventHandler;
+                    try
+                    {
+                        _searchComponent = new PatientSearchComponent();
+                        _searchComponent.SearchRequested += SearchRequestedEventHandler;
 
-                    ApplicationComponent.LaunchAsShelf(
-                        context.DesktopWindow,
-                        _searchComponent,
-                        SR.TitleSearch,
-                        ShelfDisplayHint.DockFloat,
-                        delegate(IApplicationComponent c)
-                        {
-                            _searchComponent.SearchRequested -= SearchRequestedEventHandler;
-                            _searchComponent = null;
-                        });
+                        ApplicationComponent.LaunchAsShelf(
+                            context.DesktopWindow,
+                            _searchComponent,
+                            SR.TitleSearch,
+                            ShelfDisplayHint.DockFloat,
+                            delegate(IApplicationComponent c)
+                            {
+                                _searchComponent.SearchRequested -= SearchRequestedEventHandler;
+                                _searchComponent = null;
+                            });
+                    }
+                    catch (Exception e)
+                    {
+                        // cannot start component
+                        ExceptionHandler.Report(e, context.DesktopWindow);
+                    }
                 }
             }
 

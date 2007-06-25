@@ -72,29 +72,22 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
+            Platform.GetService<IPatientBiographyService>(
+                delegate(IPatientBiographyService service)
+                {
+                    ListAllProfilesForPatientResponse response = service.ListAllProfilesForPatient(new ListAllProfilesForPatientRequest(_profileRef));
+                    _profileChoices = response.Profiles;
+
+                    LoadPatientProfileFormDataResponse formDataResponse = service.LoadPatientProfileFormData(new LoadPatientProfileFormDataRequest());
+                    _addressTypeChoices = formDataResponse.AddressTypeChoices;
+                    _phoneTypeChoices = formDataResponse.PhoneTypeChoices;
+                    _contactPersonTypeChoices = formDataResponse.ContactPersonTypeChoices;
+                    _contactPersonRelationshipChoices = formDataResponse.ContactPersonRelationshipChoices;
+                });
+
+            UpdateTables();
+
             base.Start();
-
-            try
-            {
-                Platform.GetService<IPatientBiographyService>(
-                    delegate(IPatientBiographyService service)
-                    {
-                        ListAllProfilesForPatientResponse response = service.ListAllProfilesForPatient(new ListAllProfilesForPatientRequest(_profileRef));
-                        _profileChoices = response.Profiles;
-
-                        LoadPatientProfileFormDataResponse formDataResponse = service.LoadPatientProfileFormData(new LoadPatientProfileFormDataRequest());
-                        _addressTypeChoices = formDataResponse.AddressTypeChoices;
-                        _phoneTypeChoices = formDataResponse.PhoneTypeChoices;
-                        _contactPersonTypeChoices = formDataResponse.ContactPersonTypeChoices;
-                        _contactPersonRelationshipChoices = formDataResponse.ContactPersonRelationshipChoices;
-                    });
-
-                UpdateTables();
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
         }
 
         public override void Stop()

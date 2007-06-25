@@ -45,35 +45,28 @@ namespace ClearCanvas.Ris.Client.Adt
             _selectedOrders = new List<EntityRef>();
             _checkInOrderTable = new CheckInOrderTable();
 
-            try
-            {
-                Platform.GetService<IRegistrationWorkflowService>(
-                    delegate(IRegistrationWorkflowService service)
-                    {
-                        GetDataForCheckInTableResponse response = service.GetDataForCheckInTable(new GetDataForCheckInTableRequest(_worklistItem.PatientProfileRef));
-                        _checkInOrderTable.Items.AddRange(
-                            CollectionUtils.Map<CheckInTableItem, CheckInOrderTableEntry>(response.CheckInTableItems,
-                                    delegate(CheckInTableItem item)
-                                    {
-                                        CheckInOrderTableEntry entry = new CheckInOrderTableEntry(item);
-                                        entry.CheckedChanged += new EventHandler(OrderCheckedStateChangedEventHandler);
-                                        return entry;
-                                    }));
-                    });
+            Platform.GetService<IRegistrationWorkflowService>(
+                delegate(IRegistrationWorkflowService service)
+                {
+                    GetDataForCheckInTableResponse response = service.GetDataForCheckInTable(new GetDataForCheckInTableRequest(_worklistItem.PatientProfileRef));
+                    _checkInOrderTable.Items.AddRange(
+                        CollectionUtils.Map<CheckInTableItem, CheckInOrderTableEntry>(response.CheckInTableItems,
+                                delegate(CheckInTableItem item)
+                                {
+                                    CheckInOrderTableEntry entry = new CheckInOrderTableEntry(item);
+                                    entry.CheckedChanged += new EventHandler(OrderCheckedStateChangedEventHandler);
+                                    return entry;
+                                }));
+                });
 
-                CheckInOrderTableEntry selectedEntry = CollectionUtils.SelectFirst<CheckInOrderTableEntry>(_checkInOrderTable.Items,
-                    delegate(CheckInOrderTableEntry entry)
-                    {
-                        return entry.CheckInTableItem.OrderRef == _worklistItem.OrderRef;
-                    });
+            CheckInOrderTableEntry selectedEntry = CollectionUtils.SelectFirst<CheckInOrderTableEntry>(_checkInOrderTable.Items,
+                delegate(CheckInOrderTableEntry entry)
+                {
+                    return entry.CheckInTableItem.OrderRef == _worklistItem.OrderRef;
+                });
 
-                if (selectedEntry != null)
-                    selectedEntry.Checked = true;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            if (selectedEntry != null)
+                selectedEntry.Checked = true;
 
             base.Start();
         }
@@ -108,7 +101,6 @@ namespace ClearCanvas.Ris.Client.Adt
                 try
                 {
                     SaveChanges();
-                    this.ExitCode = ApplicationComponentExitCode.Normal;
                     Host.Exit();
                 }
                 catch (Exception e)

@@ -52,18 +52,26 @@ namespace ClearCanvas.Ris.Client
 
         protected void LaunchWorkspace(IApplicationComponent component, string title)
         {
-            _workspace = ApplicationComponent.LaunchAsWorkspace(
-                _desktopWindow,
-                component,
-                title,
-                delegate(IApplicationComponent c)
-                {
-                    // remove from list of open editors
-                    DocumentManager.Remove(_docID);
-                    EventsHelper.Fire(_closed, this, EventArgs.Empty);
-                });
+            try
+            {
+                _workspace = ApplicationComponent.LaunchAsWorkspace(
+                    _desktopWindow,
+                    component,
+                    title,
+                    delegate(IApplicationComponent c)
+                    {
+                        // remove from list of open editors
+                        DocumentManager.Remove(_docID);
+                        EventsHelper.Fire(_closed, this, EventArgs.Empty);
+                    });
 
-            DocumentManager.Set(_docID, this);
+                DocumentManager.Set(_docID, this);
+            }
+            catch (Exception e)
+            {
+                // could not launch component
+                ExceptionHandler.Report(e, _desktopWindow);
+            }
         }
     }
 }

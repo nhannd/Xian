@@ -59,21 +59,14 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            base.Start();
+            Platform.GetService<IRegistrationWorkflowService>(
+                delegate(IRegistrationWorkflowService service)
+                {
+                    LoadPatientSearchComponentFormDataResponse response = service.LoadPatientSearchComponentFormData(new LoadPatientSearchComponentFormDataRequest());
+                    _sexChoices = response.SexChoices;
+                });
 
-            try
-            {
-                Platform.GetService<IRegistrationWorkflowService>(
-                    delegate(IRegistrationWorkflowService service)
-                    {
-                        LoadPatientSearchComponentFormDataResponse response = service.LoadPatientSearchComponentFormData(new LoadPatientSearchComponentFormDataRequest());
-                        _sexChoices = response.SexChoices;
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            base.Start();
         }
 
         public override void Stop()

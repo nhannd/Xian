@@ -38,22 +38,14 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             List<AlertNotificationDetail> alertNotifications = null;
 
-            try
-            {
-                Platform.GetService<IPatientBiographyService>(
-                    delegate(IPatientBiographyService service)
-                    {
-                        LoadPatientProfileResponse response = service.LoadPatientProfile(new LoadPatientProfileRequest(_profileRef));
-                        _profileRef = response.PatientProfileRef;
-                        _patientProfile = response.PatientDetail;
-                        alertNotifications = response.AlertNotifications;
-                    });
-
-            }
-            catch (Exception e)
-            {
-                // TODO: Report this...
-            }
+            Platform.GetService<IPatientBiographyService>(
+                delegate(IPatientBiographyService service)
+                {
+                    LoadPatientProfileResponse response = service.LoadPatientProfile(new LoadPatientProfileRequest(_profileRef));
+                    _profileRef = response.PatientProfileRef;
+                    _patientProfile = response.PatientDetail;
+                    alertNotifications = response.AlertNotifications;
+                });
             
             // Create component for each tab
             BiographyOrderHistoryComponent orderHistoryComponent = new BiographyOrderHistoryComponent(_profileRef);

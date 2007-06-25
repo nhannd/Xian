@@ -130,7 +130,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         private ToolSet _itemToolSet;
         private ToolSet _folderToolSet;
-        private IDictionary<string, bool> _workflowEnablment;
+        private IDictionary<string, bool> _workflowEnablement;
 
         public ReportingWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
             :base(folderExplorer)
@@ -155,7 +155,15 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public bool GetOperationEnablement(string operationName)
         {
-            return _workflowEnablment == null ? false : _workflowEnablment[operationName];
+            try
+            {
+                return _workflowEnablement == null ? false : _workflowEnablement[operationName];
+            }
+            catch (KeyNotFoundException e)
+            {
+                Platform.Log(string.Format(SR.ExceptionOperationEnablementUnknown, operationName), LogLevel.Error);
+                return false;
+            }
         }
 
         private void SelectedItemsChangedEventHandler(object sender, EventArgs e)
@@ -163,7 +171,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             ReportingWorklistItem selectedItem = CollectionUtils.FirstElement<ReportingWorklistItem>(this.SelectedItems);
             if (selectedItem == null)
             {
-                _workflowEnablment = null;
+                _workflowEnablement = null;
                 return;
             }
 
@@ -176,7 +184,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                             delegate(IReportingWorkflowService service)
                             {
                                 GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem));
-                                _workflowEnablment = response.OperationEnablementDictionary;
+                                _workflowEnablement = response.OperationEnablementDictionary;
                             });
                     });
             }

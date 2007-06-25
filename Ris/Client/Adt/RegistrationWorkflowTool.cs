@@ -97,9 +97,11 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 try
                 {
-                    CheckInOrderComponent checkInComponent = new CheckInOrderComponent(item);
+                    CheckInOrderComponent checkInComponent = new CheckInOrderComponent(item); 
                     ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                        desktopWindow, checkInComponent, String.Format("Checking in {0}", PersonNameFormat.Format(item.Name)));
+                        desktopWindow,
+                        checkInComponent, 
+                        String.Format("Checking in {0}", PersonNameFormat.Format(item.Name)));
 
                     if (exitCode == ApplicationComponentExitCode.Normal)
                     {
@@ -148,7 +150,9 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     CancelOrderComponent cancelOrderComponent = new CancelOrderComponent(item);
                     ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
-                        desktopWindow, cancelOrderComponent, String.Format("Cancel Order for {0}", PersonNameFormat.Format(item.Name)));
+                        desktopWindow,
+                        cancelOrderComponent, 
+                        String.Format("Cancel Order for {0}", PersonNameFormat.Format(item.Name)));
 
                     if (exitCode == ApplicationComponentExitCode.Normal)
                     {

@@ -49,39 +49,32 @@ namespace ClearCanvas.Ris.Client.Adt
             _selectedOrders = new List<EntityRef>();
             _cancelOrderTable = new CancelOrderTable();
 
-            try
-            {
-                Platform.GetService<IRegistrationWorkflowService>(
-                    delegate(IRegistrationWorkflowService service)
-                    {
-                        GetDataForCancelOrderTableResponse response = service.GetDataForCancelOrderTable(new GetDataForCancelOrderTableRequest(_worklistItem.PatientProfileRef));
-                        _cancelOrderTable.Items.AddRange(
-                            CollectionUtils.Map<CancelOrderTableItem, CancelOrderTableEntry>(response.CancelOrderTableItems,
-                                    delegate(CancelOrderTableItem item)
-                                    {
-                                        CancelOrderTableEntry entry = new CancelOrderTableEntry(item);
-                                        entry.CheckedChanged += new EventHandler(CancelOrderCheckedStateChangedEventHandler);                                        
-                                        return entry;
-                                    }));
+            Platform.GetService<IRegistrationWorkflowService>(
+                delegate(IRegistrationWorkflowService service)
+                {
+                    GetDataForCancelOrderTableResponse response = service.GetDataForCancelOrderTable(new GetDataForCancelOrderTableRequest(_worklistItem.PatientProfileRef));
+                    _cancelOrderTable.Items.AddRange(
+                        CollectionUtils.Map<CancelOrderTableItem, CancelOrderTableEntry>(response.CancelOrderTableItems,
+                                delegate(CancelOrderTableItem item)
+                                {
+                                    CancelOrderTableEntry entry = new CancelOrderTableEntry(item);
+                                    entry.CheckedChanged += new EventHandler(CancelOrderCheckedStateChangedEventHandler);                                        
+                                    return entry;
+                                }));
 
 
-                        _cancelReasonChoices = response.CancelReasonChoices;
-                        _selectedCancelReason = _cancelReasonChoices[0];
-                    });
+                    _cancelReasonChoices = response.CancelReasonChoices;
+                    _selectedCancelReason = _cancelReasonChoices[0];
+                });
 
-                CancelOrderTableEntry selectedEntry = CollectionUtils.SelectFirst<CancelOrderTableEntry>(_cancelOrderTable.Items,
-                    delegate(CancelOrderTableEntry entry)
-                    {
-                        return entry.CancelOrderTableItem.OrderRef == _worklistItem.OrderRef;
-                    });
+            CancelOrderTableEntry selectedEntry = CollectionUtils.SelectFirst<CancelOrderTableEntry>(_cancelOrderTable.Items,
+                delegate(CancelOrderTableEntry entry)
+                {
+                    return entry.CancelOrderTableItem.OrderRef == _worklistItem.OrderRef;
+                });
 
-                if (selectedEntry != null)
-                    selectedEntry.Checked = true;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            if (selectedEntry != null)
+                selectedEntry.Checked = true;
 
             base.Start();
         }
@@ -137,7 +130,6 @@ namespace ClearCanvas.Ris.Client.Adt
                 try
                 {
                     SaveChanges();
-                    this.ExitCode = ApplicationComponentExitCode.Normal;
                     Host.Exit();
                 }
                 catch (Exception e)

@@ -51,19 +51,12 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             base.Start();
 
-            try
-            {
-                Platform.GetService<IPatientBiographyService>(
-                    delegate(IPatientBiographyService service)
-                    {
-                        ListOrdersForPatientResponse response = service.ListOrdersForPatient(new ListOrdersForPatientRequest(_patientProfileRef));
-                        _orderList.Items.AddRange(response.Orders);
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            Platform.GetService<IPatientBiographyService>(
+                delegate(IPatientBiographyService service)
+                {
+                    ListOrdersForPatientResponse response = service.ListOrdersForPatient(new ListOrdersForPatientRequest(_patientProfileRef));
+                    _orderList.Items.AddRange(response.Orders);
+                });
         }
 
         public override void Stop()

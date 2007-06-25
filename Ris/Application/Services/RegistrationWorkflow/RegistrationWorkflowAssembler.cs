@@ -156,24 +156,31 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             ActivityStatusEnumTable activityStatusTable = context.GetBroker<IActivityStatusEnumBroker>().Load();
 
-            if (order.IsAllRequestedProcedureScheduled)
+            try
             {
-                return activityStatusTable[ActivityStatus.SC].Value;
-            }
-            else if (order.IsAllRequestedProcedureDiscontinued)
-            {
-                return activityStatusTable[ActivityStatus.DC].Value;
-            }
-            else if (order.IsAllRequestedProcedureCompletedOrDiscontinued)
-            {
-                return activityStatusTable[ActivityStatus.CM].Value;
-            }
-            else
-            {
-                if (order.IsMPSStarted)
-                    return activityStatusTable[ActivityStatus.IP].Value;
+                if (order.IsAllRequestedProcedureScheduled)
+                {
+                    return activityStatusTable[ActivityStatus.SC].Value;
+                }
+                else if (order.IsAllRequestedProcedureDiscontinued)
+                {
+                    return activityStatusTable[ActivityStatus.DC].Value;
+                }
+                else if (order.IsAllRequestedProcedureCompletedOrDiscontinued)
+                {
+                    return activityStatusTable[ActivityStatus.CM].Value;
+                }
                 else
-                    return SR.TextCheckedIn;
+                {
+                    if (order.IsMPSStarted)
+                        return activityStatusTable[ActivityStatus.IP].Value;
+                    else
+                        return SR.TextCheckedIn;
+                }
+            }
+            catch (Exception e)
+            {
+                return "Error";
             }
         }
     }

@@ -61,6 +61,33 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to perform operation.
+        /// </summary>
+        internal static string ExceptionFailedToPerformOperation {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToPerformOperation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to save report.
+        /// </summary>
+        internal static string ExceptionFailedToSaveReport {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToSaveReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot determine enablement for operation: {0}.
+        /// </summary>
+        internal static string ExceptionOperationEnablementUnknown {
+            get {
+                return ResourceManager.GetString("ExceptionOperationEnablementUnknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Radiologist Home.
         /// </summary>
         internal static string TitleRadiologistHome {
