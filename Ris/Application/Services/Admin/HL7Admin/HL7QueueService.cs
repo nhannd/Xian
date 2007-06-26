@@ -1,21 +1,19 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Security.Permissions;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.HL7;
 using ClearCanvas.HL7.Brokers;
 using ClearCanvas.HL7.PreProcessing;
 using ClearCanvas.HL7.Processing;
-using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common;
-using System.Security.Permissions;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
 {
@@ -98,7 +96,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.HL7Admin)]
         public LoadHL7QueueItemResponse LoadHL7QueueItem(LoadHL7QueueItemRequest request)
         {
-            HL7QueueItem queueItem = (HL7QueueItem)PersistenceContext.Load<HL7QueueItem>(request.QueueItemRef);
+            HL7QueueItem queueItem = PersistenceContext.Load<HL7QueueItem>(request.QueueItemRef);
             HL7QueueItemAssembler assembler = new HL7QueueItemAssembler();
             
             return new LoadHL7QueueItemResponse(
@@ -143,12 +141,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
 
             if (profiles.Count == 0)
             {
-                return new GetReferencedPatientResponse();
+                throw new RequestValidationException(string.Format(SR.ExceptionPatientNotFound, identifiers[0], assigningAuthority));
             }
-            else
-            {
-                return new GetReferencedPatientResponse(profiles[0].GetRef());
-            }
+
+            return new GetReferencedPatientResponse(profiles[0].GetRef());            
         }
 
         [UpdateOperation]

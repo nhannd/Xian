@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
+
 using System.Windows.Forms;
 
 using ClearCanvas.Controls.WinForms;
@@ -13,14 +9,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
     public partial class HL7QueuePreviewComponentControl : UserControl
     {
-        private HL7QueuePreviewComponent _component;
+        private readonly HL7QueuePreviewComponent _component;
 
         public HL7QueuePreviewComponentControl(HL7QueuePreviewComponent component)
         {
             InitializeComponent();
-
-            if (this.DesignMode)
-                return;
 
             _component = component;
 
@@ -55,7 +48,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _createdOnEnd.Value = Platform.Time.Date.AddDays(1);
             _updatedOnStart.Value = Platform.Time.Date;
             _updatedOnEnd.Value = Platform.Time.Date.AddDays(1);
-
         }
 
         private void _queue_SelectionChanged(object sender, EventArgs e)

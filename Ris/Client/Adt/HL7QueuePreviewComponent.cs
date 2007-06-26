@@ -125,54 +125,38 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private ListHL7QueueItemsRequest _listRequest;
 
+        public HL7QueuePreviewComponent()
+        {
+            _queue = new HL7QueueItemSummaryTable();
+            _toolSet = new ToolSet(new HL7QueueToolExtensionPoint(), new HL7QueueToolContext(this));
+        }
+
         public override void Start()
         {
-            base.Start();
-
-            _queue = new HL7QueueItemSummaryTable();
-
             InitialisePaging();
             InitialiseFormData();
 
-            _toolSet = new ToolSet(new HL7QueueToolExtensionPoint(), new HL7QueueToolContext(this));
+            base.Start();
         }
 
         private void InitialiseFormData()
         {
-            try
-            {
-                Platform.GetService<IHL7QueueService>(
-                    delegate(IHL7QueueService service)
-                    {
-                        GetHL7QueueFormDataRequest formRequest = new GetHL7QueueFormDataRequest();
-                        GetHL7QueueFormDataResponse formResponse = service.GetHL7QueueFormData(formRequest);
+            Platform.GetService<IHL7QueueService>(
+                delegate(IHL7QueueService service)
+                {
+                    GetHL7QueueFormDataRequest formRequest = new GetHL7QueueFormDataRequest();
+                    GetHL7QueueFormDataResponse formResponse = service.GetHL7QueueFormData(formRequest);
 
-                        if (formResponse != null)
-                        {
-                            _directionChoices = formResponse.DirectionChoices;
-                            _peerChoices = formResponse.PeerChoices;
-                            _statusChoices = formResponse.StatusCodeChoices;
-                            _typeChoices = formResponse.MessageTypeChoices;
+                    _directionChoices = formResponse.DirectionChoices;
+                    _peerChoices = formResponse.PeerChoices;
+                    _statusChoices = formResponse.StatusCodeChoices;
+                    _typeChoices = formResponse.MessageTypeChoices;
+                });
 
-                            _direction = _directionChoices[0];
-                            _peer = _peerChoices[0];
-                            _status = _statusChoices[0];
-                            _type = _typeChoices[0];
-                        }
-                        else
-                        {
-                            _directionChoices = new List<EnumValueInfo>();
-                            _peerChoices = new List<EnumValueInfo>();
-                            _statusChoices = new List<EnumValueInfo>();
-                            _typeChoices = new List<string>();
-                        }
-
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, Host.DesktopWindow);
-            }
+            _direction = _directionChoices[0];
+            _peer = _peerChoices[0];
+            _status = _statusChoices[0];
+            _type = _typeChoices[0];
         }
 
         private void InitialisePaging()

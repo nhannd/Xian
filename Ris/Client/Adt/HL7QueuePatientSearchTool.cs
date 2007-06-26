@@ -5,8 +5,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
 
@@ -68,38 +66,29 @@ namespace ClearCanvas.Ris.Client.Adt
 
         protected void OpenPatient(HL7QueueItemDetail selectedQueueItem, IDesktopWindow window)
         {
-            GetReferencedPatientRequest request = new GetReferencedPatientRequest(selectedQueueItem.QueueItemRef);
-            GetReferencedPatientResponse response = null;
-
-            Platform.GetService<IHL7QueueService>(
-                delegate(IHL7QueueService service)      
-                {
-                    try
-                    {
-                        response = service.GetReferencedPatient(request);
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, Context.DesktopWindow);
-                    }
-                });
-
-            if (response != null && response.PatientProfileRef != null)
+            try
             {
-                Document doc = DocumentManager.Get(response.PatientProfileRef);
-                if (doc == null)
-                {
-                    doc = new PatientOverviewDocument(response.PatientProfileRef, window);
-                    doc.Open();
-                }
-                else
-                {
-                    doc.Activate();
-                }
+                Platform.GetService<IHL7QueueService>(
+                    delegate(IHL7QueueService service)
+                    {
+                        GetReferencedPatientRequest request = new GetReferencedPatientRequest(selectedQueueItem.QueueItemRef);
+                        GetReferencedPatientResponse response = service.GetReferencedPatient(request);
+
+                        Document doc = DocumentManager.Get(response.PatientProfileRef);
+                        if (doc == null)
+                        {
+                            doc = new PatientOverviewDocument(response.PatientProfileRef, window);
+                            doc.Open();
+                        }
+                        else
+                        {
+                            doc.Activate();
+                        }
+                    });
             }
-            else
+            catch(Exception e)
             {
-                Platform.ShowMessageBox(SR.MessagePatientNotFound);
+                ExceptionHandler.Report(e, Context.DesktopWindow);
             }
         }
     }

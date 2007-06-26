@@ -5,8 +5,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.HL7Admin;
 
@@ -63,21 +61,19 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void ProcessQueueItem(HL7QueueItemDetail selectedQueueItem)
         {
-            ProcessHL7QueueItemRequest processRequest = new ProcessHL7QueueItemRequest(selectedQueueItem.QueueItemRef);
-            ProcessHL7QueueItemResponse processResponse;
-
-            Platform.GetService<IHL7QueueService>(
-                delegate(IHL7QueueService service)
-                {
-                    try
+            try
+            {
+                Platform.GetService<IHL7QueueService>(
+                    delegate(IHL7QueueService service)
                     {
-                        processResponse = service.ProcessHL7QueueItem(processRequest);
-                    }
-                    catch (Exception e)
-                    {
-                        ExceptionHandler.Report(e, Context.DesktopWindow);
-                    }
-                });
+                        ProcessHL7QueueItemRequest processRequest = new ProcessHL7QueueItemRequest(selectedQueueItem.QueueItemRef);
+                        service.ProcessHL7QueueItem(processRequest);
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, Context.DesktopWindow);
+            }
         }
     }
 }

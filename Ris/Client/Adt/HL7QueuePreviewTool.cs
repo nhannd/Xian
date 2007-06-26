@@ -1,6 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
@@ -17,8 +16,8 @@ namespace ClearCanvas.Ris.Client.Adt
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
     class HL7QueuePreviewTool : Tool<IDesktopToolContext>
     {
-        private HL7QueuePreviewComponent _component;
-        
+        private IWorkspace _workspace;
+
         public override void Initialize()
         {
             base.Initialize();
@@ -26,15 +25,24 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void Show()
         {
-            if (_component == null)
+            try
             {
-                _component = new HL7QueuePreviewComponent();
-
-                ApplicationComponent.LaunchAsWorkspace(
-                    this.Context.DesktopWindow,
-                    _component,
-                    SR.TitleHL7Queue,
-                    delegate(IApplicationComponent component) { _component = null; });
+                if (_workspace == null)
+                {
+                    _workspace = ApplicationComponent.LaunchAsWorkspace(
+                        this.Context.DesktopWindow,
+                        new HL7QueuePreviewComponent(),
+                        SR.TitleHL7Queue,
+                        delegate(IApplicationComponent component) { _workspace = null; });
+                }
+                else
+                {
+                    _workspace.Activate();
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Context.DesktopWindow);
             }
         }
 

@@ -133,6 +133,15 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Patient with MRN {0} {1} not found.
+        /// </summary>
+        internal static string ExceptionPatientNotFound {
+            get {
+                return ResourceManager.GetString("ExceptionPatientNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A practitioner with the name {0}, {1} already exists.
         /// </summary>
         internal static string ExceptionPractitionerAlreadyExist {
