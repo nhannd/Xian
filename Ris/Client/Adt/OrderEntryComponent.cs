@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -80,25 +78,31 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void NewOrder(RegistrationWorklistItem worklistItem, IRegistrationWorkflowItemToolContext context)
         {
-            OrderEntryComponent component = new OrderEntryComponent(worklistItem.PatientProfileRef);
-            ApplicationComponent.LaunchAsWorkspace(
-                context.DesktopWindow,
-                component,
-                string.Format(SR.TitleNewOrder, PersonNameFormat.Format(worklistItem.Name), MrnFormat.Format(worklistItem.Mrn)),
-                delegate(IApplicationComponent c) 
-                {
-                    if (c.ExitCode == ApplicationComponentExitCode.Normal)
+            try
+            {
+                ApplicationComponent.LaunchAsWorkspace(
+                    context.DesktopWindow,
+                    new OrderEntryComponent(worklistItem.PatientProfileRef),
+                    string.Format(SR.TitleNewOrder, PersonNameFormat.Format(worklistItem.Name), MrnFormat.Format(worklistItem.Mrn)),
+                    delegate(IApplicationComponent c)
                     {
-                        // Refresh the schedule folder is a new folder is placed
-                        IFolder scheduledFolder = CollectionUtils.SelectFirst<IFolder>(context.Folders,
-                            delegate(IFolder f) { return f is Folders.ScheduledFolder; });
+                        if (c.ExitCode == ApplicationComponentExitCode.Normal)
+                        {
+                            // Refresh the schedule folder is a new folder is placed
+                            IFolder scheduledFolder = CollectionUtils.SelectFirst<IFolder>(context.Folders,
+                                delegate(IFolder f) { return f is Folders.ScheduledFolder; });
 
-                        if (scheduledFolder.IsOpen)
-                            scheduledFolder.Refresh();
-                        else
-                            scheduledFolder.RefreshCount();
-                    }
-                });
+                            if (scheduledFolder.IsOpen)
+                                scheduledFolder.Refresh();
+                            else
+                                scheduledFolder.RefreshCount();
+                        }
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, context.DesktopWindow);
+            }
         }
     }
 
@@ -117,7 +121,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(OrderEntryComponentViewExtensionPoint))]
     public class OrderEntryComponent : ApplicationComponent
     {
-        private EntityRef _patientProfileRef;
+        private readonly EntityRef _patientProfileRef;
 
         private VisitSummaryTable _visitTable;
         private List<DiagnosticServiceSummary> _diagnosticServiceChoices;
@@ -153,38 +157,31 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            try
-            {
-                _visitTable = new VisitSummaryTable();
+            _visitTable = new VisitSummaryTable();
 
-                Platform.GetService<IOrderEntryService>(
-                    delegate(IOrderEntryService service)
-                    {
-                        ListActiveVisitsForPatientResponse response = service.ListActiveVisitsForPatient(new ListActiveVisitsForPatientRequest(_patientProfileRef));
-                        _visitTable.Items.AddRange(response.Visits);
+            Platform.GetService<IOrderEntryService>(
+                delegate(IOrderEntryService service)
+                {
+                    ListActiveVisitsForPatientResponse response = service.ListActiveVisitsForPatient(new ListActiveVisitsForPatientRequest(_patientProfileRef));
+                    _visitTable.Items.AddRange(response.Visits);
 
-                        GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest());
-                        _diagnosticServiceChoices = formChoicesResponse.DiagnosticServiceChoices;
-                        _facilityChoices = formChoicesResponse.OrderingFacilityChoices;
-                        _orderingPhysicianChoices = formChoicesResponse.OrderingPhysicianChoices;
-                        _priorityChoices = formChoicesResponse.OrderPriorityChoices;
+                    GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest());
+                    _diagnosticServiceChoices = formChoicesResponse.DiagnosticServiceChoices;
+                    _facilityChoices = formChoicesResponse.OrderingFacilityChoices;
+                    _orderingPhysicianChoices = formChoicesResponse.OrderingPhysicianChoices;
+                    _priorityChoices = formChoicesResponse.OrderPriorityChoices;
 
-                        _selectedPriority = _priorityChoices[0];
+                    _selectedPriority = _priorityChoices[0];
 
-                        TreeItemBinding<DiagnosticServiceTreeItem> binding = new TreeItemBinding<DiagnosticServiceTreeItem>(
-                                delegate(DiagnosticServiceTreeItem ds) { return ds.Description; },
-                                ExpandDiagnosticServiceTree);
-                        binding.CanHaveSubTreeHandler = delegate(DiagnosticServiceTreeItem ds) { return ds.DiagnosticService == null; };
-                        _diagnosticServiceTree = new Tree<DiagnosticServiceTreeItem>(binding, formChoicesResponse.TopLevelDiagnosticServiceTree);
-                    });
+                    TreeItemBinding<DiagnosticServiceTreeItem> binding = new TreeItemBinding<DiagnosticServiceTreeItem>(
+                            delegate(DiagnosticServiceTreeItem ds) { return ds.Description; },
+                            ExpandDiagnosticServiceTree);
+                    binding.CanHaveSubTreeHandler = delegate(DiagnosticServiceTreeItem ds) { return ds.DiagnosticService == null; };
+                    _diagnosticServiceTree = new Tree<DiagnosticServiceTreeItem>(binding, formChoicesResponse.TopLevelDiagnosticServiceTree);
+                });
 
-                _schedulingRequestDateTime = Platform.Time;
-                _scheduleOrder = true;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            _schedulingRequestDateTime = Platform.Time;
+            _scheduleOrder = true;
 
             base.Start();
         }
@@ -372,27 +369,30 @@ namespace ClearCanvas.Ris.Client.Adt
                 Platform.GetService<IOrderEntryService>(
                     delegate(IOrderEntryService service)
                     {
-                        PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(
-                            _selectedVisit.Patient,
-                            _selectedVisit.entityRef,
-                            //_selectedDiagnosticService.DiagnosticServiceRef,
-                            _selectedDiagnosticServiceTreeItem.DiagnosticService.DiagnosticServiceRef,
-                            _selectedPriority,
-                            _selectedOrderingPhysician.StaffRef,
-                            _selectedFacility.FacilityRef,
-                            _scheduleOrder,
-                            _schedulingRequestDateTime));
+                        service.PlaceOrder(
+                            new PlaceOrderRequest(
+                                _selectedVisit.Patient,
+                                _selectedVisit.entityRef,
+                                //_selectedDiagnosticService.DiagnosticServiceRef,
+                                _selectedDiagnosticServiceTreeItem.DiagnosticService.DiagnosticServiceRef,
+                                _selectedPriority,
+                                _selectedOrderingPhysician.StaffRef,
+                                _selectedFacility.FacilityRef,
+                                _scheduleOrder,
+                                _schedulingRequestDateTime));
                     });
 
-                this.ExitCode = ApplicationComponentExitCode.Normal;
+                this.Host.Exit();
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                this.ExitCode = ApplicationComponentExitCode.Error;
+                ExceptionHandler.Report(e, SR.ExceptionCannotPlaceOrder, this.Host.DesktopWindow, 
+                    delegate
+                    {
+                        this.ExitCode = ApplicationComponentExitCode.Error;
+                        this.Host.Exit();
+                    });
             }
-
-            this.Host.Exit();
         }
 
         public void Cancel()
@@ -438,7 +438,12 @@ namespace ClearCanvas.Ris.Client.Adt
                 }
                 catch (Exception e)
                 {
-                    ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                    ExceptionHandler.Report(e, SR.ExceptionCannotUpdateDiagnosticServiceBreakdown, this.Host.DesktopWindow,
+                        delegate
+                        {
+                            this.ExitCode = ApplicationComponentExitCode.Error;
+                            this.Host.Exit();
+                        });
                 }
             }
 
@@ -447,10 +452,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private ITree ExpandDiagnosticServiceTree(DiagnosticServiceTreeItem item)
         {
+            ITree subtree = null;
+
             try
             {
-                ITree subtree = null;
-
                 Platform.GetService<IOrderEntryService>(
                     delegate(IOrderEntryService service)
                     {
@@ -462,14 +467,18 @@ namespace ClearCanvas.Ris.Client.Adt
                         binding.CanHaveSubTreeHandler = delegate(DiagnosticServiceTreeItem ds) { return ds.DiagnosticService == null; };
                         subtree = new Tree<DiagnosticServiceTreeItem>(binding, response.DiagnosticServiceSubTree);
                     });
-
-                return subtree;
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-                return null;
+                ExceptionHandler.Report(e, SR.ExceptionCannotExpandDiagnositicServiceTree, this.Host.DesktopWindow, 
+                    delegate
+                    {
+                        this.ExitCode = ApplicationComponentExitCode.Error;
+                        this.Host.Exit();
+                    });
             }
+
+            return subtree;
         }
     }
 }

@@ -282,6 +282,15 @@
   <data name="ColumnWorkPhone" xml:space="preserve">
     <value>Work Phone</value>
   </data>
+  <data name="ExceptionCannotExpandDiagnositicServiceTree" xml:space="preserve">
+    <value>Unable to retrieve diagnostic service tree</value>
+  </data>
+  <data name="ExceptionCannotPlaceOrder" xml:space="preserve">
+    <value>Unable to place order</value>
+  </data>
+  <data name="ExceptionCannotUpdateDiagnosticServiceBreakdown" xml:space="preserve">
+    <value>Unable to retrieve diagnostic service breakdown</value>
+  </data>
   <data name="ExceptionConcurrencyPatientNotSaved" xml:space="preserve">
     <value>The patient was modified by another user.  Your changes could not be saved.</value>
   </data>
