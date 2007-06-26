@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
+
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 using ClearCanvas.Workflow;
 using ClearCanvas.Workflow.Brokers;
@@ -34,7 +33,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         {
             if (steps == null || steps.IsEmpty) return null;
 
-            PerformedProcedureStep pps = (PerformedProcedureStep)CollectionUtils.FirstElement(steps);
+            PerformedProcedureStep pps = CollectionUtils.FirstElement<PerformedProcedureStep>(steps);
             PerformedProcedureStepDetail detail = 
                 new PerformedProcedureStepDetail(pps.GetRef(), pps.CreationTime, pps.LastStateChangeTime, pps.StartTime, pps.EndTime, pps.Documentation);
 

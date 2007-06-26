@@ -64,6 +64,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     LoadPatientSearchComponentFormDataResponse response = service.LoadPatientSearchComponentFormData(new LoadPatientSearchComponentFormDataRequest());
                     _sexChoices = response.SexChoices;
+                    _sex = _sexChoices[0];  // Should be non-empty, so let the exception be thrown if it occurs
                 });
 
             base.Start();

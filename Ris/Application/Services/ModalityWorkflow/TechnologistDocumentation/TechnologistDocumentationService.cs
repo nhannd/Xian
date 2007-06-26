@@ -24,7 +24,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
                     mps.RequestedProcedure.ProcedureSteps,
                     delegate(ProcedureStep ps)
                     {
-                        return ps is ModalityProcedureStep;
+                        return ps.Is<ModalityProcedureStep>();
                     });
 
             return new GetProcedureStepsForWorklistItemResponse(
