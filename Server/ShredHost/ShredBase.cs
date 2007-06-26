@@ -12,6 +12,12 @@ namespace ClearCanvas.Server.ShredHost
 
         }
 
+        public override object InitializeLifetimeService()
+        {
+            // cause lifetime lease to never expire
+            return null;
+        }
+
         #region IShred Members
         public abstract void Start();
         public abstract void Stop();
