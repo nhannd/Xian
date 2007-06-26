@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -16,16 +14,9 @@ namespace ClearCanvas.Ris.Client.Adt
     [ClickHandler("search", "Search")]
 
     [ExtensionOf(typeof(RegistrationWorkflowFolderToolExtensionPoint))]
-    public class PatientSearchTool : ToolBase
+    public class PatientSearchTool : Tool<IRegistrationWorkflowFolderToolContext>
     {
         private PatientSearchComponent _searchComponent;
-
-        /// <summary>
-        /// Default constructor.
-        /// </summary>
-        public PatientSearchTool()
-        {
-        }
 
         /// <summary>
         /// Called by the framework to initialize this tool.
@@ -37,45 +28,35 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void Search()
         {
-            if (this.ContextBase is IRegistrationWorkflowFolderToolContext)
+            if (_searchComponent == null)
             {
-                IRegistrationWorkflowFolderToolContext context = (IRegistrationWorkflowFolderToolContext)this.ContextBase;
-
-                if (_searchComponent == null)
+                try
                 {
-                    try
-                    {
-                        _searchComponent = new PatientSearchComponent();
-                        _searchComponent.SearchRequested += SearchRequestedEventHandler;
+                    _searchComponent = new PatientSearchComponent();
+                    _searchComponent.SearchRequested += SearchRequestedEventHandler;
 
-                        ApplicationComponent.LaunchAsShelf(
-                            context.DesktopWindow,
-                            _searchComponent,
-                            SR.TitleSearch,
-                            ShelfDisplayHint.DockFloat,
-                            delegate(IApplicationComponent c)
-                            {
-                                _searchComponent.SearchRequested -= SearchRequestedEventHandler;
-                                _searchComponent = null;
-                            });
-                    }
-                    catch (Exception e)
-                    {
-                        // cannot start component
-                        ExceptionHandler.Report(e, context.DesktopWindow);
-                    }
+                    ApplicationComponent.LaunchAsShelf(
+                        this.Context.DesktopWindow,
+                        _searchComponent,
+                        SR.TitleSearch,
+                        ShelfDisplayHint.DockFloat,
+                        delegate(IApplicationComponent c)
+                        {
+                            _searchComponent.SearchRequested -= SearchRequestedEventHandler;
+                            _searchComponent = null;
+                        });
+                }
+                catch (Exception e)
+                {
+                    // cannot start component
+                    ExceptionHandler.Report(e, this.Context.DesktopWindow);
                 }
             }
-
         }
 
         private void SearchRequestedEventHandler(object sender, PatientSearchRequestedEventArgs e)
         {
-            if (this.ContextBase is IRegistrationWorkflowFolderToolContext)
-            {
-                IRegistrationWorkflowFolderToolContext context = (IRegistrationWorkflowFolderToolContext)this.ContextBase;
-                context.SearchCriteria = _searchComponent.SearchCriteria;
-            }
+            this.Context.SearchCriteria = _searchComponent.SearchCriteria;
         }
     }
 }

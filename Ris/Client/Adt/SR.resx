@@ -321,6 +321,9 @@
   <data name="MessagePatientNotFound" xml:space="preserve">
     <value>Patient not found</value>
   </data>
+  <data name="TextAny" xml:space="preserve">
+    <value>(Any)</value>
+  </data>
   <data name="TextNotScheduled" xml:space="preserve">
     <value>Not Scheduled</value>
   </data>

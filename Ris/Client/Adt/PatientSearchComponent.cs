@@ -1,13 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.ComponentModel;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Validation;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
@@ -16,7 +12,7 @@ namespace ClearCanvas.Ris.Client.Adt
 {
     public class PatientSearchRequestedEventArgs : EventArgs
     {
-        private PatientProfileSearchData _criteria;
+        private readonly PatientProfileSearchData _criteria;
 
         public PatientSearchRequestedEventArgs(PatientProfileSearchData criteria)
 	    {
@@ -29,8 +25,7 @@ namespace ClearCanvas.Ris.Client.Adt
         }
     }
 
-
-    [ExtensionPoint()]
+    [ExtensionPoint]
     public class PatientSearchComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
@@ -53,10 +48,6 @@ namespace ClearCanvas.Ris.Client.Adt
         private bool _searchEnabled;
         private event EventHandler _searchEnabledChanged;
 
-        public PatientSearchComponent()
-        {
-        }
-
         public override void Start()
         {
             Platform.GetService<IRegistrationWorkflowService>(
@@ -64,7 +55,6 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     LoadPatientSearchComponentFormDataResponse response = service.LoadPatientSearchComponentFormData(new LoadPatientSearchComponentFormDataRequest());
                     _sexChoices = response.SexChoices;
-                    _sex = _sexChoices[0];  // Should be non-empty, so let the exception be thrown if it occurs
                 });
 
             base.Start();
@@ -143,7 +133,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string Sex
         {
-            get { return _sex.Value; }
+            get { return _sex == null ? SR.TextAny : _sex.Value; }
             set
             {
                 _sex = EnumValueUtils.MapDisplayValue(_sexChoices, value);
@@ -159,7 +149,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     _sexChoices = new List<EnumValueInfo>();
 
                 List<string> values = EnumValueUtils.GetDisplayValues(_sexChoices);
-                values.Add("(Any)");
+                values.Add(SR.TextAny);
                 return values;
             }
         }

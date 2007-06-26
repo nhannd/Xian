@@ -673,6 +673,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to (Any).
+        /// </summary>
+        internal static string TextAny {
+            get {
+                return ResourceManager.GetString("TextAny", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Not Scheduled.
         /// </summary>
         internal static string TextNotScheduled {
