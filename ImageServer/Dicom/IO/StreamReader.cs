@@ -171,7 +171,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                     else
                         tagValue = _tag.TagValue;
 
-                    if (tagValue >= stopAtTag.TagValue)
+                    if ((tagValue >= stopAtTag.TagValue) && (_sqrs.Count == 0)) // only exit in root message when after stop tag
                         return DicomReadStatus.Success;
 
                     if (_vr == null)
@@ -430,7 +430,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
 
                                 DicomStreamReader idsr = new DicomStreamReader(data.Stream);
                                 idsr.Dataset = ds;
-                                idsr.Read(null, options);
+                                idsr.Read(new DicomTag(0xFFFFFFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false), options);
                                 //TODO, need to check when to pop off _sqrs if defined length sequences
                             }
                             else
@@ -449,10 +449,10 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                             _sqrs.Pop();
                         }
 
-                        if (rec._curlen != UndefinedLength)
+                        if (rec._len != UndefinedLength)
                         {
                             //long end = sq.StreamPosition + 8 + sq.StreamLength;
-                            long end = rec._curpos + 8 + rec._curlen;
+                            long end = rec._pos + 8 + rec._len;
                             if (_syntax.ExplicitVr)
                                 end += 2 + 2;
                             if (_stream.Position >= end)

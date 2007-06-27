@@ -23,31 +23,31 @@ namespace ClearCanvas.ImageServer.Dicom
     [Flags]
     public enum DicomDumpOptions
     {
-        None,
-        ShortenLongValues,
-        Restrict80CharactersPerLine,
-        KeepGroupLengthElements,
+        None = 0,
+        ShortenLongValues = 1,
+        Restrict80CharactersPerLine= 2,
+        KeepGroupLengthElements = 4,
         Default = DicomDumpOptions.ShortenLongValues | DicomDumpOptions.Restrict80CharactersPerLine
     }
 
     [Flags]
     public enum DicomReadOptions
     {
-        None,
-        KeepGroupLengths,
-        UseDictionaryForExplicitUN,
-        AllowSeekingForContext,
+        None = 0,
+        KeepGroupLengths = 1,
+        UseDictionaryForExplicitUN = 2,
+        AllowSeekingForContext = 4,
         Default = DicomReadOptions.UseDictionaryForExplicitUN | DicomReadOptions.AllowSeekingForContext
     }
 
     [Flags]
     public enum DicomWriteOptions
     {
-        None,
-        CalculateGroupLengths,
-        ExplicitLengthSequence,
-        ExplicitLengthSequenceItem,
-        WriteFragmentOffsetTable,
+        None = 0,
+        CalculateGroupLengths = 1,
+        ExplicitLengthSequence = 2,
+        ExplicitLengthSequenceItem = 4,
+        WriteFragmentOffsetTable = 8,
         Default = DicomWriteOptions.CalculateGroupLengths | DicomWriteOptions.WriteFragmentOffsetTable
     }
 }

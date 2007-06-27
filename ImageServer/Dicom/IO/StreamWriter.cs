@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
 
                         if (Flags.IsSet(options, DicomWriteOptions.ExplicitLengthSequenceItem))
                         {
-                            _writer.Write((uint)ids.CalculateWriteLength(_syntax, options & ~DicomWriteOptions.CalculateGroupLengths) - (uint)8);
+                            _writer.Write((uint)ids.CalculateWriteLength(_syntax, options & ~DicomWriteOptions.CalculateGroupLengths));
                         }
                         else
                         {

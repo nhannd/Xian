@@ -144,12 +144,36 @@ namespace ClearCanvas.ImageServer.Dicom
 
         public override void SetStringValue(String stringValue)
         {
-            throw new DicomException("Function all incompativle with SQ VR type");
+            throw new DicomException("Function all incompatible with SQ VR type");
         }
 
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax)
         {
             throw new DicomException("Unexpected call to GetByteBuffer() for a SQ attribute");
+        }
+        internal override uint CalculateWriteLength(TransferSyntax syntax, DicomWriteOptions options)
+        {
+            uint length = 0;
+            length += 4; // element tag
+            if (syntax.ExplicitVr)
+            {
+                length += 2; // vr
+                length += 6; // length
+            }
+            else
+            {
+                length += 4; // length
+            }
+            foreach (SequenceItem item in _values)
+            {
+                length += 4 + 4; // Sequence Item Tag
+                length += item.CalculateWriteLength(syntax, options & ~DicomWriteOptions.CalculateGroupLengths);
+                if (!Flags.IsSet(options, DicomWriteOptions.ExplicitLengthSequenceItem))
+                    length += 4 + 4; // Sequence Item Delimitation Item
+            }
+            if (!Flags.IsSet(options, DicomWriteOptions.ExplicitLengthSequence))
+                length += 4 + 4; // Sequence Delimitation Item
+            return length;
         }
         #endregion
 
@@ -157,7 +181,7 @@ namespace ClearCanvas.ImageServer.Dicom
         public override void Dump(StringBuilder sb, string prefix, DicomDumpOptions options)
         {
             sb.Append(prefix);
-            sb.AppendFormat("{0} {1} {2}", Tag.ToString(), Tag.VR.Name, Tag.Name);
+            sb.AppendFormat("({0:x4},{1:x4}) {2} ", Tag.Group, Tag.Element, Tag.VR.Name);
             foreach (SequenceItem item in _values)
             {
                 sb.AppendLine().Append(prefix).Append(" Item:").AppendLine();
