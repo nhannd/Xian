@@ -664,6 +664,51 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Cannot cancel procedure.
+        /// </summary>
+        internal static string ExceptionTechnologistWorkflowCancelTool {
+            get {
+                return ResourceManager.GetString("ExceptionTechnologistWorkflowCancelTool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot complete procedure.
+        /// </summary>
+        internal static string ExceptionTechnologistWorkflowCompleteTool {
+            get {
+                return ResourceManager.GetString("ExceptionTechnologistWorkflowCompleteTool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot resume procedure.
+        /// </summary>
+        internal static string ExceptionTechnologistWorkflowResumeTool {
+            get {
+                return ResourceManager.GetString("ExceptionTechnologistWorkflowResumeTool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot start procedure.
+        /// </summary>
+        internal static string ExceptionTechnologistWorkflowStartTool {
+            get {
+                return ResourceManager.GetString("ExceptionTechnologistWorkflowStartTool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot suspend procedure.
+        /// </summary>
+        internal static string ExceptionTechnologistWorkflowSuspendTool {
+            get {
+                return ResourceManager.GetString("ExceptionTechnologistWorkflowSuspendTool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to {0} has high severity notes: {1}.
         /// </summary>
         internal static string MessageAlertHighSeverityNote {

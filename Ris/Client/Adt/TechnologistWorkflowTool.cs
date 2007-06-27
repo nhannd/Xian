@@ -1,23 +1,30 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using System.Collections;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Common;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     public abstract class TechnologistWorkflowTool : Tool<ITechnologistWorkflowItemToolContext>, IDropHandler<ModalityWorklistItem>
     {
         protected string _operationName;
+        protected string _errorMessage;
 
-        public TechnologistWorkflowTool(string OperationName)
+        public TechnologistWorkflowTool(string operationName)
+            : this(operationName, null)
         {
-            _operationName = OperationName;
+        }
+
+        public TechnologistWorkflowTool(string operationName, string errorMessage)
+        {
+            _operationName = operationName;
+            _errorMessage = errorMessage;
         }
 
         public virtual bool Enabled
@@ -36,12 +43,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public virtual void Apply()
         {
-            ModalityWorklistItem item = CollectionUtils.FirstElement<ModalityWorklistItem>(this.Context.SelectedItems);
-            bool success = Execute(item, this.Context.DesktopWindow, this.Context.Folders);
-            if (success)
-            {
-                this.Context.SelectedFolder.Refresh();
-            }
+            ExecuteAndRefresh(this.Context.DesktopWindow, this.Context.SelectedFolder, this.Context.Folders, this.Context.SelectedItems);
         }
 
         public string OperationName
@@ -49,7 +51,7 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _operationName; }
         }
 
-        protected abstract bool Execute(ModalityWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders);
+        protected abstract void Execute(ModalityWorklistItem item, IEnumerable folders);
 
         #region IDropHandler<ModalityWorklistItem> Members
 
@@ -62,17 +64,26 @@ namespace ClearCanvas.Ris.Client.Adt
         public virtual bool ProcessDrop(IDropContext dropContext, ICollection<ModalityWorklistItem> items)
         {
             ITechnologistWorkflowFolderDropContext ctxt = (ITechnologistWorkflowFolderDropContext)dropContext;
-            ModalityWorklistItem item = CollectionUtils.FirstElement<ModalityWorklistItem>(items);
-            bool success = Execute(item, ctxt.DesktopWindow, ctxt.FolderSystem.Folders);
-            if (success)
-            {
-                ctxt.FolderSystem.SelectedFolder.Refresh();
-                return true;
-            }
-            return false;
+            return ExecuteAndRefresh(ctxt.DesktopWindow, ctxt.FolderSystem.SelectedFolder, ctxt.FolderSystem.Folders, items);
         }
 
         #endregion
+
+        private bool ExecuteAndRefresh(IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders, IEnumerable items)
+        {
+            try
+            {
+                ModalityWorklistItem item = CollectionUtils.FirstElement<ModalityWorklistItem>(items);
+                Execute(item, folders);
+                selectedFolder.Refresh();
+                return true;
+            }
+            catch(Exception e)
+            {
+                ExceptionHandler.Report(e, _errorMessage, desktopWindow);
+                return false;                            
+            }
+        }
     }
 
     [MenuAction("apply", "folderexplorer-items-contextmenu/Start")]
@@ -85,31 +96,21 @@ namespace ClearCanvas.Ris.Client.Adt
     public class StartTool : TechnologistWorkflowTool
     {
         public StartTool()
-            : base("StartProcedure")
+            : base("StartProcedure", SR.ExceptionTechnologistWorkflowStartTool)
         {
         }
 
-        protected override bool Execute(ModalityWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+        protected override void Execute(ModalityWorklistItem item, IEnumerable folders)
         {
-            try
-            {
-                Platform.GetService<IModalityWorkflowService>(
-                    delegate(IModalityWorkflowService service)
-                    {
-                        service.StartProcedure(new StartProcedureRequest(item.ProcedureStepRef));
-                    });
+            Platform.GetService<IModalityWorkflowService>(
+                delegate(IModalityWorkflowService service)
+                {
+                    service.StartProcedure(new StartProcedureRequest(item.ProcedureStepRef));
+                });
 
-                IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
-                    delegate(IFolder f) { return f is Folders.InProgressTechnologistWorkflowFolder; });
-                folder.RefreshCount();
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, desktopWindow);
-                return false;
-            }
+            IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
+                delegate(IFolder f) { return f is Folders.InProgressTechnologistWorkflowFolder; });
+            folder.RefreshCount();
         }
     }
 
@@ -123,31 +124,21 @@ namespace ClearCanvas.Ris.Client.Adt
     public class CompleteTool : TechnologistWorkflowTool
     {
         public CompleteTool()
-            : base("CompleteProcedure")
+            : base("CompleteProcedure", SR.ExceptionTechnologistWorkflowCompleteTool)
         {
         }
 
-        protected override bool Execute(ModalityWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+        protected override void Execute(ModalityWorklistItem item, IEnumerable folders)
         {
-            try
-            {
-                Platform.GetService<IModalityWorkflowService>(
-                    delegate(IModalityWorkflowService service)
-                    {
-                        service.CompleteProcedure(new CompleteProcedureRequest(item.ProcedureStepRef));
-                    });
+            Platform.GetService<IModalityWorkflowService>(
+                delegate(IModalityWorkflowService service)
+                {
+                    service.CompleteProcedure(new CompleteProcedureRequest(item.ProcedureStepRef));
+                });
 
-                IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
-                    delegate(IFolder f) { return f is Folders.CompletedTechnologistWorkflowFolder; });
-                folder.RefreshCount();
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, desktopWindow);
-                return false;
-            }
+            IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
+                delegate(IFolder f) { return f is Folders.CompletedTechnologistWorkflowFolder; });
+            folder.RefreshCount();
         }
     }
 
@@ -161,31 +152,21 @@ namespace ClearCanvas.Ris.Client.Adt
     public class CancelTool : TechnologistWorkflowTool
     {
         public CancelTool()
-            : base("CancelProcedure")
+            : base("CancelProcedure", SR.ExceptionTechnologistWorkflowCancelTool)
         {
         }
 
-        protected override bool Execute(ModalityWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+        protected override void Execute(ModalityWorklistItem item, IEnumerable folders)
         {
-            try
-            {
-                Platform.GetService<IModalityWorkflowService>(
-                    delegate(IModalityWorkflowService service)
-                    {
-                        service.CancelProcedure(new CancelProcedureRequest(item.ProcedureStepRef));
-                    });
+            Platform.GetService<IModalityWorkflowService>(
+                delegate(IModalityWorkflowService service)
+                {
+                    service.CancelProcedure(new CancelProcedureRequest(item.ProcedureStepRef));
+                });
 
-                IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
-                    delegate(IFolder f) { return f is Folders.CancelledTechnologistWorkflowFolder; });
-                folder.RefreshCount();
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, desktopWindow);
-                return false;
-            }
+            IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
+                delegate(IFolder f) { return f is Folders.CancelledTechnologistWorkflowFolder; });
+            folder.RefreshCount();
         }
     }
 
@@ -199,31 +180,21 @@ namespace ClearCanvas.Ris.Client.Adt
     public class SuspendTool : TechnologistWorkflowTool
     {
         public SuspendTool()
-            : base("SuspendProcedure")
+            : base("SuspendProcedure", SR.ExceptionTechnologistWorkflowSuspendTool)
         {
         }
 
-        protected override bool Execute(ModalityWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+        protected override void Execute(ModalityWorklistItem item, IEnumerable folders)
         {
-            try
-            {
-                Platform.GetService<IModalityWorkflowService>(
-                    delegate(IModalityWorkflowService service)
-                    {
-                        service.SuspendProcedure(new SuspendProcedureRequest(item.ProcedureStepRef));
-                    });
+            Platform.GetService<IModalityWorkflowService>(
+                delegate(IModalityWorkflowService service)
+                {
+                    service.SuspendProcedure(new SuspendProcedureRequest(item.ProcedureStepRef));
+                });
 
-                IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
-                    delegate(IFolder f) { return f is Folders.SuspendedTechnologistWorkflowFolder; });
-                folder.RefreshCount();
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, desktopWindow);
-                return false;
-            }
+            IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
+                delegate(IFolder f) { return f is Folders.SuspendedTechnologistWorkflowFolder; });
+            folder.RefreshCount();
         }
     }
 
@@ -237,31 +208,21 @@ namespace ClearCanvas.Ris.Client.Adt
     public class ResumeTool : TechnologistWorkflowTool
     {
         public ResumeTool()
-            : base("ResumeProcedure")
+            : base("ResumeProcedure", SR.ExceptionTechnologistWorkflowResumeTool)
         {
         }
 
-        protected override bool Execute(ModalityWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+        protected override void Execute(ModalityWorklistItem item, IEnumerable folders)
         {
-            try
-            {
-                Platform.GetService<IModalityWorkflowService>(
-                    delegate(IModalityWorkflowService service)
-                    {
-                        service.ResumeProcedure(new ResumeProcedureRequest(item.ProcedureStepRef));
-                    });
+            Platform.GetService<IModalityWorkflowService>(
+                delegate(IModalityWorkflowService service)
+                {
+                    service.ResumeProcedure(new ResumeProcedureRequest(item.ProcedureStepRef));
+                });
 
-                IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
-                    delegate(IFolder f) { return f is Folders.InProgressTechnologistWorkflowFolder; });
-                folder.RefreshCount();
-
-                return true;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, desktopWindow);
-                return false;
-            }
+            IFolder folder = CollectionUtils.SelectFirst<IFolder>(folders,
+                delegate(IFolder f) { return f is Folders.InProgressTechnologistWorkflowFolder; });
+            folder.RefreshCount();
         }
     }
 }

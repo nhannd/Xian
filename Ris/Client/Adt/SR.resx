@@ -318,6 +318,21 @@
   <data name="ExceptionOperationEnablementUnknown" xml:space="preserve">
     <value>Cannot determine enablement for operation: {0}</value>
   </data>
+  <data name="ExceptionTechnologistWorkflowCancelTool" xml:space="preserve">
+    <value>Cannot cancel procedure</value>
+  </data>
+  <data name="ExceptionTechnologistWorkflowCompleteTool" xml:space="preserve">
+    <value>Cannot complete procedure</value>
+  </data>
+  <data name="ExceptionTechnologistWorkflowResumeTool" xml:space="preserve">
+    <value>Cannot resume procedure</value>
+  </data>
+  <data name="ExceptionTechnologistWorkflowStartTool" xml:space="preserve">
+    <value>Cannot start procedure</value>
+  </data>
+  <data name="ExceptionTechnologistWorkflowSuspendTool" xml:space="preserve">
+    <value>Cannot suspend procedure</value>
+  </data>
   <data name="MessageAlertHighSeverityNote" xml:space="preserve">
     <value>{0} has high severity notes: {1}</value>
   </data>
