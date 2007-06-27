@@ -1,8 +1,8 @@
 ﻿<NUnitProject>
   <Settings activeconfig="Debug" />
   <Config name="Debug" binpathtype="Auto">
-    <assembly path="Dicom\bin\Debug\ClearCanvas.Pacs.Dicom.dll" />
-    <assembly path="Streaming\bin\Debug\ClearCanvas.Pacs.Streaming.dll" />
+    <assembly path="Dicom\bin\Debug\ClearCanvas.ImageServer.Dicom.dll" />
+    <assembly path="Streaming\bin\Debug\ClearCanvas.ImageServer.Streaming.dll" />
   </Config>
   <Config name="Release" binpathtype="Auto" />
 </NUnitProject>

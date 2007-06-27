@@ -4,18 +4,18 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}</ProjectGuid>
-    <OutputType>Library</OutputType>
+    <ProjectGuid>{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}</ProjectGuid>
+    <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.ImageServer.Streaming</RootNamespace>
-    <AssemblyName>ClearCanvas.ImageServer.Streaming</AssemblyName>
+    <RootNamespace>DicomDump</RootNamespace>
+    <AssemblyName>DicomDump</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;UNIT_TESTS</DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -28,23 +28,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="InstanceStream.cs" />
-    <Compile Include="SeriesStream.cs" />
+    <Compile Include="DicomDump.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StudyStream.cs" />
-    <Compile Include="Tests\GeneralStreamingTest.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Dicom\ClearCanvas.ImageServer.Dicom.csproj">
+    <ProjectReference Include="..\ClearCanvas.ImageServer.Dicom.csproj">
       <Project>{F65CF657-84A2-435B-9714-D70B99B39AAE}</Project>
       <Name>ClearCanvas.ImageServer.Dicom</Name>
     </ProjectReference>
@@ -57,7 +50,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  <PropertyGroup>
-    <PostBuildEvent>copy $(SolutionDir)..\Dicom\OffisWrapper\cppwrapper\$(ConfigurationName)\OffisDcm.dll $(TargetDir)</PostBuildEvent>
-  </PropertyGroup>
 </Project>

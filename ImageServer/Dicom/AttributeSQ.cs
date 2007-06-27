@@ -2,9 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.ImageServer.Dicom.Offis;
-using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.ImageServer.Dicom.Exceptions;
+using ClearCanvas.ImageServer.Dicom.IO;
 
 namespace ClearCanvas.ImageServer.Dicom
 {
@@ -29,27 +28,6 @@ namespace ClearCanvas.ImageServer.Dicom
 
         }
 
-        internal AttributeSQ(DicomTag tag, OffisDcmItem wrapperItem)
-            : base(tag)
-        {
-            List<SequenceItem> list = new List<SequenceItem>();
-
-            DcmTagKey offisTag = new DcmTagKey(tag.Group, tag.Element);
-
-            for (int num = 0; ; num++)
-            {
-                DcmItem offisItem = OffisDcm.findAndGetSequenceItemFromItem(wrapperItem.Item, offisTag, num);
-                if (offisItem == null)
-                    break;
-                SequenceItem item = new SequenceItem(offisItem, wrapperItem.FileFormat);
-                list.Add(item);
-            }
-         
-            _values = list.ToArray();
-
-            base.Count = _values.Length;
-        }
-
         internal AttributeSQ(AttributeSQ attrib, bool copyBinary)
             : base(attrib)
         {
@@ -67,7 +45,7 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Public Methods
 
-        public void AddSequenceItem(SequenceItem item)
+        public override void AddSequenceItem(SequenceItem item)
         {
             if (_values == null)
             {
@@ -86,9 +64,7 @@ namespace ClearCanvas.ImageServer.Dicom
             _values[oldValues.Length] = item;
 
             base.Count = _values.Length;
-            base.Length = base.Count;
-
-            base.Dirty = true;
+            base.StreamLength = (uint)base.Count;
         }
 
         #endregion
@@ -147,7 +123,7 @@ namespace ClearCanvas.ImageServer.Dicom
                 {
                     _values = (SequenceItem[])value;
                     base.Count = _values.Length;
-                    base.Length = base.Count;
+                    base.StreamLength = (uint)base.Count;
                 }
                 else
                 {
@@ -171,11 +147,22 @@ namespace ClearCanvas.ImageServer.Dicom
             throw new DicomException("Function all incompativle with SQ VR type");
         }
 
-        internal override void FlushAttribute(OffisDcmItem item)
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax)
         {
-            if (base.Dirty)
+            throw new DicomException("Unexpected call to GetByteBuffer() for a SQ attribute");
+        }
+        #endregion
+
+        #region Dump
+        public override void Dump(StringBuilder sb, string prefix, DicomDumpOptions options)
+        {
+            sb.Append(prefix);
+            sb.AppendFormat("{0} {1} {2}", Tag.ToString(), Tag.VR.Name, Tag.Name);
+            foreach (SequenceItem item in _values)
             {
-		    //TODO
+                sb.AppendLine().Append(prefix).Append(" Item:").AppendLine();
+                item.Dump(sb, prefix + "  > ", options);
+                sb.Length = sb.Length - 1;
             }
         }
         #endregion

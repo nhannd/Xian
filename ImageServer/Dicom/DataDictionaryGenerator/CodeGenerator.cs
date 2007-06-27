@@ -524,6 +524,9 @@ namespace ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator
             }
             writer.WriteLine("            }");
             writer.WriteLine("");
+            writer.WriteLine("            if (!_sopList.ContainsKey(uid))");
+            writer.WriteLine("                return null;");
+            writer.WriteLine("");
             writer.WriteLine("            return _sopList[uid];");
             writer.WriteLine("        }");
             

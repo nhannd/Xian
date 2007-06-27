@@ -7,8 +7,8 @@
     <ProjectGuid>{95FEA63F-7E51-4829-923E-8CD02C8DEAE2}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.Pacs.Streaming.XmlGenerator</RootNamespace>
-    <AssemblyName>ClearCanvas.Pacs.Streaming.XmlGenerator</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageServer.Streaming.XmlGenerator</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageServer.Streaming.XmlGenerator</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -58,6 +58,7 @@
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
     </Compile>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

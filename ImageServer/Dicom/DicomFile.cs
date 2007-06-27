@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Dicom.OffisWrapper;
-using ClearCanvas.ImageServer.Dicom.Offis;
+using System.IO;
+
+using ClearCanvas.ImageServer.Dicom.Exceptions;
+using ClearCanvas.ImageServer.Dicom.IO;
 
 namespace ClearCanvas.ImageServer.Dicom
 {
@@ -20,11 +22,6 @@ namespace ClearCanvas.ImageServer.Dicom
         #region Private Members
 
         private String _filename = null;
-
-        /// <summary>
-        /// Offis DcmFileFormat instance
-        /// </summary>
-        private DcmFileFormat _fileFormat = null;
 
         #endregion
 
@@ -93,7 +90,7 @@ namespace ClearCanvas.ImageServer.Dicom
             }
             set
             {
-                base._metaInfo[DicomTags.TransferSyntaxUID].SetStringValue(value.Uid);
+                base._metaInfo[DicomTags.TransferSyntaxUID].SetStringValue(value.UidString);
             }
         }
 
@@ -101,45 +98,68 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Public Methods
 
-        public bool Load()
+        public void Load(DicomReadOptions options)
         {
-            if (_fileFormat == null)
-                _fileFormat = new DcmFileFormat();
-
-            if ((base._metaInfo.OffisDataset == null)
-                && base._dataSet.OffisDataset == null)
-            {
-                OFCondition status = _fileFormat.loadFile(_filename, E_TransferSyntax.EXS_Unknown, E_GrpLenEncoding.EGL_noChange, 64, E_FileReadMode.ERM_autoDetect);
-                OffisHelper.CheckReturnValue(status, _filename);
-
-                base._dataSet.OffisDataset = new OffisDcmItem(_fileFormat.getDataset(),_fileFormat);
-                base._metaInfo.OffisDataset = new OffisDcmItem(_fileFormat.getMetaInfo(), _fileFormat);
-            }
-	
-            return true;
+            Load(null, options);
         }
 
-        public bool Write()
+        public void Load(DicomTag stopTag, DicomReadOptions options)
         {
-            if (_fileFormat == null)
-                _fileFormat = new DcmFileFormat();
-
-            if ((base._metaInfo.OffisDataset == null)
-               && base._dataSet.OffisDataset == null)
+            using (FileStream fs = File.OpenRead(Filename))
             {
-                base._dataSet.OffisDataset = new OffisDcmItem(_fileFormat.getDataset(), _fileFormat);
-                base._metaInfo.OffisDataset = new OffisDcmItem(_fileFormat.getMetaInfo(), _fileFormat);
+                fs.Seek(128, SeekOrigin.Begin);
+                CheckFileHeader(fs);
+                DicomStreamReader dsr = new DicomStreamReader(fs);
+
+                dsr.Dataset = base._metaInfo;
+                dsr.Read(new DicomTag(0x0002FFFF,"Bogus Tag",DicomVr.UNvr,false,1,1,false), options);
+                dsr.Dataset = base._dataSet;
+                if (stopTag == null)
+                    stopTag = new DicomTag(0xFFFFFFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false);
+                dsr.Read(stopTag, options);
             }
+        }
 
-            base._metaInfo.FlushDirtyAttributes();
-            base._dataSet.FlushDirtyAttributes();
+        protected static void CheckFileHeader(FileStream fs)
+        {
+            if (fs.ReadByte() != (byte)'D' ||
+                fs.ReadByte() != (byte)'I' ||
+                fs.ReadByte() != (byte)'C' ||
+                fs.ReadByte() != (byte)'M')
+                throw new DicomException("Invalid DICOM file: " + fs.Name);
+        }
 
-            OFCondition status = _fileFormat.saveFile(_filename, OffisHelper.ConvertTransferSyntax(this.TransferSyntax));
-            OffisHelper.CheckReturnValue(status, _filename);
+        public bool Save(DicomWriteOptions options)
+        {
+            using (FileStream fs = File.Create(Filename))
+            {
+                fs.Seek(128, SeekOrigin.Begin);
+                fs.WriteByte((byte)'D');
+                fs.WriteByte((byte)'I');
+                fs.WriteByte((byte)'C');
+                fs.WriteByte((byte)'M');
+
+                DicomStreamWriter dsw = new DicomStreamWriter(fs);
+                dsw.Write(TransferSyntax.GetTransferSyntax(TransferSyntax.ExplicitVRLittleEndian),
+                    base._metaInfo, options | DicomWriteOptions.CalculateGroupLengths);
+                
+                dsw.Write(this.TransferSyntax,base._dataSet, options);
+            }
 
             return true;
         }
+        #endregion
 
+        #region Dump
+        public void Dump(StringBuilder sb, string prefix, DicomDumpOptions options)
+        {
+            sb.Append(prefix).AppendLine("File: " + Filename).AppendLine();
+            sb.Append(prefix).Append("MetaInfo:").AppendLine();
+            base._metaInfo.Dump(sb, prefix, options);
+            sb.AppendLine().Append(prefix).Append("DataSet:").AppendLine();
+            base._dataSet.Dump(sb, prefix, options);
+            sb.AppendLine();
+        }
         #endregion
 
     }

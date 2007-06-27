@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.ImageServer.Dicom.Exceptions;
-using ClearCanvas.Dicom.OffisWrapper;
-using ClearCanvas.ImageServer.Dicom.Offis;
 
 namespace ClearCanvas.ImageServer.Dicom
 {
@@ -25,7 +23,6 @@ namespace ClearCanvas.ImageServer.Dicom
         #region Member Variables
 
         private SortedDictionary<uint, AbstractAttribute> _attributeList = new SortedDictionary<uint, AbstractAttribute>();
-        private OffisDcmItem _offisDataset = null;
 
         #endregion
 
@@ -36,16 +33,6 @@ namespace ClearCanvas.ImageServer.Dicom
         /// </summary>
         public AttributeCollection()
         {
-        }
-
-        /// <summary>
-        /// Internal constructor used when marshalling data from the Offis tool kit.
-        /// </summary>
-        /// <param name="theSet"></param>
-        /// <param name="fileFormat"></param>
-        internal AttributeCollection(DcmItem theSet, DcmFileFormat fileFormat)
-        {
-            _offisDataset = new OffisDcmItem(theSet, fileFormat);
         }
 
         /// <summary>
@@ -72,6 +59,16 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Public Methods
 
+        public bool Contains(uint tag)
+        {
+            return _attributeList.ContainsKey(tag);
+        }
+
+        public bool Contains(DicomTag tag)
+        {
+            return _attributeList.ContainsKey(tag.TagValue);
+        }
+
         /// <summary>
         /// Indexer to return a specific tag in the attribute collection.
         /// </summary>
@@ -87,10 +84,8 @@ namespace ClearCanvas.ImageServer.Dicom
 
                 if (!_attributeList.ContainsKey(tag))
                 {
-                    if (_offisDataset == null)
-                        attr = AbstractAttribute.NewAttribute(tag);
-                    else
-                        attr = AbstractAttribute.NewAttribute(tag, _offisDataset);
+                    attr = AbstractAttribute.NewAttribute(tag);
+             
                     if (attr == null)
                     {
                         throw new DicomException("Invalid tag: " + tag.ToString());// TODO:  Hex formating
@@ -108,18 +103,13 @@ namespace ClearCanvas.ImageServer.Dicom
                 if (value == null)
                 {
                     _attributeList.Remove(tag);
-
-                    if (this._offisDataset != null)
-                    {
-                        DcmTagKey offisTag = new DcmTagKey((ushort)((tag& 0xffff0000) >> 16), (ushort) (tag & 0x0000ffff));
-
-                        this._offisDataset.Item.findAndDeleteElement(offisTag);
-                    }
                 }
                 else
                 {
-                    value.Dirty = true;
+                    if (value.Tag.TagValue != tag)
+                        throw new DicomException("Tag being set does not match tag in AbstractAttribute");
                     _attributeList[tag] = value;
+                    
                 }
             }
         }
@@ -137,10 +127,7 @@ namespace ClearCanvas.ImageServer.Dicom
 
                 if (!_attributeList.ContainsKey(tag.TagValue))
                 {
-                    if (_offisDataset == null)
-                        attr = AbstractAttribute.NewAttribute(tag);
-                    else
-                        attr = AbstractAttribute.NewAttribute(tag, _offisDataset);
+                    attr = AbstractAttribute.NewAttribute(tag);
                     if (attr == null)
                     {
                         throw new DicomException("Invalid tag: " + tag.ToString());// TODO:  Hex formating
@@ -157,17 +144,12 @@ namespace ClearCanvas.ImageServer.Dicom
                 if (value == null)
                 {
                     _attributeList.Remove(tag.TagValue);
-
-                    if (this._offisDataset != null)
-                    {
-                        DcmTagKey offisTag = new DcmTagKey(tag.Group, tag.Element);
-
-                        this._offisDataset.Item.findAndDeleteElement(offisTag);
-                    }
                 }
                 else
                 {
-                    value.Dirty = true;
+                    if (value.Tag.TagValue != tag.TagValue)
+                        throw new DicomException("Tag being set does not match tag in AbstractAttribute");
+     
                     _attributeList[tag.TagValue] = value;
                 }
             }
@@ -262,95 +244,43 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Internal Methods
 
-        /// <summary>
-        /// Method to traverse through all the tags in the Offis message and force them to be loaded.
-        /// </summary>
-        internal void LoadAttributes()
+
+        internal uint CalculateGroupWriteLength(ushort group, TransferSyntax syntax, DicomWriteOptions options)
         {
-            if (_offisDataset == null)
-                return;
-
-            string tagName;
-            ushort group;
-            ushort element;
-            DcmVR vr = null;
-            string vrName;
-
-            DcmTag tag = null;
-            DcmObject container = _offisDataset.Item;
-            DcmObject obj = _offisDataset.Item.nextInContainer(null);
-            
-            /*
-             * We first traverse through the list of tags & put the Tag objects into our own list,
-             * then we go and actually extract each of the attributes.  This is because when we
-             * import some of the attributes in the message, we delete them out of the source
-             * message (specifically for pixel data), which causes the nextInContainer call to 
-             * terminate
-             */
-            List<DicomTag> tagList = new List<DicomTag>();
-            while (obj != null)
+            uint length = 0;
+            foreach (AbstractAttribute item in this)
             {
-                tag = obj.getTag();
-                group = tag.getGroup();
-                element = tag.getElement();
-                vr = tag.getVR();
-                vrName = vr.getVRName();
+                if (item.Tag.Group < group || item.Tag.Element == 0x0000)
+                    continue;
+                if (item.Tag.Group > group)
+                    return length;
+                length += item.CalculateWriteLength(syntax, options);
+            }
+            return length;
+        }
 
-                DicomTag ccTag = DicomTagDictionary.Instance[group, element];
-
-                if (ccTag == null)
+        internal uint CalculateWriteLength(TransferSyntax syntax, DicomWriteOptions options)
+        {
+            uint length = 0;
+            ushort group = 0xffff;
+            foreach (AbstractAttribute item in this)
+            {
+                if (item.Tag.Element == 0x0000)
+                    continue;
+                if (item.Tag.Group != group)
                 {
-                    tagName = tag.getTagName();
-                    ccTag = new DicomTag((uint)group << 16 | (uint)element, tagName, DicomVr.GetVR(vrName), true, 1, uint.MaxValue, false);
-                }
-                else
-                {
-                    if (!ccTag.VR.Name.Equals(vrName))
+                    group = item.Tag.Group;
+                    if (Flags.IsSet(options, DicomWriteOptions.CalculateGroupLengths))
                     {
-                        // TODO:  A prime tag here are group length tags, they are currently not in the dictionary.
-
-                        //if (!ccTag.MultiVR)
-                            //TODO: Log something
-
-                        // TODO:  Need some better logic here
-                        ccTag = new DicomTag((uint)group << 16 | (uint)element, ccTag.Name, DicomVr.GetVR(vrName), true, 1, uint.MaxValue, false);
-                     
+                        if (syntax.ExplicitVr)
+                            length += 4 + 2 + 2 + 4;
+                        else
+                            length += 4 + 4 + 4;
                     }
                 }
-
-                tagList.Add(ccTag);
-
-
-                obj = container.nextInContainer(obj);
+                length += item.CalculateWriteLength(syntax, options);
             }
-
-            foreach( DicomTag ccTag in tagList)
-            {
-                // This forces a load from Offis
-                AbstractAttribute attr = this[ccTag];
-            }
-
-        }
-
-        internal void FlushDirtyAttributes()
-        {
-            foreach (AbstractAttribute attr in this)
-            {
-                if (attr.Dirty)
-                {
-                    attr.FlushAttribute(_offisDataset);
-                }
-            }
-        }
-
-        #endregion
-
-        #region Internal Properties
-
-        internal OffisDcmItem OffisDataset
-        {
-            get { return _offisDataset; }
-            set { _offisDataset = value; }
+            return length;
         }
 
         #endregion
@@ -359,8 +289,6 @@ namespace ClearCanvas.ImageServer.Dicom
 
         public IEnumerator<AbstractAttribute> GetEnumerator()
         {
-            LoadAttributes();
-
             return _attributeList.Values.GetEnumerator();   
         }
 
@@ -369,6 +297,24 @@ namespace ClearCanvas.ImageServer.Dicom
             return GetEnumerator();
         }
 
+        #endregion
+
+        #region Dump
+        public void Dump()
+        {
+            StringBuilder sb = new StringBuilder();
+            Dump(sb, "", DicomDumpOptions.Default);
+            Console.WriteLine(sb.ToString());
+        }
+
+        public void Dump(StringBuilder sb, String prefix, DicomDumpOptions options)
+        {
+            foreach (AbstractAttribute item in this)
+            {
+                item.Dump(sb, prefix, DicomDumpOptions.Default);
+                sb.AppendLine();
+            }
+        }
         #endregion
     }
 }

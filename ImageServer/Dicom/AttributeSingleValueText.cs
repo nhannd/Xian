@@ -1,13 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Runtime.InteropServices;
 
-using ClearCanvas.ImageServer.Dicom.Offis;
 using ClearCanvas.ImageServer.Dicom.Exceptions;
-using ClearCanvas.Dicom.OffisWrapper;
+using ClearCanvas.ImageServer.Dicom.IO;
 
 namespace ClearCanvas.ImageServer.Dicom
 {
+    #region AttributeSingleValueText
     public abstract class AttributeSingleValueText : AbstractAttribute
     {
         private String _value = null;
@@ -26,19 +27,17 @@ namespace ClearCanvas.ImageServer.Dicom
             
         }
 
-        internal AttributeSingleValueText(DicomTag tag, OffisDcmItem item)
+        internal AttributeSingleValueText(DicomTag tag, ByteBuffer item)
             : base(tag)
         {
-            DcmTagKey offisTag = new DcmTagKey(tag.Group,tag.Element);
-            bool tagExists;
-
-            StringBuilder buffer = new StringBuilder((int)base.Tag.VR.MaximumLength);
-			OFCondition status = item.Item.findAndGetOFString(offisTag, buffer);
-            OffisHelper.CheckReturnValue(status, offisTag, out tagExists);
-			_value = buffer.ToString();
+            _value = item.GetString();
+            
+            // Saw some Osirix images that had padding on SH attributes with a null character, just
+            // pull them out here.
+            _value = _value.Trim(new char[] { tag.VR.PadChar, '\0' });
 
             Count = 1;
-            Length = _value.Length;
+            StreamLength = (uint)_value.Length;
         }
 
         internal AttributeSingleValueText(AttributeSingleValueText attrib)
@@ -107,12 +106,10 @@ namespace ClearCanvas.ImageServer.Dicom
 
         public override void SetStringValue(String stringValue)
         {
-            Dirty = true;
-
             if (stringValue == null || stringValue.Length == 0)
             {
                 Count = 1;
-                Length = 0;
+                StreamLength = 0;
                 _value = "";
                 return;
             }
@@ -120,27 +117,159 @@ namespace ClearCanvas.ImageServer.Dicom
             _value = stringValue;
 
             Count = 1;
-            Length = _value.Length;
+            StreamLength = (uint)_value.Length;
         }
 
         public abstract override AbstractAttribute Copy();
         internal abstract override AbstractAttribute Copy(bool copyBinary);
 
-        internal override void FlushAttribute(OffisDcmItem item)
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax)
         {
-            if (base.Dirty)
-            {
-                 DcmTag offisTag = new DcmTag(base.Tag.Group,base.Tag.Element);
+            ByteBuffer bb = new ByteBuffer(syntax.Endian);
 
-                 // Remove the old value, to make sure its cleared out
-                 bool tagExists;
-                 OFCondition status = item.Item.findAndDeleteElement(offisTag);
-                 OffisHelper.CheckReturnValue(status, offisTag, out tagExists);
-
-                 item.Item.putAndInsertString(offisTag, _value);
-            }
+            bb.SetString(_value, (byte)' ');
+            return bb;
         }
 
         #endregion
     }
+    #endregion
+
+    #region AttributeLT
+    public class AttributeLT : AttributeSingleValueText
+    {
+        #region Constructors
+
+        public AttributeLT(uint tag)
+            : base(tag)
+        {
+
+        }
+
+        public AttributeLT(DicomTag tag)
+            : base(tag)
+        {
+            if (!tag.VR.Equals(DicomVr.LTvr)
+             && !tag.MultiVR)
+                throw new DicomException(SR.InvalidVR);
+
+        }
+
+        internal AttributeLT(DicomTag tag, ByteBuffer item)
+            : base(tag, item)
+        {
+        }
+
+        internal AttributeLT(AttributeLT attrib)
+            : base(attrib)
+        {
+        }
+
+        #endregion
+
+        public override AbstractAttribute Copy()
+        {
+            return new AttributeLT(this);
+        }
+
+        internal override AbstractAttribute Copy(bool copyBinary)
+        {
+            return new AttributeLT(this);
+        }
+
+    }
+    #endregion
+
+    #region AttributeST
+    public class AttributeST : AttributeSingleValueText
+    {
+        #region Constructors
+
+        public AttributeST(uint tag)
+            : base(tag)
+        {
+
+        }
+
+        public AttributeST(DicomTag tag)
+            : base(tag)
+        {
+            if (!tag.VR.Equals(DicomVr.STvr)
+             && !tag.MultiVR)
+                throw new DicomException(SR.InvalidVR);
+
+        }
+
+        internal AttributeST(DicomTag tag, ByteBuffer item)
+            : base(tag, item)
+        {
+        }
+
+
+        internal AttributeST(AttributeST attrib)
+            : base(attrib)
+        {
+        }
+
+        #endregion
+
+        public override AbstractAttribute Copy()
+        {
+            return new AttributeST(this);
+        }
+
+        internal override AbstractAttribute Copy(bool copyBinary)
+        {
+            return new AttributeST(this);
+        }
+
+    }
+    #endregion
+
+    #region AttributeUT
+    public class AttributeUT : AttributeSingleValueText
+    {
+        #region Constructors
+
+        public AttributeUT(uint tag)
+            : base(tag)
+        {
+
+        }
+
+        public AttributeUT(DicomTag tag)
+            : base(tag)
+        {
+            if (!tag.VR.Equals(DicomVr.UTvr)
+             && !tag.MultiVR)
+                throw new DicomException(SR.InvalidVR);
+
+        }
+
+        internal AttributeUT(DicomTag tag, ByteBuffer item)
+            : base(tag, item)
+        {
+        }
+
+        internal AttributeUT(AttributeUT attrib)
+            : base(attrib)
+        {
+
+        }
+
+        #endregion
+
+
+        public override AbstractAttribute Copy()
+        {
+            return new AttributeUT(this);
+        }
+
+        internal override AbstractAttribute Copy(bool copyBinary)
+        {
+            return new AttributeUT(this);
+        }
+
+    }
+    #endregion
 }

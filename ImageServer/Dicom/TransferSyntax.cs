@@ -4,6 +4,12 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageServer.Dicom
 {
+    public enum Endian
+    {
+        Little,
+        Big
+    }
+
     /// <summary>
     /// This class contains transfer synatx definitions.
     /// </summary>
@@ -237,9 +243,17 @@ namespace ClearCanvas.ImageServer.Dicom
         }
 
         ///<summary>Property representing UID of transfer syntax.</summary>
-        public String Uid
+        public String UidString
         {
             get { return _uid; }
+        }
+
+        public DicomUid UID
+        {
+            get
+            {
+                return new DicomUid(_uid, _name, UidType.TransferSyntax);
+            }
         }
 
         ///<summary>Property representing the name of the transfer syntax.</summary>
@@ -252,6 +266,16 @@ namespace ClearCanvas.ImageServer.Dicom
         public bool LittleEndian
         {
             get { return _littleEndian; }
+        }
+        public Endian Endian
+        {
+            get
+            {
+                if (_littleEndian)
+                    return Endian.Little;
+
+                return Endian.Big;
+            }
         }
 
         ///<summary>Property representing if the transfer syntax is encoded as encapsulated.</summary>

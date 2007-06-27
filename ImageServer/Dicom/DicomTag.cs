@@ -16,6 +16,33 @@ namespace ClearCanvas.ImageServer.Dicom
     /// </remarks>
     public class DicomTag
     {
+        #region Static Members
+        public static uint GetCard(ushort group, ushort element)
+        {
+            return (uint)group << 16 | (uint)element;
+        }
+
+        public static bool IsPrivateGroup(ushort group)
+        {
+            return (group & 1) == 1;
+        }
+
+        public static DicomTag GetPrivateCreatorTag(ushort group, ushort element)
+        {
+            return new DicomTag((uint)group << 16 | (uint)(element >> 8), "Private Creator", DicomVr.LOvr, false, 1, 1, false);
+        }
+
+        /// <summary>(fffe,e0dd) VR= Sequence Delimitation Item</summary>
+        internal static DicomTag SequenceDelimitationItem = new DicomTag(0xfffee0dd, "Sequence Delimitation Item");
+
+        /// <summary>(fffe,e000) VR= Item</summary>
+        internal static DicomTag Item = new DicomTag(0xfffee000, "Item");
+
+        /// <summary>(fffe,e00d) VR= Item Delimitation Item</summary>
+        internal static DicomTag ItemDelimitationItem = new DicomTag(0xfffee00d, "Item Delimitation Item");
+
+        #endregion
+
         #region Private Members
         private uint _tag;
         private string _name;
@@ -47,6 +74,18 @@ namespace ClearCanvas.ImageServer.Dicom
             _vmHigh = vmHigh;
             _isRetired = isRetired;
         }
+
+        private DicomTag(uint tag, String name)
+        {
+            _tag = tag;
+            _name = name;
+            _vr = DicomVr.UNvr;
+            _multiVrTag = false;
+            _vmLow = 1;
+            _vmHigh = 1;
+            _isRetired = false;
+        }
+
         #endregion
 
         #region Properties
@@ -98,6 +137,28 @@ namespace ClearCanvas.ImageServer.Dicom
             get { return _vr; }
         }
 
+        public uint VMLow
+        {
+            get { return _vmLow; }
+        }
+
+        public uint VMHigh
+        {
+            get { return _vmHigh; }
+        }
+        
+        public string VM
+        {
+            get
+            {
+                if (_vmLow == _vmHigh)
+                    return _vmLow.ToString();
+                if (_vmHigh == uint.MaxValue)
+                    return _vmLow.ToString() + "-N";
+                return _vmLow.ToString() + "-" + _vmHigh.ToString();
+            }
+        }
+
         /// <summary>
         /// Returns a uint DICOM Tag value for the object.
         /// </summary>
@@ -106,16 +167,24 @@ namespace ClearCanvas.ImageServer.Dicom
             get { return _tag; }
         }
 
-		/// <summary>
-		/// Returns a string with the tag value in Hex
-		/// </summary>
-		public String HexString
-		{
-			get
-			{
-				return _tag.ToString("X8");
-			}
-		}
+        /// <summary>
+        /// Returns a string with the tag value in Hex
+        /// </summary>
+        public String HexString
+        {
+            get
+            {
+                return _tag.ToString("X8");
+            }
+        }
+
+        /// <summary>
+        /// Returns a bool as true if the tag is private
+        /// </summary>
+        public bool IsPrivate
+        {
+            get { return (Group & 1) == 1; }
+        }
 
         #endregion
 
@@ -164,6 +233,53 @@ namespace ClearCanvas.ImageServer.Dicom
                 return false;
 
             return (otherTag.GetHashCode() == this.GetHashCode());
+        }
+
+        public static bool operator ==(DicomTag t1, DicomTag t2)
+        {
+            if ((object)t1 == null && (object)t2 == null)
+                return true;
+            if ((object)t1 == null || (object)t2 == null)
+                return false;
+            return t1.TagValue == t2.TagValue;
+        }
+        public static bool operator !=(DicomTag t1, DicomTag t2)
+        {
+            return !(t1 == t2);
+        }
+        public static bool operator <(DicomTag t1, DicomTag t2)
+        {
+            if ((object)t1 == null || (object)t2 == null)
+                return false;
+            if (t1.Group == t2.Group && t1.Element < t2.Element)
+                return true;
+            if (t1.Group < t2.Group)
+                return true;
+            return false;
+        }
+        public static bool operator >(DicomTag t1, DicomTag t2)
+        {
+            return !(t1 < t2);
+        }
+        public static bool operator <=(DicomTag t1, DicomTag t2)
+        {
+            if ((object)t1 == null || (object)t2 == null)
+                return false;
+            if (t1.Group == t2.Group && t1.Element <= t2.Element)
+                return true;
+            if (t1.Group < t2.Group)
+                return true;
+            return false;
+        }
+        public static bool operator >=(DicomTag t1, DicomTag t2)
+        {
+            if ((object)t1 == null || (object)t2 == null)
+                return false;
+            if (t1.Group == t2.Group && t1.Element >= t2.Element)
+                return true;
+            if (t1.Group > t2.Group)
+                return true;
+            return false;
         }
     }
 }

@@ -2,8 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.Dicom.OffisWrapper;
-using ClearCanvas.ImageServer.Dicom.Offis;
+using ClearCanvas.ImageServer.Dicom.IO;
+using ClearCanvas.ImageServer.Dicom.Exceptions;
 
 namespace ClearCanvas.ImageServer.Dicom
 {
@@ -25,11 +25,10 @@ namespace ClearCanvas.ImageServer.Dicom
 
         private DicomTag _tag;
         private long _valueCount = 0;
-        private long _length = 0;
-        private bool _dirty = false;
+        private uint _length = 0;
         #endregion
 
-        #region Abstract Methods
+        #region Abstract and Virtual Methods
 
         public abstract override string ToString();
         public abstract override bool Equals(object obj);
@@ -38,9 +37,60 @@ namespace ClearCanvas.ImageServer.Dicom
         public abstract Object Values { get; set; }
         public abstract AbstractAttribute Copy();
         public abstract void SetStringValue(String stringValue);
+        internal abstract ByteBuffer GetByteBuffer(TransferSyntax syntax);
 
         internal abstract AbstractAttribute Copy(bool copyBinary);
-        internal abstract void FlushAttribute(OffisDcmItem item);
+
+        internal virtual uint CalculateWriteLength(TransferSyntax syntax, DicomWriteOptions options)
+        {
+            uint length = 4; // element tag
+            if (syntax.ExplicitVr)
+            {
+                length += 2; // vr
+                if (Tag.VR.Is16BitLengthField)
+                    length += 2;
+                else
+                    length += 6;
+            }
+            else
+            {
+                length += 4; // length tag				
+            }
+            length += (uint)StreamLength;
+            if ((length & 0x00000001) != 0)
+                length++;
+
+            return length;
+        }
+
+        public virtual ushort GetUInt16(int i)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual ushort GetUInt16(int i, ushort defaultVal)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual short GetInt16(int i)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual uint GetUInt32(int i)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual int GetInt32(int i)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual DicomUid GetUID(int i)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual void AddSequenceItem(SequenceItem item)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
         #endregion
 
         #region Constructors
@@ -71,8 +121,7 @@ namespace ClearCanvas.ImageServer.Dicom
         {
             _tag = attrib.Tag;
             _valueCount = attrib.Count;
-            _dirty = true;
-            _length = attrib.Length;
+            _length = attrib.StreamLength;
         }
 
         #endregion
@@ -87,9 +136,15 @@ namespace ClearCanvas.ImageServer.Dicom
             get { return _tag; }
         }
 
-        public long Length
+        public uint StreamLength
         {
-            get { return _length; }
+            get
+            {
+                if ((_length & 0x00000001) == 1)
+                    return _length + 1;
+
+                return _length;
+            }
             protected set { _length = value; }
         }
 
@@ -97,16 +152,6 @@ namespace ClearCanvas.ImageServer.Dicom
         {
             get { return _valueCount; }
             protected set { _valueCount = value; }
-        }
-
-        #endregion
-
-        #region Internal Properties
-
-        internal bool Dirty
-        {
-            get { return _dirty; }
-            set { _dirty = value; }
         }
 
         #endregion
@@ -125,237 +170,75 @@ namespace ClearCanvas.ImageServer.Dicom
                 return null;
 
 
-            if (tag.VR.Equals(DicomVr.AEvr))
+            switch (tag.VR.Name)
             {
-                return new AttributeAE(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.ASvr))
-            {
-                return new AttributeAS(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.ATvr))
-            {
-                return new AttributeAT(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.CSvr))
-            {
-                return new AttributeCS(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.DAvr))
-            {
-                return new AttributeDA(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.DSvr))
-            {
-                return new AttributeDS(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.DTvr))
-            {
-                return new AttributeDT(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.FLvr))
-            {
-                return new AttributeFL(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.FDvr))
-            {
-                return new AttributeFD(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.ISvr))
-            {
-                return new AttributeIS(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.LOvr))
-            {
-                return new AttributeLO(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.LTvr))
-            {
-                return new AttributeLT(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.OBvr))
-            {
-                return new AttributeOB(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.OFvr))
-            {
-                return new AttributeOF(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.OWvr))
-            {
-                return new AttributeOW(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.PNvr))
-            {
-                return new AttributePN(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.SHvr))
-            {
-                return new AttributeSH(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.SLvr))
-            {
-                return new AttributeSL(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.SQvr))
-            {
-                return new AttributeSQ(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.SSvr))
-            {
-                return new AttributeSS(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.STvr))
-            {
-                return new AttributeST(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.TMvr))
-            {
-                return new AttributeTM(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.UIvr))
-            {
-                return new AttributeUI(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.ULvr))
-            {
-                return new AttributeUL(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.UNvr))
-            {
-                return new AttributeUN(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.USvr))
-            {
-                return new AttributeUS(tag);
-            }
-            else if (tag.VR.Equals(DicomVr.UTvr))
-            {
-                return new AttributeUT(tag);
+                case "AE": return new AttributeAE(tag);
+                case "AS": return new AttributeAS(tag);
+                case "AT": return new AttributeAT(tag);
+                case "CS": return new AttributeCS(tag);
+                case "DA": return new AttributeDA(tag);
+                case "DS": return new AttributeDS(tag);
+                case "DT": return new AttributeDT(tag);
+                case "FL": return new AttributeFL(tag);
+                case "FD": return new AttributeFD(tag);
+                case "IS": return new AttributeIS(tag);
+                case "LO": return new AttributeLO(tag);
+                case "LT": return new AttributeLT(tag);
+                case "OB": return new AttributeOB(tag);
+                case "OF": return new AttributeOF(tag);
+                case "OW": return new AttributeOW(tag);
+                case "PN": return new AttributePN(tag);
+                case "SH": return new AttributeSH(tag);
+                case "SL": return new AttributeSL(tag);
+                case "SQ": return new AttributeSQ(tag);
+                case "SS": return new AttributeSS(tag);
+                case "ST": return new AttributeST(tag);
+                case "TM": return new AttributeTM(tag);
+                case "UI": return new AttributeUI(tag);
+                case "UL": return new AttributeUL(tag);
+                case "UN": return new AttributeUN(tag);
+                case "US": return new AttributeUS(tag);
+                case "UT": return new AttributeUT(tag);
             }
             
             return null;
                     
         }
-        internal static AbstractAttribute NewAttribute(uint tag, OffisDcmItem offisItem)
-        {
-            DicomTag dictionTag = DicomTagDictionary.Instance[tag];
-            return NewAttribute(dictionTag, offisItem);
-        }
 
-        internal static AbstractAttribute NewAttribute(DicomTag tag, OffisDcmItem offisItem)
+        internal static AbstractAttribute NewAttribute(DicomTag tag, ByteBuffer bb)
         {
             if (tag == null)
                 return null;
 
-
-            if (tag.VR.Equals(DicomVr.AEvr))
+            switch (tag.VR.Name)
             {
-                return new AttributeAE(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.ASvr))
-            {
-                return new AttributeAS(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.ATvr))
-            {
-                return new AttributeAT(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.CSvr))
-            {
-                return new AttributeCS(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.DAvr))
-            {
-                return new AttributeDA(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.DSvr))
-            {
-                return new AttributeDS(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.DTvr))
-            {
-                return new AttributeDT(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.FLvr))
-            {
-                return new AttributeFL(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.FDvr))
-            {
-                return new AttributeFD(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.ISvr))
-            {
-                return new AttributeIS(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.LOvr))
-            {
-                return new AttributeLO(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.LTvr))
-            {
-                return new AttributeLT(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.OBvr))
-            {
-                return new AttributeOB(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.OFvr))
-            {
-                return new AttributeOF(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.OWvr))
-            {
-                return new AttributeOW(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.PNvr))
-            {
-                return new AttributePN(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.SHvr))
-            {
-                return new AttributeSH(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.SLvr))
-            {
-                return new AttributeSL(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.SQvr))
-            {
-                return new AttributeSQ(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.SSvr))
-            {
-                return new AttributeSS(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.STvr))
-            {
-                return new AttributeST(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.TMvr))
-            {
-                return new AttributeTM(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.UIvr))
-            {
-                return new AttributeUI(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.ULvr))
-            {
-                return new AttributeUL(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.UNvr))
-            {
-                return new AttributeUN(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.USvr))
-            {
-                return new AttributeUS(tag, offisItem);
-            }
-            else if (tag.VR.Equals(DicomVr.UTvr))
-            {
-                return new AttributeUT(tag, offisItem);
+                case "AE": return new AttributeAE(tag, bb);
+                case "AS": return new AttributeAS(tag, bb);
+                case "AT": return new AttributeAT(tag, bb);
+                case "CS": return new AttributeCS(tag, bb);
+                case "DA": return new AttributeDA(tag, bb);
+                case "DS": return new AttributeDS(tag, bb);
+                case "DT": return new AttributeDT(tag, bb);
+                case "FL": return new AttributeFL(tag, bb);
+                case "FD": return new AttributeFD(tag, bb);
+                case "IS": return new AttributeIS(tag, bb);
+                case "LO": return new AttributeLO(tag, bb);
+                case "LT": return new AttributeLT(tag, bb);
+                case "OB": return new AttributeOB(tag, bb);
+                case "OF": return new AttributeOF(tag, bb);
+                case "OW": return new AttributeOW(tag, bb);
+                case "PN": return new AttributePN(tag, bb);
+                case "SH": return new AttributeSH(tag, bb);
+                case "SL": return new AttributeSL(tag, bb);
+                //case "SQ": return new AttributeSQ(tag, bb);
+                case "SS": return new AttributeSS(tag, bb);
+                case "ST": return new AttributeST(tag, bb);
+                case "TM": return new AttributeTM(tag, bb);
+                case "UI": return new AttributeUI(tag, bb);
+                case "UL": return new AttributeUL(tag, bb);
+                case "UN": return new AttributeUN(tag, bb);
+                case "US": return new AttributeUS(tag, bb);
+                case "UT": return new AttributeUT(tag, bb);
             }
 
             return null;
@@ -371,5 +254,89 @@ namespace ClearCanvas.ImageServer.Dicom
             // Uses the actual ToString implementation of the derived class.
             return attr.ToString();
         }
+
+        #region Dump
+        public virtual void Dump(StringBuilder sb, string prefix, DicomDumpOptions options)
+        {
+            int ValueWidth = 40 - prefix.Length;
+            int SbLength = sb.Length;
+
+            sb.Append(prefix);
+            sb.AppendFormat("({0:x4},{1:x4}) {2} ", Tag.Group, Tag.Element, Tag.VR.Name);
+            if (Count == 0)
+            {
+                String value = "(no value available)";
+                sb.Append(value.PadRight(ValueWidth, ' '));
+            }
+            else
+            {
+                if (Tag.VR.TextVR)
+                {
+                    String value = null;
+                    if (Tag.VR == DicomVr.UIvr)
+                    {
+                        AttributeUI ui = this as AttributeUI;
+                        DicomUid uid = ui.GetUID(0);
+                        if (uid != null && uid.Type != UidType.Unknown)
+                        {
+                            value = "=" + uid.Description;
+                            if (Flags.IsSet(options, DicomDumpOptions.ShortenLongValues))
+                            {
+                                if (value.Length > ValueWidth)
+                                {
+                                    value = value.Substring(0, ValueWidth - 3);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            value = "[" + this.ToString() + "]";
+                            if (Flags.IsSet(options, DicomDumpOptions.ShortenLongValues))
+                            {
+                                if (value.Length > ValueWidth)
+                                {
+                                    value = value.Substring(0, ValueWidth - 4) + "...]";
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        value = "[" + this.ToString() + "]";
+                        if (Flags.IsSet(options, DicomDumpOptions.ShortenLongValues))
+                        {
+                            if (value.Length > ValueWidth)
+                            {
+                                value = value.Substring(0, ValueWidth - 4) + "...]";
+                            }
+                        }
+                    }
+                    sb.Append(value.PadRight(ValueWidth, ' '));
+                }
+                else
+                {
+                    String value = this.ToString();
+                    if (Flags.IsSet(options, DicomDumpOptions.ShortenLongValues))
+                    {
+                        if (value.Length > ValueWidth)
+                        {
+                            value = value.Substring(0, ValueWidth - 3) + "...";
+                        }
+                    }
+                    sb.Append(value.PadRight(ValueWidth, ' '));
+                }
+            }
+            sb.AppendFormat(" # {0,4} {2} {1}", StreamLength, Tag.VM, Tag.Name);
+
+            if (Flags.IsSet(options, DicomDumpOptions.Restrict80CharactersPerLine))
+            {
+                if (sb.Length > (SbLength + 79))
+                {
+                    sb.Length = SbLength + 79;
+                    //sb.Append(">");
+                }
+            }
+        }
+        #endregion
     }
 }

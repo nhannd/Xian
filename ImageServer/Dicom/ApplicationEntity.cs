@@ -8,7 +8,8 @@ namespace ClearCanvas.ImageServer.Dicom
     {
         #region Member Variables
         
-        private uint _maxPduLength = (1500 - 6) * 64;
+        // Sizes that result in PDUs that are multiples of the MTU work better.
+        private uint _maxPduLength = (1500 - 6) * 128;
 
         private String _name = "AE_TITLE";
 

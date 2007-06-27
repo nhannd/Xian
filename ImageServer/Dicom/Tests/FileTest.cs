@@ -26,15 +26,14 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
         private void SetupMetaInfo(DicomFile theFile)
         {
-
             AttributeCollection theSet = theFile.MetaInfo;
 
-            theSet[DicomTags.MediaStorageSOPClassUID] = theFile.DataSet[DicomTags.SOPClassUID].Copy();
-            theSet[DicomTags.MediaStorageSOPInstanceUID] = theFile.DataSet[DicomTags.SOPInstanceUID].Copy();
+            theSet[DicomTags.MediaStorageSOPClassUID].SetStringValue(theFile.DataSet[DicomTags.SOPClassUID].ToString());
+            theSet[DicomTags.MediaStorageSOPInstanceUID].SetStringValue(theFile.DataSet[DicomTags.SOPInstanceUID].ToString());
             theFile.TransferSyntax = TransferSyntax.GetTransferSyntax(TransferSyntax.ExplicitVRLittleEndian); ;
 
             theSet[DicomTags.ImplementationClassUID].SetStringValue("1.1.1.1.1.11.1");
-            theSet[DicomTags.ImplementationVersionName].SetStringValue("CC Pacs 1.0");
+            theSet[DicomTags.ImplementationVersionName].SetStringValue("CC ImageServer 1.0");
         }
 
         private void SetupMR(AttributeCollection theSet)
@@ -128,6 +127,31 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             theSet[DicomTags.PixelData] = pixels;
 
         }
+        public void WriteOptionsTest(DicomFile sourceFile, DicomWriteOptions options)
+        {
+            bool result = sourceFile.Save(options);
+
+            Assert.AreEqual(result, true);
+
+            DicomFile newFile = new DicomFile("CreateFileTest.dcm");
+
+            DicomReadOptions readOptions = DicomReadOptions.Default;
+            newFile.Load(readOptions);
+
+            Assert.AreEqual(sourceFile.DataSet.Equals(newFile.DataSet), true);
+
+            // update a tag, and make sure it shows they're different
+            newFile.DataSet[DicomTags.PatientsName].Values = "NewPatient^First";
+            Assert.AreEqual(sourceFile.DataSet.Equals(newFile.DataSet), false);
+
+            // Now update the original file with the name, and they should be the same again
+            sourceFile.DataSet[DicomTags.PatientsName].Values = "NewPatient^First";
+            Assert.AreEqual(sourceFile.DataSet.Equals(newFile.DataSet), true);
+
+            // Return the original string value.
+            sourceFile.DataSet[DicomTags.PatientsName].SetStringValue("Patient^Test");
+
+        }
 
         [Test]
         public void CreateFileTest()
@@ -143,18 +167,20 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
             SetupMetaInfo(file);
 
-            bool result = file.Write();
+            DicomWriteOptions writeOptions = DicomWriteOptions.Default;
+            WriteOptionsTest(file, writeOptions);
 
-            Assert.AreEqual(result, true);
+            writeOptions = DicomWriteOptions.ExplicitLengthSequence;
+            WriteOptionsTest(file, writeOptions);
 
+            writeOptions = DicomWriteOptions.ExplicitLengthSequenceItem;
+            WriteOptionsTest(file, writeOptions);
 
-            DicomFile newFile = new DicomFile("CreateFileTest.dcm");
+            writeOptions = DicomWriteOptions.ExplicitLengthSequence | DicomWriteOptions.ExplicitLengthSequenceItem;
+            WriteOptionsTest(file, writeOptions);
 
-            newFile.Load();
-
-            Assert.AreEqual(dataSet.Equals(newFile.DataSet),true);
-
-
+            writeOptions = DicomWriteOptions.None;
+            WriteOptionsTest(file, writeOptions);
 
         }
     }
