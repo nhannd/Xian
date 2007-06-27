@@ -21,7 +21,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class LayoutTool : ImageViewerTool
 	{
-		private static LayoutComponent _layoutComponent;
+		private static IShelf _shelf;
 
         /// <summary>
         /// Constructor
@@ -45,19 +45,23 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
         public void Show()
 		{
             // check if a layout component is already displayed
-            if (_layoutComponent == null)
+			if (_shelf != null)
+			{
+				_shelf.Activate();
+			}
+			else
             {
                 // create and initialize the layout component
-				_layoutComponent = new LayoutComponent(this.Context);
+				LayoutComponent layoutComponent = new LayoutComponent(this.Context);
 
                 // launch the layout component in a shelf
                 // note that the component is thrown away when the shelf is closed by the user
-                ApplicationComponent.LaunchAsShelf(
+				_shelf = ApplicationComponent.LaunchAsShelf(
                     this.Context.DesktopWindow,
-					_layoutComponent,
+					layoutComponent,
                     SR.TitleLayoutManager,
-                    ShelfDisplayHint.DockLeft,// | ShelfDisplayHint.DockAutoHide,
-					delegate(IApplicationComponent component) { _layoutComponent = null; });
+                    ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide,
+					delegate(IApplicationComponent component) { _shelf = null; });
             }
         }
 	}

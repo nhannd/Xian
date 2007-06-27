@@ -7,9 +7,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 {
 	public class LocalDataStoreActivityMonitorComponentManager
 	{
-		private static IShelf _importComponentWorkspace;
-		private static IShelf _reindexComponentWorkspace;
-		private static IWorkspace _dicomSendReceiveActivityComponentWorkspace;
+		private static IShelf _importComponentShelf;
+		private static IShelf _reindexComponentShelf;
+		private static IShelf _dicomSendReceiveActivityComponentShelf;
 
 		private LocalDataStoreActivityMonitorComponentManager()
 		{
@@ -17,9 +17,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public static void ShowSendReceiveActivityComponent(IDesktopWindow desktopWindow)
 		{
-			if (_dicomSendReceiveActivityComponentWorkspace != null)
+			if (_dicomSendReceiveActivityComponentShelf != null)
 			{
-				_dicomSendReceiveActivityComponentWorkspace.Activate();
+				_dicomSendReceiveActivityComponentShelf.Activate();
 			}
 			else
 			{
@@ -33,15 +33,17 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 					SplitComponentContainer container = new SplitComponentContainer(topPane, bottomPane, SplitOrientation.Horizontal);
 
-					_dicomSendReceiveActivityComponentWorkspace = ApplicationComponent.LaunchAsWorkspace(desktopWindow, container, SR.MenuDicomSendReceiveActivity,
-						delegate(IApplicationComponent closingComponent)
-						{
-							_dicomSendReceiveActivityComponentWorkspace = null;
-						});
+					_dicomSendReceiveActivityComponentShelf = ApplicationComponent.LaunchAsShelf
+						(
+							desktopWindow, container, SR.MenuDicomSendReceiveActivity, ShelfDisplayHint.DockRight | ShelfDisplayHint.DockAutoHide,
+							delegate(IApplicationComponent closingComponent)
+							{
+								_dicomSendReceiveActivityComponentShelf = null;
+							});
 				}
 				catch
 				{
-					_dicomSendReceiveActivityComponentWorkspace = null;
+					_dicomSendReceiveActivityComponentShelf = null;
 					throw;
 				}
 			}
@@ -49,43 +51,51 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public static void ShowImportComponent(IDesktopWindow desktopWindow)
 		{
-			if (_importComponentWorkspace != null)
-				return;
-
-			try
+			if (_importComponentShelf != null)
 			{
-				DicomFileImportApplicationComponent component = new DicomFileImportApplicationComponent();
-				_importComponentWorkspace = ApplicationComponent.LaunchAsShelf(desktopWindow, component, component.Title, ShelfDisplayHint.DockBottom,
-					delegate(IApplicationComponent closingComponent)
-					{
-						_importComponentWorkspace = null;
-					});
+				_importComponentShelf.Activate();
 			}
-			catch
+			else
 			{
-				_importComponentWorkspace = null;
-				throw;
+				try
+				{
+					DicomFileImportApplicationComponent component = new DicomFileImportApplicationComponent();
+					_importComponentShelf = ApplicationComponent.LaunchAsShelf(desktopWindow, component, component.Title, ShelfDisplayHint.DockBottom | ShelfDisplayHint.DockAutoHide,
+						delegate(IApplicationComponent closingComponent)
+						{
+							_importComponentShelf = null;
+						});
+				}
+				catch
+				{
+					_importComponentShelf = null;
+					throw;
+				}
 			}
 		}
 
 		public static void ShowReindexComponent(IDesktopWindow desktopWindow)
 		{
-			if (_reindexComponentWorkspace != null)
-				return;
-
-			try
+			if (_reindexComponentShelf != null)
 			{
-				LocalDataStoreReindexApplicationComponent component = new LocalDataStoreReindexApplicationComponent();
-				_reindexComponentWorkspace = ApplicationComponent.LaunchAsShelf(desktopWindow, component, component.Title, ShelfDisplayHint.DockBottom,
-					delegate(IApplicationComponent closingComponent)
-					{
-						_reindexComponentWorkspace = null;
-					});
+				_reindexComponentShelf.Activate();
 			}
-			catch 
+			else
 			{
-				_reindexComponentWorkspace = null;
-				throw;
+				try
+				{
+					LocalDataStoreReindexApplicationComponent component = new LocalDataStoreReindexApplicationComponent();
+					_reindexComponentShelf = ApplicationComponent.LaunchAsShelf(desktopWindow, component, component.Title, ShelfDisplayHint.DockBottom | ShelfDisplayHint.DockAutoHide,
+						delegate(IApplicationComponent closingComponent)
+						{
+							_reindexComponentShelf = null;
+						});
+				}
+				catch
+				{
+					_reindexComponentShelf = null;
+					throw;
+				}
 			}
 		}
 	}

@@ -11,6 +11,7 @@ using Crownwood.DotNetMagic.Common;
 using Crownwood.DotNetMagic.Docking;
 using Crownwood.DotNetMagic.Controls;
 using System.ComponentModel;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -27,6 +28,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             _shelfManager = shelfManager;
             _shelfManager.Shelves.ItemAdded += new EventHandler<ShelfEventArgs>(Shelves_ItemAdded);
             _shelfManager.Shelves.ItemRemoved += new EventHandler<ShelfEventArgs>(Shelves_ItemRemoved);
+			_shelfManager.ShelfActivated += new EventHandler<ItemEventArgs<IShelf>>(OnShelfActivated);
 
 			_dockingManager = dockingManager;
 
@@ -35,7 +37,6 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// results in a crash. (Ticket #144)
 			_dockingManager.ContentHiding += new DockingManager.ContentHidingHandler(_dockingManager_ContentHiding);
 		}
-
 
         public void HideShelves()
         {
@@ -56,7 +57,23 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        private void Shelves_ItemAdded(object sender, ShelfEventArgs e)
+		private void OnShelfActivated(object sender, ItemEventArgs<IShelf> e)
+		{
+			Content content = GetShelfContent(e.Item);
+			if (content != null)
+			{
+				if (content.IsAutoHidden)
+				{
+					_dockingManager.BringAutoHideIntoView(content);
+				}
+				else
+				{
+					content.BringToFront();
+				}
+			}
+		}
+
+		private void Shelves_ItemAdded(object sender, ShelfEventArgs e)
         {
             AddShelfView(e.Item);
         }
@@ -66,7 +83,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             RemoveShelfView(e.Item);
         }
 
-		void _dockingManager_ContentHiding(Content c, CancelEventArgs cea)
+		private void _dockingManager_ContentHiding(Content c, CancelEventArgs cea)
 		{
 			IShelf shelf = (IShelf)c.Tag;
 			_shelfManager.Shelves.Remove(shelf);
@@ -131,5 +148,15 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+		private Content GetShelfContent(IShelf shelf)
+		{
+			foreach (Content content in _dockingManager.Contents)
+			{
+				if (content.Tag == shelf)
+					return content;
+			}
+
+			return null;
+		}
     }
 }

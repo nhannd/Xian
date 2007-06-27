@@ -28,5 +28,10 @@ namespace ClearCanvas.Desktop
         /// Returns a set of flags that provide hints as to how the shelf wishes to be displayed
         /// </summary>
         ShelfDisplayHint DisplayHint { get; }
+
+		/// <summary>
+		/// Ensures that a particular shelf becomes active/visible.
+		/// </summary>
+		void Activate();
     }
 }

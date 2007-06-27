@@ -70,8 +70,6 @@ namespace ClearCanvas.Desktop
             get { return _host.Component; }
         }
 
-        #region IShelf Members
-
         public override void Initialize(IDesktopWindow desktopWindow)
         {
 			Platform.CheckForNullReference(desktopWindow, "desktopWindow");
@@ -86,7 +84,5 @@ namespace ClearCanvas.Desktop
                 _host = null;
             }
         }
-
-        #endregion
     }
 }

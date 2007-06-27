@@ -28,6 +28,11 @@ namespace ClearCanvas.Utilities.DicomEditor
     [ExtensionOf(typeof(LocalImageExplorerToolExtensionPoint))]
     public class DicomEditorTool : ToolBase
     {
+		private IShelf _shelf;
+		private DicomEditorComponent _component;
+        private bool _enabled;
+        private event EventHandler _enabledChanged;
+
         public DicomEditorTool()
         {
             _enabled = true;
@@ -87,16 +92,24 @@ namespace ClearCanvas.Utilities.DicomEditor
 
                 DicomFileAccessor accessor = new DicomFileAccessor();
 
-                if (_component == null)
+				if (_shelf != null)
+				{
+					_shelf.Activate();
+				}
+				else
                 {
                     _component = new DicomEditorComponent();
 
-                    ApplicationComponent.LaunchAsShelf(
+                    _shelf = ApplicationComponent.LaunchAsShelf(
                                 context.DesktopWindow,
                                 _component,
                                 SR.TitleDicomEditor,
-                                ShelfDisplayHint.DockRight,
-                                delegate(IApplicationComponent component) { _component = null; });
+                                ShelfDisplayHint.DockRight | ShelfDisplayHint.DockAutoHide,
+                                delegate(IApplicationComponent component)
+								{
+									_shelf = null;
+									_component = null; 
+								});
                 }
                 
                 _component.Dumps = new DicomDump[1] { accessor.LoadDicomDump(file) };
@@ -159,24 +172,28 @@ namespace ClearCanvas.Utilities.DicomEditor
                 if (userCancelled == true)
                     return;
 
-                if (_component == null)
+				if (_shelf != null)
+				{
+					_shelf.Activate();
+				}
+				else
                 {
-                    _component = new DicomEditorComponent();
+					_component = new DicomEditorComponent();
 
-                    ApplicationComponent.LaunchAsShelf(
-                                context.DesktopWindow,
-                                _component,
-                                SR.TitleDicomEditor,
-                                ShelfDisplayHint.DockRight,
-                                delegate(IApplicationComponent component) { _component = null; });
-                }
+					_shelf = ApplicationComponent.LaunchAsShelf(
+								context.DesktopWindow,
+								_component,
+								SR.TitleDicomEditor,
+								ShelfDisplayHint.DockRight | ShelfDisplayHint.DockAutoHide,
+								delegate(IApplicationComponent component)
+								{
+									_shelf = null;
+									_component = null; 
+								});
+				}
                 
                 _component.Dumps = dumps;
             }            
         }
-
-        private bool _enabled;
-        private event EventHandler _enabledChanged;
-        private DicomEditorComponent _component; 
     }
 }

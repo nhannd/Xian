@@ -73,6 +73,11 @@ namespace ClearCanvas.Desktop
             protected set { _displayHint = value; }
         }
 
+		public void Activate()
+		{
+			_desktopWindow.ShelfManager.ActivateShelf(this);
+		}
+
         #endregion
 
         #region IDisposable Members

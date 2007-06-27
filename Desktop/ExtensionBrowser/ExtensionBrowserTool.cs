@@ -16,7 +16,7 @@ namespace ClearCanvas.Desktop.ExtensionBrowser
     [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class ExtensionBrowserTool : Tool<IDesktopToolContext>
 	{
-        private ExtensionBrowserComponent _browser;
+		private IShelf _shelf;
 
         public ExtensionBrowserTool()
 		{
@@ -24,16 +24,20 @@ namespace ClearCanvas.Desktop.ExtensionBrowser
 
         public void Show()
         {
-            if (_browser == null)
+			if (_shelf != null)
+			{
+				_shelf.Activate();
+			}
+			else
             {
-                _browser = new ExtensionBrowserComponent();
+				ExtensionBrowserComponent browser = new ExtensionBrowserComponent();
 
-                ApplicationComponent.LaunchAsShelf(
+                _shelf = ApplicationComponent.LaunchAsShelf(
                     this.Context.DesktopWindow,
-                    _browser,
+                    browser,
                     SR.TitleExtensionBrowser,
-                    ShelfDisplayHint.DockLeft,
-                    delegate(IApplicationComponent component) { _browser = null; });
+                    ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide,
+                    delegate(IApplicationComponent component) { _shelf = null; });
             }
         }
     }

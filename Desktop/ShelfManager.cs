@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
@@ -13,7 +14,8 @@ namespace ClearCanvas.Desktop
     {
         private ShelfCollection _shelves;
         private IDesktopWindow _desktopWindow;
-
+		private event EventHandler<ItemEventArgs<IShelf>> _shelfActivated;
+		
         /// <summary>
         /// Constructor
         /// </summary>
@@ -36,7 +38,13 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        /// <summary>
+		public event EventHandler<ItemEventArgs<IShelf>> ShelfActivated
+		{
+			add { _shelfActivated += value; }
+			remove { _shelfActivated -= value; }
+		}
+
+		/// <summary>
         /// The collection of <see cref="IShelf"/> objects that are currently being managed
         /// </summary>
         public ShelfCollection Shelves
@@ -71,5 +79,10 @@ namespace ClearCanvas.Desktop
         }
 
         #endregion
-    }
+
+		internal void ActivateShelf(IShelf shelf)
+		{
+			EventsHelper.Fire(_shelfActivated, this, new ItemEventArgs<IShelf>(shelf));
+		}
+	}
 }
