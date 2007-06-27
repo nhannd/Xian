@@ -3,17 +3,15 @@ using System.Collections.Generic;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.FacilityAdmin;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
     /// <summary>
-    /// Extension point for views onto <see cref="VisitEditorDetailsComponent"/>
+    /// Extension point for views onto <see cref="VisitDetailsEditorComponent"/>
     /// </summary>
     [ExtensionPoint]
     public class VisitEditorDetailsComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
@@ -28,12 +26,12 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         private VisitDetail _visit;
 
-        private List<string> _visitNumberAssigningAuthorityChoices;
-        private List<EnumValueInfo> _patientClassChoices;
-        private List<EnumValueInfo> _patientTypeChoices;
-        private List<EnumValueInfo> _admissionTypeChoices;
-        private List<EnumValueInfo> _ambulatoryStatusChoices;
-        private List<EnumValueInfo> _visitStatusChoices;
+        private readonly List<string> _visitNumberAssigningAuthorityChoices;
+        private readonly List<EnumValueInfo> _patientClassChoices;
+        private readonly List<EnumValueInfo> _patientTypeChoices;
+        private readonly List<EnumValueInfo> _admissionTypeChoices;
+        private readonly List<EnumValueInfo> _ambulatoryStatusChoices;
+        private readonly List<EnumValueInfo> _visitStatusChoices;
         private List<FacilitySummary> _facilityChoices;
 
         /// <summary>
@@ -63,32 +61,24 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            try
-            {
-                Platform.GetService<IFacilityAdminService>(
-                    delegate(IFacilityAdminService service)
-                    {
-                        ///TODO: expose facility in the UI
-                        ListAllFacilitiesResponse listResponse = service.ListAllFacilities(new ListAllFacilitiesRequest());
-                        _facilityChoices = listResponse.Facilities;
-
-                        if (listResponse.Facilities.Count == 0)
-                        {
-                            AddFacilityResponse addResponse = service.AddFacility(new AddFacilityRequest(new FacilityDetail("", "Test Facility")));
-                            _visit.Facility = addResponse.Facility;
-                            _facilityChoices.Add(addResponse.Facility);
-                        }
-                    });
-
-                if (_visit.VisitNumberAssigningAuthority == null)
+            Platform.GetService<IFacilityAdminService>(
+                delegate(IFacilityAdminService service)
                 {
-                    _visit.VisitNumberAssigningAuthority = _visitNumberAssigningAuthorityChoices[0];
-                }
+                    ///TODO: expose facility in the UI
+                    ListAllFacilitiesResponse listResponse = service.ListAllFacilities(new ListAllFacilitiesRequest());
+                    _facilityChoices = listResponse.Facilities;
 
-            }
-            catch (Exception e)
+                    if (listResponse.Facilities.Count == 0)
+                    {
+                        AddFacilityResponse addResponse = service.AddFacility(new AddFacilityRequest(new FacilityDetail("", "Test Facility")));
+                        _visit.Facility = addResponse.Facility;
+                        _facilityChoices.Add(addResponse.Facility);
+                    }
+                });
+
+            if (_visit.VisitNumberAssigningAuthority == null)
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                _visit.VisitNumberAssigningAuthority = _visitNumberAssigningAuthorityChoices[0];
             }
 
             base.Start();

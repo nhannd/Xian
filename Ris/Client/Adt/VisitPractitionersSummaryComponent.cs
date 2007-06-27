@@ -1,12 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
@@ -17,7 +15,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Ris.Client.Adt
 {
     /// <summary>
-    /// Extension point for views onto <see cref="VisitPractitionerSummaryComponent"/>
+    /// Extension point for views onto <see cref="VisitPractitionersSummaryComponent"/>
     /// </summary>
     [ExtensionPoint]
     public class VisitPractitionerSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
@@ -32,9 +30,9 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         private VisitDetail _visit;
         private VisitPractitionerDetail _currentVisitPractitionerSelection;
-        private VisitPractitionerTable _practitionersTable;
-        private List<EnumValueInfo> _visitPractitionerRoleChoices;
-        private CrudActionModel _visitPractitionerActionHandler;
+        private readonly VisitPractitionerTable _practitionersTable;
+        private readonly List<EnumValueInfo> _visitPractitionerRoleChoices;
+        private readonly CrudActionModel _visitPractitionerActionHandler;
 
         /// <summary>
         /// Constructor
@@ -54,6 +52,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
+            LoadVisitPractioners();
+
             base.Start();
         }
 
@@ -172,17 +172,35 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                ExceptionHandler.Report(e, SR.ExceptionCannotAddVisitPractitioner, this.Host.DesktopWindow,
+                    delegate
+                    {
+                        this.ExitCode = ApplicationComponentExitCode.Error;
+                        this.Host.Exit();
+                    });
             }
         }
 
         private void DummyUpdateVisitPractitioner()
         {
-            VisitPractitionerDetail vp = _currentVisitPractitionerSelection;
+            try
+            {
+                VisitPractitionerDetail vp = _currentVisitPractitionerSelection;
 
-            vp.Role = CollectionUtils.SelectFirst<EnumValueInfo>(_visitPractitionerRoleChoices,
-                    delegate(EnumValueInfo e) { return e.Code == "CN"; });
-            vp.EndTime = Platform.Time;
+                vp.Role = CollectionUtils.SelectFirst<EnumValueInfo>(_visitPractitionerRoleChoices,
+                        delegate(EnumValueInfo e) { return e.Code == "CN"; });
+                vp.EndTime = Platform.Time;
+
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, SR.ExceptionCannotAddVisitPractitioner, this.Host.DesktopWindow,
+                    delegate
+                    {
+                        this.ExitCode = ApplicationComponentExitCode.Error;
+                        this.Host.Exit();
+                    });
+            }
         }
     	#endregion    
     }

@@ -35,10 +35,5 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         {
             _component.SetSelectedVisitPractitioner(_visitPractitioners.Selection);
         }
-
-        private void VisitPractitionersSummaryComponentControl_Load(object sender, EventArgs e)
-        {
-            _component.LoadVisitPractioners();
-        }
     }
 }

@@ -556,6 +556,33 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to add/update visit.
+        /// </summary>
+        internal static string ExceptionCannotAddUpdateVisit {
+            get {
+                return ResourceManager.GetString("ExceptionCannotAddUpdateVisit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to add location to visit.
+        /// </summary>
+        internal static string ExceptionCannotAddVisitLocation {
+            get {
+                return ResourceManager.GetString("ExceptionCannotAddVisitLocation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to add practitioner to visit.
+        /// </summary>
+        internal static string ExceptionCannotAddVisitPractitioner {
+            get {
+                return ResourceManager.GetString("ExceptionCannotAddVisitPractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to retrieve diagnostic service tree.
         /// </summary>
         internal static string ExceptionCannotExpandDiagnositicServiceTree {

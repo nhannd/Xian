@@ -31,11 +31,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _locations.MenuModel = _component.VisitLocationActionModel;
         }
 
-        private void VisitLocationsSummaryComponentControl_Load(object sender, EventArgs e)
-        {
-            _component.LoadLocations();
-        }
-
         private void _locations_SelectionChanged(object sender, EventArgs e)
         {
             _component.SetSelectedVisitLocation(_locations.Selection);

@@ -1,12 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -21,7 +17,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private VisitPractitionersSummaryComponent _visitPractionersSummary;
         private VisitLocationsSummaryComponent _visitLocationsSummary;
 
-        private bool _isNew;
+        private readonly bool _isNew;
 
         /// <summary>
         /// Constructor
@@ -41,61 +37,54 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            try
-            {
-                Platform.GetService<IVisitAdminService>(
-                    delegate(IVisitAdminService service)
+            Platform.GetService<IVisitAdminService>(
+                delegate(IVisitAdminService service)
+                {
+                    LoadVisitEditorFormDataResponse response = service.LoadVisitEditorFormData(new LoadVisitEditorFormDataRequest());
+
+                    this.Pages.Add(new NavigatorPage("Visit",
+                        _visitEditor = new VisitDetailsEditorComponent(
+                            response.VisitNumberAssigningAuthorityChoices,
+                            response.PatientClassChoices,
+                            response.PatientTypeChoices,
+                            response.AdmissionTypeChoices,
+                            response.AmbulatoryStatusChoices,
+                            response.VisitStatusChoices)));
+
+                    this.Pages.Add(new NavigatorPage("Visit/Practitioners", 
+                        _visitPractionersSummary = new VisitPractitionersSummaryComponent(
+                            response.VisitPractitionerRoleChoices
+                        )));
+
+                    this.Pages.Add(new NavigatorPage("Visit/Location", 
+                        _visitLocationsSummary = new VisitLocationsSummaryComponent(
+                            response.VisitLocationRoleChoices
+                        )));
+
+                    if (_isNew)
                     {
-                        LoadVisitEditorFormDataResponse response = service.LoadVisitEditorFormData(new LoadVisitEditorFormDataRequest());
+                        _visit = new VisitDetail();
+                        _visit.Patient = _patientRef;
+                        _visit.VisitNumberAssigningAuthority = response.VisitNumberAssigningAuthorityChoices[0];
+                        _visit.PatientClass = response.PatientClassChoices[0];
+                        _visit.PatientType = response.PatientTypeChoices[0];
+                        _visit.AdmissionType = response.AdmissionTypeChoices[0];
+                        _visit.Status = response.VisitStatusChoices[0];
+                        _visit.Facility = response.FacilityChoices[0];
+                    }
+                    else
+                    {
+                        LoadVisitForAdminEditResponse loadVisitResponse = service.LoadVisitForAdminEdit(new LoadVisitForAdminEditRequest(_visitRef));
+                        _patientRef = loadVisitResponse.Patient;
+                        _visitRef = loadVisitResponse.VisitRef;
+                        _visit = loadVisitResponse.VisitDetail;
+                    }
 
-                        this.Pages.Add(new NavigatorPage("Visit",
-                            _visitEditor = new VisitDetailsEditorComponent(
-                                response.VisitNumberAssigningAuthorityChoices,
-                                response.PatientClassChoices,
-                                response.PatientTypeChoices,
-                                response.AdmissionTypeChoices,
-                                response.AmbulatoryStatusChoices,
-                                response.VisitStatusChoices)));
+                });
 
-                        this.Pages.Add(new NavigatorPage("Visit/Practitioners", 
-                            _visitPractionersSummary = new VisitPractitionersSummaryComponent(
-                                response.VisitPractitionerRoleChoices
-                            )));
-
-                        this.Pages.Add(new NavigatorPage("Visit/Location", 
-                            _visitLocationsSummary = new VisitLocationsSummaryComponent(
-                                response.VisitLocationRoleChoices
-                            )));
-
-                        if (_isNew)
-                        {
-                            _visit = new VisitDetail();
-                            _visit.Patient = _patientRef;
-                            _visit.VisitNumberAssigningAuthority = response.VisitNumberAssigningAuthorityChoices[0];
-                            _visit.PatientClass = response.PatientClassChoices[0];
-                            _visit.PatientType = response.PatientTypeChoices[0];
-                            _visit.AdmissionType = response.AdmissionTypeChoices[0];
-                            _visit.Status = response.VisitStatusChoices[0];
-                            _visit.Facility = response.FacilityChoices[0];
-                        }
-                        else
-                        {
-                            LoadVisitForAdminEditResponse loadVisitResponse = service.LoadVisitForAdminEdit(new LoadVisitForAdminEditRequest(_visitRef));
-                            _patientRef = loadVisitResponse.Patient;
-                            _visitRef = loadVisitResponse.VisitRef;
-                            _visit = loadVisitResponse.VisitDetail;
-                        }
-
-                    });
-
-                _visitEditor.Visit = _visit;
-                _visitPractionersSummary.Visit = _visit;
-                _visitLocationsSummary.Visit = _visit;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            _visitEditor.Visit = _visit;
+            _visitPractionersSummary.Visit = _visit;
+            _visitLocationsSummary.Visit = _visit;
 
             base.Start();
         }
@@ -106,27 +95,6 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         public override void Accept()
-        {
-            try
-            {
-                SaveChanges();
-                this.ExitCode = ApplicationComponentExitCode.Normal;
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow);
-                this.ExitCode = ApplicationComponentExitCode.Error;
-            }
-            this.Host.Exit();
-        }
-
-        public override void Cancel()
-        {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
-            Host.Exit();
-        }
-
-        private void SaveChanges()
         {
             try
             {
@@ -146,11 +114,23 @@ namespace ClearCanvas.Ris.Client.Adt
                             _visitRef = response.AddedVisit.entityRef;
                         }
                     });
+                this.Host.Exit();
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                ExceptionHandler.Report(e, SR.ExceptionCannotAddUpdateVisit, this.Host.DesktopWindow,
+                    delegate
+                    {
+                        this.ExitCode = ApplicationComponentExitCode.Error;
+                        this.Host.Exit();
+                    });
             }
+        }
+
+        public override void Cancel()
+        {
+            this.ExitCode = ApplicationComponentExitCode.Cancelled;
+            this.Host.Exit();
         }
     }
 }

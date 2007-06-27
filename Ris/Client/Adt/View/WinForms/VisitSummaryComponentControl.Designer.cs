@@ -28,6 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._closeButton = new System.Windows.Forms.Button();
@@ -82,9 +83,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
                         | System.Windows.Forms.AnchorStyles.Right)));
             this._visits.Location = new System.Drawing.Point(3, 3);
             this._visits.MenuModel = null;
-            this._visits.MultiSelect = true;
             this._visits.Name = "_visits";
             this._visits.ReadOnly = false;
+            this._visits.Selection = selection1;
             this._visits.Size = new System.Drawing.Size(643, 419);
             this._visits.TabIndex = 1;
             this._visits.Table = null;
@@ -100,7 +101,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "VisitSummaryComponentControl";
             this.Size = new System.Drawing.Size(655, 466);
-            this.Load += new System.EventHandler(this.VisitSummaryComponentControl_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);

@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -8,7 +6,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -83,14 +80,22 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private void ShowVisitSummaryDialog(EntityRef patientProfileRef, IDesktopWindow iDesktopWindow)
+        private void ShowVisitSummaryDialog(EntityRef patientProfileRef, IDesktopWindow desktopWindow)
         {
-            VisitSummaryComponent component = new VisitSummaryComponent(patientProfileRef);
-            ApplicationComponent.LaunchAsWorkspace(
-                iDesktopWindow,
-                component,
-                SR.TitlePatientVisits,
-                null);
+            try
+            {
+                VisitSummaryComponent component = new VisitSummaryComponent(patientProfileRef);
+                ApplicationComponent.LaunchAsWorkspace(
+                    desktopWindow,
+                    component,
+                    SR.TitlePatientVisits,
+                    null);
+
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, desktopWindow);
+            }
         }
     }
 }

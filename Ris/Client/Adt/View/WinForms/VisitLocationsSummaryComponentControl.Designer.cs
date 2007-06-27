@@ -28,6 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+            ClearCanvas.Desktop.Selection selection3 = new ClearCanvas.Desktop.Selection();
             this._locations = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.SuspendLayout();
             // 
@@ -40,9 +41,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._locations.Location = new System.Drawing.Point(0, 3);
             this._locations.MenuModel = null;
             this._locations.MultiLine = true;
-            this._locations.MultiSelect = true;
             this._locations.Name = "_locations";
             this._locations.ReadOnly = false;
+            this._locations.Selection = selection3;
             this._locations.Size = new System.Drawing.Size(179, 146);
             this._locations.TabIndex = 0;
             this._locations.Table = null;
@@ -59,7 +60,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.Controls.Add(this._locations);
             this.Name = "VisitLocationsSummaryComponentControl";
             this.Size = new System.Drawing.Size(180, 150);
-            this.Load += new System.EventHandler(this.VisitLocationsSummaryComponentControl_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

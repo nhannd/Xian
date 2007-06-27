@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -8,7 +6,6 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 using ClearCanvas.Ris.Client.Formatting;
@@ -44,34 +41,27 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            try
-            {
-                Platform.GetService<IPatientAdminService>(
-                    delegate(IPatientAdminService service)
-                    {
-                        LoadPatientProfileForAdminEditResponse response = service.LoadPatientProfileForAdminEdit(new LoadPatientProfileForAdminEditRequest(_patientProfileRef));
-                        _patientRef = response.PatientRef;
-                        _patientProfileRef = response.PatientProfileRef;
+            Platform.GetService<IPatientAdminService>(
+                delegate(IPatientAdminService service)
+                {
+                    LoadPatientProfileForAdminEditResponse response = service.LoadPatientProfileForAdminEdit(new LoadPatientProfileForAdminEditRequest(_patientProfileRef));
+                    _patientRef = response.PatientRef;
+                    _patientProfileRef = response.PatientProfileRef;
 
-                        //TODO: PersonNameDetail formatting
-                        this.Host.SetTitle(string.Format(SR.TitleVisitSummaryComponent,
-                            PersonNameFormat.Format(response.PatientDetail.Name), 
-                            MrnFormat.Format(response.PatientDetail.Mrn)));                    
-                    });
+                    this.Host.SetTitle(string.Format(SR.TitleVisitSummaryComponent,
+                        PersonNameFormat.Format(response.PatientDetail.Name), 
+                        MrnFormat.Format(response.PatientDetail.Mrn)));                    
+                });
 
-                _visitTable = new VisitSummaryTable();
+            _visitTable = new VisitSummaryTable();
 
-                _visitActionHandler = new CrudActionModel();
-                _visitActionHandler.Add.SetClickHandler(AddVisit);
-                _visitActionHandler.Edit.SetClickHandler(UpdateSelectedVisit);
-                _visitActionHandler.Delete.SetClickHandler(DeleteSelectedVisit);
-                _visitActionHandler.Add.Enabled = true;
+            _visitActionHandler = new CrudActionModel();
+            _visitActionHandler.Add.SetClickHandler(AddVisit);
+            _visitActionHandler.Edit.SetClickHandler(UpdateSelectedVisit);
+            _visitActionHandler.Delete.SetClickHandler(DeleteSelectedVisit);
+            _visitActionHandler.Add.Enabled = true;
 
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            LoadVisitsTable();
 
             base.Start();
         }
@@ -123,12 +113,19 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void AddVisit()
         {
-            VisitEditorComponent editor = new VisitEditorComponent(_patientRef);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddVisit);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            try
             {
-                LoadVisitsTable();
-                this.Modified = true;
+                VisitEditorComponent editor = new VisitEditorComponent(_patientRef);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleAddVisit);
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    LoadVisitsTable();
+                    this.Modified = true;
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
@@ -137,12 +134,19 @@ namespace ClearCanvas.Ris.Client.Adt
             // can occur if user double clicks while holding control
             if (_currentVisitSelection == null) return;
 
-            VisitEditorComponent editor = new VisitEditorComponent(_patientRef, _currentVisitSelection.entityRef);
-            ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateVisit);
-            if (exitCode == ApplicationComponentExitCode.Normal)
+            try
             {
-                LoadVisitsTable();
-                this.Modified = true;
+                VisitEditorComponent editor = new VisitEditorComponent(_patientRef, _currentVisitSelection.entityRef);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateVisit);
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    LoadVisitsTable();
+                    this.Modified = true;
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
             }
         }
 
@@ -160,19 +164,12 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _visitTable.Items.Clear();
 
-            try
-            {
-                Platform.GetService<IVisitAdminService>(
-                    delegate(IVisitAdminService service)
-                    {
-                        ListVisitsForPatientResponse response = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientProfileRef));
-                        _visitTable.Items.AddRange(response.Visits);
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
+            Platform.GetService<IVisitAdminService>(
+                delegate(IVisitAdminService service)
+                {
+                    ListVisitsForPatientResponse response = service.ListVisitsForPatient(new ListVisitsForPatientRequest(_patientProfileRef));
+                    _visitTable.Items.AddRange(response.Visits);
+                });
         }
 
         public void Close()

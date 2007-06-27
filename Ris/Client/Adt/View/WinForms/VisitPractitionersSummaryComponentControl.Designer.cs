@@ -28,6 +28,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this._visitPractitioners = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.SuspendLayout();
             // 
@@ -40,9 +41,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._visitPractitioners.Location = new System.Drawing.Point(3, 3);
             this._visitPractitioners.MenuModel = null;
             this._visitPractitioners.MultiLine = true;
-            this._visitPractitioners.MultiSelect = true;
             this._visitPractitioners.Name = "_visitPractitioners";
             this._visitPractitioners.ReadOnly = false;
+            this._visitPractitioners.Selection = selection1;
             this._visitPractitioners.Size = new System.Drawing.Size(144, 144);
             this._visitPractitioners.TabIndex = 0;
             this._visitPractitioners.Table = null;
@@ -58,7 +59,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.AutoSize = true;
             this.Controls.Add(this._visitPractitioners);
             this.Name = "VisitPractitionersSummaryComponentControl";
-            this.Load += new System.EventHandler(this.VisitPractitionersSummaryComponentControl_Load);
             this.ResumeLayout(false);
 
         }

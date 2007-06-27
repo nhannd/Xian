@@ -282,6 +282,15 @@
   <data name="ColumnWorkPhone" xml:space="preserve">
     <value>Work Phone</value>
   </data>
+  <data name="ExceptionCannotAddUpdateVisit" xml:space="preserve">
+    <value>Unable to add/update visit</value>
+  </data>
+  <data name="ExceptionCannotAddVisitLocation" xml:space="preserve">
+    <value>Unable to add location to visit</value>
+  </data>
+  <data name="ExceptionCannotAddVisitPractitioner" xml:space="preserve">
+    <value>Unable to add practitioner to visit</value>
+  </data>
   <data name="ExceptionCannotExpandDiagnositicServiceTree" xml:space="preserve">
     <value>Unable to retrieve diagnostic service tree</value>
   </data>

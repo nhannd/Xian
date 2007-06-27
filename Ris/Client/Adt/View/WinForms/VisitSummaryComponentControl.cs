@@ -31,11 +31,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _visits.MenuModel = _component.VisitListActionModel;
         }
 
-        private void VisitSummaryComponentControl_Load(object sender, EventArgs e)
-        {
-            _component.LoadVisitsTable();
-        }
-
         private void _visits_SelectionChanged(object sender, EventArgs e)
         {
             _component.SetSelectedVisit(_visits.Selection);

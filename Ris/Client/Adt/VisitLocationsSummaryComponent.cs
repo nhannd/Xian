@@ -6,7 +6,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
@@ -31,10 +30,10 @@ namespace ClearCanvas.Ris.Client.Adt
     public class VisitLocationsSummaryComponent : ApplicationComponent
     {
         private VisitDetail _visit;
-        private VisitLocationTable _locationsTable;
+        private readonly VisitLocationTable _locationsTable;
         private VisitLocationDetail _currentVisitLocationSelection;
-        private List<EnumValueInfo> _visitLocationRoleChoices;
-        private CrudActionModel _visitLocationActionHandler;
+        private readonly List<EnumValueInfo> _visitLocationRoleChoices;
+        private readonly CrudActionModel _visitLocationActionHandler;
 
         /// <summary>
         /// Constructor
@@ -54,6 +53,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
+            LoadVisitLocations();
+
             base.Start();
         }
 
@@ -112,7 +113,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             DummyAddVisitLocation();
             
-            LoadLocations();
+            LoadVisitLocations();
             this.Modified = true;
         }
 
@@ -120,7 +121,7 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             DummyUpdateSelectedVisitLocation();
 
-            LoadLocations();
+            LoadVisitLocations();
             this.Modified = true;
         }
 
@@ -128,11 +129,11 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _visit.Locations.Remove(_currentVisitLocationSelection);
 
-            LoadLocations();
+            LoadVisitLocations();
             this.Modified = true;
         }
 
-        public void LoadLocations()
+        public void LoadVisitLocations()
         {
             _locationsTable.Items.Clear();
             _locationsTable.Items.AddRange(_visit.Locations);
@@ -199,17 +200,35 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+                ExceptionHandler.Report(e, SR.ExceptionCannotAddVisitLocation, this.Host.DesktopWindow,
+                    delegate
+                    {
+                        this.ExitCode = ApplicationComponentExitCode.Error;
+                        this.Host.Exit();
+                    });
             }
         }
 
         private void DummyUpdateSelectedVisitLocation()
         {
-            VisitLocationDetail vl = _currentVisitLocationSelection;
+            try
+            {
+                VisitLocationDetail vl = _currentVisitLocationSelection;
 
-            vl.Role = CollectionUtils.SelectFirst<EnumValueInfo>(_visitLocationRoleChoices,
-                delegate(EnumValueInfo e) { return e.Code == "PR"; });
-            vl.EndTime = Platform.Time;
+                vl.Role = CollectionUtils.SelectFirst<EnumValueInfo>(_visitLocationRoleChoices,
+                    delegate(EnumValueInfo e) { return e.Code == "PR"; });
+                vl.EndTime = Platform.Time;
+
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, SR.ExceptionCannotAddVisitLocation, this.Host.DesktopWindow,
+                    delegate
+                    {
+                        this.ExitCode = ApplicationComponentExitCode.Error;
+                        this.Host.Exit();
+                    });
+            }
         }
 
         #endregion
