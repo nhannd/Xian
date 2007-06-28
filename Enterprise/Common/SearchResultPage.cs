@@ -17,8 +17,8 @@ namespace ClearCanvas.Enterprise.Common
         /// </summary>
         public SearchResultPage()
         {
-            _firstRow = 0;  // default
-            _maxRows = 100; // default
+            _firstRow = -1;  // ignore
+            _maxRows = -1; // ignore
         }
 
         /// <summary>
