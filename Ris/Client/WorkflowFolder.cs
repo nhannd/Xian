@@ -160,7 +160,7 @@ namespace ClearCanvas.Ris.Client
             }
             else
             {
-                ExceptionHandler.Report(args.Exception, "Folder refresh failed", _folderSystem.DesktopWindow);
+                Platform.Log(args.Exception, LogLevel.Error);
             }
 
             // dispose of the task
@@ -210,7 +210,7 @@ namespace ClearCanvas.Ris.Client
             }
             else
             {
-                ExceptionHandler.Report(args.Exception, "Folder refresh failed", _folderSystem.DesktopWindow);
+                Platform.Log(args.Exception, LogLevel.Error);
             }
 
             // dispose of the task

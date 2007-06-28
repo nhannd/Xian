@@ -637,15 +637,6 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to An error occured while attempting to reconcile the patient profiles.
-        /// </summary>
-        internal static string ExceptionFailedToReconcile {
-            get {
-                return ResourceManager.GetString("ExceptionFailedToReconcile", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to An error occured while attempting to save changes to this item.
         /// </summary>
         internal static string ExceptionFailedToSave {
@@ -660,6 +651,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string ExceptionOperationEnablementUnknown {
             get {
                 return ResourceManager.GetString("ExceptionOperationEnablementUnknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to reconcile patient profiles.
+        /// </summary>
+        internal static string ExceptionReconcilePatientProfiles {
+            get {
+                return ResourceManager.GetString("ExceptionReconcilePatientProfiles", resourceCulture);
             }
         }
         

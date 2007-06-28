@@ -309,14 +309,14 @@
   <data name="ExceptionFailedToExecuteQuery" xml:space="preserve">
     <value>An error occured while trying to execute the query</value>
   </data>
-  <data name="ExceptionFailedToReconcile" xml:space="preserve">
-    <value>An error occured while attempting to reconcile the patient profiles</value>
-  </data>
   <data name="ExceptionFailedToSave" xml:space="preserve">
     <value>An error occured while attempting to save changes to this item</value>
   </data>
   <data name="ExceptionOperationEnablementUnknown" xml:space="preserve">
     <value>Cannot determine enablement for operation: {0}</value>
+  </data>
+  <data name="ExceptionReconcilePatientProfiles" xml:space="preserve">
+    <value>Unable to reconcile patient profiles</value>
   </data>
   <data name="ExceptionTechnologistWorkflowCancelTool" xml:space="preserve">
     <value>Cannot cancel procedure</value>
