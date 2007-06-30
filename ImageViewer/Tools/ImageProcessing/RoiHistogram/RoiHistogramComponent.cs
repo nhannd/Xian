@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram
 	/// RoiHistogramComponent class
 	/// </summary>
 	[AssociateView(typeof(RoiHistogramComponentViewExtensionPoint))]
-	public class RoiHistogramComponent : ImageViewerToolComponent
+	public class RoiHistogramComponent : RoiAnalysisComponent
 	{
 		private int _minBin = -200;
 		private int _maxBin = 1000;
@@ -39,7 +39,6 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram
 			: base(imageViewerToolContext)
 		{
 		}
-
 
 		public bool Enabled
 		{
@@ -93,21 +92,6 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram
 				this.NotifyPropertyChanged("AutoScale");
 				OnSubjectChanged();
 			}
-		}
-
-		public override void Start()
-		{
-			// If there's an ROI selected already when 
-			WatchRoiGraphic(GetSelectedRoi());
-
-			base.Start();
-		}
-
-		public override void Stop()
-		{
-			// TODO prepare the component to exit the live phase
-			// This is a good place to do any clean up
-			base.Stop();
 		}
 
 		public int[] BinLabels
@@ -207,60 +191,56 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram
 			return rectangle;
 		}
 
-		private ROIGraphic GetSelectedRoi()
-		{
-			if (this.ImageViewer == null)
-				return null;
-
-			if (this.ImageViewer.SelectedPresentationImage == null)
-				return null;
-
-			if (this.ImageViewer.SelectedPresentationImage.SelectedGraphic == null)
-				return null;
-
-			ROIGraphic graphic =
-				this.ImageViewer.SelectedPresentationImage.SelectedGraphic as ROIGraphic;
-
-			return graphic;
-		}
-
-		protected override void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e)
-		{
-			if (e.DeactivatedImageViewer != null)
-				e.DeactivatedImageViewer.EventBroker.GraphicSelectionChanged -= new EventHandler<GraphicSelectionChangedEventArgs>(OnGraphicSelectionChanged);
-
-			if (e.ActivatedImageViewer != null)
-				e.ActivatedImageViewer.EventBroker.GraphicSelectionChanged += new EventHandler<GraphicSelectionChangedEventArgs>(OnGraphicSelectionChanged);
-
-			OnSubjectChanged();
-		}
-
-		void OnGraphicSelectionChanged(object sender, GraphicSelectionChangedEventArgs e)
-		{
-			ROIGraphic deselectedGraphic = e.DeselectedGraphic as ROIGraphic;
-			ROIGraphic selectedGraphic = e.SelectedGraphic as ROIGraphic;
-
-			UnwatchRoiGraphic(deselectedGraphic);
-			WatchRoiGraphic(selectedGraphic);
-
-			OnSubjectChanged();
-		}
-
-		private void UnwatchRoiGraphic(ROIGraphic roiGraphic)
-		{
-			if (roiGraphic != null)
-				roiGraphic.RoiChanged -= OnRoiChanged;
-		}
-
-		private void WatchRoiGraphic(ROIGraphic roiGraphic)
-		{
-			if (roiGraphic != null)
-				roiGraphic.RoiChanged += OnRoiChanged;
-		}
-
-		private void OnRoiChanged(object sender, EventArgs e)
-		{
-			OnSubjectChanged();
-		}
 	}
 }
+
+
+/*
+// Swap the values of A and B
+private void Swap<T>(ref T a, ref T b) {
+    T c = a;
+    a = b;
+    b = c;
+}
+
+// Returns the list of points from p0 to p1 
+private List<Point> BresenhamLine(Point p0, Point p1) {
+    return BresenhamLine(p0.X, p0.Y, p1.X, p1.Y);
+}
+
+// Returns the list of points from (x0, y0) to (x1, y1)
+private List<Point> BresenhamLine(int x0, int y0, int x1, int y1) {
+    // Optimization: it would be preferable to calculate in
+    // advance the size of "result" and to use a fixed-size array
+    // instead of a list.
+    List<Point> result = new List<Point>();
+
+    bool steep = Math.Abs(y1 - y0) > Math.Abs(x1 - x0);
+    if (steep) {
+        Swap(ref x0, ref y0);
+        Swap(ref x1, ref y1);
+    }
+    if (x0 > x1) {
+        Swap(ref x0, ref x1);
+        Swap(ref y0, ref y1);
+    }
+
+    int deltax = x1 - x0;
+    int deltay = Math.Abs(y1 - y0);
+    int error = 0;
+    int ystep;
+    int y = y0;
+    if (y0 < y1) ystep = 1; else ystep = -1;
+    for (int x = x0; x <= x1; x++) {
+        if (steep) result.Add(new Point(y, x));
+        else result.Add(new Point(x, y));
+        error += deltay;
+        if (2 * error >= deltax) {
+            y += ystep;
+            error -= deltax;
+        }
+    }
+
+    return result;
+}
+*/

@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinFor
 			this._plotSurface.Name = "_plotSurface";
 			this._plotSurface.RightMenu = null;
 			this._plotSurface.ShowCoordinates = true;
-			this._plotSurface.Size = new System.Drawing.Size(321, 259);
+			this._plotSurface.Size = new System.Drawing.Size(346, 259);
 			this._plotSurface.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
 			this._plotSurface.TabIndex = 0;
 			this._plotSurface.Text = "plotSurface2D1";
@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinFor
 			// 
 			// RoiHistogramComponentControl
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Inherit;
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
 			this.Controls.Add(this.label3);
 			this.Controls.Add(this._numBinsUpDown);
 			this.Controls.Add(this.label2);
@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinFor
 			this.Controls.Add(this._autoScaleCheckBox);
 			this.Controls.Add(this._plotSurface);
 			this.Name = "RoiHistogramComponentControl";
-			this.Size = new System.Drawing.Size(363, 488);
+			this.Size = new System.Drawing.Size(385, 488);
 			((System.ComponentModel.ISupportInitialize)(this._minUpDown)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._maxUpDown)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._numBinsUpDown)).EndInit();

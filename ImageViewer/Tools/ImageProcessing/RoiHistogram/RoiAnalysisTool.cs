@@ -18,14 +18,14 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram
     /// it so that it reflects the state of the active workspace.
 	/// </summary>
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class RoiHistogramTool : ImageViewerTool
+	public class RoiAnalysisTool : ImageViewerTool
 	{
-		private static RoiHistogramComponent _roiHistogramComponent;
+		private static RoiAnalysisComponentContainer _roiAnalysisComponent;
 
         /// <summary>
         /// Constructor
         /// </summary>
-		public RoiHistogramTool()
+		public RoiAnalysisTool()
 		{
         }
 
@@ -44,19 +44,19 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram
         public void Show()
 		{
             // check if a layout component is already displayed
-			if (_roiHistogramComponent == null)
+			if (_roiAnalysisComponent == null)
             {
                 // create and initialize the layout component
-				_roiHistogramComponent = new RoiHistogramComponent(this.Context);
-
+				_roiAnalysisComponent = new RoiAnalysisComponentContainer(this.Context);
+				
                 // launch the layout component in a shelf
                 // note that the component is thrown away when the shelf is closed by the user
                 ApplicationComponent.LaunchAsShelf(
                     this.Context.DesktopWindow,
-					_roiHistogramComponent,
+					_roiAnalysisComponent,
                     SR.Title,
                     ShelfDisplayHint.DockLeft,// | ShelfDisplayHint.DockAutoHide,
-					delegate(IApplicationComponent component) { _roiHistogramComponent = null; });
+					delegate(IApplicationComponent component) { _roiAnalysisComponent = null; });
             }
         }
 
