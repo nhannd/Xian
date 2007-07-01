@@ -5,13 +5,13 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.BaseTools;
 
-namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram
+namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 {
-	[MenuAction("show", "global-menus/MenuTools/MenuStandard/MenuRoiHistogram")]
-    [ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarRoiHistogram")]
+	[MenuAction("show", "global-menus/MenuTools/MenuStandard/MenuRoiAnalysis")]
+    [ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarRoiAnalysis")]
     [ClickHandler("show", "Show")]
 	[IconSet("show", IconScheme.Colour, "Icons.RoiHistogramToolSmall.png", "Icons.RoiHistogramToolMedium.png", "Icons.RoiHistogramToolLarge.png")]
-	[Tooltip("show", "ROI Histogram")]
+	[Tooltip("show", "TooltipROIAnalysis")]
 
     /// <summary>
     /// This tool runs an instance of <see cref="LayoutComponent"/> in a shelf, and coordinates
@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram
                     this.Context.DesktopWindow,
 					_roiAnalysisComponent,
                     SR.Title,
-                    ShelfDisplayHint.DockLeft,// | ShelfDisplayHint.DockAutoHide,
+                    ShelfDisplayHint.DockLeft,
 					delegate(IApplicationComponent component) { _roiAnalysisComponent = null; });
             }
         }

@@ -1,4 +1,4 @@
-namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinForms
+namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.View.WinForms
 {
     partial class RoiHistogramComponentControl
     {
@@ -51,11 +51,11 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinFor
 			this._plotSurface.DateTimeToolTip = false;
 			this._plotSurface.Legend = null;
 			this._plotSurface.LegendZOrder = -1;
-			this._plotSurface.Location = new System.Drawing.Point(20, 14);
+			this._plotSurface.Location = new System.Drawing.Point(16, 16);
 			this._plotSurface.Name = "_plotSurface";
 			this._plotSurface.RightMenu = null;
 			this._plotSurface.ShowCoordinates = true;
-			this._plotSurface.Size = new System.Drawing.Size(346, 259);
+			this._plotSurface.Size = new System.Drawing.Size(350, 260);
 			this._plotSurface.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.None;
 			this._plotSurface.TabIndex = 0;
 			this._plotSurface.Text = "plotSurface2D1";
@@ -69,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinFor
 			// _autoScaleCheckBox
 			// 
 			this._autoScaleCheckBox.AutoSize = true;
-			this._autoScaleCheckBox.Location = new System.Drawing.Point(225, 310);
+			this._autoScaleCheckBox.Location = new System.Drawing.Point(221, 310);
 			this._autoScaleCheckBox.Name = "_autoScaleCheckBox";
 			this._autoScaleCheckBox.Size = new System.Drawing.Size(73, 17);
 			this._autoScaleCheckBox.TabIndex = 1;
@@ -78,14 +78,14 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinFor
 			// 
 			// _minUpDown
 			// 
-			this._minUpDown.Location = new System.Drawing.Point(20, 314);
+			this._minUpDown.Location = new System.Drawing.Point(16, 314);
 			this._minUpDown.Name = "_minUpDown";
 			this._minUpDown.Size = new System.Drawing.Size(58, 20);
 			this._minUpDown.TabIndex = 2;
 			// 
 			// _maxUpDown
 			// 
-			this._maxUpDown.Location = new System.Drawing.Point(99, 314);
+			this._maxUpDown.Location = new System.Drawing.Point(95, 314);
 			this._maxUpDown.Name = "_maxUpDown";
 			this._maxUpDown.Size = new System.Drawing.Size(58, 20);
 			this._maxUpDown.TabIndex = 3;
@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinFor
 			// label1
 			// 
 			this.label1.AutoSize = true;
-			this.label1.Location = new System.Drawing.Point(17, 291);
+			this.label1.Location = new System.Drawing.Point(13, 291);
 			this.label1.Name = "label1";
 			this.label1.Size = new System.Drawing.Size(24, 13);
 			this.label1.TabIndex = 4;
@@ -102,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinFor
 			// label2
 			// 
 			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(96, 291);
+			this.label2.Location = new System.Drawing.Point(92, 291);
 			this.label2.Name = "label2";
 			this.label2.Size = new System.Drawing.Size(27, 13);
 			this.label2.TabIndex = 5;
@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinFor
 			// 
 			// _numBinsUpDown
 			// 
-			this._numBinsUpDown.Location = new System.Drawing.Point(20, 367);
+			this._numBinsUpDown.Location = new System.Drawing.Point(16, 367);
 			this._numBinsUpDown.Name = "_numBinsUpDown";
 			this._numBinsUpDown.Size = new System.Drawing.Size(58, 20);
 			this._numBinsUpDown.TabIndex = 6;
@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinFor
 			// label3
 			// 
 			this.label3.AutoSize = true;
-			this.label3.Location = new System.Drawing.Point(17, 347);
+			this.label3.Location = new System.Drawing.Point(13, 347);
 			this.label3.Name = "label3";
 			this.label3.Size = new System.Drawing.Size(27, 13);
 			this.label3.TabIndex = 7;
@@ -136,7 +136,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinFor
 			this.Controls.Add(this._autoScaleCheckBox);
 			this.Controls.Add(this._plotSurface);
 			this.Name = "RoiHistogramComponentControl";
-			this.Size = new System.Drawing.Size(385, 488);
+			this.Size = new System.Drawing.Size(386, 488);
 			((System.ComponentModel.ISupportInitialize)(this._minUpDown)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._maxUpDown)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._numBinsUpDown)).EndInit();

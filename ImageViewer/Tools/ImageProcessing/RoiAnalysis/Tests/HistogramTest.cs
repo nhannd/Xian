@@ -7,7 +7,7 @@ using System.Collections;
 using System.Drawing;
 using NUnit.Framework;
 
-namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram
+namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 {
 	[TestFixture]
 	public class HistogramTest

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram
+namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 {
 	public class Histogram
 	{

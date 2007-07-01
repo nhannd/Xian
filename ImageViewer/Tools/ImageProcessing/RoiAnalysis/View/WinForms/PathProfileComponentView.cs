@@ -6,23 +6,23 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
-namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinForms
+namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="RoiHistogramComponent"/>
+    /// Provides a Windows Forms view onto <see cref="PathProfileComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(RoiHistogramComponentViewExtensionPoint))]
-    public class RoiHistogramComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(PathProfileComponentViewExtensionPoint))]
+    public class PathProfileComponentView : WinFormsView, IApplicationComponentView
     {
-        private RoiHistogramComponent _component;
-        private RoiHistogramComponentControl _control;
+        private PathProfileComponent _component;
+        private PathProfileComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (RoiHistogramComponent)component;
+            _component = (PathProfileComponent)component;
         }
 
         #endregion
@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinFor
             {
                 if (_control == null)
                 {
-                    _control = new RoiHistogramComponentControl(_component);
+                    _control = new PathProfileComponentControl(_component);
                 }
                 return _control;
             }

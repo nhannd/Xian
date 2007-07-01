@@ -117,7 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="MenuRoiAnalysis" xml:space="preserve">
+    <value>ROI Analysis</value>
+  </data>
+  <data name="MenuStandard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
   <data name="Title" xml:space="preserve">
-    <value>ROI Histogram</value>
+    <value>ROI Analysis</value>
+  </data>
+  <data name="ToolbarRoiAnalysis" xml:space="preserve">
+    <value>ROI Analysis</value>
+  </data>
+  <data name="TooltipAnalysis" xml:space="preserve">
+    <value>ROI Analysis</value>
   </data>
 </root>

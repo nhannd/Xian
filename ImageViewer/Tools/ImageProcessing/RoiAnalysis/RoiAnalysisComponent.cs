@@ -5,14 +5,32 @@ using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.ImageViewer.Graphics;
 
-namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram
+namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 {
 	public abstract class RoiAnalysisComponent : ImageViewerToolComponent
 	{
+		private bool _enabled = false;
+		private RoiAnalysisComponentContainer _container;
+
 		protected RoiAnalysisComponent(IImageViewerToolContext imageViewerToolContext)
 			: base(imageViewerToolContext)
 		{
+		}
 
+		public bool Enabled
+		{
+			get { return _enabled; }
+			set
+			{
+				_enabled = value;
+				NotifyPropertyChanged("Enabled");
+			}
+		}
+
+		internal RoiAnalysisComponentContainer Container
+		{
+			get { return _container; }
+			set { _container = value; }
 		}
 
 		public override void Start()
@@ -30,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram
 			base.Stop();
 		}
 
-		protected ROIGraphic GetSelectedRoi()
+		public ROIGraphic GetSelectedRoi()
 		{
 			if (this.ImageViewer == null)
 				return null;
@@ -45,6 +63,24 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram
 				this.ImageViewer.SelectedPresentationImage.SelectedGraphic as ROIGraphic;
 
 			return graphic;
+		}
+
+		protected abstract bool CanAnalyzeSelectedRoi();
+
+		protected override void OnSubjectChanged()
+		{
+			if (CanAnalyzeSelectedRoi())
+			{
+				if (this.Container != null)
+					this.Container.SelectedComponent = this;
+			}
+
+			base.OnSubjectChanged();
+		}
+
+		internal void Initialize()
+		{
+			OnSubjectChanged();
 		}
 
 		protected override void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e)

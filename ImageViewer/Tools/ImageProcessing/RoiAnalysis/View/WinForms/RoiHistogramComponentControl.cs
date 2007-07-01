@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 using NPlot;
 
-namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.View.WinForms
+namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.View.WinForms
 {
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="RoiHistogramComponent"/>

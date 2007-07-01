@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram {
+namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -61,11 +61,47 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiHistogram {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to ROI Histogram.
+        ///   Looks up a localized string similar to ROI Analysis.
+        /// </summary>
+        internal static string MenuRoiAnalysis {
+            get {
+                return ResourceManager.GetString("MenuRoiAnalysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Standard.
+        /// </summary>
+        internal static string MenuStandard {
+            get {
+                return ResourceManager.GetString("MenuStandard", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ROI Analysis.
         /// </summary>
         internal static string Title {
             get {
                 return ResourceManager.GetString("Title", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ROI Analysis.
+        /// </summary>
+        internal static string ToolbarRoiAnalysis {
+            get {
+                return ResourceManager.GetString("ToolbarRoiAnalysis", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to ROI Analysis.
+        /// </summary>
+        internal static string TooltipAnalysis {
+            get {
+                return ResourceManager.GetString("TooltipAnalysis", resourceCulture);
             }
         }
     }
