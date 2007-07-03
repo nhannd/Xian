@@ -2,6 +2,7 @@
 //
 // SECTION: Extension of the T_ASC_Parameters class
 //
+
 struct T_ASC_Parameters
 {
     DIC_UI ourImplementationClassUID;
@@ -21,55 +22,15 @@ struct T_ASC_Parameters
 
 };
 
+//Make the default constructor private, the factory methods in T_ASC_Network should be used instead.
+%csmethodmodifiers T_ASC_Parameters::T_ASC_Parameters() "private";
+
 %extend(canthrow=1) T_ASC_Parameters {
 
-	T_ASC_Parameters(int maxReceivePduLength,
-		const char* ourAETitle,
-		const char* peerAETitle,
-		const char* peerHostName,
-		int peerPort) throw (dicom_runtime_error)
+	T_ASC_Parameters() throw (dicom_runtime_error)
 	{
-		T_ASC_Parameters* pParameters = 0;
-		OFCondition result = ASC_createAssociationParameters(&pParameters,
-			maxReceivePduLength);
-
-		if (result.bad())
-		{
-			string msg = string("ASC_createAssociationParameters: ") + result.text();
-			throw dicom_runtime_error(result, msg);
-		}
-
-		result = ASC_setAPTitles(pParameters, ourAETitle, peerAETitle, NULL);
-
-		if (result.bad())
-		{
-			string msg = string("ASC_setAPTitles: ") + result.text();
-			throw dicom_runtime_error(result, msg);
-		}
-		
-		// we will use an unsecured transport layer at this point (False)
-		result = ASC_setTransportLayerType(pParameters, OFFalse);
-
-		if (result.bad())
-		{
-			string msg = string("ASC_setTransportLayerType: ") + result.text();
-			throw dicom_runtime_error(result, msg);
-		}
-
-		DIC_NODENAME localHost;
-		DIC_NODENAME peerHost;
-
-		gethostname(localHost, sizeof(localHost) - 1);
-		sprintf(peerHost, "%s:%d", peerHostName, (int) peerPort);
-		result = ASC_setPresentationAddresses(pParameters, localHost, peerHost);
-
-		if (result.bad())
-		{
-			string msg = string("ASC_setPresentationAddresses: ") + result.text();
-			throw dicom_runtime_error(result, msg);
-		}
-
-		return pParameters;
+		OFCondition cond = EC_Normal;
+		throw new dicom_runtime_error(cond, "T_ASC_Parameters should be created via the T_ASC_Network factory method(s)");
 	}
 
 	void ConfigureForVerification() throw (dicom_runtime_error)
@@ -92,9 +53,7 @@ struct T_ASC_Parameters
 			string msg = string("ASC_addPresentationContext: ") + result.text();
 			throw dicom_runtime_error(result, msg);
 		}
-
 	}
-
 
 	void ConfigureForCStore(std::vector<string > interopFilenameList, std::vector<string > interopSopClassList, 
 			std::vector<string > interopTransferSyntaxList) throw (dicom_runtime_error)
@@ -188,12 +147,6 @@ struct T_ASC_Parameters
 			string msg = string("ASC_addPresentationContext: ") + result.text();
 			throw dicom_runtime_error(result, msg);
 		}
-	}
-
-	~T_ASC_Parameters() 
-	{
-		if (NULL != self)
-			ASC_destroyAssociationParameters(&self);
 	}
 }
 

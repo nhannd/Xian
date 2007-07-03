@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         {
             Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked on Http port " + this.SharedHttpPort.ToString());
 
-			DicomServerManager.Instance.StartServer();
+			DicomServerManager.Instance.Start();
 
 			StartHttpHost<DicomServerServiceType, IDicomServerService>(_dicomServerEndpointName, "DicomServer");
         }
@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         {
 			StopHost(_dicomServerEndpointName);
 
-			DicomServerManager.Instance.StopServer();
+			DicomServerManager.Instance.Stop();
 			
 			Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
         }

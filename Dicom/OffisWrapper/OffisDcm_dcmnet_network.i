@@ -27,11 +27,12 @@
 	if(swigCPtr.Handle != IntPtr.Zero && swigCMemOwn) 
 	{
 		swigCMemOwn = false;
-		$imcall;
-		_parametersReference = null;
+		Drop();
 	}
-	swigCPtr = new HandleRef(null, IntPtr.Zero);
+	
+	_parametersReference = null;
 
+	swigCPtr = new HandleRef(null, IntPtr.Zero);
 	GC.SuppressFinalize(this);
 }
 
@@ -65,6 +66,13 @@ struct T_ASC_Network
     DUL_NETWORKKEY      *network;
 };
 
+//These are factory methods, so swigCMemOwn should be true.  However, SWIG assumes it is false unless you specify otherwise.
+%newobject T_ASC_Network::AcceptAssociation(const char* ownAETitle, int operationTimeout, int currentNumberOfAssociations, int maximumNumberOfAssociations);
+%newobject T_ASC_Network::CreateAssociation(T_ASC_Parameters* associationParameters);
+
+//Explicitly set the Drop() method as private, since it should be hidden from the managed world.
+%csmethodmodifiers T_ASC_Network::Drop() "private";
+
 %extend(canthrow=1) T_ASC_Network {
 
 	T_ASC_Network(T_ASC_NetworkRole role,
@@ -86,9 +94,65 @@ struct T_ASC_Network
 		return pNetwork;
 	}
 
+	void Drop()
+	{
+		//this cleans up/deletes the network object.
+		ASC_dropNetwork(&self);
+	}
+
+	T_ASC_Parameters* CreateAssociationParameters(int maxReceivePduLength,
+		const char* ourAETitle,
+		const char* peerAETitle,
+		const char* peerHostName,
+		int peerPort) throw (dicom_runtime_error)
+	{	
+		T_ASC_Parameters* pParameters = 0;
+		OFCondition result = ASC_createAssociationParameters(&pParameters,
+			maxReceivePduLength);
+
+		if (result.bad())
+		{
+			string msg = string("ASC_createAssociationParameters: ") + result.text();
+			throw dicom_runtime_error(result, msg);
+		}
+
+		result = ASC_setAPTitles(pParameters, ourAETitle, peerAETitle, NULL);
+
+		if (result.bad())
+		{
+			string msg = string("ASC_setAPTitles: ") + result.text();
+			throw dicom_runtime_error(result, msg);
+		}
+		
+		// we will use an unsecured transport layer at this point (False)
+		result = ASC_setTransportLayerType(pParameters, OFFalse);
+
+		if (result.bad())
+		{
+			string msg = string("ASC_setTransportLayerType: ") + result.text();
+			throw dicom_runtime_error(result, msg);
+		}
+
+		DIC_NODENAME localHost;
+		DIC_NODENAME peerHost;
+
+		gethostname(localHost, sizeof(localHost) - 1);
+		sprintf(peerHost, "%s:%d", peerHostName, (int) peerPort);
+		result = ASC_setPresentationAddresses(pParameters, localHost, peerHost);
+
+		if (result.bad())
+		{
+			string msg = string("ASC_setPresentationAddresses: ") + result.text();
+			throw dicom_runtime_error(result, msg);
+		}
+
+		return pParameters;
+	}
+	
 	T_ASC_Association* CreateAssociation(T_ASC_Parameters* associationParameters)
 		throw (dicom_runtime_error)
 	{
+		//The T_ASC_Parameters are now owned by the association object.
 		T_ASC_Association* pAssociation = 0;
 		OFCondition result = ASC_requestAssociation(self, 
 			associationParameters, 
@@ -184,7 +248,6 @@ struct T_ASC_Network
 		return pAssociation;
 	}
 
-	
 	T_ASC_Association* AcceptAssociation(const char* ownAETitle, int operationTimeout, 
 			int currentNumberOfAssociations, int maximumNumberOfAssociations)
 		throw (dicom_runtime_error)

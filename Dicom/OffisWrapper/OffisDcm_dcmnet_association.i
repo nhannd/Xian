@@ -13,6 +13,7 @@
 	private DcmDataset _findReference;
 	private DcmDataset _moveReference;
 	private T_ASC_Network _networkReference;
+
 	private HandleRef getCPtrAndAddReferenceFind(DcmDataset cFindDataset) {
 		_findReference = cFindDataset;
 		return DcmDataset.getCPtr(cFindDataset);
@@ -39,13 +40,14 @@
 	if(swigCPtr.Handle != IntPtr.Zero && swigCMemOwn) 
 	{
 		swigCMemOwn = false;
-		$imcall;
-		_findReference = null;
-		_moveReference = null;
-		_networkReference = null;
+		Destroy();
 	}
-	swigCPtr = new HandleRef(null, IntPtr.Zero);
 
+	_findReference = null;
+	_moveReference = null;
+	_networkReference = null;
+
+	swigCPtr = new HandleRef(null, IntPtr.Zero);
 	GC.SuppressFinalize(this);
 }
 
@@ -61,8 +63,26 @@ struct T_ASC_Association
 
 %typemap(csin) T_ASC_Network *network;
 
+//Explicitly set the Destroy() method as private, since it should be hidden from the managed world.
+%csmethodmodifiers T_ASC_Association::Destroy() "private";
+
+//Make the default constructor private, the factory methods in T_ASC_Network should be used instead.
+%csmethodmodifiers T_ASC_Association::T_ASC_Association() "private";
+
 %extend(canthrow=1) T_ASC_Association {
 
+	T_ASC_Association() throw (dicom_runtime_error)
+	{
+		OFCondition cond = EC_Normal;
+		throw new dicom_runtime_error(cond, "T_ASC_Association should be created via the T_ASC_Network factory methods");
+	}
+
+	void Destroy()
+	{
+		//this cleans up/deletes the association object and child objects such as T_ASC_Parameters.
+		ASC_destroyAssociation(&self);
+	}
+	
 	bool SendCEcho(int numberOfCEchoRepeats, int timeout) throw (dicom_runtime_error)
 	{
 		OFCondition cond = EC_Normal;

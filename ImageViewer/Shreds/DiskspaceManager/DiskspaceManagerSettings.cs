@@ -6,7 +6,7 @@ using ClearCanvas.Server.ShredHost;
 
 namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 {
-    internal class DiskspaceManagerSettings : ShredConfigSection
+    internal sealed class DiskspaceManagerSettings : ShredConfigSection
     {
 		public const float LowWaterMarkDefault = 60F;
 		public const float HighWaterMarkDefault = 80F;

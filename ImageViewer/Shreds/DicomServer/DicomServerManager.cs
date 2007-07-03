@@ -18,10 +18,9 @@ using System.Threading;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
-	public partial class DicomServerManager : IDicomServerService
+	internal sealed partial class DicomServerManager : IDicomServerService
     {
 		private static DicomServerManager _instance;
-        private ClearCanvas.Dicom.Network.DicomServer _dicomServer;
 
         // Used by CFindScp
         private Dictionary<uint, DicomQuerySession> _querySessionDictionary;
@@ -34,11 +33,19 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		private List<BackgroundTaskContainer> _sendRetrieveTasks;
 		private object _sendRetrieveTaskLock = new object();
 
-        public DicomServerManager()
+		private volatile ClearCanvas.Dicom.Network.DicomServer _dicomServer;
+
+		private object _restartServerLock = new object();
+		private bool _restartingServer;
+
+		private object _serverConfigurationLock = new object();
+
+		public DicomServerManager()
         {
             _querySessionDictionary = new Dictionary<uint, DicomQuerySession>();
 			_moveSessionDictionary = new Dictionary<uint, DicomMoveSession>();
 			_sendRetrieveTasks = new List<BackgroundTaskContainer>();
+			_restartingServer = false;
         }
 
 		public static DicomServerManager Instance
@@ -56,94 +63,81 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             }
 		}
 
-        public void StartServer()
+		public void Start()
+		{
+			DicomEventManager.Instance.FindScpEvent += OnFindScpEvent;
+			DicomEventManager.Instance.FindScpProgressEvent += OnFindScpProgressEvent;
+			DicomEventManager.Instance.StoreScpBeginEvent += OnStoreScpBeginEvent;
+			DicomEventManager.Instance.StoreScpProgressEvent += OnStoreScpProgressEvent;
+			DicomEventManager.Instance.StoreScpEndEvent += OnStoreScpEndEvent;
+			DicomEventManager.Instance.MoveScpBeginEvent += OnMoveScpBeginEvent;
+			DicomEventManager.Instance.MoveScpProgressEvent += OnMoveScpProgressEvent;
+			DicomEventManager.Instance.StoreScuProgressEvent += OnStoreScuProgressEvent;
+
+			StartServer();
+		}
+		
+		public void Stop()
+		{
+			lock (_restartServerLock)
+			{
+				_restartingServer = false;
+				StopServer();
+			}
+
+			DicomEventManager.Instance.FindScpEvent -= OnFindScpEvent;
+			DicomEventManager.Instance.FindScpProgressEvent -= OnFindScpProgressEvent;
+			DicomEventManager.Instance.StoreScpBeginEvent -= OnStoreScpBeginEvent;
+			DicomEventManager.Instance.StoreScpProgressEvent -= OnStoreScpProgressEvent;
+			DicomEventManager.Instance.StoreScpEndEvent -= OnStoreScpEndEvent;
+			DicomEventManager.Instance.MoveScpBeginEvent -= OnMoveScpBeginEvent;
+			DicomEventManager.Instance.MoveScpProgressEvent -= OnMoveScpProgressEvent;
+			DicomEventManager.Instance.StoreScuProgressEvent -= OnStoreScuProgressEvent;
+			
+			_querySessionDictionary.Clear();
+			_moveSessionDictionary.Clear();
+			_sendRetrieveTasks.Clear();
+		}
+
+		private void StopServer()
+		{
+			if (_dicomServer != null)
+			{
+				_dicomServer.Stop();
+				_dicomServer = null;
+
+				Platform.Log("DICOM Server stopped", LogLevel.Info);
+			}
+		}
+
+        private void StartServer()
         {
-            try
-            {
-                // Create storage directory
-                if (!Directory.Exists(DicomServerSettings.Instance.InterimStorageDirectory))
-                    Directory.CreateDirectory(DicomServerSettings.Instance.InterimStorageDirectory);
+			lock (_serverConfigurationLock)
+			{
+				// Create storage directory
+				if (!Directory.Exists(DicomServerSettings.Instance.InterimStorageDirectory))
+					Directory.CreateDirectory(DicomServerSettings.Instance.InterimStorageDirectory);
 
-                ApplicationEntity myApplicationEntity = new ApplicationEntity(
-                    new HostName(DicomServerSettings.Instance.HostName), 
-                    new AETitle(DicomServerSettings.Instance.AETitle), 
-                    new ListeningPort(DicomServerSettings.Instance.Port));
+				ApplicationEntity myApplicationEntity = new ApplicationEntity(
+					new HostName(DicomServerSettings.Instance.HostName),
+					new AETitle(DicomServerSettings.Instance.AETitle),
+					new ListeningPort(DicomServerSettings.Instance.Port));
 
-                _dicomServer = new ClearCanvas.Dicom.Network.DicomServer(myApplicationEntity, DicomServerSettings.Instance.InterimStorageDirectory);
+				_dicomServer = new ClearCanvas.Dicom.Network.DicomServer(myApplicationEntity, DicomServerSettings.Instance.InterimStorageDirectory);
+			}
 
-                DicomEventManager.Instance.FindScpEvent += OnFindScpEvent;
-				DicomEventManager.Instance.FindScpProgressEvent += OnFindScpProgressEvent;
-				DicomEventManager.Instance.StoreScpBeginEvent += OnStoreScpBeginEvent;
-				DicomEventManager.Instance.StoreScpProgressEvent += OnStoreScpProgressEvent;
-				DicomEventManager.Instance.StoreScpEndEvent += OnStoreScpEndEvent;
-				DicomEventManager.Instance.MoveScpBeginEvent += OnMoveScpBeginEvent;
-				DicomEventManager.Instance.MoveScpProgressEvent += OnMoveScpProgressEvent;
-				DicomEventManager.Instance.StoreScuProgressEvent += OnStoreScuProgressEvent;
-
-                _dicomServer.Start();
-
-                Platform.Log("Start DICOM server", LogLevel.Info);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public void StopServer()
-        {
-            try
-            {
-                DicomEventManager.Instance.FindScpEvent -= OnFindScpEvent;
-                DicomEventManager.Instance.FindScpProgressEvent -= OnFindScpProgressEvent;
-                DicomEventManager.Instance.StoreScpBeginEvent -= OnStoreScpBeginEvent;
-                DicomEventManager.Instance.StoreScpProgressEvent -= OnStoreScpProgressEvent;
-                DicomEventManager.Instance.StoreScpEndEvent -= OnStoreScpEndEvent;
-                DicomEventManager.Instance.MoveScpBeginEvent -= OnMoveScpBeginEvent;
-                DicomEventManager.Instance.MoveScpProgressEvent -= OnMoveScpProgressEvent;
-				DicomEventManager.Instance.StoreScuProgressEvent += OnStoreScuProgressEvent;
-
-                _dicomServer.Stop();
-                _dicomServer = null;
-
-                _querySessionDictionary.Clear();
-                _moveSessionDictionary.Clear();
-                _sendRetrieveTasks.Clear();
-
-                Platform.Log("Stop DICOM server", LogLevel.Info);            
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+			try
+			{
+				_dicomServer.Start();
+				Platform.Log("DICOM Server started", LogLevel.Info);
+			}
+			catch (Exception e)
+			{
+				Platform.Log(new Exception("Failed to start Dicom Server", e));
+			}
         }
 
         #region Properties
-
-        public string HostName
-        {
-            get { return DicomServerSettings.Instance.HostName; }
-        }
-
-        public string AETitle
-        {
-            get { return DicomServerSettings.Instance.AETitle; }
-        }
-
-        public int Port
-        {
-            get { return DicomServerSettings.Instance.Port; }
-        }
-
-        public string SaveDirectory
-        {
-            get { return DicomServerSettings.Instance.InterimStorageDirectory; }
-        }
-
-        public bool IsServerRunning
-        {
-            get { return (_dicomServer == null ? false : _dicomServer.IsRunning); }
-        }
 
         #endregion
 
@@ -593,9 +587,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		public void Send(AEInformation destinationAEInformation, IEnumerable<string> uids)
 		{
-			ApplicationEntity destinationAE = new ApplicationEntity(new HostName(destinationAEInformation.HostName), new AETitle(destinationAEInformation.AETitle), new ListeningPort(destinationAEInformation.Port));
-            ApplicationEntity myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
-			
+			ApplicationEntity destinationAE;
+			ApplicationEntity myApplicationEntity;
+
+			lock (_serverConfigurationLock)
+			{
+				destinationAE = new ApplicationEntity(new HostName(destinationAEInformation.HostName), new AETitle(destinationAEInformation.AETitle), new ListeningPort(destinationAEInformation.Port));
+				myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
+			}
+
             SendParcel parcel = new SendParcel(myApplicationEntity, destinationAE, "");
 			foreach (string uid in uids)
 				parcel.Include(new Uid(uid));
@@ -680,8 +680,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		public void RetrieveStudies(AEInformation sourceAEInformation, IEnumerable<StudyInformation> studiesToRetrieve)
 		{
-            ApplicationEntity myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), 
+			ApplicationEntity myApplicationEntity;
+			string saveDirectory;
+			lock (_serverConfigurationLock)
+			{
+				myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName),
 														new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
+				
+				saveDirectory = DicomServerSettings.Instance.InterimStorageDirectory;
+			}
 
 			foreach (StudyInformation studyInformation in studiesToRetrieve)
 			{
@@ -714,7 +721,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 						ApplicationEntity sourceAE = new ApplicationEntity(new HostName(sourceAEInformation.HostName), 
 														new AETitle(sourceAEInformation.AETitle), new ListeningPort(sourceAEInformation.Port));
 
-						client.RetrieveAsServiceClassUserOnly(sourceAE, new Uid(retrieveStudyInformation.StudyInstanceUid), this.SaveDirectory);
+						using (client)
+						{
+							client.RetrieveAsServiceClassUserOnly(sourceAE, new Uid(retrieveStudyInformation.StudyInstanceUid), saveDirectory);
+						}
 					}
 					catch (Exception e)
 					{
@@ -764,35 +774,51 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		public DicomServerConfiguration GetServerConfiguration()
         {
-			return new DicomServerConfiguration(DicomServerSettings.Instance.HostName,
-                                                DicomServerSettings.Instance.AETitle,
-                                                DicomServerSettings.Instance.Port,
-                                                DicomServerSettings.Instance.InterimStorageDirectory);
+			lock (_serverConfigurationLock)
+			{
+				return new DicomServerConfiguration(DicomServerSettings.Instance.HostName,
+												DicomServerSettings.Instance.AETitle,
+												DicomServerSettings.Instance.Port,
+												DicomServerSettings.Instance.InterimStorageDirectory);
+			}
         }
 
 		public void UpdateServerConfiguration(DicomServerConfiguration newConfiguration)
         {
-            bool isServerSettingsChanged = (
-				DicomServerSettings.Instance.HostName != newConfiguration.HostName ||
-				DicomServerSettings.Instance.AETitle != newConfiguration.AETitle ||
-				DicomServerSettings.Instance.Port != newConfiguration.Port ||
-				DicomServerSettings.Instance.InterimStorageDirectory != newConfiguration.InterimStorageDirectory);
+			lock (_serverConfigurationLock)
+			{
+				lock (_restartServerLock)
+				{
+					DicomServerSettings.Instance.HostName = newConfiguration.HostName;
+					DicomServerSettings.Instance.AETitle = newConfiguration.AETitle;
+					DicomServerSettings.Instance.Port = newConfiguration.Port;
+					DicomServerSettings.Instance.InterimStorageDirectory = newConfiguration.InterimStorageDirectory;
+					DicomServerSettings.Save();
 
-			DicomServerSettings.Instance.HostName = newConfiguration.HostName;
-			DicomServerSettings.Instance.AETitle = newConfiguration.AETitle;
-			DicomServerSettings.Instance.Port = newConfiguration.Port;
-			DicomServerSettings.Instance.InterimStorageDirectory = newConfiguration.InterimStorageDirectory;
-            DicomServerSettings.Save();
+					if (_restartingServer)
+						return;
 
-            // Restart server after settings changed
-            if (isServerSettingsChanged)
-            {
-                this.StopServer();
-                this.StartServer();
-            }
+					_restartingServer = true;
+				}
+			}
+
+			WaitCallback del = delegate(object nothing)
+			{
+				StopServer();
+
+				lock (_restartServerLock)
+				{
+					if (_restartingServer)
+					{
+						StartServer();
+						_restartingServer = false;
+					}
+				}
+			};
+
+			ThreadPool.QueueUserWorkItem(del);
         }
 
 		#endregion
-
 	}
 }

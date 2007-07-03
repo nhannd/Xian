@@ -139,7 +139,7 @@ namespace ClearCanvas.Dicom.Network
 
                 using (network)
                 {
-                    T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
+                    T_ASC_Parameters associationParameters = network.CreateAssociationParameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
 
                     using (associationParameters)
                     {
@@ -502,7 +502,7 @@ namespace ClearCanvas.Dicom.Network
 
                 using (network)
                 {
-                    T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
+                    T_ASC_Parameters associationParameters = network.CreateAssociationParameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
 
                     using (associationParameters)
                     {
@@ -705,7 +705,7 @@ namespace ClearCanvas.Dicom.Network
 
                 using (network)
                 {
-                    T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
+                    T_ASC_Parameters associationParameters = network.CreateAssociationParameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
 
                     using (associationParameters)
                     {
@@ -786,7 +786,7 @@ namespace ClearCanvas.Dicom.Network
 
                 using (network)
                 {
-                    T_ASC_Parameters associationParameters = new T_ASC_Parameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
+                    T_ASC_Parameters associationParameters = network.CreateAssociationParameters(_defaultPDUSize, _myOwnAE.AE, serverAE.AE, serverAE.Host, serverAE.Port);
 
                     using (associationParameters)
                     {
