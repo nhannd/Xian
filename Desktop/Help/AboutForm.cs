@@ -22,7 +22,6 @@ namespace ClearCanvas.Desktop.Help
 
 			this._closeButton.ForeColor = Color.FromArgb(60, 150, 208);
 			this._closeButton.Click += new EventHandler(OnCloseClicked);
-			this._showLicenseButton.Click += new EventHandler(OnShowLicenseClicked);
 		}
 
 		private void SetVersion()
@@ -36,22 +35,5 @@ namespace ClearCanvas.Desktop.Help
 			Close();
 		}
 
-		private void OnShowLicenseClicked(object sender, EventArgs e)
-		{
-			string licensePath = String.Format(
-				"{0}{1}{2}", 
-				Platform.InstallDirectory, 
-				System.IO.Path.DirectorySeparatorChar, 
-				"License.rtf");
-
-			try
-			{
-				Process.Start(licensePath);
-			}
-			catch
-			{
-				Platform.ShowMessageBox(SR.LicenseNotFound);
-			}
-		}
 	}
 }

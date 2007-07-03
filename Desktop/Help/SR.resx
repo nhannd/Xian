@@ -123,4 +123,13 @@
   <data name="LicenseNotFound" xml:space="preserve">
     <value>Could not find license file.</value>
   </data>
+  <data name="MenuLicense" xml:space="preserve">
+    <value>License</value>
+  </data>
+  <data name="MenuUsersGuide" xml:space="preserve">
+    <value>Users' Guide</value>
+  </data>
+  <data name="MenuWebsite" xml:space="preserve">
+    <value>ClearCanvas.ca</value>
+  </data>
 </root>
