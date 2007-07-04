@@ -1,16 +1,11 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 
-using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -32,6 +27,8 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         private bool _delaySelectionChangeNotification = true; // see bug 386
         private bool _surpressSelectionChangedEvent = false;
+
+	    private bool _isLoaded = false;
 
 		public TableView()
 		{
@@ -74,7 +71,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             set
             {
                 _multiLine = value;
-                if (_multiLine == true)
+                if (_multiLine)
                 {
                     this._dataGridView.DefaultCellStyle.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
                     this._dataGridView.AutoSizeRowsMode = System.Windows.Forms.DataGridViewAutoSizeRowsMode.AllCells;
@@ -87,7 +84,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        [Description("Deprecated: Controlled by application setting")]
+        [Obsolete("Do not use.  Toolstrip item alignment is now controlled by application setting")]
         public RightToLeft ToolStripRightToLeft
         {
             get { return RightToLeft.No; }
@@ -125,23 +122,31 @@ namespace ClearCanvas.Desktop.View.WinForms
             set
             {
                 _toolbarModel = value;
-                ToolStripBuilder.Clear(_toolStrip.Items);
-                if (_toolbarModel != null)
-                {
-                    if (_toolStripItemAlignment == ToolStripItemAlignment.Right)
-                    {
-                        _toolbarModel.ChildNodes.Reverse();
-                    }
 
-                    ToolStripBuilder.BuildToolbar(
-                        _toolStrip.Items,
-                        _toolbarModel.ChildNodes, 
-                        new ToolStripBuilder.ToolStripBuilderStyle(_toolStripItemDisplayStyle, _toolStripItemAlignment, _textImageRelation));
-                }
+                // Defer initialization of ToolStrip until after Load() has been called
+                // so that parameters from application settings are initialized properly
+                if (_isLoaded) InitializeToolStrip();
             }
         }
 
-        public ActionModelNode MenuModel
+	    private void InitializeToolStrip()
+	    {
+	        ToolStripBuilder.Clear(_toolStrip.Items);
+	        if (_toolbarModel != null)
+	        {
+	            if (_toolStripItemAlignment == ToolStripItemAlignment.Right)
+	            {
+	                _toolbarModel.ChildNodes.Reverse();
+	            }
+
+	            ToolStripBuilder.BuildToolbar(
+	                _toolStrip.Items,
+	                _toolbarModel.ChildNodes, 
+	                new ToolStripBuilder.ToolStripBuilderStyle(_toolStripItemDisplayStyle, _toolStripItemAlignment, _textImageRelation));
+	        }
+	    }
+
+	    public ActionModelNode MenuModel
         {
             get { return _menuModel; }
             set
@@ -191,7 +196,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             set
             {
                 // if someone tries to assign null, just convert it to an empty selection - this makes everything easier
-                ISelection newSelection = (value == null) ? new Selection() : value;
+                ISelection newSelection = value ?? new Selection();
 
                 // get the existing selection
                 ISelection existingSelection = GetSelectionHelper();
@@ -303,11 +308,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 			// DataGridViewColumn, but unsubscribing from ITableColumn.VisiblityChanged
 			// was problematic.  This is the next best thing if we want
 			// easy unsubscription.
-			ITableColumn column = sender as ITableColumn;
+            ITableColumn column = (ITableColumn)sender;  //Invalid cast is a programming error, so let exception be thrown
 			DataGridViewColumn dgcolumn = FindDataGridViewColumn(column);
 
-			if (dgcolumn != null)
-				dgcolumn.Visible = column.Visible;
+            if (dgcolumn != null)
+                dgcolumn.Visible = column.Visible;
 		}
 
 		private DataGridViewColumn FindDataGridViewColumn(ITableColumn column)
@@ -509,6 +514,9 @@ namespace ClearCanvas.Desktop.View.WinForms
                 _toolStripItemAlignment = ToolStripItemAlignment.Left;
                 _textImageRelation = TextImageRelation.ImageBeforeText;                
             }
+
+            InitializeToolStrip();
+            _isLoaded = true;
         }
 	}
 }

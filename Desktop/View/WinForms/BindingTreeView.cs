@@ -1,14 +1,12 @@
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-using ClearCanvas.Desktop.Trees;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Common.Utilities;
+
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Trees;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
@@ -30,6 +28,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
         private ToolStripItemAlignment _toolStripItemAlignment = ToolStripItemAlignment.Right;
         private TextImageRelation _textImageRelation = TextImageRelation.ImageBeforeText;
+
+        private bool _isLoaded = false;
 
         /// <summary>
         /// Constructor
@@ -67,7 +67,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             set
             {
                 // if someone tries to assign null, just convert it to an empty selection - this makes everything easier
-                ISelection newSelection = (value == null) ? new Selection() : value;
+                ISelection newSelection = value ?? new Selection();
 
                 // get the existing selection
                 ISelection existingSelection = GetSelectionHelper();
@@ -148,7 +148,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _treeCtrl.ImageList = value; }
         }
 
-        [Description("Deprecated: Controlled by application setting")]
+        [Obsolete("Do not use.  Toolstrip item alignment is now controlled by application setting")]
         public RightToLeft ToolStripRightToLeft
         {
             get { return RightToLeft.No; }
@@ -450,19 +450,24 @@ namespace ClearCanvas.Desktop.View.WinForms
             set
             {
                 _toolbarModel = value;
-                ToolStripBuilder.Clear(_toolStrip.Items);
-                if (_toolbarModel != null)
-                {
-                    if (_toolStripItemAlignment == ToolStripItemAlignment.Right)
-                    {
-                        _toolbarModel.ChildNodes.Reverse();
-                    }
+                if(_isLoaded) InitializeToolStrip();
+            }
+        }
 
-                    ToolStripBuilder.BuildToolbar(
-                        _toolStrip.Items,
-                        _toolbarModel.ChildNodes,
-                        new ToolStripBuilder.ToolStripBuilderStyle(_toolStripItemDisplayStyle, _toolStripItemAlignment, _textImageRelation));
+        private void InitializeToolStrip()
+        {
+            ToolStripBuilder.Clear(_toolStrip.Items);
+            if (_toolbarModel != null)
+            {
+                if (_toolStripItemAlignment == ToolStripItemAlignment.Right)
+                {
+                    _toolbarModel.ChildNodes.Reverse();
                 }
+
+                ToolStripBuilder.BuildToolbar(
+                    _toolStrip.Items,
+                    _toolbarModel.ChildNodes,
+                    new ToolStripBuilder.ToolStripBuilderStyle(_toolStripItemDisplayStyle, _toolStripItemAlignment, _textImageRelation));
             }
         }
 
@@ -515,6 +520,9 @@ namespace ClearCanvas.Desktop.View.WinForms
                 _toolStripItemAlignment = ToolStripItemAlignment.Left;
                 _textImageRelation = TextImageRelation.ImageBeforeText;
             }
+
+            InitializeToolStrip();
+            _isLoaded = true;
         }
     }
 }
