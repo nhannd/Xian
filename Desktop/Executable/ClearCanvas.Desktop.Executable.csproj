@@ -129,6 +129,6 @@
   <Import Project="..\..\Common\ClearCanvas.Strings.targets" />
   <PropertyGroup>
     <PreBuildEvent />
-    <PostBuildEvent>PostBuild.bat "$(SolutionDir)"  $(SolutionName) $(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>$(MSBuildBinPath)\Msbuild $(ProjectDir)\PostBuild_dist.proj /p:SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(ConfigurationName);ProjectDir=$(ProjectDir);OutDir=$(OutDir);PlatformFolderPrefix=$(PlatformFolderPrefix)</PostBuildEvent>
   </PropertyGroup>
 </Project>

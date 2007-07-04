@@ -1,0 +1,24 @@
+<Project DefaultTargets="Copy Base Files;Copy x64 Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<!-- ImageViewer specific postbuild step -->
+	<PropertyGroup>
+		<DatabaseDirectory>C:\dicom_datastore</DatabaseDirectory>
+		<DistributionDirectory>$(ProjectDir)\$(PlatformFolderPrefix)\$(OutDir)</DistributionDirectory>
+		<CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
+		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
+		<LogsDirectory>$(DistributionDirectory)\logs</LogsDirectory>
+	</PropertyGroup>
+
+	<Target Name="Copy Base Files">
+		<MSBuild Projects="$(SolutionDir)\ImageViewer_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);TargetDir=$(TargetDir);PlatformFolderPrefix=$(PlatformFolderPrefix)"  />
+	</Target>
+
+	<Target Name="Copy x64 Files">
+
+		<Delete Files="$(CommonDirectory)\OffisDcm.dll" />
+		<Copy SourceFiles="$(SolutionDir)\..\Dicom\OffisWrapper\cppwrapper\x64\$(Configuration)\OffisDcm.dll" DestinationFolder="$(CommonDirectory)" />
+
+		<Delete Files="$(CommonDirectory)\ClearCanvas.ImageViewer.Rendering.BilinearInterpolation.dll" />
+		<Copy SourceFiles="$(SolutionDir)\Rendering\BilinearInterpolation\x64\$(Configuration)\ClearCanvas.ImageViewer.Rendering.BilinearInterpolation.dll" DestinationFolder="$(PluginsDirectory)" />
+	</Target>
+</Project>
+

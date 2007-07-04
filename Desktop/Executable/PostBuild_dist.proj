@@ -1,0 +1,88 @@
+<!-- This batch file is executed as a postbuild step of the ClearCanvas.Desktop.Executable -->
+<!-- project.  It copies all common ClearCanvas files into the appropriate directories, -->
+<!-- then runs a solution specific batch file to copy files specific to that solution. -->
+
+<!-- Assumptions: -->
+<!-- 1) The name of the solution specific batch file is %2.bat, where %2 is the name of the solution -->
+<!-- 2) %2.bat is located in the same folder as the solution file -->
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<DistributionDirectory>$(ProjectDir)\$(PlatformFolderPrefix)\$(OutDir)</DistributionDirectory>
+		<CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
+		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
+		<LogsDirectory>$(DistributionDirectory)\logs</LogsDirectory>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<DestinationDirectories Include="$(CommonDirectory)" />
+		<DestinationDirectories Include="$(PluginsDirectory)" />
+		<DestinationDirectories Include="$(LogsDirectory)" />
+	</ItemGroup>
+	
+	<!-- Config files, to be placed in distribution directory -->
+	<ItemGroup>
+		<ConfigFiles Include="$(SolutionDir)\..\Desktop\Executable\Logging.config" />
+	</ItemGroup>
+
+	<!-- Shared library files, to be placed in common directory -->
+	<ItemGroup>
+		<SharedLibraryFiles Include="$(SolutionDir)\..\Common\bin\$(Configuration)\*.*" />
+		<SharedLibraryFiles Include="$(SolutionDir)\..\Controls\WinForms\bin\$(Configuration)\ClearCanvas.Controls.WinForms.dll" />
+		<SharedLibraryFiles Include="$(SolutionDir)\..\ReferencedAssemblies\nunit.framework.dll" /> 
+		<SharedLibraryFiles Include="$(SolutionDir)\..\ReferencedAssemblies\log4net.dll" />
+		<SharedLibraryFiles Include="$(SolutionDir)\..\ReferencedAssemblies\DotNetMagic2005.DLL" />
+		<SharedLibraryFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Iesi.Collections.dll" />
+		<SharedLibraryFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Nhibernate.dll" />
+		<SharedLibraryFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Castle.DynamicProxy.dll" />
+	</ItemGroup>
+
+	<!-- License files -->
+	<ItemGroup>
+		<LicenseFiles Include="$(SolutionDir)\..\License.rtf" />
+	</ItemGroup>
+
+	<!-- Shared plugin files, to be placed in common directory -->
+	<ItemGroup>
+		<SharedPluginFiles Include="$(SolutionDir)\bin\$(Configuration)\ClearCanvas.Desktop.dll" />
+		<SharedPluginFiles Include="$(SolutionDir)\Configuration\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.dll" />
+		<SharedPluginFiles Include="$(SolutionDir)\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.View.WinForms.dll" />
+		<SharedPluginFiles Include="$(SolutionDir)\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.View.WinForms.dll" />
+		<SharedPluginFiles Include="$(SolutionDir)\..\Desktop\Help\bin\$(Configuration)\ClearCanvas.Desktop.Help.dll" />
+		<SharedPluginFiles Include="$(SolutionDir)\..\Desktop\ExtensionBrowser\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.dll" />
+		<SharedPluginFiles Include="$(SolutionDir)\..\Desktop\ExtensionBrowser\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" />
+	</ItemGroup>
+
+	<!-- Execution files -->
+	<ItemGroup>
+		<ExecutionFiles Include="$(SolutionDir)\..\Desktop\Executable\bin\$(Configuration)\ClearCanvas.Desktop.Executable.exe" />
+		<ExecutionFiles Include="$(SolutionDir)\..\Desktop\Executable\bin\$(Configuration)\ClearCanvas.Desktop.Executable.exe.config" />
+	</ItemGroup>
+
+	<Target Name="Copy files">
+		<Message Text="Executing ClearCanvas post-build step" />
+
+		<!-- Delete contents of plugin directory -->
+		<Delete Files=".\$(PlatformFolderPrefix)\plugins\*.*" />
+
+		<!-- Make required directories -->
+		<MakeDir Directories="@(DestinatonDirectories)" />
+
+		<!-- Copy shared config files -->
+		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" />
+
+		<!-- Copy shared libraries -->
+		<Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(CommonDirectory)" />
+
+		<!-- Copy shared plugins -->
+		<Copy SourceFiles="@(SharedPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
+
+		<!-- Copy license file -->
+		<Copy SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" />	
+
+		<!-- Copy execution files -->
+		<Copy SourceFiles="@(ExecutionFiles)" DestinationFolder="$(DistributionDirectory)" />	
+
+		<!-- Run the solution specific build file -->
+		<MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectDir=$(ProjectDir);OutDir=$(OutDir);Platform=$(Platform)"  />
+	</Target>
+</Project>
