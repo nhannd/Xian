@@ -79,7 +79,7 @@ namespace ClearCanvas.Desktop.Help {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to License.
+        ///   Looks up a localized string similar to Show License.
         /// </summary>
         public static string MenuLicense {
             get {
@@ -88,7 +88,7 @@ namespace ClearCanvas.Desktop.Help {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Users&apos; Guide.
+        ///   Looks up a localized string similar to Online User&apos;s Guide.
         /// </summary>
         public static string MenuUsersGuide {
             get {

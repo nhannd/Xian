@@ -124,10 +124,10 @@
     <value>Could not find license file.</value>
   </data>
   <data name="MenuLicense" xml:space="preserve">
-    <value>License</value>
+    <value>Show License</value>
   </data>
   <data name="MenuUsersGuide" xml:space="preserve">
-    <value>Users' Guide</value>
+    <value>Online User's Guide</value>
   </data>
   <data name="MenuWebsite" xml:space="preserve">
     <value>ClearCanvas.ca</value>
