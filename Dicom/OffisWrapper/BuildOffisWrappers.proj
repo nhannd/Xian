@@ -104,7 +104,7 @@
 	<!-- Platform- and Configuration- specific -->
 	<Choose> 
 		<!-- Win32 Debug -->
-		<When Condition=" '$(Platform)' == '' " >
+		<When Condition=" '$(Platform)' == '' Or '$(Platform)' == 'Win32' " >
 			<Choose>
 				<!-- Win32|Debug -->
 				<When Condition=" '$(Configuration)' == 'Debug' " >
