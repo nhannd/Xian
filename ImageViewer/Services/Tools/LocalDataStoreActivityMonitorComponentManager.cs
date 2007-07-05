@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 					_dicomSendReceiveActivityComponentShelf = ApplicationComponent.LaunchAsShelf
 						(
-							desktopWindow, container, SR.MenuDicomSendReceiveActivity, ShelfDisplayHint.DockRight | ShelfDisplayHint.DockAutoHide,
+							desktopWindow, container, SR.MenuDicomSendReceiveActivity, ShelfDisplayHint.DockLeft | ShelfDisplayHint.DockAutoHide,
 							delegate(IApplicationComponent closingComponent)
 							{
 								_dicomSendReceiveActivityComponentShelf = null;
