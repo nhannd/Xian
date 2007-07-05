@@ -206,7 +206,7 @@
 		</CreateItem>
 	</Target>
 	<Target Name="BuildSwigCppWrappers"
-		Inputs="@(SwigCppOutputFile)"
+		Inputs="@(SwigInterfaceFiles)"
 		Outputs="@(SwigCppLibraryOutputFile)"
 		Condition="!Exists('@(SwigCppLibraryOutputFile)')" >
 		<MSBuild Projects="..\..\Offis\BuildOffisToolkit.proj" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
@@ -217,7 +217,7 @@
 		<Exec Command="$(CppLinker) @(LinkerParameters, ' ') @(LinkerDebugParameters, ' ') @(LinkerDirectories->'/LIBPATH:&quot;%(identity)&quot;', ' ') /OUT:$(CppCompilerOutputDir)\@(CppWrapperLibraryFile->'%(filename).dll') @(LinkerObjectFiles->'%(filename)$(PlatformSuffix)%(extension)', ' ') @(StandardLinkerObjectFiles, ' ') $(CppCompilerOutputDir)\@(CppWrapperLibraryFile->'%(filename).obj')" />
 	</Target>
 	<Target Name="BuildSwigCsharpWrappers"
-		Inputs="@(AllSwigOutputFiles)"
+		Inputs="@(SwigInterfaceFiles)"
 		Outputs="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll"
 		Condition="!Exists('$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll')" >
 		<CallTarget Targets="GenerateSwigWrappers" />
