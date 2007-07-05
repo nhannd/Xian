@@ -221,8 +221,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 if (info.Response.DimseStatus != (ushort)OffisDcm.STATUS_Pending)
                     break;
 
-				String studyInstanceUID = GetTag(info.RequestIdentifiers, Dcm.StudyInstanceUID);
-				if (studyInstanceUID == null || studyInstanceUID.Length == 0)
+				string studyInstanceUID;
+				DicomHelper.TryFindAndGetOFString(info.RequestIdentifiers, Dcm.StudyInstanceUID, out studyInstanceUID);
+				if (String.IsNullOrEmpty(studyInstanceUID))
 				{
 					info.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
 					return;
@@ -367,37 +368,35 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             OFCondition cond;
             QueryKey queryKey = new QueryKey();
 
-            // TODO: shouldn't hard code the buffer length like this
-            StringBuilder buf = new StringBuilder(1024);
-
             // TODO: Edit these when we need to expand the support of search parameters
-            cond = requestIdentifiers.findAndGetOFString(Dcm.PatientId, buf);
+			string value;
+			cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.PatientId, out value);
             if (cond.good())
-                queryKey.Add(DicomTag.PatientId, buf.ToString());
+                queryKey.Add(DicomTag.PatientId, value);
 
-            cond = requestIdentifiers.findAndGetOFString(Dcm.AccessionNumber, buf);
+            cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers,Dcm.AccessionNumber, out value);
             if (cond.good())
-                queryKey.Add(DicomTag.AccessionNumber, buf.ToString());
+                queryKey.Add(DicomTag.AccessionNumber, value);
 
-            cond = requestIdentifiers.findAndGetOFString(Dcm.PatientsName, buf);
+            cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.PatientsName, out value);
             if (cond.good())
-                queryKey.Add(DicomTag.PatientsName, buf.ToString());
+                queryKey.Add(DicomTag.PatientsName, value);
 
-            cond = requestIdentifiers.findAndGetOFString(Dcm.StudyDate, buf);
+            cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyDate, out value);
             if (cond.good())
-                queryKey.Add(DicomTag.StudyDate, buf.ToString());
+                queryKey.Add(DicomTag.StudyDate, value);
 
-            cond = requestIdentifiers.findAndGetOFString(Dcm.StudyDescription, buf);
+            cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyDescription, out value);
             if (cond.good())
-                queryKey.Add(DicomTag.StudyDescription, buf.ToString());
+                queryKey.Add(DicomTag.StudyDescription, value);
 
-            cond = requestIdentifiers.findAndGetOFString(Dcm.ModalitiesInStudy, buf);
+            cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.ModalitiesInStudy, out value);
             if (cond.good())
-                queryKey.Add(DicomTag.ModalitiesInStudy, buf.ToString());
+                queryKey.Add(DicomTag.ModalitiesInStudy, value);
 
-            cond = requestIdentifiers.findAndGetOFString(Dcm.StudyInstanceUID, buf);
+            cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyInstanceUID, out value);
             if (cond.good())
-                queryKey.Add(DicomTag.StudyInstanceUID, buf.ToString());
+                queryKey.Add(DicomTag.StudyInstanceUID, value);
 
             return queryKey;
         }
@@ -542,18 +541,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         }
 
         #endregion
-
-        private string GetTag(DcmDataset dataSet, DcmTagKey tagKey)
-        {
-            // TODO: shouldn't hard code the buffer length like this
-            StringBuilder buf = new StringBuilder(1024);
-
-            OFCondition cond = dataSet.findAndGetOFString(tagKey, buf);
-            if (cond.good())
-                return buf.ToString();
-
-            return "";
-		}
 
 		private List<SendStudyInformation> ConvertToSendStudyInformation(IDictionary<IStudy, IList<ISopInstance>> sopInstancesByStudy)
 		{

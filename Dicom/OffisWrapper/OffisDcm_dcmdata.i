@@ -69,7 +69,7 @@ OFCondition findAndGetRawStringFromItemGetLength(DcmItem& item,
 		char *dummy_string = "Dummy String";
 		char **holderOfString = &dummy_string;
 		status = elem->getString(OFconst_cast(char *&, *holderOfString));
-		if (status.bad())
+		if (status.bad() || (*holderOfString) == NULL)
 			lengthRequiredOfArray = 0;
 		else
 			lengthRequiredOfArray = strlen(*holderOfString) + 1; 

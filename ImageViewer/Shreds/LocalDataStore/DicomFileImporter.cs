@@ -450,13 +450,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			private bool ConfirmProcessableFile(DcmMetaInfo metaInfo, DcmDataset dataset)
 			{
-				StringBuilder stringValue = new StringBuilder(1024);
-				OFCondition cond;
-				cond = metaInfo.findAndGetOFString(Dcm.MediaStorageSOPClassUID, stringValue);
+				string value;
+				OFCondition cond = DicomHelper.TryFindAndGetOFString(metaInfo, Dcm.MediaStorageSOPClassUID, out value);
 				if (cond.good())
 				{
 					// we want to skip Media Storage Directory Storage (DICOMDIR directories)
-					if ("1.2.840.10008.1.3.10" == stringValue.ToString())
+					if ("1.2.840.10008.1.3.10" == value)
 						return false;
 				}
 

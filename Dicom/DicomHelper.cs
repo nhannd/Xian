@@ -123,7 +123,78 @@ namespace ClearCanvas.Dicom
             return normalizedDirectory.ToString();
         }
 
-        public static OFCondition FindAndGetRawStringFromItem(DcmItem dcmItem, DcmTagKey tagKey, out byte[] rawBytes)
+		public static OFCondition FindAndGetOFString(DcmItem item, DcmTagKey tag, out string value, out bool tagExists)
+		{
+			OFCondition status = TryFindAndGetOFString(item, tag, out value);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+			return status;
+		}
+
+		public static OFCondition FindAndGetOFString(DcmItem item, DcmTagKey tag, uint position, out string value, out bool tagExists)
+		{
+			OFCondition status = TryFindAndGetOFString(item, tag, position, out value);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+			return status;
+		}
+
+		public static OFCondition FindAndGetOFStringArray(DcmItem item, DcmTagKey tag, out string valueArray, out bool tagExists)
+		{
+			OFCondition status = TryFindAndGetOFStringArray(item, tag, out valueArray);
+			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+			return status;
+		}
+
+		public static OFCondition TryFindAndGetOFString(DcmItem item, DcmTagKey tag, out string value)
+		{
+			value = "";
+			int lengthRequired = 0;
+
+			//This returns the length of the entire tag (not just at position 0), but that's ok.  At least it's guaranteed to be big enough.
+			OFCondition status = OffisDcm.findAndGetRawStringFromItemGetLength(item, tag, ref lengthRequired, false);
+			if (lengthRequired > 0)
+			{
+				StringBuilder buffer = new StringBuilder(lengthRequired);
+				status = item.findAndGetOFString(tag, buffer);
+				value = buffer.ToString();
+			}
+
+			return status;
+		}
+
+		public static OFCondition TryFindAndGetOFString(DcmItem item, DcmTagKey tag, uint position, out string value)
+		{
+			value = "";
+			int lengthRequired = 0;
+
+			//This returns the length of the entire tag (not just at 'position'), but that's ok.  At least it's guaranteed to be big enough.
+			OFCondition status = OffisDcm.findAndGetRawStringFromItemGetLength(item, tag, ref lengthRequired, false);
+			if (lengthRequired > 0)
+			{
+				StringBuilder buffer = new StringBuilder(lengthRequired);
+				status = item.findAndGetOFString(tag, buffer, position);
+				value = buffer.ToString();
+			}
+
+			return status;
+		}
+
+		public static OFCondition TryFindAndGetOFStringArray(DcmItem item, DcmTagKey tag, out string value)
+		{
+			value = "";
+			int lengthRequired = 0;
+
+			OFCondition status = OffisDcm.findAndGetRawStringFromItemGetLength(item, tag, ref lengthRequired, false);
+			if (lengthRequired > 0)
+			{
+				StringBuilder buffer = new StringBuilder(lengthRequired);
+				status = item.findAndGetOFStringArray(tag, buffer);
+				value = buffer.ToString();
+			}
+
+			return status;
+		}
+		
+		public static OFCondition FindAndGetRawStringFromItem(DcmItem dcmItem, DcmTagKey tagKey, out byte[] rawBytes)
         {
             int lengthRequiredOfArray = 0;
             OffisDcm.findAndGetRawStringFromItemGetLength(dcmItem, tagKey, ref lengthRequiredOfArray, false);

@@ -344,40 +344,26 @@ namespace ClearCanvas.Dicom
 			DicomHelper.CheckReturnValue(status, tag, out tagExists);
 		}
 
-		public void GetTag(DcmTagKey tag, out string val, out bool tagExists)
+		public void GetTag(DcmTagKey tag, out string value, out bool tagExists)
 		{
-			//TODO: shouldn't hard code the buffer length like this
 			Load();
-			StringBuilder buffer = new StringBuilder(64);
-			OFCondition status = _dataset.findAndGetOFString(tag, buffer);
-			DicomHelper.CheckReturnValue(status, tag, out tagExists);
-			val = buffer.ToString();
 
+			DicomHelper.FindAndGetOFString(_dataset, tag, out value, out tagExists);
 			if (tagExists)
 				return;
 
-			buffer = new StringBuilder(64);
-			status = _metaInfo.findAndGetOFString(tag, buffer);
-			DicomHelper.CheckReturnValue(status, tag, out tagExists);
-			val = buffer.ToString();
+			DicomHelper.FindAndGetOFString(_metaInfo, tag, out value, out tagExists);
 		}
 
 		public void GetTag(DcmTagKey tag, out string value, uint position, out bool tagExists)
 		{
-			//TODO: shouldn't hard code the buffer length like this
 			Load();
-			StringBuilder buffer = new StringBuilder(64);
-			OFCondition status = _dataset.findAndGetOFString(tag, buffer, position);
-			DicomHelper.CheckReturnValue(status, tag, out tagExists);
-			value = buffer.ToString();
 
+			DicomHelper.FindAndGetOFString(_dataset, tag, position, out value, out tagExists);
 			if (tagExists)
 				return;
 
-			buffer = new StringBuilder(64);
-			status = _metaInfo.findAndGetOFString(tag, buffer, position);
-			DicomHelper.CheckReturnValue(status, tag, out tagExists);
-			value = buffer.ToString();
+			DicomHelper.FindAndGetOFString(_metaInfo, tag, position, out value, out tagExists);
 		}
 
 		/// <summary>
@@ -391,18 +377,12 @@ namespace ClearCanvas.Dicom
 		public void GetTagArray(DcmTagKey tag, out string valueArray, out bool tagExists)
 		{
 			Load();
-			StringBuilder buffer = new StringBuilder(512);
-			OFCondition status = _dataset.findAndGetOFStringArray(tag, buffer);
-			DicomHelper.CheckReturnValue(status, tag, out tagExists);
-			valueArray = buffer.ToString();
 
+			DicomHelper.FindAndGetOFStringArray(_dataset, tag, out valueArray, out tagExists);
 			if (tagExists)
 				return;
 
-			buffer = new StringBuilder(512);
-			status = _metaInfo.findAndGetOFStringArray(tag, buffer);
-			DicomHelper.CheckReturnValue(status, tag, out tagExists);
-			valueArray = buffer.ToString();
+			DicomHelper.FindAndGetOFStringArray(_metaInfo, tag, out valueArray, out tagExists);
 		}
 
 		public abstract void Load();
@@ -450,15 +430,14 @@ namespace ClearCanvas.Dicom
                 DicomHelper.CheckReturnValue(status, Dcm.PlanarConfiguration, out tagExists);
             }
 
-            StringBuilder buffer = new StringBuilder(64);
-            status = _dataset.findAndGetOFString(Dcm.PhotometricInterpretation, buffer);
-            DicomHelper.CheckReturnValue(status, Dcm.PhotometricInterpretation, out tagExists);
-			_photometricInterpretation = PhotometricInterpretationHelper.FromString(buffer.ToString());
+			string value;
+			status = DicomHelper.TryFindAndGetOFString(_dataset, Dcm.PhotometricInterpretation, out value);
+			DicomHelper.CheckReturnValue(status, Dcm.PhotometricInterpretation, out tagExists);
+			_photometricInterpretation = PhotometricInterpretationHelper.FromString(value);
 
-			buffer = new StringBuilder(64);
-			status = _metaInfo.findAndGetOFString(Dcm.TransferSyntaxUID, buffer);
+			status = DicomHelper.TryFindAndGetOFString(_metaInfo, Dcm.TransferSyntaxUID, out value);
 			DicomHelper.CheckReturnValue(status, Dcm.TransferSyntaxUID, out tagExists);
-			_transferSyntaxUid = buffer.ToString();
+			_transferSyntaxUid = value;
 			
 			IsImageParameterSetLoaded = true;
         }

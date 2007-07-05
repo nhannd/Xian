@@ -91,35 +91,34 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					if (!condition.good())
 						throw new Exception(String.Format(SR.FormatUnableToParseFile, sopInstanceFilename));
 
-					DcmMetaInfo metaInfo = file.getMetaInfo();
 					DcmDataset dataset = file.getDataset();
 
 					StudyInformation information = new StudyInformation();
-					StringBuilder parser = new StringBuilder(1024);
+					string value;
 
-					condition = dataset.findAndGetOFString(Dcm.PatientId, parser);
+					condition = DicomHelper.TryFindAndGetOFString(dataset, Dcm.PatientId, out value);
 					if (condition.good())
-						information.PatientId = parser.ToString();
+						information.PatientId = value;
 
-					condition = dataset.findAndGetOFString(Dcm.PatientsName, parser);
+					condition = DicomHelper.TryFindAndGetOFString(dataset, Dcm.PatientsName, out value);
 					if (condition.good()) 
-						information.PatientsName = parser.ToString();
+						information.PatientsName = value;
 
-					condition = dataset.findAndGetOFString(Dcm.StudyDate, parser);
+					condition = DicomHelper.TryFindAndGetOFString(dataset, Dcm.StudyDate, out value);
 					if (condition.good())
 					{
 						DateTime studyDate;
-						DateParser.Parse(parser.ToString(), out studyDate);
+						DateParser.Parse(value, out studyDate);
 						information.StudyDate = studyDate;
 					}
 
-					condition = dataset.findAndGetOFString(Dcm.StudyDescription, parser);
+					condition = DicomHelper.TryFindAndGetOFString(dataset, Dcm.StudyDescription, out value);
 					if (condition.good())
-						information.StudyDescription = parser.ToString();
+						information.StudyDescription = value;
 
-					condition = dataset.findAndGetOFString(Dcm.StudyInstanceUID, parser);
+					condition = DicomHelper.TryFindAndGetOFString(dataset, Dcm.StudyInstanceUID, out value);
 					if (condition.good()) 
-						information.StudyInstanceUid = parser.ToString();
+						information.StudyInstanceUid = value;
 
 					return information;
 				}
