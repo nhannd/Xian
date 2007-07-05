@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.Ris.Application.Common
@@ -43,5 +40,7 @@ namespace ClearCanvas.Ris.Application.Common
         [AuthorityToken(Description = "Allow administration of authority groups")]
         public const string AuthorityGroupAdmin = "AuthorityGroupAdmin";
 
+        [AuthorityToken(Description = "Allow administration of requested procedure type groups")] 
+        public const string RequestedProcedureTypeGroupAdmin = "RequestedProcedureTypeGroupAdmin";
     }
 }

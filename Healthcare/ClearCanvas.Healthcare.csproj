@@ -79,6 +79,8 @@
     <Compile Include="PatientReconciliation\PatientReconciliationStrategyExtensionPoint.cs" />
     <Compile Include="Note.cs" />
     <Compile Include="Report.cs" />
+    <Compile Include="RequestedProcedureTypeGroup.cs" />
+    <Compile Include="RequestedProcedureTypeGroupCategory.cs" />
     <Compile Include="Workflow\Modality\WorklistItem.cs" />
     <Compile Include="Workflow\Modality\Worklists.cs" />
     <Compile Include="Brokers\*.gen.cs" />

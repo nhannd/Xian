@@ -213,6 +213,9 @@
   <data name="ExceptionSaveNoteCategory" xml:space="preserve">
     <value>Unable to save Note Category</value>
   </data>
+  <data name="ExceptionSaveRequestedProcedureTypeGroup" xml:space="preserve">
+    <value>Unable to save Requested Procedure Type Group</value>
+  </data>
   <data name="ExceptionSaveUser" xml:space="preserve">
     <value>Unable to save User</value>
   </data>
@@ -266,6 +269,9 @@
   </data>
   <data name="TitleAddNoteCategory" xml:space="preserve">
     <value>Add Note Category</value>
+  </data>
+  <data name="TitleAddRequestedProcedureTypeGroup" xml:space="preserve">
+    <value>Add Requested Procedure Type Group</value>
   </data>
   <data name="TitleAddUser" xml:space="preserve">
     <value>Add User</value>
@@ -323,6 +329,9 @@
   </data>
   <data name="TitleUpdateNoteCategory" xml:space="preserve">
     <value>Update Note Category</value>
+  </data>
+  <data name="TitleUpdateRequestedProcedureTypeGroup" xml:space="preserve">
+    <value>Update Requested Procedure Type Group</value>
   </data>
   <data name="TitleUpdateUser" xml:space="preserve">
     <value>Update User</value>

@@ -69,6 +69,7 @@
     <Compile Include="Admin\LocationAdmin\LocationAdminService.cs" />
     <Compile Include="Admin\ModalityAdmin\ModalityAdminService.cs" />
     <Compile Include="Admin\PatientAdmin\PatientAdminService.cs" />
+    <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupAdminService.cs" />
     <Compile Include="Admin\StaffAdmin\StaffAdminService.cs" />
     <Compile Include="Admin\VisitAdmin\VisitAdminService.cs" />
     <Compile Include="Admin\VisitAssembler.cs" />

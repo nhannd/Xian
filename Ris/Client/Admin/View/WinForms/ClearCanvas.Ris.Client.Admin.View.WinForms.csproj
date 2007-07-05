@@ -113,6 +113,20 @@
     </Compile>
     <Compile Include="NoteCategorySummaryComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestedProcedureTypeGroupEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RequestedProcedureTypeGroupEditorComponentControl.Designer.cs">
+      <DependentUpon>RequestedProcedureTypeGroupEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RequestedProcedureTypeGroupEditorComponentView.cs" />
+    <Compile Include="RequestedProcedureTypeGroupSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="RequestedProcedureTypeGroupSummaryComponentControl.Designer.cs">
+      <DependentUpon>RequestedProcedureTypeGroupSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="RequestedProcedureTypeGroupSummaryComponentView.cs" />
     <Compile Include="UserEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -197,6 +211,14 @@
     <EmbeddedResource Include="NoteCategorySummaryComponentControl.resx">
       <DependentUpon>NoteCategorySummaryComponentControl.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RequestedProcedureTypeGroupEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>RequestedProcedureTypeGroupEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="RequestedProcedureTypeGroupSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>RequestedProcedureTypeGroupSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UserEditorComponentControl.resx">
       <SubType>Designer</SubType>

@@ -1,11 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
@@ -13,14 +7,15 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="AuthorityGroupSummaryComponent"/>
     /// </summary>
-    public partial class AuthorityGroupSummaryComponentControl : CustomUserControl
+    public partial class AuthorityGroupSummaryComponentControl : ApplicationComponentUserControl
     {
-        private AuthorityGroupSummaryComponent _component;
+        private readonly AuthorityGroupSummaryComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public AuthorityGroupSummaryComponentControl(AuthorityGroupSummaryComponent component)
+            : base(component)
         {
             InitializeComponent();
 

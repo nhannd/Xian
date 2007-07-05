@@ -349,6 +349,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to save Requested Procedure Type Group.
+        /// </summary>
+        internal static string ExceptionSaveRequestedProcedureTypeGroup {
+            get {
+                return ResourceManager.GetString("ExceptionSaveRequestedProcedureTypeGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to save User.
         /// </summary>
         internal static string ExceptionSaveUser {
@@ -507,6 +516,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleAddNoteCategory {
             get {
                 return ResourceManager.GetString("TitleAddNoteCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Requested Procedure Type Group.
+        /// </summary>
+        internal static string TitleAddRequestedProcedureTypeGroup {
+            get {
+                return ResourceManager.GetString("TitleAddRequestedProcedureTypeGroup", resourceCulture);
             }
         }
         
@@ -678,6 +696,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleUpdateNoteCategory {
             get {
                 return ResourceManager.GetString("TitleUpdateNoteCategory", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Requested Procedure Type Group.
+        /// </summary>
+        internal static string TitleUpdateRequestedProcedureTypeGroup {
+            get {
+                return ResourceManager.GetString("TitleUpdateRequestedProcedureTypeGroup", resourceCulture);
             }
         }
         

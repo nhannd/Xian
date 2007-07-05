@@ -1,19 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
-
-using ClearCanvas.Enterprise;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
-using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -75,19 +68,12 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private IPagingController<AuthorityGroupSummary> _pagingController;
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public AuthorityGroupSummaryComponent()
-        {
-        }
-
         public override void Start()
         {
             _authorityGroupTable = new AuthorityGroupTable();
 
             _authorityGroupActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-            _authorityGroupActionHandler.AddAction(_addAuthorityGroupKey, SR.TitleAddUser, "Icons.AddToolSmall.png", SR.TitleAddAuthorityGroup, AddAuthorityGroup);
+            _authorityGroupActionHandler.AddAction(_addAuthorityGroupKey, SR.TitleAddAuthorityGroup, "Icons.AddToolSmall.png", SR.TitleAddAuthorityGroup, AddAuthorityGroup);
             _authorityGroupActionHandler.AddAction(_updateAuthorityGroupKey, SR.TitleUpdateAuthorityGroup, "Icons.EditToolSmall.png", SR.TitleUpdateAuthorityGroup, UpdateSelectedAuthorityGroup);
 
             InitialisePaging(_authorityGroupActionHandler);

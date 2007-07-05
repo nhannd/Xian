@@ -59,6 +59,10 @@
     <Compile Include="NoteCategoryEditorComponent.cs" />
     <Compile Include="NoteCategorySummaryComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RequestedProcedureTypeGroupEditorComponent.cs" />
+    <Compile Include="RequestedProcedureTypeGroupSummaryComponent.cs" />
+    <Compile Include="RequestedProcedureTypeGroupSummaryTable.cs" />
+    <Compile Include="RequestedProcedureTypeGroupSummaryTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
