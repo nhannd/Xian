@@ -207,7 +207,8 @@
 	</Target>
 	<Target Name="BuildSwigCppWrappers"
 		Inputs="@(SwigCppOutputFile)"
-		Outputs="@(SwigCppLibraryOutputFile)">
+		Outputs="@(SwigCppLibraryOutputFile)"
+		Condition="!Exists('@(SwigCppLibraryOutputFile)')" >
 		<MSBuild Projects="..\..\Offis\BuildOffisToolkit.proj" Properties="Configuration=$(Configuration);Platform=$(Platform)" />
 		<CallTarget Targets="GenerateSwigWrappers" />
 		<MakeDir Directories="$(CppCompilerOutputDir)" Condition="!Exists('$(CppCompilerOutputDir)')" />
@@ -217,7 +218,8 @@
 	</Target>
 	<Target Name="BuildSwigCsharpWrappers"
 		Inputs="@(AllSwigOutputFiles)"
-		Outputs="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll">
+		Outputs="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll"
+		Condition="!Exists('$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll')" >
 		<CallTarget Targets="GenerateSwigWrappers" />
 		<MakeDir Directories="$(SwigOutputCsharpDir)\$(Configuration)" Condition="!Exists('$(SwigOutputCsharpDir)\$(Configuration)')" />
 		<Csc Sources="$(SwigOutputCsharpDir)\*.cs" OutputAssembly="$(SwigOutputCsharpDir)\$(Configuration)\$(SwigOutputNamespace).dll" TargetType="library" EmitDebugInformation="$(CscEmitDebugInformation)" />
