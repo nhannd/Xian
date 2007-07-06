@@ -7,6 +7,7 @@
 <!-- 2) %2.bat is located in the same folder as the solution file -->
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
+		<TrunkDirectory>$(ProjectDir)\..\..</TrunkDirectory>
 		<DistributionDirectory>$(ProjectDir)\$(PlatformFolderPrefix)\$(OutDir)</DistributionDirectory>
 		<CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
 		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
@@ -21,41 +22,41 @@
 	
 	<!-- Config files, to be placed in distribution directory -->
 	<ItemGroup>
-		<ConfigFiles Include="$(SolutionDir)\..\Desktop\Executable\Logging.config" />
+		<ConfigFiles Include="$(ProjectDir)\Logging.config" />
 	</ItemGroup>
 
 	<!-- Shared library files, to be placed in common directory -->
 	<ItemGroup>
-		<SharedLibraryFiles Include="$(SolutionDir)\..\Common\bin\$(Configuration)\*.*" />
-		<SharedLibraryFiles Include="$(SolutionDir)\..\Controls\WinForms\bin\$(Configuration)\ClearCanvas.Controls.WinForms.dll" />
-		<SharedLibraryFiles Include="$(SolutionDir)\..\ReferencedAssemblies\nunit.framework.dll" /> 
-		<SharedLibraryFiles Include="$(SolutionDir)\..\ReferencedAssemblies\log4net.dll" />
-		<SharedLibraryFiles Include="$(SolutionDir)\..\ReferencedAssemblies\DotNetMagic2005.DLL" />
-		<SharedLibraryFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Iesi.Collections.dll" />
-		<SharedLibraryFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Nhibernate.dll" />
-		<SharedLibraryFiles Include="$(SolutionDir)\..\ReferencedAssemblies\Castle.DynamicProxy.dll" />
+		<SharedLibraryFiles Include="$(TrunkDirectory)\Common\bin\$(Configuration)\*.*" />
+		<SharedLibraryFiles Include="$(TrunkDirectory)\Controls\WinForms\bin\$(Configuration)\ClearCanvas.Controls.WinForms.dll" />
+		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\nunit.framework.dll" /> 
+		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\log4net.dll" />
+		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\DotNetMagic2005.DLL" />
+		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Iesi.Collections.dll" />
+		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Nhibernate.dll" />
+		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Castle.DynamicProxy.dll" />
 	</ItemGroup>
 
 	<!-- License files -->
 	<ItemGroup>
-		<LicenseFiles Include="$(SolutionDir)\..\License.rtf" />
+		<LicenseFiles Include="$(TrunkDirectory)\License.rtf" />
 	</ItemGroup>
 
 	<!-- Shared plugin files, to be placed in common directory -->
 	<ItemGroup>
-		<SharedPluginFiles Include="$(SolutionDir)\bin\$(Configuration)\ClearCanvas.Desktop.dll" />
-		<SharedPluginFiles Include="$(SolutionDir)\Configuration\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.dll" />
-		<SharedPluginFiles Include="$(SolutionDir)\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.View.WinForms.dll" />
-		<SharedPluginFiles Include="$(SolutionDir)\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.View.WinForms.dll" />
-		<SharedPluginFiles Include="$(SolutionDir)\..\Desktop\Help\bin\$(Configuration)\ClearCanvas.Desktop.Help.dll" />
-		<SharedPluginFiles Include="$(SolutionDir)\..\Desktop\ExtensionBrowser\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.dll" />
-		<SharedPluginFiles Include="$(SolutionDir)\..\Desktop\ExtensionBrowser\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" />
+		<SharedPluginFiles Include="$(TrunkDirectory)\Desktop\bin\$(Configuration)\ClearCanvas.Desktop.dll" />
+		<SharedPluginFiles Include="$(TrunkDirectory)\Desktop\Configuration\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.dll" />
+		<SharedPluginFiles Include="$(TrunkDirectory)\Desktop\Configuration\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Configuration.View.WinForms.dll" />
+		<SharedPluginFiles Include="$(TrunkDirectory)\Desktop\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.View.WinForms.dll" />
+		<SharedPluginFiles Include="$(TrunkDirectory)\Desktop\Help\bin\$(Configuration)\ClearCanvas.Desktop.Help.dll" />
+		<SharedPluginFiles Include="$(TrunkDirectory)\Desktop\ExtensionBrowser\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.dll" />
+		<SharedPluginFiles Include="$(TrunkDirectory)\Desktop\ExtensionBrowser\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.ExtensionBrowser.View.WinForms.dll" />
 	</ItemGroup>
 
 	<!-- Execution files -->
 	<ItemGroup>
-		<ExecutionFiles Include="$(SolutionDir)\..\Desktop\Executable\bin\$(Configuration)\ClearCanvas.Desktop.Executable.exe" />
-		<ExecutionFiles Include="$(SolutionDir)\..\Desktop\Executable\bin\$(Configuration)\ClearCanvas.Desktop.Executable.exe.config" />
+		<ExecutionFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.Desktop.Executable.exe" />
+		<ExecutionFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.Desktop.Executable.exe.config" />
 	</ItemGroup>
 
 	<Target Name="Copy files">
