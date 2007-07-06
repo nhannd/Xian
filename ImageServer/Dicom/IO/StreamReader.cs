@@ -1,3 +1,6 @@
+/*
+ * Taken from code Copyright (c) Colby Dillion, 2007
+ */
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -5,14 +8,14 @@ using System.IO;
 
 namespace ClearCanvas.ImageServer.Dicom.IO
 {
-    public enum DicomReadStatus
+    internal enum DicomReadStatus
     {
         Success,
         UnknownError,
         NeedMoreData
     }
 
-    public class DicomStreamReader
+    internal class DicomStreamReader
     {
         #region Private Classes
         /// <summary>
@@ -133,7 +136,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                             _pos = _stream.Position;
                             ushort g = _reader.ReadUInt16();
                             ushort e = _reader.ReadUInt16();
-                            tagValue = DicomTag.GetCard(g, e);
+                            tagValue = DicomTag.GetTagValue(g, e);
                             if (DicomTag.IsPrivateGroup(g) && e > 0x00ff)
                             {
                                 if ((tagValue & _privateCreatorCard) != _privateCreatorCard)
@@ -257,7 +260,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                                         {
                                             ushort g = _reader.ReadUInt16();
                                             ushort e = _reader.ReadUInt16();
-                                            uint tempTagValue = DicomTag.GetCard(g, e);
+                                            uint tempTagValue = DicomTag.GetTagValue(g, e);
 
                                             if (tempTagValue == DicomTag.Item.TagValue || tempTagValue == DicomTag.SequenceDelimitationItem.TagValue)
                                                 _vr = DicomVr.SQvr;
@@ -384,6 +387,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                         }
                         else
                         {
+                            DicomLogger.LogError("Encountered unexpected tag in stream: " + _tag.ToString());
                             // unexpected tag
                             return DicomReadStatus.UnknownError;
                         }
@@ -404,7 +408,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                                     return NeedMoreData(_remain - _len);
                             }
 
-                            SequenceItem ds = new SequenceItem();
+                            DicomSequenceItem ds = new DicomSequenceItem();
 
                             rec._current = ds;
                             rec._parent[rec._tag].AddSequenceItem(ds);
@@ -416,11 +420,6 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                             _sqrs.Pop();
                             _sqrs.Push(rec);
 
-                            //DcmDataset ds = new DcmDataset(_pos + 8, _len, TransferSyntax);
-                            //DcmItemSequenceItem si = new DcmItemSequenceItem(_pos, _len);
-                           // si.Dataset = ds;
-                            //_sqs.Peek().AddSequenceItem(si);
-
                             if (_len != UndefinedLength)
                             {
                                 ByteBuffer data = new ByteBuffer(_endian);
@@ -431,7 +430,6 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                                 DicomStreamReader idsr = new DicomStreamReader(data.Stream);
                                 idsr.Dataset = ds;
                                 idsr.Read(new DicomTag(0xFFFFFFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false), options);
-                                //TODO, need to check when to pop off _sqrs if defined length sequences
                             }
                             else
                             {
@@ -441,8 +439,6 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                         }
                         else if (_tag == DicomTag.ItemDelimitationItem)
                         {
-                            //if (_sds.Count == _sqs.Count) _sds.Pop();
-
                         }
                         else if (_tag == DicomTag.SequenceDelimitationItem)
                         {
@@ -451,15 +447,12 @@ namespace ClearCanvas.ImageServer.Dicom.IO
 
                         if (rec._len != UndefinedLength)
                         {
-                            //long end = sq.StreamPosition + 8 + sq.StreamLength;
                             long end = rec._pos + 8 + rec._len;
                             if (_syntax.ExplicitVr)
                                 end += 2 + 2;
                             if (_stream.Position >= end)
                             {
                                 _sqrs.Pop();
-                                //if (_sds.Count == _sqs.Count) _sds.Pop();
-                                //_dataset.AddItem(_sqs.Pop());
                             }
                         }
 
@@ -480,10 +473,6 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                                 rec._len = UndefinedLength;
                                 
                                 _sqrs.Push(rec);
- 
-                                //SequenceItem sq = new SequenceItem();
-                                //_sqs.Push(sq);
-                                //_sqtags.Push(_tag.TagValue);
                             }
                             else
                             {
@@ -533,7 +522,6 @@ namespace ClearCanvas.ImageServer.Dicom.IO
 
                                         if (rec._curlen != UndefinedLength)
                                         {
-                                            //long end = ds.StreamPosition + ds.StreamLength;
                                             long end = rec._curpos + rec._curlen;
                                             if (_stream.Position >= end)
                                             {
@@ -566,9 +554,10 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                 }
                 return DicomReadStatus.Success;
             }
-            catch (EndOfStreamException)
+            catch (EndOfStreamException e)
             {
                 // should never happen
+                DicomLogger.LogError("Unexpected exception when reading file: " + e.ToString());
                 return DicomReadStatus.UnknownError;
             }
         }

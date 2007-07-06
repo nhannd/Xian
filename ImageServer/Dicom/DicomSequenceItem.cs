@@ -6,13 +6,13 @@ using ClearCanvas.ImageServer.Dicom.Exceptions;
 
 namespace ClearCanvas.ImageServer.Dicom
 {
-    public class SequenceItem : AttributeCollection
+    public class DicomSequenceItem : AttributeCollection
     {
-        public SequenceItem() : base()
+        public DicomSequenceItem() : base()
         {
         }
 
-        internal SequenceItem(AttributeCollection source, bool copyBinary)
+        internal DicomSequenceItem(AttributeCollection source, bool copyBinary)
             : base(source, copyBinary)
         {
         }
@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageServer.Dicom
 
         public override AttributeCollection Copy(bool copyBinary)
         {
-            return new SequenceItem(this,copyBinary);
+            return new DicomSequenceItem(this,copyBinary);
         }
 
     }

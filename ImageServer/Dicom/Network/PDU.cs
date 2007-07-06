@@ -1,5 +1,5 @@
 /*
- * Original Copyright (c) Colby Dillion, 2007
+ * Taken from code Copyright (c) Colby Dillion, 2007
  */
 using System;
 using System.Collections.Generic;
@@ -255,9 +255,9 @@ namespace ClearCanvas.ImageServer.Dicom.Network
     #region A-Associate-RQ
     public class AAssociateRQ : IPDU
     {
-        private Association _assoc;
+        private AssociationParameters _assoc;
 
-        public AAssociateRQ(Association assoc)
+        public AAssociateRQ(AssociationParameters assoc)
         {
             _assoc = assoc;
         }
@@ -280,7 +280,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             pdu.Write("Application Context Name", DicomUids.DICOMApplicationContextName.UID);
             pdu.WriteLength16();
 
-            foreach (DcmPresContext pc in _assoc.GetPresentationContexts())
+            foreach (DicomPresContext pc in _assoc.GetPresentationContexts())
             {
                 // Presentation Context
                 pdu.Write("Item-Type", (byte)0x20);
@@ -324,14 +324,14 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             pdu.Write("Item-Type", (byte)0x52);
             pdu.Write("Reserved", (byte)0x00);
             pdu.MarkLength16("Item-Length");
-            pdu.Write("Implementation Class UID", Implementation.ClassUID.UID);
+            pdu.Write("Implementation Class UID", DicomImplementation.ClassUID.UID);
             pdu.WriteLength16();
 
             // Implementation Version
             pdu.Write("Item-Type", (byte)0x55);
             pdu.Write("Reserved", (byte)0x00);
             pdu.MarkLength16("Item-Length");
-            pdu.Write("Implementation Version", Implementation.Version);
+            pdu.Write("Implementation Version", DicomImplementation.Version);
             pdu.WriteLength16();
 
             pdu.WriteLength16();
@@ -429,7 +429,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                                 }
                                 else
                                 {
-                                    //Debug.Log.Error("Unhandled user item: 0x{0:x2} ({1} + 4 bytes)", ut, ul);
+                                    DicomLogger.LogError("Unhandled user item: 0x{0:x2} ({1} + 4 bytes)", ut, ul);
                                     raw.SkipBytes("Unhandled User Item", ul);
                                 }
                             }
@@ -443,9 +443,9 @@ namespace ClearCanvas.ImageServer.Dicom.Network
     #region A-Associate-AC
     public class AAssociateAC : IPDU
     {
-        private Association _assoc;
+        private AssociationParameters _assoc;
 
-        public AAssociateAC(Association assoc)
+        public AAssociateAC(AssociationParameters assoc)
         {
             _assoc = assoc;
         }
@@ -468,7 +468,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             pdu.Write("Application Context Name", DicomUids.DICOMApplicationContextName.UID);
             pdu.WriteLength16();
 
-            foreach (DcmPresContext pc in _assoc.GetPresentationContexts())
+            foreach (DicomPresContext pc in _assoc.GetPresentationContexts())
             {
                 // Presentation Context
                 pdu.Write("Item-Type", (byte)0x21);
@@ -504,14 +504,14 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             pdu.Write("Item-Type", (byte)0x52);
             pdu.Write("Reserved", (byte)0x00);
             pdu.MarkLength16("Item-Length");
-            pdu.Write("Implementation Class UID", Implementation.ClassUID.UID);
+            pdu.Write("Implementation Class UID", DicomImplementation.ClassUID.UID);
             pdu.WriteLength16();
 
             // Implementation Version
             pdu.Write("Item-Type", (byte)0x55);
             pdu.Write("Reserved", (byte)0x00);
             pdu.MarkLength16("Item-Length");
-            pdu.Write("Implementation Version", Implementation.Version);
+            pdu.Write("Implementation Version", DicomImplementation.Version);
             pdu.WriteLength16();
 
             pdu.WriteLength16();
@@ -567,7 +567,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                         string tx = raw.ReadString("Presentation Context Syntax UID", tl);
                         pl -= (ushort)(tl + 4);
 
-                        _assoc.SetPresentationContextResult(id, (DcmPresContextResult)res);
+                        _assoc.SetPresentationContextResult(id, (DicomPresContextResult)res);
                         _assoc.SetAcceptedTransferSyntax(id, TransferSyntax.GetTransferSyntax(tx));
                     }
                     else

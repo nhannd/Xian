@@ -9,9 +9,7 @@ namespace ClearCanvas.ImageServer.Dicom
     /// </summary>
     public class DicomVr
     {
-
         #region Private Members
-
         private String _name;
         private bool _isText = false;
         private bool _specificCharSet = false;
@@ -20,7 +18,6 @@ namespace ClearCanvas.ImageServer.Dicom
         private bool _is16BitLength = false;
         private char _padChar = ' ';
         private int _unitSize = 1;
-
         #endregion
 
         #region Public Static Members
@@ -212,12 +209,20 @@ namespace ClearCanvas.ImageServer.Dicom
             return _name;
         }
 
+        /// <summary>
+        /// Implicit cast to a String object, for ease of use.
+        /// </summary>
+        public static implicit operator String(DicomVr myVr)
+        {
+            return myVr.ToString();
+        }
+
         #region Public Properties
 
         /// <summary>
         /// Is the VR text based?
         /// </summary>
-        public bool TextVR
+        public bool IsTextVR
         {
             get { return _isText; }
         }
@@ -225,7 +230,7 @@ namespace ClearCanvas.ImageServer.Dicom
         /// <summary>
         /// Does the VR support multiple values?
         /// </summary>
-        public bool MultiValue
+        public bool IsMultiValue
         {
             get { return _isMultiValue; }
         }
@@ -254,16 +259,25 @@ namespace ClearCanvas.ImageServer.Dicom
             get { return _name; }
         }
 
+        /// <summary>
+        /// Does the VR require 16 bit length fields for Explicit VR transfer syntaxes? 
+        /// </summary>
         public bool Is16BitLengthField
         {
             get { return _is16BitLength; }
         }
 
+        /// <summary>
+        /// What is the padding character for the VR?
+        /// </summary>
         public char PadChar
         {
             get { return _padChar; }
         }
 
+        /// <summary>
+        /// For binary VRs, what is the size of each individual value?
+        /// </summary>
         public int UnitSize
         {
             get { return _unitSize; }

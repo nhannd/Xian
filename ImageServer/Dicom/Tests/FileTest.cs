@@ -126,19 +126,19 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
             theSet[DicomTags.PixelData] = pixels;
 
-            SequenceItem item = new SequenceItem();
+            DicomSequenceItem item = new DicomSequenceItem();
             theSet[DicomTags.RequestAttributesSequence].AddSequenceItem(item);
 
             item[DicomTags.RequestedProcedureID].SetStringValue("MRR1234");
             item[DicomTags.ScheduledProcedureStepID].SetStringValue("MRS1234");
 
-            item = new SequenceItem();
+            item = new DicomSequenceItem();
             theSet[DicomTags.RequestAttributesSequence].AddSequenceItem(item);
 
             item[DicomTags.RequestedProcedureID].SetStringValue("MR2R1234");
             item[DicomTags.ScheduledProcedureStepID].SetStringValue("MR2S1234");
 
-            SequenceItem studyItem = new SequenceItem();
+            DicomSequenceItem studyItem = new DicomSequenceItem();
 
             item[DicomTags.ReferencedStudySequence].AddSequenceItem(studyItem);
 

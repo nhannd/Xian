@@ -17,16 +17,32 @@ namespace ClearCanvas.ImageServer.Dicom
     public class DicomTag
     {
         #region Static Members
-        public static uint GetCard(ushort group, ushort element)
+        /// <summary>
+        /// Return a uint with a tags value based on the input group and element.
+        /// </summary>
+        /// <param name="group">The Group for the tag.</param>
+        /// <param name="element">The Element for the tag.</param>
+        /// <returns><code>(uint)group << 16 | (uint)element</code></returns>
+        public static uint GetTagValue(ushort group, ushort element)
         {
             return (uint)group << 16 | (uint)element;
         }
 
+        /// <summary>
+        /// Checks if a Group is private (odd).
+        /// </summary>
+        /// <param name="group">The Group to check.</param>
+        /// <returns>true if the Group is private, false otherwise.</returns>
         public static bool IsPrivateGroup(ushort group)
         {
             return (group & 1) == 1;
         }
-
+        /// <summary>
+        /// Returns an instance of a private tag for a private creator code.
+        /// </summary>
+        /// <param name="group">The Group of the tag.</param>
+        /// <param name="element">The Element for the tag.</param>
+        /// <returns></returns>
         public static DicomTag GetPrivateCreatorTag(ushort group, ushort element)
         {
             return new DicomTag((uint)group << 16 | (uint)(element >> 8), "Private Creator", DicomVr.LOvr, false, 1, 1, false);
@@ -130,23 +146,32 @@ namespace ClearCanvas.ImageServer.Dicom
         }
 
         /// <summary>
-        /// Returns a <see cref="DicomVr"/> object representing the VR of the tag.
+        /// Returns a <see cref="DicomVr"/> object representing the Value Representation (VR) of the tag.
         /// </summary>
         public DicomVr VR
         {
             get { return _vr; }
         }
 
+        /// <summary>
+        /// Gets a uint representing the low Value of Multiplicity defined by DICOM for the tag. 
+        /// </summary>
         public uint VMLow
         {
             get { return _vmLow; }
         }
 
+        /// <summary>
+        /// Gets a uint representing the high Value of Multiplicity defined by DICOM for the tag.
+        /// </summary>
         public uint VMHigh
         {
             get { return _vmHigh; }
         }
         
+        /// <summary>
+        /// Gets a string representing the value of multiplicity defined by DICOM for the tag.
+        /// </summary>
         public string VM
         {
             get
@@ -185,9 +210,9 @@ namespace ClearCanvas.ImageServer.Dicom
         {
             get { return (Group & 1) == 1; }
         }
-
         #endregion
 
+        #region System.Object Overrides
         /// <summary>
         /// Provides a hash code that's more natural by using the
         /// Group and Element number of the tag.
@@ -212,15 +237,6 @@ namespace ClearCanvas.ImageServer.Dicom
         }
 
         /// <summary>
-        /// Implicit cast to a String object, for ease of use.
-        /// </summary>
-        public static implicit operator String(DicomTag myTag)
-        {
-            return myTag.ToString();
-        }
-
-
-        /// <summary>
         /// This override allows the comparison of two DicomTag objects
         /// for semantic equivalence. 
         /// </summary>
@@ -234,7 +250,20 @@ namespace ClearCanvas.ImageServer.Dicom
 
             return (otherTag.GetHashCode() == this.GetHashCode());
         }
+        #endregion
 
+        #region Operators
+        /// <summary>
+        /// Implicit cast to a String object, for ease of use.
+        /// </summary>
+        public static implicit operator String(DicomTag myTag)
+        {
+            return myTag.ToString();
+        }
+
+        /// <summary>
+        /// Equality operator.
+        /// </summary>
         public static bool operator ==(DicomTag t1, DicomTag t2)
         {
             if ((object)t1 == null && (object)t2 == null)
@@ -243,10 +272,18 @@ namespace ClearCanvas.ImageServer.Dicom
                 return false;
             return t1.TagValue == t2.TagValue;
         }
+
+        /// <summary>
+        /// Not equal operator.
+        /// </summary>
         public static bool operator !=(DicomTag t1, DicomTag t2)
         {
             return !(t1 == t2);
         }
+
+        /// <summary>
+        /// Less than operator.
+        /// </summary>
         public static bool operator <(DicomTag t1, DicomTag t2)
         {
             if ((object)t1 == null || (object)t2 == null)
@@ -257,10 +294,18 @@ namespace ClearCanvas.ImageServer.Dicom
                 return true;
             return false;
         }
+
+        /// <summary>
+        /// Greater than operator.
+        /// </summary>
         public static bool operator >(DicomTag t1, DicomTag t2)
         {
             return !(t1 < t2);
         }
+
+        /// <summary>
+        /// Less than or equal to operator.
+        /// </summary>
         public static bool operator <=(DicomTag t1, DicomTag t2)
         {
             if ((object)t1 == null || (object)t2 == null)
@@ -271,6 +316,10 @@ namespace ClearCanvas.ImageServer.Dicom
                 return true;
             return false;
         }
+ 
+        /// <summary>
+        /// Greater than or equal to operator.
+        /// </summary>
         public static bool operator >=(DicomTag t1, DicomTag t2)
         {
             if ((object)t1 == null || (object)t2 == null)
@@ -281,5 +330,6 @@ namespace ClearCanvas.ImageServer.Dicom
                 return true;
             return false;
         }
+        #endregion
     }
 }

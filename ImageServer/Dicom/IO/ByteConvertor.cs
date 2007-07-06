@@ -1,10 +1,13 @@
+/*
+ * Taken from code Copyright (c) Colby Dillion, 2007
+ */
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ClearCanvas.ImageServer.Dicom.IO
 {
-    public static class ByteConverter
+    internal static class ByteConverter
     {
         /// <summary>
         /// Determines if this machine has the same byte

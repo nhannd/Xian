@@ -9,7 +9,7 @@ namespace ClearCanvas.ImageServer.Dicom
 {
     public class AttributeSQ : AbstractAttribute
     {
-        SequenceItem[] _values = null;
+        DicomSequenceItem[] _values = null;
 
         #region Constructors
 
@@ -31,13 +31,13 @@ namespace ClearCanvas.ImageServer.Dicom
         internal AttributeSQ(AttributeSQ attrib, bool copyBinary)
             : base(attrib)
         {
-            SequenceItem[] items = (SequenceItem[])attrib.Values;
+            DicomSequenceItem[] items = (DicomSequenceItem[])attrib.Values;
 
-            _values = new SequenceItem[items.Length];
+            _values = new DicomSequenceItem[items.Length];
 
             for (int i = 0; i < items.Length; i++)
             {
-                _values[i] = (SequenceItem)items[i].Copy(copyBinary);
+                _values[i] = (DicomSequenceItem)items[i].Copy(copyBinary);
             }
         }
 
@@ -45,18 +45,18 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Public Methods
 
-        public override void AddSequenceItem(SequenceItem item)
+        public override void AddSequenceItem(DicomSequenceItem item)
         {
             if (_values == null)
             {
-                _values = new SequenceItem[1];
+                _values = new DicomSequenceItem[1];
                 _values[0] = item;
                 return;
             }
 
-            SequenceItem[] oldValues = _values;
+            DicomSequenceItem[] oldValues = _values;
 
-            _values = new SequenceItem[oldValues.Length + 1];
+            _values = new DicomSequenceItem[oldValues.Length + 1];
             for (int i = 0; i < oldValues.Length; i++)
             {
                 _values[i] = oldValues[i];
@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageServer.Dicom
             if (obj == null || GetType() != obj.GetType()) return false;
 
             AttributeSQ a = (AttributeSQ)obj;
-            SequenceItem[] array = (SequenceItem[])a.Values;
+            DicomSequenceItem[] array = (DicomSequenceItem[])a.Values;
 
             if (Count != a.Count)
                 return false;
@@ -119,9 +119,9 @@ namespace ClearCanvas.ImageServer.Dicom
             get { return _values; }
             set
             {
-                if (value is SequenceItem[])
+                if (value is DicomSequenceItem[])
                 {
-                    _values = (SequenceItem[])value;
+                    _values = (DicomSequenceItem[])value;
                     base.Count = _values.Length;
                     base.StreamLength = (uint)base.Count;
                 }
@@ -164,7 +164,7 @@ namespace ClearCanvas.ImageServer.Dicom
             {
                 length += 4; // length
             }
-            foreach (SequenceItem item in _values)
+            foreach (DicomSequenceItem item in _values)
             {
                 length += 4 + 4; // Sequence Item Tag
                 length += item.CalculateWriteLength(syntax, options & ~DicomWriteOptions.CalculateGroupLengths);
@@ -182,7 +182,7 @@ namespace ClearCanvas.ImageServer.Dicom
         {
             sb.Append(prefix);
             sb.AppendFormat("({0:x4},{1:x4}) {2} ", Tag.Group, Tag.Element, Tag.VR.Name);
-            foreach (SequenceItem item in _values)
+            foreach (DicomSequenceItem item in _values)
             {
                 sb.AppendLine().Append(prefix).Append(" Item:").AppendLine();
                 item.Dump(sb, prefix + "  > ", options);

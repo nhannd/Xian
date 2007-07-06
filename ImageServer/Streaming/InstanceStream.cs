@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageServer.Streaming
 
                             while (itemNode != null)
                             {
-                                SequenceItem theItem = new SequenceItem();
+                                DicomSequenceItem theItem = new DicomSequenceItem();
 
                                 ParseCollection(theItem, itemNode);
 
@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageServer.Streaming
 		{
 			XmlElement instance = null;
 
-			if (collection is SequenceItem)
+			if (collection is DicomSequenceItem)
 			{
 				instance = theDocument.CreateElement("Item");
 			}
@@ -166,8 +166,8 @@ namespace ClearCanvas.ImageServer.Streaming
 
 				if (attribute is AttributeSQ)
 				{
-					SequenceItem[] items = (SequenceItem[])attribute.Values;
-					foreach (SequenceItem item in items)
+					DicomSequenceItem[] items = (DicomSequenceItem[])attribute.Values;
+					foreach (DicomSequenceItem item in items)
 					{
 						XmlElement itemElement = GetMomentoForCollection(theDocument, null, item);
 

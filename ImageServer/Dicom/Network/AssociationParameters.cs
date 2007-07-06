@@ -1,12 +1,15 @@
+/*
+ * Taken from code Copyright (c) Colby Dillion, 2007
+ */
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.ImageServer.Dicom.Exceptions;
 
-namespace ClearCanvas.ImageServer.Dicom
+namespace ClearCanvas.ImageServer.Dicom.Network
 {
-    	public enum DcmRoleSelection {
+    public enum DicomRoleSelection {
 		Disabled,
 		SCU,
 		SCP,
@@ -14,7 +17,7 @@ namespace ClearCanvas.ImageServer.Dicom
 		None
 	}
 
-	public enum DcmPresContextResult : byte {
+	public enum DicomPresContextResult : byte {
 		Proposed = 255,
 		Accept = 0,
 		RejectUser = 1,
@@ -23,28 +26,28 @@ namespace ClearCanvas.ImageServer.Dicom
 		RejectTransferSyntaxesNotSupported = 4
 	}
 
-	internal class DcmPresContext {
+	internal class DicomPresContext {
 		#region Private Members
 		private byte _pcid;
-		private DcmPresContextResult _result;
-		private DcmRoleSelection _roles;
+		private DicomPresContextResult _result;
+		private DicomRoleSelection _roles;
 		private DicomUid _abstract;
 		private List<TransferSyntax> _transfers;
 		#endregion
 
 		#region Public Constructor
-		public DcmPresContext(byte pcid, DicomUid abstractSyntax) {
+		public DicomPresContext(byte pcid, DicomUid abstractSyntax) {
 			_pcid = pcid;
-			_result = DcmPresContextResult.Proposed;
-			_roles = DcmRoleSelection.Disabled;
+			_result = DicomPresContextResult.Proposed;
+			_roles = DicomRoleSelection.Disabled;
 			_abstract = abstractSyntax;
 			_transfers = new List<TransferSyntax>();
 		}
 
-		internal DcmPresContext(byte pcid, DicomUid abstractSyntax, TransferSyntax transferSyntax, DcmPresContextResult result) {
+		internal DicomPresContext(byte pcid, DicomUid abstractSyntax, TransferSyntax transferSyntax, DicomPresContextResult result) {
 			_pcid = pcid;
 			_result = result;
-			_roles = DcmRoleSelection.Disabled;
+			_roles = DicomRoleSelection.Disabled;
 			_abstract = abstractSyntax;
 			_transfers = new List<TransferSyntax>();
 			_transfers.Add(transferSyntax);
@@ -56,18 +59,18 @@ namespace ClearCanvas.ImageServer.Dicom
 			get { return _pcid; }
 		}
 
-		public DcmPresContextResult Result {
+		public DicomPresContextResult Result {
 			get { return _result; }
 		}
 
 		public bool IsRoleSelect {
-			get { return _roles != DcmRoleSelection.Disabled; }
+			get { return _roles != DicomRoleSelection.Disabled; }
 		}
 		public bool IsSupportScuRole {
-			get { return _roles == DcmRoleSelection.SCU || _roles == DcmRoleSelection.Both; }
+			get { return _roles == DicomRoleSelection.SCU || _roles == DicomRoleSelection.Both; }
 		}
 		public bool IsSupportScpRole {
-			get { return _roles == DcmRoleSelection.SCP || _roles == DcmRoleSelection.Both; }
+			get { return _roles == DicomRoleSelection.SCP || _roles == DicomRoleSelection.Both; }
 		}
 
 		public DicomUid AbstractSyntax {
@@ -84,14 +87,14 @@ namespace ClearCanvas.ImageServer.Dicom
 		#endregion
 
 		#region Public Members
-		public void SetResult(DcmPresContextResult result) {
+		public void SetResult(DicomPresContextResult result) {
 			_result = result;
 		}
 
-		public void SetRoleSelect(DcmRoleSelection roles) {
+		public void SetRoleSelect(DicomRoleSelection roles) {
 			_roles = roles;
 		}
-		public DcmRoleSelection GetRoleSelect() {
+		public DicomRoleSelection GetRoleSelect() {
 			return _roles;
 		}
 
@@ -119,17 +122,17 @@ namespace ClearCanvas.ImageServer.Dicom
 
 		public string GetResultDescription() {
 			switch (_result) {
-			case DcmPresContextResult.Accept:
+			case DicomPresContextResult.Accept:
 				return "Accept";
-			case DcmPresContextResult.Proposed:
+			case DicomPresContextResult.Proposed:
 				return "Proposed";
-			case DcmPresContextResult.RejectAbstractSyntaxNotSupported:
+			case DicomPresContextResult.RejectAbstractSyntaxNotSupported:
 				return "Reject - Abstract Syntax Not Supported";
-			case DcmPresContextResult.RejectNoReason:
+			case DicomPresContextResult.RejectNoReason:
 				return "Reject - No Reason";
-			case DcmPresContextResult.RejectTransferSyntaxesNotSupported:
+			case DicomPresContextResult.RejectTransferSyntaxesNotSupported:
 				return "Reject - Transfer Syntaxes Not Supported";
-			case DcmPresContextResult.RejectUser:
+			case DicomPresContextResult.RejectUser:
 				return "Reject - User";
 			default:
 				return "Unknown";
@@ -137,7 +140,8 @@ namespace ClearCanvas.ImageServer.Dicom
 		}
 		#endregion
 	}
-    public class Association
+
+    public class AssociationParameters
     {
         
         #region Private Members
@@ -175,16 +179,16 @@ namespace ClearCanvas.ImageServer.Dicom
 		private uint _maxPdu;
 		private string _calledAe;
 		private string _callingAe;
-		private SortedList<byte, DcmPresContext> _presContexts;
+		private SortedList<byte, DicomPresContext> _presContexts;
 		#endregion
 
 		#region Public Constructor
-		public Association() {
+		public AssociationParameters() {
 			_maxPdu = 128 * 1024;
 			_appCtxNm = DicomUids.DICOMApplicationContextName;
-			_implClass = Implementation.ClassUID;
-			_implVersion = Implementation.Version;
-			_presContexts = new SortedList<byte, DcmPresContext>();
+			_implClass = DicomImplementation.ClassUID;
+			_implVersion = DicomImplementation.Version;
+			_presContexts = new SortedList<byte, DicomPresContext>();
 		}
 		#endregion
 
@@ -235,7 +239,7 @@ namespace ClearCanvas.ImageServer.Dicom
 		/// Adds a Presentation Context to the DICOM Associate.
 		/// </summary>
 		public void AddPresentationContext(byte pcid, DicomUid abstractSyntax) {
-			_presContexts.Add(pcid, new DcmPresContext(pcid, abstractSyntax));
+			_presContexts.Add(pcid, new DicomPresContext(pcid, abstractSyntax));
 		}
 
 		/// <summary>
@@ -274,7 +278,7 @@ namespace ClearCanvas.ImageServer.Dicom
 		/// </summary>
 		/// <param name="pcid">Presentation Context ID</param>
 		/// <param name="result">Result</param>
-		public void SetPresentationContextResult(byte pcid, DcmPresContextResult result) {
+		public void SetPresentationContextResult(byte pcid, DicomPresContextResult result) {
 			GetPresentationContext(pcid).SetResult(result);
 		}
 
@@ -283,7 +287,7 @@ namespace ClearCanvas.ImageServer.Dicom
 		/// </summary>
 		/// <param name="pcid">Presentation Context ID</param>
 		/// <returns>Result</returns>
-		public DcmPresContextResult GetPresentationContextResult(byte pcid) {
+		public DicomPresContextResult GetPresentationContextResult(byte pcid) {
 			return GetPresentationContext(pcid).Result;
 		}
 
@@ -359,7 +363,7 @@ namespace ClearCanvas.ImageServer.Dicom
 		/// <param name="abstractSyntax">Abstract Syntax</param>
 		/// <returns>Presentation Context ID</returns>
 		public byte FindAbstractSyntax(DicomUid abstractSyntax) {
-			foreach (DcmPresContext ctx in _presContexts.Values) {
+			foreach (DicomPresContext ctx in _presContexts.Values) {
 				if (ctx.AbstractSyntax == abstractSyntax)
 					return ctx.ID;
 			}
@@ -373,7 +377,7 @@ namespace ClearCanvas.ImageServer.Dicom
 		/// <param name="transferSyntax">Transfer Syntax</param>
 		/// <returns>Presentation Context ID</returns>
 		public byte FindAbstractSyntaxWithTransferSyntax(DicomUid abstractSyntax, TransferSyntax trasferSyntax) {
-			foreach (DcmPresContext ctx in _presContexts.Values) {
+			foreach (DicomPresContext ctx in _presContexts.Values) {
 				if (ctx.AbstractSyntax == abstractSyntax && ctx.HasTransfer(trasferSyntax))
 					return ctx.ID;
 			}
@@ -409,24 +413,24 @@ namespace ClearCanvas.ImageServer.Dicom
 		/// </summary>
 		/// <param name="pcid">Presentation Context ID</param>
 		/// <param name="roles">Supported Roles</param>
-		public void SetRoleSelect(byte pcid, DcmRoleSelection roles) {
+		public void SetRoleSelect(byte pcid, DicomRoleSelection roles) {
 			GetPresentationContext(pcid).SetRoleSelect(roles);
 		}
 		#endregion
 
 		#region Internal Methods
-		internal void AddPresentationContext(byte pcid, DicomUid abstractSyntax, TransferSyntax transferSyntax, DcmPresContextResult result) {
-			_presContexts.Add(pcid, new DcmPresContext(pcid, abstractSyntax, transferSyntax, result));
+		internal void AddPresentationContext(byte pcid, DicomUid abstractSyntax, TransferSyntax transferSyntax, DicomPresContextResult result) {
+			_presContexts.Add(pcid, new DicomPresContext(pcid, abstractSyntax, transferSyntax, result));
 		}
 
-		internal DcmPresContext GetPresentationContext(byte pcid) {
-			DcmPresContext ctx = null;
+		internal DicomPresContext GetPresentationContext(byte pcid) {
+			DicomPresContext ctx = null;
 			if (!_presContexts.TryGetValue(pcid, out ctx))
 				throw new NetworkException("Invalid Presentaion Context ID");
 			return ctx;
 		}
 
-		internal IList<DcmPresContext> GetPresentationContexts() {
+		internal IList<DicomPresContext> GetPresentationContexts() {
 			return _presContexts.Values;
 		}
 		#endregion
@@ -440,7 +444,7 @@ namespace ClearCanvas.ImageServer.Dicom
 			sb.AppendFormat("Called AE Title:			{0}\n", _calledAe);
 			sb.AppendFormat("Calling AE Title:			{0}\n", _callingAe);
 			sb.AppendFormat("Presentation Contexts:		{0}\n", _presContexts.Count);
-			foreach (DcmPresContext pctx in _presContexts.Values) {
+			foreach (DicomPresContext pctx in _presContexts.Values) {
 				sb.AppendFormat("	Presentation Context {0} [{1}]\n", pctx.ID, pctx.GetResultDescription());
 				sb.AppendFormat("		Abstract: {0}\n", (pctx.AbstractSyntax.Type == UidType.Unknown) ?
 					pctx.AbstractSyntax.UID : pctx.AbstractSyntax.Description);

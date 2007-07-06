@@ -22,14 +22,16 @@ namespace ClearCanvas.ImageServer.Dicom
     public abstract class AbstractAttribute
     {
         #region Private Members
-
         private DicomTag _tag;
         private long _valueCount = 0;
         private uint _length = 0;
         #endregion
 
         #region Abstract and Virtual Methods
-
+        /// <summary>
+        /// Method to return a string representation of the attribute.
+        /// </summary>
+        /// <returns></returns>
         public abstract override string ToString();
         public abstract override bool Equals(object obj);
         public abstract override int GetHashCode();
@@ -38,7 +40,6 @@ namespace ClearCanvas.ImageServer.Dicom
         public abstract AbstractAttribute Copy();
         public abstract void SetStringValue(String stringValue);
         internal abstract ByteBuffer GetByteBuffer(TransferSyntax syntax);
-
         internal abstract AbstractAttribute Copy(bool copyBinary);
 
         internal virtual uint CalculateWriteLength(TransferSyntax syntax, DicomWriteOptions options)
@@ -83,18 +84,17 @@ namespace ClearCanvas.ImageServer.Dicom
         {
             throw new DicomException(SR.InvalidType);
         }
-        public virtual DicomUid GetUID(int i)
+        public virtual DicomUid GetUid(int i)
         {
             throw new DicomException(SR.InvalidType);
         }
-        public virtual void AddSequenceItem(SequenceItem item)
+        public virtual void AddSequenceItem(DicomSequenceItem item)
         {
             throw new DicomException(SR.InvalidType);
         }
         #endregion
 
         #region Constructors
-
         /// <summary>
         /// Internal constructor when a <see cref="DicomTag"/> is used to identify the tag being added.
         /// </summary>
@@ -270,13 +270,13 @@ namespace ClearCanvas.ImageServer.Dicom
             }
             else
             {
-                if (Tag.VR.TextVR)
+                if (Tag.VR.IsTextVR)
                 {
                     String value = null;
                     if (Tag.VR == DicomVr.UIvr)
                     {
                         AttributeUI ui = this as AttributeUI;
-                        DicomUid uid = ui.GetUID(0);
+                        DicomUid uid = ui.GetUid(0);
                         if (uid != null && uid.Type != UidType.Unknown)
                         {
                             value = "=" + uid.Description;

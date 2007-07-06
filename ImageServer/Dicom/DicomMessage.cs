@@ -23,5 +23,17 @@ namespace ClearCanvas.ImageServer.Dicom
                 return SopClass.GetSopClass(sopClassUid);
             }
         }
+
+        public DicomMessage(AttributeCollection command, AttributeCollection data) : base()
+        {
+            base._metaInfo = command;
+            base._dataSet = data;
+        }
+
+        public DicomMessage(DicomFile file)
+        {
+            base._metaInfo = new AttributeCollection();
+            base._dataSet = file.DataSet;
+        }
     }
 }

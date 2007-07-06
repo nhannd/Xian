@@ -1,3 +1,6 @@
+/*
+ * Taken from code Copyright (c) Colby Dillion, 2007
+ */
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -5,7 +8,7 @@ using System.IO;
 
 namespace ClearCanvas.ImageServer.Dicom.IO
 {
-    public class ChunkStream : Stream
+    internal class ChunkStream : Stream
     {
         #region Private Members
         private long _position;

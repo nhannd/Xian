@@ -810,6 +810,12 @@ namespace ClearCanvas.ImageServer.Dicom
                     _values = (int[])value;
                     SetStreamLength();
                 }
+                else if (value is int)
+                {
+                    _values = new int[1];
+                    _values[0] = (int)value;
+                    SetStreamLength();
+                }
                 else if (value is string)
                 {
                     SetStringValue((string)value);
@@ -896,6 +902,12 @@ namespace ClearCanvas.ImageServer.Dicom
                     _values = (short[])value;
                     SetStreamLength();
                 }
+                else if (value is short)
+                {
+                    _values = new short[1];
+                    _values[0] = (short)value;
+                    SetStreamLength();
+                }
                 else if (value is String)
                 {
                     SetStringValue((String)value);
@@ -980,6 +992,12 @@ namespace ClearCanvas.ImageServer.Dicom
                 if (value is uint[])
                 {
                     _values = (uint[])value;
+                    SetStreamLength();
+                }
+                else if (value is uint)
+                {
+                    _values = new uint[1];
+                    _values[0] = (uint)value;
                     SetStreamLength();
                 }
                 else if (value is string)
@@ -1183,6 +1201,12 @@ namespace ClearCanvas.ImageServer.Dicom
                 if (value is ushort[])
                 {
                     _values = (ushort[])value;
+                    SetStreamLength();
+                }
+                else if (value is ushort)
+                {
+                    _values = new ushort[1];
+                    _values[0] = (ushort)value;
                     SetStreamLength();
                 }
                 else if (value is String)

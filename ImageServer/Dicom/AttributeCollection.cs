@@ -80,8 +80,6 @@ namespace ClearCanvas.ImageServer.Dicom
             {
                 AbstractAttribute attr = null;
 
-                //TODO -- change to check if Key Exists
-
                 if (!_attributeList.ContainsKey(tag))
                 {
                     attr = AbstractAttribute.NewAttribute(tag);
@@ -130,7 +128,7 @@ namespace ClearCanvas.ImageServer.Dicom
                     attr = AbstractAttribute.NewAttribute(tag);
                     if (attr == null)
                     {
-                        throw new DicomException("Invalid tag: " + tag.ToString());// TODO:  Hex formating
+                        throw new DicomException("Invalid tag: " + tag.HexString);// TODO:  Hex formating
                     }
                     _attributeList[tag.TagValue] = attr;
                 }

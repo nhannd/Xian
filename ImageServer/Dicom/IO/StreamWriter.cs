@@ -1,3 +1,6 @@
+/*
+ * Taken from code Copyright (c) Colby Dillion, 2007
+ */
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -5,13 +8,13 @@ using System.IO;
 
 namespace ClearCanvas.ImageServer.Dicom.IO
 {
-    public enum DicomWriteStatus
+    internal enum DicomWriteStatus
     {
         Success,
         UnknownError
     }
 
-    public class DicomStreamWriter
+    internal class DicomStreamWriter
     {
         #region Private Members
         private const uint UndefinedLength = 0xFFFFFFFF;
@@ -103,7 +106,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                         _writer.Write((uint)UndefinedLength);
                     }
 
-                    foreach (SequenceItem ids in item.Values as SequenceItem[])
+                    foreach (DicomSequenceItem ids in item.Values as DicomSequenceItem[])
                     {
                         _writer.Write((ushort)DicomTag.Item.Group);
                         _writer.Write((ushort)DicomTag.Item.Element);

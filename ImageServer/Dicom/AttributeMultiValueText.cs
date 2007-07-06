@@ -708,7 +708,7 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #endregion
 
-        public override DicomUid GetUID(int i)
+        public override DicomUid GetUid(int i)
         {
             SopClass sop = SopClass.GetSopClass(base._values[i]);
             if (sop != null)

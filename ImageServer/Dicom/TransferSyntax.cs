@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageServer.Dicom
     }
 
     /// <summary>
-    /// This class contains transfer synatx definitions.
+    /// This class contains transfer syntax definitions.
     /// </summary>
     public class TransferSyntax
     {

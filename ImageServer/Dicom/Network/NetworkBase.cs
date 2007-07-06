@@ -1,3 +1,6 @@
+/*
+ * Taken from code Copyright (c) Colby Dillion, 2007
+ */
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -11,7 +14,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 {
 
 
-    public enum DcmQueryRetrieveLevel
+    public enum DicomQueryRetrieveLevel
     {
         Patient,
         Study,
@@ -20,14 +23,14 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         Worklist
     }
 
-    public enum DcmPriority : ushort
+    public enum DicomPriority : ushort
     {
         Low = 0x0002,
         Medium = 0x0000,
         High = 0x0001
     }
 
-    public enum DcmCommandField : ushort
+    public enum DicomCommandField : ushort
     {
         CStoreRequest = 0x0001,
         CStoreResponse = 0x8001,
@@ -72,12 +75,12 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         }
     }
 
-    public abstract class DcmNetworkBase
+    public abstract class NetworkBase
     {
         #region Protected Members
         private ushort _messageId;
         private Stream _network;
-        private Association _assoc;
+        private AssociationParameters _assoc;
         private DcmDimseInfo _dimse;
         private Thread _thread;
         private bool _stop;
@@ -85,15 +88,16 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         #endregion
 
         #region Public Constructors
-        public DcmNetworkBase()
+        public NetworkBase()
         {
             _messageId = 1;
             _dimseTimeout = 180;
         }
+
         #endregion
 
         #region Public Properties
-        public Association Associate
+        public AssociationParameters Associate
         {
             get { return _assoc; }
         }
@@ -133,6 +137,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
         protected virtual void OnNetworkError(Exception e)
         {
+            
         }
 
         protected virtual void OnDimseTimeout()
@@ -144,12 +149,12 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             throw new Exception("The method or operation is not implemented.");
         }
 
-        protected virtual void OnReceiveAssociateRequest(Association association)
+        protected virtual void OnReceiveAssociateRequest(AssociationParameters association)
         {
             throw new Exception("The method or operation is not implemented.");
         }
 
-        protected virtual void OnReceiveAssociateAccept(Association association)
+        protected virtual void OnReceiveAssociateAccept(AssociationParameters association)
         {
             throw new Exception("The method or operation is not implemented.");
         }
@@ -179,8 +184,9 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         {
         }
 
-        protected virtual void OnReceiveDimse(byte pcid, AttributeCollection command, AttributeCollection dataset)
+        protected virtual bool OnReceiveDimse(byte pcid, AttributeCollection command, AttributeCollection dataset)
         {
+            return false;
         }
 
         protected virtual void OnSendDimseBegin(byte pcid, AttributeCollection command, AttributeCollection dataset, TransferMonitor monitor)
@@ -194,42 +200,6 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         protected virtual void OnSendDimse(byte pcid, AttributeCollection command, AttributeCollection dataset)
         {
         }
-
-
-
-        protected virtual void OnReceiveCStoreRequest(byte presentationID, ushort messageID, DicomUid affectedInstance,
-            DcmPriority priority, string moveAE, ushort moveMessageID, AttributeCollection dataset)
-        {
-        }
-
-        protected virtual void OnReceiveCStoreResponse(byte presentationID, ushort messageID, DicomUid affectedInstance, DcmStatus status)
-        {
-        }
-
-        protected virtual void OnReceiveCEchoRequest(byte presentationID, ushort messageID)
-        {
-        }
-
-        protected virtual void OnReceiveCEchoResponse(byte presentationID, ushort messageID, DcmStatus status)
-        {
-        }
-
-        protected virtual void OnReceiveCFindRequest(byte presentationID, ushort messageID, AttributeCollection dataset)
-        {
-        }
-
-        protected virtual void OnReceiveCFindResponse(byte presentationID, ushort messageID, AttributeCollection dataset, DcmStatus status)
-        {
-        }
-
-        protected virtual void OnReceiveCMoveRequest(byte presentationID, ushort messageID, AttributeCollection dataset)
-        {
-        }
-
-        protected virtual void OnReceiveCMoveResponse(byte presentationID, ushort messageID, DcmStatus status,
-            ushort remain, ushort complete, ushort warning, ushort failure)
-        {
-        }
         #endregion
 
         #region Public Methods
@@ -238,14 +208,20 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             return _messageId++;
         }
 
-        public void SendAssociateRequest(Association associate)
+        public void SendAssociateRequest(AssociationParameters associate)
         {
             _assoc = associate;
             AAssociateRQ pdu = new AAssociateRQ(_assoc);
             SendRawPDU(pdu.Write());
         }
 
-        public void SendAssociateAccept(Association associate)
+        public void SendAssociateAbort(DcmAbortSource source, DcmAbortReason reason)
+        {
+            AAbort pdu = new AAbort(source,reason);
+            SendRawPDU(pdu.Write());
+        }
+
+        public void SendAssociateAccept(AssociationParameters associate)
         {
             AAssociateAC pdu = new AAssociateAC(_assoc);
             SendRawPDU(pdu.Write());
@@ -272,29 +248,29 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         public void SendCEchoRequest(byte presentationID, ushort messageID)
         {
             DicomUid affectedClass = Associate.GetAbstractSyntax(presentationID);
-            AttributeCollection command = CreateRequest(messageID, DcmCommandField.CEchoRequest, affectedClass, false);
+            AttributeCollection command = CreateRequest(messageID, DicomCommandField.CEchoRequest, affectedClass, false);
             SendDimse(presentationID, command, null);
         }
 
         public void SendCEchoResponse(byte presentationID, ushort messageID, DcmStatus status)
         {
             DicomUid affectedClass = Associate.GetAbstractSyntax(presentationID);
-            AttributeCollection command = CreateResponse(messageID, DcmCommandField.CEchoResponse, affectedClass, status);
+            AttributeCollection command = CreateResponse(messageID, DicomCommandField.CEchoResponse, affectedClass, status);
             SendDimse(presentationID, command, null);
         }
 
         public void SendCStoreRequest(byte presentationID, ushort messageID, DicomUid affectedInstance,
-            DcmPriority priority, AttributeCollection dataset)
+            DicomPriority priority, AttributeCollection dataset)
         {
             SendCStoreRequest(presentationID, messageID, affectedInstance, priority, null, 0, dataset);
         }
 
         public void SendCStoreRequest(byte presentationID, ushort messageID, DicomUid affectedInstance,
-            DcmPriority priority, string moveAE, ushort moveMessageID, AttributeCollection dataset)
+            DicomPriority priority, string moveAE, ushort moveMessageID, AttributeCollection dataset)
         {
             DicomUid affectedClass = Associate.GetAbstractSyntax(presentationID);
 
-            AttributeCollection command = CreateRequest(messageID, DcmCommandField.CStoreRequest, affectedClass, true);
+            AttributeCollection command = CreateRequest(messageID, DicomCommandField.CStoreRequest, affectedClass, true);
             command[DicomTags.Priority].Values = (ushort)priority;
             command[DicomTags.AffectedSOPInstanceUID].Values = affectedInstance.UID;
             if (moveAE != null && moveAE != String.Empty)
@@ -309,7 +285,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         public void SendCStoreResponse(byte presentationID, ushort messageID, DicomUid affectedInstance, DcmStatus status)
         {
             DicomUid affectedClass = Associate.GetAbstractSyntax(presentationID);
-            AttributeCollection command = CreateResponse(messageID, DcmCommandField.CStoreResponse, affectedClass, status);
+            AttributeCollection command = CreateResponse(messageID, DicomCommandField.CStoreResponse, affectedClass, status);
             command[DicomTags.AffectedSOPInstanceUID].Values = affectedInstance.UID;
             SendDimse(presentationID, command, null);
         }
@@ -317,21 +293,21 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         public void SendCFindRequest(byte presentationID, ushort messageID, AttributeCollection dataset)
         {
             DicomUid affectedClass = Associate.GetAbstractSyntax(presentationID);
-            AttributeCollection command = CreateRequest(messageID, DcmCommandField.CFindRequest, affectedClass, true);
+            AttributeCollection command = CreateRequest(messageID, DicomCommandField.CFindRequest, affectedClass, true);
             SendDimse(presentationID, command, dataset);
         }
 
         public void SendCMoveRequest(byte presentationID, ushort messageID, string destinationAE, AttributeCollection dataset)
         {
             DicomUid affectedClass = Associate.GetAbstractSyntax(presentationID);
-            AttributeCollection command = CreateRequest(messageID, DcmCommandField.CMoveRequest, affectedClass, true);
+            AttributeCollection command = CreateRequest(messageID, DicomCommandField.CMoveRequest, affectedClass, true);
             command[DicomTags.MoveDestination].Values = destinationAE;
             SendDimse(presentationID, command, dataset);
         }
         #endregion
 
         #region Private Methods
-        private AttributeCollection CreateRequest(ushort messageID, DcmCommandField commandField, DicomUid affectedClass, bool hasDataset)
+        private AttributeCollection CreateRequest(ushort messageID, DicomCommandField commandField, DicomUid affectedClass, bool hasDataset)
         {
             AttributeCollection command = new AttributeCollection();
             command[DicomTags.MessageID].Values = messageID;
@@ -341,7 +317,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             return command;
         }
 
-        private AttributeCollection CreateResponse(ushort messageIdRespondedTo, DcmCommandField commandField, DicomUid affectedClass, DcmStatus status)
+        private AttributeCollection CreateResponse(ushort messageIdRespondedTo, DicomCommandField commandField, DicomUid affectedClass, DcmStatus status)
         {
             AttributeCollection command = new AttributeCollection();
             command[DicomTags.MessageIDBeingRespondedTo].Values = messageIdRespondedTo;
@@ -403,7 +379,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                 {
                     case 0x01:
                         {
-                            _assoc = new Association();
+                            _assoc = new AssociationParameters();
                             AAssociateRQ pdu = new AAssociateRQ(_assoc);
                             pdu.Read(raw);
                             OnReceiveAssociateRequest(_assoc);
@@ -518,10 +494,9 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                                 if (_dimse.IsNewDimse)
                                     OnReceiveDimseBegin(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
                                 OnReceiveDimseProgress(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
-                                OnReceiveDimse(pcid, _dimse.Command, _dimse.Dataset);
-                                ProcessDimse(pcid);
+                                bool ret = OnReceiveDimse(pcid, _dimse.Command, _dimse.Dataset);
                                 _dimse = null;
-                                return true;
+                                return ret;
                             }
                         }
                     }
@@ -558,10 +533,9 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                             if (_dimse.IsNewDimse)
                                 OnReceiveDimseBegin(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
                             OnReceiveDimseProgress(pcid, _dimse.Command, _dimse.Dataset, _dimse.Stats);
-                            OnReceiveDimse(pcid, _dimse.Command, _dimse.Dataset);
-                            ProcessDimse(pcid);
+                            bool ret = OnReceiveDimse(pcid, _dimse.Command, _dimse.Dataset);
                             _dimse = null;
-                            return true;
+                            return ret;
                         }
                     }
                 }
@@ -580,81 +554,12 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
                 return true;
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 //do something here!
-                //TODO Debug.Log.Error(e.ToString());
+                DicomLogger.LogError(e.ToString());
                 return false;
             }
-        }
-
-        private bool ProcessDimse(byte pcid)
-        {
-            ushort messageID = _dimse.Command[DicomTags.MessageID].GetUInt16(1);
-            DcmPriority priority = (DcmPriority)_dimse.Command[DicomTags.Priority].GetUInt16(0);
-            DcmCommandField commandField = (DcmCommandField)_dimse.Command[DicomTags.CommandField].GetUInt16(0);
-
-            if (commandField == DcmCommandField.CStoreRequest)
-            {
-                DicomUid affectedInstance = _dimse.Command[DicomTags.AffectedSOPInstanceUID].GetUID(0);
-                string moveAE = _dimse.Command[DicomTags.MoveOriginatorApplicationEntityTitle].ToString();
-                ushort moveMessageID = _dimse.Command[DicomTags.MoveOriginatorMessageID].GetUInt16(0);
-                OnReceiveCStoreRequest(pcid, messageID, affectedInstance, priority, moveAE, moveMessageID, _dimse.Dataset);
-                return true;
-            }
-
-            if (commandField == DcmCommandField.CStoreResponse)
-            {
-                DicomUid affectedInstance = _dimse.Command[DicomTags.AffectedSOPInstanceUID].GetUID(0);
-                DcmStatus status = DcmStatuses.Lookup(_dimse.Command[DicomTags.Status].GetUInt16(0, 0x0211));
-                OnReceiveCStoreResponse(pcid, messageID, affectedInstance, status);
-                return true;
-            }
-
-            if (commandField == DcmCommandField.CEchoRequest)
-            {
-                OnReceiveCEchoRequest(pcid, messageID);
-                return true;
-            }
-
-            if (commandField == DcmCommandField.CEchoResponse)
-            {
-                DcmStatus status = DcmStatuses.Lookup(_dimse.Command[DicomTags.Status].GetUInt16(0, 0x0211));
-                OnReceiveCEchoResponse(pcid, messageID, status);
-                return true;
-            }
-
-            if (commandField == DcmCommandField.CFindRequest)
-            {
-                OnReceiveCFindRequest(pcid, messageID, _dimse.Dataset);
-                return true;
-            }
-
-            if (commandField == DcmCommandField.CFindResponse)
-            {
-                DcmStatus status = DcmStatuses.Lookup(_dimse.Command[DicomTags.Status].GetUInt16(0, 0x0211));
-                OnReceiveCFindResponse(pcid, messageID, _dimse.Dataset, status);
-                return true;
-            }
-
-            if (commandField == DcmCommandField.CMoveRequest)
-            {
-                OnReceiveCMoveRequest(pcid, messageID, _dimse.Dataset);
-                return true;
-            }
-
-            if (commandField == DcmCommandField.CMoveResponse)
-            {
-                DcmStatus status = DcmStatuses.Lookup(_dimse.Command[DicomTags.Status].GetUInt16(0, 0x0211));
-                ushort remain = _dimse.Command[DicomTags.NumberofRemainingSuboperations].GetUInt16(0);
-                ushort complete = _dimse.Command[DicomTags.NumberofCompletedSuboperations].GetUInt16(0);
-                ushort warning = _dimse.Command[DicomTags.NumberofWarningSuboperations].GetUInt16(0);
-                ushort failure = _dimse.Command[DicomTags.NumberofFailedSuboperations].GetUInt16(0);
-                OnReceiveCMoveResponse(pcid, messageID, status, remain, complete, warning, failure);
-                return true;
-            }
-
-            return false;
         }
 
         private void SendRawPDU(RawPDU pdu)
