@@ -6,13 +6,14 @@
 		<CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
 		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
 		<LogsDirectory>$(DistributionDirectory)\logs</LogsDirectory>
-	</PropertyGroup>
+    <SourceEmptyDatabaseFile>$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf</SourceEmptyDatabaseFile>
+  </PropertyGroup>
 
-	<ItemGroup>
-		<DatabaseFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf" />
-	</ItemGroup>
+  <ItemGroup>
+    <DatabaseFiles Include="$(SourceEmptyDatabaseFile)" />
+  </ItemGroup>
 
-	<ItemGroup>
+  <ItemGroup>
 		<SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\NHibernateDriver\bin\$(Configuration)\ClearCanvas.Dicom.DataStore.NHibernateDriver.dll" />
 		<SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\sqlceca30.dll" />
 		<SqlCEFiles Include="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\sqlcecompact30.dll" />
@@ -74,7 +75,7 @@
 		<!-- Copy database file -->
 		<MakeDir Condition="!Exists('$(DatabaseDirectory)')" Directories="$(DatabaseDirectory)" />
 		<Copy SourceFiles="@(DatabaseFiles)" DestinationFolder="$(DatabaseDirectory)" />
-		<Copy SourceFiles="$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf" DestinationFiles="$(DatabaseDirectory)\viewer.sdf" />
+		<Copy Condition="!Exists('$(DatabaseDirectory)\viewer.sdf')" SourceFiles="$(SourceEmptyDatabaseFile)" DestinationFiles="$(DatabaseDirectory)\viewer.sdf" />
 	</Target>
 
 	<Target Name="Copy Rest of Files">
