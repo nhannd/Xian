@@ -261,19 +261,6 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		/// <summary>
-		/// Gets a map of <see cref="IStudyFinder"/> objects.
-		/// </summary>
-		public static StudyFinderMap StudyFinders
-		{
-			get
-			{
-				if (_studyFinders == null)
-					_studyFinders = new StudyFinderMap();
-
-				return _studyFinders;
-			}
-		}
 
 		/// <summary>
 		/// Gets a string containing the patients currently loaded in this
@@ -322,6 +309,17 @@ namespace ClearCanvas.ImageViewer
 
 		#region Private/internal properties
 
+		private static StudyFinderMap StudyFinders
+		{
+			get
+			{
+				if (_studyFinders == null)
+					_studyFinders = new StudyFinderMap();
+
+				return _studyFinders;
+			}
+		}
+
 		private StudyLoaderMap StudyLoaders
 		{
 			get
@@ -354,10 +352,31 @@ namespace ClearCanvas.ImageViewer
 		#region Public methods
 
 		/// <summary>
+		/// Queries for studies matching a specified set of query parameters.
+		/// </summary>
+		/// <param name="queryParameters">The search criteria.</param>
+		/// <param name="targetServer">The server to query. Can be null
+		/// if the <paramref name="source"/> does not support the querying
+		/// of different servers.</param>
+		/// <param name="source">The name of the <see cref="IStudyFinder"/> to use, which is specified
+		/// by <see cref="IStudyFinder.Name"/>.</param>
+		/// <returns></returns>
+		public static StudyItemList FindStudy(
+			QueryParameters queryParameters, 
+			object targetServer,
+			string studyFinderName)
+		{
+			Platform.CheckForNullReference(queryParameters, "queryParameters");
+			Platform.CheckForEmptyString(studyFinderName, "studyFinderName");
+
+			return ImageViewerComponent.StudyFinders[studyFinderName].Query(queryParameters, targetServer);
+		}
+
+		/// <summary>
 		/// Loads a study with a specific Study Instance UID from a specific source.
 		/// </summary>
 		/// <param name="studyInstanceUID">The Study Instance UID of the study to be loaded.</param>
-		/// <param name="source">The name of the <see cref="IStudyLoader"/> to use, which is specified
+		/// <param name="studyLoaderName">The name of the <see cref="IStudyLoader"/> to use, which is specified
 		/// by <see cref="IStudyLoader.Name"/>.</param>
 		/// <remarks>After this method is executed, the image viewer's <see cref="StudyTree"/>
 		/// will be populated with the appropriate <see cref="Study"/>, <see cref="Series"/> 
@@ -370,9 +389,12 @@ namespace ClearCanvas.ImageViewer
 		/// just pass in the name provided by <see cref="IStudyLoader.Name"/> as the source.
 		/// </remarks>
 		/// <exception cref="OpenStudyException">The study could not be opened.</exception>
-		public void LoadStudy(string studyInstanceUID, string source)
+		public void LoadStudy(string studyInstanceUID, string studyLoaderName)
 		{
-			IStudyLoader studyLoader = this.StudyLoaders[source];
+			Platform.CheckForEmptyString(studyInstanceUID, "studyInstanceUID");
+			Platform.CheckForEmptyString(studyLoaderName, "studyLoaderName");
+
+			IStudyLoader studyLoader = this.StudyLoaders[studyLoaderName];
 			int totalImages = 0;
 
 			try

@@ -25,14 +25,10 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			}
 		}
 
-        public StudyItemList Query<T>(T targetServerObject, QueryParameters queryParams)
+        public StudyItemList Query(QueryParameters queryParams, object targetServer)
         {
-            _selectedServer = (targetServerObject as ApplicationEntity);
-            return Query(queryParams);
-        }
+			_selectedServer = (ApplicationEntity)targetServer;
 
-        public StudyItemList Query(QueryParameters queryParams)
-        {
 			QueryKey queryKey = new QueryKey();
             queryKey.Add(DicomTag.PatientId, queryParams["PatientId"]);
             queryKey.Add(DicomTag.AccessionNumber, queryParams["AccessionNumber"]);

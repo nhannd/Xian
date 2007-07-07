@@ -20,19 +20,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
         string Name { get; }
 
 		/// <summary>
-		/// Queries for a study matching the specified query parameters.
-		/// </summary>
-		/// <param name="queryParams"></param>
-		/// <returns></returns>
-        StudyItemList Query(QueryParameters queryParams);
-
-		/// <summary>
 		/// Queries for a study on a target server matching the specified query parameters.
 		/// </summary>
-		/// <typeparam name="T"></typeparam>
-		/// <param name="targetServerObject"></param>
 		/// <param name="queryParams"></param>
 		/// <returns></returns>
-        StudyItemList Query<T>(T targetServerObject, QueryParameters queryParams);
+        StudyItemList Query(QueryParameters queryParams, object targetServer);
     }
 }

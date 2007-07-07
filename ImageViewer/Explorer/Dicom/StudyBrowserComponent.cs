@@ -457,12 +457,19 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 					if (serverNode.IsLocalDataStore)
 					{
-						serverStudyItemList = ImageViewerComponent.StudyFinders["DICOM_LOCAL"].Query(queryParams);
+						serverStudyItemList = ImageViewerComponent.FindStudy(queryParams, null, "DICOM_LOCAL");
 					}
 					else if (serverNode.IsServer)
 					{
 						Server server = serverNode as Server;
-						serverStudyItemList = ImageViewerComponent.StudyFinders["DICOM_REMOTE"].Query(new ApplicationEntity(new HostName(server.Host), new AETitle(server.AETitle), new ListeningPort(server.Port)), queryParams);
+
+						ApplicationEntity ae = 
+							new ApplicationEntity(
+								new HostName(server.Host), 
+								new AETitle(server.AETitle), 
+								new ListeningPort(server.Port));
+
+						serverStudyItemList = ImageViewerComponent.FindStudy(queryParams, ae , "DICOM_REMOTE");
 					}
 					else
 					{
@@ -612,7 +619,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 				parameters["StudyInstanceUid"] = studyUids;
 
 				StudyItemList list = new StudyItemList();
-				list = ImageViewerComponent.StudyFinders["DICOM_LOCAL"].Query(parameters);
+				list = ImageViewerComponent.FindStudy(parameters, null, "DICOM_LOCAL");
 
 				foreach (StudyItem item in list)
 				{

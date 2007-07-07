@@ -24,13 +24,10 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
             }
         }
 
-        public StudyItemList Query<T>(T targetServerObject, QueryParameters queryParams)
+        public StudyItemList Query(QueryParameters queryParams, object targetServer)
         {
-			return Query(queryParams);
-        }
+			Platform.CheckForNullReference(queryParams, "queryParams");
 
-        public StudyItemList Query(QueryParameters queryParams)
-        {
             QueryKey queryKey = new QueryKey();
             queryKey.Add(DicomTag.PatientId, queryParams["PatientId"]);
             queryKey.Add(DicomTag.AccessionNumber, queryParams["AccessionNumber"]);
