@@ -436,7 +436,7 @@
     <None Include="ClassDiagrams\InputManagement.cd" />
     <None Include="ClassDiagrams\LUT.cd" />
     <None Include="ClassDiagrams\PresentationImage.cd" />
-    <None Include="ClassDiagrams\Tools.cd" />
+    <None Include="ClassDiagrams\ImageViewerTools.cd" />
     <None Include="ClassDiagrams\SceneGraph.cd" />
     <None Include="ClassDiagrams\GraphicStates.cd" />
     <None Include="ClassDiagrams\InteractiveGraphics.cd" />

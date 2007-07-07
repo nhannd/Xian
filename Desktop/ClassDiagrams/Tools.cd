@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Font Name="Tahoma" Size="8.4" />
-  <Class Name="ClearCanvas.Desktop.Tools.Tool" Collapsed="true">
+  <Class Name="ClearCanvas.Desktop.Tools.ToolBase" Collapsed="true">
     <Position X="2.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
-      <FileName>Tools\Tool.cs</FileName>
+      <FileName>Tools\ToolBase.cs</FileName>
       <HashCode>AAAAAAAAICIABQAAAAAAAAAAAAAABAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -16,7 +16,7 @@
     <Position X="0.5" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <FileName>Tools\ToolSet.cs</FileName>
-      <HashCode>AAAAAAAAIABAAAAAAAAAAAAACAAAAAAAQAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAICBAAAAAAAAAAAAACAAAAAAAQAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
@@ -42,7 +42,7 @@
     <Position X="5.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Actions\IAction.cs</FileName>
-      <HashCode>AAAAAAAAEIAgAIIAAAAAACAAAAAAAAAAAAAAIQAAAAA=</HashCode>
+      <HashCode>AAAAgAAAkIAhAKJAAAAAAAAAAAAAAABYAAAAIQAAAAA=</HashCode>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ClearCanvas.Desktop.Tools.IToolSet" Collapsed="true">
@@ -53,7 +53,6 @@
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="Tools" />
-      <Property Name="Actions" />
     </ShowAsCollectionAssociation>
   </Interface>
   <Interface Name="ClearCanvas.Desktop.Tools.IToolContext" Collapsed="true">

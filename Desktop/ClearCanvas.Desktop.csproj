@@ -242,11 +242,12 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Actions\Actions.cd" />
+    <None Include="ClassDiagrams\Actions.cd" />
     <None Include="app.config" />
-    <None Include="ApplicationComponents.cd" />
+    <None Include="ClassDiagrams\ApplicationComponents.cd" />
+    <None Include="ClassDiagrams\DesktopActions.cd" />
     <None Include="ClassDiagrams\UndoRedo.cd" />
-    <None Include="Desktop.cd" />
+    <None Include="ClassDiagrams\Desktop.cd" />
     <None Include="ExceptionHandlerSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ExceptionHandlerSettings.Designer.cs</LastGenOutput>
@@ -255,7 +256,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>FormatSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Tools\Tools.cd" />
+    <None Include="ClassDiagrams\Tools.cd" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tools\Tests\" />

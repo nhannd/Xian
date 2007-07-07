@@ -2,134 +2,93 @@
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Font Name="Tahoma" Size="8.25" />
   <Class Name="ClearCanvas.ImageViewer.ImageViewerComponent" Collapsed="true" BaseTypeListCollapsed="true">
-    <Position X="0.5" Y="3" Width="2" />
+    <Position X="0.5" Y="2.75" Width="2" />
     <TypeIdentifier>
       <FileName>ImageViewerComponent.cs</FileName>
-      <HashCode>QACAoCAAUCBgIAAAAAMAAEAEFEAIEAAAIQgCCEAQIMQ=</HashCode>
+      <HashCode>QCCAoCABUChgIAAAgAMAAEAEFEAIEAAAIAgCCEAQIMQ=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Property Name="CommandHistory" />
-      <Property Name="EventBroker" />
-      <Property Name="LogicalWorkspace" />
       <Property Name="PhysicalWorkspace" />
-      <Property Name="ShortcutManager" />
-      <Property Name="StudyFinders" />
+      <Property Name="LogicalWorkspace" />
+      <Property Name="EventBroker" />
       <Property Name="StudyTree" />
     </ShowAsAssociation>
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
-    <NestedTypes>
-      <Class Name="ClearCanvas.ImageViewer.ImageViewerComponent.ImageViewerToolContext" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>ImageViewerComponent.cs</NewMemberFileName>
-        </TypeIdentifier>
-        <Lollipop Position="0.2" />
-      </Class>
-    </NestedTypes>
     <AssociationLine Name="CommandHistory" Type="ClearCanvas.Desktop.CommandHistory" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="2.5" Y="3.375" />
-        <Point X="2.875" Y="3.375" />
-        <Point X="2.875" Y="1.528" />
-        <Point X="4.5" Y="1.528" />
-      </Path>
-    </AssociationLine>
-    <AssociationLine Name="EventBroker" Type="ClearCanvas.ImageViewer.EventBroker" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="2.5" Y="3.375" />
-        <Point X="2.875" Y="3.375" />
-        <Point X="2.875" Y="0.778" />
-        <Point X="4.5" Y="0.778" />
-      </Path>
-    </AssociationLine>
-    <AssociationLine Name="LogicalWorkspace" Type="ClearCanvas.ImageViewer.ILogicalWorkspace" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="2.5" Y="3.375" />
-        <Point X="2.875" Y="3.375" />
-        <Point X="2.875" Y="2.347" />
-        <Point X="4.5" Y="2.347" />
+        <Point X="2.5" Y="3.125" />
+        <Point X="2.875" Y="3.125" />
+        <Point X="2.875" Y="4.778" />
+        <Point X="4.5" Y="4.778" />
       </Path>
     </AssociationLine>
     <AssociationLine Name="PhysicalWorkspace" Type="ClearCanvas.ImageViewer.IPhysicalWorkspace" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="2.5" Y="3.375" />
-        <Point X="2.875" Y="3.375" />
-        <Point X="2.875" Y="3.604" />
-        <Point X="4.5" Y="3.604" />
+        <Point X="2.5" Y="3.125" />
+        <Point X="2.875" Y="3.125" />
+        <Point X="2.875" Y="2.354" />
+        <Point X="4.5" Y="2.354" />
       </Path>
     </AssociationLine>
-    <AssociationLine Name="ShortcutManager" Type="ClearCanvas.ImageViewer.InputManagement.IViewerShortcutManager" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="LogicalWorkspace" Type="ClearCanvas.ImageViewer.ILogicalWorkspace" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="2.5" Y="3.375" />
-        <Point X="2.875" Y="3.375" />
-        <Point X="2.875" Y="6.028" />
-        <Point X="4.5" Y="6.028" />
+        <Point X="2.5" Y="3.125" />
+        <Point X="2.875" Y="3.125" />
+        <Point X="2.875" Y="3.097" />
+        <Point X="4.5" Y="3.097" />
       </Path>
     </AssociationLine>
-    <AssociationLine Name="StudyFinders" Type="ClearCanvas.ImageViewer.StudyManagement.StudyFinderMap" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="EventBroker" Type="ClearCanvas.ImageViewer.EventBroker" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="2.5" Y="3.375" />
-        <Point X="2.875" Y="3.375" />
-        <Point X="2.875" Y="5.113" />
-        <Point X="4.5" Y="5.113" />
+        <Point X="2.5" Y="3.125" />
+        <Point X="2.875" Y="3.125" />
+        <Point X="2.875" Y="4.028" />
+        <Point X="4.5" Y="4.028" />
       </Path>
     </AssociationLine>
     <AssociationLine Name="StudyTree" Type="ClearCanvas.ImageViewer.StudyManagement.StudyTree" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="2.5" Y="3.375" />
-        <Point X="2.875" Y="3.375" />
-        <Point X="2.875" Y="4.278" />
-        <Point X="4.5" Y="4.278" />
+        <Point X="2.5" Y="3.125" />
+        <Point X="2.875" Y="3.125" />
+        <Point X="2.875" Y="1.278" />
+        <Point X="4.5" Y="1.278" />
       </Path>
     </AssociationLine>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.Desktop.CommandHistory" Collapsed="true">
-    <Position X="4.5" Y="1.25" Width="1.5" />
+    <Position X="4.5" Y="4.5" Width="1.5" />
     <TypeIdentifier />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.EventBroker" Collapsed="true">
-    <Position X="4.5" Y="0.5" Width="1.5" />
+    <Position X="4.5" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <FileName>EventBroker.cs</FileName>
-      <HashCode>gAgAAgAAAAgAAIABMIABAgAQBAAAigACAgqABAggAAA=</HashCode>
+      <HashCode>gAgAAgAAAAgAAIAAEIABAgAQBAAAigECAAqAFAogAAA=</HashCode>
     </TypeIdentifier>
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.StudyManagement.StudyFinderMap" Collapsed="true">
-    <Position X="4.5" Y="5" Width="1.5" />
-    <TypeIdentifier>
-      <FileName>StudyManagement\StudyFinderMap.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAAAACAAAAAAAAAAgAAAEAAAAAAAEAAA=</HashCode>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.StudyManagement.StudyTree" Collapsed="true">
-    <Position X="4.5" Y="4" Width="1.5" />
+    <Position X="4.5" Y="1" Width="1.5" />
     <TypeIdentifier>
       <FileName>StudyManagement\StudyTree.cs</FileName>
       <HashCode>AAAAAAAAACAAAEgiAACAABAAAkFIAAAABAAAAACDACA=</HashCode>
     </TypeIdentifier>
   </Class>
   <Interface Name="ClearCanvas.ImageViewer.ILogicalWorkspace" Collapsed="true">
-    <Position X="4.5" Y="2" Width="1.75" />
+    <Position X="4.5" Y="2.75" Width="1.75" />
     <TypeIdentifier>
       <FileName>ILogicalWorkspace.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAIAAAAAgAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAIAAAAAgAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.IPhysicalWorkspace" Collapsed="true">
-    <Position X="4.5" Y="3" Width="1.75" />
+    <Position X="4.5" Y="1.75" Width="1.75" />
     <TypeIdentifier>
       <FileName>IPhysicalWorkspace.cs</FileName>
-      <HashCode>AAAAAAAAABBAAkAAAAAAAAAAAAAAAgBAAAACCAkAAAA=</HashCode>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="ClearCanvas.ImageViewer.InputManagement.IViewerShortcutManager" Collapsed="true">
-    <Position X="4.5" Y="5.75" Width="2" />
-    <TypeIdentifier>
-      <FileName>InputManagement\IViewerShortcutManager.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAQIABAAAAAAAAAEAAAAAAAAA=</HashCode>
+      <HashCode>AAAAAAAAAABABEAACAAAAAAAEAAAAgBAAAACCAkAAAA=</HashCode>
     </TypeIdentifier>
   </Interface>
 </ClassDiagram>
