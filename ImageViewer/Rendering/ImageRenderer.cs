@@ -34,12 +34,13 @@ namespace ClearCanvas.ImageViewer.Rendering
 			byte[] srcPixelData = imageGraphic.PixelData.Raw;
 
 			int[] lutData = null;
-			int srcBytesPerPixel = imageGraphic.BitsAllocated / 8;
 
 			IndexedImageGraphic grayscaleImage = imageGraphic as IndexedImageGraphic;
 
 			if (grayscaleImage != null)
 				lutData = grayscaleImage.OutputLUT;
+
+			ColorImageGraphic colorImage = imageGraphic as ColorImageGraphic;
 
 			bool swapXY = ImageRenderer.IsRotated(imageGraphic);
 
@@ -50,22 +51,49 @@ namespace ClearCanvas.ImageViewer.Rendering
 					if (imageGraphic.InterpolationMode == 
 						ClearCanvas.ImageViewer.Graphics.InterpolationMode.Bilinear)
 					{
-						ImageInterpolatorBilinear.Interpolate(
-							srcViewableRectangle,
-							pSrcPixelData,
-							imageGraphic.Columns,
-							imageGraphic.Rows,
-							srcBytesPerPixel,
-							imageGraphic.BitsStored,
-							dstViewableRectangle,
-							(byte*)pDstPixelData,
-							dstWidth,
-							dstBytesPerPixel,
-							swapXY,
-							pLutData,
-							imageGraphic.IsColor,
-							imageGraphic.IsPlanar,
-							imageGraphic.IsSigned);
+						if (grayscaleImage != null)
+						{
+							int srcBytesPerPixel = imageGraphic.BitsAllocated / 8;
+
+							ImageInterpolatorBilinear.Interpolate(
+								srcViewableRectangle,
+								pSrcPixelData,
+								grayscaleImage.Columns,
+								grayscaleImage.Rows,
+								srcBytesPerPixel,
+								grayscaleImage.BitsStored,
+								dstViewableRectangle,
+								(byte*)pDstPixelData,
+								dstWidth,
+								dstBytesPerPixel,
+								swapXY,
+								pLutData,
+								false,
+								false,
+								grayscaleImage.IsSigned);
+						}
+
+						if (colorImage != null)
+						{
+							int srcBytesPerPixel = 4;
+
+							ImageInterpolatorBilinear.Interpolate(
+								srcViewableRectangle,
+								pSrcPixelData,
+								colorImage.Columns,
+								colorImage.Rows,
+								srcBytesPerPixel,
+								32,
+								dstViewableRectangle,
+								(byte*)pDstPixelData,
+								dstWidth,
+								dstBytesPerPixel,
+								swapXY,
+								pLutData,
+								true,
+								false,
+								false);
+						}
 					}
 				}
 			}

@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		internal ModalityLUTLinear GetModalityLUTLinear(
 			int bitsStored,
-			int pixelRepresentation,
+			bool isSigned,
 			double rescaleSlope,
 			double rescaleIntercept)
 		{
@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			foreach (ModalityLUTLinear lut in this.ModalityLUTs)
 			{
 				if (lut.BitsStored == bitsStored &&
-					lut.PixelRepresentation == pixelRepresentation &&
+					lut.IsSigned == isSigned &&
 					lut.RescaleSlope == rescaleSlope &&
 					lut.RescaleIntercept == rescaleIntercept)
 					return lut;
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			ModalityLUTLinear modalityLut = new ModalityLUTLinear(
 				bitsStored, 
-				pixelRepresentation, 
+				isSigned, 
 				rescaleSlope, 
 				rescaleIntercept);
 
@@ -95,20 +95,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 		internal PresentationLUT GetPresentationLUT(
 			int minInputValue,
 			int maxInputValue,
-			PhotometricInterpretation photometricInterpretation)
+			bool invert)
 		{
 			foreach (PresentationLUT lut in this.PresentationLUTs)
 			{
 				if (lut.MaxInputValue == maxInputValue &&
 					lut.MinInputValue == minInputValue &&
-					lut.PhotometricInterpretation == photometricInterpretation)
+					lut.Invert == invert)
 					return lut;
 			}
 
 			PresentationLUT presentationLut = new PresentationLUT(
 				minInputValue, 
 				maxInputValue, 
-				photometricInterpretation);
+				invert);
 
 			this.PresentationLUTs.Add(presentationLut);
 

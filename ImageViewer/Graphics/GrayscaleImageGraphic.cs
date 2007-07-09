@@ -13,11 +13,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </summary>
 	public class GrayscaleImageGraphic : IndexedImageGraphic, IVOILUTLinearProvider
 	{
+		#region Private fields
+
 		private LUTComposer _lutComposer;
 		private LUTFactory _lutFactory;
 		
 		private int _minPixelValue;
 		private int _maxPixelValue;
+
+		#endregion
+
+		#region Public constructors
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="GrayscaleImageGraphic"/>
@@ -38,10 +44,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			imageSop.BitsAllocated,
 			imageSop.BitsStored,
 			imageSop.HighBit,
-			imageSop.SamplesPerPixel,
-			imageSop.PixelRepresentation,
-			imageSop.PlanarConfiguration,
-			imageSop.PhotometricInterpretation,
+			imageSop.PixelRepresentation != 0 ? true : false,
+			imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ? true: false,
 			imageSop.RescaleSlope,
 			imageSop.RescaleIntercept,
 			imageSop.PixelData)
@@ -58,10 +62,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="bitsAllocated"></param>
 		/// <param name="bitsStored"></param>
 		/// <param name="highBit"></param>
-		/// <param name="samplesPerPixel"></param>
-		/// <param name="pixelRepresentation"></param>
-		/// <param name="planarConfiguration"></param>
-		/// <param name="photometricInterpretation"></param>
+		/// <param name="isSigned"></param>
+		/// <param name="inverted"></param>
 		/// <param name="rescaleSlope"></param>
 		/// <param name="rescaleIntercept"></param>
 		/// <param name="pixelData"></param>
@@ -71,10 +73,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			int bitsAllocated,
 			int bitsStored,
 			int highBit,
-			int samplesPerPixel,
-			int pixelRepresentation,
-			int planarConfiguration,
-			PhotometricInterpretation photometricInterpretation,
+			bool isSigned,
+			bool inverted,
 			double rescaleSlope,
 			double rescaleIntercept,
 			byte[] pixelData)
@@ -84,17 +84,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 				bitsAllocated,
 				bitsStored,
 				highBit,
-				samplesPerPixel,
-				pixelRepresentation,
-				planarConfiguration,
-				photometricInterpretation,
+				isSigned,
 				pixelData)
 		{
 			_minPixelValue = int.MinValue;
 			_maxPixelValue = int.MaxValue;
 
-			InstallGrayscaleLUTs(rescaleSlope, rescaleIntercept, photometricInterpretation);
+			InstallGrayscaleLUTs(rescaleSlope, rescaleIntercept, inverted);
 		}
+
+		#endregion
+
+		#region Public properties
 
 		/// <summary>
 		/// Returns the minimum pixel value in the image pixel data itself.  Note that on first calling the get method
@@ -107,13 +108,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get
 			{
 				if (_minPixelValue == int.MinValue)
-					this.PixelData.CalculateMinMaxPixelValue(out _minPixelValue, out _maxPixelValue);
+					((IndexedPixelData)this.PixelData).CalculateMinMaxPixelValue(out _minPixelValue, out _maxPixelValue);
 
 				return _minPixelValue;
 			}
 			protected set
 			{
-				Platform.CheckArgumentRange(value, base.PixelData.AbsoluteMinPixelValue, base.PixelData.AbsoluteMaxPixelValue, "value");
+				Platform.CheckArgumentRange(
+					value, 
+					((IndexedPixelData)this.PixelData).AbsoluteMinPixelValue, 
+					((IndexedPixelData)this.PixelData).AbsoluteMaxPixelValue, "value");
+
 				_minPixelValue = value;
 			}
 		}
@@ -129,13 +134,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get
 			{
 				if (_maxPixelValue == int.MaxValue)
-					this.PixelData.CalculateMinMaxPixelValue(out _minPixelValue, out _maxPixelValue);
+					((IndexedPixelData)this.PixelData).CalculateMinMaxPixelValue(out _minPixelValue, out _maxPixelValue);
 
 				return _maxPixelValue;
 			}
 			protected set
 			{
-				Platform.CheckArgumentRange(value, base.PixelData.AbsoluteMinPixelValue, base.PixelData.AbsoluteMaxPixelValue, "value");
+				Platform.CheckArgumentRange(
+					value, 
+					((IndexedPixelData)this.PixelData).AbsoluteMinPixelValue, 
+					((IndexedPixelData)base.PixelData).AbsoluteMaxPixelValue, "value");
+
 				_maxPixelValue = value;
 			}
 		}
@@ -188,6 +197,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
+		#endregion
+
+		#region Private properties
+
 		/// <summary>
 		/// Gets the <see cref="LUTComposer"/>.
 		/// </summary>
@@ -213,6 +226,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		#endregion
+
+		#region Disposal
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -225,6 +242,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		#endregion
+
+		#region Static methods
+
 		public static IStatefulVoiLutLinear NewVoiLutLinear(GrayscaleImageGraphic fromGraphic, IVoiLutLinearState state)
 		{
 			return new StatefulVoiLutLinear(state, fromGraphic.ModalityLUT.MinOutputValue, fromGraphic.ModalityLUT.MaxOutputValue);
@@ -235,14 +256,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return new StatefulVoiLutLinear(fromGraphic.ModalityLUT.MinOutputValue, fromGraphic.ModalityLUT.MaxOutputValue);
 		}
 
+		#endregion
+
+		#region Private methods
+
 		private void InstallGrayscaleLUTs(
 			double rescaleSlope, 
 			double rescaleIntercept,
-			PhotometricInterpretation photometricInterpretation)
+			bool inverted)
 		{
 			ModalityLUTLinear modalityLut = this.LUTFactory.GetModalityLUTLinear(
 				this.BitsStored,
-				this.PixelRepresentation,
+				this.IsSigned,
 				rescaleSlope,
 				rescaleIntercept);
 
@@ -254,9 +279,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 			PresentationLUT presentationLut = this.LUTFactory.GetPresentationLUT(
 				voiLut.MinOutputValue,
 				voiLut.MaxOutputValue,
-				photometricInterpretation);
+				inverted);
 
 			this.LUTComposer.LUTCollection.Add(presentationLut);
 		}
+
+		#endregion
 	}
 }

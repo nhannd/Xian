@@ -1,22 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Font Name="Tahoma" Size="8.25" />
-  <Class Name="ClearCanvas.ImageViewer.Graphics.ImageGraphic">
+  <Class Name="ClearCanvas.ImageViewer.Graphics.ImageGraphic" Collapsed="true">
     <Position X="4.25" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Graphics\ImageGraphic.cs</FileName>
-      <HashCode>CApAAQCAIMBIFUCAQACAhFkAgIAAAChEASgBCQkCAAA=</HashCode>
+      <HashCode>CAoAAQAAIIBIEECQQAKAhFkAAIAAACBEACgBAAkCAAA=</HashCode>
     </TypeIdentifier>
     <Members>
       <Field Name="_bitsAllocated" Hidden="true" />
       <Field Name="_bitsStored" Hidden="true" />
       <Field Name="_columns" Hidden="true" />
       <Field Name="_doubleWordAlignedColumns" Hidden="true" />
-      <Field Name="_fastInterpolationMethod" Hidden="true" />
-      <Field Name="_fastRender" Hidden="true" />
       <Field Name="_highBit" Hidden="true" />
-      <Field Name="_normalInterpolationMethod" Hidden="true" />
-      <Field Name="_photometricInterpretation" Hidden="true" />
       <Field Name="_pixelData" Hidden="true" />
       <Field Name="_pixelDataRaw" Hidden="true" />
       <Field Name="_pixelRepresentation" Hidden="true" />
@@ -29,20 +25,13 @@
       <Property Name="BitsStored" Hidden="true" />
       <Property Name="Columns" Hidden="true" />
       <Property Name="DoubleWordAlignedColumns" Hidden="true" />
-      <Property Name="FastInterpolationMethod" Hidden="true" />
-      <Property Name="FastRender" Hidden="true" />
       <Property Name="HighBit" Hidden="true" />
       <Method Name="HitTest" Hidden="true" />
       <Method Name="ImageGraphic" Hidden="true" />
-      <Property Name="InterpolationMethod" Hidden="true" />
-      <Property Name="IsColor" Hidden="true" />
       <Property Name="IsDoubleWordAligned" Hidden="true" />
-      <Property Name="IsGrayscale" Hidden="true" />
       <Property Name="IsPlanar" Hidden="true" />
       <Property Name="IsSigned" Hidden="true" />
       <Method Name="Move" Hidden="true" />
-      <Property Name="NormalInterpolationMethod" Hidden="true" />
-      <Property Name="PhotometricInterpretation" Hidden="true" />
       <Property Name="PixelDataRaw" Hidden="true" />
       <Property Name="PixelRepresentation" Hidden="true" />
       <Property Name="PlanarConfiguration" Hidden="true" />
@@ -51,59 +40,52 @@
       <Property Name="SizeInBytes" Hidden="true" />
       <Property Name="SizeInPixels" Hidden="true" />
     </Members>
-    <NestedTypes>
-      <Enum Name="ClearCanvas.ImageViewer.Graphics.ImageGraphic.InterpolationMethods" Collapsed="true">
-        <TypeIdentifier>
-          <NewMemberFileName>Graphics\ImageGraphic.cs</NewMemberFileName>
-        </TypeIdentifier>
-      </Enum>
-    </NestedTypes>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.StandardColorImageGraphic" Collapsed="true">
-    <Position X="5" Y="3.5" Width="2.25" />
+    <Position X="5.5" Y="2.75" Width="2.25" />
     <TypeIdentifier>
       <FileName>Graphics\StandardColorImageGraphic.cs</FileName>
-      <HashCode>BAAAAAAAAAAAFAAAAAAAAAAAAAAAAAABgAAAEAAAAAA=</HashCode>
+      <HashCode>BAAAAAAAAAAAFAAAAAAAAAAAAAAAAAABgAAAEAAIAAA=</HashCode>
     </TypeIdentifier>
   </Class>
-  <Class Name="ClearCanvas.ImageViewer.Graphics.IndexedImageGraphic">
-    <Position X="2.75" Y="3.5" Width="1.75" />
+  <Class Name="ClearCanvas.ImageViewer.Graphics.IndexedImageGraphic" Collapsed="true">
+    <Position X="2.75" Y="2.75" Width="1.75" />
     <TypeIdentifier>
       <FileName>Graphics\IndexedImageGraphic.cs</FileName>
-      <HashCode>AAgAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
     <Members>
-      <Field Name="_lutComposer" Hidden="true" />
       <Method Name="IndexedImageGraphic" Hidden="true" />
-      <Property Name="LUTComposer" Hidden="true" />
     </Members>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.StandardGrayscaleImageGraphic" Collapsed="true">
-    <Position X="0.5" Y="6.25" Width="2.5" />
+    <Position X="0.5" Y="5.75" Width="2.5" />
     <TypeIdentifier>
       <FileName>Graphics\StandardGrayscaleImageGraphic.cs</FileName>
-      <HashCode>AAIAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <HashCode>AAAAAAQAAAAAEAAAAAAAAAQAAAIAiAAAIAAFEAAIAAA=</HashCode>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.StandardPaletteColorImageGraphic" Collapsed="true">
-    <Position X="3.75" Y="5.25" Width="2.75" />
+    <Position X="4" Y="4.25" Width="2.75" />
     <TypeIdentifier>
       <FileName>Graphics\StandardPaletteColorImageGraphic.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
     </TypeIdentifier>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.GrayscaleImageGraphic" Collapsed="true">
-    <Position X="0.75" Y="5.25" Width="2" />
+    <Position X="0.75" Y="4.25" Width="2" />
     <TypeIdentifier>
       <FileName>Graphics\GrayscaleImageGraphic.cs</FileName>
-      <HashCode>kAAAAAAAAAAAAAAAAAIAAAAAAAQCAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>kAgAAEAAACQAABABAAAAAABEAAQCAAAAAAAAAABCgAA=</HashCode>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.Graphic" Collapsed="true">
     <Position X="4.25" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Graphics\Graphic.cs</FileName>
-      <HashCode>ACKAIQEAAKBAggAAAoAAAgQMAAABEgIIAAAQAIAAAAA=</HashCode>
+      <HashCode>AAKAISEAAKBAggAAAoAAAgQMAAABEgIIAABQAIAAAAA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>

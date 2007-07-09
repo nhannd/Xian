@@ -137,8 +137,11 @@
     <Compile Include="Comparers\StudyDateComparer.cs" />
     <Compile Include="Comparers\SeriesNumberComparer.cs" />
     <Compile Include="GarbageCollectionTool.cs" />
+    <Compile Include="Graphics\ColorImageGraphic.cs" />
+    <Compile Include="Graphics\ColorPixelData.cs" />
     <Compile Include="Graphics\GraphicSelectionChangedEventArgs.cs" />
     <Compile Include="Graphics\GrayscaleImageGraphic.cs" />
+    <Compile Include="Graphics\IndexedPixelData.cs" />
     <Compile Include="Graphics\IImageSpatialTransform.cs" />
     <Compile Include="Graphics\ImageSpatialTransformMemento.cs" />
     <Compile Include="Graphics\PointPrimitive.cs" />
@@ -371,11 +374,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RectangleChangedEventArgs.cs" />
     <Compile Include="Rendering\ImageBuffer.cs" />
-    <Compile Include="Rendering\ImageBufferWin32.cs" />
     <Compile Include="Rendering\ImageInterpolatorBilinear.cs" />
     <Compile Include="Rendering\ImageRenderer.cs" />
     <Compile Include="Mathematics\RectangleUtilities.cs" />
-    <Compile Include="Rendering\Win32.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

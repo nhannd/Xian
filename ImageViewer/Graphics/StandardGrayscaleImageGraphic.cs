@@ -14,8 +14,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </summary>
 	public class StandardGrayscaleImageGraphic : GrayscaleImageGraphic, IVoiLutManagerProvider, IAutoVoiLutApplicatorProvider
 	{
+		#region Private fields
+
 		private ImageSop _imageSop;
 		private IVoiLutManager _voiLutManager;
+
+		#endregion
+
+		#region Public constructor
 
 		/// <summary>
 		/// Instantiates a new instance of <see cref="StandardGrayscaleImageGraphic"/>
@@ -29,10 +35,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			imageSop.BitsAllocated,
 			imageSop.BitsStored,
 			imageSop.HighBit,
-			imageSop.SamplesPerPixel,
-			imageSop.PixelRepresentation,
-			imageSop.PlanarConfiguration,
-			imageSop.PhotometricInterpretation,
+			imageSop.PixelRepresentation != 0 ? true : false,
+			imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ? true: false,
 			imageSop.RescaleSlope,
 			imageSop.RescaleIntercept,
 			null)
@@ -45,6 +49,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			ApplyInitialVoiLut();
 		}
+
+		#endregion
+
+		#region Public properties
 
 		/// <summary>
 		/// Gets the associated <see cref="ImageSop"/>.
@@ -78,38 +86,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return !(this.WindowCenterValues == null || this.WindowCenterValues.Length == 0); }
 		}
 
-		/// <summary>
-		/// Gets the pixel data from the associated <see cref="ImageSop"/>.
-		/// </summary>
-		protected override byte[] PixelDataRaw
-		{
-			get
-			{
-				return _imageSop.PixelData;
-			}
-		}
-
-		/// <summary>
-		/// Installs a new Voi Lut
-		/// </summary>
-		/// <param name="newLut">the Lut to install</param>
-		public virtual void InstallVoiLut(IComposableLUT newLut)
-		{
-			Platform.CheckForNullReference(newLut, "newLut");
-			base.VoiLUT = newLut;
-		}
-
-		protected virtual void ApplyInitialVoiLut()
-		{
-			if (this.AutoVoiLutApplicator != null)
-				this.AutoVoiLutApplicator.ApplyNext();
-		}
-
-		protected virtual IVoiLutManager CreateVoiLutManager()
-		{
-			return new StandardVoiLutManager(this);
-		}
-
 		#region IAutoLutApplicatorProvider Members
 
 		public virtual IAutoVoiLutApplicator AutoVoiLutApplicator
@@ -124,6 +100,51 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public IVoiLutManager VoiLutManager
 		{
 			get { return _voiLutManager; }
+		}
+
+		#endregion
+
+		#endregion
+
+		#region Protected properties
+		/// <summary>
+		/// Gets the pixel data from the associated <see cref="ImageSop"/>.
+		/// </summary>
+		protected override byte[] PixelDataRaw
+		{
+			get
+			{
+				return _imageSop.PixelData;
+			}
+		}
+
+		#endregion
+
+		#region Public methods
+
+		/// <summary>
+		/// Installs a new Voi Lut
+		/// </summary>
+		/// <param name="newLut">the Lut to install</param>
+		public virtual void InstallVoiLut(IComposableLUT newLut)
+		{
+			Platform.CheckForNullReference(newLut, "newLut");
+			base.VoiLUT = newLut;
+		}
+
+		#endregion
+
+		#region Protected methods
+
+		protected virtual void ApplyInitialVoiLut()
+		{
+			if (this.AutoVoiLutApplicator != null)
+				this.AutoVoiLutApplicator.ApplyNext();
+		}
+
+		protected virtual IVoiLutManager CreateVoiLutManager()
+		{
+			return new StandardVoiLutManager(this);
 		}
 
 		#endregion

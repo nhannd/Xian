@@ -290,6 +290,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		private void EnterSelectedState(IMouseInformation mouseInformation)
 		{
+			this.Selected = true;
+
 			if (this.ParentPresentationImage.FocussedGraphic == this)
 				this.ParentPresentationImage.FocussedGraphic = null;
 

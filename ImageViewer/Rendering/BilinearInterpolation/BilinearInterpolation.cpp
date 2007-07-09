@@ -672,11 +672,9 @@ void InterpolateBilinearRGB(
 		
 		for (unsigned int x = 0; x < dstRegionWidth; ++x)
 		{
-            pRowDstPixelData[3] = 0xff;  //A
-
             BYTE* pSrcPixel00 = pRowSrcPixelData + (*pxPixel) * xSrcStride; 
     
-            for (int i = 0; i < 3; ++i)
+            for (int i = 0; i < 4; ++i)
             {
                 BYTE* pSrcPixel01 = pSrcPixel00 + xSrcStride;
                 BYTE* pSrcPixel10 = pSrcPixel00 + ySrcStride;
@@ -686,8 +684,7 @@ void InterpolateBilinearRGB(
 				int yInterpolated2 = (*pSrcPixel01 << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel11 - *pSrcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
 				int IFinal = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
 
-				//2-i because the destination pixel data goes BGRA and the source goes RGB
-                pRowDstPixelData[2 - i] = (BYTE)(IFinal); //R(i=0), G(1), B(2)
+                pRowDstPixelData[i] = (BYTE)(IFinal); //R(i=0), G(1), B(2), A(3)
 
                 pSrcPixel00 += srcNextChannelOffset;
             }
@@ -818,8 +815,8 @@ BOOL InterpolateBilinear
 
 		if (!isPlanar)
 		{
-			xSrcStride = 3;
-			ySrcStride = srcWidth * 3;
+			xSrcStride = 4;
+			ySrcStride = srcWidth * 4;
 		}
 		else
 		{

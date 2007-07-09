@@ -25,24 +25,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 		Bilinear 
 	};
 
+
 	/// <summary>
 	/// An image <see cref="Graphic"/>.
 	/// </summary>
-	public class ImageGraphic : Graphic
+	public abstract class ImageGraphic : Graphic
 	{
 		#region Private fields
 
 		private int _rows;
 		private int _columns;
 		private int _bitsAllocated;
-		private int _bitsStored;
-		private int _highBit;
 		private int _samplesPerPixel;
-		private int _pixelRepresentation;
-		private int _planarConfiguration;
-		private PhotometricInterpretation _photometricInterpretation;
 		private byte[] _pixelDataRaw;
-		private PixelData _pixelData;
+		protected PixelData _pixelDataWrapper;
 
 		private int _sizeInBytes = -1;
 		private int _sizeInPixels = -1;
@@ -53,32 +49,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
-		/// <summary>
-		/// Initializes a new instance of <see cref="ImageGraphic"/>
-		/// with the specified <see cref="ImageSop"/>.
-		/// </summary>
-		/// <param name="imageSop"></param>
-		/// <remarks>
-		/// This constructor is provided for convenience in the case where
-		/// the properties of <see cref="ImageGraphic"/> are the
-		/// same as that of an existing <see cref="ImageSop"/>.
-		/// Note that a reference to <paramref name="imageSop"/> is <i>not</i> held
-		/// by <see cref="ImageGraphic"/>.
-		/// </remarks>
-		public ImageGraphic(ImageSop imageSop)
-			: this(
-			imageSop.Rows, 
-			imageSop.Columns,
-			imageSop.BitsAllocated,
-			imageSop.BitsStored,
-			imageSop.HighBit,
-			imageSop.SamplesPerPixel,
-			imageSop.PixelRepresentation,
-			imageSop.PlanarConfiguration,
-			imageSop.PhotometricInterpretation,
-			imageSop.PixelData)
-		{
-		}
+		#region Protected constructor
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="ImageGraphic"/>
@@ -89,45 +60,27 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="bitsAllocated"></param>
 		/// <param name="bitsStored"></param>
 		/// <param name="highBit"></param>
-		/// <param name="samplesPerPixel"></param>
-		/// <param name="pixelRepresentation"></param>
-		/// <param name="planarConfiguration"></param>
-		/// <param name="photometricInterpretation"></param>
 		/// <param name="pixelData"></param>
-		public ImageGraphic(
+		protected ImageGraphic(
 			int rows,
 			int columns,
 			int bitsAllocated,
-			int bitsStored,
-			int highBit,
-			int samplesPerPixel,
-			int pixelRepresentation,
-			int planarConfiguration,
-			PhotometricInterpretation photometricInterpretation,
 			byte[] pixelData)
 		{
 			ImageValidator.ValidateRows(rows);
 			ImageValidator.ValidateColumns(columns);
-			ImageValidator.ValidateBitsAllocated(bitsAllocated);
-			ImageValidator.ValidateBitsStored(bitsStored);
-			ImageValidator.ValidateHighBit(highBit);
-			ImageValidator.ValidateSamplesPerPixel(samplesPerPixel);
-			ImageValidator.ValidatePixelRepresentation(pixelRepresentation);
-			ImageValidator.ValidatePhotometricInterpretation(photometricInterpretation);
 
 			_rows = rows;
 			_columns = columns;
 			_bitsAllocated = bitsAllocated;
-			_bitsStored = bitsStored;
-			_highBit = highBit;
-			_samplesPerPixel = samplesPerPixel;
-			_pixelRepresentation = pixelRepresentation;
-			_planarConfiguration = planarConfiguration;
-			_photometricInterpretation = photometricInterpretation;
 			_pixelDataRaw = pixelData;
 
 			_imageRectangle = new RectangleF(0, 0, _columns - 1, _rows - 1);
 		}
+
+		#endregion
+
+		#region Public properties
 
 		/// <summary>
 		/// Gets the number of rows in the image.
@@ -155,149 +108,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets the number of bits stored in the image.
-		/// </summary>
-		/// <remarks>The number of bits stored does not necessarily equal the number
-		/// of bits allocated. Values of 8, 10, 12 and 16 are typical.</remarks>
-		public int BitsStored 
-		{
-			get { return _bitsStored; }
-		}
-
-		/// <summary>
-		/// Gets the high bit in the image.
-		/// </summary>
-		/// <remarks>Theoretically, the high bit does not necessarily have to equal
-		/// Bits Stored - 1.  But in almost all cases this assumption is true; we
-		/// too make this assumption.</remarks>
-		public int HighBit 
-		{
-			get { return _highBit; }
-		}
-
-		/// <summary>
-		/// Gets the number of samples per pixel in the image.
-		/// </summary>
-		/// <remarks>For MONOCHROME1, MONOCHROME2 and PALETTE_COLOR images, this 
-		/// property can be ignored.  For other colour (e.g. RGB, YBR_FULL, etc.)
-		/// images, the value of this property is typically 3 or 4 depending
-		/// on the particular <see cref="PhotometricInterpretation"/>.</remarks>
-		public int SamplesPerPixel 
-		{
-			get { return _samplesPerPixel; } 
-		}
-
-		/// <summary>
-		/// Gets the pixel representation of the image.
-		/// </summary>
-		/// <value>0 if the pixel data is unsigned or non-zero if the pixel data
-		/// is signed.</value>
-		public int PixelRepresentation 
-		{
-			get { return _pixelRepresentation; }
-		}
-
-		/// <summary>
-		/// Gets the planar configuration of the image.
-		/// </summary>
-		/// <remarks>When pixel colour components are interleaved (e.g., RGBRGBRGB)
-		/// the value of this property is 0.  When they organized in colour planes
-		/// (e.g., RRRGGGBBB), the value is 1.</remarks>
-		public int PlanarConfiguration 
-		{
-			get { return _planarConfiguration; }
-		}
-		
-		/// <summary>
-		/// Gets the photometric interpretation of the image.
-		/// </summary>
-		public virtual PhotometricInterpretation PhotometricInterpretation 
-		{
-			get { return _photometricInterpretation; }
-		}
-
-		/// <summary>
-		/// Gets the pixel data of the image.
-		/// </summary>
-		/// <returns></returns>
-		/// <remarks>
-		/// By default, <see cref="PixelDataRaw"/> returns an empty array of bytes
-		/// of size <see cref="SizeInBytes"/>.  Override this property if you want
-		/// the pixel data to be otherwise.  Note that this is what is returned
-		/// by <see cref="ClearCanvas.ImageViewer.Graphics.PixelData.Raw"/>.
-		/// </remarks>
-		protected virtual byte[] PixelDataRaw
-		{
-			get
-			{
-				if (_pixelDataRaw == null)
-					_pixelDataRaw = new byte[this.SizeInBytes];
-
-				return _pixelDataRaw;
-			}
-		}
-
-		/// <summary>
 		/// Gets the <see cref="PixelData"/>.
 		/// </summary>
 		public PixelData PixelData
 		{
 			get
 			{
-				if (_pixelData == null)
-				{
-					_pixelData = new PixelData(
-						this.Rows,
-						this.Columns,
-						this.BitsAllocated,
-						this.BitsStored,
-						this.HighBit,
-						this.SamplesPerPixel,
-						this.PixelRepresentation,
-						this.PlanarConfiguration,
-						this.PhotometricInterpretation,
-						this.PixelDataRaw);
-				}
+				if (_pixelDataWrapper == null)
+					_pixelDataWrapper = CreatePixelDataWrapper();
 
-				return _pixelData;
+				return _pixelDataWrapper;
 			}
 		}
-
-		/// <summary>
-		/// Gets a value indicating whether the image is grayscale.
-		/// </summary>
-		public bool IsGrayscale
-		{
-			get
-			{
-				return (this.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ||
-						this.PhotometricInterpretation == PhotometricInterpretation.Monochrome2);
-			}
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether the image is colour.
-		/// </summary>
-		public bool IsColor
-		{
-			get { return !this.IsGrayscale && this.PhotometricInterpretation != PhotometricInterpretation.Unknown; }
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether the image's <see cref="PlanarConfiguration"/> is 1.
-		/// </summary>
-		public bool IsPlanar
-		{
-			get { return this.PlanarConfiguration == 1; }
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether the image's pixel data is signed.
-		/// </summary>
-        public bool IsSigned
-        {
-            get { return this.PixelRepresentation != 0; }
-        }
 
 		/// <summary>
 		/// Gets a value indicating whether image is aligned on a 4-byte boundary
@@ -335,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				// Only calculate this once
 				if (_sizeInBytes == -1)
-					_sizeInBytes = this.SizeInPixels * this.SamplesPerPixel * this.BitsAllocated / 8;
+					_sizeInBytes = this.SizeInPixels * this.BitsAllocated / 8;
 
 				return _sizeInBytes;
 			}
@@ -371,6 +193,37 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return _interpolationMode; }
 		}
 
+		#endregion
+
+		#region Protected properties/methods
+
+		/// <summary>
+		/// Gets the pixel data of the image.
+		/// </summary>
+		/// <returns></returns>
+		/// <remarks>
+		/// By default, <see cref="PixelDataRaw"/> returns an empty array of bytes
+		/// of size <see cref="SizeInBytes"/>.  Override this property if you want
+		/// the pixel data to be otherwise.  Note that this is what is returned
+		/// by <see cref="ClearCanvas.ImageViewer.Graphics.PixelData.Raw"/>.
+		/// </remarks>
+		protected virtual byte[] PixelDataRaw
+		{
+			get
+			{
+				if (_pixelDataRaw == null)
+					_pixelDataRaw = new byte[this.SizeInBytes];
+
+				return _pixelDataRaw;
+			}
+		}
+
+		protected abstract PixelData CreatePixelDataWrapper();
+
+		#endregion
+
+		#region Public methods
+
 		/// <summary>
 		/// Performs a hit test on the <see cref="ImageGraphic"/> at a given point.
 		/// </summary>
@@ -394,5 +247,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			//this.SpatialTransform.
 		}
+
+		#endregion
 	}
 }

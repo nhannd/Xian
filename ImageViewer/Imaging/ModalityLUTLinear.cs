@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		private bool _lutCreated = false;
 		private int _bitsStored;
-		private int _pixelRepresentation;
+		private bool _isSigned;
 		private double _rescaleSlope;
 		private double _rescaleIntercept;
 
@@ -24,19 +24,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <param name="rescaleIntercept"></param>
 		public ModalityLUTLinear(
 			int bitsStored,
-			int pixelRepresentation, 
+			bool isSigned, 
 			double rescaleSlope,
 			double rescaleIntercept)
 		{
 			ImageValidator.ValidateBitsStored(bitsStored);
-			ImageValidator.ValidatePixelRepresentation(pixelRepresentation);
 
 			_bitsStored = bitsStored;
-			_pixelRepresentation = pixelRepresentation;
+			_isSigned = isSigned;
 			this.RescaleSlope = rescaleSlope;
 			this.RescaleIntercept = rescaleIntercept;
 
-			SetInputRange(bitsStored, pixelRepresentation);
+			SetInputRange(bitsStored, isSigned);
 			SetOutputRange();
 		}
 
@@ -45,9 +44,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _bitsStored; }
 		}
 
-		internal int PixelRepresentation
+		internal bool IsSigned
 		{
-			get { return _pixelRepresentation; }
+			get { return _isSigned; }
 		}
 
 		/// <summary>
@@ -101,9 +100,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public override string GetKey()
 		{
-			return String.Format("{0}_{1}_{2:F2}_{3:F2}",
+			return String.Format("{0}_{1}_{2}_{3:F2}",
 				this.BitsStored,
-				this.PixelRepresentation,
+				this.IsSigned.ToString(),
 				this.RescaleSlope,
 				this.RescaleIntercept);
 		}
@@ -116,18 +115,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private void SetInputRange(int bitsStored, int pixelRepresentation)
+		private void SetInputRange(int bitsStored, bool isSigned)
 		{
 			// Determine input value range
-			if (pixelRepresentation == 0)
+			if (isSigned)
 			{
-				this.MinInputValue = 0;
-				this.MaxInputValue = (1 << bitsStored) - 1;
+				this.MinInputValue = -(1 << (bitsStored - 1));
+				this.MaxInputValue = (1 << (bitsStored - 1)) - 1;
 			}
 			else
 			{
-				this.MinInputValue = -(1 << (bitsStored - 1));
-				this.MaxInputValue =  (1 << (bitsStored - 1)) - 1;
+				this.MinInputValue = 0;
+				this.MaxInputValue = (1 << bitsStored) - 1;
 			}
 
 			this.Length = this.MaxInputValue - this.MinInputValue + 1;

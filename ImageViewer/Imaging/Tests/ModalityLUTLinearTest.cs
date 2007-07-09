@@ -29,13 +29,13 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		public void Unsigned1()
 		{
 			int bitsStored = 1;
-			int pixelRepresentation = 0;
+			bool isSigned = false;
 			double rescaleSlope = 1;
 			double rescaleIntercept = 100;
 
 			ModalityLUTLinear lut = new ModalityLUTLinear(
-				bitsStored, 
-				pixelRepresentation, 
+				bitsStored,
+				isSigned, 
 				rescaleSlope, 
 				rescaleIntercept);
 
@@ -48,13 +48,13 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		public void Signed1()
 		{
 			int bitsStored = 1;
-			int pixelRepresentation = 1;
+			bool isSigned = true;
 			double rescaleSlope = 1;
 			double rescaleIntercept = 100;
 
 			ModalityLUTLinear lut = new ModalityLUTLinear(
 				bitsStored, 
-				pixelRepresentation, 
+				isSigned, 
 				rescaleSlope, 
 				rescaleIntercept);
 
@@ -67,13 +67,13 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		public void Unsigned12()
 		{
 			int bitsStored = 12;
-			int pixelRepresentation = 0;
+			bool isSigned = false;
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 100;
 
 			ModalityLUTLinear lut = new ModalityLUTLinear(
 				bitsStored, 
-				pixelRepresentation, 
+				isSigned, 
 				rescaleSlope, 
 				rescaleIntercept);
 
@@ -87,13 +87,13 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		public void Signed12()
 		{
 			int bitsStored = 12;
-			int pixelRepresentation = 1;
+			bool isSigned = true;
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 100;
 
 			ModalityLUTLinear lut = new ModalityLUTLinear(
 				bitsStored, 
-				pixelRepresentation, 
+				isSigned, 
 				rescaleSlope, 
 				rescaleIntercept);
 
@@ -108,13 +108,13 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		public void IndexOutOfRangeTooLow()
 		{
 			int bitsStored = 12;
-			int pixelRepresentation = 0;
+			bool isSigned = false;
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 100;
 
 			ModalityLUTLinear lut = new ModalityLUTLinear(
 				bitsStored, 
-				pixelRepresentation, 
+				isSigned, 
 				rescaleSlope, 
 				rescaleIntercept);
 
@@ -126,13 +126,13 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		public void IndexOutOfRangeTooHigh()
 		{
 			int bitsStored = 12;
-			int pixelRepresentation = 0;
+			bool isSigned = false;
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 100;
 
 			ModalityLUTLinear lut = new ModalityLUTLinear(
 				bitsStored, 
-				pixelRepresentation, 
+				isSigned, 
 				rescaleSlope, 
 				rescaleIntercept);
 
@@ -144,32 +144,17 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		public void BitsStoredInvalid()
 		{
 			int bitsStored = 0;
-			int pixelRepresentation = 0;
+			bool isSigned = false;
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 100;
 
 			ModalityLUTLinear lut = new ModalityLUTLinear(
 				bitsStored, 
-				pixelRepresentation, 
+				isSigned, 
 				rescaleSlope, 
 				rescaleIntercept);
 		}
 
-		[Test]
-		[ExpectedException(typeof(ImageValidationException))]
-		public void PixelRepresentationInvalid()
-		{
-			int bitsStored = 1;
-			int pixelRepresentation = -1;
-			double rescaleSlope = 0.5;
-			double rescaleIntercept = 100;
-
-			ModalityLUTLinear lut = new ModalityLUTLinear(
-				bitsStored, 
-				pixelRepresentation, 
-				rescaleSlope, 
-				rescaleIntercept);
-		}
 	}
 }
 

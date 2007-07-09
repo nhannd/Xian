@@ -14,210 +14,210 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Rendering.Tests
 {
-	class MockImageGraphic : ImageGraphic
-	{
-		public MockImageGraphic(
-			int width,
-			int height,
-			int bitsAllocated,
-			int bitsStored,
-			int highBit,
-			int samplesPerPixel,
-			int pixelRepresentation,
-			int planarConfiguration,
-			PhotometricInterpretation photometricInterpretation,
-			byte[] pixelData)
-			: base(
-				height, 
-				width, 
-				bitsAllocated, 
-				bitsStored, 
-				highBit, 
-				samplesPerPixel, 
-				pixelRepresentation, 
-				planarConfiguration, 
-				photometricInterpretation,
-				pixelData)
-		{
-			InstallLut();
-		}
+	//class MockImageGraphic : ImageGraphic
+	//{
+	//    public MockImageGraphic(
+	//        int width,
+	//        int height,
+	//        int bitsAllocated,
+	//        int bitsStored,
+	//        int highBit,
+	//        int samplesPerPixel,
+	//        int pixelRepresentation,
+	//        int planarConfiguration,
+	//        PhotometricInterpretation photometricInterpretation,
+	//        byte[] pixelData)
+	//        : base(
+	//            height, 
+	//            width, 
+	//            bitsAllocated, 
+	//            bitsStored, 
+	//            highBit, 
+	//            samplesPerPixel, 
+	//            pixelRepresentation, 
+	//            planarConfiguration, 
+	//            photometricInterpretation,
+	//            pixelData)
+	//    {
+	//        InstallLut();
+	//    }
 
 
-		private void InstallLut()
-		{
-			if (this.IsColor)
-				return;
+	//    private void InstallLut()
+	//    {
+	//        if (this.IsColor)
+	//            return;
 
-			double rescaleSlope = 1.0;
-			double rescaleIntercept = 0.0;
+	//        double rescaleSlope = 1.0;
+	//        double rescaleIntercept = 0.0;
 
-			ModalityLUTLinear modalityLUT =
-				new ModalityLUTLinear(
-				this.BitsStored,
-				this.PixelRepresentation,
-				rescaleSlope,
-				rescaleIntercept);
+	//        ModalityLUTLinear modalityLUT =
+	//            new ModalityLUTLinear(
+	//            this.BitsStored,
+	//            this.PixelRepresentation,
+	//            rescaleSlope,
+	//            rescaleIntercept);
 
-			//this.GrayscaleLUTPipeline.ModalityLUT = modalityLUT;
-			//VOILUTLinear linearLut = new VOILUTLinear(modalityLUT.MinOutputValue, modalityLUT.MaxOutputValue);
-			//linearLut.WindowWidth = 1 << this.BitsStored;
-			//linearLut.WindowCenter = linearLut.WindowWidth / 2;
-			//this.GrayscaleLUTPipeline.VoiLUT = linearLut;
-			//this.GrayscaleLUTPipeline.Execute();
-		}
+	//        //this.GrayscaleLUTPipeline.ModalityLUT = modalityLUT;
+	//        //VOILUTLinear linearLut = new VOILUTLinear(modalityLUT.MinOutputValue, modalityLUT.MaxOutputValue);
+	//        //linearLut.WindowWidth = 1 << this.BitsStored;
+	//        //linearLut.WindowCenter = linearLut.WindowWidth / 2;
+	//        //this.GrayscaleLUTPipeline.VoiLUT = linearLut;
+	//        //this.GrayscaleLUTPipeline.Execute();
+	//    }
 
-		public override bool HitTest(Point point)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+	//    public override bool HitTest(Point point)
+	//    {
+	//        throw new Exception("The method or operation is not implemented.");
+	//    }
 
-		public override void Move(SizeF delta)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+	//    public override void Move(SizeF delta)
+	//    {
+	//        throw new Exception("The method or operation is not implemented.");
+	//    }
 
-	}
+	//}
 
-	static class ImageLayerFactory
-	{
-		public static MockImageGraphic CreateMonochrome8ImageLayer(int width, int height)
-		{
-			int bitsAllocated = 8;
-			int bitsStored = 8;
-			int highBit = 7;
-			int samplesPerPixel = 1;
-			int pixelRepresentation = 0;
-			int planarConfiguration = 0;
-			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
+	//static class ImageLayerFactory
+	//{
+	//    public static MockImageGraphic CreateMonochrome8ImageLayer(int width, int height)
+	//    {
+	//        int bitsAllocated = 8;
+	//        int bitsStored = 8;
+	//        int highBit = 7;
+	//        int samplesPerPixel = 1;
+	//        int pixelRepresentation = 0;
+	//        int planarConfiguration = 0;
+	//        PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 			
-			return new MockImageGraphic(
-				width, 
-				height, 
-				bitsAllocated,
-				bitsStored,
-				highBit, 
-				samplesPerPixel, 
-				pixelRepresentation, 
-				planarConfiguration, 
-				photometricInterpretation,
-				null);
-		}
+	//        return new MockImageGraphic(
+	//            width, 
+	//            height, 
+	//            bitsAllocated,
+	//            bitsStored,
+	//            highBit, 
+	//            samplesPerPixel, 
+	//            pixelRepresentation, 
+	//            planarConfiguration, 
+	//            photometricInterpretation,
+	//            null);
+	//    }
 
-		public static MockImageGraphic CreateMonochrome16ImageLayer(int width, int height)
-		{
-			int bitsAllocated = 16;
-			int bitsStored = 16;
-			int highBit = 15;
-			int samplesPerPixel = 1;
-			int pixelRepresentation = 0;
-			int planarConfiguration = 0;
-			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
+	//    public static MockImageGraphic CreateMonochrome16ImageLayer(int width, int height)
+	//    {
+	//        int bitsAllocated = 16;
+	//        int bitsStored = 16;
+	//        int highBit = 15;
+	//        int samplesPerPixel = 1;
+	//        int pixelRepresentation = 0;
+	//        int planarConfiguration = 0;
+	//        PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 
-			return new MockImageGraphic(
-				width,
-				height,
-				bitsAllocated,
-				bitsStored,
-				highBit,
-				samplesPerPixel,
-				pixelRepresentation,
-				planarConfiguration,
-				photometricInterpretation,
-				null);
-		}
+	//        return new MockImageGraphic(
+	//            width,
+	//            height,
+	//            bitsAllocated,
+	//            bitsStored,
+	//            highBit,
+	//            samplesPerPixel,
+	//            pixelRepresentation,
+	//            planarConfiguration,
+	//            photometricInterpretation,
+	//            null);
+	//    }
 
-		public static MockImageGraphic CreateRGBTripletImageLayer(int width, int height)
-		{
-			int bitsAllocated = 8;
-			int bitsStored = 8;
-			int highBit = 7;
-			int samplesPerPixel = 3;
-			int pixelRepresentation = 0;
-			int planarConfiguration = 0;
-			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Rgb;
+	//    public static MockImageGraphic CreateRGBTripletImageLayer(int width, int height)
+	//    {
+	//        int bitsAllocated = 8;
+	//        int bitsStored = 8;
+	//        int highBit = 7;
+	//        int samplesPerPixel = 3;
+	//        int pixelRepresentation = 0;
+	//        int planarConfiguration = 0;
+	//        PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Rgb;
 
-			return new MockImageGraphic(
-				width,
-				height,
-				bitsAllocated,
-				bitsStored,
-				highBit,
-				samplesPerPixel,
-				pixelRepresentation,
-				planarConfiguration,
-				photometricInterpretation,
-				null);
-		}
+	//        return new MockImageGraphic(
+	//            width,
+	//            height,
+	//            bitsAllocated,
+	//            bitsStored,
+	//            highBit,
+	//            samplesPerPixel,
+	//            pixelRepresentation,
+	//            planarConfiguration,
+	//            photometricInterpretation,
+	//            null);
+	//    }
 
-		public static MockImageGraphic CreateRGBPlanarImageLayer(int width, int height)
-		{
-			int bitsAllocated = 8;
-			int bitsStored = 8;
-			int highBit = 7;
-			int samplesPerPixel = 3;
-			int pixelRepresentation = 0;
-			int planarConfiguration = 1;
-			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Rgb;
+	//    public static MockImageGraphic CreateRGBPlanarImageLayer(int width, int height)
+	//    {
+	//        int bitsAllocated = 8;
+	//        int bitsStored = 8;
+	//        int highBit = 7;
+	//        int samplesPerPixel = 3;
+	//        int pixelRepresentation = 0;
+	//        int planarConfiguration = 1;
+	//        PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Rgb;
 
-			return new MockImageGraphic(
-				width,
-				height,
-				bitsAllocated,
-				bitsStored,
-				highBit,
-				samplesPerPixel,
-				pixelRepresentation,
-				planarConfiguration,
-				photometricInterpretation,
-				null);
-		}
-	}
+	//        return new MockImageGraphic(
+	//            width,
+	//            height,
+	//            bitsAllocated,
+	//            bitsStored,
+	//            highBit,
+	//            samplesPerPixel,
+	//            pixelRepresentation,
+	//            planarConfiguration,
+	//            photometricInterpretation,
+	//            null);
+	//    }
+	//}
 
 
-	static class ImageRendererTestUtilities
-	{
-		public static Bitmap RenderLayer(MockImageGraphic layer, int dstWidth, int dstHeight)
-		{
-			Bitmap bitmap = new Bitmap(dstWidth, dstHeight);
-			RectangleF clientArea = new RectangleF(0, 0, dstWidth, dstHeight);
+	//static class ImageRendererTestUtilities
+	//{
+	//    public static Bitmap RenderLayer(MockImageGraphic layer, int dstWidth, int dstHeight)
+	//    {
+	//        Bitmap bitmap = new Bitmap(dstWidth, dstHeight);
+	//        RectangleF clientArea = new RectangleF(0, 0, dstWidth, dstHeight);
 
-			BitmapData bitmapData = LockBitmap(bitmap);
-			int bytesPerPixel = 4;
-			ImageRenderer.Render(layer, bitmapData.Scan0, bitmapData.Width, bytesPerPixel, clientArea);
-			bitmap.UnlockBits(bitmapData);
-			return bitmap;
-		}
+	//        BitmapData bitmapData = LockBitmap(bitmap);
+	//        int bytesPerPixel = 4;
+	//        ImageRenderer.Render(layer, bitmapData.Scan0, bitmapData.Width, bytesPerPixel, clientArea);
+	//        bitmap.UnlockBits(bitmapData);
+	//        return bitmap;
+	//    }
 
-		public static void VerifyMonochromePixelValue16(int x, int y, int expectedPixelValue16, Bitmap bitmap)
-		{
-			int expectedPixelValue8 = expectedPixelValue16 / 256;
+	//    public static void VerifyMonochromePixelValue16(int x, int y, int expectedPixelValue16, Bitmap bitmap)
+	//    {
+	//        int expectedPixelValue8 = expectedPixelValue16 / 256;
 
-			VerifyMonochromePixelValue8(x, y, expectedPixelValue8, bitmap);
-		}
+	//        VerifyMonochromePixelValue8(x, y, expectedPixelValue8, bitmap);
+	//    }
 
-		public static void VerifyMonochromePixelValue8(int x, int y, int expectedPixelValue8, Bitmap bitmap)
-		{
-			Color expectedPixelColor = Color.FromArgb(expectedPixelValue8, expectedPixelValue8, expectedPixelValue8);
+	//    public static void VerifyMonochromePixelValue8(int x, int y, int expectedPixelValue8, Bitmap bitmap)
+	//    {
+	//        Color expectedPixelColor = Color.FromArgb(expectedPixelValue8, expectedPixelValue8, expectedPixelValue8);
 
-			VerifyRGBPixelValue(x, y, expectedPixelColor, bitmap);
-		}
+	//        VerifyRGBPixelValue(x, y, expectedPixelColor, bitmap);
+	//    }
 
-		public static void VerifyRGBPixelValue(int x, int y, Color expectedPixelColor, Bitmap bitmap)
-		{
-			Color actualPixelColor = bitmap.GetPixel(x, y);
-			Assert.AreEqual(expectedPixelColor, actualPixelColor);
-		}
+	//    public static void VerifyRGBPixelValue(int x, int y, Color expectedPixelColor, Bitmap bitmap)
+	//    {
+	//        Color actualPixelColor = bitmap.GetPixel(x, y);
+	//        Assert.AreEqual(expectedPixelColor, actualPixelColor);
+	//    }
 
-		private static BitmapData LockBitmap(Bitmap bitmap)
-		{
-			BitmapData bitmapData = bitmap.LockBits(
-				new Rectangle(0, 0, bitmap.Width, bitmap.Height),
-				ImageLockMode.ReadWrite,
-				bitmap.PixelFormat);
+	//    private static BitmapData LockBitmap(Bitmap bitmap)
+	//    {
+	//        BitmapData bitmapData = bitmap.LockBits(
+	//            new Rectangle(0, 0, bitmap.Width, bitmap.Height),
+	//            ImageLockMode.ReadWrite,
+	//            bitmap.PixelFormat);
 
-			return bitmapData;
-		}
+	//        return bitmapData;
+	//    }
 
-	}
+	//}
 }
 #endif

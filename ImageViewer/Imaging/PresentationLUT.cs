@@ -18,7 +18,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// </remarks>
 	public class PresentationLUT : ComposableLUT
 	{
-		private PhotometricInterpretation _photometricInterpretation;
 		private bool _invert = false;
 		private bool _lutCreated = false;
 		private int _minPlusMax;
@@ -30,24 +29,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		/// <param name="minInputValue"></param>
 		/// <param name="maxInputValue"></param>
-		/// <param name="photometricInterpretation"></param>
+		/// <param name="invert"></param>
 		public PresentationLUT(
 			int minInputValue, 
 			int maxInputValue,
-			PhotometricInterpretation photometricInterpretation)
+			bool invert)
 			: base(minInputValue, maxInputValue)
 		{
-			_photometricInterpretation = photometricInterpretation;
-
-			if (photometricInterpretation == PhotometricInterpretation.Monochrome1)
-				_invert = true;
-
+			_invert = invert;
 			_minPlusMax = this.MinInputValue + this.MaxInputValue;
-		}
-
-		public PhotometricInterpretation PhotometricInterpretation
-		{
-			get { return _photometricInterpretation; }
 		}
 
 		/// <summary>

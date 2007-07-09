@@ -13,6 +13,16 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </summary>
 	public abstract class IndexedImageGraphic : ImageGraphic
 	{
+		#region Private fields
+
+		private int _bitsStored;
+		private int _highBit;
+		private bool _isSigned;
+
+		#endregion
+
+		#region Protected constructors
+
 		/// <summary>
 		/// Initializes a new instance of <see cref="IndexedImageGraphic"/>
 		/// with the specified <see cref="ImageSop"/>.
@@ -26,7 +36,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// by <see cref="IndexedImageGraphic"/>.
 		/// </remarks>
 		protected IndexedImageGraphic(ImageSop imageSop)
-			: base(imageSop)
+			: this(imageSop.Rows,
+				imageSop.Columns,
+				imageSop.BitsAllocated,
+				imageSop.BitsStored,
+				imageSop.HighBit,
+				imageSop.PixelRepresentation != 0 ? true : false,
+				imageSop.PixelData)
 		{
 		}
 
@@ -39,10 +55,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="bitsAllocated"></param>
 		/// <param name="bitsStored"></param>
 		/// <param name="highBit"></param>
-		/// <param name="samplesPerPixel"></param>
-		/// <param name="pixelRepresentation"></param>
-		/// <param name="planarConfiguration"></param>
-		/// <param name="photometricInterpretation"></param>
+		/// <param name="isSigned"></param>
 		/// <param name="pixelData"></param>
 		protected IndexedImageGraphic(
 			int rows,
@@ -50,23 +63,54 @@ namespace ClearCanvas.ImageViewer.Graphics
 			int bitsAllocated,
 			int bitsStored,
 			int highBit,
-			int samplesPerPixel,
-			int pixelRepresentation,
-			int planarConfiguration,
-			PhotometricInterpretation photometricInterpretation,
+			bool isSigned,
 			byte[] pixelData)
 			: base(
 				rows,
 				columns,
 				bitsAllocated,
-				bitsStored,
-				highBit,
-				samplesPerPixel,
-				pixelRepresentation,
-				planarConfiguration,
-				photometricInterpretation,
 				pixelData)
 		{
+			ImageValidator.ValidateBitsAllocated(bitsAllocated);
+			ImageValidator.ValidateBitsStored(bitsStored);
+			ImageValidator.ValidateHighBit(highBit);
+
+			_bitsStored = bitsStored;
+			_highBit = highBit;
+			_isSigned = isSigned;
+		}
+
+		#endregion
+
+		#region Public properties
+
+		/// <summary>
+		/// Gets the number of bits stored in the image.
+		/// </summary>
+		/// <remarks>The number of bits stored does not necessarily equal the number
+		/// of bits allocated. Values of 8, 10, 12 and 16 are typical.</remarks>
+		public int BitsStored
+		{
+			get { return _bitsStored; }
+		}
+
+		/// <summary>
+		/// Gets the high bit in the image.
+		/// </summary>
+		/// <remarks>Theoretically, the high bit does not necessarily have to equal
+		/// Bits Stored - 1.  But in almost all cases this assumption is true; we
+		/// too make this assumption.</remarks>
+		public int HighBit
+		{
+			get { return _highBit; }
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether the image's pixel data is signed.
+		/// </summary>
+		public bool IsSigned
+		{
+			get { return _isSigned; }
 		}
 
 		/// <summary>
@@ -78,5 +122,23 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// use <see cref="OutputLUT"/> to determine the ARGB value to display for a given pixel value.
 		/// </remarks>
 		public abstract int[] OutputLUT { get; }
+
+		#endregion
+
+		#region Protected methods
+
+		protected override PixelData CreatePixelDataWrapper()
+		{
+			return new IndexedPixelData(
+						this.Rows,
+						this.Columns,
+						this.BitsAllocated,
+						this.BitsStored,
+						this.HighBit,
+						this.IsSigned,
+						this.PixelDataRaw);
+		}
+
+		#endregion
 	}
 }

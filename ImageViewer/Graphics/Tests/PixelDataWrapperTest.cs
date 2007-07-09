@@ -37,23 +37,18 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int bitsAllocated = 8;
 			int bitsStored = 8;
 			int highBit = 7;
+			bool isSigned = false;
 			int samplesPerPixel = 1;
-			int pixelRepresentation = 0;
-			int planarConfiguration = 0;
-			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new PixelData(
+			PixelData pixelDataWrapper = new IndexedPixelData(
 				rows,
 				columns,
 				bitsAllocated,
 				bitsStored,
 				highBit,
-				samplesPerPixel,
-				pixelRepresentation,
-				planarConfiguration,
-				photometricInterpretation,
+				isSigned,
 				pixelData);
 
 			int x = 3;
@@ -82,23 +77,18 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int bitsAllocated = 8;
 			int bitsStored = 8;
 			int highBit = 7;
+			bool isSigned = true;
 			int samplesPerPixel = 1;
-			int pixelRepresentation = 1;
-			int planarConfiguration = 0;
-			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new PixelData(
+			PixelData pixelDataWrapper = new IndexedPixelData(
 				rows,
 				columns,
 				bitsAllocated,
 				bitsStored,
 				highBit,
-				samplesPerPixel,
-				pixelRepresentation,
-				planarConfiguration,
-				photometricInterpretation,
+				isSigned,
 				pixelData);
 
 			int x = 3;
@@ -128,23 +118,18 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int bitsAllocated = 16;
 			int bitsStored = 16;
 			int highBit = 15;
+			bool isSigned = false;
 			int samplesPerPixel = 1;
-			int pixelRepresentation = 0;
-			int planarConfiguration = 0;
-			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new PixelData(
+			PixelData pixelDataWrapper = new IndexedPixelData(
 				rows,
 				columns,
 				bitsAllocated,
 				bitsStored,
 				highBit,
-				samplesPerPixel,
-				pixelRepresentation,
-				planarConfiguration,
-				photometricInterpretation,
+				isSigned,
 				pixelData);
 
 			int x = 3;
@@ -175,23 +160,18 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int bitsAllocated = 16;
 			int bitsStored = 16;
 			int highBit = 15;
+			bool isSigned = true;
 			int samplesPerPixel = 1;
-			int pixelRepresentation = 1;
-			int planarConfiguration = 0;
-			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new PixelData(
+			PixelData pixelDataWrapper = new IndexedPixelData(
 				rows,
 				columns,
 				bitsAllocated,
 				bitsStored,
 				highBit,
-				samplesPerPixel,
-				pixelRepresentation,
-				planarConfiguration,
-				photometricInterpretation,
+				isSigned,
 				pixelData);
 
 			int x = 3;
@@ -222,23 +202,18 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int bitsAllocated = 16;
 			int bitsStored = 16;
 			int highBit = 15;
+			bool isSigned = true;
 			int samplesPerPixel = 1;
-			int pixelRepresentation = 1;
-			int planarConfiguration = 0;
-			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new PixelData(
+			PixelData pixelDataWrapper = new IndexedPixelData(
 				rows,
 				columns,
 				bitsAllocated,
 				bitsStored,
 				highBit,
-				samplesPerPixel,
-				pixelRepresentation,
-				planarConfiguration,
-				photometricInterpretation,
+				isSigned,
 				pixelData);
 
 			int x = 3;
@@ -256,42 +231,30 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 		}
 
 		[Test]
-		public void SetPixelRGBTriplet()
+		public void SetPixelARGB()
 		{
 			int rows = 19;
 			int columns = 7;
 			int bitsAllocated = 8;
-			int bitsStored = 8;
-			int highBit = 7;
-			int samplesPerPixel = 3;
-			int pixelRepresentation = 0;
-			int planarConfiguration = 0;
-			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Rgb;
+			int samplesPerPixel = 4;
 			int imageSize = rows * columns * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new PixelData(
+			ColorPixelData pixelDataWrapper = new ColorPixelData(
 				rows,
 				columns,
-				bitsAllocated,
-				bitsStored,
-				highBit,
-				samplesPerPixel,
-				pixelRepresentation,
-				planarConfiguration,
-				photometricInterpretation,
 				pixelData);
 
 			int x = 3;
 			int y = 4;
 
 			Color testValue = Color.FromArgb(10, 20, 30);
-			pixelDataWrapper.SetPixelRGB(x, y, testValue);
-			Color actualValue = pixelDataWrapper.GetPixelRGB(x, y);
+			pixelDataWrapper.SetPixel(x, y, testValue);
+			Color actualValue = pixelDataWrapper.GetPixelAsColor(x, y);
 			Assert.AreEqual(testValue, actualValue);
 
 			pixelDataWrapper.SetPixel(x, y, testValue.ToArgb());
-			actualValue = pixelDataWrapper.GetPixelRGB(x, y);
+			actualValue = pixelDataWrapper.GetPixelAsColor(x, y);
 			Assert.AreEqual(testValue, actualValue);
 
 			pixelDataWrapper.SetPixel(x, y, testValue.ToArgb());
@@ -301,10 +264,10 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			// Make sure it works with unsafe code too
 			fixed (byte* pPixelData = pixelDataWrapper.Raw)
 			{
-				int bytesPerPixel = 3;
+				int bytesPerPixel = 4;
 				int stride = columns * bytesPerPixel;
 				int i = (y * stride) + (x * bytesPerPixel);
-				actualValue = Color.FromArgb(pPixelData[i], pixelData[i + 1], pixelData[i + 2]);
+				actualValue = Color.FromArgb(pPixelData[i + 2], pixelData[i + 1], pixelData[i]);
 			}
 
 			Assert.AreEqual(testValue, actualValue);
@@ -318,25 +281,19 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int bitsAllocated = 16;
 			int bitsStored = 9;
 			int highBit = 8;
+			bool isSigned = true;
 			int samplesPerPixel = 1;
-			int pixelRepresentation = 1;
-			int planarConfiguration = 0;
-			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new PixelData(
+			PixelData pixelDataWrapper = new IndexedPixelData(
 				rows,
 				columns,
 				bitsAllocated,
 				bitsStored,
 				highBit,
-				samplesPerPixel,
-				pixelRepresentation,
-				planarConfiguration,
-				photometricInterpretation,
+				isSigned,
 				pixelData);
-
 
 			pixelData[0] = 255;
 			pixelData[1] = 1;
@@ -374,23 +331,18 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int bitsAllocated = 8;
 			int bitsStored = 5;
 			int highBit = 4;
+			bool isSigned = true;
 			int samplesPerPixel = 1;
-			int pixelRepresentation = 1;
-			int planarConfiguration = 0;
-			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new PixelData(
+			PixelData pixelDataWrapper = new IndexedPixelData(
 				rows,
 				columns,
 				bitsAllocated,
 				bitsStored,
 				highBit,
-				samplesPerPixel,
-				pixelRepresentation,
-				planarConfiguration,
-				photometricInterpretation,
+				isSigned,
 				pixelData);
 
 			Signed5Bit(pixelData, pixelDataWrapper);
@@ -404,23 +356,18 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int bitsAllocated = 16;
 			int bitsStored = 5;
 			int highBit = 4;
+			bool isSigned = true;
 			int samplesPerPixel = 1;
-			int pixelRepresentation = 1;
-			int planarConfiguration = 0;
-			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new PixelData(
+			PixelData pixelDataWrapper = new IndexedPixelData(
 				rows,
 				columns,
 				bitsAllocated,
 				bitsStored,
 				highBit,
-				samplesPerPixel,
-				pixelRepresentation,
-				planarConfiguration,
-				photometricInterpretation,
+				isSigned,
 				pixelData);
 
 			Signed5Bit(pixelData, pixelDataWrapper);
@@ -463,23 +410,18 @@ namespace ClearCanvas.ImageViewer.Graphics.Tests
 			int bitsAllocated = 16;
 			int bitsStored = 16;
 			int highBit = 15;
+			bool isSigned = true;
 			int samplesPerPixel = 1;
-			int pixelRepresentation = 1;
-			int planarConfiguration = 0;
-			PhotometricInterpretation photometricInterpretation = PhotometricInterpretation.Monochrome2;
 			int imageSize = columns * rows * bitsAllocated / 8 * samplesPerPixel;
 			byte[] pixelData = new byte[imageSize];
 
-			PixelData pixelDataWrapper = new PixelData(
+			PixelData pixelDataWrapper = new IndexedPixelData(
 				rows,
 				columns,
 				bitsAllocated,
 				bitsStored,
 				highBit,
-				samplesPerPixel,
-				pixelRepresentation,
-				planarConfiguration,
-				photometricInterpretation,
+				isSigned,
 				pixelData);
 
 			int i = 0;

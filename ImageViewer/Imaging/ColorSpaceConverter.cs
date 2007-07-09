@@ -6,92 +6,13 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	public delegate int YbrToRgb(int y, int b, int r);
+
 	/// <summary>
 	/// Converts between colour spaces.
 	/// </summary>
-	public static unsafe class ColorSpaceConverter
+	public static class ColorSpaceConverter
 	{
-		/// <summary>
-		/// Converts the specified <see cref="ImageGraphic"/> from
-		/// YBR_XXX to RGB.
-		/// </summary>
-		/// <param name="imageGraphic"></param>
-		/// <exception cref="ArgumentException">
-		/// Photometric interpretation is not YBR_XXX.
-		/// </exception>
-		public static void YbrToRgb(ImageGraphic imageGraphic)
-		{
-			YbrToRgb(
-				imageGraphic.PhotometricInterpretation,
-				imageGraphic.IsPlanar,
-				imageGraphic.Rows,
-				imageGraphic.Columns,
-				imageGraphic.PixelData.Raw);
-		}
-
-		/// <summary>
-		/// Converts YBR_XXX pixel data to RGB.
-		/// </summary>
-		/// <param name="photometricInterpretation"></param>
-		/// <param name="isPlanar"></param>
-		/// <param name="rows"></param>
-		/// <param name="columns"></param>
-		/// <param name="pixelData"></param>
-		public static void YbrToRgb(
-			PhotometricInterpretation photometricInterpretation,
-			bool isPlanar,
-			int rows,
-			int columns,
-			byte[] pixelData)
-		{
-			if (photometricInterpretation != PhotometricInterpretation.YbrFull ||
-				photometricInterpretation != PhotometricInterpretation.YbrFull422 ||
-				photometricInterpretation != PhotometricInterpretation.YbrIct ||
-				photometricInterpretation != PhotometricInterpretation.YbrPartial422 ||
-				photometricInterpretation != PhotometricInterpretation.YbrRct)
-				throw new ArgumentException("Photometric interpretation is not YBR_XXX");
-
-			int imageSizeInPixels = rows * columns;
-
-			if (isPlanar)
-			{
-				switch (photometricInterpretation)
-				{
-					case PhotometricInterpretation.YbrFull:
-					case PhotometricInterpretation.YbrFull422:
-						YbrFullToRgbPlanar(imageSizeInPixels, pixelData);
-						break;
-					case PhotometricInterpretation.YbrPartial422:
-						YbrPartial422ToRgbPlanar(imageSizeInPixels, pixelData);
-						break;
-					case PhotometricInterpretation.YbrIct:
-						YbrIctToRgbPlanar(imageSizeInPixels, pixelData);
-						break;
-					case PhotometricInterpretation.YbrRct:
-						YbrRctToRgbPlanar(imageSizeInPixels, pixelData);
-						break;
-				}
-			}
-			else
-			{
-				switch (photometricInterpretation)
-				{
-					case PhotometricInterpretation.YbrFull:
-					case PhotometricInterpretation.YbrFull422:
-						YbrFullToRgbTriplet(imageSizeInPixels, pixelData);
-						break;
-					case PhotometricInterpretation.YbrPartial422:
-						YbrPartial422ToRgbTriplet(imageSizeInPixels, pixelData);
-						break;
-					case PhotometricInterpretation.YbrIct:
-						YbrIctToRgbTriplet(imageSizeInPixels, pixelData);
-						break;
-					case PhotometricInterpretation.YbrRct:
-						YbrRctToRgbTriplet(imageSizeInPixels, pixelData);
-						break;
-				}
-			}
-		}
 
 		/// <summary>
 		/// Converts a YBR_FULL value to RGB.
@@ -191,76 +112,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 			int argb = (alpha << 24) | (red << 16) | (green << 8) | blue;
 
 			return argb;
-		}
-
-		private static void YbrFullToRgbPlanar(int imageSizeInPixels, byte[] pixelData)
-		{
-			fixed (byte* pBytePixelData = pixelData)
-			{
-				int y, b, r;
-				int bOffset = imageSizeInPixels;
-				int rOffset = imageSizeInPixels * 2;
-
-				for (int i = 0; i < imageSizeInPixels; i++)
-				{
-					y = i;
-					b = bOffset + i;
-					r = rOffset + i;
-					int rgb = YbrFullToRgb(pBytePixelData[y], pBytePixelData[b], pBytePixelData[r]);
-					pBytePixelData[y] = (byte)((rgb & 0x00ff0000) >> 16);
-					pBytePixelData[b] = (byte)((rgb & 0x0000ff00) >> 8);
-					pBytePixelData[r] = (byte)((rgb & 0x000000ff));
-				}
-			}
-		}
-
-		private static void YbrPartial422ToRgbPlanar(int imageSizeInPixels, byte[] pixelData)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		private static void YbrIctToRgbPlanar(int imageSizeInPixels, byte[] pixelData)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		private static void YbrRctToRgbPlanar(int imageSizeInPixels, byte[] pixelData)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		private static void YbrFullToRgbTriplet(int imageSizeInPixels, byte[] pixelData)
-		{
-			fixed (byte* pBytePixelData = pixelData)
-			{
-				int y, b, r;
-
-				for (int i = 0; i < imageSizeInPixels; i++)
-				{
-					y = i * 3;
-					b = y + 1;
-					r = b + 1;
-					int rgb = YbrFullToRgb(pBytePixelData[y], pBytePixelData[b], pBytePixelData[r]);
-					pBytePixelData[y] = (byte)((rgb & 0x00ff0000) >> 16);
-					pBytePixelData[b] = (byte)((rgb & 0x0000ff00) >> 8);
-					pBytePixelData[r] = (byte)((rgb & 0x000000ff));
-				}
-			}
-		}
-
-		private static void YbrPartial422ToRgbTriplet(int imageSizeInPixels, byte[] pixelData)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		private static void YbrIctToRgbTriplet(int imageSizeInPixels, byte[] pixelData)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-
-		private static void YbrRctToRgbTriplet(int imageSizeInPixels, byte[] pixelData)
-		{
-			throw new Exception("The method or operation is not implemented.");
 		}
 	}
 }

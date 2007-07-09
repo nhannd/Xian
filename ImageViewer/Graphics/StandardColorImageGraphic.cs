@@ -5,38 +5,35 @@ using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Rendering;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
 	/// A colour <see cref="ImageGraphic"/> with an associated <see cref="ImageSop"/>.
 	/// </summary>
-	public class StandardColorImageGraphic : ImageGraphic
+	public unsafe class StandardColorImageGraphic : ColorImageGraphic
 	{
+		#region Private fields
+
+		private bool _converted;
 		private ImageSop _imageSop;
-		private bool _ybrConvertedToRgb = false;
+
+		#endregion
 
 		/// <summary>
 		/// Instantiates a new instance of <see cref="StandardColorImageGraphic"/>
 		/// with the specified <see cref="ImageSop"/>.
 		/// </summary>
 		/// <param name="imageSop"></param>
-		public StandardColorImageGraphic(ImageSop imageSop) :
-			base(
-			imageSop.Rows,
-			imageSop.Columns,
-			imageSop.BitsAllocated,
-			imageSop.BitsStored,
-			imageSop.HighBit,
-			imageSop.SamplesPerPixel,
-			imageSop.PixelRepresentation,
-			imageSop.PlanarConfiguration,
-			imageSop.PhotometricInterpretation,
-			null)
+		public StandardColorImageGraphic(ImageSop imageSop)
+			: base(imageSop.Rows,
+				   imageSop.Columns,
+				   null)
 		{
-			if (!this.IsColor && 
-				base.PhotometricInterpretation != PhotometricInterpretation.PaletteColor)
-				throw new InvalidOperationException("Image must be non-indexed colour");
+			if (imageSop.PhotometricInterpretation != PhotometricInterpretation.Rgb &&
+				!IsYbr(imageSop.PhotometricInterpretation))
+				throw new InvalidOperationException("Image must be RGB or YBR_XXX.");
 
 			_imageSop = imageSop;
 		}
@@ -47,47 +44,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public ImageSop ImageSop
 		{
 			get { return _imageSop; }
-		}
-
-		/// <summary>
-		/// Gets a value indicating whether the image has been converted from
-		/// any YBR photometric interpretation to RGB.
-		/// </summary>
-		public bool YbrConvertedToRgb
-		{
-			get { return _ybrConvertedToRgb; }
-		}
-
-		/// <summary>
-		/// Gets the photometric interpretation.
-		/// </summary>
-		/// <value>
-		/// Always RGB.
-		/// </value>
-		/// <remarks>
-		/// To make it easier for the implementor of <see cref="IRenderer"/>, <i>all</i>
-		/// non-indexed colour images are RGB.  If an image is natively YBR_XXX, it is automatically
-		/// converted to RGB and the <see cref="YbrConvertedToRgb"/> flag is set
-		/// to <b>true</b>.
-		/// </remarks>
-		public override PhotometricInterpretation PhotometricInterpretation
-		{
-			get
-			{
-				return PhotometricInterpretation.Rgb;
-			}
-		}
-
-		private bool IsYbr
-		{
-			get
-			{
-				return base.PhotometricInterpretation == PhotometricInterpretation.YbrFull ||
-				base.PhotometricInterpretation == PhotometricInterpretation.YbrFull422 ||
-				base.PhotometricInterpretation == PhotometricInterpretation.YbrPartial422 ||
-				base.PhotometricInterpretation == PhotometricInterpretation.YbrIct ||
-				base.PhotometricInterpretation == PhotometricInterpretation.YbrRct;
-			}
 		}
 
 		/// <summary>
@@ -102,17 +58,194 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get
 			{
-				// If it's a YBR image, convert it to RGB in place.  Having 
-				// all non-indexed (i.e., non-palette) colour images in one format
-				// makes image processing much easier.
-				if (!_ybrConvertedToRgb && this.IsYbr)
+				if (!_converted)
 				{
-					_ybrConvertedToRgb = true;
-					ColorSpaceConverter.YbrToRgb(this);
+					ConvertToArgb(
+						_imageSop.PhotometricInterpretation, 
+						_imageSop.PlanarConfiguration,
+						_imageSop.PixelData,
+						base.PixelDataRaw);
+
+					_converted = true;
 				}
 
-				return _imageSop.PixelData;
+				return base.PixelDataRaw;
 			}
+		}
+
+		private void ConvertToArgb(
+			PhotometricInterpretation photometricInterpretation,
+			int planarConfiguration,
+			byte[] srcPixelData,
+			byte[] argbPixelData)
+		{
+			if (photometricInterpretation == PhotometricInterpretation.Rgb)
+			{
+				if (planarConfiguration == 0)
+					RgbTripletToArgb(srcPixelData, argbPixelData);
+				else
+					RgbPlanarToArgb(srcPixelData, argbPixelData);
+			}
+			else
+			{
+				if (planarConfiguration == 0)
+					YbrTripletToArgb(srcPixelData, argbPixelData, photometricInterpretation);
+				else
+					YbrPlanarToArgb(srcPixelData, argbPixelData, photometricInterpretation);
+			}
+		}
+
+		#region RGB to ARGB
+
+		private void RgbTripletToArgb(byte[] rgbPixelData, byte[] argbPixelData)
+		{
+			fixed (byte* pRgbPixelData = rgbPixelData)
+			{
+				fixed (byte* pArgbPixelData = argbPixelData)
+				{
+					int src = 0;
+					int dst = 0;
+
+					for (int i = 0; i < this.SizeInPixels; i++)
+					{
+						pArgbPixelData[dst] = pRgbPixelData[src + 2];
+						pArgbPixelData[dst + 1] = pRgbPixelData[src + 1];
+						pArgbPixelData[dst + 2] = pRgbPixelData[src];
+						pArgbPixelData[dst + 3] = 0xff;
+
+						src += 3;
+						dst += 4;
+					}
+				}
+			}
+		}
+
+		private void RgbPlanarToArgb(byte[] rgbPixelData, byte[] argbPixelData)
+		{
+			fixed (byte* pRgbPixelData = rgbPixelData)
+			{
+				fixed (byte* pArgbPixelData = argbPixelData)
+				{
+					int src = 0;
+					int dst = 0;
+
+					int greenOffset = this.SizeInPixels;
+					int blueOffset = this.SizeInPixels * 2;
+
+					for (int i = 0; i < this.SizeInPixels; i++)
+					{
+						pArgbPixelData[dst] = pRgbPixelData[src + blueOffset];
+						pArgbPixelData[dst + 1] = pRgbPixelData[src + greenOffset];
+						pArgbPixelData[dst + 2] = pRgbPixelData[src];
+						pArgbPixelData[dst + 3] = 0xff;
+
+						src += 1;
+						dst += 4;
+					}
+				}
+			}
+		}
+
+		#endregion
+
+		#region YBR to ARGB
+
+		private void YbrTripletToArgb(
+			byte[] ybrPixelData, 
+			byte[] argbPixelData, 
+			PhotometricInterpretation photometricInterpretation)
+		{
+			fixed (byte* pYbrPixelData = ybrPixelData)
+			{
+				fixed (byte* pArgbPixelData = argbPixelData)
+				{
+					int src = 0;
+					int dst = 0;
+
+					YbrToRgb converter = GetYbrToRgbConverter(photometricInterpretation);
+
+					for (int i = 0; i < this.SizeInPixels; i++)
+					{
+						int rgb = converter(
+							pYbrPixelData[src], 
+							pYbrPixelData[src + 1], 
+							pYbrPixelData[src + 2]);
+
+						pArgbPixelData[dst] = Color.FromArgb(rgb).B;
+						pArgbPixelData[dst + 1] = Color.FromArgb(rgb).G;
+						pArgbPixelData[dst + 2] = Color.FromArgb(rgb).R;
+						pArgbPixelData[dst + 3] = 0xff;
+
+						src += 3;
+						dst += 4;
+					}
+				}
+			}
+		}
+
+		private void YbrPlanarToArgb(
+			byte[] ybrPixelData, 
+			byte[] argbPixelData,
+			PhotometricInterpretation photometricInterpretation)
+		{
+			fixed (byte* pYbrPixelData = ybrPixelData)
+			{
+				fixed (byte* pArgbPixelData = argbPixelData)
+				{
+					int src = 0;
+					int dst = 0;
+
+					int bOffset = this.SizeInPixels;
+					int rOffset = this.SizeInPixels * 2;
+
+					YbrToRgb converter = GetYbrToRgbConverter(photometricInterpretation);
+
+					for (int i = 0; i < this.SizeInPixels; i++)
+					{
+						int rgb = converter(
+							pYbrPixelData[src], 
+							pYbrPixelData[src + bOffset], 
+							pYbrPixelData[src + rOffset]);
+
+						pArgbPixelData[dst] = Color.FromArgb(rgb).B;
+						pArgbPixelData[dst + 1] = Color.FromArgb(rgb).G;
+						pArgbPixelData[dst + 2] = Color.FromArgb(rgb).R;
+						pArgbPixelData[dst + 3] = 0xff;
+
+						src += 1;
+						dst += 4;
+					}
+				}
+			}
+		}
+
+		#endregion
+
+		private YbrToRgb GetYbrToRgbConverter(PhotometricInterpretation photometricInterpretation)
+		{
+			YbrToRgb converter;
+
+			if (photometricInterpretation == PhotometricInterpretation.YbrFull)
+				converter = new YbrToRgb(ColorSpaceConverter.YbrFullToRgb);
+			else if (photometricInterpretation == PhotometricInterpretation.YbrFull422)
+				converter = new YbrToRgb(ColorSpaceConverter.YbrFull422ToRgb);
+			else if (photometricInterpretation == PhotometricInterpretation.YbrIct)
+				converter = new YbrToRgb(ColorSpaceConverter.YbrIctToRgb);
+			else if (photometricInterpretation == PhotometricInterpretation.YbrPartial422)
+				converter = new YbrToRgb(ColorSpaceConverter.YbrPartial422ToRgb);
+			else
+				converter = new YbrToRgb(ColorSpaceConverter.YbrRctToRgb);
+
+			return converter;
+		}
+
+		private bool IsYbr(PhotometricInterpretation photometricInterpretation)
+		{
+			return photometricInterpretation == PhotometricInterpretation.YbrFull ||
+				photometricInterpretation == PhotometricInterpretation.YbrFull422 ||
+				photometricInterpretation == PhotometricInterpretation.YbrPartial422 ||
+				photometricInterpretation == PhotometricInterpretation.YbrIct ||
+				photometricInterpretation == PhotometricInterpretation.YbrRct;
 		}
 	}
 }
