@@ -63,27 +63,27 @@
 		<Message Text="Executing ClearCanvas post-build step" />
 
 		<!-- Delete contents of plugin directory -->
-		<Delete Files=".\$(PlatformFolderPrefix)\plugins\*.*" />
+		<Delete Files=".\$(PlatformFolderPrefix)\plugins\*.*" ContinueOnError="true"/>
 
 		<!-- Make required directories -->
-		<MakeDir Directories="@(DestinatonDirectories)" />
+		<MakeDir Directories="@(DestinatonDirectories)" ContinueOnError="true"/>
 
 		<!-- Copy shared config files -->
-		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" />
+		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
 
 		<!-- Copy shared libraries -->
-		<Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(CommonDirectory)" />
+		<Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(CommonDirectory)" ContinueOnError="true"/>
 
 		<!-- Copy shared plugins -->
-		<Copy SourceFiles="@(SharedPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
+		<Copy SourceFiles="@(SharedPluginFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true"/>
 
 		<!-- Copy license file -->
-		<Copy SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" />	
+		<Copy SourceFiles="@(LicenseFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>	
 
 		<!-- Copy execution files -->
-		<Copy SourceFiles="@(ExecutionFiles)" DestinationFolder="$(DistributionDirectory)" />	
+		<Copy SourceFiles="@(ExecutionFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>	
 
 		<!-- Run the solution specific build file -->
-		<MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectDir=$(ProjectDir);OutDir=$(OutDir);Platform=$(Platform)"  />
+		<MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectDir=$(ProjectDir);OutDir=$(OutDir);Platform=$(Platform)" />
 	</Target>
 </Project>

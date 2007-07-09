@@ -1,0 +1,82 @@
+<Project DefaultTargets="CopyServerFiles" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<!-- RisClient specific postbuild step -->
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<DistributionDirectory>$(ProjectDir)\$(OutDir)</DistributionDirectory>		
+		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
+		<JscriptDirectory>$(SolutionDir)..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
+		<SetupDirectory>$(SolutionDir)setup</SetupDirectory>
+		<EnterpriseDirectory>$(SolutionDir)..\..\Enterprise</EnterpriseDirectory>
+		<WorkflowDirectory>$(SolutionDir)..\..\Workflow</WorkflowDirectory>
+		<HealthcareDirectory>$(SolutionDir)..\..\Healthcare</HealthcareDirectory>
+		<HL7Directory>$(SolutionDir)..\..\HL7</HL7Directory>
+		<ReferencedAssembliesDirectory>$(SolutionDir)..\..\ReferencedAssemblies</ReferencedAssembliesDirectory>
+		<RisApplicationDirectory>$(SolutionDir)..\Application</RisApplicationDirectory>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<ConfigFiles Include="$(SolutionDir)\..\Client\Adt\actionmodels.xml" />
+		<ConfigFiles Include="$(EnterpriseDirectory)\Hibernate\hibernate.cfg.xml" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<SetupFiles Include="$(SetupDirectory)\ddl-writer.bat" />
+		<SetupFiles Include="$(SetupDirectory)\import-authority-tokens.bat" />
+		<SetupFiles Include="$(SetupDirectory)\import-authority-groups.bat" />
+		<SetupFiles Include="$(SetupDirectory)\default-authority-groups.xml" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<EnterprisePluginFiles Include="$(JscriptDirectory)\ClearCanvas.Jscript.dll" />
+		
+		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
+		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Core\bin\$(Configuration)\ClearCanvas.Enterprise.Core.dll" />
+		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\Iesi.Collections.dll" />
+		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\Spring.Core.dll" />
+		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\Spring.Aop.dll" />
+		
+		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Hibernate.dll" />
+		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Hibernate\DdlWriter\bin\$(Configuration)\ClearCanvas.Enterprise.Hibernate.DdlWriter.dll" />
+		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\Castle.DynamicProxy.dll" />
+		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\HashCodeProvider.dll" />
+		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate.dll" />
+		<EnterprisePluginFiles Include="$(ReferencedAssembliesDirectory)\NHibernate.Caches.SysCache.dll" />
+		
+		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.dll" />
+		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Configuration\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Configuration.Hibernate.dll" />
+		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Authentication\bin\$(Configuration)\ClearCanvas.Enterprise.Authentication.dll" />
+		<EnterprisePluginFiles Include="$(EnterpriseDirectory)\Authentication\Hibernate\bin\$(Configuration)\ClearCanvas.Enterprise.Authentication.Hibernate.dll" />
+	</ItemGroup>	
+	
+	<ItemGroup>
+		<ModelFiles Include="$(WorkflowDirectory)\bin\$(Configuration)\ClearCanvas.Workflow.dll" />
+		<ModelFiles Include="$(WorkflowDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Workflow.Hibernate.dll" />
+		<ModelFiles Include="$(HealthcareDirectory)\bin\$(Configuration)\ClearCanvas.Healthcare.dll" />
+		<ModelFiles Include="$(HealthcareDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Healthcare.Hibernate.dll" />
+		<ModelFiles Include="$(HL7Directory)\bin\$(Configuration)\ClearCanvas.HL7.dll" />
+		<ModelFiles Include="$(HL7Directory)\Hibernate\bin\$(Configuration)\ClearCanvas.HL7.Hibernate.dll" />
+		<ModelFiles Include="$(HL7Directory)\NHapi\bin\$(Configuration)\ClearCanvas.HL7.Hapi.dll" />
+		<ModelFiles Include="$(ReferencedAssembliesDirectory)\NHapi.*" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<RisFiles Include="$(RisApplicationDirectory)\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Common.dll" />
+		<RisFiles Include="$(RisApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Services.dll" />
+		<RisFiles Include="$(SolutionDir)bin\$(Configuration)\ClearCanvas.Ris.Server.dll" />
+	</ItemGroup>
+	
+	<Target Name="CopyServerFiles">
+		<!-- Copy Server Distribution files -->
+		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" />
+		<Copy SourceFiles="@(SetupDirectory)" DestinationFolder="$(DistributionDirectory)" />
+		
+		<!-- Copy Server Plugin files -->
+		<MakeDir Condition="!Exists('$(PluginsDirectory)')" Directories="$(PluginsDirectory)" />
+		<Copy SourceFiles="@(EnterprisePluginFiles)" DestinationFolder="$(PluginsDirectory)" />
+		<Copy SourceFiles="@(ModelFiles)" DestinationFolder="$(PluginsDirectory)" />
+	</Target>
+	
+</Project>

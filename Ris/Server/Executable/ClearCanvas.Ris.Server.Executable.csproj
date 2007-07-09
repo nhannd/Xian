@@ -72,6 +72,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PostBuildEvent>PostBuild.bat "$(SolutionDir)"  $(SolutionName) $(ConfigurationName)</PostBuildEvent>
+    <PostBuildEvent>$(MSBuildBinPath)\Msbuild $(SolutionDir)\$(SolutionName)_dist.proj /p:SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(ConfigurationName);ProjectDir=$(ProjectDir);OutDir=$(OutDir);Platform=$(Platform);PlatformFolderPrefix=$(PlatformFolderPrefix)</PostBuildEvent>
   </PropertyGroup>
 </Project>

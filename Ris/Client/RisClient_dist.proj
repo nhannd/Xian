@@ -1,0 +1,37 @@
+<Project DefaultTargets="CopyClientFiles" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<!-- RisClient specific postbuild step -->
+	<PropertyGroup>
+		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<DistributionDirectory>$(ProjectDir)\$(OutDir)</DistributionDirectory>		
+		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
+		<JscriptDirectory>$(ProjectDir)\..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
+	</PropertyGroup>
+	
+	<ItemGroup>
+		<ConfigFiles Include="$(SolutionDir)\Adt\actionmodels.xml" />
+	</ItemGroup>
+	
+	<ItemGroup>
+		<SharedLibraryFiles Include="$(JscriptDirectory)\ClearCanvas.Jscript.dll" />
+		<SharedLibraryFiles Include="$(SolutionDir)\$(OutDir)\ClearCanvas.Ris.Client.dll" />
+		<SharedLibraryFiles Include="$(SolutionDir)\View\WinForms\$(OutDir)\ClearCanvas.Ris.Client.View.WinForms.dll" />
+		<SharedLibraryFiles Include="$(SolutionDir)\Admin\$(OutDir)\ClearCanvas.Ris.Client.Admin.dll" />
+		<SharedLibraryFiles Include="$(SolutionDir)\Admin\View\WinForms\$(OutDir)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" />
+		<SharedLibraryFiles Include="$(SolutionDir)\Adt\$(OutDir)\ClearCanvas.Ris.Client.Adt.dll" />
+		<SharedLibraryFiles Include="$(SolutionDir)\Adt\View\WinForms\$(OutDir)\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" />
+		<SharedLibraryFiles Include="$(SolutionDir)\Reporting\$(OutDir)\ClearCanvas.Ris.Client.Reporting.dll" />
+		<SharedLibraryFiles Include="$(SolutionDir)\Reporting\View\WinForms\$(OutDir)\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" />
+	</ItemGroup>
+	
+	<Target Name="CopyClientFiles">
+		<!-- Copy Client files -->
+		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" />
+		
+		<MakeDir Condition="!Exists('$(PluginsDirectory)')" Directories="$(PluginsDirectory)" />
+		<Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" />		
+	</Target>
+	
+</Project>
