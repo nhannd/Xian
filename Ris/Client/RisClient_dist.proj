@@ -15,7 +15,6 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<SharedLibraryFiles Include="$(JscriptDirectory)\ClearCanvas.Jscript.dll" />
 		<SharedLibraryFiles Include="$(SolutionDir)\$(OutDir)\ClearCanvas.Ris.Client.dll" />
 		<SharedLibraryFiles Include="$(SolutionDir)\View\WinForms\$(OutDir)\ClearCanvas.Ris.Client.View.WinForms.dll" />
 		<SharedLibraryFiles Include="$(SolutionDir)\Admin\$(OutDir)\ClearCanvas.Ris.Client.Admin.dll" />
@@ -25,13 +24,18 @@
 		<SharedLibraryFiles Include="$(SolutionDir)\Reporting\$(OutDir)\ClearCanvas.Ris.Client.Reporting.dll" />
 		<SharedLibraryFiles Include="$(SolutionDir)\Reporting\View\WinForms\$(OutDir)\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" />
 	</ItemGroup>
+
+  <ItemGroup>
+    <JscriptFiles Include="$(JscriptDirectory)\ClearCanvas.Jscript.dll" />
+  </ItemGroup>
 	
 	<Target Name="CopyClientFiles">
 		<!-- Copy Client files -->
 		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" />
 		
 		<MakeDir Condition="!Exists('$(PluginsDirectory)')" Directories="$(PluginsDirectory)" />
-		<Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" />		
+		<Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" />
+    <Copy SourceFiles="@(JscriptFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
 	</Target>
 	
 </Project>
