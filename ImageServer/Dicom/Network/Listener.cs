@@ -118,7 +118,15 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         {
             _tcpListener = new TcpListener(_ipEndPoint);
 
-            _tcpListener.Start();
+            try
+            {
+                _tcpListener.Start();
+            }
+            catch (SocketException e)
+            {
+                DicomLogger.LogError("Unexpected exception when starting TCP listener: " + e.ToString());
+                return;
+            }
 
             while (true)
             {

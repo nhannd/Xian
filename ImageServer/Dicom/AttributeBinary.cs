@@ -95,6 +95,15 @@ namespace ClearCanvas.ImageServer.Dicom
                 {
                     return ulong.Parse(val, NumberStyle);
                 }
+                if (typeof(T) == typeof(float))
+                {
+                    return float.Parse(val, NumberStyle);
+                }
+                if (typeof(T) == typeof(double))
+                {
+                    return double.Parse(val, NumberStyle);
+                }
+
             }
             catch { }
             return null;
@@ -160,6 +169,11 @@ namespace ClearCanvas.ImageServer.Dicom
                 }
                 return hash;
             }
+        }
+
+        public override Type GetValueType()
+        {
+            return typeof(T);
         }
 
         public override void SetStringValue(String stringValue)
@@ -354,6 +368,14 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Abstract Method Implementation
 
+        public override float GetFloat32(int i)
+        {
+            return (float)_values[i];
+        }
+        public override double GetFloat64(int i)
+        {
+            return _values[i];
+        }
         public override Object Values
         {
             get { return _values; }
@@ -432,6 +454,15 @@ namespace ClearCanvas.ImageServer.Dicom
         #endregion
 
         #region Abstract Method Implementation
+
+        public override float GetFloat32(int i)
+        {
+            return _values[i];
+        }
+        public override double GetFloat64(int i)
+        {
+            return (double)_values[i];
+        }
 
         public override Object Values
         {

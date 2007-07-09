@@ -39,9 +39,11 @@ namespace ClearCanvas.ImageServer.Dicom
         public abstract Object Values { get; set; }
         public abstract AbstractAttribute Copy();
         public abstract void SetStringValue(String stringValue);
+        public abstract Type GetValueType(); 
+        
         internal abstract ByteBuffer GetByteBuffer(TransferSyntax syntax);
         internal abstract AbstractAttribute Copy(bool copyBinary);
-
+        
         internal virtual uint CalculateWriteLength(TransferSyntax syntax, DicomWriteOptions options)
         {
             uint length = 4; // element tag
@@ -81,6 +83,14 @@ namespace ClearCanvas.ImageServer.Dicom
             throw new DicomException(SR.InvalidType);
         }
         public virtual int GetInt32(int i)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual float GetFloat32(int i)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+        public virtual double GetFloat64(int i)
         {
             throw new DicomException(SR.InvalidType);
         }

@@ -104,6 +104,11 @@ namespace ClearCanvas.ImageServer.Dicom
             return _values.GetHashCode();
         }
 
+        public override Type GetValueType()
+        {
+            return typeof(DicomSequenceItem);
+        }
+
         public override bool IsNull
         {
             get

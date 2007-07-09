@@ -10,7 +10,7 @@ using ClearCanvas.ImageServer.Dicom.Exceptions;
 namespace ClearCanvas.ImageServer.Dicom.Tests
 {
     [TestFixture]
-    public class AttributeTests
+    public class AttributeTests : AbstractTest
     {
         #region AttributeAE Test
         [Test]

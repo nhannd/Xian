@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 namespace ClearCanvas.ImageServer.Dicom
 {
+    /// <summary>
+    /// Enumerated value to differentiate between little and big endian.
+    /// </summary>
     public enum Endian
     {
         Little,
@@ -242,12 +245,13 @@ namespace ClearCanvas.ImageServer.Dicom
             return _name;
         }
 
-        ///<summary>Property representing UID of transfer syntax.</summary>
+        ///<summary>Property representing the UID string of transfer syntax.</summary>
         public String UidString
         {
             get { return _uid; }
         }
 
+        ///<summary>Property representing the UID of transfer syntax.</summary>
         public DicomUid UID
         {
             get
@@ -267,7 +271,9 @@ namespace ClearCanvas.ImageServer.Dicom
         {
             get { return _littleEndian; }
         }
-        public Endian Endian
+
+        ///<summary>Property representing the Endian enumerated value for the transfer syntax.</summary>
+          public Endian Endian
         {
             get
             {

@@ -67,7 +67,8 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
         public void Close()
         {
-            _handler.OnClientClosed(this);
+            if (_handler != null)
+                _handler.OnClientClosed(this);
 
             if (_network != null)
             {

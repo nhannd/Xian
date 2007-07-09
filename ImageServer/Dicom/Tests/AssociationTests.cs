@@ -1,3 +1,4 @@
+#if UNIT_TESTS
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -12,7 +13,7 @@ using ClearCanvas.ImageServer.Dicom.Exceptions;
 namespace ClearCanvas.ImageServer.Dicom.Tests
 {
     [TestFixture]
-    public class AssociationTests
+    public class AssociationTests : AbstractTest
     {
         [Test]
         public void ClientTest()
@@ -144,3 +145,4 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
     }
 }
+#endif

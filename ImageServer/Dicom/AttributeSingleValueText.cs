@@ -78,6 +78,11 @@ namespace ClearCanvas.ImageServer.Dicom
             return _value.GetHashCode();
         }
 
+        public override Type GetValueType()
+        {
+            return typeof(string);
+        }
+
         public override bool IsNull
         {
             get

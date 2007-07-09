@@ -39,7 +39,9 @@
   <ItemGroup>
     <Compile Include="AbstractMessage.cs" />
     <Compile Include="ApplicationEntity.cs" />
+    <Compile Include="DicomFieldAttribute.cs" />
     <Compile Include="DicomLogger.cs" />
+    <Compile Include="Exceptions\DicomDataException.cs" />
     <Compile Include="Network\AssociationParameters.cs" />
     <Compile Include="AttributeBinary.cs" />
     <Compile Include="AttributeMultiValueText.cs" />
@@ -87,8 +89,10 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="DicomTag.cs" />
+    <Compile Include="Tests\AbstractTest.cs" />
     <Compile Include="Tests\AssociationTests.cs" />
     <Compile Include="Tests\AttributeTests.cs" />
+    <Compile Include="Tests\DicomFieldTests.cs" />
     <Compile Include="Tests\FileTest.cs" />
     <Compile Include="TransferSyntax.cs" />
   </ItemGroup>

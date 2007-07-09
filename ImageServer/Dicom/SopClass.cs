@@ -1600,7 +1600,7 @@ namespace ClearCanvas.ImageServer.Dicom
                                           true));
 
             }
-            
+
             if (!_sopList.ContainsKey(uid))
                 return null;
 

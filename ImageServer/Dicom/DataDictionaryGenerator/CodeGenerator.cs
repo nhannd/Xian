@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator
             writer.WriteLine("using System.Collections;");
             writer.WriteLine("using System.Collections.Generic;");
             writer.WriteLine("");
-            writer.WriteLine("namespace ClearCanvas.Pacs.Dicom");
+            writer.WriteLine("namespace ClearCanvas.ImageServer.Dicom");
             writer.WriteLine("{");
         }
 
@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator
                 if (tag.retired != null && tag.retired.Equals("RET"))
                     writer.WriteLine("        /// <para>This tag has been retired.</para>");
                 writer.WriteLine("        /// </summary>");
-                writer.WriteLine("        public static readonly uint " + tag.varName + " = " + tag.nTag + ";");
+                writer.WriteLine("        public const uint " + tag.varName + " = " + tag.nTag + ";");
             }
 
             writer.WriteLine("    }");
@@ -274,9 +274,18 @@ namespace ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator
             StreamWriter writer = new StreamWriter(syntaxFile);
 
             WriterHeader(writer);
+            writer.WriteLine("    /// <summary>");
+            writer.WriteLine("    /// Enumerated value to differentiate between little and big endian.");
+            writer.WriteLine("    /// </summary>");
+            writer.WriteLine("    public enum Endian");
+            writer.WriteLine("    {");
+            writer.WriteLine("        Little,");
+            writer.WriteLine("        Big");
+            writer.WriteLine("    }");
+            writer.WriteLine("");
 
             writer.WriteLine("    /// <summary>");
-            writer.WriteLine("    /// This class contains transfer synatx definitions.");
+            writer.WriteLine("    /// This class contains transfer syntax definitions.");
             writer.WriteLine("    /// </summary>");
             writer.WriteLine("    public class TransferSyntax");
             writer.WriteLine("    {");
@@ -324,10 +333,19 @@ namespace ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator
             writer.WriteLine("            return _name;");
             writer.WriteLine("        }");
             writer.WriteLine("");
-            writer.WriteLine("        ///<summary>Property representing UID of transfer syntax.</summary>");
-            writer.WriteLine("        public String Uid");
+            writer.WriteLine("        ///<summary>Property representing the UID string of transfer syntax.</summary>");
+            writer.WriteLine("        public String UidString");
             writer.WriteLine("        {");
             writer.WriteLine("            get { return _uid; }");
+            writer.WriteLine("        }");
+            writer.WriteLine("");
+            writer.WriteLine("        ///<summary>Property representing the UID of transfer syntax.</summary>");
+            writer.WriteLine("        public DicomUid UID");
+            writer.WriteLine("        {");
+            writer.WriteLine("            get");
+            writer.WriteLine("            {");
+            writer.WriteLine("                return new DicomUid(_uid, _name, UidType.TransferSyntax);");
+            writer.WriteLine("            }");
             writer.WriteLine("        }");
             writer.WriteLine("");
             writer.WriteLine("        ///<summary>Property representing the name of the transfer syntax.</summary>");
@@ -340,6 +358,18 @@ namespace ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator
             writer.WriteLine("        public bool LittleEndian");
             writer.WriteLine("        {");
             writer.WriteLine("            get { return _littleEndian; }");
+            writer.WriteLine("        }");
+            writer.WriteLine("");
+            writer.WriteLine("        ///<summary>Property representing the Endian enumerated value for the transfer syntax.</summary>");
+            writer.WriteLine("          public Endian Endian");
+            writer.WriteLine("        {");
+            writer.WriteLine("            get");
+            writer.WriteLine("            {");
+            writer.WriteLine("                if (_littleEndian)");
+            writer.WriteLine("                    return Endian.Little;");
+            writer.WriteLine("");
+            writer.WriteLine("                return Endian.Big;");
+            writer.WriteLine("            }");
             writer.WriteLine("        }");
             writer.WriteLine("");
             writer.WriteLine("        ///<summary>Property representing if the transfer syntax is encoded as encapsulated.</summary>");

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.Globalization;
 
 using ClearCanvas.ImageServer.Dicom.Exceptions;
 using ClearCanvas.ImageServer.Dicom.IO;
@@ -82,6 +83,7 @@ namespace ClearCanvas.ImageServer.Dicom
             if (_values == null)
                 return "";
 
+            // could use: return string.Join("\\", _values);
             String value = null;
 
             foreach (String val in _values)
@@ -114,6 +116,11 @@ namespace ClearCanvas.ImageServer.Dicom
         public override int GetHashCode()
         {
             return _values.GetHashCode();
+        }
+
+        public override Type GetValueType()
+        {
+            return typeof(String);
         }
 
         public override bool IsNull
@@ -364,6 +371,8 @@ namespace ClearCanvas.ImageServer.Dicom
     #region AttributeDS
     public class AttributeDS : AttributeMultiValueText
     {
+        protected NumberStyles _numberStyle = NumberStyles.Any;
+
         #region Constructors
 
         public AttributeDS(uint tag)
@@ -392,6 +401,14 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #endregion
 
+        #region Properties
+        public NumberStyles NumberStyle
+        {
+            get { return _numberStyle; }
+            set { _numberStyle = value; }
+        }
+        #endregion
+
         public override AbstractAttribute Copy()
         {
             return new AttributeDS(this);
@@ -400,6 +417,16 @@ namespace ClearCanvas.ImageServer.Dicom
         internal override AbstractAttribute Copy(bool copyBinary)
         {
             return new AttributeDS(this);
+        }
+
+        public override float GetFloat32(int i)
+        {
+            return float.Parse(_values[i], NumberStyle);
+        }
+
+        public override double GetFloat64(int i)
+        {
+            return double.Parse(_values[i], NumberStyle);
         }
 
     }
@@ -452,6 +479,8 @@ namespace ClearCanvas.ImageServer.Dicom
     #region AttributeIS
     public class AttributeIS : AttributeMultiValueText
     {
+        protected NumberStyles _numberStyle = NumberStyles.Any;
+
         #region Constructors
 
         public AttributeIS(uint tag)
@@ -481,6 +510,14 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #endregion
 
+        #region Properties
+        public NumberStyles NumberStyle
+        {
+            get { return _numberStyle; }
+            set { _numberStyle = value; }
+        }
+        #endregion
+
         public override AbstractAttribute Copy()
         {
             return new AttributeIS(this);
@@ -491,6 +528,39 @@ namespace ClearCanvas.ImageServer.Dicom
             return new AttributeIS(this);
         }
 
+        public override float GetFloat32(int i)
+        {
+            return float.Parse(_values[i], NumberStyle);
+        }
+
+        public override double GetFloat64(int i)
+        {
+            return double.Parse(_values[i], NumberStyle);
+        }
+
+        public override ushort GetUInt16(int i)
+        {
+            return ushort.Parse(_values[i], NumberStyle);
+        }
+        public override ushort GetUInt16(int i, ushort defaultVal)
+        {
+            if (_values.Length < i + 1)
+                return defaultVal;
+
+            return ushort.Parse(_values[i], NumberStyle);
+        }
+        public override short GetInt16(int i)
+        {
+            return short.Parse(_values[i], NumberStyle);
+        }
+        public override uint GetUInt32(int i)
+        {
+            return uint.Parse(_values[i], NumberStyle);
+        }
+        public override int GetInt32(int i)
+        {
+            return int.Parse(_values[i], NumberStyle);
+        }
     }
     #endregion
 
