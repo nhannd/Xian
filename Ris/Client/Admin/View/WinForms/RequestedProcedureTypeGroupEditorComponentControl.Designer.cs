@@ -28,27 +28,29 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
+            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this._name = new ClearCanvas.Controls.WinForms.TextField();
-            this._category = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this._addButton = new System.Windows.Forms.Button();
             this._removeButton = new System.Windows.Forms.Button();
-            this.listBox1 = new System.Windows.Forms.ListBox();
-            this.listBox2 = new System.Windows.Forms.ListBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
+            this._availableRequestedProcedureTypes = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this._selectedRequestedProcedureTypes = new ClearCanvas.Desktop.View.WinForms.TableView();
+            this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this._name = new ClearCanvas.Controls.WinForms.TextField();
+            this._category = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._description = new ClearCanvas.Controls.WinForms.TextAreaField();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
-            this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
+            this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -114,6 +116,107 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Requested Procedure Types";
             // 
+            // tableLayoutPanel3
+            // 
+            this.tableLayoutPanel3.ColumnCount = 3;
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.Controls.Add(this._addButton, 1, 1);
+            this.tableLayoutPanel3.Controls.Add(this._removeButton, 1, 2);
+            this.tableLayoutPanel3.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel3.Controls.Add(this.label2, 2, 0);
+            this.tableLayoutPanel3.Controls.Add(this._availableRequestedProcedureTypes, 0, 1);
+            this.tableLayoutPanel3.Controls.Add(this._selectedRequestedProcedureTypes, 2, 1);
+            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 16);
+            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
+            this.tableLayoutPanel3.RowCount = 3;
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel3.Size = new System.Drawing.Size(648, 382);
+            this.tableLayoutPanel3.TabIndex = 0;
+            // 
+            // _addButton
+            // 
+            this._addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this._addButton.Location = new System.Drawing.Point(286, 171);
+            this._addButton.Name = "_addButton";
+            this._addButton.Size = new System.Drawing.Size(75, 23);
+            this._addButton.TabIndex = 0;
+            this._addButton.Text = ">>";
+            this._addButton.UseVisualStyleBackColor = true;
+            this._addButton.Click += new System.EventHandler(this.AddSelection);
+            // 
+            // _removeButton
+            // 
+            this._removeButton.Location = new System.Drawing.Point(286, 200);
+            this._removeButton.Name = "_removeButton";
+            this._removeButton.Size = new System.Drawing.Size(75, 23);
+            this._removeButton.TabIndex = 1;
+            this._removeButton.Text = "<<";
+            this._removeButton.UseVisualStyleBackColor = true;
+            this._removeButton.Click += new System.EventHandler(this.RemoveSelection);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 0);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(50, 13);
+            this.label1.TabIndex = 4;
+            this.label1.Text = "Available";
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(367, 0);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(49, 13);
+            this.label2.TabIndex = 5;
+            this.label2.Text = "Selected";
+            // 
+            // _availableRequestedProcedureTypes
+            // 
+            this._availableRequestedProcedureTypes.AutoSize = true;
+            this._availableRequestedProcedureTypes.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._availableRequestedProcedureTypes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._availableRequestedProcedureTypes.Location = new System.Drawing.Point(3, 16);
+            this._availableRequestedProcedureTypes.MenuModel = null;
+            this._availableRequestedProcedureTypes.Name = "_availableRequestedProcedureTypes";
+            this._availableRequestedProcedureTypes.ReadOnly = false;
+            this.tableLayoutPanel3.SetRowSpan(this._availableRequestedProcedureTypes, 2);
+            this._availableRequestedProcedureTypes.Selection = selection1;
+            this._availableRequestedProcedureTypes.ShowToolbar = false;
+            this._availableRequestedProcedureTypes.Size = new System.Drawing.Size(277, 363);
+            this._availableRequestedProcedureTypes.TabIndex = 6;
+            this._availableRequestedProcedureTypes.Table = null;
+            this._availableRequestedProcedureTypes.ToolbarModel = null;
+            this._availableRequestedProcedureTypes.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._availableRequestedProcedureTypes.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            this._availableRequestedProcedureTypes.ItemDoubleClicked += new System.EventHandler(this.AddSelection);
+            // 
+            // _selectedRequestedProcedureTypes
+            // 
+            this._selectedRequestedProcedureTypes.AutoSize = true;
+            this._selectedRequestedProcedureTypes.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this._selectedRequestedProcedureTypes.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._selectedRequestedProcedureTypes.Location = new System.Drawing.Point(367, 16);
+            this._selectedRequestedProcedureTypes.MenuModel = null;
+            this._selectedRequestedProcedureTypes.Name = "_selectedRequestedProcedureTypes";
+            this._selectedRequestedProcedureTypes.ReadOnly = false;
+            this.tableLayoutPanel3.SetRowSpan(this._selectedRequestedProcedureTypes, 2);
+            this._selectedRequestedProcedureTypes.Selection = selection2;
+            this._selectedRequestedProcedureTypes.ShowToolbar = false;
+            this._selectedRequestedProcedureTypes.Size = new System.Drawing.Size(278, 363);
+            this._selectedRequestedProcedureTypes.TabIndex = 7;
+            this._selectedRequestedProcedureTypes.Table = null;
+            this._selectedRequestedProcedureTypes.ToolbarModel = null;
+            this._selectedRequestedProcedureTypes.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+            this._selectedRequestedProcedureTypes.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
+            this._selectedRequestedProcedureTypes.ItemDoubleClicked += new System.EventHandler(this.RemoveSelection);
+            // 
             // tableLayoutPanel2
             // 
             this.tableLayoutPanel2.AutoSize = true;
@@ -163,87 +266,6 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._category.TabIndex = 1;
             this._category.Value = null;
             // 
-            // tableLayoutPanel3
-            // 
-            this.tableLayoutPanel3.ColumnCount = 3;
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
-            this.tableLayoutPanel3.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Controls.Add(this._addButton, 1, 1);
-            this.tableLayoutPanel3.Controls.Add(this._removeButton, 1, 2);
-            this.tableLayoutPanel3.Controls.Add(this.listBox1, 0, 1);
-            this.tableLayoutPanel3.Controls.Add(this.listBox2, 2, 1);
-            this.tableLayoutPanel3.Controls.Add(this.label1, 0, 0);
-            this.tableLayoutPanel3.Controls.Add(this.label2, 2, 0);
-            this.tableLayoutPanel3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tableLayoutPanel3.Location = new System.Drawing.Point(3, 16);
-            this.tableLayoutPanel3.Name = "tableLayoutPanel3";
-            this.tableLayoutPanel3.RowCount = 3;
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel3.Size = new System.Drawing.Size(648, 382);
-            this.tableLayoutPanel3.TabIndex = 0;
-            // 
-            // _addButton
-            // 
-            this._addButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this._addButton.Location = new System.Drawing.Point(286, 171);
-            this._addButton.Name = "_addButton";
-            this._addButton.Size = new System.Drawing.Size(75, 23);
-            this._addButton.TabIndex = 0;
-            this._addButton.Text = ">>";
-            this._addButton.UseVisualStyleBackColor = true;
-            this._addButton.Click += new System.EventHandler(this._addButton_Click);
-            // 
-            // _removeButton
-            // 
-            this._removeButton.Location = new System.Drawing.Point(286, 200);
-            this._removeButton.Name = "_removeButton";
-            this._removeButton.Size = new System.Drawing.Size(75, 23);
-            this._removeButton.TabIndex = 1;
-            this._removeButton.Text = "<<";
-            this._removeButton.UseVisualStyleBackColor = true;
-            this._removeButton.Click += new System.EventHandler(this._removeButton_Click);
-            // 
-            // listBox1
-            // 
-            this.listBox1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.Location = new System.Drawing.Point(3, 16);
-            this.listBox1.Name = "listBox1";
-            this.tableLayoutPanel3.SetRowSpan(this.listBox1, 2);
-            this.listBox1.Size = new System.Drawing.Size(277, 355);
-            this.listBox1.TabIndex = 2;
-            // 
-            // listBox2
-            // 
-            this.listBox2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.listBox2.FormattingEnabled = true;
-            this.listBox2.Location = new System.Drawing.Point(367, 16);
-            this.listBox2.Name = "listBox2";
-            this.tableLayoutPanel3.SetRowSpan(this.listBox2, 2);
-            this.listBox2.Size = new System.Drawing.Size(278, 355);
-            this.listBox2.TabIndex = 3;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(3, 0);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(50, 13);
-            this.label1.TabIndex = 4;
-            this.label1.Text = "Available";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(367, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(49, 13);
-            this.label2.TabIndex = 5;
-            this.label2.Text = "Selected";
-            // 
             // _description
             // 
             this._description.AutoSize = true;
@@ -269,10 +291,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.tableLayoutPanel1.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
-            this.tableLayoutPanel2.ResumeLayout(false);
-            this.tableLayoutPanel2.PerformLayout();
             this.tableLayoutPanel3.ResumeLayout(false);
             this.tableLayoutPanel3.PerformLayout();
+            this.tableLayoutPanel2.ResumeLayout(false);
+            this.tableLayoutPanel2.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -291,10 +313,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.Button _addButton;
         private System.Windows.Forms.Button _removeButton;
-        private System.Windows.Forms.ListBox listBox1;
-        private System.Windows.Forms.ListBox listBox2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
         private ClearCanvas.Controls.WinForms.TextAreaField _description;
+        private ClearCanvas.Desktop.View.WinForms.TableView _availableRequestedProcedureTypes;
+        private ClearCanvas.Desktop.View.WinForms.TableView _selectedRequestedProcedureTypes;
     }
 }

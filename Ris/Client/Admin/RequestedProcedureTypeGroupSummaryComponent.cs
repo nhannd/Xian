@@ -150,9 +150,12 @@ namespace ClearCanvas.Ris.Client.Admin
                 if (_selectedRequestedProcedureTypeGroup == null) return;
 
                 RequestedProcedureTypeGroupEditorComponent editor = new RequestedProcedureTypeGroupEditorComponent(_selectedRequestedProcedureTypeGroup.EntityRef);
-                ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateRequestedProcedureTypeGroup);
+                ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, editor, SR.TitleUpdateRequestedProcedureTypeGroup);
 
-                UpdateRequestedProcedureTypeGroup();
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    LoadRequestedProcedureTypeGroupTable();
+                }
             }
             catch (Exception e)
             {

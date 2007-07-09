@@ -6,6 +6,14 @@ namespace ClearCanvas.Ris.Application.Common.Admin.RequestedProcedureTypeGroupAd
     [DataContract]
     public class RequestedProcedureTypeGroupSummary : DataContractBase
     {
+        public RequestedProcedureTypeGroupSummary(EntityRef entityRef, string name, string description, EnumValueInfo category)
+        {
+            EntityRef = entityRef;
+            Name = name;
+            Description = description;
+            Category = category;
+        }
+
         [DataMember]
         public EntityRef EntityRef;
 

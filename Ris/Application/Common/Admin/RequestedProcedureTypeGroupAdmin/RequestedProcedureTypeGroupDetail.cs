@@ -9,11 +9,8 @@ namespace ClearCanvas.Ris.Application.Common.Admin.RequestedProcedureTypeGroupAd
     {
         public RequestedProcedureTypeGroupDetail()
         {
-            Foo = "Foo";
+            this.RequestedProcedureTypes = new List<RequestedProcedureTypeSummary>();
         }
-
-        [DataMember]
-        public string Foo;
 
         [DataMember]
         public EntityRef EntityRef;

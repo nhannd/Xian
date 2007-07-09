@@ -1,12 +1,37 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.RequestedProcedureTypeGroupAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
+    internal class RequestedProcedureTypeSummaryTable : Table<RequestedProcedureTypeSummary>
+    {
+        private readonly int columnSortIndex = 0;
+
+        internal RequestedProcedureTypeSummaryTable()
+        {
+            this.Columns.Add(new TableColumn<RequestedProcedureTypeSummary, int>("ID",
+                delegate(RequestedProcedureTypeSummary rpt)
+                {
+                    int id;
+                    return int.TryParse(rpt.Id, out id) ? id : -1 ;
+                },
+                0.5f));
+
+            this.Columns.Add(new TableColumn<RequestedProcedureTypeSummary, string>("Name",
+                delegate(RequestedProcedureTypeSummary rpt) { return rpt.Name; },
+                0.5f));
+
+            this.Sort(new TableSortParams(this.Columns[columnSortIndex], true));
+        }
+    }
+
     /// <summary>
     /// Extension point for views onto <see cref="RequestedProcedureTypeGroupEditorComponent"/>
     /// </summary>
@@ -27,7 +52,13 @@ namespace ClearCanvas.Ris.Client.Admin
         private RequestedProcedureTypeGroupDetail _editedItemDetail;
         private RequestedProcedureTypeGroupSummary _editedItemSummary;
 
-        private List<RequestedProcedureTypeSummary> _requestedProcedureTypeChoices;
+        private List<EnumValueInfo> _requestedProcedureTypeGroupCategoryChoices;
+        private RequestedProcedureTypeSummaryTable _availableRequestedProcedureTypes;
+        private RequestedProcedureTypeSummaryTable _selectedRequestedProcedureTypes;
+        private RequestedProcedureTypeSummary _selectedRequestedProcedureTypesSelection;
+        private RequestedProcedureTypeSummary _availableRequestedProcedureTypesSelection;
+
+        private event EventHandler _requestedProcedureTypeSummaryTablesChanged;
 
         public RequestedProcedureTypeGroupEditorComponent()
         {
@@ -42,16 +73,21 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public override void Start()
         {
+            _availableRequestedProcedureTypes = new RequestedProcedureTypeSummaryTable();
+            _selectedRequestedProcedureTypes = new RequestedProcedureTypeSummaryTable();
+
             Platform.GetService<IRequestedProcedureTypeGroupAdminService>(
                 delegate(IRequestedProcedureTypeGroupAdminService service)
                     {
                         GetRequestedProcedureTypeGroupEditFormDataResponse formDataResponse =
                             service.GetRequestedProcedureTypeGroupEditFormData(new GetRequestedProcedureTypeGroupEditFormDataRequest());
-                        _requestedProcedureTypeChoices = formDataResponse.RequestedProcedureTypes;
+                        _requestedProcedureTypeGroupCategoryChoices = formDataResponse.Categories;
+                        _availableRequestedProcedureTypes.Items.AddRange(formDataResponse.RequestedProcedureTypes);
 
                         if (_isNew)
                         {
                             _editedItemDetail = new RequestedProcedureTypeGroupDetail();
+                            _editedItemDetail.Category = _requestedProcedureTypeGroupCategoryChoices[0];
                         }
                         else
                         {
@@ -60,6 +96,12 @@ namespace ClearCanvas.Ris.Client.Admin
                                     new LoadRequestedProcedureTypeGroupForEditRequest(_editedItemEntityRef));
 
                             _editedItemDetail = response.Detail;
+                            _selectedRequestedProcedureTypes.Items.AddRange(_editedItemDetail.RequestedProcedureTypes);
+                        }
+
+                        foreach(RequestedProcedureTypeSummary selectedSummary in _selectedRequestedProcedureTypes.Items)
+                        {
+                            _availableRequestedProcedureTypes.Items.Remove(selectedSummary);
                         }
                     });
 
@@ -71,23 +113,89 @@ namespace ClearCanvas.Ris.Client.Admin
             base.Stop();
         }
 
+        public RequestedProcedureTypeGroupSummary EditedRequestedProcedureTypeGroupSummary
+        {
+            get { return _editedItemSummary; }
+        }
+
         #region Presentation Model
 
-        public string Foo
+        public string Name
         {
-            get { return _editedItemDetail.Foo; }
-            set 
-            { 
-                _editedItemDetail.Foo = value;
+            get { return _editedItemDetail.Name; }
+            set
+            {
+                _editedItemDetail.Name = value;
                 this.Modified = true;
             }
         }
 
+        public string Description
+        {
+            get { return _editedItemDetail.Description; }
+            set
+            {
+                _editedItemDetail.Description = value;
+                this.Modified = true;
+            }
+        }
+
+        #region Category
+        public string Category
+        {
+            get { return _editedItemDetail.Category == null ? string.Empty : _editedItemDetail.Category.Value; }
+            set
+            {
+                _editedItemDetail.Category = EnumValueUtils.MapDisplayValue(_requestedProcedureTypeGroupCategoryChoices, value);
+                this.Modified = true;
+            }
+        }
+
+        public IList<string> CategoryChoices
+        {
+            get { return EnumValueUtils.GetDisplayValues(_requestedProcedureTypeGroupCategoryChoices); }
+        }
         #endregion
 
-        public RequestedProcedureTypeGroupSummary EditedRequestedProcedureTypeGroupSummary
+        public ITable AvailableRequestedProcedureTypes
         {
-            get { return _editedItemSummary; }
+            get { return _availableRequestedProcedureTypes; }
+        }
+
+        public ITable SelectedRequestedProcedureTypes
+        {
+            get { return _selectedRequestedProcedureTypes; }
+        }
+
+        public ISelection SelectedRequestedProcedureTypesSelection
+        {
+            get { return _selectedRequestedProcedureTypesSelection == null ? Selection.Empty : new Selection(_selectedRequestedProcedureTypesSelection); }
+            set
+            {
+                _selectedRequestedProcedureTypesSelection = (RequestedProcedureTypeSummary)value.Item;
+            }
+        }
+
+        public ISelection AvailableRequestedProcedureTypesSelection
+        {
+            get { return _availableRequestedProcedureTypesSelection == null ? Selection.Empty : new Selection(_availableRequestedProcedureTypesSelection); }
+            set
+            {
+                _availableRequestedProcedureTypesSelection = (RequestedProcedureTypeSummary)value.Item;
+            }
+        }
+
+        public event EventHandler RequestedProcedureTypeTablesChanged
+        {
+            add { _requestedProcedureTypeSummaryTablesChanged += value; }
+            remove { _requestedProcedureTypeSummaryTablesChanged -= value; }
+        }
+
+        #endregion
+
+        public bool AcceptEnabled
+        {
+            get { return this.Modified; }
         }
 
         public void Accept()
@@ -100,6 +208,9 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 try
                 {
+                    _editedItemDetail.RequestedProcedureTypes.Clear();
+                    _editedItemDetail.RequestedProcedureTypes.AddRange(_selectedRequestedProcedureTypes.Items);
+
                     Platform.GetService<IRequestedProcedureTypeGroupAdminService>(
                         delegate(IRequestedProcedureTypeGroupAdminService service)
                         {
@@ -139,16 +250,36 @@ namespace ClearCanvas.Ris.Client.Admin
             Host.Exit();
         }
 
-        public bool AcceptEnabled
+        public bool AddSelectionEnabled
         {
-            get { return this.Modified; }
+            get { return _availableRequestedProcedureTypesSelection != null; }
         }
 
-        public event EventHandler AcceptEnabledChanged
+        public void AddSelection(ISelection selection)
         {
-            add { this.ModifiedChanged += value; }
-            remove { this.ModifiedChanged -= value; }
+            foreach(RequestedProcedureTypeSummary summary in selection.Items)
+            {
+                _selectedRequestedProcedureTypes.Items.Add(summary);
+                _availableRequestedProcedureTypes.Items.Remove(summary);
+            }
+            EventsHelper.Fire(_requestedProcedureTypeSummaryTablesChanged, this, EventArgs.Empty);
+            this.Modified = true;
         }
 
+        public bool RemoveSelectionEnabled
+        {
+            get { return _selectedRequestedProcedureTypesSelection != null; }
+        }
+
+        public void RemoveSelection(ISelection selection)
+        {
+            foreach (RequestedProcedureTypeSummary summary in selection.Items)
+            {
+                _selectedRequestedProcedureTypes.Items.Remove(summary);
+                _availableRequestedProcedureTypes.Items.Add(summary);
+            }
+            EventsHelper.Fire(_requestedProcedureTypeSummaryTablesChanged, this, EventArgs.Empty);
+            this.Modified = true;
+        }
     }
 }

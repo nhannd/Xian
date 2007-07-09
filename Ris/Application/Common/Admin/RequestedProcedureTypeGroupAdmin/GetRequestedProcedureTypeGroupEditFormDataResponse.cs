@@ -7,12 +7,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.RequestedProcedureTypeGroupAd
     [DataContract]
     public class GetRequestedProcedureTypeGroupEditFormDataResponse : DataContractBase
     {
-        public GetRequestedProcedureTypeGroupEditFormDataResponse()
-        {
-            RequestedProcedureTypes = new List<RequestedProcedureTypeSummary>();
-        }
-
         [DataMember]
         public List<RequestedProcedureTypeSummary> RequestedProcedureTypes;
+
+        [DataMember]
+        public List<EnumValueInfo> Categories;
     }
 }
