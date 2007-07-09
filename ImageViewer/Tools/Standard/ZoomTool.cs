@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardZoom/Activate", KeyStroke = XKeys.Z)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
-    [Tooltip("activate", "TooltipZoom")]
+	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ZoomToolSmall.png", "Icons.ZoomToolMedium.png", "Icons.ZoomToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Zoom")]
 
@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[KeyboardAction("zoomout", "imageviewer-keyboard/ToolsStandardZoom/ZoomOut", KeyStroke = XKeys.Oemcomma)]
 	[ClickHandler("zoomout", "ZoomOut")]
 
-	[MouseWheelControl("ZoomIn", "ZoomOut", ModifierFlags.Control)]
+	[MouseToolWheelControl("ZoomIn", "ZoomOut", ModifierFlags.Control)]
 	[MouseToolButton(XMouseButtons.Right, false)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
@@ -39,8 +39,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private SpatialTransformApplicator _applicator;
 
 		public ZoomTool()
+			: base(SR.TooltipZoom)
 		{
 			this.CursorToken = new CursorToken("Icons.ZoomToolSmall.png", this.GetType().Assembly);
+		}
+
+		public override string Tooltip
+		{
+			get { return base.Tooltip; }
+		}
+
+		public override event EventHandler TooltipChanged
+		{
+			add { base.TooltipChanged += value; }
+			remove { base.TooltipChanged -= value; }
 		}
 
 		private void CaptureBeginState()

@@ -91,7 +91,10 @@ namespace ClearCanvas.ImageViewer
 
             _toolSet = new ToolSet(new ImageViewerToolExtensionPoint(), new ImageViewerToolContext(this));
 
-			RegisterShortcuts();
+			_shortcutManager = new ViewerShortcutManager();
+
+			foreach (ITool tool in _toolSet.Tools)
+				_shortcutManager.RegisterImageViewerTool(tool);
         }
 
 		/// <summary>
@@ -235,9 +238,6 @@ namespace ClearCanvas.ImageViewer
         {
             get 
 			{
-				if (_shortcutManager == null)
-					_shortcutManager = new ViewerShortcutManager();
-
 				return _shortcutManager; 
 			}
         }
@@ -547,12 +547,6 @@ namespace ClearCanvas.ImageViewer
 		#endregion 
 
 		#region Private methods
-
-		private void RegisterShortcuts()
-		{
-			(ShortcutManager as ViewerShortcutManager).RegisterKeyboardShortcuts(this.KeyboardModel.ChildNodes);
-			(ShortcutManager as ViewerShortcutManager).RegisterMouseShortcuts(_toolSet.Tools);
-		}
 
 		private void VerifyLoad(int totalImages, int failedImages)
 		{

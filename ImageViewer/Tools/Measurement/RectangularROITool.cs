@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     [ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarRectangularROI", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
-    [Tooltip("activate", "TooltipRectangularROI")]
+	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.RectangularROIToolSmall.png", "Icons.RectangularROIToolMedium.png", "Icons.RectangularROIToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Measurement.ROI.Rectangular")]
 
@@ -29,7 +29,19 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		private ROIGraphic _createGraphic;
 
 		public RectangularROITool()
+			: base(SR.TooltipRectangularROI)
 		{
+		}
+
+		public override string Tooltip
+		{
+			get { return base.Tooltip; }
+		}
+
+		public override event EventHandler TooltipChanged
+		{
+			add { base.TooltipChanged += value; }
+			remove { base.TooltipChanged -= value; }
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)

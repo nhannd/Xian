@@ -16,11 +16,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardStack/Activate", KeyStroke = XKeys.S)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
-	[Tooltip("activate", "TooltipStack")]
+	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.StackToolSmall.png", "Icons.StackToolMedium.png", "Icons.StackToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Stacking.Standard")]
 
-	[MouseWheelControl("StackDown", "StackUp")]
+	[MouseToolWheelControl("StackDown", "StackUp")]
 	[MouseToolButton(XMouseButtons.Left, true)]
 
 	[KeyboardAction("stackup", "imageviewer-keyboard/ToolsStandardStack/StackUp", KeyStroke = XKeys.PageUp)]
@@ -43,8 +43,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private IImageBox _currentImageBox;
 
 		public StackTool()
+			: base(SR.TooltipStack)
 		{
 			this.CursorToken = new CursorToken("Icons.StackToolSmall.png", this.GetType().Assembly);
+		}
+
+		public override string Tooltip
+		{
+			get { return base.Tooltip; }
+		}
+
+		public override event EventHandler TooltipChanged
+		{
+			add { base.TooltipChanged += value; }
+			remove { base.TooltipChanged -= value; }
 		}
 
 		private void CaptureBeginState(IImageBox imageBox)

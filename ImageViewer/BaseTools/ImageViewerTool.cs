@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// <summary>
 		/// Gets the <see cref="IImageViewer"/> associated with this tool.
 		/// </summary>
-		public IImageViewer ImageViewer
+		protected IImageViewer ImageViewer
 		{
 			get { return this.Context.Viewer; }
 		}
@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// </summary>
 		/// <value>The selected <see cref="IPresentationImage"/> or <b>null</b>
 		/// if no <see cref="IPresentationImage"/> is currently selected.</value>
-		public IPresentationImage SelectedPresentationImage
+		protected IPresentationImage SelectedPresentationImage
 		{
 			get
 			{
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// </summary>
 		/// <value>The selected <see cref="IImageGraphicProvider"/> or <b>null</b>
 		/// if no <see cref="IImageGraphicProvider"/> is currently selected.</value>
-		public IImageGraphicProvider SelectedImageGraphicProvider
+		protected IImageGraphicProvider SelectedImageGraphicProvider
 		{
 			get
 			{
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// </summary>
 		/// <value>The selected <see cref="IImageSopProvider"/> or <b>null</b>
 		/// if no <see cref="IImageSopProvider"/> is currently selected.</value>
-		public IImageSopProvider SelectedImageSopProvider
+		protected IImageSopProvider SelectedImageSopProvider
 		{
 			get
 			{
@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// </summary>
 		/// <value>The selected <see cref="ISpatialTransformProvider"/> or <b>null</b>
 		/// if no <see cref="ISpatialTransformProvider"/> is currently selected.</value>
-		public ISpatialTransformProvider SelectedSpatialTransformProvider
+		protected ISpatialTransformProvider SelectedSpatialTransformProvider
 		{
 			get
 			{
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// </summary>
 		/// <value>The selected <see cref="IVOILUTLinearProvider"/> or <b>null</b>
 		/// if no <see cref="IVOILUTLinearProvider"/> is currently selected.</value>
-		public IVOILUTLinearProvider SelectedVOILUTLinearProvider
+		protected IVOILUTLinearProvider SelectedVOILUTLinearProvider
 		{
 			get
 			{
@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// </summary>
 		/// <value>The selected <see cref="IAutoLutApplicatorProvider"/> or <b>null</b>
 		/// if no <see cref="IAutoLutApplicatorProvider"/> is currently selected.</value>
-		public IAutoVoiLutApplicatorProvider SelectedAutoLutApplicatorProvider
+		protected IAutoVoiLutApplicatorProvider SelectedAutoLutApplicatorProvider
 		{
 			get
 			{
@@ -165,7 +165,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// </summary>
 		/// <value>The selected <see cref="IOverlayGraphicsProvider"/> or <b>null</b>
 		/// if no <see cref="IOverlayGraphicsProvider"/> is currently selected.</value>
-		public IOverlayGraphicsProvider SelectedOverlayGraphicsProvider
+		protected IOverlayGraphicsProvider SelectedOverlayGraphicsProvider
 		{
 			get
 			{
@@ -181,7 +181,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// </summary>
 		/// <value>The selected <see cref="IAnnotationLayoutProvider"/> or <b>null</b>
 		/// if no <see cref="IAnnotationLayoutProvider"/> is currently selected.</value>
-		public IAnnotationLayoutProvider SelectedAnnotationLayoutProvider
+		protected IAnnotationLayoutProvider SelectedAnnotationLayoutProvider
 		{
 			get
 			{
@@ -192,7 +192,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			}
 		}
 
-		void OnTileSelected(object sender, TileSelectedEventArgs e)
+		protected virtual void OnTileSelected(object sender, TileSelectedEventArgs e)
 		{
 			if (e.SelectedTile.PresentationImage == null)
 				this.Enabled = false;
@@ -200,7 +200,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 				this.Enabled = true;
 		}
 
-		void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
+		protected virtual void OnPresentationImageSelected(object sender, PresentationImageSelectedEventArgs e)
 		{
 			if (e.SelectedPresentationImage == null)
 				this.Enabled = false;

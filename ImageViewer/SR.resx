@@ -264,6 +264,9 @@
   <data name="ExceptionMouseToolHasNoAssignment" xml:space="preserve">
     <value>The mouse tool does not have a shortcut assignment ({0}).  The tool cannot be activated.</value>
   </data>
+  <data name="ExceptionMouseToolMustHaveValidAssignment" xml:space="preserve">
+    <value>A mouse tool can only be assigned a valid mouse button.</value>
+  </data>
   <data name="ExceptionMouseToolShouldHaveDefault" xml:space="preserve">
     <value>A mouse tool should have a default button assignment ({0}).  The tool may have no effect.</value>
   </data>
@@ -287,6 +290,9 @@
   </data>
   <data name="LabelError" xml:space="preserve">
     <value>Error:</value>
+  </data>
+  <data name="LabelUnknown" xml:space="preserve">
+    <value>Unknown</value>
   </data>
   <data name="MessageErrorLoadingAnnotationLayout" xml:space="preserve">
     <value>An unrecoverable error occurred while attempting to load the text overlay.  Please see the log for details.</value>

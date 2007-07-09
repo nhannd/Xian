@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
     [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarWindowLevel", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[ClickHandler("activate", "Select")]
-    [Tooltip("activate", "TooltipWindowLevel")]
+	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.WindowLevelToolSmall.png", "Icons.WindowLevelToolMedium.png", "Icons.WindowLevelToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Lut.WindowLevel")]
 
@@ -45,6 +45,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private VoiLutOperationApplicator _applicator;
 
 		public WindowLevelTool()
+			: base(SR.TooltipWindowLevel)
 		{
 			this.CursorToken = new CursorToken("Icons.WindowLevelToolSmall.png", this.GetType().Assembly);
         }
@@ -52,6 +53,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override void Initialize()
         {
             base.Initialize();
+		}
+
+		public override string Tooltip
+		{
+			get { return base.Tooltip; }
+		}
+
+		public override event EventHandler TooltipChanged
+		{
+			add { base.TooltipChanged += value; }
+			remove { base.TooltipChanged -= value; }
 		}
 
 		private void CaptureBeginState()

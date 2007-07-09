@@ -6,7 +6,6 @@ using ClearCanvas.ImageViewer.InputManagement;
 using System.Drawing;
 using ClearCanvas.Desktop;
 
-
 namespace ClearCanvas.ImageViewer.BaseTools
 {
     /// <summary>
@@ -17,6 +16,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
     /// and is given the opportunity to respond to mouse events for that button.  Developers 
     /// implementing mouse tools should subclass this class.
     /// </remarks>
+
 	public abstract class MouseImageViewerTool :
 		ImageViewerTool, 
 		IMouseButtonHandler, 
@@ -29,53 +29,54 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		private int _deltaX;
 		private int _deltaY;
 
+		private string _tooltipPrefix;
+		private event EventHandler _tooltipChangedEvent;
+
+		private XMouseButtons _mouseButton;
+		private event EventHandler _mouseButtonChanged;
+
         private bool _active;
         private event EventHandler _activationChangedEvent;
 
-		private bool _requiresCapture;
 		private CursorToken _cursorToken;
-
+		
 		#endregion
 
+		protected MouseImageViewerTool(string tooltipPrefix)
+			: base()
+		{
+			_tooltipPrefix = tooltipPrefix;
+
+			_mouseButton = XMouseButtons.None;
+			_active = false;
+		}
+
 		protected MouseImageViewerTool()
-        {
-			_requiresCapture = true;
-        }
-
-		public bool RequiresCapture
+			: this(SR.LabelUnknown)
 		{
-			get { return _requiresCapture; }
-			protected set { _requiresCapture = value; }
 		}
 
-		/// <summary>
-		/// Gets the cursor associated with this mouse tool.
-		/// </summary>
-		public CursorToken CursorToken
+		protected virtual string TooltipPrefix
 		{
-			get { return _cursorToken; }
-			protected set { _cursorToken = value; }
-		}
-
-		/// <summary>
-        /// Gets or sets a value indicating whether this tool is currently active or not.  
-        /// </summary>
-		/// <remarks>
-		/// Any number of mouse tools may be assigned to a given mouse button, but 
-		/// only one such tool can be active at any given time.
-		/// </remarks>
-        public bool Active
-        {
-            get { return _active; }
-			set
+			get { return _tooltipPrefix; }
+			set 
 			{
-				if (value == _active)
+				if (_tooltipPrefix == value)
 					return;
 
-				_active = value;
-				EventsHelper.Fire(_activationChangedEvent, this, new EventArgs());
+				_tooltipPrefix = value;
+				EventsHelper.Fire(_tooltipChangedEvent, this, EventArgs.Empty);
 			}
-        }
+		}
+
+		/// <summary>
+		/// Gets the cursor token associated with this mouse tool.
+		/// </summary>
+		protected CursorToken CursorToken
+		{
+			get { return _cursorToken; }
+			set { _cursorToken = value; }
+		}
 
 		/// <summary>
 		/// Gets the previous x coordinate of the mouse pointer.
@@ -112,6 +113,76 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
+		/// Gets the tooltip associated with this tool.  For mouse tools, this is a combination of 
+		/// <see cref="TooltipPrefix"/> and <see cref="MouseButton"/> in the form "Prefix (button)".
+		/// </summary>
+		public virtual string Tooltip
+		{
+			get
+			{
+				return String.Format("{0} ({1})", this.TooltipPrefix, this.MouseButton.ToString());
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the mouse button assigned to this tool.
+		/// </summary>
+		/// <remarks>
+		/// It is expected that on creation of this tool, this property will be set to
+		/// something other than 'None'.  Currently this is done in the overridden <see cref="Initialize" /> method.
+		/// </remarks>
+		public XMouseButtons MouseButton
+		{
+			get
+			{
+				return _mouseButton;
+			}
+			set
+			{
+				if (value == XMouseButtons.None)
+					throw new ArgumentException(SR.ExceptionMouseToolMustHaveValidAssignment);
+
+				if (_mouseButton == value)
+					return;
+
+				_mouseButton = value;
+				EventsHelper.Fire(_mouseButtonChanged, this, EventArgs.Empty);
+
+				//the mouse button assignment affects the tooltip.
+				EventsHelper.Fire(_tooltipChangedEvent, this, EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets a value indicating whether this tool is currently active or not.  
+		/// </summary>
+		/// <remarks>
+		/// Any number of mouse tools may be assigned to a given mouse button, but 
+		/// only one such tool can be active at any given time.
+		/// </remarks>
+		public bool Active
+		{
+			get { return _active; }
+			set
+			{
+				if (value == _active)
+					return;
+
+				_active = value;
+				EventsHelper.Fire(_activationChangedEvent, this, new EventArgs());
+			}
+		}
+
+		/// <summary>
+		/// Notifies observer(s) that the tooltip has changed.
+		/// </summary>
+		public virtual event EventHandler TooltipChanged
+		{
+			add { _tooltipChangedEvent += value; }
+			remove { _tooltipChangedEvent -= value; }
+		}
+
+		/// <summary>
 		/// Occurs when the <see cref="Active"/> property has changed.
 		/// </summary>
 		public event EventHandler ActivationChanged
@@ -121,11 +192,28 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-		/// Overrides <see cref="ToolBase.Initialize"/>.
+		/// Occurs when the <see cref="MouseButton"/> property has changed.
 		/// </summary>
+		public event EventHandler MouseButtonChanged
+		{
+			add { _mouseButtonChanged += value; }
+			remove { _mouseButtonChanged -= value; }
+		}
+
+		/// <summary>
+		/// Overrides <see cref="ToolBase.Initialize"/>.  Initialization of the <see cref="MouseButton"/> member
+		/// is done here using the <see cref="MouseImageViewerToolInitializer.Initialize"/> method.
+		/// </summary>
+		/// <remarks>
+		/// Initializing the tool this way (via <see cref="MouseImageViewerToolInitializer.Initialize"/>)allows 
+		/// us to defer runtime value checking, of the <see cref="MouseButton"/> attribute in particular, 
+		/// to tool initialization time rather than at construction time.  This way, we can explicitly disallow
+		/// assignments like 'None' and the tool will never appear in the toolbar.
+		/// </remarks>
 		public override void Initialize()
 		{
 			base.Initialize();
+			MouseImageViewerToolInitializer.Initialize(this);
 		}
 
         /// <summary>
@@ -214,15 +302,26 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			return false;
 		}
 
+		/// <summary>
+		/// Called by the framework when it needs to unexpectedly release capture on the tool, allowing it to do 
+		/// any necessary cleanup.  This method should be overridden by any derived classes that need to do cleanup.
+		/// </summary>
 		public virtual void Cancel()
 		{
 		}
 
+		/// <summary>
+		/// Gets whether or not this tool suppresses the context menu entirely while it is active/has capture.
+		/// </summary>
 		public virtual bool SuppressContextMenu
 		{
 			get { return false; }
 		}
 
+		/// <summary>
+		/// Gets whether or not the <see cref="Track"/> method should be processed for mouse 
+		/// coordinates outside the view rectange.
+		/// </summary>
 		public virtual bool ConstrainToTile
 		{
 			get { return false; }
@@ -232,6 +331,11 @@ namespace ClearCanvas.ImageViewer.BaseTools
 
 		#region ICursorTokenProvider Members
 
+		/// <summary>
+		/// Gets the cursor token associated with the tool.
+		/// </summary>
+		/// <param name="point">The point in destination (view) coordinates.</param>
+		/// <returns>a <see cref="CursorToken"/> object that is used to construct the cursor in the view.</returns>
 		public virtual CursorToken GetCursorToken(Point point)
 		{
 			return this.CursorToken;

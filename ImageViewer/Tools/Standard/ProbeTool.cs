@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuProbe", Flags = ClickActionFlags.CheckAction)]
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarProbe", Flags = ClickActionFlags.CheckAction)]
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardProbe/Activate", KeyStroke = XKeys.B)]
-	[Tooltip("activate", "TooltipProbe")]
+	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ProbeToolSmall.png", "Icons.ProbeToolMedium.png", "Icons.ProbeToolLarge.png")]
 	[ClickHandler("activate", "Select")]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
@@ -42,8 +42,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// framework.  Do not remove.
 		/// </summary>
 		public ProbeTool()
+			: base(SR.TooltipProbe)
 		{
 			this.CursorToken = new CursorToken("ProbeCursor.png", this.GetType().Assembly);
+		}
+
+		public override string Tooltip
+		{
+			get { return base.Tooltip; }
+		}
+
+		public override event EventHandler TooltipChanged
+		{
+			add { base.TooltipChanged += value; }
+			remove { base.TooltipChanged -= value; }
 		}
 
 		/// <summary>

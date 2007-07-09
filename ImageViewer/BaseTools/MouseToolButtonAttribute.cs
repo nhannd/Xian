@@ -4,7 +4,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
-namespace ClearCanvas.ImageViewer.InputManagement
+namespace ClearCanvas.ImageViewer.BaseTools
 {
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 	public sealed class MouseToolButtonAttribute : Attribute

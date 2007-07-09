@@ -122,6 +122,10 @@
     <Compile Include="Annotations\StoredAnnotatationLayoutProvider.cs" />
     <Compile Include="Annotations\Tests\AnnotationLayoutStoreTests.cs" />
     <Compile Include="ActiveImageViewerChangedEventArgs.cs" />
+    <Compile Include="BaseTools\ModifiedMouseToolButtonAttribute.cs" />
+    <Compile Include="BaseTools\MouseImageViewerToolInitializer.cs" />
+    <Compile Include="BaseTools\MouseToolButtonAttribute.cs" />
+    <Compile Include="BaseTools\MouseToolWheelControlAttribute.cs" />
     <Compile Include="Comparers\ComparerBase.cs" />
     <Compile Include="Comparers\AcquisitionNumberComparer.cs" />
     <Compile Include="Comparers\StandardImageSetComparer.cs" />
@@ -200,16 +204,12 @@
     <Compile Include="InputManagement\IMouseWheelHandler.cs" />
     <Compile Include="InputManagement\IViewerShortcutManager.cs" />
     <Compile Include="InputManagement\KeyboardButtonShortcut.cs" />
-    <Compile Include="InputManagement\KeyStrokeSettings.cs" />
     <Compile Include="InputManagement\Modifiers.cs" />
     <Compile Include="InputManagement\IInputController.cs" />
     <Compile Include="Comparers\InstanceNumberComparer.cs" />
-    <Compile Include="InputManagement\ModifiedMouseToolButtonAttribute.cs" />
     <Compile Include="InputManagement\MouseButtonShortcut.cs" />
     <Compile Include="InputManagement\KeyboardButtonMessage.cs" />
     <Compile Include="InputManagement\MouseLeaveMessage.cs" />
-    <Compile Include="InputManagement\MouseToolButtonAttribute.cs" />
-    <Compile Include="InputManagement\MouseWheelControlAttribute.cs" />
     <Compile Include="InputManagement\MouseWheelHandler.cs" />
     <Compile Include="InputManagement\MouseWheelMessage.cs" />
     <Compile Include="InputManagement\ReleaseCaptureMessage.cs" />

@@ -2,8 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.InputManagement;
 
-namespace ClearCanvas.ImageViewer.InputManagement
+namespace ClearCanvas.ImageViewer.BaseTools
 {
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
 	public class ModifiedMouseToolButtonAttribute : Attribute

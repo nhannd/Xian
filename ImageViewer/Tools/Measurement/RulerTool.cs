@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     [ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarRuler", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
-	[Tooltip("activate", "TooltipRuler")]
+	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.RulerToolSmall.png", "Icons.RulerToolMedium.png", "Icons.RulerToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Measurement.ROI.Linear")]
 
@@ -32,7 +32,19 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		private ROIGraphic _roiGraphic;
 
 		public RulerTool()
+			: base(SR.TooltipRuler)
 		{
+		}
+
+		public override string Tooltip
+		{
+			get { return base.Tooltip; }
+		}
+
+		public override event EventHandler TooltipChanged
+		{
+			add { base.TooltipChanged += value; }
+			remove { base.TooltipChanged -= value; }
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)

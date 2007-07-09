@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardPan/Activate", KeyStroke = XKeys.P)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
-	[Tooltip("activate", "TooltipPan")]
+	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.PanToolSmall.png", "Icons.PanToolMedium.png", "Icons.PanToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Pan")]
 
@@ -44,8 +44,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		private SpatialTransformApplicator _applicator;
 
 		public PanTool()
+			: base(SR.TooltipPan)
 		{
 			this.CursorToken = new CursorToken("Icons.PanToolSmall.png", this.GetType().Assembly);
+		}
+
+		public override string Tooltip
+		{
+			get { return base.Tooltip; }
+		}
+
+		public override event EventHandler TooltipChanged
+		{
+			add { base.TooltipChanged += value; }
+			remove { base.TooltipChanged -= value; }
 		}
 
 		private void CaptureBeginState()
