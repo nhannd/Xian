@@ -1,0 +1,26 @@
+<Project DefaultTargets="Copy Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<!-- ImageViewerSamples specific postbuild step -->
+
+	<ItemGroup>
+		<ImageViewerPluginFiles Include="$(SolutionDir)\..\Desktop\Applets\WebBrowser\bin\$(Configuration)\ClearCanvas.Desktop.Applets.WebBrowser.dll" />
+		<ImageViewerPluginFiles Include="$(SolutionDir)\..\Desktop\Applets\WebBrowser\View\WinForms\bin\$(Configuration)\ClearCanvas.Desktop.Applets.WebBrowser.View.WinForms.dll" />
+		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\ImageProcessing\Filter\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter.dll" />
+		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\ImageProcessing\Filter\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter.View.WinForms.dll" />
+		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\NPlot.dll" />
+		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\ImageProcessing\RoiAnalysis\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.dll" />
+		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\ImageProcessing\RoiAnalysis\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis.View.WinForms.dll" />
+		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Volume\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Volume.dll" />
+		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ImageViewer\Tools\Volume\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Volume.View.WinForms.dll" />
+		<ImageViewerPluginFiles Include="$(SolutionDir)\..\ReferencedAssemblies\vtk\*.*" />
+	</ItemGroup>
+
+	<Target Name="Copy Files">
+    <!-- Run the image viewer build file -->
+    <MSBuild Projects="$(SolutionDir)\ImageViewer_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectDir=$(ProjectDir);OutDir=$(OutDir);Platform=$(Platform);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory)" />
+
+		<!-- Copy ImageViewer plugins -->
+		<Copy SourceFiles="@(ImageViewerPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
+
+	</Target>
+</Project>
+

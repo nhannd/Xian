@@ -325,7 +325,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 	ProjectSection(SolutionItems) = preProject
-		ImageViewerSamples.bat = ImageViewerSamples.bat
+		ImageViewerSamples_dist.proj = ImageViewerSamples_dist.proj
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Desktop.Applets.WebBrowser", "..\Desktop\Applets\WebBrowser\ClearCanvas.Desktop.Applets.WebBrowser.csproj", "{99C5FEC1-FC30-4767-8D52-5D2EBB82F46B}"

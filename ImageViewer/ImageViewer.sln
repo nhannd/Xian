@@ -317,7 +317,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 	ProjectSection(SolutionItems) = preProject
-		ImageViewer.bat = ImageViewer.bat
+		ImageViewer_dist.proj = ImageViewer_dist.proj
 	EndProjectSection
 EndProject
 Global

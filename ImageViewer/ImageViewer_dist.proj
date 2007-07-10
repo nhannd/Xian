@@ -2,10 +2,6 @@
 	<!-- ImageViewer specific postbuild step -->
 	<PropertyGroup>
 		<DatabaseDirectory>C:\dicom_datastore</DatabaseDirectory>
-		<DistributionDirectory>$(ProjectDir)\$(PlatformFolderPrefix)\$(OutDir)</DistributionDirectory>
-		<CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
-		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
-		<LogsDirectory>$(DistributionDirectory)\logs</LogsDirectory>
     <SourceEmptyDatabaseFile>$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf</SourceEmptyDatabaseFile>
   </PropertyGroup>
 

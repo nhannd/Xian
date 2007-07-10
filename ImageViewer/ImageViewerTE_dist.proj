@@ -1,0 +1,17 @@
+<Project DefaultTargets="Copy Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<!-- ImageViewerTE specific postbuild step -->
+
+	<ItemGroup>
+		<ImageViewerPluginFiles Include="$(SolutionDir)\Tools\ImageProcessing\DynamicTe\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe.dll" />
+	</ItemGroup>
+
+	<Target Name="Copy Files">
+    <!-- Run the image viewer build file -->
+    <MSBuild Projects="$(SolutionDir)\ImageViewer_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectDir=$(ProjectDir);OutDir=$(OutDir);Platform=$(Platform);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory)" />
+
+		<!-- Copy ImageViewer plugins -->
+		<Copy SourceFiles="@(ImageViewerPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
+
+	</Target>
+</Project>
+
