@@ -228,6 +228,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			}
 			else
 			{
+				this.Clear();
 				this.SelectedTotalToProcess = _selectedProgressItem.TotalFilesToImport;
 				this.SelectedAvailableCount = _selectedProgressItem.NumberOfFilesCommittedToDataStore;
 				this.SelectedFailedSteps = _selectedProgressItem.TotalDataStoreCommitFailures;
