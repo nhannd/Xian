@@ -94,8 +94,9 @@ namespace ClearCanvas.Controls.WinForms
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "SplashScreen";
+			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "SplashScreen";
+			this.Text = "ClearCanvas";
 			this.TopMost = true;
 			this.DoubleClick += new System.EventHandler(this.SplashScreen_DoubleClick);
 			this.ResumeLayout(false);
