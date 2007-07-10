@@ -83,14 +83,14 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.flowLayoutPanel1.Size = new System.Drawing.Size(654, 29);
-            this.flowLayoutPanel1.TabIndex = 0;
+            this.flowLayoutPanel1.TabIndex = 2;
             // 
             // _cancelButton
             // 
             this._cancelButton.Location = new System.Drawing.Point(576, 3);
             this._cancelButton.Name = "_cancelButton";
             this._cancelButton.Size = new System.Drawing.Size(75, 23);
-            this._cancelButton.TabIndex = 0;
+            this._cancelButton.TabIndex = 1;
             this._cancelButton.Text = "Cancel";
             this._cancelButton.UseVisualStyleBackColor = true;
             this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._acceptButton.Location = new System.Drawing.Point(495, 3);
             this._acceptButton.Name = "_acceptButton";
             this._acceptButton.Size = new System.Drawing.Size(75, 23);
-            this._acceptButton.TabIndex = 1;
+            this._acceptButton.TabIndex = 0;
             this._acceptButton.Text = "Accept";
             this._acceptButton.UseVisualStyleBackColor = true;
             this._acceptButton.Click += new System.EventHandler(this._acceptButton_Click);
@@ -144,7 +144,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._addButton.Location = new System.Drawing.Point(286, 171);
             this._addButton.Name = "_addButton";
             this._addButton.Size = new System.Drawing.Size(75, 23);
-            this._addButton.TabIndex = 0;
+            this._addButton.TabIndex = 4;
             this._addButton.Text = ">>";
             this._addButton.UseVisualStyleBackColor = true;
             this._addButton.Click += new System.EventHandler(this.AddSelection);
@@ -154,7 +154,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._removeButton.Location = new System.Drawing.Point(286, 200);
             this._removeButton.Name = "_removeButton";
             this._removeButton.Size = new System.Drawing.Size(75, 23);
-            this._removeButton.TabIndex = 1;
+            this._removeButton.TabIndex = 5;
             this._removeButton.Text = "<<";
             this._removeButton.UseVisualStyleBackColor = true;
             this._removeButton.Click += new System.EventHandler(this.RemoveSelection);
@@ -165,7 +165,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.label1.Location = new System.Drawing.Point(3, 0);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(50, 13);
-            this.label1.TabIndex = 4;
+            this.label1.TabIndex = 0;
             this.label1.Text = "Available";
             // 
             // label2
@@ -174,7 +174,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.label2.Location = new System.Drawing.Point(367, 0);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(49, 13);
-            this.label2.TabIndex = 5;
+            this.label2.TabIndex = 1;
             this.label2.Text = "Selected";
             // 
             // _availableRequestedProcedureTypes
@@ -190,7 +190,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._availableRequestedProcedureTypes.Selection = selection1;
             this._availableRequestedProcedureTypes.ShowToolbar = false;
             this._availableRequestedProcedureTypes.Size = new System.Drawing.Size(277, 363);
-            this._availableRequestedProcedureTypes.TabIndex = 6;
+            this._availableRequestedProcedureTypes.TabIndex = 2;
             this._availableRequestedProcedureTypes.Table = null;
             this._availableRequestedProcedureTypes.ToolbarModel = null;
             this._availableRequestedProcedureTypes.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -210,7 +210,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._selectedRequestedProcedureTypes.Selection = selection2;
             this._selectedRequestedProcedureTypes.ShowToolbar = false;
             this._selectedRequestedProcedureTypes.Size = new System.Drawing.Size(278, 363);
-            this._selectedRequestedProcedureTypes.TabIndex = 7;
+            this._selectedRequestedProcedureTypes.TabIndex = 3;
             this._selectedRequestedProcedureTypes.Table = null;
             this._selectedRequestedProcedureTypes.ToolbarModel = null;
             this._selectedRequestedProcedureTypes.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -234,7 +234,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.Size = new System.Drawing.Size(654, 118);
-            this.tableLayoutPanel2.TabIndex = 2;
+            this.tableLayoutPanel2.TabIndex = 0;
             // 
             // _name
             // 

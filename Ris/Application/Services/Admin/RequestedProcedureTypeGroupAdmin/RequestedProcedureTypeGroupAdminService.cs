@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Security.Permissions;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -83,10 +81,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.RequestedProcedureTypeGroup
         public AddRequestedProcedureTypeGroupResponse AddRequestedProcedureTypeGroup(
             AddRequestedProcedureTypeGroupRequest request)
         {
-            if(GroupExists(request.Detail.Name))
+            if (string.IsNullOrEmpty(request.Detail.Name))
             {
-                //TODO: SR
-                throw new RequestValidationException("Already exists");
+                throw new RequestValidationException(SR.ExceptionRequestedProcedureTypeGroupNameRequired);
+            }
+
+            if (GroupExists(request.Detail.Name))
+            {
+                throw new RequestValidationException(string.Format(SR.ExceptionRequestedProcedureTypeGroupNameAlreadyExists, request.Detail.Name));
             }
 
             RequestedProcedureTypeGroup group = new RequestedProcedureTypeGroup();
