@@ -1,0 +1,53 @@
+<!-- This batch file is executed as a postbuild step of the ClearCanvas.Ris.Server.Executable -->
+<!-- project.  It copies all common ClearCanvas files into the appropriate directories, -->
+<!-- then runs a solution specific msbuild proj to copy files specific to that solution. -->
+
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<TrunkDirectory>$(ProjectDir)\..\..\..</TrunkDirectory>
+		<DistributionDirectory>$(ProjectDir)\$(OutDir)</DistributionDirectory>
+		<CommonDirectory>$(DistributionDirectory)\common</CommonDirectory>
+		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
+		<LogsDirectory>$(DistributionDirectory)\logs</LogsDirectory>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<DestinationDirectories Include="$(CommonDirectory)" />
+		<DestinationDirectories Include="$(PluginsDirectory)" />
+		<DestinationDirectories Include="$(LogsDirectory)" />
+	</ItemGroup>
+	
+	<!-- Config files, to be placed in distribution directory -->
+	<ItemGroup>
+		<ConfigFiles Include="$(ProjectDir)\Logging.config" />
+	</ItemGroup>
+
+	<!-- Shared library files, to be placed in common directory -->
+	<ItemGroup>
+		<SharedLibraryFiles Include="$(TrunkDirectory)\Common\bin\$(Configuration)\*.*" />
+		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\nunit.framework.dll" /> 
+		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\log4net.dll" />
+		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Iesi.Collections.dll" />
+		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Nhibernate.dll" />
+		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\Castle.DynamicProxy.dll" />
+	</ItemGroup>	
+
+	<Target Name="Copy files">
+		<Message Text="Executing ClearCanvas post-build step" />
+
+		<!-- Delete contents of plugin directory -->
+		<Delete Files=".\$(PlatformFolderPrefix)\plugins\*.*" ContinueOnError="true"/>
+
+		<!-- Make required directories -->
+		<MakeDir Directories="@(DestinatonDirectories)" ContinueOnError="true"/>
+
+		<!-- Copy shared config files -->
+		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>
+
+		<!-- Copy shared libraries -->
+		<Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(CommonDirectory)" ContinueOnError="true"/>
+
+		<!-- Run the solution specific build file -->
+		<MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectDir=$(ProjectDir);OutDir=$(OutDir);Platform=$(Platform)" />
+	</Target>
+</Project>
