@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._statusLabel.Location = new System.Drawing.Point(23, 15);
 			this._statusLabel.Name = "_statusLabel";
 			this._statusLabel.Size = new System.Drawing.Size(40, 13);
-			this._statusLabel.TabIndex = 3;
+			this._statusLabel.TabIndex = 0;
 			this._statusLabel.Text = "Status:";
 			this._statusLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._processedCount.Location = new System.Drawing.Point(338, 47);
 			this._processedCount.Name = "_processedCount";
 			this._processedCount.Size = new System.Drawing.Size(40, 23);
-			this._processedCount.TabIndex = 5;
+			this._processedCount.TabIndex = 4;
 			this._processedCount.Text = "0";
 			this._processedCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._processedProgress.Location = new System.Drawing.Point(69, 48);
 			this._processedProgress.Name = "_processedProgress";
 			this._processedProgress.Size = new System.Drawing.Size(263, 20);
-			this._processedProgress.TabIndex = 6;
+			this._processedProgress.TabIndex = 3;
 			// 
 			// _failedLabel
 			// 
@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._processedLabel.Location = new System.Drawing.Point(3, 52);
 			this._processedLabel.Name = "_processedLabel";
 			this._processedLabel.Size = new System.Drawing.Size(60, 13);
-			this._processedLabel.TabIndex = 10;
+			this._processedLabel.TabIndex = 2;
 			this._processedLabel.Text = "Processed:";
 			this._processedLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
@@ -96,7 +96,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._availableLabel.Location = new System.Drawing.Point(10, 92);
 			this._availableLabel.Name = "_availableLabel";
 			this._availableLabel.Size = new System.Drawing.Size(53, 13);
-			this._availableLabel.TabIndex = 12;
+			this._availableLabel.TabIndex = 5;
 			this._availableLabel.Text = "Available:";
 			this._availableLabel.TextAlign = System.Drawing.ContentAlignment.TopRight;
 			// 
@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._failedCount.Location = new System.Drawing.Point(69, 126);
 			this._failedCount.Name = "_failedCount";
 			this._failedCount.Size = new System.Drawing.Size(85, 23);
-			this._failedCount.TabIndex = 13;
+			this._failedCount.TabIndex = 8;
 			this._failedCount.Text = "0";
 			// 
 			// _statusMessage
@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._statusMessage.Location = new System.Drawing.Point(69, 15);
 			this._statusMessage.Name = "_statusMessage";
 			this._statusMessage.Size = new System.Drawing.Size(263, 23);
-			this._statusMessage.TabIndex = 14;
+			this._statusMessage.TabIndex = 1;
 			this._statusMessage.Text = "Pending ...";
 			// 
 			// _availableCount
@@ -130,7 +130,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._availableCount.Location = new System.Drawing.Point(69, 87);
 			this._availableCount.Name = "_availableCount";
 			this._availableCount.Size = new System.Drawing.Size(85, 23);
-			this._availableCount.TabIndex = 15;
+			this._availableCount.TabIndex = 6;
 			this._availableCount.Text = "0";
 			this._availableCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
 			// 
@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._cancelButton.Location = new System.Drawing.Point(257, 121);
 			this._cancelButton.Name = "_cancelButton";
 			this._cancelButton.Size = new System.Drawing.Size(75, 23);
-			this._cancelButton.TabIndex = 17;
+			this._cancelButton.TabIndex = 9;
 			this._cancelButton.Text = "Cancel";
 			this._cancelButton.UseVisualStyleBackColor = true;
 			this._cancelButton.Click += new System.EventHandler(this.OnCancelButtonClicked);
@@ -149,7 +149,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.AutoSize = true;
 			this.Controls.Add(this._cancelButton);
 			this.Controls.Add(this._availableCount);
 			this.Controls.Add(this._statusMessage);
@@ -161,7 +160,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this.Controls.Add(this._processedCount);
 			this.Controls.Add(this._statusLabel);
 			this.Name = "ImportProgressControl";
-			this.Size = new System.Drawing.Size(385, 197);
+			this.Size = new System.Drawing.Size(385, 170);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

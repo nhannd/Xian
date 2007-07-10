@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._sendTable.ReadOnly = false;
 			this._sendTable.Selection = selection1;
 			this._sendTable.Size = new System.Drawing.Size(687, 389);
-			this._sendTable.TabIndex = 6;
+			this._sendTable.TabIndex = 1;
 			this._sendTable.Table = null;
 			this._sendTable.ToolbarModel = null;
 			this._sendTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._titleBar.Name = "_titleBar";
 			this._titleBar.Size = new System.Drawing.Size(687, 31);
 			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
-			this._titleBar.TabIndex = 7;
+			this._titleBar.TabIndex = 0;
 			this._titleBar.Text = "Send Operations";
 			// 
 			// SendQueueApplicationComponentControl

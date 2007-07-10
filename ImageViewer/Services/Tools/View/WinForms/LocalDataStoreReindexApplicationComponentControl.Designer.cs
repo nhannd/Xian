@@ -33,14 +33,16 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			// 
 			// _reindexProgressControl
 			// 
+			this._reindexProgressControl.AcceptButton = null;
 			this._reindexProgressControl.AutoSize = true;
 			this._reindexProgressControl.AvailableCount = 0;
+			this._reindexProgressControl.CancelButton = null;
 			this._reindexProgressControl.CancelEnabled = true;
 			this._reindexProgressControl.Dock = System.Windows.Forms.DockStyle.Fill;
 			this._reindexProgressControl.FailedSteps = 0;
 			this._reindexProgressControl.Location = new System.Drawing.Point(0, 0);
 			this._reindexProgressControl.Name = "_reindexProgressControl";
-			this._reindexProgressControl.Size = new System.Drawing.Size(777, 201);
+			this._reindexProgressControl.Size = new System.Drawing.Size(777, 188);
 			this._reindexProgressControl.StatusMessage = "Status:";
 			this._reindexProgressControl.TabIndex = 10;
 			this._reindexProgressControl.TotalProcessed = 0;
@@ -52,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.Controls.Add(this._reindexProgressControl);
 			this.Name = "LocalDataStoreReindexApplicationComponentControl";
-			this.Size = new System.Drawing.Size(777, 201);
+			this.Size = new System.Drawing.Size(777, 188);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 

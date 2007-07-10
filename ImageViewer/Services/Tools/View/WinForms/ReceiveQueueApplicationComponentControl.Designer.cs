@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._receiveTable.ReadOnly = false;
 			this._receiveTable.Selection = selection1;
 			this._receiveTable.Size = new System.Drawing.Size(624, 325);
-			this._receiveTable.TabIndex = 4;
+			this._receiveTable.TabIndex = 1;
 			this._receiveTable.Table = null;
 			this._receiveTable.ToolbarModel = null;
 			this._receiveTable.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools.View.WinForms
 			this._titleBar.Name = "_titleBar";
 			this._titleBar.Size = new System.Drawing.Size(624, 31);
 			this._titleBar.Style = Crownwood.DotNetMagic.Common.VisualStyle.IDE2005;
-			this._titleBar.TabIndex = 5;
+			this._titleBar.TabIndex = 0;
 			this._titleBar.Text = "Receive Operations";
 			// 
 			// ReceiveQueueApplicationComponentControl
