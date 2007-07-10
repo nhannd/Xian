@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 		{
 			Platform.CheckForNullReference(imageSop, "imageSop");
 
-			_dynamicTe = new DynamicTe(this.ImageGraphic, protonDensityMap, t2Map);
+			_dynamicTe = new DynamicTe(this.ImageGraphic as GrayscaleImageGraphic, protonDensityMap, t2Map);
 		}
 
 		public DynamicTe DynamicTe
@@ -45,10 +45,8 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 				this.ImageSop.BitsAllocated,
 				this.ImageSop.BitsStored,
 				this.ImageSop.HighBit,
-				this.ImageSop.SamplesPerPixel,
-				this.ImageSop.PixelRepresentation,
-				this.ImageSop.PlanarConfiguration,
-				this.ImageSop.PhotometricInterpretation,
+				this.ImageSop.PixelRepresentation != 0 ? true : false,
+				this.ImageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ? true : false,
 				this.ImageSop.RescaleSlope,
 				this.ImageSop.RescaleIntercept,
 				null);

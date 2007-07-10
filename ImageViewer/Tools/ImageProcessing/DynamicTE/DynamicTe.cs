@@ -8,13 +8,13 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 {
 	public class DynamicTe : IMemorable
 	{
-		private ImageGraphic _imageGraphic;
+		private GrayscaleImageGraphic _imageGraphic;
 		private double _te;
 		private byte[] _protonDensityMap;
 		private byte[] _t2Map;
 
 		public DynamicTe(
-			ImageGraphic imageGraphic,
+			GrayscaleImageGraphic imageGraphic,
 			byte[] protonDensityMap,
 			byte[] t2Map)
 		{
