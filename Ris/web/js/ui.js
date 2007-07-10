@@ -624,3 +624,16 @@ var DateInput =
     }
 };
 
+var Field = 
+{
+	setValue: function(element, value)
+	{
+		element.innerHTML = value ? (value + "").escapeHTML() : "";
+	},
+	
+	show: function(element, showThisField)
+	{
+		element.style.display = showThisField ? "" : "none";
+	}
+};
+

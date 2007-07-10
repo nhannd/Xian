@@ -88,6 +88,24 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Create Report.
+        /// </summary>
+        internal static string TitleCreateReport {
+            get {
+                return ResourceManager.GetString("TitleCreateReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Report.
+        /// </summary>
+        internal static string TitleEditReport {
+            get {
+                return ResourceManager.GetString("TitleEditReport", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Radiologist Home.
         /// </summary>
         internal static string TitleRadiologistHome {

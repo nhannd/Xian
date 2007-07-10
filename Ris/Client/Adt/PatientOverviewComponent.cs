@@ -137,12 +137,12 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 if (_patientProfile.DeathIndicator)
                 {
-                    TimeSpan age = _patientProfile.TimeOfDeath.Value.Subtract(_patientProfile.DateOfBirth);
+                    TimeSpan age = _patientProfile.TimeOfDeath.Value.Subtract(_patientProfile.DateOfBirth.Value);
                     return String.Format("Age/Sex: {0} ({1}) Deceased", (int)age.Days / 365, _patientProfile.Sex.Value);
                 }
                 else
                 {
-                    TimeSpan age = Platform.Time.Date.Subtract(_patientProfile.DateOfBirth);
+                    TimeSpan age = Platform.Time.Date.Subtract(_patientProfile.DateOfBirth.Value);
                     return String.Format("Age/Sex: {0} ({1})", (int)age.Days / 365, _patientProfile.Sex.Value);
                 }
             }

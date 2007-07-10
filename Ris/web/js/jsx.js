@@ -193,4 +193,183 @@ if(!Date.prototype.toISOString)
 }
     
 
+// utility to combine a list of strings with separator
+if (!String.combine)
+{
+	String.combine = function(values, separator)
+	{
+		separator = separator ? (separator + "").escapeHTML() : "";
 
+		if (values == null || values.length == 0)
+			return "";
+			
+		return values.reduce("", 
+			function(memo, item) 
+			{
+				return memo.length == 0 ? item : memo + separator + item;
+			});
+	};
+}
+
+if (!Date.prototype.addYears)
+{
+	Date.prototype.addYears = function(offset)
+	{
+		var newDate = new Date(this);
+		newDate.setYear(newDate.getYear() + offset);	
+		return newDate;
+	};
+
+	Date.prototype.addMonths = function(offset)
+	{
+		var newDate = new Date(this);
+		newDate.setMonth(newDate.getMonth() + offset);	
+		return newDate;
+	};
+
+	Date.prototype.addDays = function(offset)
+	{
+		var newDate = new Date(this);
+		newDate.setDate(newDate.getDate() + offset);	
+		return newDate;
+	};
+
+	Date.prototype.addHours = function(offset)
+	{
+		var newDate = new Date(this);
+		newDate.setHours(newDate.getHours() + offset);	
+		return newDate;
+	};
+
+	Date.prototype.addMinutes = function(offset)
+	{
+		var newDate = new Date(this);
+		newDate.setMinutes(newDate.getMinutes() + offset);	
+		return newDate;
+	};
+
+	Date.prototype.addSeconds = function(offset)
+	{
+		var newDate = new Date(this);
+		newDate.setSeconds(newDate.getSeconds() + offset);	
+		return newDate;
+	};
+
+	Date.prototype.addMilliseconds = function(offset)
+	{
+		var newDate = new Date(this);
+		newDate.setMilliseconds(newDate.getMilliseconds() + offset);	
+		return newDate;
+	};
+}
+
+if (!Date.today)
+{
+	Date.today = function()
+	{
+		var today = new Date();
+		today.setHours(0);
+		today.setMinutes(0);
+		today.setSeconds(0);
+		today.setMilliseconds(0);
+		return today;
+	};
+}
+
+if (!Date.compare)
+{
+	// compare two date, a null date object is infinite into the future
+	Date.compare = function(date1, date2)
+	{
+		if (date1 == null && date2 == null)
+			return 0;
+		else if (date1 == null)
+			return 1;
+		else if (date2 == null)
+			return -1;
+		else
+			return Date.parse(date1) - Date.parse(date2);
+	}
+
+	// Compare whether date1 is more recent than date2.
+	// Any time after the beginning of today is considered more recent than the past.
+	// Time of null is considered infinite into the future.
+	Date.compareMoreRecent = function(date1, date2)
+	{
+		if (date1 == date2)  // also take care of both equal null
+			return 0;
+
+		var today = Date.today();
+		var dateOneMoreRecent = false;
+		
+		if (date1 == null)
+		{
+			if (Date.compare(date2, today) < 0)
+				dateOneMoreRecent = true;  // time1 in the future, time2 in the past
+		}
+		else if (date2 == null)
+		{
+			if (Date.compare(date1, today) < 0)
+				dateOneMoreRecent = false;  // time1 in the past, time2 in the future
+		}
+		else // both are not null
+		{
+			var timeOneSpan = Date.parse(date1) - Date.parse(today);
+			var timeTwoSpan = Date.parse(date2) - Date.parse(today);
+
+			if (timeOneSpan > 0 && timeTwoSpan > 0)
+			{
+				// Both in the future
+				dateOneMoreRecent = timeOneSpan < timeTwoSpan;
+			}
+			else if (timeOneSpan < 0 && timeTwoSpan < 0)
+			{
+				// Both in the past
+				dateOneMoreRecent = timeOneSpan > timeTwoSpan;
+			}
+			else
+			{
+				dateOneMoreRecent = timeOneSpan > timeTwoSpan;
+			}
+		}
+
+		return dateOneMoreRecent ? -1 : 1;
+	}
+}
+
+// Mimic a dictionary structure by mapping this array onto an array of composite objects with "key", "values" and other properties.
+// The "key" property is the value return from the getKeyFunc predicate function.
+// The "values" property contains an array of items that match the same key.
+// More properties can be set using the setCommonPropertiesFunc
+if(!Array.prototype.group)
+{
+    Array.prototype.group = function(getKeyFunc, setCommonPropertiesFunc)
+    {
+        var group = [];
+        for(var i = 0; i < this.length; i++)
+		{
+			var thisKey = getKeyFunc(this[i]);
+			var commonObject = group.find(function(item) { return item.key == thisKey; });
+			if (commonObject)
+			{
+				commonObject.values.push(this[i]);
+			}
+			else
+			{
+				commonObject = { "key": thisKey, "values":[] };
+				commonObject.values.push(this[i]);
+				group.push(commonObject);
+			}
+			
+		}
+		
+		// set the common properties only at the end, since some properties in setCommonPropertiesFunc may be a composite value of each element
+		for (var j = 0; j < group.length; j++)
+		{
+			var firstElement = group[j].values[0];
+			setCommonPropertiesFunc(firstElement, group[j]);
+		}
+
+        return group;
+    }
+}

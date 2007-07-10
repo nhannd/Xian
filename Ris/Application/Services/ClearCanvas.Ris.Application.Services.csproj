@@ -95,6 +95,8 @@
     <Compile Include="PatientReconciliation\PatientReconciliationService.cs" />
     <Compile Include="PatientReconciliation\ReconciliationCandidateAssembler.cs" />
     <Compile Include="PersonNameAssembler.cs" />
+    <Compile Include="PreviewService\PreviewService.cs" />
+    <Compile Include="PreviewService\PreviewServiceAssembler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AlertAssembler.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntryAssembler.cs" />

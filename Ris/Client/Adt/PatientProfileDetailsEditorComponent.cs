@@ -118,7 +118,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public DateTime DateOfBirth
         {
-            get { return _profile.DateOfBirth; }
+            get { return _profile.DateOfBirth.Value; }
             set
             { 
                 _profile.DateOfBirth = value.Date;

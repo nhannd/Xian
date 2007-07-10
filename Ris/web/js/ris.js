@@ -19,6 +19,11 @@ if(window.external)
             window.external.Alert(message || "");
         },
         
+		getActionHtml: function(labelSearch, actionLabel)
+		{
+			return window.external.GetActionHtml(labelSearch, actionLabel);
+		},
+		
         resolveStaffName: function(query)
         {
             return window.external.ResolveStaffName(query || "");
@@ -47,7 +52,52 @@ if(window.external)
         setData: function(tag, data)
         {
             window.external.SetData(tag, data);
-        }
+        },
+		
+		getPreviewData: function(previewLevel)
+		{
+			return window.external.GetPreviewData(previewLevel);
+		},
+		
+		formatDate: function(date)
+		{
+			return date ? window.external.FormatDate(date.toISOString()) : "";
+		},
+
+		formatTime: function(date)
+		{
+			return date ? window.external.FormatTime(date.toISOString()) : "";
+		},
+
+		formatDateTime: function(date)
+		{
+			return date ? window.external.FormatDateTime(date.toISOString()) : "";
+		},
+
+		formatAddress: function(address)
+		{
+			return address ? window.external.FormatAddress(JSML.create(address, "Address")) : "";
+		},
+
+		formatHealthcard: function(healthcard)
+		{
+			return healthcard ? window.external.FormatHealthcard(JSML.create(healthcard, "Healthcard")) : "";
+		},
+
+		formatMrn: function(mrn)
+		{
+			return mrn ? window.external.FormatMrn(JSML.create(mrn, "Mrn")) : "";
+		},
+
+		formatPersonName: function(personName)
+		{
+			return personName ? window.external.FormatPersonName(JSML.create(personName, "PersonName")) : "";
+		},
+
+		formatTelephone: function(telephone)
+		{
+			return telephone ? window.external.FormatTelephone(JSML.create(telephone, "Telephone")) : "";
+		}
     };
     
     // redefine some browser functions to use Ris versions

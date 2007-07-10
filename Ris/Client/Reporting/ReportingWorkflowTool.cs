@@ -80,8 +80,8 @@ namespace ClearCanvas.Ris.Client.Reporting
             #endregion
         }
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Claim Interpretation")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Claim Interpretation")]
+        [MenuAction("apply", "folderexplorer-items-contextmenu/Claim")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Claim")]
         [ClickHandler("apply", "Apply")]
         [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
@@ -122,6 +122,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         [ClickHandler("apply", "Apply")]
         [IconSet("apply", IconScheme.Colour, "Icons.EditToolSmall.png", "Icons.EditToolSmall.png", "Icons.EditToolSmall.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+        [LabelValueObserver("apply", "Label", "LabelChanged")]
         [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
         [ExtensionOf(typeof(Folders.InProgressFolder.DropHandlerExtensionPoint))]
         public class EditReportTool : WorkflowItemTool
@@ -129,6 +130,24 @@ namespace ClearCanvas.Ris.Client.Reporting
             public EditReportTool()
                 : base("EditReport")
             {
+            }
+
+            public string Label
+            {
+                get
+                {
+                    if (this.Context.GetWorkflowOperationEnablement("StartInterpretation") ||
+                        this.Context.GetWorkflowOperationEnablement("StartVerification"))
+                        return SR.TitleEditReport;
+                    else
+                        return SR.TitleCreateReport;
+                }
+            }
+
+            public event EventHandler LabelChanged
+            {
+                add { this.Context.SelectedItemsChanged += value; }
+                remove { this.Context.SelectedItemsChanged -= value; }
             }
 
             public override bool Enabled

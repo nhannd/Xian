@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Application.Common
         public PersonNameDetail Name;
 
         [DataMember]
-        public DateTime DateOfBirth;
+        public DateTime? DateOfBirth;
 
         [DataMember]
         public EnumValueInfo Sex;
@@ -47,6 +47,18 @@ namespace ClearCanvas.Ris.Application.Common
 
         [DataMember]
         public DateTime? TimeOfDeath;
+
+        [DataMember]
+        public AddressDetail CurrentHomeAddress;
+
+        [DataMember]
+        public AddressDetail CurrentWorkAddress;
+
+        [DataMember]
+        public TelephoneDetail CurrentHomePhone;
+
+        [DataMember]
+        public TelephoneDetail CurrentWorkPhone;
 
         //[DataMember]
         //public List<EnumValueInfo> AmbulatoryStatuses;

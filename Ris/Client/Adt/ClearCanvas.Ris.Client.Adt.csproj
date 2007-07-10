@@ -53,6 +53,7 @@
     <Compile Include="BiographyFeedbackTable.cs" />
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
+    <Compile Include="JsmlSerializer.cs" />
     <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
     <Compile Include="OrderEntryComponentSettings.cs" />
@@ -105,6 +106,12 @@
     <Compile Include="HomeTool.cs" />
     <Compile Include="PatientSearchComponent.cs" />
     <Compile Include="RegistrationPreviewComponent.cs" />
+    <Compile Include="RegistrationPreviewComponentSettings.cs" />
+    <Compile Include="RegistrationPreviewComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>RegistrationPreviewComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="RegistrationWorkflowFolder.cs" />
     <Compile Include="RegistrationWorkflowFolderSystem.cs" />
     <Compile Include="RegistrationWorkflowFolderSystemTool.cs" />
@@ -173,9 +180,6 @@
       <Project>{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}</Project>
       <Name>ClearCanvas.Ris.Client</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="PatientPreview.html" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
@@ -252,7 +256,6 @@
     <EmbeddedResource Include="Icons\FolderOpenMedium.png" />
     <EmbeddedResource Include="Icons\FolderOpenSmall.png" />
     <EmbeddedResource Include="PatientProfileAdditionalInfoEditorComponent.val.xml" />
-    <EmbeddedResource Include="RegistrationPreview.html" />
     <EmbeddedResource Include="OrderEntryComponent.val.xml" />
     <EmbeddedResource Include="PatientProfileDetailsEditorComponent.val.xml" />
     <EmbeddedResource Include="PatientProfileDiff.html" />
@@ -273,6 +276,10 @@
     <None Include="PerformedProcedureComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>PerformedProcedureComponentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="RegistrationPreviewComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>RegistrationPreviewComponentSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

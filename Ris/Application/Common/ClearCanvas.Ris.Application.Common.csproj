@@ -258,6 +258,16 @@
     <Compile Include="PatientReconciliation\ListProfilesForPatientsResponse.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="PersonNameDetail.cs" />
+    <Compile Include="PreviewService\GetPatientAlertsRequest.cs" />
+    <Compile Include="PreviewService\GetPatientAlertsResponse.cs" />
+    <Compile Include="PreviewService\PatientOrderData.cs" />
+    <Compile Include="PreviewService\GetDataRequest.cs" />
+    <Compile Include="PreviewService\GetDataResponse.cs" />
+    <Compile Include="PreviewService\IPreviewService.cs" />
+    <Compile Include="PreviewService\ListPatientOrdersRequest.cs" />
+    <Compile Include="PreviewService\ListPatientOrdersResponse.cs" />
+    <Compile Include="PreviewService\GetPatientProfileRequest.cs" />
+    <Compile Include="PreviewService\GetPatientProfileResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="AlertNotificationDetail.cs" />
     <Compile Include="RegistrationWorkflow\CancelOrderRequest.cs" />

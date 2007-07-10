@@ -30,6 +30,17 @@ namespace ClearCanvas.Ris.Application.Services
 
         public PatientProfileDetail CreatePatientProfileDetail(PatientProfile profile, IPersistenceContext context)
         {
+            return CreatePatientProfileDetail(profile, context, true, true, true, true, true);
+        }
+
+        public PatientProfileDetail CreatePatientProfileDetail(PatientProfile profile, 
+            IPersistenceContext context, 
+            bool includeAddresses,
+            bool includeContactPersons,
+            bool includeEmailAddresses,
+            bool includeTelephoneNumbers,
+            bool includeNotes)
+        {
             PatientProfileDetail detail = new PatientProfileDetail();
 
             detail.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
@@ -59,39 +70,60 @@ namespace ClearCanvas.Ris.Application.Services
                 religion.Code.ToString(),
                 religion.Value);
 
-            TelephoneNumberAssembler telephoneAssembler = new TelephoneNumberAssembler();
-            detail.TelephoneNumbers = new List<TelephoneDetail>();
-            foreach (TelephoneNumber t in profile.TelephoneNumbers)
-            {
-                detail.TelephoneNumbers.Add(telephoneAssembler.CreateTelephoneDetail(t, context));
-            }
-
             AddressAssembler addressAssembler = new AddressAssembler();
-            detail.Addresses = new List<AddressDetail>();
-            foreach (Address a in profile.Addresses)
+            detail.CurrentHomeAddress = addressAssembler.CreateAddressDetail(profile.CurrentHomeAddress, context);
+            detail.CurrentWorkAddress = addressAssembler.CreateAddressDetail(profile.CurrentWorkAddress, context);
+
+            TelephoneNumberAssembler telephoneAssembler = new TelephoneNumberAssembler();
+            detail.CurrentHomePhone = telephoneAssembler.CreateTelephoneDetail(profile.CurrentHomePhone, context);
+            detail.CurrentWorkPhone = telephoneAssembler.CreateTelephoneDetail(profile.CurrentWorkPhone, context);
+
+            if (includeTelephoneNumbers)
             {
-                detail.Addresses.Add(addressAssembler.CreateAddressDetail(a, context));
+                detail.TelephoneNumbers = new List<TelephoneDetail>();
+                foreach (TelephoneNumber t in profile.TelephoneNumbers)
+                {
+                    detail.TelephoneNumbers.Add(telephoneAssembler.CreateTelephoneDetail(t, context));
+                }
             }
 
-            ContactPersonAssembler contactPersonAssembler = new ContactPersonAssembler();
-            detail.ContactPersons = new List<ContactPersonDetail>();
-            foreach (ContactPerson cp in profile.ContactPersons)
+            if (includeAddresses)
             {
-                detail.ContactPersons.Add(contactPersonAssembler.CreateContactPersonDetail(cp, context));
+                detail.Addresses = new List<AddressDetail>();
+                foreach (Address a in profile.Addresses)
+                {
+                    detail.Addresses.Add(addressAssembler.CreateAddressDetail(a, context));
+                }
             }
 
-            EmailAddressAssembler emailAssembler = new EmailAddressAssembler();
-            detail.EmailAddresses = new List<EmailAddressDetail>();
-            foreach (EmailAddress e in profile.EmailAddresses)
+            if (includeContactPersons)
             {
-                detail.EmailAddresses.Add(emailAssembler.CreateEmailAddressDetail(e, context));
+                ContactPersonAssembler contactPersonAssembler = new ContactPersonAssembler();
+                detail.ContactPersons = new List<ContactPersonDetail>();
+                foreach (ContactPerson cp in profile.ContactPersons)
+                {
+                    detail.ContactPersons.Add(contactPersonAssembler.CreateContactPersonDetail(cp, context));
+                }
             }
 
-            NoteAssembler noteAssembler = new NoteAssembler();
-            detail.Notes = new List<NoteDetail>();
-            foreach (Note n in profile.Patient.Notes)
+            if (includeEmailAddresses)
             {
-                detail.Notes.Add(noteAssembler.CreateNoteDetail(n, context));
+                EmailAddressAssembler emailAssembler = new EmailAddressAssembler();
+                detail.EmailAddresses = new List<EmailAddressDetail>();
+                foreach (EmailAddress e in profile.EmailAddresses)
+                {
+                    detail.EmailAddresses.Add(emailAssembler.CreateEmailAddressDetail(e, context));
+                }
+            }
+
+            if (includeNotes)
+            {
+                NoteAssembler noteAssembler = new NoteAssembler();
+                detail.Notes = new List<NoteDetail>();
+                foreach (Note n in profile.Patient.Notes)
+                {
+                    detail.Notes.Add(noteAssembler.CreateNoteDetail(n, context));
+                }
             }
 
             return detail;
@@ -111,7 +143,7 @@ namespace ClearCanvas.Ris.Application.Services
             nameAssembler.UpdatePersonName(detail.Name, profile.Name);
 
             profile.Sex = (Sex)Enum.Parse(typeof(Sex), detail.Sex.Code.ToString());
-            profile.DateOfBirth = detail.DateOfBirth;
+            profile.DateOfBirth = detail.DateOfBirth.Value;
             profile.DeathIndicator = detail.DeathIndicator;
             profile.TimeOfDeath = detail.TimeOfDeath;
 

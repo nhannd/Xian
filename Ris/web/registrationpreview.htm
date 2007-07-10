@@ -1,0 +1,313 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <title>Registration Preview</title>
+        <link href="css/default.css" rel="stylesheet" type="text/css" />
+        <link href="js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="js/calendar/calendar.js"></script>
+        <script type="text/javascript" src="js/calendar/lang/calendar-en.js"></script>
+        <script type="text/javascript" src="js/jsx.js"></script>
+	    <script type="text/javascript" src="js/jsml.js"></script>
+	    <script type="text/javascript" src="js/ui.js"></script>
+	    <script type="text/javascript" src="js/ris.js"></script>
+	    <script type="text/javascript" >
+		    var data = {};
+		    var errorProvider = new ErrorProvider();
+
+		    function onBodyLoad()
+		    {		        
+		        if(!Ris)
+		            return;
+		            
+	            try
+	            {
+                    var request = { "GetPatientProfileRequest": {},
+                                    "ListPatientOrdersRequest": { "QueryDetailLevel": "RequestedProcedure" },
+                                    "GetPatientAlertsRequest": {} };
+
+                    var requestJsml = JSML.create(request, "GetDataRequest");
+                    data = JSML.parse(Ris.getPreviewData(requestJsml));
+                                        
+                    if (data == null || data.length == 0)
+                    {
+                        Field.setValue($("myForm"), "");
+                        return;
+                    }
+
+		            // update patient demography
+		            var patientName = "This patient";
+		            if (data.GetPatientProfileResponse && data.GetPatientProfileResponse.PatientProfileDetail)
+		            {
+		                var patientProfile = data.GetPatientProfileResponse.PatientProfileDetail;
+		                patientName = Ris.formatPersonName(patientProfile.Name);
+		                Field.setValue($("name"), patientName);
+			            Field.setValue($("mrn"), Ris.formatMrn(patientProfile.Mrn));
+			            Field.setValue($("sex"), patientProfile.Sex.Value);					
+			            Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
+			            Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
+			            Field.setValue($("currentHomePhone"), Ris.formatTelephone(patientProfile.CurrentHomePhone));
+			            Field.setValue($("currentHomeAddress"), Ris.formatAddress(patientProfile.CurrentHomeAddress));
+		            }
+
+                    // update patient alerts
+		            if (data.GetPatientAlertsResponse && data.GetPatientAlertsResponse.AlertNotifications && data.GetPatientAlertsResponse.AlertNotifications.length > 0)
+		            {
+    	                var alertNotifications = data.GetPatientAlertsResponse.AlertNotifications;
+                        var alertHtml = "";
+	                    alertNotifications.each(function(item) 
+	                        {
+	                            alertHtml += "<img width='50' src='" + getAlertIcon(item) + "' alt='" + getAlertTooltip(patientName, item) + "' align='right'/>";
+	                        });
+                        $("alerts").innerHTML = alertHtml;
+		            }
+
+                    // update active and past RIC tables
+		            if (data.ListPatientOrdersResponse && data.ListPatientOrdersResponse.PatientOrderData && data.ListPatientOrdersResponse.PatientOrderData.length > 0)
+		            {
+    		            var patientOrderData = data.ListPatientOrdersResponse.PatientOrderData;
+
+                        // group patientOrderData by AccessionNumber
+                        var orders = patientOrderData.group(
+                            function(item) { return item.AccessionNumber; }, 
+                            function(item, common)
+                            {
+                                common.CombineRequestedProcedureName = String.combine(common.values.map(function(item) { return item.RequestedProcedureTypeName; }), "/");
+                                common.EarliestScheduledMPSDateTime = item.EarliestScheduledMPSDateTime;
+                                common.OrderStatus = item.OrderStatus;
+                                common.Insurance = "";
+                                common.OrderingFacilityName = item.OrderingFacilityName;
+                                common.OrderingPractitionerName = item.OrderingPractitionerName;
+                            });
+
+		                var today = Date.today();
+		                var pastOrders = orders.select(
+		                    function(item) 
+		                    { 
+		                        return item.EarliestScheduledMPSDateTime && Date.compare(item.EarliestScheduledMPSDateTime, today) < 0;
+		                    }).sort(orderDataComparison);
+
+		                var activeOrders = orders.select(
+		                    function(item) 
+		                    { 
+		                        return item.EarliestScheduledMPSDateTime && Date.compare(item.EarliestScheduledMPSDateTime, today) >= 0;
+		                    }).sort(orderDataComparison);
+
+//			            var notScheduledOrders = orders.select(
+//			                function(item) 
+//			                { 
+//			                    return item.EarliestScheduledMPSDateTime == null;
+//			                });
+//			            activeOrders = activeOrders.concat(notScheduledOrders);
+
+                        if (activeOrders.length == 0)
+                        {
+                            Field.show($("activeOrdersTable"), false);
+                        }
+                        else
+                        {
+                            var activeOrdersTable = createOrdersTable($("activeOrdersTable"));
+                            activeOrdersTable.bindItems(activeOrders);
+    	                }
+    	                
+                        if (pastOrders.length == 0)
+                        {
+                            Field.show($("pastOrdersTable"), false);
+                        }
+                        else
+                        {
+                            var pastOrdersTable = createOrdersTable($("pastOrdersTable"));
+                            pastOrdersTable.bindItems(pastOrders);
+    	                }
+		            }
+	            }
+	            catch(e)
+	            {
+	                var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+		            Field.setValue($("myForm"), message);
+	            }
+		    }
+		    
+	        function getAlertIcon(alert)
+	        {
+                switch (alert.Type)
+                {
+                    case "Note Alert":
+                        return "Images/AlertPen.png";
+                    case "Language Alert":
+                        return "Images/AlertWorld.png";
+                    case "Reconciliation Alert":
+                        return "Images/AlertMessenger.png";
+                    case "Schedule Alert":
+                        return "Images/AlertClock.png";
+                    case "Incomplete demographic data alert":
+                        return "Images/AlertIncompleteData.png";
+                    default:
+                        return "Images/AlertGeneral.png";
+                }
+	        }
+	        
+	        function getAlertTooltip(patientName, alert)
+	        {
+                var reasons = String.combine(alert.Reasons, ", ");
+
+                switch (alert.Type)
+                {
+                    case "Note Alert":
+                        return patientName + " has high severity notes: " + reasons;
+                    case "Language Alert":
+                        return patientName + " speaks: " + reasons;
+                    case "Reconciliation Alert":
+                        return patientName + " has unreconciled records";
+                    case "Incomplete demographic data alert":
+                        return patientName + " has incomplete demographic data: " + reasons;
+                    default:
+                        return reasons;
+                }
+            }
+            
+            function getDescriptiveTime(dateTime)
+            {
+                if (dateTime == null)
+                    return "";
+                
+                var today = Date.today();
+                var yesterday = today.addDays(-1);
+                var tomorrow = today.addDays(1);
+                var afterTomorrow = tomorrow.addDays(1);
+
+                if (Date.compare(dateTime, yesterday) < 0)
+                {
+                    var dateDiff = new Date(Date.parse(today) - Date.parse(dateTime));
+                    return dateDiff.getDate() + " days ago";
+                }
+                else if (Date.compare(dateTime, yesterday) >= 0 && Date.compare(dateTime, today) < 0)
+                {
+                    return "Yesterday " + Ris.formatTime(dateTime);
+                }
+                else if (Date.compare(dateTime, today) >= 0 && Date.compare(dateTime, tomorrow) < 0)
+                {
+                    return "Today " + Ris.formatTime(dateTime);                
+                }
+                else if (Date.compare(dateTime, tomorrow) >= 0 && Date.compare(dateTime, afterTomorrow) < 0)
+                {
+                    return "Tomorrow " + Ris.formatTime(dateTime);
+                }
+                else
+                {
+                    return Ris.formatDateTime(dateTime);                
+                }
+            }
+            
+            function createOrdersTable(htmlTable)
+            {
+	            var ordersTable = Table.createTable(htmlTable, { editInPlace: false, flow: false },
+	                 [
+	                    {   label: "Requested Procedures",
+	                        cellType: "text",
+	                        getValue: function(item) { return item.CombineRequestedProcedureName; }
+	                    },
+	                    {   label: "Scheduled For",
+	                        cellType: "text",
+	                        getValue: function(item) { return getDescriptiveTime(item.EarliestScheduledMPSDateTime); }
+	                    },
+	                    {   label: "Order Status",
+	                        cellType: "text",
+	                        getValue: function(item) { return item.OrderStatus; }
+	                    },
+	                    {   label: "Insurance",
+	                        cellType: "text",
+	                        getValue: function(item) { return ""; }
+	                    },
+	                    {   label: "Ordering Facility",
+	                        cellType: "text",
+	                        getValue: function(item) { return item.OrderingFacilityName; }
+	                    },
+	                    {   label: "Ordering Physician",
+	                        cellType: "text",
+	                        getValue: function(item) { return Ris.formatPersonName(item.OrderingPractitionerName); }
+	                    }
+	                 ]);
+		             
+	            ordersTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+	            ordersTable.rowCycleClassNames = ["row0", "row1"];
+	            
+	            return ordersTable;
+            }
+            
+            function orderDataComparison(data1, data2)
+            {
+                return Date.compareMoreRecent(data1.EarliestScheduledMPSDateTime, data2.EarliestScheduledMPSDateTime);
+            }
+		</script>
+	</head>
+	<body onload="javascript: onBodyLoad()">
+		<form id="myForm">
+		    <table width="640" border="0">
+			    <tr>
+				    <td width="422" class="pageheading"><div id="name"/></td>
+				    <td width="202" rowspan="2"><div id="alerts"/></td>
+			    </tr>
+			    <tr>
+				    <td class="pageheading2"><div id="mrn"/></td>
+			    </tr>
+		    </table>
+    		
+		    <p>&nbsp;</p>
+		    <table width="640" border="0">
+			    <tr>
+				    <td width="120" class="propertyname">Date of Birth</td>
+				    <td width="200"><div id="dateOfBirth"/></td>
+				    <td width="63" class="propertyname">Sex</td>
+				    <td width="229"><div id="sex"/></td>
+			    </tr>
+			    <tr>
+				    <td class="propertyname">Healthcard # </td>
+				    <td><div id="healthcard"/></td>
+				    <td class="propertyname">&nbsp;</td>
+				    <td>&nbsp;</td>
+			    </tr>
+			    <tr>
+				    <td class="propertyname">Home Phone</td>
+				    <td colspan="3"><div id="currentHomePhone"/></td>
+			    </tr>
+			    <tr>
+				    <td class="propertyname">Home Address</td>
+				    <td colspan="3"><div id="currentHomeAddress"/></td>
+			    </tr>
+			    <tr class="additionalentriescount">
+				    <td colspan="4">
+				        <script language="javascript" type="text/javascript">
+                            document.write(Ris.getActionHtml("Details", "more..."));
+				        </script>
+				    </td>
+			    </tr>
+		    </table>
+    		
+		    <p>&nbsp;</p>
+	        <table width="640" border="0" id="activeOrdersTable">
+	            <tr class="sectionheading"><td colspan="7">Active Requests for Imaging Consultation</td></tr>
+	            <tr class="tableheading">
+	                <td></td>
+		            <td>Requested Procedures</td>
+		            <td>Scheduled For</td>
+		            <td>Order Status</td>
+		            <td>Insurance</td>
+		            <td>Ordering Facility</td>
+		            <td>Ordering Physician</td>
+	            </tr>
+	        </table>
+	        <table width="640" border="0" id="pastOrdersTable">
+	            <tr class="sectionheading"><td colspan="7">Past Requests for Imaging Consultation</td></tr>
+	            <tr class="tableheading">
+	                <td></td>
+		            <td>Requested Procedures</td>
+		            <td>Scheduled For</td>
+		            <td>Order Status</td>
+		            <td>Insurance</td>
+		            <td>Ordering Facility</td>
+		            <td>Ordering Physician</td>
+	            </tr>
+	        </table>
+		</form>
+	</body>
+</html>

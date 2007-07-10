@@ -20,11 +20,11 @@ namespace ClearCanvas.Ris.Application.Common
             this.Value = value;
             this.Description = description;
         }
-/*
+
         public EnumValueInfo()
         {
         }
-*/
+
         [DataMember]
         public string Code;
 
