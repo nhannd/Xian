@@ -5,47 +5,214 @@ namespace ClearCanvas.Dicom
     using System.Text;
 
     /// <summary>
-    /// Describes a DICOM tag and provides some static helper functions
-    /// that return DicomTag objects representing tags without the use
-    /// of string literals, but uses symbolic names instead.
+    /// The DicomTag class contains all DICOM information for a specific tag.
     /// </summary>
+    /// <remarks>
+    /// <para>The DicomTag class is used as described in the Flyweight pattern.  A single instance should only be allocated
+    /// for each DICOM tag, and that instance will be shared in any <see cref="AttributeCollection"/> 
+    /// that references the specific tag.</para>
+    /// <para>Note, however, that non standard DICOM tags (or tags not in stored in the <see cref="DicomTagDictionary"/>
+    /// will have a specific instance allocated to store their information when they are encountered by the assembly.</para>
+    /// </remarks>
     public class DicomTag
     {
+        #region Static Members
         /// <summary>
-        /// Constructor with discrete Group and Element.
+        /// Return a uint with a tags value based on the input group and element.
         /// </summary>
-        /// <param name="group">Group Number of tag.</param>
-        /// <param name="element">Element Number of tag.</param>
-        public DicomTag(ushort group, ushort element)
-            : this((uint) ((group << 16) | element))
+        /// <param name="group">The Group for the tag.</param>
+        /// <param name="element">The Element for the tag.</param>
+        /// <returns></returns>
+        public static uint GetTagValue(ushort group, ushort element)
         {
+            return (uint)group << 16 | (uint)element;
         }
 
         /// <summary>
-        /// Constructor with Group and Element represented as a 32-bit integer.
+        /// Checks if a Group is private (odd).
         /// </summary>
-        /// <param name="ID">The 32-bit representation of the Group and Element.</param>
-        public DicomTag(uint ID)
+        /// <param name="group">The Group to check.</param>
+        /// <returns>true if the Group is private, false otherwise.</returns>
+        public static bool IsPrivateGroup(ushort group)
         {
-            _id = ID;
+            return (group & 1) == 1;
+        }
+        /// <summary>
+        /// Returns an instance of a private tag for a private creator code.
+        /// </summary>
+        /// <param name="group">The Group of the tag.</param>
+        /// <param name="element">The Element for the tag.</param>
+        /// <returns></returns>
+        public static DicomTag GetPrivateCreatorTag(ushort group, ushort element)
+        {
+            return new DicomTag((uint)group << 16 | (uint)(element >> 8), "Private Creator", DicomVr.LOvr, false, 1, 1, false);
         }
 
+        /// <summary>(fffe,e0dd) VR= Sequence Delimitation Item</summary>
+        internal static DicomTag SequenceDelimitationItem = new DicomTag(0xfffee0dd, "Sequence Delimitation Item");
+
+        /// <summary>(fffe,e000) VR= Item</summary>
+        internal static DicomTag Item = new DicomTag(0xfffee000, "Item");
+
+        /// <summary>(fffe,e00d) VR= Item Delimitation Item</summary>
+        internal static DicomTag ItemDelimitationItem = new DicomTag(0xfffee00d, "Item Delimitation Item");
+
+        #endregion
+
+        #region Private Members
+        private uint _tag;
+        private string _name;
+        private DicomVr _vr;
+        private uint _vmLow;
+        private uint _vmHigh;
+        private bool _isRetired;
+        private bool _multiVrTag;
+        #endregion
+
+        #region Constructors
         /// <summary>
-        /// Gets the Group Number of the tag as a 16-bit integer.
+        /// Primary constructor for dictionary tags
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="name"></param>
+        /// <param name="vr"></param>
+        /// <param name="isMultiVrTag"></param>
+        /// <param name="vmLow"></param>
+        /// <param name="vmHigh"></param>
+        /// <param name="isRetired"></param>
+        public DicomTag(uint tag, String name, DicomVr vr, bool isMultiVrTag, uint vmLow, uint vmHigh, bool isRetired)
+        {
+            _tag = tag;
+            _name = name;
+            _vr = vr;
+            _multiVrTag = isMultiVrTag;
+            _vmLow = vmLow;
+            _vmHigh = vmHigh;
+            _isRetired = isRetired;
+        }
+
+        private DicomTag(uint tag, String name)
+        {
+            _tag = tag;
+            _name = name;
+            _vr = DicomVr.UNvr;
+            _multiVrTag = false;
+            _vmLow = 1;
+            _vmHigh = 1;
+            _isRetired = false;
+        }
+
+        #endregion
+
+        #region Properties
+        /// <summary>
+        /// Gets the Group Number of the tag as a 16-bit unsigned integer.
         /// </summary>
         public ushort Group
         {
-            get { return ((ushort) ((_id & 0xffff0000) >> 16)); }
+            get { return ((ushort)((_tag & 0xffff0000) >> 16)); }
         }
 
         /// <summary>
-        /// Gets the Element Number of the tag as a 16-bit integer.
+        /// Gets the Element Number of the tag as a 16-bit unsigned integer.
         /// </summary>
         public ushort Element
         {
-            get { return ((ushort) (_id & 0x0000ffff)); }
+            get { return ((ushort)(_tag & 0x0000ffff)); }
         }
 
+        /// <summary>
+        /// Gets a text description of the tag.
+        /// </summary>
+        public String Name
+        {
+            get { return _name; }
+        }
+
+        /// <summary>
+        /// Gets a boolean telling if the tag is retired.
+        /// </summary>
+        public bool Retired
+        {
+            get { return _isRetired; }
+        }
+
+        /// <summary>
+        /// Gets a boolean telling if the tag supports multiple VRs.
+        /// </summary>
+        public bool MultiVR
+        {
+            get { return _multiVrTag; }
+        }
+
+        /// <summary>
+        /// Returns a <see cref="DicomVr"/> object representing the Value Representation (VR) of the tag.
+        /// </summary>
+        public DicomVr VR
+        {
+            get { return _vr; }
+        }
+
+        /// <summary>
+        /// Gets a uint representing the low Value of Multiplicity defined by DICOM for the tag. 
+        /// </summary>
+        public uint VMLow
+        {
+            get { return _vmLow; }
+        }
+
+        /// <summary>
+        /// Gets a uint representing the high Value of Multiplicity defined by DICOM for the tag.
+        /// </summary>
+        public uint VMHigh
+        {
+            get { return _vmHigh; }
+        }
+
+        /// <summary>
+        /// Gets a string representing the value of multiplicity defined by DICOM for the tag.
+        /// </summary>
+        public string VM
+        {
+            get
+            {
+                if (_vmLow == _vmHigh)
+                    return _vmLow.ToString();
+                if (_vmHigh == uint.MaxValue)
+                    return _vmLow.ToString() + "-N";
+                return _vmLow.ToString() + "-" + _vmHigh.ToString();
+            }
+        }
+
+        /// <summary>
+        /// Returns a uint DICOM Tag value for the object.
+        /// </summary>
+        public uint TagValue
+        {
+            get { return _tag; }
+        }
+
+        /// <summary>
+        /// Returns a string with the tag value in Hex
+        /// </summary>
+        public String HexString
+        {
+            get
+            {
+                return _tag.ToString("X8");
+            }
+        }
+
+        /// <summary>
+        /// Returns a bool as true if the tag is private
+        /// </summary>
+        public bool IsPrivate
+        {
+            get { return (Group & 1) == 1; }
+        }
+        #endregion
+
+        #region System.Object Overrides
         /// <summary>
         /// Provides a hash code that's more natural by using the
         /// Group and Element number of the tag.
@@ -53,19 +220,19 @@ namespace ClearCanvas.Dicom
         /// <returns>The Group and Element number as a 32-bit integer.</returns>
         public override int GetHashCode()
         {
-            return ((int)_id);
+            return ((int)_tag);
         }
 
         /// <summary>
         /// Provides a human-readable representation of the tag.
         /// </summary>
         /// <returns>The string representation of the Group and Element.</returns>
-        public override String ToString()
+        public override string ToString()
         {
-            // TODO: use the DICOM data dictionary to get a string description of the tag
-            // instead of just providing the group and element numbers
             StringBuilder buffer = new StringBuilder();
-            buffer.AppendFormat("({0:x4},{1:x4})", Group, Element);
+            buffer.AppendFormat("({0:x4},{1:x4}) ", Group, Element);
+            buffer.Append(_name);
+
             return buffer.ToString();
         }
 
@@ -83,2138 +250,87 @@ namespace ClearCanvas.Dicom
 
             return (otherTag.GetHashCode() == this.GetHashCode());
         }
+        #endregion
 
-        public static DicomTag CommandGroupLength { get { return new DicomTag(0x0000, 0x0000); } }
-        public static DicomTag ACR_NEMA_CommandGroupLengthToEnd { get { return new DicomTag(0x0000, 0x0001); } }
-        public static DicomTag AffectedSOPClassUID { get { return new DicomTag(0x0000, 0x0002); } }
-        public static DicomTag RequestedSOPClassUID { get { return new DicomTag(0x0000, 0x0003); } }
-        public static DicomTag ACR_NEMA_CommandRecognitionCode { get { return new DicomTag(0x0000, 0x0010); } }
-        public static DicomTag CommandField { get { return new DicomTag(0x0000, 0x0100); } }
-        public static DicomTag MessageID { get { return new DicomTag(0x0000, 0x0110); } }
-        public static DicomTag MessageIDBeingRespondedTo { get { return new DicomTag(0x0000, 0x0120); } }
-        public static DicomTag ACR_NEMA_Initiator { get { return new DicomTag(0x0000, 0x0200); } }
-        public static DicomTag ACR_NEMA_Receiver { get { return new DicomTag(0x0000, 0x0300); } }
-        public static DicomTag ACR_NEMA_FindLocation { get { return new DicomTag(0x0000, 0x0400); } }
-        public static DicomTag MoveDestination { get { return new DicomTag(0x0000, 0x0600); } }
-        public static DicomTag Priority { get { return new DicomTag(0x0000, 0x0700); } }
-        public static DicomTag DataSetType { get { return new DicomTag(0x0000, 0x0800); } }
-        public static DicomTag ACR_NEMA_NumberOfMatches { get { return new DicomTag(0x0000, 0x0850); } }
-        public static DicomTag ACR_NEMA_ResponseSequenceNumber { get { return new DicomTag(0x0000, 0x0860); } }
-        public static DicomTag Status { get { return new DicomTag(0x0000, 0x0900); } }
-        public static DicomTag OffendingElement { get { return new DicomTag(0x0000, 0x0901); } }
-        public static DicomTag ErrorComment { get { return new DicomTag(0x0000, 0x0902); } }
-        public static DicomTag ErrorID { get { return new DicomTag(0x0000, 0x0903); } }
-        public static DicomTag AffectedSOPInstanceUID { get { return new DicomTag(0x0000, 0x1000); } }
-        public static DicomTag RequestedSOPInstanceUID { get { return new DicomTag(0x0000, 0x1001); } }
-        public static DicomTag EventTypeID { get { return new DicomTag(0x0000, 0x1002); } }
-        public static DicomTag AttributeIdentifierList { get { return new DicomTag(0x0000, 0x1005); } }
-        public static DicomTag ActionTypeID { get { return new DicomTag(0x0000, 0x1008); } }
-        public static DicomTag NumberOfRemainingSuboperations { get { return new DicomTag(0x0000, 0x1020); } }
-        public static DicomTag NumberOfCompletedSuboperations { get { return new DicomTag(0x0000, 0x1021); } }
-        public static DicomTag NumberOfFailedSuboperations { get { return new DicomTag(0x0000, 0x1022); } }
-        public static DicomTag NumberOfWarningSuboperations { get { return new DicomTag(0x0000, 0x1023); } }
-        public static DicomTag MoveOriginatorApplicationEntityTitle { get { return new DicomTag(0x0000, 0x1030); } }
-        public static DicomTag MoveOriginatorMessageID { get { return new DicomTag(0x0000, 0x1031); } }
-        public static DicomTag ACR_NEMA_DialogReceiver { get { return new DicomTag(0x0000, 0x4000); } }
-        public static DicomTag ACR_NEMA_TerminalType { get { return new DicomTag(0x0000, 0x4010); } }
-        public static DicomTag ACR_NEMA_MessageSetID { get { return new DicomTag(0x0000, 0x5010); } }
-        public static DicomTag ACR_NEMA_EndMessageSet { get { return new DicomTag(0x0000, 0x5020); } }
-        public static DicomTag ACR_NEMA_DisplayFormat { get { return new DicomTag(0x0000, 0x5110); } }
-        public static DicomTag ACR_NEMA_PagePositionID { get { return new DicomTag(0x0000, 0x5120); } }
-        public static DicomTag ACR_NEMA_TextFormatID { get { return new DicomTag(0x0000, 0x5130); } }
-        public static DicomTag ACR_NEMA_NormalReverse { get { return new DicomTag(0x0000, 0x5140); } }
-        public static DicomTag ACR_NEMA_AddGrayScale { get { return new DicomTag(0x0000, 0x5150); } }
-        public static DicomTag ACR_NEMA_Borders { get { return new DicomTag(0x0000, 0x5160); } }
-        public static DicomTag ACR_NEMA_Copies { get { return new DicomTag(0x0000, 0x5170); } }
-        public static DicomTag ACR_NEMA_OldMagnificationType { get { return new DicomTag(0x0000, 0x5180); } }
-        public static DicomTag ACR_NEMA_Erase { get { return new DicomTag(0x0000, 0x5190); } }
-        public static DicomTag ACR_NEMA_Print { get { return new DicomTag(0x0000, 0x51a0); } }
-        public static DicomTag ACR_NEMA_Overlays { get { return new DicomTag(0x0000, 0x51b0); } }
-        public static DicomTag MetaElementGroupLength { get { return new DicomTag(0x0002, 0x0000); } }
-        public static DicomTag FileMetaInformationVersion { get { return new DicomTag(0x0002, 0x0001); } }
-        public static DicomTag MediaStorageSOPClassUID { get { return new DicomTag(0x0002, 0x0002); } }
-        public static DicomTag MediaStorageSOPInstanceUID { get { return new DicomTag(0x0002, 0x0003); } }
-        public static DicomTag TransferSyntaxUID { get { return new DicomTag(0x0002, 0x0010); } }
-        public static DicomTag ImplementationClassUID { get { return new DicomTag(0x0002, 0x0012); } }
-        public static DicomTag ImplementationVersionName { get { return new DicomTag(0x0002, 0x0013); } }
-        public static DicomTag SourceApplicationEntityTitle { get { return new DicomTag(0x0002, 0x0016); } }
-        public static DicomTag PrivateInformationCreatorUID { get { return new DicomTag(0x0002, 0x0100); } }
-        public static DicomTag PrivateInformation { get { return new DicomTag(0x0002, 0x0102); } }
-        public static DicomTag FileSetGroupLength { get { return new DicomTag(0x0004, 0x0000); } }
-        public static DicomTag FileSetID { get { return new DicomTag(0x0004, 0x1130); } }
-        public static DicomTag FileSetDescriptorFileID { get { return new DicomTag(0x0004, 0x1141); } }
-        public static DicomTag SpecificCharacterSetOfFileSetDescriptorFile { get { return new DicomTag(0x0004, 0x1142); } }
-        public static DicomTag OffsetOfTheFirstDirectoryRecordOfTheRootDirectoryEntity { get { return new DicomTag(0x0004, 0x1200); } }
-        public static DicomTag OffsetOfTheLastDirectoryRecordOfTheRootDirectoryEntity { get { return new DicomTag(0x0004, 0x1202); } }
-        public static DicomTag FileSetConsistencyFlag { get { return new DicomTag(0x0004, 0x1212); } }
-        public static DicomTag DirectoryRecordSequence { get { return new DicomTag(0x0004, 0x1220); } }
-        public static DicomTag OffsetOfTheNextDirectoryRecord { get { return new DicomTag(0x0004, 0x1400); } }
-        public static DicomTag RecordInUseFlag { get { return new DicomTag(0x0004, 0x1410); } }
-        public static DicomTag OffsetOfReferencedLowerLevelDirectoryEntity { get { return new DicomTag(0x0004, 0x1420); } }
-        public static DicomTag DirectoryRecordType { get { return new DicomTag(0x0004, 0x1430); } }
-        public static DicomTag PrivateRecordUID { get { return new DicomTag(0x0004, 0x1432); } }
-        public static DicomTag ReferencedFileID { get { return new DicomTag(0x0004, 0x1500); } }
-        public static DicomTag MRDRDirectoryRecordOffset { get { return new DicomTag(0x0004, 0x1504); } }
-        public static DicomTag ReferencedSOPClassUIDInFile { get { return new DicomTag(0x0004, 0x1510); } }
-        public static DicomTag ReferencedSOPInstanceUIDInFile { get { return new DicomTag(0x0004, 0x1511); } }
-        public static DicomTag ReferencedTransferSyntaxUIDInFile { get { return new DicomTag(0x0004, 0x1512); } }
-        public static DicomTag NumberOfReferences { get { return new DicomTag(0x0004, 0x1600); } }
-        public static DicomTag IdentifyingGroupLength { get { return new DicomTag(0x0008, 0x0000); } }
-        public static DicomTag ACR_NEMA_IdentifyingGroupLengthToEnd { get { return new DicomTag(0x0008, 0x0001); } }
-        public static DicomTag SpecificCharacterSet { get { return new DicomTag(0x0008, 0x0005); } }
-        public static DicomTag ImageType { get { return new DicomTag(0x0008, 0x0008); } }
-        public static DicomTag ACR_NEMA_RecognitionCode { get { return new DicomTag(0x0008, 0x0010); } }
-        public static DicomTag InstanceCreationDate { get { return new DicomTag(0x0008, 0x0012); } }
-        public static DicomTag InstanceCreationTime { get { return new DicomTag(0x0008, 0x0013); } }
-        public static DicomTag InstanceCreatorUID { get { return new DicomTag(0x0008, 0x0014); } }
-        public static DicomTag SOPClassUID { get { return new DicomTag(0x0008, 0x0016); } }
-        public static DicomTag SOPInstanceUID { get { return new DicomTag(0x0008, 0x0018); } }
-        public static DicomTag StudyDate { get { return new DicomTag(0x0008, 0x0020); } }
-        public static DicomTag SeriesDate { get { return new DicomTag(0x0008, 0x0021); } }
-        public static DicomTag AcquisitionDate { get { return new DicomTag(0x0008, 0x0022); } }
-        public static DicomTag ContentDate { get { return new DicomTag(0x0008, 0x0023); } }
-        public static DicomTag OverlayDate { get { return new DicomTag(0x0008, 0x0024); } }
-        public static DicomTag CurveDate { get { return new DicomTag(0x0008, 0x0025); } }
-        public static DicomTag AcquisitionDatetime { get { return new DicomTag(0x0008, 0x002a); } }
-        public static DicomTag StudyTime { get { return new DicomTag(0x0008, 0x0030); } }
-        public static DicomTag SeriesTime { get { return new DicomTag(0x0008, 0x0031); } }
-        public static DicomTag AcquisitionTime { get { return new DicomTag(0x0008, 0x0032); } }
-        public static DicomTag ContentTime { get { return new DicomTag(0x0008, 0x0033); } }
-        public static DicomTag OverlayTime { get { return new DicomTag(0x0008, 0x0034); } }
-        public static DicomTag CurveTime { get { return new DicomTag(0x0008, 0x0035); } }
-        public static DicomTag ACR_NEMA_OldDataSetType { get { return new DicomTag(0x0008, 0x0040); } }
-        public static DicomTag ACR_NEMA_DataSetSubtype { get { return new DicomTag(0x0008, 0x0041); } }
-        public static DicomTag NuclearMedicineSeriesType { get { return new DicomTag(0x0008, 0x0042); } }
-        public static DicomTag AccessionNumber { get { return new DicomTag(0x0008, 0x0050); } }
-        public static DicomTag QueryRetrieveLevel { get { return new DicomTag(0x0008, 0x0052); } }
-        public static DicomTag RetrieveAETitle { get { return new DicomTag(0x0008, 0x0054); } }
-        public static DicomTag InstanceAvailability { get { return new DicomTag(0x0008, 0x0056); } }
-        public static DicomTag FailedSOPInstanceUIDList { get { return new DicomTag(0x0008, 0x0058); } }
-        public static DicomTag Modality { get { return new DicomTag(0x0008, 0x0060); } }
-        public static DicomTag ModalitiesInStudy { get { return new DicomTag(0x0008, 0x0061); } }
-        public static DicomTag ConversionType { get { return new DicomTag(0x0008, 0x0064); } }
-        public static DicomTag PresentationIntentType { get { return new DicomTag(0x0008, 0x0068); } }
-        public static DicomTag Manufacturer { get { return new DicomTag(0x0008, 0x0070); } }
-        public static DicomTag InstitutionName { get { return new DicomTag(0x0008, 0x0080); } }
-        public static DicomTag InstitutionAddress { get { return new DicomTag(0x0008, 0x0081); } }
-        public static DicomTag InstitutionCodeSequence { get { return new DicomTag(0x0008, 0x0082); } }
-        public static DicomTag ReferringPhysiciansName { get { return new DicomTag(0x0008, 0x0090); } }
-        public static DicomTag ReferringPhysiciansAddress { get { return new DicomTag(0x0008, 0x0092); } }
-        public static DicomTag ReferringPhysiciansTelephoneNumbers { get { return new DicomTag(0x0008, 0x0094); } }
-        public static DicomTag ReferringPhysicianIdentificationSequence { get { return new DicomTag(0x0008, 0x0096); } }
-        public static DicomTag CodeValue { get { return new DicomTag(0x0008, 0x0100); } }
-        public static DicomTag CodingSchemeDesignator { get { return new DicomTag(0x0008, 0x0102); } }
-        public static DicomTag CodingSchemeVersion { get { return new DicomTag(0x0008, 0x0103); } }
-        public static DicomTag CodeMeaning { get { return new DicomTag(0x0008, 0x0104); } }
-        public static DicomTag MappingResource { get { return new DicomTag(0x0008, 0x0105); } }
-        public static DicomTag ContextGroupVersion { get { return new DicomTag(0x0008, 0x0106); } }
-        public static DicomTag ContextGroupLocalVersion { get { return new DicomTag(0x0008, 0x0107); } }
-        public static DicomTag CodeSetExtensionFlag { get { return new DicomTag(0x0008, 0x010b); } }
-        public static DicomTag CodingSchemeUID { get { return new DicomTag(0x0008, 0x010c); } }
-        public static DicomTag CodeSetExtensionCreatorUID { get { return new DicomTag(0x0008, 0x010d); } }
-        public static DicomTag ContextIdentifier { get { return new DicomTag(0x0008, 0x010f); } }
-        public static DicomTag CodingSchemeIdentificationSequence { get { return new DicomTag(0x0008, 0x0110); } }
-        public static DicomTag CodingSchemeRegistry { get { return new DicomTag(0x0008, 0x0112); } }
-        public static DicomTag CodingSchemeExternalID { get { return new DicomTag(0x0008, 0x0114); } }
-        public static DicomTag CodingSchemeName { get { return new DicomTag(0x0008, 0x0115); } }
-        public static DicomTag ResponsibleOrganization { get { return new DicomTag(0x0008, 0x0116); } }
-        public static DicomTag TimezoneOffsetFromUTC { get { return new DicomTag(0x0008, 0x0201); } }
-        public static DicomTag ACR_NEMA_NetworkID { get { return new DicomTag(0x0008, 0x1000); } }
-        public static DicomTag StationName { get { return new DicomTag(0x0008, 0x1010); } }
-        public static DicomTag StudyDescription { get { return new DicomTag(0x0008, 0x1030); } }
-        public static DicomTag ProcedureCodeSequence { get { return new DicomTag(0x0008, 0x1032); } }
-        public static DicomTag SeriesDescription { get { return new DicomTag(0x0008, 0x103e); } }
-        public static DicomTag InstitutionalDepartmentName { get { return new DicomTag(0x0008, 0x1040); } }
-        public static DicomTag PhysiciansOfRecord { get { return new DicomTag(0x0008, 0x1048); } }
-        public static DicomTag PhysiciansOfRecordIdentificationSequence { get { return new DicomTag(0x0008, 0x1049); } }
-        public static DicomTag PerformingPhysiciansName { get { return new DicomTag(0x0008, 0x1050); } }
-        public static DicomTag PerformingPhysicianIdentificationSequence { get { return new DicomTag(0x0008, 0x1052); } }
-        public static DicomTag NameOfPhysiciansReadingStudy { get { return new DicomTag(0x0008, 0x1060); } }
-        public static DicomTag PhysiciansReadingStudyIdentificationSequence { get { return new DicomTag(0x0008, 0x1062); } }
-        public static DicomTag OperatorsName { get { return new DicomTag(0x0008, 0x1070); } }
-        public static DicomTag OperatorIdentificationSequence { get { return new DicomTag(0x0008, 0x1072); } }
-        public static DicomTag AdmittingDiagnosesDescription { get { return new DicomTag(0x0008, 0x1080); } }
-        public static DicomTag AdmittingDiagnosesCodeSequence { get { return new DicomTag(0x0008, 0x1084); } }
-        public static DicomTag ManufacturersModelName { get { return new DicomTag(0x0008, 0x1090); } }
-        public static DicomTag ReferencedResultsSequence { get { return new DicomTag(0x0008, 0x1100); } }
-        public static DicomTag ReferencedStudySequence { get { return new DicomTag(0x0008, 0x1110); } }
-        public static DicomTag ReferencedPerformedProcedureStepSequence { get { return new DicomTag(0x0008, 0x1111); } }
-        public static DicomTag ReferencedSeriesSequence { get { return new DicomTag(0x0008, 0x1115); } }
-        public static DicomTag ReferencedPatientSequence { get { return new DicomTag(0x0008, 0x1120); } }
-        public static DicomTag ReferencedVisitSequence { get { return new DicomTag(0x0008, 0x1125); } }
-        public static DicomTag ReferencedOverlaySequence { get { return new DicomTag(0x0008, 0x1130); } }
-        public static DicomTag ReferencedWaveformSequence { get { return new DicomTag(0x0008, 0x113a); } }
-        public static DicomTag ReferencedImageSequence { get { return new DicomTag(0x0008, 0x1140); } }
-        public static DicomTag ReferencedCurveSequence { get { return new DicomTag(0x0008, 0x1145); } }
-        public static DicomTag ReferencedInstanceSequence { get { return new DicomTag(0x0008, 0x114a); } }
-        public static DicomTag ReferencedSOPClassUID { get { return new DicomTag(0x0008, 0x1150); } }
-        public static DicomTag ReferencedSOPInstanceUID { get { return new DicomTag(0x0008, 0x1155); } }
-        public static DicomTag SOPClassesSupported { get { return new DicomTag(0x0008, 0x115a); } }
-        public static DicomTag ReferencedFrameNumber { get { return new DicomTag(0x0008, 0x1160); } }
-        public static DicomTag TransactionUID { get { return new DicomTag(0x0008, 0x1195); } }
-        public static DicomTag FailureReason { get { return new DicomTag(0x0008, 0x1197); } }
-        public static DicomTag FailedSOPSequence { get { return new DicomTag(0x0008, 0x1198); } }
-        public static DicomTag ReferencedSOPSequence { get { return new DicomTag(0x0008, 0x1199); } }
-        public static DicomTag StudiesContainingOtherReferencedInstancesSequence { get { return new DicomTag(0x0008, 0x1200); } }
-        public static DicomTag RelatedSeriesSequence { get { return new DicomTag(0x0008, 0x1250); } }
-        public static DicomTag RETIRED_LossyImageCompression { get { return new DicomTag(0x0008, 0x2110); } }
-        public static DicomTag DerivationDescription { get { return new DicomTag(0x0008, 0x2111); } }
-        public static DicomTag SourceImageSequence { get { return new DicomTag(0x0008, 0x2112); } }
-        public static DicomTag StageName { get { return new DicomTag(0x0008, 0x2120); } }
-        public static DicomTag StageNumber { get { return new DicomTag(0x0008, 0x2122); } }
-        public static DicomTag NumberOfStages { get { return new DicomTag(0x0008, 0x2124); } }
-        public static DicomTag ViewName { get { return new DicomTag(0x0008, 0x2127); } }
-        public static DicomTag ViewNumber { get { return new DicomTag(0x0008, 0x2128); } }
-        public static DicomTag NumberOfEventTimers { get { return new DicomTag(0x0008, 0x2129); } }
-        public static DicomTag NumberOfViewsInStage { get { return new DicomTag(0x0008, 0x212a); } }
-        public static DicomTag EventElapsedTimes { get { return new DicomTag(0x0008, 0x2130); } }
-        public static DicomTag EventTimerNames { get { return new DicomTag(0x0008, 0x2132); } }
-        public static DicomTag StartTrim { get { return new DicomTag(0x0008, 0x2142); } }
-        public static DicomTag StopTrim { get { return new DicomTag(0x0008, 0x2143); } }
-        public static DicomTag RecommendedDisplayFrameRate { get { return new DicomTag(0x0008, 0x2144); } }
-        public static DicomTag TransducerPosition { get { return new DicomTag(0x0008, 0x2200); } }
-        public static DicomTag TransducerOrientation { get { return new DicomTag(0x0008, 0x2204); } }
-        public static DicomTag AnatomicStructure { get { return new DicomTag(0x0008, 0x2208); } }
-        public static DicomTag AnatomicRegionSequence { get { return new DicomTag(0x0008, 0x2218); } }
-        public static DicomTag AnatomicRegionModifierSequence { get { return new DicomTag(0x0008, 0x2220); } }
-        public static DicomTag PrimaryAnatomicStructureSequence { get { return new DicomTag(0x0008, 0x2228); } }
-        public static DicomTag AnatomicStructureSpaceOrRegionSequence { get { return new DicomTag(0x0008, 0x2229); } }
-        public static DicomTag PrimaryAnatomicStructureModifierSequence { get { return new DicomTag(0x0008, 0x2230); } }
-        public static DicomTag TransducerPositionSequence { get { return new DicomTag(0x0008, 0x2240); } }
-        public static DicomTag TransducerPositionModifierSequence { get { return new DicomTag(0x0008, 0x2242); } }
-        public static DicomTag TransducerOrientationSequence { get { return new DicomTag(0x0008, 0x2244); } }
-        public static DicomTag TransducerOrientationModifierSequence { get { return new DicomTag(0x0008, 0x2246); } }
-        public static DicomTag AlternateRepresentationSequence { get { return new DicomTag(0x0008, 0x3001); } }
-        public static DicomTag ACR_NEMA_IdentifyingComments { get { return new DicomTag(0x0008, 0x4000); } }
-        public static DicomTag FrameType { get { return new DicomTag(0x0008, 0x9007); } }
-        public static DicomTag ReferencedImageEvidenceSequence { get { return new DicomTag(0x0008, 0x9092); } }
-        public static DicomTag ReferencedRawDataSequence { get { return new DicomTag(0x0008, 0x9121); } }
-        public static DicomTag CreatorVersionUID { get { return new DicomTag(0x0008, 0x9123); } }
-        public static DicomTag DerivationImageSequence { get { return new DicomTag(0x0008, 0x9124); } }
-        public static DicomTag SourceImageEvidenceSequence { get { return new DicomTag(0x0008, 0x9154); } }
-        public static DicomTag PixelPresentation { get { return new DicomTag(0x0008, 0x9205); } }
-        public static DicomTag VolumetricProperties { get { return new DicomTag(0x0008, 0x9206); } }
-        public static DicomTag VolumeBasedCalculationTechnique { get { return new DicomTag(0x0008, 0x9207); } }
-        public static DicomTag ComplexImageComponent { get { return new DicomTag(0x0008, 0x9208); } }
-        public static DicomTag AcquisitionContrast { get { return new DicomTag(0x0008, 0x9209); } }
-        public static DicomTag DerivationCodeSequence { get { return new DicomTag(0x0008, 0x9215); } }
-        public static DicomTag ReferencedGrayscalePresentationStateSequence { get { return new DicomTag(0x0008, 0x9237); } }
-        public static DicomTag PatientGroupLength { get { return new DicomTag(0x0010, 0x0000); } }
-        public static DicomTag PatientsName { get { return new DicomTag(0x0010, 0x0010); } }
-        public static DicomTag PatientId { get { return new DicomTag(0x0010, 0x0020); } }
-        public static DicomTag IssuerOfPatientID { get { return new DicomTag(0x0010, 0x0021); } }
-        public static DicomTag PatientsBirthDate { get { return new DicomTag(0x0010, 0x0030); } }
-        public static DicomTag PatientsBirthTime { get { return new DicomTag(0x0010, 0x0032); } }
-        public static DicomTag PatientsSex { get { return new DicomTag(0x0010, 0x0040); } }
-        public static DicomTag PatientsInsurancePlanCodeSequence { get { return new DicomTag(0x0010, 0x0050); } }
-        public static DicomTag PatientsPrimaryLanguageCodeSequence { get { return new DicomTag(0x0010, 0x0101); } }
-        public static DicomTag PatientsPrimaryLanguageCodeModifierSequence { get { return new DicomTag(0x0010, 0x0102); } }
-        public static DicomTag OtherPatientIDs { get { return new DicomTag(0x0010, 0x1000); } }
-        public static DicomTag OtherPatientNames { get { return new DicomTag(0x0010, 0x1001); } }
-        public static DicomTag PatientsBirthName { get { return new DicomTag(0x0010, 0x1005); } }
-        public static DicomTag PatientsAge { get { return new DicomTag(0x0010, 0x1010); } }
-        public static DicomTag PatientsSize { get { return new DicomTag(0x0010, 0x1020); } }
-        public static DicomTag PatientsWeight { get { return new DicomTag(0x0010, 0x1030); } }
-        public static DicomTag PatientsAddress { get { return new DicomTag(0x0010, 0x1040); } }
-        public static DicomTag ACR_NEMA_InsurancePlanIdentification { get { return new DicomTag(0x0010, 0x1050); } }
-        public static DicomTag PatientsMothersBirthName { get { return new DicomTag(0x0010, 0x1060); } }
-        public static DicomTag MilitaryRank { get { return new DicomTag(0x0010, 0x1080); } }
-        public static DicomTag BranchOfService { get { return new DicomTag(0x0010, 0x1081); } }
-        public static DicomTag MedicalRecordLocator { get { return new DicomTag(0x0010, 0x1090); } }
-        public static DicomTag MedicalAlerts { get { return new DicomTag(0x0010, 0x2000); } }
-        public static DicomTag ContrastAllergies { get { return new DicomTag(0x0010, 0x2110); } }
-        public static DicomTag CountryOfResidence { get { return new DicomTag(0x0010, 0x2150); } }
-        public static DicomTag RegionOfResidence { get { return new DicomTag(0x0010, 0x2152); } }
-        public static DicomTag PatientsTelephoneNumbers { get { return new DicomTag(0x0010, 0x2154); } }
-        public static DicomTag EthnicGroup { get { return new DicomTag(0x0010, 0x2160); } }
-        public static DicomTag Occupation { get { return new DicomTag(0x0010, 0x2180); } }
-        public static DicomTag SmokingStatus { get { return new DicomTag(0x0010, 0x21a0); } }
-        public static DicomTag AdditionalPatientHistory { get { return new DicomTag(0x0010, 0x21b0); } }
-        public static DicomTag PregnancyStatus { get { return new DicomTag(0x0010, 0x21c0); } }
-        public static DicomTag LastMenstrualDate { get { return new DicomTag(0x0010, 0x21d0); } }
-        public static DicomTag PatientsReligiousPreference { get { return new DicomTag(0x0010, 0x21f0); } }
-        public static DicomTag PatientComments { get { return new DicomTag(0x0010, 0x4000); } }
-        public static DicomTag ClinicalTrialSponsorName { get { return new DicomTag(0x0012, 0x0010); } }
-        public static DicomTag ClinicalTrialProtocolID { get { return new DicomTag(0x0012, 0x0020); } }
-        public static DicomTag ClinicalTrialProtocolName { get { return new DicomTag(0x0012, 0x0021); } }
-        public static DicomTag ClinicalTrialSiteID { get { return new DicomTag(0x0012, 0x0030); } }
-        public static DicomTag ClinicalTrialSiteName { get { return new DicomTag(0x0012, 0x0031); } }
-        public static DicomTag ClinicalTrialSubjectID { get { return new DicomTag(0x0012, 0x0040); } }
-        public static DicomTag ClinicalTrialSubjectReadingID { get { return new DicomTag(0x0012, 0x0042); } }
-        public static DicomTag ClinicalTrialTimePointID { get { return new DicomTag(0x0012, 0x0050); } }
-        public static DicomTag ClinicalTrialTimePointDescription { get { return new DicomTag(0x0012, 0x0051); } }
-        public static DicomTag ClinicalTrialCoordinatingCenterName { get { return new DicomTag(0x0012, 0x0060); } }
-        public static DicomTag AcquisitionGroupLength { get { return new DicomTag(0x0018, 0x0000); } }
-        public static DicomTag ContrastBolusAgent { get { return new DicomTag(0x0018, 0x0010); } }
-        public static DicomTag ContrastBolusAgentSequence { get { return new DicomTag(0x0018, 0x0012); } }
-        public static DicomTag ContrastBolusAdministrationRouteSequence { get { return new DicomTag(0x0018, 0x0014); } }
-        public static DicomTag BodyPartExamined { get { return new DicomTag(0x0018, 0x0015); } }
-        public static DicomTag ScanningSequence { get { return new DicomTag(0x0018, 0x0020); } }
-        public static DicomTag SequenceVariant { get { return new DicomTag(0x0018, 0x0021); } }
-        public static DicomTag ScanOptions { get { return new DicomTag(0x0018, 0x0022); } }
-        public static DicomTag MRAcquisitionType { get { return new DicomTag(0x0018, 0x0023); } }
-        public static DicomTag SequenceName { get { return new DicomTag(0x0018, 0x0024); } }
-        public static DicomTag AngioFlag { get { return new DicomTag(0x0018, 0x0025); } }
-        public static DicomTag InterventionDrugInformationSequence { get { return new DicomTag(0x0018, 0x0026); } }
-        public static DicomTag InterventionDrugStopTime { get { return new DicomTag(0x0018, 0x0027); } }
-        public static DicomTag InterventionDrugDose { get { return new DicomTag(0x0018, 0x0028); } }
-        public static DicomTag InterventionDrugCodeSequence { get { return new DicomTag(0x0018, 0x0029); } }
-        public static DicomTag AdditionalDrugSequence { get { return new DicomTag(0x0018, 0x002a); } }
-        public static DicomTag Radionuclide { get { return new DicomTag(0x0018, 0x0030); } }
-        public static DicomTag Radiopharmaceutical { get { return new DicomTag(0x0018, 0x0031); } }
-        public static DicomTag EnergyWindowCenterline { get { return new DicomTag(0x0018, 0x0032); } }
-        public static DicomTag EnergyWindowTotalWidth { get { return new DicomTag(0x0018, 0x0033); } }
-        public static DicomTag InterventionDrugName { get { return new DicomTag(0x0018, 0x0034); } }
-        public static DicomTag InterventionDrugStartTime { get { return new DicomTag(0x0018, 0x0035); } }
-        public static DicomTag InterventionSequence { get { return new DicomTag(0x0018, 0x0036); } }
-        public static DicomTag RETIRED_TherapyType { get { return new DicomTag(0x0018, 0x0037); } }
-        public static DicomTag InterventionalStatus { get { return new DicomTag(0x0018, 0x0038); } }
-        public static DicomTag RETIRED_TherapyDescription { get { return new DicomTag(0x0018, 0x0039); } }
-        public static DicomTag InterventionDescription { get { return new DicomTag(0x0018, 0x003a); } }
-        public static DicomTag CineRate { get { return new DicomTag(0x0018, 0x0040); } }
-        public static DicomTag SliceThickness { get { return new DicomTag(0x0018, 0x0050); } }
-        public static DicomTag KVP { get { return new DicomTag(0x0018, 0x0060); } }
-        public static DicomTag CountsAccumulated { get { return new DicomTag(0x0018, 0x0070); } }
-        public static DicomTag AcquisitionTerminationCondition { get { return new DicomTag(0x0018, 0x0071); } }
-        public static DicomTag EffectiveDuration { get { return new DicomTag(0x0018, 0x0072); } }
-        public static DicomTag AcquisitionStartCondition { get { return new DicomTag(0x0018, 0x0073); } }
-        public static DicomTag AcquisitionStartConditionData { get { return new DicomTag(0x0018, 0x0074); } }
-        public static DicomTag AcquisitionTerminationConditionData { get { return new DicomTag(0x0018, 0x0075); } }
-        public static DicomTag RepetitionTime { get { return new DicomTag(0x0018, 0x0080); } }
-        public static DicomTag EchoTime { get { return new DicomTag(0x0018, 0x0081); } }
-        public static DicomTag InversionTime { get { return new DicomTag(0x0018, 0x0082); } }
-        public static DicomTag NumberOfAverages { get { return new DicomTag(0x0018, 0x0083); } }
-        public static DicomTag ImagingFrequency { get { return new DicomTag(0x0018, 0x0084); } }
-        public static DicomTag ImagedNucleus { get { return new DicomTag(0x0018, 0x0085); } }
-        public static DicomTag EchoNumbers { get { return new DicomTag(0x0018, 0x0086); } }
-        public static DicomTag MagneticFieldStrength { get { return new DicomTag(0x0018, 0x0087); } }
-        public static DicomTag SpacingBetweenSlices { get { return new DicomTag(0x0018, 0x0088); } }
-        public static DicomTag NumberOfPhaseEncodingSteps { get { return new DicomTag(0x0018, 0x0089); } }
-        public static DicomTag DataCollectionDiameter { get { return new DicomTag(0x0018, 0x0090); } }
-        public static DicomTag EchoTrainLength { get { return new DicomTag(0x0018, 0x0091); } }
-        public static DicomTag PercentSampling { get { return new DicomTag(0x0018, 0x0093); } }
-        public static DicomTag PercentPhaseFieldOfView { get { return new DicomTag(0x0018, 0x0094); } }
-        public static DicomTag PixelBandwidth { get { return new DicomTag(0x0018, 0x0095); } }
-        public static DicomTag DeviceSerialNumber { get { return new DicomTag(0x0018, 0x1000); } }
-        public static DicomTag PlateID { get { return new DicomTag(0x0018, 0x1004); } }
-        public static DicomTag SecondaryCaptureDeviceID { get { return new DicomTag(0x0018, 0x1010); } }
-        public static DicomTag HardcopyCreationDeviceID { get { return new DicomTag(0x0018, 0x1011); } }
-        public static DicomTag DateOfSecondaryCapture { get { return new DicomTag(0x0018, 0x1012); } }
-        public static DicomTag TimeOfSecondaryCapture { get { return new DicomTag(0x0018, 0x1014); } }
-        public static DicomTag SecondaryCaptureDeviceManufacturer { get { return new DicomTag(0x0018, 0x1016); } }
-        public static DicomTag HardcopyDeviceManufacturer { get { return new DicomTag(0x0018, 0x1017); } }
-        public static DicomTag SecondaryCaptureDeviceManufacturersModelName { get { return new DicomTag(0x0018, 0x1018); } }
-        public static DicomTag SecondaryCaptureDeviceSoftwareVersions { get { return new DicomTag(0x0018, 0x1019); } }
-        public static DicomTag HardcopyDeviceSoftwareVersion { get { return new DicomTag(0x0018, 0x101a); } }
-        public static DicomTag HardcopyDeviceManufacturersModelName { get { return new DicomTag(0x0018, 0x101b); } }
-        public static DicomTag SoftwareVersions { get { return new DicomTag(0x0018, 0x1020); } }
-        public static DicomTag VideoImageFormatAcquired { get { return new DicomTag(0x0018, 0x1022); } }
-        public static DicomTag DigitalImageFormatAcquired { get { return new DicomTag(0x0018, 0x1023); } }
-        public static DicomTag ProtocolName { get { return new DicomTag(0x0018, 0x1030); } }
-        public static DicomTag ContrastBolusRoute { get { return new DicomTag(0x0018, 0x1040); } }
-        public static DicomTag ContrastBolusVolume { get { return new DicomTag(0x0018, 0x1041); } }
-        public static DicomTag ContrastBolusStartTime { get { return new DicomTag(0x0018, 0x1042); } }
-        public static DicomTag ContrastBolusStopTime { get { return new DicomTag(0x0018, 0x1043); } }
-        public static DicomTag ContrastBolusTotalDose { get { return new DicomTag(0x0018, 0x1044); } }
-        public static DicomTag SyringeCounts { get { return new DicomTag(0x0018, 0x1045); } }
-        public static DicomTag ContrastFlowRate { get { return new DicomTag(0x0018, 0x1046); } }
-        public static DicomTag ContrastFlowDuration { get { return new DicomTag(0x0018, 0x1047); } }
-        public static DicomTag ContrastBolusIngredient { get { return new DicomTag(0x0018, 0x1048); } }
-        public static DicomTag ContrastBolusIngredientConcentration { get { return new DicomTag(0x0018, 0x1049); } }
-        public static DicomTag SpatialResolution { get { return new DicomTag(0x0018, 0x1050); } }
-        public static DicomTag TriggerTime { get { return new DicomTag(0x0018, 0x1060); } }
-        public static DicomTag TriggerSourceOrType { get { return new DicomTag(0x0018, 0x1061); } }
-        public static DicomTag NominalInterval { get { return new DicomTag(0x0018, 0x1062); } }
-        public static DicomTag FrameTime { get { return new DicomTag(0x0018, 0x1063); } }
-        public static DicomTag FramingType { get { return new DicomTag(0x0018, 0x1064); } }
-        public static DicomTag FrameTimeVector { get { return new DicomTag(0x0018, 0x1065); } }
-        public static DicomTag FrameDelay { get { return new DicomTag(0x0018, 0x1066); } }
-        public static DicomTag ImageTriggerDelay { get { return new DicomTag(0x0018, 0x1067); } }
-        public static DicomTag MultiplexGroupTimeOffset { get { return new DicomTag(0x0018, 0x1068); } }
-        public static DicomTag TriggerTimeOffset { get { return new DicomTag(0x0018, 0x1069); } }
-        public static DicomTag SynchronizationTrigger { get { return new DicomTag(0x0018, 0x106a); } }
-        public static DicomTag SynchronizationChannel { get { return new DicomTag(0x0018, 0x106c); } }
-        public static DicomTag TriggerSamplePosition { get { return new DicomTag(0x0018, 0x106e); } }
-        public static DicomTag RadiopharmaceuticalRoute { get { return new DicomTag(0x0018, 0x1070); } }
-        public static DicomTag RadiopharmaceuticalVolume { get { return new DicomTag(0x0018, 0x1071); } }
-        public static DicomTag RadiopharmaceuticalStartTime { get { return new DicomTag(0x0018, 0x1072); } }
-        public static DicomTag RadiopharmaceuticalStopTime { get { return new DicomTag(0x0018, 0x1073); } }
-        public static DicomTag RadionuclideTotalDose { get { return new DicomTag(0x0018, 0x1074); } }
-        public static DicomTag RadionuclideHalfLife { get { return new DicomTag(0x0018, 0x1075); } }
-        public static DicomTag RadionuclidePositronFraction { get { return new DicomTag(0x0018, 0x1076); } }
-        public static DicomTag RadiopharmaceuticalSpecificActivity { get { return new DicomTag(0x0018, 0x1077); } }
-        public static DicomTag BeatRejectionFlag { get { return new DicomTag(0x0018, 0x1080); } }
-        public static DicomTag LowRRValue { get { return new DicomTag(0x0018, 0x1081); } }
-        public static DicomTag HighRRValue { get { return new DicomTag(0x0018, 0x1082); } }
-        public static DicomTag IntervalsAcquired { get { return new DicomTag(0x0018, 0x1083); } }
-        public static DicomTag IntervalsRejected { get { return new DicomTag(0x0018, 0x1084); } }
-        public static DicomTag PVCRejection { get { return new DicomTag(0x0018, 0x1085); } }
-        public static DicomTag SkipBeats { get { return new DicomTag(0x0018, 0x1086); } }
-        public static DicomTag HeartRate { get { return new DicomTag(0x0018, 0x1088); } }
-        public static DicomTag CardiacNumberOfImages { get { return new DicomTag(0x0018, 0x1090); } }
-        public static DicomTag TriggerWindow { get { return new DicomTag(0x0018, 0x1094); } }
-        public static DicomTag ReconstructionDiameter { get { return new DicomTag(0x0018, 0x1100); } }
-        public static DicomTag DistanceSourceToDetector { get { return new DicomTag(0x0018, 0x1110); } }
-        public static DicomTag DistanceSourceToPatient { get { return new DicomTag(0x0018, 0x1111); } }
-        public static DicomTag EstimatedRadiographicMagnificationFactor { get { return new DicomTag(0x0018, 0x1114); } }
-        public static DicomTag GantryDetectorTilt { get { return new DicomTag(0x0018, 0x1120); } }
-        public static DicomTag GantryDetectorSlew { get { return new DicomTag(0x0018, 0x1121); } }
-        public static DicomTag TableHeight { get { return new DicomTag(0x0018, 0x1130); } }
-        public static DicomTag TableTraverse { get { return new DicomTag(0x0018, 0x1131); } }
-        public static DicomTag TableMotion { get { return new DicomTag(0x0018, 0x1134); } }
-        public static DicomTag TableVerticalIncrement { get { return new DicomTag(0x0018, 0x1135); } }
-        public static DicomTag TableLateralIncrement { get { return new DicomTag(0x0018, 0x1136); } }
-        public static DicomTag TableLongitudinalIncrement { get { return new DicomTag(0x0018, 0x1137); } }
-        public static DicomTag TableAngle { get { return new DicomTag(0x0018, 0x1138); } }
-        public static DicomTag TableType { get { return new DicomTag(0x0018, 0x113a); } }
-        public static DicomTag RotationDirection { get { return new DicomTag(0x0018, 0x1140); } }
-        public static DicomTag AngularPosition { get { return new DicomTag(0x0018, 0x1141); } }
-        public static DicomTag RadialPosition { get { return new DicomTag(0x0018, 0x1142); } }
-        public static DicomTag ScanArc { get { return new DicomTag(0x0018, 0x1143); } }
-        public static DicomTag AngularStep { get { return new DicomTag(0x0018, 0x1144); } }
-        public static DicomTag CenterOfRotationOffset { get { return new DicomTag(0x0018, 0x1145); } }
-        public static DicomTag RotationOffset { get { return new DicomTag(0x0018, 0x1146); } }
-        public static DicomTag FieldOfViewShape { get { return new DicomTag(0x0018, 0x1147); } }
-        public static DicomTag FieldOfViewDimensions { get { return new DicomTag(0x0018, 0x1149); } }
-        public static DicomTag ExposureTime { get { return new DicomTag(0x0018, 0x1150); } }
-        public static DicomTag XRayTubeCurrent { get { return new DicomTag(0x0018, 0x1151); } }
-        public static DicomTag Exposure { get { return new DicomTag(0x0018, 0x1152); } }
-        public static DicomTag ExposureInMicroAs { get { return new DicomTag(0x0018, 0x1153); } }
-        public static DicomTag AveragePulseWidth { get { return new DicomTag(0x0018, 0x1154); } }
-        public static DicomTag RadiationSetting { get { return new DicomTag(0x0018, 0x1155); } }
-        public static DicomTag RectificationType { get { return new DicomTag(0x0018, 0x1156); } }
-        public static DicomTag RadiationMode { get { return new DicomTag(0x0018, 0x115a); } }
-        public static DicomTag ImageAreaDoseProduct { get { return new DicomTag(0x0018, 0x115e); } }
-        public static DicomTag FilterType { get { return new DicomTag(0x0018, 0x1160); } }
-        public static DicomTag TypeOfFilters { get { return new DicomTag(0x0018, 0x1161); } }
-        public static DicomTag IntensifierSize { get { return new DicomTag(0x0018, 0x1162); } }
-        public static DicomTag ImagerPixelSpacing { get { return new DicomTag(0x0018, 0x1164); } }
-        public static DicomTag Grid { get { return new DicomTag(0x0018, 0x1166); } }
-        public static DicomTag GeneratorPower { get { return new DicomTag(0x0018, 0x1170); } }
-        public static DicomTag CollimatorGridName { get { return new DicomTag(0x0018, 0x1180); } }
-        public static DicomTag CollimatorType { get { return new DicomTag(0x0018, 0x1181); } }
-        public static DicomTag FocalDistance { get { return new DicomTag(0x0018, 0x1182); } }
-        public static DicomTag XFocusCenter { get { return new DicomTag(0x0018, 0x1183); } }
-        public static DicomTag YFocusCenter { get { return new DicomTag(0x0018, 0x1184); } }
-        public static DicomTag FocalSpots { get { return new DicomTag(0x0018, 0x1190); } }
-        public static DicomTag AnodeTargetMaterial { get { return new DicomTag(0x0018, 0x1191); } }
-        public static DicomTag BodyPartThickness { get { return new DicomTag(0x0018, 0x11a0); } }
-        public static DicomTag CompressionForce { get { return new DicomTag(0x0018, 0x11a2); } }
-        public static DicomTag DateOfLastCalibration { get { return new DicomTag(0x0018, 0x1200); } }
-        public static DicomTag TimeOfLastCalibration { get { return new DicomTag(0x0018, 0x1201); } }
-        public static DicomTag ConvolutionKernel { get { return new DicomTag(0x0018, 0x1210); } }
-        public static DicomTag ACR_NEMA_UpperLowerPixelValues { get { return new DicomTag(0x0018, 0x1240); } }
-        public static DicomTag ActualFrameDuration { get { return new DicomTag(0x0018, 0x1242); } }
-        public static DicomTag CountRate { get { return new DicomTag(0x0018, 0x1243); } }
-        public static DicomTag PreferredPlaybackSequencing { get { return new DicomTag(0x0018, 0x1244); } }
-        public static DicomTag ReceiveCoilName { get { return new DicomTag(0x0018, 0x1250); } }
-        public static DicomTag TransmitCoilName { get { return new DicomTag(0x0018, 0x1251); } }
-        public static DicomTag PlateType { get { return new DicomTag(0x0018, 0x1260); } }
-        public static DicomTag PhosphorType { get { return new DicomTag(0x0018, 0x1261); } }
-        public static DicomTag ScanVelocity { get { return new DicomTag(0x0018, 0x1300); } }
-        public static DicomTag WholeBodyTechnique { get { return new DicomTag(0x0018, 0x1301); } }
-        public static DicomTag ScanLength { get { return new DicomTag(0x0018, 0x1302); } }
-        public static DicomTag AcquisitionMatrix { get { return new DicomTag(0x0018, 0x1310); } }
-        public static DicomTag InPlanePhaseEncodingDirection { get { return new DicomTag(0x0018, 0x1312); } }
-        public static DicomTag FlipAngle { get { return new DicomTag(0x0018, 0x1314); } }
-        public static DicomTag VariableFlipAngleFlag { get { return new DicomTag(0x0018, 0x1315); } }
-        public static DicomTag SAR { get { return new DicomTag(0x0018, 0x1316); } }
-        public static DicomTag dBdt { get { return new DicomTag(0x0018, 0x1318); } }
-        public static DicomTag AcquisitionDeviceProcessingDescription { get { return new DicomTag(0x0018, 0x1400); } }
-        public static DicomTag AcquisitionDeviceProcessingCode { get { return new DicomTag(0x0018, 0x1401); } }
-        public static DicomTag CassetteOrientation { get { return new DicomTag(0x0018, 0x1402); } }
-        public static DicomTag CassetteSize { get { return new DicomTag(0x0018, 0x1403); } }
-        public static DicomTag ExposuresOnPlate { get { return new DicomTag(0x0018, 0x1404); } }
-        public static DicomTag RelativeXRayExposure { get { return new DicomTag(0x0018, 0x1405); } }
-        public static DicomTag ColumnAngulation { get { return new DicomTag(0x0018, 0x1450); } }
-        public static DicomTag TomoLayerHeight { get { return new DicomTag(0x0018, 0x1460); } }
-        public static DicomTag TomoAngle { get { return new DicomTag(0x0018, 0x1470); } }
-        public static DicomTag TomoTime { get { return new DicomTag(0x0018, 0x1480); } }
-        public static DicomTag TomoType { get { return new DicomTag(0x0018, 0x1490); } }
-        public static DicomTag TomoClass { get { return new DicomTag(0x0018, 0x1491); } }
-        public static DicomTag NumberOfTomosynthesisSourceImages { get { return new DicomTag(0x0018, 0x1495); } }
-        public static DicomTag PositionerMotion { get { return new DicomTag(0x0018, 0x1500); } }
-        public static DicomTag PositionerType { get { return new DicomTag(0x0018, 0x1508); } }
-        public static DicomTag PositionerPrimaryAngle { get { return new DicomTag(0x0018, 0x1510); } }
-        public static DicomTag PositionerSecondaryAngle { get { return new DicomTag(0x0018, 0x1511); } }
-        public static DicomTag PositionerPrimaryAngleIncrement { get { return new DicomTag(0x0018, 0x1520); } }
-        public static DicomTag PositionerSecondaryAngleIncrement { get { return new DicomTag(0x0018, 0x1521); } }
-        public static DicomTag DetectorPrimaryAngle { get { return new DicomTag(0x0018, 0x1530); } }
-        public static DicomTag DetectorSecondaryAngle { get { return new DicomTag(0x0018, 0x1531); } }
-        public static DicomTag ShutterShape { get { return new DicomTag(0x0018, 0x1600); } }
-        public static DicomTag ShutterLeftVerticalEdge { get { return new DicomTag(0x0018, 0x1602); } }
-        public static DicomTag ShutterRightVerticalEdge { get { return new DicomTag(0x0018, 0x1604); } }
-        public static DicomTag ShutterUpperHorizontalEdge { get { return new DicomTag(0x0018, 0x1606); } }
-        public static DicomTag ShutterLowerHorizontalEdge { get { return new DicomTag(0x0018, 0x1608); } }
-        public static DicomTag CenterOfCircularShutter { get { return new DicomTag(0x0018, 0x1610); } }
-        public static DicomTag RadiusOfCircularShutter { get { return new DicomTag(0x0018, 0x1612); } }
-        public static DicomTag VerticesOfThePolygonalShutter { get { return new DicomTag(0x0018, 0x1620); } }
-        public static DicomTag ShutterPresentationValue { get { return new DicomTag(0x0018, 0x1622); } }
-        public static DicomTag ShutterOverlayGroup { get { return new DicomTag(0x0018, 0x1623); } }
-        public static DicomTag CollimatorShape { get { return new DicomTag(0x0018, 0x1700); } }
-        public static DicomTag CollimatorLeftVerticalEdge { get { return new DicomTag(0x0018, 0x1702); } }
-        public static DicomTag CollimatorRightVerticalEdge { get { return new DicomTag(0x0018, 0x1704); } }
-        public static DicomTag CollimatorUpperHorizontalEdge { get { return new DicomTag(0x0018, 0x1706); } }
-        public static DicomTag CollimatorLowerHorizontalEdge { get { return new DicomTag(0x0018, 0x1708); } }
-        public static DicomTag CenterOfCircularCollimator { get { return new DicomTag(0x0018, 0x1710); } }
-        public static DicomTag RadiusOfCircularCollimator { get { return new DicomTag(0x0018, 0x1712); } }
-        public static DicomTag VerticesOfThePolygonalCollimator { get { return new DicomTag(0x0018, 0x1720); } }
-        public static DicomTag AcquisitionTimeSynchronized { get { return new DicomTag(0x0018, 0x1800); } }
-        public static DicomTag TimeSource { get { return new DicomTag(0x0018, 0x1801); } }
-        public static DicomTag TimeDistributionProtocol { get { return new DicomTag(0x0018, 0x1802); } }
-        public static DicomTag PageNumberVector { get { return new DicomTag(0x0018, 0x2001); } }
-        public static DicomTag FrameLabelVector { get { return new DicomTag(0x0018, 0x2002); } }
-        public static DicomTag FramePrimaryAngleVector { get { return new DicomTag(0x0018, 0x2003); } }
-        public static DicomTag FrameSecondaryAngleVector { get { return new DicomTag(0x0018, 0x2004); } }
-        public static DicomTag SliceLocationVector { get { return new DicomTag(0x0018, 0x2005); } }
-        public static DicomTag DisplayWindowLabelVector { get { return new DicomTag(0x0018, 0x2006); } }
-        public static DicomTag NominalScannedPixelSpacing { get { return new DicomTag(0x0018, 0x2010); } }
-        public static DicomTag DigitizingDeviceTransportDirection { get { return new DicomTag(0x0018, 0x2020); } }
-        public static DicomTag RotationOfScannedFilm { get { return new DicomTag(0x0018, 0x2030); } }
-        public static DicomTag IVUSAcquisition { get { return new DicomTag(0x0018, 0x3100); } }
-        public static DicomTag IVUSPullbackRate { get { return new DicomTag(0x0018, 0x3101); } }
-        public static DicomTag IVUSGatedRate { get { return new DicomTag(0x0018, 0x3102); } }
-        public static DicomTag IVUSPullbackStartFrameNumber { get { return new DicomTag(0x0018, 0x3103); } }
-        public static DicomTag IVUSPullbackStopFrameNumber { get { return new DicomTag(0x0018, 0x3104); } }
-        public static DicomTag LesionNumber { get { return new DicomTag(0x0018, 0x3105); } }
-        public static DicomTag ACR_NEMA_AcquisitionComments { get { return new DicomTag(0x0018, 0x4000); } }
-        public static DicomTag OutputPower { get { return new DicomTag(0x0018, 0x5000); } }
-        public static DicomTag TransducerData { get { return new DicomTag(0x0018, 0x5010); } }
-        public static DicomTag FocusDepth { get { return new DicomTag(0x0018, 0x5012); } }
-        public static DicomTag ProcessingFunction { get { return new DicomTag(0x0018, 0x5020); } }
-        public static DicomTag PostprocessingFunction { get { return new DicomTag(0x0018, 0x5021); } }
-        public static DicomTag MechanicalIndex { get { return new DicomTag(0x0018, 0x5022); } }
-        public static DicomTag BoneThermalIndex { get { return new DicomTag(0x0018, 0x5024); } }
-        public static DicomTag CranialThermalIndex { get { return new DicomTag(0x0018, 0x5026); } }
-        public static DicomTag SoftTissueThermalIndex { get { return new DicomTag(0x0018, 0x5027); } }
-        public static DicomTag SoftTissueFocusThermalIndex { get { return new DicomTag(0x0018, 0x5028); } }
-        public static DicomTag SoftTissueSurfaceThermalIndex { get { return new DicomTag(0x0018, 0x5029); } }
-        public static DicomTag ACR_NEMA_DynamicRange { get { return new DicomTag(0x0018, 0x5030); } }
-        public static DicomTag ACR_NEMA_TotalGain { get { return new DicomTag(0x0018, 0x5040); } }
-        public static DicomTag DepthOfScanField { get { return new DicomTag(0x0018, 0x5050); } }
-        public static DicomTag PatientPosition { get { return new DicomTag(0x0018, 0x5100); } }
-        public static DicomTag ViewPosition { get { return new DicomTag(0x0018, 0x5101); } }
-        public static DicomTag ProjectionEponymousNameCodeSequence { get { return new DicomTag(0x0018, 0x5104); } }
-        public static DicomTag ImageTransformationMatrix { get { return new DicomTag(0x0018, 0x5210); } }
-        public static DicomTag ImageTranslationVector { get { return new DicomTag(0x0018, 0x5212); } }
-        public static DicomTag Sensitivity { get { return new DicomTag(0x0018, 0x6000); } }
-        public static DicomTag SequenceOfUltrasoundRegions { get { return new DicomTag(0x0018, 0x6011); } }
-        public static DicomTag RegionSpatialFormat { get { return new DicomTag(0x0018, 0x6012); } }
-        public static DicomTag RegionDataType { get { return new DicomTag(0x0018, 0x6014); } }
-        public static DicomTag RegionFlags { get { return new DicomTag(0x0018, 0x6016); } }
-        public static DicomTag RegionLocationMinX0 { get { return new DicomTag(0x0018, 0x6018); } }
-        public static DicomTag RegionLocationMinY0 { get { return new DicomTag(0x0018, 0x601a); } }
-        public static DicomTag RegionLocationMaxX1 { get { return new DicomTag(0x0018, 0x601c); } }
-        public static DicomTag RegionLocationMaxY1 { get { return new DicomTag(0x0018, 0x601e); } }
-        public static DicomTag ReferencePixelX0 { get { return new DicomTag(0x0018, 0x6020); } }
-        public static DicomTag ReferencePixelY0 { get { return new DicomTag(0x0018, 0x6022); } }
-        public static DicomTag PhysicalUnitsXDirection { get { return new DicomTag(0x0018, 0x6024); } }
-        public static DicomTag PhysicalUnitsYDirection { get { return new DicomTag(0x0018, 0x6026); } }
-        public static DicomTag ReferencePixelPhysicalValueX { get { return new DicomTag(0x0018, 0x6028); } }
-        public static DicomTag ReferencePixelPhysicalValueY { get { return new DicomTag(0x0018, 0x602a); } }
-        public static DicomTag PhysicalDeltaX { get { return new DicomTag(0x0018, 0x602c); } }
-        public static DicomTag PhysicalDeltaY { get { return new DicomTag(0x0018, 0x602e); } }
-        public static DicomTag TransducerFrequency { get { return new DicomTag(0x0018, 0x6030); } }
-        public static DicomTag TransducerType { get { return new DicomTag(0x0018, 0x6031); } }
-        public static DicomTag PulseRepetitionFrequency { get { return new DicomTag(0x0018, 0x6032); } }
-        public static DicomTag DopplerCorrectionAngle { get { return new DicomTag(0x0018, 0x6034); } }
-        public static DicomTag SteeringAngle { get { return new DicomTag(0x0018, 0x6036); } }
-        public static DicomTag RETIRED_DopplerSampleVolumeXPosition { get { return new DicomTag(0x0018, 0x6038); } }
-        public static DicomTag DopplerSampleVolumeXPosition { get { return new DicomTag(0x0018, 0x6039); } }
-        public static DicomTag RETIRED_DopplerSampleVolumeYPosition { get { return new DicomTag(0x0018, 0x603a); } }
-        public static DicomTag DopplerSampleVolumeYPosition { get { return new DicomTag(0x0018, 0x603b); } }
-        public static DicomTag RETIRED_TMLinePositionX0 { get { return new DicomTag(0x0018, 0x603c); } }
-        public static DicomTag TMLinePositionX0 { get { return new DicomTag(0x0018, 0x603d); } }
-        public static DicomTag RETIRED_TMLinePositionY0 { get { return new DicomTag(0x0018, 0x603e); } }
-        public static DicomTag TMLinePositionY0 { get { return new DicomTag(0x0018, 0x603f); } }
-        public static DicomTag RETIRED_TMLinePositionX1 { get { return new DicomTag(0x0018, 0x6040); } }
-        public static DicomTag TMLinePositionX1 { get { return new DicomTag(0x0018, 0x6041); } }
-        public static DicomTag RETIRED_TMLinePositionY1 { get { return new DicomTag(0x0018, 0x6042); } }
-        public static DicomTag TMLinePositionY1 { get { return new DicomTag(0x0018, 0x6043); } }
-        public static DicomTag PixelComponentOrganization { get { return new DicomTag(0x0018, 0x6044); } }
-        public static DicomTag PixelComponentMask { get { return new DicomTag(0x0018, 0x6046); } }
-        public static DicomTag PixelComponentRangeStart { get { return new DicomTag(0x0018, 0x6048); } }
-        public static DicomTag PixelComponentRangeStop { get { return new DicomTag(0x0018, 0x604a); } }
-        public static DicomTag PixelComponentPhysicalUnits { get { return new DicomTag(0x0018, 0x604c); } }
-        public static DicomTag PixelComponentDataType { get { return new DicomTag(0x0018, 0x604e); } }
-        public static DicomTag NumberOfTableBreakPoints { get { return new DicomTag(0x0018, 0x6050); } }
-        public static DicomTag TableOfXBreakPoints { get { return new DicomTag(0x0018, 0x6052); } }
-        public static DicomTag TableOfYBreakPoints { get { return new DicomTag(0x0018, 0x6054); } }
-        public static DicomTag NumberOfTableEntries { get { return new DicomTag(0x0018, 0x6056); } }
-        public static DicomTag TableOfPixelValues { get { return new DicomTag(0x0018, 0x6058); } }
-        public static DicomTag TableOfParameterValues { get { return new DicomTag(0x0018, 0x605a); } }
-        public static DicomTag DetectorConditionsNominalFlag { get { return new DicomTag(0x0018, 0x7000); } }
-        public static DicomTag DetectorTemperature { get { return new DicomTag(0x0018, 0x7001); } }
-        public static DicomTag DetectorType { get { return new DicomTag(0x0018, 0x7004); } }
-        public static DicomTag DetectorConfiguration { get { return new DicomTag(0x0018, 0x7005); } }
-        public static DicomTag DetectorDescription { get { return new DicomTag(0x0018, 0x7006); } }
-        public static DicomTag DetectorMode { get { return new DicomTag(0x0018, 0x7008); } }
-        public static DicomTag DetectorID { get { return new DicomTag(0x0018, 0x700a); } }
-        public static DicomTag DateOfLastDetectorCalibration { get { return new DicomTag(0x0018, 0x700c); } }
-        public static DicomTag TimeOfLastDetectorCalibration { get { return new DicomTag(0x0018, 0x700e); } }
-        public static DicomTag ExposuresOnDetectorSinceLastCalibration { get { return new DicomTag(0x0018, 0x7010); } }
-        public static DicomTag ExposuresOnDetectorSinceManufactured { get { return new DicomTag(0x0018, 0x7011); } }
-        public static DicomTag DetectorTimeSinceLastExposure { get { return new DicomTag(0x0018, 0x7012); } }
-        public static DicomTag DetectorActiveTime { get { return new DicomTag(0x0018, 0x7014); } }
-        public static DicomTag DetectorActivationOffsetFromExposure { get { return new DicomTag(0x0018, 0x7016); } }
-        public static DicomTag DetectorBinning { get { return new DicomTag(0x0018, 0x701a); } }
-        public static DicomTag DetectorElementPhysicalSize { get { return new DicomTag(0x0018, 0x7020); } }
-        public static DicomTag DetectorElementSpacing { get { return new DicomTag(0x0018, 0x7022); } }
-        public static DicomTag DetectorActiveShape { get { return new DicomTag(0x0018, 0x7024); } }
-        public static DicomTag DetectorActiveDimensions { get { return new DicomTag(0x0018, 0x7026); } }
-        public static DicomTag DetectorActiveOrigin { get { return new DicomTag(0x0018, 0x7028); } }
-        public static DicomTag FieldOfViewOrigin { get { return new DicomTag(0x0018, 0x7030); } }
-        public static DicomTag FieldOfViewRotation { get { return new DicomTag(0x0018, 0x7032); } }
-        public static DicomTag FieldOfViewHorizontalFlip { get { return new DicomTag(0x0018, 0x7034); } }
-        public static DicomTag GridAbsorbingMaterial { get { return new DicomTag(0x0018, 0x7040); } }
-        public static DicomTag GridSpacingMaterial { get { return new DicomTag(0x0018, 0x7041); } }
-        public static DicomTag GridThickness { get { return new DicomTag(0x0018, 0x7042); } }
-        public static DicomTag GridPitch { get { return new DicomTag(0x0018, 0x7044); } }
-        public static DicomTag GridAspectRatio { get { return new DicomTag(0x0018, 0x7046); } }
-        public static DicomTag GridPeriod { get { return new DicomTag(0x0018, 0x7048); } }
-        public static DicomTag GridFocalDistance { get { return new DicomTag(0x0018, 0x704c); } }
-        public static DicomTag FilterMaterial { get { return new DicomTag(0x0018, 0x7050); } }
-        public static DicomTag FilterThicknessMinimum { get { return new DicomTag(0x0018, 0x7052); } }
-        public static DicomTag FilterThicknessMaximum { get { return new DicomTag(0x0018, 0x7054); } }
-        public static DicomTag ExposureControlMode { get { return new DicomTag(0x0018, 0x7060); } }
-        public static DicomTag ExposureControlModeDescription { get { return new DicomTag(0x0018, 0x7062); } }
-        public static DicomTag ExposureStatus { get { return new DicomTag(0x0018, 0x7064); } }
-        public static DicomTag PhototimerSetting { get { return new DicomTag(0x0018, 0x7065); } }
-        public static DicomTag ExposureTimeInMicroS { get { return new DicomTag(0x0018, 0x8150); } }
-        public static DicomTag XRayTubeCurrentInMicroA { get { return new DicomTag(0x0018, 0x8151); } }
-        public static DicomTag ContentQualification { get { return new DicomTag(0x0018, 0x9004); } }
-        public static DicomTag PulseSequenceName { get { return new DicomTag(0x0018, 0x9005); } }
-        public static DicomTag MRImagingModifierSequence { get { return new DicomTag(0x0018, 0x9006); } }
-        public static DicomTag EchoPulseSequence { get { return new DicomTag(0x0018, 0x9008); } }
-        public static DicomTag InversionRecovery { get { return new DicomTag(0x0018, 0x9009); } }
-        public static DicomTag FlowCompensation { get { return new DicomTag(0x0018, 0x9010); } }
-        public static DicomTag MultipleSpinEcho { get { return new DicomTag(0x0018, 0x9011); } }
-        public static DicomTag MultiPlanarExcitation { get { return new DicomTag(0x0018, 0x9012); } }
-        public static DicomTag PhaseContrast { get { return new DicomTag(0x0018, 0x9014); } }
-        public static DicomTag TimeOfFlightContrast { get { return new DicomTag(0x0018, 0x9015); } }
-        public static DicomTag Spoiling { get { return new DicomTag(0x0018, 0x9016); } }
-        public static DicomTag SteadyStatePulseSequence { get { return new DicomTag(0x0018, 0x9017); } }
-        public static DicomTag EchoPlanarPulseSequence { get { return new DicomTag(0x0018, 0x9018); } }
-        public static DicomTag TagAngleFirstAxis { get { return new DicomTag(0x0018, 0x9019); } }
-        public static DicomTag MagnetizationTransfer { get { return new DicomTag(0x0018, 0x9020); } }
-        public static DicomTag T2Preparation { get { return new DicomTag(0x0018, 0x9021); } }
-        public static DicomTag BloodSignalNulling { get { return new DicomTag(0x0018, 0x9022); } }
-        public static DicomTag SaturationRecovery { get { return new DicomTag(0x0018, 0x9024); } }
-        public static DicomTag SpectrallySelectedSuppression { get { return new DicomTag(0x0018, 0x9025); } }
-        public static DicomTag SpectrallySelectedExcitation { get { return new DicomTag(0x0018, 0x9026); } }
-        public static DicomTag SpatialPreSaturation { get { return new DicomTag(0x0018, 0x9027); } }
-        public static DicomTag Tagging { get { return new DicomTag(0x0018, 0x9028); } }
-        public static DicomTag OversamplingPhase { get { return new DicomTag(0x0018, 0x9029); } }
-        public static DicomTag TagSpacingFirstDimension { get { return new DicomTag(0x0018, 0x9030); } }
-        public static DicomTag GeometryOfKSpaceTraversal { get { return new DicomTag(0x0018, 0x9032); } }
-        public static DicomTag SegmentedKSpaceTraversal { get { return new DicomTag(0x0018, 0x9033); } }
-        public static DicomTag RectilinearPhaseEncodeReordering { get { return new DicomTag(0x0018, 0x9034); } }
-        public static DicomTag TagThickness { get { return new DicomTag(0x0018, 0x9035); } }
-        public static DicomTag PartialFourierDirection { get { return new DicomTag(0x0018, 0x9036); } }
-        public static DicomTag CardiacSynchronizationTechnique { get { return new DicomTag(0x0018, 0x9037); } }
-        public static DicomTag ReceiveCoilManufacturerName { get { return new DicomTag(0x0018, 0x9041); } }
-        public static DicomTag MRReceiveCoilSequence { get { return new DicomTag(0x0018, 0x9042); } }
-        public static DicomTag ReceiveCoilType { get { return new DicomTag(0x0018, 0x9043); } }
-        public static DicomTag QuadratureReceiveCoil { get { return new DicomTag(0x0018, 0x9044); } }
-        public static DicomTag MultiCoilDefinitionSequence { get { return new DicomTag(0x0018, 0x9045); } }
-        public static DicomTag MultiCoilConfiguration { get { return new DicomTag(0x0018, 0x9046); } }
-        public static DicomTag MultiCoilElementName { get { return new DicomTag(0x0018, 0x9047); } }
-        public static DicomTag MultiCoilElementUsed { get { return new DicomTag(0x0018, 0x9048); } }
-        public static DicomTag MRTransmitCoilSequence { get { return new DicomTag(0x0018, 0x9049); } }
-        public static DicomTag TransmitCoilManufacturerName { get { return new DicomTag(0x0018, 0x9050); } }
-        public static DicomTag TransmitCoilType { get { return new DicomTag(0x0018, 0x9051); } }
-        public static DicomTag SpectralWidth { get { return new DicomTag(0x0018, 0x9052); } }
-        public static DicomTag ChemicalShiftReference { get { return new DicomTag(0x0018, 0x9053); } }
-        public static DicomTag VolumeLocalizationTechnique { get { return new DicomTag(0x0018, 0x9054); } }
-        public static DicomTag MRAcquisitionFrequencyEncodingSteps { get { return new DicomTag(0x0018, 0x9058); } }
-        public static DicomTag Decoupling { get { return new DicomTag(0x0018, 0x9059); } }
-        public static DicomTag DecoupledNucleus { get { return new DicomTag(0x0018, 0x9060); } }
-        public static DicomTag DecouplingFrequency { get { return new DicomTag(0x0018, 0x9061); } }
-        public static DicomTag DecouplingMethod { get { return new DicomTag(0x0018, 0x9062); } }
-        public static DicomTag DecouplingChemicalShiftReference { get { return new DicomTag(0x0018, 0x9063); } }
-        public static DicomTag KSpaceFiltering { get { return new DicomTag(0x0018, 0x9064); } }
-        public static DicomTag TimeDomainFiltering { get { return new DicomTag(0x0018, 0x9065); } }
-        public static DicomTag NumberOfZeroFills { get { return new DicomTag(0x0018, 0x9066); } }
-        public static DicomTag BaselineCorrection { get { return new DicomTag(0x0018, 0x9067); } }
-        public static DicomTag ParallelReductionFactorInPlane { get { return new DicomTag(0x0018, 0x9069); } }
-        public static DicomTag CardiacRRIntervalSpecified { get { return new DicomTag(0x0018, 0x9070); } }
-        public static DicomTag AcquisitionDuration { get { return new DicomTag(0x0018, 0x9073); } }
-        public static DicomTag FrameAcquisitionDatetime { get { return new DicomTag(0x0018, 0x9074); } }
-        public static DicomTag DiffusionDirectionality { get { return new DicomTag(0x0018, 0x9075); } }
-        public static DicomTag DiffusionGradientDirectionSequence { get { return new DicomTag(0x0018, 0x9076); } }
-        public static DicomTag ParallelAcquisition { get { return new DicomTag(0x0018, 0x9077); } }
-        public static DicomTag ParallelAcquisitionTechnique { get { return new DicomTag(0x0018, 0x9078); } }
-        public static DicomTag InversionTimes { get { return new DicomTag(0x0018, 0x9079); } }
-        public static DicomTag MetaboliteMapDescription { get { return new DicomTag(0x0018, 0x9080); } }
-        public static DicomTag PartialFourier { get { return new DicomTag(0x0018, 0x9081); } }
-        public static DicomTag EffectiveEchoTime { get { return new DicomTag(0x0018, 0x9082); } }
-        public static DicomTag MetaboliteMapCodeSequence { get { return new DicomTag(0x0018, 0x9083); } }
-        public static DicomTag ChemicalShiftSequence { get { return new DicomTag(0x0018, 0x9084); } }
-        public static DicomTag CardiacSignalSource { get { return new DicomTag(0x0018, 0x9085); } }
-        public static DicomTag DiffusionBValue { get { return new DicomTag(0x0018, 0x9087); } }
-        public static DicomTag DiffusionGradientOrientation { get { return new DicomTag(0x0018, 0x9089); } }
-        public static DicomTag VelocityEncodingDirection { get { return new DicomTag(0x0018, 0x9090); } }
-        public static DicomTag VelocityEncodingMinimumValue { get { return new DicomTag(0x0018, 0x9091); } }
-        public static DicomTag NumberOfKSpaceTrajectories { get { return new DicomTag(0x0018, 0x9093); } }
-        public static DicomTag CoverageOfKSpace { get { return new DicomTag(0x0018, 0x9094); } }
-        public static DicomTag SpectroscopyAcquisitionPhaseRows { get { return new DicomTag(0x0018, 0x9095); } }
-        public static DicomTag RETIRED_ParallelReductionFactorInPlane { get { return new DicomTag(0x0018, 0x9096); } }
-        public static DicomTag TransmitterFrequency { get { return new DicomTag(0x0018, 0x9098); } }
-        public static DicomTag ResonantNucleus { get { return new DicomTag(0x0018, 0x9100); } }
-        public static DicomTag FrequencyCorrection { get { return new DicomTag(0x0018, 0x9101); } }
-        public static DicomTag MRSpectroscopyFOVGeometrySequence { get { return new DicomTag(0x0018, 0x9103); } }
-        public static DicomTag SlabThickness { get { return new DicomTag(0x0018, 0x9104); } }
-        public static DicomTag SlabOrientation { get { return new DicomTag(0x0018, 0x9105); } }
-        public static DicomTag MidSlabPosition { get { return new DicomTag(0x0018, 0x9106); } }
-        public static DicomTag MRSpatialSaturationSequence { get { return new DicomTag(0x0018, 0x9107); } }
-        public static DicomTag MRTimingAndRelatedParametersSequence { get { return new DicomTag(0x0018, 0x9112); } }
-        public static DicomTag MREchoSequence { get { return new DicomTag(0x0018, 0x9114); } }
-        public static DicomTag MRModifierSequence { get { return new DicomTag(0x0018, 0x9115); } }
-        public static DicomTag MRDiffusionSequence { get { return new DicomTag(0x0018, 0x9117); } }
-        public static DicomTag CardiacTriggerSequence { get { return new DicomTag(0x0018, 0x9118); } }
-        public static DicomTag MRAveragesSequence { get { return new DicomTag(0x0018, 0x9119); } }
-        public static DicomTag MRFOVGeometrySequence { get { return new DicomTag(0x0018, 0x9125); } }
-        public static DicomTag VolumeLocalizationSequence { get { return new DicomTag(0x0018, 0x9126); } }
-        public static DicomTag SpectroscopyAcquisitionDataColumns { get { return new DicomTag(0x0018, 0x9127); } }
-        public static DicomTag DiffusionAnisotropyType { get { return new DicomTag(0x0018, 0x9147); } }
-        public static DicomTag FrameReferenceDatetime { get { return new DicomTag(0x0018, 0x9151); } }
-        public static DicomTag MRMetaboliteMapSequence { get { return new DicomTag(0x0018, 0x9152); } }
-        public static DicomTag ParallelReductionFactorOutOfPlane { get { return new DicomTag(0x0018, 0x9155); } }
-        public static DicomTag SpectroscopyAcquisitionOutOfPlanePhaseSteps { get { return new DicomTag(0x0018, 0x9159); } }
-        public static DicomTag BulkMotionStatus { get { return new DicomTag(0x0018, 0x9166); } }
-        public static DicomTag ParallelReductionFactorSecondInPlane { get { return new DicomTag(0x0018, 0x9168); } }
-        public static DicomTag CardiacBeatRejectionTechnique { get { return new DicomTag(0x0018, 0x9169); } }
-        public static DicomTag RespiratoryMotionCompensationTechnique { get { return new DicomTag(0x0018, 0x9170); } }
-        public static DicomTag RespiratorySignalSource { get { return new DicomTag(0x0018, 0x9171); } }
-        public static DicomTag BulkMotionCompensationTechnique { get { return new DicomTag(0x0018, 0x9172); } }
-        public static DicomTag BulkMotionSignalSource { get { return new DicomTag(0x0018, 0x9173); } }
-        public static DicomTag ApplicableSafetyStandardAgency { get { return new DicomTag(0x0018, 0x9174); } }
-        public static DicomTag ApplicableSafetyStandardDescription { get { return new DicomTag(0x0018, 0x9175); } }
-        public static DicomTag OperatingModeSequence { get { return new DicomTag(0x0018, 0x9176); } }
-        public static DicomTag OperatingModeType { get { return new DicomTag(0x0018, 0x9177); } }
-        public static DicomTag OperationMode { get { return new DicomTag(0x0018, 0x9178); } }
-        public static DicomTag SpecificAbsorptionRateDefinition { get { return new DicomTag(0x0018, 0x9179); } }
-        public static DicomTag GradientOutputType { get { return new DicomTag(0x0018, 0x9180); } }
-        public static DicomTag SpecificAbsorptionRateValue { get { return new DicomTag(0x0018, 0x9181); } }
-        public static DicomTag GradientOutput { get { return new DicomTag(0x0018, 0x9182); } }
-        public static DicomTag FlowCompensationDirection { get { return new DicomTag(0x0018, 0x9183); } }
-        public static DicomTag TaggingDelay { get { return new DicomTag(0x0018, 0x9184); } }
-        public static DicomTag RETIRED_ChemicalShiftsMinimumIntegrationLimitInHz { get { return new DicomTag(0x0018, 0x9195); } }
-        public static DicomTag RETIRED_ChemicalShiftsMaximumIntegrationLimitInHz { get { return new DicomTag(0x0018, 0x9196); } }
-        public static DicomTag MRVelocityEncodingSequence { get { return new DicomTag(0x0018, 0x9197); } }
-        public static DicomTag FirstOrderPhaseCorrection { get { return new DicomTag(0x0018, 0x9198); } }
-        public static DicomTag WaterReferencedPhaseCorrection { get { return new DicomTag(0x0018, 0x9199); } }
-        public static DicomTag MRSpectroscopyAcquisitionType { get { return new DicomTag(0x0018, 0x9200); } }
-        public static DicomTag RespiratoryCyclePosition { get { return new DicomTag(0x0018, 0x9214); } }
-        public static DicomTag VelocityEncodingMaximumValue { get { return new DicomTag(0x0018, 0x9217); } }
-        public static DicomTag TagSpacingSecondDimension { get { return new DicomTag(0x0018, 0x9218); } }
-        public static DicomTag TagAngleSecondAxis { get { return new DicomTag(0x0018, 0x9219); } }
-        public static DicomTag FrameAcquisitionDuration { get { return new DicomTag(0x0018, 0x9220); } }
-        public static DicomTag MRImageFrameTypeSequence { get { return new DicomTag(0x0018, 0x9226); } }
-        public static DicomTag MRSpectroscopyFrameTypeSequence { get { return new DicomTag(0x0018, 0x9227); } }
-        public static DicomTag MRAcquisitionPhaseEncodingStepsInPlane { get { return new DicomTag(0x0018, 0x9231); } }
-        public static DicomTag MRAcquisitionPhaseEncodingStepsOutOfPlane { get { return new DicomTag(0x0018, 0x9232); } }
-        public static DicomTag SpectroscopyAcquisitionPhaseColumns { get { return new DicomTag(0x0018, 0x9234); } }
-        public static DicomTag CardiacCyclePosition { get { return new DicomTag(0x0018, 0x9236); } }
-        public static DicomTag SpecificAbsorptionRateSequence { get { return new DicomTag(0x0018, 0x9239); } }
-        public static DicomTag RFEchoTrainLength { get { return new DicomTag(0x0018, 0x9240); } }
-        public static DicomTag GradientEchoTrainLength { get { return new DicomTag(0x0018, 0x9241); } }
-        public static DicomTag ChemicalShiftsMinimumIntegrationLimitInPpm { get { return new DicomTag(0x0018, 0x9295); } }
-        public static DicomTag ChemicalShiftsMaximumIntegrationLimitInPpm { get { return new DicomTag(0x0018, 0x9296); } }
-        public static DicomTag CTAcquisitionTypeSequence { get { return new DicomTag(0x0018, 0x9301); } }
-        public static DicomTag AcquisitionType { get { return new DicomTag(0x0018, 0x9302); } }
-        public static DicomTag TubeAngle { get { return new DicomTag(0x0018, 0x9303); } }
-        public static DicomTag CTAcquisitionDetailsSequence { get { return new DicomTag(0x0018, 0x9304); } }
-        public static DicomTag RevolutionTime { get { return new DicomTag(0x0018, 0x9305); } }
-        public static DicomTag SingleCollimationWidth { get { return new DicomTag(0x0018, 0x9306); } }
-        public static DicomTag TotalCollimationWidth { get { return new DicomTag(0x0018, 0x9307); } }
-        public static DicomTag CTTableDynamicsSequence { get { return new DicomTag(0x0018, 0x9308); } }
-        public static DicomTag TableSpeed { get { return new DicomTag(0x0018, 0x9309); } }
-        public static DicomTag TableFeedPerRotation { get { return new DicomTag(0x0018, 0x9310); } }
-        public static DicomTag SpiralPitchFactor { get { return new DicomTag(0x0018, 0x9311); } }
-        public static DicomTag CTGeometrySequence { get { return new DicomTag(0x0018, 0x9312); } }
-        public static DicomTag DataCollectionCenterPatient { get { return new DicomTag(0x0018, 0x9313); } }
-        public static DicomTag CTReconstructionSequence { get { return new DicomTag(0x0018, 0x9314); } }
-        public static DicomTag ReconstructionAlgorithm { get { return new DicomTag(0x0018, 0x9315); } }
-        public static DicomTag ConvolutionKernelGroup { get { return new DicomTag(0x0018, 0x9316); } }
-        public static DicomTag ReconstructionFieldOfView { get { return new DicomTag(0x0018, 0x9317); } }
-        public static DicomTag ReconstructionTargetCenterPatient { get { return new DicomTag(0x0018, 0x9318); } }
-        public static DicomTag ReconstructionAngle { get { return new DicomTag(0x0018, 0x9319); } }
-        public static DicomTag ImageFilter { get { return new DicomTag(0x0018, 0x9320); } }
-        public static DicomTag CTExposureSequence { get { return new DicomTag(0x0018, 0x9321); } }
-        public static DicomTag ReconstructionPixelSpacing { get { return new DicomTag(0x0018, 0x9322); } }
-        public static DicomTag ExposureModulationType { get { return new DicomTag(0x0018, 0x9323); } }
-        public static DicomTag EstimatedDoseSaving { get { return new DicomTag(0x0018, 0x9324); } }
-        public static DicomTag CTXRayDetailsSequence { get { return new DicomTag(0x0018, 0x9325); } }
-        public static DicomTag CTPositionSequence { get { return new DicomTag(0x0018, 0x9326); } }
-        public static DicomTag TablePosition { get { return new DicomTag(0x0018, 0x9327); } }
-        public static DicomTag ExposureTimeInms { get { return new DicomTag(0x0018, 0x9328); } }
-        public static DicomTag CTImageFrameTypeSequence { get { return new DicomTag(0x0018, 0x9329); } }
-        public static DicomTag XRayTubeCurrentInmA { get { return new DicomTag(0x0018, 0x9330); } }
-        public static DicomTag ExposureInmAs { get { return new DicomTag(0x0018, 0x9332); } }
-        public static DicomTag ConstantVolumeFlag { get { return new DicomTag(0x0018, 0x9333); } }
-        public static DicomTag FluoroscopyFlag { get { return new DicomTag(0x0018, 0x9334); } }
-        public static DicomTag DistanceSourceToDataCollectionCenter { get { return new DicomTag(0x0018, 0x9335); } }
-        public static DicomTag ContrastBolusAgentNumber { get { return new DicomTag(0x0018, 0x9337); } }
-        public static DicomTag ContrastBolusIngredientCodeSequence { get { return new DicomTag(0x0018, 0x9338); } }
-        public static DicomTag ContrastAdministrationProfileSequence { get { return new DicomTag(0x0018, 0x9340); } }
-        public static DicomTag ContrastBolusUsageSequence { get { return new DicomTag(0x0018, 0x9341); } }
-        public static DicomTag ContrastBolusAgentAdministered { get { return new DicomTag(0x0018, 0x9342); } }
-        public static DicomTag ContrastBolusAgentDetected { get { return new DicomTag(0x0018, 0x9343); } }
-        public static DicomTag ContrastBolusAgentPhase { get { return new DicomTag(0x0018, 0x9344); } }
-        public static DicomTag CTDIvol { get { return new DicomTag(0x0018, 0x9345); } }
-        public static DicomTag ContributingEquipmentSequence { get { return new DicomTag(0x0018, 0xa001); } }
-        public static DicomTag ContributionDateTime { get { return new DicomTag(0x0018, 0xa002); } }
-        public static DicomTag ContributionDescription { get { return new DicomTag(0x0018, 0xa003); } }
-        public static DicomTag ImageGroupLength { get { return new DicomTag(0x0020, 0x0000); } }
-        public static DicomTag StudyInstanceUID { get { return new DicomTag(0x0020, 0x000d); } }
-        public static DicomTag SeriesInstanceUID { get { return new DicomTag(0x0020, 0x000e); } }
-        public static DicomTag StudyID { get { return new DicomTag(0x0020, 0x0010); } }
-        public static DicomTag SeriesNumber { get { return new DicomTag(0x0020, 0x0011); } }
-        public static DicomTag AcquisitionNumber { get { return new DicomTag(0x0020, 0x0012); } }
-        public static DicomTag InstanceNumber { get { return new DicomTag(0x0020, 0x0013); } }
-        public static DicomTag IsotopeNumber { get { return new DicomTag(0x0020, 0x0014); } }
-        public static DicomTag PhaseNumber { get { return new DicomTag(0x0020, 0x0015); } }
-        public static DicomTag IntervalNumber { get { return new DicomTag(0x0020, 0x0016); } }
-        public static DicomTag TimeSlotNumber { get { return new DicomTag(0x0020, 0x0017); } }
-        public static DicomTag AngleNumber { get { return new DicomTag(0x0020, 0x0018); } }
-        public static DicomTag ItemNumber { get { return new DicomTag(0x0020, 0x0019); } }
-        public static DicomTag PatientOrientation { get { return new DicomTag(0x0020, 0x0020); } }
-        public static DicomTag OverlayNumber { get { return new DicomTag(0x0020, 0x0022); } }
-        public static DicomTag CurveNumber { get { return new DicomTag(0x0020, 0x0024); } }
-        public static DicomTag LookupTableNumber { get { return new DicomTag(0x0020, 0x0026); } }
-        public static DicomTag ACR_NEMA_ImagePosition { get { return new DicomTag(0x0020, 0x0030); } }
-        public static DicomTag ImagePositionPatient { get { return new DicomTag(0x0020, 0x0032); } }
-        public static DicomTag ACR_NEMA_ImageOrientation { get { return new DicomTag(0x0020, 0x0035); } }
-        public static DicomTag ImageOrientationPatient { get { return new DicomTag(0x0020, 0x0037); } }
-        public static DicomTag ACR_NEMA_Location { get { return new DicomTag(0x0020, 0x0050); } }
-        public static DicomTag FrameOfReferenceUID { get { return new DicomTag(0x0020, 0x0052); } }
-        public static DicomTag Laterality { get { return new DicomTag(0x0020, 0x0060); } }
-        public static DicomTag ImageLaterality { get { return new DicomTag(0x0020, 0x0062); } }
-        public static DicomTag ACR_NEMA_ImageGeometryType { get { return new DicomTag(0x0020, 0x0070); } }
-        public static DicomTag ACR_NEMA_MaskingImage { get { return new DicomTag(0x0020, 0x0080); } }
-        public static DicomTag TemporalPositionIdentifier { get { return new DicomTag(0x0020, 0x0100); } }
-        public static DicomTag NumberOfTemporalPositions { get { return new DicomTag(0x0020, 0x0105); } }
-        public static DicomTag TemporalResolution { get { return new DicomTag(0x0020, 0x0110); } }
-        public static DicomTag SynchronizationFrameOfReferenceUID { get { return new DicomTag(0x0020, 0x0200); } }
-        public static DicomTag SeriesInStudy { get { return new DicomTag(0x0020, 0x1000); } }
-        public static DicomTag ACR_NEMA_AcquisitionsInSeries { get { return new DicomTag(0x0020, 0x1001); } }
-        public static DicomTag ImagesInAcquisition { get { return new DicomTag(0x0020, 0x1002); } }
-        public static DicomTag ACR_NEMA_ImagesInSeries { get { return new DicomTag(0x0020, 0x1003); } }
-        public static DicomTag AcquisitionsInStudy { get { return new DicomTag(0x0020, 0x1004); } }
-        public static DicomTag ACR_NEMA_ImagesInStudy { get { return new DicomTag(0x0020, 0x1005); } }
-        public static DicomTag ACR_NEMA_Reference { get { return new DicomTag(0x0020, 0x1020); } }
-        public static DicomTag PositionReferenceIndicator { get { return new DicomTag(0x0020, 0x1040); } }
-        public static DicomTag SliceLocation { get { return new DicomTag(0x0020, 0x1041); } }
-        public static DicomTag OtherStudyNumbers { get { return new DicomTag(0x0020, 0x1070); } }
-        public static DicomTag NumberOfPatientRelatedStudies { get { return new DicomTag(0x0020, 0x1200); } }
-        public static DicomTag NumberOfPatientRelatedSeries { get { return new DicomTag(0x0020, 0x1202); } }
-        public static DicomTag NumberOfPatientRelatedInstances { get { return new DicomTag(0x0020, 0x1204); } }
-        public static DicomTag NumberOfStudyRelatedSeries { get { return new DicomTag(0x0020, 0x1206); } }
-        public static DicomTag NumberOfStudyRelatedInstances { get { return new DicomTag(0x0020, 0x1208); } }
-        public static DicomTag NumberOfSeriesRelatedInstances { get { return new DicomTag(0x0020, 0x1209); } }
-        public static DicomTag ACR_NEMA_ModifyingDeviceID { get { return new DicomTag(0x0020, 0x3401); } }
-        public static DicomTag ACR_NEMA_ModifiedImageID { get { return new DicomTag(0x0020, 0x3402); } }
-        public static DicomTag ACR_NEMA_ModifiedImageDate { get { return new DicomTag(0x0020, 0x3403); } }
-        public static DicomTag ACR_NEMA_ModifyingDeviceManufacturer { get { return new DicomTag(0x0020, 0x3404); } }
-        public static DicomTag ACR_NEMA_ModifiedImageTime { get { return new DicomTag(0x0020, 0x3405); } }
-        public static DicomTag ACR_NEMA_ModifiedImageDescription { get { return new DicomTag(0x0020, 0x3406); } }
-        public static DicomTag ImageComments { get { return new DicomTag(0x0020, 0x4000); } }
-        public static DicomTag ACR_NEMA_OriginalImageIdentification { get { return new DicomTag(0x0020, 0x5000); } }
-        public static DicomTag ACR_NEMA_OriginalImageIdentificationNomenclature { get { return new DicomTag(0x0020, 0x5002); } }
-        public static DicomTag StackID { get { return new DicomTag(0x0020, 0x9056); } }
-        public static DicomTag InStackPositionNumber { get { return new DicomTag(0x0020, 0x9057); } }
-        public static DicomTag FrameAnatomySequence { get { return new DicomTag(0x0020, 0x9071); } }
-        public static DicomTag FrameLaterality { get { return new DicomTag(0x0020, 0x9072); } }
-        public static DicomTag FrameContentSequence { get { return new DicomTag(0x0020, 0x9111); } }
-        public static DicomTag PlanePositionSequence { get { return new DicomTag(0x0020, 0x9113); } }
-        public static DicomTag PlaneOrientationSequence { get { return new DicomTag(0x0020, 0x9116); } }
-        public static DicomTag TemporalPositionIndex { get { return new DicomTag(0x0020, 0x9128); } }
-        public static DicomTag TriggerDelayTime { get { return new DicomTag(0x0020, 0x9153); } }
-        public static DicomTag FrameAcquisitionNumber { get { return new DicomTag(0x0020, 0x9156); } }
-        public static DicomTag DimensionIndexValues { get { return new DicomTag(0x0020, 0x9157); } }
-        public static DicomTag FrameComments { get { return new DicomTag(0x0020, 0x9158); } }
-        public static DicomTag ConcatenationUID { get { return new DicomTag(0x0020, 0x9161); } }
-        public static DicomTag InConcatenationNumber { get { return new DicomTag(0x0020, 0x9162); } }
-        public static DicomTag InConcatenationTotalNumber { get { return new DicomTag(0x0020, 0x9163); } }
-        public static DicomTag DimensionOrganizationUID { get { return new DicomTag(0x0020, 0x9164); } }
-        public static DicomTag DimensionIndexPointer { get { return new DicomTag(0x0020, 0x9165); } }
-        public static DicomTag FunctionalGroupPointer { get { return new DicomTag(0x0020, 0x9167); } }
-        public static DicomTag DimensionIndexPrivateCreator { get { return new DicomTag(0x0020, 0x9213); } }
-        public static DicomTag DimensionOrganizationSequence { get { return new DicomTag(0x0020, 0x9221); } }
-        public static DicomTag DimensionIndexSequence { get { return new DicomTag(0x0020, 0x9222); } }
-        public static DicomTag ConcatenationFrameOffsetNumber { get { return new DicomTag(0x0020, 0x9228); } }
-        public static DicomTag FunctionalGroupPrivateCreator { get { return new DicomTag(0x0020, 0x9238); } }
-        public static DicomTag ImagePresentationGroupLength { get { return new DicomTag(0x0028, 0x0000); } }
-        public static DicomTag SamplesPerPixel { get { return new DicomTag(0x0028, 0x0002); } }
-        public static DicomTag PhotometricInterpretation { get { return new DicomTag(0x0028, 0x0004); } }
-        public static DicomTag ACR_NEMA_ImageDimensions { get { return new DicomTag(0x0028, 0x0005); } }
-        public static DicomTag PlanarConfiguration { get { return new DicomTag(0x0028, 0x0006); } }
-        public static DicomTag NumberOfFrames { get { return new DicomTag(0x0028, 0x0008); } }
-        public static DicomTag FrameIncrementPointer { get { return new DicomTag(0x0028, 0x0009); } }
-        public static DicomTag FrameDimensionPointer { get { return new DicomTag(0x0028, 0x000a); } }
-        public static DicomTag Rows { get { return new DicomTag(0x0028, 0x0010); } }
-        public static DicomTag Columns { get { return new DicomTag(0x0028, 0x0011); } }
-        public static DicomTag Planes { get { return new DicomTag(0x0028, 0x0012); } }
-        public static DicomTag UltrasoundColorDataPresent { get { return new DicomTag(0x0028, 0x0014); } }
-        public static DicomTag PixelSpacing { get { return new DicomTag(0x0028, 0x0030); } }
-        public static DicomTag ZoomFactor { get { return new DicomTag(0x0028, 0x0031); } }
-        public static DicomTag ZoomCenter { get { return new DicomTag(0x0028, 0x0032); } }
-        public static DicomTag PixelAspectRatio { get { return new DicomTag(0x0028, 0x0034); } }
-        public static DicomTag ACR_NEMA_ImageFormat { get { return new DicomTag(0x0028, 0x0040); } }
-        public static DicomTag ACR_NEMA_ManipulatedImage { get { return new DicomTag(0x0028, 0x0050); } }
-        public static DicomTag CorrectedImage { get { return new DicomTag(0x0028, 0x0051); } }
-        public static DicomTag ACR_NEMA_2C_CompressionRecognitionCode { get { return new DicomTag(0x0028, 0x005f); } }
-        public static DicomTag ACR_NEMA_CompressionCode { get { return new DicomTag(0x0028, 0x0060); } }
-        public static DicomTag ACR_NEMA_2C_CompressionOriginator { get { return new DicomTag(0x0028, 0x0061); } }
-        public static DicomTag ACR_NEMA_2C_CompressionLabel { get { return new DicomTag(0x0028, 0x0062); } }
-        public static DicomTag ACR_NEMA_2C_CompressionDescription { get { return new DicomTag(0x0028, 0x0063); } }
-        public static DicomTag ACR_NEMA_2C_CompressionSequence { get { return new DicomTag(0x0028, 0x0065); } }
-        public static DicomTag ACR_NEMA_2C_CompressionStepPointers { get { return new DicomTag(0x0028, 0x0066); } }
-        public static DicomTag ACR_NEMA_2C_RepeatInterval { get { return new DicomTag(0x0028, 0x0068); } }
-        public static DicomTag ACR_NEMA_2C_BitsGrouped { get { return new DicomTag(0x0028, 0x0069); } }
-        public static DicomTag ACR_NEMA_2C_PerimeterTable { get { return new DicomTag(0x0028, 0x0070); } }
-        public static DicomTag ACR_NEMA_2C_PerimeterValue { get { return new DicomTag(0x0028, 0x0071); } }
-        public static DicomTag ACR_NEMA_2C_PredictorRows { get { return new DicomTag(0x0028, 0x0080); } }
-        public static DicomTag ACR_NEMA_2C_PredictorColumns { get { return new DicomTag(0x0028, 0x0081); } }
-        public static DicomTag ACR_NEMA_2C_PredictorConstants { get { return new DicomTag(0x0028, 0x0082); } }
-        public static DicomTag ACR_NEMA_2C_BlockedPixels { get { return new DicomTag(0x0028, 0x0090); } }
-        public static DicomTag ACR_NEMA_2C_BlockRows { get { return new DicomTag(0x0028, 0x0091); } }
-        public static DicomTag ACR_NEMA_2C_BlockColumns { get { return new DicomTag(0x0028, 0x0092); } }
-        public static DicomTag ACR_NEMA_2C_RowOverlap { get { return new DicomTag(0x0028, 0x0093); } }
-        public static DicomTag ACR_NEMA_2C_ColumnOverlap { get { return new DicomTag(0x0028, 0x0094); } }
-        public static DicomTag BitsAllocated { get { return new DicomTag(0x0028, 0x0100); } }
-        public static DicomTag BitsStored { get { return new DicomTag(0x0028, 0x0101); } }
-        public static DicomTag HighBit { get { return new DicomTag(0x0028, 0x0102); } }
-        public static DicomTag PixelRepresentation { get { return new DicomTag(0x0028, 0x0103); } }
-        public static DicomTag ACR_NEMA_SmallestValidPixelValue { get { return new DicomTag(0x0028, 0x0104); } }
-        public static DicomTag ACR_NEMA_LargestValidPixelValue { get { return new DicomTag(0x0028, 0x0105); } }
-        public static DicomTag SmallestImagePixelValue { get { return new DicomTag(0x0028, 0x0106); } }
-        public static DicomTag LargestImagePixelValue { get { return new DicomTag(0x0028, 0x0107); } }
-        public static DicomTag SmallestPixelValueInSeries { get { return new DicomTag(0x0028, 0x0108); } }
-        public static DicomTag LargestPixelValueInSeries { get { return new DicomTag(0x0028, 0x0109); } }
-        public static DicomTag SmallestImagePixelValueInPlane { get { return new DicomTag(0x0028, 0x0110); } }
-        public static DicomTag LargestImagePixelValueInPlane { get { return new DicomTag(0x0028, 0x0111); } }
-        public static DicomTag PixelPaddingValue { get { return new DicomTag(0x0028, 0x0120); } }
-        public static DicomTag ACR_NEMA_ImageLocation { get { return new DicomTag(0x0028, 0x0200); } }
-        public static DicomTag QualityControlImage { get { return new DicomTag(0x0028, 0x0300); } }
-        public static DicomTag BurnedInAnnotation { get { return new DicomTag(0x0028, 0x0301); } }
-        public static DicomTag ACR_NEMA_2C_TransformLabel { get { return new DicomTag(0x0028, 0x0400); } }
-        public static DicomTag ACR_NEMA_2C_TransformVersionNumber { get { return new DicomTag(0x0028, 0x0401); } }
-        public static DicomTag ACR_NEMA_2C_NumberOfTransformSteps { get { return new DicomTag(0x0028, 0x0402); } }
-        public static DicomTag ACR_NEMA_2C_SequenceOfCompressedData { get { return new DicomTag(0x0028, 0x0403); } }
-        public static DicomTag ACR_NEMA_2C_DetailsOfCoefficients { get { return new DicomTag(0x0028, 0x0404); } }
-        public static DicomTag ACR_NEMA_2C_RowsForNthOrderCoefficients { get { return new DicomTag(0x0028, 0x0410); } }
-        public static DicomTag ACR_NEMA_2C_ColumnsForNthOrderCoefficients { get { return new DicomTag(0x0028, 0x0411); } }
-        public static DicomTag ACR_NEMA_2C_CoefficientCoding { get { return new DicomTag(0x0028, 0x0412); } }
-        public static DicomTag ACR_NEMA_2C_CoefficientCodingPointers { get { return new DicomTag(0x0028, 0x0413); } }
-        public static DicomTag ACR_NEMA_2C_DCTLabel { get { return new DicomTag(0x0028, 0x0700); } }
-        public static DicomTag ACR_NEMA_2C_DataBlockDescription { get { return new DicomTag(0x0028, 0x0701); } }
-        public static DicomTag ACR_NEMA_2C_DataBlock { get { return new DicomTag(0x0028, 0x0702); } }
-        public static DicomTag ACR_NEMA_2C_NormalizationFactorFormat { get { return new DicomTag(0x0028, 0x0710); } }
-        public static DicomTag ACR_NEMA_2C_ZonalMapNumberFormat { get { return new DicomTag(0x0028, 0x0720); } }
-        public static DicomTag ACR_NEMA_2C_ZonalMapLocation { get { return new DicomTag(0x0028, 0x0721); } }
-        public static DicomTag ACR_NEMA_2C_ZonalMapFormat { get { return new DicomTag(0x0028, 0x0722); } }
-        public static DicomTag ACR_NEMA_2C_AdaptiveMapFormat { get { return new DicomTag(0x0028, 0x0730); } }
-        public static DicomTag ACR_NEMA_2C_CodeNumberFormat { get { return new DicomTag(0x0028, 0x0740); } }
-        public static DicomTag ACR_NEMA_2C_CodeLabel { get { return new DicomTag(0x0028, 0x0800); } }
-        public static DicomTag ACR_NEMA_2C_NumberOfTables { get { return new DicomTag(0x0028, 0x0802); } }
-        public static DicomTag ACR_NEMA_2C_CodeTableLocation { get { return new DicomTag(0x0028, 0x0803); } }
-        public static DicomTag ACR_NEMA_2C_BitsForCodeWord { get { return new DicomTag(0x0028, 0x0804); } }
-        public static DicomTag ACR_NEMA_2C_ImageDataLocation { get { return new DicomTag(0x0028, 0x0808); } }
-        public static DicomTag PixelIntensityRelationship { get { return new DicomTag(0x0028, 0x1040); } }
-        public static DicomTag PixelIntensityRelationshipSign { get { return new DicomTag(0x0028, 0x1041); } }
-        public static DicomTag WindowCenter { get { return new DicomTag(0x0028, 0x1050); } }
-        public static DicomTag WindowWidth { get { return new DicomTag(0x0028, 0x1051); } }
-        public static DicomTag RescaleIntercept { get { return new DicomTag(0x0028, 0x1052); } }
-        public static DicomTag RescaleSlope { get { return new DicomTag(0x0028, 0x1053); } }
-        public static DicomTag RescaleType { get { return new DicomTag(0x0028, 0x1054); } }
-        public static DicomTag WindowCenterWidthExplanation { get { return new DicomTag(0x0028, 0x1055); } }
-        public static DicomTag ACR_NEMA_GrayScale { get { return new DicomTag(0x0028, 0x1080); } }
-        public static DicomTag RecommendedViewingMode { get { return new DicomTag(0x0028, 0x1090); } }
-        public static DicomTag ACR_NEMA_GrayLookupTableDescriptor { get { return new DicomTag(0x0028, 0x1100); } }
-        public static DicomTag RedPaletteColorLookupTableDescriptor { get { return new DicomTag(0x0028, 0x1101); } }
-        public static DicomTag GreenPaletteColorLookupTableDescriptor { get { return new DicomTag(0x0028, 0x1102); } }
-        public static DicomTag BluePaletteColorLookupTableDescriptor { get { return new DicomTag(0x0028, 0x1103); } }
-        public static DicomTag PaletteColorLookupTableUID { get { return new DicomTag(0x0028, 0x1199); } }
-        public static DicomTag ACR_NEMA_GrayLookupTableData { get { return new DicomTag(0x0028, 0x1200); } }
-        public static DicomTag RedPaletteColorLookupTableData { get { return new DicomTag(0x0028, 0x1201); } }
-        public static DicomTag GreenPaletteColorLookupTableData { get { return new DicomTag(0x0028, 0x1202); } }
-        public static DicomTag BluePaletteColorLookupTableData { get { return new DicomTag(0x0028, 0x1203); } }
-        public static DicomTag SegmentedRedPaletteColorLookupTableData { get { return new DicomTag(0x0028, 0x1221); } }
-        public static DicomTag SegmentedGreenPaletteColorLookupTableData { get { return new DicomTag(0x0028, 0x1222); } }
-        public static DicomTag SegmentedBluePaletteColorLookupTableData { get { return new DicomTag(0x0028, 0x1223); } }
-        public static DicomTag ImplantPresent { get { return new DicomTag(0x0028, 0x1300); } }
-        public static DicomTag PartialView { get { return new DicomTag(0x0028, 0x1350); } }
-        public static DicomTag PartialViewDescription { get { return new DicomTag(0x0028, 0x1351); } }
-        public static DicomTag LossyImageCompression { get { return new DicomTag(0x0028, 0x2110); } }
-        public static DicomTag LossyImageCompressionRatio { get { return new DicomTag(0x0028, 0x2112); } }
-        public static DicomTag ModalityLUTSequence { get { return new DicomTag(0x0028, 0x3000); } }
-        public static DicomTag LUTDescriptor { get { return new DicomTag(0x0028, 0x3002); } }
-        public static DicomTag LUTExplanation { get { return new DicomTag(0x0028, 0x3003); } }
-        public static DicomTag ModalityLUTType { get { return new DicomTag(0x0028, 0x3004); } }
-        public static DicomTag LUTData { get { return new DicomTag(0x0028, 0x3006); } }
-        public static DicomTag VOILUTSequence { get { return new DicomTag(0x0028, 0x3010); } }
-        public static DicomTag SoftcopyVOILUTSequence { get { return new DicomTag(0x0028, 0x3110); } }
-        public static DicomTag ACR_NEMA_ImagePresentationComments { get { return new DicomTag(0x0028, 0x4000); } }
-        public static DicomTag BiPlaneAcquisitionSequence { get { return new DicomTag(0x0028, 0x5000); } }
-        public static DicomTag RepresentativeFrameNumber { get { return new DicomTag(0x0028, 0x6010); } }
-        public static DicomTag FrameNumbersOfInterestFOI { get { return new DicomTag(0x0028, 0x6020); } }
-        public static DicomTag FramesOfInterestDescription { get { return new DicomTag(0x0028, 0x6022); } }
-        public static DicomTag FrameOfInterestType { get { return new DicomTag(0x0028, 0x6023); } }
-        public static DicomTag RETIRED_MaskPointers { get { return new DicomTag(0x0028, 0x6030); } }
-        public static DicomTag RWavePointer { get { return new DicomTag(0x0028, 0x6040); } }
-        public static DicomTag MaskSubtractionSequence { get { return new DicomTag(0x0028, 0x6100); } }
-        public static DicomTag MaskOperation { get { return new DicomTag(0x0028, 0x6101); } }
-        public static DicomTag ApplicableFrameRange { get { return new DicomTag(0x0028, 0x6102); } }
-        public static DicomTag MaskFrameNumbers { get { return new DicomTag(0x0028, 0x6110); } }
-        public static DicomTag ContrastFrameAveraging { get { return new DicomTag(0x0028, 0x6112); } }
-        public static DicomTag MaskSubPixelShift { get { return new DicomTag(0x0028, 0x6114); } }
-        public static DicomTag TIDOffset { get { return new DicomTag(0x0028, 0x6120); } }
-        public static DicomTag MaskOperationExplanation { get { return new DicomTag(0x0028, 0x6190); } }
-        public static DicomTag DataPointRows { get { return new DicomTag(0x0028, 0x9001); } }
-        public static DicomTag DataPointColumns { get { return new DicomTag(0x0028, 0x9002); } }
-        public static DicomTag SignalDomainColumns { get { return new DicomTag(0x0028, 0x9003); } }
-        public static DicomTag LargestMonochromePixelValue { get { return new DicomTag(0x0028, 0x9099); } }
-        public static DicomTag DataRepresentation { get { return new DicomTag(0x0028, 0x9108); } }
-        public static DicomTag PixelMeasuresSequence { get { return new DicomTag(0x0028, 0x9110); } }
-        public static DicomTag FrameVOILUTSequence { get { return new DicomTag(0x0028, 0x9132); } }
-        public static DicomTag PixelValueTransformationSequence { get { return new DicomTag(0x0028, 0x9145); } }
-        public static DicomTag SignalDomainRows { get { return new DicomTag(0x0028, 0x9235); } }
-        public static DicomTag StudyGroupLength { get { return new DicomTag(0x0032, 0x0000); } }
-        public static DicomTag StudyStatusID { get { return new DicomTag(0x0032, 0x000a); } }
-        public static DicomTag StudyPriorityID { get { return new DicomTag(0x0032, 0x000c); } }
-        public static DicomTag StudyIDIssuer { get { return new DicomTag(0x0032, 0x0012); } }
-        public static DicomTag StudyVerifiedDate { get { return new DicomTag(0x0032, 0x0032); } }
-        public static DicomTag StudyVerifiedTime { get { return new DicomTag(0x0032, 0x0033); } }
-        public static DicomTag StudyReadDate { get { return new DicomTag(0x0032, 0x0034); } }
-        public static DicomTag StudyReadTime { get { return new DicomTag(0x0032, 0x0035); } }
-        public static DicomTag ScheduledStudyStartDate { get { return new DicomTag(0x0032, 0x1000); } }
-        public static DicomTag ScheduledStudyStartTime { get { return new DicomTag(0x0032, 0x1001); } }
-        public static DicomTag ScheduledStudyStopDate { get { return new DicomTag(0x0032, 0x1010); } }
-        public static DicomTag ScheduledStudyStopTime { get { return new DicomTag(0x0032, 0x1011); } }
-        public static DicomTag ScheduledStudyLocation { get { return new DicomTag(0x0032, 0x1020); } }
-        public static DicomTag ScheduledStudyLocationAETitles { get { return new DicomTag(0x0032, 0x1021); } }
-        public static DicomTag ReasonForStudy { get { return new DicomTag(0x0032, 0x1030); } }
-        public static DicomTag RequestingPhysicianIdentificationSequence { get { return new DicomTag(0x0032, 0x1031); } }
-        public static DicomTag RequestingPhysician { get { return new DicomTag(0x0032, 0x1032); } }
-        public static DicomTag RequestingService { get { return new DicomTag(0x0032, 0x1033); } }
-        public static DicomTag StudyArrivalDate { get { return new DicomTag(0x0032, 0x1040); } }
-        public static DicomTag StudyArrivalTime { get { return new DicomTag(0x0032, 0x1041); } }
-        public static DicomTag StudyCompletionDate { get { return new DicomTag(0x0032, 0x1050); } }
-        public static DicomTag StudyCompletionTime { get { return new DicomTag(0x0032, 0x1051); } }
-        public static DicomTag StudyComponentStatusID { get { return new DicomTag(0x0032, 0x1055); } }
-        public static DicomTag RequestedProcedureDescription { get { return new DicomTag(0x0032, 0x1060); } }
-        public static DicomTag RequestedProcedureCodeSequence { get { return new DicomTag(0x0032, 0x1064); } }
-        public static DicomTag RequestedContrastAgent { get { return new DicomTag(0x0032, 0x1070); } }
-        public static DicomTag StudyComments { get { return new DicomTag(0x0032, 0x4000); } }
-        public static DicomTag VisitGroupLength { get { return new DicomTag(0x0038, 0x0000); } }
-        public static DicomTag ReferencedPatientAliasSequence { get { return new DicomTag(0x0038, 0x0004); } }
-        public static DicomTag VisitStatusID { get { return new DicomTag(0x0038, 0x0008); } }
-        public static DicomTag AdmissionID { get { return new DicomTag(0x0038, 0x0010); } }
-        public static DicomTag IssuerOfAdmissionID { get { return new DicomTag(0x0038, 0x0011); } }
-        public static DicomTag RouteOfAdmissions { get { return new DicomTag(0x0038, 0x0016); } }
-        public static DicomTag ScheduledAdmissionDate { get { return new DicomTag(0x0038, 0x001a); } }
-        public static DicomTag ScheduledAdmissionTime { get { return new DicomTag(0x0038, 0x001b); } }
-        public static DicomTag ScheduledDischargeDate { get { return new DicomTag(0x0038, 0x001c); } }
-        public static DicomTag ScheduledDischargeTime { get { return new DicomTag(0x0038, 0x001d); } }
-        public static DicomTag ScheduledPatientInstitutionResidence { get { return new DicomTag(0x0038, 0x001e); } }
-        public static DicomTag AdmittingDate { get { return new DicomTag(0x0038, 0x0020); } }
-        public static DicomTag AdmittingTime { get { return new DicomTag(0x0038, 0x0021); } }
-        public static DicomTag DischargeDate { get { return new DicomTag(0x0038, 0x0030); } }
-        public static DicomTag DischargeTime { get { return new DicomTag(0x0038, 0x0032); } }
-        public static DicomTag DischargeDiagnosisDescription { get { return new DicomTag(0x0038, 0x0040); } }
-        public static DicomTag DischargeDiagnosisCodeSequence { get { return new DicomTag(0x0038, 0x0044); } }
-        public static DicomTag SpecialNeeds { get { return new DicomTag(0x0038, 0x0050); } }
-        public static DicomTag CurrentPatientLocation { get { return new DicomTag(0x0038, 0x0300); } }
-        public static DicomTag PatientsInstitutionResidence { get { return new DicomTag(0x0038, 0x0400); } }
-        public static DicomTag PatientState { get { return new DicomTag(0x0038, 0x0500); } }
-        public static DicomTag VisitComments { get { return new DicomTag(0x0038, 0x4000); } }
-        public static DicomTag WaveformOriginality { get { return new DicomTag(0x003a, 0x0004); } }
-        public static DicomTag NumberOfWaveformChannels { get { return new DicomTag(0x003a, 0x0005); } }
-        public static DicomTag NumberOfWaveformSamples { get { return new DicomTag(0x003a, 0x0010); } }
-        public static DicomTag SamplingFrequency { get { return new DicomTag(0x003a, 0x001a); } }
-        public static DicomTag MultiplexGroupLabel { get { return new DicomTag(0x003a, 0x0020); } }
-        public static DicomTag ChannelDefinitionSequence { get { return new DicomTag(0x003a, 0x0200); } }
-        public static DicomTag WaveformChannelNumber { get { return new DicomTag(0x003a, 0x0202); } }
-        public static DicomTag ChannelLabel { get { return new DicomTag(0x003a, 0x0203); } }
-        public static DicomTag ChannelStatus { get { return new DicomTag(0x003a, 0x0205); } }
-        public static DicomTag ChannelSourceSequence { get { return new DicomTag(0x003a, 0x0208); } }
-        public static DicomTag ChannelSourceModifiersSequence { get { return new DicomTag(0x003a, 0x0209); } }
-        public static DicomTag SourceWaveformSequence { get { return new DicomTag(0x003a, 0x020a); } }
-        public static DicomTag ChannelDerivationDescription { get { return new DicomTag(0x003a, 0x020c); } }
-        public static DicomTag ChannelSensitivity { get { return new DicomTag(0x003a, 0x0210); } }
-        public static DicomTag ChannelSensitivityUnitsSequence { get { return new DicomTag(0x003a, 0x0211); } }
-        public static DicomTag ChannelSensitivityCorrectionFactor { get { return new DicomTag(0x003a, 0x0212); } }
-        public static DicomTag ChannelBaseline { get { return new DicomTag(0x003a, 0x0213); } }
-        public static DicomTag ChannelTimeSkew { get { return new DicomTag(0x003a, 0x0214); } }
-        public static DicomTag ChannelSampleSkew { get { return new DicomTag(0x003a, 0x0215); } }
-        public static DicomTag ChannelOffset { get { return new DicomTag(0x003a, 0x0218); } }
-        public static DicomTag WaveformBitsStored { get { return new DicomTag(0x003a, 0x021a); } }
-        public static DicomTag FilterLowFrequency { get { return new DicomTag(0x003a, 0x0220); } }
-        public static DicomTag FilterHighFrequency { get { return new DicomTag(0x003a, 0x0221); } }
-        public static DicomTag NotchFilterFrequency { get { return new DicomTag(0x003a, 0x0222); } }
-        public static DicomTag NotchFilterBandwidth { get { return new DicomTag(0x003a, 0x0223); } }
-        public static DicomTag MultiplexedAudioChannelsDescriptionCodeSequence { get { return new DicomTag(0x003a, 0x0300); } }
-        public static DicomTag ChannelIdentificationCode { get { return new DicomTag(0x003a, 0x0301); } }
-        public static DicomTag ChannelMode { get { return new DicomTag(0x003a, 0x0302); } }
-        public static DicomTag ModalityWorklistGroupLength { get { return new DicomTag(0x0040, 0x0000); } }
-        public static DicomTag ScheduledStationAETitle { get { return new DicomTag(0x0040, 0x0001); } }
-        public static DicomTag ScheduledProcedureStepStartDate { get { return new DicomTag(0x0040, 0x0002); } }
-        public static DicomTag ScheduledProcedureStepStartTime { get { return new DicomTag(0x0040, 0x0003); } }
-        public static DicomTag ScheduledProcedureStepEndDate { get { return new DicomTag(0x0040, 0x0004); } }
-        public static DicomTag ScheduledProcedureStepEndTime { get { return new DicomTag(0x0040, 0x0005); } }
-        public static DicomTag ScheduledPerformingPhysiciansName { get { return new DicomTag(0x0040, 0x0006); } }
-        public static DicomTag ScheduledProcedureStepDescription { get { return new DicomTag(0x0040, 0x0007); } }
-        public static DicomTag ScheduledProtocolCodeSequence { get { return new DicomTag(0x0040, 0x0008); } }
-        public static DicomTag ScheduledProcedureStepID { get { return new DicomTag(0x0040, 0x0009); } }
-        public static DicomTag StageCodeSequence { get { return new DicomTag(0x0040, 0x000a); } }
-        public static DicomTag ScheduledPerformingPhysicianIdentificationSequence { get { return new DicomTag(0x0040, 0x000b); } }
-        public static DicomTag ScheduledStationName { get { return new DicomTag(0x0040, 0x0010); } }
-        public static DicomTag ScheduledProcedureStepLocation { get { return new DicomTag(0x0040, 0x0011); } }
-        public static DicomTag PreMedication { get { return new DicomTag(0x0040, 0x0012); } }
-        public static DicomTag ScheduledProcedureStepStatus { get { return new DicomTag(0x0040, 0x0020); } }
-        public static DicomTag ScheduledProcedureStepSequence { get { return new DicomTag(0x0040, 0x0100); } }
-        public static DicomTag ReferencedNonImageCompositeSOPInstanceSequence { get { return new DicomTag(0x0040, 0x0220); } }
-        public static DicomTag PerformedStationAETitle { get { return new DicomTag(0x0040, 0x0241); } }
-        public static DicomTag PerformedStationName { get { return new DicomTag(0x0040, 0x0242); } }
-        public static DicomTag PerformedLocation { get { return new DicomTag(0x0040, 0x0243); } }
-        public static DicomTag PerformedProcedureStepStartDate { get { return new DicomTag(0x0040, 0x0244); } }
-        public static DicomTag PerformedProcedureStepStartTime { get { return new DicomTag(0x0040, 0x0245); } }
-        public static DicomTag PerformedProcedureStepEndDate { get { return new DicomTag(0x0040, 0x0250); } }
-        public static DicomTag PerformedProcedureStepEndTime { get { return new DicomTag(0x0040, 0x0251); } }
-        public static DicomTag PerformedProcedureStepStatus { get { return new DicomTag(0x0040, 0x0252); } }
-        public static DicomTag PerformedProcedureStepID { get { return new DicomTag(0x0040, 0x0253); } }
-        public static DicomTag PerformedProcedureStepDescription { get { return new DicomTag(0x0040, 0x0254); } }
-        public static DicomTag PerformedProcedureTypeDescription { get { return new DicomTag(0x0040, 0x0255); } }
-        public static DicomTag PerformedProtocolCodeSequence { get { return new DicomTag(0x0040, 0x0260); } }
-        public static DicomTag ScheduledStepAttributesSequence { get { return new DicomTag(0x0040, 0x0270); } }
-        public static DicomTag RequestAttributesSequence { get { return new DicomTag(0x0040, 0x0275); } }
-        public static DicomTag CommentsOnThePerformedProcedureStep { get { return new DicomTag(0x0040, 0x0280); } }
-        public static DicomTag PerformedProcedureStepDiscontinuationReasonCodeSequence { get { return new DicomTag(0x0040, 0x0281); } }
-        public static DicomTag QuantitySequence { get { return new DicomTag(0x0040, 0x0293); } }
-        public static DicomTag Quantity { get { return new DicomTag(0x0040, 0x0294); } }
-        public static DicomTag MeasuringUnitsSequence { get { return new DicomTag(0x0040, 0x0295); } }
-        public static DicomTag BillingItemSequence { get { return new DicomTag(0x0040, 0x0296); } }
-        public static DicomTag TotalTimeOfFluoroscopy { get { return new DicomTag(0x0040, 0x0300); } }
-        public static DicomTag TotalNumberOfExposures { get { return new DicomTag(0x0040, 0x0301); } }
-        public static DicomTag EntranceDose { get { return new DicomTag(0x0040, 0x0302); } }
-        public static DicomTag ExposedArea { get { return new DicomTag(0x0040, 0x0303); } }
-        public static DicomTag DistanceSourceToEntrance { get { return new DicomTag(0x0040, 0x0306); } }
-        public static DicomTag RETIRED_DistanceSourceToSupport { get { return new DicomTag(0x0040, 0x0307); } }
-        public static DicomTag ExposureDoseSequence { get { return new DicomTag(0x0040, 0x030e); } }
-        public static DicomTag CommentsOnRadiationDose { get { return new DicomTag(0x0040, 0x0310); } }
-        public static DicomTag XRayOutput { get { return new DicomTag(0x0040, 0x0312); } }
-        public static DicomTag HalfValueLayer { get { return new DicomTag(0x0040, 0x0314); } }
-        public static DicomTag OrganDose { get { return new DicomTag(0x0040, 0x0316); } }
-        public static DicomTag OrganExposed { get { return new DicomTag(0x0040, 0x0318); } }
-        public static DicomTag BillingProcedureStepSequence { get { return new DicomTag(0x0040, 0x0320); } }
-        public static DicomTag FilmConsumptionSequence { get { return new DicomTag(0x0040, 0x0321); } }
-        public static DicomTag BillingSuppliesAndDevicesSequence { get { return new DicomTag(0x0040, 0x0324); } }
-        public static DicomTag RETIRED_ReferencedProcedureStepSequence { get { return new DicomTag(0x0040, 0x0330); } }
-        public static DicomTag PerformedSeriesSequence { get { return new DicomTag(0x0040, 0x0340); } }
-        public static DicomTag CommentsOnTheScheduledProcedureStep { get { return new DicomTag(0x0040, 0x0400); } }
-        public static DicomTag ProtocolContextSequence { get { return new DicomTag(0x0040, 0x0440); } }
-        public static DicomTag ContentItemModifierSequence { get { return new DicomTag(0x0040, 0x0441); } }
-        public static DicomTag SpecimenAccessionNumber { get { return new DicomTag(0x0040, 0x050a); } }
-        public static DicomTag SpecimenSequence { get { return new DicomTag(0x0040, 0x0550); } }
-        public static DicomTag SpecimenIdentifier { get { return new DicomTag(0x0040, 0x0551); } }
-        public static DicomTag AcquisitionContextSequence { get { return new DicomTag(0x0040, 0x0555); } }
-        public static DicomTag AcquisitionContextDescription { get { return new DicomTag(0x0040, 0x0556); } }
-        public static DicomTag SpecimenTypeCodeSequence { get { return new DicomTag(0x0040, 0x059a); } }
-        public static DicomTag SlideIdentifier { get { return new DicomTag(0x0040, 0x06fa); } }
-        public static DicomTag ImageCenterPointCoordinatesSequence { get { return new DicomTag(0x0040, 0x071a); } }
-        public static DicomTag XOffsetInSlideCoordinateSystem { get { return new DicomTag(0x0040, 0x072a); } }
-        public static DicomTag YOffsetInSlideCoordinateSystem { get { return new DicomTag(0x0040, 0x073a); } }
-        public static DicomTag ZOffsetInSlideCoordinateSystem { get { return new DicomTag(0x0040, 0x074a); } }
-        public static DicomTag PixelSpacingSequence { get { return new DicomTag(0x0040, 0x08d8); } }
-        public static DicomTag CoordinateSystemAxisCodeSequence { get { return new DicomTag(0x0040, 0x08da); } }
-        public static DicomTag MeasurementUnitsCodeSequence { get { return new DicomTag(0x0040, 0x08ea); } }
-        public static DicomTag RequestedProcedureID { get { return new DicomTag(0x0040, 0x1001); } }
-        public static DicomTag ReasonForTheRequestedProcedure { get { return new DicomTag(0x0040, 0x1002); } }
-        public static DicomTag RequestedProcedurePriority { get { return new DicomTag(0x0040, 0x1003); } }
-        public static DicomTag PatientTransportArrangements { get { return new DicomTag(0x0040, 0x1004); } }
-        public static DicomTag RequestedProcedureLocation { get { return new DicomTag(0x0040, 0x1005); } }
-        public static DicomTag PlacerOrderNumberProcedure { get { return new DicomTag(0x0040, 0x1006); } }
-        public static DicomTag FillerOrderNumberProcedure { get { return new DicomTag(0x0040, 0x1007); } }
-        public static DicomTag ConfidentialityCode { get { return new DicomTag(0x0040, 0x1008); } }
-        public static DicomTag ReportingPriority { get { return new DicomTag(0x0040, 0x1009); } }
-        public static DicomTag ReasonForRequestedProcedureCodeSequence { get { return new DicomTag(0x0040, 0x100a); } }
-        public static DicomTag NamesOfIntendedRecipientsOfResults { get { return new DicomTag(0x0040, 0x1010); } }
-        public static DicomTag IntendedRecipientsOfResultsIdentificationSequence { get { return new DicomTag(0x0040, 0x1011); } }
-        public static DicomTag PersonIdentificationCodeSequence { get { return new DicomTag(0x0040, 0x1101); } }
-        public static DicomTag PersonsAddress { get { return new DicomTag(0x0040, 0x1102); } }
-        public static DicomTag PersonsTelephoneNumbers { get { return new DicomTag(0x0040, 0x1103); } }
-        public static DicomTag RequestedProcedureComments { get { return new DicomTag(0x0040, 0x1400); } }
-        public static DicomTag RETIRED_ReasonForTheImagingServiceRequest { get { return new DicomTag(0x0040, 0x2001); } }
-        public static DicomTag IssueDateOfImagingServiceRequest { get { return new DicomTag(0x0040, 0x2004); } }
-        public static DicomTag IssueTimeOfImagingServiceRequest { get { return new DicomTag(0x0040, 0x2005); } }
-        public static DicomTag RETIRED_PlacerOrderNumberImagingServiceRequest { get { return new DicomTag(0x0040, 0x2006); } }
-        public static DicomTag RETIRED_FillerOrderNumberImagingServiceRequest { get { return new DicomTag(0x0040, 0x2007); } }
-        public static DicomTag OrderEnteredBy { get { return new DicomTag(0x0040, 0x2008); } }
-        public static DicomTag OrderEnterersLocation { get { return new DicomTag(0x0040, 0x2009); } }
-        public static DicomTag OrderCallbackPhoneNumber { get { return new DicomTag(0x0040, 0x2010); } }
-        public static DicomTag PlacerOrderNumberImagingServiceRequest { get { return new DicomTag(0x0040, 0x2016); } }
-        public static DicomTag FillerOrderNumberImagingServiceRequest { get { return new DicomTag(0x0040, 0x2017); } }
-        public static DicomTag ImagingServiceRequestComments { get { return new DicomTag(0x0040, 0x2400); } }
-        public static DicomTag ConfidentialityConstraintOnPatientDataDescription { get { return new DicomTag(0x0040, 0x3001); } }
-        public static DicomTag GeneralPurposeScheduledProcedureStepStatus { get { return new DicomTag(0x0040, 0x4001); } }
-        public static DicomTag GeneralPurposePerformedProcedureStepStatus { get { return new DicomTag(0x0040, 0x4002); } }
-        public static DicomTag GeneralPurposeScheduledProcedureStepPriority { get { return new DicomTag(0x0040, 0x4003); } }
-        public static DicomTag ScheduledProcessingApplicationsCodeSequence { get { return new DicomTag(0x0040, 0x4004); } }
-        public static DicomTag ScheduledProcedureStepStartDateAndTime { get { return new DicomTag(0x0040, 0x4005); } }
-        public static DicomTag MultipleCopiesFlag { get { return new DicomTag(0x0040, 0x4006); } }
-        public static DicomTag PerformedProcessingApplicationsCodeSequence { get { return new DicomTag(0x0040, 0x4007); } }
-        public static DicomTag HumanPerformerCodeSequence { get { return new DicomTag(0x0040, 0x4009); } }
-        public static DicomTag ScheduledProcedureStepModificationDateAndTime { get { return new DicomTag(0x0040, 0x4010); } }
-        public static DicomTag ExpectedCompletionDateAndTime { get { return new DicomTag(0x0040, 0x4011); } }
-        public static DicomTag ResultingGeneralPurposePerformedProcedureStepsSequence { get { return new DicomTag(0x0040, 0x4015); } }
-        public static DicomTag ReferencedGeneralPurposeScheduledProcedureStepSequence { get { return new DicomTag(0x0040, 0x4016); } }
-        public static DicomTag ScheduledWorkitemCodeSequence { get { return new DicomTag(0x0040, 0x4018); } }
-        public static DicomTag PerformedWorkitemCodeSequence { get { return new DicomTag(0x0040, 0x4019); } }
-        public static DicomTag InputAvailabilityFlag { get { return new DicomTag(0x0040, 0x4020); } }
-        public static DicomTag InputInformationSequence { get { return new DicomTag(0x0040, 0x4021); } }
-        public static DicomTag RelevantInformationSequence { get { return new DicomTag(0x0040, 0x4022); } }
-        public static DicomTag ReferencedGeneralPurposeScheduledProcedureStepTransactionUID { get { return new DicomTag(0x0040, 0x4023); } }
-        public static DicomTag ScheduledStationNameCodeSequence { get { return new DicomTag(0x0040, 0x4025); } }
-        public static DicomTag ScheduledStationClassCodeSequence { get { return new DicomTag(0x0040, 0x4026); } }
-        public static DicomTag ScheduledStationGeographicLocationCodeSequence { get { return new DicomTag(0x0040, 0x4027); } }
-        public static DicomTag PerformedStationNameCodeSequence { get { return new DicomTag(0x0040, 0x4028); } }
-        public static DicomTag PerformedStationClassCodeSequence { get { return new DicomTag(0x0040, 0x4029); } }
-        public static DicomTag PerformedStationGeographicLocationCodeSequence { get { return new DicomTag(0x0040, 0x4030); } }
-        public static DicomTag RequestedSubsequentWorkitemCodeSequence { get { return new DicomTag(0x0040, 0x4031); } }
-        public static DicomTag NonDICOMOutputCodeSequence { get { return new DicomTag(0x0040, 0x4032); } }
-        public static DicomTag OutputInformationSequence { get { return new DicomTag(0x0040, 0x4033); } }
-        public static DicomTag ScheduledHumanPerformersSequence { get { return new DicomTag(0x0040, 0x4034); } }
-        public static DicomTag ActualHumanPerformersSequence { get { return new DicomTag(0x0040, 0x4035); } }
-        public static DicomTag HumanPerformersOrganization { get { return new DicomTag(0x0040, 0x4036); } }
-        public static DicomTag HumanPerformersName { get { return new DicomTag(0x0040, 0x4037); } }
-        public static DicomTag EntranceDoseInmGy { get { return new DicomTag(0x0040, 0x8302); } }
-        public static DicomTag RealWorldValueMappingSequence { get { return new DicomTag(0x0040, 0x9096); } }
-        public static DicomTag LUTLabel { get { return new DicomTag(0x0040, 0x9210); } }
-        public static DicomTag RealWorldValueLastValueMapped { get { return new DicomTag(0x0040, 0x9211); } }
-        public static DicomTag RealWorldValueLUTData { get { return new DicomTag(0x0040, 0x9212); } }
-        public static DicomTag RealWorldValueFirstValueMapped { get { return new DicomTag(0x0040, 0x9216); } }
-        public static DicomTag RealWorldValueIntercept { get { return new DicomTag(0x0040, 0x9224); } }
-        public static DicomTag RealWorldValueSlope { get { return new DicomTag(0x0040, 0x9225); } }
-        public static DicomTag RelationshipType { get { return new DicomTag(0x0040, 0xa010); } }
-        public static DicomTag VerifyingOrganization { get { return new DicomTag(0x0040, 0xa027); } }
-        public static DicomTag VerificationDateTime { get { return new DicomTag(0x0040, 0xa030); } }
-        public static DicomTag ObservationDateTime { get { return new DicomTag(0x0040, 0xa032); } }
-        public static DicomTag ValueType { get { return new DicomTag(0x0040, 0xa040); } }
-        public static DicomTag ConceptNameCodeSequence { get { return new DicomTag(0x0040, 0xa043); } }
-        public static DicomTag ContinuityOfContent { get { return new DicomTag(0x0040, 0xa050); } }
-        public static DicomTag VerifyingObserverSequence { get { return new DicomTag(0x0040, 0xa073); } }
-        public static DicomTag VerifyingObserverName { get { return new DicomTag(0x0040, 0xa075); } }
-        public static DicomTag VerifyingObserverIdentificationCodeSequence { get { return new DicomTag(0x0040, 0xa088); } }
-        public static DicomTag ReferencedWaveformChannels { get { return new DicomTag(0x0040, 0xa0b0); } }
-        public static DicomTag DateTime { get { return new DicomTag(0x0040, 0xa120); } }
-        public static DicomTag Date { get { return new DicomTag(0x0040, 0xa121); } }
-        public static DicomTag Time { get { return new DicomTag(0x0040, 0xa122); } }
-        public static DicomTag PersonName { get { return new DicomTag(0x0040, 0xa123); } }
-        public static DicomTag UID { get { return new DicomTag(0x0040, 0xa124); } }
-        public static DicomTag TemporalRangeType { get { return new DicomTag(0x0040, 0xa130); } }
-        public static DicomTag ReferencedSamplePositions { get { return new DicomTag(0x0040, 0xa132); } }
-        public static DicomTag ReferencedFrameNumbers { get { return new DicomTag(0x0040, 0xa136); } }
-        public static DicomTag ReferencedTimeOffsets { get { return new DicomTag(0x0040, 0xa138); } }
-        public static DicomTag ReferencedDatetime { get { return new DicomTag(0x0040, 0xa13a); } }
-        public static DicomTag TextValue { get { return new DicomTag(0x0040, 0xa160); } }
-        public static DicomTag ConceptCodeSequence { get { return new DicomTag(0x0040, 0xa168); } }
-        public static DicomTag PurposeOfReferenceCodeSequence { get { return new DicomTag(0x0040, 0xa170); } }
-        public static DicomTag AnnotationGroupNumber { get { return new DicomTag(0x0040, 0xa180); } }
-        public static DicomTag ModifierCodeSequence { get { return new DicomTag(0x0040, 0xa195); } }
-        public static DicomTag MeasuredValueSequence { get { return new DicomTag(0x0040, 0xa300); } }
-        public static DicomTag NumericValueQualifierCodeSequence { get { return new DicomTag(0x0040, 0xa301); } }
-        public static DicomTag NumericValue { get { return new DicomTag(0x0040, 0xa30a); } }
-        public static DicomTag PredecessorDocumentsSequence { get { return new DicomTag(0x0040, 0xa360); } }
-        public static DicomTag ReferencedRequestSequence { get { return new DicomTag(0x0040, 0xa370); } }
-        public static DicomTag PerformedProcedureCodeSequence { get { return new DicomTag(0x0040, 0xa372); } }
-        public static DicomTag CurrentRequestedProcedureEvidenceSequence { get { return new DicomTag(0x0040, 0xa375); } }
-        public static DicomTag PertinentOtherEvidenceSequence { get { return new DicomTag(0x0040, 0xa385); } }
-        public static DicomTag CompletionFlag { get { return new DicomTag(0x0040, 0xa491); } }
-        public static DicomTag CompletionFlagDescription { get { return new DicomTag(0x0040, 0xa492); } }
-        public static DicomTag VerificationFlag { get { return new DicomTag(0x0040, 0xa493); } }
-        public static DicomTag ContentTemplateSequence { get { return new DicomTag(0x0040, 0xa504); } }
-        public static DicomTag IdenticalDocumentsSequence { get { return new DicomTag(0x0040, 0xa525); } }
-        public static DicomTag ContentSequence { get { return new DicomTag(0x0040, 0xa730); } }
-        public static DicomTag AnnotationSequence { get { return new DicomTag(0x0040, 0xb020); } }
-        public static DicomTag TemplateIdentifier { get { return new DicomTag(0x0040, 0xdb00); } }
-        public static DicomTag RETIRED_TemplateVersion { get { return new DicomTag(0x0040, 0xdb06); } }
-        public static DicomTag RETIRED_TemplateLocalVersion { get { return new DicomTag(0x0040, 0xdb07); } }
-        public static DicomTag RETIRED_TemplateExtensionFlag { get { return new DicomTag(0x0040, 0xdb0b); } }
-        public static DicomTag RETIRED_TemplateExtensionOrganizationUID { get { return new DicomTag(0x0040, 0xdb0c); } }
-        public static DicomTag RETIRED_TemplateExtensionCreatorUID { get { return new DicomTag(0x0040, 0xdb0d); } }
-        public static DicomTag ReferencedContentItemIdentifier { get { return new DicomTag(0x0040, 0xdb73); } }
-        public static DicomTag XRayAngioDeviceGroupLength { get { return new DicomTag(0x0050, 0x0000); } }
-        public static DicomTag CalibrationImage { get { return new DicomTag(0x0050, 0x0004); } }
-        public static DicomTag DeviceSequence { get { return new DicomTag(0x0050, 0x0010); } }
-        public static DicomTag DeviceLength { get { return new DicomTag(0x0050, 0x0014); } }
-        public static DicomTag DeviceDiameter { get { return new DicomTag(0x0050, 0x0016); } }
-        public static DicomTag DeviceDiameterUnits { get { return new DicomTag(0x0050, 0x0017); } }
-        public static DicomTag DeviceVolume { get { return new DicomTag(0x0050, 0x0018); } }
-        public static DicomTag InterMarkerDistance { get { return new DicomTag(0x0050, 0x0019); } }
-        public static DicomTag DeviceDescription { get { return new DicomTag(0x0050, 0x0020); } }
-        public static DicomTag NuclearMedicineGroupLength { get { return new DicomTag(0x0054, 0x0000); } }
-        public static DicomTag EnergyWindowVector { get { return new DicomTag(0x0054, 0x0010); } }
-        public static DicomTag NumberOfEnergyWindows { get { return new DicomTag(0x0054, 0x0011); } }
-        public static DicomTag EnergyWindowInformationSequence { get { return new DicomTag(0x0054, 0x0012); } }
-        public static DicomTag EnergyWindowRangeSequence { get { return new DicomTag(0x0054, 0x0013); } }
-        public static DicomTag EnergyWindowLowerLimit { get { return new DicomTag(0x0054, 0x0014); } }
-        public static DicomTag EnergyWindowUpperLimit { get { return new DicomTag(0x0054, 0x0015); } }
-        public static DicomTag RadiopharmaceuticalInformationSequence { get { return new DicomTag(0x0054, 0x0016); } }
-        public static DicomTag ResidualSyringeCounts { get { return new DicomTag(0x0054, 0x0017); } }
-        public static DicomTag EnergyWindowName { get { return new DicomTag(0x0054, 0x0018); } }
-        public static DicomTag DetectorVector { get { return new DicomTag(0x0054, 0x0020); } }
-        public static DicomTag NumberOfDetectors { get { return new DicomTag(0x0054, 0x0021); } }
-        public static DicomTag DetectorInformationSequence { get { return new DicomTag(0x0054, 0x0022); } }
-        public static DicomTag PhaseVector { get { return new DicomTag(0x0054, 0x0030); } }
-        public static DicomTag NumberOfPhases { get { return new DicomTag(0x0054, 0x0031); } }
-        public static DicomTag PhaseInformationSequence { get { return new DicomTag(0x0054, 0x0032); } }
-        public static DicomTag NumberOfFramesInPhase { get { return new DicomTag(0x0054, 0x0033); } }
-        public static DicomTag PhaseDelay { get { return new DicomTag(0x0054, 0x0036); } }
-        public static DicomTag PauseBetweenFrames { get { return new DicomTag(0x0054, 0x0038); } }
-        public static DicomTag PhaseDescription { get { return new DicomTag(0x0054, 0x0039); } }
-        public static DicomTag RotationVector { get { return new DicomTag(0x0054, 0x0050); } }
-        public static DicomTag NumberOfRotations { get { return new DicomTag(0x0054, 0x0051); } }
-        public static DicomTag RotationInformationSequence { get { return new DicomTag(0x0054, 0x0052); } }
-        public static DicomTag NumberOfFramesInRotation { get { return new DicomTag(0x0054, 0x0053); } }
-        public static DicomTag RRIntervalVector { get { return new DicomTag(0x0054, 0x0060); } }
-        public static DicomTag NumberOfRRIntervals { get { return new DicomTag(0x0054, 0x0061); } }
-        public static DicomTag GatedInformationSequence { get { return new DicomTag(0x0054, 0x0062); } }
-        public static DicomTag DataInformationSequence { get { return new DicomTag(0x0054, 0x0063); } }
-        public static DicomTag TimeSlotVector { get { return new DicomTag(0x0054, 0x0070); } }
-        public static DicomTag NumberOfTimeSlots { get { return new DicomTag(0x0054, 0x0071); } }
-        public static DicomTag TimeSlotInformationSequence { get { return new DicomTag(0x0054, 0x0072); } }
-        public static DicomTag TimeSlotTime { get { return new DicomTag(0x0054, 0x0073); } }
-        public static DicomTag SliceVector { get { return new DicomTag(0x0054, 0x0080); } }
-        public static DicomTag NumberOfSlices { get { return new DicomTag(0x0054, 0x0081); } }
-        public static DicomTag AngularViewVector { get { return new DicomTag(0x0054, 0x0090); } }
-        public static DicomTag TimeSliceVector { get { return new DicomTag(0x0054, 0x0100); } }
-        public static DicomTag NumberOfTimeSlices { get { return new DicomTag(0x0054, 0x0101); } }
-        public static DicomTag StartAngle { get { return new DicomTag(0x0054, 0x0200); } }
-        public static DicomTag TypeOfDetectorMotion { get { return new DicomTag(0x0054, 0x0202); } }
-        public static DicomTag TriggerVector { get { return new DicomTag(0x0054, 0x0210); } }
-        public static DicomTag NumberOfTriggersInPhase { get { return new DicomTag(0x0054, 0x0211); } }
-        public static DicomTag ViewCodeSequence { get { return new DicomTag(0x0054, 0x0220); } }
-        public static DicomTag ViewModifierCodeSequence { get { return new DicomTag(0x0054, 0x0222); } }
-        public static DicomTag RadionuclideCodeSequence { get { return new DicomTag(0x0054, 0x0300); } }
-        public static DicomTag AdministrationRouteCodeSequence { get { return new DicomTag(0x0054, 0x0302); } }
-        public static DicomTag RadiopharmaceuticalCodeSequence { get { return new DicomTag(0x0054, 0x0304); } }
-        public static DicomTag CalibrationDataSequence { get { return new DicomTag(0x0054, 0x0306); } }
-        public static DicomTag EnergyWindowNumber { get { return new DicomTag(0x0054, 0x0308); } }
-        public static DicomTag ImageID { get { return new DicomTag(0x0054, 0x0400); } }
-        public static DicomTag PatientOrientationCodeSequence { get { return new DicomTag(0x0054, 0x0410); } }
-        public static DicomTag PatientOrientationModifierCodeSequence { get { return new DicomTag(0x0054, 0x0412); } }
-        public static DicomTag PatientGantryRelationshipCodeSequence { get { return new DicomTag(0x0054, 0x0414); } }
-        public static DicomTag SliceProgressionDirection { get { return new DicomTag(0x0054, 0x0500); } }
-        public static DicomTag SeriesType { get { return new DicomTag(0x0054, 0x1000); } }
-        public static DicomTag Units { get { return new DicomTag(0x0054, 0x1001); } }
-        public static DicomTag CountsSource { get { return new DicomTag(0x0054, 0x1002); } }
-        public static DicomTag ReprojectionMethod { get { return new DicomTag(0x0054, 0x1004); } }
-        public static DicomTag RandomsCorrectionMethod { get { return new DicomTag(0x0054, 0x1100); } }
-        public static DicomTag AttenuationCorrectionMethod { get { return new DicomTag(0x0054, 0x1101); } }
-        public static DicomTag DecayCorrection { get { return new DicomTag(0x0054, 0x1102); } }
-        public static DicomTag ReconstructionMethod { get { return new DicomTag(0x0054, 0x1103); } }
-        public static DicomTag DetectorLinesOfResponseUsed { get { return new DicomTag(0x0054, 0x1104); } }
-        public static DicomTag ScatterCorrectionMethod { get { return new DicomTag(0x0054, 0x1105); } }
-        public static DicomTag AxialAcceptance { get { return new DicomTag(0x0054, 0x1200); } }
-        public static DicomTag AxialMash { get { return new DicomTag(0x0054, 0x1201); } }
-        public static DicomTag TransverseMash { get { return new DicomTag(0x0054, 0x1202); } }
-        public static DicomTag DetectorElementSize { get { return new DicomTag(0x0054, 0x1203); } }
-        public static DicomTag CoincidenceWindowWidth { get { return new DicomTag(0x0054, 0x1210); } }
-        public static DicomTag SecondaryCountsType { get { return new DicomTag(0x0054, 0x1220); } }
-        public static DicomTag FrameReferenceTime { get { return new DicomTag(0x0054, 0x1300); } }
-        public static DicomTag PrimaryPromptsCountsAccumulated { get { return new DicomTag(0x0054, 0x1310); } }
-        public static DicomTag SecondaryCountsAccumulated { get { return new DicomTag(0x0054, 0x1311); } }
-        public static DicomTag SliceSensitivityFactor { get { return new DicomTag(0x0054, 0x1320); } }
-        public static DicomTag DecayFactor { get { return new DicomTag(0x0054, 0x1321); } }
-        public static DicomTag DoseCalibrationFactor { get { return new DicomTag(0x0054, 0x1322); } }
-        public static DicomTag ScatterFractionFactor { get { return new DicomTag(0x0054, 0x1323); } }
-        public static DicomTag DeadTimeFactor { get { return new DicomTag(0x0054, 0x1324); } }
-        public static DicomTag ImageIndex { get { return new DicomTag(0x0054, 0x1330); } }
-        public static DicomTag CountsIncluded { get { return new DicomTag(0x0054, 0x1400); } }
-        public static DicomTag DeadTimeCorrectionFlag { get { return new DicomTag(0x0054, 0x1401); } }
-        public static DicomTag HistogramGroupLength { get { return new DicomTag(0x0060, 0x0000); } }
-        public static DicomTag HistogramSequence { get { return new DicomTag(0x0060, 0x3000); } }
-        public static DicomTag HistogramNumberOfBins { get { return new DicomTag(0x0060, 0x3002); } }
-        public static DicomTag HistogramFirstBinValue { get { return new DicomTag(0x0060, 0x3004); } }
-        public static DicomTag HistogramLastBinValue { get { return new DicomTag(0x0060, 0x3006); } }
-        public static DicomTag HistogramBinWidth { get { return new DicomTag(0x0060, 0x3008); } }
-        public static DicomTag HistogramExplanation { get { return new DicomTag(0x0060, 0x3010); } }
-        public static DicomTag HistogramData { get { return new DicomTag(0x0060, 0x3020); } }
-        public static DicomTag PresentationStateGroupLength { get { return new DicomTag(0x0070, 0x0000); } }
-        public static DicomTag GraphicAnnotationSequence { get { return new DicomTag(0x0070, 0x0001); } }
-        public static DicomTag GraphicLayer { get { return new DicomTag(0x0070, 0x0002); } }
-        public static DicomTag BoundingBoxAnnotationUnits { get { return new DicomTag(0x0070, 0x0003); } }
-        public static DicomTag AnchorPointAnnotationUnits { get { return new DicomTag(0x0070, 0x0004); } }
-        public static DicomTag GraphicAnnotationUnits { get { return new DicomTag(0x0070, 0x0005); } }
-        public static DicomTag UnformattedTextValue { get { return new DicomTag(0x0070, 0x0006); } }
-        public static DicomTag TextObjectSequence { get { return new DicomTag(0x0070, 0x0008); } }
-        public static DicomTag GraphicObjectSequence { get { return new DicomTag(0x0070, 0x0009); } }
-        public static DicomTag BoundingBoxTopLeftHandCorner { get { return new DicomTag(0x0070, 0x0010); } }
-        public static DicomTag BoundingBoxBottomRightHandCorner { get { return new DicomTag(0x0070, 0x0011); } }
-        public static DicomTag BoundingBoxTextHorizontalJustification { get { return new DicomTag(0x0070, 0x0012); } }
-        public static DicomTag AnchorPoint { get { return new DicomTag(0x0070, 0x0014); } }
-        public static DicomTag AnchorPointVisibility { get { return new DicomTag(0x0070, 0x0015); } }
-        public static DicomTag GraphicDimensions { get { return new DicomTag(0x0070, 0x0020); } }
-        public static DicomTag NumberOfGraphicPoints { get { return new DicomTag(0x0070, 0x0021); } }
-        public static DicomTag GraphicData { get { return new DicomTag(0x0070, 0x0022); } }
-        public static DicomTag GraphicType { get { return new DicomTag(0x0070, 0x0023); } }
-        public static DicomTag GraphicFilled { get { return new DicomTag(0x0070, 0x0024); } }
-        public static DicomTag ImageHorizontalFlip { get { return new DicomTag(0x0070, 0x0041); } }
-        public static DicomTag ImageRotation { get { return new DicomTag(0x0070, 0x0042); } }
-        public static DicomTag DisplayedAreaTopLeftHandCorner { get { return new DicomTag(0x0070, 0x0052); } }
-        public static DicomTag DisplayedAreaBottomRightHandCorner { get { return new DicomTag(0x0070, 0x0053); } }
-        public static DicomTag DisplayedAreaSelectionSequence { get { return new DicomTag(0x0070, 0x005a); } }
-        public static DicomTag GraphicLayerSequence { get { return new DicomTag(0x0070, 0x0060); } }
-        public static DicomTag GraphicLayerOrder { get { return new DicomTag(0x0070, 0x0062); } }
-        public static DicomTag GraphicLayerRecommendedDisplayGrayscaleValue { get { return new DicomTag(0x0070, 0x0066); } }
-        public static DicomTag GraphicLayerRecommendedDisplayRGBValue { get { return new DicomTag(0x0070, 0x0067); } }
-        public static DicomTag GraphicLayerDescription { get { return new DicomTag(0x0070, 0x0068); } }
-        public static DicomTag ContentLabel { get { return new DicomTag(0x0070, 0x0080); } }
-        public static DicomTag ContentDescription { get { return new DicomTag(0x0070, 0x0081); } }
-        public static DicomTag PresentationCreationDate { get { return new DicomTag(0x0070, 0x0082); } }
-        public static DicomTag PresentationCreationTime { get { return new DicomTag(0x0070, 0x0083); } }
-        public static DicomTag ContentCreatorsName { get { return new DicomTag(0x0070, 0x0084); } }
-        public static DicomTag PresentationSizeMode { get { return new DicomTag(0x0070, 0x0100); } }
-        public static DicomTag PresentationPixelSpacing { get { return new DicomTag(0x0070, 0x0101); } }
-        public static DicomTag PresentationPixelAspectRatio { get { return new DicomTag(0x0070, 0x0102); } }
-        public static DicomTag PresentationPixelMagnificationRatio { get { return new DicomTag(0x0070, 0x0103); } }
-        public static DicomTag ShapeType { get { return new DicomTag(0x0070, 0x0306); } }
-        public static DicomTag RegistrationSequence { get { return new DicomTag(0x0070, 0x0308); } }
-        public static DicomTag MatrixRegistrationSequence { get { return new DicomTag(0x0070, 0x0309); } }
-        public static DicomTag MatrixSequence { get { return new DicomTag(0x0070, 0x030a); } }
-        public static DicomTag FrameOfReferenceTransformationMatrixType { get { return new DicomTag(0x0070, 0x030c); } }
-        public static DicomTag RegistrationTypeCodeSequence { get { return new DicomTag(0x0070, 0x030d); } }
-        public static DicomTag FiducialDescription { get { return new DicomTag(0x0070, 0x030f); } }
-        public static DicomTag FiducialIdentifier { get { return new DicomTag(0x0070, 0x0310); } }
-        public static DicomTag FiducialIdentifierCodeSequence { get { return new DicomTag(0x0070, 0x0311); } }
-        public static DicomTag ContourUncertaintyRadius { get { return new DicomTag(0x0070, 0x0312); } }
-        public static DicomTag UsedFiducialsSequence { get { return new DicomTag(0x0070, 0x0314); } }
-        public static DicomTag GraphicCoordinatesDataSequence { get { return new DicomTag(0x0070, 0x0318); } }
-        public static DicomTag FiducialUID { get { return new DicomTag(0x0070, 0x031a); } }
-        public static DicomTag FiducialSetSequence { get { return new DicomTag(0x0070, 0x031c); } }
-        public static DicomTag FiducialSequence { get { return new DicomTag(0x0070, 0x031e); } }
-        public static DicomTag StorageGroupLength { get { return new DicomTag(0x0088, 0x0000); } }
-        public static DicomTag StorageMediaFileSetID { get { return new DicomTag(0x0088, 0x0130); } }
-        public static DicomTag StorageMediaFileSetUID { get { return new DicomTag(0x0088, 0x0140); } }
-        public static DicomTag IconImageSequence { get { return new DicomTag(0x0088, 0x0200); } }
-        public static DicomTag TopicTitle { get { return new DicomTag(0x0088, 0x0904); } }
-        public static DicomTag TopicSubject { get { return new DicomTag(0x0088, 0x0906); } }
-        public static DicomTag TopicAuthor { get { return new DicomTag(0x0088, 0x0910); } }
-        public static DicomTag TopicKeyWords { get { return new DicomTag(0x0088, 0x0912); } }
-        public static DicomTag SOPInstanceStatus { get { return new DicomTag(0x0100, 0x0410); } }
-        public static DicomTag SOPAuthorizationDateAndTime { get { return new DicomTag(0x0100, 0x0420); } }
-        public static DicomTag SOPAuthorizationComment { get { return new DicomTag(0x0100, 0x0424); } }
-        public static DicomTag AuthorizationEquipmentCertificationNumber { get { return new DicomTag(0x0100, 0x0426); } }
-        public static DicomTag MACIDNumber { get { return new DicomTag(0x0400, 0x0005); } }
-        public static DicomTag MACCalculationTransferSyntaxUID { get { return new DicomTag(0x0400, 0x0010); } }
-        public static DicomTag MACAlgorithm { get { return new DicomTag(0x0400, 0x0015); } }
-        public static DicomTag DataElementsSigned { get { return new DicomTag(0x0400, 0x0020); } }
-        public static DicomTag DigitalSignatureUID { get { return new DicomTag(0x0400, 0x0100); } }
-        public static DicomTag DigitalSignatureDateTime { get { return new DicomTag(0x0400, 0x0105); } }
-        public static DicomTag CertificateType { get { return new DicomTag(0x0400, 0x0110); } }
-        public static DicomTag CertificateOfSigner { get { return new DicomTag(0x0400, 0x0115); } }
-        public static DicomTag Signature { get { return new DicomTag(0x0400, 0x0120); } }
-        public static DicomTag CertifiedTimestampType { get { return new DicomTag(0x0400, 0x0305); } }
-        public static DicomTag CertifiedTimestamp { get { return new DicomTag(0x0400, 0x0310); } }
-        public static DicomTag EncryptedAttributesSequence { get { return new DicomTag(0x0400, 0x0500); } }
-        public static DicomTag EncryptedContentTransferSyntaxUID { get { return new DicomTag(0x0400, 0x0510); } }
-        public static DicomTag EncryptedContent { get { return new DicomTag(0x0400, 0x0520); } }
-        public static DicomTag ModifiedAttributesSequence { get { return new DicomTag(0x0400, 0x0550); } }
-        public static DicomTag ACR_NEMA_2C_CodeTableGroupLength { get { return new DicomTag(0x1000, 0x0000); } }
-        public static DicomTag ACR_NEMA_2C_EscapeTriplet { get { return new DicomTag(0x1000, 0x0010); } }
-        public static DicomTag ACR_NEMA_2C_RunLengthTriplet { get { return new DicomTag(0x1000, 0x0011); } }
-        public static DicomTag ACR_NEMA_2C_HuffmanTableSize { get { return new DicomTag(0x1000, 0x0012); } }
-        public static DicomTag ACR_NEMA_2C_HuffmanTableTriplet { get { return new DicomTag(0x1000, 0x0013); } }
-        public static DicomTag ACR_NEMA_2C_ShiftTableSize { get { return new DicomTag(0x1000, 0x0014); } }
-        public static DicomTag ACR_NEMA_2C_ShiftTableTriplet { get { return new DicomTag(0x1000, 0x0015); } }
-        public static DicomTag ACR_NEMA_2C_ZonalMapGroupLength { get { return new DicomTag(0x1010, 0x0000); } }
-        public static DicomTag ACR_NEMA_2C_ZonalMap { get { return new DicomTag(0x1010, 0x0004); } }
-        public static DicomTag FilmSessionGroupLength { get { return new DicomTag(0x2000, 0x0000); } }
-        public static DicomTag NumberOfCopies { get { return new DicomTag(0x2000, 0x0010); } }
-        public static DicomTag PrinterConfigurationSequence { get { return new DicomTag(0x2000, 0x001e); } }
-        public static DicomTag PrintPriority { get { return new DicomTag(0x2000, 0x0020); } }
-        public static DicomTag MediumType { get { return new DicomTag(0x2000, 0x0030); } }
-        public static DicomTag FilmDestination { get { return new DicomTag(0x2000, 0x0040); } }
-        public static DicomTag FilmSessionLabel { get { return new DicomTag(0x2000, 0x0050); } }
-        public static DicomTag MemoryAllocation { get { return new DicomTag(0x2000, 0x0060); } }
-        public static DicomTag MaximumMemoryAllocation { get { return new DicomTag(0x2000, 0x0061); } }
-        public static DicomTag ColorImagePrintingFlag { get { return new DicomTag(0x2000, 0x0062); } }
-        public static DicomTag CollationFlag { get { return new DicomTag(0x2000, 0x0063); } }
-        public static DicomTag AnnotationFlag { get { return new DicomTag(0x2000, 0x0065); } }
-        public static DicomTag ImageOverlayFlag { get { return new DicomTag(0x2000, 0x0067); } }
-        public static DicomTag PresentationLUTFlag { get { return new DicomTag(0x2000, 0x0069); } }
-        public static DicomTag ImageBoxPresentationLUTFlag { get { return new DicomTag(0x2000, 0x006a); } }
-        public static DicomTag MemoryBitDepth { get { return new DicomTag(0x2000, 0x00a0); } }
-        public static DicomTag PrintingBitDepth { get { return new DicomTag(0x2000, 0x00a1); } }
-        public static DicomTag MediaInstalledSequence { get { return new DicomTag(0x2000, 0x00a2); } }
-        public static DicomTag OtherMediaAvailableSequence { get { return new DicomTag(0x2000, 0x00a4); } }
-        public static DicomTag SupportedImageDisplayFormatsSequence { get { return new DicomTag(0x2000, 0x00a8); } }
-        public static DicomTag ReferencedFilmBoxSequence { get { return new DicomTag(0x2000, 0x0500); } }
-        public static DicomTag ReferencedStoredPrintSequence { get { return new DicomTag(0x2000, 0x0510); } }
-        public static DicomTag FilmBoxGroupLength { get { return new DicomTag(0x2010, 0x0000); } }
-        public static DicomTag ImageDisplayFormat { get { return new DicomTag(0x2010, 0x0010); } }
-        public static DicomTag AnnotationDisplayFormatID { get { return new DicomTag(0x2010, 0x0030); } }
-        public static DicomTag FilmOrientation { get { return new DicomTag(0x2010, 0x0040); } }
-        public static DicomTag FilmSizeID { get { return new DicomTag(0x2010, 0x0050); } }
-        public static DicomTag PrinterResolutionID { get { return new DicomTag(0x2010, 0x0052); } }
-        public static DicomTag DefaultPrinterResolutionID { get { return new DicomTag(0x2010, 0x0054); } }
-        public static DicomTag MagnificationType { get { return new DicomTag(0x2010, 0x0060); } }
-        public static DicomTag SmoothingType { get { return new DicomTag(0x2010, 0x0080); } }
-        public static DicomTag DefaultMagnificationType { get { return new DicomTag(0x2010, 0x00a6); } }
-        public static DicomTag OtherMagnificationTypesAvailable { get { return new DicomTag(0x2010, 0x00a7); } }
-        public static DicomTag DefaultSmoothingType { get { return new DicomTag(0x2010, 0x00a8); } }
-        public static DicomTag OtherSmoothingTypesAvailable { get { return new DicomTag(0x2010, 0x00a9); } }
-        public static DicomTag BorderDensity { get { return new DicomTag(0x2010, 0x0100); } }
-        public static DicomTag EmptyImageDensity { get { return new DicomTag(0x2010, 0x0110); } }
-        public static DicomTag MinDensity { get { return new DicomTag(0x2010, 0x0120); } }
-        public static DicomTag MaxDensity { get { return new DicomTag(0x2010, 0x0130); } }
-        public static DicomTag Trim { get { return new DicomTag(0x2010, 0x0140); } }
-        public static DicomTag ConfigurationInformation { get { return new DicomTag(0x2010, 0x0150); } }
-        public static DicomTag ConfigurationInformationDescription { get { return new DicomTag(0x2010, 0x0152); } }
-        public static DicomTag MaximumCollatedFilms { get { return new DicomTag(0x2010, 0x0154); } }
-        public static DicomTag Illumination { get { return new DicomTag(0x2010, 0x015e); } }
-        public static DicomTag ReflectedAmbientLight { get { return new DicomTag(0x2010, 0x0160); } }
-        public static DicomTag PrinterPixelSpacing { get { return new DicomTag(0x2010, 0x0376); } }
-        public static DicomTag ReferencedFilmSessionSequence { get { return new DicomTag(0x2010, 0x0500); } }
-        public static DicomTag ReferencedImageBoxSequence { get { return new DicomTag(0x2010, 0x0510); } }
-        public static DicomTag ReferencedBasicAnnotationBoxSequence { get { return new DicomTag(0x2010, 0x0520); } }
-        public static DicomTag ImageBoxGroupLength { get { return new DicomTag(0x2020, 0x0000); } }
-        public static DicomTag ImagePosition { get { return new DicomTag(0x2020, 0x0010); } }
-        public static DicomTag Polarity { get { return new DicomTag(0x2020, 0x0020); } }
-        public static DicomTag RequestedImageSize { get { return new DicomTag(0x2020, 0x0030); } }
-        public static DicomTag RequestedDecimateCropBehavior { get { return new DicomTag(0x2020, 0x0040); } }
-        public static DicomTag RequestedResolutionID { get { return new DicomTag(0x2020, 0x0050); } }
-        public static DicomTag RequestedImageSizeFlag { get { return new DicomTag(0x2020, 0x00a0); } }
-        public static DicomTag DecimateCropResult { get { return new DicomTag(0x2020, 0x00a2); } }
-        public static DicomTag BasicGrayscaleImageSequence { get { return new DicomTag(0x2020, 0x0110); } }
-        public static DicomTag BasicColorImageSequence { get { return new DicomTag(0x2020, 0x0111); } }
-        public static DicomTag RETIRED_ReferencedImageOverlayBoxSequence { get { return new DicomTag(0x2020, 0x0130); } }
-        public static DicomTag RETIRED_ReferencedVOILUTBoxSequence { get { return new DicomTag(0x2020, 0x0140); } }
-        public static DicomTag AnnotationGroupLength { get { return new DicomTag(0x2030, 0x0000); } }
-        public static DicomTag AnnotationPosition { get { return new DicomTag(0x2030, 0x0010); } }
-        public static DicomTag TextString { get { return new DicomTag(0x2030, 0x0020); } }
-        public static DicomTag OverlayBoxGroupLength { get { return new DicomTag(0x2040, 0x0000); } }
-        public static DicomTag ReferencedOverlayPlaneSequence { get { return new DicomTag(0x2040, 0x0010); } }
-        public static DicomTag ReferencedOverlayPlaneGroups { get { return new DicomTag(0x2040, 0x0011); } }
-        public static DicomTag OverlayPixelDataSequence { get { return new DicomTag(0x2040, 0x0020); } }
-        public static DicomTag OverlayMagnificationType { get { return new DicomTag(0x2040, 0x0060); } }
-        public static DicomTag OverlaySmoothingType { get { return new DicomTag(0x2040, 0x0070); } }
-        public static DicomTag OverlayOrImageMagnification { get { return new DicomTag(0x2040, 0x0072); } }
-        public static DicomTag MagnifyToNumberOfColumns { get { return new DicomTag(0x2040, 0x0074); } }
-        public static DicomTag OverlayForegroundDensity { get { return new DicomTag(0x2040, 0x0080); } }
-        public static DicomTag OverlayBackgroundDensity { get { return new DicomTag(0x2040, 0x0082); } }
-        public static DicomTag OverlayMode { get { return new DicomTag(0x2040, 0x0090); } }
-        public static DicomTag ThresholdDensity { get { return new DicomTag(0x2040, 0x0100); } }
-        public static DicomTag RETIRED_ReferencedImageBoxSequence { get { return new DicomTag(0x2040, 0x0500); } }
-        public static DicomTag PresentationLUTGroupLength { get { return new DicomTag(0x2050, 0x0000); } }
-        public static DicomTag PresentationLUTSequence { get { return new DicomTag(0x2050, 0x0010); } }
-        public static DicomTag PresentationLUTShape { get { return new DicomTag(0x2050, 0x0020); } }
-        public static DicomTag ReferencedPresentationLUTSequence { get { return new DicomTag(0x2050, 0x0500); } }
-        public static DicomTag PrintJobGroupLength { get { return new DicomTag(0x2100, 0x0000); } }
-        public static DicomTag PrintJobID { get { return new DicomTag(0x2100, 0x0010); } }
-        public static DicomTag ExecutionStatus { get { return new DicomTag(0x2100, 0x0020); } }
-        public static DicomTag ExecutionStatusInfo { get { return new DicomTag(0x2100, 0x0030); } }
-        public static DicomTag CreationDate { get { return new DicomTag(0x2100, 0x0040); } }
-        public static DicomTag CreationTime { get { return new DicomTag(0x2100, 0x0050); } }
-        public static DicomTag Originator { get { return new DicomTag(0x2100, 0x0070); } }
-        public static DicomTag DestinationAE { get { return new DicomTag(0x2100, 0x0140); } }
-        public static DicomTag OwnerID { get { return new DicomTag(0x2100, 0x0160); } }
-        public static DicomTag NumberOfFilms { get { return new DicomTag(0x2100, 0x0170); } }
-        public static DicomTag ReferencedPrintJobSequence { get { return new DicomTag(0x2100, 0x0500); } }
-        public static DicomTag PrinterGroupLength { get { return new DicomTag(0x2110, 0x0000); } }
-        public static DicomTag PrinterStatus { get { return new DicomTag(0x2110, 0x0010); } }
-        public static DicomTag PrinterStatusInfo { get { return new DicomTag(0x2110, 0x0020); } }
-        public static DicomTag PrinterName { get { return new DicomTag(0x2110, 0x0030); } }
-        public static DicomTag PrintQueueID { get { return new DicomTag(0x2110, 0x0099); } }
-        public static DicomTag QueueGroupLength { get { return new DicomTag(0x2120, 0x0000); } }
-        public static DicomTag QueueStatus { get { return new DicomTag(0x2120, 0x0010); } }
-        public static DicomTag PrintJobDescriptionSequence { get { return new DicomTag(0x2120, 0x0050); } }
-        public static DicomTag QueueReferencedPrintJobSequence { get { return new DicomTag(0x2120, 0x0070); } }
-        public static DicomTag PrintContentGroupLength { get { return new DicomTag(0x2130, 0x0000); } }
-        public static DicomTag PrintManagementCapabilitiesSequence { get { return new DicomTag(0x2130, 0x0010); } }
-        public static DicomTag PrinterCharacteristicsSequence { get { return new DicomTag(0x2130, 0x0015); } }
-        public static DicomTag FilmBoxContentSequence { get { return new DicomTag(0x2130, 0x0030); } }
-        public static DicomTag ImageBoxContentSequence { get { return new DicomTag(0x2130, 0x0040); } }
-        public static DicomTag AnnotationContentSequence { get { return new DicomTag(0x2130, 0x0050); } }
-        public static DicomTag ImageOverlayBoxContentSequence { get { return new DicomTag(0x2130, 0x0060); } }
-        public static DicomTag PresentationLUTContentSequence { get { return new DicomTag(0x2130, 0x0080); } }
-        public static DicomTag ProposedStudySequence { get { return new DicomTag(0x2130, 0x00a0); } }
-        public static DicomTag OriginalImageSequence { get { return new DicomTag(0x2130, 0x00c0); } }
-        public static DicomTag RTImageGroupLength { get { return new DicomTag(0x3002, 0x0000); } }
-        public static DicomTag RTImageLabel { get { return new DicomTag(0x3002, 0x0002); } }
-        public static DicomTag RTImageName { get { return new DicomTag(0x3002, 0x0003); } }
-        public static DicomTag RTImageDescription { get { return new DicomTag(0x3002, 0x0004); } }
-        public static DicomTag ReportedValuesOrigin { get { return new DicomTag(0x3002, 0x000a); } }
-        public static DicomTag RTImagePlane { get { return new DicomTag(0x3002, 0x000c); } }
-        public static DicomTag XRayImageReceptorTranslation { get { return new DicomTag(0x3002, 0x000d); } }
-        public static DicomTag XRayImageReceptorAngle { get { return new DicomTag(0x3002, 0x000e); } }
-        public static DicomTag RTImageOrientation { get { return new DicomTag(0x3002, 0x0010); } }
-        public static DicomTag ImagePlanePixelSpacing { get { return new DicomTag(0x3002, 0x0011); } }
-        public static DicomTag RTImagePosition { get { return new DicomTag(0x3002, 0x0012); } }
-        public static DicomTag RadiationMachineName { get { return new DicomTag(0x3002, 0x0020); } }
-        public static DicomTag RadiationMachineSAD { get { return new DicomTag(0x3002, 0x0022); } }
-        public static DicomTag RadiationMachineSSD { get { return new DicomTag(0x3002, 0x0024); } }
-        public static DicomTag RTImageSID { get { return new DicomTag(0x3002, 0x0026); } }
-        public static DicomTag SourceToReferenceObjectDistance { get { return new DicomTag(0x3002, 0x0028); } }
-        public static DicomTag FractionNumber { get { return new DicomTag(0x3002, 0x0029); } }
-        public static DicomTag ExposureSequence { get { return new DicomTag(0x3002, 0x0030); } }
-        public static DicomTag MetersetExposure { get { return new DicomTag(0x3002, 0x0032); } }
-        public static DicomTag DiaphragmPosition { get { return new DicomTag(0x3002, 0x0034); } }
-        public static DicomTag RTDoseGroupLength { get { return new DicomTag(0x3004, 0x0000); } }
-        public static DicomTag DVHType { get { return new DicomTag(0x3004, 0x0001); } }
-        public static DicomTag DoseUnits { get { return new DicomTag(0x3004, 0x0002); } }
-        public static DicomTag DoseType { get { return new DicomTag(0x3004, 0x0004); } }
-        public static DicomTag DoseComment { get { return new DicomTag(0x3004, 0x0006); } }
-        public static DicomTag NormalizationPoint { get { return new DicomTag(0x3004, 0x0008); } }
-        public static DicomTag DoseSummationType { get { return new DicomTag(0x3004, 0x000a); } }
-        public static DicomTag GridFrameOffsetVector { get { return new DicomTag(0x3004, 0x000c); } }
-        public static DicomTag DoseGridScaling { get { return new DicomTag(0x3004, 0x000e); } }
-        public static DicomTag RTDoseROISequence { get { return new DicomTag(0x3004, 0x0010); } }
-        public static DicomTag DoseValue { get { return new DicomTag(0x3004, 0x0012); } }
-        public static DicomTag DVHNormalizationPoint { get { return new DicomTag(0x3004, 0x0040); } }
-        public static DicomTag DVHNormalizationDoseValue { get { return new DicomTag(0x3004, 0x0042); } }
-        public static DicomTag DVHSequence { get { return new DicomTag(0x3004, 0x0050); } }
-        public static DicomTag DVHDoseScaling { get { return new DicomTag(0x3004, 0x0052); } }
-        public static DicomTag DVHVolumeUnits { get { return new DicomTag(0x3004, 0x0054); } }
-        public static DicomTag DVHNumberOfBins { get { return new DicomTag(0x3004, 0x0056); } }
-        public static DicomTag DVHData { get { return new DicomTag(0x3004, 0x0058); } }
-        public static DicomTag DVHReferencedROISequence { get { return new DicomTag(0x3004, 0x0060); } }
-        public static DicomTag DVHROIContributionType { get { return new DicomTag(0x3004, 0x0062); } }
-        public static DicomTag DVHMinimumDose { get { return new DicomTag(0x3004, 0x0070); } }
-        public static DicomTag DVHMaximumDose { get { return new DicomTag(0x3004, 0x0072); } }
-        public static DicomTag DVHMeanDose { get { return new DicomTag(0x3004, 0x0074); } }
-        public static DicomTag RTStructureSetGroupLength { get { return new DicomTag(0x3006, 0x0000); } }
-        public static DicomTag StructureSetLabel { get { return new DicomTag(0x3006, 0x0002); } }
-        public static DicomTag StructureSetName { get { return new DicomTag(0x3006, 0x0004); } }
-        public static DicomTag StructureSetDescription { get { return new DicomTag(0x3006, 0x0006); } }
-        public static DicomTag StructureSetDate { get { return new DicomTag(0x3006, 0x0008); } }
-        public static DicomTag StructureSetTime { get { return new DicomTag(0x3006, 0x0009); } }
-        public static DicomTag ReferencedFrameOfReferenceSequence { get { return new DicomTag(0x3006, 0x0010); } }
-        public static DicomTag RTReferencedStudySequence { get { return new DicomTag(0x3006, 0x0012); } }
-        public static DicomTag RTReferencedSeriesSequence { get { return new DicomTag(0x3006, 0x0014); } }
-        public static DicomTag ContourImageSequence { get { return new DicomTag(0x3006, 0x0016); } }
-        public static DicomTag StructureSetROISequence { get { return new DicomTag(0x3006, 0x0020); } }
-        public static DicomTag ROINumber { get { return new DicomTag(0x3006, 0x0022); } }
-        public static DicomTag ReferencedFrameOfReferenceUID { get { return new DicomTag(0x3006, 0x0024); } }
-        public static DicomTag ROIName { get { return new DicomTag(0x3006, 0x0026); } }
-        public static DicomTag ROIDescription { get { return new DicomTag(0x3006, 0x0028); } }
-        public static DicomTag ROIDisplayColor { get { return new DicomTag(0x3006, 0x002a); } }
-        public static DicomTag ROIVolume { get { return new DicomTag(0x3006, 0x002c); } }
-        public static DicomTag RTRelatedROISequence { get { return new DicomTag(0x3006, 0x0030); } }
-        public static DicomTag RTROIRelationship { get { return new DicomTag(0x3006, 0x0033); } }
-        public static DicomTag ROIGenerationAlgorithm { get { return new DicomTag(0x3006, 0x0036); } }
-        public static DicomTag ROIGenerationDescription { get { return new DicomTag(0x3006, 0x0038); } }
-        public static DicomTag ROIContourSequence { get { return new DicomTag(0x3006, 0x0039); } }
-        public static DicomTag ContourSequence { get { return new DicomTag(0x3006, 0x0040); } }
-        public static DicomTag ContourGeometricType { get { return new DicomTag(0x3006, 0x0042); } }
-        public static DicomTag ContourSlabThickness { get { return new DicomTag(0x3006, 0x0044); } }
-        public static DicomTag ContourOffsetVector { get { return new DicomTag(0x3006, 0x0045); } }
-        public static DicomTag NumberOfContourPoints { get { return new DicomTag(0x3006, 0x0046); } }
-        public static DicomTag ContourNumber { get { return new DicomTag(0x3006, 0x0048); } }
-        public static DicomTag AttachedContours { get { return new DicomTag(0x3006, 0x0049); } }
-        public static DicomTag ContourData { get { return new DicomTag(0x3006, 0x0050); } }
-        public static DicomTag RTROIObservationsSequence { get { return new DicomTag(0x3006, 0x0080); } }
-        public static DicomTag ObservationNumber { get { return new DicomTag(0x3006, 0x0082); } }
-        public static DicomTag ReferencedROINumber { get { return new DicomTag(0x3006, 0x0084); } }
-        public static DicomTag ROIObservationLabel { get { return new DicomTag(0x3006, 0x0085); } }
-        public static DicomTag RTROIIdentificationCodeSequence { get { return new DicomTag(0x3006, 0x0086); } }
-        public static DicomTag ROIObservationDescription { get { return new DicomTag(0x3006, 0x0088); } }
-        public static DicomTag RelatedRTROIObservationsSequence { get { return new DicomTag(0x3006, 0x00a0); } }
-        public static DicomTag RTROIInterpretedType { get { return new DicomTag(0x3006, 0x00a4); } }
-        public static DicomTag ROIInterpreter { get { return new DicomTag(0x3006, 0x00a6); } }
-        public static DicomTag ROIPhysicalPropertiesSequence { get { return new DicomTag(0x3006, 0x00b0); } }
-        public static DicomTag ROIPhysicalProperty { get { return new DicomTag(0x3006, 0x00b2); } }
-        public static DicomTag ROIPhysicalPropertyValue { get { return new DicomTag(0x3006, 0x00b4); } }
-        public static DicomTag FrameOfReferenceRelationshipSequence { get { return new DicomTag(0x3006, 0x00c0); } }
-        public static DicomTag RelatedFrameOfReferenceUID { get { return new DicomTag(0x3006, 0x00c2); } }
-        public static DicomTag FrameOfReferenceTransformationType { get { return new DicomTag(0x3006, 0x00c4); } }
-        public static DicomTag FrameOfReferenceTransformationMatrix { get { return new DicomTag(0x3006, 0x00c6); } }
-        public static DicomTag FrameOfReferenceTransformationComment { get { return new DicomTag(0x3006, 0x00c8); } }
-        public static DicomTag MeasuredDoseReferenceSequence { get { return new DicomTag(0x3008, 0x0010); } }
-        public static DicomTag MeasuredDoseDescription { get { return new DicomTag(0x3008, 0x0012); } }
-        public static DicomTag MeasuredDoseType { get { return new DicomTag(0x3008, 0x0014); } }
-        public static DicomTag MeasuredDoseValue { get { return new DicomTag(0x3008, 0x0016); } }
-        public static DicomTag TreatmentSessionBeamSequence { get { return new DicomTag(0x3008, 0x0020); } }
-        public static DicomTag CurrentFractionNumber { get { return new DicomTag(0x3008, 0x0022); } }
-        public static DicomTag TreatmentControlPointDate { get { return new DicomTag(0x3008, 0x0024); } }
-        public static DicomTag TreatmentControlPointTime { get { return new DicomTag(0x3008, 0x0025); } }
-        public static DicomTag TreatmentTerminationStatus { get { return new DicomTag(0x3008, 0x002a); } }
-        public static DicomTag TreatmentTerminationCode { get { return new DicomTag(0x3008, 0x002b); } }
-        public static DicomTag TreatmentVerificationStatus { get { return new DicomTag(0x3008, 0x002c); } }
-        public static DicomTag ReferencedTreatmentRecordSequence { get { return new DicomTag(0x3008, 0x0030); } }
-        public static DicomTag SpecifiedPrimaryMeterset { get { return new DicomTag(0x3008, 0x0032); } }
-        public static DicomTag SpecifiedSecondaryMeterset { get { return new DicomTag(0x3008, 0x0033); } }
-        public static DicomTag DeliveredPrimaryMeterset { get { return new DicomTag(0x3008, 0x0036); } }
-        public static DicomTag DeliveredSecondaryMeterset { get { return new DicomTag(0x3008, 0x0037); } }
-        public static DicomTag SpecifiedTreatmentTime { get { return new DicomTag(0x3008, 0x003a); } }
-        public static DicomTag DeliveredTreatmentTime { get { return new DicomTag(0x3008, 0x003b); } }
-        public static DicomTag ControlPointDeliverySequence { get { return new DicomTag(0x3008, 0x0040); } }
-        public static DicomTag SpecifiedMeterset { get { return new DicomTag(0x3008, 0x0042); } }
-        public static DicomTag DeliveredMeterset { get { return new DicomTag(0x3008, 0x0044); } }
-        public static DicomTag DoseRateDelivered { get { return new DicomTag(0x3008, 0x0048); } }
-        public static DicomTag TreatmentSummaryCalculatedDoseReferenceSequence { get { return new DicomTag(0x3008, 0x0050); } }
-        public static DicomTag CumulativeDoseToDoseReference { get { return new DicomTag(0x3008, 0x0052); } }
-        public static DicomTag FirstTreatmentDate { get { return new DicomTag(0x3008, 0x0054); } }
-        public static DicomTag MostRecentTreatmentDate { get { return new DicomTag(0x3008, 0x0056); } }
-        public static DicomTag NumberOfFractionsDelivered { get { return new DicomTag(0x3008, 0x005a); } }
-        public static DicomTag OverrideSequence { get { return new DicomTag(0x3008, 0x0060); } }
-        public static DicomTag OverrideParameterPointer { get { return new DicomTag(0x3008, 0x0062); } }
-        public static DicomTag MeasuredDoseReferenceNumber { get { return new DicomTag(0x3008, 0x0064); } }
-        public static DicomTag OverrideReason { get { return new DicomTag(0x3008, 0x0066); } }
-        public static DicomTag CalculatedDoseReferenceSequence { get { return new DicomTag(0x3008, 0x0070); } }
-        public static DicomTag CalculatedDoseReferenceNumber { get { return new DicomTag(0x3008, 0x0072); } }
-        public static DicomTag CalculatedDoseReferenceDescription { get { return new DicomTag(0x3008, 0x0074); } }
-        public static DicomTag CalculatedDoseReferenceDoseValue { get { return new DicomTag(0x3008, 0x0076); } }
-        public static DicomTag StartMeterset { get { return new DicomTag(0x3008, 0x0078); } }
-        public static DicomTag EndMeterset { get { return new DicomTag(0x3008, 0x007a); } }
-        public static DicomTag ReferencedMeasuredDoseReferenceSequence { get { return new DicomTag(0x3008, 0x0080); } }
-        public static DicomTag ReferencedMeasuredDoseReferenceNumber { get { return new DicomTag(0x3008, 0x0082); } }
-        public static DicomTag ReferencedCalculatedDoseReferenceSequence { get { return new DicomTag(0x3008, 0x0090); } }
-        public static DicomTag ReferencedCalculatedDoseReferenceNumber { get { return new DicomTag(0x3008, 0x0092); } }
-        public static DicomTag BeamLimitingDeviceLeafPairsSequence { get { return new DicomTag(0x3008, 0x00a0); } }
-        public static DicomTag RecordedWedgeSequence { get { return new DicomTag(0x3008, 0x00b0); } }
-        public static DicomTag RecordedCompensatorSequence { get { return new DicomTag(0x3008, 0x00c0); } }
-        public static DicomTag RecordedBlockSequence { get { return new DicomTag(0x3008, 0x00d0); } }
-        public static DicomTag TreatmentSummaryMeasuredDoseReferenceSequence { get { return new DicomTag(0x3008, 0x00e0); } }
-        public static DicomTag RecordedSourceSequence { get { return new DicomTag(0x3008, 0x0100); } }
-        public static DicomTag SourceSerialNumber { get { return new DicomTag(0x3008, 0x0105); } }
-        public static DicomTag TreatmentSessionApplicationSetupSequence { get { return new DicomTag(0x3008, 0x0110); } }
-        public static DicomTag ApplicationSetupCheck { get { return new DicomTag(0x3008, 0x0116); } }
-        public static DicomTag RecordedBrachyAccessoryDeviceSequence { get { return new DicomTag(0x3008, 0x0120); } }
-        public static DicomTag ReferencedBrachyAccessoryDeviceNumber { get { return new DicomTag(0x3008, 0x0122); } }
-        public static DicomTag RecordedChannelSequence { get { return new DicomTag(0x3008, 0x0130); } }
-        public static DicomTag SpecifiedChannelTotalTime { get { return new DicomTag(0x3008, 0x0132); } }
-        public static DicomTag DeliveredChannelTotalTime { get { return new DicomTag(0x3008, 0x0134); } }
-        public static DicomTag SpecifiedNumberOfPulses { get { return new DicomTag(0x3008, 0x0136); } }
-        public static DicomTag DeliveredNumberOfPulses { get { return new DicomTag(0x3008, 0x0138); } }
-        public static DicomTag SpecifiedPulseRepetitionInterval { get { return new DicomTag(0x3008, 0x013a); } }
-        public static DicomTag DeliveredPulseRepetitionInterval { get { return new DicomTag(0x3008, 0x013c); } }
-        public static DicomTag RecordedSourceApplicatorSequence { get { return new DicomTag(0x3008, 0x0140); } }
-        public static DicomTag ReferencedSourceApplicatorNumber { get { return new DicomTag(0x3008, 0x0142); } }
-        public static DicomTag RecordedChannelShieldSequence { get { return new DicomTag(0x3008, 0x0150); } }
-        public static DicomTag ReferencedChannelShieldNumber { get { return new DicomTag(0x3008, 0x0152); } }
-        public static DicomTag BrachyControlPointDeliveredSequence { get { return new DicomTag(0x3008, 0x0160); } }
-        public static DicomTag SafePositionExitDate { get { return new DicomTag(0x3008, 0x0162); } }
-        public static DicomTag SafePositionExitTime { get { return new DicomTag(0x3008, 0x0164); } }
-        public static DicomTag SafePositionReturnDate { get { return new DicomTag(0x3008, 0x0166); } }
-        public static DicomTag SafePositionReturnTime { get { return new DicomTag(0x3008, 0x0168); } }
-        public static DicomTag CurrentTreatmentStatus { get { return new DicomTag(0x3008, 0x0200); } }
-        public static DicomTag TreatmentStatusComment { get { return new DicomTag(0x3008, 0x0202); } }
-        public static DicomTag FractionGroupSummarySequence { get { return new DicomTag(0x3008, 0x0220); } }
-        public static DicomTag ReferencedFractionNumber { get { return new DicomTag(0x3008, 0x0223); } }
-        public static DicomTag FractionGroupType { get { return new DicomTag(0x3008, 0x0224); } }
-        public static DicomTag BeamStopperPosition { get { return new DicomTag(0x3008, 0x0230); } }
-        public static DicomTag FractionStatusSummarySequence { get { return new DicomTag(0x3008, 0x0240); } }
-        public static DicomTag TreatmentDate { get { return new DicomTag(0x3008, 0x0250); } }
-        public static DicomTag TreatmentTime { get { return new DicomTag(0x3008, 0x0251); } }
-        public static DicomTag RTPlanGroupLength { get { return new DicomTag(0x300a, 0x0000); } }
-        public static DicomTag RTPlanLabel { get { return new DicomTag(0x300a, 0x0002); } }
-        public static DicomTag RTPlanName { get { return new DicomTag(0x300a, 0x0003); } }
-        public static DicomTag RTPlanDescription { get { return new DicomTag(0x300a, 0x0004); } }
-        public static DicomTag RTPlanDate { get { return new DicomTag(0x300a, 0x0006); } }
-        public static DicomTag RTPlanTime { get { return new DicomTag(0x300a, 0x0007); } }
-        public static DicomTag TreatmentProtocols { get { return new DicomTag(0x300a, 0x0009); } }
-        public static DicomTag TreatmentIntent { get { return new DicomTag(0x300a, 0x000a); } }
-        public static DicomTag TreatmentSites { get { return new DicomTag(0x300a, 0x000b); } }
-        public static DicomTag RTPlanGeometry { get { return new DicomTag(0x300a, 0x000c); } }
-        public static DicomTag PrescriptionDescription { get { return new DicomTag(0x300a, 0x000e); } }
-        public static DicomTag DoseReferenceSequence { get { return new DicomTag(0x300a, 0x0010); } }
-        public static DicomTag DoseReferenceNumber { get { return new DicomTag(0x300a, 0x0012); } }
-        public static DicomTag DoseReferenceStructureType { get { return new DicomTag(0x300a, 0x0014); } }
-        public static DicomTag NominalBeamEnergyUnit { get { return new DicomTag(0x300a, 0x0015); } }
-        public static DicomTag DoseReferenceDescription { get { return new DicomTag(0x300a, 0x0016); } }
-        public static DicomTag DoseReferencePointCoordinates { get { return new DicomTag(0x300a, 0x0018); } }
-        public static DicomTag NominalPriorDose { get { return new DicomTag(0x300a, 0x001a); } }
-        public static DicomTag DoseReferenceType { get { return new DicomTag(0x300a, 0x0020); } }
-        public static DicomTag ConstraintWeight { get { return new DicomTag(0x300a, 0x0021); } }
-        public static DicomTag DeliveryWarningDose { get { return new DicomTag(0x300a, 0x0022); } }
-        public static DicomTag DeliveryMaximumDose { get { return new DicomTag(0x300a, 0x0023); } }
-        public static DicomTag TargetMinimumDose { get { return new DicomTag(0x300a, 0x0025); } }
-        public static DicomTag TargetPrescriptionDose { get { return new DicomTag(0x300a, 0x0026); } }
-        public static DicomTag TargetMaximumDose { get { return new DicomTag(0x300a, 0x0027); } }
-        public static DicomTag TargetUnderdoseVolumeFraction { get { return new DicomTag(0x300a, 0x0028); } }
-        public static DicomTag OrganAtRiskFullVolumeDose { get { return new DicomTag(0x300a, 0x002a); } }
-        public static DicomTag OrganAtRiskLimitDose { get { return new DicomTag(0x300a, 0x002b); } }
-        public static DicomTag OrganAtRiskMaximumDose { get { return new DicomTag(0x300a, 0x002c); } }
-        public static DicomTag OrganAtRiskOverdoseVolumeFraction { get { return new DicomTag(0x300a, 0x002d); } }
-        public static DicomTag ToleranceTableSequence { get { return new DicomTag(0x300a, 0x0040); } }
-        public static DicomTag ToleranceTableNumber { get { return new DicomTag(0x300a, 0x0042); } }
-        public static DicomTag ToleranceTableLabel { get { return new DicomTag(0x300a, 0x0043); } }
-        public static DicomTag GantryAngleTolerance { get { return new DicomTag(0x300a, 0x0044); } }
-        public static DicomTag BeamLimitingDeviceAngleTolerance { get { return new DicomTag(0x300a, 0x0046); } }
-        public static DicomTag BeamLimitingDeviceToleranceSequence { get { return new DicomTag(0x300a, 0x0048); } }
-        public static DicomTag BeamLimitingDevicePositionTolerance { get { return new DicomTag(0x300a, 0x004a); } }
-        public static DicomTag PatientSupportAngleTolerance { get { return new DicomTag(0x300a, 0x004c); } }
-        public static DicomTag TableTopEccentricAngleTolerance { get { return new DicomTag(0x300a, 0x004e); } }
-        public static DicomTag TableTopVerticalPositionTolerance { get { return new DicomTag(0x300a, 0x0051); } }
-        public static DicomTag TableTopLongitudinalPositionTolerance { get { return new DicomTag(0x300a, 0x0052); } }
-        public static DicomTag TableTopLateralPositionTolerance { get { return new DicomTag(0x300a, 0x0053); } }
-        public static DicomTag RTPlanRelationship { get { return new DicomTag(0x300a, 0x0055); } }
-        public static DicomTag FractionGroupSequence { get { return new DicomTag(0x300a, 0x0070); } }
-        public static DicomTag FractionGroupNumber { get { return new DicomTag(0x300a, 0x0071); } }
-        public static DicomTag NumberOfFractionsPlanned { get { return new DicomTag(0x300a, 0x0078); } }
-        public static DicomTag NumberOfFractionPatternDigitsPerDay { get { return new DicomTag(0x300a, 0x0079); } }
-        public static DicomTag RepeatFractionCycleLength { get { return new DicomTag(0x300a, 0x007a); } }
-        public static DicomTag FractionPattern { get { return new DicomTag(0x300a, 0x007b); } }
-        public static DicomTag NumberOfBeams { get { return new DicomTag(0x300a, 0x0080); } }
-        public static DicomTag BeamDoseSpecificationPoint { get { return new DicomTag(0x300a, 0x0082); } }
-        public static DicomTag BeamDose { get { return new DicomTag(0x300a, 0x0084); } }
-        public static DicomTag BeamMeterset { get { return new DicomTag(0x300a, 0x0086); } }
-        public static DicomTag NumberOfBrachyApplicationSetups { get { return new DicomTag(0x300a, 0x00a0); } }
-        public static DicomTag BrachyApplicationSetupDoseSpecificationPoint { get { return new DicomTag(0x300a, 0x00a2); } }
-        public static DicomTag BrachyApplicationSetupDose { get { return new DicomTag(0x300a, 0x00a4); } }
-        public static DicomTag BeamSequence { get { return new DicomTag(0x300a, 0x00b0); } }
-        public static DicomTag TreatmentMachineName { get { return new DicomTag(0x300a, 0x00b2); } }
-        public static DicomTag PrimaryDosimeterUnit { get { return new DicomTag(0x300a, 0x00b3); } }
-        public static DicomTag SourceAxisDistance { get { return new DicomTag(0x300a, 0x00b4); } }
-        public static DicomTag BeamLimitingDeviceSequence { get { return new DicomTag(0x300a, 0x00b6); } }
-        public static DicomTag RTBeamLimitingDeviceType { get { return new DicomTag(0x300a, 0x00b8); } }
-        public static DicomTag SourceToBeamLimitingDeviceDistance { get { return new DicomTag(0x300a, 0x00ba); } }
-        public static DicomTag NumberOfLeafJawPairs { get { return new DicomTag(0x300a, 0x00bc); } }
-        public static DicomTag LeafPositionBoundaries { get { return new DicomTag(0x300a, 0x00be); } }
-        public static DicomTag BeamNumber { get { return new DicomTag(0x300a, 0x00c0); } }
-        public static DicomTag BeamName { get { return new DicomTag(0x300a, 0x00c2); } }
-        public static DicomTag BeamDescription { get { return new DicomTag(0x300a, 0x00c3); } }
-        public static DicomTag BeamType { get { return new DicomTag(0x300a, 0x00c4); } }
-        public static DicomTag RadiationType { get { return new DicomTag(0x300a, 0x00c6); } }
-        public static DicomTag HighDoseTechniqueType { get { return new DicomTag(0x300a, 0x00c7); } }
-        public static DicomTag ReferenceImageNumber { get { return new DicomTag(0x300a, 0x00c8); } }
-        public static DicomTag PlannedVerificationImageSequence { get { return new DicomTag(0x300a, 0x00ca); } }
-        public static DicomTag ImagingDeviceSpecificAcquisitionParameters { get { return new DicomTag(0x300a, 0x00cc); } }
-        public static DicomTag TreatmentDeliveryType { get { return new DicomTag(0x300a, 0x00ce); } }
-        public static DicomTag NumberOfWedges { get { return new DicomTag(0x300a, 0x00d0); } }
-        public static DicomTag WedgeSequence { get { return new DicomTag(0x300a, 0x00d1); } }
-        public static DicomTag WedgeNumber { get { return new DicomTag(0x300a, 0x00d2); } }
-        public static DicomTag WedgeType { get { return new DicomTag(0x300a, 0x00d3); } }
-        public static DicomTag WedgeID { get { return new DicomTag(0x300a, 0x00d4); } }
-        public static DicomTag WedgeAngle { get { return new DicomTag(0x300a, 0x00d5); } }
-        public static DicomTag WedgeFactor { get { return new DicomTag(0x300a, 0x00d6); } }
-        public static DicomTag WedgeOrientation { get { return new DicomTag(0x300a, 0x00d8); } }
-        public static DicomTag SourceToWedgeTrayDistance { get { return new DicomTag(0x300a, 0x00da); } }
-        public static DicomTag NumberOfCompensators { get { return new DicomTag(0x300a, 0x00e0); } }
-        public static DicomTag MaterialID { get { return new DicomTag(0x300a, 0x00e1); } }
-        public static DicomTag TotalCompensatorTrayFactor { get { return new DicomTag(0x300a, 0x00e2); } }
-        public static DicomTag CompensatorSequence { get { return new DicomTag(0x300a, 0x00e3); } }
-        public static DicomTag CompensatorNumber { get { return new DicomTag(0x300a, 0x00e4); } }
-        public static DicomTag CompensatorID { get { return new DicomTag(0x300a, 0x00e5); } }
-        public static DicomTag SourceToCompensatorTrayDistance { get { return new DicomTag(0x300a, 0x00e6); } }
-        public static DicomTag CompensatorRows { get { return new DicomTag(0x300a, 0x00e7); } }
-        public static DicomTag CompensatorColumns { get { return new DicomTag(0x300a, 0x00e8); } }
-        public static DicomTag CompensatorPixelSpacing { get { return new DicomTag(0x300a, 0x00e9); } }
-        public static DicomTag CompensatorPosition { get { return new DicomTag(0x300a, 0x00ea); } }
-        public static DicomTag CompensatorTransmissionData { get { return new DicomTag(0x300a, 0x00eb); } }
-        public static DicomTag CompensatorThicknessData { get { return new DicomTag(0x300a, 0x00ec); } }
-        public static DicomTag NumberOfBoli { get { return new DicomTag(0x300a, 0x00ed); } }
-        public static DicomTag CompensatorType { get { return new DicomTag(0x300a, 0x00ee); } }
-        public static DicomTag NumberOfBlocks { get { return new DicomTag(0x300a, 0x00f0); } }
-        public static DicomTag TotalBlockTrayFactor { get { return new DicomTag(0x300a, 0x00f2); } }
-        public static DicomTag BlockSequence { get { return new DicomTag(0x300a, 0x00f4); } }
-        public static DicomTag BlockTrayID { get { return new DicomTag(0x300a, 0x00f5); } }
-        public static DicomTag SourceToBlockTrayDistance { get { return new DicomTag(0x300a, 0x00f6); } }
-        public static DicomTag BlockType { get { return new DicomTag(0x300a, 0x00f8); } }
-        public static DicomTag BlockDivergence { get { return new DicomTag(0x300a, 0x00fa); } }
-        public static DicomTag BlockMountingPosition { get { return new DicomTag(0x300a, 0x00fb); } }
-        public static DicomTag BlockNumber { get { return new DicomTag(0x300a, 0x00fc); } }
-        public static DicomTag BlockName { get { return new DicomTag(0x300a, 0x00fe); } }
-        public static DicomTag BlockThickness { get { return new DicomTag(0x300a, 0x0100); } }
-        public static DicomTag BlockTransmission { get { return new DicomTag(0x300a, 0x0102); } }
-        public static DicomTag BlockNumberOfPoints { get { return new DicomTag(0x300a, 0x0104); } }
-        public static DicomTag BlockData { get { return new DicomTag(0x300a, 0x0106); } }
-        public static DicomTag ApplicatorSequence { get { return new DicomTag(0x300a, 0x0107); } }
-        public static DicomTag ApplicatorID { get { return new DicomTag(0x300a, 0x0108); } }
-        public static DicomTag ApplicatorType { get { return new DicomTag(0x300a, 0x0109); } }
-        public static DicomTag ApplicatorDescription { get { return new DicomTag(0x300a, 0x010a); } }
-        public static DicomTag CumulativeDoseReferenceCoefficient { get { return new DicomTag(0x300a, 0x010c); } }
-        public static DicomTag FinalCumulativeMetersetWeight { get { return new DicomTag(0x300a, 0x010e); } }
-        public static DicomTag NumberOfControlPoints { get { return new DicomTag(0x300a, 0x0110); } }
-        public static DicomTag ControlPointSequence { get { return new DicomTag(0x300a, 0x0111); } }
-        public static DicomTag ControlPointIndex { get { return new DicomTag(0x300a, 0x0112); } }
-        public static DicomTag NominalBeamEnergy { get { return new DicomTag(0x300a, 0x0114); } }
-        public static DicomTag DoseRateSet { get { return new DicomTag(0x300a, 0x0115); } }
-        public static DicomTag WedgePositionSequence { get { return new DicomTag(0x300a, 0x0116); } }
-        public static DicomTag WedgePosition { get { return new DicomTag(0x300a, 0x0118); } }
-        public static DicomTag BeamLimitingDevicePositionSequence { get { return new DicomTag(0x300a, 0x011a); } }
-        public static DicomTag LeafJawPositions { get { return new DicomTag(0x300a, 0x011c); } }
-        public static DicomTag GantryAngle { get { return new DicomTag(0x300a, 0x011e); } }
-        public static DicomTag GantryRotationDirection { get { return new DicomTag(0x300a, 0x011f); } }
-        public static DicomTag BeamLimitingDeviceAngle { get { return new DicomTag(0x300a, 0x0120); } }
-        public static DicomTag BeamLimitingDeviceRotationDirection { get { return new DicomTag(0x300a, 0x0121); } }
-        public static DicomTag PatientSupportAngle { get { return new DicomTag(0x300a, 0x0122); } }
-        public static DicomTag PatientSupportRotationDirection { get { return new DicomTag(0x300a, 0x0123); } }
-        public static DicomTag TableTopEccentricAxisDistance { get { return new DicomTag(0x300a, 0x0124); } }
-        public static DicomTag TableTopEccentricAngle { get { return new DicomTag(0x300a, 0x0125); } }
-        public static DicomTag TableTopEccentricRotationDirection { get { return new DicomTag(0x300a, 0x0126); } }
-        public static DicomTag TableTopVerticalPosition { get { return new DicomTag(0x300a, 0x0128); } }
-        public static DicomTag TableTopLongitudinalPosition { get { return new DicomTag(0x300a, 0x0129); } }
-        public static DicomTag TableTopLateralPosition { get { return new DicomTag(0x300a, 0x012a); } }
-        public static DicomTag IsocenterPosition { get { return new DicomTag(0x300a, 0x012c); } }
-        public static DicomTag SurfaceEntryPoint { get { return new DicomTag(0x300a, 0x012e); } }
-        public static DicomTag SourceToSurfaceDistance { get { return new DicomTag(0x300a, 0x0130); } }
-        public static DicomTag CumulativeMetersetWeight { get { return new DicomTag(0x300a, 0x0134); } }
-        public static DicomTag PatientSetupSequence { get { return new DicomTag(0x300a, 0x0180); } }
-        public static DicomTag PatientSetupNumber { get { return new DicomTag(0x300a, 0x0182); } }
-        public static DicomTag PatientAdditionalPosition { get { return new DicomTag(0x300a, 0x0184); } }
-        public static DicomTag FixationDeviceSequence { get { return new DicomTag(0x300a, 0x0190); } }
-        public static DicomTag FixationDeviceType { get { return new DicomTag(0x300a, 0x0192); } }
-        public static DicomTag FixationDeviceLabel { get { return new DicomTag(0x300a, 0x0194); } }
-        public static DicomTag FixationDeviceDescription { get { return new DicomTag(0x300a, 0x0196); } }
-        public static DicomTag FixationDevicePosition { get { return new DicomTag(0x300a, 0x0198); } }
-        public static DicomTag ShieldingDeviceSequence { get { return new DicomTag(0x300a, 0x01a0); } }
-        public static DicomTag ShieldingDeviceType { get { return new DicomTag(0x300a, 0x01a2); } }
-        public static DicomTag ShieldingDeviceLabel { get { return new DicomTag(0x300a, 0x01a4); } }
-        public static DicomTag ShieldingDeviceDescription { get { return new DicomTag(0x300a, 0x01a6); } }
-        public static DicomTag ShieldingDevicePosition { get { return new DicomTag(0x300a, 0x01a8); } }
-        public static DicomTag SetupTechnique { get { return new DicomTag(0x300a, 0x01b0); } }
-        public static DicomTag SetupTechniqueDescription { get { return new DicomTag(0x300a, 0x01b2); } }
-        public static DicomTag SetupDeviceSequence { get { return new DicomTag(0x300a, 0x01b4); } }
-        public static DicomTag SetupDeviceType { get { return new DicomTag(0x300a, 0x01b6); } }
-        public static DicomTag SetupDeviceLabel { get { return new DicomTag(0x300a, 0x01b8); } }
-        public static DicomTag SetupDeviceDescription { get { return new DicomTag(0x300a, 0x01ba); } }
-        public static DicomTag SetupDeviceParameter { get { return new DicomTag(0x300a, 0x01bc); } }
-        public static DicomTag SetupReferenceDescription { get { return new DicomTag(0x300a, 0x01d0); } }
-        public static DicomTag TableTopVerticalSetupDisplacement { get { return new DicomTag(0x300a, 0x01d2); } }
-        public static DicomTag TableTopLongitudinalSetupDisplacement { get { return new DicomTag(0x300a, 0x01d4); } }
-        public static DicomTag TableTopLateralSetupDisplacement { get { return new DicomTag(0x300a, 0x01d6); } }
-        public static DicomTag BrachyTreatmentTechnique { get { return new DicomTag(0x300a, 0x0200); } }
-        public static DicomTag BrachyTreatmentType { get { return new DicomTag(0x300a, 0x0202); } }
-        public static DicomTag TreatmentMachineSequence { get { return new DicomTag(0x300a, 0x0206); } }
-        public static DicomTag SourceSequence { get { return new DicomTag(0x300a, 0x0210); } }
-        public static DicomTag SourceNumber { get { return new DicomTag(0x300a, 0x0212); } }
-        public static DicomTag SourceType { get { return new DicomTag(0x300a, 0x0214); } }
-        public static DicomTag SourceManufacturer { get { return new DicomTag(0x300a, 0x0216); } }
-        public static DicomTag ActiveSourceDiameter { get { return new DicomTag(0x300a, 0x0218); } }
-        public static DicomTag ActiveSourceLength { get { return new DicomTag(0x300a, 0x021a); } }
-        public static DicomTag SourceEncapsulationNominalThickness { get { return new DicomTag(0x300a, 0x0222); } }
-        public static DicomTag SourceEncapsulationNominalTransmission { get { return new DicomTag(0x300a, 0x0224); } }
-        public static DicomTag SourceIsotopeName { get { return new DicomTag(0x300a, 0x0226); } }
-        public static DicomTag SourceIsotopeHalfLife { get { return new DicomTag(0x300a, 0x0228); } }
-        public static DicomTag ReferenceAirKermaRate { get { return new DicomTag(0x300a, 0x022a); } }
-        public static DicomTag AirKermaRateReferenceDate { get { return new DicomTag(0x300a, 0x022c); } }
-        public static DicomTag AirKermaRateReferenceTime { get { return new DicomTag(0x300a, 0x022e); } }
-        public static DicomTag ApplicationSetupSequence { get { return new DicomTag(0x300a, 0x0230); } }
-        public static DicomTag ApplicationSetupType { get { return new DicomTag(0x300a, 0x0232); } }
-        public static DicomTag ApplicationSetupNumber { get { return new DicomTag(0x300a, 0x0234); } }
-        public static DicomTag ApplicationSetupName { get { return new DicomTag(0x300a, 0x0236); } }
-        public static DicomTag ApplicationSetupManufacturer { get { return new DicomTag(0x300a, 0x0238); } }
-        public static DicomTag TemplateNumber { get { return new DicomTag(0x300a, 0x0240); } }
-        public static DicomTag TemplateType { get { return new DicomTag(0x300a, 0x0242); } }
-        public static DicomTag TemplateName { get { return new DicomTag(0x300a, 0x0244); } }
-        public static DicomTag TotalReferenceAirKerma { get { return new DicomTag(0x300a, 0x0250); } }
-        public static DicomTag BrachyAccessoryDeviceSequence { get { return new DicomTag(0x300a, 0x0260); } }
-        public static DicomTag BrachyAccessoryDeviceNumber { get { return new DicomTag(0x300a, 0x0262); } }
-        public static DicomTag BrachyAccessoryDeviceID { get { return new DicomTag(0x300a, 0x0263); } }
-        public static DicomTag BrachyAccessoryDeviceType { get { return new DicomTag(0x300a, 0x0264); } }
-        public static DicomTag BrachyAccessoryDeviceName { get { return new DicomTag(0x300a, 0x0266); } }
-        public static DicomTag BrachyAccessoryDeviceNominalThickness { get { return new DicomTag(0x300a, 0x026a); } }
-        public static DicomTag BrachyAccessoryDeviceNominalTransmission { get { return new DicomTag(0x300a, 0x026c); } }
-        public static DicomTag ChannelSequence { get { return new DicomTag(0x300a, 0x0280); } }
-        public static DicomTag ChannelNumber { get { return new DicomTag(0x300a, 0x0282); } }
-        public static DicomTag ChannelLength { get { return new DicomTag(0x300a, 0x0284); } }
-        public static DicomTag ChannelTotalTime { get { return new DicomTag(0x300a, 0x0286); } }
-        public static DicomTag SourceMovementType { get { return new DicomTag(0x300a, 0x0288); } }
-        public static DicomTag NumberOfPulses { get { return new DicomTag(0x300a, 0x028a); } }
-        public static DicomTag PulseRepetitionInterval { get { return new DicomTag(0x300a, 0x028c); } }
-        public static DicomTag SourceApplicatorNumber { get { return new DicomTag(0x300a, 0x0290); } }
-        public static DicomTag SourceApplicatorID { get { return new DicomTag(0x300a, 0x0291); } }
-        public static DicomTag SourceApplicatorType { get { return new DicomTag(0x300a, 0x0292); } }
-        public static DicomTag SourceApplicatorName { get { return new DicomTag(0x300a, 0x0294); } }
-        public static DicomTag SourceApplicatorLength { get { return new DicomTag(0x300a, 0x0296); } }
-        public static DicomTag SourceApplicatorManufacturer { get { return new DicomTag(0x300a, 0x0298); } }
-        public static DicomTag SourceApplicatorWallNominalThickness { get { return new DicomTag(0x300a, 0x029c); } }
-        public static DicomTag SourceApplicatorWallNominalTransmission { get { return new DicomTag(0x300a, 0x029e); } }
-        public static DicomTag SourceApplicatorStepSize { get { return new DicomTag(0x300a, 0x02a0); } }
-        public static DicomTag TransferTubeNumber { get { return new DicomTag(0x300a, 0x02a2); } }
-        public static DicomTag TransferTubeLength { get { return new DicomTag(0x300a, 0x02a4); } }
-        public static DicomTag ChannelShieldSequence { get { return new DicomTag(0x300a, 0x02b0); } }
-        public static DicomTag ChannelShieldNumber { get { return new DicomTag(0x300a, 0x02b2); } }
-        public static DicomTag ChannelShieldID { get { return new DicomTag(0x300a, 0x02b3); } }
-        public static DicomTag ChannelShieldName { get { return new DicomTag(0x300a, 0x02b4); } }
-        public static DicomTag ChannelShieldNominalThickness { get { return new DicomTag(0x300a, 0x02b8); } }
-        public static DicomTag ChannelShieldNominalTransmission { get { return new DicomTag(0x300a, 0x02ba); } }
-        public static DicomTag FinalCumulativeTimeWeight { get { return new DicomTag(0x300a, 0x02c8); } }
-        public static DicomTag BrachyControlPointSequence { get { return new DicomTag(0x300a, 0x02d0); } }
-        public static DicomTag ControlPointRelativePosition { get { return new DicomTag(0x300a, 0x02d2); } }
-        public static DicomTag ControlPoint3DPosition { get { return new DicomTag(0x300a, 0x02d4); } }
-        public static DicomTag CumulativeTimeWeight { get { return new DicomTag(0x300a, 0x02d6); } }
-        public static DicomTag CompensatorDivergence { get { return new DicomTag(0x300a, 0x02e0); } }
-        public static DicomTag CompensatorMountingPosition { get { return new DicomTag(0x300a, 0x02e1); } }
-        public static DicomTag SourceToCompensatorDistance { get { return new DicomTag(0x300a, 0x02e2); } }
-        public static DicomTag RTRelationshipGroupLength { get { return new DicomTag(0x300c, 0x0000); } }
-        public static DicomTag ReferencedRTPlanSequence { get { return new DicomTag(0x300c, 0x0002); } }
-        public static DicomTag ReferencedBeamSequence { get { return new DicomTag(0x300c, 0x0004); } }
-        public static DicomTag ReferencedBeamNumber { get { return new DicomTag(0x300c, 0x0006); } }
-        public static DicomTag ReferencedReferenceImageNumber { get { return new DicomTag(0x300c, 0x0007); } }
-        public static DicomTag StartCumulativeMetersetWeight { get { return new DicomTag(0x300c, 0x0008); } }
-        public static DicomTag EndCumulativeMetersetWeight { get { return new DicomTag(0x300c, 0x0009); } }
-        public static DicomTag ReferencedBrachyApplicationSetupSequence { get { return new DicomTag(0x300c, 0x000a); } }
-        public static DicomTag ReferencedBrachyApplicationSetupNumber { get { return new DicomTag(0x300c, 0x000c); } }
-        public static DicomTag ReferencedSourceNumber { get { return new DicomTag(0x300c, 0x000e); } }
-        public static DicomTag ReferencedFractionGroupSequence { get { return new DicomTag(0x300c, 0x0020); } }
-        public static DicomTag ReferencedFractionGroupNumber { get { return new DicomTag(0x300c, 0x0022); } }
-        public static DicomTag ReferencedVerificationImageSequence { get { return new DicomTag(0x300c, 0x0040); } }
-        public static DicomTag ReferencedReferenceImageSequence { get { return new DicomTag(0x300c, 0x0042); } }
-        public static DicomTag ReferencedDoseReferenceSequence { get { return new DicomTag(0x300c, 0x0050); } }
-        public static DicomTag ReferencedDoseReferenceNumber { get { return new DicomTag(0x300c, 0x0051); } }
-        public static DicomTag BrachyReferencedDoseReferenceSequence { get { return new DicomTag(0x300c, 0x0055); } }
-        public static DicomTag ReferencedStructureSetSequence { get { return new DicomTag(0x300c, 0x0060); } }
-        public static DicomTag ReferencedPatientSetupNumber { get { return new DicomTag(0x300c, 0x006a); } }
-        public static DicomTag ReferencedDoseSequence { get { return new DicomTag(0x300c, 0x0080); } }
-        public static DicomTag ReferencedToleranceTableNumber { get { return new DicomTag(0x300c, 0x00a0); } }
-        public static DicomTag ReferencedBolusSequence { get { return new DicomTag(0x300c, 0x00b0); } }
-        public static DicomTag ReferencedWedgeNumber { get { return new DicomTag(0x300c, 0x00c0); } }
-        public static DicomTag ReferencedCompensatorNumber { get { return new DicomTag(0x300c, 0x00d0); } }
-        public static DicomTag ReferencedBlockNumber { get { return new DicomTag(0x300c, 0x00e0); } }
-        public static DicomTag ReferencedControlPointIndex { get { return new DicomTag(0x300c, 0x00f0); } }
-        public static DicomTag RTApprovalGroupLength { get { return new DicomTag(0x300e, 0x0000); } }
-        public static DicomTag ApprovalStatus { get { return new DicomTag(0x300e, 0x0002); } }
-        public static DicomTag ReviewDate { get { return new DicomTag(0x300e, 0x0004); } }
-        public static DicomTag ReviewTime { get { return new DicomTag(0x300e, 0x0005); } }
-        public static DicomTag ReviewerName { get { return new DicomTag(0x300e, 0x0008); } }
-        public static DicomTag ACR_NEMA_TextGroupLength { get { return new DicomTag(0x4000, 0x0000); } }
-        public static DicomTag ACR_NEMA_TextArbitrary { get { return new DicomTag(0x4000, 0x0010); } }
-        public static DicomTag ACR_NEMA_TextComments { get { return new DicomTag(0x4000, 0x4000); } }
-        public static DicomTag ResultsGroupLength { get { return new DicomTag(0x4008, 0x0000); } }
-        public static DicomTag ResultsID { get { return new DicomTag(0x4008, 0x0040); } }
-        public static DicomTag ResultsIDIssuer { get { return new DicomTag(0x4008, 0x0042); } }
-        public static DicomTag ReferencedInterpretationSequence { get { return new DicomTag(0x4008, 0x0050); } }
-        public static DicomTag InterpretationRecordedDate { get { return new DicomTag(0x4008, 0x0100); } }
-        public static DicomTag InterpretationRecordedTime { get { return new DicomTag(0x4008, 0x0101); } }
-        public static DicomTag InterpretationRecorder { get { return new DicomTag(0x4008, 0x0102); } }
-        public static DicomTag ReferenceToRecordedSound { get { return new DicomTag(0x4008, 0x0103); } }
-        public static DicomTag InterpretationTranscriptionDate { get { return new DicomTag(0x4008, 0x0108); } }
-        public static DicomTag InterpretationTranscriptionTime { get { return new DicomTag(0x4008, 0x0109); } }
-        public static DicomTag InterpretationTranscriber { get { return new DicomTag(0x4008, 0x010a); } }
-        public static DicomTag InterpretationText { get { return new DicomTag(0x4008, 0x010b); } }
-        public static DicomTag InterpretationAuthor { get { return new DicomTag(0x4008, 0x010c); } }
-        public static DicomTag InterpretationApproverSequence { get { return new DicomTag(0x4008, 0x0111); } }
-        public static DicomTag InterpretationApprovalDate { get { return new DicomTag(0x4008, 0x0112); } }
-        public static DicomTag InterpretationApprovalTime { get { return new DicomTag(0x4008, 0x0113); } }
-        public static DicomTag PhysicianApprovingInterpretation { get { return new DicomTag(0x4008, 0x0114); } }
-        public static DicomTag InterpretationDiagnosisDescription { get { return new DicomTag(0x4008, 0x0115); } }
-        public static DicomTag InterpretationDiagnosisCodeSequence { get { return new DicomTag(0x4008, 0x0117); } }
-        public static DicomTag ResultsDistributionListSequence { get { return new DicomTag(0x4008, 0x0118); } }
-        public static DicomTag DistributionName { get { return new DicomTag(0x4008, 0x0119); } }
-        public static DicomTag DistributionAddress { get { return new DicomTag(0x4008, 0x011a); } }
-        public static DicomTag InterpretationID { get { return new DicomTag(0x4008, 0x0200); } }
-        public static DicomTag InterpretationIDIssuer { get { return new DicomTag(0x4008, 0x0202); } }
-        public static DicomTag InterpretationTypeID { get { return new DicomTag(0x4008, 0x0210); } }
-        public static DicomTag InterpretationStatusID { get { return new DicomTag(0x4008, 0x0212); } }
-        public static DicomTag Impressions { get { return new DicomTag(0x4008, 0x0300); } }
-        public static DicomTag ResultsComments { get { return new DicomTag(0x4008, 0x4000); } }
-        public static DicomTag MACParametersSequence { get { return new DicomTag(0x4ffe, 0x0001); } }
-        public static DicomTag SharedFunctionalGroupsSequence { get { return new DicomTag(0x5200, 0x9229); } }
-        public static DicomTag PerFrameFunctionalGroupsSequence { get { return new DicomTag(0x5200, 0x9230); } }
-        public static DicomTag WaveformGroupLength { get { return new DicomTag(0x5400, 0x0000); } }
-        public static DicomTag WaveformSequence { get { return new DicomTag(0x5400, 0x0100); } }
-        public static DicomTag ChannelMinimumValue { get { return new DicomTag(0x5400, 0x0110); } }
-        public static DicomTag ChannelMaximumValue { get { return new DicomTag(0x5400, 0x0112); } }
-        public static DicomTag WaveformBitsAllocated { get { return new DicomTag(0x5400, 0x1004); } }
-        public static DicomTag WaveformSampleInterpretation { get { return new DicomTag(0x5400, 0x1006); } }
-        public static DicomTag WaveformPaddingValue { get { return new DicomTag(0x5400, 0x100a); } }
-        public static DicomTag WaveformData { get { return new DicomTag(0x5400, 0x1010); } }
-        public static DicomTag FirstOrderPhaseCorrectionAngle { get { return new DicomTag(0x5600, 0x0010); } }
-        public static DicomTag SpectroscopyData { get { return new DicomTag(0x5600, 0x0020); } }
-        public static DicomTag PixelDataGroupLength { get { return new DicomTag(0x7fe0, 0x0000); } }
-        public static DicomTag PixelData { get { return new DicomTag(0x7fe0, 0x0010); } }
-        public static DicomTag ACR_NEMA_2C_CoefficientsSDVN { get { return new DicomTag(0x7fe0, 0x0020); } }
-        public static DicomTag ACR_NEMA_2C_CoefficientsSDHN { get { return new DicomTag(0x7fe0, 0x0030); } }
-        public static DicomTag ACR_NEMA_2C_CoefficientsSDDN { get { return new DicomTag(0x7fe0, 0x0040); } }
-        public static DicomTag DigitalSignaturesSequence { get { return new DicomTag(0xfffa, 0xfffa); } }
-        public static DicomTag DataSetTrailingPadding { get { return new DicomTag(0xfffc, 0xfffc); } }
-        public static DicomTag Item { get { return new DicomTag(0xfffe, 0xe000); } }
-        public static DicomTag ItemDelimitationItem { get { return new DicomTag(0xfffe, 0xe00d); } }
-        public static DicomTag SequenceDelimitationItem { get { return new DicomTag(0xfffe, 0xe0dd); } }
+        #region Operators
+        /// <summary>
+        /// Implicit cast to a String object, for ease of use.
+        /// </summary>
+        public static implicit operator String(DicomTag myTag)
+        {
+            return myTag.ToString();
+        }
 
-        /*
-        ** Tags where the group/element can vary (repeating tags).
-        ** Number of entries: 83
-        */
-        public static DicomTag CurveGroupLength { get { return new DicomTag(0x5000, 0x0000); } } /* (0x5000-0x50ff,0x0000) */
-        public static DicomTag CurveDimensions { get { return new DicomTag(0x5000, 0x0005); } } /* (0x5000-0x50ff,0x0005) */
-        public static DicomTag NumberOfPoints { get { return new DicomTag(0x5000, 0x0010); } } /* (0x5000-0x50ff,0x0010) */
-        public static DicomTag TypeOfData { get { return new DicomTag(0x5000, 0x0020); } } /* (0x5000-0x50ff,0x0020) */
-        public static DicomTag CurveDescription { get { return new DicomTag(0x5000, 0x0022); } } /* (0x5000-0x50ff,0x0022) */
-        public static DicomTag AxisUnits { get { return new DicomTag(0x5000, 0x0030); } } /* (0x5000-0x50ff,0x0030) */
-        public static DicomTag AxisLabels { get { return new DicomTag(0x5000, 0x0040); } } /* (0x5000-0x50ff,0x0040) */
-        public static DicomTag DataValueRepresentation { get { return new DicomTag(0x5000, 0x0103); } } /* (0x5000-0x50ff,0x0103) */
-        public static DicomTag MinimumCoordinateValue { get { return new DicomTag(0x5000, 0x0104); } } /* (0x5000-0x50ff,0x0104) */
-        public static DicomTag MaximumCoordinateValue { get { return new DicomTag(0x5000, 0x0105); } } /* (0x5000-0x50ff,0x0105) */
-        public static DicomTag CurveRange { get { return new DicomTag(0x5000, 0x0106); } } /* (0x5000-0x50ff,0x0106) */
-        public static DicomTag CurveDataDescriptor { get { return new DicomTag(0x5000, 0x0110); } } /* (0x5000-0x50ff,0x0110) */
-        public static DicomTag CoordinateStartValue { get { return new DicomTag(0x5000, 0x0112); } } /* (0x5000-0x50ff,0x0112) */
-        public static DicomTag CoordinateStepValue { get { return new DicomTag(0x5000, 0x0114); } } /* (0x5000-0x50ff,0x0114) */
-        public static DicomTag CurveActivationLayer { get { return new DicomTag(0x5000, 0x1001); } } /* (0x5000-0x50ff,0x1001) */
-        public static DicomTag AudioType { get { return new DicomTag(0x5000, 0x2000); } } /* (0x5000-0x50ff,0x2000) */
-        public static DicomTag AudioSampleFormat { get { return new DicomTag(0x5000, 0x2002); } } /* (0x5000-0x50ff,0x2002) */
-        public static DicomTag NumberOfChannels { get { return new DicomTag(0x5000, 0x2004); } } /* (0x5000-0x50ff,0x2004) */
-        public static DicomTag NumberOfSamples { get { return new DicomTag(0x5000, 0x2006); } } /* (0x5000-0x50ff,0x2006) */
-        public static DicomTag SampleRate { get { return new DicomTag(0x5000, 0x2008); } } /* (0x5000-0x50ff,0x2008) */
-        public static DicomTag TotalTime { get { return new DicomTag(0x5000, 0x200a); } } /* (0x5000-0x50ff,0x200a) */
-        public static DicomTag AudioSampleData { get { return new DicomTag(0x5000, 0x200c); } } /* (0x5000-0x50ff,0x200c) */
-        public static DicomTag AudioComments { get { return new DicomTag(0x5000, 0x200e); } } /* (0x5000-0x50ff,0x200e) */
-        public static DicomTag CurveLabel { get { return new DicomTag(0x5000, 0x2500); } } /* (0x5000-0x50ff,0x2500) */
-        public static DicomTag CurveReferencedOverlaySequence { get { return new DicomTag(0x5000, 0x2600); } } /* (0x5000-0x50ff,0x2600) */
-        public static DicomTag ReferencedOverlayGroup { get { return new DicomTag(0x5000, 0x2610); } } /* (0x5000-0x50ff,0x2610) */
-        public static DicomTag CurveData { get { return new DicomTag(0x5000, 0x3000); } } /* (0x5000-0x50ff,0x3000) */
-        public static DicomTag OverlayGroupLength { get { return new DicomTag(0x6000, 0x0000); } } /* (0x6000-0x60ff,0x0000) */
-        public static DicomTag OverlayRows { get { return new DicomTag(0x6000, 0x0010); } } /* (0x6000-0x60ff,0x0010) */
-        public static DicomTag OverlayColumns { get { return new DicomTag(0x6000, 0x0011); } } /* (0x6000-0x60ff,0x0011) */
-        public static DicomTag OverlayPlanes { get { return new DicomTag(0x6000, 0x0012); } } /* (0x6000-0x60ff,0x0012) */
-        public static DicomTag NumberOfFramesInOverlay { get { return new DicomTag(0x6000, 0x0015); } } /* (0x6000-0x60ff,0x0015) */
-        public static DicomTag OverlayDescription { get { return new DicomTag(0x6000, 0x0022); } } /* (0x6000-0x60ff,0x0022) */
-        public static DicomTag OverlayType { get { return new DicomTag(0x6000, 0x0040); } } /* (0x6000-0x60ff,0x0040) */
-        public static DicomTag OverlaySubtype { get { return new DicomTag(0x6000, 0x0045); } } /* (0x6000-0x60ff,0x0045) */
-        public static DicomTag OverlayOrigin { get { return new DicomTag(0x6000, 0x0050); } } /* (0x6000-0x60ff,0x0050) */
-        public static DicomTag ImageFrameOrigin { get { return new DicomTag(0x6000, 0x0051); } } /* (0x6000-0x60ff,0x0051) */
-        public static DicomTag OverlayPlaneOrigin { get { return new DicomTag(0x6000, 0x0052); } } /* (0x6000-0x60ff,0x0052) */
-        public static DicomTag OverlayBitsAllocated { get { return new DicomTag(0x6000, 0x0100); } } /* (0x6000-0x60ff,0x0100) */
-        public static DicomTag OverlayBitPosition { get { return new DicomTag(0x6000, 0x0102); } } /* (0x6000-0x60ff,0x0102) */
-        public static DicomTag OverlayActivationLayer { get { return new DicomTag(0x6000, 0x1001); } } /* (0x6000-0x60ff,0x1001) */
-        public static DicomTag ROIArea { get { return new DicomTag(0x6000, 0x1301); } } /* (0x6000-0x60ff,0x1301) */
-        public static DicomTag ROIMean { get { return new DicomTag(0x6000, 0x1302); } } /* (0x6000-0x60ff,0x1302) */
-        public static DicomTag ROIStandardDeviation { get { return new DicomTag(0x6000, 0x1303); } } /* (0x6000-0x60ff,0x1303) */
-        public static DicomTag OverlayLabel { get { return new DicomTag(0x6000, 0x1500); } } /* (0x6000-0x60ff,0x1500) */
-        public static DicomTag OverlayData { get { return new DicomTag(0x6000, 0x3000); } } /* (0x6000-0x60ff,0x3000) */
-        public static DicomTag ACR_NEMA_2C_VariablePixelDataGroupLength { get { return new DicomTag(0x7f00, 0x0000); } } /* (0x7f00-0x7fff,0x0000) */
-        public static DicomTag PrivateGroupLength { get { return new DicomTag(0x0009, 0x0000); } } /* (0x0009-o-0xffff,0x0000) */
-        public static DicomTag PrivateGroupLengthToEnd { get { return new DicomTag(0x0009, 0x0001); } } /* (0x0009-o-0xffff,0x0001) */
-        public static DicomTag ACR_NEMA_2C_OverlayCompressionCode { get { return new DicomTag(0x6000, 0x0060); } } /* (0x6000-0x60ff,0x0060) */
-        public static DicomTag ACR_NEMA_2C_OverlayCompressionOriginator { get { return new DicomTag(0x6000, 0x0061); } } /* (0x6000-0x60ff,0x0061) */
-        public static DicomTag ACR_NEMA_2C_OverlayCompressionLabel { get { return new DicomTag(0x6000, 0x0062); } } /* (0x6000-0x60ff,0x0062) */
-        public static DicomTag ACR_NEMA_2C_OverlayCompressionDescription { get { return new DicomTag(0x6000, 0x0063); } } /* (0x6000-0x60ff,0x0063) */
-        public static DicomTag ACR_NEMA_2C_OverlayCompressionStepPointers { get { return new DicomTag(0x6000, 0x0066); } } /* (0x6000-0x60ff,0x0066) */
-        public static DicomTag ACR_NEMA_2C_OverlayRepeatInterval { get { return new DicomTag(0x6000, 0x0068); } } /* (0x6000-0x60ff,0x0068) */
-        public static DicomTag ACR_NEMA_2C_OverlayBitsGrouped { get { return new DicomTag(0x6000, 0x0069); } } /* (0x6000-0x60ff,0x0069) */
-        public static DicomTag ACR_NEMA_2C_VariablePixelData { get { return new DicomTag(0x7f00, 0x0010); } } /* (0x7f00-0x7fff,0x0010) */
-        public static DicomTag ACR_NEMA_2C_VariableNextDataGroup { get { return new DicomTag(0x7f00, 0x0011); } } /* (0x7f00-0x7fff,0x0011) */
-        public static DicomTag ACR_NEMA_2C_VariableCoefficientsSDVN { get { return new DicomTag(0x7f00, 0x0020); } } /* (0x7f00-0x7fff,0x0020) */
-        public static DicomTag ACR_NEMA_2C_VariableCoefficientsSDHN { get { return new DicomTag(0x7f00, 0x0030); } } /* (0x7f00-0x7fff,0x0030) */
-        public static DicomTag ACR_NEMA_2C_VariableCoefficientsSDDN { get { return new DicomTag(0x7f00, 0x0040); } } /* (0x7f00-0x7fff,0x0040) */
-        public static DicomTag PrivateCreator { get { return new DicomTag(0x0009, 0x0010); } } /* (0x0009-o-0xffff,0x0010-u-0x00ff) */
-        public static DicomTag IllegalGroupLength { get { return new DicomTag(0x0001, 0x0000); } } /* (0x0001-o-0x0007,0x0000) */
-        public static DicomTag IllegalGroupLengthToEnd { get { return new DicomTag(0x0001, 0x0001); } } /* (0x0001-o-0x0007,0x0001) */
-        public static DicomTag IllegalPrivateCreator { get { return new DicomTag(0x0001, 0x0010); } } /* (0x0001-o-0x0007,0x0010-u-0x00ff) */
-        public static DicomTag GenericGroupLength { get { return new DicomTag(0x0000, 0x0000); } } /* (0x0000-u-0xffff,0x0000) */
-        public static DicomTag GenericGroupLengthToEnd { get { return new DicomTag(0x0000, 0x0001); } } /* (0x0000-u-0xffff,0x0001) */
-        public static DicomTag OverlayDescriptorGray { get { return new DicomTag(0x6000, 0x1100); } } /* (0x6000-0x60ff,0x1100) */
-        public static DicomTag OverlayDescriptorRed { get { return new DicomTag(0x6000, 0x1101); } } /* (0x6000-0x60ff,0x1101) */
-        public static DicomTag OverlayDescriptorGreen { get { return new DicomTag(0x6000, 0x1102); } } /* (0x6000-0x60ff,0x1102) */
-        public static DicomTag OverlayDescriptorBlue { get { return new DicomTag(0x6000, 0x1103); } } /* (0x6000-0x60ff,0x1103) */
-        public static DicomTag OverlayGray { get { return new DicomTag(0x6000, 0x1200); } } /* (0x6000-0x60ff,0x1200) */
-        public static DicomTag OverlayRed { get { return new DicomTag(0x6000, 0x1201); } } /* (0x6000-0x60ff,0x1201) */
-        public static DicomTag OverlayGreen { get { return new DicomTag(0x6000, 0x1202); } } /* (0x6000-0x60ff,0x1202) */
-        public static DicomTag OverlayBlue { get { return new DicomTag(0x6000, 0x1203); } } /* (0x6000-0x60ff,0x1203) */
-        public static DicomTag ACR_NEMA_SourceImageID { get { return new DicomTag(0x0020, 0x3100); } } /* (0x0020,0x3100-0x31ff) */
-        public static DicomTag ACR_NEMA_OverlayFormat { get { return new DicomTag(0x6000, 0x0110); } } /* (0x6000-0x60ff,0x0110) */
-        public static DicomTag ACR_NEMA_OverlayLocation { get { return new DicomTag(0x6000, 0x0200); } } /* (0x6000-0x60ff,0x0200) */
-        public static DicomTag ACR_NEMA_OverlayComments { get { return new DicomTag(0x6000, 0x4000); } } /* (0x6000-0x60ff,0x4000) */
-        public static DicomTag ACR_NEMA_2C_OverlayCodeLabel { get { return new DicomTag(0x6000, 0x0800); } } /* (0x6000-0x60ff,0x0800) */
-        public static DicomTag ACR_NEMA_2C_OverlayNumberOfTables { get { return new DicomTag(0x6000, 0x0802); } } /* (0x6000-0x60ff,0x0802) */
-        public static DicomTag ACR_NEMA_2C_OverlayCodeTableLocation { get { return new DicomTag(0x6000, 0x0803); } } /* (0x6000-0x60ff,0x0803) */
-        public static DicomTag ACR_NEMA_2C_OverlayBitsForCodeWord { get { return new DicomTag(0x6000, 0x0804); } } /* (0x6000-0x60ff,0x0804) */
+        /// <summary>
+        /// Equality operator.
+        /// </summary>
+        public static bool operator ==(DicomTag t1, DicomTag t2)
+        {
+            if ((object)t1 == null && (object)t2 == null)
+                return true;
+            if ((object)t1 == null || (object)t2 == null)
+                return false;
+            return t1.TagValue == t2.TagValue;
+        }
 
-        private uint _id = 0;
+        /// <summary>
+        /// Not equal operator.
+        /// </summary>
+        public static bool operator !=(DicomTag t1, DicomTag t2)
+        {
+            return !(t1 == t2);
+        }
+
+        /// <summary>
+        /// Less than operator.
+        /// </summary>
+        public static bool operator <(DicomTag t1, DicomTag t2)
+        {
+            if ((object)t1 == null || (object)t2 == null)
+                return false;
+            if (t1.Group == t2.Group && t1.Element < t2.Element)
+                return true;
+            if (t1.Group < t2.Group)
+                return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Greater than operator.
+        /// </summary>
+        public static bool operator >(DicomTag t1, DicomTag t2)
+        {
+            return !(t1 < t2);
+        }
+
+        /// <summary>
+        /// Less than or equal to operator.
+        /// </summary>
+        public static bool operator <=(DicomTag t1, DicomTag t2)
+        {
+            if ((object)t1 == null || (object)t2 == null)
+                return false;
+            if (t1.Group == t2.Group && t1.Element <= t2.Element)
+                return true;
+            if (t1.Group < t2.Group)
+                return true;
+            return false;
+        }
+
+        /// <summary>
+        /// Greater than or equal to operator.
+        /// </summary>
+        public static bool operator >=(DicomTag t1, DicomTag t2)
+        {
+            if ((object)t1 == null || (object)t2 == null)
+                return false;
+            if (t1.Group == t2.Group && t1.Element >= t2.Element)
+                return true;
+            if (t1.Group > t2.Group)
+                return true;
+            return false;
+        }
+        #endregion
     }
 }
+

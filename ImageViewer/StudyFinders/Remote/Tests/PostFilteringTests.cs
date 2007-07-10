@@ -94,9 +94,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote.Tests
 		{
 			QueryResult result = new QueryResult();
 			if (modalityResult != null)
-				result.Add(DicomTag.ModalitiesInStudy, modalityResult);
+				result.Add(DicomTags.ModalitiesinStudy, modalityResult);
 			
-			result.Add(DicomTag.StudyInstanceUID, studyUID);
+			result.Add(DicomTags.StudyInstanceUID, studyUID);
 			return result;
 		}
 	}

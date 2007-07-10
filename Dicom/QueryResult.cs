@@ -10,7 +10,7 @@ namespace ClearCanvas.Dicom
     /// Since QueryResult implements IDictionary, it's possible to use an enumerator to extract
     /// every single tag in the result, as well as provide a key to extract a particular tag.
     /// </summary>
-    public class QueryResult : IDictionary<DicomTag, string>
+    public class QueryResult : IDictionary<uint, string>
     {
         /// <summary>
         /// Gets the Study Instance UID as a Uid object.
@@ -19,8 +19,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTag.StudyInstanceUID))
-                    return new Uid(_internalDictionary[DicomTag.StudyInstanceUID]);
+                if (this.ContainsTag(DicomTags.StudyInstanceUID))
+                    return new Uid(_internalDictionary[DicomTags.StudyInstanceUID]);
                 else
                     return new Uid();
             }
@@ -33,8 +33,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTag.PatientId))
-                    return new PatientId(_internalDictionary[DicomTag.PatientId]);
+                if (this.ContainsTag(DicomTags.PatientID))
+                    return new PatientId(_internalDictionary[DicomTags.PatientID]);
                 else
                     return new PatientId();
             }
@@ -47,8 +47,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTag.PatientsName))
-                    return new PersonName(_internalDictionary[DicomTag.PatientsName]);
+                if (this.ContainsTag(DicomTags.PatientsName))
+                    return new PersonName(_internalDictionary[DicomTags.PatientsName]);
                 else
                     return new PersonName();
             }
@@ -61,8 +61,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTag.ModalitiesInStudy))
-                    return _internalDictionary[DicomTag.ModalitiesInStudy];
+                if (this.ContainsTag(DicomTags.ModalitiesinStudy))
+                    return _internalDictionary[DicomTags.ModalitiesinStudy];
                 else
                     return "";
             }
@@ -75,8 +75,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTag.StudyDescription))
-                    return _internalDictionary[DicomTag.StudyDescription];
+                if (this.ContainsTag(DicomTags.StudyDescription))
+                    return _internalDictionary[DicomTags.StudyDescription];
                 else
                     return "";
             }
@@ -89,8 +89,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTag.StudyDate))
-                    return _internalDictionary[DicomTag.StudyDate];
+                if (this.ContainsTag(DicomTags.StudyDate))
+                    return _internalDictionary[DicomTags.StudyDate];
                 else
                     return "";
             }
@@ -103,8 +103,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTag.StudyTime))
-                    return _internalDictionary[DicomTag.StudyTime];
+                if (this.ContainsTag(DicomTags.StudyTime))
+                    return _internalDictionary[DicomTags.StudyTime];
                 else
                     return "";
             }
@@ -117,8 +117,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTag.AccessionNumber))
-                    return _internalDictionary[DicomTag.AccessionNumber];
+                if (this.ContainsTag(DicomTags.AccessionNumber))
+                    return _internalDictionary[DicomTags.AccessionNumber];
                 else
                     return "";
             }
@@ -131,8 +131,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTag.Modality))
-                    return _internalDictionary[DicomTag.Modality];
+                if (this.ContainsTag(DicomTags.Modality))
+                    return _internalDictionary[DicomTags.Modality];
                 else
                     return "";
             }
@@ -145,8 +145,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTag.SeriesInstanceUID))
-                    return new Uid(_internalDictionary[DicomTag.SeriesInstanceUID]);
+                if (this.ContainsTag(DicomTags.SeriesInstanceUID))
+                    return new Uid(_internalDictionary[DicomTags.SeriesInstanceUID]);
                 else
                     return new Uid();
             }
@@ -159,8 +159,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTag.SeriesDescription))
-                    return _internalDictionary[DicomTag.SeriesDescription];
+                if (this.ContainsTag(DicomTags.SeriesDescription))
+                    return _internalDictionary[DicomTags.SeriesDescription];
                 else
                     return "";
             }
@@ -173,8 +173,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTag.SeriesNumber))
-                    return _internalDictionary[DicomTag.SeriesNumber];
+                if (this.ContainsTag(DicomTags.SeriesNumber))
+                    return _internalDictionary[DicomTags.SeriesNumber];
                 else
                     return "";
             }
@@ -187,9 +187,9 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (ContainsTag(DicomTag.NumberOfStudyRelatedInstances))
+                if (ContainsTag(DicomTags.NumberofStudyRelatedInstances))
                 {
-                    String temp = _internalDictionary[DicomTag.NumberOfStudyRelatedInstances];
+                    String temp = _internalDictionary[DicomTags.NumberofStudyRelatedInstances];
                     uint output;
                     if (uint.TryParse(temp, out output))
                         return output;
@@ -205,9 +205,9 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTag.NumberOfSeriesRelatedInstances))
+                if (this.ContainsTag(DicomTags.NumberofSeriesRelatedInstances))
                 {
-                    String temp = _internalDictionary[DicomTag.NumberOfSeriesRelatedInstances];
+                    String temp = _internalDictionary[DicomTags.NumberofSeriesRelatedInstances];
                     uint output;
                     if (uint.TryParse(temp, out output))
                         return output;
@@ -220,8 +220,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTag.SpecificCharacterSet))
-                    return _internalDictionary[DicomTag.SpecificCharacterSet];
+                if (this.ContainsTag(DicomTags.SpecificCharacterSet))
+                    return _internalDictionary[DicomTags.SpecificCharacterSet];
                 else
                     return "";
             }
@@ -230,9 +230,9 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Gets the whole collection of DICOM tags in this query result.
         /// </summary>
-        public ICollection<DicomTag> DicomTags
+        public ICollection<uint> DicomTagCollection
         {
-            get { return (this as IDictionary<DicomTag, string>).Keys; }
+            get { return (this as IDictionary<uint, string>).Keys; }
         }
 
         /// <summary>
@@ -240,16 +240,16 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <param name="key">The key representing the tag the client wants to obtain.</param>
         /// <returns>The string representation of that value.</returns>
-        public string this[DicomTag key]
+        public string this[uint key]
         {
             get 
             {
                 if (this.ContainsTag(key))
-                    return (this as IDictionary<DicomTag, string>)[key];
+                    return (this as IDictionary<uint, string>)[key];
                 else
                     return "";
             }
-            set { (this as IDictionary<DicomTag, string>)[key] = value; }
+            set { (this as IDictionary<uint, string>)[key] = value; }
         }   
 
         /// <summary>
@@ -257,9 +257,9 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <param name="key">The key of the tag.</param>
         /// <param name="value">The value of the tag.</param>
-        public void Add(DicomTag key, string value)
+        public void Add(uint key, string value)
         {
-            (this as IDictionary<DicomTag, string>).Add(key, value);
+            (this as IDictionary<uint, string>).Add(key, value);
         }
 
         /// <summary>
@@ -267,7 +267,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public void Clear()
         {
-            (this as ICollection<KeyValuePair<DicomTag, string>>).Clear();
+            (this as ICollection<KeyValuePair<uint, string>>).Clear();
         }
 
         /// <summary>
@@ -275,9 +275,9 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <param name="tag">The tag to check.</param>
         /// <returns>True - tag exists; False - tag does not exist.</returns>
-        public Boolean ContainsTag(DicomTag tag)
+        public Boolean ContainsTag(uint tag)
         {
-            return (this as IDictionary<DicomTag, string>).ContainsKey(tag);
+            return (this as IDictionary<uint, string>).ContainsKey(tag);
         }
 
         /// <summary>
@@ -292,41 +292,41 @@ namespace ClearCanvas.Dicom
                 return StudyInstanceUid.ToString();
         }
 
-        private Dictionary<DicomTag, string> _internalDictionary = new Dictionary<DicomTag,string>();
+        private Dictionary<uint, string> _internalDictionary = new Dictionary<uint, string>();
 
         #region IDictionary<DicomTag,string> Members
 
-        void IDictionary<DicomTag, string>.Add(DicomTag key, string value)
+        void IDictionary<uint, string>.Add(uint key, string value)
         {
             _internalDictionary.Add(key, value);
         }
 
-        bool IDictionary<DicomTag, string>.ContainsKey(DicomTag key)
+        bool IDictionary<uint, string>.ContainsKey(uint key)
         {
             return _internalDictionary.ContainsKey(key);
         }
 
-        ICollection<DicomTag> IDictionary<DicomTag, string>.Keys
+        ICollection<uint> IDictionary<uint, string>.Keys
         {
             get { return _internalDictionary.Keys; }
         }
 
-        bool IDictionary<DicomTag, string>.Remove(DicomTag key)
+        bool IDictionary<uint, string>.Remove(uint key)
         {
             return _internalDictionary.Remove(key);
         }
 
-        bool IDictionary<DicomTag, string>.TryGetValue(DicomTag key, out string value)
+        bool IDictionary<uint, string>.TryGetValue(uint key, out string value)
         {
             return _internalDictionary.TryGetValue(key, out value);
         }
 
-        ICollection<string> IDictionary<DicomTag, string>.Values
+        ICollection<string> IDictionary<uint, string>.Values
         {
             get { return _internalDictionary.Values; }
         }
 
-        string IDictionary<DicomTag, string>.this[DicomTag key]
+        string IDictionary<uint, string>.this[uint key]
         {
             get
             {
@@ -340,50 +340,50 @@ namespace ClearCanvas.Dicom
 
         #endregion
 
-        #region ICollection<KeyValuePair<DicomTag,string>> Members
+        #region ICollection<KeyValuePair<uint,string>> Members
 
-        void ICollection<KeyValuePair<DicomTag, string>>.Add(KeyValuePair<DicomTag, string> item)
+        void ICollection<KeyValuePair<uint, string>>.Add(KeyValuePair<uint, string> item)
         {
-            (_internalDictionary as ICollection<KeyValuePair<DicomTag, string>>).Add(item);
+            (_internalDictionary as ICollection<KeyValuePair<uint, string>>).Add(item);
         }
 
-        void ICollection<KeyValuePair<DicomTag, string>>.Clear()
+        void ICollection<KeyValuePair<uint, string>>.Clear()
         {
-            (_internalDictionary as ICollection<KeyValuePair<DicomTag, string>>).Clear();
+            (_internalDictionary as ICollection<KeyValuePair<uint, string>>).Clear();
         }
 
-        bool ICollection<KeyValuePair<DicomTag, string>>.Contains(KeyValuePair<DicomTag, string> item)
+        bool ICollection<KeyValuePair<uint, string>>.Contains(KeyValuePair<uint, string> item)
         {
-            return (_internalDictionary as ICollection<KeyValuePair<DicomTag, string>>).Contains(item);
+            return (_internalDictionary as ICollection<KeyValuePair<uint, string>>).Contains(item);
         }
 
-        void ICollection<KeyValuePair<DicomTag, string>>.CopyTo(KeyValuePair<DicomTag, string>[] array, int arrayIndex)
+        void ICollection<KeyValuePair<uint, string>>.CopyTo(KeyValuePair<uint, string>[] array, int arrayIndex)
         {
-            (_internalDictionary as ICollection<KeyValuePair<DicomTag, string>>).CopyTo(array, arrayIndex);
+            (_internalDictionary as ICollection<KeyValuePair<uint, string>>).CopyTo(array, arrayIndex);
         }
 
-        int ICollection<KeyValuePair<DicomTag, string>>.Count
+        int ICollection<KeyValuePair<uint, string>>.Count
         {
-            get { return (_internalDictionary as ICollection<KeyValuePair<DicomTag, string>>).Count; }
+            get { return (_internalDictionary as ICollection<KeyValuePair<uint, string>>).Count; }
         }
 
-        bool ICollection<KeyValuePair<DicomTag, string>>.IsReadOnly
+        bool ICollection<KeyValuePair<uint, string>>.IsReadOnly
         {
-            get { return (_internalDictionary as ICollection<KeyValuePair<DicomTag, string>>).IsReadOnly; }
+            get { return (_internalDictionary as ICollection<KeyValuePair<uint, string>>).IsReadOnly; }
         }
 
-        bool ICollection<KeyValuePair<DicomTag, string>>.Remove(KeyValuePair<DicomTag, string> item)
+        bool ICollection<KeyValuePair<uint, string>>.Remove(KeyValuePair<uint, string> item)
         {
-            return (_internalDictionary as ICollection<KeyValuePair<DicomTag, string>>).Remove(item);
+            return (_internalDictionary as ICollection<KeyValuePair<uint, string>>).Remove(item);
         }
 
         #endregion
 
-        #region IEnumerable<KeyValuePair<DicomTag,string>> Members
+        #region IEnumerable<KeyValuePair<uint,string>> Members
 
-        IEnumerator<KeyValuePair<DicomTag, string>> IEnumerable<KeyValuePair<DicomTag, string>>.GetEnumerator()
+        IEnumerator<KeyValuePair<uint, string>> IEnumerable<KeyValuePair<uint, string>>.GetEnumerator()
         {
-            return (_internalDictionary as ICollection<KeyValuePair<DicomTag, string>>).GetEnumerator();
+            return (_internalDictionary as ICollection<KeyValuePair<uint, string>>).GetEnumerator();
         }
 
         #endregion

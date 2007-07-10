@@ -118,10 +118,14 @@ namespace ClearCanvas.Dicom.Tests
             Assert.IsTrue(results.Count > 0);
 
             foreach (QueryResult qr in results)
-            {   
-                foreach (DicomTag dicomTag in qr.DicomTags)
+            {
+                foreach (uint dicomTag in qr.DicomTagCollection)
                 {
-                    Console.WriteLine("{0} - {1}", dicomTag.ToString(), qr[dicomTag]);
+                    DicomTag tag = DicomTagDictionary.Instance[dicomTag];
+                    if (tag != null)
+                        Console.WriteLine("{0} - {1}", tag.ToString(), qr[dicomTag]);
+                    else
+                        Console.WriteLine("{0} - {1}", dicomTag, qr[dicomTag]);
                 }
                 Console.WriteLine("Patient's Name: {0}", qr.PatientsName);
                 Console.WriteLine("Patient ID: {0}", qr.PatientId);
@@ -147,9 +151,13 @@ namespace ClearCanvas.Dicom.Tests
 
             foreach (QueryResult qr in results)
             {
-                foreach (DicomTag dicomTag in qr.DicomTags)
+                foreach (uint dicomTag in qr.DicomTagCollection)
                 {
-                    Console.WriteLine("{0} - {1}", dicomTag.ToString(), qr[dicomTag]);
+                    DicomTag tag = DicomTagDictionary.Instance[dicomTag];
+                    if (tag != null)
+                        Console.WriteLine("{0} - {1}", tag.ToString(), qr[dicomTag]);
+                    else
+                        Console.WriteLine("{0} - {1}", dicomTag, qr[dicomTag]);
                 }
                 Console.WriteLine("Patient's Name: {0}", qr.PatientsName);
                 Console.WriteLine("Patient ID: {0}", qr.PatientId);
@@ -200,9 +208,13 @@ namespace ClearCanvas.Dicom.Tests
 
             foreach (QueryResult qr in results)
             {
-                foreach (DicomTag dicomTag in qr.DicomTags)
+                foreach (uint dicomTag in qr.DicomTagCollection)
                 {
-                    Console.WriteLine("{0} - {1}", dicomTag.ToString(), qr[dicomTag]);
+                    DicomTag tag = DicomTagDictionary.Instance[dicomTag];
+                    if (tag != null)
+                        Console.WriteLine("{0} - {1}", tag.ToString(), qr[dicomTag]);
+                    else
+                        Console.WriteLine("{0} - {1}", dicomTag, qr[dicomTag]);
                 }
                 Console.WriteLine("Patient's Name: {0}", qr.PatientsName);
                 Console.WriteLine("Patient ID: {0}", qr.PatientId);
@@ -228,9 +240,13 @@ namespace ClearCanvas.Dicom.Tests
 
             foreach (QueryResult qr in results)
             {
-                foreach (DicomTag dicomTag in qr.DicomTags)
+                foreach (uint dicomTag in qr.DicomTagCollection)
                 {
-                    Console.WriteLine("{0} - {1}", dicomTag.ToString(), qr[dicomTag]);
+                    DicomTag tag = DicomTagDictionary.Instance[dicomTag];
+                    if (tag != null)
+                        Console.WriteLine("{0} - {1}", tag.ToString(), qr[dicomTag]);
+                    else
+                        Console.WriteLine("{0} - {1}", dicomTag, qr[dicomTag]);
                 }
                 Console.WriteLine("Patient's Name: {0}", qr.PatientsName);
                 Console.WriteLine("Patient ID: {0}", qr.PatientId);
@@ -255,10 +271,14 @@ namespace ClearCanvas.Dicom.Tests
             Assert.IsTrue(results.Count > 0);
 
             foreach (QueryResult qr in results)
-            {   
-                foreach (DicomTag dicomTag in qr.DicomTags)
+            {
+                foreach (uint dicomTag in qr.DicomTagCollection)
                 {
-                    Console.WriteLine("{0} - {1}", dicomTag.ToString(), qr[dicomTag]);
+                    DicomTag tag = DicomTagDictionary.Instance[dicomTag];
+                    if (tag != null)
+                        Console.WriteLine("{0} - {1}", tag.ToString(), qr[dicomTag]);
+                    else
+                        Console.WriteLine("{0} - {1}", dicomTag, qr[dicomTag]);
                 }
             }
         }
@@ -282,9 +302,13 @@ namespace ClearCanvas.Dicom.Tests
 
             foreach (QueryResult qr in results)
             {
-                foreach (DicomTag dicomTag in qr.DicomTags)
+                foreach (uint dicomTag in qr.DicomTagCollection)
                 {
-                    Console.WriteLine("{0} - {1}", dicomTag.ToString(), qr[dicomTag]);
+                    DicomTag tag = DicomTagDictionary.Instance[dicomTag];
+                    if (tag != null)
+                        Console.WriteLine("{0} - {1}", tag.ToString(), qr[dicomTag]);
+                    else
+                        Console.WriteLine("{0} - {1}", dicomTag, qr[dicomTag]);
                 }
             }
         }
@@ -372,9 +396,13 @@ namespace ClearCanvas.Dicom.Tests
 	   public static void QueryResultReceivedEventHandler(object source, QueryResultReceivedEventArgs args)
         {
             Console.WriteLine("Beg of QueryResultReceivedEventHandler-------------");
-            foreach (DicomTag tag in args.Result.DicomTags)
+            foreach (uint dicomTag in args.Result.DicomTagCollection)
             {
-                Console.WriteLine("{0} - {1}", tag.ToString(), args.Result[tag]);
+                DicomTag tag = DicomTagDictionary.Instance[dicomTag];
+                if (tag != null)
+                    Console.WriteLine("{0} - {1}", tag.ToString(), args.Result[dicomTag]);
+                else
+                    Console.WriteLine("{0} - {1}", dicomTag, args.Result[dicomTag]);
             }
             Console.WriteLine("End of QueryResultReceivedEventHandler-------------");
         }
@@ -384,9 +412,13 @@ namespace ClearCanvas.Dicom.Tests
             Console.WriteLine("Beg of QueryCompletedEventHandler-------------");
             foreach (QueryResult qr in args.Results)
             {
-                foreach (DicomTag dicomTag in qr.DicomTags)
+                foreach (uint dicomTag in qr.DicomTagCollection)
                 {
-                    Console.WriteLine("{0} - {1}", dicomTag.ToString(), qr[dicomTag]);
+                    DicomTag tag = DicomTagDictionary.Instance[dicomTag];
+                    if (tag != null)
+                        Console.WriteLine("{0} - {1}", tag.ToString(), qr[dicomTag]);
+                    else
+                        Console.WriteLine("{0} - {1}", dicomTag, qr[dicomTag]);
                 }
             }
             Console.WriteLine("End of QueryCompletedEventHandler-------------");

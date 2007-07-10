@@ -258,7 +258,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 			IDicomDictionary queryDictionary = DataAccessLayer.GetIDicomDictionary(DicomDictionary.DefaultQueryDictionaryName);
 
-			foreach (DicomTag tag in queryKey.DicomTags)
+			foreach (uint tag in queryKey.DicomTagCollection)
 			{
 				if (queryKey[tag].Length > 0)
 				{
@@ -269,10 +269,10 @@ namespace ClearCanvas.Dicom.DataStore
 						continue;
 
 					StringBuilder nextCriteria = new StringBuilder();
-					if (tag.Equals(DicomTag.ModalitiesInStudy))
+					if (tag.Equals(DicomTags.ModalitiesinStudy))
 					{
 						//special case for modalities in study since it's not actually in the study table.
-						AppendModalitiesInStudyQuery(queryKey[DicomTag.ModalitiesInStudy], nextCriteria);
+						AppendModalitiesInStudyQuery(queryKey[DicomTags.ModalitiesinStudy], nextCriteria);
 					}
 					else
 					{
@@ -343,8 +343,7 @@ namespace ClearCanvas.Dicom.DataStore
 							continue;
 
 						DictionaryEntry col = resultsDictionary.GetColumn(new TagName(fieldName));
-						DicomTag tag = new DicomTag(col.Path.GetLastPathElementAsInt32());
-						result.Add(tag, fieldValue.ToString());
+                        result.Add(col.Path.GetLastPathElementAsInt32(), fieldValue.ToString());
 					}
 				}
 
@@ -353,7 +352,7 @@ namespace ClearCanvas.Dicom.DataStore
 					setModalities[series.Modality] = series.Modality;
 
 				string modalities = VMStringConverter.ToDicomStringArray<string>(setModalities.Keys);
-				result.Add(DicomTag.ModalitiesInStudy, modalities);
+				result.Add(DicomTags.ModalitiesinStudy, modalities);
 
 				results.Add(result);
 			}

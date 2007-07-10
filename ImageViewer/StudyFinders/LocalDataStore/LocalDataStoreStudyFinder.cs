@@ -29,15 +29,15 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 			Platform.CheckForNullReference(queryParams, "queryParams");
 
             QueryKey queryKey = new QueryKey();
-            queryKey.Add(DicomTag.PatientId, queryParams["PatientId"]);
-            queryKey.Add(DicomTag.AccessionNumber, queryParams["AccessionNumber"]);
-            queryKey.Add(DicomTag.PatientsName, queryParams["PatientsName"]);
-            queryKey.Add(DicomTag.StudyDate, queryParams["StudyDate"]);
-            queryKey.Add(DicomTag.StudyDescription, queryParams["StudyDescription"]);
-            queryKey.Add(DicomTag.PatientsBirthDate, "");
-            queryKey.Add(DicomTag.ModalitiesInStudy, queryParams["ModalitiesInStudy"]);
-            queryKey.Add(DicomTag.SpecificCharacterSet, "");
-			queryKey.Add(DicomTag.StudyInstanceUID, queryParams["StudyInstanceUid"]);
+            queryKey.Add(DicomTags.PatientID, queryParams["PatientId"]);
+            queryKey.Add(DicomTags.AccessionNumber, queryParams["AccessionNumber"]);
+            queryKey.Add(DicomTags.PatientsName, queryParams["PatientsName"]);
+            queryKey.Add(DicomTags.StudyDate, queryParams["StudyDate"]);
+            queryKey.Add(DicomTags.StudyDescription, queryParams["StudyDescription"]);
+            queryKey.Add(DicomTags.PatientsBirthDate, "");
+            queryKey.Add(DicomTags.ModalitiesinStudy, queryParams["ModalitiesInStudy"]);
+            queryKey.Add(DicomTags.SpecificCharacterSet, "");
+			queryKey.Add(DicomTags.StudyInstanceUID, queryParams["StudyInstanceUid"]);
 
             ReadOnlyQueryResultCollection results = Query(queryKey);
             if (null == results)
@@ -50,7 +50,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
                 item.SpecificCharacterSet = result.SpecificCharacterSet;
                 item.PatientId = result.PatientId.ToString();
                 item.PatientsName = result.PatientsName;
-                item.PatientsBirthDate = result[DicomTag.PatientsBirthDate];
+                item.PatientsBirthDate = result[DicomTags.PatientsBirthDate];
                 item.StudyDate = result.StudyDate;
                 item.StudyDescription = result.StudyDescription;
                 item.ModalitiesInStudy = result.ModalitiesInStudy;

@@ -716,5 +716,23 @@ namespace ClearCanvas.Dicom {
                 return ResourceManager.GetString("ExceptionPoorlyFormattedDateRange", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The type being set is not compatible with the value representation of the tag..
+        /// </summary>
+        public static string InvalidType {
+            get {
+                return ResourceManager.GetString("InvalidType", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Value Representatoin (VR)  selected was invalid for the tag..
+        /// </summary>
+        public static string InvalidVR {
+            get {
+                return ResourceManager.GetString("InvalidVR", resourceCulture);
+            }
+        }
     }
 }

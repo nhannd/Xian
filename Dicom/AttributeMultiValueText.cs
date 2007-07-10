@@ -4,10 +4,9 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Globalization;
 
-using ClearCanvas.ImageServer.Dicom.Exceptions;
-using ClearCanvas.ImageServer.Dicom.IO;
+using ClearCanvas.Dicom.IO;
 
-namespace ClearCanvas.ImageServer.Dicom
+namespace ClearCanvas.Dicom
 {
     #region AttributeMultiValueText
     public abstract class AttributeMultiValueText : AbstractAttribute
@@ -20,16 +19,16 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Constructors
 
-        internal AttributeMultiValueText(uint tag) 
+        internal AttributeMultiValueText(uint tag)
             : base(tag)
         {
-            
+
         }
 
         internal AttributeMultiValueText(DicomTag tag)
             : base(tag)
         {
-            
+
         }
 
         internal AttributeMultiValueText(DicomTag tag, ByteBuffer item)
@@ -90,12 +89,12 @@ namespace ClearCanvas.ImageServer.Dicom
             {
                 if (value == null)
                     value = val;
-                else 
+                else
                     value += "\\" + val;
             }
 
             if (value == null) return "";
-             
+
             return value;
         }
 
@@ -127,7 +126,7 @@ namespace ClearCanvas.ImageServer.Dicom
         {
             get
             {
-                if ((Count == 1) && (_values!=null) && (_values.Length == 0))
+                if ((Count == 1) && (_values != null) && (_values.Length == 0))
                     return true;
                 return false;
             }
@@ -574,14 +573,14 @@ namespace ClearCanvas.ImageServer.Dicom
     #endregion
 
     #region AttributeLO
-        public class AttributeLO : AttributeMultiValueText
+    public class AttributeLO : AttributeMultiValueText
     {
         #region Constructors
 
-        public AttributeLO(uint tag) 
+        public AttributeLO(uint tag)
             : base(tag)
         {
-            
+
         }
 
         public AttributeLO(DicomTag tag)
@@ -604,7 +603,7 @@ namespace ClearCanvas.ImageServer.Dicom
         }
 
 
-        #endregion 
+        #endregion
 
         public override AbstractAttribute Copy()
         {

@@ -77,7 +77,8 @@ namespace ClearCanvas.Dicom.Network
 		private event EventHandler<DicomEventArgs> _storeScuProgressEvent;
 		private object _storeScuProgressEventLock = new object();
 
-		/// Fires when a C-FIND result is received.
+		/// <summary>
+        /// Fires when a C-FIND result is received.
 		/// </summary>
 		private event EventHandler<DicomEventArgs> _queryResultReceivedEvent;
 		private object _queryResultReceivedEventLock = new object();

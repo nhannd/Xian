@@ -341,9 +341,9 @@ namespace ClearCanvas.Dicom.Network
             InitializeStandardCFindDataset(ref cFindDataset, QRLevel.Study);
 
             // set the specific query keys
-            foreach (DicomTag tag in key.DicomTags)
+            foreach (uint tag in key.DicomTagCollection)
             {
-                cFindDataset.putAndInsertString(new DcmTag(tag.Group, tag.Element), key[tag]);
+                cFindDataset.putAndInsertString(new DcmTag((ushort)(tag >> 16), (ushort)(tag & 0xffff)), key[tag]);
             }
  
             ReadOnlyQueryResultCollection results = Query(serverAE, cFindDataset);
@@ -691,6 +691,7 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="cMoveDataset">The dataset containing the parameters for this Retrieve.</param>
         /// <param name="saveDirectory">The path on the local filesystem that will store the
         /// DICOM objects that are received.</param>
+        /// <param name="isAsServiceClassUserOnly"></param>
         protected void Retrieve(ApplicationEntity serverAE, DcmDataset cMoveDataset, string saveDirectory, bool isAsServiceClassUserOnly)
         {
             try
@@ -828,7 +829,7 @@ namespace ClearCanvas.Dicom.Network
 											DcmElement element = OffisDcm.castToDcmElement(item);
 											if (null != element)
 											{
-												queryResult.Add(new DicomTag(element.getGTag(), element.getETag()), element.ToString());
+												queryResult.Add((uint)element.getGTag() << 16 | (uint)element.getETag(), element.ToString());
 											}
 
 											item = responseData.nextInContainer(item);

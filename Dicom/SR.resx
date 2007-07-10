@@ -343,4 +343,10 @@
     <value>Non-DICOM, application-level logic exception or execution failure</value>
     <comment>Used to indicate execution failures that have to do with the intended functionality, rather than technical DICOM problems</comment>
   </data>
+  <data name="InvalidType" xml:space="preserve">
+    <value>The type being set is not compatible with the value representation of the tag.</value>
+  </data>
+  <data name="InvalidVR" xml:space="preserve">
+    <value>The Value Representatoin (VR)  selected was invalid for the tag.</value>
+  </data>
 </root>

@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
-using ClearCanvas.ImageServer.Dicom.Exceptions;
 
-namespace ClearCanvas.ImageServer.Dicom
+
+namespace ClearCanvas.Dicom
 {
     /// <summary>
     /// The AttributeCollection class models an a collection of DICOM attributes.
@@ -78,27 +78,27 @@ namespace ClearCanvas.ImageServer.Dicom
         /// <returns></returns>
         public AbstractAttribute this[uint tag]
         {
-            get 
+            get
             {
                 AbstractAttribute attr = null;
 
                 if (!_attributeList.ContainsKey(tag))
                 {
                     attr = AbstractAttribute.NewAttribute(tag);
-             
+
                     if (attr == null)
                     {
                         throw new DicomException("Invalid tag: " + tag.ToString());// TODO:  Hex formating
                     }
                     _attributeList[tag] = attr;
                 }
-                else 
+                else
                     attr = _attributeList[tag];
 
 
-                return attr; 
+                return attr;
             }
-            set 
+            set
             {
                 if (value == null)
                 {
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageServer.Dicom
                     if (value.Tag.TagValue != tag)
                         throw new DicomException("Tag being set does not match tag in AbstractAttribute");
                     _attributeList[tag] = value;
-                    
+
                 }
             }
         }
@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageServer.Dicom
                 {
                     if (value.Tag.TagValue != tag.TagValue)
                         throw new DicomException("Tag being set does not match tag in AbstractAttribute");
-     
+
                     _attributeList[tag.TagValue] = value;
                 }
             }
@@ -231,7 +231,7 @@ namespace ClearCanvas.ImageServer.Dicom
                 if (!thisAttrib.Equals(compareAttrib))
                     return false;
             }
-           
+
             return true;
         }
 
@@ -289,7 +289,7 @@ namespace ClearCanvas.ImageServer.Dicom
 
         public IEnumerator<AbstractAttribute> GetEnumerator()
         {
-            return _attributeList.Values.GetEnumerator();   
+            return _attributeList.Values.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -352,7 +352,7 @@ namespace ClearCanvas.ImageServer.Dicom
             if (vtype.IsSubclassOf(typeof(AbstractAttribute)))
             {
                 if (elem != null && vtype != elem.GetType())
-                    throw new DicomDataException("Invalid binding type for Element VR!");
+                    throw new DicomException("Invalid binding type for Element VR!");
                 return elem;
             }
             else if (vtype.IsArray)
@@ -375,9 +375,9 @@ namespace ClearCanvas.ImageServer.Dicom
 
                         return array;
                     }
-                    
+
                     if (vtype.GetElementType() != elem.GetValueType())
-                        throw new DicomDataException("Invalid binding type for Element VR!");
+                        throw new DicomException("Invalid binding type for Element VR!");
                     //if (elem.GetValueType() == typeof(DateTime))
                     //    return (elem as AbstractAttribute).GetDateTimes();
                     else
@@ -450,7 +450,7 @@ namespace ClearCanvas.ImageServer.Dicom
                             return elem.Values;
                         }
                         else
-                            throw new DicomDataException("Invalid binding type for Element VR!");
+                            throw new DicomException("Invalid binding type for Element VR!");
                     }
                     else
                     {
@@ -533,11 +533,11 @@ namespace ClearCanvas.ImageServer.Dicom
                     if (vtype.IsArray)
                     {
                         if (vtype.GetElementType() != elem.GetValueType())
-                            throw new DicomDataException("Invalid binding type for Element VR!");
-//                        if (elem.GetValueType() == typeof(DateTime))
-  //                          (elem as AbstractAttribute).SetDateTimes((DateTime[])value);
-    //                    else
-                            elem.Values = (object[])value;
+                            throw new DicomException("Invalid binding type for Element VR!");
+                        //                        if (elem.GetValueType() == typeof(DateTime))
+                        //                          (elem as AbstractAttribute).SetDateTimes((DateTime[])value);
+                        //                    else
+                        elem.Values = (object[])value;
                     }
                     else
                     {
@@ -551,11 +551,11 @@ namespace ClearCanvas.ImageServer.Dicom
                             TransferSyntax ts = (TransferSyntax)value;
                             elem.SetStringValue(ts.UID.UID);
                         }
-                      //  else if (vtype == typeof(DcmDateRange) && elem.GetType().IsSubclassOf(typeof(AbstractAttribute)))
-                      //  {
-                      //      DcmDateRange dr = (DcmDateRange)value;
-                      //      (elem as AbstractAttribute).SetDateTimeRange(dr);
-                      //  }
+                        //  else if (vtype == typeof(DcmDateRange) && elem.GetType().IsSubclassOf(typeof(AbstractAttribute)))
+                        //  {
+                        //      DcmDateRange dr = (DcmDateRange)value;
+                        //      (elem as AbstractAttribute).SetDateTimeRange(dr);
+                        //  }
                         else if (vtype != elem.GetValueType())
                         {
                             if (vtype == typeof(string))
@@ -563,7 +563,7 @@ namespace ClearCanvas.ImageServer.Dicom
                                 elem.SetStringValue((string)value);
                             }
                             else
-                                throw new DicomDataException("Invalid binding type for Element VR!");
+                                throw new DicomException("Invalid binding type for Element VR!");
                         }
                         else
                         {
@@ -630,3 +630,4 @@ namespace ClearCanvas.ImageServer.Dicom
         #endregion
     }
 }
+

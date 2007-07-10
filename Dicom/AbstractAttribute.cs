@@ -2,10 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.ImageServer.Dicom.IO;
-using ClearCanvas.ImageServer.Dicom.Exceptions;
+using ClearCanvas.Dicom.IO;
 
-namespace ClearCanvas.ImageServer.Dicom
+namespace ClearCanvas.Dicom
 {
     /// <summary>
     /// Abstract class representing a DICOM attribute within an attribute collection.
@@ -39,11 +38,11 @@ namespace ClearCanvas.ImageServer.Dicom
         public abstract Object Values { get; set; }
         public abstract AbstractAttribute Copy();
         public abstract void SetStringValue(String stringValue);
-        public abstract Type GetValueType(); 
-        
+        public abstract Type GetValueType();
+
         internal abstract ByteBuffer GetByteBuffer(TransferSyntax syntax);
         internal abstract AbstractAttribute Copy(bool copyBinary);
-        
+
         internal virtual uint CalculateWriteLength(TransferSyntax syntax, DicomWriteOptions options)
         {
             uint length = 4; // element tag
@@ -215,9 +214,9 @@ namespace ClearCanvas.ImageServer.Dicom
                 case "US": return new AttributeUS(tag);
                 case "UT": return new AttributeUT(tag);
             }
-            
+
             return null;
-                    
+
         }
 
         internal static AbstractAttribute NewAttribute(DicomTag tag, ByteBuffer bb)
@@ -355,3 +354,4 @@ namespace ClearCanvas.ImageServer.Dicom
         #endregion
     }
 }
+
