@@ -70,13 +70,14 @@
 	
 	<Target Name="CopyServerFiles">
 		<!-- Copy Server Distribution files -->
-		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" />
-		<Copy SourceFiles="@(SetupDirectory)" DestinationFolder="$(DistributionDirectory)" />
+		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
+		<Copy SourceFiles="@(SetupFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
 		
 		<!-- Copy Server Plugin files -->
-		<MakeDir Condition="!Exists('$(PluginsDirectory)')" Directories="$(PluginsDirectory)" />
-		<Copy SourceFiles="@(EnterprisePluginFiles)" DestinationFolder="$(PluginsDirectory)" />
-		<Copy SourceFiles="@(ModelFiles)" DestinationFolder="$(PluginsDirectory)" />
+		<MakeDir Condition="!Exists('$(PluginsDirectory)')" Directories="$(PluginsDirectory)" ContinueOnError="true" />
+		<Copy SourceFiles="@(EnterprisePluginFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
+		<Copy SourceFiles="@(ModelFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
+		<Copy SourceFiles="@(RisFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
 	</Target>
 	
 </Project>

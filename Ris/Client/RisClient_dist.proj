@@ -6,6 +6,7 @@
 	
 	<PropertyGroup>
 		<DistributionDirectory>$(ProjectDir)\$(OutDir)</DistributionDirectory>		
+		<TrunkDirectory>$(SolutionDir)\..\..</TrunkDirectory>
 		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
 		<JscriptDirectory>$(ProjectDir)\..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
 	</PropertyGroup>
@@ -15,14 +16,19 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<SharedLibraryFiles Include="$(SolutionDir)\$(OutDir)\ClearCanvas.Ris.Client.dll" />
-		<SharedLibraryFiles Include="$(SolutionDir)\View\WinForms\$(OutDir)\ClearCanvas.Ris.Client.View.WinForms.dll" />
-		<SharedLibraryFiles Include="$(SolutionDir)\Admin\$(OutDir)\ClearCanvas.Ris.Client.Admin.dll" />
-		<SharedLibraryFiles Include="$(SolutionDir)\Admin\View\WinForms\$(OutDir)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" />
-		<SharedLibraryFiles Include="$(SolutionDir)\Adt\$(OutDir)\ClearCanvas.Ris.Client.Adt.dll" />
-		<SharedLibraryFiles Include="$(SolutionDir)\Adt\View\WinForms\$(OutDir)\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" />
-		<SharedLibraryFiles Include="$(SolutionDir)\Reporting\$(OutDir)\ClearCanvas.Ris.Client.Reporting.dll" />
-		<SharedLibraryFiles Include="$(SolutionDir)\Reporting\View\WinForms\$(OutDir)\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" />
+		<SharedLibraryFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
+		<SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Common.dll" />
+	</ItemGroup>	
+	
+	<ItemGroup>
+		<ClientModuleFiles Include="$(SolutionDir)\bin\$(Configuration)\ClearCanvas.Ris.Client.dll" />
+		<ClientModuleFiles Include="$(SolutionDir)\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.View.WinForms.dll" />
+		<ClientModuleFiles Include="$(SolutionDir)\Admin\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.dll" />
+		<ClientModuleFiles Include="$(SolutionDir)\Admin\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" />
+		<ClientModuleFiles Include="$(SolutionDir)\Adt\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.dll" />
+		<ClientModuleFiles Include="$(SolutionDir)\Adt\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" />
+		<ClientModuleFiles Include="$(SolutionDir)\Reporting\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.dll" />
+		<ClientModuleFiles Include="$(SolutionDir)\Reporting\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" />
 	</ItemGroup>
 
   <ItemGroup>
@@ -31,11 +37,12 @@
 	
 	<Target Name="CopyClientFiles">
 		<!-- Copy Client files -->
-		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" />
+		<Copy SourceFiles="@(ConfigFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true" />
 		
-		<MakeDir Condition="!Exists('$(PluginsDirectory)')" Directories="$(PluginsDirectory)" />
-		<Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" />
-    <Copy SourceFiles="@(JscriptFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
+		<MakeDir Condition="!Exists('$(PluginsDirectory)')" Directories="$(PluginsDirectory)" ContinueOnError="true" />
+		<Copy SourceFiles="@(SharedLibraryFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
+		<Copy SourceFiles="@(ClientModuleFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
+		<Copy SourceFiles="@(JscriptFiles)" DestinationFolder="$(PluginsDirectory)" ContinueOnError="true" />
 	</Target>
 	
 </Project>
