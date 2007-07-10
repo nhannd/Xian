@@ -59,11 +59,16 @@
 		<ExecutionFiles Include="$(ProjectDir)\bin\$(Configuration)\ClearCanvas.Desktop.Executable.exe.config" />
 	</ItemGroup>
 
+  <!-- Plugin files -->
+  <ItemGroup>
+    <PluginDeleteFiles Include="$(PluginsDirectory)\*.*" />
+  </ItemGroup>
+  
 	<Target Name="Copy files">
 		<Message Text="Executing ClearCanvas post-build step" />
 
 		<!-- Delete contents of plugin directory -->
-		<Delete Files=".\$(PlatformFolderPrefix)\plugins\*.*" ContinueOnError="true"/>
+		<Delete Files="@(PluginDeleteFiles)" ContinueOnError="true"/>
 
 		<!-- Make required directories -->
 		<MakeDir Directories="@(DestinatonDirectories)" ContinueOnError="true"/>
@@ -84,6 +89,6 @@
 		<Copy SourceFiles="@(ExecutionFiles)" DestinationFolder="$(DistributionDirectory)" ContinueOnError="true"/>	
 
 		<!-- Run the solution specific build file -->
-		<MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectDir=$(ProjectDir);OutDir=$(OutDir);Platform=$(Platform)" />
+		<MSBuild Projects="$(SolutionDir)\$(SolutionName)_dist.proj" Properties="SolutionDir=$(SolutionDir);SolutionName=$(SolutionName);Configuration=$(Configuration);ProjectDir=$(ProjectDir);OutDir=$(OutDir);Platform=$(Platform);DistributionDirectory=$(DistributionDirectory);CommonDirectory=$(CommonDirectory);PluginsDirectory=$(PluginsDirectory);LogDirectory=$(LogDirectory)" />
 	</Target>
 </Project>
