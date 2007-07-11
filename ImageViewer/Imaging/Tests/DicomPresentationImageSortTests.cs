@@ -44,10 +44,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			PresentationImageCollection orderedCollection = new PresentationImageCollection();
 			PresentationImageCollection nonOrderedCollection = new PresentationImageCollection();
 
-			MockImageSop junkImageSop = new MockImageSop();
-			junkImageSop.InstanceNumber = 0;
-			junkImageSop.StudyInstanceUID = "123";
-			junkImageSop.SeriesInstanceUID = "1";
+			MockImageSop junkImageSop = NewMockImageSop("123", "1", 0);
 			orderedCollection.Add(new StandardPresentationImage(junkImageSop));
 
 			AppendCollection(NewDicomSeries("123", "1", 1, 25), orderedCollection);
@@ -195,11 +192,19 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 
 		public StandardPresentationImage NewDicomImage(string studyUID, string seriesUID, int instanceNumber)
 		{
+			return new StandardPresentationImage(NewMockImageSop(studyUID, seriesUID, instanceNumber));
+		}
+
+		internal MockImageSop NewMockImageSop(string studyUID, string seriesUID, int instanceNumber)
+		{
 			MockImageSop newImageSop = new MockImageSop();
-			newImageSop.StudyInstanceUID = studyUID;
-			newImageSop.SeriesInstanceUID = seriesUID;
-			newImageSop.InstanceNumber = instanceNumber;
-			return new StandardPresentationImage(newImageSop);
+			IMockImageSopSetters setters = (IMockImageSopSetters)newImageSop;
+
+			setters.StudyInstanceUid = studyUID;
+			setters.SeriesInstanceUid = seriesUID;
+			setters.InstanceNumber = instanceNumber;
+
+			return newImageSop;
 		}
 	}
 }

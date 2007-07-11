@@ -25,15 +25,27 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		public override string TransferSyntaxUID
+		{
+			get
+			{
+				return _realImageSop.TransferSyntaxUID;
+			}
+		}
+
+		public override string SopInstanceUID
+		{
+			get
+			{
+				return _realImageSop.SopInstanceUID;
+			}
+		}
+
 		public override PersonName PatientsName
 		{
 			get
 			{
 				return _realImageSop.PatientsName;
-			}
-			set
-			{
-				_realImageSop.PatientsName = value;
 			}
 		}
 
@@ -43,10 +55,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.PatientId;
 			}
-			set
-			{
-				_realImageSop.PatientId = value;
-			}
 		}
 
 		public override string PatientsBirthDate
@@ -54,10 +62,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.PatientsBirthDate;
-			}
-			set
-			{
-				_realImageSop.PatientsBirthDate = value;
 			}
 		}
 
@@ -67,10 +71,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.PatientsSex;
 			}
-			set
-			{
-				_realImageSop.PatientsSex = value;
-			}
 		}
 
 		public override string StudyInstanceUID
@@ -78,10 +78,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.StudyInstanceUID;
-			}
-			set
-			{
-				_realImageSop.StudyInstanceUID = value;
 			}
 		}
 
@@ -91,10 +87,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.StudyDate;
 			}
-			set
-			{
-				_realImageSop.StudyDate = value;
-			}
 		}
 
 		public override string StudyTime
@@ -102,10 +94,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.StudyTime;
-			}
-			set
-			{
-				_realImageSop.StudyTime = value;
 			}
 		}
 
@@ -115,10 +103,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.ReferringPhysiciansName;
 			}
-			set
-			{
-				_realImageSop.ReferringPhysiciansName = value;
-			}
 		}
 
 		public override string AccessionNumber
@@ -126,10 +110,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.AccessionNumber;
-			}
-			set
-			{
-				_realImageSop.AccessionNumber = value;
 			}
 		}
 
@@ -139,10 +119,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.StudyDescription;
 			}
-			set
-			{
-				_realImageSop.StudyDescription = value;
-			}
 		}
 
 		public override PersonName[] NameOfPhysiciansReadingStudy
@@ -150,10 +126,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.NameOfPhysiciansReadingStudy;
-			}
-			set
-			{
-				_realImageSop.NameOfPhysiciansReadingStudy = value;
 			}
 		}
 
@@ -163,10 +135,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.AdmittingDiagnosesDescription;
 			}
-			set
-			{
-				_realImageSop.AdmittingDiagnosesDescription = value;
-			}
 		}
 
 		public override string PatientsAge
@@ -174,10 +142,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.PatientsAge;
-			}
-			set
-			{
-				_realImageSop.PatientsAge = value;
 			}
 		}
 
@@ -187,10 +151,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.AdditionalPatientsHistory;
 			}
-			set
-			{
-				_realImageSop.AdditionalPatientsHistory = value;
-			}
 		}
 
 		public override string Modality
@@ -198,10 +158,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.Modality;
-			}
-			set
-			{
-				_realImageSop.Modality = value;
 			}
 		}
 
@@ -211,10 +167,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.SeriesInstanceUID;
 			}
-			set
-			{
-				_realImageSop.SeriesInstanceUID = value;
-			}
 		}
 
 		public override int SeriesNumber
@@ -222,10 +174,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.SeriesNumber;
-			}
-			set
-			{
-				_realImageSop.SeriesNumber = value;
 			}
 		}
 
@@ -235,10 +183,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.Laterality;
 			}
-			set
-			{
-				_realImageSop.Laterality = value;
-			}
 		}
 
 		public override string SeriesDate
@@ -246,10 +190,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.SeriesDate;
-			}
-			set
-			{
-				_realImageSop.SeriesDate = value;
 			}
 		}
 
@@ -259,10 +199,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.SeriesTime;
 			}
-			set
-			{
-				_realImageSop.SeriesTime = value;
-			}
 		}
 
 		public override PersonName[] PerformingPhysiciansName
@@ -270,10 +206,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.PerformingPhysiciansName;
-			}
-			set
-			{
-				_realImageSop.PerformingPhysiciansName = value;
 			}
 		}
 
@@ -283,10 +215,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.ProtocolName;
 			}
-			set
-			{
-				_realImageSop.ProtocolName = value;
-			}
 		}
 
 		public override string SeriesDescription
@@ -294,10 +222,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.SeriesDescription;
-			}
-			set
-			{
-				_realImageSop.SeriesDescription = value;
 			}
 		}
 
@@ -307,10 +231,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.OperatorsName;
 			}
-			set
-			{
-				_realImageSop.OperatorsName = value;
-			}
 		}
 
 		public override string BodyPartExamined
@@ -318,10 +238,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.BodyPartExamined;
-			}
-			set
-			{
-				_realImageSop.BodyPartExamined = value;
 			}
 		}
 
@@ -331,10 +247,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.PatientPosition;
 			}
-			set
-			{
-				_realImageSop.PatientPosition = value;
-			}
 		}
 
 		public override string Manufacturer
@@ -342,10 +254,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.Manufacturer;
-			}
-			set
-			{
-				_realImageSop.Manufacturer = value;
 			}
 		}
 
@@ -355,10 +263,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.InstitutionName;
 			}
-			set
-			{
-				_realImageSop.InstitutionName = value;
-			}
 		}
 
 		public override string StationName
@@ -366,10 +270,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.StationName;
-			}
-			set
-			{
-				_realImageSop.StationName = value;
 			}
 		}
 
@@ -379,10 +279,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.InstitutionalDepartmentName;
 			}
-			set
-			{
-				_realImageSop.InstitutionalDepartmentName = value;
-			}
 		}
 
 		public override string ManufacturersModelName
@@ -390,10 +286,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.ManufacturersModelName;
-			}
-			set
-			{
-				_realImageSop.ManufacturersModelName = value;
 			}
 		}
 
@@ -403,10 +295,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.InstanceNumber;
 			}
-			set
-			{
-				_realImageSop.InstanceNumber = value;
-			}
 		}
 
 		public override PatientOrientation PatientOrientation
@@ -414,10 +302,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.PatientOrientation;
-			}
-			set
-			{
-				_realImageSop.PatientOrientation = value;
 			}
 		}
 
@@ -427,10 +311,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.ImageType;
 			}
-			set
-			{
-				_realImageSop.ImageType = value;
-			}
 		}
 
 		public override int AcquisitionNumber
@@ -438,10 +318,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.AcquisitionNumber;
-			}
-			set
-			{
-				_realImageSop.AcquisitionNumber = value;
 			}
 		}
 
@@ -451,10 +327,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.AcquisitionDate;
 			}
-			set
-			{
-				_realImageSop.AcquisitionDate = value;
-			}
 		}
 
 		public override string AcquisitionTime
@@ -462,10 +334,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.AcquisitionTime;
-			}
-			set
-			{
-				_realImageSop.AcquisitionTime = value;
 			}
 		}
 
@@ -475,10 +343,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.AcquisitionDateTime;
 			}
-			set
-			{
-				_realImageSop.AcquisitionDateTime = value;
-			}
 		}
 
 		public override int ImagesInAcquisition
@@ -486,10 +350,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.ImagesInAcquisition;
-			}
-			set
-			{
-				_realImageSop.ImagesInAcquisition = value;
 			}
 		}
 
@@ -499,10 +359,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.ImageComments;
 			}
-			set
-			{
-				_realImageSop.ImageComments = value;
-			}
 		}
 
 		public override string LossyImageCompression
@@ -510,10 +366,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.LossyImageCompression;
-			}
-			set
-			{
-				_realImageSop.LossyImageCompression = value;
 			}
 		}
 
@@ -523,10 +375,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.LossyImageCompressionRatio;
 			}
-			set
-			{
-				_realImageSop.LossyImageCompressionRatio = value;
-			}
 		}
 
 		public override string PresentationLUTShape
@@ -534,10 +382,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.PresentationLUTShape;
-			}
-			set
-			{
-				_realImageSop.PresentationLUTShape = value;
 			}
 		}
 
@@ -547,10 +391,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.PixelSpacing;
 			}
-			set
-			{
-				_realImageSop.PixelSpacing = value;
-			}
 		}
 
 		public override ImageOrientationPatient ImageOrientationPatient
@@ -558,10 +398,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.ImageOrientationPatient;
-			}
-			set
-			{
-				_realImageSop.ImageOrientationPatient = value;
 			}
 		}
 
@@ -571,10 +407,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.ImagePositionPatient;
 			}
-			set
-			{
-				_realImageSop.ImagePositionPatient = value;
-			}
 		}
 
 		public override double SliceThickness
@@ -582,10 +414,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.SliceThickness;
-			}
-			set
-			{
-				_realImageSop.SliceThickness = value;
 			}
 		}
 
@@ -595,10 +423,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.SliceLocation;
 			}
-			set
-			{
-				_realImageSop.SliceLocation = value;
-			}
 		}
 
 		public override PixelAspectRatio PixelAspectRatio
@@ -606,10 +430,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.PixelAspectRatio;
-			}
-			set
-			{
-				_realImageSop.PixelAspectRatio = value;
 			}
 		}
 
@@ -619,10 +439,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.SamplesPerPixel;
 			}
-			set
-			{
-				_realImageSop.SamplesPerPixel = value;
-			}
 		}
 
 		public override PhotometricInterpretation PhotometricInterpretation
@@ -630,10 +446,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.PhotometricInterpretation;
-			}
-			set
-			{
-				_realImageSop.PhotometricInterpretation = value;
 			}
 		}
 
@@ -643,10 +455,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.Rows;
 			}
-			set
-			{
-				_realImageSop.Rows = value;
-			}
 		}
 
 		public override int Columns
@@ -654,10 +462,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.Columns;
-			}
-			set
-			{
-				_realImageSop.Columns = value;
 			}
 		}
 
@@ -667,10 +471,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.BitsAllocated;
 			}
-			set
-			{
-				_realImageSop.BitsAllocated = value;
-			}
 		}
 
 		public override int BitsStored
@@ -678,10 +478,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.BitsStored;
-			}
-			set
-			{
-				_realImageSop.BitsStored = value;
 			}
 		}
 
@@ -691,10 +487,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.HighBit;
 			}
-			set
-			{
-				_realImageSop.HighBit = value;
-			}
 		}
 
 		public override int PixelRepresentation
@@ -702,10 +494,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.PixelRepresentation;
-			}
-			set
-			{
-				_realImageSop.PixelRepresentation = value;
 			}
 		}
 
@@ -723,10 +511,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.PlanarConfiguration;
 			}
-			set
-			{
-				_realImageSop.PlanarConfiguration = value;
-			}
 		}
 
 		public override double RescaleIntercept
@@ -734,10 +518,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.RescaleIntercept;
-			}
-			set
-			{
-				_realImageSop.RescaleIntercept = value;
 			}
 		}
 
@@ -747,10 +527,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.RescaleSlope;
 			}
-			set
-			{
-				_realImageSop.RescaleSlope = value;
-			}
 		}
 
 		public override string RescaleType
@@ -758,10 +534,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.RescaleType;
-			}
-			set
-			{
-				_realImageSop.RescaleType = value;
 			}
 		}
 
@@ -771,10 +543,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.WindowCenterAndWidth;
 			}
-			set
-			{
-				_realImageSop.WindowCenterAndWidth = value;
-			}
 		}
 
 		public override string[] WindowCenterAndWidthExplanation
@@ -782,10 +550,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			get
 			{
 				return _realImageSop.WindowCenterAndWidthExplanation;
-			}
-			set
-			{
-				_realImageSop.WindowCenterAndWidthExplanation = value;
 			}
 		}
 
@@ -832,30 +596,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public override void GetTagArray(DcmTagKey tag, out string val, out bool tagExists)
 		{
 			_realImageSop.GetTagArray(tag, out val, out tagExists);
-		}
-
-		public override string SopInstanceUID
-		{
-			get
-			{
-				return _realImageSop.SopInstanceUID;
-			}
-			set
-			{
-				_realImageSop.SopInstanceUID = value;
-			}
-		}
-
-		public override string TransferSyntaxUID
-		{
-			get
-			{
-				return _realImageSop.TransferSyntaxUID;
-			}
-			set
-			{
-				_realImageSop.TransferSyntaxUID = value;
-			}
 		}
 
 		protected override void Dispose(bool disposing)

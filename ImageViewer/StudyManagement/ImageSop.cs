@@ -9,522 +9,193 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
 	/// <summary>
-	/// A DICOM image SOP.
+	/// A DICOM Image SOP Instance.
 	/// </summary>
 	public abstract class ImageSop : Sop
 	{
-		private static ImageCodecMap _imageCodecMap;
+		#region General Image Module
 
 		/// <summary>
-		/// Gets the underlying native DICOM object.
+		/// Gets the instance number.
 		/// </summary>
-		/// <remarks>
-		/// <para>
-		/// Sometimes, it is necessary to break the image SOP abstraction and expose
-		/// the underlying implementation object, since providing a wrapper for the object
-		/// in <see cref="ImageSop"/> would be prohibitive because of the large number of
-		/// methods that would have to be wrapped.
-		/// </para>
-		/// <para>
-		/// Because <see cref="NativeDicomObject"/> returns an <see cref="Object"/>, it
-		/// needs to be cast to a known class.  Note that if the interface to that
-		/// known class changes at some point in the future, client code may break.
-		/// For this reason, <see cref="NativeDicomObject"/> should be used
-		/// carefully and sparingly.
-		/// </para>
-		/// </remarks>
-        public abstract object NativeDicomObject { get; }
+		public abstract int InstanceNumber { get; }
 
-		// Patient Module
-
-		/// <summary>
-		/// Gets or sets the patient's name.
-		/// </summary>
-		public abstract PersonName PatientsName { get; set; }
-
-		/// <summary>
-		/// Gets or sets the patient ID.
-		/// </summary>
-		public abstract string PatientId { get; set; }
-
-		/// <summary>
-		/// Gets or sets the patient's birthdate.
-		/// </summary>
-		public abstract string PatientsBirthDate { get; set; }
-
-		/// <summary>
-		/// Gets or sets the patient's sex.
-		/// </summary>
-		public abstract string PatientsSex { get; set; }
-
-		// General Study Module
-
-		/// <summary>
-		/// Gets or sets the Study Instance UID.
-		/// </summary>
-		public abstract string StudyInstanceUID { get; set; }
-
-		/// <summary>
-		/// Gets or sets the study date.
-		/// </summary>
-		public abstract string StudyDate { get; set; }
-
-		/// <summary>
-		/// Gets or sets the study time.
-		/// </summary>
-		public abstract string StudyTime { get; set; }
-
-		/// <summary>
-		/// Gets or sets the referring physician's name.
-		/// </summary>
-		public abstract PersonName ReferringPhysiciansName { get; set; }
-
-		/// <summary>
-		/// Gets or sets the accession number.
-		/// </summary>
-		public abstract string AccessionNumber { get; set; }
-
-		/// <summary>
-		/// Gets or sets the study description.
-		/// </summary>
-		public abstract string StudyDescription { get; set; }
-
-		/// <summary>
-		/// Gets or sets the names of physicians reading the study.
-		/// </summary>
-		public abstract PersonName[] NameOfPhysiciansReadingStudy { get; set; }
-
-		// Patient Study Module
-
-		/// <summary>
-		/// Gets or sets the admitting diagnoses descriptions.
-		/// </summary>
-		public abstract string[] AdmittingDiagnosesDescription { get; set; }
-
-		/// <summary>
-		/// Gets or sets the patient's age.
-		/// </summary>
-		public abstract string PatientsAge { get; set; }
-
-		/// <summary>
-		/// Gets or sets the additional patient's history.
-		/// </summary>
-		public abstract string AdditionalPatientsHistory { get; set; }
-
-		// General Series Module
-
-		/// <summary>
-		/// Gets or sets the modality.
-		/// </summary>
-		public abstract string Modality { get; set; }
-
-		/// <summary>
-		/// Gets or sets the Series Instance UID.
-		/// </summary>
-		public abstract string SeriesInstanceUID { get; set; }
-
-		/// <summary>
-		/// Gets or sets the series number.
-		/// </summary>
-		public abstract int SeriesNumber { get; set; }
-
-		/// <summary>
-		/// Gets or sets the laterality.
-		/// </summary>
-		public abstract string Laterality { get; set; }
-
 		/// <summary>
-		/// Gets or sets the series date.
+		/// Gets the patient orientation.
 		/// </summary>
-		public abstract string SeriesDate { get; set; }
+		public abstract PatientOrientation PatientOrientation { get; }
 
 		/// <summary>
-		/// Gets or sets the series time.
+		/// Gets the image type.  The entire Image Type value should be returned as a Dicom string array.
 		/// </summary>
-		public abstract string SeriesTime { get; set; }
+		public abstract string ImageType { get; }
 
 		/// <summary>
-		/// Gets or sets the names of performing physicians.
+		/// Gets the acquisition number.
 		/// </summary>
-		public abstract PersonName[] PerformingPhysiciansName { get; set; }
+		public abstract int AcquisitionNumber { get; }
 
 		/// <summary>
-		/// Gets or sets the protocol name.
+		/// Gets the acquisiton date.
 		/// </summary>
-		public abstract string ProtocolName { get; set;}
+		public abstract string AcquisitionDate { get; }
 
 		/// <summary>
-		/// Gets or sets the series description.
+		/// Gets the acquisition time.
 		/// </summary>
-		public abstract string SeriesDescription { get; set; }
+		public abstract string AcquisitionTime { get; }
 
 		/// <summary>
-		/// Gets or sets the names of operators.
+		/// Gets the acquisition date/time.
 		/// </summary>
-		public abstract PersonName[] OperatorsName { get; set; }
+		public abstract string AcquisitionDateTime { get; }
 
 		/// <summary>
-		/// Gets or sets the body part examined.
+		/// Gets the number of images in the acquisition.
 		/// </summary>
-		public abstract string BodyPartExamined { get; set; }
+		public abstract int ImagesInAcquisition { get; }
 
 		/// <summary>
-		/// Gets or sets the patient position.
+		/// Gets the image comments.
 		/// </summary>
-		public abstract string PatientPosition { get; set; }
+		public abstract string ImageComments { get; }
 
-		// General Equipment Module
-
-		/// <summary>
-		/// Gets or sets the manufacturer.
-		/// </summary>
-		public abstract string Manufacturer { get; set; }
-
-		/// <summary>
-		/// Gets or sets the institution name.
-		/// </summary>
-		public abstract string InstitutionName { get; set; }
-
-		/// <summary>
-		/// Gets or sets the station name.
-		/// </summary>
-		public abstract string StationName { get; set; }
-
-		/// <summary>
-		/// Gets or sets the institutional department name.
-		/// </summary>
-		public abstract string InstitutionalDepartmentName { get; set; }
-
-		/// <summary>
-		/// Gets or sets the manufacturer's model name.
-		/// </summary>
-		public abstract string ManufacturersModelName { get; set; }
-		
-		// General Image Module
-
-		/// <summary>
-		/// Gets or sets the instance number.
-		/// </summary>
-		public abstract int InstanceNumber { get; set; }
-
-		/// <summary>
-		/// Gets or sets the patient orientation.
-		/// </summary>
-		public abstract PatientOrientation PatientOrientation { get; set; }
-
-		/// <summary>
-		/// Gets or sets the image type.
-		/// </summary>
-		public abstract string ImageType { get; set; }
-
-		/// <summary>
-		/// Gets or sets the acquisition number.
-		/// </summary>
-		public abstract int AcquisitionNumber { get; set; }
-
-		/// <summary>
-		/// Gets or sets the acquisiton date.
-		/// </summary>
-		public abstract string AcquisitionDate { get; set; }
-
-		/// <summary>
-		/// Gets or sets the acquisition time.
-		/// </summary>
-		public abstract string AcquisitionTime { get; set; }
-
-		/// <summary>
-		/// Gets or sets the acquisition date/time.
-		/// </summary>
-		public abstract string AcquisitionDateTime { get; set; }
-
-		/// <summary>
-		/// Gets or sets the number of images in the acquisition.
-		/// </summary>
-		public abstract int ImagesInAcquisition { get; set; }
-
-		/// <summary>
-		/// Gets or sets the image comments.
-		/// </summary>
-		public abstract string ImageComments { get; set; }
-
-		/// <summary>
-		/// Gets or sets the lossy image compression.
-		/// </summary>
-		public abstract string LossyImageCompression { get; set; }
-
 		/// <summary>
-		/// Gets or sets the lossy image compression ratio.
+		/// Gets the lossy image compression.
 		/// </summary>
-		public abstract double[] LossyImageCompressionRatio { get; set; }
+		public abstract string LossyImageCompression { get; }
 
 		/// <summary>
-		/// Gets or sets the presentation LUT shape.
+		/// Gets the lossy image compression ratio.
 		/// </summary>
-		public abstract string PresentationLUTShape { get; set; }
-
-		// Image Plane Module
+		public abstract double[] LossyImageCompressionRatio { get; }
 
 		/// <summary>
-		/// Gets or sets the pixel spacing.
+		/// Gets the presentation LUT shape.
 		/// </summary>
-		public abstract PixelSpacing PixelSpacing { get; set; }
+		public abstract string PresentationLUTShape { get; }
 
-		/// <summary>
-		/// Gets or sets the image orientation patient.
-		/// </summary>
-		public abstract ImageOrientationPatient ImageOrientationPatient { get; set; }
+		#endregion
 
-		/// <summary>
-		/// Gets or sets the image position patient.
-		/// </summary>
-		public abstract ImagePositionPatient ImagePositionPatient { get; set; }
+		#region Image Plane Module
 
 		/// <summary>
-		/// Gets or sets the slice thickness.
+		/// Gets the pixel spacing.
 		/// </summary>
-		public abstract double SliceThickness { get; set; }
+		public abstract PixelSpacing PixelSpacing { get; }
 
 		/// <summary>
-		/// Gets or sets the slice location.
+		/// Gets the image orientation patient.
 		/// </summary>
-		public abstract double SliceLocation { get; set; }
+		public abstract ImageOrientationPatient ImageOrientationPatient { get; }
 
 		/// <summary>
-		/// Gets or sets the pixel aspect ratio.
+		/// Gets the image position patient.
 		/// </summary>
-		public abstract PixelAspectRatio PixelAspectRatio { get; set; }
+		public abstract ImagePositionPatient ImagePositionPatient { get; }
 
-		// Image Pixel Module
-
 		/// <summary>
-		/// Gets or sets the samples per pixel.
+		/// Gets the slice thickness.
 		/// </summary>
-		public abstract int SamplesPerPixel { get; set; }
+		public abstract double SliceThickness { get; }
 
 		/// <summary>
-		/// Gets or sets the photometric interpretation.
+		/// Gets the slice location.
 		/// </summary>
-		public abstract PhotometricInterpretation PhotometricInterpretation { get; set; }
+		public abstract double SliceLocation { get; }
 
 		/// <summary>
-		/// Gets or sets the number of rows.
+		/// Gets the pixel aspect ratio.
 		/// </summary>
-		public abstract int Rows { get; set; }
+		public abstract PixelAspectRatio PixelAspectRatio { get; }
 
-		/// <summary>
-		/// Gets or sets the number of columns.
-		/// </summary>
-		public abstract int Columns { get; set; }
+		#endregion
 
-		/// <summary>
-		/// Gets or sets the number of bits allocated.
-		/// </summary>
-		public abstract int BitsAllocated { get; set; }
+		#region Image Pixel Module
 
 		/// <summary>
-		/// Gets or sets the number of bits stored.
+		/// Gets the samples per pixel.
 		/// </summary>
-		public abstract int BitsStored { get; set; }
+		public abstract int SamplesPerPixel { get; }
 
 		/// <summary>
-		/// Gets or sets the high bit.
+		/// Gets the photometric interpretation.
 		/// </summary>
-		public abstract int HighBit { get; set; }
+		public abstract PhotometricInterpretation PhotometricInterpretation { get; }
 
 		/// <summary>
-		/// Gets or sets the pixel representation.
+		/// Gets the number of rows.
 		/// </summary>
-		public abstract int PixelRepresentation { get; set; }
+		public abstract int Rows { get; }
 
 		/// <summary>
-		/// Gets or sets the planar configuration.
+		/// Gets the number of columns.
 		/// </summary>
-		public abstract int PlanarConfiguration { get; set; }
-
-		// Modality LUT Module
+		public abstract int Columns { get; }
 
 		/// <summary>
-		/// Gets or sets the rescale intercept.
+		/// Gets the number of bits allocated.
 		/// </summary>
-		public abstract double RescaleIntercept { get; set; }
+		public abstract int BitsAllocated { get; }
 
 		/// <summary>
-		/// Gets or sets the rescale slope.
+		/// Gets the number of bits stored.
 		/// </summary>
-		public abstract double RescaleSlope { get; set; }
+		public abstract int BitsStored { get; }
 
 		/// <summary>
-		/// Gets or sets the rescale type.
+		/// Gets the high bit.
 		/// </summary>
-		public abstract string RescaleType { get; set; }
+		public abstract int HighBit { get; }
 
-		// VOI LUT Module
-
 		/// <summary>
-		/// Gets or sets the window width and center.
+		/// Gets the pixel representation.
 		/// </summary>
-		public abstract Window[] WindowCenterAndWidth { get; set; }
+		public abstract int PixelRepresentation { get; }
 
 		/// <summary>
-		/// Gets or sets the window width and center explanation.
+		/// Gets the planar configuration.
 		/// </summary>
-		public abstract string[] WindowCenterAndWidthExplanation { get; set; }
-
+		public abstract int PlanarConfiguration { get; }
 
 		/// <summary>
 		/// Gets the raw pixel data.
 		/// </summary>
 		public abstract byte[] PixelData { get; }
 
-		/// <summary>
-		/// Gets a DICOM tag (16 bit, unsigned).
-		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="val"></param>
-		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out ushort val, out bool tagExists);
+		#endregion
+
+		#region Modality LUT Module
 
 		/// <summary>
-		/// Gets a DICOM tag with value multiplicity (16 bit, unsigned).
+		/// Gets the rescale intercept.
 		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="val"></param>
-		/// <param name="position"></param>
-		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out ushort val, uint position, out bool tagExists);
+		public abstract double RescaleIntercept { get; }
 
 		/// <summary>
-		/// Gets a DICOM tag (integer).
+		/// Gets the rescale slope.
 		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="val"></param>
-		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out int val, out bool tagExists);
+		public abstract double RescaleSlope { get; }
 
 		/// <summary>
-		/// Gets a DICOM tag with value multiplicity (integer).
+		/// Gets the rescale type.
 		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="val"></param>
-		/// <param name="position"></param>
-		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out int val, uint position, out bool tagExists);
+		public abstract string RescaleType { get; }
+
+		#endregion
+
+		#region VOI LUT Module
 
 		/// <summary>
-		/// Gets a DICOM tag (double).
+		/// Gets the window width and center.
 		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="val"></param>
-		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out double val, out bool tagExists);
+		public abstract Window[] WindowCenterAndWidth { get; }
 
 		/// <summary>
-		/// Gets a DICOM tag with value multiplicity (double).
+		/// Gets the window width and center explanation.
 		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="val"></param>
-		/// <param name="position"></param>
-		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out double val, uint position, out bool tagExists);
+		public abstract string[] WindowCenterAndWidthExplanation { get; }
 
-		/// <summary>
-		/// Gets a DICOM tag (string).
-		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="val"></param>
-		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out string val, out bool tagExists);
-
-		/// <summary>
-		/// Gets a DICOM tag with value multiplicity (string).
-		/// </summary>
-		/// <param name="tag"></param>
-		/// <param name="val"></param>
-		/// <param name="position"></param>
-		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out string val, uint position, out bool tagExists);
-
-		public abstract void GetTagArray(DcmTagKey tag, out string val, out bool tagExists);
-
-		/// <summary>
-		/// Gets the pixel spacing appropriate to the modality.
-		/// </summary>
-		/// <param name="pixelSpacingX"></param>
-		/// <param name="pixelSpacingY"></param>
-		/// <remarks>
-		/// For projection based modalities (i.e., CR, DX and MG), Imager Pixel Spacing is
-		/// returned as the pixel spacing.  For all other modalities, the standard
-		/// Pixel Spacing is returned.
-		/// </remarks>
-		public void GetModalityPixelSpacing(out double pixelSpacingX, out double pixelSpacingY)
-		{
-			if (String.Compare(this.Modality, "CR", true) == 0 ||
-				String.Compare(this.Modality, "DX", true) == 0 ||
-				String.Compare(this.Modality, "MG", true) == 0)
-			{
-				bool tagExists;
-				this.GetTag(Dcm.ImagerPixelSpacing, out pixelSpacingY, 0, out tagExists);
-
-				if (!tagExists)
-				{
-					pixelSpacingX = double.NaN;
-					pixelSpacingY = double.NaN;
-					return;
-				}
-
-				this.GetTag(Dcm.ImagerPixelSpacing, out pixelSpacingX, 1, out tagExists);
-			}
-			else
-			{
-				pixelSpacingX = this.PixelSpacing.Row;
-				pixelSpacingY = this.PixelSpacing.Column;
-			}
-		}
-
-		/// <summary>
-		/// Decompresses pixel data.
-		/// </summary>
-		/// <param name="compressedPixelData">The compressed pixel data.</param>
-		/// <remarks>
-		/// This method should be called by the subclass's <see cref="PixelData"/> 
-		/// property.
-		/// </remarks>
-		protected byte[] DecompressPixelData(byte[] compressedPixelData)
-		{
-			if (_imageCodecMap == null)
-				_imageCodecMap = new ImageCodecMap();
-
-			if (!_imageCodecMap.IsTransferSyntaxSupported(this.TransferSyntaxUID))
-				throw new Exception("Transfer syntax not supported.");
-
-			byte[] uncompressedPixelData;
-
-			try
-			{
-				uncompressedPixelData = _imageCodecMap[this.TransferSyntaxUID].Decode(
-					compressedPixelData,
-					this.Rows,
-					this.Columns,
-					this.BitsAllocated,
-					this.BitsStored,
-					this.PixelRepresentation,
-					PhotometricInterpretationHelper.GetString(this.PhotometricInterpretation),
-					this.SamplesPerPixel,
-					this.PlanarConfiguration,
-					null);
-			}
-			catch (Exception e)
-			{
-				Platform.Log(e);
-				throw new Exception("Unable to decode pixel data.", e);
-			}
-
-			return uncompressedPixelData;
-		}
-
-		public override string ToString()
-		{
-			return this.SopInstanceUID;
-		}
+		#endregion
 	}
 }

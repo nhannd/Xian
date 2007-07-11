@@ -243,6 +243,7 @@
       <DependentUpon>StandardModalitySettings.settings</DependentUpon>
     </Compile>
     <Compile Include="StudyManagement\ICacheableSop.cs" />
+    <Compile Include="StudyManagement\ImageSopHelper.cs" />
     <Compile Include="StudyManagement\ImageSopProxy.cs" />
     <Compile Include="StudyManagement\LocalImageLoader.cs">
       <SubType>Code</SubType>

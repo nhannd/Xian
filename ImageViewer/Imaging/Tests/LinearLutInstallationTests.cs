@@ -82,10 +82,11 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double expectedWindowCenter)
 		{
 			MockImageSop imageSop = new MockImageSop();
-			
-			imageSop.PixelRepresentation = pixelRepresentation;
-			imageSop.BitsStored = bitsStored;
-			imageSop.WindowCenterAndWidth = new Window[] { new Window(windowWidth, windowCenter) };
+			IMockImageSopSetters setters = (IMockImageSopSetters)imageSop;
+
+			setters.PixelRepresentation = pixelRepresentation;
+			setters.BitsStored = bitsStored;
+			setters.WindowCenterAndWidth = new Window[] { new Window(windowWidth, windowCenter) };
 
 			StandardPresentationImage image = new StandardPresentationImage(imageSop);
 

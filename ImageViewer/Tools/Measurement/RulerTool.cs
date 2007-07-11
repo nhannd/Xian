@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			double pixelSpacingX;
 			double pixelSpacingY;
 
-			image.ImageSop.GetModalityPixelSpacing(out pixelSpacingX, out pixelSpacingY);
+			ImageSopHelper.GetModalityPixelSpacing(image.ImageSop, out pixelSpacingX, out pixelSpacingY);
 
 			bool pixelSpacingInvalid =  pixelSpacingX <= float.Epsilon ||
 										pixelSpacingY <= float.Epsilon ||

@@ -33,20 +33,39 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
         private ImageSopInstance DataStoreImageSopInstance
         {
             get { return _dataStoreImageSopInstance; }
-            set { throw new Exception("The method or operation is not implemented.");; }
         }
 
         private ClearCanvas.Dicom.DataStore.Study DataStoreStudy
         {
             get { return _dataStoreStudy; }
-            set { throw new Exception("The method or operation is not implemented."); }
         }
 
         private ClearCanvas.Dicom.DataStore.Series DataStoreSeries
         {
             get { return _dataStoreSeries; }
-            set { throw new Exception("The method or operation is not implemented."); }
         }
+
+		public override string TransferSyntaxUID
+		{
+			get
+			{
+				if (this.DataStoreImageSopInstance.TransferSyntaxUid != null)
+					return this.DataStoreImageSopInstance.TransferSyntaxUid;
+				else
+					return "";
+			}
+		}
+
+		public override string SopInstanceUID
+		{
+			get
+			{
+				if (this.DataStoreImageSopInstance.SopInstanceUid != null)
+					return this.DataStoreImageSopInstance.SopInstanceUid;
+				else
+					return "";
+			}
+		}
 
 		public override PersonName PatientsName
 		{
@@ -57,7 +76,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return new PersonName("");
             }
-            set { throw new Exception("The method or operation is not implemented."); }
 		}
 
         public override string PatientId
@@ -69,8 +87,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return "";
             }
-
-            set { throw new Exception("The method or operation is not implemented."); }
         }
 
 		public override string PatientsBirthDate
@@ -82,7 +98,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return "";
             }
-            set { throw new Exception("The method or operation is not implemented."); }
 		}
 
 		public override string PatientsSex
@@ -94,7 +109,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return "";
             }
-            set { throw new Exception("The method or operation is not implemented."); }
 		}
 
 		public override string StudyInstanceUID
@@ -106,7 +120,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return "";
             }
-            set { throw new Exception("The method or operation is not implemented."); }
 		}
 
 		public override string StudyDate
@@ -118,7 +131,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return "";
             }
-            set { throw new Exception("The method or operation is not implemented."); }
 		}
 
 		public override string StudyTime
@@ -130,7 +142,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
 					return "";
             }
-            set { throw new Exception("The method or operation is not implemented."); }
         }
 
 		public override string AccessionNumber
@@ -142,7 +153,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else 
                     return "";
             }
-            set { throw new Exception("The method or operation is not implemented."); }
 		}
 
 		public override string StudyDescription
@@ -154,8 +164,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return "";
             }
-
-            set { throw new Exception("The method or operation is not implemented."); }
 		}
 
 		public override string Modality
@@ -167,7 +175,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return "";
             }
-            set { throw new Exception("The method or operation is not implemented."); }
 		}
 
 		public override string SeriesInstanceUID
@@ -179,7 +186,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return "";
             }
-            set { throw new Exception("The method or operation is not implemented."); }
 		}
 
 		public override int SeriesNumber
@@ -188,7 +194,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             {
                 return DataStoreSeries.SeriesNumber;
             }
-            set { throw new Exception("The method or operation is not implemented."); }
 		}
 
 		public override string SeriesDescription
@@ -200,7 +205,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 				else
 					return "";
 			}
-			set { throw new Exception("The method or operation is not implemented."); }
 		}
 
 		public override string Laterality
@@ -212,7 +216,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return "";
             }
-            set { throw new Exception("The method or operation is not implemented."); }
 		}
 
 
@@ -221,10 +224,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			get
 			{
     			return DataStoreImageSopInstance.InstanceNumber;
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
 			}
 		}
 
@@ -237,8 +236,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 				else
 					return new PixelSpacing(-1.0, -1.0);
             }
-            set { throw new Exception("The method or operation is not implemented."); }
-       
 		}
 
         public override PixelAspectRatio PixelAspectRatio
@@ -250,8 +247,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return new PixelAspectRatio(1.0, 1.0);
             }
-            set { throw new Exception("The method or operation is not implemented."); }
-
         }
 
 		public override int SamplesPerPixel
@@ -263,7 +258,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return -1;
             }
-            set { throw new Exception("The method or operation is not implemented."); }
 		}
 
 		public override PhotometricInterpretation PhotometricInterpretation
@@ -272,7 +266,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 			{
                 return this.DataStoreImageSopInstance.PhotometricInterpretation;
 			}
-            set { throw new Exception("The method or operation is not implemented."); }
 		}
 
 		public override int Rows
@@ -284,10 +277,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return -1;
             }
-            set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override int Columns
@@ -299,10 +288,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return -1;
             }
-            set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override int BitsAllocated
@@ -314,10 +299,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return -1;
             }
-            set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override int BitsStored
@@ -329,10 +310,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return -1;
             }
-            set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override int HighBit
@@ -344,19 +321,11 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return -1;
             }
-            set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override int PixelRepresentation
 		{
             get { return this.DataStoreImageSopInstance.PixelRepresentation; }
-            set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override int PlanarConfiguration
@@ -369,10 +338,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return -1;
             }
-            set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override double RescaleIntercept
@@ -381,10 +346,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             {
                 return this.DataStoreImageSopInstance.RescaleIntercept;
             }
-            set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override double RescaleSlope
@@ -396,10 +357,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
                 else
                     return double.NaN;
             }
-            set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override Window[]  WindowCenterAndWidth
@@ -416,42 +373,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 				
 				return windowCentersAndWidths.ToArray();
             }
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
-
-		public override string SopInstanceUID
-		{
-            get 
-            {
-                if (this.DataStoreImageSopInstance.SopInstanceUid != null)
-                    return this.DataStoreImageSopInstance.SopInstanceUid;
-                else
-                    return "";
-            }
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-		public override string TransferSyntaxUID
-		{
-            get 
-            {
-                if (this.DataStoreImageSopInstance.TransferSyntaxUid != null)
-                    return this.DataStoreImageSopInstance.TransferSyntaxUid;
-                else
-                    return "";
-            }
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-
 	}
 }

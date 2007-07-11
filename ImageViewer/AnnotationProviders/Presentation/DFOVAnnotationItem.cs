@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			spatialTransform.
 
 			double pixelSpacingX, pixelSpacingY;
-			imageSop.GetModalityPixelSpacing(out pixelSpacingX, out pixelSpacingY);
+			ImageSopHelper.GetModalityPixelSpacing(image.ImageSop, out pixelSpacingX, out pixelSpacingY);
 
 			if (pixelSpacingX == double.NaN || pixelSpacingY == double.NaN)
 				return String.Empty;

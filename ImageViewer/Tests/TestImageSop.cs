@@ -36,10 +36,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string PatientId
@@ -48,19 +44,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				return _patientID;
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string PatientsBirthDate
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -72,10 +60,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string StudyInstanceUID
@@ -84,19 +68,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				return _studyInstanceUID;
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string StudyDate
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -108,19 +84,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override PersonName ReferringPhysiciansName
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -132,19 +100,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string StudyDescription
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -156,19 +116,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string[] AdmittingDiagnosesDescription
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -180,19 +132,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string AdditionalPatientsHistory
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -204,10 +148,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string SeriesInstanceUID
@@ -216,19 +156,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				return _seriesInstanceUID;
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override int SeriesNumber
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -240,19 +172,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string Laterality
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -264,19 +188,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string SeriesTime
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -288,19 +204,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string ProtocolName
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -312,19 +220,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string BodyPartExamined
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -336,19 +236,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string Manufacturer
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -360,19 +252,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string StationName
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -384,19 +268,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string ManufacturersModelName
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -408,19 +284,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override PatientOrientation PatientOrientation
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -432,19 +300,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override int AcquisitionNumber
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -456,19 +316,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string AcquisitionTime
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -480,19 +332,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override int ImagesInAcquisition
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -504,19 +348,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string LossyImageCompression
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -528,19 +364,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string PresentationLUTShape
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -552,19 +380,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override ImageOrientationPatient ImageOrientationPatient
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -576,19 +396,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override double SliceThickness
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -600,19 +412,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override PixelAspectRatio PixelAspectRatio
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -624,10 +428,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				return 1;
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override PhotometricInterpretation PhotometricInterpretation
@@ -635,10 +435,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			get
 			{
 				return PhotometricInterpretation.Monochrome1;
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
 			}
 		}
 
@@ -648,10 +444,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				return 512;
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override int Columns
@@ -659,10 +451,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			get
 			{
 				return 512;
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
 			}
 		}
 
@@ -672,10 +460,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				return 16;
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override int BitsStored
@@ -683,10 +467,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			get
 			{
 				return 16;
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
 			}
 		}
 
@@ -696,10 +476,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				return 15;
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override int PixelRepresentation
@@ -707,10 +483,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			get
 			{
 				return 0;
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
 			}
 		}
 
@@ -728,19 +500,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override double RescaleIntercept
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -752,19 +516,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string RescaleType
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -776,19 +532,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string[] WindowCenterAndWidthExplanation
 		{
 			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-			set
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
@@ -845,10 +593,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				return _sopInstanceUID;
 			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
 		}
 
 		public override string TransferSyntaxUID
@@ -856,10 +600,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			get
 			{
 				return "1.2.840.10008.1.2";
-			}
-			set
-			{
-				throw new Exception("The method or operation is not implemented.");
 			}
 		}
 	}
