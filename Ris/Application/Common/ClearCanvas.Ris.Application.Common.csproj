@@ -258,6 +258,8 @@
     <Compile Include="PatientReconciliation\ListProfilesForPatientsResponse.cs" />
     <Compile Include="AuthorityTokens.cs" />
     <Compile Include="PersonNameDetail.cs" />
+    <Compile Include="PreviewService\GetModalityProcedureStepRequest.cs" />
+    <Compile Include="PreviewService\GetModalityProcedureStepResponse.cs" />
     <Compile Include="PreviewService\GetPatientAlertsRequest.cs" />
     <Compile Include="PreviewService\GetPatientAlertsResponse.cs" />
     <Compile Include="PreviewService\PatientOrderData.cs" />

@@ -165,6 +165,9 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
         public DateTime? ScheduledEndTime;
 
         [DataMember]
+        public PersonNameDetail AssignedStaffName;
+
+        [DataMember]
         public PersonNameDetail PerformerStaffName;
 
         [DataMember]
@@ -178,6 +181,9 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
 
         [DataMember]
         public string Modality;
+
+        [DataMember]
+        public string DiscontinueReason;
 
         #endregion
 

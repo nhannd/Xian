@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
@@ -12,17 +11,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     /// Provides a Windows Forms view onto <see cref="TechnologistPreviewComponent"/>
     /// </summary>
     [ExtensionOf(typeof(TechnologistPreviewComponentViewExtensionPoint))]
-    public class TechnologistPreviewComponentView : HtmlComponentView
+    public class TechnologistPreviewComponentView : PreviewComponentView
     {
-        public TechnologistPreviewComponentView()
-            :base("TechnologistPreview.html")
-	    {
-	    }
-
-        protected override ClearCanvas.Desktop.Actions.ActionModelNode GetEmbeddedActionModel()
-        {
-            return ((TechnologistPreviewComponent)this.Component).MenuModel;
-        }
-
     }
 }

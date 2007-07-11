@@ -76,13 +76,19 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             preview.Facility = new FacilityAssembler().CreateFacilityDetail(mps.RequestedProcedure.Order.OrderingFacility);
 
             //preview.DSBreakdown = new List<string>();
-            List<ProcedureStep> mpsList = new List<ProcedureStep>();
+            List<ModalityProcedureStep> mpsList = new List<ModalityProcedureStep>();
             foreach (RequestedProcedure rp in mps.RequestedProcedure.Order.RequestedProcedures)
             {
-                mpsList.AddRange(CollectionUtils.Select<ProcedureStep, List<ProcedureStep>>(rp.ProcedureSteps,
+                List<ProcedureStep> psList = CollectionUtils.Select<ProcedureStep, List<ProcedureStep>>(rp.ProcedureSteps,
                     delegate(ProcedureStep procedureStep)
                     {
                         return procedureStep.Is<ModalityProcedureStep>();
+                    });
+
+                mpsList.AddRange(CollectionUtils.Map<ProcedureStep, ModalityProcedureStep, List<ModalityProcedureStep>>(psList,
+                    delegate(ProcedureStep ps)
+                    {
+                        return ps.As<ModalityProcedureStep>();
                     }));
             }
 

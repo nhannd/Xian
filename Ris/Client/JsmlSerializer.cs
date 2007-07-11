@@ -4,12 +4,12 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Xml;
+using System.IO;
 
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
-using System.IO;
 
-namespace ClearCanvas.Ris.Client.Adt
+namespace ClearCanvas.Ris.Client
 {
     public static class JsmlSerializer
     {
@@ -18,8 +18,21 @@ namespace ClearCanvas.Ris.Client.Adt
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="dataObject"></param>
-        /// <param name="writer"></param>
+        /// <returns></returns>
         public static string Serialize<T>(T dataObject)
+            where T : DataContractBase
+        {
+            return Serialize<T>(dataObject, false);
+        }
+
+        /// <summary>
+        /// Take an object of type DataContractBase and serialize all members with DataMemberAttribute to Jsml format.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="dataObject"></param>
+        /// <param name="includeEmptyTags"></param>
+        /// <returns></returns>
+        public static string Serialize<T>(T dataObject, bool includeEmptyTags)
             where T : DataContractBase
         {
             string jsml = "";
@@ -34,19 +47,6 @@ namespace ClearCanvas.Ris.Client.Adt
             }
 
             return jsml;
-        }
-
-        /// <summary>
-        /// Take an object of type DataContractBase and serialize all members with DataMemberAttribute to Jsml format.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="dataObject"></param>
-        /// <param name="writer"></param>
-        /// <param name="includeEmptyTags"></param>
-        public static void Serialize<T>(T dataObject, XmlTextWriter writer, bool includeEmptyTags)
-            where T : DataContractBase
-        {
-            SerializeHelper(dataObject, typeof(T).Name, writer, includeEmptyTags);
         }
 
         /// <summary>

@@ -2,14 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
-using System.Runtime.InteropServices;
 
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Application.Common.PreviewService
 {
-    [ComVisible(true)]
     [DataContract]
     public class ListPatientOrdersResponse : DataContractBase
     {

@@ -12,21 +12,15 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("view1", "global-menus/Patient/View Details...")]
-    [ButtonAction("view1", "global-toolbars/Patient/ViewPatient")]
-    [ClickHandler("view1", "View")]
-    [EnabledStateObserver("view1", "Enabled", "EnabledChanged")]
-    [Tooltip("view1", "Open patient details")]
-	[IconSet("view1", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
-
-    [MenuAction("view3", "RegistrationPreview-menu/Details")]
-    [ButtonAction("view3", "folderexplorer-items-toolbar/Details")]
-    [MenuAction("view3", "folderexplorer-items-contextmenu/Details")]
-    [ClickHandler("view3", "View")]
-    [EnabledStateObserver("view3", "Enabled", "EnabledChanged")]
-    [Tooltip("view3", "Open patient details")]
-	[IconSet("view3", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
-
+    [MenuAction("view", "global-menus/Patient/View Details...")]
+    [ButtonAction("view", "global-toolbars/Patient/ViewPatient")]
+    [ButtonAction("view", "folderexplorer-items-toolbar/Details")]
+    [MenuAction("view", "folderexplorer-items-contextmenu/Details")]
+    [MenuAction("view", "RegistrationPreview-menu/Details")]
+    [ClickHandler("view", "View")]
+    [EnabledStateObserver("view", "Enabled", "EnabledChanged")]
+    [Tooltip("view", "Open patient details")]
+	[IconSet("view", IconScheme.Colour, "PatientDetailsToolSmall.png", "PatientDetailsToolMedium.png", "PatientDetailsToolLarge.png")]
     [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
     [ExtensionOf(typeof(RegistrationPreviewToolExtensionPoint))]
     public class PatientOverviewTool : Tool<IToolContext>

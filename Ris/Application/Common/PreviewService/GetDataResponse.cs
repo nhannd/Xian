@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Runtime.Serialization;
-using System.Runtime.InteropServices;
+
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.PreviewService
@@ -13,6 +13,9 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
         public GetDataResponse()
         {
         }
+
+        [DataMember]
+        public GetModalityProcedureStepResponse GetModalityProcedureStepResponse;
 
         [DataMember]
         public GetPatientProfileResponse GetPatientProfileResponse;

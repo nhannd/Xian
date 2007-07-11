@@ -10,6 +10,12 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
     public class GetDataRequest : DataContractBase
     {
         [DataMember]
+        public EntityRef ModalityProcedureStepRef;
+
+        [DataMember]
+        public GetModalityProcedureStepRequest GetModalityProcedureStepRequest;
+
+        [DataMember]
         public EntityRef PatientProfileRef;
 
         [DataMember]

@@ -1,6 +1,6 @@
-namespace ClearCanvas.Ris.Client.Adt.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    partial class RegistrationPreviewComponentControl
+    partial class PreviewComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -28,30 +28,33 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._browser = new System.Windows.Forms.WebBrowser();
+            this._webBrowser = new System.Windows.Forms.WebBrowser();
             this.SuspendLayout();
             // 
-            // _browser
+            // _webBrowser
             // 
-            this._browser.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._browser.Location = new System.Drawing.Point(0, 0);
-            this._browser.MinimumSize = new System.Drawing.Size(20, 20);
-            this._browser.Name = "_browser";
-            this._browser.Size = new System.Drawing.Size(150, 150);
-            this._browser.TabIndex = 0;
+            this._webBrowser.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._webBrowser.Location = new System.Drawing.Point(0, 0);
+            this._webBrowser.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._webBrowser.MinimumSize = new System.Drawing.Size(15, 16);
+            this._webBrowser.Name = "_webBrowser";
+            this._webBrowser.Size = new System.Drawing.Size(398, 384);
+            this._webBrowser.TabIndex = 0;
             // 
-            // RegistrationPreviewComponentControl
+            // PreviewComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this._browser);
-            this.Name = "RegistrationPreviewComponentControl";
+            this.Controls.Add(this._webBrowser);
+            this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this.Name = "PreviewComponentControl";
+            this.Size = new System.Drawing.Size(398, 384);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.WebBrowser _browser;
+        private System.Windows.Forms.WebBrowser _webBrowser;
     }
 }

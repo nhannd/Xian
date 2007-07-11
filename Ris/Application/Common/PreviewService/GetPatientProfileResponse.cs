@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
-using System.Runtime.InteropServices;
 
 namespace ClearCanvas.Ris.Application.Common.PreviewService
 {
-    [ComVisible(true)]
     [DataContract]
     public class GetPatientProfileResponse : DataContractBase
     {

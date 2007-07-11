@@ -53,7 +53,6 @@
     <Compile Include="BiographyFeedbackTable.cs" />
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
-    <Compile Include="JsmlSerializer.cs" />
     <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
     <Compile Include="OrderEntryComponentSettings.cs" />
@@ -125,6 +124,12 @@
     <Compile Include="TechnologistDocumentationTool.cs" />
     <Compile Include="TechnologistHomeTool.cs" />
     <Compile Include="TechnologistPreviewComponent.cs" />
+    <Compile Include="TechnologistPreviewComponentSettings.cs" />
+    <Compile Include="TechnologistPreviewComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>TechnologistPreviewComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="TechnologistWorkflowFolderBase.cs" />
     <Compile Include="TechnologistWorkflowFolderSystem.cs" />
     <Compile Include="TechnologistWorkflowFolderSystemTool.cs" />
@@ -243,7 +248,6 @@
     <EmbeddedResource Include="Icons\AddToolSmall.png" />
     <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
     <EmbeddedResource Include="Icons\CheckSmall.png" />
-    <EmbeddedResource Include="TechnologistPreview.html" />
     <EmbeddedResource Include="Icons\AlertClock.png" />
     <EmbeddedResource Include="Icons\AlertMessenger.png" />
     <EmbeddedResource Include="Icons\AlertPen.png" />
@@ -280,6 +284,10 @@
     <None Include="RegistrationPreviewComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>RegistrationPreviewComponentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="TechnologistPreviewComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>TechnologistPreviewComponentSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

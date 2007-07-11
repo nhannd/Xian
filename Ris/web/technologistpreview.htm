@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-        <title>Registration Preview</title>
+        <title>Technologist Preview</title>
         <link href="css/default.css" rel="stylesheet" type="text/css" />
         <link href="js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript" src="js/calendar/calendar.js"></script>
@@ -19,10 +19,11 @@
 		    {		        
 		        if(!Ris)
 		            return;
-		            
+		        
 	            try
 	            {
-                    var request = { "GetPatientProfileRequest": {},
+                    var request = { "GetModalityProcedureStepRequest": { "GetDiagnosticServiceBreakdown": true },
+                                    "GetPatientProfileRequest": {},
                                     "ListPatientOrdersRequest": { "QueryDetailLevel": "RequestedProcedure" },
                                     "GetPatientAlertsRequest": {} };
 
@@ -46,8 +47,6 @@
 			            Field.setValue($("sex"), patientProfile.Sex.Value);					
 			            Field.setValue($("dateOfBirth"), Ris.formatDate(patientProfile.DateOfBirth));
 			            Field.setValue($("healthcard"), Ris.formatHealthcard(patientProfile.Healthcard));
-			            Field.setValue($("currentHomePhone"), Ris.formatTelephone(patientProfile.CurrentHomePhone));
-			            Field.setValue($("currentHomeAddress"), Ris.formatAddress(patientProfile.CurrentHomeAddress));
 		            }
 
                     // update patient alerts
@@ -58,6 +57,44 @@
 	                    alertNotifications.each(function(item) { alertHtml += getAlertHtml(item, patientName); });
                         $("alerts").innerHTML = alertHtml;
 		            }
+		            
+		            if (data.GetModalityProcedureStepResponse)
+		            {
+		                var mpsData = data.GetModalityProcedureStepResponse.PatientOrderData;
+
+                        if (mpsData)
+                        {
+    		                // update Imaging Consultation Overview
+		                    Field.setValue($("AccessionNumber"), mpsData.AccessionNumber);
+		                    Field.setValue($("OrderPriority"), mpsData.OrderPriority);
+		                    Field.setValue($("OrderingPhysician"), Ris.formatPersonName(mpsData.OrderingPractitionerName));
+		                    Field.setValue($("OrderingFacility"), mpsData.OrderingFacilityName);
+
+    		                // update Selected MPS Detail
+		                    Field.setValue($("MPSName"), mpsData.ModalityProcedureStepTypeName);
+		                    Field.setValue($("Modality"), mpsData.Modality);
+		                    Field.setValue($("MPSStatus"), mpsData.MPSState);
+		                    Field.setValue($("DiscontinueReason"), mpsData.DiscontinueReason);
+		                    if (mpsData.DiscontinueReason == null || mpsData.DiscontinueReason.length == 0)
+    		                    Field.show($("DiscontinueReasonRow"), false);
+
+		                    Field.setValue($("AssignedStaff"), Ris.formatPersonName(mpsData.ScheduledPerformerStaffName));
+		                    Field.setValue($("PerformingStaff"), Ris.formatPersonName(mpsData.PerformerStaffName));
+		                    Field.setValue($("ScheduledStartTime"), Ris.formatDateTime(mpsData.ScheduledStartTime));
+		                    Field.setValue($("ScheduledEndTime"), Ris.formatDateTime(mpsData.ScheduledEndTime));
+		                    Field.setValue($("StartTime"), Ris.formatDateTime(mpsData.StartTime));
+		                    Field.setValue($("EndTime"), Ris.formatDateTime(mpsData.EndTime));
+		                }
+
+                        var dsBreakdown = data.GetModalityProcedureStepResponse.DiagnosticServiceBreakdown;
+    		            if (dsBreakdown)
+    		            {
+                            var dsTable = createDiagnosticServiceBreakdownTable($("dsBreakdownTable"));
+	                        dsTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+                            dsTable.bindItems(dsBreakdown);
+    		            }
+		            }
+		            
 
                     // update active and past RIC tables
 		            if (data.ListPatientOrdersResponse && data.ListPatientOrdersResponse.PatientOrderData && data.ListPatientOrdersResponse.PatientOrderData.length > 0)
@@ -119,6 +156,7 @@
                             pastOrdersTable.bindItems(pastOrders);
     	                }
 		            }
+
 	            }
 	            catch(e)
 	            {
@@ -126,6 +164,7 @@
 		            Field.setValue($("myForm"), message);
 	            }
 		    }
+
 		</script>
 	</head>
 	<body onload="javascript: onBodyLoad()">
@@ -154,24 +193,71 @@
 				    <td class="propertyname">&nbsp;</td>
 				    <td>&nbsp;</td>
 			    </tr>
-			    <tr>
-				    <td class="propertyname">Home Phone</td>
-				    <td colspan="3"><div id="currentHomePhone"/></td>
-			    </tr>
-			    <tr>
-				    <td class="propertyname">Home Address</td>
-				    <td colspan="3"><div id="currentHomeAddress"/></td>
-			    </tr>
-			    <tr class="additionalentriescount">
-				    <td colspan="4">
-				        <script language="javascript" type="text/javascript">
-                            document.write(Ris.getActionHtml("Details", "more..."));
-				        </script>
-				    </td>
-			    </tr>
 		    </table>
     		
-		    <p>&nbsp;</p>
+            <p>&nbsp;</p>
+            <table width="640" border="0">
+                <tr class="sectionheading">
+                    <td colspan="4">Imaging Consultation Overview</td>
+                </tr>
+                <tr>
+                    <td width="120" class="propertyname">Accession Number</td>
+                    <td width="200"><div id="AccessionNumber"/></td>
+                    <td width="120" class="propertyname">Priority</td>
+                    <td width="200"><div id="OrderPriority"/></td>
+                </tr>
+                <tr>
+                    <td width="120" class="propertyname">Ordering Physician</td>
+                    <td width="200"><div id="OrderingPhysician"/></td>
+                    <td width="120" class="propertyname">Facility</td>
+                    <td width="200"><div id="OrderingFacility"/></td>
+                </tr>
+            </table>
+            <table width="640" border="0" id="dsBreakdownTable">
+                <tr>
+                    <td colspan="6" class="tableheading">Diagnostic Service Breakdown</td>
+                </tr>
+            </table>
+
+            <p>&nbsp;</p>
+            <table width="640" border="0">
+                <tr class="sectionheading">
+                    <td colspan="4">Selected MPS Details</td>
+                </tr>
+                <tr>
+                    <td width="120" class="propertyname">Name</td>
+                    <td width="200"><div id="MPSName"/></td>
+                    <td width="120" class="propertyname">Modality</td>
+                    <td width="200"><div id="Modality"/></td>
+                </tr>
+                <tr>
+                    <td width="120"  class="propertyname">Status</td>
+                    <td width="200"><div id="MPSStatus"/></td>
+                </tr>
+                <tr id="DiscontinueReasonRow">
+                    <td width="120" class="propertyname">Discontinue Reason</td>
+                    <td colspan="3"><div id="DiscontinueReason"/></td>
+                </tr>
+                <tr>
+                    <td width="120"  class="propertyname">Assigned Staff</td>
+                    <td width="200"><div id="AssignedStaff"/></td>
+                    <td width="120" class="propertyname">Performing Staff</td>
+                    <td width="200"><div id="PerformingStaff"/></td>
+                </tr>
+                <tr>
+                    <td width="120"  class="propertyname">Scheduled Start Time</td>
+                    <td width="200"><div id="ScheduledStartTime"/></td>
+                    <td width="120" class="propertyname">Scheduled End Time</td>
+                    <td width="200"><div id="ScheduledEndTime"/></td>
+                </tr>
+                <tr>
+                    <td width="120"  class="propertyname">Start Time</td>
+                    <td width="200"><div id="StartTime"/></td>
+                    <td width="120" class="propertyname">End Time</td>
+                    <td width="200"><div id="EndTime"/></td>
+                </tr>
+            </table>
+            <p>&nbsp;</p>
 	        <table width="640" border="0" id="activeOrdersTable">
 	            <tr class="sectionheading"><td colspan="7">Active Requests for Imaging Consultation</td></tr>
 	            <tr class="tableheading">

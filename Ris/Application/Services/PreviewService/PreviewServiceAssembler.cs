@@ -153,6 +153,9 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
                 data.ScheduledEndTime = mps.Scheduling.EndTime;
             }
 
+            if (mps.AssignedStaff != null)
+                data.AssignedStaffName = nameAssembler.CreatePersonNameDetail(mps.AssignedStaff.Name);
+
             if (mps.PerformingStaff != null)
                 data.PerformerStaffName = nameAssembler.CreatePersonNameDetail(mps.PerformingStaff.Name);
 
@@ -161,6 +164,8 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
 
             data.ModalityProcedureStepTypeName = mps.Type.Name;
             data.Modality = mps.Modality.Name;
+
+            data.DiscontinueReason = "";
         }
 
         #endregion
