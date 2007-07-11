@@ -19,16 +19,16 @@ using System.Threading;
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 {
 	internal sealed partial class DicomServerManager : IDicomServerService
-    {
+	{
 		private static DicomServerManager _instance;
 
-        // Used by CFindScp
-        private Dictionary<uint, DicomQuerySession> _querySessionDictionary;
-        private object _querySessionLock = new object();
+		// Used by CFindScp
+		private Dictionary<uint, DicomQuerySession> _querySessionDictionary;
+		private object _querySessionLock = new object();
 
-        // Used by CMoveScp to keep track of the sub-CStore progerss
+		// Used by CMoveScp to keep track of the sub-CStore progerss
 		private Dictionary<uint, DicomMoveSession> _moveSessionDictionary;
-        private object _moveSessionLock = new object();
+		private object _moveSessionLock = new object();
 
 		private List<BackgroundTaskContainer> _sendRetrieveTasks;
 		private object _sendRetrieveTaskLock = new object();
@@ -41,12 +41,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		private object _serverConfigurationLock = new object();
 
 		public DicomServerManager()
-        {
-            _querySessionDictionary = new Dictionary<uint, DicomQuerySession>();
+		{
+			_querySessionDictionary = new Dictionary<uint, DicomQuerySession>();
 			_moveSessionDictionary = new Dictionary<uint, DicomMoveSession>();
 			_sendRetrieveTasks = new List<BackgroundTaskContainer>();
 			_restartingServer = false;
-        }
+		}
 
 		public static DicomServerManager Instance
 		{
@@ -57,10 +57,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 				return _instance;
 			}
-            set
-            {
-                _instance = value;
-            }
+			set
+			{
+				_instance = value;
+			}
 		}
 
 		public void Start()
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			StartServer();
 		}
-		
+
 		public void Stop()
 		{
 			lock (_restartServerLock)
@@ -93,7 +93,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			DicomEventManager.Instance.MoveScpBeginEvent -= OnMoveScpBeginEvent;
 			DicomEventManager.Instance.MoveScpProgressEvent -= OnMoveScpProgressEvent;
 			DicomEventManager.Instance.StoreScuProgressEvent -= OnStoreScuProgressEvent;
-			
+
 			_querySessionDictionary.Clear();
 			_moveSessionDictionary.Clear();
 			_sendRetrieveTasks.Clear();
@@ -110,8 +110,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 		}
 
-        private void StartServer()
-        {
+		private void StartServer()
+		{
 			lock (_serverConfigurationLock)
 			{
 				// Create storage directory
@@ -135,41 +135,41 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				Platform.Log(new Exception("Failed to start Dicom Server", e));
 			}
-        }
+		}
 
-        #region Properties
+		#region Properties
 
-        #endregion
+		#endregion
 
-        #region DicomServer FindScp Event Handlers
+		#region DicomServer FindScp Event Handlers
 
-        private void OnFindScpEvent(object sender, DicomEventArgs e)
-        {
-            InteropFindScpCallbackInfo info = new InteropFindScpCallbackInfo(e.CallbackInfoPointer, false);
-            if (info == null)
-                return;
+		private void OnFindScpEvent(object sender, DicomEventArgs e)
+		{
+			InteropFindScpCallbackInfo info = new InteropFindScpCallbackInfo(e.CallbackInfoPointer, false);
+			if (info == null)
+				return;
 
-            info.Response.DimseStatus = (ushort) QueryDB(info.QueryRetrieveOperationIdentifier, info.RequestIdentifiers);
-        }
+			info.Response.DimseStatus = (ushort)QueryDB(info.QueryRetrieveOperationIdentifier, info.RequestIdentifiers);
+		}
 
-        private void OnFindScpProgressEvent(object sender, DicomEventArgs e)
-        {
-            InteropFindScpCallbackInfo info = new InteropFindScpCallbackInfo(e.CallbackInfoPointer, false);
-            if (info == null)
-                return;
+		private void OnFindScpProgressEvent(object sender, DicomEventArgs e)
+		{
+			InteropFindScpCallbackInfo info = new InteropFindScpCallbackInfo(e.CallbackInfoPointer, false);
+			if (info == null)
+				return;
 
 			info.Response.DimseStatus = (ushort)GetNextQueryResult(info.QueryRetrieveOperationIdentifier, info.ResponseIdentifiers);
-        }
+		}
 
-        #endregion
+		#endregion
 
-        #region DicomServer MoveScp Event Handlers
+		#region DicomServer MoveScp Event Handlers
 
-        private void OnMoveScpBeginEvent(object sender, DicomEventArgs e)
-        {
-            InteropMoveScpCallbackInfo info = new InteropMoveScpCallbackInfo(e.CallbackInfoPointer, false);
-            if (info == null)
-                return;
+		private void OnMoveScpBeginEvent(object sender, DicomEventArgs e)
+		{
+			InteropMoveScpCallbackInfo info = new InteropMoveScpCallbackInfo(e.CallbackInfoPointer, false);
+			if (info == null)
+				return;
 
 			lock (_moveSessionLock)
 			{
@@ -180,7 +180,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					return;
 				}
 			}
-			
+
 			// Start the Query
 			info.Response.DimseStatus = (ushort)QueryDB(info.QueryRetrieveOperationIdentifier, info.RequestIdentifiers);
 
@@ -211,15 +211,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				return;
 			}
 
-            ApplicationEntity myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
-            SendParcel sendParcel = new SendParcel(myApplicationEntity, destinationAE, "");
+			ApplicationEntity myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
+			SendParcel sendParcel = new SendParcel(myApplicationEntity, destinationAE, "");
 
 			// Move all return results
-            while (info.Response.DimseStatus == (ushort) OffisDcm.STATUS_Pending)
-            {
+			while (info.Response.DimseStatus == (ushort)OffisDcm.STATUS_Pending)
+			{
 				info.Response.DimseStatus = (ushort)GetNextQueryResult(info.QueryRetrieveOperationIdentifier, info.ResponseIdentifiers);
-                if (info.Response.DimseStatus != (ushort)OffisDcm.STATUS_Pending)
-                    break;
+				if (info.Response.DimseStatus != (ushort)OffisDcm.STATUS_Pending)
+					break;
 
 				string studyInstanceUID;
 				DicomHelper.TryFindAndGetOFString(info.RequestIdentifiers, Dcm.StudyInstanceUID, out studyInstanceUID);
@@ -230,7 +230,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				}
 
 				sendParcel.Include(new Uid(studyInstanceUID));
-            }
+			}
 
 			BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context)
 			{
@@ -251,7 +251,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 
 			info.Response.NumberOfRemainingSubOperations = (ushort)sendParcel.GetToSendObjectCount();
-			
+
 			EventHandler<BackgroundTaskTerminatedEventArgs> deleteHandler = new EventHandler<BackgroundTaskTerminatedEventArgs>
 				(delegate(object ignore, BackgroundTaskTerminatedEventArgs ignoreArgs)
 				{
@@ -266,40 +266,40 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			task.Run();
 
 			info.Response.DimseStatus = (ushort)OffisDcm.STATUS_Pending;
-        }
+		}
 
-        private void OnMoveScpProgressEvent(object sender, DicomEventArgs e)
-        {
-            InteropMoveScpCallbackInfo info = new InteropMoveScpCallbackInfo(e.CallbackInfoPointer, false);
-            if (info == null)
-                return;
+		private void OnMoveScpProgressEvent(object sender, DicomEventArgs e)
+		{
+			InteropMoveScpCallbackInfo info = new InteropMoveScpCallbackInfo(e.CallbackInfoPointer, false);
+			if (info == null)
+				return;
 
 			info.Response.DimseStatus = (ushort)UpdateMoveProgress(info.QueryRetrieveOperationIdentifier, info.Response);
-        }
+		}
 
 		#endregion
 
-        #region DicomServer StoreScp Event Handlers
+		#region DicomServer StoreScp Event Handlers
 
-        private void OnStoreScpBeginEvent(object sender, DicomEventArgs e)
-        {
-            InteropStoreScpCallbackInfo info = new InteropStoreScpCallbackInfo(e.CallbackInfoPointer, false);
-            if (info == null)
-                return;
-        }
+		private void OnStoreScpBeginEvent(object sender, DicomEventArgs e)
+		{
+			InteropStoreScpCallbackInfo info = new InteropStoreScpCallbackInfo(e.CallbackInfoPointer, false);
+			if (info == null)
+				return;
+		}
 
-        private void OnStoreScpProgressEvent(object sender, DicomEventArgs e)
-        {
-            InteropStoreScpCallbackInfo info = new InteropStoreScpCallbackInfo(e.CallbackInfoPointer, false);
-            if (info == null)
-                return;
-        }
+		private void OnStoreScpProgressEvent(object sender, DicomEventArgs e)
+		{
+			InteropStoreScpCallbackInfo info = new InteropStoreScpCallbackInfo(e.CallbackInfoPointer, false);
+			if (info == null)
+				return;
+		}
 
-        private void OnStoreScpEndEvent(object sender, DicomEventArgs e)
-        {
-            InteropStoreScpCallbackInfo info = new InteropStoreScpCallbackInfo(e.CallbackInfoPointer, false);
-            if (info == null)
-                return;
+		private void OnStoreScpEndEvent(object sender, DicomEventArgs e)
+		{
+			InteropStoreScpCallbackInfo info = new InteropStoreScpCallbackInfo(e.CallbackInfoPointer, false);
+			if (info == null)
+				return;
 
 			StoreScpReceivedFileInformation storedInformation = new StoreScpReceivedFileInformation();
 
@@ -320,10 +320,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				Platform.Log(ex);
 			}
 
-            info.DimseStatus = (ushort)OffisDcm.STATUS_Success;
-        }
+			info.DimseStatus = (ushort)OffisDcm.STATUS_Success;
+		}
 
-        #endregion
+		#endregion
 
 		#region Store Scu Event Handlers
 
@@ -364,122 +364,122 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		#region FindScp helper functions
 
 		private QueryKey BuildQueryKey(DcmDataset requestIdentifiers)
-        {
-            OFCondition cond;
-            QueryKey queryKey = new QueryKey();
+		{
+			OFCondition cond;
+			QueryKey queryKey = new QueryKey();
 
-            // TODO: Edit these when we need to expand the support of search parameters
+			// TODO: Edit these when we need to expand the support of search parameters
 			string value;
 			cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.PatientId, out value);
-            if (cond.good())
-                queryKey.Add(DicomTag.PatientId, value);
+			if (cond.good())
+				queryKey.Add(DicomTags.PatientID, value);
 
-            cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers,Dcm.AccessionNumber, out value);
-            if (cond.good())
-                queryKey.Add(DicomTag.AccessionNumber, value);
+			cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.AccessionNumber, out value);
+			if (cond.good())
+				queryKey.Add(DicomTags.AccessionNumber, value);
 
-            cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.PatientsName, out value);
-            if (cond.good())
-                queryKey.Add(DicomTag.PatientsName, value);
+			cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.PatientsName, out value);
+			if (cond.good())
+				queryKey.Add(DicomTags.PatientsName, value);
 
-            cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyDate, out value);
-            if (cond.good())
-                queryKey.Add(DicomTag.StudyDate, value);
+			cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyDate, out value);
+			if (cond.good())
+				queryKey.Add(DicomTags.StudyDate, value);
 
-            cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyDescription, out value);
-            if (cond.good())
-                queryKey.Add(DicomTag.StudyDescription, value);
+			cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyDescription, out value);
+			if (cond.good())
+				queryKey.Add(DicomTags.StudyDescription, value);
 
-            cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.ModalitiesInStudy, out value);
-            if (cond.good())
-                queryKey.Add(DicomTag.ModalitiesInStudy, value);
+			cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.ModalitiesInStudy, out value);
+			if (cond.good())
+				queryKey.Add(DicomTags.ModalitiesinStudy, value);
 
-            cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyInstanceUID, out value);
-            if (cond.good())
-                queryKey.Add(DicomTag.StudyInstanceUID, value);
+			cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyInstanceUID, out value);
+			if (cond.good())
+				queryKey.Add(DicomTags.StudyInstanceUID, value);
 
-            return queryKey;
-        }
+			return queryKey;
+		}
 
-        private int QueryDB(uint operationIdentifier, DcmDataset requestIdentifiers)
-        {
-            try
-            {
-                // Query DB for results
-                ReadOnlyQueryResultCollection queryResults = DataAccessLayer.GetIDataStoreReader().StudyQuery(BuildQueryKey(requestIdentifiers));
-                if (queryResults.Count == 0)
-                    return OffisDcm.STATUS_Success;
+		private int QueryDB(uint operationIdentifier, DcmDataset requestIdentifiers)
+		{
+			try
+			{
+				// Query DB for results
+				ReadOnlyQueryResultCollection queryResults = DataAccessLayer.GetIDataStoreReader().StudyQuery(BuildQueryKey(requestIdentifiers));
+				if (queryResults.Count == 0)
+					return OffisDcm.STATUS_Success;
 
-                // Remember the query results for this session.  The DicomServer will call back to get query results
-                lock (_querySessionLock)
-                {
+				// Remember the query results for this session.  The DicomServer will call back to get query results
+				lock (_querySessionLock)
+				{
 					_querySessionDictionary[operationIdentifier] = new DicomQuerySession(queryResults);
-                }
-            }
-            catch (Exception exception)
-            {
-                Platform.Log(exception);
-                return OffisDcm.STATUS_FIND_Failed_UnableToProcess;
-            }
+				}
+			}
+			catch (Exception exception)
+			{
+				Platform.Log(exception);
+				return OffisDcm.STATUS_FIND_Failed_UnableToProcess;
+			}
 
-            return OffisDcm.STATUS_Pending;
-        }
+			return OffisDcm.STATUS_Pending;
+		}
 
 		private int GetNextQueryResult(uint operationIdentifier, DcmDataset responseIdentifiers)
-        {
-            QueryResult result;
-            DicomQuerySession querySession;
+		{
+			QueryResult result;
+			DicomQuerySession querySession;
 
-            try
-            {
-                lock (_querySessionLock)
-                {
+			try
+			{
+				lock (_querySessionLock)
+				{
 					querySession = _querySessionDictionary[operationIdentifier];
-                    if (querySession.CurrentIndex >= querySession.QueryResults.Count)
-                    {
-                        // If all the results had been retrieved, remove this query session from dictionary
+					if (querySession.CurrentIndex >= querySession.QueryResults.Count)
+					{
+						// If all the results had been retrieved, remove this query session from dictionary
 						_querySessionDictionary.Remove(operationIdentifier);
-                        return OffisDcm.STATUS_Success;
-                    }
-                }
+						return OffisDcm.STATUS_Success;
+					}
+				}
 
-                // Otherwise, return the next query result based on the current query index
-                result = querySession.QueryResults[querySession.CurrentIndex];
-                querySession.CurrentIndex++;
-            }
-            catch (KeyNotFoundException)
-            {
-                // if key is not found, we return STATUS_Success anyway.  It means CFind has completed successfully
-                return OffisDcm.STATUS_Success;
-            }
-            catch (Exception exception)
-            {
-                Platform.Log(exception, LogLevel.Error);
-                return OffisDcm.STATUS_FIND_Failed_UnableToProcess;
-            }
+				// Otherwise, return the next query result based on the current query index
+				result = querySession.QueryResults[querySession.CurrentIndex];
+				querySession.CurrentIndex++;
+			}
+			catch (KeyNotFoundException)
+			{
+				// if key is not found, we return STATUS_Success anyway.  It means CFind has completed successfully
+				return OffisDcm.STATUS_Success;
+			}
+			catch (Exception exception)
+			{
+				Platform.Log(exception, LogLevel.Error);
+				return OffisDcm.STATUS_FIND_Failed_UnableToProcess;
+			}
 
-            // Edit these when we need to expand the list of supported return tags
-            responseIdentifiers.clear();
-            responseIdentifiers.putAndInsertString(new DcmTag(Dcm.PatientId), result.PatientId);
-            responseIdentifiers.putAndInsertString(new DcmTag(Dcm.PatientsName), result.PatientsName);
-            responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyDate), result.StudyDate);
-            responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyTime), result.StudyTime);
-            responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyDescription), result.StudyDescription);
-            responseIdentifiers.putAndInsertString(new DcmTag(Dcm.ModalitiesInStudy), result.ModalitiesInStudy);
-            responseIdentifiers.putAndInsertString(new DcmTag(Dcm.AccessionNumber), result.AccessionNumber);
-            responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), result.StudyInstanceUid);
-            responseIdentifiers.putAndInsertString(new DcmTag(Dcm.QueryRetrieveLevel), "STUDY");
-            responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), result.StudyInstanceUid);
+			// Edit these when we need to expand the list of supported return tags
+			responseIdentifiers.clear();
+			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.PatientId), result.PatientId);
+			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.PatientsName), result.PatientsName);
+			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyDate), result.StudyDate);
+			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyTime), result.StudyTime);
+			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyDescription), result.StudyDescription);
+			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.ModalitiesInStudy), result.ModalitiesInStudy);
+			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.AccessionNumber), result.AccessionNumber);
+			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), result.StudyInstanceUid);
+			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.QueryRetrieveLevel), "STUDY");
+			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), result.StudyInstanceUid);
 
-            return OffisDcm.STATUS_Pending;
-        }
+			return OffisDcm.STATUS_Pending;
+		}
 
-        #endregion
+		#endregion
 
-        #region MoveScp helper functions
+		#region MoveScp helper functions
 
-        private int UpdateMoveProgress(uint moveOperationIdentifier, T_DIMSE_C_MoveRSP response)
-        {
+		private int UpdateMoveProgress(uint moveOperationIdentifier, T_DIMSE_C_MoveRSP response)
+		{
 			int status = OffisDcm.STATUS_Pending;
 			DicomMoveSession session;
 
@@ -492,7 +492,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 
 			// Keep the thread here and only return CMoveRSP when there's something different to report.
-            while (session.Progress == session.Parcel.CurrentProgressStep && session.Parcel.IsActive())
+			while (session.Progress == session.Parcel.CurrentProgressStep && session.Parcel.IsActive())
 			{
 				Thread.Sleep(1000);
 			};
@@ -502,9 +502,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			int totalSteps;
 
 			session.Parcel.GetSafeStats(out transferState, out totalSteps, out currentProgressStep);
-			
+
 			session.Progress = currentProgressStep;
-			
+
 			response.NumberOfCompletedSubOperations = (ushort)currentProgressStep;
 			response.NumberOfRemainingSubOperations = (ushort)(totalSteps - currentProgressStep);
 
@@ -538,9 +538,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			Console.WriteLine("MOVE - Completed: {0} Remaining: {1}", response.NumberOfCompletedSubOperations, response.NumberOfRemainingSubOperations);
 #endif
 			return status;
-        }
+		}
 
-        #endregion
+		#endregion
 
 		private List<SendStudyInformation> ConvertToSendStudyInformation(IDictionary<IStudy, IList<ISopInstance>> sopInstancesByStudy)
 		{
@@ -583,7 +583,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName), new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
 			}
 
-            SendParcel parcel = new SendParcel(myApplicationEntity, destinationAE, "");
+			SendParcel parcel = new SendParcel(myApplicationEntity, destinationAE, "");
 			foreach (string uid in uids)
 				parcel.Include(new Uid(uid));
 
@@ -604,7 +604,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 					serviceClient.Close();
 				}
-				catch(Exception e)
+				catch (Exception e)
 				{
 					//not much we can do other than just log it.
 					Platform.Log(e);
@@ -673,15 +673,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				myApplicationEntity = new ApplicationEntity(new HostName(DicomServerSettings.Instance.HostName),
 														new AETitle(DicomServerSettings.Instance.AETitle), new ListeningPort(DicomServerSettings.Instance.Port));
-				
+
 				saveDirectory = DicomServerSettings.Instance.InterimStorageDirectory;
 			}
 
 			foreach (StudyInformation studyInformation in studiesToRetrieve)
 			{
 				StudyInformation retrieveStudyInformation = studyInformation;
-				BackgroundTaskContainer container = new BackgroundTaskContainer(); 
-				
+				BackgroundTaskContainer container = new BackgroundTaskContainer();
+
 				BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext context)
 				{
 					LocalDataStoreServiceClient serviceClient = new LocalDataStoreServiceClient();
@@ -695,7 +695,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 						serviceClient.RetrieveStarted(retrieveInformation);
 						serviceClient.Close();
 					}
-					catch(Exception ex)
+					catch (Exception ex)
 					{
 						//can't tell the Local Data Store service about the pending retrieve operation, not much we can do.
 						Platform.Log(ex);
@@ -704,8 +704,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 					try
 					{
-                        DicomClient client = new DicomClient(myApplicationEntity);
-						ApplicationEntity sourceAE = new ApplicationEntity(new HostName(sourceAEInformation.HostName), 
+						DicomClient client = new DicomClient(myApplicationEntity);
+						ApplicationEntity sourceAE = new ApplicationEntity(new HostName(sourceAEInformation.HostName),
 														new AETitle(sourceAEInformation.AETitle), new ListeningPort(sourceAEInformation.Port));
 
 						using (client)
@@ -728,7 +728,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 							serviceClient.ReceiveError(errorInformation);
 							serviceClient.Close();
 						}
-						catch(Exception ex)
+						catch (Exception ex)
 						{
 							//again, not much we can do.
 							Platform.Log(ex);
@@ -739,7 +739,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				}, false, container);
 
 				container.Task = task;
-				lock(_sendRetrieveTaskLock)
+				lock (_sendRetrieveTaskLock)
 				{
 					_sendRetrieveTasks.Add(container);
 				}
@@ -760,7 +760,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		}
 
 		public DicomServerConfiguration GetServerConfiguration()
-        {
+		{
 			lock (_serverConfigurationLock)
 			{
 				return new DicomServerConfiguration(DicomServerSettings.Instance.HostName,
@@ -768,10 +768,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 												DicomServerSettings.Instance.Port,
 												DicomServerSettings.Instance.InterimStorageDirectory);
 			}
-        }
+		}
 
 		public void UpdateServerConfiguration(DicomServerConfiguration newConfiguration)
-        {
+		{
 			lock (_serverConfigurationLock)
 			{
 				lock (_restartServerLock)
@@ -804,7 +804,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			};
 
 			ThreadPool.QueueUserWorkItem(del);
-        }
+		}
 
 		#endregion
 	}
