@@ -49,10 +49,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			get
 			{
-				if (this.DataStoreImageSopInstance.TransferSyntaxUid != null)
-					return this.DataStoreImageSopInstance.TransferSyntaxUid;
-				else
-					return "";
+				return this.DataStoreImageSopInstance.TransferSyntaxUid ?? "";
 			}
 		}
 
@@ -60,10 +57,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			get
 			{
-				if (this.DataStoreImageSopInstance.SopInstanceUid != null)
-					return this.DataStoreImageSopInstance.SopInstanceUid;
-				else
-					return "";
+				return this.DataStoreImageSopInstance.SopInstanceUid ?? "";
 			}
 		}
 
@@ -71,10 +65,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			get 
             {
-                if (this.DataStoreStudy.PatientsName != null)
-                    return this.DataStoreStudy.PatientsName;
-                else
-                    return new PersonName("");
+				return new PersonName(this.DataStoreStudy.PatientsName ?? "");
             }
 		}
 
@@ -82,10 +73,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
         {
             get 
             {
-                if (this.DataStoreStudy.PatientId != null)
-                    return this.DataStoreStudy.PatientId;
-                else
-                    return "";
+				return this.DataStoreStudy.PatientId ?? "";
             }
         }
 
@@ -93,10 +81,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreStudy.PatientsBirthDateRaw != null)
-                    return this.DataStoreStudy.PatientsBirthDateRaw;
-                else
-                    return "";
+                return this.DataStoreStudy.PatientsBirthDateRaw ?? "";
             }
 		}
 
@@ -104,10 +89,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreStudy.PatientsSex != null)
-                    return this.DataStoreStudy.PatientsSex;
-                else
-                    return "";
+                return this.DataStoreStudy.PatientsSex ?? "";
             }
 		}
 
@@ -115,10 +97,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreStudy.StudyInstanceUid != null)
-                    return this.DataStoreStudy.StudyInstanceUid;
-                else
-                    return "";
+				return this.DataStoreStudy.StudyInstanceUid ?? "";
             }
 		}
 
@@ -126,10 +105,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-				if (this.DataStoreStudy.StudyDateRaw != null)
-                    return this.DataStoreStudy.StudyDateRaw;
-                else
-                    return "";
+				return this.DataStoreStudy.StudyDateRaw ?? "";
             }
 		}
 
@@ -137,10 +113,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreStudy.StudyTimeRaw != null)
-                    return this.DataStoreStudy.StudyTimeRaw;
-                else
-					return "";
+				return this.DataStoreStudy.StudyTimeRaw ?? "";
             }
         }
 
@@ -148,10 +121,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreStudy.AccessionNumber != null)
-                    return this.DataStoreStudy.AccessionNumber;
-                else 
-                    return "";
+				return this.DataStoreStudy.AccessionNumber ?? "";
             }
 		}
 
@@ -159,10 +129,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreStudy.StudyDescription != null)
-                    return this.DataStoreStudy.StudyDescription;
-                else
-                    return "";
+				return this.DataStoreStudy.StudyDescription ?? "";
             }
 		}
 
@@ -170,10 +137,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreSeries.Modality != null)
-                    return this.DataStoreSeries.Modality;
-                else
-                    return "";
+				return this.DataStoreSeries.Modality ?? "";
             }
 		}
 
@@ -181,10 +145,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreSeries.SeriesInstanceUid != null)
-                    return this.DataStoreSeries.SeriesInstanceUid;
-                else
-                    return "";
+				return this.DataStoreSeries.SeriesInstanceUid ?? "";
             }
 		}
 
@@ -200,10 +161,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
 			get
 			{
-				if (this.DataStoreSeries.SeriesDescription != null)
-					return this.DataStoreSeries.SeriesDescription;
-				else
-					return "";
+				return this.DataStoreSeries.SeriesDescription ?? "";
 			}
 		}
 
@@ -211,10 +169,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreSeries.Laterality != null)
-                    return this.DataStoreSeries.Laterality;
-                else
-                    return "";
+				return this.DataStoreSeries.Laterality ?? "";
             }
 		}
 
@@ -231,10 +186,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-				if (this.DataStoreImageSopInstance.PixelSpacing != null)
-					return this.DataStoreImageSopInstance.PixelSpacing;
-				else
-					return new PixelSpacing(-1.0, -1.0);
+				return this.DataStoreImageSopInstance.PixelSpacing ?? new PixelSpacing(0, 0);
             }
 		}
 
@@ -242,10 +194,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
         {
             get
             {
-                if (this.DataStoreImageSopInstance.PixelAspectRatio != null)
-                    return this.DataStoreImageSopInstance.PixelAspectRatio;
-                else
-                    return new PixelAspectRatio(1.0, 1.0);
+				return this.DataStoreImageSopInstance.PixelAspectRatio ?? new PixelAspectRatio(1, 1);
             }
         }
 
@@ -253,10 +202,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreImageSopInstance.SamplesPerPixel != 0)
-                    return this.DataStoreImageSopInstance.SamplesPerPixel;
-                else
-                    return -1;
+				return this.DataStoreImageSopInstance.SamplesPerPixel;
             }
 		}
 
@@ -272,10 +218,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreImageSopInstance.Rows != 0)
-                    return Convert.ToInt32(this.DataStoreImageSopInstance.Rows);
-                else
-                    return -1;
+				return this.DataStoreImageSopInstance.Rows;
             }
 		}
 
@@ -283,10 +226,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreImageSopInstance.Columns != 0)
-                    return Convert.ToInt32(this.DataStoreImageSopInstance.Columns);
-                else
-                    return -1;
+				return this.DataStoreImageSopInstance.Columns;
             }
 		}
 
@@ -294,10 +234,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreImageSopInstance.BitsAllocated != 0)
-                    return this.DataStoreImageSopInstance.BitsAllocated;
-                else
-                    return -1;
+				return this.DataStoreImageSopInstance.BitsAllocated;
             }
 		}
 
@@ -305,10 +242,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreImageSopInstance.BitsStored != 0)
-                    return this.DataStoreImageSopInstance.BitsStored;
-                else
-                    return -1;
+				return this.DataStoreImageSopInstance.BitsStored;
             }
 		}
 
@@ -316,10 +250,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreImageSopInstance.HighBit != 0)
-                    return this.DataStoreImageSopInstance.HighBit;
-                else
-                    return -1;
+				return this.DataStoreImageSopInstance.HighBit;
             }
 		}
 
@@ -332,11 +263,7 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreImageSopInstance.PlanarConfiguration == 0 ||
-                    this.DataStoreImageSopInstance.PlanarConfiguration == 1)
-                    return this.DataStoreImageSopInstance.PlanarConfiguration;
-                else
-                    return -1;
+				return this.DataStoreImageSopInstance.PlanarConfiguration;
             }
 		}
 
@@ -352,10 +279,10 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 		{
             get 
             {
-                if (this.DataStoreImageSopInstance.RescaleSlope != 0.0)
+				if (this.DataStoreImageSopInstance.RescaleSlope != 0.0)
                     return this.DataStoreImageSopInstance.RescaleSlope;
-                else
-                    return double.NaN;
+				else
+					return 1.0;
             }
 		}
 

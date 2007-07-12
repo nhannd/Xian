@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common.Utilities;
 using System.Diagnostics;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -49,8 +50,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void Initialize(int bitsStored, int highBit, bool isSigned)
 		{
-			ImageValidator.ValidateBitsStored(bitsStored);
-			ImageValidator.ValidateHighBit(highBit);
+			DicomValidator.ValidateBitsStored(bitsStored);
+			DicomValidator.ValidateHighBit(highBit);
 
 			_bitsStored = bitsStored;
 			_highBit = highBit;

@@ -41,9 +41,14 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			double pixelSpacingX, pixelSpacingY;
 			ImageSopHelper.GetModalityPixelSpacing(image.ImageSop, out pixelSpacingX, out pixelSpacingY);
 
-			if (pixelSpacingX == double.NaN || pixelSpacingY == double.NaN)
-				return String.Empty;
+			bool pixelSpacingInvalid =  pixelSpacingX <= float.Epsilon ||
+										pixelSpacingY <= float.Epsilon ||
+										double.IsNaN(pixelSpacingX) ||
+										double.IsNaN(pixelSpacingY);
 
+			if (pixelSpacingInvalid)
+ 				return String.Empty;
+  
 			// DFOV in cm
 			double displayedFieldOfViewX = imageSop.Columns * pixelSpacingX / 10;
 			double displayedFieldOfViewY = imageSop.Rows * pixelSpacingY / 10;

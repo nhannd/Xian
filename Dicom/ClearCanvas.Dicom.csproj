@@ -183,6 +183,8 @@
   <ItemGroup>
     <Compile Include="AttributeMultiValueText.cs" />
     <Compile Include="DicomLogger.cs" />
+    <Compile Include="DicomValidationException.cs" />
+    <Compile Include="DicomValidator.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />

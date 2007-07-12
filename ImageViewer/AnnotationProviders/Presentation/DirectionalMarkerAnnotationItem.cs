@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 				{
 					// TODO: Shouldn't have to recast.  Need to add a 2DTransform interface
 					SpatialTransform spatialTransform = associatedTransform.SpatialTransform as SpatialTransform;
-					if (spatialTransform != null)
+					if (spatialTransform != null && associatedDicom.ImageSop.ImageOrientationPatient != null)
 						markerText = GetAnnotationTextInternal(spatialTransform, associatedDicom.ImageSop.ImageOrientationPatient);
 				}
 			}

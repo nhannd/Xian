@@ -152,6 +152,7 @@
     <Compile Include="Graphics\StandardGrayscaleImageGraphicVoiLutLinearStateBase.cs" />
     <Compile Include="Graphics\StandardPaletteColorImageGraphic.cs" />
     <Compile Include="Graphics\StandardVoiLutManager.cs" />
+    <Compile Include="StudyManagement\SopValidationException.cs" />
     <Compile Include="Imaging\StandardVoiLutLinear.cs" />
     <Compile Include="Graphics\StandardGrayscaleImageGraphicVoiLutLinearState.cs" />
     <Compile Include="Imaging\IStatefulVoiLutLinear.cs" />
@@ -322,7 +323,6 @@
     <Compile Include="ImageViewerComponent.cs" />
     <Compile Include="Imaging\CalculatedLUT.cs" />
     <Compile Include="Imaging\ColorSpaceConverter.cs" />
-    <Compile Include="Imaging\ImageValidationException.cs" />
     <Compile Include="Imaging\LUTComposer.cs" />
     <Compile Include="Graphics\SpatialTransform.cs" />
     <Compile Include="Graphics\SpatialTransformApplicator.cs" />
@@ -333,7 +333,6 @@
     <Compile Include="Imaging\IComposableLUT.cs" />
     <Compile Include="Imaging\ILUT.cs" />
     <Compile Include="ImageOperationApplicatorMemento.cs" />
-    <Compile Include="Imaging\ImageValidator.cs" />
     <Compile Include="ImageOperationApplicator.cs" />
     <Compile Include="Imaging\LUT.cs" />
     <Compile Include="Imaging\ModalityLUTLinear.cs" />

@@ -1,5 +1,6 @@
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -28,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			double rescaleSlope,
 			double rescaleIntercept)
 		{
-			ImageValidator.ValidateBitsStored(bitsStored);
+			DicomValidator.ValidateBitsStored(bitsStored);
 
 			_bitsStored = bitsStored;
 			_isSigned = isSigned;

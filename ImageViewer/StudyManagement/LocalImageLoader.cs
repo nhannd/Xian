@@ -89,7 +89,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				image = new LocalImageSop(file);
 
-				ImageValidator.ValidateSOPInstanceUID(image.SopInstanceUID);
 				_viewer.StudyTree.AddImage(image);
 				_viewer.EventBroker.OnImageLoaded(
 					new SopEventArgs(_viewer.StudyTree.GetSop(image.SopInstanceUID)));

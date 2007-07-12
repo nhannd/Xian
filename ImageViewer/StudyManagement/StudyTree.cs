@@ -153,7 +153,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			Platform.CheckForNullReference(image, "image");
 
-			ImageValidator.ValidateImage(image);
+			image.Validate();
 
 			Patient patient = AddPatient(image.PatientId);
 			Study study = AddStudy(image.StudyInstanceUID, patient);

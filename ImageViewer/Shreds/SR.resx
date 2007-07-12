@@ -219,6 +219,9 @@
   <data name="ExceptionImporterNotStarted" xml:space="preserve">
     <value>The file importer is not running.</value>
   </data>
+  <data name="ExceptionInvalidPatientId" xml:space="preserve">
+    <value>The Patient Id cannot be empty.</value>
+  </data>
   <data name="ExceptionNamedThreadPoolDoesNotExist" xml:space="preserve">
     <value>The specified thread pool '{0}' does not exist.</value>
   </data>

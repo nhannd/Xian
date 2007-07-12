@@ -5,6 +5,7 @@
 using System;
 using NUnit.Framework;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Imaging.Tests
 {
@@ -140,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		}
 
 		[Test]
-		[ExpectedException(typeof(ImageValidationException))]
+		[ExpectedException(typeof(DicomValidationException))]
 		public void BitsStoredInvalid()
 		{
 			int bitsStored = 0;

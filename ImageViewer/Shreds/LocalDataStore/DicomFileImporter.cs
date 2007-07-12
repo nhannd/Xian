@@ -518,6 +518,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					setImportInformation.Series = CreateNewSeries(metaInfo, dataset);
 					setImportInformation.SopInstance = CreateNewSopInstance(metaInfo, dataset);
 
+					ValidateStudy(setImportInformation.Study);
+					ValidateSeries(setImportInformation.Series);
+					ValidateImage(setImportInformation.SopInstance);
+
 					setImportInformation.StudyInstanceUid = setImportInformation.Study.StudyInstanceUid;
 					setImportInformation.SeriesInstanceUid = setImportInformation.Series.SeriesInstanceUid;
 					setImportInformation.SopInstanceUid = setImportInformation.SopInstance.SopInstanceUid;
@@ -543,6 +547,52 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						file = null;
 					}
 				}
+			}
+
+			private void ValidateStudy(Study study)
+			{
+				Platform.CheckForNullReference(study, "study");
+				DicomValidator.ValidateStudyInstanceUID(study.StudyInstanceUid);
+
+				string patientId = study.PatientId;
+				if (String.IsNullOrEmpty(patientId) || patientId.TrimEnd(' ').Length == 0)
+					throw new DicomValidationException(String.Format(SR.ExceptionInvalidPatientId));
+			}
+
+			private void ValidateSeries(Series series)
+			{
+				Platform.CheckForNullReference(series, "series");
+				DicomValidator.ValidateSeriesInstanceUID(series.SeriesInstanceUid);
+			}
+
+			private void ValidateImage(SopInstance sopInstance)
+			{
+				Platform.CheckForNullReference(sopInstance, "sopInstance");
+				DicomValidator.ValidateSOPInstanceUID(sopInstance.SopInstanceUid);
+				DicomValidator.ValidateTransferSyntaxUID(sopInstance.TransferSyntaxUid);
+
+				ImageSopInstance image = sopInstance as ImageSopInstance;
+				if (image == null)
+					return;
+
+				DicomValidator.ValidateRows(image.Rows);
+				DicomValidator.ValidateColumns(image.Columns);
+				DicomValidator.ValidateBitsAllocated(image.BitsAllocated);
+				DicomValidator.ValidateBitsStored(image.BitsStored);
+				DicomValidator.ValidateHighBit(image.HighBit);
+				DicomValidator.ValidateSamplesPerPixel(image.SamplesPerPixel);
+				DicomValidator.ValidatePixelRepresentation(image.PixelRepresentation);
+				DicomValidator.ValidatePhotometricInterpretation(image.PhotometricInterpretation);
+
+				DicomValidator.ValidateImagePropertyRelationships
+					(
+						image.BitsStored,
+						image.BitsAllocated,
+						image.HighBit,
+						image.PhotometricInterpretation,
+						image.PlanarConfiguration,
+						image.SamplesPerPixel
+					);
 			}
 
 			private void MoveFile(ImportJobInformation jobInformation)

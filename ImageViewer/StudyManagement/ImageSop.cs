@@ -18,62 +18,181 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the instance number.
 		/// </summary>
-		public abstract int InstanceNumber { get; }
+		public virtual int InstanceNumber
+		{
+			get
+			{
+				bool tagExists;
+				int instanceNumber;
+				GetTag(Dcm.InstanceNumber, out instanceNumber, out tagExists);
+				return instanceNumber;
+			}
+		}
 
 		/// <summary>
 		/// Gets the patient orientation.
 		/// </summary>
-		public abstract PatientOrientation PatientOrientation { get; }
+		/// <remarks>
+		/// A <see cref="PatientOrientation"/> is returned even when no data is available; 
+		/// it will simply have values of "" for its <see cref="PatientOrientation.Row"/> and <see cref="PatientOrientation.Column"/> properties.
+		/// </remarks>
+		public virtual PatientOrientation PatientOrientation
+		{
+			get
+			{
+				bool tagExists;
+				string patientOrientation;
+				GetTagArray(Dcm.PatientOrientation, out patientOrientation, out tagExists);
+				if (tagExists)
+				{
+					string[] values = VMStringConverter.ToStringArray(patientOrientation);
+					if (values.Length == 2)
+						return new PatientOrientation(values[0], values[1]);
+				}
+
+				return new PatientOrientation("", "");
+			}
+		}
 
 		/// <summary>
 		/// Gets the image type.  The entire Image Type value should be returned as a Dicom string array.
 		/// </summary>
-		public abstract string ImageType { get; }
+		public virtual string ImageType
+		{
+			get
+			{
+				bool tagExists;
+				string imageType;
+				GetTagArray(Dcm.ImageType, out imageType, out tagExists);
+				return imageType ?? "";
+			}
+		}
 
 		/// <summary>
 		/// Gets the acquisition number.
 		/// </summary>
-		public abstract int AcquisitionNumber { get; }
+		public virtual int AcquisitionNumber
+		{
+			get
+			{
+				bool tagExists;
+				int acquisitionNumber;
+				GetTag(Dcm.AcquisitionNumber, out acquisitionNumber, out tagExists);
+				return acquisitionNumber;
+			}
+		}
 
 		/// <summary>
 		/// Gets the acquisiton date.
 		/// </summary>
-		public abstract string AcquisitionDate { get; }
+		public virtual string AcquisitionDate
+		{
+			get
+			{
+				bool tagExists;
+				string acquisitionDate;
+				GetTag(Dcm.AcquisitionDate, out acquisitionDate, out tagExists);
+				return acquisitionDate ?? "";
+			}
+		}
 
 		/// <summary>
 		/// Gets the acquisition time.
 		/// </summary>
-		public abstract string AcquisitionTime { get; }
+		public virtual string AcquisitionTime
+		{
+			get
+			{
+				bool tagExists;
+				string acquisitionTime;
+				GetTag(Dcm.AcquisitionTime, out acquisitionTime, out tagExists);
+				return acquisitionTime ?? "";
+			}
+		}
 
 		/// <summary>
 		/// Gets the acquisition date/time.
 		/// </summary>
-		public abstract string AcquisitionDateTime { get; }
+		public virtual string AcquisitionDateTime
+		{
+			get
+			{
+				bool tagExists;
+				string acquisitionDateTime;
+				GetTag(Dcm.AcquisitionDatetime, out acquisitionDateTime, out tagExists);
+				return acquisitionDateTime ?? "";
+			}
+		}
 
 		/// <summary>
 		/// Gets the number of images in the acquisition.
 		/// </summary>
-		public abstract int ImagesInAcquisition { get; }
+		public virtual int ImagesInAcquisition
+		{
+			get
+			{
+				bool tagExists;
+				int imagesInAcquisition;
+				GetTag(Dcm.ImagesInAcquisition, out imagesInAcquisition, out tagExists);
+				return imagesInAcquisition;
+			}
+		}
 
 		/// <summary>
 		/// Gets the image comments.
 		/// </summary>
-		public abstract string ImageComments { get; }
+		public virtual string ImageComments
+		{
+			get
+			{
+				bool tagExists;
+				string imageComments;
+				GetTag(Dcm.ImageComments, out imageComments, out tagExists);
+				return imageComments ?? "";
+			}
+		}
 
 		/// <summary>
 		/// Gets the lossy image compression.
 		/// </summary>
-		public abstract string LossyImageCompression { get; }
+		public virtual string LossyImageCompression
+		{
+			get
+			{
+				bool tagExists;
+				string lossyImageCompression;
+				GetTag(Dcm.LossyImageCompression, out lossyImageCompression, out tagExists);
+				return lossyImageCompression ?? "";
+			}
+		}
 
 		/// <summary>
 		/// Gets the lossy image compression ratio.
 		/// </summary>
-		public abstract double[] LossyImageCompressionRatio { get; }
+		public virtual double[] LossyImageCompressionRatio
+		{
+			get
+			{
+				bool tagExists;
+				string lossyImageCompressionRatios;
+				GetTagArray(Dcm.LossyImageCompressionRatio, out lossyImageCompressionRatios, out tagExists);
+				return VMStringConverter.ToDoubleArray(lossyImageCompressionRatios);
+			}
+		}
 
 		/// <summary>
 		/// Gets the presentation LUT shape.
 		/// </summary>
-		public abstract string PresentationLUTShape { get; }
+		public virtual string PresentationLUTShape
+		{
+			get
+			{
+				bool tagExists;
+				string presentationLUTShape;
+				GetTag(Dcm.PresentationLUTShape, out presentationLUTShape, out tagExists);
+				return presentationLUTShape ?? "";
+			}
+		}
 
 		#endregion
 
@@ -82,82 +201,263 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the pixel spacing.
 		/// </summary>
-		public abstract PixelSpacing PixelSpacing { get; }
+		/// <remarks>
+		/// a <see cref="PixelSpacing"/> object is always returned, but when no data is available, its properties have values of 0.
+		/// </remarks>
+		public virtual PixelSpacing PixelSpacing
+		{
+			get
+			{
+				bool tagExists;
+				string pixelSpacing;
+				GetTagArray(Dcm.PixelSpacing, out pixelSpacing, out tagExists);
+				if (tagExists)
+				{
+					double[] values = VMStringConverter.ToDoubleArray(pixelSpacing);
+					if (values.Length == 2)
+						return new PixelSpacing(values[0], values[1]);
+				}
+
+				return new PixelSpacing(0, 0);
+			}
+		}
 
 		/// <summary>
 		/// Gets the image orientation patient.
 		/// </summary>
-		public abstract ImageOrientationPatient ImageOrientationPatient { get; }
+		/// <remarks>
+		/// null is returned when no data is available.
+		/// </remarks>
+		public virtual ImageOrientationPatient ImageOrientationPatient
+		{
+			get
+			{
+				bool tagExists;
+				string imageOrientationPatient;
+				GetTagArray(Dcm.ImageOrientationPatient, out imageOrientationPatient, out tagExists);
+				if (tagExists)
+				{
+					double[] values = VMStringConverter.ToDoubleArray(imageOrientationPatient);
+					if (values.Length == 6)
+						return new ImageOrientationPatient(values[0], values[1], values[2], values[3], values[4], values[5]);
+				}
+
+				return null;
+			}
+		}
 
 		/// <summary>
 		/// Gets the image position patient.
 		/// </summary>
-		public abstract ImagePositionPatient ImagePositionPatient { get; }
+		/// <remarks>
+		/// null is returned when no data is available.
+		/// </remarks>
+		public virtual ImagePositionPatient ImagePositionPatient
+		{
+			get
+			{
+				bool tagExists;
+				string imagePositionPatient;
+				GetTagArray(Dcm.ImagePositionPatient, out imagePositionPatient, out tagExists);
+				if (tagExists)
+				{
+					double[] values = VMStringConverter.ToDoubleArray(imagePositionPatient);
+					if (values.Length == 3)
+						return new ImagePositionPatient(values[0], values[1], values[2]);
+				}
+
+				return null;
+			}
+		}
 
 		/// <summary>
 		/// Gets the slice thickness.
 		/// </summary>
-		public abstract double SliceThickness { get; }
+		public virtual double SliceThickness
+		{
+			get
+			{
+				bool tagExists;
+				double sliceThickness;
+				GetTag(Dcm.SliceThickness, out sliceThickness, out tagExists);
+				return sliceThickness;
+			}
+		}
 
 		/// <summary>
 		/// Gets the slice location.
 		/// </summary>
-		public abstract double SliceLocation { get; }
-
-		/// <summary>
-		/// Gets the pixel aspect ratio.
-		/// </summary>
-		public abstract PixelAspectRatio PixelAspectRatio { get; }
+		public virtual double SliceLocation
+		{
+			get
+			{
+				bool tagExists;
+				double sliceLocation;
+				GetTag(Dcm.SliceLocation, out sliceLocation, out tagExists);
+				return sliceLocation;
+			}
+		}
 
 		#endregion
 
 		#region Image Pixel Module
 
+		#region Type 1
+		
 		/// <summary>
 		/// Gets the samples per pixel.
 		/// </summary>
-		public abstract int SamplesPerPixel { get; }
+		public virtual int SamplesPerPixel
+		{
+			get
+			{
+				bool tagExists;
+				ushort samplesPerPixel;
+				GetTag(Dcm.SamplesPerPixel, out samplesPerPixel, out tagExists);
+				return (int)samplesPerPixel;
+			}
+		}
 
 		/// <summary>
 		/// Gets the photometric interpretation.
 		/// </summary>
-		public abstract PhotometricInterpretation PhotometricInterpretation { get; }
+		public virtual PhotometricInterpretation PhotometricInterpretation
+		{
+			get
+			{
+				bool tagExists;
+				string photometricInterpretation;
+				GetTag(Dcm.PhotometricInterpretation, out photometricInterpretation, out tagExists);
+				return PhotometricInterpretationHelper.FromString(photometricInterpretation);
+			}
+		}
 
 		/// <summary>
 		/// Gets the number of rows.
 		/// </summary>
-		public abstract int Rows { get; }
+		public virtual int Rows
+		{
+			get
+			{
+				bool tagExists;
+				ushort rows;
+				GetTag(Dcm.Rows, out rows, out tagExists);
+				return (int)rows;
+			}
+		}
 
 		/// <summary>
 		/// Gets the number of columns.
 		/// </summary>
-		public abstract int Columns { get; }
+		public virtual int Columns
+		{
+			get
+			{
+				bool tagExists;
+				ushort columns;
+				GetTag(Dcm.Columns, out columns, out tagExists);
+				return (int)columns;
+			}
+		}
 
 		/// <summary>
 		/// Gets the number of bits allocated.
 		/// </summary>
-		public abstract int BitsAllocated { get; }
+		public virtual int BitsAllocated
+		{
+			get
+			{
+				bool tagExists;
+				ushort bitsAllocated;
+				GetTag(Dcm.BitsAllocated, out bitsAllocated, out tagExists);
+				return (int)bitsAllocated;
+			}
+		}
 
 		/// <summary>
 		/// Gets the number of bits stored.
 		/// </summary>
-		public abstract int BitsStored { get; }
+		public virtual int BitsStored
+		{
+			get
+			{
+				bool tagExists;
+				ushort bitsStored;
+				GetTag(Dcm.BitsStored, out bitsStored, out tagExists);
+				return (int)bitsStored;
+			}
+		}
 
 		/// <summary>
 		/// Gets the high bit.
 		/// </summary>
-		public abstract int HighBit { get; }
+		public virtual int HighBit
+		{
+			get
+			{
+				bool tagExists;
+				ushort highBit;
+				GetTag(Dcm.HighBit, out highBit, out tagExists);
+				return (int)highBit;
+			}
+		}
 
 		/// <summary>
 		/// Gets the pixel representation.
 		/// </summary>
-		public abstract int PixelRepresentation { get; }
+		public virtual int PixelRepresentation
+		{
+			get
+			{
+				bool tagExists;
+				ushort pixelRepresentation;
+				GetTag(Dcm.PixelRepresentation, out pixelRepresentation, out tagExists);
+				return (int)pixelRepresentation;
+			}
+		}
+
+		#endregion 
+		#region Type 1C
 
 		/// <summary>
 		/// Gets the planar configuration.
 		/// </summary>
-		public abstract int PlanarConfiguration { get; }
+		public virtual int PlanarConfiguration
+		{
+			get
+			{
+				bool tagExists;
+				ushort planarConfiguration;
+				GetTag(Dcm.PlanarConfiguration, out planarConfiguration, out tagExists);
+				return (int)planarConfiguration;
+			}
+		}
 
+		/// <summary>
+		/// Gets the pixel aspect ratio.
+		/// </summary>
+		/// <remarks>
+		/// A default value of 1/1 is returned if no data is available.
+		/// </remarks>
+		public virtual PixelAspectRatio PixelAspectRatio
+		{
+			get
+			{
+				bool tagExists;
+				string pixelAspectRatio;
+				GetTagArray(Dcm.PixelAspectRatio, out pixelAspectRatio, out tagExists);
+				if (tagExists)
+				{
+					double[] values = VMStringConverter.ToDoubleArray(pixelAspectRatio);
+					if (values.Length == 2)
+						return new PixelAspectRatio(values[0], values[1]);
+				}
+
+				return new PixelAspectRatio(1, 1);
+			}
+		}
+
+		#endregion
 		#endregion
 
 		#region Modality LUT Module
@@ -165,17 +465,50 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the rescale intercept.
 		/// </summary>
-		public abstract double RescaleIntercept { get; }
+		public virtual double RescaleIntercept
+		{
+			get
+			{
+				bool tagExists;
+				double rescaleIntercept;
+				GetTag(Dcm.RescaleIntercept, out rescaleIntercept, out tagExists);
+				return rescaleIntercept;
+			}
+		}
 
 		/// <summary>
 		/// Gets the rescale slope.
 		/// </summary>
-		public abstract double RescaleSlope { get; }
+		/// <remarks>
+		/// 1.0 is returned if no data is available.
+		/// </remarks>
+		public virtual double RescaleSlope
+		{
+			get
+			{
+				bool tagExists;
+				double rescaleSlope;
+				GetTag(Dcm.RescaleSlope, out rescaleSlope, out tagExists);
+				if (rescaleSlope == 0.0)
+					return 1.0;
+
+				return rescaleSlope;
+			}
+		}
 
 		/// <summary>
 		/// Gets the rescale type.
 		/// </summary>
-		public abstract string RescaleType { get; }
+		public virtual string RescaleType
+		{
+			get
+			{
+				bool tagExists;
+				string rescaleType;
+				GetTag(Dcm.RescaleType, out rescaleType, out tagExists);
+				return rescaleType ?? "";
+			}
+		}
 
 		#endregion
 
@@ -184,15 +517,102 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the window width and center.
 		/// </summary>
-		public abstract Window[] WindowCenterAndWidth { get; }
+		public virtual Window[] WindowCenterAndWidth
+		{
+			get
+			{
+				bool tagExists;
+				string windowCenterValues;
+				GetTagArray(Dcm.WindowCenter, out windowCenterValues, out tagExists);
+				if (tagExists)
+				{
+					string windowWidthValues;
+					GetTagArray(Dcm.WindowWidth, out windowWidthValues, out tagExists);
+					if (tagExists)
+					{
+						if (!String.IsNullOrEmpty(windowCenterValues) && !String.IsNullOrEmpty(windowWidthValues))
+						{
+							List<Window> windows = new List<Window>();
+
+							double[] windowCenters = VMStringConverter.ToDoubleArray(windowCenterValues);
+							double[] windowWidths = VMStringConverter.ToDoubleArray(windowWidthValues);
+
+							if (windowCenters.Length > 0 && windowCenters.Length == windowWidths.Length)
+							{
+								for (int i = 0; i < windowWidths.Length; ++i)
+								{
+									windows.Add(new Window(windowWidths[i], windowCenters[i]));
+								}
+
+								return windows.ToArray();
+							}
+						}
+					}
+				}
+
+				return new Window[] { };
+			}
+		}
 
 		/// <summary>
 		/// Gets the window width and center explanation.
 		/// </summary>
-		public abstract string[] WindowCenterAndWidthExplanation { get; }
+		public virtual string[] WindowCenterAndWidthExplanation
+		{
+			get
+			{
+				bool tagExists;
+				string windowCenterAndWidthExplanations;
+				GetTagArray(Dcm.WindowCenterWidthExplanation, out windowCenterAndWidthExplanations, out tagExists);
+				return VMStringConverter.ToStringArray(windowCenterAndWidthExplanations);
+			}
+		}
 
 		#endregion
 
 		public abstract byte[] GetNormalizedPixelData();
+
+		/// <summary>
+		/// Validates the <see cref="ImageSop"/> object.
+		/// </summary>
+		/// <remarks>
+		/// Derived classes should call the base class implementation first, and then do further validation.
+		/// The <see cref="ImageSop"/> class validates properties deemed vital to usage of the object.
+		/// </remarks>
+		/// <exception cref="SopValidationException">Thrown when validation fails.</exception>
+		protected override void ValidateInternal()
+		{
+			base.ValidateInternal();
+
+			ValidateAllowableTransferSyntax();
+
+			DicomValidator.ValidateRows(this.Rows);
+			DicomValidator.ValidateColumns(this.Columns);
+			DicomValidator.ValidateBitsAllocated(this.BitsAllocated);
+			DicomValidator.ValidateBitsStored(this.BitsStored);
+			DicomValidator.ValidateHighBit(this.HighBit);
+			DicomValidator.ValidateSamplesPerPixel(this.SamplesPerPixel);
+			DicomValidator.ValidatePixelRepresentation(this.PixelRepresentation);
+			DicomValidator.ValidatePhotometricInterpretation(this.PhotometricInterpretation);
+
+			DicomValidator.ValidateImagePropertyRelationships
+				(
+					this.BitsStored, 
+					this.BitsAllocated, 
+					this.HighBit, 
+					this.PhotometricInterpretation, 
+					this.PlanarConfiguration, 
+					this.SamplesPerPixel
+				);
+		}
+
+		private void ValidateAllowableTransferSyntax()
+		{
+			//Right now, Dicom Images are restricted to these transfer syntaxes for viewing purposes.
+			if (this.TransferSyntaxUID != "1.2.840.10008.1.2" &&
+				this.TransferSyntaxUID != "1.2.840.10008.1.2.1" &&
+				this.TransferSyntaxUID != "1.2.840.10008.1.2.2")
+				throw new SopValidationException(SR.ExceptionInvalidTransferSyntaxUID);
+		}
 	}
 }

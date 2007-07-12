@@ -75,8 +75,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void Initialize(int rows, int columns, int bitsAllocated)
 		{
-			ImageValidator.ValidateRows(rows);
-			ImageValidator.ValidateColumns(columns);
+			DicomValidator.ValidateRows(rows);
+			DicomValidator.ValidateColumns(columns);
 			_rows = rows;
 			_columns = columns;
 			_bitsAllocated = bitsAllocated;

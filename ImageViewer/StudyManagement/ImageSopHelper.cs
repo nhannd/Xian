@@ -43,6 +43,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </remarks>
 		public static void GetModalityPixelSpacing(ImageSop imageSop, out double pixelSpacingX, out double pixelSpacingY)
 		{
+			pixelSpacingX = 0;
+			pixelSpacingY = 0;
+
 			if (String.Compare(imageSop.Modality, "CR", true) == 0 ||
 				String.Compare(imageSop.Modality, "DX", true) == 0 ||
 				String.Compare(imageSop.Modality, "MG", true) == 0)
@@ -51,11 +54,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				imageSop.GetTag(Dcm.ImagerPixelSpacing, out pixelSpacingY, 0, out tagExists);
 
 				if (!tagExists)
-				{
-					pixelSpacingX = double.NaN;
-					pixelSpacingY = double.NaN;
 					return;
-				}
 
 				imageSop.GetTag(Dcm.ImagerPixelSpacing, out pixelSpacingX, 1, out tagExists);
 			}

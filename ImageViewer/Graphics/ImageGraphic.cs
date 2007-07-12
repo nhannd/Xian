@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		protected ImageGraphic(int rows, int columns, int bitsPerPixel, byte[] pixelData)
 		{
 			Platform.CheckForNullReference(pixelData, "pixelData");
-			ImageValidator.ValidatePixelData(pixelData, rows, columns, bitsPerPixel);
+			DicomValidator.ValidatePixelData(pixelData, rows, columns, bitsPerPixel);
 			_pixelDataRaw = pixelData;
 			Initialize(rows, columns, bitsPerPixel);
 		}
@@ -92,8 +92,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void Initialize(int rows, int columns, int bitsPerPixel)
 		{
-			ImageValidator.ValidateRows(rows);
-			ImageValidator.ValidateColumns(columns);
+			DicomValidator.ValidateRows(rows);
+			DicomValidator.ValidateColumns(columns);
 
 			_rows = rows;
 			_columns = columns;
