@@ -31,6 +31,24 @@ namespace ClearCanvas.ImageViewer.Graphics
 			byte[] pixelData)
 			: base(rows, columns, bitsAllocated, pixelData)
 		{
+			Initialize(bitsStored, highBit, isSigned);
+		}
+
+		public IndexedPixelData(
+			int rows,
+			int columns,
+			int bitsAllocated,
+			int bitsStored,
+			int highBit,
+			bool isSigned,
+			PixelDataGetter pixelDataGetter)
+			: base(rows, columns, bitsAllocated, pixelDataGetter)
+		{
+			Initialize(bitsStored, highBit, isSigned);
+		}
+
+		private void Initialize(int bitsStored, int highBit, bool isSigned)
+		{
 			ImageValidator.ValidateBitsStored(bitsStored);
 			ImageValidator.ValidateHighBit(highBit);
 
@@ -77,61 +95,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 				(byte[])_pixelData.Clone());
 		}
 
-		#region GetPixel methods
-
-		/// <summary>
-		/// Gets the pixel value at the specified location.
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns>
-		/// The value of the pixel.
-		/// </returns>
-		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
-		/// <paramref name="y"/> are out of bounds.</exception>
-		public override int GetPixel(int x, int y)
-		{
-			int i = GetIndex(x, y);
-			return GetPixelInternal(i);
-		}
-
-		public override int GetPixel(int pixelIndex)
-		{
-			int i = pixelIndex * _bytesPerPixel;
-			return GetPixelInternal(i);
-		}
-
-		#endregion
-
-		#region SetPixel methods
-
-		/// <summary>
-		/// Sets the pixel value at the specified location.
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="value"></param>
-		/// <remarks>
-		/// Allowable pixel values are determined by the pixel representation
-		/// and the number of bits stored.
-		/// represent
-		/// </remarks>
-		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
-		/// <paramref name="y"/> are out of bounds, or <paramref name="value"/>
-		/// is out of range.</exception>
-		public override void SetPixel(int x, int y, int value)
-		{
-			int i = GetIndex(x,y);
-			SetPixelInternal(i, value);
-		}
-
-		public override void SetPixel(int pixelIndex, int value)
-		{
-			int i = pixelIndex * _bytesPerPixel;
-			SetPixelInternal(i, value);
-		}
-
-		#endregion
 
 		/// <summary>
 		/// Calculates the Minimum and Maximum pixel values from the pixel data efficiently, using unsafe code.
@@ -140,6 +103,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="maxPixelValue">returns the maximum pixel value</param>
 		unsafe public void CalculateMinMaxPixelValue(out int minPixelValue, out int maxPixelValue)
 		{
+			byte[] pixelData;
+
+			if (_pixelData != null)
+				pixelData = _pixelData;
+			else
+				pixelData = _pixelDataGetter();
+
 #if DEBUG
 			CodeClock clock = new CodeClock();
 			clock.Start();
@@ -148,7 +118,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				if (_bitsAllocated == 8)
 				{
-					fixed (byte* ptr = _pixelData)
+					fixed (byte* ptr = pixelData)
 					{
 						byte* pixel = (byte*)ptr;
 
@@ -188,7 +158,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 				else
 				{
-					fixed (byte* ptr = _pixelData)
+					fixed (byte* ptr = pixelData)
 					{
 						UInt16* pixel = (UInt16*)ptr;
 
@@ -231,7 +201,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				if (_bitsAllocated == 8)
 				{
-					fixed (byte* ptr = _pixelData)
+					fixed (byte* ptr = pixelData)
 					{
 						byte* pixel = ptr;
 
@@ -254,7 +224,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				}
 				else
 				{
-					fixed (byte* ptr = _pixelData)
+					fixed (byte* ptr = pixelData)
 					{
 						UInt16* pixel = (UInt16*)ptr;
 
@@ -285,9 +255,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
-		#region Private get methods
+		#region Overrides
 
-		private int GetPixelInternal(int i)
+		protected override int GetPixelInternal(int i)
 		{
 			if (_bytesPerPixel == 1) // 8 bit
 			{
@@ -305,9 +275,35 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
+		protected override void SetPixelInternal(int i, int value)
+		{
+			if (_bytesPerPixel == 1)
+			{
+				if (_isSigned)
+					SetPixelSigned8(i, value);
+				else
+					SetPixelUnsigned8(i, value);
+			}
+			else
+			{
+				if (_isSigned)
+					SetPixelSigned16(i, value);
+				else
+					SetPixelUnsigned16(i, value);
+			}
+		}
+
+		#endregion
+
+		#region Private get methods
+
+
 		private byte GetPixelUnsigned8(int i)
 		{
-			return _pixelData[i];
+			if (_pixelData != null)
+				return _pixelData[i];
+			else
+				return _pixelDataGetter()[i];
 		}
 
 		private sbyte GetPixelSigned8(int i)
@@ -347,9 +343,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private ushort GetPixelUnsigned16(int i)
 		{
-			ushort lowbyte = (ushort)_pixelData[i];
-			ushort highbyte = (ushort)_pixelData[i + 1];
-			ushort pixelValue = (ushort)(lowbyte | (highbyte << 8));
+			ushort lowbyte, highbyte, pixelValue;
+
+			if (_pixelData != null)
+			{
+				lowbyte = (ushort)_pixelData[i];
+				highbyte = (ushort)_pixelData[i + 1];
+				pixelValue = (ushort)(lowbyte | (highbyte << 8));
+			}
+			else
+			{
+				lowbyte = (ushort)_pixelDataGetter()[i];
+				highbyte = (ushort)_pixelDataGetter()[i + 1];
+				pixelValue = (ushort)(lowbyte | (highbyte << 8));
+			}
 
 			return pixelValue;
 		}
@@ -394,24 +401,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Private set methods
 
-		private void SetPixelInternal(int i, int value)
-		{
-			if (_bytesPerPixel == 1)
-			{
-				if (_isSigned)
-					SetPixelSigned8(i, value);
-				else
-					SetPixelUnsigned8(i, value);
-			}
-			else
-			{
-				if (_isSigned)
-					SetPixelSigned16(i, value);
-				else
-					SetPixelUnsigned16(i, value);
-			}
-		}
-
 		private void SetPixelUnsigned8(int i, int value)
 		{
 			if (value < _absoluteMinPixelValue || value > _absoluteMaxPixelValue)
@@ -440,7 +429,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void SetPixel8(int i, byte value)
 		{
-			_pixelData[i] = value;
+			if (_pixelData != null)
+				_pixelData[i] = value;
+			else
+				_pixelDataGetter()[i] = value;
 		}
 
 		private void SetPixelUnsigned16(int i, int value)
@@ -470,8 +462,16 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void SetPixel16(int i, ushort value)
 		{
-			_pixelData[i] = (byte)(value & 0x00ff); // low-byte first (little endian)
-			_pixelData[i + 1] = (byte)((value & 0xff00) >> 8); // high-byte last
+			if (_pixelData != null)
+			{
+				_pixelData[i] = (byte)(value & 0x00ff); // low-byte first (little endian)
+				_pixelData[i + 1] = (byte)((value & 0xff00) >> 8); // high-byte last
+			}
+			else
+			{
+				_pixelDataGetter()[i] = (byte)(value & 0x00ff); // low-byte first (little endian)
+				_pixelDataGetter()[i + 1] = (byte)((value & 0xff00) >> 8); // high-byte last
+			}
 		}
 
 		#endregion

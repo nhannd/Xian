@@ -29,9 +29,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		protected int _rows;
 		protected int _columns;
 		protected int _bitsAllocated;
-		protected int _bitsStored;
-		protected int _highBit;
 		protected byte[] _pixelData;
+		protected PixelDataGetter _pixelDataGetter;
 
 		protected int _bytesPerPixel;
 		private int _stride;
@@ -56,14 +55,31 @@ namespace ClearCanvas.ImageViewer.Graphics
 			int bitsAllocated,
 			byte[] pixelData)
 		{
+			Platform.CheckForNullReference(pixelData, "pixelData");
+			_pixelData = pixelData;
+
+			Initialize(rows, columns, bitsAllocated);
+		}
+
+		protected PixelData(
+			int rows,
+			int columns,
+			int bitsAllocated,
+			PixelDataGetter pixelDataGetter)
+		{
+			Platform.CheckForNullReference(pixelDataGetter, "pixelDataGetter");
+			_pixelDataGetter = pixelDataGetter;
+
+			Initialize(rows, columns, bitsAllocated);
+		}
+
+		private void Initialize(int rows, int columns, int bitsAllocated)
+		{
 			ImageValidator.ValidateRows(rows);
 			ImageValidator.ValidateColumns(columns);
-			Platform.CheckForNullReference(pixelData, "pixelData");
-
 			_rows = rows;
 			_columns = columns;
 			_bitsAllocated = bitsAllocated;
-			_pixelData = pixelData;
 
 			_bytesPerPixel = bitsAllocated / 8;
 			_stride = _columns * _bytesPerPixel;
@@ -78,7 +94,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public byte[] Raw
 		{
-			get { return _pixelData; }
+			get 
+			{
+				if (_pixelData != null)
+					return _pixelData;
+				else
+					return _pixelDataGetter();
+			}
 		}
 
 		#endregion
@@ -98,9 +120,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </returns>
 		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
 		/// <paramref name="y"/> are out of bounds.</exception>
-		public abstract int GetPixel(int x, int y);
+		public int GetPixel(int x, int y)
+		{
+			int i = GetIndex(x, y);
+			return GetPixelInternal(i);
+		}
 
-		public abstract int GetPixel(int pixelIndex);
+		public int GetPixel(int pixelIndex)
+		{
+			int i = pixelIndex * _bytesPerPixel;
+			return GetPixelInternal(i);
+		}
 
 		/// <summary>
 		/// Sets the pixel value at the specified location.
@@ -111,9 +141,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
 		/// <paramref name="y"/> are out of bounds, or <paramref name="value"/>
 		/// is out of range.</exception>
-		public abstract void SetPixel(int x, int y, int value);
+		public void SetPixel(int x, int y, int value)
+		{
+			int i = GetIndex(x, y);
+			SetPixelInternal(i, value);
+		}
 
-		public abstract void SetPixel(int pixelIndex, int value);
+		public void SetPixel(int pixelIndex, int value)
+		{
+			int i = pixelIndex * _bytesPerPixel;
+			SetPixelInternal(i, value);
+		}
 
 		public delegate void PixelProcessor(int i, int x, int y, int pixelIndex);
 
@@ -157,6 +195,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 				pixelIndex += (_columns - right) + left - 1;
 			}
 		}
+
+		#endregion
+
+		#region Protected methods
+
+		protected abstract int GetPixelInternal(int i);
+
+		protected abstract void SetPixelInternal(int i, int value);
 
 		#endregion
 

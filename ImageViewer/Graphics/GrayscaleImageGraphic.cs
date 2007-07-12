@@ -25,32 +25,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Public constructors
 
-		/// <summary>
-		/// Initializes a new instance of <see cref="GrayscaleImageGraphic"/>
-		/// with the specified <see cref="ImageSop"/>.
-		/// </summary>
-		/// <param name="imageSop"></param>
-		/// <remarks>
-		/// This constructor is provided for convenience in the case where
-		/// the properties of <see cref="GrayscaleImageGraphic"/> are the
-		/// same as that of an existing <see cref="ImageSop"/>.
-		/// Note that a reference to <paramref name="imageSop"/> is <i>not</i> held
-		/// by <see cref="GrayscaleImageGraphic"/>.
-		/// </remarks>
-		public GrayscaleImageGraphic(ImageSop imageSop) 
-			: this(
-			imageSop.Rows,
-			imageSop.Columns,
-			imageSop.BitsAllocated,
-			imageSop.BitsStored,
-			imageSop.HighBit,
-			imageSop.PixelRepresentation != 0 ? true : false,
-			imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ? true: false,
-			imageSop.RescaleSlope,
-			imageSop.RescaleIntercept,
-			imageSop.PixelData)
+		public GrayscaleImageGraphic(int rows, int columns)
+			: base(rows, 
+				   columns, 
+				   16, /* bits allocated */
+				   16, /* bits stored */
+				   15, /* high bit */
+				   false) /* is signed */
 		{
-
+			Initialize(false, 1.0, 0.0);
 		}
 
 		/// <summary>
@@ -86,6 +69,34 @@ namespace ClearCanvas.ImageViewer.Graphics
 				highBit,
 				isSigned,
 				pixelData)
+		{
+			Initialize(inverted, rescaleSlope, rescaleIntercept);
+		}
+
+		public GrayscaleImageGraphic(
+			int rows,
+			int columns,
+			int bitsAllocated,
+			int bitsStored,
+			int highBit,
+			bool isSigned,
+			bool inverted,
+			double rescaleSlope,
+			double rescaleIntercept,
+			PixelDataGetter pixelDataGetter)
+			: base(
+				rows,
+				columns,
+				bitsAllocated,
+				bitsStored,
+				highBit,
+				isSigned,
+				pixelDataGetter)
+		{
+			Initialize(inverted, rescaleSlope, rescaleIntercept);
+		}
+
+		private void Initialize(bool inverted, double rescaleSlope, double rescaleIntercept)
 		{
 			_minPixelValue = int.MinValue;
 			_maxPixelValue = int.MaxValue;

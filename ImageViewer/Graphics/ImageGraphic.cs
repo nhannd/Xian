@@ -25,25 +25,33 @@ namespace ClearCanvas.ImageViewer.Graphics
 		Bilinear 
 	};
 
+	public delegate byte[] PixelDataGetter();
 
 	/// <summary>
 	/// An image <see cref="Graphic"/>.
 	/// </summary>
+	/// <remarks>
+	/// The derived classes <see cref="IndexedImageGraphic"/> and 
+	/// <see cref="ColorImageGraphic"/> represent the two basic types of
+	/// 2D images in the framework.
+	/// 
+	/// An <see cref="ImageGraphic"/> is always a leaf in the scene graph.
+	/// </remarks>
 	public abstract class ImageGraphic : Graphic
 	{
 		#region Private fields
 
 		private int _rows;
 		private int _columns;
-		private int _bitsAllocated;
-		private int _samplesPerPixel;
+		private int _bitsPerPixel;
+
 		private byte[] _pixelDataRaw;
-		protected PixelData _pixelDataWrapper;
+		private PixelDataGetter _pixelDataGetter;
+		private PixelData _pixelDataWrapper;
 
 		private int _sizeInBytes = -1;
 		private int _sizeInPixels = -1;
 		private int _doubleWordAlignedColumns = -1;
-		private RectangleF _imageRectangle;
 
 		private InterpolationMode _interpolationMode = InterpolationMode.Bilinear;
 
@@ -51,32 +59,47 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Protected constructor
 
+		protected ImageGraphic(int rows, int columns, int bitsPerPixel) :
+			this(rows, columns, bitsPerPixel, new byte[rows * columns * bitsPerPixel / 8])
+		{
+		}
+
 		/// <summary>
 		/// Initializes a new instance of <see cref="ImageGraphic"/>
 		/// with the specified image parameters.
 		/// </summary>
 		/// <param name="rows"></param>
 		/// <param name="columns"></param>
-		/// <param name="bitsAllocated"></param>
-		/// <param name="bitsStored"></param>
-		/// <param name="highBit"></param>
-		/// <param name="pixelData"></param>
-		protected ImageGraphic(
-			int rows,
-			int columns,
-			int bitsAllocated,
-			byte[] pixelData)
+		/// <param name="bitsPerPixel"></param>
+		/// <param name="pixelData">If <b>null</b>, a byte buffer of size
+		/// <i>rows</i> x <i>columns</i> x <i>bitsPerPixel</i> / 8
+		/// will be allocated.</param>
+		/// <exception cref="ArgumentException"></exception>
+		protected ImageGraphic(int rows, int columns, int bitsPerPixel, byte[] pixelData)
+		{
+			Platform.CheckForNullReference(pixelData, "pixelData");
+			ImageValidator.ValidatePixelData(pixelData, rows, columns, bitsPerPixel);
+			_pixelDataRaw = pixelData;
+			Initialize(rows, columns, bitsPerPixel);
+		}
+
+		protected ImageGraphic(int rows, int columns, int bitsPerPixel, PixelDataGetter pixelDataGetter)
+		{
+			Platform.CheckForNullReference(pixelDataGetter, "pixelDataGetter");
+			_pixelDataGetter = pixelDataGetter;
+			Initialize(rows, columns, bitsPerPixel);
+		}
+
+		private void Initialize(int rows, int columns, int bitsPerPixel)
 		{
 			ImageValidator.ValidateRows(rows);
 			ImageValidator.ValidateColumns(columns);
 
 			_rows = rows;
 			_columns = columns;
-			_bitsAllocated = bitsAllocated;
-			_pixelDataRaw = pixelData;
-
-			_imageRectangle = new RectangleF(0, 0, _columns - 1, _rows - 1);
+			_bitsPerPixel = bitsPerPixel;
 		}
+
 
 		#endregion
 
@@ -99,26 +122,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets the number of bits allocated in the image.
+		/// Gets the number of bits per pixel.
 		/// </summary>
-		/// <remarks>The number of bits allocated will always either be 8 or 16.</remarks>
-		public int BitsAllocated 
+		/// <remarks>In the case of <see cref="IndexedImageGraphic"/>, this
+		/// property will always have a value of 8 or 16, whereas in the
+		/// case of <see cref="ColorImageGraphic"/>, it will always have
+		/// a value of 32 (ARGB).</remarks>
+		public int BitsPerPixel 
 		{
-			get { return _bitsAllocated; }
-		}
-
-		/// <summary>
-		/// Gets the <see cref="PixelData"/>.
-		/// </summary>
-		public PixelData PixelData
-		{
-			get
-			{
-				if (_pixelDataWrapper == null)
-					_pixelDataWrapper = CreatePixelDataWrapper();
-
-				return _pixelDataWrapper;
-			}
+			get { return _bitsPerPixel; }
 		}
 
 		/// <summary>
@@ -157,7 +169,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			{
 				// Only calculate this once
 				if (_sizeInBytes == -1)
-					_sizeInBytes = this.SizeInPixels * this.BitsAllocated / 8;
+					_sizeInBytes = this.SizeInPixels * this.BitsPerPixel / 8;
 
 				return _sizeInBytes;
 			}
@@ -193,29 +205,29 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return _interpolationMode; }
 		}
 
+		public PixelData PixelData
+		{
+			get
+			{
+				if (_pixelDataWrapper == null)
+					_pixelDataWrapper = CreatePixelDataWrapper();
+
+				return _pixelDataWrapper; 
+			}
+		}
+
 		#endregion
 
 		#region Protected properties/methods
 
-		/// <summary>
-		/// Gets the pixel data of the image.
-		/// </summary>
-		/// <returns></returns>
-		/// <remarks>
-		/// By default, <see cref="PixelDataRaw"/> returns an empty array of bytes
-		/// of size <see cref="SizeInBytes"/>.  Override this property if you want
-		/// the pixel data to be otherwise.  Note that this is what is returned
-		/// by <see cref="ClearCanvas.ImageViewer.Graphics.PixelData.Raw"/>.
-		/// </remarks>
-		protected virtual byte[] PixelDataRaw
+		protected byte[] PixelDataRaw
 		{
-			get
-			{
-				if (_pixelDataRaw == null)
-					_pixelDataRaw = new byte[this.SizeInBytes];
+			get { return _pixelDataRaw; }
+		}
 
-				return _pixelDataRaw;
-			}
+		protected PixelDataGetter PixelDataGetter
+		{
+			get { return _pixelDataGetter; }
 		}
 
 		protected abstract PixelData CreatePixelDataWrapper();

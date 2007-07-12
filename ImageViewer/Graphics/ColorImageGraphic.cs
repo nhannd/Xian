@@ -4,33 +4,46 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	/// <summary>
+	/// An image
+	/// </summary>
 	public class ColorImageGraphic : ImageGraphic
 	{
+		public ColorImageGraphic(int rows, int columns)
+			: base(rows, columns, 32)
+		{
+		}
+
 		/// <summary>
-		/// Initializes a new instance of <see cref="IndexedImageGraphic"/>
-		/// with the specified image parameters.
+		/// 
 		/// </summary>
 		/// <param name="rows"></param>
 		/// <param name="columns"></param>
 		/// <param name="pixelData"></param>
-		public ColorImageGraphic(
-			int rows,
-			int columns,
-			byte[] pixelData)
-			: base(
-				rows,
-				columns,
-				32,
-				pixelData)
+		public ColorImageGraphic(int rows, int columns, byte[] pixelData)
+			: base(rows, columns, 32, pixelData)
 		{
+		}
+
+		public ColorImageGraphic(int rows, int columns, PixelDataGetter pixelDataGetter)
+			: base(rows, columns, 32, pixelDataGetter)
+		{
+		}
+
+		public new ColorPixelData PixelData
+		{
+			get
+			{
+				return base.PixelData as ColorPixelData;
+			}
 		}
 
 		protected override PixelData CreatePixelDataWrapper()
 		{
-			return new ColorPixelData(
-						this.Rows,
-						this.Columns,
-						this.PixelDataRaw);
+			if (this.PixelDataRaw != null)
+				return new ColorPixelData(this.Rows, this.Columns, this.PixelDataRaw);
+			else
+				return new ColorPixelData(this.Rows, this.Columns, this.PixelDataGetter);
 		}
 	}
 }

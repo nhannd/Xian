@@ -273,13 +273,13 @@ namespace ClearCanvas.ImageViewer
 			_imageGraphic = CreateImageGraphic();
 			_overlayGraphics = new CompositeGraphic();
 
-			//ColorImageGraphic colorOverlay = new ColorImageGraphic(_imageSop.Rows, _imageSop.Columns, null);
+			//ColorImageGraphic colorOverlay = new ColorImageGraphic(_imageSop.Rows, _imageSop.Columns);
 
 			//_imageGraphic.PixelData.ForEachPixel(
 			//    delegate(int i, int x, int y, int pixelIndex)
 			//    {
 			//        if (_imageGraphic.PixelData.GetPixel(pixelIndex) > 1200)
-			//            colorOverlay.PixelData.SetPixel(pixelIndex, Color.FromArgb(150, 250, 0, 200).ToArgb());
+			//            colorOverlay.PixelData.SetPixel(pixelIndex, Color.FromArgb(200, 250, 0, 200));
 			//    });
 
 			_compositeImageGraphic.Graphics.Add(_imageGraphic);
@@ -307,8 +307,8 @@ namespace ClearCanvas.ImageViewer
 			if (_imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ||
 				_imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome2)
 				return new StandardGrayscaleImageGraphic(_imageSop);
-			else if (_imageSop.PhotometricInterpretation == PhotometricInterpretation.PaletteColor)
-			    return new StandardPaletteColorImageGraphic(_imageSop);
+			//else if (_imageSop.PhotometricInterpretation == PhotometricInterpretation.PaletteColor)
+			//    return new StandardPaletteColorImageGraphic(_imageSop);
 			else
 			    return new StandardColorImageGraphic(_imageSop);
 		}

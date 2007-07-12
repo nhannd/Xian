@@ -6,20 +6,20 @@ using ClearCanvas.ImageViewer.StudyManagement;
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	// TODO:  support palette colour.
-	internal class StandardPaletteColorImageGraphic : IndexedImageGraphic
-	{
-		private ImageSop _imageSop;
+	//internal class StandardPaletteColorImageGraphic : IndexedImageGraphic
+	//{
+	//    private ImageSop _imageSop;
 
-		public StandardPaletteColorImageGraphic(ImageSop imageSop) : base(imageSop)
-		{
-			_imageSop = imageSop;
+	//    public StandardPaletteColorImageGraphic(ImageSop imageSop) : base(imageSop)
+	//    {
+	//        _imageSop = imageSop;
 
-			//TODO: Load palette tables into LUTs here
-		}
+	//        //TODO: Load palette tables into LUTs here
+	//    }
 
-		public override int[] OutputLUT
-		{
-			get { throw new Exception("The method or operation is not implemented."); }
-		}
-	}
+	//    public override int[] OutputLUT
+	//    {
+	//        get { throw new Exception("The method or operation is not implemented."); }
+	//    }
+	//}
 }

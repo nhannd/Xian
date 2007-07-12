@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.Dicom;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -11,8 +12,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Converts between colour spaces.
 	/// </summary>
-	public static class ColorSpaceConverter
+	public unsafe static class ColorSpaceConverter
 	{
+		#region Public methods
 
 		/// <summary>
 		/// Converts a YBR_FULL value to RGB.
@@ -113,5 +115,181 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			return argb;
 		}
+
+		public static void ToArgb(
+			PhotometricInterpretation photometricInterpretation,
+			int planarConfiguration,
+			byte[] srcPixelData,
+			byte[] argbPixelData)
+		{
+			int sizeInPixels = argbPixelData.Length / 4;
+
+			if (photometricInterpretation == PhotometricInterpretation.Rgb)
+			{
+				if (planarConfiguration == 0)
+					RgbTripletToArgb(srcPixelData, argbPixelData, sizeInPixels);
+				else
+					RgbPlanarToArgb(srcPixelData, argbPixelData, sizeInPixels);
+			}
+			else
+			{
+				if (planarConfiguration == 0)
+					YbrTripletToArgb(srcPixelData, argbPixelData, sizeInPixels, photometricInterpretation);
+				else
+					YbrPlanarToArgb(srcPixelData, argbPixelData, sizeInPixels, photometricInterpretation);
+			}
+		}
+
+		#endregion
+
+		#region Private methods
+
+		#region RGB to ARGB
+
+		private static void RgbTripletToArgb(byte[] rgbPixelData, byte[] argbPixelData, int sizeInPixels)
+		{
+			fixed (byte* pRgbPixelData = rgbPixelData)
+			{
+				fixed (byte* pArgbPixelData = argbPixelData)
+				{
+					int src = 0;
+					int dst = 0;
+
+					for (int i = 0; i < sizeInPixels; i++)
+					{
+						pArgbPixelData[dst] = pRgbPixelData[src + 2];
+						pArgbPixelData[dst + 1] = pRgbPixelData[src + 1];
+						pArgbPixelData[dst + 2] = pRgbPixelData[src];
+						pArgbPixelData[dst + 3] = 0xff;
+
+						src += 3;
+						dst += 4;
+					}
+				}
+			}
+		}
+
+		private static void RgbPlanarToArgb(byte[] rgbPixelData, byte[] argbPixelData, int sizeInPixels)
+		{
+			fixed (byte* pRgbPixelData = rgbPixelData)
+			{
+				fixed (byte* pArgbPixelData = argbPixelData)
+				{
+					int src = 0;
+					int dst = 0;
+
+					int greenOffset = sizeInPixels;
+					int blueOffset = sizeInPixels * 2;
+
+					for (int i = 0; i < sizeInPixels; i++)
+					{
+						pArgbPixelData[dst] = pRgbPixelData[src + blueOffset];
+						pArgbPixelData[dst + 1] = pRgbPixelData[src + greenOffset];
+						pArgbPixelData[dst + 2] = pRgbPixelData[src];
+						pArgbPixelData[dst + 3] = 0xff;
+
+						src += 1;
+						dst += 4;
+					}
+				}
+			}
+		}
+
+		#endregion
+
+		#region YBR to ARGB
+
+		private static void YbrTripletToArgb(
+			byte[] ybrPixelData,
+			byte[] argbPixelData,
+			int sizeInPixels,
+			PhotometricInterpretation photometricInterpretation)
+		{
+			fixed (byte* pYbrPixelData = ybrPixelData)
+			{
+				fixed (byte* pArgbPixelData = argbPixelData)
+				{
+					int src = 0;
+					int dst = 0;
+
+					YbrToRgb converter = GetYbrToRgbConverter(photometricInterpretation);
+
+					for (int i = 0; i < sizeInPixels; i++)
+					{
+						int rgb = converter(
+							pYbrPixelData[src],
+							pYbrPixelData[src + 1],
+							pYbrPixelData[src + 2]);
+
+						pArgbPixelData[dst] = Color.FromArgb(rgb).B;
+						pArgbPixelData[dst + 1] = Color.FromArgb(rgb).G;
+						pArgbPixelData[dst + 2] = Color.FromArgb(rgb).R;
+						pArgbPixelData[dst + 3] = 0xff;
+
+						src += 3;
+						dst += 4;
+					}
+				}
+			}
+		}
+
+		private static void YbrPlanarToArgb(
+			byte[] ybrPixelData,
+			byte[] argbPixelData,
+			int sizeInPixels, 
+			PhotometricInterpretation photometricInterpretation)
+		{
+			fixed (byte* pYbrPixelData = ybrPixelData)
+			{
+				fixed (byte* pArgbPixelData = argbPixelData)
+				{
+					int src = 0;
+					int dst = 0;
+
+					int bOffset = sizeInPixels;
+					int rOffset = sizeInPixels * 2;
+
+					YbrToRgb converter = GetYbrToRgbConverter(photometricInterpretation);
+
+					for (int i = 0; i < sizeInPixels; i++)
+					{
+						int rgb = converter(
+							pYbrPixelData[src],
+							pYbrPixelData[src + bOffset],
+							pYbrPixelData[src + rOffset]);
+
+						pArgbPixelData[dst] = Color.FromArgb(rgb).B;
+						pArgbPixelData[dst + 1] = Color.FromArgb(rgb).G;
+						pArgbPixelData[dst + 2] = Color.FromArgb(rgb).R;
+						pArgbPixelData[dst + 3] = 0xff;
+
+						src += 1;
+						dst += 4;
+					}
+				}
+			}
+		}
+
+		#endregion
+
+		private static YbrToRgb GetYbrToRgbConverter(PhotometricInterpretation photometricInterpretation)
+		{
+			YbrToRgb converter;
+
+			if (photometricInterpretation == PhotometricInterpretation.YbrFull)
+				converter = new YbrToRgb(ColorSpaceConverter.YbrFullToRgb);
+			else if (photometricInterpretation == PhotometricInterpretation.YbrFull422)
+				converter = new YbrToRgb(ColorSpaceConverter.YbrFull422ToRgb);
+			else if (photometricInterpretation == PhotometricInterpretation.YbrIct)
+				converter = new YbrToRgb(ColorSpaceConverter.YbrIctToRgb);
+			else if (photometricInterpretation == PhotometricInterpretation.YbrPartial422)
+				converter = new YbrToRgb(ColorSpaceConverter.YbrPartial422ToRgb);
+			else
+				converter = new YbrToRgb(ColorSpaceConverter.YbrRctToRgb);
+
+			return converter;
+		}
+
+		#endregion
 	}
 }

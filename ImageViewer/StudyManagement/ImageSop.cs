@@ -158,11 +158,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public abstract int PlanarConfiguration { get; }
 
-		/// <summary>
-		/// Gets the raw pixel data.
-		/// </summary>
-		public abstract byte[] PixelData { get; }
-
 		#endregion
 
 		#region Modality LUT Module
@@ -197,5 +192,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		public abstract string[] WindowCenterAndWidthExplanation { get; }
 
 		#endregion
+
+		public abstract byte[] GetNormalizedPixelData();
 	}
 }

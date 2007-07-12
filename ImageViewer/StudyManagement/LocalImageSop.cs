@@ -18,6 +18,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	public class LocalImageSop : ImageSop
 	{
 		private FileDicomImage _dicomImage;
+		private byte[] _pixelData;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="LocalImageSop"/> with
@@ -784,12 +785,38 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override byte[] PixelData
+		public override byte[] GetNormalizedPixelData()
 		{
-			get
+			if (_pixelData == null)
 			{
-				return ImageSopHelper.DecompressPixelData(this, _dicomImage.GetPixelData());
+				// Decompress the pixel data (if pixel data is already uncompressed,
+				// this is a pass-through, a no-op.
+				// TODO: When the pixel data is compressed, we should delete the
+				// compressed buffer and just leave the uncompressed buffer, so as to
+				// save memory.  If a memory management mechanism decides to unload the
+				// pixel data, the next time this method is called should again decompress
+				// the data as if it were doing so for the first time.
+				_pixelData = ImageSopHelper.DecompressPixelData(this, _dicomImage.GetPixelData());
+
+				// If it's a colour image, we want to change the colour space ARGB
+				// so that it's easily consumed downstream
+				if (this.PhotometricInterpretation != PhotometricInterpretation.Monochrome1 &&
+					this.PhotometricInterpretation != PhotometricInterpretation.Monochrome2)
+				{
+					int sizeInBytes = this.Rows * this.Columns * 4;
+					byte[] newPixelData = new byte[sizeInBytes];
+					
+					ColorSpaceConverter.ToArgb(
+						this.PhotometricInterpretation,
+						this.PlanarConfiguration,
+						_pixelData,
+						newPixelData);
+
+					_pixelData = newPixelData;
+				}
 			}
+
+			return _pixelData;
 		}
 
 		public override void GetTag(DcmTagKey tag, out ushort val, out bool tagExists)

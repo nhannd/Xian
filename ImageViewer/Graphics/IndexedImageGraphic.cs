@@ -18,32 +18,25 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private int _bitsStored;
 		private int _highBit;
 		private bool _isSigned;
+		//private IndexedPixelData _pixelDataWrapper;
 
 		#endregion
 
 		#region Protected constructors
 
-		/// <summary>
-		/// Initializes a new instance of <see cref="IndexedImageGraphic"/>
-		/// with the specified <see cref="ImageSop"/>.
-		/// </summary>
-		/// <param name="imageSop"></param>
-		/// <remarks>
-		/// This constructor is provided for convenience in the case where
-		/// the properties of <see cref="IndexedImageGraphic"/> are the
-		/// same as that of an existing <see cref="ImageSop"/>.
-		/// Note that a reference to <paramref name="imageSop"/> is <i>not</i> held
-		/// by <see cref="IndexedImageGraphic"/>.
-		/// </remarks>
-		protected IndexedImageGraphic(ImageSop imageSop)
-			: this(imageSop.Rows,
-				imageSop.Columns,
-				imageSop.BitsAllocated,
-				imageSop.BitsStored,
-				imageSop.HighBit,
-				imageSop.PixelRepresentation != 0 ? true : false,
-				imageSop.PixelData)
+		protected IndexedImageGraphic(
+			int rows,
+			int columns,
+			int bitsAllocated,
+			int bitsStored,
+			int highBit,
+			bool isSigned)
+			: base(
+				rows,
+				columns,
+				bitsAllocated)
 		{
+			Initialize(bitsStored, highBit, isSigned);
 		}
 
 		/// <summary>
@@ -71,7 +64,28 @@ namespace ClearCanvas.ImageViewer.Graphics
 				bitsAllocated,
 				pixelData)
 		{
-			ImageValidator.ValidateBitsAllocated(bitsAllocated);
+			Initialize(bitsStored, highBit, isSigned);
+		}
+
+		protected IndexedImageGraphic(
+			int rows,
+			int columns,
+			int bitsAllocated,
+			int bitsStored,
+			int highBit,
+			bool isSigned,
+			PixelDataGetter pixelDataGetter)
+			: base(
+				rows,
+				columns,
+				bitsAllocated,
+				pixelDataGetter)
+		{
+			Initialize(bitsStored, highBit, isSigned);
+		}
+
+		private void Initialize(int bitsStored, int highBit, bool isSigned)
+		{
 			ImageValidator.ValidateBitsStored(bitsStored);
 			ImageValidator.ValidateHighBit(highBit);
 
@@ -113,6 +127,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return _isSigned; }
 		}
 
+		public new IndexedPixelData PixelData
+		{
+			get
+			{
+				return base.PixelData as IndexedPixelData;
+			}
+		}
+
 		/// <summary>
 		/// The output of the LUT pipeline.
 		/// </summary>
@@ -125,20 +147,30 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
-		#region Protected methods
-
 		protected override PixelData CreatePixelDataWrapper()
 		{
-			return new IndexedPixelData(
-						this.Rows,
-						this.Columns,
-						this.BitsAllocated,
-						this.BitsStored,
-						this.HighBit,
-						this.IsSigned,
-						this.PixelDataRaw);
+			if (this.PixelDataRaw != null)
+			{
+				return new IndexedPixelData(
+									this.Rows,
+									this.Columns,
+									this.BitsPerPixel,
+									this.BitsStored,
+									this.HighBit,
+									this.IsSigned,
+									this.PixelDataRaw);
+			}
+			else
+			{
+				return new IndexedPixelData(
+									this.Rows,
+									this.Columns,
+									this.BitsPerPixel,
+									this.BitsStored,
+									this.HighBit,
+									this.IsSigned,
+									this.PixelDataGetter);
+			}
 		}
-
-		#endregion
 	}
 }

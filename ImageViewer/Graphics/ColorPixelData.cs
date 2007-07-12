@@ -16,36 +16,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 		}
 
+		public ColorPixelData(
+			int rows,
+			int columns,
+			PixelDataGetter pixelDataGetter)
+			: base(rows, columns, 32, pixelDataGetter)
+		{
+		}
+
 		#region Public methods
 
 		public override PixelData Clone()
 		{
 			return new ColorPixelData(_rows, _columns, (byte[])_pixelData.Clone());
-		}
-
-		#region GetPixel methods
-
-		/// <summary>
-		/// Gets the pixel value at the specified location.
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <returns>
-		/// The value of the pixel.  In the case where the photometric interpretation
-		/// is RGB, an ARGB value is returned.
-		/// </returns>
-		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
-		/// <paramref name="y"/> are out of bounds.</exception>
-		public override int GetPixel(int x, int y)
-		{
-			int i = GetIndex(x, y);
-			return GetPixelInternal(i);
-		}
-
-		public override int GetPixel(int pixelIndex)
-		{
-			int i = pixelIndex * _bytesPerPixel;
-			return GetPixelInternal(i);
 		}
 
 		/// <summary>
@@ -65,34 +48,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		public Color GetPixelAsColor(int x, int y)
 		{
 			return Color.FromArgb(GetPixel(x, y));
-		}
-
-		#endregion
-
-		#region SetPixel methods
-
-		/// <summary>
-		/// Sets the pixel value at the specified location.
-		/// </summary>
-		/// <param name="x"></param>
-		/// <param name="y"></param>
-		/// <param name="value"></param>
-		/// <remarks>
-		/// Allowable pixel values are determined by the pixel representation
-		/// and the number of bits stored.
-		/// represent
-		/// </remarks>
-		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
-		/// <paramref name="y"/> are out of bounds, or <paramref name="value"/>
-		/// is out of range.</exception>
-		public override void SetPixel(int x, int y, int value)
-		{
-			SetPixel(x, y, Color.FromArgb(value));
-		}
-
-		public override void SetPixel(int pixelIndex, int value)
-		{
-			SetPixel(pixelIndex, Color.FromArgb(value));
 		}
 
 		/// <summary>
@@ -138,11 +93,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
-		#endregion
+		#region Overrides
 
-		#region Private methods
-
-		private int GetPixelInternal(int i)
+		protected override int GetPixelInternal(int i)
 		{
 			int b = (int)_pixelData[i];
 			int g = (int)_pixelData[i + 1];
@@ -152,6 +105,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 			int argb = a << 24 | r << 16 | g << 8 | b;
 			return argb;
 		}
+
+		protected override void SetPixelInternal(int i, int value)
+		{
+			_pixelData[i]     = (byte)(value & 0x000000ff);
+			_pixelData[i + 1] = (byte)((value & 0x0000ff00) >> 8);
+			_pixelData[i + 2] = (byte)((value & 0x00ff0000) >> 16);
+			_pixelData[i + 3] = (byte)((value & 0xff000000) >> 24);
+		}
+
+		#endregion
+
+		#region Private methods
 
 		private void SetPixelInternal(int i, byte a, byte r, byte g, byte b)
 		{

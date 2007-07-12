@@ -486,14 +486,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			}
 		}
 
-		public override byte[] PixelData
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
 		public override int PlanarConfiguration
 		{
 			get
@@ -540,6 +532,11 @@ namespace ClearCanvas.ImageViewer.Tests
 			{
 				throw new Exception("The method or operation is not implemented.");
 			}
+		}
+
+		public override byte[] GetNormalizedPixelData()
+		{
+			throw new Exception("The method or operation is not implemented.");
 		}
 
 		public override void GetTag(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out ushort val, out bool tagExists)

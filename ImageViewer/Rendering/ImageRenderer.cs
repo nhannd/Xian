@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 					{
 						if (grayscaleImage != null)
 						{
-							int srcBytesPerPixel = imageGraphic.BitsAllocated / 8;
+							int srcBytesPerPixel = imageGraphic.BitsPerPixel / 8;
 
 							ImageInterpolatorBilinear.Interpolate(
 								srcViewableRectangle,

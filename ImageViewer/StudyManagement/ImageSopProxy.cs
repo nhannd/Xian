@@ -497,14 +497,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override byte[] PixelData
-		{
-			get
-			{
-				return _realImageSop.PixelData;
-			}
-		}
-
 		public override int PlanarConfiguration
 		{
 			get
@@ -551,6 +543,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				return _realImageSop.WindowCenterAndWidthExplanation;
 			}
+		}
+
+		public override byte[] GetNormalizedPixelData()
+		{
+			return _realImageSop.GetNormalizedPixelData();
 		}
 
 		public override void GetTag(DcmTagKey tag, out ushort val, out bool tagExists)

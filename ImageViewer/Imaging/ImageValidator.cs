@@ -180,6 +180,24 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
+		/// Validates that the size of the pixel data byte buffer is equal
+		/// to <i>rows</i> x <i>columns</i> x <i>bitsPerPixel</i> / 8.
+		/// </summary>
+		/// <param name="pixelData"></param>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="bitsPerPixel">Can be 8 or 16 in the case of grayscale images,
+		/// or 32 in the case of colour images.  <i>BitsPerPixel</i> is the product
+		/// of DICOM's <i>Bits Allocated</i> and DICOM's <i>Samples Per Pixel</i></param>.
+		public static void ValidatePixelData(byte[] pixelData, int rows, int columns, int bitsPerPixel)
+		{
+			int sizeInBytes = rows * columns * bitsPerPixel / 8;
+
+			if (pixelData.Length != sizeInBytes)
+				throw new ArgumentException(SR.ExceptionInvalidPixelData);
+		}
+
+		/// <summary>
 		/// Validates the transfer syntax UID.
 		/// </summary>
 		/// <param name="uid"></param>

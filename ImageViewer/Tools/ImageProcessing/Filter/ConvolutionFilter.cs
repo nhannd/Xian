@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter
 			int minInputValue = image.ModalityLUT.MinInputValue;
 			int maxInputValue = image.ModalityLUT.MaxInputValue;
 
-			if (image.BitsAllocated == 16)
+			if (image.BitsPerPixel == 16)
 			{
 				if (image.IsSigned)
 				{

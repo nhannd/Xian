@@ -39,13 +39,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			imageSop.PhotometricInterpretation == PhotometricInterpretation.Monochrome1 ? true: false,
 			imageSop.RescaleSlope,
 			imageSop.RescaleIntercept,
-			null)
+			new PixelDataGetter(imageSop.GetNormalizedPixelData))
 		{
 			Platform.CheckForNullReference(imageSop, "image");
 			_imageSop = imageSop;
 
 			_voiLutManager = CreateVoiLutManager();
 			Platform.CheckForNullReference(_voiLutManager, "_voiLutManager");
+
+			if (imageSop.PhotometricInterpretation != PhotometricInterpretation.Monochrome1 &&
+				imageSop.PhotometricInterpretation != PhotometricInterpretation.Monochrome2)
+				throw new InvalidOperationException("Image must be MONOCHROME1 or MONOCHROME2.");
 
 			ApplyInitialVoiLut();
 		}
@@ -103,20 +107,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		#endregion
-
-		#endregion
-
-		#region Protected properties
-		/// <summary>
-		/// Gets the pixel data from the associated <see cref="ImageSop"/>.
-		/// </summary>
-		protected override byte[] PixelDataRaw
-		{
-			get
-			{
-				return _imageSop.PixelData;
-			}
-		}
 
 		#endregion
 
