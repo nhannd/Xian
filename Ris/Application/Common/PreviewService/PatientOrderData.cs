@@ -150,10 +150,10 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
 
         #endregion
 
-        #region Modality Procedure Step
+        #region Procedure Step
 
         [DataMember]
-        public string MPSState;
+        public string ProcedureStepStatus;
 
         [DataMember]
         public PersonNameDetail ScheduledPerformerStaffName;
@@ -177,13 +177,24 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
         public DateTime? EndTime;
 
         [DataMember]
+        public string DiscontinueReason;
+
+        #endregion
+
+        #region Modality Procedure Step
+
+        [DataMember]
         public string ModalityProcedureStepTypeName;
 
         [DataMember]
         public string Modality;
 
+        #endregion
+
+        #region Reporting Procedure Step
+
         [DataMember]
-        public string DiscontinueReason;
+        public string ReportContent;
 
         #endregion
 

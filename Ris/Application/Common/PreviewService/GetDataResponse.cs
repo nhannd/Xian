@@ -18,6 +18,9 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
         public GetModalityProcedureStepResponse GetModalityProcedureStepResponse;
 
         [DataMember]
+        public GetReportingProcedureStepResponse GetReportingProcedureStepResponse;
+
+        [DataMember]
         public GetPatientProfileResponse GetPatientProfileResponse;
 
         [DataMember]

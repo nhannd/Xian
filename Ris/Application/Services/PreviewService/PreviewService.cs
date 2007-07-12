@@ -30,20 +30,26 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
             GetDataResponse response = new GetDataResponse();
 
             if (request.GetModalityProcedureStepRequest != null)
-                response.GetModalityProcedureStepResponse = GetModalityProcedureStep(request.GetModalityProcedureStepRequest, request.ModalityProcedureStepRef);
+                response.GetModalityProcedureStepResponse = GetModalityProcedureStep(request.GetModalityProcedureStepRequest, request.ProcedureStepRef);
+
+            if (request.GetReportingProcedureStepRequest != null)
+                response.GetReportingProcedureStepResponse = GetReportingProcedureStep(request.GetReportingProcedureStepRequest, request.ProcedureStepRef);
 
             EntityRef profileRef = request.PatientProfileRef;
-            if (profileRef == null && request.ModalityProcedureStepRef != null
+            if (profileRef == null
                 && (request.GetPatientProfileRequest != null || request.ListPatientOrdersRequest != null || request.GetPatientAlertsRequest != null))
             {
-                ModalityProcedureStep mps = PersistenceContext.Load<ModalityProcedureStep>(request.ModalityProcedureStepRef);
-                PatientProfile profile = CollectionUtils.SelectFirst<PatientProfile>(mps.RequestedProcedure.Order.Patient.Profiles,
-                    delegate(PatientProfile thisProfile)
-                    {
-                        return thisProfile.Mrn.AssigningAuthority == mps.RequestedProcedure.Order.Visit.VisitNumber.AssigningAuthority;
-                    });
+                if (request.ProcedureStepRef != null)
+                {
+                    ProcedureStep ps = PersistenceContext.Load<ProcedureStep>(request.ProcedureStepRef);
+                    PatientProfile profile = CollectionUtils.SelectFirst<PatientProfile>(ps.RequestedProcedure.Order.Patient.Profiles,
+                        delegate(PatientProfile thisProfile)
+                        {
+                            return thisProfile.Mrn.AssigningAuthority == ps.RequestedProcedure.Order.Visit.VisitNumber.AssigningAuthority;
+                        });
 
-                profileRef = profile.GetRef();
+                    profileRef = profile.GetRef();
+                }
             }
 
             if (request.GetPatientProfileRequest != null)
@@ -99,6 +105,17 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
                     });
             }
             
+            return response;
+        }
+
+        private GetReportingProcedureStepResponse GetReportingProcedureStep(GetReportingProcedureStepRequest request, EntityRef rpsRef)
+        {
+            GetReportingProcedureStepResponse response = new GetReportingProcedureStepResponse();
+
+            ReportingProcedureStep rps = PersistenceContext.Load<ReportingProcedureStep>(rpsRef);
+            PreviewServiceAssembler assembler = new PreviewServiceAssembler();
+            response.PatientOrderData = assembler.CreatePatientOrderData(rps, this.PersistenceContext);
+
             return response;
         }
 

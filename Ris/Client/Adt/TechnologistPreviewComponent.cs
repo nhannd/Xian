@@ -99,7 +99,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         delegate(IPreviewService service)
                         {
                             GetDataRequest request = JsmlSerializer.Deserialize<GetDataRequest>(requestJsml);
-                            request.ModalityProcedureStepRef = _worklistItem.ProcedureStepRef;
+                            request.ProcedureStepRef = _worklistItem.ProcedureStepRef;
 
                             GetDataResponse response = service.GetData(request);
                             responseJsml = JsmlSerializer.Serialize<GetDataResponse>(response);

@@ -29,6 +29,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
     <Reference Include="System.Data" />
     <Reference Include="System.Runtime.Serialization, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -40,6 +41,12 @@
     <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\WorkflowFolders.cs" />
     <Compile Include="HomeTool.cs" />
+    <Compile Include="ReportingPreviewComponentSettings.cs" />
+    <Compile Include="ReportingPreviewComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ReportingPreviewComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ReportSummaryTable.cs" />
     <Compile Include="ReportDocument.cs" />
     <Compile Include="PriorReportComponent.cs" />
@@ -85,9 +92,6 @@
       <Project>{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}</Project>
       <Name>ClearCanvas.Ris.Client</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="ReportingPreview.html" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Icons\CompleteToolLarge.png" />
@@ -137,6 +141,13 @@
   <ItemGroup>
     <EmbeddedResource Include="Icons\RefreshToolLarge.png" />
     <EmbeddedResource Include="Icons\RefreshToolMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="ReportingPreviewComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ReportingPreviewComponentSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

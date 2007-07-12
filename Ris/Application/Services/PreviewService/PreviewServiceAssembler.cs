@@ -50,21 +50,21 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
             return data;
         }
 
-        public PatientOrderData CreatePatientOrderData(ModalityProcedureStep mps, IPersistenceContext context)
+        public PatientOrderData CreatePatientOrderData(ProcedureStep ps, IPersistenceContext context)
         {
             PatientOrderData data = new PatientOrderData();
 
-            PatientProfile profile = CollectionUtils.SelectFirst<PatientProfile>(mps.RequestedProcedure.Order.Patient.Profiles,
+            PatientProfile profile = CollectionUtils.SelectFirst<PatientProfile>(ps.RequestedProcedure.Order.Patient.Profiles,
                 delegate(PatientProfile thisProfile)
                 {
-                    return thisProfile.Mrn.AssigningAuthority == mps.RequestedProcedure.Order.Visit.VisitNumber.AssigningAuthority;
+                    return thisProfile.Mrn.AssigningAuthority == ps.RequestedProcedure.Order.Visit.VisitNumber.AssigningAuthority;
                 });
 
             UpdatePatientOrderData(data, profile, context);
-            UpdatePatientOrderData(data, mps.RequestedProcedure.Order, context);
-            UpdatePatientOrderData(data, mps.RequestedProcedure.Order.Visit, context);
-            UpdatePatientOrderData(data, mps.RequestedProcedure, context);
-            UpdatePatientOrderData(data, mps, context);
+            UpdatePatientOrderData(data, ps.RequestedProcedure.Order, context);
+            UpdatePatientOrderData(data, ps.RequestedProcedure.Order.Visit, context);
+            UpdatePatientOrderData(data, ps.RequestedProcedure, context);
+            UpdatePatientOrderData(data, ps, context);
 
             return data;
         }
@@ -139,33 +139,42 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
             data.RequestedProcedureTypeName = rp.Type.Name;
         }
 
-        private void UpdatePatientOrderData(PatientOrderData data, ModalityProcedureStep mps, IPersistenceContext context)
+        private void UpdatePatientOrderData(PatientOrderData data, ProcedureStep ps, IPersistenceContext context)
         {
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             ActivityStatusEnumTable statusEnumTable = context.GetBroker<IActivityStatusEnumBroker>().Load();
 
-            data.MPSState = statusEnumTable[mps.State].Value;
-            if (mps.Scheduling != null)
+            data.ProcedureStepStatus = statusEnumTable[ps.State].Value;
+            if (ps.Scheduling != null)
             {
                 //TODO ScheduledPerformerStaff for ModalityProcedureStepSummary
                 //summary.ScheduledPerformerStaff = staffAssembler.CreateStaffSummary(mps.Scheduling.Performer);
-                data.ScheduledStartTime = mps.Scheduling.StartTime;
-                data.ScheduledEndTime = mps.Scheduling.EndTime;
+                data.ScheduledStartTime = ps.Scheduling.StartTime;
+                data.ScheduledEndTime = ps.Scheduling.EndTime;
             }
 
-            if (mps.AssignedStaff != null)
-                data.AssignedStaffName = nameAssembler.CreatePersonNameDetail(mps.AssignedStaff.Name);
+            if (ps.AssignedStaff != null)
+                data.AssignedStaffName = nameAssembler.CreatePersonNameDetail(ps.AssignedStaff.Name);
 
-            if (mps.PerformingStaff != null)
-                data.PerformerStaffName = nameAssembler.CreatePersonNameDetail(mps.PerformingStaff.Name);
+            if (ps.PerformingStaff != null)
+                data.PerformerStaffName = nameAssembler.CreatePersonNameDetail(ps.PerformingStaff.Name);
 
-            data.StartTime = mps.StartTime;
-            data.EndTime = mps.EndTime;
-
-            data.ModalityProcedureStepTypeName = mps.Type.Name;
-            data.Modality = mps.Modality.Name;
+            data.StartTime = ps.StartTime;
+            data.EndTime = ps.EndTime;
 
             data.DiscontinueReason = "";
+
+            if (ps.Is<ModalityProcedureStep>())
+            {
+                ModalityProcedureStep mps = ps.As<ModalityProcedureStep>();
+                data.ModalityProcedureStepTypeName = mps.Type.Name;
+                data.Modality = mps.Modality.Name;
+            }
+            else if (ps.Is<ReportingProcedureStep>())
+            {
+                ReportingProcedureStep rps = ps.As<ReportingProcedureStep>();
+                data.ReportContent = rps.Report == null ? rps.Report.ReportContent : "";
+            }
         }
 
         #endregion

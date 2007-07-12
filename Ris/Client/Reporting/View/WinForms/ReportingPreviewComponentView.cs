@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 {
@@ -12,17 +11,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
     /// Provides a Windows Forms view onto <see cref="ReportingPreviewComponent"/>
     /// </summary>
     [ExtensionOf(typeof(ReportingPreviewComponentViewExtensionPoint))]
-    public class RegistrationPreviewComponentView : HtmlComponentView
+    public class ReportingPreviewComponentView : PreviewComponentView
     {
-        public RegistrationPreviewComponentView()
-            :base("ReportingPreview.html")
-        {
-
-        }
-
-        protected override ClearCanvas.Desktop.Actions.ActionModelNode GetEmbeddedActionModel()
-        {
-            return ((ReportingPreviewComponent)this.Component).MenuModel;
-        }
     }
 }

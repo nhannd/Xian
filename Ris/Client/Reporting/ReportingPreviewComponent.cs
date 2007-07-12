@@ -1,20 +1,14 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.IO;
 
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Common.Scripting;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Client;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Ris.Application.Common.PreviewService;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -41,7 +35,7 @@ namespace ClearCanvas.Ris.Client.Reporting
     /// ReportingPreviewComponent class
     /// </summary>
     [AssociateView(typeof(ReportingPreviewComponentViewExtensionPoint))]
-    public class ReportingPreviewComponent : HtmlApplicationComponent
+    public class ReportingPreviewComponent : PreviewApplicationComponent
     {
         class ReportingPreviewToolContext : ToolContext, IReportingPreviewToolContext
         {
@@ -63,11 +57,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         }
 
         private ReportingWorklistItem _worklistItem;
-        private ReportingWorklistPreview _worklistPreview;
-
         private ToolSet _toolSet;
-
-        private BackgroundTask _previewLoadTask;
 
         /// <summary>
         /// Constructor
@@ -76,25 +66,10 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
         }
 
-        public ReportingWorklistItem WorklistItem
-        {
-            get { return _worklistItem; }
-            set
-            {
-                _worklistItem = value;
-                if (this.IsStarted)
-                {
-                    UpdateDisplay();
-                }
-            }
-        }
-
         public override void Start()
         {
             _toolSet = new ToolSet(new ReportingPreviewToolExtensionPoint(), new ReportingPreviewToolContext(this));
 
-            UpdateDisplay();
-            
             base.Start();
         }
 
@@ -105,121 +80,53 @@ namespace ClearCanvas.Ris.Client.Reporting
             base.Stop();
         }
 
-        private void UpdateDisplay()
-        {
-            // if there is a preview showing, clear it
-            if (_worklistPreview != null)
-            {
-                _worklistPreview = null;
-
-
-                // clear current preview
-                NotifyAllPropertiesChanged();
-            }
-
-            if (_worklistItem != null && _worklistItem.ProcedureStepRef != null)
-            {
-                LoadPreviewAsync(_worklistItem);
-            }
-        }
-
-        private void LoadPreviewAsync(ReportingWorklistItem item)
-        {
-            // remove any previous task
-            if (_previewLoadTask != null)
-            {
-                // important to unsubscribe - in case the previous task is still running, we don't want to receive events from it anymore
-                _previewLoadTask.Terminated -= OnPreviewLoaded;
-                _previewLoadTask.Dispose();
-                _previewLoadTask = null;
-            }
-
-            // create a background task to load the preview
-            _previewLoadTask = new BackgroundTask(
-                delegate(IBackgroundTaskContext taskContext)
-                {
-                    try
-                    {
-                        ReportingWorklistItem worklistItem = (ReportingWorklistItem)taskContext.UserState;
-                        Platform.GetService<IReportingWorkflowService>(
-                            delegate(IReportingWorkflowService service)
-                            {
-                                LoadWorklistPreviewResponse response = service.LoadWorklistPreview(new LoadWorklistPreviewRequest(worklistItem));
-                                taskContext.Complete(response.WorklistPreview);
-                            });
-
-                    }
-                    catch (Exception e)
-                    {
-                        taskContext.Error(e);
-                    }
-                },
-                false, item);
-
-            _previewLoadTask.Terminated += OnPreviewLoaded;
-            _previewLoadTask.Run();
-        }
-
-        private void OnPreviewLoaded(object sender, BackgroundTaskTerminatedEventArgs args)
-        {
-            if (args.Reason == BackgroundTaskTerminatedReason.Completed)
-            {
-                _worklistPreview = (ReportingWorklistPreview)args.Result;
-
-
-                NotifyAllPropertiesChanged();
-            }
-            else if (args.Reason == BackgroundTaskTerminatedReason.Exception)
-            {
-                ExceptionHandler.Report(args.Exception, this.Host.DesktopWindow);
-            }
-        }
-
         #region Presentation Model
 
-        public ActionModelNode MenuModel
+        public override string GetPreviewData(string requestJsml)
+        {
+            string responseJsml = "";
+
+            try
+            {
+                if (_worklistItem != null && String.IsNullOrEmpty(requestJsml) == false)
+                {
+                    Platform.GetService<IPreviewService>(
+                        delegate(IPreviewService service)
+                        {
+                            GetDataRequest request = JsmlSerializer.Deserialize<GetDataRequest>(requestJsml);
+                            request.ProcedureStepRef = _worklistItem.ProcedureStepRef;
+
+                            GetDataResponse response = service.GetData(request);
+                            responseJsml = JsmlSerializer.Serialize<GetDataResponse>(response);
+                        });
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+
+            return responseJsml;
+        }
+
+        public override string DetailsPageUrl
+        {
+            get { return ReportingPreviewComponentSettings.Default.DetailsPageUrl; }
+        }
+
+        public override ActionModelNode ActionModel
         {
             get { return ActionModelRoot.CreateModel(this.GetType().FullName, "ReportingPreview-menu", _toolSet.Actions); }
         }
 
-        public ReportingWorklistPreview WorklistPreview
+        public ReportingWorklistItem WorklistItem
         {
-            get { return _worklistPreview; }
-        }
-
-        public string Name
-        {
-            get { return PersonNameFormat.Format(_worklistPreview.Name); }
-        }
-
-        public string Mrn
-        {
-            get { return MrnFormat.Format(_worklistPreview.Mrn); }
-        }
-
-        public string DateOfBirth
-        {
-            get { return Format.Date(_worklistPreview.DateOfBirth); }
-        }
-
-        public string Sex
-        {
-            get { return _worklistPreview.Sex; }
-        }
-
-        public string AccessionNumber
-        {
-            get { return _worklistPreview.AccessionNumber; }
-        }
-
-        public string RequestedProcedureName
-        {
-            get { return _worklistPreview.RequestedProcedureName; }
-        }
-
-        public string VisitNumber
-        {
-            get { return String.Format("{0} {1}", _worklistPreview.VisitNumberAssigningAuthority, _worklistPreview.VisitNumberId); }
+            get { return _worklistItem; }
+            set
+            {
+                _worklistItem = value;
+                NotifyAllPropertiesChanged();
+            }
         }
 
         #endregion

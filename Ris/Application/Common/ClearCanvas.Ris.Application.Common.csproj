@@ -262,6 +262,8 @@
     <Compile Include="PreviewService\GetModalityProcedureStepResponse.cs" />
     <Compile Include="PreviewService\GetPatientAlertsRequest.cs" />
     <Compile Include="PreviewService\GetPatientAlertsResponse.cs" />
+    <Compile Include="PreviewService\GetReportingProcedureStepRequest.cs" />
+    <Compile Include="PreviewService\GetReportingProcedureStepResponse.cs" />
     <Compile Include="PreviewService\PatientOrderData.cs" />
     <Compile Include="PreviewService\GetDataRequest.cs" />
     <Compile Include="PreviewService\GetDataResponse.cs" />
