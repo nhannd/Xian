@@ -173,7 +173,7 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
             else if (ps.Is<ReportingProcedureStep>())
             {
                 ReportingProcedureStep rps = ps.As<ReportingProcedureStep>();
-                data.ReportContent = rps.Report == null ? rps.Report.ReportContent : "";
+                data.ReportContent = rps.ReportPart == null ? "" : rps.ReportPart.Content;
             }
         }
 

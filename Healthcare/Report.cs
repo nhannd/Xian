@@ -37,5 +37,22 @@ namespace ClearCanvas.Healthcare {
 		
 		#endregion
 
-	}
+        /// <summary>
+        /// Adds a report part to this report, setting the report's <see cref="Report.ReportParts"/> property
+        /// to refer to this object.  Use this method rather than referring to the <see cref="Report.ReportParts"/>
+        /// collection directly.
+        /// </summary>
+        /// <param name="profile"></param>
+        public void AddPart(ReportPart part)
+        {
+            if (part.Report != null)
+            {
+                //NB: technically we should remove the report part from the other report's collection, but there
+                //seems to be a bug with NHibernate where it deletes the part if we do this
+                //part.Report.Parts.Remove(part);
+            }
+            part.Report = this;
+            this.Parts.Add(part);
+        }
+    }
 }

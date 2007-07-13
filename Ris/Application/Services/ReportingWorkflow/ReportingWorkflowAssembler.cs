@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             ReportingWorklistPreview preview = new ReportingWorklistPreview();
 
-            preview.ReportContent = (step.Report == null ? null : step.Report.ReportContent);
+            preview.ReportContent = (step.ReportPart == null ? null : step.ReportPart.Content);
 
             // PatientProfile Details
             preview.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
@@ -77,34 +77,30 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return item;
         }
 
-        //public ReportingWorklistItem CreateReportingWorklistItem(ReportingWorklistQueryResult result)
-        //{
-        //    ReportingWorklistItem item = new ReportingWorklistItem();
+        public ReportSummary CreateReportSummary(Report report)
+        {
+            ReportSummary summary = new ReportSummary();
+            summary.ReportRef = report.GetRef();
+            summary.DiagnosticServiceName = report.Procedure.Order.DiagnosticService.Name;
+            summary.RequestedProcedureName = report.Procedure.Type.Name;
+            summary.Parts = CollectionUtils.Map<ReportPart, ReportPartSummary, List<ReportPartSummary>>(report.Parts,
+                delegate(ReportPart part)
+                {
+                    return CreateReportPartSummary(part);
+                });
 
-        //    //TODO: Detail of ReportingWorklistItem not defined
-        //    item.ProcedureStepRef = result.ProcedureStep;
-        //    item.Mrn = new MrnDetail(result.Mrn.Id, result.Mrn.AssigningAuthority);
+            return summary;
+        }
 
-        //    PersonNameAssembler assembler = new PersonNameAssembler();
-        //    item.PersonNameDetail = assembler.CreatePersonNameDetail(result.PatientName);
+        public ReportPartSummary CreateReportPartSummary(ReportPart reportPart)
+        {
+            ReportPartSummary summary = new ReportPartSummary();
 
-        //    item.AccessionNumber = result.AccessionNumber;
-        //    item.RequestedProcedureName = result.RequestedProcedureName;
-        //    item.DiagnosticServiceName = result.DiagnosticServiceName;
-        //    item.Priority = result.Priority.ToString();
-        //    item.ActivityStatusCode = result.Status.ToString();
+            summary.ReportPartRef = reportPart.GetRef();
+            summary.Index = reportPart.Id;
+            summary.Content = reportPart.Content;
 
-        //    return item;
-        //}
-
-        //public ReportingProcedureStepSearchCriteria CreateSearchCriteria(ReportingWorklistSearchCriteria criteria)
-        //{
-        //    ReportingProcedureStepSearchCriteria rpsSearchCriteria = new ReportingProcedureStepSearchCriteria();
-
-        //    ActivityStatus status = (ActivityStatus)Enum.Parse(typeof(ActivityStatus), criteria.ActivityStatusCode);
-        //    rpsSearchCriteria.State.EqualTo(status);
-
-        //    return rpsSearchCriteria;
-        //}
+            return summary;
+        }
     }
 }

@@ -134,44 +134,48 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public LoadReportForEditResponse LoadReportForEdit(LoadReportForEditRequest request)
         {
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
-            string report = (step.Report == null ? "" : step.Report.ReportContent);
-            return new LoadReportForEditResponse(report);
+            string reportPart = (step.ReportPart == null ? "" : step.ReportPart.Content);
+            return new LoadReportForEditResponse(reportPart);
         }
 
         [UpdateOperation]
         public SaveReportResponse SaveReport(SaveReportRequest request)
         {
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
-            if (step.Report != null)
+            if (step.ReportPart != null)
             {
-                step.Report.ReportContent = request.ReportContent;
+                step.ReportPart.Content = request.ReportContent;
             }
             else
             {
-                Report report = new Report(step.RequestedProcedure, request.ReportContent);
+                Report report = new Report();
+                report.Procedure = step.RequestedProcedure;
                 PersistenceContext.Lock(report, DirtyState.New);
-                step.Report = report;
-            }
+                PersistenceContext.SynchState();
 
-            PersistenceContext.SynchState();
+                ReportPart part = new ReportPart("0", request.ReportContent, report);
+                PersistenceContext.Lock(part, DirtyState.New);
+                PersistenceContext.SynchState();
+
+                step.ReportPart = part;
+                report.AddPart(step.ReportPart);
+            }
+            
             return new SaveReportResponse(step.GetRef());
         }
 
         [ReadOperation]
         public GetPriorReportResponse GetPriorReport(GetPriorReportRequest request)
         {
+            ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
+
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.Proxy);
 
             IList<Report> listReports = PersistenceContext.GetBroker<IReportingWorklistBroker>().GetPriorReport(step.RequestedProcedure.Order.Patient);
             List<ReportSummary> listSummary = CollectionUtils.Map<Report, ReportSummary, List<ReportSummary>>(listReports,
                 delegate(Report report)
                 {
-                    ReportSummary summary = new ReportSummary();
-                    summary.ReportRef = report.GetRef();
-                    summary.ReportContent = report.ReportContent;
-                    summary.DiagnosticServiceName = report.Procedure.Order.DiagnosticService.Name;
-                    summary.RequestedProcedureName = report.Procedure.Type.Name;
-                    return summary;
+                    return assembler.CreateReportSummary(report);
                 });
 
             return new GetPriorReportResponse(listSummary);

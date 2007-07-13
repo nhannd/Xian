@@ -7,6 +7,11 @@
     <version name="Version" column="Version_"/>
 
     <many-to-one name="Procedure" class="RequestedProcedure" column="ProcedureOID_" not-null="true"/>
-    <property name="ReportContent" column="ReportContent_" type="StringClob" length="65000" not-null="false"/>
+
+    <set name="Parts" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+      <key column="ReportOID_"/>
+      <one-to-many class="ReportPart"/>
+    </set>
+
   </class>
 </hibernate-mapping>

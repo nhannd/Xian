@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public string ReportContent
         {
-            get { return _selectedReport == null ? null : _selectedReport.ReportContent; }
+            get { return _selectedReport == null ? null : _selectedReport.Parts[0].Content; }
         }
 
         private void ReportSelectionChanged()

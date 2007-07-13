@@ -7,18 +7,15 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
-    public class ReportSummary : DataContractBase
+    public class ReportPartSummary : DataContractBase
     {
         [DataMember]
-        public EntityRef ReportRef;
+        public EntityRef ReportPartRef;
 
         [DataMember]
-        public string DiagnosticServiceName;
+        public string Index;
 
         [DataMember]
-        public string RequestedProcedureName;
-
-        [DataMember]
-        public List<ReportPartSummary> Parts;
+        public string Content;
     }
 }

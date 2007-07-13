@@ -337,6 +337,7 @@
     <Compile Include="ReportingWorkflow\LoadReportForEditResponse.cs" />
     <Compile Include="ReportingWorkflow\LoadWorklistPreviewRequest.cs" />
     <Compile Include="ReportingWorkflow\LoadWorklistPreviewResponse.cs" />
+    <Compile Include="ReportingWorkflow\ReportPartSummary.cs" />
     <Compile Include="ReportingWorkflow\ReportSummary.cs" />
     <Compile Include="ReportingWorkflow\SaveReportRequest.cs" />
     <Compile Include="ReportingWorkflow\SaveReportResponse.cs" />

@@ -167,6 +167,7 @@
     <EmbeddedResource Include="Mappings\DiagnosticServiceTreeNode.hbm.xml" />
     <EmbeddedResource Include="Mappings\RequestedProcedureTypeGroup.hbm.xml" />
     <EmbeddedResource Include="Mappings\RequestedProcedureTypeGroupCategoryEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ReportPart.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />
