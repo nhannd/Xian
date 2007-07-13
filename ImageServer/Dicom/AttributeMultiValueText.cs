@@ -801,7 +801,7 @@ namespace ClearCanvas.ImageServer.Dicom
 
             TransferSyntax ts = TransferSyntax.GetTransferSyntax(base._values[i]);
             if (ts != null)
-                return new DicomUid(ts.UID.UID, ts.Name, UidType.TransferSyntax);
+                return new DicomUid(ts.DicomUid.UID, ts.Name, UidType.TransferSyntax);
 
             return new DicomUid(base._values[i], base._values[i], UidType.Unknown);
         }

@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
         public DicomStreamWriter(Stream stream)
         {
             _stream = stream;
-            TransferSyntax = TransferSyntax.GetTransferSyntax(TransferSyntax.ExplicitVRLittleEndian);
+            TransferSyntax = TransferSyntax.ExplicitVRLittleEndian;
         }
         #endregion
 

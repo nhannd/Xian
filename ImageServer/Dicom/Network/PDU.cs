@@ -280,6 +280,9 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             pdu.Write("Application Context Name", DicomUids.DICOMApplicationContextName.UID);
             pdu.WriteLength16();
 
+            if (_assoc.GetPresentationContexts().Count == 0)
+                throw new DicomException("No presentation contexts set for association");
+
             foreach (DicomPresContext pc in _assoc.GetPresentationContexts())
             {
                 // Presentation Context
@@ -293,8 +296,11 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                 pdu.Write("Item-Type", (byte)0x30);
                 pdu.Write("Reserved", (byte)0x00);
                 pdu.MarkLength16("Item-Length");
-                pdu.Write("Abstract Syntax UID", pc.AbstractSyntax.UID);
+                pdu.Write("Abstract Syntax UID", pc.AbstractSyntax.Uid);
                 pdu.WriteLength16();
+
+                if (pc.GetTransfers().Count == 0)
+                    throw new DicomException("No transfer syntaxes set for presentation context " + pc.AbstractSyntax.Name );
 
                 // Transfer Syntax
                 foreach (TransferSyntax ts in pc.GetTransfers())
@@ -302,7 +308,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                     pdu.Write("Item-Type", (byte)0x40);
                     pdu.Write("Reserved", (byte)0x00);
                     pdu.MarkLength16("Item-Length");
-                    pdu.Write("Transfer Syntax UID", ts.UID.UID);
+                    pdu.Write("Transfer Syntax UID", ts.DicomUid.UID);
                     pdu.WriteLength16();
                 }
 
@@ -382,7 +388,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                             string sx = raw.ReadString("Presentation Context Syntax UID", pl);
                             if (pt == 0x30)
                             {
-                                _assoc.AddPresentationContext(id, DicomUids.Lookup(sx));
+                                _assoc.AddPresentationContext(id, SopClass.GetSopClass(sx));
                             }
                             else if (pt == 0x40)
                             {
@@ -483,7 +489,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                 pdu.Write("Item-Type", (byte)0x40);
                 pdu.Write("Reserved", (byte)0x00);
                 pdu.MarkLength16("Item-Length");
-                pdu.Write("Transfer Syntax UID", pc.AcceptedTransferSyntax.UID.UID);
+                pdu.Write("Transfer Syntax UID", pc.AcceptedTransferSyntax.DicomUid.UID);
                 pdu.WriteLength16();
 
                 pdu.WriteLength16();
@@ -617,20 +623,20 @@ namespace ClearCanvas.ImageServer.Dicom.Network
     #endregion
 
     #region A-Associate-RJ
-    public enum DcmRejectResult
+    public enum DicomRejectResult
     {
         Permanent = 1,
         Transient = 2
     }
 
-    public enum DcmRejectSource
+    public enum DicomRejectSource
     {
         ServiceUser = 1,
         ServiceProviderACSE = 2,
         ServiceProviderPresentation = 3
     }
 
-    public enum DcmRejectReason
+    public enum DicomRejectReason
     {
         // Service User
         NoReasonGiven = 1,
@@ -648,29 +654,29 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
     public class AAssociateRJ : IPDU
     {
-        private DcmRejectResult _rt = DcmRejectResult.Permanent;
-        private DcmRejectSource _so = DcmRejectSource.ServiceUser;
-        private DcmRejectReason _rn = DcmRejectReason.NoReasonGiven;
+        private DicomRejectResult _rt = DicomRejectResult.Permanent;
+        private DicomRejectSource _so = DicomRejectSource.ServiceUser;
+        private DicomRejectReason _rn = DicomRejectReason.NoReasonGiven;
 
         public AAssociateRJ()
         {
         }
-        public AAssociateRJ(DcmRejectResult rt, DcmRejectSource so, DcmRejectReason rn)
+        public AAssociateRJ(DicomRejectResult rt, DicomRejectSource so, DicomRejectReason rn)
         {
             _rt = rt;
             _so = so;
             _rn = rn;
         }
 
-        public DcmRejectResult Result
+        public DicomRejectResult Result
         {
             get { return _rt; }
         }
-        public DcmRejectSource Source
+        public DicomRejectSource Source
         {
             get { return _so; }
         }
-        public DcmRejectReason Reason
+        public DicomRejectReason Reason
         {
             get { return _rn; }
         }
@@ -688,9 +694,9 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         public void Read(RawPDU raw)
         {
             raw.ReadByte("Reserved");
-            _rt = (DcmRejectResult)raw.ReadByte("Result");
-            _so = (DcmRejectSource)raw.ReadByte("Source");
-            _rn = (DcmRejectReason)raw.ReadByte("Reason");
+            _rt = (DicomRejectResult)raw.ReadByte("Result");
+            _so = (DicomRejectSource)raw.ReadByte("Source");
+            _rn = (DicomRejectReason)raw.ReadByte("Reason");
         }
     }
     #endregion
@@ -730,13 +736,13 @@ namespace ClearCanvas.ImageServer.Dicom.Network
     #endregion
 
     #region A-Abort
-    public enum DcmAbortSource
+    public enum DicomAbortSource
     {
         Unknown = 0,
         ServiceUser = 1,
         ServiceProvider = 2
     }
-    public enum DcmAbortReason
+    public enum DicomAbortReason
     {
         NotSpecified = 0,
         UnrecognizedPDU = 1,
@@ -748,14 +754,14 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
     public class AAbort : IPDU
     {
-        private DcmAbortSource _s = DcmAbortSource.ServiceUser;
-        public DcmAbortSource Source
+        private DicomAbortSource _s = DicomAbortSource.ServiceUser;
+        public DicomAbortSource Source
         {
             get { return _s; }
         }
 
-        private DcmAbortReason _r = DcmAbortReason.NotSpecified;
-        public DcmAbortReason Reason
+        private DicomAbortReason _r = DicomAbortReason.NotSpecified;
+        public DicomAbortReason Reason
         {
             get { return _r; }
         }
@@ -763,7 +769,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         public AAbort()
         {
         }
-        public AAbort(DcmAbortSource s, DcmAbortReason r)
+        public AAbort(DicomAbortSource s, DicomAbortReason r)
         {
             _s = s; _r = r;
         }
@@ -785,8 +791,8 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         {
             raw.ReadByte("Reserved");
             raw.ReadByte("Reserved");
-            _s = (DcmAbortSource)raw.ReadByte("Source");
-            _r = (DcmAbortReason)raw.ReadByte("Reason");
+            _s = (DicomAbortSource)raw.ReadByte("Source");
+            _r = (DicomAbortReason)raw.ReadByte("Reason");
         }
         #endregion
     }

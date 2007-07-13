@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
         public DicomStreamReader(Stream stream)
         {
             _stream = stream;
-            TransferSyntax = TransferSyntax.GetTransferSyntax(TransferSyntax.ExplicitVRLittleEndian);
+            TransferSyntax = TransferSyntax.ExplicitVRLittleEndian;
         }
         #endregion
 
@@ -116,6 +116,9 @@ namespace ClearCanvas.ImageServer.Dicom.IO
 
         public DicomReadStatus Read(DicomTag stopAtTag, DicomReadOptions options)
         {
+            if (stopAtTag == null)
+                stopAtTag = new DicomTag(0xFFFFFFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false);
+
             // Counters:
             //  _remain - bytes remaining in stream
             //  _bytes - estimates bytes to end of dataset
@@ -158,7 +161,11 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                             }
                             else
                             {
-                                _tag = DicomTagDictionary.Instance[g, e];
+                                if (e == 0x0000)
+                                    _tag = new DicomTag((uint)g << 16 | (uint)e, "Group Length", DicomVr.ULvr, false, 1, 1, false);
+                                else
+                                    _tag = DicomTagDictionary.Instance[g, e];
+
                                 if (_tag == null)
                                     _tag = new DicomTag((uint)g << 16 | (uint)e, "Private Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
                             }
@@ -429,7 +436,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
 
                                 DicomStreamReader idsr = new DicomStreamReader(data.Stream);
                                 idsr.Dataset = ds;
-                                idsr.Read(new DicomTag(0xFFFFFFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false), options);
+                                idsr.Read(null, options);
                             }
                             else
                             {

@@ -40,6 +40,24 @@ namespace ClearCanvas.ImageServer.Dicom
         }
 
         /// <summary>
+        /// Log an error message related to an exception to the log file.
+        /// </summary>
+        /// <param name="msg">The message to log.</param>
+        public static void LogErrorException(Exception e, String msg, params object[] args)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendFormat(msg, args);
+
+            sb.AppendFormat("Exception: {0} ", e.Message);
+            sb.AppendLine("Stack Trace:");
+            sb.AppendLine(e.StackTrace);
+
+            WriteLog(sb.ToString(), "Error");
+        }
+
+
+        /// <summary>
         /// Log an error message to the log file.
         /// </summary>
         /// <param name="msg">The message to log.</param>
@@ -92,7 +110,7 @@ namespace ClearCanvas.ImageServer.Dicom
 
     public class DicomFileLogger
     {
-        private static String logFile = "DicomLog.txt";
+        private static String logFile = "DicomLog.log";
 
         /// <summary>
         /// Static property containing the name of the log file.
@@ -123,8 +141,11 @@ namespace ClearCanvas.ImageServer.Dicom
                 try
                 {
                     String logFileDate = logFile;
-
-                    logFileDate = logFileDate.Insert(logFileDate.IndexOf(".log"), "_" + info.Time.ToString("MM-dd-yyyy"));
+                    int index = logFileDate.IndexOf(".log");
+                    if (index < 0)
+                        logFileDate = logFileDate + "_" + info.Time.ToString("MM-dd-yyyy") + ".log";
+                    else
+                        logFileDate = logFileDate.Insert(index, "_" + info.Time.ToString("MM-dd-yyyy"));
 
                     writer = File.AppendText(logFileDate);
 

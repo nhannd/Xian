@@ -15,10 +15,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
     public class DicomClient : NetworkBase
     {
         #region Private Members
-		private string _host;
-		private int _port;
-		private string _callingAe;
-		private string _calledAe;
+		private IPEndPoint _remoteEndPoint;
 		private int _timeout;
 		private Socket _socket;
 		private Stream _network;
@@ -29,10 +26,9 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 		#endregion
 
 		#region Public Constructors
-        private DicomClient(String host, int port, AssociationParameters assoc, IDicomClientHandler handler) : base()
+        private DicomClient(AssociationParameters assoc, IDicomClientHandler handler) : base()
         {
-            _host = host;
-            _port = port;
+            _remoteEndPoint = assoc.RemoteEndPoint;
             _socket = null;
             _network = null;
             _closedEvent = null;
@@ -44,21 +40,21 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
 		#region Public Properties
 		public string Host {
-			get { return _host; }
+			get { return _remoteEndPoint.Address.ToString(); }
 		}
 
 		public int Port {
-			get { return _port; }
+			get { return _remoteEndPoint.Port; }
 		}
 
 		public string CallingAE {
-			get { return _callingAe; }
-			set { _callingAe = value; }
+			get { return _assoc.CallingAE; }
+			//set { _callingAe = value; }
 		}
 
 		public string CalledAE {
-			get { return _calledAe; }
-			set { _calledAe = value; }
+			get { return _assoc.CalledAE; }
+			//set { _calledAe = value; }
 		}
 
 		public int Timeout {
@@ -70,28 +66,36 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 			get { return _socket; }
 		}
 
-		//public Logger Log {
-	//		get { return _log; }
-//			set { _log = value; }
-		//}
-
 		public bool ClosedOnError {
 			get { return _closedOnError; }
 		}
 		#endregion
+
+        #region Private Methods
+        private void SetSocketOptions(ClientAssociationParameters parameters)
+        {
+            _socket.ReceiveBufferSize = parameters.ReceiveBufferSize;
+            _socket.SendBufferSize = parameters.SendBufferSize;
+            _socket.ReceiveTimeout = parameters.ReadTimeout;
+            _socket.SendTimeout = parameters.WriteTimeout;
+            _socket.LingerState = new LingerOption(false, 5);
+            // Nagle option
+            _socket.NoDelay = false;
+        }
 
         private void Connect()
         {
             _closedOnError = false;
 
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _socket.SendTimeout = _timeout * 1000;
-            _socket.ReceiveTimeout = _timeout * 1000;
-            _socket.Connect(_host, _port);
+
+            SetSocketOptions(this._assoc as ClientAssociationParameters);
+
+            _socket.Connect(_remoteEndPoint);
 
             _network = new NetworkStream(_socket);
 
-            InitializeNetwork(_network);
+            InitializeNetwork(_network,"Client handler to: " + _remoteEndPoint.ToString());
 
             _closedEvent = new ManualResetEvent(false);
 
@@ -103,53 +107,61 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             _closedOnError = false;
 
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            _socket.SendTimeout = _timeout * 1000;
-            _socket.ReceiveTimeout = _timeout * 1000;
-            _socket.Connect(_host, _port);
+            
+            SetSocketOptions(this._assoc as ClientAssociationParameters);
+
+            _socket.Connect(_remoteEndPoint);
 
             _network = new SslStream(new NetworkStream(_socket));
 
-            InitializeNetwork(_network);
+            InitializeNetwork(_network, "TLS Client handler to: " + _remoteEndPoint.ToString());
 
             _closedEvent = new ManualResetEvent(false);
 
             OnClientConnected();
         }
+        #endregion
 
-		#region Public Members
-        public static DicomClient Connect(string host, int port, ApplicationEntity ae, AssociationParameters assoc, IDicomClientHandler handler)
+        #region Public Members
+        public static DicomClient Connect(AssociationParameters assoc, IDicomClientHandler handler)
         {
-            DicomClient client = new DicomClient(host,port,assoc,handler);
+            DicomClient client = new DicomClient(assoc, handler);
             client.Connect();
             return client;
 		}
 
-        public static DicomClient ConnectTLS(string host, int port, ApplicationEntity ae, AssociationParameters assoc, IDicomClientHandler handler)
+        public static DicomClient ConnectTLS(AssociationParameters assoc, IDicomClientHandler handler)
         {
-            DicomClient client = new DicomClient(host, port, assoc, handler);
+            DicomClient client = new DicomClient(assoc, handler);
             client.ConnectTLS();
             return client;
 		}
 
-		public void Close() {
-            
-            _handler.OnClientClosed(this);
+        public void Close()
+        {
 
-			if (_network != null) {
-				_network.Close();
-				_network = null;
-			}
-			if (_socket != null) {
-				if (_socket.Connected)
-					_socket.Close();
-				_socket = null;
-			}
-			if (_closedEvent != null) {
-				_closedEvent.Set();
-				_closedEvent = null;
-			}
-			ShutdownNetwork();
-		}
+            lock (this)
+            {
+                if (_network != null)
+                {
+                    _network.Close();
+                    _network = null;
+                }
+                if (_socket != null)
+                {
+                    if (_socket.Connected)
+                        _socket.Close();
+                    _socket = null;
+                }
+                if (_closedEvent != null)
+                {
+                    _closedEvent.Set();
+                    _closedEvent = null;
+                }
+            }
+            ShutdownNetwork();
+
+        }
 
 		public bool Wait() {
 			_closedEvent.WaitOne();
@@ -162,10 +174,6 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         {
             DicomLogger.LogInfo("SCU -> Connect: {0}", InternalSocket.RemoteEndPoint);
 
-
-            _assoc.CalledAE = CalledAE;
-            _assoc.CallingAE = CallingAE;
-
             DicomLogger.LogInfo("C-Store SCU -> Association request");
             SendAssociateRequest(_assoc);
 
@@ -175,17 +183,41 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 		}
 
 		protected override void OnNetworkError(Exception e) {
-            _handler.OnNetworkError(this,e);
+            try
+            {
+                _handler.OnNetworkError(this, e);
+            }
+            catch (Exception) { }
+
 			_closedOnError = true;
 			Close();
 		}
 
 		protected override void OnDimseTimeout() {
-			_closedOnError = true;
-			Close();
+            try
+            {
+                _handler.OnDimseTimeout(this);
+            }
+            catch (Exception e)
+            {
+                OnUserException(e, "Unexpected exception on OnDimseTimeout");
+            }
 		}
 
-		protected override void OnReceiveAssociateReject(DcmRejectResult result, DcmRejectSource source, DcmRejectReason reason) {
+        protected override void OnReceiveAssociateAccept(AssociationParameters association)
+        {
+            try
+            {
+                _handler.OnReceiveAssociateAccept(this, association);
+            }
+            catch (Exception e)
+            {
+                OnUserException(e, "Unexpected exception on OnReceiveAssociateAccept");
+            }
+
+        }
+
+		protected override void OnReceiveAssociateReject(DicomRejectResult result, DicomRejectSource source, DicomRejectReason reason) {
             
             _handler.OnReceiveAssociateReject(this,result, source, reason);
 
@@ -193,64 +225,58 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 			Close();
 		}
 
-		protected override void OnReceiveAbort(DcmAbortSource source, DcmAbortReason reason) {
-            
-            _handler.OnReceiveAbort(this,source, reason);
-
+		protected override void OnReceiveAbort(DicomAbortSource source, DicomAbortReason reason) {
+            try
+            {
+                _handler.OnReceiveAbort(this, source, reason);
+            }
+            catch (Exception e)
+            {
+                OnUserException(e, "Unexpected exception on OnReceiveAbort");
+            }
 			_closedOnError = true;
 			Close();
 		}
 
 		protected override void OnReceiveReleaseResponse() {
-
-            _handler.OnReceiveReleaseResponse(this);
-
-			_closedOnError = false;
-			Close();
+            try
+            {
+                _handler.OnReceiveReleaseResponse(this);
+            }
+            catch (Exception e)
+            {
+                OnUserException(e, "Unexpected exception on OnReceiveReleaseResponse");
+            }
+            _closedOnError = false;
+            Close();
 		}
-        protected override bool OnReceiveDimse(byte pcid, AttributeCollection command, AttributeCollection dataset)
+
+
+        protected override void OnReceiveDimseRequest(byte pcid, DicomMessage msg)
         {
-            ushort messageID = command[DicomTags.MessageID].GetUInt16(1);
-            DicomPriority priority = (DicomPriority)command[DicomTags.Priority].GetUInt16(0);
-            DicomCommandField commandField = (DicomCommandField)command[DicomTags.CommandField].GetUInt16(0);
-
-            if ((commandField == DicomCommandField.CStoreRequest)
-                || (commandField == DicomCommandField.CCancelRequest)
-                || (commandField == DicomCommandField.CEchoRequest)
-                || (commandField == DicomCommandField.CFindRequest)
-                || (commandField == DicomCommandField.CGetRequest)
-                || (commandField == DicomCommandField.CMoveRequest)
-                || (commandField == DicomCommandField.NActionRequest)
-                || (commandField == DicomCommandField.NCreateRequest)
-                || (commandField == DicomCommandField.NDeleteRequest)
-                || (commandField == DicomCommandField.NEventReportRequest)
-                || (commandField == DicomCommandField.NGetRequest)
-                || (commandField == DicomCommandField.NSetRequest))
+            try
             {
-                DicomMessage msg = new DicomMessage(command, dataset);
-                _handler.OnReceiveRequestMessage(this, pcid, messageID, msg);
-                return true;
+                _handler.OnReceiveRequestMessage(this, pcid, msg);
             }
-
-            if ((commandField == DicomCommandField.CStoreResponse)
-             || (commandField == DicomCommandField.CEchoResponse)
-             || (commandField == DicomCommandField.CFindResponse)
-             || (commandField == DicomCommandField.CGetResponse)
-             || (commandField == DicomCommandField.CMoveResponse)
-             || (commandField == DicomCommandField.NActionResponse)
-             || (commandField == DicomCommandField.NCreateResponse)
-             || (commandField == DicomCommandField.NDeleteResponse)
-             || (commandField == DicomCommandField.NEventReportResponse)
-             || (commandField == DicomCommandField.NGetResponse)
-             || (commandField == DicomCommandField.NSetResponse))
+            catch (Exception e)
             {
-                DcmStatus status = DcmStatuses.Lookup(command[DicomTags.Status].GetUInt16(0, 0x0211));
-                DicomMessage msg = new DicomMessage(command, dataset);
-                _handler.OnReceiveResponseMessage(this, pcid, messageID, status, msg);
-                return true;
+                OnUserException(e, "Unexpected exception on OnReceiveRequestMessage");
             }
+            return ;
+        }
+        protected override void OnReceiveDimseResponse(byte pcid, DicomMessage msg)
+        {
 
-            return false;
+            try
+            {
+                _handler.OnReceiveResponseMessage(this, pcid, msg);
+            }
+            catch (Exception e)
+            {
+                OnUserException(e, "Unexpected exception on OnReceiveResponseMessage");
+            }
+            return;
+
         }
 		#endregion
     }

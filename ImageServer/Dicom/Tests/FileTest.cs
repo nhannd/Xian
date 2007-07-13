@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
             theSet[DicomTags.MediaStorageSOPClassUID].SetStringValue(theFile.DataSet[DicomTags.SOPClassUID].ToString());
             theSet[DicomTags.MediaStorageSOPInstanceUID].SetStringValue(theFile.DataSet[DicomTags.SOPInstanceUID].ToString());
-            theFile.TransferSyntax = TransferSyntax.GetTransferSyntax(TransferSyntax.ExplicitVRLittleEndian); ;
+            theFile.TransferSyntax = TransferSyntax.ExplicitVRLittleEndian; 
 
             theSet[DicomTags.ImplementationClassUID].SetStringValue("1.1.1.1.1.11.1");
             theSet[DicomTags.ImplementationVersionName].SetStringValue("CC ImageServer 1.0");

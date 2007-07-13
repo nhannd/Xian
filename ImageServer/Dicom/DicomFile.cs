@@ -67,9 +67,14 @@ namespace ClearCanvas.ImageServer.Dicom
         {
             get
             {
-                String sopClassUid = base.MetaInfo[DicomTags.MediaStorageSOPClassUID].ToString();
+                String sopClassUid = base.DataSet[DicomTags.SOPClassUID].ToString();
 
-                return SopClass.GetSopClass(sopClassUid);
+                SopClass sop = SopClass.GetSopClass(sopClassUid);
+
+                if (sop == null)
+                    sop = new SopClass("Unknown Sop Class", sopClassUid, false);
+
+                return sop;
             }
         }
 
@@ -110,10 +115,12 @@ namespace ClearCanvas.ImageServer.Dicom
                 fs.Seek(128, SeekOrigin.Begin);
                 CheckFileHeader(fs);
                 DicomStreamReader dsr = new DicomStreamReader(fs);
+                dsr.TransferSyntax = TransferSyntax.ExplicitVRLittleEndian;
 
                 dsr.Dataset = base._metaInfo;
                 dsr.Read(new DicomTag(0x0002FFFF,"Bogus Tag",DicomVr.UNvr,false,1,1,false), options);
                 dsr.Dataset = base._dataSet;
+                dsr.TransferSyntax = TransferSyntax;
                 if (stopTag == null)
                     stopTag = new DicomTag(0xFFFFFFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false);
                 dsr.Read(stopTag, options);
@@ -140,7 +147,7 @@ namespace ClearCanvas.ImageServer.Dicom
                 fs.WriteByte((byte)'M');
 
                 DicomStreamWriter dsw = new DicomStreamWriter(fs);
-                dsw.Write(TransferSyntax.GetTransferSyntax(TransferSyntax.ExplicitVRLittleEndian),
+                dsw.Write(TransferSyntax.ExplicitVRLittleEndian,
                     base._metaInfo, options | DicomWriteOptions.CalculateGroupLengths);
                 
                 dsw.Write(this.TransferSyntax,base._dataSet, options);

@@ -8,13 +8,13 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 {
     public interface IDicomClientHandler
     {
-        void OnClientClosed(DicomClient client);
-        void OnNetworkError(DicomClient client, Exception e);
         void OnReceiveAssociateAccept(DicomClient client, AssociationParameters association);
-        void OnReceiveRequestMessage(DicomClient client, byte presentationID, ushort messageID, DicomMessage message);
-        void OnReceiveResponseMessage(DicomClient client, byte presentationID, ushort messageID, DcmStatus status, DicomMessage message);
+        void OnReceiveAssociateReject(DicomClient client, DicomRejectResult result, DicomRejectSource source, DicomRejectReason reason);
+        void OnReceiveRequestMessage(DicomClient client, byte presentationID, DicomMessage message);
+        void OnReceiveResponseMessage(DicomClient client, byte presentationID, DicomMessage message);
         void OnReceiveReleaseResponse(DicomClient client);
-        void OnReceiveAssociateReject(DicomClient client, DcmRejectResult result, DcmRejectSource source, DcmRejectReason reason);
-        void OnReceiveAbort(DicomClient client, DcmAbortSource source, DcmAbortReason reason);
+        void OnReceiveAbort(DicomClient client, DicomAbortSource source, DicomAbortReason reason);
+        void OnNetworkError(DicomClient client, Exception e);
+        void OnDimseTimeout(DicomClient server);
     }
 }

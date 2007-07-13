@@ -7,7 +7,7 @@ using System.Text;
 
 namespace ClearCanvas.ImageServer.Dicom.Network
 {
-    public enum DcmState
+    public enum DicomState
     {
         Success,
         Cancel,
@@ -16,14 +16,14 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         Failure
     }
 
-    public class DcmStatus
+    public class DicomStatus
     {
         public readonly ushort Code;
         public readonly ushort Mask;
-        public readonly DcmState Status;
+        public readonly DicomState Status;
         public readonly string Description;
 
-        public DcmStatus(string code, DcmState status, string desc)
+        public DicomStatus(string code, DicomState status, string desc)
         {
             Code = ushort.Parse(code.Replace('x', '0'), System.Globalization.NumberStyles.HexNumber);
 
@@ -43,20 +43,20 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
         public override string ToString()
         {
-            if (Status == DcmState.Warning || Status == DcmState.Failure)
+            if (Status == DicomState.Warning || Status == DicomState.Failure)
             {
                 return String.Format("{0}: {1}", Status, Description);
             }
             return Description;
         }
 
-        public static bool operator ==(DcmStatus s1, DcmStatus s2)
+        public static bool operator ==(DicomStatus s1, DicomStatus s2)
         {
             if ((object)s1 == null || (object)s2 == null)
                 return false;
             return (s1.Code & s2.Mask) == (s2.Code & s1.Mask);
         }
-        public static bool operator !=(DcmStatus s1, DcmStatus s2)
+        public static bool operator !=(DicomStatus s1, DicomStatus s2)
         {
             if ((object)s1 == null || (object)s2 == null)
                 return false;
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         }
         public override bool Equals(object obj)
         {
-            return (DcmStatus)obj == this;
+            return (DicomStatus)obj == this;
         }
         public override int GetHashCode()
         {
@@ -72,11 +72,11 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         }
     }
 
-    public static class DcmStatuses
+    public static class DicomStatuses
     {
-        public static List<DcmStatus> Entries = new List<DcmStatus>();
+        public static List<DicomStatus> Entries = new List<DicomStatus>();
 
-        static DcmStatuses()
+        static DicomStatuses()
         {
             #region Load Dicom Status List
             Entries.Add(Success);
@@ -137,9 +137,9 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             #endregion
         }
 
-        public static DcmStatus Lookup(ushort code)
+        public static DicomStatus Lookup(ushort code)
         {
-            foreach (DcmStatus status in Entries)
+            foreach (DicomStatus status in Entries)
             {
                 if (status.Code == (code & status.Mask))
                     return status;
@@ -149,169 +149,169 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
         #region Dicom Statuses
         /// <summary>Success: Success</summary>
-        public static DcmStatus Success = new DcmStatus("0000", DcmState.Success, "Success");
+        public static DicomStatus Success = new DicomStatus("0000", DicomState.Success, "Success");
 
         /// <summary>Cancel: Cancel</summary>
-        public static DcmStatus Cancel = new DcmStatus("FE00", DcmState.Cancel, "Cancel");
+        public static DicomStatus Cancel = new DicomStatus("FE00", DicomState.Cancel, "Cancel");
 
         /// <summary>Pending: Pending</summary>
-        public static DcmStatus Pending = new DcmStatus("FF00", DcmState.Pending, "Pending");
+        public static DicomStatus Pending = new DicomStatus("FF00", DicomState.Pending, "Pending");
 
         /// <summary>Warning: Attribute list error</summary>
-        public static DcmStatus AttributeListError = new DcmStatus("0107", DcmState.Warning, "Attribute list error");
+        public static DicomStatus AttributeListError = new DicomStatus("0107", DicomState.Warning, "Attribute list error");
 
         /// <summary>Warning: Attribute Value Out of Range</summary>
-        public static DcmStatus AttributeValueOutOfRange = new DcmStatus("0116", DcmState.Warning, "Attribute Value Out of Range");
+        public static DicomStatus AttributeValueOutOfRange = new DicomStatus("0116", DicomState.Warning, "Attribute Value Out of Range");
 
         /// <summary>Failure: Refused: SOP class not supported</summary>
-        public static DcmStatus SOPClassNotSupported = new DcmStatus("0122", DcmState.Failure, "Refused: SOP class not supported");
+        public static DicomStatus SOPClassNotSupported = new DicomStatus("0122", DicomState.Failure, "Refused: SOP class not supported");
 
         /// <summary>Failure: Class-instance conflict</summary>
-        public static DcmStatus ClassInstanceConflict = new DcmStatus("0119", DcmState.Failure, "Class-instance conflict");
+        public static DicomStatus ClassInstanceConflict = new DicomStatus("0119", DicomState.Failure, "Class-instance conflict");
 
         /// <summary>Failure: Duplicate SOP instance</summary>
-        public static DcmStatus DuplicateSOPInstance = new DcmStatus("0111", DcmState.Failure, "Duplicate SOP instance");
+        public static DicomStatus DuplicateSOPInstance = new DicomStatus("0111", DicomState.Failure, "Duplicate SOP instance");
 
         /// <summary>Failure: Duplicate invocation</summary>
-        public static DcmStatus DuplicateInvocation = new DcmStatus("0210", DcmState.Failure, "Duplicate invocation");
+        public static DicomStatus DuplicateInvocation = new DicomStatus("0210", DicomState.Failure, "Duplicate invocation");
 
         /// <summary>Failure: Invalid argument value</summary>
-        public static DcmStatus InvalidArgumentValue = new DcmStatus("0115", DcmState.Failure, "Invalid argument value");
+        public static DicomStatus InvalidArgumentValue = new DicomStatus("0115", DicomState.Failure, "Invalid argument value");
 
         /// <summary>Failure: Invalid attribute value</summary>
-        public static DcmStatus InvalidAttributeValue = new DcmStatus("0106", DcmState.Failure, "Invalid attribute value");
+        public static DicomStatus InvalidAttributeValue = new DicomStatus("0106", DicomState.Failure, "Invalid attribute value");
 
         /// <summary>Failure: Invalid object instance</summary>
-        public static DcmStatus InvalidObjectInstance = new DcmStatus("0117", DcmState.Failure, "Invalid object instance");
+        public static DicomStatus InvalidObjectInstance = new DicomStatus("0117", DicomState.Failure, "Invalid object instance");
 
         /// <summary>Failure: Missing attribute</summary>
-        public static DcmStatus MissingAttribute = new DcmStatus("0120", DcmState.Failure, "Missing attribute");
+        public static DicomStatus MissingAttribute = new DicomStatus("0120", DicomState.Failure, "Missing attribute");
 
         /// <summary>Failure: Missing attribute value</summary>
-        public static DcmStatus MissingAttributeValue = new DcmStatus("0121", DcmState.Failure, "Missing attribute value");
+        public static DicomStatus MissingAttributeValue = new DicomStatus("0121", DicomState.Failure, "Missing attribute value");
 
         /// <summary>Failure: Mistyped argument</summary>
-        public static DcmStatus MistypedArgument = new DcmStatus("0212", DcmState.Failure, "Mistyped argument");
+        public static DicomStatus MistypedArgument = new DicomStatus("0212", DicomState.Failure, "Mistyped argument");
 
         /// <summary>Failure: No such argument</summary>
-        public static DcmStatus NoSuchArgument = new DcmStatus("0114", DcmState.Failure, "No such argument");
+        public static DicomStatus NoSuchArgument = new DicomStatus("0114", DicomState.Failure, "No such argument");
 
         /// <summary>Failure: No such event type</summary>
-        public static DcmStatus NoSuchEventType = new DcmStatus("0113", DcmState.Failure, "No such event type");
+        public static DicomStatus NoSuchEventType = new DicomStatus("0113", DicomState.Failure, "No such event type");
 
         /// <summary>Failure: No Such object instance</summary>
-        public static DcmStatus NoSuchObjectInstance = new DcmStatus("0112", DcmState.Failure, "No Such object instance");
+        public static DicomStatus NoSuchObjectInstance = new DicomStatus("0112", DicomState.Failure, "No Such object instance");
 
         /// <summary>Failure: No Such SOP class</summary>
-        public static DcmStatus NoSuchSOPClass = new DcmStatus("0118", DcmState.Failure, "No Such SOP class");
+        public static DicomStatus NoSuchSOPClass = new DicomStatus("0118", DicomState.Failure, "No Such SOP class");
 
         /// <summary>Failure: Processing failure</summary>
-        public static DcmStatus ProcessingFailure = new DcmStatus("0110", DcmState.Failure, "Processing failure");
+        public static DicomStatus ProcessingFailure = new DicomStatus("0110", DicomState.Failure, "Processing failure");
 
         /// <summary>Failure: Resource limitation</summary>
-        public static DcmStatus ResourceLimitation = new DcmStatus("0213", DcmState.Failure, "Resource limitation");
+        public static DicomStatus ResourceLimitation = new DicomStatus("0213", DicomState.Failure, "Resource limitation");
 
         /// <summary>Failure: Unrecognized operation</summary>
-        public static DcmStatus UnrecognizedOperation = new DcmStatus("0211", DcmState.Failure, "Unrecognized operation");
+        public static DicomStatus UnrecognizedOperation = new DicomStatus("0211", DicomState.Failure, "Unrecognized operation");
 
         /// <summary>Failure: No such action type</summary>
-        public static DcmStatus NoSuchActionType = new DcmStatus("0123", DcmState.Failure, "No such action type");
+        public static DicomStatus NoSuchActionType = new DicomStatus("0123", DicomState.Failure, "No such action type");
 
         /// <summary>Storage Failure: Out of Resources</summary>
-        public static DcmStatus StorageStorageOutOfResources = new DcmStatus("A7xx", DcmState.Failure, "Out of Resources");
+        public static DicomStatus StorageStorageOutOfResources = new DicomStatus("A7xx", DicomState.Failure, "Out of Resources");
 
         /// <summary>Storage Failure: Data Set does not match SOP Class (Error)</summary>
-        public static DcmStatus StorageDataSetDoesNotMatchSOPClassError = new DcmStatus("A9xx", DcmState.Failure, "Data Set does not match SOP Class (Error)");
+        public static DicomStatus StorageDataSetDoesNotMatchSOPClassError = new DicomStatus("A9xx", DicomState.Failure, "Data Set does not match SOP Class (Error)");
 
         /// <summary>Storage Failure: Cannot understand</summary>
-        public static DcmStatus StorageCannotUnderstand = new DcmStatus("Cxxx", DcmState.Failure, "Cannot understand");
+        public static DicomStatus StorageCannotUnderstand = new DicomStatus("Cxxx", DicomState.Failure, "Cannot understand");
 
         /// <summary>Storage Warning: Coercion of Data Elements</summary>
-        public static DcmStatus StorageCoercionOfDataElements = new DcmStatus("B000", DcmState.Warning, "Coercion of Data Elements");
+        public static DicomStatus StorageCoercionOfDataElements = new DicomStatus("B000", DicomState.Warning, "Coercion of Data Elements");
 
         /// <summary>Storage Warning: Data Set does not match SOP Class (Warning)</summary>
-        public static DcmStatus StorageDataSetDoesNotMatchSOPClassWarning = new DcmStatus("B007", DcmState.Warning, "Data Set does not match SOP Class (Warning)");
+        public static DicomStatus StorageDataSetDoesNotMatchSOPClassWarning = new DicomStatus("B007", DicomState.Warning, "Data Set does not match SOP Class (Warning)");
 
         /// <summary>Storage Warning: Elements Discarded</summary>
-        public static DcmStatus StorageElementsDiscarded = new DcmStatus("B006", DcmState.Warning, "Elements Discarded");
+        public static DicomStatus StorageElementsDiscarded = new DicomStatus("B006", DicomState.Warning, "Elements Discarded");
 
         /// <summary>QueryRetrieve Failure: Out of Resources</summary>
-        public static DcmStatus QueryRetrieveOutOfResources = new DcmStatus("A700", DcmState.Failure, "Out of Resources");
+        public static DicomStatus QueryRetrieveOutOfResources = new DicomStatus("A700", DicomState.Failure, "Out of Resources");
 
         /// <summary>QueryRetrieve Failure: Unable to calculate number of matches</summary>
-        public static DcmStatus QueryRetrieveUnableToCalculateNumberOfMatches = new DcmStatus("A701", DcmState.Failure, "Unable to calculate number of matches");
+        public static DicomStatus QueryRetrieveUnableToCalculateNumberOfMatches = new DicomStatus("A701", DicomState.Failure, "Unable to calculate number of matches");
 
         /// <summary>QueryRetrieve Failure: Unable to perform suboperations</summary>
-        public static DcmStatus QueryRetrieveUnableToPerformSuboperations = new DcmStatus("A702", DcmState.Failure, "Unable to perform suboperations");
+        public static DicomStatus QueryRetrieveUnableToPerformSuboperations = new DicomStatus("A702", DicomState.Failure, "Unable to perform suboperations");
 
         /// <summary>QueryRetrieve Failure: Move Destination unknown</summary>
-        public static DcmStatus QueryRetrieveMoveDestinationUnknown = new DcmStatus("A801", DcmState.Failure, "Move Destination unknown");
+        public static DicomStatus QueryRetrieveMoveDestinationUnknown = new DicomStatus("A801", DicomState.Failure, "Move Destination unknown");
 
         /// <summary>QueryRetrieve Failure: Identifier does not match SOP Class</summary>
-        public static DcmStatus QueryRetrieveIdentifierDoesNotMatchSOPClass = new DcmStatus("A900", DcmState.Failure, "Identifier does not match SOP Class");
+        public static DicomStatus QueryRetrieveIdentifierDoesNotMatchSOPClass = new DicomStatus("A900", DicomState.Failure, "Identifier does not match SOP Class");
 
         /// <summary>QueryRetrieve Failure: Unable to process</summary>
-        public static DcmStatus QueryRetrieveUnableToProcess = new DcmStatus("Cxxx", DcmState.Failure, "Unable to process");
+        public static DicomStatus QueryRetrieveUnableToProcess = new DicomStatus("Cxxx", DicomState.Failure, "Unable to process");
 
         /// <summary>QueryRetrieve Pending: Optional Keys Not Supported</summary>
-        public static DcmStatus QueryRetrieveOptionalKeysNotSupported = new DcmStatus("FF01", DcmState.Pending, "Optional Keys Not Supported");
+        public static DicomStatus QueryRetrieveOptionalKeysNotSupported = new DicomStatus("FF01", DicomState.Pending, "Optional Keys Not Supported");
 
         /// <summary>QueryRetrieve Warning: Sub-operations Complete - One or more Failures</summary>
-        public static DcmStatus QueryRetrieveSubOpsOneOrMoreFailures = new DcmStatus("B000", DcmState.Warning, "Sub-operations Complete - One or more Failures");
+        public static DicomStatus QueryRetrieveSubOpsOneOrMoreFailures = new DicomStatus("B000", DicomState.Warning, "Sub-operations Complete - One or more Failures");
 
         /// <summary>PrintManagement Warning: Memory allocation not supported</summary>
-        public static DcmStatus PrintManagementMemoryAllocationNotSupported = new DcmStatus("B000", DcmState.Warning, "Memory allocation not supported");
+        public static DicomStatus PrintManagementMemoryAllocationNotSupported = new DicomStatus("B000", DicomState.Warning, "Memory allocation not supported");
 
         /// <summary>PrintManagement Warning: Film session printing (collation) is not supported</summary>
-        public static DcmStatus PrintManagementFilmSessionPrintingNotSupported = new DcmStatus("B601", DcmState.Warning, "Film session printing (collation) is not supported");
+        public static DicomStatus PrintManagementFilmSessionPrintingNotSupported = new DicomStatus("B601", DicomState.Warning, "Film session printing (collation) is not supported");
 
         /// <summary>PrintManagement Warning: Film session SOP instance hierarchy does not contain image box SOP instances (empty page)</summary>
-        public static DcmStatus PrintManagementFilmSessionEmptyPage = new DcmStatus("B602", DcmState.Warning, "Film session SOP instance hierarchy does not contain image box SOP instances (empty page)");
+        public static DicomStatus PrintManagementFilmSessionEmptyPage = new DicomStatus("B602", DicomState.Warning, "Film session SOP instance hierarchy does not contain image box SOP instances (empty page)");
 
         /// <summary>PrintManagement Warning: Film box SOP instance hierarchy does not contain image box SOP instances (empty page)</summary>
-        public static DcmStatus PrintManagementFilmBoxEmptyPage = new DcmStatus("B603", DcmState.Warning, "Film box SOP instance hierarchy does not contain image box SOP instances (empty page)");
+        public static DicomStatus PrintManagementFilmBoxEmptyPage = new DicomStatus("B603", DicomState.Warning, "Film box SOP instance hierarchy does not contain image box SOP instances (empty page)");
 
         /// <summary>PrintManagement Warning: Image size is larger than image box size, the image has been demagnified</summary>
-        public static DcmStatus PrintManagementImageDemagnified = new DcmStatus("B604", DcmState.Warning, "Image size is larger than image box size, the image has been demagnified");
+        public static DicomStatus PrintManagementImageDemagnified = new DicomStatus("B604", DicomState.Warning, "Image size is larger than image box size, the image has been demagnified");
 
         /// <summary>PrintManagement Warning: Requested min density or max density outside of printer's operating range</summary>
-        public static DcmStatus PrintManagementMinMaxDensityOutOfRange = new DcmStatus("B605", DcmState.Warning, "Requested min density or max density outside of printer's operating range");
+        public static DicomStatus PrintManagementMinMaxDensityOutOfRange = new DicomStatus("B605", DicomState.Warning, "Requested min density or max density outside of printer's operating range");
 
         /// <summary>PrintManagement Warning: Image size is larger than the image box size, the Image has been cropped to fit</summary>
-        public static DcmStatus PrintManagementImageCropped = new DcmStatus("B609", DcmState.Warning, "Image size is larger than the image box size, the Image has been cropped to fit");
+        public static DicomStatus PrintManagementImageCropped = new DicomStatus("B609", DicomState.Warning, "Image size is larger than the image box size, the Image has been cropped to fit");
 
         /// <summary>PrintManagement Warning: Image size or combined print image size is larger than the image box size, image or combined print image has been decimated to fit</summary>
-        public static DcmStatus PrintManagementImageDecimated = new DcmStatus("B60A", DcmState.Warning, "Image size or combined print image size is larger than the image box size, image or combined print image has been decimated to fit");
+        public static DicomStatus PrintManagementImageDecimated = new DicomStatus("B60A", DicomState.Warning, "Image size or combined print image size is larger than the image box size, image or combined print image has been decimated to fit");
 
         /// <summary>PrintManagement Failure: Film session SOP instance hierarchy does not contain film box SOP instances</summary>
-        public static DcmStatus PrintManagementFilmSessionEmpty = new DcmStatus("C600", DcmState.Failure, "Film session SOP instance hierarchy does not contain film box SOP instances");
+        public static DicomStatus PrintManagementFilmSessionEmpty = new DicomStatus("C600", DicomState.Failure, "Film session SOP instance hierarchy does not contain film box SOP instances");
 
         /// <summary>PrintManagement Failure: Unable to create Print Job SOP Instance; print queue is full</summary>
-        public static DcmStatus PrintManagementPrintQueueFull = new DcmStatus("C601", DcmState.Failure, "Unable to create Print Job SOP Instance; print queue is full");
+        public static DicomStatus PrintManagementPrintQueueFull = new DicomStatus("C601", DicomState.Failure, "Unable to create Print Job SOP Instance; print queue is full");
 
         /// <summary>PrintManagement Failure: Image size is larger than image box size</summary>
-        public static DcmStatus PrintManagementImageLargerThanImageBox = new DcmStatus("C603", DcmState.Failure, "Image size is larger than image box size");
+        public static DicomStatus PrintManagementImageLargerThanImageBox = new DicomStatus("C603", DicomState.Failure, "Image size is larger than image box size");
 
         /// <summary>PrintManagement Failure: Insufficient memory in printer to store the image</summary>
-        public static DcmStatus PrintManagementInsufficientMemoryInPrinter = new DcmStatus("C605", DcmState.Failure, "Insufficient memory in printer to store the image");
+        public static DicomStatus PrintManagementInsufficientMemoryInPrinter = new DicomStatus("C605", DicomState.Failure, "Insufficient memory in printer to store the image");
 
         /// <summary>PrintManagement Failure: Combined Print Image size is larger than the Image Box size</summary>
-        public static DcmStatus PrintManagementCombinedImageLargerThanImageBox = new DcmStatus("C613", DcmState.Failure, "Combined Print Image size is larger than the Image Box size");
+        public static DicomStatus PrintManagementCombinedImageLargerThanImageBox = new DicomStatus("C613", DicomState.Failure, "Combined Print Image size is larger than the Image Box size");
 
         /// <summary>PrintManagement Failure: There is an existing film box that has not been printed and N-ACTION at the Film Session level is not supported.</summary>
-        public static DcmStatus PrintManagementExistingFilmBoxNotPrinted = new DcmStatus("C616", DcmState.Failure, "There is an existing film box that has not been printed and N-ACTION at the Film Session level is not supported.");
+        public static DicomStatus PrintManagementExistingFilmBoxNotPrinted = new DicomStatus("C616", DicomState.Failure, "There is an existing film box that has not been printed and N-ACTION at the Film Session level is not supported.");
 
         /// <summary>MediaCreationManagement Failure: Refused because an Initiate Media Creation action has already been received for this SOP Instance</summary>
-        public static DcmStatus MediaCreationManagementDuplicateInitiateMediaCreation = new DcmStatus("A510", DcmState.Failure, "Refused because an Initiate Media Creation action has already been received for this SOP Instance");
+        public static DicomStatus MediaCreationManagementDuplicateInitiateMediaCreation = new DicomStatus("A510", DicomState.Failure, "Refused because an Initiate Media Creation action has already been received for this SOP Instance");
 
         /// <summary>MediaCreationManagement Failure: Media creation request already completed</summary>
-        public static DcmStatus MediaCreationManagementMediaCreationRequestAlreadyCompleted = new DcmStatus("C201", DcmState.Failure, "Media creation request already completed");
+        public static DicomStatus MediaCreationManagementMediaCreationRequestAlreadyCompleted = new DicomStatus("C201", DicomState.Failure, "Media creation request already completed");
 
         /// <summary>MediaCreationManagement Failure: Media creation request already in progress and cannot be interrupted</summary>
-        public static DcmStatus MediaCreationManagementMediaCreationRequestAlreadyInProgress = new DcmStatus("C202", DcmState.Failure, "Media creation request already in progress and cannot be interrupted");
+        public static DicomStatus MediaCreationManagementMediaCreationRequestAlreadyInProgress = new DicomStatus("C202", DicomState.Failure, "Media creation request already in progress and cannot be interrupted");
 
         /// <summary>MediaCreationManagement Failure: Cancellation denied for unspecified reason</summary>
-        public static DcmStatus MediaCreationManagementCancellationDeniedForUnspecifiedReason = new DcmStatus("C203", DcmState.Failure, "Cancellation denied for unspecified reason");
+        public static DicomStatus MediaCreationManagementCancellationDeniedForUnspecifiedReason = new DicomStatus("C203", DicomState.Failure, "Cancellation denied for unspecified reason");
         #endregion
     }
 }

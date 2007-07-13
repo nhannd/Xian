@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Net;
 
 using ClearCanvas.ImageServer.Dicom.Exceptions;
 
@@ -31,12 +32,12 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 		private byte _pcid;
 		private DicomPresContextResult _result;
 		private DicomRoleSelection _roles;
-		private DicomUid _abstract;
+		private SopClass _abstract;
 		private List<TransferSyntax> _transfers;
 		#endregion
 
 		#region Public Constructor
-		public DicomPresContext(byte pcid, DicomUid abstractSyntax) {
+		public DicomPresContext(byte pcid, SopClass abstractSyntax) {
 			_pcid = pcid;
 			_result = DicomPresContextResult.Proposed;
 			_roles = DicomRoleSelection.Disabled;
@@ -44,7 +45,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 			_transfers = new List<TransferSyntax>();
 		}
 
-		internal DicomPresContext(byte pcid, DicomUid abstractSyntax, TransferSyntax transferSyntax, DicomPresContextResult result) {
+		internal DicomPresContext(byte pcid, SopClass abstractSyntax, TransferSyntax transferSyntax, DicomPresContextResult result) {
 			_pcid = pcid;
 			_result = result;
 			_roles = DicomRoleSelection.Disabled;
@@ -73,7 +74,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 			get { return _roles == DicomRoleSelection.SCP || _roles == DicomRoleSelection.Both; }
 		}
 
-		public DicomUid AbstractSyntax {
+		public SopClass AbstractSyntax {
 			get { return _abstract; }
 		}
 
@@ -146,11 +147,70 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         
         #region Private Members
         private uint _maxPduLength = 128 * 1024;
-        private ApplicationEntity _calledAE;
-        private ApplicationEntity _callingAE;
+        private String _calledAE;
+        private String _callingAE;
+        private DicomUid _appCtxNm;
+        private DicomUid _implClass;
+        private string _implVersion;
+        private SortedList<byte, DicomPresContext> _presContexts;
+        private IPEndPoint _localEndPoint;
+        private IPEndPoint _remoteEndPoint;
 
+        // Sizes that result in PDUs that are multiples of the MTU work better.
+        private int _sendBufferSize = 128 * 1024;
+        private int _receiveBufferSize = 128 * 1024;
+        private int _readTimeout = 30;
+        private int _writeTimeout = 30;
         #endregion
 
+
+		#region Constructors
+		protected AssociationParameters(String callingAE, String calledAE, IPEndPoint localEndPoint, IPEndPoint remoteEndPoint) {
+            _maxPduLength = 128 * 1024;
+			_appCtxNm = DicomUids.DICOMApplicationContextName;
+			_implClass = DicomImplementation.ClassUID;
+			_implVersion = DicomImplementation.Version;
+			_presContexts = new SortedList<byte, DicomPresContext>();
+
+            _calledAE = calledAE;
+            _callingAE = callingAE;
+
+            _localEndPoint = localEndPoint;
+            _remoteEndPoint = remoteEndPoint;
+		}
+
+        protected AssociationParameters(AssociationParameters parameters)
+        {
+
+            _appCtxNm = parameters._appCtxNm;
+            _calledAE = parameters._calledAE;
+            _callingAE = parameters._callingAE;
+            _implClass = parameters._implClass;
+            _implVersion = parameters._implVersion;
+            _localEndPoint = parameters._localEndPoint;
+            _maxPduLength = parameters._maxPduLength;
+            _readTimeout = parameters._readTimeout;
+            _receiveBufferSize = parameters._receiveBufferSize;
+            _remoteEndPoint = parameters._remoteEndPoint;
+            _sendBufferSize = parameters._sendBufferSize;
+            _writeTimeout = parameters._writeTimeout;
+
+            foreach (byte id in parameters._presContexts.Keys)
+            {
+                AddPresentationContext(id,parameters._presContexts[id].AbstractSyntax);
+
+                foreach (TransferSyntax ts in parameters._presContexts[id].GetTransfers())
+                {
+                    AddTransferSyntax(id,ts);
+                }
+
+                SetRoleSelect(id, parameters._presContexts[id].GetRoleSelect());
+
+            }
+        }
+		#endregion
+
+		#region Public Properties
         /// <summary>
         /// The Maximum PDU Length negotiated for the association
         /// </summary>
@@ -159,40 +219,54 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             get { return _maxPduLength; }
             set { _maxPduLength = value; }
         }
+        /// <summary>
+        /// The network Send Buffer size utilized by this application.
+        /// </summary>
+        public int SendBufferSize
+        {
+            get { return _sendBufferSize; }
+            set { _sendBufferSize = value; }
+        }
 
-        public ApplicationEntity CalledApplication
+        /// <summary>
+        /// The network Receive Buffer size utilized by this application.
+        /// </summary>
+        public int ReceiveBufferSize
+        {
+            get { return _receiveBufferSize; }
+            set { _receiveBufferSize = value; }
+        }
+
+        /// <summary>
+        /// The timeout for any network Read operations.
+        /// </summary>
+        public int ReadTimeout
+        {
+            get { return _readTimeout; }
+            set { _readTimeout = value; }
+        }
+
+        /// <summary>
+        /// The timeout for any network write operations.
+        /// </summary>
+        public int WriteTimeout
+        {
+            get { return _writeTimeout; }
+            set { _writeTimeout = value; }
+        }
+
+        public String CalledAE
         {
             get { return _calledAE; }
             set { _calledAE = value; }
         }
 
-        public ApplicationEntity CallingApplication
+        public String CallingAE
         {
             get { return _callingAE; }
             set { _callingAE = value; }
         }
 
-        		#region Private Members
-		private DicomUid _appCtxNm;
-		private DicomUid _implClass;
-		private string _implVersion;
-		private uint _maxPdu;
-		private string _calledAe;
-		private string _callingAe;
-		private SortedList<byte, DicomPresContext> _presContexts;
-		#endregion
-
-		#region Public Constructor
-		public AssociationParameters() {
-			_maxPdu = 128 * 1024;
-			_appCtxNm = DicomUids.DICOMApplicationContextName;
-			_implClass = DicomImplementation.ClassUID;
-			_implVersion = DicomImplementation.Version;
-			_presContexts = new SortedList<byte, DicomPresContext>();
-		}
-		#endregion
-
-		#region Public Properties
 		/// <summary>
 		/// Gets or sets the Application Context Name.
 		/// </summary>
@@ -217,35 +291,40 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 			set { _implVersion = value; }
 		}
 
-		/// <summary>
-		/// Gets or sets the Called AE title.
-		/// </summary>
-		public string CalledAE {
-			get { return _calledAe; }
-			set { _calledAe = value; }
-		}
+        public IPEndPoint RemoteEndPoint
+        {
+            get { return _remoteEndPoint; }
+            internal set { _remoteEndPoint = value; }
+        }
 
-		/// <summary>
-		/// Gets or sets the Calling AE title.
-		/// </summary>
-		public string CallingAE {
-			get { return _callingAe; }
-			set { _callingAe = value; }
-		}
+        public IPEndPoint LocalEndPoint
+        {
+            get { return _localEndPoint; }
+            internal set { _localEndPoint = value; }
+        }
+
 		#endregion
 
-		#region Public Methods
-		/// <summary>
+        #region Internal Properties
+        internal SortedList<byte, DicomPresContext> PresentationContexts
+        {
+            get { return _presContexts; }
+            set { _presContexts = value; }
+        }
+        #endregion
+
+        #region Public Methods
+        /// <summary>
 		/// Adds a Presentation Context to the DICOM Associate.
 		/// </summary>
-		public void AddPresentationContext(byte pcid, DicomUid abstractSyntax) {
+		public void AddPresentationContext(byte pcid, SopClass abstractSyntax) {
 			_presContexts.Add(pcid, new DicomPresContext(pcid, abstractSyntax));
 		}
 
 		/// <summary>
 		/// Adds a Presentation Context to the DICOM Associate.
 		/// </summary>
-		public byte AddPresentationContext(DicomUid abstractSyntax) {
+		public byte AddPresentationContext(SopClass abstractSyntax) {
 			byte pcid = 1;
 			foreach (byte id in _presContexts.Keys) {
 				if (_presContexts[id].AbstractSyntax == abstractSyntax)
@@ -334,7 +413,8 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 		/// <param name="pcid">Presentation Context ID</param>
 		/// <returns>Abstract Syntax</returns>
 		public DicomUid GetAbstractSyntax(byte pcid) {
-			return GetPresentationContext(pcid).AbstractSyntax;
+            SopClass sop = GetPresentationContext(pcid).AbstractSyntax;
+			return sop.DicomUid;
 		}
 
 		/// <summary>
@@ -362,9 +442,9 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 		/// </summary>
 		/// <param name="abstractSyntax">Abstract Syntax</param>
 		/// <returns>Presentation Context ID</returns>
-		public byte FindAbstractSyntax(DicomUid abstractSyntax) {
+		public byte FindAbstractSyntax(SopClass abstractSyntax) {
 			foreach (DicomPresContext ctx in _presContexts.Values) {
-				if (ctx.AbstractSyntax == abstractSyntax)
+				if (ctx.AbstractSyntax.Uid == abstractSyntax.Uid)
 					return ctx.ID;
 			}
 			return 0;
@@ -376,9 +456,9 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 		/// <param name="abstractSyntax">Abstract Syntax</param>
 		/// <param name="transferSyntax">Transfer Syntax</param>
 		/// <returns>Presentation Context ID</returns>
-		public byte FindAbstractSyntaxWithTransferSyntax(DicomUid abstractSyntax, TransferSyntax trasferSyntax) {
+		public byte FindAbstractSyntaxWithTransferSyntax(SopClass abstractSyntax, TransferSyntax transferSyntax) {
 			foreach (DicomPresContext ctx in _presContexts.Values) {
-				if (ctx.AbstractSyntax == abstractSyntax && ctx.HasTransfer(trasferSyntax))
+				if (ctx.AbstractSyntax.Uid == abstractSyntax.Uid && ctx.HasTransfer(transferSyntax))
 					return ctx.ID;
 			}
 			return 0;
@@ -420,7 +500,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
 		#region Internal Methods
 		internal void AddPresentationContext(byte pcid, DicomUid abstractSyntax, TransferSyntax transferSyntax, DicomPresContextResult result) {
-			_presContexts.Add(pcid, new DicomPresContext(pcid, abstractSyntax, transferSyntax, result));
+			_presContexts.Add(pcid, new DicomPresContext(pcid, SopClass.GetSopClass(abstractSyntax.UID), transferSyntax, result));
 		}
 
 		internal DicomPresContext GetPresentationContext(byte pcid) {
@@ -435,25 +515,57 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 		}
 		#endregion
 
-		public override string ToString() {
+
+        public override string ToString() {
 			StringBuilder sb = new StringBuilder();
 			sb.AppendFormat("Application Context:		{0}\n", _appCtxNm);
 			sb.AppendFormat("Implementation Class:		{0}\n", _implClass);
 			sb.AppendFormat("Implementation Version:	{0}\n", _implVersion);
-			sb.AppendFormat("Maximum PDU Size:			{0}\n", _maxPdu);
-			sb.AppendFormat("Called AE Title:			{0}\n", _calledAe);
-			sb.AppendFormat("Calling AE Title:			{0}\n", _callingAe);
+            sb.AppendFormat("Maximum PDU Size:			{0}\n", _maxPduLength);
+			sb.AppendFormat("Called AE Title:			{0}\n", _calledAE);
+			sb.AppendFormat("Calling AE Title:			{0}\n", _callingAE);
 			sb.AppendFormat("Presentation Contexts:		{0}\n", _presContexts.Count);
 			foreach (DicomPresContext pctx in _presContexts.Values) {
 				sb.AppendFormat("	Presentation Context {0} [{1}]\n", pctx.ID, pctx.GetResultDescription());
-				sb.AppendFormat("		Abstract: {0}\n", (pctx.AbstractSyntax.Type == UidType.Unknown) ?
-					pctx.AbstractSyntax.UID : pctx.AbstractSyntax.Description);
+				sb.AppendFormat("		Abstract: {0}\n", pctx.AbstractSyntax.Name);
 				foreach (TransferSyntax ts in pctx.GetTransfers()) {
-					sb.AppendFormat("		Transfer: {0}\n", (ts.UID.Type == UidType.Unknown) ?
-						ts.UID.UID : ts.UID.Description);
+					sb.AppendFormat("		Transfer: {0}\n", (ts.DicomUid.Type == UidType.Unknown) ?
+						ts.DicomUid.UID : ts.DicomUid.Description);
 				}
 			}
 			return sb.ToString();
 		}
+    }
+
+    public class ClientAssociationParameters : AssociationParameters
+    {
+        public ClientAssociationParameters(String callingAE, String calledAE, IPEndPoint remoteEndPoint)
+            : base(callingAE,calledAE,null,remoteEndPoint)
+        {
+		}
+
+        private ClientAssociationParameters(ClientAssociationParameters parameters)
+            : base(parameters)
+        {
+        }
+
+        internal ClientAssociationParameters Copy(ClientAssociationParameters sourceParameters)
+        {
+            return new ClientAssociationParameters(sourceParameters);
+        }
+    }
+
+    public class ServerAssociationParameters : AssociationParameters
+    {
+        internal ServerAssociationParameters()
+            : base(null, null, null, null)
+        {
+        }
+
+        public ServerAssociationParameters(String CalledAE, IPEndPoint localEndPoint )
+            : base(null,CalledAE,localEndPoint,null)
+        {
+        }
+
     }
 }

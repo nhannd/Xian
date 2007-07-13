@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             theSet[DicomTags.ImageType].SetStringValue("ORIGINAL\\PRIMARY\\OTHER\\M\\FFE");
             theSet[DicomTags.InstanceCreationDate].SetStringValue("20070618");
             theSet[DicomTags.InstanceCreationTime].SetStringValue("133600");
-            theSet[DicomTags.SOPClassUID].SetStringValue("1.2.840.10008.5.1.3.1.1.4");
+            theSet[DicomTags.SOPClassUID].SetStringValue(SopClass.MRImageStorageUid);
             theSet[DicomTags.SOPInstanceUID].SetStringValue("1.1.1.1.1");
             theSet[DicomTags.StudyDate].SetStringValue("20070618");
             theSet[DicomTags.StudyTime].SetStringValue("1336000");
@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
             item[DicomTags.ReferencedStudySequence].AddSequenceItem(studyItem);
 
-            studyItem[DicomTags.ReferencedSOPClassUID].SetStringValue(SopClass.MRImageStorage);
+            studyItem[DicomTags.ReferencedSOPClassUID].SetStringValue(SopClass.MRImageStorageUid);
             studyItem[DicomTags.ReferencedSOPInstanceUID].SetStringValue("1.2.3.4.5.6.7.8.9");
 
         }

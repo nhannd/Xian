@@ -342,7 +342,7 @@ namespace ClearCanvas.ImageServer.Dicom
             }
             catch (Exception e)
             {
-                DicomLogger.LogError("Error in default value type! - {0}", vtype.ToString() + "  Exception: " + e.ToString());
+                DicomLogger.LogErrorException(e,"Error in default value type! - {0}", vtype.ToString());
                 return null;
             }
         }
@@ -486,7 +486,7 @@ namespace ClearCanvas.ImageServer.Dicom
                     }
                     catch (Exception e)
                     {
-                        DicomLogger.LogError("Unable to bind field: " + e.Message);
+                        DicomLogger.LogErrorException(e,"Unable to bind field");
                     }
                 }
             }
@@ -511,7 +511,7 @@ namespace ClearCanvas.ImageServer.Dicom
                     }
                     catch (Exception e)
                     {
-                        DicomLogger.LogError("Unable to bind field: " + e.Message);
+                        DicomLogger.LogErrorException(e,"Unable to bind field");
                     }
                 }
             }
@@ -549,7 +549,7 @@ namespace ClearCanvas.ImageServer.Dicom
                         else if (elem.Tag.VR == DicomVr.UIvr && vtype == typeof(TransferSyntax))
                         {
                             TransferSyntax ts = (TransferSyntax)value;
-                            elem.SetStringValue(ts.UID.UID);
+                            elem.SetStringValue(ts.DicomUid.UID);
                         }
                       //  else if (vtype == typeof(DcmDateRange) && elem.GetType().IsSubclassOf(typeof(AbstractAttribute)))
                       //  {

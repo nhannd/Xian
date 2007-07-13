@@ -11,8 +11,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
     internal struct ListenerInfo
     {
         public StartAssociation StartDelegate;
-        public ApplicationEntity App;
-        public IPEndPoint EndPoint;
+        public ServerAssociationParameters Parameters;
     }
 
     /// <summary>
@@ -34,45 +33,45 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
         #region Public Static Methods
 
-        public static void Listen(IPEndPoint ep, ApplicationEntity ae, StartAssociation acceptor)
+        public static void Listen(ServerAssociationParameters parameters, StartAssociation acceptor)
         {
-            if (_listeners.ContainsKey(ep))
+            if (_listeners.ContainsKey(parameters.LocalEndPoint))
             {
-                Listener theListener = _listeners[ep];
+                Listener theListener = _listeners[parameters.LocalEndPoint];
 
                 ListenerInfo info = new ListenerInfo();
                 
                 info.StartDelegate = acceptor;
-                info.App = ae;
-                info.EndPoint = ep;
+                info.Parameters = parameters;
 
-                theListener._applications.Add(ae.Name,info);
+                theListener._applications.Add(parameters.CalledAE,info);
 
             }
             else
             {
                 
-                Listener theListener = new Listener(ep, ae, acceptor);
-                _listeners[ep] = theListener;
+                Listener theListener = new Listener(parameters, acceptor);
+                _listeners[parameters.LocalEndPoint] = theListener;
                 theListener.StartThread();
             }
         }
 
-        public static void StopListening(IPEndPoint ep, ApplicationEntity ae)
+        public static void StopListening(ServerAssociationParameters parameters)
         {
             Listener theListener;
 
-            theListener = _listeners[ep];
-            if (theListener != null)
+            if (_listeners.ContainsKey(parameters.LocalEndPoint))
             {
-                if (theListener._applications.ContainsKey(ae.Name))
+                theListener = _listeners[parameters.LocalEndPoint];
+
+                if (theListener._applications.ContainsKey(parameters.CalledAE))
                 {
-                    theListener._applications.Remove(ae.Name);
+                    theListener._applications.Remove(parameters.CalledAE);
 
                     if (theListener._applications.Count == 0)
                     {
                         // Cleanup the listener
-                        _listeners[ep] = null;
+                        _listeners.Remove(parameters.LocalEndPoint);
                         theListener.StopThread();
                         theListener.Dispose();
                     }
@@ -83,17 +82,17 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         #endregion
 
         #region Constructors
-        internal Listener(IPEndPoint ep, ApplicationEntity ae, StartAssociation acceptor)
+        internal Listener(ServerAssociationParameters parameters, StartAssociation acceptor)
         {
 
             ListenerInfo info = new ListenerInfo();
-            info.App = ae;
+
+            info.Parameters = parameters;
             info.StartDelegate = acceptor;
-            info.EndPoint = ep;
 
-            this._applications.Add(ae.Name, info);
+            this._applications.Add(parameters.CalledAE, info);
 
-            _ipEndPoint = ep;
+            _ipEndPoint = parameters.LocalEndPoint;
         }
         #endregion
 
@@ -124,7 +123,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             }
             catch (SocketException e)
             {
-                DicomLogger.LogError("Unexpected exception when starting TCP listener: " + e.ToString());
+                DicomLogger.LogErrorException(e,"Unexpected exception when starting TCP listener");
                 return;
             }
 
