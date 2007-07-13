@@ -116,6 +116,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return argb;
 		}
 
+		/// <summary>
+		/// Converts pixel data of a particular photometric interpretation
+		/// to ARGB.
+		/// </summary>
+		/// <param name="photometricInterpretation"></param>
+		/// <param name="planarConfiguration"></param>
+		/// <param name="srcPixelData">The input pixel data to be converted.</param>
+		/// <param name="argbPixelData">The converted output pixel data in ARGB format.</param>
 		public static void ToArgb(
 			PhotometricInterpretation photometricInterpretation,
 			int planarConfiguration,

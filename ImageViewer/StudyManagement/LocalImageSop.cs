@@ -113,7 +113,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			if (_pixelData == null)
 			{
 				// Decompress the pixel data (if pixel data is already uncompressed,
-				// this is a pass-through, a no-op.
+				// this is a pass-through, a no-op.)
+				//
 				// TODO: When the pixel data is compressed, we should delete the
 				// compressed buffer and just leave the uncompressed buffer, so as to
 				// save memory.  If a memory management mechanism decides to unload the

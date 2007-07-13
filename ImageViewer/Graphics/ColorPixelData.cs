@@ -6,8 +6,27 @@ using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	/// <summary>
+	/// A colour pixel wrapper.
+	/// </summary>
+	/// <remarks>
+	/// <see cref="ColorPixelData"/> provides a number of convenience methods
+	/// to make accessing and changing colour pixel data easier.  Use these methods
+	/// judiciously, as the convenience comes at the expense of performance.
+	/// For example, if you're doing complex image processing, using methods
+	/// such as <see cref="PixelData.SetPixel(int, int, int)"/> is not recommended if you want
+	/// good performance.  Instead, use the <see cref="PixelData.Raw"/> property 
+	/// to get the raw byte array, then use unsafe code to do your processing.
+	/// </remarks>
 	public class ColorPixelData : PixelData
 	{
+		/// <summary>
+		/// Initializes a new instance of <see cref="ColorPixelData"/>
+		/// with the specified image parameters.
+		/// </summary>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="pixelData">The pixel data to be wrapped.</param>
 		public ColorPixelData(
 			int rows,
 			int columns,
@@ -16,6 +35,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="ColorPixelData"/>
+		/// with the specified image parameters.
+		/// </summary>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="pixelDataGetter">A delegate that returns the pixel data.</param>
 		public ColorPixelData(
 			int rows,
 			int columns,
@@ -26,32 +52,30 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Public methods
 
-		public override PixelData Clone()
+		/// <summary>
+		/// Returns a copy of the object, including the pixel data.
+		/// </summary>
+		/// <returns></returns>
+		public new ColorPixelData Clone()
 		{
-			return new ColorPixelData(_rows, _columns, (byte[])_pixelData.Clone());
+			return base.Clone() as ColorPixelData;
 		}
 
 		/// <summary>
-		/// Gets the RGB pixel value at the specified location.
+		/// Gets the ARGB pixel value at the specified location.
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
 		/// <returns></returns>
-		/// <remarks>
-		/// <see cref="GetPixelRGB"/> only works with images whose
-		/// photometric interpretation is RGB.
-		/// </remarks>
 		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
 		/// <paramref name="y"/> are out of bounds.</exception>
-		/// <exception cref="InvalidOperationException">The photometric
-		/// interpretation is not RGB.</exception>
 		public Color GetPixelAsColor(int x, int y)
 		{
 			return Color.FromArgb(GetPixel(x, y));
 		}
 
 		/// <summary>
-		/// Sets the RGB pixel value at the specified location.
+		/// Sets the ARGB pixel value at the specified location.
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
@@ -63,20 +87,33 @@ namespace ClearCanvas.ImageViewer.Graphics
 			SetPixel(x, y, color.A, color.R, color.G, color.B);
 		}
 
+		/// <summary>
+		/// Sets the ARGB pixel value at a specific pixel index.
+		/// </summary>
+		/// <param name="pixelIndex"></param>
+		/// <param name="color"></param>
+		/// <remarks>
+		/// If the pixel data is treated as a one-dimensional array
+		/// where each row of pixels is concatenated, <paramref name="pixelIndex"/>
+		/// is the index into that array.  This is useful when you know the
+		/// index of the pixel that you want to set and don't want to 
+		/// incur the needless computational overhead associated with specifying
+		/// an x and y value.
+		/// </remarks>
 		public void SetPixel(int pixelIndex, Color color)
 		{
 			SetPixel(pixelIndex, color.A, color.R, color.G, color.B);
 		}
 
 		/// <summary>
-		/// Sets the RGB pixel value at the specified location.
+		/// Sets the ARGB pixel value at the specified location.
 		/// </summary>
 		/// <param name="x"></param>
 		/// <param name="y"></param>
-		/// <param name="a"></param>
-		/// <param name="r"></param>
-		/// <param name="g"></param>
-		/// <param name="b"></param>
+		/// <param name="a">Alpha</param>
+		/// <param name="r">Red</param>
+		/// <param name="g">Green</param>
+		/// <param name="b">Blue</param>
 		/// <exception cref="ArgumentException"><paramref name="x"/> and/or
 		/// <paramref name="y"/> are out of bounds.</exception>
 		public void SetPixel(int x, int y, byte a, byte r, byte g, byte b)
@@ -85,6 +122,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 			SetPixelInternal(i, a, r, g, b);
 		}
 
+		/// <summary>
+		/// Sets the ARGB pixel value at a particular pixel index.
+		/// </summary>
+		/// <param name="pixelIndex"></param>
+		/// <param name="a">Alpha</param>
+		/// <param name="r">Red</param>
+		/// <param name="g">Green</param>
+		/// <param name="b">Blue</param>
+		/// <remarks>
+		/// If the pixel data is treated as a one-dimensional array
+		/// where each row of pixels is concatenated, <paramref name="pixelIndex"/>
+		/// is the index into that array.  This is useful when you know the
+		/// index of the pixel that you want to set and don't want to 
+		/// incur the needless computational overhead associated with specifying
+		/// an x and y value.
+		/// </remarks>
 		public void SetPixel(int pixelIndex, byte a, byte r, byte g, byte b)
 		{
 			int i = pixelIndex * _bytesPerPixel;
@@ -94,6 +147,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		#endregion
 
 		#region Overrides
+
+		protected override PixelData CloneInternal()
+		{
+			return new ColorPixelData(_rows, _columns, (byte[])_pixelData.Clone());
+		}
 
 		protected override int GetPixelInternal(int i)
 		{

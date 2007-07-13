@@ -59,8 +59,25 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Protected constructor
 
-		protected ImageGraphic(int rows, int columns, int bitsPerPixel) :
-			this(rows, columns, bitsPerPixel, new byte[rows * columns * bitsPerPixel / 8])
+		/// <summary>
+		/// Initializes a new instance of <see cref="ImageGraphic"/>
+		/// with the specified image parameters.
+		/// </summary>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="bitsPerPixel">Can be 8 or 16 in the case of
+		/// grayscale or indexed (palette) colour images, or 32 for
+		/// multichannel colour images.</param>
+		/// <remarks>
+		/// Creates an empty image of a specific size and bit depth.
+		/// All all entries in the byte buffer are set to zero. Useful as
+		/// a canvas on which pixels can be set by the client.
+		/// </remarks>
+		/// <exception cref="ArgumentException"><paramref name="rows"/> or
+		/// <paramref name="columns"/> is negative, or <paramref name="bitsPerPixel"/>
+		/// is not one of 8, 16 or 32.</exception>
+		protected ImageGraphic(int rows, int columns, int bitsPerPixel)
+			: this(rows, columns, bitsPerPixel, new byte[rows * columns * bitsPerPixel / 8])
 		{
 		}
 
@@ -70,11 +87,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		/// <param name="rows"></param>
 		/// <param name="columns"></param>
-		/// <param name="bitsPerPixel"></param>
-		/// <param name="pixelData">If <b>null</b>, a byte buffer of size
-		/// <i>rows</i> x <i>columns</i> x <i>bitsPerPixel</i> / 8
-		/// will be allocated.</param>
-		/// <exception cref="ArgumentException"></exception>
+		/// <param name="bitsPerPixel">Can be 8 or 16 in the case of
+		/// grayscale or indexed (palette) colour images, or 32 for
+		/// multichannel colour images.</param>
+		/// <param name="pixelData"></param>
+		/// <remarks>
+		/// Creates an image using existing pixel data.
+		/// </remarks>
+		/// <exception cref="NullReferenceException"><paramref name="pixelData"/> is <b>null</b></exception>
+		/// <exception cref="ArgumentException"><paramref name="rows"/> or
+		/// <paramref name="columns"/> is negative, or <paramref name="bitsPerPixel"/>
+		/// is not one of 8, 16 or 32.</exception>
 		protected ImageGraphic(int rows, int columns, int bitsPerPixel, byte[] pixelData)
 		{
 			Platform.CheckForNullReference(pixelData, "pixelData");
@@ -83,6 +106,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 			Initialize(rows, columns, bitsPerPixel);
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="ImageGraphic"/>
+		/// with the specified image parameters.
+		/// </summary>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="bitsPerPixel">Can be 8 or 16 in the case of
+		/// grayscale or indexed (palette) colour images, or 32 for
+		/// multichannel colour images.</param>
+		/// <param name="pixelDataGetter"></param>
+		/// <remarks>
+		/// Creates an image using existing pixel data but does so
+		/// without ever storing a reference to the pixel data. This is necessary
+		/// to ensure that pixel data can be properly garbage collected in
+		/// any future memory management schemes.
+		/// </remarks>
 		protected ImageGraphic(int rows, int columns, int bitsPerPixel, PixelDataGetter pixelDataGetter)
 		{
 			Platform.CheckForNullReference(pixelDataGetter, "pixelDataGetter");
@@ -205,6 +244,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return _interpolationMode; }
 		}
 
+		/// <summary>
+		/// Gets an object that encapsulates the pixel data.
+		/// </summary>
 		public PixelData PixelData
 		{
 			get
@@ -220,16 +262,30 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Protected properties/methods
 
+		/// <summary>
+		/// Gets the raw raw pixel data, if passed in during construction.
+		/// </summary>
+		/// <value>The raw pixel data, or <b>null</b> if it was not
+		/// passed in during construction</value>
 		protected byte[] PixelDataRaw
 		{
 			get { return _pixelDataRaw; }
 		}
 
+		/// <summary>
+		/// Gets the pixel data delegate, if passed in during construction.
+		/// </summary>
+		/// <value>The pixel data delegate, or <b>null</b> if it was not
+		/// passed in during construction.</value>
 		protected PixelDataGetter PixelDataGetter
 		{
 			get { return _pixelDataGetter; }
 		}
 
+		/// <summary>
+		/// Creates an object that encapsulates the pixel data.
+		/// </summary>
+		/// <returns></returns>
 		protected abstract PixelData CreatePixelDataWrapper();
 
 		#endregion

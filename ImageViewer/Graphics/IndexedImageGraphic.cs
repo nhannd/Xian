@@ -24,6 +24,21 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Protected constructors
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="IndexedImageGraphic"/>
+		/// with the specified image parameters.
+		/// </summary>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="bitsAllocated">Can be either 8 or 16.</param>
+		/// <param name="bitsStored"></param>
+		/// <param name="highBit"></param>
+		/// <param name="isSigned"></param>
+		/// <remarks>
+		/// Creates an empty indexed image of a specific size and bit depth.
+		/// All all entries in the byte buffer are set to zero. Useful as
+		/// a canvas on which pixels can be set by the client.
+		/// </remarks>
 		protected IndexedImageGraphic(
 			int rows,
 			int columns,
@@ -45,11 +60,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		/// <param name="rows"></param>
 		/// <param name="columns"></param>
-		/// <param name="bitsAllocated"></param>
+		/// <param name="bitsAllocated">Can be either 8 or 16.</param>
 		/// <param name="bitsStored"></param>
 		/// <param name="highBit"></param>
 		/// <param name="isSigned"></param>
 		/// <param name="pixelData"></param>
+		/// <remarks>
+		/// Creates an indexed image using existing pixel data.
+		/// </remarks>
 		protected IndexedImageGraphic(
 			int rows,
 			int columns,
@@ -67,6 +85,23 @@ namespace ClearCanvas.ImageViewer.Graphics
 			Initialize(bitsStored, highBit, isSigned);
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="IndexedImageGraphic"/>
+		/// with the specified image parameters.
+		/// </summary>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="bitsAllocated">Can be either 8 or 16.</param>
+		/// <param name="bitsStored"></param>
+		/// <param name="highBit"></param>
+		/// <param name="isSigned"></param>
+		/// <param name="pixelDataGetter"></param>
+		/// <remarks>
+		/// Creates an indexed image using existing pixel data but does so
+		/// without ever storing a reference to the pixel data. This is necessary
+		/// to ensure that pixel data can be properly garbage collected in
+		/// any future memory management schemes.
+		/// </remarks>
 		protected IndexedImageGraphic(
 			int rows,
 			int columns,
@@ -111,9 +146,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Gets the high bit in the image.
 		/// </summary>
-		/// <remarks>Theoretically, the high bit does not necessarily have to equal
+		/// <remarks>
+		/// Theoretically, the high bit does not necessarily have to equal
 		/// Bits Stored - 1.  But in almost all cases this assumption is true; we
-		/// too make this assumption.</remarks>
+		/// too make this assumption.
+		/// </remarks>
 		public int HighBit
 		{
 			get { return _highBit; }
@@ -127,6 +164,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return _isSigned; }
 		}
 
+		/// <summary>
+		/// Gets an object that encapsulates the pixel data.
+		/// </summary>
 		public new IndexedPixelData PixelData
 		{
 			get
@@ -147,6 +187,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
+		/// <summary>
+		/// Creates an object that encapsulates the pixel data.
+		/// </summary>
+		/// <returns></returns>
 		protected override PixelData CreatePixelDataWrapper()
 		{
 			if (this.PixelDataRaw != null)

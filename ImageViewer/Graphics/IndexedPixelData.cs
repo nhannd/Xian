@@ -8,6 +8,18 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	/// <summary>
+	/// An indexed pixel data wrapper.
+	/// </summary>
+	/// <remarks>
+	/// <see cref="IndexedPixelData"/> provides a number of convenience methods
+	/// to make accessing and changing indexed pixel data easier.  Use these methods
+	/// judiciously, as the convenience comes at the expense of performance.
+	/// For example, if you're doing complex image processing, using methods
+	/// such as <see cref="PixelData.SetPixel(int, int, int)"/> is not recommended if you want
+	/// good performance.  Instead, use the <see cref="PixelData.Raw"/> property 
+	/// to get the raw byte array, then use unsafe code to do your processing.
+	/// </remarks>
 	public class IndexedPixelData : PixelData
 	{
 		#region Private fields
@@ -22,6 +34,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Public constructor
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="IndexedPixelData"/> with the
+		/// specified image parameters.
+		/// </summary>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="bitsAllocated"></param>
+		/// <param name="bitsStored"></param>
+		/// <param name="highBit"></param>
+		/// <param name="isSigned"></param>
+		/// <param name="pixelData">The pixel data to be wrapped.</param>
 		public IndexedPixelData(
 			int rows,
 			int columns,
@@ -35,6 +58,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			Initialize(bitsStored, highBit, isSigned);
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="IndexedPixelData"/> with the
+		/// specified image parameters.
+		/// </summary>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="bitsAllocated"></param>
+		/// <param name="bitsStored"></param>
+		/// <param name="highBit"></param>
+		/// <param name="isSigned"></param>
+		/// <param name="pixelDataGetter">A delegate that returns the pixel data.</param>
 		public IndexedPixelData(
 			int rows,
 			int columns,
@@ -84,18 +118,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Public methods
 
-		public override PixelData Clone()
+		/// <summary>
+		/// Returns a copy of the object, including the pixel data.
+		/// </summary>
+		/// <returns></returns>
+		public new IndexedPixelData Clone()
 		{
-			return new IndexedPixelData(
-				_rows,
-				_columns,
-				_bitsAllocated,
-				_bitsStored,
-				_highBit,
-				_isSigned,
-				(byte[])_pixelData.Clone());
+			return base.Clone() as IndexedPixelData;
 		}
-
 
 		/// <summary>
 		/// Calculates the Minimum and Maximum pixel values from the pixel data efficiently, using unsafe code.
@@ -257,6 +287,18 @@ namespace ClearCanvas.ImageViewer.Graphics
 		#endregion
 
 		#region Overrides
+
+		protected override PixelData CloneInternal()
+		{
+			return new IndexedPixelData(
+				_rows,
+				_columns,
+				_bitsAllocated,
+				_bitsStored,
+				_highBit,
+				_isSigned,
+				(byte[])_pixelData.Clone());
+		}
 
 		protected override int GetPixelInternal(int i)
 		{
