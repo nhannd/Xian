@@ -482,17 +482,11 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		/// <returns>The active <see cref="IImageViewer"/> or <b>null</b> if 
 		/// the workspace does not host an <see cref="IImageViewer"/>.</returns>
-		public static IImageViewer GetAsImageViewer(IWorkspace workspace)
+		public static IImageViewer GetAsImageViewer(Workspace workspace)
 		{
 			Platform.CheckForNullReference(workspace, "workspace");
 
-			if (!(workspace is ApplicationComponentHostWorkspace))
-				return null;
-
-			IApplicationComponent component = ((ApplicationComponentHostWorkspace)workspace).Component;
-
-			if (component == null)
-				return null;
+			IApplicationComponent component = workspace.Component;
 
 			if (!(component is IImageViewer))
 				return null;

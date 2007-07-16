@@ -45,7 +45,7 @@ namespace ClearCanvas.Desktop
                 get { return _owner.Host.CommandHistory; }
             }
 
-            public override IDesktopWindow DesktopWindow
+            public override DesktopWindow DesktopWindow
             {
                 get { return _owner.Host.DesktopWindow; }
             }

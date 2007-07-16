@@ -53,7 +53,7 @@ namespace ClearCanvas.Desktop
                 _owner.Host.SetTitle(title);
             }
 
-            public override IDesktopWindow DesktopWindow
+            public override DesktopWindow DesktopWindow
             {
                 get { return _owner.Host.DesktopWindow; }
             }

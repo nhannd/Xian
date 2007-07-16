@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			base.Initialize();
 
-			this.Context.DesktopWindow.WorkspaceManager.Workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(OnWorkspaceRemoved);
+			this.Context.DesktopWindow.Workspaces.ItemClosed += OnWorkspaceClosed;
 
 			TimerCallback timerCallback = new TimerCallback(OnTimer);
 
@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer
 			_timer = new System.Threading.Timer(timerCallback, autoReset, 0, 2000);
 		}
 
-		void OnWorkspaceRemoved(object sender, WorkspaceEventArgs e)
+		void OnWorkspaceClosed(object sender, ItemEventArgs<Workspace> e)
 		{
 			// When a workspace has been closed, we want the GC to run
 			// a few times triggered by a timer to release what is often

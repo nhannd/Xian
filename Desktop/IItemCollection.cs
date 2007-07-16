@@ -33,13 +33,13 @@ namespace ClearCanvas.Desktop
     /// <summary>
     /// Event args used when an item changes
     /// </summary>
-    public class ItemEventArgs : EventArgs
+    public class ItemChangedEventArgs : EventArgs
     {
         private object _item;
         private int _itemIndex;
         private ItemChangeType _changeType;
 
-        internal ItemEventArgs(ItemChangeType changeType, int itemIndex, object item)
+        internal ItemChangedEventArgs(ItemChangeType changeType, int itemIndex, object item)
         {
             _changeType = changeType;
             _itemIndex = itemIndex;
@@ -73,7 +73,7 @@ namespace ClearCanvas.Desktop
     /// </summary>
     public interface IItemCollection : System.Collections.IEnumerable
     {
-        event EventHandler<ItemEventArgs> ItemsChanged;
+        event EventHandler<ItemChangedEventArgs> ItemsChanged;
 
         /// <summary>
         /// Gets the number of items in the collection

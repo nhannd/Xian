@@ -25,7 +25,7 @@ namespace ClearCanvas.Desktop.Tables
         {
             _baseColumnWidth = 10;
             _columns = new TableColumnCollection<TItem>();
-            _columns.ItemsChanged += delegate(object sender, ItemEventArgs args)
+            _columns.ItemsChanged += delegate(object sender, ItemChangedEventArgs args)
             {
                 switch (args.ChangeType)
                 {

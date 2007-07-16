@@ -46,7 +46,7 @@ namespace ClearCanvas.Desktop.Edit
             base.Initialize();
 
             // need to monitor which workspace is active
-            this.Context.DesktopWindow.WorkspaceManager.ActiveWorkspaceChanged += new EventHandler<WorkspaceActivationChangedEventArgs>(WorkspaceActivatedEventHandler);
+            this.Context.DesktopWindow.Workspaces.ItemActivationChanged += WorkspaceActivatedEventHandler;
         }
 
         public bool UndoEnabled
@@ -98,23 +98,22 @@ namespace ClearCanvas.Desktop.Edit
             this.ActiveWorkspace.CommandHistory.Redo();
         }
 
-        private IWorkspace ActiveWorkspace
+        private Workspace ActiveWorkspace
         {
             get { return this.Context.DesktopWindow.ActiveWorkspace; }
         }
 
-        private void WorkspaceActivatedEventHandler(object sender, WorkspaceActivationChangedEventArgs e)
+        private void WorkspaceActivatedEventHandler(object sender, ItemEventArgs<Workspace> e)
         {
-            if (e.DeactivatedWorkspace != null)
-            {
-                // stop listening to the previously active workspace
-                e.DeactivatedWorkspace.CommandHistory.CurrentCommandChanged -= CurrentCommandChangedEventHandler;
-            }
-
-            if (e.ActivatedWorkspace != null)
+            if (e.Item.Active)
             {
                 // listen for changes to the command history of this workspace
-                e.ActivatedWorkspace.CommandHistory.CurrentCommandChanged += CurrentCommandChangedEventHandler;
+                e.Item.CommandHistory.CurrentCommandChanged += CurrentCommandChangedEventHandler;
+            }
+            else
+            {
+                // stop listening to the previously active workspace
+                e.Item.CommandHistory.CurrentCommandChanged -= CurrentCommandChangedEventHandler;
             }
 
             UpdateEnablement();

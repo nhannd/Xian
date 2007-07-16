@@ -13,10 +13,6 @@ namespace ClearCanvas.Common.Utilities
 			_item = item;
 		}
 
-		protected ItemEventArgs()
-		{ 
-		}
-
 		public TItem Item
 		{
 			get { return _item; }

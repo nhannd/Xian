@@ -11,9 +11,6 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
     public class ActionPath : Path
     {
-        public const string GlobalMenus = "global-menus";
-        public const string GlobalToolbars = "global-toolbars";
-
         /// <summary>
         /// Constructs an action path from the specified path string, using the specified resource resolver.
         /// If the resource resolver is null, the path segments will be treated as localized text.

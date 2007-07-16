@@ -15,7 +15,7 @@ namespace ClearCanvas.Desktop
     {
 
         private List<TItem> _list;
-        private event EventHandler<ItemEventArgs> _itemsChanged;
+        private event EventHandler<ItemChangedEventArgs> _itemsChanged;
 
         /// <summary>
         /// Constructor
@@ -108,7 +108,7 @@ namespace ClearCanvas.Desktop
 
         #region IItemCollection members
 
-        public event EventHandler<ItemEventArgs> ItemsChanged
+        public event EventHandler<ItemChangedEventArgs> ItemsChanged
         {
             add { _itemsChanged += value; }
             remove { _itemsChanged -= value; }
@@ -228,7 +228,7 @@ namespace ClearCanvas.Desktop
 
         private void NotifyItemsChanged(ItemChangeType itemChangeType, int index, TItem item)
         {
-            EventsHelper.Fire(_itemsChanged, this, new ItemEventArgs(itemChangeType, index, item));
+            EventsHelper.Fire(_itemsChanged, this, new ItemChangedEventArgs(itemChangeType, index, item));
         }
     }
 }

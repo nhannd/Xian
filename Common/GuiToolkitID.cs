@@ -7,9 +7,9 @@ namespace ClearCanvas.Common
     /// <summary>
     /// Defines a set of identifiers representing different GUI toolkits.
     /// </summary>
-    public enum GuiToolkitID
+    public class GuiToolkitID
     {
-        WinForms,
-        GTK,
+        public const string WinForms = "WinForms";
+        public const string GTK = "GTK";
     }
 }

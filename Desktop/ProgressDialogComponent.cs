@@ -96,12 +96,12 @@ namespace ClearCanvas.Desktop
         /// Override implementation of <see cref="IApplicationComponent.CanExit"/>.
         /// This is called when user click on the 'X' button to close the dialog
         /// </summary>
-        public override bool CanExit()
+        public override bool CanExit(UserInteraction interactive)
         {
             // 
             if (_task != null && _task.IsRunning)
             {
-                if (_task.SupportsCancel)
+                if (_task.SupportsCancel && interactive == UserInteraction.Allowed)
                 {
                     if (Platform.ShowMessageBox(SR.MessageConfirmCancelTask, MessageBoxActions.OkCancel) == DialogBoxAction.Ok)
                     {

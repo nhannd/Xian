@@ -13,10 +13,10 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// <see cref="System.Windows.Forms"/> as the underlying GUI toolkit, and that intends to be compatible
     /// with <see cref="ClearCanvas.Workstation.View.WinForms.WorkstationView"/> must subclass this class.
     /// </summary>
-    [GuiToolkit(GuiToolkitID.WinForms)]
+    [GuiToolkit(ClearCanvas.Common.GuiToolkitID.WinForms)]
     public abstract class WinFormsView
     {
-        public WinFormsView()
+        protected WinFormsView()
         {
             if (!Platform.IsWin32Platform)
             {
@@ -29,9 +29,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <summary>
         /// Returns <see cref="GuiToolkitID.WinForms"/>
         /// </summary>
-        public GuiToolkitID GuiToolkitID
+        public string GuiToolkitID
         {
-            get { return GuiToolkitID.WinForms; }
+            get { return ClearCanvas.Common.GuiToolkitID.WinForms; }
         }
 
         /// <summary>

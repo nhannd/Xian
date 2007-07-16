@@ -13,14 +13,14 @@ namespace ClearCanvas.Common
     [AttributeUsage(AttributeTargets.Class)]
     public class GuiToolkitAttribute : Attribute
     {
-        private GuiToolkitID _toolkitID;
+        private string _toolkitID;
 
-        public GuiToolkitAttribute(GuiToolkitID toolkitID)
+        public GuiToolkitAttribute(string toolkitID)
         {
             _toolkitID = toolkitID;
         }
 
-        public GuiToolkitID ToolkitID
+        public string ToolkitID
         {
             get { return _toolkitID; }
         }

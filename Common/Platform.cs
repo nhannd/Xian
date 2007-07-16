@@ -341,7 +341,6 @@ namespace ClearCanvas.Common
             catch (Exception e)
             {
 				Platform.Log(e, LogLevel.Fatal);
-				Platform.ShowMessageBox(SR.ExceptionFatalApplicationError);
             }
 #endif
         }
@@ -540,6 +539,7 @@ namespace ClearCanvas.Common
         /// This method is thread-safe, however displaying message boxes from a thread other than the UI
         /// thread is not a recommended practice.
         /// </remarks>
+        [Obsolete("Use DesktopWindow.ShowMessageBox instead", false)]
         public static void ShowMessageBox(string message)
 		{
             ShowMessageBox(message, MessageBoxActions.Ok);
@@ -556,6 +556,7 @@ namespace ClearCanvas.Common
         /// <param name="message"></param>
         /// <param name="buttons"></param>
         /// <returns></returns>
+        [Obsolete("Use DesktopWindow.ShowMessageBox instead", false)]
         public static DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
         {
             // create message box if does not exist

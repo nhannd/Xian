@@ -7,51 +7,186 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using System.Threading;
 using System.Security.Principal;
+using ClearCanvas.Common.Utilities;
+using System.Reflection;
 
 namespace ClearCanvas.Desktop
 {
+    #region Extension Points
+
     /// <summary>
-    /// Defines an extension point for a general dialog box
+    /// Defines an extension point for an implementation of <see cref="IGuiToolkit"/>.
+    /// The application requires one extension of this point.
     /// </summary>
-    public class DialogBoxExtensionPoint : ExtensionPoint<IDialogBox>
+    [ExtensionPoint]
+    public class GuiToolkitExtensionPoint : ExtensionPoint<IGuiToolkit>
     {
     }
 
+    /// <summary>
+    /// Defines an extension point for a view onto the application.  One extension
+    /// is required.
+    /// </summary>
+    [ExtensionPoint]
+    public class ApplicationViewExtensionPoint : ExtensionPoint<IApplicationView>
+    {
+    }
+
+    public interface IApplicationToolContext : IToolContext
+    {
+    }
 
     /// <summary>
-    /// Singleton class that represents the desktop application as a whole.
+    /// Defines an extension point of application tools.  Application tools are global
+    /// to the application.  An application tool is instantiated exactly once.  Application
+    /// tools cannot have actions.
     /// </summary>
-    [ClearCanvas.Common.ExtensionOf(typeof(ApplicationRootExtensionPoint))]
+    [ExtensionPoint]
+    public class ApplicationToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
+    #endregion
+
+    /// <summary>
+    /// Singleton class that represents the desktop application.
+    /// </summary>
+    /// <remarks>
+    /// This class may be subclassed.
+    /// </remarks>
+    [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
+    [AssociateView(typeof(ApplicationViewExtensionPoint))]
     public class Application : IApplicationRoot
     {
+        #region Public Static Members
+
         private static Application _instance;
 
-        private IDesktopWindow _window;
-        private IDesktopWindowView _view;
+        /// <summary>
+        /// Gets the singleton instance of the <see cref="Application"/> object
+        /// </summary>
+        public static Application Instance
+        {
+            get { return _instance; }
+        }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="Application"/> class.
+        /// Gets the toolkit ID of the currently loaded GUI <see cref="IGuiToolkit"/>,
+        /// or null if the toolkit has not been loaded yet.
+        /// </summary>
+        public static string GuiToolkitID
+        {
+            get { return _instance.GuiToolkit != null ? _instance.GuiToolkit.ToolkitID : null; }
+        }
+
+        /// <summary>
+        /// Gets the name of the application.
+        /// </summary>
+        public static string Name
+        {
+            get { return _instance.ApplicationName; }
+        }
+
+        /// <summary>
+        /// Gets the version of the application.
+        /// </summary>
+        public static Version Version
+        {
+            get { return _instance.ApplicationVersion; }
+        }
+
+        /// <summary>
+        /// Gets the collection of application windows.
+        /// </summary>
+        public static DesktopWindowCollection DesktopWindows
+        {
+            get { return _instance.Windows; }
+        }
+
+        /// <summary>
+        /// Gets the currently active window.
+        /// </summary>
+        public static DesktopWindow ActiveDesktopWindow
+        {
+            get { return DesktopWindows.ActiveWindow; }
+        }
+
+        public static DialogBoxAction ShowMessageBox(string message, MessageBoxActions actions)
+        {
+            return _instance.View.ShowMessageBox(message, actions);
+        }
+
+        /// <summary>
+        /// Attempts to close all open windows and terminate the application.
+        /// </summary>
+        /// <returns>True if the application successfully quits, or false if it does not.</returns>
+        public static bool Quit()
+        {
+            return _instance.DoQuit();
+        }
+
+        /// <summary>
+        /// Occurs before the application is about to quit.
+        /// </summary>
+        public static event EventHandler<QuittingEventArgs> Quitting
+        {
+            add { _instance._quitting += value; }
+            remove { _instance._quitting -= value; }
+        }
+
+        /// <summary>
+        /// Occurs before the application is about to quit.
+        /// </summary>
+        public static event EventHandler Quitted
+        {
+            add { _instance._quitted += value; }
+            remove { _instance._quitted -= value; }
+        }
+
+
+        #endregion
+
+        #region ApplicationToolContext
+
+        class ApplicationToolContext : ToolContext, IApplicationToolContext
+        {
+            internal ApplicationToolContext(Application application)
+            {
+
+            }
+        }
+
+        #endregion
+
+        private string _appName;
+        private Version _appVersion;
+        private IGuiToolkit _guiToolkit;
+        private IApplicationView _view;
+        private DesktopWindowCollection _windows;
+        private ToolSet _toolSet;
+
+        private event EventHandler<QuittingEventArgs> _quitting;
+        private event EventHandler _quitted;
+
+
+        /// <summary>
+        /// Default constructor
         /// </summary>
         public Application()
         {
             _instance = this;
+        }
 
-            _window = new DesktopWindow();
-
-            // Create the view
-            _view = (IDesktopWindowView)ViewFactory.CreateAssociatedView(typeof(DesktopWindow));
-            _view.SetDesktopWindow(_window);
-		}
+        #region IApplicationRoot members
 
         /// <summary>
-        /// Runs the application by running the view's message pump.  Typically this method will
-        /// block until the message pump terminates.
+        /// Runs the application.
         /// </summary>
-        public void RunApplication(string[] args)
+        void IApplicationRoot.RunApplication(string[] args)
         {
             try
             {
-                _view.RunMessagePump();
+                Run(args);
             }
             finally
             {
@@ -59,55 +194,173 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        /// <summary>
-        /// Clean up any disposable objects
-        /// </summary>
-        private void CleanUp()
-        {
-            _window.Dispose();
-        }
+        #endregion
 
-        /// <summary>
-        /// The name of the application
-        /// </summary>
-        public static string ApplicationName
-        {
-            get { return SR.ApplicationName; }
-        }
+        #region Protected overridables
 
-        /// <summary>
-        /// The <see cref="GuiToolkitID"/> of the GUI toolkit that is currently in use
-        /// </summary>
-        public static GuiToolkitID GuiToolkit
+        protected virtual void Run(string[] args)
         {
-            get
+            _guiToolkit = (IGuiToolkit)(new GuiToolkitExtensionPoint()).CreateExtension();
+
+            // init toolkit before creating any windows
+            _guiToolkit.Initialize();
+
+            _view = (IApplicationView)ViewFactory.CreateAssociatedView(this.GetType());
+
+            _windows = CreateDesktopWindowCollection();
+            _windows.ItemClosed += delegate(object sender, ClosedItemEventArgs<DesktopWindow> e)
             {
-                if (Platform.IsWin32Platform)
-                    return GuiToolkitID.WinForms;
-                if (Platform.IsUnixPlatform)
-                    return GuiToolkitID.GTK;
+                // terminate the app when the window count goes to 0 if the app isn't already quitting
+                if (_windows.Count == 0 && e.Reason != CloseReason.ApplicationQuit)
+                {
+                    DoQuit();
+                }
+            };
 
-                throw new Exception();  // TODO elaborate
+            // load tools
+            _toolSet = new ToolSet(new ApplicationToolExtensionPoint(), new ApplicationToolContext(this));
+
+            // create a root window
+            CreateRootWindow();
+
+            // start message pump - this will block until _guiToolkit.QuitMessagePump() is called
+            _guiToolkit.RunMessagePump();
+        }
+
+        protected virtual DesktopWindow CreateRootWindow()
+        {
+            return _windows.AddNew("Root");
+        }
+
+        protected virtual void CleanUp()
+        {
+            if (_view != null && _view is IDisposable)
+            {
+                (_view as IDisposable).Dispose();
+                _view = null;
+            }
+
+            if (_toolSet != null)
+            {
+                _toolSet.Dispose();
+                _toolSet = null;
+            }
+
+            if (_windows != null)
+            {
+                (_windows as IDisposable).Dispose();
+            }
+
+            if (_guiToolkit != null && _guiToolkit is IDisposable)
+            {
+                (_guiToolkit as IDisposable).Dispose();
             }
         }
 
-        /// <summary>
-        /// Factory method to create a dialog box using the GUI toolkit of the main window
-        /// </summary>
-        /// <returns></returns>
-        public static IDialogBox CreateDialogBox()
+        protected virtual void OnQuitting(QuittingEventArgs args)
         {
-            GuiToolkitAttribute testAttr = new GuiToolkitAttribute(GuiToolkit);
-            DialogBoxExtensionPoint xp = new DialogBoxExtensionPoint();
-            return (IDialogBox)xp.CreateExtension(new AttributeExtensionFilter(testAttr));
+            EventsHelper.Fire(_quitting, this, args);
         }
 
-        /// <summary>
-        /// Quits the application
-        /// </summary>
-        public static void Quit()
+        protected virtual void OnQuitted(EventArgs args)
         {
-            _instance._view.QuitMessagePump();
+            EventsHelper.Fire(_quitted, this, args);
         }
+
+        protected virtual string GetName()
+        {
+            return DesktopSettings.Default.ApplicationName;
+        }
+
+        protected virtual Version GetVersion()
+        {
+            return Assembly.GetExecutingAssembly().GetName().Version;
+        }
+        
+        #endregion
+
+        #region Helpers
+
+        internal bool DoQuit()
+        {
+            QuittingEventArgs args = new QuittingEventArgs(UserInteraction.Allowed, false);
+            OnQuitting(args);
+            if(args.Cancel)
+                return false;
+
+            if (!CloseAllWindows())
+                return false;
+
+            OnQuitted(EventArgs.Empty);
+
+            _guiToolkit.QuitMessagePump();
+
+            return true;
+        }
+
+        protected bool CloseAllWindows()
+        {
+            // make a copy of the windows collection for iteration
+            List<DesktopWindow> windows = new List<DesktopWindow>(_windows);
+
+            foreach (DesktopWindow window in windows)
+            {
+                // try to close the window
+                bool closed = window.Close(UserInteraction.Allowed, CloseReason.ApplicationQuit);
+
+                // if one fails, abort
+                if (!closed)
+                    return false;
+            }
+            return true;
+        }
+
+        protected string ApplicationName
+        {
+            get
+            {
+                if (_appName == null)
+                    _appName = GetName();
+                return _appName;
+            }
+        }
+
+        protected Version ApplicationVersion
+        {
+            get
+            {
+                if (_appVersion == null)
+                    _appVersion = GetVersion();
+                return _appVersion;
+            }
+        }
+
+
+        protected DesktopWindowCollection Windows
+        {
+            get { return _windows; }
+        }
+
+        internal IDesktopWindowView OpenWindowView(DesktopWindow window)
+        {
+            return _view.OpenWindow(window);
+        }
+
+        protected IGuiToolkit GuiToolkit
+        {
+            get { return _guiToolkit; }
+        }
+
+        protected IApplicationView View
+        {
+            get { return _view; }
+        }
+
+        private DesktopWindowCollection CreateDesktopWindowCollection()
+        {
+            return new DesktopWindowCollection(this);
+        }
+
+        #endregion
     }
 }

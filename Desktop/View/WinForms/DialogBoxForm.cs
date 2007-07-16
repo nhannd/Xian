@@ -13,12 +13,12 @@ namespace ClearCanvas.Desktop.View.WinForms
     {
         private Control _content;
 
-        public DialogBoxForm(string title, IView view)
+        public DialogBoxForm(string title, Control content)
         {
             InitializeComponent();
             this.Text = title;
 
-            _content = (Control)view.GuiElement;
+            _content = content;
 
             // important - if we do not set a minimum size, the full content may not be displayed
             _content.MinimumSize = _content.Size;

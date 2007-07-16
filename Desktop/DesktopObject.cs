@@ -1,0 +1,443 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.ComponentModel;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
+
+namespace ClearCanvas.Desktop
+{
+    public abstract class DesktopObject : IDesktopObject, IDisposable
+    {
+        private string _name;
+        private string _title;
+        private DesktopObjectState _state;
+        private bool _active;
+
+        private event EventHandler _opening;
+        private event EventHandler _opened;
+        private event EventHandler<ClosingEventArgs> _closing;
+        private event EventHandler<ClosedEventArgs> _closed;
+
+        private event EventHandler _titleChanged;
+        private event EventHandler _activeChanged;
+        private event EventHandler _internalActiveChanged;
+
+        private bool _visible;
+        private event EventHandler _visibleChanged;
+
+        private IDesktopObjectView _view;
+
+        protected DesktopObject(DesktopObjectCreationArgs args)
+        {
+            _name = args.Name;
+            _title = args.Title;
+            //_visible = true;    // all objects are visible by default
+        }
+
+        ~DesktopObject()
+        {
+            Dispose(false);
+        }
+
+        #region Public properties
+
+        /// <summary>
+        /// Gets the runtime name of the object, or null if the object is not named.
+        /// </summary>
+        public string Name
+        {
+            get { return _name; }
+        }
+
+        /// <summary>
+        /// Gets the current state of the object.
+        /// </summary>
+        public DesktopObjectState State
+        {
+            get { return _state; }
+        }
+
+        /// <summary>
+        /// Gets the title that is presented to the user on the screen.
+        /// </summary>
+        public string Title
+        {
+            get { return _title; }
+            protected set
+            {
+                if (value != _title)
+                {
+                    _title = value;
+                    if (this.View != null)
+                    {
+                        this.View.SetTitle(_title);
+                    }
+                    OnTitleChanged(EventArgs.Empty);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this object is currently visible.
+        /// </summary>
+        public bool Visible
+        {
+            get { return _visible; }
+            private set
+            {
+                if (value != _visible)
+                {
+                    _visible = value;
+                    OnVisibleChanged(EventArgs.Empty);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Gets a value indicating whether this object is currently active.
+        /// </summary>
+        public bool Active
+        {
+            get { return _active; }
+            private set
+            {
+                if (value != _active)
+                {
+                    _active = value;
+                    OnInternalActiveChanged(EventArgs.Empty);
+                }
+            }
+        }
+
+        #endregion
+
+        #region Public methods
+
+        /// <summary>
+        /// Activates the object.
+        /// </summary>
+        public virtual void Activate()
+        {
+            AssertState(new DesktopObjectState[] { DesktopObjectState.Open });
+            DoActivate();
+        }
+
+        /// <summary>
+        /// Checks if the object is in a closable state (would be able to close without user interaction).
+        /// </summary>
+        /// <returns>True if the object can be closed without user interaction.</returns>
+        public bool QueryCloseReady()
+        {
+            AssertState(new DesktopObjectState[] { DesktopObjectState.Open, DesktopObjectState.Closing });
+
+            return CanClose(UserInteraction.NotAllowed);
+        }
+
+        /// <summary>
+        /// Tries to close the object, interacting with the user if necessary.
+        /// </summary>
+        /// <returns>True if the object is closed, otherwise false.</returns>
+        public bool Close()
+        {
+            AssertState(new DesktopObjectState[] { DesktopObjectState.Open });
+            
+            return Close(UserInteraction.Allowed);
+        }
+
+        /// <summary>
+        /// Tries to close the object, interacting with the user only if specified.
+        /// </summary>
+        /// <param name="interactive">A value specifying whether user interaction is allowed.</param>
+        /// <returns>True if the object is closed, otherwise false.</returns>
+        public bool Close(UserInteraction interactive)
+        {
+            AssertState(new DesktopObjectState[] { DesktopObjectState.Open });
+
+            return Close(interactive, CloseReason.Program);
+        }
+
+        #endregion
+
+        #region Public events
+
+        /// <summary>
+        /// Occurs when the object is about to open.
+        /// </summary>
+        public event EventHandler Opening
+        {
+            add { _opening += value; }
+            remove { _opening -= value; }
+        }
+
+        /// <summary>
+        /// Occurs when the object has opened.
+        /// </summary>
+        public event EventHandler Opened
+        {
+            add { _opened += value; }
+            remove { _opened -= value; }
+        }
+
+        /// <summary>
+        /// Occurs when the object is about to close.
+        /// </summary>
+        public event EventHandler<ClosingEventArgs> Closing
+        {
+            add { _closing += value; }
+            remove { _closing += value; }
+        }
+
+        /// <summary>
+        /// Occurs when the object has closed.
+        /// </summary>
+        public event EventHandler<ClosedEventArgs> Closed
+        {
+            add { _closed += value; }
+            remove { _closed -= value; }
+        }
+
+        /// <summary>
+        /// Occurs when the <see cref="Visible"/> property changes.
+        /// </summary>
+        public event EventHandler VisibleChanged
+        {
+            add { _visibleChanged += value; }
+            remove { _visibleChanged -= value; }
+        }
+
+        /// <summary>
+        /// Occurs when the <see cref="Active"/> property changes.
+        /// </summary>
+        public event EventHandler ActiveChanged
+        {
+            add { _activeChanged += value; }
+            remove { _activeChanged -= value; }
+        }
+
+        /// <summary>
+        /// Occurs when the <see cref="Title"/> property changes.
+        /// </summary>
+        public event EventHandler TitleChanged
+        {
+            add { _titleChanged += value; }
+            remove { _titleChanged -= value; }
+        }
+
+        #endregion
+
+        #region IDisposable Members
+
+        void IDisposable.Dispose()
+        {
+            try
+            {
+                Dispose(true);
+                GC.SuppressFinalize(this);
+            }
+            catch (Exception e)
+            {
+                // shouldn't throw anything from inside Dispose()
+                Platform.Log(e);
+            }
+        }
+
+        #endregion
+
+        #region Protected Overridables
+
+        protected abstract IDesktopObjectView CreateView();
+
+        protected virtual void Initialize()
+        {
+            // nothing to initialize
+        }
+
+        protected internal virtual bool CanClose(UserInteraction interaction)
+        {
+            return true;
+        }
+
+        protected virtual bool PrepareClose(CloseReason reason)
+        {
+            // first see if we can close without interacting
+            // that way we avoid calling Activate() if not necessary
+            if(CanClose(UserInteraction.NotAllowed))
+                return true;
+
+            // make active, so the user is not confused if it brings up a message box
+            DoActivate();
+
+            // see if we can close with interaction
+            return CanClose(UserInteraction.Allowed);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                // view may have already been disposed in the Close method
+                if (_view != null)
+                {
+                    _view.Dispose();
+                    _view = null;
+                }
+            }
+        }
+
+        protected virtual void OnOpening(EventArgs args)
+        {
+            EventsHelper.Fire(_opening, this, args);
+        }
+
+        protected virtual void OnOpened(EventArgs args)
+        {
+            EventsHelper.Fire(_opened, this, args);
+        }
+
+        protected virtual void OnClosing(ClosingEventArgs args)
+        {
+            EventsHelper.Fire(_closing, this, args);
+        }
+
+        protected virtual void OnClosed(EventArgs args)
+        {
+            EventsHelper.Fire(_closed, this, args);
+        }
+
+        protected virtual void OnVisibleChanged(EventArgs args)
+        {
+            EventsHelper.Fire(_visibleChanged, this, args);
+        }
+
+        protected virtual void OnActiveChanged(EventArgs args)
+        {
+            EventsHelper.Fire(_activeChanged, this, args);
+        }
+
+        protected virtual void OnTitleChanged(EventArgs args)
+        {
+            EventsHelper.Fire(_titleChanged, this, args);
+        }
+
+        #endregion
+
+        #region Helpers
+
+        internal void RaiseActiveChanged()
+        {
+            OnActiveChanged(EventArgs.Empty);
+        }
+
+        protected IDesktopObjectView View
+        {
+            get { return _view; }
+        }
+
+        internal void Open()
+        {
+            // call initialize before opening
+            // any exception thrown from initialize will therefore abort before opening, not after
+            Initialize();
+
+            _state = DesktopObjectState.Opening;
+            OnOpening(EventArgs.Empty);
+
+            _view = CreateView();
+            _view.SetTitle(_title);
+            _view.ActiveChanged += delegate(object sender, EventArgs args)
+            {
+                this.Active = _view.Active;
+            };
+            _view.VisibleChanged += delegate(object sender, EventArgs args)
+            {
+                this.Visible = _view.Visible;
+            };
+            _view.CloseRequested += delegate(object sender, EventArgs args)
+            {
+                // the request should always come from the active object, so interaction should be allowed
+                Close(UserInteraction.Allowed, CloseReason.UserInterface);
+            };
+
+            _view.Open();
+
+            _state = DesktopObjectState.Open;
+            OnOpened(EventArgs.Empty);
+        }
+
+        internal event EventHandler InternalActiveChanged
+        {
+            add { _internalActiveChanged += value; }
+            remove { _internalActiveChanged -= value; }
+        }
+
+        protected internal bool Close(UserInteraction interactive, CloseReason reason)
+        {
+            // easy case - bail if interaction is prohibited and we can't close with interacting
+            if (interactive == UserInteraction.NotAllowed && !CanClose(UserInteraction.NotAllowed))
+                return false;
+
+            // either we can close without interacting, or interaction is allowed, so let's try and close
+
+            // begin closing - the operation may yet be cancelled
+            _state = DesktopObjectState.Closing;
+
+            ClosingEventArgs args = new ClosingEventArgs(reason, interactive);
+            OnClosing(args);
+
+            if (args.Cancel || !PrepareClose(reason))
+            {
+                _state = DesktopObjectState.Open;
+                return false;
+            }
+
+            // notify inactive
+            this.Active = false;
+
+            try
+            {
+                // close the view
+                _view.Dispose();
+            }
+            catch (Exception e)
+            {
+                Platform.Log(e);
+            }
+            _view = null;
+
+            // close was successful
+            _state = DesktopObjectState.Closed;
+            OnClosed(new ClosedEventArgs(reason));
+
+            // dispose of this object after firing the Closed event
+            // (reason being that handlers of the Closed event may expect this object to be intact)
+            (this as IDisposable).Dispose();
+
+            return true;
+        }
+
+        protected void AssertState(DesktopObjectState[] validStates)
+        {
+            if (!CollectionUtils.Contains<DesktopObjectState>(validStates,
+                delegate(DesktopObjectState state) { return state == this.State; }))
+            {
+                string t = this.GetType().Name;
+                string s = this.State.ToString();
+                throw new InvalidOperationException(string.Format("Operation not valid on a {0} with State: {1}", t, s));
+            }
+        }
+
+        private void DoActivate()
+        {
+            _view.Show();    // always ensure the object is visible prior to activating
+            _view.Activate();
+        }
+
+        private void OnInternalActiveChanged(EventArgs args)
+        {
+            EventsHelper.Fire(_internalActiveChanged, this, args);
+        }
+
+        #endregion
+    }
+}

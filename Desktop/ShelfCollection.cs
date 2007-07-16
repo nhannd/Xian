@@ -8,27 +8,60 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// A collection of <see cref="IShelf"/> objects, used by <see cref="ShelfManager"/>
+    /// Represents the collection of <see cref="Shelf"/> objects for a given desktop window.
     /// </summary>
-    public class ShelfCollection : ObservableList<IShelf, ShelfEventArgs>
+    public class ShelfCollection : DesktopObjectCollection<Shelf>
     {
-        private ShelfManager _owner;
+        private DesktopWindow _owner;
 
-        internal ShelfCollection(ShelfManager owner)
+        protected internal ShelfCollection(DesktopWindow owner)
         {
             _owner = owner;
         }
 
-        protected override void OnItemAdded(ShelfEventArgs e)
+        /// <summary>
+        /// Opens a new shelf.
+        /// </summary>
+        /// <param name="component"></param>
+        /// <param name="title"></param>
+        /// <param name="displayHint"></param>
+        /// <returns></returns>
+        public Shelf AddNew(IApplicationComponent component, string title, ShelfDisplayHint displayHint)
         {
-            _owner.ShelfAdded(e.Item);
-            base.OnItemAdded(e);
+            return AddNew(component, title, null, displayHint);
         }
 
-        protected override void OnItemRemoved(ShelfEventArgs e)
+        /// <summary>
+        /// Opens a new shelf.
+        /// </summary>
+        /// <param name="component"></param>
+        /// <param name="title"></param>
+        /// <param name="name"></param>
+        /// <param name="displayHint"></param>
+        /// <returns></returns>
+        public Shelf AddNew(IApplicationComponent component, string title, string name, ShelfDisplayHint displayHint)
         {
-            _owner.ShelfRemoved(e.Item);
-            base.OnItemRemoved(e);
+            return AddNew(new ShelfCreationArgs(component, title, name, displayHint));
+        }
+
+        /// <summary>
+        /// Opens a new shelf.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public Shelf AddNew(ShelfCreationArgs args)
+        {
+            Shelf shelf = CreateShelf(args);
+            Open(shelf);
+            return shelf;
+        }
+
+        protected virtual Shelf CreateShelf(ShelfCreationArgs args)
+        {
+            IShelfFactory factory = CollectionUtils.FirstElement<IShelfFactory>(
+                (new ShelfFactoryExtensionPoint()).CreateExtensions()) ?? new DefaultShelfFactory();
+
+            return factory.CreateShelf(args, _owner);
         }
     }
 }

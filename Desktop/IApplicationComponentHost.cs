@@ -44,6 +44,6 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Provides component with access to the desktop window in which it is running.
         /// </summary>
-        IDesktopWindow DesktopWindow { get; }
+        DesktopWindow DesktopWindow { get; }
     }
 }

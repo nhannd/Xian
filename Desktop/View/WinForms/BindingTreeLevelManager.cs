@@ -34,7 +34,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="e"></param>
-        private void TreeItemsChangedEventHandler(object sender, ItemEventArgs e)
+        private void TreeItemsChangedEventHandler(object sender, ItemChangedEventArgs e)
         {
             switch (e.ChangeType)
             {

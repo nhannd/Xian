@@ -113,18 +113,23 @@ namespace ClearCanvas.Desktop
         /// </summary>
         event EventHandler ValidationVisibleChanged;
 
-
-
         /// <summary>
         /// Called by the framework to determine if this component in a state
         /// such that it can be stopped.
         /// </summary>
         /// <remarks>
-        /// Within the implementation of this method,
-        /// the component is free to perform any necessary interaction with the 
+        /// This method is called with interactive set to false to query the component
+        /// to see if it is in a closable state.  In this case, the component must respond without interacting
+        /// with the user.  Typically this means erring on the side of caution, e.g.,
+        /// respond false if there is any unsaved data.
+        /// 
+        /// The method is called with interactive set to true to allow the component to prepare to exit.
+        /// In this case, the component is free to perform any necessary interaction with the 
         /// user, such as the display of a confirmation dialog, to determine
-        /// whether it is appropriate to exit.  The component should also be sure to 
-        /// set the value of <see cref="ExitCode"/> before returning from this method.
+        /// whether it is appropriate to exit.  
+        /// 
+        /// If the component returns true, it should also be sure to 
+        /// set the value of <see cref="ExitCode"/> before returning.
         /// 
         /// Note that if the component itself requests the exit (by calling
         /// the <see cref="IApplicationComponentHost.Exit"/> method), then this method
@@ -132,7 +137,7 @@ namespace ClearCanvas.Desktop
         /// state.
         /// </remarks>
         /// <returns>True if the component is ready to exit</returns>
-        bool CanExit();
+        bool CanExit(UserInteraction allowInteraction);
 
         /// <summary>
         /// A value that is returned to the caller after the component exits,

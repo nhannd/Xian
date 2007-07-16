@@ -8,94 +8,158 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Abstract class that provides the base implementation of <see cref="IShelf"/>.
+    /// Represents a shelf within a desktop window.
     /// </summary>
-    public abstract class Shelf : IShelf
+    public class Shelf : DesktopObject, IShelf
     {
-        private IDesktopWindow _desktopWindow;
-        private EventHandler _titleChanged;
-        private string _title;
-        private ShelfDisplayHint _displayHint;
+        #region Host Implementation
 
-        public Shelf(string title, ShelfDisplayHint displayHint, IDesktopWindow desktopWindow)
+        // implements the host interface, which is exposed to the hosted application component
+        class Host : ApplicationComponentHost
         {
-            _title = title;
-            _displayHint = displayHint;
+            private Shelf _shelf;
+
+            internal Host(Shelf shelf, IApplicationComponent component)
+                : base(component)
+            {
+                Platform.CheckForNullReference(shelf, "shelf");
+                _shelf = shelf;
+            }
+
+            public override void Exit()
+            {
+                _shelf._exitRequestedByComponent = true;
+                // close the shelf
+                _shelf.Close(UserInteraction.Allowed, CloseReason.Program);
+            }
+
+            public override DesktopWindow DesktopWindow
+            {
+                get { return _shelf._desktopWindow; }
+            }
+
+            public override void SetTitle(string title)
+            {
+                _shelf.Title = title;
+            }
+        }
+
+        #endregion
+
+        private Host _host;
+        private DesktopWindow _desktopWindow;
+        private ShelfDisplayHint _displayHint;
+        private bool _exitRequestedByComponent;
+
+        protected internal Shelf(ShelfCreationArgs args, DesktopWindow desktopWindow)
+            :base(args)
+        {
             _desktopWindow = desktopWindow;
+            _displayHint = args.DisplayHint;
+            _host = new Host(this, args.Component);
+        }
+
+        #region Public properties
+
+        /// <summary>
+        /// Gets the hosted component
+        /// </summary>
+        public IApplicationComponent Component
+        {
+            get { return _host.Component; }
         }
 
         /// <summary>
-        /// Implementation of the <see cref="IDisposable"/> pattern
+        /// Gets the desktop window that owns this shelf.
         /// </summary>
-        /// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            // nothing to do
-        }
-
-        #region IShelf Members
-
-        public virtual void Initialize(IDesktopWindow desktopWindow)
-        {
-            _desktopWindow = desktopWindow;
-        }
-
-        public IDesktopWindow DesktopWindow
+        public DesktopWindow DesktopWindow
         {
             get { return _desktopWindow; }
         }
 
-        public event EventHandler TitleChanged
-        {
-            add { _titleChanged += value; }
-            remove { _titleChanged -= value; }
-        }
-
-        public string Title
-        {
-            get
-            {
-                return _title;
-            }
-            set
-            {
-                if (_title != value)
-                {
-                    _title = value;
-                    EventsHelper.Fire(_titleChanged, this, new EventArgs());
-                }
-            }
-        }
-
+        /// <summary>
+        /// Gets the current display hint.
+        /// </summary>
         public ShelfDisplayHint DisplayHint
         {
             get { return _displayHint; }
             protected set { _displayHint = value; }
         }
-
-		public void Activate()
-		{
-			_desktopWindow.ShelfManager.ActivateShelf(this);
-		}
-
+        
         #endregion
 
-        #region IDisposable Members
+        #region Public methods
 
-        public void Dispose()
+        /// <summary>
+        /// Makes the shelf visible.
+        /// </summary>
+        public void Show()
         {
-            try
-            {
-                Dispose(true);
-                GC.SuppressFinalize(this);
-            }
-            catch (Exception e)
-            {
-                // shouldn't throw anything from inside Dispose()
-                Platform.Log(e);
-            }
+            AssertState(new DesktopObjectState[] { DesktopObjectState.Open, DesktopObjectState.Closing });
+            
+            this.ShelfView.Show();
+        }
+
+        /// <summary>
+        /// Hides the shelf from view.
+        /// </summary>
+        public void Hide()
+        {
+            AssertState(new DesktopObjectState[] { DesktopObjectState.Open, DesktopObjectState.Closing });
+
+            this.ShelfView.Hide();
         }
 
         #endregion
+
+        #region IShelf Members
+
+        IDesktopWindow IShelf.DesktopWindow
+        {
+            get { return _desktopWindow; }
+        }
+
+        #endregion
+
+        #region Protected overrides
+
+        protected override void Initialize()
+        {
+            _host.StartComponent();
+            base.Initialize();
+        }
+
+        protected internal override bool CanClose(UserInteraction interactive)
+        {
+            return _exitRequestedByComponent || _host.Component.CanExit(interactive);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing && _host != null)
+            {
+                _host.StopComponent();
+                _host = null;
+            }
+        }
+
+        protected override IDesktopObjectView CreateView()
+        {
+            return _desktopWindow.CreateShelfView(this);
+        }
+
+        #endregion
+
+        #region Helpers
+
+        protected IShelfView ShelfView
+        {
+            get { return (IShelfView)this.View; }
+        }
+
+        #endregion
+
     }
 }

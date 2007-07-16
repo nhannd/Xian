@@ -4,26 +4,14 @@
   <!-- an ISessionFactory instance -->
   <session-factory>
 
-    <!-- common properties -->
+    <!-- properties -->
     <property name="connection.provider">NHibernate.Connection.DriverConnectionProvider</property>
-    <property name="hibernate.connection.isolation">ReadCommitted</property>
+    <property name="connection.driver_class">NHibernate.Driver.SqlClientDriver</property>
+    <property name="connection.connection_string">Data Source=MILO\SQLEXPRESS;Initial Catalog=ris2;User Id=risuser;Password=rispass</property>
     <property name="hibernate.show_sql">true</property>
-    <!-- 2nd level cache - need a distributed cache implementation for this to work correctly
-    	<property name="hibernate.cache.provider_class">NHibernate.Caches.SysCache.SysCacheProvider, NHibernate.Caches.SysCache</property>
-    	<property name="relativeExpiration">10</property>
-    -->
-
-    <!--MS SQL-->
     <property name="hibernate.dialect">NHibernate.Dialect.MsSql2000Dialect</property>
-	  <property name="connection.driver_class">NHibernate.Driver.SqlClientDriver</property>
-	  <property name="connection.connection_string">Data Source=172.16.10.167\SQLEXPRESS;Initial Catalog=Ris2;User Id=risuser;Password=rispass</property>
-	  <property name="hibernate.default_schema">Ris2.dbo</property>
-
-    <!--SQLite-->
-    <!--<property name="hibernate.dialect">NHibernate.Dialect.SQLiteDialect</property>
-    <property name="hibernate.connection.driver_class">NHibernate.Driver.SQLiteDriver</property>
-    <property name="hibernate.connection.connection_string">Data Source=datastore\ris.sqb;Version=3</property>-->
-    
+    <property name="hibernate.connection.isolation">ReadCommitted</property>
+    <property name="hibernate.default_schema">ris2.dbo</property>
   </session-factory>
 
 </hibernate-configuration>

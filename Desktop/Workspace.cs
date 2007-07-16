@@ -9,118 +9,147 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Abstract class that provides the base implementation of <see cref="IWorkspace"/>.
+    /// Represents a workspace within a desktop window.
     /// </summary>
-    public abstract class Workspace : IWorkspace
+    public class Workspace : DesktopObject, IWorkspace
 	{
-        private IDesktopWindow _desktopWindow;
-		private string _title;
-		private CommandHistory _commandHistory;
+        #region Host Implementation
 
-        private event EventHandler _titleChanged;
+        // implements the host interface, which is exposed to the hosted application component
+        class Host : ApplicationComponentHost
+        {
+            private Workspace _workspace;
 
-		/// <summary>
-		/// Initializes a new instance of the <see cref="Workspace"/> class.
-		/// </summary>
-		public Workspace(string title, IDesktopWindow desktopWindow)
-		{
-            _title = title;
-            _commandHistory = new CommandHistory(100);
-            _desktopWindow = desktopWindow;
+            internal Host(Workspace workspace, IApplicationComponent component)
+                :base(component)
+            {
+				Platform.CheckForNullReference(workspace, "workspace");
+                _workspace = workspace;
+            }
+
+            public override void Exit()
+            {
+                _workspace._exitRequestedByComponent = true;
+
+                // close the workspace
+                _workspace.Close(UserInteraction.Allowed, CloseReason.Program);
+            }
+
+            public override CommandHistory CommandHistory
+            {
+                get { return _workspace._commandHistory; }
+            }
+
+            public override DesktopWindow DesktopWindow
+            {
+                get { return _workspace._desktopWindow; }
+            }
+
+            public override void SetTitle(string title)
+            {
+                _workspace.Title = title;
+            }
         }
 
-        #region IWorkspace Members
+        #endregion
 
 
-        public IDesktopWindow DesktopWindow
+        private Host _host;
+        private DesktopWindow _desktopWindow;
+        private CommandHistory _commandHistory;
+        private bool _exitRequestedByComponent;
+
+
+        protected internal Workspace(WorkspaceCreationArgs args, DesktopWindow desktopWindow)
+            : base(args)
+        {
+            _commandHistory = new CommandHistory(100);
+            _desktopWindow = desktopWindow;
+
+            _host = new Host(this, args.Component);
+        }
+
+        #region Public properties
+
+        /// <summary>
+        /// Gets the hosted component
+        /// </summary>
+        public IApplicationComponent Component
+        {
+            get { return _host.Component; }
+        }
+
+        /// <summary>
+        /// Gets the desktop window that owns this workspace.
+        /// </summary>
+        public DesktopWindow DesktopWindow
         {
             get { return _desktopWindow; }
         }
 
         /// <summary>
-        /// Gets or sets the title of this workspace.  The title will be displayed in the user-interface
+        /// Gets the command history associated with this workspace.
         /// </summary>
-		public string Title
-		{
-            get { return _title; }
-            set
-            {
-                if (value != _title)
-                {
-                    _title = value;
-                    EventsHelper.Fire(_titleChanged, this, new EventArgs());
-                }
-            }
-		}
-
-        public virtual void Activate()
+        public CommandHistory CommandHistory
         {
-            if (_desktopWindow == null)
-                throw new InvalidOperationException();
-
-            _desktopWindow.WorkspaceManager.ActiveWorkspace = this;
-        }
-
-		public bool Active
-		{
-            get { return (_desktopWindow == null) ? false : (_desktopWindow.ActiveWorkspace == this); }
-		}
-
-		/// <summary>
-		/// Gets the workspace's <see cref="CommandHistory"/>.
-		/// </summary>
-		/// <value>The workspace's <see cref="CommandHistory"/>.</value>
-		public CommandHistory CommandHistory
-		{
-			get { return _commandHistory; }
-		}
-
-        public abstract IActionSet Actions
-        {
-            get;
-        }
-
-        /// <summary>
-        /// Fired when the title of the workspace is changed
-        /// </summary>
-        public event EventHandler TitleChanged
-        {
-            add { _titleChanged += value; }
-            remove { _titleChanged -= value; }
-        }
-
-        /// <summary>
-        /// Implementation of the <see cref="IDisposable"/> pattern
-        /// </summary>
-        /// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
-        protected virtual void Dispose(bool disposing)
-        {
-            // nothing to do
-        }
-
-        public virtual bool CanClose()
-        {
-            return true;
+            get { return _commandHistory; }
         }
 
         #endregion
 
-        #region IDisposable Members
+        #region Protected overrides
 
-        public void Dispose()
+        protected internal override bool CanClose(UserInteraction interactive)
         {
-            try
+            return _exitRequestedByComponent || _host.Component.CanExit(interactive);
+        }
+
+        protected override void Initialize()
+        {
+            _host.StartComponent();
+            base.Initialize();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            base.Dispose(disposing);
+
+            if (disposing && _host != null)
             {
-                Dispose(true);
-                GC.SuppressFinalize(this);
-            }
-            catch (Exception e)
-            {
-                // shouldn't throw anything from inside Dispose()
-                Platform.Log(e);
+                _host.StopComponent();
+                _host = null;
             }
         }
 
+        protected override IDesktopObjectView CreateView()
+        {
+            return _desktopWindow.CreateWorkspaceView(this);
+        }
+
         #endregion
+
+        #region Helpers
+
+        protected internal IActionSet Actions
+        {
+            get { return _host.Component.ExportedActions; }
+        }
+
+        protected IWorkspaceView WorkspaceView
+        {
+            get { return (IWorkspaceView)this.View; }
+        }
+
+        #endregion
+
+        #region IWorkspace Members
+
+        IDesktopWindow IWorkspace.DesktopWindow
+        {
+            get { return _desktopWindow; }
+        }
+
+        #endregion
+
     }
 }

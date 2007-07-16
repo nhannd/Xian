@@ -9,20 +9,12 @@ namespace ClearCanvas.Desktop
     {
         private IApplicationComponent _component;
         private IApplicationComponentView _componentView;
-        private ApplicationComponentExitDelegate _exitCallback;
-
-        public ApplicationComponentHost(IApplicationComponent component, ApplicationComponentExitDelegate exitCallback)
-        {
-            _component = component;
-            _exitCallback = exitCallback;
-            _component.SetHost(this);
-        }
 
         public ApplicationComponentHost(IApplicationComponent component)
-            :this(component, null)
         {
+            _component = component;
+            _component.SetHost(this);
         }
-
 
         public virtual void StartComponent()
         {
@@ -38,10 +30,6 @@ namespace ClearCanvas.Desktop
 				throw new InvalidOperationException(SR.ExceptionComponentNeverStarted);
 
             _component.Stop();
-            if (_exitCallback != null)
-            {
-                _exitCallback(_component);
-            }
         }
 
         public bool IsStarted
@@ -66,8 +54,6 @@ namespace ClearCanvas.Desktop
                 return _componentView;
             }
         }
-	
-	
 
         #region IApplicationComponentHost Members
 
@@ -95,7 +81,7 @@ namespace ClearCanvas.Desktop
         /// <returns></returns>
         public virtual DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
         {
-            return Platform.ShowMessageBox(message, buttons);
+            return this.DesktopWindow.ShowMessageBox(message, buttons);
         }
 
         /// <summary>
@@ -109,7 +95,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Returns the associated desktop window
         /// </summary>
-        public abstract IDesktopWindow DesktopWindow { get; }
+        public abstract DesktopWindow DesktopWindow { get; }
 
         #endregion
     }

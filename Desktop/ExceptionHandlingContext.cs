@@ -85,7 +85,7 @@ namespace ClearCanvas.Desktop
             ApplicationComponent.LaunchAsDialog(
                 _desktopWindow,
                 new ExceptionHandlerComponent(e, message),
-                Application.ApplicationName);
+                Application.Name);
         }
     }
 }

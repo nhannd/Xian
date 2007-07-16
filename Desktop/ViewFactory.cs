@@ -18,7 +18,7 @@ namespace ClearCanvas.Desktop
         /// <param name="toolkitID">The desired GUI toolkit</param>
         /// <returns>The view object that was created.</returns>
         /// <exception cref="NotSupportedException">A view extension matching the specified GUI toolkit does not exist.</exception>
-        public static IView CreateView(IExtensionPoint extensionPoint, GuiToolkitID toolkitID)
+        public static IView CreateView(IExtensionPoint extensionPoint, string toolkitID)
         {
             // create an attribute representing the GUI toolkitID
             GuiToolkitAttribute toolkitAttr = new GuiToolkitAttribute(toolkitID);
@@ -36,7 +36,7 @@ namespace ClearCanvas.Desktop
         /// <exception cref="InvalidOperationException">The main workstation view has not yet been created.</exception>
         public static IView CreateView(IExtensionPoint extensionPoint)
         {
-            return CreateView(extensionPoint, Application.GuiToolkit);
+            return CreateView(extensionPoint, Application.GuiToolkitID);
         }
 
         /// <summary>

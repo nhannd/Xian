@@ -47,8 +47,33 @@
     <Compile Include="ActiveToolbarButton.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="ApplicationComponentHostShelfView.cs" />
-    <Compile Include="ApplicationComponentHostWorkspaceView.cs" />
+    <Compile Include="ApplicationView.cs" />
+    <Compile Include="CloseHelperComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="CloseHelperComponentControl.Designer.cs">
+      <DependentUpon>CloseHelperComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CloseHelperComponentView.cs" />
+    <Compile Include="DesktopMonitorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="DesktopMonitorComponentControl.Designer.cs">
+      <DependentUpon>DesktopMonitorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="DesktopMonitorComponentView.cs" />
+    <Compile Include="DesktopObjectView.cs" />
+    <Compile Include="GuiToolkit.cs" />
+    <Compile Include="ShelfView.cs" />
+    <Compile Include="TestComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TestComponentControl.Designer.cs">
+      <DependentUpon>TestComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TestComponentView.cs" />
+    <Compile Include="OrderedSet.cs" />
+    <Compile Include="WorkspaceView.cs" />
     <Compile Include="ApplicationComponentUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -150,7 +175,7 @@
     <Compile Include="DialogBoxForm.Designer.cs">
       <DependentUpon>DialogBoxForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="DialogBox.cs" />
+    <Compile Include="DialogBoxView.cs" />
     <Compile Include="IconFactory.cs" />
     <Compile Include="MessageBox.cs" />
     <Compile Include="NavigatorComponentContainerControl.cs">
@@ -161,7 +186,6 @@
     </Compile>
     <Compile Include="NavigatorComponentContainerView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ShelfViewManager.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -185,11 +209,7 @@
     <Compile Include="DesktopForm.designer.cs">
       <DependentUpon>DesktopForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="DesktopView.cs" />
-    <Compile Include="WorkspaceTabPage.cs">
-      <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="WorkspaceViewManager.cs" />
+    <Compile Include="DesktopWindowView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
@@ -202,6 +222,14 @@
     <EmbeddedResource Include="BindingTreeView.resx">
       <DependentUpon>BindingTreeView.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="CloseHelperComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>CloseHelperComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="DesktopMonitorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>DesktopMonitorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DialogBoxForm.resx">
       <SubType>Designer</SubType>
@@ -259,6 +287,10 @@
     <EmbeddedResource Include="TableView.resx">
       <DependentUpon>TableView.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TestComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>TestComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

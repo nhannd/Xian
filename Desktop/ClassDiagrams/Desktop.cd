@@ -1,98 +1,161 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Font Name="Tahoma" Size="8.4" />
   <Class Name="ClearCanvas.Desktop.Application" Collapsed="true">
-    <Position X="1" Y="1.25" Width="1.25" />
+    <Position X="0.75" Y="0.5" Width="1.25" />
     <TypeIdentifier>
       <FileName>Application.cs</FileName>
-      <HashCode>AAAEAAAAAgAEgAAAAgAAAAAAAAAAAAAAAGAIAEAAAQA=</HashCode>
+      <HashCode>ICAEABgAEAAEgAAAIAAEKAwAAAgJAAAAwHAAQEAABYI=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="_window" />
+      <Property Name="View" />
     </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="ClearCanvas.Desktop.WorkspaceManager" Collapsed="true">
-    <Position X="6.25" Y="1" Width="1.75" />
-    <TypeIdentifier>
-      <FileName>WorkspaceManager.cs</FileName>
-      <HashCode>ACAAEAAAEGAAAAAIAAAABiAAAAAAQAAAAAAAAACAAAA=</HashCode>
-    </TypeIdentifier>
     <ShowAsCollectionAssociation>
-      <Property Name="Workspaces" />
+      <Property Name="Windows" />
     </ShowAsCollectionAssociation>
+    <AssociationLine Name="View" Type="ClearCanvas.Desktop.IApplicationView" FixedToPoint="true">
+      <Path>
+        <Point X="1.188" Y="1.014" />
+        <Point X="1.188" Y="5" />
+      </Path>
+    </AssociationLine>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ClearCanvas.Desktop.ShelfManager" Collapsed="true">
-    <Position X="6.25" Y="2" Width="1.5" />
+  <Class Name="ClearCanvas.Desktop.DesktopWindow" Collapsed="true">
+    <Position X="2.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <FileName>ShelfManager.cs</FileName>
-      <HashCode>AAAAAIAAACAgAAAAAAAAAQAAAAAAAAAAAAAAAACAAQA=</HashCode>
+      <FileName>DesktopWindow.cs</FileName>
+      <HashCode>BGAIAIEFELAEDEAIEAEAKAAAAAIAAggIAIAAAAAABQA=</HashCode>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="DesktopWindowView" />
+    </ShowAsAssociation>
     <ShowAsCollectionAssociation>
       <Property Name="Shelves" />
+      <Property Name="Workspaces" />
     </ShowAsCollectionAssociation>
+    <NestedTypes>
+      <Class Name="ClearCanvas.Desktop.DesktopWindow.DesktopToolContext" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>DesktopWindow.cs</NewMemberFileName>
+        </TypeIdentifier>
+        <Lollipop Position="0.2" />
+      </Class>
+    </NestedTypes>
+    <AssociationLine Name="Shelves" Type="ClearCanvas.Desktop.Shelf" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="3.812" Y="2.386" />
+        <Point X="3.812" Y="4.062" />
+        <Point X="5" Y="4.062" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.36" Y="0.093" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Workspaces" Type="ClearCanvas.Desktop.Workspace" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="4" Y="2.062" />
+        <Point X="4.375" Y="2.062" />
+        <Point X="4.375" Y="2.818" />
+        <Point X="7" Y="2.818" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="1.602" Y="0.077" />
+      </MemberNameLabel>
+    </AssociationLine>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ClearCanvas.Desktop.Actions.ActionModelNode" Collapsed="true">
-    <Position X="6.25" Y="3" Width="1.5" />
+  <Class Name="ClearCanvas.Desktop.Shelf" Collapsed="true">
+    <Position X="5" Y="3.75" Width="1.5" />
     <TypeIdentifier>
-      <FileName>Actions\ActionModelNode.cs</FileName>
-      <HashCode>AAAAIMAAAAAAABAAAAEEEAAAAAAAAQAAAACAgAAEAAQ=</HashCode>
-    </TypeIdentifier>
-  </Class>
-  <Interface Name="ClearCanvas.Desktop.IDesktopWindow" Collapsed="true">
-    <Position X="3.25" Y="1.25" Width="1.5" />
-    <TypeIdentifier>
-      <FileName>IDesktopWindow.cs</FileName>
-      <HashCode>AAAAAAAABIAACAAIAAAAABAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Shelf.cs</FileName>
+      <HashCode>gBAAAAIAACAAAQAAUEEAAAAAAAAEAgAAAAJABACAAAA=</HashCode>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Property Name="ShelfManager" />
-      <Property Name="WorkspaceManager" />
-      <Property Name="MenuModel" />
-      <Property Name="ToolbarModel" />
+      <Property Name="ShelfView" />
+      <Property Name="Component" />
     </ShowAsAssociation>
-    <AssociationLine Name="ShelfManager" Type="ClearCanvas.Desktop.ShelfManager" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="4.438" Y="1.886" />
-        <Point X="4.438" Y="2.351" />
-        <Point X="6.25" Y="2.351" />
-      </Path>
-    </AssociationLine>
-    <AssociationLine Name="MenuModel" Type="ClearCanvas.Desktop.Actions.ActionModelNode" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="3.562" Y="1.886" />
-        <Point X="3.562" Y="3.337" />
-        <Point X="6.25" Y="3.337" />
-      </Path>
+    <NestedTypes>
+      <Class Name="ClearCanvas.Desktop.Shelf.Host" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Shelf.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <AssociationLine Name="Component" Type="ClearCanvas.Desktop.IApplicationComponent">
       <MemberNameLabel ManuallyPlaced="true">
-        <Position X="0.177" Y="-0.24" />
+        <Position X="0.818" Y="0.068" />
       </MemberNameLabel>
     </AssociationLine>
-    <AssociationLine Name="ToolbarModel" Type="ClearCanvas.Desktop.Actions.ActionModelNode" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="4" Y="1.886" />
-        <Point X="4" Y="3.137" />
-        <Point X="6.25" Y="3.137" />
-      </Path>
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="0.16" Y="0.102" />
-      </MemberNameLabel>
-    </AssociationLine>
-  </Interface>
-  <Interface Name="ClearCanvas.Desktop.IWorkspace" Collapsed="true">
-    <Position X="9.25" Y="1" Width="1.5" />
+    <Lollipop Position="0.242" />
+  </Class>
+  <Class Name="ClearCanvas.Desktop.Workspace" Collapsed="true">
+    <Position X="7" Y="2.5" Width="1.5" />
     <TypeIdentifier>
-      <FileName>IWorkspace.cs</FileName>
-      <HashCode>AAAAAAAAMAAAAUBAQAAAAAAAAAAAAgAgAAAIAAAAAAA=</HashCode>
+      <FileName>Workspace.cs</FileName>
+      <HashCode>ABAAAAAAMCEAAQAAQAEACAAAAAAAAgAAAABABACAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="WorkspaceView" />
+      <Property Name="Component" />
+    </ShowAsAssociation>
+    <NestedTypes>
+      <Class Name="ClearCanvas.Desktop.Workspace.Host" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Workspace.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Class>
+    </NestedTypes>
+    <AssociationLine Name="WorkspaceView" Type="ClearCanvas.Desktop.IWorkspaceView">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.185" Y="0.168" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Component" Type="ClearCanvas.Desktop.IApplicationComponent" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="8.5" Y="2.917" />
+        <Point X="10.188" Y="2.917" />
+        <Point X="10.188" Y="3.25" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.735" Y="0.427" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <Lollipop Position="0.283" />
+  </Class>
+  <Interface Name="ClearCanvas.Desktop.IApplicationView" Collapsed="true">
+    <Position X="0.5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>IApplicationView.cs</FileName>
+      <HashCode>IAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="ClearCanvas.Desktop.IShelf" Collapsed="true">
-    <Position X="9.25" Y="2" Width="1.5" />
+  <Interface Name="ClearCanvas.Desktop.IWorkspaceView" Collapsed="true">
+    <Position X="7" Y="5" Width="1.5" />
     <TypeIdentifier>
-      <FileName>IShelf.cs</FileName>
-      <HashCode>AAAAAAAAAAAAAUAAQEAAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
+      <FileName>IWorkspaceView.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.Desktop.IApplicationComponent" Collapsed="true">
+    <Position X="9" Y="3.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>IApplicationComponent.cs</FileName>
+      <HashCode>AAAAQCAAACAIACAAABIAAAAAAAJAAAggIAAgAAgAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.Desktop.IShelfView" Collapsed="true">
+    <Position X="5" Y="5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>IShelfView.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.Desktop.IDesktopWindowView" Collapsed="true">
+    <Position X="2.5" Y="5" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>IDesktopWindowView.cs</FileName>
+      <HashCode>AAAAACEAABAAAAAAAAAgAAAAAAIAAAIAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Interface>
 </ClassDiagram>

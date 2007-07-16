@@ -10,7 +10,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
     public static class ToolStripBuilder
     {
-        enum ToolStripKind
+        public enum ToolStripKind
         {
             Menu,
             Toolbar
@@ -54,6 +54,26 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+        public static void BuildToolStrip(ToolStripKind kind, ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes)
+        {
+            BuildToolStrip(kind, parentItemCollection, nodes, new ToolStripBuilderStyle());
+        }
+        
+        public static void BuildToolStrip(ToolStripKind kind, ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle)
+        {
+            switch (kind)
+            {
+                case ToolStripKind.Menu:
+                    BuildMenu(parentItemCollection, nodes);
+                    break;
+                case ToolStripKind.Toolbar:
+                    BuildToolbar(parentItemCollection, nodes, builderStyle);
+                    break;
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
         public static void BuildToolbar(ToolStripItemCollection parentItemCollection, IEnumerable<ActionModelNode> nodes, ToolStripBuilderStyle builderStyle)
         {
             foreach (ActionModelNode node in nodes)
@@ -61,7 +81,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 if (node.IsLeaf)
                 {
                     IAction action = (IAction)node.Action;
-                    ToolStripItem button = GetToolStripItemForAction(action, ToolStripKind.Toolbar);
+                    ToolStripItem button = CreateToolStripItemForAction(action, ToolStripKind.Toolbar);
                     button.Tag = node;
 
                     // By default, only display the image on the button
@@ -93,7 +113,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 {
                     // this is a leaf node (terminal menu item)
                     IAction action = (IAction)node.Action;
-                    menuItem = (ToolStripMenuItem)GetToolStripItemForAction(action, ToolStripKind.Menu);
+                    menuItem = (ToolStripMenuItem)CreateToolStripItemForAction(action, ToolStripKind.Menu);
 
 					menuItem.Tag = node;
 					parentItemCollection.Add(menuItem);
@@ -154,7 +174,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        private static ToolStripItem GetToolStripItemForAction(IAction action, ToolStripKind kind)
+        private static ToolStripItem CreateToolStripItemForAction(IAction action, ToolStripKind kind)
         {
             // optimization: since most actions will be IClickAction, we can just create the controls
             // directly rather than use the associated view, which is slower

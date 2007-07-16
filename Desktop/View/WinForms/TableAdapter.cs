@@ -298,7 +298,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Private Methods
 
-        private void TableDataChangedEventHandler(object sender, ItemEventArgs e)
+        private void TableDataChangedEventHandler(object sender, ItemChangedEventArgs e)
         {
             switch (e.ChangeType)
             {
@@ -319,7 +319,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        private void TableStructureChangedEventHandler(object sender, ItemEventArgs e)
+        private void TableStructureChangedEventHandler(object sender, ItemChangedEventArgs e)
         {
             ITableColumn column = (ITableColumn)_table.Columns[e.ItemIndex];
             switch (e.ChangeType)

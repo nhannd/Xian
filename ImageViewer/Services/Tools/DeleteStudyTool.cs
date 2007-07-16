@@ -170,20 +170,13 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			List<IImageViewer> imageViewers = new List<IImageViewer>();
 
-			foreach (IWorkspace workspace in this.Context.DesktopWindow.WorkspaceManager.Workspaces)
+			foreach (Workspace workspace in this.Context.DesktopWindow.Workspaces)
 			{
-				if (!(workspace is ApplicationComponentHostWorkspace))
+                IImageViewer viewer = ImageViewerComponent.GetAsImageViewer(workspace);
+				if (viewer == null)
 					continue;
 
-				IApplicationComponent component = ((ApplicationComponentHostWorkspace)workspace).Component;
-
-				if (component == null)
-					continue;
-
-				if (!(component is IImageViewer))
-					continue;
-
-				imageViewers.Add(component as IImageViewer);
+                imageViewers.Add(viewer);
 			}
 
 			return imageViewers;

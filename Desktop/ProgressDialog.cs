@@ -54,7 +54,7 @@ namespace ClearCanvas.Desktop
             ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(
                 desktopWindow,
                 progressComponent,
-                Application.ApplicationName);
+                Application.Name);
 
             if (result == ApplicationComponentExitCode.Error)
                 throw progressComponent.TaskException;

@@ -47,7 +47,7 @@ namespace ClearCanvas.Desktop
 
             #region ApplicationComponentHost overrides
 
-            public override IDesktopWindow DesktopWindow
+            public override DesktopWindow DesktopWindow
             {
                 get { return _owner.Host.DesktopWindow; }
             }

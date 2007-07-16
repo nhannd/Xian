@@ -7,50 +7,46 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Defines the interface to a desktop window, as seen by the <see cref="Application"/>
+    /// Defines the public interface to a <see cref="DesktopWindow"/>.
     /// </summary>
-    public interface IDesktopWindow : IDisposable
+    public interface IDesktopWindow : IDesktopObject
     {
         /// <summary>
-        /// Gets the active workspace, or null if there are no workspaces
+        /// Gets the collection of workspaces associated with this window.
         /// </summary>
-        IWorkspace ActiveWorkspace { get; }
+        WorkspaceCollection Workspaces { get; }
 
         /// <summary>
-        /// Gets the current menu model
+        /// Gets the currently active workspace, or null if there are no workspaces.
         /// </summary>
-        ActionModelNode MenuModel { get; }
+        Workspace ActiveWorkspace { get; }
 
         /// <summary>
-        /// Gets the current toolbar model
+        /// Gets the collection of shelves associated with this window.
         /// </summary>
-        ActionModelNode ToolbarModel { get; }
+        ShelfCollection Shelves { get; }
 
         /// <summary>
-        /// Gets the associated shelf manager
-        /// </summary>
-        ShelfManager ShelfManager { get; }
-
-        /// <summary>
-        /// Gets the associated workspace manager
-        /// </summary>
-        WorkspaceManager WorkspaceManager { get; }
-
-        /// <summary>
-        /// Asks the desktop window if it is in a closable state.  The desktop window may take any actions
-        /// in this method that are necessary to decide whether or not it can be closed, including prompting
-        /// the user to save data, etc.
-        /// </summary>
-        /// <returns></returns>
-        bool CanClose();
-
-        /// <summary>
-        /// Shows a message box in this desktop window
+        /// Shows a message box in front of this window.
         /// </summary>
         /// <param name="message"></param>
         /// <param name="buttons"></param>
         /// <returns></returns>
         DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons);
 
+        /// <summary>
+        /// Shows a dialog box in front of this window.
+        /// </summary>
+        /// <param name="component"></param>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        DialogBoxAction ShowDialogBox(IApplicationComponent component, string title);
+
+        /// <summary>
+        /// Shows a dialog box in front of this window.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        DialogBoxAction ShowDialogBox(DialogBoxCreationArgs args);
     }
 }

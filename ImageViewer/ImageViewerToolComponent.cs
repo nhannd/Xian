@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			_imageViewerToolContext = imageViewerToolContext;
 			this.ImageViewer = imageViewerToolContext.Viewer;
-			_imageViewerToolContext.DesktopWindow.WorkspaceManager.ActiveWorkspaceChanged += OnWorkspaceActivated;
+			_imageViewerToolContext.DesktopWindow.Workspaces.ItemActivationChanged += OnWorkspaceActivated;
 		}
 
 		/// <summary>
@@ -102,10 +102,10 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
-		private void OnWorkspaceActivated(object sender, WorkspaceActivationChangedEventArgs e)
+		private void OnWorkspaceActivated(object sender, ItemEventArgs<Workspace> e)
 		{
-			IImageViewer imageViewer = ImageViewerComponent.GetAsImageViewer(e.ActivatedWorkspace);
-			this.ImageViewer = imageViewer;
+            IImageViewer imageViewer = ImageViewerComponent.GetAsImageViewer(_imageViewerToolContext.DesktopWindow.ActiveWorkspace);
+            this.ImageViewer = imageViewer;
 		}
 
 		/// <summary>

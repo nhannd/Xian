@@ -18,7 +18,7 @@ namespace ClearCanvas.Ris.Client
             _folderName = folderName;
             _itemsTable = itemsTable;
 
-            _itemsTable.Items.ItemsChanged += delegate(object sender, ItemEventArgs args)
+            _itemsTable.Items.ItemsChanged += delegate(object sender, ItemChangedEventArgs args)
                 {
                     NotifyTextChanged();
                 };

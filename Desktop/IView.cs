@@ -17,7 +17,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gets the toolkitID of the GUI tookit upon which this view is based.
         /// </summary>
-        GuiToolkitID GuiToolkitID
+        string GuiToolkitID
         {
             get;
         }

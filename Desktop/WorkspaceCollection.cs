@@ -7,56 +7,104 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// A collection of <see cref="IWorkspace"/> objects, used by <see cref="WorkspaceManager"/>
+    /// Represents the collection of <see cref="Workspace"/> objects for a given desktop window.
     /// </summary>
-    public class WorkspaceCollection : ObservableList<IWorkspace, WorkspaceEventArgs>
+    public class WorkspaceCollection : DesktopObjectCollection<Workspace>
 	{
-        private WorkspaceManager _owner;
+        private DesktopWindow _owner;
+        private Workspace _activeWorkspace;
 
-		public WorkspaceCollection(WorkspaceManager owner)
+        protected internal WorkspaceCollection(DesktopWindow owner)
 		{
             _owner = owner;
 		}
-		
-        // This method is overridden here to force the Mono compiler to see it as "public"
-        // Otherwise, a bug in the Mono compiler prevents the method from being visible 
-        // to other assemblies
-		public override event EventHandler<WorkspaceEventArgs> ItemAdded
-		{
-			add { base.ItemAdded += value; }
-			remove { base.ItemAdded -= value;	}
-		}
-
-        // This method is overridden here to force the Mono compiler to see it as "public"
-        // Otherwise, a bug in the Mono compiler prevents the method from being visible 
-        // to other assemblies
-        public override event EventHandler<WorkspaceEventArgs> ItemRemoved
-		{
-			add { base.ItemRemoved += value; }
-			remove { base.ItemRemoved -= value; }
-		}
 
         /// <summary>
-        /// Overridden to check if the workspace can be closed before removing it.  This method
-        /// calls <see cref="IWorkspace.CanClose"/> to see if the workspace can be closed.
+        /// Opens a new workspace.
         /// </summary>
-        /// <param name="item"></param>
-        /// <returns>True if the workspace was successfully closed and removed, otherwise false</returns>
-        public override bool Remove(IWorkspace item)
+        /// <param name="component"></param>
+        /// <param name="title"></param>
+        /// <returns></returns>
+        public Workspace AddNew(IApplicationComponent component, string title)
         {
-            return item.CanClose() ? base.Remove(item) : false;
+            return AddNew(component, title, null);
         }
 
-        protected override void OnItemAdded(WorkspaceEventArgs e)
+        /// <summary>
+        /// Opens a new workspace.
+        /// </summary>
+        /// <param name="component"></param>
+        /// <param name="title"></param>
+        /// <param name="name"></param>
+        /// <returns></returns>
+        public Workspace AddNew(IApplicationComponent component, string title, string name)
         {
-            _owner.WorkspaceAdded(e.Workspace);
-            base.OnItemAdded(e);
+            return AddNew(new WorkspaceCreationArgs(component, title, name));
         }
 
-        protected override void OnItemRemoved(WorkspaceEventArgs e)
+        /// <summary>
+        /// Opens a new workspace.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public Workspace AddNew(WorkspaceCreationArgs args)
         {
-            _owner.WorkspaceRemoved(e.Workspace);
-            base.OnItemRemoved(e);
+            Workspace workspace = CreateWorkspace(args);
+            Open(workspace);
+            return workspace;
         }
-	}
+
+        /// <summary>
+        /// Gets the currently active workspace, or null if there are no workspaces in the collection.
+        /// </summary>
+        public Workspace ActiveWorkspace
+        {
+            get { return _activeWorkspace; }
+        }
+
+        protected virtual Workspace CreateWorkspace(WorkspaceCreationArgs args)
+        {
+            IWorkspaceFactory factory = CollectionUtils.FirstElement<IWorkspaceFactory>(
+                (new WorkspaceFactoryExtensionPoint()).CreateExtensions()) ?? new DefaultWorkspaceFactory();
+
+            return factory.CreateWorkspace(args, _owner);
+        }
+
+        protected override void OnItemActivationChangedInternal(ItemEventArgs<Workspace> args)
+        {
+            if (args.Item.Active)
+            {
+                // activated
+                Workspace lastActive = _activeWorkspace;
+
+                // set this prior to firing any events, so that a call to ActiveWorkspace property will return correct value
+                _activeWorkspace = args.Item;
+
+                if (lastActive != null)
+                {
+                    lastActive.RaiseActiveChanged();
+                }
+                _activeWorkspace.RaiseActiveChanged();
+                
+            }
+        }
+
+        protected override void OnItemClosed(ClosedItemEventArgs<Workspace> args)
+        {
+            if (this.Count == 0)
+            {
+                // raise pending de-activation event for the last active workspace, before the closing event
+                if (_activeWorkspace != null)
+                {
+                    Workspace lastActive = _activeWorkspace;
+
+                    // set this prior to firing any events, so that a call to ActiveWorkspace property will return correct value
+                    _activeWorkspace = null;
+                    lastActive.RaiseActiveChanged();
+                }
+            }
+
+            base.OnItemClosed(args);
+        }
+    }
 }

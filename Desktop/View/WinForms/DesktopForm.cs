@@ -17,37 +17,25 @@ using Crownwood.DotNetMagic.Docking;
 using Crownwood.DotNetMagic.Controls;
 using Crownwood.DotNetMagic.Forms;
 using System.Reflection;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
     public partial class DesktopForm : DotNetMagicForm
     {
-        private IDesktopWindow _desktopWindow;
-
- 		private WorkspaceViewManager _workspaceViewManager;
-        private ShelfViewManager _shelfViewManager;
+        private ActionModelNode _menuModel;
+        private ActionModelNode _toolbarModel;
 
 		private DockingManager _dockingManager;
 
-		private bool _menusRebuilding = false;
-
-        public DesktopForm(IDesktopWindow desktopWindow)
+        public DesktopForm()
         {
-            _desktopWindow = desktopWindow;
-
 			if (SplashScreen.SplashForm != null)
 				SplashScreen.SplashForm.Owner = this;
 			
 			InitializeComponent();
-			this.Text = String.Format("{0} {1}", Application.ApplicationName, GetVersion());
 
-            // Subscribe to WorkspaceManager events so we know when workspaces are being
-            // added, removed and activated
-            _desktopWindow.WorkspaceManager.Workspaces.ItemAdded += new EventHandler<WorkspaceEventArgs>(OnWorkspaceAdded);
-            _desktopWindow.WorkspaceManager.Workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(OnWorkspaceRemoved);
-            _desktopWindow.WorkspaceManager.ActiveWorkspaceChanged += new EventHandler<WorkspaceActivationChangedEventArgs>(OnWorkspaceActivated);
-
-            _dockingManager = new DockingManager(this._toolStripContainer.ContentPanel, VisualStyle.IDE2005);
+            _dockingManager = new DockingManager(_toolStripContainer.ContentPanel, VisualStyle.IDE2005);
             _dockingManager.ActiveColor = SystemColors.Control;
             _dockingManager.InnerControl = _tabbedGroups;
 			_dockingManager.TabControlCreated += new DockingManager.TabControlCreatedHandler(OnDockingManagerTabControlCreated);
@@ -59,61 +47,67 @@ namespace ClearCanvas.Desktop.View.WinForms
 			{
 				InitializeTabControl(_tabbedGroups.ActiveLeaf.TabControl);
 			}
-			
-			_workspaceViewManager = new WorkspaceViewManager(this, _tabbedGroups);
-			_shelfViewManager = new ShelfViewManager(_desktopWindow.ShelfManager, _dockingManager);
-
-			RebuildMenusAndToolbars();
         }
 
-        private void UpdateTitleBar()
+        #region Public properties
+
+        public ActionModelNode MenuModel
         {
-            string title = string.Format("{0} {1}", Application.ApplicationName, GetVersion());
-            if (_desktopWindow.WorkspaceManager.ActiveWorkspace != null)
+            get { return _menuModel; }
+            set
             {
-                title = string.Format("{0} - {1}", title, _desktopWindow.WorkspaceManager.ActiveWorkspace.Title);
+                _menuModel = value;
+                BuildToolStrip(ToolStripBuilder.ToolStripKind.Menu, _mainMenu, _menuModel);
             }
-            this.Text = title;
         }
 
-		internal IDesktopWindow DesktopWindow
-		{
-			get { return _desktopWindow; }
-		}
-
-		protected override void OnLoad(EventArgs e)
-		{
-			LoadWindowSettings();
-
-			base.OnLoad(e);
-		}
-
-		protected override void OnClosing(CancelEventArgs e)
-		{
-            if (_desktopWindow.CanClose())
+        public ActionModelNode ToolbarModel
+        {
+            get { return _toolbarModel; }
+            set
             {
-                SaveWindowSettings();
+                _toolbarModel = value;
+                BuildToolStrip(ToolStripBuilder.ToolStripKind.Toolbar, _toolbar, _toolbarModel);
             }
-            else
-            {
-                // cancel the request
-                e.Cancel = true;
-            }
+        }
 
-			base.OnClosing(e);
-		}
+        public TabbedGroups TabbedGroups
+        {
+            get { return _tabbedGroups; }
+        }
 
-		private void LoadWindowSettings()
+        public DockingManager DockingManager
+        {
+            get { return _dockingManager; }
+        }
+
+        #endregion
+
+        #region Form event handlers
+
+        private void OnTabbedGroupsTabControlCreated(TabbedGroups tabbedGroups, Crownwood.DotNetMagic.Controls.TabControl tabControl)
+        {
+            InitializeTabControl(tabControl);
+        }
+
+        private void OnDockingManagerTabControlCreated(Crownwood.DotNetMagic.Controls.TabControl tabControl)
+        {
+            InitializeTabControl(tabControl);
+        }
+
+
+        #endregion
+
+        #region Window Settings
+
+        internal void LoadWindowSettings()
 		{
-#if !MONO
-			this.SuspendLayout();
-
 			Rectangle screenRectangle = Screen.PrimaryScreen.Bounds;
 
 			// If the bounds of the primary screen is different from what was saved
 			// either because there was a screen resolution change or because the app
 			// is being started for the first time, get Windows to properly position the window.
-			if (screenRectangle != DesktopView.Settings.PrimaryScreenRectangle)
+			if (screenRectangle != Settings.PrimaryScreenRectangle)
 			{
 				// Make the window size 75% of the primary screen
 				float scale = 0.75f;
@@ -122,45 +116,53 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 				// Center the window (for some reason, FormStartPosition.CenterScreen doesn't seem
 				// to work.)
-				int x = (screenRectangle.Width - this.Width) / 2;
-				int y = (screenRectangle.Height - this.Height) / 2;
-				this.Location = new Point(x, y);
+				//int x = (screenRectangle.Width - this.Width) / 2;
+				//int y = (screenRectangle.Height - this.Height) / 2;
+				//this.Location = new Point(x, y);
+                this.StartPosition = FormStartPosition.CenterScreen;
 			}
 			else
 			{
-				this.Location = DesktopView.Settings.WindowRectangle.Location;
-				this.Size = DesktopView.Settings.WindowRectangle.Size;
+				this.Location = Settings.WindowRectangle.Location;
+				this.Size = Settings.WindowRectangle.Size;
+                this.StartPosition = FormStartPosition.Manual;
 			}
 
 			// If window was last closed when minimized, don't open it up minimized,
 			// but rather just open it normally
-			if (DesktopView.Settings.WindowState == FormWindowState.Minimized)
+			if (Settings.WindowState == FormWindowState.Minimized)
 				this.WindowState = FormWindowState.Normal;
 			else
-				this.WindowState = DesktopView.Settings.WindowState;
-
-			this.ResumeLayout();
-#endif
+				this.WindowState = Settings.WindowState;
 		}
 
-		private void SaveWindowSettings()
+		internal void SaveWindowSettings()
 		{
-#if !MONO
 			// If the window state is normal, just save its location and size
 			if (this.WindowState == FormWindowState.Normal)
-				DesktopView.Settings.WindowRectangle = new Rectangle(this.Location, this.Size);
+				Settings.WindowRectangle = new Rectangle(this.Location, this.Size);
 			// But, if it's minimized or maximized, save the restore bounds instead
 			else
-				DesktopView.Settings.WindowRectangle = this.RestoreBounds;
+				Settings.WindowRectangle = this.RestoreBounds;
 
-			DesktopView.Settings.WindowState = this.WindowState;
-			DesktopView.Settings.PrimaryScreenRectangle = Screen.PrimaryScreen.Bounds;
-			DesktopView.Settings.Save();
-#endif
-		}
+			Settings.WindowState = this.WindowState;
+			Settings.PrimaryScreenRectangle = Screen.PrimaryScreen.Bounds;
+			Settings.Save();
+        }
 
+        #endregion
 
-		private void InitializeTabControl(Crownwood.DotNetMagic.Controls.TabControl tabControl)
+        #region Helper methods
+
+        internal DesktopViewSettings Settings
+        {
+            get
+            {
+                return DesktopViewSettings.Default;
+            }
+        }
+
+        private void InitializeTabControl(Crownwood.DotNetMagic.Controls.TabControl tabControl)
 		{
 			if (tabControl == null)
 				return;
@@ -168,83 +170,23 @@ namespace ClearCanvas.Desktop.View.WinForms
 			tabControl.TextTips = true;
 			tabControl.ToolTips = false;
 			tabControl.MaximumHeaderWidth = 256;
-		}
-
-		void OnTabbedGroupsTabControlCreated(TabbedGroups tabbedGroups, Crownwood.DotNetMagic.Controls.TabControl tabControl)
-		{
-			InitializeTabControl(tabControl);
-		}
-
-		void OnDockingManagerTabControlCreated(Crownwood.DotNetMagic.Controls.TabControl tabControl)
-		{
-			InitializeTabControl(tabControl);
-		}
-		
-		private void OnWorkspaceAdded(object sender, WorkspaceEventArgs e)
-        {
-			_workspaceViewManager.AddWorkpaceTab(e.Workspace);
-
-            // When we add a new workspace, we need to
-            _shelfViewManager.HideShelves();  
         }
 
-        // This is the event handler for when a workspace is removed from the
-        // WorkspaceManager.  Not to be confused with OnCloseWorkspaceTab
-        private void OnWorkspaceRemoved(object sender, WorkspaceEventArgs e)
+        private void BuildToolStrip(ToolStripBuilder.ToolStripKind kind, ToolStrip toolStrip, ActionModelNode actionModel)
         {
-			_dockingManager.Container.Focus();
-			_workspaceViewManager.RemoveWorkspaceTab(e.Workspace);
-        }
+            // avoid flicker
+            toolStrip.SuspendLayout();
+            // very important to clean up the existing ones first
+            ToolStripBuilder.Clear(toolStrip.Items);
 
-        private void OnWorkspaceActivated(object sender, WorkspaceActivationChangedEventArgs e)
-        {
-            _workspaceViewManager.ActivateWorkspace(e.ActivatedWorkspace);
-            UpdateTitleBar();
-        }
-
-        internal void RebuildMenusAndToolbars()
-        {
-			// When menus are being created, tools are are being instantiated
-			// and Tool.Initialize is called.  If in Tool.Initialize code is executed
-			// that results in this method being called again (such as creating a new
-			// workspace upon tool initialization), we can have an infinite mutual
-			// recursion situation.  The _menusRebuilding flag prevents that from
-			// happening.
-			if (_menusRebuilding)
-				return;
-
-			_menusRebuilding = true;
-
-			// Suspend the layouts so we avoid the flicker when we empty
-			// and refill the menus and toolbars
-			this._mainMenu.SuspendLayout();
-			this._toolbar.SuspendLayout();
-			// very important to clean up the existing ones first
-            ToolStripBuilder.Clear(this._mainMenu.Items);
-            ToolStripBuilder.Clear(this._toolbar.Items);
-
-            if (_desktopWindow.MenuModel != null)
+            if (actionModel != null)
             {
-                ToolStripBuilder.BuildMenu(this._mainMenu.Items, _desktopWindow.MenuModel.ChildNodes);
+                ToolStripBuilder.BuildToolStrip(kind, toolStrip.Items, actionModel.ChildNodes);
             }
 
-            if (_desktopWindow.ToolbarModel != null)
-            {
-                ToolStripBuilder.BuildToolbar(this._toolbar.Items, _desktopWindow.ToolbarModel.ChildNodes, ToolStripItemDisplayStyle.Image);
-            }
+            toolStrip.ResumeLayout();
+        }
 
-			this._toolbar.ResumeLayout();
-			this._mainMenu.ResumeLayout();
-
-			_menusRebuilding = false;
-		}
-
-		private string GetVersion()
-		{
-			int major = Assembly.GetExecutingAssembly().GetName().Version.Major;
-			int minor = Assembly.GetExecutingAssembly().GetName().Version.Minor;
-
-			return String.Format("{0}.{1}", major, minor);
-		}
+        #endregion
     }
 }

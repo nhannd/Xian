@@ -38,19 +38,37 @@ namespace ClearCanvas.Desktop
         /// <param name="title">The title of the workspace</param>
         /// <param name="exitCallback">The callback to invoke when the workspace is closed</param>
         /// <returns>The workspace that is hosting the component</returns>
-        public static IWorkspace LaunchAsWorkspace(
+        public static Workspace LaunchAsWorkspace(
             IDesktopWindow desktopWindow,
             IApplicationComponent component,
             string title,
             ApplicationComponentExitDelegate exitCallback)
         {
-			Platform.CheckForNullReference(desktopWindow, "desktopWindow");
-			Platform.CheckForNullReference(component, "component");
+            return LaunchAsWorkspace(desktopWindow, component, title, null, exitCallback);
+        }
 
-            IWorkspace workspace = new ApplicationComponentHostWorkspace(desktopWindow, component, title, exitCallback);
-            desktopWindow.WorkspaceManager.Workspaces.Add(workspace);
+        public static Workspace LaunchAsWorkspace(
+            IDesktopWindow desktopWindow,
+            IApplicationComponent component,
+            string title,
+            string name,
+            ApplicationComponentExitDelegate exitCallback)
+        {
+            Platform.CheckForNullReference(desktopWindow, "desktopWindow");
+            Platform.CheckForNullReference(component, "component");
+
+            WorkspaceCreationArgs args = new WorkspaceCreationArgs(component, title, name);
+            Workspace workspace = desktopWindow.Workspaces.AddNew(args);
+            if (exitCallback != null)
+            {
+                workspace.Closed += delegate(object sender, ClosedEventArgs e)
+                {
+                    exitCallback(component);
+                };
+            }
             return workspace;
         }
+
 
         /// <summary>
         /// Executes the specified application component in a new shelf.  The exit callback will be invoked
@@ -66,15 +84,36 @@ namespace ClearCanvas.Desktop
         /// <param name="displayHint">A hint as to how the shelf should initially be displayed</param>
         /// <param name="exitCallback">The callback to invoke when the shelf is closed</param>
         /// <returns>The shelf that is hosting the component</returns>
-        public static IShelf LaunchAsShelf(
+        public static Shelf LaunchAsShelf(
             IDesktopWindow desktopWindow,
             IApplicationComponent component,
             string title,
             ShelfDisplayHint displayHint,
             ApplicationComponentExitDelegate exitCallback)
         {
-            IShelf shelf = new ApplicationComponentHostShelf(desktopWindow, title, component, displayHint, exitCallback);
-            desktopWindow.ShelfManager.Shelves.Add(shelf);
+            return LaunchAsShelf(desktopWindow, component, title, null, displayHint, exitCallback);
+        }
+
+        public static Shelf LaunchAsShelf(
+            IDesktopWindow desktopWindow,
+            IApplicationComponent component,
+            string title,
+            string name,
+            ShelfDisplayHint displayHint,
+            ApplicationComponentExitDelegate exitCallback)
+        {
+            Platform.CheckForNullReference(desktopWindow, "desktopWindow");
+            Platform.CheckForNullReference(component, "component");
+
+            ShelfCreationArgs args = new ShelfCreationArgs(component, title, name, displayHint);
+            Shelf shelf = desktopWindow.Shelves.AddNew(args);
+            if (exitCallback != null)
+            {
+                shelf.Closed += delegate(object sender, ClosedEventArgs e)
+                {
+                    exitCallback(component);
+                };
+            }
             return shelf;
         }
 
@@ -95,8 +134,18 @@ namespace ClearCanvas.Desktop
             IApplicationComponent component,
             string title)
         {
-            ApplicationComponentHostDialog hostDialog = new ApplicationComponentHostDialog(title, component);
-            return hostDialog.RunModal(desktopWindow);
+            return LaunchAsDialog(desktopWindow, component, title, null);
+        }
+
+        public static ApplicationComponentExitCode LaunchAsDialog(
+            IDesktopWindow desktopWindow,
+            IApplicationComponent component,
+            string title,
+            string name)
+        {
+            DialogBoxCreationArgs args = new DialogBoxCreationArgs(component, title, name);
+            desktopWindow.ShowDialogBox(args);
+            return component.ExitCode;
         }
 
         private IApplicationComponentHost _host;
@@ -117,7 +166,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Constructor
         /// </summary>
-        public ApplicationComponent()
+        protected ApplicationComponent()
         {
             _exitCode = ApplicationComponentExitCode.Normal;    // default exit code
             
@@ -134,6 +183,16 @@ namespace ClearCanvas.Desktop
             {
                 return _host;
             }
+        }
+
+        /// <summary>
+        /// Convenience method for use by subclasses to set the exit code and ask the host to exit in a single call.
+        /// </summary>
+        /// <param name="exitCode"></param>
+        protected void Exit(ApplicationComponentExitCode exitCode)
+        {
+            this.ExitCode = exitCode;
+            this.Host.Exit();
         }
 
         /// <summary>
@@ -228,15 +287,20 @@ namespace ClearCanvas.Desktop
 
         /// <summary>
         /// Default implementation of <see cref="IApplicationComponent.CanExit"/>.
+        /// </summary>
+        /// <remarks>
         /// Checks the <see cref="Modified"/> property, and if true, presents a standard
         /// confirmation dialog to the user asking whether or not changes should be
         /// retained.
-        /// </summary>
-        public virtual bool CanExit()
+        /// </remarks>
+        public virtual bool CanExit(UserInteraction interactive)
         {
             AssertStarted();
 
-            if (this.Modified)
+            if (interactive == UserInteraction.NotAllowed)
+                return !_modified;
+
+            if (_modified)
             {
 				DialogBoxAction result = this.Host.ShowMessageBox(SR.MessageConfirmSaveChangesBeforeClosing, MessageBoxActions.YesNoCancel);
                 switch (result)
@@ -255,8 +319,8 @@ namespace ClearCanvas.Desktop
             {
                 // this is equivalent to cancelling
                 this.ExitCode = ApplicationComponentExitCode.Cancelled;
+                return true;
             }
-            return true;
         }
 
         /// <summary>

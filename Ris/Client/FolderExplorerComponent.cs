@@ -146,7 +146,7 @@ namespace ClearCanvas.Ris.Client
             binding.AcceptDropHandler = FolderAcceptDrop;
 
             _folderTree = new Tree<IFolder>(binding);
-            _folderTree.Items.ItemsChanged += new EventHandler<ItemEventArgs>(RootFoldersChangedEventHandler);
+            _folderTree.Items.ItemsChanged += new EventHandler<ItemChangedEventArgs>(RootFoldersChangedEventHandler);
             _folderExplorerToolExtensionPoint = extensionPoint;
         }
 
@@ -376,7 +376,7 @@ namespace ClearCanvas.Ris.Client
             return DragDropKind.None;
         }
 
-        private void RootFoldersChangedEventHandler(object sender, ItemEventArgs e)
+        private void RootFoldersChangedEventHandler(object sender, ItemChangedEventArgs e)
         {
             if (e.ChangeType == ItemChangeType.ItemAdded)
             {

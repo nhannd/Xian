@@ -36,7 +36,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 _owner = owner;
 	        }
 
-            public override IDesktopWindow DesktopWindow
+            public override DesktopWindow DesktopWindow
             {
                 get { return _owner.Host.DesktopWindow; }
             }

@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Client
 
         public bool Close()
         {
-            if (_workspace != null && _desktopWindow.WorkspaceManager.Workspaces.Remove(_workspace))
+            if (_workspace != null && _workspace.Close())
             {
                 _workspace = null;
                 return true;

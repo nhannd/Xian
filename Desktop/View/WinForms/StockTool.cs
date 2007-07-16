@@ -11,7 +11,7 @@ namespace ClearCanvas.Desktop.View.WinForms
     {
         public StockTool()
         {
-			if(Application.GuiToolkit != GuiToolkitID.WinForms)
+			if(Application.GuiToolkitID != GuiToolkitID.WinForms)
 			{
 				// this tool is not supported for other toolkits
 				// so it should not be created

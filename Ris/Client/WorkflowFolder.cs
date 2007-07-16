@@ -32,7 +32,7 @@ namespace ClearCanvas.Ris.Client
             _folderSystem = folderSystem;
             _folderName = folderName;
             _itemsTable = itemsTable;
-            _itemsTable.Items.ItemsChanged += delegate(object sender, ItemEventArgs args)
+            _itemsTable.Items.ItemsChanged += delegate(object sender, ItemChangedEventArgs args)
                 {
                     _itemCount = _itemsTable.Items.Count;
                     NotifyTextChanged();

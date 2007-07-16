@@ -10,6 +10,8 @@ namespace ClearCanvas.Common.Utilities
     /// </summary>
     public static class CollectionUtils
     {
+        public delegate M ReduceDelegate<T, M>(T item, M memo);
+        
         /// <summary>
         /// Selects all items in the target collection that match the specified predicate, returning
         /// them as a new collection of the specified type.
@@ -207,6 +209,25 @@ namespace ClearCanvas.Common.Utilities
                 result.Add(mapFunction(item));
             }
             return result;
+        }
+
+        /// <summary>
+        /// Reduces the specified collection to a singular value according to the specified reduce function.
+        /// </summary>
+        /// <typeparam name="TItem">The type of items in the target collection</typeparam>
+        /// <typeparam name="TMemo">The type of the singular value to reduce the collection to.</typeparam>
+        /// <param name="target">The collection to operate on</param>
+        /// <param name="initial">The initial value for the reduce operation</param>
+        /// <param name="reduceFunction">A delegate that performs the reduce operation</param>
+        /// <returns>The value of the reduce operation</returns>
+        public static TMemo Reduce<TItem, TMemo>(IEnumerable target, TMemo initial, ReduceDelegate<TItem, TMemo> reduceFunction)
+        {
+            TMemo memo = initial;
+            foreach (TItem item in target)
+            {
+                memo = reduceFunction(item, memo);
+            }
+            return memo;
         }
 
         /// <summary>

@@ -46,8 +46,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 base.Initialize();
 
-                this.Context.DesktopWindow.WorkspaceManager.Workspaces.ItemAdded += new EventHandler<WorkspaceEventArgs>(Workspaces_Changed);
-                this.Context.DesktopWindow.WorkspaceManager.Workspaces.ItemRemoved += new EventHandler<WorkspaceEventArgs>(Workspaces_Changed);
+                this.Context.DesktopWindow.Workspaces.ItemOpened += Workspaces_Changed;
+                this.Context.DesktopWindow.Workspaces.ItemClosed += Workspaces_Changed;
             }
 
             public void CloseWorkspace()
@@ -56,13 +56,16 @@ namespace ClearCanvas.Desktop.View.WinForms
                 IWorkspace activeWorkspace = window.ActiveWorkspace;
                 if (activeWorkspace != null)
                 {
-                    window.WorkspaceManager.Workspaces.Remove(activeWorkspace);
+                    activeWorkspace.Close();
                 }
             }
 
             public bool Enabled
             {
-                get { return this.Context.DesktopWindow.WorkspaceManager.Workspaces.Count > 0; }
+                get
+                {
+                    return this.Context.DesktopWindow.Workspaces.Count > 0;
+                }
             }
 
             public event EventHandler EnabledChanged
@@ -71,7 +74,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 remove { _enabledChanged -= value; }
             }
 
-            private void Workspaces_Changed(object sender, WorkspaceEventArgs e)
+            private void Workspaces_Changed(object sender, ItemEventArgs<Workspace> e)
             {
                 EventsHelper.Fire(_enabledChanged, this, new EventArgs());
             }

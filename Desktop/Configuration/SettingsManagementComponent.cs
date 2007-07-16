@@ -226,10 +226,18 @@ namespace ClearCanvas.Desktop.Configuration
             base.Stop();
         }
 
-        public override bool CanExit()
+        public override bool CanExit(UserInteraction interactive)
         {
-            SaveModifiedSettings(true);
-            return true;
+            if (interactive == UserInteraction.Allowed)
+            {
+                SaveModifiedSettings(true);
+                return true;
+            }
+            else
+            {
+                // return false if anything modified
+                return _selectedSettingsGroup == null || !IsAnyPropertyDirty();
+            }
         }
 
         #region Presentation Model
