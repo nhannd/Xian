@@ -520,7 +520,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					ValidateStudy(setImportInformation.Study);
 					ValidateSeries(setImportInformation.Series);
-					ValidateImage(setImportInformation.SopInstance);
+					ValidateSopInstance(setImportInformation.SopInstance);
 
 					setImportInformation.StudyInstanceUid = setImportInformation.Study.StudyInstanceUid;
 					setImportInformation.SeriesInstanceUid = setImportInformation.Series.SeriesInstanceUid;
@@ -561,7 +561,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				DicomValidator.ValidateSeriesInstanceUID(series.SeriesInstanceUid);
 			}
 
-			private void ValidateImage(SopInstance sopInstance)
+			private void ValidateSopInstance(SopInstance sopInstance)
 			{
 				Platform.CheckForNullReference(sopInstance, "sopInstance");
 				DicomValidator.ValidateSOPInstanceUID(sopInstance.SopInstanceUid);
