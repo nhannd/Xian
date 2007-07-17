@@ -9,8 +9,8 @@ using ClearCanvas.ImageServer.Dicom.IO;
 
 namespace ClearCanvas.ImageServer.Dicom
 {
-    #region AttributeMultiValueText
-    public abstract class AttributeMultiValueText : AbstractAttribute
+    #region DicomAttributeMultiValueText
+    public abstract class DicomAttributeMultiValueText : DicomAttribute
     {
         #region Private Members
 
@@ -20,19 +20,19 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Constructors
 
-        internal AttributeMultiValueText(uint tag) 
+        internal DicomAttributeMultiValueText(uint tag) 
             : base(tag)
         {
             
         }
 
-        internal AttributeMultiValueText(DicomTag tag)
+        internal DicomAttributeMultiValueText(DicomTag tag)
             : base(tag)
         {
             
         }
 
-        internal AttributeMultiValueText(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeMultiValueText(DicomTag tag, ByteBuffer item)
             : base(tag)
         {
             String valueArray = item.GetString();
@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Dicom
             StreamLength = (uint)valueArray.Length;
         }
 
-        internal AttributeMultiValueText(AttributeMultiValueText attrib)
+        internal DicomAttributeMultiValueText(DicomAttributeMultiValueText attrib)
             : base(attrib)
         {
             String[] values = (String[])attrib.Values;
@@ -84,19 +84,19 @@ namespace ClearCanvas.ImageServer.Dicom
                 return "";
 
             // could use: return string.Join("\\", _values);
-            String value = null;
+            StringBuilder value = null;
 
             foreach (String val in _values)
             {
                 if (value == null)
-                    value = val;
+                    value = new StringBuilder(val);
                 else 
-                    value += "\\" + val;
+                    value.AppendFormat("\\{0}", val);
             }
 
             if (value == null) return "";
              
-            return value;
+            return value.ToString();
         }
 
         public override bool Equals(object obj)
@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageServer.Dicom
             //Check for null and compare run-time types.
             if (obj == null || GetType() != obj.GetType()) return false;
 
-            AttributeMultiValueText a = (AttributeMultiValueText)obj;
+            DicomAttributeMultiValueText a = (DicomAttributeMultiValueText)obj;
 
             // check if both values are null
             if (this.Count == 1 && this.StreamLength == 0 && a.Count == 1 && a.StreamLength == 0)
@@ -133,6 +133,17 @@ namespace ClearCanvas.ImageServer.Dicom
             }
         }
 
+        public override bool IsEmpty
+        {
+            get
+            {
+                if ((Count == 0) && (_values == null))
+                    return true;
+                return false;
+            }
+        }
+
+
         public override Object Values
         {
             get { return _values; }
@@ -155,6 +166,18 @@ namespace ClearCanvas.ImageServer.Dicom
             }
         }
 
+        public override bool TryGetString(int i, out String value)
+        {
+            if (_values == null || _values.Length <= i)
+            {
+                value = "";
+                return false;
+            }
+
+            value = _values[i];
+            return true;
+        }
+
         public override void SetStringValue(String stringValue)
         {
             if (stringValue == null || stringValue.Length == 0)
@@ -172,8 +195,8 @@ namespace ClearCanvas.ImageServer.Dicom
             StreamLength = (uint)stringValue.Length;
         }
 
-        public abstract override AbstractAttribute Copy();
-        internal abstract override AbstractAttribute Copy(bool copyBinary);
+        public abstract override DicomAttribute Copy();
+        internal abstract override DicomAttribute Copy(bool copyBinary);
 
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax)
         {
@@ -189,18 +212,18 @@ namespace ClearCanvas.ImageServer.Dicom
     }
     #endregion
 
-    #region AttributeAE
-    public class AttributeAE : AttributeMultiValueText
+    #region DicomAttributeAE
+    public class DicomAttributeAE : DicomAttributeMultiValueText
     {
         #region Constructors
 
-        public AttributeAE(uint tag)
+        public DicomAttributeAE(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeAE(DicomTag tag)
+        public DicomAttributeAE(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.AEvr)
@@ -208,12 +231,12 @@ namespace ClearCanvas.ImageServer.Dicom
                 throw new DicomException(SR.InvalidVR);
         }
 
-        internal AttributeAE(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeAE(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeAE(AttributeAE attrib)
+        internal DicomAttributeAE(DicomAttributeAE attrib)
             : base(attrib)
         {
         }
@@ -222,13 +245,13 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Abstract Method Implementation
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeAE(this);
+            return new DicomAttributeAE(this);
         }
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeAE(this);
+            return new DicomAttributeAE(this);
         }
 
         #endregion
@@ -236,18 +259,18 @@ namespace ClearCanvas.ImageServer.Dicom
     }
     #endregion
 
-    #region AttributeAS
-    public class AttributeAS : AttributeMultiValueText
+    #region DicomAttributeAS
+    public class DicomAttributeAS : DicomAttributeMultiValueText
     {
         #region Constructors
 
-        public AttributeAS(uint tag)
+        public DicomAttributeAS(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeAS(DicomTag tag)
+        public DicomAttributeAS(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.ASvr)
@@ -255,43 +278,43 @@ namespace ClearCanvas.ImageServer.Dicom
                 throw new DicomException(SR.InvalidVR);
         }
 
-        internal AttributeAS(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeAS(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeAS(AttributeAS attrib)
+        internal DicomAttributeAS(DicomAttributeAS attrib)
             : base(attrib)
         {
         }
 
         #endregion
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeAS(this);
+            return new DicomAttributeAS(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeAS(this);
+            return new DicomAttributeAS(this);
         }
 
     }
     #endregion
 
-    #region AttributeCS
-    public class AttributeCS : AttributeMultiValueText
+    #region DicomAttributeCS
+    public class DicomAttributeCS : DicomAttributeMultiValueText
     {
         #region Constructors
 
-        public AttributeCS(uint tag)
+        public DicomAttributeCS(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeCS(DicomTag tag)
+        public DicomAttributeCS(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.CSvr)
@@ -299,43 +322,43 @@ namespace ClearCanvas.ImageServer.Dicom
                 throw new DicomException(SR.InvalidVR);
         }
 
-        internal AttributeCS(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeCS(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
 
-        internal AttributeCS(AttributeCS attrib)
+        internal DicomAttributeCS(DicomAttributeCS attrib)
             : base(attrib)
         {
         }
 
         #endregion
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeCS(this);
+            return new DicomAttributeCS(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeCS(this);
+            return new DicomAttributeCS(this);
         }
 
     }
     #endregion
 
-    #region AttributeDA
-    public class AttributeDA : AttributeMultiValueText
+    #region DicomAttributeDA
+    public class DicomAttributeDA : DicomAttributeMultiValueText
     {
         #region Constructors
 
-        public AttributeDA(uint tag)
+        public DicomAttributeDA(uint tag)
             : base(tag)
         {
         }
 
-        public AttributeDA(DicomTag tag)
+        public DicomAttributeDA(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.DAvr)
@@ -343,50 +366,56 @@ namespace ClearCanvas.ImageServer.Dicom
                 throw new DicomException(SR.InvalidVR);
         }
 
-        internal AttributeDA(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeDA(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeDA(AttributeDA attrib)
+        internal DicomAttributeDA(DicomAttributeDA attrib)
             : base(attrib)
         {
         }
 
         #endregion
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeDA(this);
+            return new DicomAttributeDA(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeDA(this);
+            return new DicomAttributeDA(this);
         }
-        public override DateTime GetDateTime(int i)
+        public override bool TryGetDateTime(int i, out DateTime value)
         {
             // Dicom recommends we still support the old date format (#2) although it is deprecated.
             // See PS 3.5, table 6.2-1 - 'Dicom Value Representations' under VR DA.
-            return DateTime.ParseExact(_values[i], new string[] { "yyyyMMdd", "yyyy.MM.dd" }, CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault);
+            if (_values == null || _values.Length <= i)
+            {
+                value = new DateTime();
+                return false;
+            }
+
+            return DateTime.TryParseExact(_values[i], new string[] { "yyyyMMdd", "yyyy.MM.dd" }, CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault, out value);
         }
     }
     #endregion
 
-    #region AttributeDS
-    public class AttributeDS : AttributeMultiValueText
+    #region DicomAttributeDS
+    public class DicomAttributeDS : DicomAttributeMultiValueText
     {
         protected NumberStyles _numberStyle = NumberStyles.Any;
 
         #region Constructors
 
-        public AttributeDS(uint tag)
+        public DicomAttributeDS(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeDS(DicomTag tag)
+        public DicomAttributeDS(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.DSvr)
@@ -394,12 +423,12 @@ namespace ClearCanvas.ImageServer.Dicom
                 throw new DicomException(SR.InvalidVR);
         }
 
-        internal AttributeDS(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeDS(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeDS(AttributeDS attrib)
+        internal DicomAttributeDS(DicomAttributeDS attrib)
             : base(attrib)
         {
         }
@@ -414,41 +443,53 @@ namespace ClearCanvas.ImageServer.Dicom
         }
         #endregion
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeDS(this);
+            return new DicomAttributeDS(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeDS(this);
+            return new DicomAttributeDS(this);
         }
 
-        public override float GetFloat32(int i)
+        public override bool TryGetFloat32(int i, out float value)
         {
-            return float.Parse(_values[i], NumberStyle);
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0.0f;
+                return false;
+            }
+
+            return float.TryParse(_values[i], out value);
         }
 
-        public override double GetFloat64(int i)
+        public override bool TryGetFloat64(int i, out double value)
         {
-            return double.Parse(_values[i], NumberStyle);
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0.0;
+                return false;
+            }
+
+            return double.TryParse(_values[i], out value);
         }
 
     }
     #endregion
 
-    #region AttributeDT
-    public class AttributeDT : AttributeMultiValueText
+    #region DicomAttributeDT
+    public class DicomAttributeDT : DicomAttributeMultiValueText
     {
         #region Constructors
 
-        public AttributeDT(uint tag)
+        public DicomAttributeDT(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeDT(DicomTag tag)
+        public DicomAttributeDT(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.DTvr)
@@ -456,49 +497,55 @@ namespace ClearCanvas.ImageServer.Dicom
                 throw new DicomException(SR.InvalidVR);
         }
 
-        internal AttributeDT(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeDT(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeDT(AttributeDT attrib)
+        internal DicomAttributeDT(DicomAttributeDT attrib)
             : base(attrib)
         {
         }
 
         #endregion
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeDT(this);
+            return new DicomAttributeDT(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeDT(this);
+            return new DicomAttributeDT(this);
         }
 
-        public override DateTime GetDateTime(int i)
+        public override bool TryGetDateTime(int i, out DateTime value)
         {
-            return DateTime.ParseExact(_values[i], "yyyyMMddHHmmss.FFFFFF&ZZZZ", CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault);
+            if (_values == null || _values.Length <= i)
+            {
+                value = new DateTime();
+                return false;
+            }
+
+            return DateTime.TryParseExact(_values[i],"yyyyMMddHHmmss.FFFFFF&ZZZZ", CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault, out value);
         }
     }
     #endregion
 
-    #region AttributeIS
-    public class AttributeIS : AttributeMultiValueText
+    #region DicomAttributeIS
+    public class DicomAttributeIS : DicomAttributeMultiValueText
     {
         protected NumberStyles _numberStyle = NumberStyles.Any;
 
         #region Constructors
 
-        public AttributeIS(uint tag)
+        public DicomAttributeIS(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeIS(DicomTag tag)
+        public DicomAttributeIS(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.ISvr)
@@ -507,12 +554,12 @@ namespace ClearCanvas.ImageServer.Dicom
 
         }
 
-        internal AttributeIS(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeIS(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeIS(AttributeIS attrib)
+        internal DicomAttributeIS(DicomAttributeIS attrib)
             : base(attrib)
         {
         }
@@ -527,64 +574,93 @@ namespace ClearCanvas.ImageServer.Dicom
         }
         #endregion
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeIS(this);
+            return new DicomAttributeIS(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeIS(this);
+            return new DicomAttributeIS(this);
         }
 
-        public override float GetFloat32(int i)
+        public override bool TryGetFloat32(int i, out float value)
         {
-            return float.Parse(_values[i], NumberStyle);
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0.0f;
+                return false;
+            }
+
+            return float.TryParse(_values[i], out value);
         }
 
-        public override double GetFloat64(int i)
+        public override bool TryGetFloat64(int i, out double value)
         {
-            return double.Parse(_values[i], NumberStyle);
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0.0f;
+                return false;
+            }
+
+            return double.TryParse(_values[i], out value);
         }
 
-        public override ushort GetUInt16(int i)
+        public override bool TryGetUInt16(int i, out ushort value)
         {
-            return ushort.Parse(_values[i], NumberStyle);
-        }
-        public override ushort GetUInt16(int i, ushort defaultVal)
-        {
-            if (_values.Length < i + 1)
-                return defaultVal;
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0;
+                return false;
+            }
 
-            return ushort.Parse(_values[i], NumberStyle);
+            return ushort.TryParse(_values[i],NumberStyle, CultureInfo.CurrentCulture, out value);
         }
-        public override short GetInt16(int i)
+        public override bool TryGetInt16(int i, out short value)
         {
-            return short.Parse(_values[i], NumberStyle);
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0;
+                return false;
+            }
+
+            return short.TryParse(_values[i], NumberStyle, CultureInfo.CurrentCulture, out value);
         }
-        public override uint GetUInt32(int i)
+        public override bool TryGetUInt32(int i, out uint value)
         {
-            return uint.Parse(_values[i], NumberStyle);
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0;
+                return false;
+            }
+
+            return uint.TryParse(_values[i], NumberStyle, CultureInfo.CurrentCulture, out value);
         }
-        public override int GetInt32(int i)
+        public override bool TryGetInt32(int i, out int value)
         {
-            return int.Parse(_values[i], NumberStyle);
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0;
+                return false;
+            }
+
+            return int.TryParse(_values[i], NumberStyle, CultureInfo.CurrentCulture, out value);
         }
     }
     #endregion
 
-    #region AttributeLO
-        public class AttributeLO : AttributeMultiValueText
+    #region DicomAttributeLO
+        public class DicomAttributeLO : DicomAttributeMultiValueText
     {
         #region Constructors
 
-        public AttributeLO(uint tag) 
+        public DicomAttributeLO(uint tag) 
             : base(tag)
         {
             
         }
 
-        public AttributeLO(DicomTag tag)
+        public DicomAttributeLO(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.LOvr)
@@ -593,12 +669,12 @@ namespace ClearCanvas.ImageServer.Dicom
 
         }
 
-        internal AttributeLO(AttributeLO attrib)
+        internal DicomAttributeLO(DicomAttributeLO attrib)
             : base(attrib)
         {
         }
 
-        internal AttributeLO(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeLO(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
@@ -606,31 +682,31 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #endregion 
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeLO(this);
+            return new DicomAttributeLO(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeLO(this);
+            return new DicomAttributeLO(this);
         }
 
     }
     #endregion
 
-    #region AttributePN
-    public class AttributePN : AttributeMultiValueText
+    #region DicomAttributePN
+    public class DicomAttributePN : DicomAttributeMultiValueText
     {
         #region Constructors
 
-        public AttributePN(uint tag)
+        public DicomAttributePN(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributePN(DicomTag tag)
+        public DicomAttributePN(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.PNvr)
@@ -639,44 +715,44 @@ namespace ClearCanvas.ImageServer.Dicom
 
         }
 
-        internal AttributePN(DicomTag tag, ByteBuffer item)
+        internal DicomAttributePN(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
 
-        internal AttributePN(AttributePN attrib)
+        internal DicomAttributePN(DicomAttributePN attrib)
             : base(attrib)
         {
         }
 
         #endregion
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributePN(this);
+            return new DicomAttributePN(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributePN(this);
+            return new DicomAttributePN(this);
         }
 
     }
     #endregion
 
-    #region AttributeSH
-    public class AttributeSH : AttributeMultiValueText
+    #region DicomAttributeSH
+    public class DicomAttributeSH : DicomAttributeMultiValueText
     {
         #region Constructors
 
-        public AttributeSH(uint tag)
+        public DicomAttributeSH(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeSH(DicomTag tag)
+        public DicomAttributeSH(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.SHvr)
@@ -685,44 +761,44 @@ namespace ClearCanvas.ImageServer.Dicom
 
         }
 
-        internal AttributeSH(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeSH(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
 
-        internal AttributeSH(AttributeSH attrib)
+        internal DicomAttributeSH(DicomAttributeSH attrib)
             : base(attrib)
         {
         }
 
         #endregion
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeSH(this);
+            return new DicomAttributeSH(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeSH(this);
+            return new DicomAttributeSH(this);
         }
 
     }
     #endregion
 
-    #region AttributeTM
-    public class AttributeTM : AttributeMultiValueText
+    #region DicomAttributeTM
+    public class DicomAttributeTM : DicomAttributeMultiValueText
     {
         #region Constructors
 
-        public AttributeTM(uint tag)
+        public DicomAttributeTM(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeTM(DicomTag tag)
+        public DicomAttributeTM(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.TMvr)
@@ -731,48 +807,55 @@ namespace ClearCanvas.ImageServer.Dicom
 
         }
 
-        internal AttributeTM(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeTM(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeTM(AttributeTM attrib)
+        internal DicomAttributeTM(DicomAttributeTM attrib)
             : base(attrib)
         {
         }
 
         #endregion
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeTM(this);
+            return new DicomAttributeTM(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeTM(this);
+            return new DicomAttributeTM(this);
         }
 
-        public override DateTime GetDateTime(int i)
+        public override bool TryGetDateTime(int i, out DateTime value)
         {
-            return DateTime.ParseExact(_values[i], "HHmmSS.FFFFFF", CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault);
+            if (_values == null || _values.Length <= i)
+            {
+                value = new DateTime();
+                return false;
+            }
+
+            return DateTime.TryParseExact(_values[i], "HHmmSS.FFFFFF", CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault, out value);
+
         }
 
     }
     #endregion
 
-    #region AttributeUI
-    public class AttributeUI : AttributeMultiValueText
+    #region DicomAttributeUI
+    public class DicomAttributeUI : DicomAttributeMultiValueText
     {
         #region Constructors
 
-        public AttributeUI(uint tag)
+        public DicomAttributeUI(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeUI(DicomTag tag)
+        public DicomAttributeUI(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.UIvr)
@@ -781,40 +864,47 @@ namespace ClearCanvas.ImageServer.Dicom
 
         }
 
-        internal AttributeUI(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeUI(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeUI(AttributeUI attrib)
+        internal DicomAttributeUI(DicomAttributeUI attrib)
             : base(attrib)
         {
         }
 
         #endregion
 
-        public override DicomUid GetUid(int i)
+        public override bool TryGetUid(int i, out DicomUid value)
         {
             SopClass sop = SopClass.GetSopClass(base._values[i]);
             if (sop != null)
-                return new DicomUid(sop.Uid, sop.Name, UidType.SOPClass);
+            {
+                value = sop.DicomUid;
+                return true;
+            }
 
             TransferSyntax ts = TransferSyntax.GetTransferSyntax(base._values[i]);
             if (ts != null)
-                return new DicomUid(ts.DicomUid.UID, ts.Name, UidType.TransferSyntax);
+            {
+                value = ts.DicomUid;
+                return true;
+            }
 
-            return new DicomUid(base._values[i], base._values[i], UidType.Unknown);
+            value = new DicomUid(base._values[i], base._values[i], UidType.Unknown);
+            return true;
         }
 
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeUI(this);
+            return new DicomAttributeUI(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeUI(this);
+            return new DicomAttributeUI(this);
         }
 
 

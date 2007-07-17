@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageServer.Streaming
     {
         #region Private members
 
-        private AttributeCollection _collection = null;
+        private DicomAttributeCollection _collection = null;
         private String _sopInstanceUid = null;
         #endregion
 
@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageServer.Streaming
             }
         }
 
-        public AttributeCollection Collection
+        public DicomAttributeCollection Collection
         {
             get { return _collection; }
         }
@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageServer.Streaming
 
         #region Constructors
 
-        public InstanceStream(AttributeCollection collection)
+        public InstanceStream(DicomAttributeCollection collection)
         {
             
             _sopInstanceUid = collection[DicomTags.SOPInstanceUID];
@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Streaming
         {
         }
 
-        private void ParseCollection(AttributeCollection theCollection, XmlNode theNode)
+        private void ParseCollection(DicomAttributeCollection theCollection, XmlNode theNode)
         {
             XmlNode attributeNode = theNode.FirstChild;
             while (attributeNode != null)
@@ -65,11 +65,11 @@ namespace ClearCanvas.ImageServer.Streaming
                     if (theTag == null)
                         theTag = new DicomTag(tagValue,"Unknown tag",DicomVr.GetVR(vr),false,1,uint.MaxValue,false);
 
-                    AbstractAttribute attribute = theCollection[theTag];
+                    DicomAttribute attribute = theCollection[theTag];
 
-                    if (attribute is AttributeSQ)
+                    if (attribute is DicomAttributeSQ)
                     {
-                        AttributeSQ attribSQ = (AttributeSQ)attribute;
+                        DicomAttributeSQ attribSQ = (DicomAttributeSQ)attribute;
 
                         if (attributeNode.HasChildNodes)
                         {
@@ -97,10 +97,10 @@ namespace ClearCanvas.ImageServer.Streaming
             }
         }
 
-        internal InstanceStream(XmlNode instanceNode,AttributeCollection baseCollection)
+        internal InstanceStream(XmlNode instanceNode,DicomAttributeCollection baseCollection)
         {
             if (baseCollection == null)
-                _collection = new AttributeCollection();
+                _collection = new DicomAttributeCollection();
             else
                 _collection = baseCollection.Copy();
 
@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageServer.Streaming
 
 		#region Internal Methods
 
-        private XmlElement GetMomentoForCollection(XmlDocument theDocument, AttributeCollection baseCollection, AttributeCollection collection)
+        private XmlElement GetMomentoForCollection(XmlDocument theDocument, DicomAttributeCollection baseCollection, DicomAttributeCollection collection)
 		{
 			XmlElement instance = null;
 
@@ -136,16 +136,16 @@ namespace ClearCanvas.ImageServer.Streaming
 				instance.Attributes.Append(sopInstanceUid);
 			}
 
-			foreach (Dicom.AbstractAttribute attribute in collection)
+			foreach (Dicom.DicomAttribute attribute in collection)
 			{
                 if (baseCollection!=null)
                 {
-                    AbstractAttribute attribBase = baseCollection[attribute.Tag];
+                    DicomAttribute attribBase = baseCollection[attribute.Tag];
                     if (attribBase!=null)
                     {
-                        if (!(attribute is AttributeOB)
-                         && !(attribute is AttributeOW)
-                         && !(attribute is AttributeOF))
+                        if (!(attribute is DicomAttributeOB)
+                         && !(attribute is DicomAttributeOW)
+                         && !(attribute is DicomAttributeOF))
                         {
                             if (attribute.Equals(attribBase))
                                 continue; // SKip the attribute, its the same as in the base!
@@ -164,7 +164,7 @@ namespace ClearCanvas.ImageServer.Streaming
 				instanceElement.Attributes.Append(tag);
 				instanceElement.Attributes.Append(vr);
 
-				if (attribute is AttributeSQ)
+				if (attribute is DicomAttributeSQ)
 				{
 					DicomSequenceItem[] items = (DicomSequenceItem[])attribute.Values;
 					foreach (DicomSequenceItem item in items)

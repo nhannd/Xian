@@ -85,23 +85,23 @@ namespace ClearCanvas.ImageServer.Streaming
             if (false == iterator.MoveNext())
                 return;
 
-            AttributeCollection collect1 = iterator.Current.Collection;
+            DicomAttributeCollection collect1 = iterator.Current.Collection;
 
             if (false == iterator.MoveNext())
                 return;
 
-            AttributeCollection collect2 = iterator.Current.Collection;
+            DicomAttributeCollection collect2 = iterator.Current.Collection;
 
-            _seriesTagsStream = new InstanceStream(new AttributeCollection());
+            _seriesTagsStream = new InstanceStream(new DicomAttributeCollection());
 
-            foreach (AbstractAttribute attrib1 in collect1)
+            foreach (DicomAttribute attrib1 in collect1)
             {
-                if ((attrib1 is AttributeOB)
-                    || (attrib1 is AttributeOW)
-                    || (attrib1 is AttributeOF))
+                if ((attrib1 is DicomAttributeOB)
+                    || (attrib1 is DicomAttributeOW)
+                    || (attrib1 is DicomAttributeOF))
                     continue;
 
-                AbstractAttribute attrib2 = collect2[attrib1.Tag];
+                DicomAttribute attrib2 = collect2[attrib1.Tag];
                 if (attrib2 == null)
                     continue;
 

@@ -25,9 +25,9 @@ namespace ClearCanvas.ImageServer.Dicom.IO
         {
             public long _pos;
             public long _len;
-            public AttributeCollection _parent;
+            public DicomAttributeCollection _parent;
             public uint _tag;
-            public AttributeCollection _current;
+            public DicomAttributeCollection _current;
 
             public long _curpos;
             public long _curlen;
@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
         private TransferSyntax _syntax = null;
         private Endian _endian;
 
-        private AttributeCollection _dataset;
+        private DicomAttributeCollection _dataset;
 
         private uint _privateCreatorCard = 0xffffffff;
         private string _privateCreatorId = String.Empty;
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
 
         private Stack<SequenceRecord> _sqrs = new Stack<SequenceRecord>();
 
-        private AttributeOB _fragment = null;
+        private DicomAttributeOB _fragment = null;
         #endregion
 
         #region Public Constructors
@@ -83,7 +83,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
             }
         }
 
-        public AttributeCollection Dataset
+        public DicomAttributeCollection Dataset
         {
             get { return _dataset; }
             set
@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                                 {
                                     _privateCreatorCard = tagValue & 0xffffff00;
                                     DicomTag pct = DicomTag.GetPrivateCreatorTag(g, e);
-                                    AttributeCollection ds = _dataset;
+                                    DicomAttributeCollection ds = _dataset;
                                     if (_sqrs.Count > 0)
                                     {
                                         ds = _sqrs.Peek()._current;
@@ -483,7 +483,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                             }
                             else
                             {
-                                _fragment = new AttributeOB(_tag);
+                                _fragment = new DicomAttributeOB(_tag);
                             }
                         }
                         else
@@ -509,7 +509,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                                     bb.Endian = _endian;
                                     bb.CopyFrom(_stream, (int)_len);
 
-                                    AbstractAttribute elem = AbstractAttribute.NewAttribute(_tag, bb);
+                                    DicomAttribute elem = DicomAttribute.NewAttribute(_tag, bb);
                                     
                                     _remain -= _len;
                                     _read += _len;
@@ -517,7 +517,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                                     if (_sqrs.Count > 0)
                                     {
                                         SequenceRecord rec = _sqrs.Peek();
-                                        AttributeCollection ds = rec._current;
+                                        DicomAttributeCollection ds = rec._current;
 
                                         if (_tag.Element == 0x0000)
                                         {

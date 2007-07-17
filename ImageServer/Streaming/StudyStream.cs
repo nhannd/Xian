@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageServer.Streaming
         public bool AddFile(DicomFile theFile)
         {
             // Create a copy of the collection without pixel data
-            AttributeCollection data = theFile.DataSet.Copy(false);
+            DicomAttributeCollection data = theFile.DataSet.Copy(false);
 
             String studyInstanceUid = data[DicomTags.StudyInstanceUID];
 

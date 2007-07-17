@@ -22,7 +22,6 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 		private ManualResetEvent _closedEvent;
 		private bool _closedOnError;
         IDicomClientHandler _handler;
-        AssociationParameters _assoc;
 		#endregion
 
 		#region Public Constructors
@@ -39,24 +38,6 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 		#endregion
 
 		#region Public Properties
-		public string Host {
-			get { return _remoteEndPoint.Address.ToString(); }
-		}
-
-		public int Port {
-			get { return _remoteEndPoint.Port; }
-		}
-
-		public string CallingAE {
-			get { return _assoc.CallingAE; }
-			//set { _callingAe = value; }
-		}
-
-		public string CalledAE {
-			get { return _assoc.CalledAE; }
-			//set { _calledAe = value; }
-		}
-
 		public int Timeout {
 			get { return _timeout; }
 			set { _timeout = value; }
@@ -185,7 +166,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 		protected override void OnNetworkError(Exception e) {
             try
             {
-                _handler.OnNetworkError(this, e);
+                _handler.OnNetworkError(this, this._assoc as ClientAssociationParameters, e);
             }
             catch (Exception) { }
 
@@ -196,7 +177,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 		protected override void OnDimseTimeout() {
             try
             {
-                _handler.OnDimseTimeout(this);
+                _handler.OnDimseTimeout(this, this._assoc as ClientAssociationParameters);
             }
             catch (Exception e)
             {
@@ -208,7 +189,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         {
             try
             {
-                _handler.OnReceiveAssociateAccept(this, association);
+                _handler.OnReceiveAssociateAccept(this, association as ClientAssociationParameters);
             }
             catch (Exception e)
             {
@@ -218,8 +199,8 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         }
 
 		protected override void OnReceiveAssociateReject(DicomRejectResult result, DicomRejectSource source, DicomRejectReason reason) {
-            
-            _handler.OnReceiveAssociateReject(this,result, source, reason);
+
+            _handler.OnReceiveAssociateReject(this, this._assoc as ClientAssociationParameters, result, source, reason);
 
             _closedOnError = true;
 			Close();
@@ -228,7 +209,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 		protected override void OnReceiveAbort(DicomAbortSource source, DicomAbortReason reason) {
             try
             {
-                _handler.OnReceiveAbort(this, source, reason);
+                _handler.OnReceiveAbort(this, this._assoc as ClientAssociationParameters, source, reason);
             }
             catch (Exception e)
             {
@@ -241,7 +222,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 		protected override void OnReceiveReleaseResponse() {
             try
             {
-                _handler.OnReceiveReleaseResponse(this);
+                _handler.OnReceiveReleaseResponse(this, this._assoc as ClientAssociationParameters);
             }
             catch (Exception e)
             {
@@ -256,7 +237,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         {
             try
             {
-                _handler.OnReceiveRequestMessage(this, pcid, msg);
+                _handler.OnReceiveRequestMessage(this, this._assoc as ClientAssociationParameters, pcid, msg);
             }
             catch (Exception e)
             {
@@ -269,7 +250,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
             try
             {
-                _handler.OnReceiveResponseMessage(this, pcid, msg);
+                _handler.OnReceiveResponseMessage(this, this._assoc as ClientAssociationParameters, pcid, msg);
             }
             catch (Exception e)
             {

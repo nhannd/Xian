@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 {
     public abstract class AbstractTest
     {
-        public void SetupMR(AttributeCollection theSet)
+        public void SetupMR(DicomAttributeCollection theSet)
         {
             theSet[DicomTags.SpecificCharacterSet].SetStringValue("ISO_IR 100");
             theSet[DicomTags.ImageType].SetStringValue("ORIGINAL\\PRIMARY\\OTHER\\M\\FFE");
@@ -85,7 +85,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
             uint length = 256 * 256 * 2;
 
-            AttributeOW pixels = new AttributeOW(DicomTags.PixelData); ;
+            DicomAttributeOW pixels = new DicomAttributeOW(DicomTags.PixelData); ;
 
             byte[] pixelArray = new byte[length];
 

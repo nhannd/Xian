@@ -874,5 +874,5 @@ namespace ClearCanvas.ImageServer.Dicom
         public static DicomUid UniversalCoordinatedTime = new DicomUid("1.2.840.10008.15.1.1", "Universal Coordinated Time", UidType.SynchronizationFrameOfReference);
         #endregion
     }
-
+    
 }

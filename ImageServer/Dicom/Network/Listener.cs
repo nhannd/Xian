@@ -44,8 +44,14 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                 info.StartDelegate = acceptor;
                 info.Parameters = parameters;
 
-                theListener._applications.Add(parameters.CalledAE,info);
+                if (theListener._applications.ContainsKey(parameters.CalledAE))
+                {
+                    DicomLogger.LogError("Already listening with AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
+                    return;
+                }
 
+                theListener._applications.Add(parameters.CalledAE,info);
+                DicomLogger.LogInfo("Starting to listen with AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
             }
             else
             {
@@ -53,6 +59,8 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                 Listener theListener = new Listener(parameters, acceptor);
                 _listeners[parameters.LocalEndPoint] = theListener;
                 theListener.StartThread();
+
+                DicomLogger.LogInfo("Starting to listen with AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
             }
         }
 
@@ -75,6 +83,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                         theListener.StopThread();
                         theListener.Dispose();
                     }
+                    DicomLogger.LogInfo("Stopping listening wiith AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
                 }
             }
 
@@ -133,6 +142,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                     new AsyncCallback(DoBeginAcceptCallback), this);
 
                 _threadStop.WaitOne();
+                _threadStop.Reset();
 
                 if (_stop == true)
                     return;

@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageServer.Dicom
                     new TransferSyntax("Explicit VR Little Endian",
                                  TransferSyntax.ExplicitVRLittleEndianUid,
                                  true, // Little Endian?
-                                 true, // Encapsulated?
+                                 false, // Encapsulated?
                                  true, // Explicit VR?
                                  false // Deflated?
                                  );

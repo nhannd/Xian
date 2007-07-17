@@ -9,7 +9,7 @@ using ClearCanvas.ImageServer.Dicom.Exceptions;
 namespace ClearCanvas.ImageServer.Dicom
 {
     /// <summary>
-    /// The AttributeCollection class models an a collection of DICOM attributes.
+    /// The DicomAttributeCollection class models an a collection of DICOM attributes.
     /// </summary>
     /// <remarks>
     /// <para>
@@ -20,11 +20,11 @@ namespace ClearCanvas.ImageServer.Dicom
     /// 
     /// </para>
     /// </remarks>
-    public class AttributeCollection : IEnumerable<AbstractAttribute>
+    public class DicomAttributeCollection : IEnumerable<DicomAttribute>
     {
         #region Member Variables
 
-        private SortedDictionary<uint, AbstractAttribute> _attributeList = new SortedDictionary<uint, AbstractAttribute>();
+        private SortedDictionary<uint, DicomAttribute> _attributeList = new SortedDictionary<uint, DicomAttribute>();
 
         #endregion
 
@@ -33,24 +33,24 @@ namespace ClearCanvas.ImageServer.Dicom
         /// <summary>
         /// Default constuctor.
         /// </summary>
-        public AttributeCollection()
+        public DicomAttributeCollection()
         {
         }
 
         /// <summary>
-        /// Internal constructor used when creating a copy of an AttributeCollection.
+        /// Internal constructor used when creating a copy of an DicomAttributeCollection.
         /// </summary>
         /// <param name="source"></param>
         /// <param name="copyBinary"></param>
-        internal AttributeCollection(AttributeCollection source, bool copyBinary)
+        internal DicomAttributeCollection(DicomAttributeCollection source, bool copyBinary)
         {
-            foreach (AbstractAttribute attrib in source)
+            foreach (DicomAttribute attrib in source)
             {
                 if (copyBinary ||
-                      (!(attrib is AttributeOB)
-                    && !(attrib is AttributeOW)
-                    && !(attrib is AttributeOF)
-                    && !(attrib is AttributeUN)))
+                      (!(attrib is DicomAttributeOB)
+                    && !(attrib is DicomAttributeOW)
+                    && !(attrib is DicomAttributeOF)
+                    && !(attrib is DicomAttributeUN)))
                 {
                     this[attrib.Tag] = attrib.Copy();
                 }
@@ -61,14 +61,31 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Public Methods
 
+        /// <summary>
+        /// Check if a tag is contained in an DicomAttributeCollection and has a value.
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns></returns>
         public bool Contains(uint tag)
         {
-            return _attributeList.ContainsKey(tag);
+            if (!_attributeList.ContainsKey(tag))
+                return false;
+
+            return !this[tag].IsEmpty;
         }
+
+        /// <summary>
+        /// Check if a tag is contained in an DicomAttributeCollection and has a value.
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns></returns>
 
         public bool Contains(DicomTag tag)
         {
-            return _attributeList.ContainsKey(tag.TagValue);
+            if (!_attributeList.ContainsKey(tag.TagValue))
+                return false;
+
+            return !this[tag].IsEmpty;
         }
 
         /// <summary>
@@ -76,15 +93,15 @@ namespace ClearCanvas.ImageServer.Dicom
         /// </summary>
         /// <param name="tag"></param>
         /// <returns></returns>
-        public AbstractAttribute this[uint tag]
+        public DicomAttribute this[uint tag]
         {
             get 
             {
-                AbstractAttribute attr = null;
+                DicomAttribute attr = null;
 
                 if (!_attributeList.ContainsKey(tag))
                 {
-                    attr = AbstractAttribute.NewAttribute(tag);
+                    attr = DicomAttribute.NewAttribute(tag);
              
                     if (attr == null)
                     {
@@ -119,15 +136,15 @@ namespace ClearCanvas.ImageServer.Dicom
         /// </summary>
         /// <param name="tag"></param>
         /// <returns></returns>
-        public AbstractAttribute this[DicomTag tag]
+        public DicomAttribute this[DicomTag tag]
         {
             get
             {
-                AbstractAttribute attr = null;
+                DicomAttribute attr = null;
 
                 if (!_attributeList.ContainsKey(tag.TagValue))
                 {
-                    attr = AbstractAttribute.NewAttribute(tag);
+                    attr = DicomAttribute.NewAttribute(tag);
                     if (attr == null)
                     {
                         throw new DicomException("Invalid tag: " + tag.HexString);// TODO:  Hex formating
@@ -156,23 +173,23 @@ namespace ClearCanvas.ImageServer.Dicom
         }
 
         /// <summary>
-        /// Create a duplicate copy of the AttributeCollection.
+        /// Create a duplicate copy of the DicomAttributeCollection.
         /// </summary>
         /// <remarks>
         /// <para>
-        /// This method creates a copy of all of the attributes within the AttributeCollection and returns 
+        /// This method creates a copy of all of the attributes within the DicomAttributeCollection and returns 
         /// a new copy.  Note that binary attributes with a VR of OB, OW, OF, and UN are copied.
         /// </para>
         /// </remarks>
-        /// <returns>A new AttributeCollection.</returns>
-        public virtual AttributeCollection Copy()
+        /// <returns>A new DicomAttributeCollection.</returns>
+        public virtual DicomAttributeCollection Copy()
         {
             return Copy(true);
         }
 
-        public virtual AttributeCollection Copy(bool copyBinary)
+        public virtual DicomAttributeCollection Copy(bool copyBinary)
         {
-            return new AttributeCollection(this, copyBinary);
+            return new DicomAttributeCollection(this, copyBinary);
         }
 
         public override bool Equals(object obj)
@@ -180,10 +197,10 @@ namespace ClearCanvas.ImageServer.Dicom
             //Check for null and compare run-time types.
             if (obj == null || GetType() != obj.GetType()) return false;
 
-            AttributeCollection a = (AttributeCollection)obj;
+            DicomAttributeCollection a = (DicomAttributeCollection)obj;
 
-            IEnumerator<AbstractAttribute> thisEnumerator = GetEnumerator();
-            IEnumerator<AbstractAttribute> compareEnumerator = a.GetEnumerator();
+            IEnumerator<DicomAttribute> thisEnumerator = GetEnumerator();
+            IEnumerator<DicomAttribute> compareEnumerator = a.GetEnumerator();
 
             for (; ; )
             {
@@ -196,8 +213,8 @@ namespace ClearCanvas.ImageServer.Dicom
                 if (!thisValidNext || !compareValidNext)
                     return false;
 
-                AbstractAttribute thisAttrib = thisEnumerator.Current;
-                AbstractAttribute compareAttrib = compareEnumerator.Current;
+                DicomAttribute thisAttrib = thisEnumerator.Current;
+                DicomAttribute compareAttrib = compareEnumerator.Current;
 
                 if (thisAttrib.Tag.Element == 0x0000)
                 {
@@ -248,7 +265,7 @@ namespace ClearCanvas.ImageServer.Dicom
         internal uint CalculateGroupWriteLength(ushort group, TransferSyntax syntax, DicomWriteOptions options)
         {
             uint length = 0;
-            foreach (AbstractAttribute item in this)
+            foreach (DicomAttribute item in this)
             {
                 if (item.Tag.Group < group || item.Tag.Element == 0x0000)
                     continue;
@@ -263,7 +280,7 @@ namespace ClearCanvas.ImageServer.Dicom
         {
             uint length = 0;
             ushort group = 0xffff;
-            foreach (AbstractAttribute item in this)
+            foreach (DicomAttribute item in this)
             {
                 if (item.Tag.Element == 0x0000)
                     continue;
@@ -287,7 +304,7 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region IEnumerable Implementation
 
-        public IEnumerator<AbstractAttribute> GetEnumerator()
+        public IEnumerator<DicomAttribute> GetEnumerator()
         {
             return _attributeList.Values.GetEnumerator();   
         }
@@ -347,9 +364,9 @@ namespace ClearCanvas.ImageServer.Dicom
             }
         }
 
-        private object LoadDicomFieldValue(AbstractAttribute elem, Type vtype, DicomFieldDefault deflt, bool udzl)
+        private object LoadDicomFieldValue(DicomAttribute elem, Type vtype, DicomFieldDefault deflt, bool udzl)
         {
-            if (vtype.IsSubclassOf(typeof(AbstractAttribute)))
+            if (vtype.IsSubclassOf(typeof(DicomAttribute)))
             {
                 if (elem != null && vtype != elem.GetType())
                     throw new DicomDataException("Invalid binding type for Element VR!");
@@ -363,15 +380,16 @@ namespace ClearCanvas.ImageServer.Dicom
                     {
                         float[] array = new float[elem.Count];
                         for (int i = 0; i < array.Length; i++)
-                            array[i] = elem.GetFloat32(i);
-
+                        {
+                             elem.TryGetFloat32(i, out array[i]);
+                        }
                         return array;
                     }
                     else if (vtype.GetElementType() == typeof(double) && (elem.Tag.VR == DicomVr.DSvr))
                     {
                         double[] array = new double[elem.Count];
                         for (int i = 0; i < array.Length; i++)
-                            array[i] = elem.GetFloat64(i);
+                            elem.TryGetFloat64(i, out array[i]);
 
                         return array;
                     }
@@ -405,33 +423,47 @@ namespace ClearCanvas.ImageServer.Dicom
                     }
                     else if (vtype == typeof(ushort))
                     {
-                        return elem.GetUInt16(0);
+                        ushort value;
+                        elem.TryGetUInt16(0, out value);
+                        return value;
                     }
                     else if (vtype == typeof(short))
                     {
-                        return elem.GetInt16(0);
+                        short value;
+                        elem.TryGetInt16(0, out value);
+                        return value;
                     }
                     else if (vtype == typeof(uint))
                     {
-                        return elem.GetUInt32(0);
+                        uint value;
+                        elem.TryGetUInt32(0, out value);
+                        return value;
                     }
                     else if (vtype == typeof(int))
                     {
-                        return elem.GetInt32(0);
+                        int value;
+                        elem.TryGetInt32(0, out value);
+                        return value;
                     }
                     else if (vtype == typeof(float))
                     {
-                        return elem.GetFloat32(0);
+                        float value;
+                        elem.TryGetFloat32(0, out value);
+                        return value;
                     }
                     else if (vtype == typeof(double))
                     {
-                        return elem.GetFloat64(0);
+                        double value;
+                        elem.TryGetFloat64(0, out value);
+                        return value;
                     }
                     if (vtype != elem.GetValueType())
                     {
                         if (vtype == typeof(DicomUid) && elem.Tag.VR == DicomVr.UIvr)
                         {
-                            return (elem as AttributeUI).GetUid(0);
+                            DicomUid uid;
+                            elem.TryGetUid(0, out uid);
+                            return uid;
                         }
                         else if (vtype == typeof(TransferSyntax) && elem.Tag.VR == DicomVr.UIvr)
                         {
@@ -439,7 +471,9 @@ namespace ClearCanvas.ImageServer.Dicom
                         }
                         else if (vtype == typeof(DateTime))
                         {
-                            return elem.GetDateTime(0);
+                            DateTime dt;
+                            elem.TryGetDateTime(0, out dt);
+                            return dt;
                         }
                         //else if (vtype == typeof(DcmDateRange) && elem.GetType().IsSubclassOf(typeof(AttributeMultiValueText)))
                         //{
@@ -474,7 +508,7 @@ namespace ClearCanvas.ImageServer.Dicom
                     try
                     {
                         DicomFieldAttribute dfa = (DicomFieldAttribute)field.GetCustomAttributes(typeof(DicomFieldAttribute), true)[0];
-                        AbstractAttribute elem = this[dfa.Tag];
+                        DicomAttribute elem = this[dfa.Tag];
                         if ((elem == null || (elem.StreamLength == 0 && dfa.UseDefaultForZeroLength)) && dfa.DefaultValue == DicomFieldDefault.None)
                         {
                             // do nothing
@@ -499,7 +533,7 @@ namespace ClearCanvas.ImageServer.Dicom
                     try
                     {
                         DicomFieldAttribute dfa = (DicomFieldAttribute)property.GetCustomAttributes(typeof(DicomFieldAttribute), true)[0];
-                        AbstractAttribute elem = this[dfa.Tag];
+                        DicomAttribute elem = this[dfa.Tag];
                         if ((elem == null || (elem.StreamLength == 0 && dfa.UseDefaultForZeroLength)) && dfa.DefaultValue == DicomFieldDefault.None)
                         {
                             // do nothing
@@ -524,12 +558,12 @@ namespace ClearCanvas.ImageServer.Dicom
                 Type vtype = value.GetType();
                 if (vtype.IsSubclassOf(typeof(DicomSequenceItem)))
                 {
-                    AbstractAttribute elem = this[tag];
+                    DicomAttribute elem = this[tag];
                     elem.AddSequenceItem((DicomSequenceItem)value);
                 }
                 else
                 {
-                    AbstractAttribute elem = this[tag];
+                    DicomAttribute elem = this[tag];
                     if (vtype.IsArray)
                     {
                         if (vtype.GetElementType() != elem.GetValueType())
@@ -580,7 +614,7 @@ namespace ClearCanvas.ImageServer.Dicom
                 }
                 else if (createEmpty)
                 {
-                    AbstractAttribute elem = this[tag];
+                    DicomAttribute elem = this[tag];
                 }
             }
         }
@@ -621,7 +655,7 @@ namespace ClearCanvas.ImageServer.Dicom
 
         public void Dump(StringBuilder sb, String prefix, DicomDumpOptions options)
         {
-            foreach (AbstractAttribute item in this)
+            foreach (DicomAttribute item in this)
             {
                 item.Dump(sb, prefix, DicomDumpOptions.Default);
                 sb.AppendLine();

@@ -12,14 +12,14 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
     [TestFixture]
     public class AttributeTests : AbstractTest
     {
-        #region AttributeAE Test
+        #region DicomAttributeAE Test
         [Test]
         public void AttributeAETest()
         {
             bool testResult = false;
             try
             {
-                AttributeAE attrib = new AttributeAE(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
+                DicomAttributeAE attrib = new DicomAttributeAE(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
             }
             catch (DicomException)
             {
@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             testResult = true;
             try
             {
-                AttributeAE attrib = new AttributeAE(DicomTagDictionary.Instance[DicomTags.RetrieveAETitle]);
+                DicomAttributeAE attrib = new DicomAttributeAE(DicomTagDictionary.Instance[DicomTags.RetrieveAETitle]);
                 testResult = true;
             }
             catch (DicomException)
@@ -42,14 +42,14 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
         }
         #endregion
 
-        #region AttributeAS Test
+        #region DicomAttributeAS Test
         [Test]
         public void AttributeASTest()
         {
             bool testResult = false;
             try
             {
-                AttributeAS attrib = new AttributeAS(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
+                DicomAttributeAS attrib = new DicomAttributeAS(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
             }
             catch (DicomException)
             {
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             testResult = true;
             try
             {
-                AttributeAS attrib = new AttributeAS(DicomTagDictionary.Instance[DicomTags.PatientsAge]);
+                DicomAttributeAS attrib = new DicomAttributeAS(DicomTagDictionary.Instance[DicomTags.PatientsAge]);
                 testResult = true;
             }
             catch (DicomException)
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             bool testResult = false;
             try
             {
-                AttributeAT attrib = new AttributeAT(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
+                DicomAttributeAT attrib = new DicomAttributeAT(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
             }
             catch (DicomException)
             {
@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             testResult = true;
             try
             {
-                AttributeAT attrib = new AttributeAT(DicomTagDictionary.Instance[DicomTags.FrameIncrementPointer]);
+                DicomAttributeAT attrib = new DicomAttributeAT(DicomTagDictionary.Instance[DicomTags.FrameIncrementPointer]);
                 testResult = true;
             }
             catch (DicomException)
@@ -103,14 +103,14 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
         }
 
-        #region AttributeCS Test
+        #region DicomAttributeCS Test
         [Test]
         public void AttributeCSTest()
         {
             bool testResult = false;
             try
             {
-                AttributeCS attrib = new AttributeCS(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
+                DicomAttributeCS attrib = new DicomAttributeCS(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
             }
             catch (DicomException)
             {
@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             testResult = true;
             try
             {
-                AttributeCS attrib = new AttributeCS(DicomTagDictionary.Instance[DicomTags.ImageType]);
+                DicomAttributeCS attrib = new DicomAttributeCS(DicomTagDictionary.Instance[DicomTags.ImageType]);
                 testResult = true;
             }
             catch (DicomException)
@@ -134,14 +134,14 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
         }
         #endregion
 
-        #region AttributeDA Test
+        #region DicomAttributeDA Test
         [Test]
         public void AttributeDATest()
         {
             bool testResult = false;
             try
             {
-                AttributeDA attrib = new AttributeDA(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
+                DicomAttributeDA attrib = new DicomAttributeDA(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
             }
             catch (DicomException)
             {
@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             testResult = true;
             try
             {
-                AttributeDA attrib = new AttributeDA(DicomTagDictionary.Instance[DicomTags.StudyDate]);
+                DicomAttributeDA attrib = new DicomAttributeDA(DicomTagDictionary.Instance[DicomTags.StudyDate]);
                 testResult = true;
             }
             catch (DicomException)
@@ -165,14 +165,14 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
         }
         #endregion
 
-        #region AttributeDS Test
+        #region DicomAttributeDS Test
         [Test]
         public void AttributeDSTest()
         {
             bool testResult = false;
             try
             {
-                AttributeDS attrib = new AttributeDS(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
+                DicomAttributeDS attrib = new DicomAttributeDS(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
             }
             catch (DicomException)
             {
@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             testResult = true;
             try
             {
-                AttributeDS attrib = new AttributeDS(DicomTagDictionary.Instance[DicomTags.WindowCenter]);
+                DicomAttributeDS attrib = new DicomAttributeDS(DicomTagDictionary.Instance[DicomTags.WindowCenter]);
                 testResult = true;
             }
             catch (DicomException)

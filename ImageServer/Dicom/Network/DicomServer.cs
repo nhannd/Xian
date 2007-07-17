@@ -11,11 +11,11 @@ using System.IO;
 
 namespace ClearCanvas.ImageServer.Dicom.Network
 {
-    public delegate IDicomServerHandler StartAssociation(AssociationParameters assoc);
+    public delegate IDicomServerHandler StartAssociation(ServerAssociationParameters assoc);
 
     public class DicomServer : NetworkBase
     {
-        #region Static Public members
+        #region Static Public Methods
         public static void StartListening(ServerAssociationParameters parameters, StartAssociation acceptor)
         {
             Listener.Listen(parameters, acceptor);
@@ -32,13 +32,19 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 		private Socket _socket;
 		private Stream _network;
 		private ManualResetEvent _closedEvent;
-		//private Logger _log;
 		private bool _closedOnError = false;
         IDicomServerHandler _handler;
         private Dictionary<String, ListenerInfo> _appList;
 		#endregion
 
-		#region Public Constructors
+        #region Public Properties
+        public bool ClosedOnError
+        {
+            get { return _closedOnError; }
+        }
+        #endregion
+
+        #region Public Constructors
 
         internal DicomServer(Socket socket, Dictionary<String,ListenerInfo> appList)
             : base()
@@ -120,6 +126,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
         #endregion
 
+        #region Public Methods
         public void Close()
         {
             lock (this)
@@ -143,7 +150,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             }
             ShutdownNetwork();
         }
-        
+        #endregion
 
         #region NetworkBase Overrides
         protected override bool NetworkHasData()
@@ -156,7 +163,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             try
             {
                 if (_handler != null)
-                    _handler.OnNetworkError(this, e);
+                    _handler.OnNetworkError(this, this._assoc as ServerAssociationParameters, e);
             }
             catch (Exception) { }
 
@@ -164,7 +171,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             Close();
         }
 
-        protected override void OnReceiveAssociateRequest(AssociationParameters association)
+        protected override void OnReceiveAssociateRequest(ServerAssociationParameters association)
         {
             if (!_appList.ContainsKey(association.CalledAE))
             {
@@ -214,7 +221,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         {
             try
             {
-                _handler.OnDimseTimeout(this);
+                _handler.OnDimseTimeout(this, this._assoc as ServerAssociationParameters);
             }
             catch (Exception e)
             {
@@ -226,9 +233,12 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         {
             try
             {
-                _handler.OnReceiveAbort(this, source, reason);
+                _handler.OnReceiveAbort(this, this._assoc as ServerAssociationParameters, source, reason);
             }
-            catch (Exception) { }
+            catch (Exception e) 
+            {
+                OnUserException(e, "Unexpected exception OnReceiveAbort");
+            }
 
             _closedOnError = true;
             Close();
@@ -238,7 +248,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         {
             try
             {
-                _handler.OnReceiveReleaseRequest(this);
+                _handler.OnReceiveReleaseRequest(this, this._assoc as ServerAssociationParameters);
             }
             catch (Exception e)
             {
@@ -251,7 +261,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         {
             try
             {
-                _handler.OnReceiveRequestMessage(this, pcid, msg);
+                _handler.OnReceiveRequestMessage(this, this._assoc as ServerAssociationParameters, pcid, msg);
             }
             catch (Exception e)
             {
@@ -264,7 +274,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
             try
             {
-                _handler.OnReceiveResponseMessage(this, pcid, msg);
+                _handler.OnReceiveResponseMessage(this, this._assoc as ServerAssociationParameters, pcid, msg);
             }
             catch (Exception e)
             {

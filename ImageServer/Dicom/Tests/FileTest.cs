@@ -19,17 +19,17 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
             file = new DicomFile("filename");
 
-            file = new DicomFile(null, new AttributeCollection(), new AttributeCollection());
+            file = new DicomFile(null, new DicomAttributeCollection(), new DicomAttributeCollection());
 
 
         }
 
         private void SetupMetaInfo(DicomFile theFile)
         {
-            AttributeCollection theSet = theFile.MetaInfo;
+            DicomAttributeCollection theSet = theFile.MetaInfo;
 
-            theSet[DicomTags.MediaStorageSOPClassUID].SetStringValue(theFile.DataSet[DicomTags.SOPClassUID].ToString());
-            theSet[DicomTags.MediaStorageSOPInstanceUID].SetStringValue(theFile.DataSet[DicomTags.SOPInstanceUID].ToString());
+            theSet[DicomTags.MediaStorageSOPClassUID].SetStringValue(theFile.DataSet[DicomTags.SOPClassUID].GetString(0,""));
+            theSet[DicomTags.MediaStorageSOPInstanceUID].SetStringValue(theFile.DataSet[DicomTags.SOPInstanceUID].GetString(0, ""));
             theFile.TransferSyntax = TransferSyntax.ExplicitVRLittleEndian; 
 
             theSet[DicomTags.ImplementationClassUID].SetStringValue("1.1.1.1.1.11.1");
@@ -68,9 +68,9 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
         {
             DicomFile file = new DicomFile("CreateFileTest.dcm");
 
-            AttributeCollection dataSet = file.DataSet;
+            DicomAttributeCollection dataSet = file.DataSet;
 
-            AttributeCollection metaInfo = file.DataSet;
+            DicomAttributeCollection metaInfo = file.DataSet;
 
 
             SetupMR(dataSet);

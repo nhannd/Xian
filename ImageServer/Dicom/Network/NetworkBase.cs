@@ -74,8 +74,8 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
     internal class DcmDimseInfo
     {
-        public AttributeCollection Command;
-        public AttributeCollection Dataset;
+        public DicomAttributeCollection Command;
+        public DicomAttributeCollection Dataset;
         public ChunkStream CommandData;
         public ChunkStream DatasetData;
         public DicomStreamReader CommandReader;
@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         #region Protected Members
         private ushort _messageId;
         private Stream _network;
-        private AssociationParameters _assoc;
+        protected AssociationParameters _assoc;
         private DcmDimseInfo _dimse;
         private Thread _thread;
         private bool _stop;
@@ -113,11 +113,6 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         #endregion
 
         #region Public Properties
-        public AssociationParameters Associate
-        {
-            get { return _assoc; }
-        }
-
         public int DimseTimeout
         {
             get { return _dimseTimeout; }
@@ -194,7 +189,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             throw new Exception("The method or operation is not implemented.");
         }
 
-        protected virtual void OnReceiveAssociateRequest(AssociationParameters association)
+        protected virtual void OnReceiveAssociateRequest(ServerAssociationParameters association)
         {
             throw new Exception("The method or operation is not implemented.");
         }
@@ -219,11 +214,11 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         }
 
 
-        protected virtual void OnReceiveDimseBegin(byte pcid, AttributeCollection command, AttributeCollection dataset, TransferMonitor stats)
+        protected virtual void OnReceiveDimseBegin(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset, TransferMonitor stats)
         {
         }
 
-        protected virtual void OnReceiveDimseProgress(byte pcid, AttributeCollection command, AttributeCollection dataset, TransferMonitor stats)
+        protected virtual void OnReceiveDimseProgress(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset, TransferMonitor stats)
         {
         }
 
@@ -235,7 +230,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         {
         }
 
-        private bool OnReceiveDimse(byte pcid, AttributeCollection command, AttributeCollection dataset)
+        private bool OnReceiveDimse(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset)
         {
             DicomMessage msg = new DicomMessage(command, dataset);
             DicomCommandField commandField = msg.CommandField;
@@ -277,15 +272,15 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             return false;
         }
 
-        protected virtual void OnSendDimseBegin(byte pcid, AttributeCollection command, AttributeCollection dataset, TransferMonitor monitor)
+        protected virtual void OnSendDimseBegin(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset, TransferMonitor monitor)
         {
         }
 
-        protected virtual void OnSendDimseProgress(byte pcid, AttributeCollection command, AttributeCollection dataset, TransferMonitor monitor)
+        protected virtual void OnSendDimseProgress(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset, TransferMonitor monitor)
         {
         }
 
-        protected virtual void OnSendDimse(byte pcid, AttributeCollection command, AttributeCollection dataset)
+        protected virtual void OnSendDimse(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset)
         {
         }
         #endregion
@@ -363,14 +358,14 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
         public void SendCEchoRequest(byte presentationID, ushort messageID)
         {
-            DicomUid affectedClass = Associate.GetAbstractSyntax(presentationID);
-            AttributeCollection command = CreateRequest(messageID, DicomCommandField.CEchoRequest, affectedClass, false);
+            DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
+            DicomAttributeCollection command = CreateRequest(messageID, DicomCommandField.CEchoRequest, affectedClass, false);
             SendDimse(presentationID, command, null);
         }
 
         public void SendCEchoResponse(byte presentationID, ushort messageID, DicomStatus status)
         {
-            DicomUid affectedClass = Associate.GetAbstractSyntax(presentationID);
+            DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
             DicomMessage msg = CreateResponse(messageID, DicomCommandField.CEchoResponse, affectedClass, status);
             SendDimse(presentationID, msg.CommandSet, null);
         }
@@ -384,16 +379,24 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         public void SendCStoreRequest(byte presentationID, ushort messageID,
             DicomPriority priority, string moveAE, ushort moveMessageID, DicomMessage message)
         {
-            DicomUid affectedClass = Associate.GetAbstractSyntax(presentationID);
+            DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
 
-            AttributeCollection command = message.MetaInfo;
+            DicomAttributeCollection command = message.MetaInfo;
 
             message.MessageId = messageID;
             message.CommandField = DicomCommandField.CStoreRequest;
             message.AffectedSopClassUid = message.SopClass.Uid;
-            message.DataSetType = true ? (ushort)0x0202 : (ushort)0x0101;
+            //message.DataSetType = true ? (ushort)0x0202 : (ushort)0x0101;
+            message.DataSetType = (ushort)0x0202;
             message.Priority = priority;
-            message.AffectedSopInstanceUid = message.DataSet[DicomTags.SOPInstanceUID].ToString();
+
+            String sopInstanceUid;
+            bool ok = message.DataSet[DicomTags.SOPInstanceUID].TryGetString(0, out sopInstanceUid);
+            if (!ok)
+                throw new DicomException("SOP Instance UID unexpectedly not set in CStore Message being sent.");
+
+            message.AffectedSopInstanceUid = sopInstanceUid;
+            
             
             if (moveAE != null && moveAE != String.Empty)
             {
@@ -406,32 +409,32 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
         public void SendCStoreResponse(byte presentationID, ushort messageID, DicomUid affectedInstance, DicomStatus status)
         {
-            DicomUid affectedClass = Associate.GetAbstractSyntax(presentationID);
+            DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
             DicomMessage msg = CreateResponse(messageID, DicomCommandField.CStoreResponse, affectedClass, status);
             msg.AffectedSopInstanceUid = affectedInstance.UID;
             SendDimse(presentationID, msg.CommandSet, null);
         }
 
-        public void SendCFindRequest(byte presentationID, ushort messageID, AttributeCollection dataset)
+        public void SendCFindRequest(byte presentationID, ushort messageID, DicomAttributeCollection dataset)
         {
-            DicomUid affectedClass = Associate.GetAbstractSyntax(presentationID);
-            AttributeCollection command = CreateRequest(messageID, DicomCommandField.CFindRequest, affectedClass, true);
+            DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
+            DicomAttributeCollection command = CreateRequest(messageID, DicomCommandField.CFindRequest, affectedClass, true);
             SendDimse(presentationID, command, dataset);
         }
 
-        public void SendCMoveRequest(byte presentationID, ushort messageID, string destinationAE, AttributeCollection dataset)
+        public void SendCMoveRequest(byte presentationID, ushort messageID, string destinationAE, DicomAttributeCollection dataset)
         {
-            DicomUid affectedClass = Associate.GetAbstractSyntax(presentationID);
-            AttributeCollection command = CreateRequest(messageID, DicomCommandField.CMoveRequest, affectedClass, true);
+            DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
+            DicomAttributeCollection command = CreateRequest(messageID, DicomCommandField.CMoveRequest, affectedClass, true);
             command[DicomTags.MoveDestination].Values = destinationAE;
             SendDimse(presentationID, command, dataset);
         }
         #endregion
 
         #region Private Methods
-        private AttributeCollection CreateRequest(ushort messageID, DicomCommandField commandField, DicomUid affectedClass, bool hasDataset)
+        private DicomAttributeCollection CreateRequest(ushort messageID, DicomCommandField commandField, DicomUid affectedClass, bool hasDataset)
         {
-            AttributeCollection command = new AttributeCollection();
+            DicomAttributeCollection command = new DicomAttributeCollection();
             command[DicomTags.MessageID].Values = messageID;
             command[DicomTags.CommandField].Values = (ushort)commandField;
             command[DicomTags.AffectedSOPClassUID].Values = affectedClass.UID;
@@ -509,7 +512,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                             AAssociateRQ pdu = new AAssociateRQ(_assoc);
                             pdu.Read(raw);
                             _state = DicomAssociationState.Sta3_AwaitingLocalAAssociationResponsePrimative;
-                            OnReceiveAssociateRequest(_assoc);
+                            OnReceiveAssociateRequest(_assoc as ServerAssociationParameters);
 
                             if (_state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose &&
                                 _state != DicomAssociationState.Sta6_AssociationEstablished)
@@ -602,7 +605,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
                         if (_dimse.Command == null)
                         {
-                            _dimse.Command = new AttributeCollection();
+                            _dimse.Command = new DicomAttributeCollection();
                         }
 
                         if (_dimse.CommandReader == null)
@@ -625,7 +628,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                             bool isLast = true;
                             if (_dimse.Command.Contains(DicomTags.DataSetType))
                             {
-                                if (_dimse.Command[DicomTags.DataSetType].GetUInt16(0) != 0x0101)
+                                if (_dimse.Command[DicomTags.DataSetType].GetUInt16(0,0x0) != 0x0101)
                                     isLast = false;
                             }
                             if (isLast)
@@ -650,7 +653,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                         if (_dimse.Dataset == null)
                         {
                             
-                            _dimse.Dataset = new AttributeCollection();
+                            _dimse.Dataset = new DicomAttributeCollection();
                         }
 
                         if (_dimse.DatasetReader == null)
@@ -715,7 +718,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             }
         }
 
-        private bool SendDimse(byte pcid, AttributeCollection command, AttributeCollection dataset)
+        private bool SendDimse(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset)
         {
             try
             {

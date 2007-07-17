@@ -18,7 +18,7 @@
 	<TransferSyntax uid="1.2.840.10008.1.2.1"
 					description="Explicit VR Little Endian"
 					littleEndian="true"
-					encapsulated="true"
+					encapsulated="false"
 					explicitVR="true"
 					deflated="false"/>
 

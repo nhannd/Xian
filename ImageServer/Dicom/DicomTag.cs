@@ -9,7 +9,7 @@ namespace ClearCanvas.ImageServer.Dicom
     /// </summary>
     /// <remarks>
     /// <para>The DicomTag class is used as described in the Flyweight pattern.  A single instance should only be allocated
-    /// for each DICOM tag, and that instance will be shared in any <see cref="AttributeCollection"/> 
+    /// for each DICOM tag, and that instance will be shared in any <see cref="DicomAttributeCollection"/> 
     /// that references the specific tag.</para>
     /// <para>Note, however, that non standard DICOM tags (or tags not in stored in the <see cref="DicomTagDictionary>"/>
     /// will have a specific instance allocated to store their information when they are encountered by the assembly.</para>

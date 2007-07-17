@@ -9,7 +9,7 @@ namespace ClearCanvas.ImageServer.Dicom
     /// <summary>
     /// Class representing a DICOM Message to be transferred over the network.
     /// </summary>
-    public class DicomMessage : AbstractMessage
+    public class DicomMessage : DicomMessageBase
     {
         #region Command Element Properties
         /// <summary>
@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageServer.Dicom
         /// </summary>
         public string AffectedSopClassUid
         {
-            get { return _metaInfo[DicomTags.AffectedSOPClassUID].ToString(); }
+            get { return _metaInfo[DicomTags.AffectedSOPClassUID].GetString(0,""); }
             set { _metaInfo[DicomTags.AffectedSOPClassUID].Values = value; }
         }
         /// <summary>
@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageServer.Dicom
         /// </summary>
         public string RequestedSopClassUid
         {
-            get { return _metaInfo[DicomTags.RequestedSOPClassUID].ToString(); }
+            get { return _metaInfo[DicomTags.RequestedSOPClassUID].GetString(0,""); }
             set { _metaInfo[DicomTags.RequestedSOPClassUID].Values = value; }
         }
         /// <summary>
@@ -64,9 +64,8 @@ namespace ClearCanvas.ImageServer.Dicom
         /// </summary>
         public string MoveDestination
         {
-            get { return _metaInfo[DicomTags.MoveDestination].ToString(); }
+            get { return _metaInfo[DicomTags.MoveDestination].GetString(0,""); }
             set { _metaInfo[DicomTags.MoveDestination].Values = value; }
-
         }
         /// <summary>
         /// The priority shall be set to one of the following values: 
@@ -123,7 +122,7 @@ namespace ClearCanvas.ImageServer.Dicom
         /// </summary>
         public string ErrorComment
         {
-            get { return _metaInfo[DicomTags.ErrorComment].ToString(); }
+            get { return _metaInfo[DicomTags.ErrorComment].GetString(0,""); }
             set { _metaInfo[DicomTags.ErrorComment].Values = value; }
         }
         /// <summary>
@@ -139,7 +138,7 @@ namespace ClearCanvas.ImageServer.Dicom
         /// </summary>
         public string AffectedSopInstanceUid
         {
-            get { return _metaInfo[DicomTags.AffectedSOPInstanceUID].ToString(); }
+            get { return _metaInfo[DicomTags.AffectedSOPInstanceUID].GetString(0,""); }
             set { _metaInfo[DicomTags.AffectedSOPInstanceUID].Values = value; }
         }
         /// <summary>
@@ -147,7 +146,7 @@ namespace ClearCanvas.ImageServer.Dicom
         /// </summary>
         public string RequestedSopInstanceUid
         {
-            get { return _metaInfo[DicomTags.RequestedSOPInstanceUID].ToString(); }
+            get { return _metaInfo[DicomTags.RequestedSOPInstanceUID].GetString(0,""); }
             set { _metaInfo[DicomTags.RequestedSOPInstanceUID].Values = value; }
         }
         /// <summary>
@@ -216,7 +215,7 @@ namespace ClearCanvas.ImageServer.Dicom
         /// </summary>
         public string MoveOriginatorApplicationEntityTitle
         {
-            get { return _metaInfo[DicomTags.MoveOriginatorApplicationEntityTitle].ToString(); }
+            get { return _metaInfo[DicomTags.MoveOriginatorApplicationEntityTitle].GetString(0,""); }
             set { _metaInfo[DicomTags.MoveOriginatorApplicationEntityTitle].Values = value; }
         }
         /// <summary>
@@ -232,7 +231,7 @@ namespace ClearCanvas.ImageServer.Dicom
         #endregion
 
         #region Public Properties
-        public AttributeCollection CommandSet
+        public DicomAttributeCollection CommandSet
         {
             get { return MetaInfo; }
         }
@@ -241,7 +240,7 @@ namespace ClearCanvas.ImageServer.Dicom
         {
             get
             {
-                String sopClassUid = base.DataSet[DicomTags.SOPClassUID].ToString();
+                String sopClassUid = base.DataSet[DicomTags.SOPClassUID].GetString(0,"");
 
                 SopClass sop = SopClass.GetSopClass(sopClassUid);
 
@@ -254,29 +253,29 @@ namespace ClearCanvas.ImageServer.Dicom
         #endregion
 
         #region Constructors
-        public DicomMessage(AttributeCollection command, AttributeCollection data) : base()
+        public DicomMessage(DicomAttributeCollection command, DicomAttributeCollection data) : base()
         {
             if (command == null)
-                base._metaInfo = new AttributeCollection();
+                base._metaInfo = new DicomAttributeCollection();
             else
                 base._metaInfo = command;
 
             if (data == null)
-                base._dataSet = new AttributeCollection();
+                base._dataSet = new DicomAttributeCollection();
             else
                 base._dataSet = data;
         }
 
         public DicomMessage(DicomFile file)
         {
-            base._metaInfo = new AttributeCollection();
+            base._metaInfo = new DicomAttributeCollection();
             base._dataSet = file.DataSet;
         }
 
         public DicomMessage()
         {
-            base._metaInfo = new AttributeCollection();
-            base._dataSet = new AttributeCollection();
+            base._metaInfo = new DicomAttributeCollection();
+            base._dataSet = new DicomAttributeCollection();
         }
         #endregion
 

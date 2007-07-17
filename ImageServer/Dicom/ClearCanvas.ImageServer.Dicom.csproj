@@ -37,21 +37,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AbstractMessage.cs" />
+    <Compile Include="DicomMessageBase.cs" />
     <Compile Include="DicomFieldAttribute.cs" />
     <Compile Include="DicomLogger.cs" />
     <Compile Include="Exceptions\DicomDataException.cs" />
     <Compile Include="Network\AssociationParameters.cs" />
-    <Compile Include="AttributeBinary.cs" />
-    <Compile Include="AttributeMultiValueText.cs" />
-    <Compile Include="AttributeSingleValueText.cs" />
-    <Compile Include="AttributeSQ.cs" />
+    <Compile Include="DicomAttributeBinary.cs" />
+    <Compile Include="DicomAttributeMultiValueText.cs" />
+    <Compile Include="DicomAttributeSingleValueText.cs" />
+    <Compile Include="DicomAttributeSQ.cs" />
     <Compile Include="DicomTagDictionary.cs" />
     <Compile Include="DicomTags.cs" />
     <Compile Include="DicomUid.cs" />
     <Compile Include="DicomVr.cs" />
-    <Compile Include="AbstractAttribute.cs" />
-    <Compile Include="AttributeCollection.cs" />
+    <Compile Include="DicomAttribute.cs" />
+    <Compile Include="DicomAttributeCollection.cs" />
     <Compile Include="Exceptions\DicomException.cs" />
     <Compile Include="Exceptions\NetworkException.cs" />
     <Compile Include="Exceptions\SR.Designer.cs">

@@ -78,30 +78,34 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
         [Test]
         public void FieldTest()
         {
-            AttributeCollection theSet = new AttributeCollection();
+            DicomAttributeCollection theSet = new DicomAttributeCollection();
             TestFields theFields = new TestFields();
 
             SetupMR(theSet);
 
             theSet.LoadDicomFields(theFields);
 
-            Assert.AreSame(theFields.AccessionNumber, theSet[DicomTags.AccessionNumber].ToString(), "Accession Numbers did not match!");
-            Assert.AreSame(theFields.SOPClassUID.UID, theSet[DicomTags.SOPClassUID].ToString(), "SOP Class UIDs did not match!");
-            Assert.AreSame(theFields.SOPInstanceUID.UID, theSet[DicomTags.SOPInstanceUID].ToString(), "SOP Class UIDs did not match!");
-            Assert.IsTrue(theFields.StudyDate.ToString("yyyyMMdd", CultureInfo.CurrentCulture).Equals(theSet[DicomTags.StudyDate].ToString()));
-            Assert.AreSame(theFields.Modality, theSet[DicomTags.Modality].ToString(), "Modality did not match!");
-            Assert.AreSame(theFields.StudyDescription, theSet[DicomTags.StudyDescription].ToString(), "Study Description did not match!");
-            Assert.AreSame(theFields.StudyInstanceUID.UID, theSet[DicomTags.StudyInstanceUID].ToString(), "Study Instance UIDs did not match!");
-            Assert.AreSame(theFields.SeriesInstanceUID.UID, theSet[DicomTags.SeriesInstanceUID].ToString(), "Series Instance UIDs did not match!");
-            Assert.AreSame(theFields.StudyID, theSet[DicomTags.StudyID].ToString(), "StudyID did not match!");
-            Assert.AreSame(theFields.PatientsName, theSet[DicomTags.PatientsName].ToString(), "PatientsName did not match!");
-            Assert.AreSame(theFields.PatientID, theSet[DicomTags.PatientID].ToString(), "PatientID did not match!");
-            Assert.IsTrue(theFields.PatientsBirthDate.ToString("yyyyMMdd", CultureInfo.CurrentCulture).Equals(theSet[DicomTags.PatientsBirthDate].ToString()));
-            Assert.AreSame(theFields.PatientsSex, theSet[DicomTags.PatientsSex].ToString(), "PatientsSex did not match!");
-            Assert.IsTrue(theFields.Rows == theSet[DicomTags.Rows].GetUInt16(0));
-            Assert.IsTrue(theFields.Columns == theSet[DicomTags.Columns].GetUInt16(0));
-            Assert.IsTrue(theFields.PixelSpacing == theSet[DicomTags.PixelSpacing].GetFloat32(0));
-            Assert.IsTrue(theFields.InstanceNumber == theSet[DicomTags.InstanceNumber].GetInt32(0));
+            Assert.IsTrue(theFields.AccessionNumber.Equals(theSet[DicomTags.AccessionNumber].GetString(0,"")), "Accession Numbers did not match!");
+            Assert.IsTrue(theFields.SOPClassUID.UID.Equals(theSet[DicomTags.SOPClassUID].GetString(0, "")), "SOP Class UIDs did not match!");
+            Assert.IsTrue(theFields.SOPInstanceUID.UID.Equals(theSet[DicomTags.SOPInstanceUID].GetString(0, "")), "SOP Class UIDs did not match!");
+            Assert.IsTrue(theFields.StudyDate.ToString("yyyyMMdd", CultureInfo.CurrentCulture).Equals(theSet[DicomTags.StudyDate].GetString(0, "")));
+            Assert.IsTrue(theFields.Modality.Equals(theSet[DicomTags.Modality].GetString(0, "")), "Modality did not match!");
+            Assert.IsTrue(theFields.StudyDescription.Equals(theSet[DicomTags.StudyDescription].GetString(0, "")), "Study Description did not match!");
+            Assert.IsTrue(theFields.StudyInstanceUID.UID.Equals(theSet[DicomTags.StudyInstanceUID].GetString(0, "")), "Study Instance UIDs did not match!");
+            Assert.IsTrue(theFields.SeriesInstanceUID.UID.Equals(theSet[DicomTags.SeriesInstanceUID].GetString(0, "")), "Series Instance UIDs did not match!");
+            Assert.IsTrue(theFields.StudyID.Equals(theSet[DicomTags.StudyID].GetString(0, "")), "StudyID did not match!");
+            Assert.IsTrue(theFields.PatientsName.Equals(theSet[DicomTags.PatientsName].GetString(0, "")), "PatientsName did not match!");
+            Assert.IsTrue(theFields.PatientID.Equals(theSet[DicomTags.PatientID].GetString(0, "")), "PatientID did not match!");
+            Assert.IsTrue(theFields.PatientsBirthDate.ToString("yyyyMMdd", CultureInfo.CurrentCulture).Equals(theSet[DicomTags.PatientsBirthDate].GetString(0, "")));
+            Assert.IsTrue(theFields.PatientsSex.Equals(theSet[DicomTags.PatientsSex].GetString(0, "")), "PatientsSex did not match!");
+            Assert.IsTrue(theFields.Rows == theSet[DicomTags.Rows].GetUInt16(0,0));
+            Assert.IsTrue(theFields.Columns == theSet[DicomTags.Columns].GetUInt16(0,0));
+            float floatValue;
+            theSet[DicomTags.PixelSpacing].TryGetFloat32(0, out floatValue);
+            Assert.IsTrue(theFields.PixelSpacing == floatValue);
+            int intValue;
+            theSet[DicomTags.InstanceNumber].TryGetInt32(0, out intValue);
+            Assert.IsTrue(theFields.InstanceNumber == intValue);
             //Assert.IsTrue(string.Join("\\", theFields.ImageType).Equals(theSet[DicomTags.ImageType].ToString()));
         }
 

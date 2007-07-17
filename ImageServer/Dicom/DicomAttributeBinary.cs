@@ -10,24 +10,24 @@ using ClearCanvas.ImageServer.Dicom.IO;
 namespace ClearCanvas.ImageServer.Dicom
 {
 
-    #region AttributeBinary<T>
-    public abstract class AttributeBinary<T> : AbstractAttribute
+    #region DicomAttributeBinary<T>
+    public abstract class DicomAttributeBinary<T> : DicomAttribute
     {
         protected T[] _values;
         protected NumberStyles _numberStyle = NumberStyles.Any;
 
         #region Constructors
-        internal AttributeBinary(uint tag) 
+        internal DicomAttributeBinary(uint tag) 
             : base(tag)
         {            
         }
 
-        internal AttributeBinary(DicomTag tag)
+        internal DicomAttributeBinary(DicomTag tag)
             : base(tag)
         {   
         }
 
-        internal AttributeBinary(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeBinary(DicomTag tag, ByteBuffer item)
             : base(tag)
         {
             if (ByteBuffer.LocalMachineEndian != item.Endian)
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Dicom
             StreamLength = (uint)( Count * tag.VR.UnitSize);
         }
 
-        internal AttributeBinary(AttributeBinary<T> attrib)
+        internal DicomAttributeBinary(DicomAttributeBinary<T> attrib)
             : base(attrib)
         {
             T[] values = (T[])attrib.Values;
@@ -139,7 +139,7 @@ namespace ClearCanvas.ImageServer.Dicom
             //Check for null and compare run-time types.
             if (obj == null || GetType() != obj.GetType()) return false;
 
-            AttributeBinary<T> a = (AttributeBinary<T>)obj;
+            DicomAttributeBinary<T> a = (DicomAttributeBinary<T>)obj;
             T[] array = (T[])a.Values;
 
             if (Count != a.Count)
@@ -176,6 +176,19 @@ namespace ClearCanvas.ImageServer.Dicom
             return typeof(T);
         }
 
+        public override bool TryGetString(int i, out String value)
+        {
+            if (_values == null || _values.Length <= i)
+            {
+                value = "";
+                return false;
+            }
+
+            value = _values[i].ToString();
+
+            return true;
+        }
+
         public override void SetStringValue(String stringValue)
         {
             if (stringValue == null || stringValue.Length == 0)
@@ -203,19 +216,19 @@ namespace ClearCanvas.ImageServer.Dicom
             if (_values == null)
                 return "";
 
-            String val = null;
+            StringBuilder val = null;
             foreach (T i in _values)
             {
                 if (val == null)
-                    val = i.ToString();
+                    val = new StringBuilder(i.ToString());
                 else
-                    val += "\\" + i.ToString();
+                    val.AppendFormat("\\{0}", i.ToString());
             }
 
             if (val == null)
-                val = "";
+                return "";
 
-            return val;
+            return val.ToString();
         }
 
         public override bool IsNull
@@ -227,27 +240,36 @@ namespace ClearCanvas.ImageServer.Dicom
                 return false;
             }
         }
+        public override bool IsEmpty
+        {
+            get
+            {
+                if ((Count == 0) && (_values == null))
+                    return true;
+                return false;
+            }
+        }
 
         public abstract override Object Values { get; set; }
-        public abstract override AbstractAttribute Copy();
-        internal abstract override AbstractAttribute Copy(bool copyBinary);
+        public abstract override DicomAttribute Copy();
+        internal abstract override DicomAttribute Copy(bool copyBinary);
 
         #endregion
     }
     #endregion
 
-    #region AttributeAT
-    public class AttributeAT : AttributeBinary<uint>
+    #region DicomAttributeAT
+    public class DicomAttributeAT : DicomAttributeBinary<uint>
     {
 
         #region Constructors
 
-        public AttributeAT(uint tag)
+        public DicomAttributeAT(uint tag)
             : base(tag)
         {
         }
 
-        public AttributeAT(DicomTag tag)
+        public DicomAttributeAT(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.ATvr)
@@ -255,12 +277,12 @@ namespace ClearCanvas.ImageServer.Dicom
                 throw new DicomException(SR.InvalidVR);
         }
 
-        internal AttributeAT(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeAT(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeAT(AttributeAT attrib)
+        internal DicomAttributeAT(DicomAttributeAT attrib)
             : base(attrib)
         {
         }
@@ -284,9 +306,16 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Abstract Method Implementation
 
-        public override uint GetUInt32(int i)
+        public override bool TryGetUInt32(int i, out uint value)
         {
-            return _values[i];
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0;
+                return false;
+            }
+
+            value = _values[i];
+            return true;
         }
 
         public override Object Values
@@ -310,31 +339,31 @@ namespace ClearCanvas.ImageServer.Dicom
             }
         }
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeAT(this);
+            return new DicomAttributeAT(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeAT(this);
+            return new DicomAttributeAT(this);
         }
 
         #endregion
     }
     #endregion
 
-    #region AttributeFD
-    public class AttributeFD : AttributeBinary<double>
+    #region DicomAttributeFD
+    public class DicomAttributeFD : DicomAttributeBinary<double>
     {
         #region Constructors
 
-        public AttributeFD(uint tag)
+        public DicomAttributeFD(uint tag)
             : base(tag)
         {
         }
 
-        public AttributeFD(DicomTag tag)
+        public DicomAttributeFD(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.FDvr)
@@ -342,12 +371,12 @@ namespace ClearCanvas.ImageServer.Dicom
                 throw new DicomException(SR.InvalidVR);
         }
 
-        internal AttributeFD(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeFD(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeFD(AttributeFD attrib)
+        internal DicomAttributeFD(DicomAttributeFD attrib)
             : base(attrib)
         {
         }
@@ -368,13 +397,27 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Abstract Method Implementation
 
-        public override float GetFloat32(int i)
+        public override bool TryGetFloat32(int i, out float value)
         {
-            return (float)_values[i];
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0.0f;
+                return false;
+            }
+
+            value = (float)_values[i];
+            return true;
         }
-        public override double GetFloat64(int i)
+        public override bool TryGetFloat64(int i, out double value)
         {
-            return _values[i];
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0.0f;
+                return false;
+            }
+
+            value = _values[i];
+            return true;
         }
         public override Object Values
         {
@@ -397,31 +440,31 @@ namespace ClearCanvas.ImageServer.Dicom
             }
         }
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeFD(this);
+            return new DicomAttributeFD(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeFD(this);
+            return new DicomAttributeFD(this);
         }
 
         #endregion
     }
     #endregion
 
-    #region AttributeFL
-    public class AttributeFL : AttributeBinary<float>
+    #region DicomAttributeFL
+    public class DicomAttributeFL : DicomAttributeBinary<float>
     {
         #region Constructors
 
-        public AttributeFL(uint tag)
+        public DicomAttributeFL(uint tag)
             : base(tag)
         {
         }
 
-        public AttributeFL(DicomTag tag)
+        public DicomAttributeFL(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.FLvr)
@@ -429,12 +472,12 @@ namespace ClearCanvas.ImageServer.Dicom
                 throw new DicomException(SR.InvalidVR);
         }
 
-        internal AttributeFL(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeFL(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeFL(AttributeFL attrib)
+        internal DicomAttributeFL(DicomAttributeFL attrib)
             : base(attrib)
         {
         }
@@ -455,13 +498,27 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Abstract Method Implementation
 
-        public override float GetFloat32(int i)
+        public override bool TryGetFloat32(int i, out float value)
         {
-            return _values[i];
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0.0f;
+                return false;
+            }
+
+            value = _values[i];
+            return true;
         }
-        public override double GetFloat64(int i)
+        public override bool TryGetFloat64(int i, out double value)
         {
-            return (double)_values[i];
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0.0f;
+                return false;
+            }
+
+            value = (double)_values[i];
+            return true;
         }
 
         public override Object Values
@@ -485,21 +542,21 @@ namespace ClearCanvas.ImageServer.Dicom
             }
         }
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeFL(this);
+            return new DicomAttributeFL(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeFL(this);
+            return new DicomAttributeFL(this);
         }
         #endregion
     }
     #endregion
 
-    #region AttributeOB
-    public class AttributeOB : AttributeBinary<byte>
+    #region DicomAttributeOB
+    public class DicomAttributeOB : DicomAttributeBinary<byte>
     {
         #region Protected Members
         protected List<uint> _table;
@@ -508,13 +565,13 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Constructors
 
-        public AttributeOB(uint tag)
+        public DicomAttributeOB(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeOB(DicomTag tag)
+        public DicomAttributeOB(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.OBvr)
@@ -523,12 +580,12 @@ namespace ClearCanvas.ImageServer.Dicom
 
         }
 
-        internal AttributeOB(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeOB(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeOB(AttributeOB attrib)
+        internal DicomAttributeOB(DicomAttributeOB attrib)
             : base(attrib)
         {
         }
@@ -555,14 +612,14 @@ namespace ClearCanvas.ImageServer.Dicom
             }
         }
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeOB(this);
+            return new DicomAttributeOB(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeOB(this);
+            return new DicomAttributeOB(this);
         }
 
         #endregion
@@ -650,16 +707,16 @@ namespace ClearCanvas.ImageServer.Dicom
     }
     #endregion
 
-    #region AttributeOF
-    public class AttributeOF : AttributeBinary<float>
+    #region DicomAttributeOF
+    public class DicomAttributeOF : DicomAttributeBinary<float>
     {
-        public AttributeOF(uint tag)
+        public DicomAttributeOF(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeOF(DicomTag tag)
+        public DicomAttributeOF(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.OFvr)
@@ -668,13 +725,13 @@ namespace ClearCanvas.ImageServer.Dicom
 
         }
 
-        internal AttributeOF(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeOF(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
 
-        internal AttributeOF(AttributeOF attrib)
+        internal DicomAttributeOF(DicomAttributeOF attrib)
             : base(attrib)
         {
         }
@@ -684,7 +741,7 @@ namespace ClearCanvas.ImageServer.Dicom
 
         public override string ToString()
         {
-            return base.Tag; // TODO
+            return base.Tag + " of length " + base.StreamLength;
         }
 
         public override Object Values
@@ -704,29 +761,29 @@ namespace ClearCanvas.ImageServer.Dicom
             }
         }
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeOF(this);
+            return new DicomAttributeOF(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeOF(this);
+            return new DicomAttributeOF(this);
         }
 
         #endregion
     }
     #endregion
 
-    #region AttributeOW
-    public class AttributeOW : AttributeBinary<ushort>
+    #region DicomAttributeOW
+    public class DicomAttributeOW : DicomAttributeBinary<ushort>
     {
-        public AttributeOW(uint tag)
+        public DicomAttributeOW(uint tag)
             : base(tag)
         {
         }
 
-        public AttributeOW(DicomTag tag)
+        public DicomAttributeOW(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.OWvr)
@@ -734,13 +791,13 @@ namespace ClearCanvas.ImageServer.Dicom
                 throw new DicomException(SR.InvalidVR);
         }
 
-        internal AttributeOW(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeOW(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
 
-        internal AttributeOW(AttributeOW attrib)
+        internal DicomAttributeOW(DicomAttributeOW attrib)
             : base(attrib)
         {
         }
@@ -778,14 +835,14 @@ namespace ClearCanvas.ImageServer.Dicom
             }
         }
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeOW(this);
+            return new DicomAttributeOW(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeOW(this);
+            return new DicomAttributeOW(this);
         }
 
         #endregion
@@ -794,16 +851,16 @@ namespace ClearCanvas.ImageServer.Dicom
     }
     #endregion
 
-    #region AttributeSL
-    public class AttributeSL : AttributeBinary<int>
+    #region DicomAttributeSL
+    public class DicomAttributeSL : DicomAttributeBinary<int>
     {
-        public AttributeSL(uint tag)
+        public DicomAttributeSL(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeSL(DicomTag tag)
+        public DicomAttributeSL(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.SLvr)
@@ -812,21 +869,28 @@ namespace ClearCanvas.ImageServer.Dicom
 
         }
 
-        internal AttributeSL(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeSL(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeSL(AttributeSL attrib)
+        internal DicomAttributeSL(DicomAttributeSL attrib)
             : base(attrib)
         {
         }
 
         #region Abstract Method Implementation
 
-        public override int GetInt32(int i)
+        public override bool TryGetInt32(int i, out int value)
         {
-            return _values[i];
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0;
+                return false;
+            }
+
+            value = _values[i];
+            return true;
         }
 
 
@@ -858,32 +922,32 @@ namespace ClearCanvas.ImageServer.Dicom
             }
         }
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeSL(this);
+            return new DicomAttributeSL(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeSL(this);
+            return new DicomAttributeSL(this);
         }
 
         #endregion
     }
     #endregion
 
-    #region AttributeSS
-    public class AttributeSS : AttributeBinary<short>
+    #region DicomAttributeSS
+    public class DicomAttributeSS : DicomAttributeBinary<short>
     {
         #region Constructors
 
-        public AttributeSS(uint tag)
+        public DicomAttributeSS(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeSS(DicomTag tag)
+        public DicomAttributeSS(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.SSvr)
@@ -892,12 +956,12 @@ namespace ClearCanvas.ImageServer.Dicom
 
         }
 
-        internal AttributeSS(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeSS(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeSS(AttributeSS attrib)
+        internal DicomAttributeSS(DicomAttributeSS attrib)
             : base(attrib)
         {
         }
@@ -918,9 +982,16 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Abstract Method Implementation
 
-        public override short GetInt16(int i)
+        public override bool TryGetInt16(int i, out short value)
         {
-            return _values[i];
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0;
+                return false;
+            }
+
+            value = _values[i];
+            return true;
         }
 
         public override Object Values
@@ -950,32 +1021,32 @@ namespace ClearCanvas.ImageServer.Dicom
             }
         }
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeSS(this);
+            return new DicomAttributeSS(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeSS(this);
+            return new DicomAttributeSS(this);
         }
 
         #endregion
     }
     #endregion
 
-    #region AttributeUL
-    public class AttributeUL : AttributeBinary<uint>
+    #region DicomAttributeUL
+    public class DicomAttributeUL : DicomAttributeBinary<uint>
     {
         #region Constructors
 
-        public AttributeUL(uint tag)
+        public DicomAttributeUL(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeUL(DicomTag tag)
+        public DicomAttributeUL(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.ULvr)
@@ -984,12 +1055,12 @@ namespace ClearCanvas.ImageServer.Dicom
 
         }
 
-        internal AttributeUL(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeUL(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeUL(AttributeUL attrib)
+        internal DicomAttributeUL(DicomAttributeUL attrib)
             : base(attrib)
         {
         }
@@ -1010,9 +1081,16 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Abstract Method Implementation
 
-        public override uint GetUInt32(int i)
+        public override bool TryGetUInt32(int i, out uint value)
         {
-            return _values[i];
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0;
+                return false;
+            }
+
+            value = _values[i];
+            return true;
         }
 
         public override Object Values
@@ -1042,37 +1120,37 @@ namespace ClearCanvas.ImageServer.Dicom
             }
         }
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeUL(this);
+            return new DicomAttributeUL(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeUL(this);
+            return new DicomAttributeUL(this);
         }
 
         #endregion
     }
     #endregion 
 
-    #region AttributeUN
-    public class AttributeUN : AttributeBinary<byte>
+    #region DicomAttributeUN
+    public class DicomAttributeUN : DicomAttributeBinary<byte>
     {
         #region Constructors
 
-        public AttributeUN(uint tag)
+        public DicomAttributeUN(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeUN(DicomTag tag)
+        public DicomAttributeUN(DicomTag tag)
             : base(tag)
         {
         }
 
-        internal AttributeUN(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeUN(DicomTag tag, ByteBuffer item)
             : base(tag)
         {
             _values = item.ToBytes();
@@ -1080,7 +1158,7 @@ namespace ClearCanvas.ImageServer.Dicom
             SetStreamLength();
         }
 
-        internal AttributeUN(AttributeUN attrib)
+        internal DicomAttributeUN(DicomAttributeUN attrib)
             : base(attrib)
         {
         }
@@ -1119,6 +1197,15 @@ namespace ClearCanvas.ImageServer.Dicom
                 return false;
             }
         }
+        public override bool IsEmpty
+        {
+            get
+            {
+                if ((Count == 0) && (_values == null))
+                    return true;
+                return false;
+            }
+        }
 
         public override object Values
         {
@@ -1137,14 +1224,14 @@ namespace ClearCanvas.ImageServer.Dicom
             }
         }
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeUN(this);
+            return new DicomAttributeUN(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeUN(this);
+            return new DicomAttributeUN(this);
         }
 
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax)
@@ -1159,18 +1246,18 @@ namespace ClearCanvas.ImageServer.Dicom
     }
     #endregion
 
-    #region AttributeUS
-    public class AttributeUS : AttributeBinary<ushort>
+    #region DicomAttributeUS
+    public class DicomAttributeUS : DicomAttributeBinary<ushort>
     {
         #region Constructors
 
-        public AttributeUS(uint tag)
+        public DicomAttributeUS(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeUS(DicomTag tag)
+        public DicomAttributeUS(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.USvr)
@@ -1179,12 +1266,12 @@ namespace ClearCanvas.ImageServer.Dicom
 
         }
 
-        internal AttributeUS(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeUS(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeUS(AttributeUS attrib)
+        internal DicomAttributeUS(DicomAttributeUS attrib)
             : base(attrib)
         {
             ushort[] values = (ushort[])attrib.Values;
@@ -1211,17 +1298,16 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Abstract Method Implementation
 
-        public override ushort GetUInt16(int i)
+        public override bool TryGetUInt16(int i, out ushort value)
         {
-            return _values[i];
-        }
+            if (_values == null || _values.Length <= i)
+            {
+                value = 0;
+                return false;
+            }
 
-        public override ushort GetUInt16(int i, ushort defaultVal)
-        {
-            if ((_values == null) || (_values.Length == 0))
-                return defaultVal;
-
-            return _values[i];
+            value = _values[i];
+            return true;
         }
 
         public override Object Values
@@ -1251,14 +1337,14 @@ namespace ClearCanvas.ImageServer.Dicom
             }
         }
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeUS(this);
+            return new DicomAttributeUS(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeUS(this);
+            return new DicomAttributeUS(this);
         }
 
         #endregion

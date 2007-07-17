@@ -38,21 +38,21 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
         #region IDicomClientHandler Members
 
-        public void OnDimseTimeout(DicomClient client)
+        public void OnDimseTimeout(DicomClient client, ClientAssociationParameters association)
         {
         }
 
-        public void OnClientClosed(DicomClient client)
+        public void OnClientClosed(DicomClient client, ClientAssociationParameters association)
         {
             OnClientClosedCalled = true;
         }
 
-        public void OnNetworkError(DicomClient client, Exception e)
+        public void OnNetworkError(DicomClient client, ClientAssociationParameters association, Exception e)
         {
             Assert.Fail("Incorrectly received OnNetworkError callback");
         }
 
-        public void OnReceiveAssociateAccept(DicomClient client, AssociationParameters association)
+        public void OnReceiveAssociateAccept(DicomClient client, ClientAssociationParameters association)
         {
             if (_type == TestTypes.AssociationReject)
             {
@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
                 DicomMessage msg = new DicomMessage();
 
                 _test.SetupMR(msg.DataSet);
-                byte id = client.Associate.FindAbstractSyntaxWithTransferSyntax(msg.SopClass, TransferSyntax.ExplicitVRLittleEndian);
+                byte id = association.FindAbstractSyntaxWithTransferSyntax(msg.SopClass, TransferSyntax.ExplicitVRLittleEndian);
 
                 client.SendCStoreRequest(id, client.NextMessageID(), DicomPriority.Medium, msg);
             }
@@ -73,24 +73,24 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             }
         }
 
-        public void OnReceiveRequestMessage(DicomClient client, byte presentationID, DicomMessage message)
+        public void OnReceiveRequestMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
         {
             Assert.Fail("Incorrectly received OnReceiveRequestMessage callback");
         }
 
-        public void OnReceiveResponseMessage(DicomClient client, byte presentationID, DicomMessage message)
+        public void OnReceiveResponseMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
         {
             client.SendReleaseRequest();
             Assert.AreEqual(message.Status.Code, DicomStatuses.Success.Code, "Incorrect DICOM status returned");
         }
 
-        public void OnReceiveReleaseResponse(DicomClient client)
+        public void OnReceiveReleaseResponse(DicomClient client, ClientAssociationParameters association)
         {
             // Signal the main thread we're exiting
             _threadStop.Set();
         }
 
-        public void OnReceiveAssociateReject(DicomClient client, DicomRejectResult result, DicomRejectSource source, DicomRejectReason reason)
+        public void OnReceiveAssociateReject(DicomClient client, ClientAssociationParameters association, DicomRejectResult result, DicomRejectSource source, DicomRejectReason reason)
         {
             if (_type == TestTypes.AssociationReject)
             {
@@ -103,7 +103,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
                 Assert.Fail("Incorrectly received OnReceiveAssociateReject callback");
         }
 
-        public void OnReceiveAbort(DicomClient client, DicomAbortSource source, DicomAbortReason reason)
+        public void OnReceiveAbort(DicomClient client, ClientAssociationParameters association, DicomAbortSource source, DicomAbortReason reason)
         {
             Assert.Fail("Incorrectly received OnReceiveAbort callback");
         }
@@ -123,56 +123,66 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
         }
         #region IDicomServerHandler Members
 
-        public void OnClientConnected(DicomServer server)
+        public void OnClientConnected(DicomServer server, ServerAssociationParameters association)
         {
 
         }
 
-        public void OnClientClosed(DicomServer server)
+        public void OnClientClosed(DicomServer server, ServerAssociationParameters association)
         {
             DicomLogger.LogInfo("Client has closed");
         }
 
-        public void OnNetworkError(DicomServer server, Exception e)
+        public void OnNetworkError(DicomServer server, ServerAssociationParameters association, Exception e)
         {
             DicomLogger.LogErrorException(e, "Unexpected network error");
 
             Assert.Fail("Unexpected network error: " + e.Message);
         }
 
-        public void OnDimseTimeout(DicomServer client)
+        public void OnDimseTimeout(DicomServer client, ServerAssociationParameters association)
         {
         }
 
-        public void OnReceiveAssociateRequest(DicomServer server, AssociationParameters association)
+        public void OnReceiveAssociateRequest(DicomServer server, ServerAssociationParameters association)
         {
             server.SendAssociateAccept(association);
         }
 
-        public void OnReceiveRequestMessage(DicomServer server, byte presentationID, DicomMessage message)
+        public void OnReceiveRequestMessage(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
         {
-            AttributeCollection testSet = new AttributeCollection();
+            DicomAttributeCollection testSet = new DicomAttributeCollection();
 
             _test.SetupMR(testSet);
 
             bool same = testSet.Equals(message.DataSet);
 
+            DicomUid sopInstanceUid;
+            bool ok = message.DataSet[DicomTags.SOPInstanceUID].TryGetUid(0, out sopInstanceUid);
+            if (!ok)
+            {
+                DicomLogger.LogError("Unable to retrieve SOP Instance UID from request message.  Aborting association.");
+                server.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
+                return;
+            }
 
-            server.SendCStoreResponse(presentationID, message.MessageId, message.DataSet[DicomTags.SOPInstanceUID].GetUid(0), DicomStatuses.Success);
+            server.SendCStoreResponse(presentationID, message.MessageId,sopInstanceUid, DicomStatuses.Success);
 
         }
 
-        public void OnReceiveResponseMessage(DicomServer server, byte presentationID, DicomMessage message)
+        public void OnReceiveResponseMessage(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
         {
-            throw new Exception("The method or operation is not implemented.");
+            DicomLogger.LogError("Unexpected OnReceiveResponseMessage callback.  Aborting Association.");
+            server.SendAssociateAbort(DicomAbortSource.ServiceUser, DicomAbortReason.NotSpecified);
+            Assert.Fail("Unexpected OnReceiveResponseMessage");
         }
 
-        public void OnReceiveReleaseRequest(DicomServer server)
+        public void OnReceiveReleaseRequest(DicomServer server, ServerAssociationParameters association)
         {
 
         }
 
-        public void OnReceiveAbort(DicomServer server, DicomAbortSource source, DicomAbortReason reason)
+        public void OnReceiveAbort(DicomServer server, ServerAssociationParameters association, DicomAbortSource source, DicomAbortReason reason)
         {
             throw new Exception("The method or operation is not implemented.");
         }
