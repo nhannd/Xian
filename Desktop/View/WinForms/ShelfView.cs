@@ -37,7 +37,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         public override void Open()
         {
             IApplicationComponentView componentView = (IApplicationComponentView)ViewFactory.CreateAssociatedView(_shelf.Component.GetType());
-            componentView.SetComponent(_shelf.Component);
+            componentView.SetComponent((IApplicationComponent)_shelf.Component);
             _content = _desktopView.AddShelfView(this, (Control)componentView.GuiElement, _shelf.Title, _shelf.DisplayHint);
         }
 

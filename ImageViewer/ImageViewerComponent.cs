@@ -486,12 +486,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(workspace, "workspace");
 
-			IApplicationComponent component = workspace.Component;
-
-			if (!(component is IImageViewer))
-				return null;
-
-			return component as IImageViewer;
+            // return the hosted IImageViewer, or null if the hosted component is not an IImageViewer
+            return workspace.Component as IImageViewer;
 		}
 
 		#endregion

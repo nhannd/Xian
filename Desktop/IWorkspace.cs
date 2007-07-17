@@ -16,6 +16,11 @@ namespace ClearCanvas.Desktop
         IDesktopWindow DesktopWindow { get; }
 
         /// <summary>
+        /// Gets the hosted component.
+        /// </summary>
+        object Component { get; }
+
+        /// <summary>
         /// Gets the command history associated with this workspace.
         /// </summary>
         CommandHistory CommandHistory { get; }

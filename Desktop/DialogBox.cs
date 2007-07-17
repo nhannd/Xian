@@ -53,7 +53,7 @@ namespace ClearCanvas.Desktop
             _host = new Host(this, _component);
         }
 
-        public IApplicationComponent Component
+        public object Component
         {
             get { return _component; }
         }

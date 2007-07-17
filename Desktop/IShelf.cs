@@ -15,6 +15,11 @@ namespace ClearCanvas.Desktop
         IDesktopWindow DesktopWindow { get; }
 
         /// <summary>
+        /// Gets the hosted component.
+        /// </summary>
+        object Component { get; }
+
+        /// <summary>
         /// Gets the current display hint.
         /// </summary>
         ShelfDisplayHint DisplayHint { get; }

@@ -19,7 +19,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         protected internal DialogBoxView(DialogBox dialogBox, IWin32Window owner)
         {
             IApplicationComponentView componentView = (IApplicationComponentView)ViewFactory.CreateAssociatedView(dialogBox.Component.GetType());
-            componentView.SetComponent(dialogBox.Component);
+            componentView.SetComponent((IApplicationComponent)dialogBox.Component);
 
             _form = new DialogBoxForm(dialogBox.Title, (Control)componentView.GuiElement);
             _form.FormClosing += new FormClosingEventHandler(_form_FormClosing);

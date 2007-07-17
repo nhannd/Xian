@@ -72,9 +72,9 @@ namespace ClearCanvas.Desktop
         #region Public properties
 
         /// <summary>
-        /// Gets the hosted component
+        /// Gets the hosted component.
         /// </summary>
-        public IApplicationComponent Component
+        public object Component
         {
             get { return _host.Component; }
         }
