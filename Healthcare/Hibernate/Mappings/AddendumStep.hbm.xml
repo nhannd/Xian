@@ -1,5 +1,0 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
-<hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
-  <subclass name="AddendumStep" proxy="AddendumStep" extends="ReportingProcedureStep" discriminator-value="ADD">
-  </subclass>
-</hibernate-mapping>

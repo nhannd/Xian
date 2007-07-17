@@ -7,12 +7,14 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
-    public class StartAddendumResponse : DataContractBase
+    public class CreateAddendumRequest : DataContractBase
     {
-        [DataMember]
-        public EntityRef VerificationStepRef;
+        public CreateAddendumRequest(ReportingWorklistItem item)
+        {
+            this.WorklistItem = item;
+        }
 
         [DataMember]
-        public EntityRef AddendumStepRef;
+        public ReportingWorklistItem WorklistItem;
     }
 }

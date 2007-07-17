@@ -43,7 +43,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="*.gen.cs" />
-    <Compile Include="AddendumStep.cs" />
     <Compile Include="Alert\AlertNotification.cs" />
     <Compile Include="Alert\IncompleteDemographicDataAlert.cs" />
     <Compile Include="Alert\IncompleteDemographicDataAlertSettings.cs" />

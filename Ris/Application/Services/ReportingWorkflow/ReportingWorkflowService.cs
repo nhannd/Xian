@@ -167,48 +167,18 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [UpdateOperation]
-        [OperationEnablement("CanStartAddendum")]
-        public StartAddendumResponse StartAddendum(StartAddendumRequest request)
+        [OperationEnablement("CanCreateAddendum")]
+        public CreateAddendumResponse CreateAddendum(CreateAddendumRequest request)
         {
             VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
 
-            Operations.StartAddendum op = new Operations.StartAddendum();
-            AddendumStep addendum = op.Execute(verification, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            Operations.CreateAddendum op = new Operations.CreateAddendum();
+            InterpretationStep interpretation = op.Execute(verification, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
-            StartAddendumResponse response = new StartAddendumResponse();
+            CreateAddendumResponse response = new CreateAddendumResponse();
             response.VerificationStepRef = verification.GetRef();
-            response.AddendumStepRef = addendum.GetRef();
+            response.InterpretationStepRef = interpretation.GetRef();
             return response;
-        }
-
-        [UpdateOperation]
-        [OperationEnablement("CanCancelAddendum")]
-        public CancelAddendumResponse CancelAddendum(CancelAddendumRequest request)
-        {
-            AddendumStep addendum = PersistenceContext.Load<AddendumStep>(request.AddendumStepRef, EntityLoadFlags.CheckVersion);
-
-            Operations.CancelAddendum op = new Operations.CancelAddendum();
-            op.Execute(addendum, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
-
-            return new CancelAddendumResponse(addendum.GetRef());
-        }
-
-        [UpdateOperation]
-        [OperationEnablement("CanCompleteAddendum")]
-        public CompleteAddendumResponse CompleteAddendum(CompleteAddendumRequest request)
-        {
-            VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.VerificationStepRef, EntityLoadFlags.CheckVersion);
-            AddendumStep addendum = PersistenceContext.Load<AddendumStep>(request.AddendumStepRef, EntityLoadFlags.CheckVersion);
-
-            Report report = verification.ReportPart.Report;
-            int index = report.Parts.Count + 1;
-            addendum.ReportPart = new ReportPart(index.ToString(), request.AddendumContent, report);
-            report.Parts.Add(addendum.ReportPart);
-
-            Operations.CompleteAddendum op = new Operations.CompleteAddendum();
-            op.Execute(addendum, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
-
-            return new CompleteAddendumResponse(addendum.GetRef());
         }
 
         [ReadOperation]
@@ -302,19 +272,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return CanExecuteOperation(new Operations.CompleteVerification(), itemKey);
         }
 
-        public bool CanStartAddendum(IWorklistItemKey itemKey)
+        public bool CanCreateAddendum(IWorklistItemKey itemKey)
         {
-            return CanExecuteOperation(new Operations.StartAddendum(), itemKey);
-        }
-
-        public bool CanCancelAddendum(IWorklistItemKey itemKey)
-        {
-            return CanExecuteOperation(new Operations.CancelAddendum(), itemKey);
-        }
-
-        public bool CanCompleteAddendum(IWorklistItemKey itemKey)
-        {
-            return CanExecuteOperation(new Operations.CompleteAddendum(), itemKey);
+            return CanExecuteOperation(new Operations.CreateAddendum(), itemKey);
         }
 
         private bool CanExecuteOperation(Operations.ReportingOperation op, IWorklistItemKey itemKey)

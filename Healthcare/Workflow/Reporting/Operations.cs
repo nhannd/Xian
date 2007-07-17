@@ -77,7 +77,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public abstract class CompleteInterpretationBase : ReportingOperation
         {
-            public void Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
+            public virtual void Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
                 step.Complete();
             }
@@ -101,7 +101,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CompleteInterpretationForTranscription : CompleteInterpretationBase
         {
-            public TranscriptionStep Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
+            public new TranscriptionStep Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
                 base.Execute(step, currentUserStaff, workflow);
 
@@ -113,7 +113,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CompleteInterpretationForVerification : CompleteInterpretationBase
         {
-            public VerificationStep Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
+            public new VerificationStep Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
                 base.Execute(step, currentUserStaff, workflow);
 
@@ -126,7 +126,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CompleteInterpretationAndVerify : CompleteInterpretationBase
         {
-            public VerificationStep Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
+            public new VerificationStep Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
                 base.Execute(step, currentUserStaff, workflow);
 
@@ -228,15 +228,15 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             }
         }
 
-        public class StartAddendum : ReportingOperation
+        public class CreateAddendum : ReportingOperation
         {
-            public AddendumStep Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
+            public InterpretationStep Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                AddendumStep addendumStep = new AddendumStep(step);
-                addendumStep.Assign(step.PerformingStaff);
-                addendumStep.Start(step.PerformingStaff);
-                workflow.AddActivity(addendumStep);
-                return addendumStep;
+                InterpretationStep interpretation = new InterpretationStep(step.RequestedProcedure);
+                interpretation.Assign(step.PerformingStaff);
+                interpretation.Start(step.PerformingStaff);
+                workflow.AddActivity(interpretation);
+                return interpretation;
             }
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
@@ -246,56 +246,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                     return false;
 
                 if (step.State != ActivityStatus.CM)
-                    return false;
-
-                // do not start a new addendum if there is currently one being edited
-                ProcedureStep activeAddendumStep = CollectionUtils.SelectFirst<ProcedureStep>(step.RequestedProcedure.AddendumSteps,
-                    delegate(ProcedureStep ps)
-                    {
-                        return ps.State == ActivityStatus.IP;
-                    });
-
-                if (activeAddendumStep != null)
-                    return false;
-
-                return true;
-            }
-        }
-
-        public class CancelAddendum : ReportingOperation
-        {
-            public void Execute(AddendumStep step, Staff currentUserStaff, IWorkflow workflow)
-            {
-                step.Discontinue();
-            }
-
-            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
-            {
-                // can only create an addendum for a completed verification step
-                if (step.Is<AddendumStep>() == false)
-                    return false;
-
-                if (step.State == ActivityStatus.CM)
-                    return false;
-
-                return true;
-            }
-        }
-
-        public class CompleteAddendum : ReportingOperation
-        {
-            public void Execute(AddendumStep step, Staff currentUserStaff, IWorkflow workflow)
-            {
-                step.Complete();
-            }
-
-            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
-            {
-                // can only create an addendum for a completed verification step
-                if (step.Is<AddendumStep>() == false)
-                    return false;
-
-                if (step.State == ActivityStatus.CM || step.State == ActivityStatus.DC)
                     return false;
 
                 return true;
