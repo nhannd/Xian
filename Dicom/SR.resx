@@ -403,4 +403,10 @@
   <data name="ExceptionInvalidTransferUID" xml:space="preserve">
     <value>The Transfer Syntax UID cannot be empty.</value>
   </data>
+  <data name="ExceptionSequenceQueriesNotSupported" xml:space="preserve">
+    <value>Sequence queries are not supported at this time (tag path = {0}).</value>
+  </data>
+  <data name="ExceptionDicomTagPathInvalid" xml:space="preserve">
+    <value>The specified Dicom Tag Path is invalid: {0}.</value>
+  </data>
 </root>

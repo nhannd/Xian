@@ -353,25 +353,24 @@ namespace ClearCanvas.Dicom.DataStore
 
 			IDicomDictionary queryDictionary = DataAccessLayer.GetIDicomDictionary(DicomDictionary.DefaultQueryDictionaryName);
 
-            foreach (uint tag in queryKey.DicomTagCollection)
+			foreach (DicomTagPath path in queryKey.DicomTagPathCollection)
             {
-                if (queryKey[tag].Length > 0)
+                if (queryKey[path].Length > 0)
                 {
-                    Path path = new Path(tag.ToString());
 					DictionaryEntry column = queryDictionary.GetColumn(path);
 
 					if (column.IsComputed)
 						continue;
 
 					StringBuilder nextCriteria = new StringBuilder();
-                    if (tag.Equals(DicomTags.ModalitiesinStudy))
+                    if (path.Equals(DicomTags.ModalitiesinStudy))
 					{
 						//special case for modalities in study since it's not actually in the study table.
 						AppendModalitiesInStudyQuery(queryKey[DicomTags.ModalitiesinStudy], nextCriteria);
 					}
 					else
 					{
-						AppendQuery(queryKey[tag], column, nextCriteria);
+						AppendQuery(queryKey[path], column, nextCriteria);
 					}
 
 					if (nextCriteria.Length == 0)
@@ -445,7 +444,7 @@ namespace ClearCanvas.Dicom.DataStore
 							continue;
 
 						DictionaryEntry col = resultsDictionary.GetColumn(new TagName(fieldName));
-                        result.Add(col.Path.GetLastPathElementAsInt32(), fieldValue.ToString());
+						result.Add(col.Path, fieldValue.ToString());
 					}
 				}
 

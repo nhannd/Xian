@@ -100,7 +100,7 @@ namespace ClearCanvas.Dicom.DataStore
             return _tagNameToColumnDictionary.ContainsKey(tagName);
         }
 
-        public bool Contains(Path path)
+		public bool Contains(DicomTagPath path)
         {
             return _pathToColumnDictionary.ContainsKey(path);
         }
@@ -113,7 +113,7 @@ namespace ClearCanvas.Dicom.DataStore
                 throw new Exception(String.Format(SR.FormatSpecifiedColumnDoesNotExistForTag, tagName.ToString()));
         }
 
-        public DictionaryEntry GetColumn(Path path)
+		public DictionaryEntry GetColumn(DicomTagPath path)
         {
             if (_pathToColumnDictionary.ContainsKey(path))
                 return _pathToColumnDictionary[path];

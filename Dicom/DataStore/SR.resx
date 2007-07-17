@@ -123,9 +123,6 @@
   <data name="ExceptionModalitiesInStudyWildcardsNotSupported" xml:space="preserve">
     <value>The ModalitiesInStudy Key Attribute cannot contain wildcards.</value>
   </data>
-  <data name="ExceptionPathCannotBeNull" xml:space="preserve">
-    <value>The path cannot be null.</value>
-  </data>
   <data name="ExceptionStudyQueryNullKey" xml:space="preserve">
     <value>The study query key cannot be null.</value>
   </data>

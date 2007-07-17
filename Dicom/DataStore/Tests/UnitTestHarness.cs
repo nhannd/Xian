@@ -240,25 +240,6 @@ namespace ClearCanvas.Dicom.DataStore.Tests
             Assert.IsTrue(2 == count);
             DataAccessLayer.GetIDataStoreWriter().RemoveStudy(studyFound);
         }
-
-        [Ignore]
-        [Test]
-        public void TestDictionary()
-        {
-            DicomDictionaryContainer container = new DicomDictionaryContainer();
-            DictionaryEntry entry1 = new DictionaryEntry();
-            entry1.TagName = new TagName("TestA");
-            entry1.Path = new Path("Path/Path/Path1");
-            entry1.IsComputed = false;
-            DictionaryEntry entry2 = new DictionaryEntry();
-            entry2.TagName = new TagName("TestB");
-            entry2.Path = new Path("Path/Path/Path2");
-            entry2.IsComputed = false;
-            container.DictionaryEntries.Add(entry1);
-            container.DictionaryEntries.Add(entry2);
-
-            DataAccessLayer.GetIDataStoreWriter().StoreDictionary(container);
-        }
     }
 }
 #endif

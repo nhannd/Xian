@@ -183,6 +183,7 @@
   <ItemGroup>
     <Compile Include="AttributeMultiValueText.cs" />
     <Compile Include="DicomLogger.cs" />
+    <Compile Include="DicomTagPath.cs" />
     <Compile Include="DicomValidationException.cs" />
     <Compile Include="DicomValidator.cs" />
   </ItemGroup>

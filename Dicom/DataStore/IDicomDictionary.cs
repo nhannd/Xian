@@ -7,8 +7,8 @@ namespace ClearCanvas.Dicom.DataStore
     public interface IDicomDictionary
     {
         bool Contains(TagName tagName);
-        bool Contains(Path path);
+        bool Contains(DicomTagPath path);
         DictionaryEntry GetColumn(TagName tagName);
-        DictionaryEntry GetColumn(Path path);
+        DictionaryEntry GetColumn(DicomTagPath path);
     }
 }

@@ -214,6 +214,15 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The specified Dicom Tag Path is invalid: {0}..
+        /// </summary>
+        public static string ExceptionDicomTagPathInvalid {
+            get {
+                return ResourceManager.GetString("ExceptionDicomTagPathInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Transfer syntax {0} for SOP UID = {1} not supported.  Compressed pixel data cannot be loaded at this time..
         /// </summary>
         public static string ExceptionDicomTransferSyntaxNotSupported {
@@ -876,6 +885,15 @@ namespace ClearCanvas.Dicom {
         public static string ExceptionPoorlyFormattedDateRange {
             get {
                 return ResourceManager.GetString("ExceptionPoorlyFormattedDateRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sequence queries are not supported at this time (tag path = {0})..
+        /// </summary>
+        public static string ExceptionSequenceQueriesNotSupported {
+            get {
+                return ResourceManager.GetString("ExceptionSequenceQueriesNotSupported", resourceCulture);
             }
         }
         
