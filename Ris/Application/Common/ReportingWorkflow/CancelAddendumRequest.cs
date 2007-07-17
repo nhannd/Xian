@@ -7,14 +7,14 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
-    public class SaveReportResponse : DataContractBase
+    public class CancelAddendumRequest : DataContractBase
     {
-        public SaveReportResponse(EntityRef reportingStepRef)
+        public CancelAddendumRequest(EntityRef addendumStepRef)
         {
-            this.ReportingStepRef = reportingStepRef;
+            this.AddendumStepRef = addendumStepRef;
         }
 
         [DataMember]
-        public EntityRef ReportingStepRef;
+        public EntityRef AddendumStepRef;
     }
 }

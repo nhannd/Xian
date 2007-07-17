@@ -8,10 +8,11 @@
 
     <many-to-one name="Procedure" class="RequestedProcedure" column="ProcedureOID_" not-null="true"/>
 
-    <set name="Parts" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+    <list name="Parts" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
       <key column="ReportOID_"/>
+      <index column="Id_"/>
       <one-to-many class="ReportPart"/>
-    </set>
+    </list>
 
   </class>
 </hibernate-mapping>

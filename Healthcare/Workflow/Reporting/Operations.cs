@@ -7,6 +7,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare.Brokers;
 using System.Collections;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Workflow.Reporting
 {
@@ -14,16 +15,14 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
     {
         public abstract class ReportingOperation
         {
-            public abstract void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow);
             public abstract bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff);
         }
 
         public class ClaimInterpretation : ReportingOperation
         {
-            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
+            public void Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                InterpretationStep interpretation = step.Downcast<InterpretationStep>();
-                interpretation.Assign(currentUserStaff);
+                step.Assign(currentUserStaff);
             }
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
@@ -45,19 +44,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class StartInterpretation : ReportingOperation
         {
-            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
+            public void Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                InterpretationStep interpretation = step.Downcast<InterpretationStep>();
-
                 // if not assigned, assign
-                if (interpretation.AssignedStaff == null)
+                if (step.AssignedStaff == null)
                 {
-                    interpretation.Assign(currentUserStaff);
+                    step.Assign(currentUserStaff);
                 }
 
-                if (interpretation.State == ActivityStatus.SC)
+                if (step.State == ActivityStatus.SC)
                 {
-                    interpretation.Start(currentUserStaff);
+                    step.Start(currentUserStaff);
                 }
             }
 
@@ -80,10 +77,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public abstract class CompleteInterpretationBase : ReportingOperation
         {
-            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
+            public void Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                InterpretationStep interpretation = step.Downcast<InterpretationStep>();
-                interpretation.Complete();
+                step.Complete();
             }
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
@@ -105,55 +101,56 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CompleteInterpretationForTranscription : CompleteInterpretationBase
         {
-            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
+            public TranscriptionStep Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
                 base.Execute(step, currentUserStaff, workflow);
-                workflow.AddActivity(new TranscriptionStep(step));
+
+                TranscriptionStep transcription = new TranscriptionStep(step);
+                workflow.AddActivity(transcription);
+                return transcription;
             }
         }
 
         public class CompleteInterpretationForVerification : CompleteInterpretationBase
         {
-            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
+            public VerificationStep Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
                 base.Execute(step, currentUserStaff, workflow);
 
-                InterpretationStep interpretation = step.Downcast<InterpretationStep>();
-                VerificationStep verification = new VerificationStep(interpretation);
-                verification.Assign(interpretation.PerformingStaff);
-
+                VerificationStep verification = new VerificationStep(step);
+                verification.Assign(step.PerformingStaff);
                 workflow.AddActivity(verification);
+                return verification;
             }
         }
 
         public class CompleteInterpretationAndVerify : CompleteInterpretationBase
         {
-            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
+            public VerificationStep Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
                 base.Execute(step, currentUserStaff, workflow);
 
-                InterpretationStep interpretation = step.Downcast<InterpretationStep>();
-                VerificationStep verification = new VerificationStep(interpretation);
-                verification.Assign(interpretation.PerformingStaff);
-                verification.Complete(interpretation.PerformingStaff);
-
+                VerificationStep verification = new VerificationStep(step);
+                verification.Assign(step.PerformingStaff);
+                verification.Complete(step.PerformingStaff);
                 workflow.AddActivity(verification);
+                return verification;
             }
         }
 
         public class CancelPendingTranscription : ReportingOperation
         {
-            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
+            public InterpretationStep Execute(TranscriptionStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                TranscriptionStep transcription = step.Downcast<TranscriptionStep>();
-                transcription.Discontinue();
+                step.Discontinue();
 
-                InterpretationStep interpretation = new InterpretationStep(transcription);
+                InterpretationStep interpretation = new InterpretationStep(step);
 
                 // TODO assign the new interpretation back to the dictating physician, from the Report object
                 //interpretation.Assign();
 
                 workflow.AddActivity(interpretation);
+                return interpretation;
             }
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
@@ -175,19 +172,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class StartVerification : ReportingOperation
         {
-            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
+            public void Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                VerificationStep verification = step.Downcast<VerificationStep>();
-
                 // if not assigned, assign
-                if (verification.AssignedStaff == null)
+                if (step.AssignedStaff == null)
                 {
-                    verification.Assign(currentUserStaff);
+                    step.Assign(currentUserStaff);
                 }
 
-                if (verification.State == ActivityStatus.SC)
+                if (step.State == ActivityStatus.SC)
                 {
-                    verification.Start(currentUserStaff);
+                    step.Start(currentUserStaff);
                 }
             }
 
@@ -210,12 +205,10 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class CompleteVerification : ReportingOperation
         {
-            public override void Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
+            public void Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
             {
-                VerificationStep verification = step.Downcast<VerificationStep>();
-
                 // this operation is legal even if the step was never started, therefore need to supply the performer
-                verification.Complete(currentUserStaff);
+                step.Complete(currentUserStaff);
             }
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
@@ -229,6 +222,80 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
                 // step is assigned to someone else
                 if (Equals(step.AssignedStaff, currentUserStaff) == false)
+                    return false;
+
+                return true;
+            }
+        }
+
+        public class StartAddendum : ReportingOperation
+        {
+            public AddendumStep Execute(VerificationStep step, Staff currentUserStaff, IWorkflow workflow)
+            {
+                AddendumStep addendumStep = new AddendumStep(step);
+                addendumStep.Assign(step.PerformingStaff);
+                addendumStep.Start(step.PerformingStaff);
+                workflow.AddActivity(addendumStep);
+                return addendumStep;
+            }
+
+            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+            {
+                // can only create an addendum for a completed verification step
+                if (step.Is<VerificationStep>() == false)
+                    return false;
+
+                if (step.State != ActivityStatus.CM)
+                    return false;
+
+                // do not start a new addendum if there is currently one being edited
+                ProcedureStep activeAddendumStep = CollectionUtils.SelectFirst<ProcedureStep>(step.RequestedProcedure.AddendumSteps,
+                    delegate(ProcedureStep ps)
+                    {
+                        return ps.State == ActivityStatus.IP;
+                    });
+
+                if (activeAddendumStep != null)
+                    return false;
+
+                return true;
+            }
+        }
+
+        public class CancelAddendum : ReportingOperation
+        {
+            public void Execute(AddendumStep step, Staff currentUserStaff, IWorkflow workflow)
+            {
+                step.Discontinue();
+            }
+
+            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+            {
+                // can only create an addendum for a completed verification step
+                if (step.Is<AddendumStep>() == false)
+                    return false;
+
+                if (step.State == ActivityStatus.CM)
+                    return false;
+
+                return true;
+            }
+        }
+
+        public class CompleteAddendum : ReportingOperation
+        {
+            public void Execute(AddendumStep step, Staff currentUserStaff, IWorkflow workflow)
+            {
+                step.Complete();
+            }
+
+            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+            {
+                // can only create an addendum for a completed verification step
+                if (step.Is<AddendumStep>() == false)
+                    return false;
+
+                if (step.State == ActivityStatus.CM || step.State == ActivityStatus.DC)
                     return false;
 
                 return true;

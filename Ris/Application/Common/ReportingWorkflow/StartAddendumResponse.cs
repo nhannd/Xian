@@ -1,18 +1,18 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
-    public class CompleteInterpretationAndVerifyResponse : DataContractBase
+    public class StartAddendumResponse : DataContractBase
     {
         [DataMember]
-        public EntityRef InterpretationStepRef;
+        public EntityRef VerificationStepRef;
 
         [DataMember]
-        public EntityRef VerificationStepRef;
+        public EntityRef AddendumStepRef;
     }
 }

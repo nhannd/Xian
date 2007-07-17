@@ -9,9 +9,9 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class GetPriorReportRequest : DataContractBase
     {
-        public GetPriorReportRequest(EntityRef stepRef)
+        public GetPriorReportRequest(EntityRef reportingStepRef)
         {
-            this.ReportingStepRef = stepRef;
+            this.ReportingStepRef = reportingStepRef;
         }
 
         [DataMember]

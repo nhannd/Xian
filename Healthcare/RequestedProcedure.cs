@@ -88,6 +88,18 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
+        public List<ProcedureStep> AddendumSteps
+        {
+            get
+            {
+                return CollectionUtils.Select<ProcedureStep, List<ProcedureStep>>(this.ProcedureSteps,
+                    delegate(ProcedureStep ps)
+                    {
+                        return ps.Is<AddendumStep>();
+                    });
+            }
+        }
+
         public CheckInProcedureStep CheckInStep
         {
             get

@@ -319,8 +319,12 @@
     <Compile Include="RegistrationWorkflow\RICSummary.cs" />
     <Compile Include="RegistrationWorkflow\SearchPatientRequest.cs" />
     <Compile Include="RegistrationWorkflow\SearchPatientResponse.cs" />
+    <Compile Include="ReportingWorkflow\CancelAddendumRequest.cs" />
+    <Compile Include="ReportingWorkflow\CancelAddendumResponse.cs" />
     <Compile Include="ReportingWorkflow\CancelPendingTranscriptionRequest.cs" />
     <Compile Include="ReportingWorkflow\ClaimInterpretationRequest.cs" />
+    <Compile Include="ReportingWorkflow\CompleteAddendumRequest.cs" />
+    <Compile Include="ReportingWorkflow\CompleteAddendumResponse.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationAndVerifyRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationForTranscriptionRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationForVerificationRequest.cs" />
@@ -331,6 +335,8 @@
     <Compile Include="ReportingWorkflow\CompleteInterpretationForTranscriptionResponse.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationForVerificationResponse.cs" />
     <Compile Include="ReportingWorkflow\CompleteVerificationResponse.cs" />
+    <Compile Include="ReportingWorkflow\StartAddendumRequest.cs" />
+    <Compile Include="ReportingWorkflow\StartAddendumResponse.cs" />
     <Compile Include="ReportingWorkflow\GetPriorReportRequest.cs" />
     <Compile Include="ReportingWorkflow\GetPriorReportResponse.cs" />
     <Compile Include="ReportingWorkflow\LoadReportForEditRequest.cs" />

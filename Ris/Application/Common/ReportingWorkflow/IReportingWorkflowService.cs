@@ -111,6 +111,33 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         CompleteVerificationResponse CompleteVerification(CompleteVerificationRequest request);
 
         /// <summary>
+        /// Start an addendum step
+        /// </summary>
+        /// <param name="request"><see cref="StartAddendumRequest"/></param>
+        /// <returns><see cref="StartAddendumResponse"/></returns>
+        [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        StartAddendumResponse StartAddendum(StartAddendumRequest request);
+
+        /// <summary>
+        /// Cancel an addendum step
+        /// </summary>
+        /// <param name="request"><see cref="CancelAddendumRequest"/></param>
+        /// <returns><see cref="CancelAddendumResponse"/></returns>
+        [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        CancelAddendumResponse CancelAddendum(CancelAddendumRequest request);
+
+        /// <summary>
+        /// Complete an addendum step
+        /// </summary>
+        /// <param name="request"><see cref="CompleteAddendumRequest"/></param>
+        /// <returns><see cref="CompleteAddendumResponse"/></returns>
+        [OperationContract]
+        [FaultContract(typeof(ConcurrentModificationException))]
+        CompleteAddendumResponse CompleteAddendum(CompleteAddendumRequest request);
+
+        /// <summary>
         /// Load the report of a given reporting step
         /// </summary>
         /// <param name="request"><see cref="LoadReportForEditRequest"/></param>

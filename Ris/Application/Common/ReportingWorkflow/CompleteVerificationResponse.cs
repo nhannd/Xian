@@ -9,12 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class CompleteVerificationResponse : DataContractBase
     {
-        public CompleteVerificationResponse(EntityRef stepRef)
+        public CompleteVerificationResponse(EntityRef verificationStepRef)
         {
-            this.ReportingStepRef = stepRef;
+            this.VerificationStepRef = verificationStepRef;
         }
 
         [DataMember]
-        public EntityRef ReportingStepRef;
+        public EntityRef VerificationStepRef;
     }
 }

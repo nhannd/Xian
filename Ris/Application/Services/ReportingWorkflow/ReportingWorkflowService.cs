@@ -62,72 +62,153 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [OperationEnablement("CanClaimInterpretation")]
         public ClaimInterpretationResponse ClaimInterpretation(ClaimInterpretationRequest request)
         {
-            ReportingProcedureStep step = ExecuteOperation(new Operations.ClaimInterpretation(), request.WorklistItem.ProcedureStepRef);
-            PersistenceContext.SynchState();
-            return new ClaimInterpretationResponse(step.GetRef());
+            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+
+            Operations.ClaimInterpretation op = new Operations.ClaimInterpretation();
+            op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+            return new ClaimInterpretationResponse(interpretation.GetRef());
         }
 
         [UpdateOperation]
         [OperationEnablement("CanStartInterpretation")]
         public StartInterpretationResponse StartInterpretation(StartInterpretationRequest request)
         {
-            ReportingProcedureStep step = ExecuteOperation(new Operations.StartInterpretation(), request.WorklistItem.ProcedureStepRef);
-            PersistenceContext.SynchState();
-            return new StartInterpretationResponse(step.GetRef());
+            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+
+            Operations.StartInterpretation op = new Operations.StartInterpretation();
+            op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+            return new StartInterpretationResponse(interpretation.GetRef());
         }
 
         [UpdateOperation]
         [OperationEnablement("CanCompleteInterpretationForTranscription")]
         public CompleteInterpretationForTranscriptionResponse CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request)
         {
-            ReportingProcedureStep step = ExecuteOperation(new Operations.CompleteInterpretationForTranscription(), request.WorklistItem.ProcedureStepRef);
-            PersistenceContext.SynchState();
-            return new CompleteInterpretationForTranscriptionResponse(step.GetRef());
+            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+
+            Operations.CompleteInterpretationForTranscription op = new Operations.CompleteInterpretationForTranscription();
+            TranscriptionStep transcription = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+            CompleteInterpretationForTranscriptionResponse response = new CompleteInterpretationForTranscriptionResponse();
+            response.InterpretationStepRef = interpretation.GetRef();
+            response.TranscriptionStepRef = transcription.GetRef();
+            return response;
         }
 
         [UpdateOperation]
         [OperationEnablement("CanCompleteInterpretationForVerification")]
         public CompleteInterpretationForVerificationResponse CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request)
         {
-            ReportingProcedureStep step = ExecuteOperation(new Operations.CompleteInterpretationForVerification(), request.WorklistItem.ProcedureStepRef);
-            PersistenceContext.SynchState();
-            return new CompleteInterpretationForVerificationResponse(step.GetRef());
+            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+
+            Operations.CompleteInterpretationForVerification op = new Operations.CompleteInterpretationForVerification();
+            VerificationStep verification = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+            CompleteInterpretationForVerificationResponse response = new CompleteInterpretationForVerificationResponse();
+            response.InterpretationStepRef = interpretation.GetRef();
+            response.VerificationStepRef = verification.GetRef();
+            return response;
         }
 
         [UpdateOperation]
         [OperationEnablement("CanCompleteInterpretationAndVerify")]
         public CompleteInterpretationAndVerifyResponse CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request)
         {
-            ReportingProcedureStep step = ExecuteOperation(new Operations.CompleteInterpretationAndVerify(), request.WorklistItem.ProcedureStepRef);
-            PersistenceContext.SynchState();
-            return new CompleteInterpretationAndVerifyResponse(step.GetRef());
+            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+
+            Operations.CompleteInterpretationAndVerify op = new Operations.CompleteInterpretationAndVerify();
+            VerificationStep verification = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+            CompleteInterpretationAndVerifyResponse response = new CompleteInterpretationAndVerifyResponse();
+            response.InterpretationStepRef = interpretation.GetRef();
+            response.VerificationStepRef = verification.GetRef();
+            return response;
         }
 
         [UpdateOperation]
         [OperationEnablement("CanCancelPendingTranscription")]
         public CancelPendingTranscriptionResponse CancelPendingTranscription(CancelPendingTranscriptionRequest request)
         {
-            ReportingProcedureStep step = ExecuteOperation(new Operations.CancelPendingTranscription(), request.WorklistItem.ProcedureStepRef);
-            PersistenceContext.SynchState();
-            return new CancelPendingTranscriptionResponse(step.GetRef());
+            TranscriptionStep transcription = PersistenceContext.Load<TranscriptionStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+
+            Operations.CancelPendingTranscription op = new Operations.CancelPendingTranscription();
+            InterpretationStep interpretation = op.Execute(transcription, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+            CancelPendingTranscriptionResponse response = new CancelPendingTranscriptionResponse();
+            response.TranscriptionStepRef = transcription.GetRef();
+            response.InterpretationStepRef = interpretation.GetRef();
+            return response;
         }
 
         [UpdateOperation]
         [OperationEnablement("CanStartVerification")]
         public StartVerificationResponse StartVerification(StartVerificationRequest request)
         {
-            ReportingProcedureStep step = ExecuteOperation(new Operations.StartVerification(), request.WorklistItem.ProcedureStepRef);
-            PersistenceContext.SynchState();
-            return new StartVerificationResponse(step.GetRef());
+            VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+
+            Operations.StartVerification op = new Operations.StartVerification();
+            op.Execute(verification, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+            return new StartVerificationResponse(verification.GetRef());
         }
 
         [UpdateOperation]
         [OperationEnablement("CanCompleteVerification")]
         public CompleteVerificationResponse CompleteVerification(CompleteVerificationRequest request)
         {
-            ReportingProcedureStep step = ExecuteOperation(new Operations.CompleteVerification(), request.WorklistItem.ProcedureStepRef);
-            PersistenceContext.SynchState();
-            return new CompleteVerificationResponse(step.GetRef());
+            VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+
+            Operations.CompleteVerification op = new Operations.CompleteVerification();
+            op.Execute(verification, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+            return new CompleteVerificationResponse(verification.GetRef());
+        }
+
+        [UpdateOperation]
+        [OperationEnablement("CanStartAddendum")]
+        public StartAddendumResponse StartAddendum(StartAddendumRequest request)
+        {
+            VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+
+            Operations.StartAddendum op = new Operations.StartAddendum();
+            AddendumStep addendum = op.Execute(verification, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+            StartAddendumResponse response = new StartAddendumResponse();
+            response.VerificationStepRef = verification.GetRef();
+            response.AddendumStepRef = addendum.GetRef();
+            return response;
+        }
+
+        [UpdateOperation]
+        [OperationEnablement("CanCancelAddendum")]
+        public CancelAddendumResponse CancelAddendum(CancelAddendumRequest request)
+        {
+            AddendumStep addendum = PersistenceContext.Load<AddendumStep>(request.AddendumStepRef, EntityLoadFlags.CheckVersion);
+
+            Operations.CancelAddendum op = new Operations.CancelAddendum();
+            op.Execute(addendum, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+            return new CancelAddendumResponse(addendum.GetRef());
+        }
+
+        [UpdateOperation]
+        [OperationEnablement("CanCompleteAddendum")]
+        public CompleteAddendumResponse CompleteAddendum(CompleteAddendumRequest request)
+        {
+            VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.VerificationStepRef, EntityLoadFlags.CheckVersion);
+            AddendumStep addendum = PersistenceContext.Load<AddendumStep>(request.AddendumStepRef, EntityLoadFlags.CheckVersion);
+
+            Report report = verification.ReportPart.Report;
+            int index = report.Parts.Count + 1;
+            addendum.ReportPart = new ReportPart(index.ToString(), request.AddendumContent, report);
+            report.Parts.Add(addendum.ReportPart);
+
+            Operations.CompleteAddendum op = new Operations.CompleteAddendum();
+            op.Execute(addendum, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+
+            return new CompleteAddendumResponse(addendum.GetRef());
         }
 
         [ReadOperation]
@@ -150,15 +231,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             {
                 Report report = new Report();
                 report.Procedure = step.RequestedProcedure;
-                PersistenceContext.Lock(report, DirtyState.New);
-                PersistenceContext.SynchState();
 
-                ReportPart part = new ReportPart("0", request.ReportContent, report);
-                PersistenceContext.Lock(part, DirtyState.New);
-                PersistenceContext.SynchState();
-
-                step.ReportPart = part;
+                step.ReportPart = new ReportPart("0", request.ReportContent, report);
                 report.AddPart(step.ReportPart);
+
+                PersistenceContext.Lock(report, DirtyState.New);
             }
             
             return new SaveReportResponse(step.GetRef());
@@ -225,13 +302,19 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return CanExecuteOperation(new Operations.CompleteVerification(), itemKey);
         }
 
-        #endregion
-
-        private ReportingProcedureStep ExecuteOperation(Operations.ReportingOperation op, EntityRef stepRef)
+        public bool CanStartAddendum(IWorklistItemKey itemKey)
         {
-            ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(stepRef, EntityLoadFlags.CheckVersion);
-            op.Execute(step, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
-            return step;
+            return CanExecuteOperation(new Operations.StartAddendum(), itemKey);
+        }
+
+        public bool CanCancelAddendum(IWorklistItemKey itemKey)
+        {
+            return CanExecuteOperation(new Operations.CancelAddendum(), itemKey);
+        }
+
+        public bool CanCompleteAddendum(IWorklistItemKey itemKey)
+        {
+            return CanExecuteOperation(new Operations.CompleteAddendum(), itemKey);
         }
 
         private bool CanExecuteOperation(Operations.ReportingOperation op, IWorklistItemKey itemKey)
@@ -246,5 +329,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 return false;
             }
         }
+
+        #endregion
+
     }
 }

@@ -9,12 +9,10 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class CancelPendingTranscriptionResponse : DataContractBase
     {
-        public CancelPendingTranscriptionResponse(EntityRef stepRef)
-        {
-            this.ReportingStepRef = stepRef;
-        }
+        [DataMember]
+        public EntityRef TranscriptionStepRef;
 
         [DataMember]
-        public EntityRef ReportingStepRef;
+        public EntityRef InterpretationStepRef;
     }
 }

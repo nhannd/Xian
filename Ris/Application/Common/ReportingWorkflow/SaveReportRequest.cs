@@ -9,9 +9,9 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class SaveReportRequest : DataContractBase
     {
-        public SaveReportRequest(EntityRef stepRef, string reportContent)
+        public SaveReportRequest(EntityRef reportingStepRef, string reportContent)
         {
-            this.ReportingStepRef = stepRef;
+            this.ReportingStepRef = reportingStepRef;
             this.ReportContent = reportContent;
         }
 
