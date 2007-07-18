@@ -25,9 +25,9 @@ namespace ClearCanvas.Dicom.IO
         {
             public long _pos;
             public long _len;
-            public AttributeCollection _parent;
+            public DicomAttributeCollection _parent;
             public uint _tag;
-            public AttributeCollection _current;
+            public DicomAttributeCollection _current;
 
             public long _curpos;
             public long _curlen;
@@ -43,7 +43,7 @@ namespace ClearCanvas.Dicom.IO
         private TransferSyntax _syntax = null;
         private Endian _endian;
 
-        private AttributeCollection _dataset;
+        private DicomAttributeCollection _dataset;
 
         private uint _privateCreatorCard = 0xffffffff;
         private string _privateCreatorId = String.Empty;
@@ -60,14 +60,14 @@ namespace ClearCanvas.Dicom.IO
 
         private Stack<SequenceRecord> _sqrs = new Stack<SequenceRecord>();
 
-        private AttributeOB _fragment = null;
+        private DicomAttributeOB _fragment = null;
         #endregion
 
         #region Public Constructors
         public DicomStreamReader(Stream stream)
         {
             _stream = stream;
-            TransferSyntax = TransferSyntax.GetTransferSyntax(TransferSyntax.ExplicitVRLittleEndian);
+            TransferSyntax = TransferSyntax.ExplicitVRLittleEndian;
         }
         #endregion
 
@@ -83,7 +83,7 @@ namespace ClearCanvas.Dicom.IO
             }
         }
 
-        public AttributeCollection Dataset
+        public DicomAttributeCollection Dataset
         {
             get { return _dataset; }
             set
@@ -116,6 +116,9 @@ namespace ClearCanvas.Dicom.IO
 
         public DicomReadStatus Read(DicomTag stopAtTag, DicomReadOptions options)
         {
+            if (stopAtTag == null)
+                stopAtTag = new DicomTag(0xFFFFFFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false);
+
             // Counters:
             //  _remain - bytes remaining in stream
             //  _bytes - estimates bytes to end of dataset
@@ -143,7 +146,7 @@ namespace ClearCanvas.Dicom.IO
                                 {
                                     _privateCreatorCard = tagValue & 0xffffff00;
                                     DicomTag pct = DicomTag.GetPrivateCreatorTag(g, e);
-                                    AttributeCollection ds = _dataset;
+                                    DicomAttributeCollection ds = _dataset;
                                     if (_sqrs.Count > 0)
                                     {
                                         ds = _sqrs.Peek()._current;
@@ -158,7 +161,11 @@ namespace ClearCanvas.Dicom.IO
                             }
                             else
                             {
-                                _tag = DicomTagDictionary.Instance[g, e];
+                                if (e == 0x0000)
+                                    _tag = new DicomTag((uint)g << 16 | (uint)e, "Group Length", DicomVr.ULvr, false, 1, 1, false);
+                                else
+                                    _tag = DicomTagDictionary.Instance[g, e];
+
                                 if (_tag == null)
                                     _tag = new DicomTag((uint)g << 16 | (uint)e, "Private Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
                             }
@@ -429,7 +436,7 @@ namespace ClearCanvas.Dicom.IO
 
                                 DicomStreamReader idsr = new DicomStreamReader(data.Stream);
                                 idsr.Dataset = ds;
-                                idsr.Read(new DicomTag(0xFFFFFFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false), options);
+                                idsr.Read(null, options);
                             }
                             else
                             {
@@ -476,7 +483,7 @@ namespace ClearCanvas.Dicom.IO
                             }
                             else
                             {
-                                _fragment = new AttributeOB(_tag);
+                                _fragment = new DicomAttributeOB(_tag);
                             }
                         }
                         else
@@ -502,7 +509,7 @@ namespace ClearCanvas.Dicom.IO
                                     bb.Endian = _endian;
                                     bb.CopyFrom(_stream, (int)_len);
 
-                                    AbstractAttribute elem = AbstractAttribute.NewAttribute(_tag, bb);
+                                    DicomAttribute elem = DicomAttribute.NewAttribute(_tag, bb);
 
                                     _remain -= _len;
                                     _read += _len;
@@ -510,7 +517,7 @@ namespace ClearCanvas.Dicom.IO
                                     if (_sqrs.Count > 0)
                                     {
                                         SequenceRecord rec = _sqrs.Peek();
-                                        AttributeCollection ds = rec._current;
+                                        DicomAttributeCollection ds = rec._current;
 
                                         if (_tag.Element == 0x0000)
                                         {

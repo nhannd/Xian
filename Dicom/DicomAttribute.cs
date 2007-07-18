@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Dicom.IO;
+//using ClearCanvas.Dicom.Exceptions;
 
 namespace ClearCanvas.Dicom
 {
@@ -11,14 +12,14 @@ namespace ClearCanvas.Dicom
     /// </summary>
     /// <remarks>
     /// <para>
-    /// The AbstractAttribute class is a base class that represents a DICOM attribute.  A number of abstract methods are 
-    /// defined.  Derived classes exist for each of the VR types.  In addition, the <see cref="AttributeBinary"/>,
+    /// The DicomAttribute class is a base class that represents a DICOM attribute.  A number of abstract methods are 
+    /// defined.  Derived classes exist for each of the VR types.  In addition, the <see cref="DicomAttributeBinary"/>,
     /// <see cref="AttributeMultiValueText"/>, and <see cref="AttributeSingelValueText"/> classes contain generic
     /// implementations for binary VRs, text values that contain multiple values, and text VRs that contain a single
     /// value respectively.
     /// </para>
     /// </remarks>
-    public abstract class AbstractAttribute
+    public abstract class DicomAttribute
     {
         #region Private Members
         private DicomTag _tag;
@@ -35,13 +36,14 @@ namespace ClearCanvas.Dicom
         public abstract override bool Equals(object obj);
         public abstract override int GetHashCode();
         public abstract bool IsNull { get; }
+        public abstract bool IsEmpty { get; }
         public abstract Object Values { get; set; }
-        public abstract AbstractAttribute Copy();
+        public abstract DicomAttribute Copy();
         public abstract void SetStringValue(String stringValue);
         public abstract Type GetValueType();
 
         internal abstract ByteBuffer GetByteBuffer(TransferSyntax syntax);
-        internal abstract AbstractAttribute Copy(bool copyBinary);
+        internal abstract DicomAttribute Copy(bool copyBinary);
 
         internal virtual uint CalculateWriteLength(TransferSyntax syntax, DicomWriteOptions options)
         {
@@ -65,43 +67,70 @@ namespace ClearCanvas.Dicom
             return length;
         }
 
-        public virtual ushort GetUInt16(int i)
+        public virtual bool TryGetUInt16(int i, out ushort value)
         {
-            throw new DicomException(SR.InvalidType);
+            value = 0;
+            return false;
         }
         public virtual ushort GetUInt16(int i, ushort defaultVal)
         {
-            throw new DicomException(SR.InvalidType);
+            ushort value;
+            bool ok = TryGetUInt16(i, out value);
+            if (!ok)
+                return defaultVal;
+            return value;
         }
-        public virtual short GetInt16(int i)
+        public virtual bool TryGetInt16(int i, out short value)
         {
-            throw new DicomException(SR.InvalidType);
+            value = 0;
+            return false;
         }
-        public virtual uint GetUInt32(int i)
+        public virtual bool TryGetUInt32(int i, out uint value)
         {
-            throw new DicomException(SR.InvalidType);
+            value = 0;
+            return false;
         }
-        public virtual int GetInt32(int i)
+        public virtual bool TryGetInt32(int i, out int value)
         {
-            throw new DicomException(SR.InvalidType);
+            value = 0;
+            return false;
         }
-        public virtual float GetFloat32(int i)
+        public virtual bool TryGetFloat32(int i, out float value)
         {
-            throw new DicomException(SR.InvalidType);
+            value = 0.0f;
+            return false;
         }
-        public virtual double GetFloat64(int i)
+        public virtual bool TryGetFloat64(int i, out double value)
         {
-            throw new DicomException(SR.InvalidType);
+            value = 0.0f;
+            return false;
         }
-        public virtual DicomUid GetUid(int i)
+        public virtual bool TryGetString(int i, out String value)
         {
-            throw new DicomException(SR.InvalidType);
+            value = "";
+            return false;
         }
+        public virtual String GetString(int i, String defaultVal)
+        {
+            String value;
+            bool ok = TryGetString(i, out value);
+            if (!ok)
+                return defaultVal;
+            return value;
+        }
+
+        public virtual bool TryGetUid(int i, out DicomUid value)
+        {
+            value = null;
+            return false;
+        }
+        public virtual bool TryGetDateTime(int i, out DateTime value)
+        {
+            value = new DateTime();
+            return false;
+        }
+
         public virtual void AddSequenceItem(DicomSequenceItem item)
-        {
-            throw new DicomException(SR.InvalidType);
-        }
-        public virtual DateTime GetDateTime(int i)
         {
             throw new DicomException(SR.InvalidType);
         }
@@ -113,7 +142,7 @@ namespace ClearCanvas.Dicom
         /// Internal constructor when a <see cref="DicomTag"/> is used to identify the tag being added.
         /// </summary>
         /// <param name="tag">The DICOM tag associated with the attribute being created.</param>
-        internal AbstractAttribute(DicomTag tag)
+        internal DicomAttribute(DicomTag tag)
         {
             _tag = tag;
         }
@@ -122,7 +151,7 @@ namespace ClearCanvas.Dicom
         /// Internal constructor when a uint representation of the tag is used to identify the tag being added.
         /// </summary>
         /// <param name="tag">The DICOM tag associated with the attribute being created.</param>
-        internal AbstractAttribute(uint tag)
+        internal DicomAttribute(uint tag)
         {
             _tag = DicomTagDictionary.Instance[tag];
         }
@@ -131,7 +160,7 @@ namespace ClearCanvas.Dicom
         /// Internal constructor used when copying an attribute from a pre-existing attribute instance.
         /// </summary>
         /// <param name="attrib">The attribute that is being copied.</param>
-        internal AbstractAttribute(AbstractAttribute attrib)
+        internal DicomAttribute(DicomAttribute attrib)
         {
             _tag = attrib.Tag;
             _valueCount = attrib.Count;
@@ -172,13 +201,13 @@ namespace ClearCanvas.Dicom
 
         #region Internal Static Methods
 
-        internal static AbstractAttribute NewAttribute(uint tag)
+        internal static DicomAttribute NewAttribute(uint tag)
         {
             DicomTag dictionTag = DicomTagDictionary.Instance[tag];
             return NewAttribute(dictionTag);
         }
 
-        internal static AbstractAttribute NewAttribute(DicomTag tag)
+        internal static DicomAttribute NewAttribute(DicomTag tag)
         {
             if (tag == null)
                 return null;
@@ -186,73 +215,73 @@ namespace ClearCanvas.Dicom
 
             switch (tag.VR.Name)
             {
-                case "AE": return new AttributeAE(tag);
-                case "AS": return new AttributeAS(tag);
-                case "AT": return new AttributeAT(tag);
-                case "CS": return new AttributeCS(tag);
-                case "DA": return new AttributeDA(tag);
-                case "DS": return new AttributeDS(tag);
-                case "DT": return new AttributeDT(tag);
-                case "FL": return new AttributeFL(tag);
-                case "FD": return new AttributeFD(tag);
-                case "IS": return new AttributeIS(tag);
-                case "LO": return new AttributeLO(tag);
-                case "LT": return new AttributeLT(tag);
-                case "OB": return new AttributeOB(tag);
-                case "OF": return new AttributeOF(tag);
-                case "OW": return new AttributeOW(tag);
-                case "PN": return new AttributePN(tag);
-                case "SH": return new AttributeSH(tag);
-                case "SL": return new AttributeSL(tag);
-                case "SQ": return new AttributeSQ(tag);
-                case "SS": return new AttributeSS(tag);
-                case "ST": return new AttributeST(tag);
-                case "TM": return new AttributeTM(tag);
-                case "UI": return new AttributeUI(tag);
-                case "UL": return new AttributeUL(tag);
-                case "UN": return new AttributeUN(tag);
-                case "US": return new AttributeUS(tag);
-                case "UT": return new AttributeUT(tag);
+                case "AE": return new DicomAttributeAE(tag);
+                case "AS": return new DicomAttributeAS(tag);
+                case "AT": return new DicomAttributeAT(tag);
+                case "CS": return new DicomAttributeCS(tag);
+                case "DA": return new DicomAttributeDA(tag);
+                case "DS": return new DicomAttributeDS(tag);
+                case "DT": return new DicomAttributeDT(tag);
+                case "FL": return new DicomAttributeFL(tag);
+                case "FD": return new DicomAttributeFD(tag);
+                case "IS": return new DicomAttributeIS(tag);
+                case "LO": return new DicomAttributeLO(tag);
+                case "LT": return new DicomAttributeLT(tag);
+                case "OB": return new DicomAttributeOB(tag);
+                case "OF": return new DicomAttributeOF(tag);
+                case "OW": return new DicomAttributeOW(tag);
+                case "PN": return new DicomAttributePN(tag);
+                case "SH": return new DicomAttributeSH(tag);
+                case "SL": return new DicomAttributeSL(tag);
+                case "SQ": return new DicomAttributeSQ(tag);
+                case "SS": return new DicomAttributeSS(tag);
+                case "ST": return new DicomAttributeST(tag);
+                case "TM": return new DicomAttributeTM(tag);
+                case "UI": return new DicomAttributeUI(tag);
+                case "UL": return new DicomAttributeUL(tag);
+                case "UN": return new DicomAttributeUN(tag);
+                case "US": return new DicomAttributeUS(tag);
+                case "UT": return new DicomAttributeUT(tag);
             }
 
             return null;
 
         }
 
-        internal static AbstractAttribute NewAttribute(DicomTag tag, ByteBuffer bb)
+        internal static DicomAttribute NewAttribute(DicomTag tag, ByteBuffer bb)
         {
             if (tag == null)
                 return null;
 
             switch (tag.VR.Name)
             {
-                case "AE": return new AttributeAE(tag, bb);
-                case "AS": return new AttributeAS(tag, bb);
-                case "AT": return new AttributeAT(tag, bb);
-                case "CS": return new AttributeCS(tag, bb);
-                case "DA": return new AttributeDA(tag, bb);
-                case "DS": return new AttributeDS(tag, bb);
-                case "DT": return new AttributeDT(tag, bb);
-                case "FL": return new AttributeFL(tag, bb);
-                case "FD": return new AttributeFD(tag, bb);
-                case "IS": return new AttributeIS(tag, bb);
-                case "LO": return new AttributeLO(tag, bb);
-                case "LT": return new AttributeLT(tag, bb);
-                case "OB": return new AttributeOB(tag, bb);
-                case "OF": return new AttributeOF(tag, bb);
-                case "OW": return new AttributeOW(tag, bb);
-                case "PN": return new AttributePN(tag, bb);
-                case "SH": return new AttributeSH(tag, bb);
-                case "SL": return new AttributeSL(tag, bb);
+                case "AE": return new DicomAttributeAE(tag, bb);
+                case "AS": return new DicomAttributeAS(tag, bb);
+                case "AT": return new DicomAttributeAT(tag, bb);
+                case "CS": return new DicomAttributeCS(tag, bb);
+                case "DA": return new DicomAttributeDA(tag, bb);
+                case "DS": return new DicomAttributeDS(tag, bb);
+                case "DT": return new DicomAttributeDT(tag, bb);
+                case "FL": return new DicomAttributeFL(tag, bb);
+                case "FD": return new DicomAttributeFD(tag, bb);
+                case "IS": return new DicomAttributeIS(tag, bb);
+                case "LO": return new DicomAttributeLO(tag, bb);
+                case "LT": return new DicomAttributeLT(tag, bb);
+                case "OB": return new DicomAttributeOB(tag, bb);
+                case "OF": return new DicomAttributeOF(tag, bb);
+                case "OW": return new DicomAttributeOW(tag, bb);
+                case "PN": return new DicomAttributePN(tag, bb);
+                case "SH": return new DicomAttributeSH(tag, bb);
+                case "SL": return new DicomAttributeSL(tag, bb);
                 //case "SQ": return new AttributeSQ(tag, bb);
-                case "SS": return new AttributeSS(tag, bb);
-                case "ST": return new AttributeST(tag, bb);
-                case "TM": return new AttributeTM(tag, bb);
-                case "UI": return new AttributeUI(tag, bb);
-                case "UL": return new AttributeUL(tag, bb);
-                case "UN": return new AttributeUN(tag, bb);
-                case "US": return new AttributeUS(tag, bb);
-                case "UT": return new AttributeUT(tag, bb);
+                case "SS": return new DicomAttributeSS(tag, bb);
+                case "ST": return new DicomAttributeST(tag, bb);
+                case "TM": return new DicomAttributeTM(tag, bb);
+                case "UI": return new DicomAttributeUI(tag, bb);
+                case "UL": return new DicomAttributeUL(tag, bb);
+                case "UN": return new DicomAttributeUN(tag, bb);
+                case "US": return new DicomAttributeUS(tag, bb);
+                case "UT": return new DicomAttributeUT(tag, bb);
             }
 
             return null;
@@ -263,7 +292,7 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Implicit cast to a String object, for ease of use.
         /// </summary>
-        public static implicit operator String(AbstractAttribute attr)
+        public static implicit operator String(DicomAttribute attr)
         {
             // Uses the actual ToString implementation of the derived class.
             return attr.ToString();
@@ -289,9 +318,12 @@ namespace ClearCanvas.Dicom
                     String value = null;
                     if (Tag.VR == DicomVr.UIvr)
                     {
-                        AttributeUI ui = this as AttributeUI;
-                        DicomUid uid = ui.GetUid(0);
-                        if (uid != null && uid.Type != UidType.Unknown)
+                        DicomAttributeUI ui = this as DicomAttributeUI;
+
+                        DicomUid uid;
+                        bool ok = ui.TryGetUid(0, out uid);
+
+                        if (ok && uid.Type != UidType.Unknown)
                         {
                             value = "=" + uid.Description;
                             if (Flags.IsSet(options, DicomDumpOptions.ShortenLongValues))
@@ -354,4 +386,3 @@ namespace ClearCanvas.Dicom
         #endregion
     }
 }
-

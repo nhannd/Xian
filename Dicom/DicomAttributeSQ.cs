@@ -2,23 +2,24 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+//using ClearCanvas.Dicom.Exceptions;
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom
 {
-    public class AttributeSQ : AbstractAttribute
+    public class DicomAttributeSQ : DicomAttribute
     {
         DicomSequenceItem[] _values = null;
 
         #region Constructors
 
-        public AttributeSQ(uint tag)
+        public DicomAttributeSQ(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeSQ(DicomTag tag)
+        public DicomAttributeSQ(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.SQvr)
@@ -27,7 +28,7 @@ namespace ClearCanvas.Dicom
 
         }
 
-        internal AttributeSQ(AttributeSQ attrib, bool copyBinary)
+        internal DicomAttributeSQ(DicomAttributeSQ attrib, bool copyBinary)
             : base(attrib)
         {
             DicomSequenceItem[] items = (DicomSequenceItem[])attrib.Values;
@@ -80,7 +81,7 @@ namespace ClearCanvas.Dicom
             //Check for null and compare run-time types.
             if (obj == null || GetType() != obj.GetType()) return false;
 
-            AttributeSQ a = (AttributeSQ)obj;
+            DicomAttributeSQ a = (DicomAttributeSQ)obj;
             DicomSequenceItem[] array = (DicomSequenceItem[])a.Values;
 
             if (Count != a.Count)
@@ -118,6 +119,17 @@ namespace ClearCanvas.Dicom
             }
         }
 
+        public override bool IsEmpty
+        {
+            get
+            {
+                if ((Count == 0) && (_values == null))
+                    return true;
+                return false;
+            }
+        }
+
+
         public override Object Values
         {
             get { return _values; }
@@ -136,14 +148,14 @@ namespace ClearCanvas.Dicom
             }
         }
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeSQ(this, true);
+            return new DicomAttributeSQ(this, true);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeSQ(this, copyBinary);
+            return new DicomAttributeSQ(this, copyBinary);
         }
 
         public override void SetStringValue(String stringValue)

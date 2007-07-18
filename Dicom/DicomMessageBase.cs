@@ -7,16 +7,16 @@ namespace ClearCanvas.Dicom
     /// <summary>
     /// Base class for DICOM Files and Messages
     /// </summary>
-    public abstract class AbstractMessage
+    public abstract class DicomMessageBase
     {
-        internal AttributeCollection _metaInfo = null;
-        internal AttributeCollection _dataSet = null;
+        internal DicomAttributeCollection _metaInfo = null;
+        internal DicomAttributeCollection _dataSet = null;
 
-        public AttributeCollection MetaInfo
+        public DicomAttributeCollection MetaInfo
         {
             get { return _metaInfo; }
         }
-        public AttributeCollection DataSet
+        public DicomAttributeCollection DataSet
         {
             get { return _dataSet; }
         }

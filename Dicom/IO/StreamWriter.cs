@@ -31,7 +31,7 @@ namespace ClearCanvas.Dicom.IO
         public DicomStreamWriter(Stream stream)
         {
             _stream = stream;
-            TransferSyntax = TransferSyntax.GetTransferSyntax(TransferSyntax.ExplicitVRLittleEndian);
+            TransferSyntax = TransferSyntax.ExplicitVRLittleEndian;
         }
         #endregion
 
@@ -52,11 +52,11 @@ namespace ClearCanvas.Dicom.IO
 
         #endregion
 
-        public DicomWriteStatus Write(TransferSyntax syntax, AttributeCollection dataset, DicomWriteOptions options)
+        public DicomWriteStatus Write(TransferSyntax syntax, DicomAttributeCollection dataset, DicomWriteOptions options)
         {
             TransferSyntax = syntax;
 
-            foreach (AbstractAttribute item in dataset)
+            foreach (DicomAttribute item in dataset)
             {
                 if (item.Tag.Element == 0x0000)
                     continue;
@@ -89,9 +89,9 @@ namespace ClearCanvas.Dicom.IO
                     _writer.Write((byte)item.Tag.VR.Name[1]);
                 }
 
-                if (item is AttributeSQ)
+                if (item is DicomAttributeSQ)
                 {
-                    AttributeSQ sq = item as AttributeSQ;
+                    DicomAttributeSQ sq = item as DicomAttributeSQ;
 
                     if (_syntax.ExplicitVr)
                         _writer.Write((ushort)0x0000);
@@ -138,9 +138,9 @@ namespace ClearCanvas.Dicom.IO
                     }
                 }
 
-                else if (item is AttributeOB && _syntax.Encapsulated)
+                else if (item is DicomAttributeOB && _syntax.Encapsulated)
                 {
-                    AttributeOB fs = item as AttributeOB;
+                    DicomAttributeOB fs = item as DicomAttributeOB;
 
                     if (_syntax.ExplicitVr)
                         _writer.Write((ushort)0x0000);
@@ -174,7 +174,7 @@ namespace ClearCanvas.Dicom.IO
 
                 else
                 {
-                    AbstractAttribute de = item as AbstractAttribute;
+                    DicomAttribute de = item as DicomAttribute;
 
                     if (_syntax.ExplicitVr)
                     {

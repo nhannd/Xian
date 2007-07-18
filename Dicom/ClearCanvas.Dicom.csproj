@@ -84,14 +84,14 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Compile Include="AbstractAttribute.cs" />
-    <Compile Include="AbstractMessage.cs" />
+    <Compile Include="DicomAttribute.cs" />
+    <Compile Include="DicomMessageBase.cs" />
     <Compile Include="Accession.cs" />
     <Compile Include="AETitle.cs" />
-    <Compile Include="AttributeBinary.cs" />
-    <Compile Include="AttributeCollection.cs" />
-    <Compile Include="AttributeSingleValueText.cs" />
-    <Compile Include="AttributeSQ.cs" />
+    <Compile Include="DicomAttributeBinary.cs" />
+    <Compile Include="DicomAttributeCollection.cs" />
+    <Compile Include="DicomAttributeSingleValueText.cs" />
+    <Compile Include="DicomAttributeSQ.cs" />
     <Compile Include="ComponentGroup.cs" />
     <Compile Include="DateParser.cs" />
     <Compile Include="DateRangeHelper.cs" />
@@ -181,7 +181,7 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AttributeMultiValueText.cs" />
+    <Compile Include="DicomAttributeMultiValueText.cs" />
     <Compile Include="DicomLogger.cs" />
     <Compile Include="DicomTagPath.cs" />
     <Compile Include="DicomValidationException.cs" />

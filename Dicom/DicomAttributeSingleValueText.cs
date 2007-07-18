@@ -3,30 +3,31 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
+//using ClearCanvas.Dicom.Exceptions;
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom
 {
-    #region AttributeSingleValueText
-    public abstract class AttributeSingleValueText : AbstractAttribute
+    #region DicomAttributeSingleValueText
+    public abstract class DicomAttributeSingleValueText : DicomAttribute
     {
         private String _value = null;
 
         #region Constructors
 
-        internal AttributeSingleValueText(uint tag)
+        internal DicomAttributeSingleValueText(uint tag)
             : base(tag)
         {
 
         }
 
-        internal AttributeSingleValueText(DicomTag tag)
+        internal DicomAttributeSingleValueText(DicomTag tag)
             : base(tag)
         {
 
         }
 
-        internal AttributeSingleValueText(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeSingleValueText(DicomTag tag, ByteBuffer item)
             : base(tag)
         {
             _value = item.GetString();
@@ -39,7 +40,7 @@ namespace ClearCanvas.Dicom
             StreamLength = (uint)_value.Length;
         }
 
-        internal AttributeSingleValueText(AttributeSingleValueText attrib)
+        internal DicomAttributeSingleValueText(DicomAttributeSingleValueText attrib)
             : base(attrib)
         {
             String value = attrib;
@@ -52,6 +53,17 @@ namespace ClearCanvas.Dicom
 
 
         #region Abstract Method Implementation
+
+        public override bool TryGetString(int i, out String value)
+        {
+            if (i == 0)
+            {
+                value = _value;
+                return true;
+            }
+            value = "";
+            return false;
+        }
 
         public override string ToString()
         {
@@ -66,7 +78,7 @@ namespace ClearCanvas.Dicom
             //Check for null and compare run-time types.
             if (obj == null || GetType() != obj.GetType()) return false;
 
-            AbstractAttribute a = (AbstractAttribute)obj;
+            DicomAttribute a = (DicomAttribute)obj;
             string str = (string)a.Values;
 
             return _value.Equals(str);
@@ -87,6 +99,15 @@ namespace ClearCanvas.Dicom
             get
             {
                 if ((_value != null) && (_value.Length == 0))
+                    return true;
+                return false;
+            }
+        }
+        public override bool IsEmpty
+        {
+            get
+            {
+                if ((Count == 0) && (_value == null))
                     return true;
                 return false;
             }
@@ -124,8 +145,8 @@ namespace ClearCanvas.Dicom
             StreamLength = (uint)_value.Length;
         }
 
-        public abstract override AbstractAttribute Copy();
-        internal abstract override AbstractAttribute Copy(bool copyBinary);
+        public abstract override DicomAttribute Copy();
+        internal abstract override DicomAttribute Copy(bool copyBinary);
 
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax)
         {
@@ -139,18 +160,18 @@ namespace ClearCanvas.Dicom
     }
     #endregion
 
-    #region AttributeLT
-    public class AttributeLT : AttributeSingleValueText
+    #region DicomAttributeLT
+    public class DicomAttributeLT : DicomAttributeSingleValueText
     {
         #region Constructors
 
-        public AttributeLT(uint tag)
+        public DicomAttributeLT(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeLT(DicomTag tag)
+        public DicomAttributeLT(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.LTvr)
@@ -159,43 +180,43 @@ namespace ClearCanvas.Dicom
 
         }
 
-        internal AttributeLT(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeLT(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeLT(AttributeLT attrib)
+        internal DicomAttributeLT(DicomAttributeLT attrib)
             : base(attrib)
         {
         }
 
         #endregion
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeLT(this);
+            return new DicomAttributeLT(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeLT(this);
+            return new DicomAttributeLT(this);
         }
 
     }
     #endregion
 
-    #region AttributeST
-    public class AttributeST : AttributeSingleValueText
+    #region DicomAttributeST
+    public class DicomAttributeST : DicomAttributeSingleValueText
     {
         #region Constructors
 
-        public AttributeST(uint tag)
+        public DicomAttributeST(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeST(DicomTag tag)
+        public DicomAttributeST(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.STvr)
@@ -204,44 +225,44 @@ namespace ClearCanvas.Dicom
 
         }
 
-        internal AttributeST(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeST(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
 
-        internal AttributeST(AttributeST attrib)
+        internal DicomAttributeST(DicomAttributeST attrib)
             : base(attrib)
         {
         }
 
         #endregion
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeST(this);
+            return new DicomAttributeST(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeST(this);
+            return new DicomAttributeST(this);
         }
 
     }
     #endregion
 
-    #region AttributeUT
-    public class AttributeUT : AttributeSingleValueText
+    #region DicomAttributeUT
+    public class DicomAttributeUT : DicomAttributeSingleValueText
     {
         #region Constructors
 
-        public AttributeUT(uint tag)
+        public DicomAttributeUT(uint tag)
             : base(tag)
         {
 
         }
 
-        public AttributeUT(DicomTag tag)
+        public DicomAttributeUT(DicomTag tag)
             : base(tag)
         {
             if (!tag.VR.Equals(DicomVr.UTvr)
@@ -250,12 +271,12 @@ namespace ClearCanvas.Dicom
 
         }
 
-        internal AttributeUT(DicomTag tag, ByteBuffer item)
+        internal DicomAttributeUT(DicomTag tag, ByteBuffer item)
             : base(tag, item)
         {
         }
 
-        internal AttributeUT(AttributeUT attrib)
+        internal DicomAttributeUT(DicomAttributeUT attrib)
             : base(attrib)
         {
 
@@ -264,14 +285,14 @@ namespace ClearCanvas.Dicom
         #endregion
 
 
-        public override AbstractAttribute Copy()
+        public override DicomAttribute Copy()
         {
-            return new AttributeUT(this);
+            return new DicomAttributeUT(this);
         }
 
-        internal override AbstractAttribute Copy(bool copyBinary)
+        internal override DicomAttribute Copy(bool copyBinary)
         {
-            return new AttributeUT(this);
+            return new DicomAttributeUT(this);
         }
 
     }
