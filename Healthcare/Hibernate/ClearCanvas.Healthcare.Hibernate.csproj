@@ -53,6 +53,7 @@
     <Compile Include="Brokers\ReportingProcedureStepBroker.cs" />
     <Compile Include="Brokers\ReportingWorklistBroker.cs" />
     <Compile Include="Brokers\StaffBroker.cs" />
+    <Compile Include="Brokers\WorklistBroker.cs" />
     <Compile Include="DateTimeRangeHbm.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
@@ -168,6 +169,10 @@
     <EmbeddedResource Include="Mappings\RequestedProcedureTypeGroup.hbm.xml" />
     <EmbeddedResource Include="Mappings\RequestedProcedureTypeGroupCategoryEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\ReportPart.hbm.xml" />
+    <EmbeddedResource Include="Mappings\Worklist.hbm.xml" />
+    <EmbeddedResource Include="Mappings\RegistrationWorklists.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ReportingWorklists.hbm.xml" />
+    <EmbeddedResource Include="Mappings\TechnologistWorklists.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />

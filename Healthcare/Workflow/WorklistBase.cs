@@ -49,6 +49,12 @@ namespace ClearCanvas.Healthcare.Workflow
         public virtual int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
         { return -1; }
 
+        public virtual string Name
+        {
+            get { return ""; }
+            set { }
+        }
+
         #endregion
     }
 

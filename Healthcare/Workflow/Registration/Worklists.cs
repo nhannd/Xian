@@ -1,15 +1,7 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Workflow;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Workflow.Registration
 {

@@ -1,12 +1,7 @@
-using System;
 using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Workflow;
 
-namespace ClearCanvas.Healthcare.Workflow
+namespace ClearCanvas.Healthcare
 {
     public interface IWorklistItemKey
     {
@@ -21,6 +16,6 @@ namespace ClearCanvas.Healthcare.Workflow
     {
         IList GetWorklist(Staff currentUserStaff, IPersistenceContext context);
         int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context);
+        string Name { get; set; }
     }
-
 }
