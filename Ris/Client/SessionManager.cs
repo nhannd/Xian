@@ -6,6 +6,7 @@ using ClearCanvas.Ris.Application.Common.Login;
 using System.Threading;
 using System.Security.Principal;
 using System.ServiceModel;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -40,15 +41,15 @@ namespace ClearCanvas.Ris.Client
                         }
                         catch (CommunicationException)
                         {
-                            Platform.ShowMessageBox(SR.MessageCommunicationError);
+                            ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageCommunicationError, MessageBoxActions.Ok);
                         }
                         catch (TimeoutException)
                         {
-                            Platform.ShowMessageBox(SR.MessageLoginTimeout);
+                            ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageLoginTimeout, MessageBoxActions.Ok);
                         }
                         catch (Exception)
                         {
-                            Platform.ShowMessageBox(SR.MessageInvalidUserNamePassword);
+                            ClearCanvas.Desktop.Application.ShowMessageBox(SR.MessageInvalidUserNamePassword, MessageBoxActions.Ok);
                         }
                     }
                     else
