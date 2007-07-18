@@ -188,7 +188,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                                 delegate(IReportingWorkflowService service)
                                 {
                                     StartInterpretationResponse response = service.StartInterpretation(new StartInterpretationRequest(item));
-                                    item.ProcedureStepRef = response.ReportingStepRef;
+                                    item.ProcedureStepRef = response.InterpretationStepRef;
                                 });
                         }
                         else if (item.StepType == "Verification")
@@ -197,7 +197,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                                 delegate(IReportingWorkflowService service)
                                 {
                                     StartVerificationResponse response = service.StartVerification(new StartVerificationRequest(item));
-                                    item.ProcedureStepRef = response.ReportingStepRef;
+                                    item.ProcedureStepRef = response.VerificationStepRef;
                                 });
 
                         }

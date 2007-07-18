@@ -5,9 +5,11 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.RequestedProcedureTypeGroupAdmin;
+using ClearCanvas.Ris.Application.Services.Admin.RequestedProcedureTypeGroupAdmin;
 
-namespace ClearCanvas.Ris.Application.Services.Admin.RequestedProcedureTypeGroupAdmin
+namespace ClearCanvas.Ris.Application.Services.Admin
 {
     internal class RequestedProcedureTypeGroupAssembler
     {

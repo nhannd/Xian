@@ -196,6 +196,24 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A worklist with the name {0} already exists.
+        /// </summary>
+        internal static string ExceptionWorklistNameAlreadyExists {
+            get {
+                return ResourceManager.GetString("ExceptionWorklistNameAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A worklist name is required.
+        /// </summary>
+        internal static string ExceptionWorklistNameRequired {
+            get {
+                return ResourceManager.GetString("ExceptionWorklistNameRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Checked In.
         /// </summary>
         internal static string TextCheckedIn {

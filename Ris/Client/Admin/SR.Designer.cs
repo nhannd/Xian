@@ -367,6 +367,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to save Worklist.
+        /// </summary>
+        internal static string ExceptionSaveWorklist {
+            get {
+                return ResourceManager.GetString("ExceptionSaveWorklist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit.
         /// </summary>
         internal static string LabelEdit {
@@ -534,6 +543,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleAddUser {
             get {
                 return ResourceManager.GetString("TitleAddUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Add Worklist.
+        /// </summary>
+        internal static string TitleAddWorklist {
+            get {
+                return ResourceManager.GetString("TitleAddWorklist", resourceCulture);
             }
         }
         
@@ -714,6 +732,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleUpdateUser {
             get {
                 return ResourceManager.GetString("TitleUpdateUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Update Worklist.
+        /// </summary>
+        internal static string TitleUpdateWorklist {
+            get {
+                return ResourceManager.GetString("TitleUpdateWorklist", resourceCulture);
             }
         }
         

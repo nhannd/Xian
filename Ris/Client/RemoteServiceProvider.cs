@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.ServiceModel;
-using System.ServiceModel.Channels;
 using System.Reflection;
+using System.ServiceModel;
+
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client
@@ -30,6 +28,8 @@ namespace ClearCanvas.Ris.Client
                 binding.Security.Mode = SecurityMode.Message;
                 binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
                 binding.MaxReceivedMessageSize = 1048576;
+                //binding.ReceiveTimeout = new TimeSpan(0, 0 , 20);
+                //binding.SendTimeout = new TimeSpan(0, 0, 10);
 
                 // create the channel factory
                 Type channelFactoryClass = typeof(ChannelFactory<>).MakeGenericType(new Type[] { serviceType });

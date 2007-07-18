@@ -141,6 +141,20 @@
       <DependentUpon>UserSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UserSummaryComponentView.cs" />
+    <Compile Include="WorklistEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorklistEditorComponentControl.Designer.cs">
+      <DependentUpon>WorklistEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorklistEditorComponentView.cs" />
+    <Compile Include="WorklistSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="WorklistSummaryComponentControl.Designer.cs">
+      <DependentUpon>WorklistSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="WorklistSummaryComponentView.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\Common\ClearCanvas.Common.csproj">
@@ -227,6 +241,14 @@
     <EmbeddedResource Include="UserSummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>UserSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorklistEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WorklistEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="WorklistSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>WorklistSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

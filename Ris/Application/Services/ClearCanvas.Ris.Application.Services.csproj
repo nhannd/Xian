@@ -71,10 +71,12 @@
     <Compile Include="Admin\PatientAdmin\PatientAdminService.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeAssembler.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupAdminService.cs" />
-    <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupAssembler.cs" />
+    <Compile Include="Admin\RequestedProcedureTypeGroupAssembler.cs" />
     <Compile Include="Admin\StaffAdmin\StaffAdminService.cs" />
     <Compile Include="Admin\VisitAdmin\VisitAdminService.cs" />
     <Compile Include="Admin\VisitAssembler.cs" />
+    <Compile Include="Admin\WorklistAdmin\WorklistAdminService.cs" />
+    <Compile Include="Admin\WorklistAdmin\WorklistAssembler.cs" />
     <Compile Include="ApplicationServiceBase.cs" />
     <Compile Include="ApplicationServiceExtensionPoint.cs" />
     <Compile Include="Admin\HL7QueueItemAssembler.cs" />

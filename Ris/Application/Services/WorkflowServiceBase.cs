@@ -8,7 +8,6 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Healthcare.Workflow;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Workflow;
 

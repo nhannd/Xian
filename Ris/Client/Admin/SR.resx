@@ -219,6 +219,9 @@
   <data name="ExceptionSaveUser" xml:space="preserve">
     <value>Unable to save User</value>
   </data>
+  <data name="ExceptionSaveWorklist" xml:space="preserve">
+    <value>Unable to save Worklist</value>
+  </data>
   <data name="LabelEdit" xml:space="preserve">
     <value>Edit</value>
   </data>
@@ -275,6 +278,9 @@
   </data>
   <data name="TitleAddUser" xml:space="preserve">
     <value>Add User</value>
+  </data>
+  <data name="TitleAddWorklist" xml:space="preserve">
+    <value>Add Worklist</value>
   </data>
   <data name="TitleAuthorityGroup" xml:space="preserve">
     <value>Authority Groups Admin</value>
@@ -335,6 +341,9 @@
   </data>
   <data name="TitleUpdateUser" xml:space="preserve">
     <value>Update User</value>
+  </data>
+  <data name="TitleUpdateWorklist" xml:space="preserve">
+    <value>Update Worklist</value>
   </data>
   <data name="TitleUser" xml:space="preserve">
     <value>User Admin</value>

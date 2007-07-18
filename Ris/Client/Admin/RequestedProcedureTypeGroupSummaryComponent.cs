@@ -5,6 +5,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.RequestedProcedureTypeGroupAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin

@@ -1,17 +1,17 @@
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.Admin.RequestedProcedureTypeGroupAdmin
+namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 {
     [DataContract]
-    public class RequestedProcedureTypeGroupSummary : DataContractBase
+    public class WorklistSummary : DataContractBase
     {
-        public RequestedProcedureTypeGroupSummary(EntityRef entityRef, string name, string description, EnumValueInfo category)
+        public WorklistSummary(EntityRef entityRef, string name, string description, string worklistType)
         {
             EntityRef = entityRef;
             Name = name;
             Description = description;
-            Category = category;
+            WorklistType = worklistType;
         }
 
         [DataMember]
@@ -24,6 +24,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.RequestedProcedureTypeGroupAd
         public string Description;
 
         [DataMember]
-        public EnumValueInfo Category;
+        public string WorklistType;
     }
 }
