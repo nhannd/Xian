@@ -61,6 +61,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ClearCanvas Workstation.
+        /// </summary>
+        public static string ApplicationName {
+            get {
+                return ResourceManager.GetString("ApplicationName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The event {0} does not exist for class {1}..
         /// </summary>
         public static string ExceptionActionBuilderEventDoesNotExist {

@@ -47,18 +47,6 @@ namespace ClearCanvas.Common
     {
     }
 
-    /// <summary>
-    /// Defines a general mechanism for establishing a session.  When <see cref="Platform.StartApp"/>
-    /// is called, the framework will look for a session manager extension.  If one is found, the
-    /// framework will attempt to establish a session by calling <see cref="ISessionManager.InitiateSession"/>.
-    /// If no session manager extensions are found, the application will proceed to execute in standalone
-    /// (i.e no authentication) mode.
-    /// </summary>
-    [ExtensionPoint()]
-    public class SessionManagerExtensionPoint : ExtensionPoint<ISessionManager>
-    {
-    }
-
     [ExtensionPoint()]
     public class TimeProviderExtensionPoint : ExtensionPoint<ITimeProvider>
     {
@@ -312,29 +300,11 @@ namespace ClearCanvas.Common
             try
             {
 #endif
-            ISessionManager sessionManager = GetSessionManager();
-            if (sessionManager != null)
-            {
-                // allow any exception thrown here to cause the application to terminate
-                if (!sessionManager.InitiateSession())
-                    return;     // silent exit
-            }
-
-            try
-            {
-                ApplicationRootExtensionPoint xp = new ApplicationRootExtensionPoint();
-                _applicationRoot = (applicationRootFilter == null) ?
-                    (IApplicationRoot)xp.CreateExtension() :
-                    (IApplicationRoot)xp.CreateExtension(applicationRootFilter);
-                _applicationRoot.RunApplication(args);
-            }
-            finally
-            {
-                if (sessionManager != null)
-                    sessionManager.TerminateSession();
-            }
-
-
+            ApplicationRootExtensionPoint xp = new ApplicationRootExtensionPoint();
+            _applicationRoot = (applicationRootFilter == null) ?
+                (IApplicationRoot)xp.CreateExtension() :
+                (IApplicationRoot)xp.CreateExtension(applicationRootFilter);
+            _applicationRoot.RunApplication(args);
 
 #if !DEBUG
             }
@@ -813,24 +783,6 @@ namespace ClearCanvas.Common
             if (IsWin32Platform)
             {                
                 System.Diagnostics.Process.Start("explorer.exe", "/n,/select," + path);
-            }
-        }
-
-        /// <summary>
-        /// Private method to get a session manager
-        /// </summary>
-        /// <returns></returns>
-        private static ISessionManager GetSessionManager()
-        {
-            try
-            {
-                SessionManagerExtensionPoint xp = new SessionManagerExtensionPoint();
-                return (ISessionManager)xp.CreateExtension();
-            }
-            catch (NotSupportedException)
-            {
-                // no session manager implementation
-                return null;
             }
         }
     }

@@ -10,20 +10,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
     /// <summary>
     /// Abstract base class for all WinForms-based views.  Any class that implements a view using
-    /// <see cref="System.Windows.Forms"/> as the underlying GUI toolkit, and that intends to be compatible
-    /// with <see cref="ClearCanvas.Workstation.View.WinForms.WorkstationView"/> must subclass this class.
+    /// <see cref="System.Windows.Forms"/> as the underlying GUI toolkit should subclass this class.
     /// </summary>
     [GuiToolkit(ClearCanvas.Common.GuiToolkitID.WinForms)]
     public abstract class WinFormsView
     {
         protected WinFormsView()
         {
-            if (!Platform.IsWin32Platform)
-            {
-                //TODO add a message here
-                throw new NotSupportedException();
-            }
-            System.Windows.Forms.Application.EnableVisualStyles();
         }
 
         /// <summary>

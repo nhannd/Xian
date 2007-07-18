@@ -73,12 +73,6 @@
     <Compile Include="DesktopObjectState.cs" />
     <Compile Include="DesktopObject.cs" />
     <Compile Include="DesktopObjectCollection.cs" />
-    <Compile Include="DesktopSettings.cs" />
-    <Compile Include="DesktopSettings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>DesktopSettings.settings</DependentUpon>
-    </Compile>
     <Compile Include="DesktopWindowCollection.cs" />
     <Compile Include="DesktopWindowCreationArgs.cs" />
     <Compile Include="DialogBoxCollection.cs" />
@@ -88,6 +82,7 @@
     <Compile Include="IDesktopObject.cs" />
     <Compile Include="IDesktopObjectView.cs" />
     <Compile Include="IGuiToolkit.cs" />
+    <Compile Include="ISessionManager.cs" />
     <Compile Include="UserInteraction.cs" />
     <Compile Include="PrincipalPermissionSpecification.cs" />
     <Compile Include="Actions\Tests\ActionModelStoreTests.cs" />
@@ -271,10 +266,6 @@
     <None Include="ClassDiagrams\DesktopActions.cd" />
     <None Include="ClassDiagrams\UndoRedo.cd" />
     <None Include="ClassDiagrams\Desktop.cd" />
-    <None Include="DesktopSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>DesktopSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="ExceptionHandlerSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ExceptionHandlerSettings.Designer.cs</LastGenOutput>

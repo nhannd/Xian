@@ -15,24 +15,16 @@ namespace ClearCanvas.Desktop
         /// </summary>
         string ToolkitID { get; }
 
-        /// <summary>
-        /// Initializes the toolkit.  This method is called prior <see cref="RunMessagePump"/>.
-        /// </summary>
-        void Initialize();
+        event EventHandler Started;
 
         /// <summary>
-        /// Starts the message pump of the underlying GUI toolkit.  It is expected that this method will
-        /// block for the duration of the application execution.
+        /// Runs the GUI toolkits internal message loop, blocking until <see cref="Terminate"/> is called.
         /// </summary>
         /// <remarks>
-        /// The method assumes that the view relies on an underlying message pump, as most 
-        /// desktop GUI toolkits do.
+        /// 
         /// </remarks>
-        void RunMessagePump();
+        void Run();
 
-        /// <summary>
-        /// Terminates the message pump of the underlying GUI toolkit, prior to termination of the application.
-        /// </summary>
-        void QuitMessagePump();
+        void Terminate();
     }
 }

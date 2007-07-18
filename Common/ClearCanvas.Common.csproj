@@ -115,7 +115,6 @@
     <Compile Include="IMessageBox.cs" />
     <Compile Include="Auditing\Auditor.cs" />
     <Compile Include="Auditing\IAuditor.cs" />
-    <Compile Include="ISessionManager.cs" />
     <Compile Include="ITimeProvider.cs" />
     <Compile Include="PluginLoadedEventArgs.cs" />
     <Compile Include="AssemblyInfo.cs">
