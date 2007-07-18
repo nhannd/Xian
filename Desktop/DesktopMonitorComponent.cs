@@ -12,7 +12,8 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
-
+    
+#if DEBUG   // only include this tool in debug builds
     [MenuAction("launch", "global-menus/Test/Monitor")]
     [ClickHandler("launch", "Launch")]
 
@@ -37,7 +38,7 @@ namespace ClearCanvas.Desktop
             }
         }
     }
-
+#endif
 
     /// <summary>
     /// Extension point for views onto <see cref="DesktopMonitorComponent"/>
