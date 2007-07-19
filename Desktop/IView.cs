@@ -6,16 +6,17 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// A base interface for all classes that represent UI "views".  A view is any class that implements
-    /// some GUI functionality for the purpose of displaying the state of an underlying model to the user, and
-    /// allowing the user to interact with the model.  The purpose of a view class is to shield the model from
-    /// the specific implementation details of the GUI, thereby allowing the model to work with different
-    /// GUI toolkits.
+    /// A base interface for all classes that represent UI views.  A view is a class that provides
+    /// a UI representation for another object (the model).
     /// </summary>
+    /// <remarks>
+    /// The purpose of a view class is to separate the presentation from the application logic,
+    /// allowing the application to work with different GUI toolkits.
+    /// </remarks>
     public interface IView
     {
         /// <summary>
-        /// Gets the toolkitID of the GUI tookit upon which this view is based.
+        /// Gets the toolkitID of the GUI tookit in which the view is implemented.
         /// </summary>
         string GuiToolkitID
         {
@@ -23,10 +24,12 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Exposes the underlying UI component that provides this view.  The type of the object
-        /// is dependent upon the GUI toolkit.  A parent view will know how to cast
-        /// this object appropriately.
+        /// Gets the underlying GUI component that for this view.
         /// </summary>
+        /// <remarks>
+        /// The type of the returned object is specific to a given GUI toolkit.  For example,
+        /// a view implemented in Windows Forms would return a Windows Forms Control object.
+        /// </remarks>
         object GuiElement
         {
             get;

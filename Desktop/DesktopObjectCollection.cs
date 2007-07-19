@@ -16,7 +16,7 @@ namespace ClearCanvas.Desktop
     /// <summary>
     /// Generic abstract base class for collections of <see cref="DesktopObject"/> subclasses.
     /// </summary>
-    /// <typeparam name="T">The type of <see cref="DesktopObject"/></typeparam>
+    /// <typeparam name="T">The type of <see cref="DesktopObject"/> subclass.</typeparam>
     public abstract class DesktopObjectCollection<T> : DesktopObjectCollection, IEnumerable<T>, IDisposable
         where T : DesktopObject
     {
@@ -40,6 +40,9 @@ namespace ClearCanvas.Desktop
             _nameMap = new Dictionary<string, T>();
         }
 
+        /// <summary>
+        /// Finalizer
+        /// </summary>
         ~DesktopObjectCollection()
         {
             Dispose(false);
@@ -75,7 +78,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Checks if the specified item exists in this collection.
         /// </summary>
-        /// <param name="obj">The desktop object to look for</param>
+        /// <param name="obj">The desktop object to look for.</param>
         /// <returns></returns>
         public bool Contains(T obj)
         {
@@ -180,42 +183,73 @@ namespace ClearCanvas.Desktop
 
         #region Protected overridables
 
+        /// <summary>
+        /// Raises the <see cref="ItemOpening"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         protected virtual void OnItemOpening(ItemEventArgs<T> args)
         {
             EventsHelper.Fire(_itemOpening, this, args);
         }
 
+        /// <summary>
+        /// Raises the <see cref="ItemOpened"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         protected virtual void OnItemOpened(ItemEventArgs<T> args)
         {
             EventsHelper.Fire(_itemOpened, this, args);
         }
 
+        /// <summary>
+        /// Raises the <see cref="ItemClosing"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         protected virtual void OnItemClosing(ClosingItemEventArgs<T> args)
         {
             EventsHelper.Fire(_itemClosing, this, args);
         }
 
+        /// <summary>
+        /// Raises the <see cref="ItemClosed"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         protected virtual void OnItemClosed(ClosedItemEventArgs<T> args)
         {
             EventsHelper.Fire(_itemClosed, this, args);
         }
 
+        /// <summary>
+        /// Raises the <see cref="ItemVisibilityChanged"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         protected virtual void OnItemVisibilityChanged(ItemEventArgs<T> args)
         {
             EventsHelper.Fire(_itemVisibilityChanged, this, args);
         }
 
+        /// <summary>
+        /// </summary>
+        /// <param name="args"></param>
         protected virtual void OnItemActivationChangedInternal(ItemEventArgs<T> args)
         {
             // default behaviour, just raise the public event
             args.Item.RaiseActiveChanged();
         }
 
+        /// <summary>
+        /// Raises the <see cref="ItemActivationChanged"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         protected virtual void OnItemActivationChanged(ItemEventArgs<T> args)
         {
             EventsHelper.Fire(_itemActivationChanged, this, args);
         }
 
+        /// <summary>
+        /// Disposes of this collection, first disposing of each object in the collection.
+        /// </summary>
+        /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -241,6 +275,10 @@ namespace ClearCanvas.Desktop
 
         #region Helpers
 
+        /// <summary>
+        /// Opens the specified object.
+        /// </summary>
+        /// <param name="obj"></param>
         protected void Open(T obj)
         {
             obj.Opening += delegate(object sender, EventArgs e)
@@ -279,12 +317,16 @@ namespace ClearCanvas.Desktop
             obj.Open();
         }
 
+        /// <summary>
+        /// Adds the specified object to the collection.
+        /// </summary>
+        /// <param name="obj"></param>
         private void Add(T obj)
         {
             if (_list.Contains(obj))
-                throw new InvalidOperationException("Collection already contains this object");
+                throw new InvalidOperationException(SR.ExceptionObjectAlreadyInCollection);
             if (obj.Name != null && _nameMap.ContainsKey(obj.Name))
-                throw new DesktopException(string.Format("An object with the name {0} already exists", obj.Name));
+                throw new InvalidOperationException(string.Format(SR.ExceptionObjectWithNameAlreadyExists, obj.Name));
 
             _list.Add(obj);
             if (obj.Name != null)
@@ -293,6 +335,10 @@ namespace ClearCanvas.Desktop
             }
         }
 
+        /// <summary>
+        /// Removes the specified object from the collection.
+        /// </summary>
+        /// <param name="obj"></param>
         private void Remove(T obj)
         {
             if (_nameMap.ContainsValue(obj))

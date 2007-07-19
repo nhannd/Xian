@@ -7,6 +7,10 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
+    /// <summary>
+    /// Provides "Close Assistant" services, which inform the user of workspaces that require attention prior
+    /// to a desktop window close or application quit.
+    /// </summary>
     [ExtensionOf(typeof(ApplicationToolExtensionPoint))]
     class CloseHelperTool : Tool<IApplicationToolContext>
     {

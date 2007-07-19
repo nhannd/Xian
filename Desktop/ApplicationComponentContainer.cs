@@ -7,14 +7,14 @@ using ClearCanvas.Desktop.Validation;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Base class for application components that act as containers for other application components.
+    /// Abstract base class for application components that act as containers for other application components.
     /// </summary>
     public abstract class ApplicationComponentContainer : ApplicationComponent, IApplicationComponentContainer
     {
         private IApplicationComponentContainerValidationStrategy _validationStrategy;
 
         /// <summary>
-        /// Constructor
+        /// Default constructor
         /// </summary>
         public ApplicationComponentContainer()
         {
@@ -32,10 +32,13 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// The behaviour of this property depends on the <see cref="ValidationStrategy"/> property.
+        /// Gets a value indicating whether there are any data validation errors.
+        /// </summary>
+        /// <remarks>
+        /// The default implementation of this property delegates to the <see cref="ValidationStrategy"/> object.
         /// Invoking this property may cause any unstarted components in the container to be started,
         /// which means that it may throw exceptions.
-        /// </summary>
+        /// </remarks>
         public override bool HasValidationErrors
         {
             get
@@ -45,10 +48,13 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// The behaviour of this property depends on the <see cref="ValidationStrategy"/> property.
+        /// Sets the <see cref="ValidationVisible"/> property and raises the <see cref="ValidationVisibleChanged"/> event.
+        /// </summary>
+        /// <remarks>
+        /// The default implementation of this property delegates to the <see cref="ValidationStrategy"/> object.
         /// Invoking this property may cause any unstarted components in the container to be started,
         /// which means that it may throw exceptions.
-        /// </summary>
+        /// </remarks>
         /// <param name="show"></param>
         public override void ShowValidation(bool show)
         {
@@ -57,12 +63,26 @@ namespace ClearCanvas.Desktop
 
         #region IApplicationComponentContainer Members
 
+        /// <summary>
+        /// Gets an enumeration of the contained components.
+        /// </summary>
         public abstract IEnumerable<IApplicationComponent> ContainedComponents { get; }
 
+        /// <summary>
+        /// Gets an enumeration of the components that are currently visible.
+        /// </summary>
         public abstract IEnumerable<IApplicationComponent> VisibleComponents { get; }
 
+        /// <summary>
+        /// Ensures that the specified component is visible.
+        /// </summary>
+        /// <param name="component"></param>
         public abstract void EnsureVisible(IApplicationComponent component);
 
+        /// <summary>
+        /// Ensures that the specified component has been started.
+        /// </summary>
+        /// <param name="component"></param>
         public abstract void EnsureStarted(IApplicationComponent component);
 
         #endregion

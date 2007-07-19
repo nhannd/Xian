@@ -8,13 +8,17 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Represents the collection of <see cref="Shelf"/> objects for a given desktop window.
+    /// Represents the collection of <see cref="Shelf"/> objects for a desktop window.
     /// </summary>
-    public class ShelfCollection : DesktopObjectCollection<Shelf>
+    public sealed class ShelfCollection : DesktopObjectCollection<Shelf>
     {
         private DesktopWindow _owner;
 
-        protected internal ShelfCollection(DesktopWindow owner)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="owner"></param>
+        internal ShelfCollection(DesktopWindow owner)
         {
             _owner = owner;
         }
@@ -56,7 +60,12 @@ namespace ClearCanvas.Desktop
             return shelf;
         }
 
-        protected virtual Shelf CreateShelf(ShelfCreationArgs args)
+        /// <summary>
+        /// Creates a new shelf.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        private Shelf CreateShelf(ShelfCreationArgs args)
         {
             IShelfFactory factory = CollectionUtils.FirstElement<IShelfFactory>(
                 (new ShelfFactoryExtensionPoint()).CreateExtensions()) ?? new DefaultShelfFactory();

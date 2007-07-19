@@ -15,7 +15,7 @@ namespace ClearCanvas.Desktop
     #region Extension Points
 
     /// <summary>
-    /// Defines an extension point for an implementation of <see cref="IGuiToolkit"/>.
+    /// Defines an extension point for providing an implementation of <see cref="IGuiToolkit"/>.
     /// The application requires one extension of this point.
     /// </summary>
     [ExtensionPoint]
@@ -24,35 +24,41 @@ namespace ClearCanvas.Desktop
     }
 
     /// <summary>
-    /// Defines a general mechanism for establishing a session.  When <see cref="Platform.StartApp"/>
-    /// is called, the framework will look for a session manager extension.  If one is found, the
-    /// framework will attempt to establish a session by calling <see cref="ISessionManager.InitiateSession"/>.
-    /// If no session manager extensions are found, the application will proceed to execute in standalone
-    /// (i.e no authentication) mode.
+    /// Defines an extension point for providing an optional implementation of <see cref="ISessionManager"/>.
     /// </summary>
+    /// <remarks>
+    /// The framework will use one extension of this point if found, but no extension is required.</remarks>
     [ExtensionPoint()]
     public class SessionManagerExtensionPoint : ExtensionPoint<ISessionManager>
     {
     }
 
     /// <summary>
-    /// Defines an extension point for a view onto the application.  One extension
-    /// is required.
+    /// Defines an extension point for a view onto the application.
     /// </summary>
+    /// <remarks>
+    /// One extension is required, or the application will not run.
+    /// </remarks>
     [ExtensionPoint]
     public class ApplicationViewExtensionPoint : ExtensionPoint<IApplicationView>
     {
     }
 
+    /// <summary>
+    /// Tool context interface for tools that extend <see cref="ApplicationToolExtensionPoint"/>.
+    /// </summary>
     public interface IApplicationToolContext : IToolContext
     {
     }
 
     /// <summary>
-    /// Defines an extension point of application tools.  Application tools are global
-    /// to the application.  An application tool is instantiated exactly once.  Application
-    /// tools cannot have actions.
+    /// Defines an extension point for application tools, which are global to the application.
     /// </summary>
+    /// <remarks>
+    /// Application tools are global to the application. An application tool is instantiated exactly once.
+    /// Application tools cannot have actions because they are not associated with any UI entity.
+    /// Extensions should expect to recieve a tool context of type <see cref="IApplicationToolContext"/>.
+    /// </remarks>
     [ExtensionPoint]
     public class ApplicationToolExtensionPoint : ExtensionPoint<ITool>
     {
@@ -64,7 +70,19 @@ namespace ClearCanvas.Desktop
     /// Singleton class that represents the desktop application.
     /// </summary>
     /// <remarks>
-    /// This class may be subclassed.
+    /// <para>
+    /// This class extends <see cref="ApplicationRootExtensionPoint"/> and provides the implementation of
+    /// <see cref="IApplicationRoot"/> for a desktop application.  This class may be subclassed if necessary.
+    /// In order for the framework to use the subclass, it must be passed to <see cref="Platform.StartApp"/>.
+    /// (Typically this is done by passing the class name as a command line argument to the executable).
+    /// </para>
+    /// <para>
+    /// The class provides a number of static convenience methods that may be freely used by application code.
+    /// These static members should not be considered thread-safe.
+    /// </para>
+    /// <para>
+    /// The <see cref="Instance"/> property can be used to obtain the singleton instance of the class (or subclass).
+    /// </para>
     /// </remarks>
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     [AssociateView(typeof(ApplicationViewExtensionPoint))]
@@ -118,19 +136,38 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Gets the currently active window.
         /// </summary>
+        /// <value>The active window, or null if no windows have been created.</value>
         public static DesktopWindow ActiveDesktopWindow
         {
             get { return DesktopWindows.ActiveWindow; }
         }
 
+        /// <summary>
+        /// Shows a message box using the application name as the title.
+        /// </summary>
+        /// <remarks>
+        /// It is preferable to use <see cref="ClearCanvas.Desktop.DesktkopWindow.ShowMessageBox"/> if a desktop window
+        /// is available, since that method will ensure that the message box window is associated with
+        /// the parent desktop window. This method is provided for situations where a message box needs to 
+        /// be displayed prior to the creation of any desktop windows.
+        /// </remarks>
+        /// <param name="message">The message to display</param>
+        /// <param name="actions">The actions that the user may take</param>
+        /// <returns>The resulting action taken by the user</returns>
         public static DialogBoxAction ShowMessageBox(string message, MessageBoxActions actions)
         {
             return _instance.View.ShowMessageBox(message, actions);
         }
 
         /// <summary>
-        /// Attempts to close all open windows and terminate the application.
+        /// Attempts to close all open desktop windows and terminate the application.
         /// </summary>
+        /// <remarks>
+        /// The request to quit is not guaranteed to succeed.  Specifically, it will fail if an
+        /// open workspace demands user-interaction in order to close, in which case the user may
+        /// cancel the operation.  The request may also be cancelled programmatically, by handlers
+        /// of the <see cref="Quitting"/> event.
+        /// </remarks>
         /// <returns>True if the application successfully quits, or false if it does not.</returns>
         public static bool Quit()
         {
@@ -207,7 +244,7 @@ namespace ClearCanvas.Desktop
 
 
         /// <summary>
-        /// Default constructor
+        /// Default constructor, for internal framework use only.
         /// </summary>
         public Application()
         {
@@ -217,7 +254,7 @@ namespace ClearCanvas.Desktop
         #region IApplicationRoot members
 
         /// <summary>
-        /// Runs the application.
+        /// Implementation of <see cref="IApplicationRoot.RunApplication"/>.  Runs the application.
         /// </summary>
         void IApplicationRoot.RunApplication(string[] args)
         {
@@ -235,7 +272,155 @@ namespace ClearCanvas.Desktop
 
         #region Protected overridables
 
-        protected virtual void Run(string[] args)
+        /// <summary>
+        /// Initializes the application. Override this method to perform custom initialization.
+        /// </summary>
+        /// <remarks>
+        /// Initializes the application, including the session manager, application tools and root window.
+        /// The GUI toolkit and application view have already been initialized prior to this method being
+        /// called.
+        /// </remarks>
+        /// <param name="args">Arguments passed in from the command line.</param>
+        /// <returns>True if initialization was successful, false if the application should terminate immediately.</returns>
+        protected virtual bool Initialize(string[] args)
+        {
+            // initialize session
+            if (!InitializeSessionManager())
+                return false;
+
+            // load tools
+            _toolSet = new ToolSet(new ApplicationToolExtensionPoint(), new ApplicationToolContext(this));
+
+            // create a root window
+            _windows.AddNew("Root");
+
+            return true;
+        }
+
+        /// <summary>
+        /// Called after the GUI toolkit message loop terminates, to clean up the application.  Override
+        /// this method to perform custom clean-up.  Be sure to call the base class method.
+        /// </summary>
+        protected virtual void CleanUp()
+        {
+            if (_view != null && _view is IDisposable)
+            {
+                (_view as IDisposable).Dispose();
+                _view = null;
+            }
+
+            if (_toolSet != null)
+            {
+                _toolSet.Dispose();
+                _toolSet = null;
+            }
+
+            if (_windows != null)
+            {
+                (_windows as IDisposable).Dispose();
+            }
+
+            if (_guiToolkit != null && _guiToolkit is IDisposable)
+            {
+                (_guiToolkit as IDisposable).Dispose();
+            }
+        }
+
+        /// <summary>
+        /// Raises the <see cref="Quitting"/> event.
+        /// </summary>
+        /// <param name="args"></param>
+        protected virtual void OnQuitting(QuittingEventArgs args)
+        {
+            EventsHelper.Fire(_quitting, this, args);
+        }
+
+        /// <summary>
+        /// Raises the <see cref="Quitted"/> event.
+        /// </summary>
+        /// <param name="args"></param>
+        protected virtual void OnQuitted(EventArgs args)
+        {
+            EventsHelper.Fire(_quitted, this, args);
+        }
+
+        /// <summary>
+        /// Gets the display name for the application. Override this method to provide a custom display name.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual string GetName()
+        {
+            return SR.ApplicationName;
+        }
+
+        /// <summary>
+        /// Gets the version of the application, which is by default the version of this assembly.
+        /// Override this method to provide custom version information.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual Version GetVersion()
+        {
+            return Assembly.GetExecutingAssembly().GetName().Version;
+        }
+        
+        #endregion
+
+        #region Protected members
+
+        /// <summary>
+        /// Closes all desktop windows.
+        /// </summary>
+        /// <returns></returns>
+        protected bool CloseAllWindows()
+        {
+            // make a copy of the windows collection for iteration
+            List<DesktopWindow> windows = new List<DesktopWindow>(_windows);
+
+            foreach (DesktopWindow window in windows)
+            {
+                // try to close the window
+                bool closed = window.Close(UserInteraction.Allowed, CloseReason.ApplicationQuit);
+
+                // if one fails, abort
+                if (!closed)
+                    return false;
+            }
+            return true;
+        }
+
+        /// <summary>
+        /// Gets the collection of desktop windows.
+        /// </summary>
+        protected DesktopWindowCollection Windows
+        {
+            get { return _windows; }
+        }
+
+        /// <summary>
+        /// Gets the GUI toolkit.
+        /// </summary>
+        protected IGuiToolkit GuiToolkit
+        {
+            get { return _guiToolkit; }
+        }
+
+        /// <summary>
+        /// Gets the application view.
+        /// </summary>
+        protected IApplicationView View
+        {
+            get { return _view; }
+        }
+
+        #endregion
+
+        #region Helpers
+
+        /// <summary>
+        /// Implements the logic to start up the desktop by running the GUI toolkit and creating the application view.
+        /// </summary>
+        /// <param name="args"></param>
+        private void Run(string[] args)
         {
             // load gui toolkit
             try
@@ -262,24 +447,18 @@ namespace ClearCanvas.Desktop
                     return;
                 }
 
-                // initialize session
-                if (!InitializeSessionManager())
+                // initialize
+                if (!Initialize(args))
                 {
                     _guiToolkit.Terminate();
                     return;
                 }
 
-                // load tools
-                _toolSet = new ToolSet(new ApplicationToolExtensionPoint(), new ApplicationToolContext(this));
-
-                // create a root window
-                CreateRootWindow();
-
                 _initialized = true;
             };
 
             // init windows collection
-            _windows = CreateDesktopWindowCollection();
+            _windows = new DesktopWindowCollection(this);
             _windows.ItemClosed += delegate(object sender, ClosedItemEventArgs<DesktopWindow> e)
             {
                 // terminate the app when the window count goes to 0 if the app isn't already quitting
@@ -293,57 +472,12 @@ namespace ClearCanvas.Desktop
             // start message pump - this will block until _guiToolkit.Terminate() is called
             _guiToolkit.Run();
         }
-
-        protected virtual void CleanUp()
-        {
-            if (_view != null && _view is IDisposable)
-            {
-                (_view as IDisposable).Dispose();
-                _view = null;
-            }
-
-            if (_toolSet != null)
-            {
-                _toolSet.Dispose();
-                _toolSet = null;
-            }
-
-            if (_windows != null)
-            {
-                (_windows as IDisposable).Dispose();
-            }
-
-            if (_guiToolkit != null && _guiToolkit is IDisposable)
-            {
-                (_guiToolkit as IDisposable).Dispose();
-            }
-        }
-
-        protected virtual void OnQuitting(QuittingEventArgs args)
-        {
-            EventsHelper.Fire(_quitting, this, args);
-        }
-
-        protected virtual void OnQuitted(EventArgs args)
-        {
-            EventsHelper.Fire(_quitted, this, args);
-        }
-
-        protected virtual string GetName()
-        {
-            return SR.ApplicationName;
-        }
-
-        protected virtual Version GetVersion()
-        {
-            return Assembly.GetExecutingAssembly().GetName().Version;
-        }
         
-        #endregion
-
-        #region Helpers
-
-        internal bool DoQuit()
+        /// <summary>
+        /// Implements the logic to terminate the desktop, including closing all windows and terminating the session.
+        /// </summary>
+        /// <returns>True if the application is really going to terminate, false otherwise</returns>
+        private bool DoQuit()
         {
             if (!_initialized)
                 throw new InvalidOperationException("This method cannot be called until the Application is fully initialized");
@@ -373,6 +507,10 @@ namespace ClearCanvas.Desktop
             return true;
         }
 
+        /// <summary>
+        /// Initializes the session manager, using an extension if one is provided.
+        /// </summary>
+        /// <returns></returns>
         private bool InitializeSessionManager()
         {
             try
@@ -400,29 +538,10 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        private DesktopWindow CreateRootWindow()
-        {
-            return _windows.AddNew("Root");
-        }
-
-        protected bool CloseAllWindows()
-        {
-            // make a copy of the windows collection for iteration
-            List<DesktopWindow> windows = new List<DesktopWindow>(_windows);
-
-            foreach (DesktopWindow window in windows)
-            {
-                // try to close the window
-                bool closed = window.Close(UserInteraction.Allowed, CloseReason.ApplicationQuit);
-
-                // if one fails, abort
-                if (!closed)
-                    return false;
-            }
-            return true;
-        }
-
-        protected string ApplicationName
+        /// <summary>
+        /// Gets the cached application name.
+        /// </summary>
+        private string ApplicationName
         {
             get
             {
@@ -432,7 +551,10 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        protected Version ApplicationVersion
+        /// <summary>
+        /// Gets the cached application version.
+        /// </summary>
+        private Version ApplicationVersion
         {
             get
             {
@@ -442,30 +564,14 @@ namespace ClearCanvas.Desktop
             }
         }
 
-
-        protected DesktopWindowCollection Windows
+        /// <summary>
+        /// Creates a view for a desktop window.
+        /// </summary>
+        /// <param name="window"></param>
+        /// <returns></returns>
+        internal IDesktopWindowView CreateDesktopWindowView(DesktopWindow window)
         {
-            get { return _windows; }
-        }
-
-        internal IDesktopWindowView OpenWindowView(DesktopWindow window)
-        {
-            return _view.OpenWindow(window);
-        }
-
-        protected IGuiToolkit GuiToolkit
-        {
-            get { return _guiToolkit; }
-        }
-
-        protected IApplicationView View
-        {
-            get { return _view; }
-        }
-
-        private DesktopWindowCollection CreateDesktopWindowCollection()
-        {
-            return new DesktopWindowCollection(this);
+            return _view.CreateDesktopWindowView(window);
         }
 
         #endregion

@@ -5,19 +5,49 @@ using System.Text;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Flags that indicate how a shelf should be displayed
+    /// A set of flags that indicate how a shelf should be displayed.
     /// </summary>
     [Flags]
     public enum ShelfDisplayHint
     {
+        /// <summary>
+        /// None
+        /// </summary>
 		None = 0,
+
+        /// <summary>
+        /// Dock the shelf on the left.
+        /// </summary>
 		DockLeft = 1,
+
+        /// <summary>
+        /// Dock the shelf on the right.
+        /// </summary>
 		DockRight = 2,
+
+        /// <summary>
+        /// Dock the shelf at the top.
+        /// </summary>
 		DockTop = 4,
+
+        /// <summary>
+        /// Dock the shelf at the bottom.
+        /// </summary>
 		DockBottom  = 8,
+
+        /// <summary>
+        /// Float the shelf.
+        /// </summary>
 		DockFloat = 16,
+
+        /// <summary>
+        /// Dock the shelf in auto-hide mode.
+        /// </summary>
 		DockAutoHide = 32,
-		MaximizeOnDock = 64,
-		HideOnWorkspaceOpen = 128
+
+        /// <summary>
+        /// Hide the shelf whenever a new workspace opens.
+        /// </summary>
+		HideOnWorkspaceOpen = 64
     }
 }

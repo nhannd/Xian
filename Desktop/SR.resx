@@ -162,6 +162,12 @@
   <data name="ExceptionInvalidActionPath" xml:space="preserve">
     <value>Invalid action path.  Path must have 2 or more segments.</value>
   </data>
+  <data name="ExceptionObjectAlreadyInCollection" xml:space="preserve">
+    <value>Collection already contains this object</value>
+  </data>
+  <data name="ExceptionObjectWithNameAlreadyExists" xml:space="preserve">
+    <value>An object with the name {0} already exists</value>
+  </data>
   <data name="ExceptionStackComponentCannotExit" xml:space="preserve">
     <value>Component cannot exit because it is not at the top of the component stack.</value>
   </data>

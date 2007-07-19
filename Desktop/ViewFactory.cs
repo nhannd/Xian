@@ -7,12 +7,12 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Provides a convenient set of methods for instantiating view extensions.
+    /// Provides a convenient set of methods for instantiating views.
     /// </summary>
     public static class ViewFactory
     {
         /// <summary>
-        /// Creates a view extension that matches the specified GUI toolkit.
+        /// Creates a view for the specified extension point and GUI toolkit.
         /// </summary>
         /// <param name="extensionPoint">The view extension point.</param>
         /// <param name="toolkitID">The desired GUI toolkit</param>
@@ -28,7 +28,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Creates a view extension that matches GUI toolkit currently in use.
+        /// Creates a view for the specified extension point and current GUI toolkit.
         /// </summary>
         /// <param name="extensionPoint">The view extension point.</param>
         /// <returns>The view object that was created.</returns>
@@ -40,7 +40,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Creates a view extension based on the view extension point that is associated with the specified
+        /// Creates a view based on the view extension point that is associated with the specified
         /// model type.  The model type is any class that has a <see cref="AssociateViewAttribute"/> attribute
         /// specified.
         /// </summary>

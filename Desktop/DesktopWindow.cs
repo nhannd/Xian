@@ -12,8 +12,12 @@ namespace ClearCanvas.Desktop
     #region Extension points
 
     /// <summary>
-    /// Defines an extension point for tools that are applicable to a desktop window.
+    /// Defines an extension point for desktop tools, which are instantiated once per desktop window.
     /// </summary>
+    /// <remarks>
+    /// Desktop tools are owned by a desktop window. A desktop tool is instantiated once per desktop window.
+    /// Extensions should expect to recieve a tool context of type <see cref="IDesktopToolContext"/>.
+    /// </remarks>
     [ExtensionPoint()]
     public class DesktopToolExtensionPoint : ExtensionPoint<ITool>
     {
@@ -25,7 +29,7 @@ namespace ClearCanvas.Desktop
     public interface IDesktopToolContext : IToolContext
     {
         /// <summary>
-        /// Gets the desktop window that the tool acts on
+        /// Gets the desktop window that the tool is associated with.
         /// </summary>
         DesktopWindow DesktopWindow { get; }
     }
@@ -33,7 +37,7 @@ namespace ClearCanvas.Desktop
     #endregion
 
     /// <summary>
-    /// Represents an application window.
+    /// Represents a desktop window (an application main window).
     /// </summary>
     public class DesktopWindow : DesktopObject, IDesktopWindow
     {
@@ -56,7 +60,14 @@ namespace ClearCanvas.Desktop
 
         #endregion
 
+        /// <summary>
+        /// Defines the global menu action site.
+        /// </summary>
         protected const string GlobalMenus = "global-menus";
+
+        /// <summary>
+        /// Defines the global toolbar action site.
+        /// </summary>
         protected const string GlobalToolbars = "global-toolbars";
 
         private Application _application;
@@ -79,9 +90,9 @@ namespace ClearCanvas.Desktop
             :base(args)
         {
             _application = application;
-            _workspaces = CreateWorkspaceCollection();
-            _shelves = CreateShelfCollection();
-            _dialogs = CreateDialogBoxCollection();
+            _workspaces = new WorkspaceCollection(this);
+            _shelves = new ShelfCollection(this);
+            _dialogs = new DialogBoxCollection(this);
 
             // if no title supplied, create default title
             _baseTitle = !string.IsNullOrEmpty(args.Title) ?
@@ -138,8 +149,7 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Shows a dialog box in front of this window.
         /// </summary>
-        /// <param name="component"></param>
-        /// <param name="title"></param>
+        /// <param name="args"></param>
         /// <returns></returns>
         public DialogBoxAction ShowDialogBox(DialogBoxCreationArgs args)
         {
@@ -152,7 +162,8 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Shows a dialog box in front of this window.
         /// </summary>
-        /// <param name="args"></param>
+        /// <param name="component"></param>
+        /// <param name="title"></param>
         /// <returns></returns>
         public DialogBoxAction ShowDialogBox(IApplicationComponent component, string title)
         {
@@ -181,6 +192,11 @@ namespace ClearCanvas.Desktop
             base.OnOpened(args);
         }
 
+        /// <summary>
+        /// Checks if all workspaces can close.
+        /// </summary>
+        /// <param name="interactive"></param>
+        /// <returns></returns>
         protected internal override bool CanClose(UserInteraction interactive)
         {
             // should never be called in this mode
@@ -192,6 +208,11 @@ namespace ClearCanvas.Desktop
                 delegate(Workspace w) { return w.CanClose(UserInteraction.NotAllowed); });
         }
 
+        /// <summary>
+        /// Attempts to close all workspaces and shelves.
+        /// </summary>
+        /// <param name="reason"></param>
+        /// <returns></returns>
         protected override bool PrepareClose(CloseReason reason)
         {
             List<Workspace> workspaces = new List<Workspace>(_workspaces);
@@ -212,6 +233,10 @@ namespace ClearCanvas.Desktop
             return true;
         }
 
+        /// <summary>
+        /// Disposes of this object.
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -238,11 +263,17 @@ namespace ClearCanvas.Desktop
             }
         }
 
+        /// <summary>
+        /// Creates the title that is displayed in the title bar.  Override this method to customize the title. 
+        /// </summary>
+        /// <param name="baseTitle"></param>
+        /// <param name="activeWorkspace"></param>
+        /// <returns></returns>
         protected virtual string MakeTitle(string baseTitle, Workspace activeWorkspace)
         {
             if (activeWorkspace != null)
             {
-                return string.Format("{0} - {1}", baseTitle, activeWorkspace.Title);
+                return string.Format("{0} - {1}", activeWorkspace.Title, baseTitle);
             }
             else
             {
@@ -250,65 +281,84 @@ namespace ClearCanvas.Desktop
             }
         }
         
-        protected override IDesktopObjectView CreateView()
+        /// <summary>
+        /// Creates a view for this object.
+        /// </summary>
+        /// <returns></returns>
+        protected sealed override IDesktopObjectView CreateView()
         {
-            return _application.OpenWindowView(this);
+            return _application.CreateDesktopWindowView(this);
         }
 
         #endregion
 
         #region Helpers
 
-        private WorkspaceCollection CreateWorkspaceCollection()
-        {
-            return new WorkspaceCollection(this);
-        }
-
-        private ShelfCollection CreateShelfCollection()
-        {
-            return new ShelfCollection(this);
-        }
-
-        private DialogBoxCollection CreateDialogBoxCollection()
-        {
-            return new DialogBoxCollection(this);
-        }
-
+        /// <summary>
+        /// Creates a workspace view for the specified workspace.
+        /// </summary>
+        /// <param name="workspace"></param>
+        /// <returns></returns>
         internal IWorkspaceView CreateWorkspaceView(Workspace workspace)
         {
             return this.DesktopWindowView.CreateWorkspaceView(workspace);
         }
 
+        /// <summary>
+        /// Creates a shelf view for the specified shelf.
+        /// </summary>
+        /// <param name="shelf"></param>
+        /// <returns></returns>
         internal IShelfView CreateShelfView(Shelf shelf)
         {
             return this.DesktopWindowView.CreateShelfView(shelf);
         }
 
+        /// <summary>
+        /// Creates a dialog box view for the specified dialog box.
+        /// </summary>
+        /// <param name="dialog"></param>
+        /// <returns></returns>
         internal IDialogBoxView CreateDialogView(DialogBox dialog)
         {
             return this.DesktopWindowView.CreateDialogBoxView(dialog);
         }
 
+        /// <summary>
+        /// Gets the view for this object as an <see cref="IDesktopWindowView"/>
+        /// </summary>
         protected IDesktopWindowView DesktopWindowView
         {
             get { return (IDesktopWindowView)this.View; }
         }
 
+        /// <summary>
+        /// Gets the tool set associated with this desktop window.
+        /// </summary>
         protected IToolSet DesktopTools
         {
             get { return _desktopTools; }
         }
 
+        /// <summary>
+        /// Gets the current menu model.
+        /// </summary>
         protected ActionModelNode MenuModel
         {
             get { return _menuModel; }
         }
 
+        /// <summary>
+        /// Gets the current toolbar model.
+        /// </summary>
         protected ActionModelNode ToolbarModel
         {
             get { return _toolbarModel; }
         }
 
+        /// <summary>
+        /// Updates the view's title, menu and toolbars.
+        /// </summary>
         private void UpdateView()
         {
             if (this.DesktopWindowView != null)
@@ -323,6 +373,11 @@ namespace ClearCanvas.Desktop
             }
         }
 
+        /// <summary>
+        /// Builds the action model for the specified site.
+        /// </summary>
+        /// <param name="site"></param>
+        /// <returns></returns>
         private ActionModelNode BuildActionModel(string site)
         {
             IActionSet actions = this.DesktopTools.Actions;

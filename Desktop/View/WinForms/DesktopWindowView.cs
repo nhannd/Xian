@@ -197,9 +197,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             content.Tag = shelfView;
 
             // Make sure the window is the size as it's been defined by the tool
-            if ((hint & ShelfDisplayHint.MaximizeOnDock) != 0)
-                content.DisplaySize = _form.DockingManager.Container.Size;
-            else
+            //if ((hint & ShelfDisplayHint.MaximizeOnDock) != 0)
+            //    content.DisplaySize = _form.DockingManager.Container.Size;
+            //else
                 content.DisplaySize = content.Control.Size;
 
             content.AutoHideSize = content.Control.Size;

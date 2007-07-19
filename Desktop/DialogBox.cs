@@ -6,6 +6,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
+    /// <summary>
+    /// Represents a dialog box.
+    /// </summary>
     public class DialogBox : DesktopObject
     {
         // implements the host interface, which is exposed to the hosted application component
@@ -44,6 +47,11 @@ namespace ClearCanvas.Desktop
         private bool _exitRequestedByComponent;
         private Host _host;
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="desktopWindow"></param>
         protected internal DialogBox(DialogBoxCreationArgs args, DesktopWindow desktopWindow)
             :base(args)
         {
@@ -53,11 +61,17 @@ namespace ClearCanvas.Desktop
             _host = new Host(this, _component);
         }
 
+        /// <summary>
+        /// Gets the component hosted by this dialog box.
+        /// </summary>
         public object Component
         {
             get { return _component; }
         }
 
+        /// <summary>
+        /// Starts the hosted component.
+        /// </summary>
         protected override void Initialize()
         {
             _host.StartComponent();
@@ -65,26 +79,47 @@ namespace ClearCanvas.Desktop
             base.Initialize();
         }
 
+        /// <summary>
+        /// Runs this dialog on a modal loop, blocking until the dialog is closed.
+        /// </summary>
+        /// <returns></returns>
         internal DialogBoxAction RunModal()
         {
             return this.DialogBoxView.RunModal();
         }
 
+        /// <summary>
+        /// Terminates the modal loop, closing the dialog box.
+        /// </summary>
+        /// <param name="action"></param>
         private void EndModal(DialogBoxAction action)
         {
             this.DialogBoxView.EndModal(action);
         }
 
+        /// <summary>
+        /// Sets the title of the dialog.
+        /// </summary>
+        /// <param name="title"></param>
         private void SetTitle(string title)
         {
             this.DialogBoxView.SetTitle(title);
         }
 
+        /// <summary>
+        /// Checks if the hosted component can close.
+        /// </summary>
+        /// <param name="interactive"></param>
+        /// <returns></returns>
         protected internal override bool CanClose(UserInteraction interactive)
         {
             return _exitRequestedByComponent || _host.Component.CanExit(interactive);
         }
 
+        /// <summary>
+        /// Disposes of this object.
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -96,11 +131,18 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        protected override IDesktopObjectView CreateView()
+        /// <summary>
+        /// Creates a view for this object.
+        /// </summary>
+        /// <returns></returns>
+        protected sealed override IDesktopObjectView CreateView()
         {
             return _desktopWindow.CreateDialogView(this);
         }
 
+        /// <summary>
+        /// Gets the view for this object as a <see cref="IDialogBoxView"/>.
+        /// </summary>
         protected IDialogBoxView DialogBoxView
         {
             get { return (IDialogBoxView)this.View; }

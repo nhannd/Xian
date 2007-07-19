@@ -31,7 +31,7 @@ namespace ClearCanvas.Desktop
     }
 
     /// <summary>
-    /// Event args used when an item changes
+    /// Provides data for the <see cref="IItemCollection.ItemChanged"/> event.
     /// </summary>
     public class ItemChangedEventArgs : EventArgs
     {
@@ -47,7 +47,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// The type of change that occured
+        /// Gets the type of change that occured
         /// </summary>
         public ItemChangeType ChangeType
         {
@@ -55,13 +55,16 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// The index of the item that changed
+        /// Gets the index of the item that changed.
         /// </summary>
         public int ItemIndex
         {
             get { return _itemIndex; }
         }
 
+        /// <summary>
+        /// Gets the item that has changed.
+        /// </summary>
         public object Item
         {
             get { return _item; }
@@ -73,6 +76,9 @@ namespace ClearCanvas.Desktop
     /// </summary>
     public interface IItemCollection : System.Collections.IEnumerable
     {
+        /// <summary>
+        /// Occurs when an item in the collection has changed.
+        /// </summary>
         event EventHandler<ItemChangedEventArgs> ItemsChanged;
 
         /// <summary>

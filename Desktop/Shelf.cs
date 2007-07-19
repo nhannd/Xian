@@ -51,6 +51,11 @@ namespace ClearCanvas.Desktop
         private ShelfDisplayHint _displayHint;
         private bool _exitRequestedByComponent;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="desktopWindow"></param>
         protected internal Shelf(ShelfCreationArgs args, DesktopWindow desktopWindow)
             :base(args)
         {
@@ -123,17 +128,29 @@ namespace ClearCanvas.Desktop
 
         #region Protected overrides
 
+        /// <summary>
+        /// Starts the hosted component.
+        /// </summary>
         protected override void Initialize()
         {
             _host.StartComponent();
             base.Initialize();
         }
 
+        /// <summary>
+        /// Checks if the hosted component can exit.
+        /// </summary>
+        /// <param name="interactive"></param>
+        /// <returns></returns>
         protected internal override bool CanClose(UserInteraction interactive)
         {
             return _exitRequestedByComponent || _host.Component.CanExit(interactive);
         }
 
+        /// <summary>
+        /// Disposes of this object, stopping the hosted component.
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -145,7 +162,11 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        protected override IDesktopObjectView CreateView()
+        /// <summary>
+        /// Creates a view for this shelf.
+        /// </summary>
+        /// <returns></returns>
+        protected sealed override IDesktopObjectView CreateView()
         {
             return _desktopWindow.CreateShelfView(this);
         }
@@ -154,6 +175,9 @@ namespace ClearCanvas.Desktop
 
         #region Helpers
 
+        /// <summary>
+        /// Gets the view for this object as a <see cref="IShelfView"/>.
+        /// </summary>
         protected IShelfView ShelfView
         {
             get { return (IShelfView)this.View; }

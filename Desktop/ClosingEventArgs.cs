@@ -6,26 +6,29 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
+    /// <summary>
+    /// Defines possible reasons why a <see cref="DesktopObject"/> might close.
+    /// </summary>
     public enum CloseReason
     {
         /// <summary>
-        /// The user is trying to close the object directly via the user-interface
+        /// The user is closing the object directly via the user-interface.
         /// </summary>
         UserInterface,
 
         /// <summary>
-        /// The object is being closed programmatically
+        /// The object is being closed programmatically.
         /// </summary>
         Program,
 
         /// <summary>
-        /// The application is exiting
+        /// The application is exiting.
         /// </summary>
         ApplicationQuit
     }
 
     /// <summary>
-    /// Event args used for "closing" events, where the request may need to be cancelled
+    /// Provides data for Closing events, where the request may need to be cancelled.
     /// </summary>
     public class ClosingEventArgs : EventArgs
     {
@@ -33,11 +36,22 @@ namespace ClearCanvas.Desktop
         private bool _cancel;
         private UserInteraction _interaction;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="reason"></param>
+        /// <param name="interaction"></param>
         public ClosingEventArgs(CloseReason reason, UserInteraction interaction)
             : this(reason, interaction, false)
         {
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="reason"></param>
+        /// <param name="interaction"></param>
+        /// <param name="cancel"></param>
         public ClosingEventArgs(CloseReason reason, UserInteraction interaction, bool cancel)
         {
             _reason = reason;
@@ -45,11 +59,17 @@ namespace ClearCanvas.Desktop
             _cancel = cancel;
         }
 
+        /// <summary>
+        /// Gets the reason the object is closing.
+        /// </summary>
         public CloseReason Reason
         {
             get { return _reason; }
         }
 
+        /// <summary>
+        /// Gets the user-interaction policy for this closing operation, which handlers must abide by.
+        /// </summary>
         public UserInteraction Interaction
         {
             get { return _interaction; }
@@ -63,12 +83,22 @@ namespace ClearCanvas.Desktop
         }
     }
 
+    /// <summary>
+    /// Provides data for Closing events, where the request may need to be cancelled.
+    /// </summary>
     public class ClosingItemEventArgs<TItem> : ItemEventArgs<TItem>
     {
         private bool _cancel;
         private CloseReason _reason;
         private UserInteraction _interaction;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="item"></param>
+        /// <param name="reason"></param>
+        /// <param name="interaction"></param>
+        /// <param name="cancel"></param>
         public ClosingItemEventArgs(TItem item, CloseReason reason, UserInteraction interaction, bool cancel)
             :base(item)
         {
@@ -77,11 +107,17 @@ namespace ClearCanvas.Desktop
             _interaction = interaction;
         }
 
+        /// <summary>
+        /// Gets the reason the item is closing.
+        /// </summary>
         public CloseReason Reason
         {
             get { return _reason; }
         }
 
+        /// <summary>
+        /// Gets the user-interaction policy for this closing operation, which handlers must abide by.
+        /// </summary>
         public UserInteraction Interaction
         {
             get { return _interaction; }

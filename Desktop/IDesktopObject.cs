@@ -5,7 +5,7 @@ using System.Text;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Defines the public interface to a <see cref="DesktopObject"/>
+    /// Defines the public interface to a <see cref="DesktopObject"/>.
     /// </summary>
     public interface IDesktopObject
     {

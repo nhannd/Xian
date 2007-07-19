@@ -196,6 +196,24 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Collection already contains this object.
+        /// </summary>
+        public static string ExceptionObjectAlreadyInCollection {
+            get {
+                return ResourceManager.GetString("ExceptionObjectAlreadyInCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An object with the name {0} already exists.
+        /// </summary>
+        public static string ExceptionObjectWithNameAlreadyExists {
+            get {
+                return ResourceManager.GetString("ExceptionObjectWithNameAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Component cannot exit because it is not at the top of the component stack..
         /// </summary>
         public static string ExceptionStackComponentCannotExit {

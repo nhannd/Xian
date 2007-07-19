@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ClearCanvas.Desktop.Validation
 {
+    /// <summary>
+    /// Defines the interface to provide custom validation strategies for application components.
+    /// </summary>
     public interface IApplicationComponentContainerValidationStrategy
     {
         /// <summary>

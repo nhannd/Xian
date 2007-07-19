@@ -9,15 +9,33 @@ namespace ClearCanvas.Desktop
     /// <summary>
     /// Represents the collection of <see cref="Workspace"/> objects for a given desktop window.
     /// </summary>
-    public class WorkspaceCollection : DesktopObjectCollection<Workspace>
+    public sealed class WorkspaceCollection : DesktopObjectCollection<Workspace>
 	{
         private DesktopWindow _owner;
         private Workspace _activeWorkspace;
 
-        protected internal WorkspaceCollection(DesktopWindow owner)
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="owner"></param>
+        internal WorkspaceCollection(DesktopWindow owner)
 		{
             _owner = owner;
-		}
+        }
+
+        #region Public properties
+
+        /// <summary>
+        /// Gets the currently active workspace, or null if there are no workspaces in the collection.
+        /// </summary>
+        public Workspace ActiveWorkspace
+        {
+            get { return _activeWorkspace; }
+        }
+
+        #endregion
+
+        #region Public methods
 
         /// <summary>
         /// Opens a new workspace.
@@ -54,23 +72,11 @@ namespace ClearCanvas.Desktop
             return workspace;
         }
 
-        /// <summary>
-        /// Gets the currently active workspace, or null if there are no workspaces in the collection.
-        /// </summary>
-        public Workspace ActiveWorkspace
-        {
-            get { return _activeWorkspace; }
-        }
+        #endregion
 
-        protected virtual Workspace CreateWorkspace(WorkspaceCreationArgs args)
-        {
-            IWorkspaceFactory factory = CollectionUtils.FirstElement<IWorkspaceFactory>(
-                (new WorkspaceFactoryExtensionPoint()).CreateExtensions()) ?? new DefaultWorkspaceFactory();
+        #region Protected overridables
 
-            return factory.CreateWorkspace(args, _owner);
-        }
-
-        protected override void OnItemActivationChangedInternal(ItemEventArgs<Workspace> args)
+        protected sealed override void OnItemActivationChangedInternal(ItemEventArgs<Workspace> args)
         {
             if (args.Item.Active)
             {
@@ -89,7 +95,7 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        protected override void OnItemClosed(ClosedItemEventArgs<Workspace> args)
+        protected sealed override void OnItemClosed(ClosedItemEventArgs<Workspace> args)
         {
             if (this.Count == 0)
             {
@@ -106,5 +112,19 @@ namespace ClearCanvas.Desktop
 
             base.OnItemClosed(args);
         }
+
+        #endregion
+
+        #region Helpers
+
+        private Workspace CreateWorkspace(WorkspaceCreationArgs args)
+        {
+            IWorkspaceFactory factory = CollectionUtils.FirstElement<IWorkspaceFactory>(
+                (new WorkspaceFactoryExtensionPoint()).CreateExtensions()) ?? new DefaultWorkspaceFactory();
+
+            return factory.CreateWorkspace(args, _owner);
+        }
+
+        #endregion
     }
 }

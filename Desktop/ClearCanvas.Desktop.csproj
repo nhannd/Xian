@@ -67,7 +67,6 @@
     <Compile Include="ClosedEventArgs.cs" />
     <Compile Include="CloseHelperComponent.cs" />
     <Compile Include="CloseHelperTool.cs" />
-    <Compile Include="DesktopException.cs" />
     <Compile Include="DesktopMonitorComponent.cs" />
     <Compile Include="DesktopObjectCreationArgs.cs" />
     <Compile Include="DesktopObjectState.cs" />
@@ -203,7 +202,6 @@
     <Compile Include="Validation\ValidationRuleSet.cs" />
     <Compile Include="Validation\ValidationRule.cs" />
     <Compile Include="Validation\VisitedNodesContainerValidationStrategy.cs" />
-    <Compile Include="ItemActivationChangedEventArgs.cs" />
     <Compile Include="ApplicationComponent.cs" />
     <Compile Include="AssociateViewAttribute.cs" />
     <Compile Include="Command.cs" />

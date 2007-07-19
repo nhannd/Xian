@@ -59,7 +59,11 @@ namespace ClearCanvas.Desktop
         private CommandHistory _commandHistory;
         private bool _exitRequestedByComponent;
 
-
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="desktopWindow"></param>
         protected internal Workspace(WorkspaceCreationArgs args, DesktopWindow desktopWindow)
             : base(args)
         {
@@ -99,17 +103,30 @@ namespace ClearCanvas.Desktop
 
         #region Protected overrides
 
+
+        /// <summary>
+        /// Checks if the hosted component can close.
+        /// </summary>
+        /// <param name="interactive"></param>
+        /// <returns></returns>
         protected internal override bool CanClose(UserInteraction interactive)
         {
             return _exitRequestedByComponent || _host.Component.CanExit(interactive);
         }
 
+        /// <summary>
+        /// Starts the hosted component.
+        /// </summary>
         protected override void Initialize()
         {
             _host.StartComponent();
             base.Initialize();
         }
 
+        /// <summary>
+        /// Stops the hosted component.
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -121,7 +138,11 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        protected override IDesktopObjectView CreateView()
+        /// <summary>
+        /// Creates a view for this workspace.
+        /// </summary>
+        /// <returns></returns>
+        protected sealed override IDesktopObjectView CreateView()
         {
             return _desktopWindow.CreateWorkspaceView(this);
         }
@@ -130,11 +151,17 @@ namespace ClearCanvas.Desktop
 
         #region Helpers
 
+        /// <summary>
+        /// Gets the set of actions that are exported from the hosted component.
+        /// </summary>
         protected internal IActionSet Actions
         {
             get { return _host.Component.ExportedActions; }
         }
 
+        /// <summary>
+        /// Gets the view for this object as an <see cref="IWorkspaceView"/>.
+        /// </summary>
         protected IWorkspaceView WorkspaceView
         {
             get { return (IWorkspaceView)this.View; }

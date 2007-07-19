@@ -17,14 +17,14 @@ namespace ClearCanvas.Desktop
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="viewExtensionPointType">The view extension point class</param>
+        /// <param name="viewExtensionPointType">The view extension point class.</param>
         public AssociateViewAttribute(Type viewExtensionPointType)
         {
             _viewExtensionPointType = viewExtensionPointType;
         }
 
         /// <summary>
-        /// Gets the view extension point class
+        /// Gets the view extension point class.
         /// </summary>
         public Type ViewExtensionPointType
         {

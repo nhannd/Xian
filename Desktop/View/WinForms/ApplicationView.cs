@@ -14,7 +14,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region IApplicationView Members
 
-        public IDesktopWindowView OpenWindow(DesktopWindow window)
+        public IDesktopWindowView CreateDesktopWindowView(DesktopWindow window)
         {
             return new DesktopWindowView(window);
         }

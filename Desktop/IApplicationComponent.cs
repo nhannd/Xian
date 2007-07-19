@@ -35,10 +35,11 @@ namespace ClearCanvas.Desktop
     }
 
     /// <summary>
-    /// Defines the interface to an application component as seen by
-    /// the host.  All methods on this interface are intended solely
-    /// for use by the application component host.
+    /// Defines the interface to an application component as seen by an application component host.
     /// </summary>
+    /// <remarks>
+    /// An application component must implement this interface in order to be hosted by the desktop framework.
+    /// </remarks>
     public interface IApplicationComponent
     {
         /// <summary>
@@ -56,7 +57,7 @@ namespace ClearCanvas.Desktop
 
         /// <summary>
         /// Called by the framework to initialize the component.  This method
-        /// is guaranteed to be called before the component becomes visible
+        /// will be called before the component becomes visible
         /// on the screen.  All significant initialization should be performed
         /// here rather than in the constructor.
         /// </summary>
@@ -69,7 +70,7 @@ namespace ClearCanvas.Desktop
         void Stop();
 
         /// <summary>
-        /// Returns true if the component is live.  A component is considered "live" after the Start()
+        /// Returns true if the component is live.  A component is considered live after the Start()
         /// method has been called, and before the Stop() method is called.
         /// </summary>
         bool IsStarted { get; }
@@ -81,35 +82,33 @@ namespace ClearCanvas.Desktop
         bool Modified { get; }
 
         /// <summary>
-        /// Notifies that the value of the <see cref="Modified"/> property has changed.
+        /// Notifies the host that the value of the <see cref="Modified"/> property has changed.
         /// </summary>
         event EventHandler ModifiedChanged;
 
         /// <summary>
-        /// Notifies that the value of any or all properties may have changed, and the view
-        /// should re-synchronize itself with the component.
+        /// Notifies the host that the value of any or all properties may have changed.
         /// </summary>
         event EventHandler AllPropertiesChanged;
 
         /// <summary>
-        /// Returns true if there are any validation errors based on the current state of the component.
+        /// Gets a value indicating whether there are any validation errors based on the current state of the component.
         /// </summary>
         bool HasValidationErrors { get; }
 
         /// <summary>
         /// Shows or hides validation errors.
         /// </summary>
-        /// <param name="show">True to show errors, false to hide them</param>
+        /// <param name="show"></param>
         void ShowValidation(bool show);
 
         /// <summary>
-        /// Gets whether validation should be showing or hidden.  The view should use this property to determine
-        /// whether it should show or hide validation.
+        /// Gets a value indicating whether validation errors should be visible on the user-interface.
         /// </summary>
         bool ValidationVisible { get; }
 
         /// <summary>
-        /// Notifies the view that the <see cref="ValidationVisible"/> property has changed.
+        /// Occurs when the <see cref="ValidationVisible"/> property has changed.
         /// </summary>
         event EventHandler ValidationVisibleChanged;
 
@@ -118,30 +117,33 @@ namespace ClearCanvas.Desktop
         /// such that it can be stopped.
         /// </summary>
         /// <remarks>
-        /// This method is called with interactive set to false to query the component
+        /// <para>
+        /// This method is called with <see cref="UserInteraction.NotAllowed"/> to query the component
         /// to see if it is in a closable state.  In this case, the component must respond without interacting
-        /// with the user.  Typically this means erring on the side of caution, e.g.,
+        /// with the user.  The component should respond conservatively, e.g.,
         /// respond false if there is any unsaved data.
-        /// 
-        /// The method is called with interactive set to true to allow the component to prepare to exit.
+        /// </para>
+        /// <para>
+        /// The method is called with <see cref="UserInteraction.Allowed"/> to allow the component to prepare to exit.
         /// In this case, the component is free to perform any necessary interaction with the 
         /// user, such as the display of a confirmation dialog, to determine
         /// whether it is appropriate to exit.  
-        /// 
+        /// </para>
+        /// <para>
         /// If the component returns true, it should also be sure to 
         /// set the value of <see cref="ExitCode"/> before returning.
-        /// 
+        /// </para>
+        /// <para>
         /// Note that if the component itself requests the exit (by calling
         /// the <see cref="IApplicationComponentHost.Exit"/> method), then this method
-        /// will not be called, since it is assumed that the component is in a suitable
-        /// state.
+        /// will not be called, since it is assumed that the component is prepared to be stopped.
+        /// </para>
         /// </remarks>
-        /// <returns>True if the component is ready to exit</returns>
+        /// <returns>True if the component is ready to exit.</returns>
         bool CanExit(UserInteraction allowInteraction);
 
         /// <summary>
-        /// A value that is returned to the caller after the component exits,
-        /// indicating the circumstances of the exit.
+        /// Gets a value indicating the circumstances of the exit.
         /// </summary>
         ApplicationComponentExitCode ExitCode { get; }
     }

@@ -5,6 +5,9 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop
 {
+    /// <summary>
+    /// Helper class for <see cref="PagedComponentContainer"/>.
+    /// </summary>
     public abstract class ContainerPage
     {
         private IApplicationComponent _component;
@@ -14,12 +17,19 @@ namespace ClearCanvas.Desktop
             _component = component;
         }
 
+        /// <summary>
+        /// Gets the component associated with the page.
+        /// </summary>
         public IApplicationComponent Component
         {
             get { return _component; }
         }
     }
 
+    /// <summary>
+    /// Abstract base class for application component containers that support multiple pages.
+    /// </summary>
+    /// <typeparam name="TPage"></typeparam>
     public class PagedComponentContainer<TPage> : ApplicationComponentContainer
         where TPage : ContainerPage
     {
@@ -161,13 +171,16 @@ namespace ClearCanvas.Desktop
             }
         }
 
+        /// <summary>
+        /// Gets the index of the current page.
+        /// </summary>
         public int CurrentPageIndex
         {
             get { return _current; }
         }
 
         /// <summary>
-        /// Notifies that the current page has changed.
+        /// Occurs when the current page has changed.
         /// </summary>
         public event EventHandler CurrentPageChanged
         {
@@ -175,6 +188,11 @@ namespace ClearCanvas.Desktop
             remove { _currentPageChanged -= value; }
         }
 
+        /// <summary>
+        /// Gets the view for the specified page.
+        /// </summary>
+        /// <param name="page"></param>
+        /// <returns></returns>
         public IApplicationComponentView GetPageView(ContainerPage page)
         {
             PageHost host = _mapPageToHost[page];

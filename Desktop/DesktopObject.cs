@@ -7,6 +7,9 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
+    /// <summary>
+    /// Abstract base class for desktop objects such as windows, workspaces and shelves.
+    /// </summary>
     public abstract class DesktopObject : IDesktopObject, IDisposable
     {
         private string _name;
@@ -28,6 +31,10 @@ namespace ClearCanvas.Desktop
 
         private IDesktopObjectView _view;
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        /// <param name="args"></param>
         protected DesktopObject(DesktopObjectCreationArgs args)
         {
             _name = args.Name;
@@ -35,6 +42,9 @@ namespace ClearCanvas.Desktop
             //_visible = true;    // all objects are visible by default
         }
 
+        /// <summary>
+        /// Finalizer
+        /// </summary>
         ~DesktopObject()
         {
             Dispose(false);
@@ -246,18 +256,42 @@ namespace ClearCanvas.Desktop
 
         #region Protected Overridables
 
+        /// <summary>
+        /// Factory method to create a view for this object.
+        /// </summary>
+        /// <returns></returns>
         protected abstract IDesktopObjectView CreateView();
 
+        /// <summary>
+        /// Initializes the object, prior to it becoming visible on the screen.  Override this method to perform
+        /// custom initialization.
+        /// </summary>
         protected virtual void Initialize()
         {
             // nothing to initialize
         }
 
+        /// <summary>
+        /// Asks the object whether it can be closed.
+        /// </summary>
+        /// <remarks>
+        /// The default implementation just returns true. Override this method to customize the behaviour.
+        /// The interaction policy indicates whether the object may interact with the user in order to determine
+        /// how to respond.  If user interaction is not allowed, the object should respond conservatively
+        /// (e.g. respond with false if there may be unsaved data).
+        /// </remarks>
+        /// <param name="interaction"></param>
+        /// <returns>True if the object can be closed, otherwise false.</returns>
         protected internal virtual bool CanClose(UserInteraction interaction)
         {
             return true;
         }
 
+        /// <summary>
+        /// Gives the object an opportunity to prepare before being closed.
+        /// </summary>
+        /// <param name="reason"></param>
+        /// <returns>True if the object is ready to close, or false it the object cannot be closed.</returns>
         protected virtual bool PrepareClose(CloseReason reason)
         {
             // first see if we can close without interacting
@@ -272,6 +306,10 @@ namespace ClearCanvas.Desktop
             return CanClose(UserInteraction.Allowed);
         }
 
+        /// <summary>
+        /// Called to dispose of this object.
+        /// </summary>
+        /// <param name="disposing"></param>
         protected virtual void Dispose(bool disposing)
         {
             if (disposing)
@@ -285,36 +323,64 @@ namespace ClearCanvas.Desktop
             }
         }
 
+        /// <summary>
+        /// Raises the <see cref="Opening"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         protected virtual void OnOpening(EventArgs args)
         {
             EventsHelper.Fire(_opening, this, args);
         }
 
+        /// <summary>
+        /// Raises the <see cref="Opened"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         protected virtual void OnOpened(EventArgs args)
         {
             EventsHelper.Fire(_opened, this, args);
         }
 
+        /// <summary>
+        /// Raises the <see cref="Closing"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         protected virtual void OnClosing(ClosingEventArgs args)
         {
             EventsHelper.Fire(_closing, this, args);
         }
 
+        /// <summary>
+        /// Raises the <see cref="Closed"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         protected virtual void OnClosed(EventArgs args)
         {
             EventsHelper.Fire(_closed, this, args);
         }
 
+        /// <summary>
+        /// Raises the <see cref="VisibleChanged"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         protected virtual void OnVisibleChanged(EventArgs args)
         {
             EventsHelper.Fire(_visibleChanged, this, args);
         }
 
+        /// <summary>
+        /// Raises the <see cref="ActiveChanged"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         protected virtual void OnActiveChanged(EventArgs args)
         {
             EventsHelper.Fire(_activeChanged, this, args);
         }
 
+        /// <summary>
+        /// Raises the <see cref="TitleChanged"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         protected virtual void OnTitleChanged(EventArgs args)
         {
             EventsHelper.Fire(_titleChanged, this, args);
@@ -324,16 +390,25 @@ namespace ClearCanvas.Desktop
 
         #region Helpers
 
+        /// <summary>
+        /// Raises the <see cref="ActiveChanged"/> event.
+        /// </summary>
         internal void RaiseActiveChanged()
         {
             OnActiveChanged(EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Gets the view for this object.
+        /// </summary>
         protected IDesktopObjectView View
         {
             get { return _view; }
         }
 
+        /// <summary>
+        /// Opens this object.
+        /// </summary>
         internal void Open()
         {
             // call initialize before opening
@@ -365,12 +440,21 @@ namespace ClearCanvas.Desktop
             OnOpened(EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Occurs when the <see cref="Active"/> property changes.
+        /// </summary>
         internal event EventHandler InternalActiveChanged
         {
             add { _internalActiveChanged += value; }
             remove { _internalActiveChanged -= value; }
         }
 
+        /// <summary>
+        /// Closes this object.
+        /// </summary>
+        /// <param name="interactive"></param>
+        /// <param name="reason"></param>
+        /// <returns>True if the object was closed, otherwise false.</returns>
         protected internal bool Close(UserInteraction interactive, CloseReason reason)
         {
             // easy case - bail if interaction is prohibited and we can't close with interacting
@@ -416,6 +500,10 @@ namespace ClearCanvas.Desktop
             return true;
         }
 
+        /// <summary>
+        /// Asserts that the object is in one of the specified valid states.
+        /// </summary>
+        /// <param name="validStates"></param>
         protected void AssertState(DesktopObjectState[] validStates)
         {
             if (!CollectionUtils.Contains<DesktopObjectState>(validStates,
@@ -427,12 +515,19 @@ namespace ClearCanvas.Desktop
             }
         }
 
+        /// <summary>
+        /// Activates this object.
+        /// </summary>
         private void DoActivate()
         {
             _view.Show();    // always ensure the object is visible prior to activating
             _view.Activate();
         }
 
+        /// <summary>
+        /// Raises the <see cref="InternalActiveChanged"/> event.
+        /// </summary>
+        /// <param name="args"></param>
         private void OnInternalActiveChanged(EventArgs args)
         {
             EventsHelper.Fire(_internalActiveChanged, this, args);

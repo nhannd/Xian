@@ -19,10 +19,12 @@ namespace ClearCanvas.Desktop
     public delegate void ApplicationComponentExitDelegate(IApplicationComponent component);    
     
     /// <summary>
-    /// Abstract base class for all application components.  Components should extend this class
-    /// rather than implement <see cref="IApplicationComponent"/> directly, as it provides a default
-    /// implementation suitable for most situations.
+    /// Abstract base class for all application components. 
     /// </summary>
+    /// <remarks>
+    /// Components should extend this class rather than implement <see cref="IApplicationComponent"/> directly,
+    /// as it provides a default implementation suitable for most situations.
+    /// </remarks>
     public abstract class ApplicationComponent : IApplicationComponent, INotifyPropertyChanged, IDataErrorInfo
     {
         /// <summary>
@@ -30,14 +32,14 @@ namespace ClearCanvas.Desktop
         /// when the workspace is closed.
         /// </summary>
         /// <remarks>
-        /// If the specified component throws an exception from it's <see cref="Start"/> method, that exception
+        /// If the specified component throws an exception from the <see cref="Start"/> method, that exception
         /// will be propagate to the caller of this method and the component will not be launched.
         /// </remarks>
-        /// <param name="desktopWindow">The desktop window in which the workspace will run</param>
-        /// <param name="component">The application component to launch</param>
-        /// <param name="title">The title of the workspace</param>
-        /// <param name="exitCallback">The callback to invoke when the workspace is closed</param>
-        /// <returns>The workspace that is hosting the component</returns>
+        /// <param name="desktopWindow">The desktop window in which the workspace will run.</param>
+        /// <param name="component">The application component to launch.</param>
+        /// <param name="title">The title of the workspace.</param>
+        /// <param name="exitCallback">An optional callback to invoke when the workspace is closed.</param>
+        /// <returns>The workspace that is hosting the component.</returns>
         public static Workspace LaunchAsWorkspace(
             IDesktopWindow desktopWindow,
             IApplicationComponent component,
@@ -47,6 +49,16 @@ namespace ClearCanvas.Desktop
             return LaunchAsWorkspace(desktopWindow, component, title, null, exitCallback);
         }
 
+        /// <summary>
+        /// Executes the specified application component in a new workspace.  The exit callback will be invoked
+        /// when the workspace is closed.
+        /// </summary>
+        /// <param name="desktopWindow">The desktop window in which the workspace will run.</param>
+        /// <param name="component">The application component to launch.</param>
+        /// <param name="title">The display title of the workspace.</param>
+        /// <param name="name">The unique name of the workspace.</param>
+        /// <param name="exitCallback">An optional callback to invoke when the workspace is closed.</param>
+        /// <returns>The workspace that is hosting the component.</returns>
         public static Workspace LaunchAsWorkspace(
             IDesktopWindow desktopWindow,
             IApplicationComponent component,
@@ -75,15 +87,15 @@ namespace ClearCanvas.Desktop
         /// when the shelf is closed.
         /// </summary>
         /// <remarks>
-        /// If the specified component throws an exception from it's <see cref="Start"/> method, that exception
+        /// If the specified component throws an exception from its <see cref="Start"/> method, that exception
         /// will be propagate to the caller of this method and the component will not be launched.
         /// </remarks>
-        /// <param name="desktopWindow">The desktop window in which the shelf will run</param>
-        /// <param name="component">The application component to launch</param>
-        /// <param name="title">The title of the shelf</param>
-        /// <param name="displayHint">A hint as to how the shelf should initially be displayed</param>
-        /// <param name="exitCallback">The callback to invoke when the shelf is closed</param>
-        /// <returns>The shelf that is hosting the component</returns>
+        /// <param name="desktopWindow">The desktop window in which the shelf will run.</param>
+        /// <param name="component">The application component to launch.</param>
+        /// <param name="title">The title of the shelf.</param>
+        /// <param name="displayHint">A hint as to how the shelf should initially be displayed.</param>
+        /// <param name="exitCallback">The callback to invoke when the shelf is closed.</param>
+        /// <returns>The shelf that is hosting the component.</returns>
         public static Shelf LaunchAsShelf(
             IDesktopWindow desktopWindow,
             IApplicationComponent component,
@@ -94,6 +106,21 @@ namespace ClearCanvas.Desktop
             return LaunchAsShelf(desktopWindow, component, title, null, displayHint, exitCallback);
         }
 
+        /// <summary>
+        /// Executes the specified application component in a new shelf.  The exit callback will be invoked
+        /// when the shelf is closed.
+        /// </summary>
+        /// <remarks>
+        /// If the specified component throws an exception from its <see cref="Start"/> method, that exception
+        /// will be propagate to the caller of this method and the component will not be launched.
+        /// </remarks>
+        /// <param name="desktopWindow">The desktop window in which the shelf will run.</param>
+        /// <param name="component">The application component to launch.</param>
+        /// <param name="title">The title of the shelf.</param>
+        /// <param name="name">The unique name shelf.</param>
+        /// <param name="displayHint">A hint as to how the shelf should initially be displayed.</param>
+        /// <param name="exitCallback">The callback to invoke when the shelf is closed.</param>
+        /// <returns>The shelf that is hosting the component.</returns>
         public static Shelf LaunchAsShelf(
             IDesktopWindow desktopWindow,
             IApplicationComponent component,
@@ -122,13 +149,13 @@ namespace ClearCanvas.Desktop
         /// the dialog box is closed.
         /// </summary>
         /// <remarks>
-        /// If the specified component throws an exception from it's <see cref="Start"/> method, that exception
+        /// If the specified component throws an exception from its <see cref="Start"/> method, that exception
         /// will be propagate to the caller of this method and the component will not be launched.
         /// </remarks>
-        /// <param name="desktopWindow">The desktop window in which the shelf will run</param>
-        /// <param name="component">The application component to launch</param>
-        /// <param name="title">The title of the shelf</param>
-        /// <returns></returns>
+        /// <param name="desktopWindow">The desktop window in which the dialog box is centered.</param>
+        /// <param name="component">The application component to launch.</param>
+        /// <param name="title">The title of the dialog box.</param>
+        /// <returns>The exit code that the component exits with.</returns>
         public static ApplicationComponentExitCode LaunchAsDialog(
             IDesktopWindow desktopWindow,
             IApplicationComponent component,
@@ -137,7 +164,7 @@ namespace ClearCanvas.Desktop
             return LaunchAsDialog(desktopWindow, component, title, null);
         }
 
-        public static ApplicationComponentExitCode LaunchAsDialog(
+        private static ApplicationComponentExitCode LaunchAsDialog(
             IDesktopWindow desktopWindow,
             IApplicationComponent component,
             string title,
@@ -160,11 +187,11 @@ namespace ClearCanvas.Desktop
 
         private ValidationRuleSet _validation;
         private bool _showValidationErrors;
-        private event EventHandler _showValidationErrorsChanged;
+        private event EventHandler _validationVisibleChanged;
 
 
         /// <summary>
-        /// Constructor
+        /// Default constructor
         /// </summary>
         protected ApplicationComponent()
         {
@@ -174,19 +201,28 @@ namespace ClearCanvas.Desktop
             _validation = new ValidationRuleSet();
         }
 
+
         /// <summary>
-        /// Provides subclasses with access to the host
+        /// Gets or sets the <see cref="ValidationRuleSet"/> that is associated with this component.
+        /// </summary>
+        public ValidationRuleSet Validation
+        {
+            get { return _validation; }
+            set { _validation = value; }
+        }
+
+        #region Protected members
+
+        /// <summary>
+        /// Gets the <see cref="IApplicationComponentHost"/> that is hosting this component.
         /// </summary>
         protected IApplicationComponentHost Host
         {
-            get
-            {
-                return _host;
-            }
+            get { return _host; }
         }
 
         /// <summary>
-        /// Convenience method for use by subclasses to set the exit code and ask the host to exit in a single call.
+        /// Sets the exit code and asks the host to exit in a single call.
         /// </summary>
         /// <param name="exitCode"></param>
         protected void Exit(ApplicationComponentExitCode exitCode)
@@ -197,12 +233,13 @@ namespace ClearCanvas.Desktop
 
         /// <summary>
         /// Convenience method to fire the <see cref="ModifiedChanged"/> event.
+        /// <remarks>
         /// Note that it is not necessary to explicitly call this method if the 
         /// default implementation of the <see cref="Modified"/> property is used,
-        /// since the event is fired automatically.
-        /// 
+        /// since the event is fired automatically when the property is set.
         /// This method is provided for situations where the subclass has chosen
         /// to override the <see cref="Modified"/> property.
+        /// </remarks>
         /// </summary>
         protected void NotifyModifiedChanged()
         {
@@ -210,7 +247,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Notifies that the specified property has changed
+        /// Notifies subscribers of the <see cref="PropertyChanged"/> event that the specified property has changed.
         /// </summary>
         /// <param name="propertyName"></param>
         protected void NotifyPropertyChanged(string propertyName)
@@ -219,27 +256,22 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Notifies that all properties may have changed.  A view should respond to this event
-        /// by refreshing itself completely.
+        /// Notifies subscribers of the <see cref="AllPropertiesChanged"/> that all properties may have changed.
+        /// A view should respond to this event by refreshing itself completely.
         /// </summary>
         protected void NotifyAllPropertiesChanged()
         {
             EventsHelper.Fire(_allPropertiesChanged, this, EventArgs.Empty);
         }
 
-        public ValidationRuleSet Validation
-        {
-            get { return _validation; }
-            set { _validation = value; }
-        }
+        #endregion
 
         #region IApplicationComponent Members
 
         /// <summary>
-        /// Default implementation of <see cref="IApplicationComponent.SetHost"/>
-        /// Called by the framework to initialize this component with access to its host
+        /// Called by the framework to set the host.  For internal use only.
         /// </summary>
-        /// <param name="host">The host in which the component is running</param>
+        /// <param name="host"></param>
         public void SetHost(IApplicationComponentHost host)
         {
 			Platform.CheckForNullReference(host, "host");
@@ -247,21 +279,23 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Returns an empty set of actions.  Subclasses can override this to export
-        /// a desired set of actions.
+        /// Returns the set of actions that the component wishes to export to the desktop.
         /// </summary>
+        /// <remarks>
+        /// The default implementation of this method returns an empty action set.
+        /// </remarks>
         public virtual IActionSet ExportedActions
         {
-            get
-            {
-                return new ActionSet();
-            }
+            get { return new ActionSet(); }
         }
 
         /// <summary>
-        /// Default implementation of <see cref="IApplicationComponent.Start"/>. Overrides should
-        /// be sure to call the base implementation.
+        /// Called by the host to initialize the application component.  Override this method to implement
+        /// custom initialization logic.
         /// </summary>
+        /// <remarks>
+        /// Overrides must be sure to call the base implementation.
+        /// </remarks>
         public virtual void Start()
         {
             AssertNotStarted();
@@ -270,9 +304,12 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Default implementation of <see cref="IApplicationComponent.Stop"/>.  Overrides should
-        /// be sure to call the base implementation.
+        /// Called by the host when the application component is being terminated.  Override this method to implement
+        /// custom termination logic.
         /// </summary>
+        /// <remarks>
+        /// Overrides must be sure to call the base implementation.
+        /// </remarks>
         public virtual void Stop()
         {
             AssertStarted();
@@ -280,18 +317,29 @@ namespace ClearCanvas.Desktop
             _started = false;
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this component is live or not. 
+        /// </summary>
         public bool IsStarted
         {
             get { return _started; }
         }
 
         /// <summary>
-        /// Default implementation of <see cref="IApplicationComponent.CanExit"/>.
+        /// Called by the host to determine if the application component is in a state such that it can be stopped.
         /// </summary>
         /// <remarks>
-        /// Checks the <see cref="Modified"/> property, and if true, presents a standard
-        /// confirmation dialog to the user asking whether or not changes should be
-        /// retained.
+        /// <para>
+        /// The default implementation simply check the <see cref="Modified"/> property to see if data has been modified.
+        /// If data has been modified, and <see cref="UserInteraction.NotAllowed"/> is specified, it returns false.
+        /// If data has been modified, and <see cref="UserInteraction.Allowed"/> is specified, it presents a standard
+        /// confirmation dialog asking the user whether or not data should be saved or discarded, or the exit cancelled.
+        /// If the user elects to save or discard data, the <see cref="ExitCode"/> property is set accordingly and a value
+        /// of true is returned.  If the user elects to cancel, a value of false is returned.
+        /// </para>
+        /// <para>
+        /// Override this method to provide custom logic for responding to this query.
+        /// </para>
         /// </remarks>
         public virtual bool CanExit(UserInteraction interactive)
         {
@@ -324,8 +372,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Default implementation of <see cref="IApplicationComponent.Modified"/>
-        /// Set this property from within the subclass.
+        /// Gets or sets a value indicating whether data has been modified.
         /// </summary>
         public virtual bool Modified
         {
@@ -340,6 +387,10 @@ namespace ClearCanvas.Desktop
             }
         }
 
+        /// <summary>
+        /// Occurs when all properties may have changed, and the entire view should be updated to reflect
+        /// the components data.
+        /// </summary>
         public event EventHandler AllPropertiesChanged
         {
             add { _allPropertiesChanged += value; }
@@ -347,7 +398,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Default implementation of <see cref="IApplicationComponent.ModifiedChanged"/>
+        /// Occurs when the <see cref="Modified"/> property has changed.
         /// </summary>
         public event EventHandler ModifiedChanged
         {
@@ -356,8 +407,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Default implementation of <see cref="IApplicationComponent.ExitCode"/>
-        /// Set this property from within the subclass.
+        /// Gets or sets the exit code for the component.
         /// </summary>
         public virtual ApplicationComponentExitCode ExitCode
         {
@@ -365,6 +415,14 @@ namespace ClearCanvas.Desktop
             protected set { _exitCode = value; }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the component currently has data validation errors.
+        /// </summary>
+        /// <remarks>
+        /// The default implementation checks the <see cref="Validation"/> property to see if the
+        /// rule set contains any rules that are not satisfied.  Override this property to implement
+        /// custom behaviour.
+        /// </remarks>
         public virtual bool HasValidationErrors
         {
             get
@@ -375,23 +433,33 @@ namespace ClearCanvas.Desktop
             }
         }
 
+        /// <summary>
+        /// Sets the <see cref="ValidationVisible"/> property and raises the <see cref="ValidationVisibleChanged"/> event.
+        /// </summary>
+        /// <param name="show"></param>
         public virtual void ShowValidation(bool show)
         {
             AssertStarted();
 
             _showValidationErrors = show;
-            EventsHelper.Fire(_showValidationErrorsChanged, this, EventArgs.Empty);
+            EventsHelper.Fire(_validationVisibleChanged, this, EventArgs.Empty);
         }
 
+        /// <summary>
+        /// Gets a value indicating whether the view should display validation errors to the user.
+        /// </summary>
         public bool ValidationVisible
         {
             get { return _showValidationErrors; }
         }
 
+        /// <summary>
+        /// Occurs when the value of the <see cref="ValidationVisible"/> property changes.
+        /// </summary>
         public event EventHandler ValidationVisibleChanged
         {
-            add { _showValidationErrorsChanged += value; }
-            remove { _showValidationErrorsChanged -= value; }
+            add { _validationVisibleChanged += value; }
+            remove { _validationVisibleChanged -= value; }
         }
 
         #endregion

@@ -7,8 +7,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Desktop
 {
     /// <summary>
-    /// Defines a general interface for a dialog box that is independent of the windowing toolkit that is used
-    /// to display it.
+    /// Defines the interface to a view for a <see cref="DialogBox"/> object.
     /// </summary>
     public interface IDialogBoxView : IDesktopObjectView
     {

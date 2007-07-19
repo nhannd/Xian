@@ -8,7 +8,7 @@ namespace ClearCanvas.Desktop
     /// <summary>
     /// Represents the collection of <see cref="DesktopWindow"/> objects in the application.
     /// </summary>
-    public class DesktopWindowCollection : DesktopObjectCollection<DesktopWindow>
+    public sealed class DesktopWindowCollection : DesktopObjectCollection<DesktopWindow>
     {
         private Application _owner;
         private DesktopWindow _activeWindow;
@@ -17,7 +17,7 @@ namespace ClearCanvas.Desktop
         /// Default constructor
         /// </summary>
         /// <param name="owner"></param>
-        protected internal DesktopWindowCollection(Application owner)
+        internal DesktopWindowCollection(Application owner)
         {
             _owner = owner;
         }
@@ -25,7 +25,7 @@ namespace ClearCanvas.Desktop
         #region Public methods
 
         /// <summary>
-        /// Gets the currently active window
+        /// Gets the currently active window.
         /// </summary>
         public DesktopWindow ActiveWindow
         {
@@ -33,7 +33,7 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
-        /// Opens a new unnamed desktop window.  The window will have the default application title.
+        /// Opens a new unnamed desktop window.
         /// </summary>
         /// <returns></returns>
         public DesktopWindow AddNew()
@@ -43,7 +43,6 @@ namespace ClearCanvas.Desktop
 
         /// <summary>
         /// Opens a new desktop window with the specified name.
-        /// The window will have the default application title.
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -68,15 +67,7 @@ namespace ClearCanvas.Desktop
 
         #region Protected overrides
 
-        protected virtual DesktopWindow CreateWindow(DesktopWindowCreationArgs args)
-        {
-            IDesktopWindowFactory factory = CollectionUtils.FirstElement<IDesktopWindowFactory>(
-                (new DesktopWindowFactoryExtensionPoint()).CreateExtensions()) ?? new DefaultDesktopWindowFactory();
-
-            return factory.CreateWindow(args, _owner);
-        }
-
-        protected override void OnItemActivationChangedInternal(ItemEventArgs<DesktopWindow> args)
+        protected sealed override void OnItemActivationChangedInternal(ItemEventArgs<DesktopWindow> args)
         {
             if (args.Item.Active)
             {
@@ -95,7 +86,7 @@ namespace ClearCanvas.Desktop
             }
         }
 
-        protected override void OnItemClosed(ClosedItemEventArgs<DesktopWindow> args)
+        protected sealed override void OnItemClosed(ClosedItemEventArgs<DesktopWindow> args)
         {
             if (this.Count == 0)
             {
@@ -114,5 +105,19 @@ namespace ClearCanvas.Desktop
         }
 
         #endregion
+
+        /// <summary>
+        /// Creates a new <see cref="DesktopWindow"/>.
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        private DesktopWindow CreateWindow(DesktopWindowCreationArgs args)
+        {
+            IDesktopWindowFactory factory = CollectionUtils.FirstElement<IDesktopWindowFactory>(
+                (new DesktopWindowFactoryExtensionPoint()).CreateExtensions()) ?? new DefaultDesktopWindowFactory();
+
+            return factory.CreateWindow(args, _owner);
+        }
+
     }
 }
