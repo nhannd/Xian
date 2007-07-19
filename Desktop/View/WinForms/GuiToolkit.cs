@@ -8,13 +8,17 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
+    /// <summary>
+    /// WinForms implementation of <see cref="IGuiToolkit"/>. 
+    /// </summary>
     [ExtensionOf(typeof(GuiToolkitExtensionPoint))]
     public class GuiToolkit : IGuiToolkit
     {
-        private delegate void InvokeDelegate();
-
         private event EventHandler _started;
 
+        /// <summary>
+        /// No-args constructor required by extension point framework.
+        /// </summary>
         public GuiToolkit()
         {
             if (!Platform.IsWin32Platform)
@@ -23,17 +27,27 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region IGuiToolkit Members
 
+        /// <summary>
+        /// Gets the toolkit ID.
+        /// </summary>
+        /// <value>Always returns <see cref="ClearCanvas.Common.GuiToolkitID.WinForms"/>.</value>
         public string ToolkitID
         {
             get { return GuiToolkitID.WinForms; }
         }
 
+        /// <summary>
+        /// Occurs after the message loop has started.
+        /// </summary>
         public event EventHandler Started
         {
             add { _started += value; }
             remove { _started -= value; }
         }
 
+        /// <summary>
+        /// Initializes WinForms and starts the message loop.  Blocks until <see cref="Terminate"/> is called.
+        /// </summary>
         public void Run()
         {
             // this must be called before any GUI objects are created - otherwise we get problems with icons not showing up
@@ -54,6 +68,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             System.Windows.Forms.Application.Run();
         }
 
+        /// <summary>
+        /// Terminates the message loop.
+        /// </summary>
         public void Terminate()
         {
             System.Windows.Forms.Application.Exit();

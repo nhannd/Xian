@@ -9,6 +9,14 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
+    /// <summary>
+    /// WinForms implementation of <see cref="IDialogBoxView"/>. 
+    /// </summary>
+    /// <remarks>
+    /// This class may subclassed if customization is desired.  In this case, the <see cref="DesktopWindowView"/>
+    /// class must also be subclassed in order to instantiate the subclass from 
+    /// its <see cref="DesktopWindowView.CreateDialogBoxView"/> method.
+    /// </remarks>
     public class DialogBoxView : DesktopObjectView, IDialogBoxView
     {
         private DialogBoxForm _form;
@@ -16,6 +24,11 @@ namespace ClearCanvas.Desktop.View.WinForms
         private bool _reallyClose;
         private DialogResult _result;
 
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="dialogBox"></param>
+        /// <param name="owner"></param>
         protected internal DialogBoxView(DialogBox dialogBox, IWin32Window owner)
         {
             IApplicationComponentView componentView = (IApplicationComponentView)ViewFactory.CreateAssociatedView(dialogBox.Component.GetType());
@@ -27,26 +40,42 @@ namespace ClearCanvas.Desktop.View.WinForms
             _owner = owner;
         }
 
+        /// <summary>
+        /// Not used.
+        /// </summary>
         public override void Open()
         {
             // do nothing
         }
 
+        /// <summary>
+        /// Not used.
+        /// </summary>
         public override void Show()
         {
             // do nothing
         }
 
+        /// <summary>
+        /// Not used.
+        /// </summary>
         public override void Hide()
         {
             // do nothing
         }
 
+        /// <summary>
+        /// Not used.
+        /// </summary>
         public override void Activate()
         {
             // do nothing
         }
 
+        /// <summary>
+        /// Sets the title of the dialog box.
+        /// </summary>
+        /// <param name="title"></param>
         public override void SetTitle(string title)
         {
             _form.Text = title;
@@ -55,6 +84,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region IDialogBoxView Members
 
+        /// <summary>
+        /// Runs the modal dialog.
+        /// </summary>
+        /// <returns></returns>
         public DialogBoxAction RunModal()
         {
             DialogResult result = _form.ShowDialog(_owner);
@@ -73,6 +106,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+        /// <summary>
+        /// Terminates the modal dialog.
+        /// </summary>
+        /// <param name="action"></param>
         public void EndModal(DialogBoxAction action)
         {
             switch (action)
@@ -93,6 +130,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             _form.DialogResult = _result;
         }
 
+        /// <summary>
+        /// Disposes of this object.
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing)

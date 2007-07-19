@@ -10,7 +10,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
     /// <summary>
     /// Abstract base class for all WinForms-based views.  Any class that implements a view using
-    /// <see cref="System.Windows.Forms"/> as the underlying GUI toolkit should subclass this class.
+    /// WinForms as the underlying GUI toolkit should subclass this class.
     /// </summary>
     [GuiToolkit(ClearCanvas.Common.GuiToolkitID.WinForms)]
     public abstract class WinFormsView
@@ -20,7 +20,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         /// <summary>
-        /// Returns <see cref="GuiToolkitID.WinForms"/>
+        /// Gets the toolkit ID, which is always <see cref="ClearCanvas.Common.GuiToolkitID.WinForms"/>.
         /// </summary>
         public string GuiToolkitID
         {
@@ -28,7 +28,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         /// <summary>
-        /// Returns the <see cref="System.Windows.Forms.Control"/> that implements this view, allowing
+        /// Gets the <see cref="System.Windows.Forms.Control"/> that implements this view, allowing
         /// a parent view to insert the control as one of its children.
         /// </summary>
         public abstract object GuiElement

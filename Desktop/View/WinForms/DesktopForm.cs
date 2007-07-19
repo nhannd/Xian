@@ -21,6 +21,12 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
+    /// <summary>
+    /// Form used by the <see cref="DesktkopWindowView"/> class.
+    /// </summary>
+    /// <remarks>
+    /// This class may be subclassed.
+    /// </remarks>
     public partial class DesktopForm : DotNetMagicForm
     {
         private ActionModelNode _menuModel;
@@ -28,6 +34,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
 		private DockingManager _dockingManager;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public DesktopForm()
         {
 			if (SplashScreen.SplashForm != null)
@@ -51,7 +60,10 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Public properties
 
-        public ActionModelNode MenuModel
+        /// <summary>
+        /// Gets or sets the menu model.
+        /// </summary>
+        protected internal ActionModelNode MenuModel
         {
             get { return _menuModel; }
             set
@@ -61,7 +73,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        public ActionModelNode ToolbarModel
+        /// <summary>
+        /// Gets or sets the toolbar model.
+        /// </summary>
+        protected internal ActionModelNode ToolbarModel
         {
             get { return _toolbarModel; }
             set
@@ -71,12 +86,18 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        public TabbedGroups TabbedGroups
+        /// <summary>
+        /// Gets the <see cref="TabbedGroups"/> object that manages workspace tab groups.
+        /// </summary>
+        protected internal TabbedGroups TabbedGroups
         {
             get { return _tabbedGroups; }
         }
 
-        public DockingManager DockingManager
+        /// <summary>
+        /// Gets the <see cref="DockingManager"/> object that manages shelf docking windows.
+        /// </summary>
+        protected internal DockingManager DockingManager
         {
             get { return _dockingManager; }
         }
@@ -156,13 +177,15 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         internal DesktopViewSettings Settings
         {
-            get
-            {
-                return DesktopViewSettings.Default;
-            }
+            get { return DesktopViewSettings.Default; }
         }
 
-        private void InitializeTabControl(Crownwood.DotNetMagic.Controls.TabControl tabControl)
+        /// <summary>
+        /// Called to initialize a <see cref="Crownwood.DotNetMagic.Controls.TabControl"/>. Override
+        /// this method to perform custom initialization.
+        /// </summary>
+        /// <param name="tabControl"></param>
+        protected virtual void InitializeTabControl(Crownwood.DotNetMagic.Controls.TabControl tabControl)
 		{
 			if (tabControl == null)
 				return;
@@ -172,7 +195,13 @@ namespace ClearCanvas.Desktop.View.WinForms
 			tabControl.MaximumHeaderWidth = 256;
         }
 
-        private void BuildToolStrip(ToolStripBuilder.ToolStripKind kind, ToolStrip toolStrip, ActionModelNode actionModel)
+        /// <summary>
+        /// Called to build menus and toolbars.  Override this method to customize menu and toolbar building.
+        /// </summary>
+        /// <param name="kind"></param>
+        /// <param name="toolStrip"></param>
+        /// <param name="actionModel"></param>
+        protected virtual void BuildToolStrip(ToolStripBuilder.ToolStripKind kind, ToolStrip toolStrip, ActionModelNode actionModel)
         {
             // avoid flicker
             toolStrip.SuspendLayout();

@@ -9,24 +9,42 @@ using System.ComponentModel;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
+    /// <summary>
+    /// WinForms implementation of <see cref="IShelfView"/>. 
+    /// </summary>
+    /// <remarks>
+    /// This class may subclassed if customization is desired.  In this case, the <see cref="DesktopWindowView"/>
+    /// class must also be subclassed in order to instantiate the subclass from 
+    /// its <see cref="DesktopWindowView.CreateShelfView"/> method.
+    /// </remarks>
     public class ShelfView : DesktopObjectView, IShelfView
     {
         private DesktopWindowView _desktopView;
         private Content _content;
         private Shelf _shelf;
 
-
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="shelf"></param>
+        /// <param name="desktopView"></param>
         protected internal ShelfView(Shelf shelf, DesktopWindowView desktopView)
         {
             _shelf = shelf;
             _desktopView = desktopView;
         }
 
+        /// <summary>
+        /// Gets the <see cref="Content"/> object that is hosted by the docking window.
+        /// </summary>
         protected internal Content Content
         {
             get { return _content; }
         }
 
+        /// <summary>
+        /// Gets the <see cref="ShelfDisplayHint"/> for this shelf.
+        /// </summary>
         protected internal ShelfDisplayHint DisplayHint
         {
             get { return _shelf.DisplayHint; }
@@ -34,6 +52,9 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region DesktopObjectView overrides
 
+        /// <summary>
+        /// Opens this shelf view.
+        /// </summary>
         public override void Open()
         {
             IApplicationComponentView componentView = (IApplicationComponentView)ViewFactory.CreateAssociatedView(_shelf.Component.GetType());
@@ -41,6 +62,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             _content = _desktopView.AddShelfView(this, (Control)componentView.GuiElement, _shelf.Title, _shelf.DisplayHint);
         }
 
+        /// <summary>
+        /// Sets the title of the shelf.
+        /// </summary>
+        /// <param name="title"></param>
         public override void SetTitle(string title)
         {
             if (_content != null)
@@ -49,21 +74,34 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+        /// <summary>
+        /// Activates the shelf.
+        /// </summary>
         public override void Activate()
         {
             _desktopView.ActivateShelfView(this);
         }
 
+        /// <summary>
+        /// Shows the shelf.
+        /// </summary>
         public override void Show()
         {
             _desktopView.ShowShelfView(this);
         }
 
+        /// <summary>
+        /// Hides the shelf.
+        /// </summary>
         public override void Hide()
         {
             _desktopView.HideShelfView(this);
         }
 
+        /// <summary>
+        /// Disposes of this object.
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && _content != null)

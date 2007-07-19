@@ -9,10 +9,21 @@ using Crownwood.DotNetMagic.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
+    /// <summary>
+    /// Form used by the <see cref="DialogView"/> class.
+    /// </summary>
+    /// <remarks>
+    /// This class may be subclassed.
+    /// </remarks>
     public partial class DialogBoxForm : DotNetMagicForm
     {
         private Control _content;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="content"></param>
         public DialogBoxForm(string title, Control content)
         {
             InitializeComponent();

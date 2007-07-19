@@ -14,6 +14,14 @@ using System.ComponentModel;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {
+    /// <summary>
+    /// WinForms implementation of <see cref="IDesktopWindowView"/>. 
+    /// </summary>
+    /// <remarks>
+    /// This class may subclassed if customization is desired.  In this case, the <see cref="ApplicationView"/>
+    /// class must also be subclassed in order to instantiate the subclass from 
+    /// its <see cref="ApplicationView.CreateDesktopWindowView"/> method.
+    /// </remarks>
     public class DesktopWindowView : DesktopObjectView, IDesktopWindowView
     {
         private static DesktopWindowView _lastActiveWindow;
@@ -21,6 +29,10 @@ namespace ClearCanvas.Desktop.View.WinForms
         private DesktopForm _form;
         private OrderedSet<WorkspaceView> _workspaceActivationOrder;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="window"></param>
         protected internal DesktopWindowView(DesktopWindow window)
         {
             _form = new DesktopForm();
