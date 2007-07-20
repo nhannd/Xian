@@ -1,18 +1,13 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
+
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Registration;
-using ClearCanvas.Enterprise.Hibernate.Hql;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Core;
-using System.Collections;
+
 using NHibernate;
-using ClearCanvas.Workflow;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -46,6 +41,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                                                         " (select distinct o from ModalityProcedureStep mps join mps.RequestedProcedure rp join rp.Order o where" +
                                                         " (mps.State != :mpsState and mps.Scheduling.StartTime between :mpsSchedulingStartTimeBegin and :mpsSchedulingStartTimeEnd))";
 
+        private const string _hqlWorklistSubQuery = " and rp.Type in" +
+                                                    " (select distinct rpt from Worklist w join w.RequestedProcedureTypeGroups rptg join rptg.RequestedProcedureTypes rpt where w = :worklist)";
+
+
         #region Query helpers
 
         private void AddMainQueryParameters(List<QueryParameter> parameters)
@@ -59,6 +58,16 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             parameters.Add(new QueryParameter("mpsState", "SC"));
             parameters.Add(new QueryParameter("mpsSchedulingStartTimeBegin", Platform.Time.Date));
             parameters.Add(new QueryParameter("mpsSchedulingStartTimeEnd", Platform.Time.Date.AddDays(1)));
+        }
+
+        private void AddWorklistQueryAndParameters(ref string hqlQuery, List<QueryParameter> parameters, Worklist worklist)
+        {
+            if (worklist != null)
+            {
+                hqlQuery += _hqlWorklistSubQuery;
+                parameters.Add(new QueryParameter("worklist", worklist));
+                AddSubQueryParameters(parameters);
+            }
         }
 
         private IList<WorklistItem> GetWorklist(string hqlQuery, List<QueryParameter> parameters)
@@ -100,16 +109,28 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetScheduledWorklist()
         {
+            return GetScheduledWorklist(null);
+        }
+
+        public IList<WorklistItem> GetScheduledWorklist(RegistrationScheduledWorklist worklist)
+        {
             string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("cpsState", "SC"));
             AddMainQueryParameters(parameters);
 
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
             return GetWorklist(hqlQuery, parameters);
         }
 
         public IList<WorklistItem> GetCheckInWorklist()
+        {
+            return GetCheckInWorklist(null);
+        }
+
+        public IList<WorklistItem> GetCheckInWorklist(RegistrationCheckedInWorklist worklist)
         {
             string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition, _hqlMPSNotStartedSubQuery);
 
@@ -118,10 +139,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             AddMainQueryParameters(parameters);
             AddSubQueryParameters(parameters);
 
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
             return GetWorklist(hqlQuery, parameters);
         }
 
         public IList<WorklistItem> GetInProgressWorklist()
+        {
+            return GetInProgressWorklist(null);
+        }
+
+        public IList<WorklistItem> GetInProgressWorklist(RegistrationInProgessWorklist worklist)
         {
             string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition, _hqlMPSStartedSubQuery);
 
@@ -130,10 +158,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             AddMainQueryParameters(parameters);
             AddSubQueryParameters(parameters);
 
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
             return GetWorklist(hqlQuery, parameters);
         }
 
         public IList<WorklistItem> GetCompletedWorklist()
+        {
+            return GetCompletedWorklist(null);
+        }
+
+        public IList<WorklistItem> GetCompletedWorklist(RegistrationCompletedWorklist worklist)
         {
             string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition);
 
@@ -141,16 +176,26 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             parameters.Add(new QueryParameter("cpsState", "CM"));
             AddMainQueryParameters(parameters);
 
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
             return GetWorklist(hqlQuery, parameters);
         }
 
         public IList<WorklistItem> GetCancelledWorklist()
+        {
+            return GetCancelledWorklist(null);
+        }
+
+
+        public IList<WorklistItem> GetCancelledWorklist(RegistrationCancelledWorklist worklist)
         {
             string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("cpsState", "DC"));
             AddMainQueryParameters(parameters);
+
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
 
             return GetWorklist(hqlQuery, parameters);
         }
@@ -161,16 +206,28 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetScheduledWorklistCount()
         {
+            return GetScheduledWorklistCount(null);
+        }
+
+        public int GetScheduledWorklistCount(RegistrationScheduledWorklist worklist)
+        {
             string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("cpsState", "SC"));
             AddMainQueryParameters(parameters);
 
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
             return GetWorklistCount(hqlQuery, parameters);
         }
 
         public int GetCheckInWorklistCount()
+        {
+            return GetCheckInWorklistCount(null);
+        }
+
+        public int GetCheckInWorklistCount(RegistrationCheckedInWorklist worklist)
         {
             string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition, _hqlMPSNotStartedSubQuery);
 
@@ -179,10 +236,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             AddMainQueryParameters(parameters);
             AddSubQueryParameters(parameters);
 
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
             return GetWorklistCount(hqlQuery, parameters);
         }
 
         public int GetInProgressWorklistCount()
+        {
+            return GetInProgressWorklistCount(null);
+        }
+
+        public int GetInProgressWorklistCount(RegistrationInProgessWorklist worklist)
         {
             string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition, _hqlMPSStartedSubQuery);
 
@@ -191,10 +255,17 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             AddMainQueryParameters(parameters);
             AddSubQueryParameters(parameters);
 
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
             return GetWorklistCount(hqlQuery, parameters);
         }
 
         public int GetCompletedWorklistCount()
+        {
+            return GetCompletedWorklistCount(null);
+        }
+
+        public int GetCompletedWorklistCount(RegistrationCompletedWorklist worklist)
         {
             string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition);
 
@@ -202,16 +273,25 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             parameters.Add(new QueryParameter("cpsState", "CM"));
             AddMainQueryParameters(parameters);
 
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
             return GetWorklistCount(hqlQuery, parameters);
         }
 
         public int GetCancelledWorklistCount()
+        {
+            return GetCancelledWorklistCount(null);
+        }
+
+        public int GetCancelledWorklistCount(RegistrationCancelledWorklist worklist)
         {
             string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("cpsState", "DC"));
             AddMainQueryParameters(parameters);
+
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
 
             return GetWorklistCount(hqlQuery, parameters);
         }

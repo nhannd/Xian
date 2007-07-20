@@ -664,6 +664,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Requested Procedure Type Groups Admin.
+        /// </summary>
+        internal static string TitleRequestedProcedureTypeGroup {
+            get {
+                return ResourceManager.GetString("TitleRequestedProcedureTypeGroup", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Update Authority Group.
         /// </summary>
         internal static string TitleUpdateAuthorityGroup {
@@ -750,6 +759,15 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string TitleUser {
             get {
                 return ResourceManager.GetString("TitleUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Worklists.
+        /// </summary>
+        internal static string TitleWorklist {
+            get {
+                return ResourceManager.GetString("TitleWorklist", resourceCulture);
             }
         }
     }

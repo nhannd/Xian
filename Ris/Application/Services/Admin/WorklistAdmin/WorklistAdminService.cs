@@ -33,10 +33,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                     return assembler.GetRequestedProcedureTypeGroupSummary(rptGroup, this.PersistenceContext);
                 });
 
-            // TODO: 
             response.WorklistTypes = new List<string>();
-            response.WorklistTypes.Add("Foo");
-            response.WorklistTypes.Add("Bar");
+            response.WorklistTypes.AddRange(WorklistFactory.Instance.WorklistTypes);
 
             return response;
         }
@@ -85,7 +83,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             }
 
             WorklistAssembler assembler = new WorklistAssembler();
-            Worklist worklist = assembler.WorklistFactory(request.Detail.WorklistType);
+            Worklist worklist = WorklistFactory.Instance.GetWorklist(request.Detail.WorklistType);
             assembler.UpdateWorklist(worklist, request.Detail, this.PersistenceContext);
 
             PersistenceContext.Lock(worklist, DirtyState.New);

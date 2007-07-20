@@ -318,6 +318,9 @@
   <data name="TitleNoteCategories" xml:space="preserve">
     <value>Note Categories</value>
   </data>
+  <data name="TitleRequestedProcedureTypeGroup" xml:space="preserve">
+    <value>Requested Procedure Type Groups Admin</value>
+  </data>
   <data name="TitleUpdateAuthorityGroup" xml:space="preserve">
     <value>Update Authority Group</value>
   </data>
@@ -347,5 +350,8 @@
   </data>
   <data name="TitleUser" xml:space="preserve">
     <value>User Admin</value>
+  </data>
+  <data name="TitleWorklist" xml:space="preserve">
+    <value>Worklists</value>
   </data>
 </root>

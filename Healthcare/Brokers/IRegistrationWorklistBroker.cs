@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
+
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare.Workflow.Registration;
 
 namespace ClearCanvas.Healthcare.Brokers
@@ -10,16 +8,26 @@ namespace ClearCanvas.Healthcare.Brokers
     public interface IRegistrationWorklistBroker : IPersistenceBroker
     {
         IList<WorklistItem> GetScheduledWorklist();
+        IList<WorklistItem> GetScheduledWorklist(RegistrationScheduledWorklist worklist);
         IList<WorklistItem> GetCheckInWorklist();
+        IList<WorklistItem> GetCheckInWorklist(RegistrationCheckedInWorklist worklist);
         IList<WorklistItem> GetInProgressWorklist();
+        IList<WorklistItem> GetInProgressWorklist(RegistrationInProgessWorklist worklist);
         IList<WorklistItem> GetCompletedWorklist();
+        IList<WorklistItem> GetCompletedWorklist(RegistrationCompletedWorklist worklist);
         IList<WorklistItem> GetCancelledWorklist();
+        IList<WorklistItem> GetCancelledWorklist(RegistrationCancelledWorklist worklist);
 
         int GetScheduledWorklistCount();
+        int GetScheduledWorklistCount(RegistrationScheduledWorklist worklist);
         int GetCheckInWorklistCount();
+        int GetCheckInWorklistCount(RegistrationCheckedInWorklist worklist);
         int GetInProgressWorklistCount();
+        int GetInProgressWorklistCount(RegistrationInProgessWorklist worklist);
         int GetCompletedWorklistCount();
+        int GetCompletedWorklistCount(RegistrationCompletedWorklist worklist);
         int GetCancelledWorklistCount();
+        int GetCancelledWorklistCount(RegistrationCancelledWorklist worklist);
 
         IList<Order> GetOrdersForCheckIn(Patient patient);
         int GetOrdersForCheckInCount(Patient patient);

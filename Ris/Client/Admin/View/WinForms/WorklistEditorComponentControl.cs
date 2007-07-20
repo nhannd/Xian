@@ -26,6 +26,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
             _type.DataSource = _component.TypeChoices;
             _type.DataBindings.Add("Value", _component, "Type", true, DataSourceUpdateMode.OnPropertyChanged);
+            _type.DataBindings.Add("Enabled", _component, "TypeEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _availableRequestedProcedureTypes.Table = _component.AvailableRequestedProcedureTypeGroups;
             _availableRequestedProcedureTypes.DataBindings.Add("Selection", _component, "AvailableRequestedProcedureTypeGroupsSelection", true, DataSourceUpdateMode.OnPropertyChanged);

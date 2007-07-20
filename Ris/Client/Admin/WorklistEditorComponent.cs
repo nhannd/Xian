@@ -6,7 +6,6 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common.Admin.RequestedProcedureTypeGroupAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
@@ -136,6 +135,11 @@ namespace ClearCanvas.Ris.Client.Admin
         public IList<string> TypeChoices
         {
             get { return _typeChoices; }
+        }
+
+        public bool TypeEnabled
+        {
+            get { return _isNew; }
         }
         #endregion
 

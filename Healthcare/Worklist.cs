@@ -44,5 +44,10 @@ namespace ClearCanvas.Healthcare
         {
             get { return _requestedProcedureTypeGroups; }
         }
+
+        protected static T GetBroker<T>(IPersistenceContext context) where T : IPersistenceBroker
+        {
+            return context.GetBroker<T>();
+        }
     }
 }
