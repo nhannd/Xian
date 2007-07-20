@@ -207,10 +207,10 @@ var Table = {
 		        checkBox.type = "checkbox";
 		        td.appendChild(checkBox);
 		        this._checkBoxes[index] = checkBox;
+
+		        // add errorProvider image next to checkbox
+		        this.errorProvider.setError(checkBox, "");
 		    }
-    		
-		    // add errorProvider image next to checkbox
-		    this.errorProvider.setError(checkBox, "");
     		
 		    var containerCell;  // used by "flow" style
 	        for(var i=0; i < this._columns.length; i++)
@@ -231,7 +231,7 @@ var Table = {
 	            else
 	            {
 		            // add one cell for each column, offset by 1 if there is a checkbox column
-			        cell = tr.insertCell(i + this._options.checkBoxes ? 1 : 0);
+			        cell = tr.insertCell(i + eval(this._options.checkBoxes ? 1 : 0));
 	            }
 		        
 		        this._renderCell(index, i, cell, obj);
