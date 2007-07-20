@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common;
 using System.Runtime.InteropServices;
@@ -10,7 +9,7 @@ namespace ClearCanvas.Dicom.DataStore
 {
     public abstract class DicomImageStoreBase
     {
-        protected IStudy GetStudy(DcmMetaInfo metaInfo, DcmDataset sopInstanceDataset, Type dataAccessLayerType)
+		protected IStudy GetStudy(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset, Type dataAccessLayerType)
         {
             // determine whether we're going to use a SingleSessionDataAccessLayer or a regular DataAccessLayer
             IDataStoreReader dataStoreReader = null;
@@ -28,179 +27,154 @@ namespace ClearCanvas.Dicom.DataStore
                 throw new System.ArgumentException();
             }
 
-			string studyInstanceUid;
-            OFCondition cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.StudyInstanceUID, out studyInstanceUid);
-            if (cond.good())
-            {
-                Study study = null;
-                if (this.StudyCache.ContainsKey(studyInstanceUid))
-                    study = this.StudyCache[studyInstanceUid];
+			DicomAttribute attribute = sopInstanceDataset[DicomTags.StudyInstanceUID];
+			string studyInstanceUid = attribute.ToString();
+			if (String.IsNullOrEmpty(studyInstanceUid))
+				return null;
 
+            Study study = null;
+            if (this.StudyCache.ContainsKey(studyInstanceUid))
+                study = this.StudyCache[studyInstanceUid];
+
+            if (null == study)
+            {
+                // we haven't come across this study yet, so let's see if it already exists in the DataStore
+                study = dataStoreReader.GetStudy(new Uid(studyInstanceUid)) as Study;
                 if (null == study)
                 {
-                    // we haven't come across this study yet, so let's see if it already exists in the DataStore
-                    study = dataStoreReader.GetStudy(new Uid(studyInstanceUid)) as Study;
-                    if (null == study)
-                    {
-                        // the study doesn't exist in the data store either
-                        study = CreateNewStudy(metaInfo, sopInstanceDataset);
-                        this.StudyCache.Add(studyInstanceUid, study);
-                        return study;
-                    }
-                    else
-                    {
-                        // the study was found in the data store
-                        this.StudyCache.Add(studyInstanceUid, study);
-
-                        // since Study-Series is not lazy initialized, all the series
-                        // should be loaded. Let's add them to the cache
-                        foreach (ISeries series in study.Series)
-                        {
-                            this.SeriesCache.Add(series.GetSeriesInstanceUid().ToString(), series as Series);
-                        }
-
-                        return study;
-                    }
+                    // the study doesn't exist in the data store either
+                    study = CreateNewStudy(metaInfo, sopInstanceDataset);
+                    this.StudyCache.Add(studyInstanceUid, study);
+                    return study;
                 }
                 else
                 {
-                    // the study was found in the cache
+                    // the study was found in the data store
+                    this.StudyCache.Add(studyInstanceUid, study);
+
+                    // since Study-Series is not lazy initialized, all the series
+                    // should be loaded. Let's add them to the cache
+                    foreach (ISeries series in study.Series)
+                    {
+                        this.SeriesCache.Add(series.GetSeriesInstanceUid().ToString(), series as Series);
+                    }
+
                     return study;
                 }
             }
-            return null;
-        }
-
-        protected ISeries GetSeries(DcmMetaInfo metaInfo, DcmDataset sopInstanceDataset)
-        {
-			string seriesInstanceUid;
-			OFCondition cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.SeriesInstanceUID, out seriesInstanceUid);
-			if (cond.good())
+            else
             {
-                Series series = null;
-                if (this.SeriesCache.ContainsKey(seriesInstanceUid))
-                    series = this.SeriesCache[seriesInstanceUid];
-
-                if (null == series)
-                {
-                    // if the series was in the datastore, it would also exist
-                    // in the cache at this point, because the study would have
-                    // been loaded, and Series is not lazy-initialized.
-                    // Therefore, this series is not in the datastore either.
-                    series = CreateNewSeries(metaInfo, sopInstanceDataset);
-                    this.SeriesCache.Add(seriesInstanceUid, series);
-                    return series;
-                }
-                else
-                {
-                    // the series was found in the cache
-                    return series;
-                }
+                // the study was found in the cache
+                return study;
             }
-            return null;
         }
 
-        protected Study CreateNewStudy(DcmMetaInfo metaInfo, DcmDataset sopInstanceDataset)
+		protected ISeries GetSeries(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
+        {
+			DicomAttribute attribute = sopInstanceDataset[DicomTags.SeriesInstanceUID];
+			string seriesInstanceUid = attribute.ToString();
+			if (String.IsNullOrEmpty(seriesInstanceUid))
+				return null;
+
+			Series series = null;
+            if (this.SeriesCache.ContainsKey(seriesInstanceUid))
+                series = this.SeriesCache[seriesInstanceUid];
+
+            if (null == series)
+            {
+                // if the series was in the datastore, it would also exist
+                // in the cache at this point, because the study would have
+                // been loaded, and Series is not lazy-initialized.
+                // Therefore, this series is not in the datastore either.
+                series = CreateNewSeries(metaInfo, sopInstanceDataset);
+                this.SeriesCache.Add(seriesInstanceUid, series);
+                return series;
+            }
+            else
+            {
+                // the series was found in the cache
+                return series;
+            }
+        }
+
+		protected Study CreateNewStudy(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
         {
             Study study = new Study();
-			string value;
-			OFCondition cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.AccessionNumber, out value);
-			if (cond.good())
-				study.AccessionNumber = value;
+
+			DicomAttribute attribute = sopInstanceDataset[DicomTags.AccessionNumber];
+			study.AccessionNumber = attribute.ToString();
 
             //
             // TODO: can't access sequences yet. We will have to get
             // ProcedureCodeSequence.CodeValue and ProcedureCodeSequence.SchemeDesignator
             //
 
-			cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.StudyDate, out value);
-			if (cond.good())
-			{
-				study.StudyDateRaw = value;
-				study.StudyDate = DateParser.Parse(value);
-			}
+			attribute = sopInstanceDataset[DicomTags.StudyDate];
+			study.StudyDateRaw = attribute.ToString();
+			study.StudyDate = DateParser.Parse(study.StudyDateRaw);
 
-			cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.StudyTime, out value);
-			if (cond.good())
-				study.StudyTimeRaw = value;
+			attribute = sopInstanceDataset[DicomTags.StudyTime];
+			study.StudyTimeRaw = attribute.ToString();
 
-			cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.StudyDescription, out value);
-			if (cond.good())
-				study.StudyDescription = value;
+			attribute = sopInstanceDataset[DicomTags.StudyDescription];
+			study.StudyDescription = attribute.ToString();
 
-			cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.StudyID, out value);
-			if (cond.good())
-				study.StudyId = value;
+			attribute = sopInstanceDataset[DicomTags.StudyID];
+			study.StudyId = attribute.ToString();
 
-			cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.StudyInstanceUID, out value);
-			if (cond.good())
-				study.StudyInstanceUid = value;
+			attribute = sopInstanceDataset[DicomTags.StudyInstanceUID];
+			study.StudyInstanceUid = attribute.ToString();
 
-			cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.PatientId, out value);
-            if (cond.good())
-                study.PatientId = new PatientId(value);
+			attribute = sopInstanceDataset[DicomTags.PatientID];
+			study.PatientId = new PatientId(attribute.ToString() ?? "");
 
-			cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.PatientsSex, out value);
-			if (cond.good())
-				study.PatientsSex = value;
+			attribute = sopInstanceDataset[DicomTags.PatientsSex];
+			study.PatientsSex = attribute.ToString();
 
-			cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.PatientsBirthDate, out value);
-			if (cond.good())
-				study.PatientsBirthDateRaw = value;
+			attribute = sopInstanceDataset[DicomTags.PatientsBirthDate];
+			study.PatientsBirthDateRaw = attribute.ToString();
 
-			cond = DicomHelper.TryFindAndGetOFStringArray(sopInstanceDataset, Dcm.SpecificCharacterSet, out value);
-			if (cond.good())
-				study.SpecificCharacterSet = value;
+			attribute = sopInstanceDataset[DicomTags.SpecificCharacterSet];
+			study.SpecificCharacterSet = attribute.ToString();
 
-            byte[] patientsNameRawBytes;
-            cond = DicomHelper.FindAndGetRawStringFromItem(sopInstanceDataset, Dcm.PatientsName, out patientsNameRawBytes);
-
-            if (cond.good())
-            {
-                // of course we shouldn't be converting this yet again, we should be able to store the raw
-                study.PatientsNameRaw = patientsNameRawBytes;
-				study.PatientsName = new PersonName(SpecificCharacterSetParser.Parse(study.SpecificCharacterSet, study.PatientsNameRaw));
-            }
+			attribute = sopInstanceDataset[DicomTags.PatientsName];
+			// !!TODO: this needs to be fixed once the managed toolkit is changed to support character sets.
+			study.PatientsNameRaw = Encoding.ASCII.GetBytes(attribute.ToString());
+			study.PatientsName = new PersonName(SpecificCharacterSetParser.Parse(study.SpecificCharacterSet, study.PatientsNameRaw));
 
             study.StoreTime = Platform.Time;
 
             return study;
         }
 
-        protected Series CreateNewSeries(DcmMetaInfo metaInfo, DcmDataset sopInstanceDataset)
+		protected Series CreateNewSeries(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
         {
             Series series = new Series();
 
-			string value;
-			OFCondition cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.Laterality, out value);
-			if (cond.good())
-				series.Laterality = value;
+			DicomAttribute attribute = sopInstanceDataset[DicomTags.Laterality];
+			series.Laterality = attribute.ToString();
 
-			cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.Modality, out value);
-			if (cond.good())
-				series.Modality = value;
+			attribute = sopInstanceDataset[DicomTags.Modality];
+			series.Modality = attribute.ToString();
 
-			cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.SeriesDescription, out value);
-            if (cond.good())
-                series.SeriesDescription = value;
+			attribute = sopInstanceDataset[DicomTags.SeriesDescription];
+			series.SeriesDescription = attribute.ToString();
 
-			cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.SeriesInstanceUID, out value);
-            if (cond.good())
-                series.SeriesInstanceUid = value;
+			attribute = sopInstanceDataset[DicomTags.SeriesInstanceUID];
+			series.SeriesInstanceUid = attribute.ToString();
 
-            int integerValue;
-            cond = sopInstanceDataset.findAndGetSint32(Dcm.SeriesNumber, out integerValue);
-            if (cond.good())
-                series.SeriesNumber = integerValue;
+			attribute = sopInstanceDataset[DicomTags.SeriesNumber];
+			int intValue;
+			if (attribute.TryGetInt32(0, out intValue))
+				series.SeriesNumber = intValue;
 
-			cond = DicomHelper.TryFindAndGetOFStringArray(sopInstanceDataset, Dcm.SpecificCharacterSet, out value);
-            if (cond.good())
-                series.SpecificCharacterSet = value;
+			attribute = sopInstanceDataset[DicomTags.SpecificCharacterSet];
+			series.SpecificCharacterSet = attribute.ToString();
 
             return series;
         }
 
-        protected ISopInstance GetSopInstance(DcmMetaInfo metaInfo, DcmDataset sopInstanceDataset, string fileName)
+		protected ISopInstance GetSopInstance(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset, string fileName)
         {
             return CreateNewSopInstance(metaInfo, sopInstanceDataset, fileName);
         }
@@ -216,131 +190,112 @@ namespace ClearCanvas.Dicom.DataStore
 			sopInstance.LocationUri = new DicomUri(uriBuilder.Uri);
 		}
 
-		protected SopInstance CreateNewSopInstance(DcmMetaInfo metaInfo, DcmDataset sopInstanceDataset, string fileName)
+		protected SopInstance CreateNewSopInstance(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset, string fileName)
 		{
 			SopInstance newSop = CreateNewSopInstance(metaInfo, sopInstanceDataset);
 			AssignSopInstanceUri(newSop, fileName);
 			return newSop;
 		}
 
-		protected SopInstance CreateNewSopInstance(DcmMetaInfo metaInfo, DcmDataset sopInstanceDataset)
+		protected SopInstance CreateNewSopInstance(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
         {
-            ushort ushortValue;
-            int integerValue;
-            double doubleValue;
-
             // TODO: we need to generalize this to be able to create the correct
             // type in the SopInstance hierarchy instead of always creating a 
             // ImageSopInstance.
             ImageSopInstance image = new ImageSopInstance();
 
-            OFCondition cond = sopInstanceDataset.findAndGetUint16(Dcm.BitsAllocated, out ushortValue);
-            if (cond.good())
-                image.BitsAllocated = Convert.ToInt32(ushortValue);
+			UInt16 uintValue;
+			DicomAttribute attribute = sopInstanceDataset[DicomTags.BitsAllocated];
+			if (attribute.TryGetUInt16(0, out uintValue))
+				image.BitsAllocated = (int)uintValue;
 
-            cond = sopInstanceDataset.findAndGetUint16(Dcm.BitsStored, out ushortValue);
-            if (cond.good())
-                image.BitsStored = Convert.ToInt32(ushortValue);
+			attribute = sopInstanceDataset[DicomTags.BitsStored];
+			if (attribute.TryGetUInt16(0, out uintValue))
+				image.BitsStored = (int)uintValue;
 
-            cond = sopInstanceDataset.findAndGetUint16(Dcm.Columns, out ushortValue);
-            if (cond.good())
-                image.Columns = Convert.ToInt32(ushortValue);
+			attribute = sopInstanceDataset[DicomTags.HighBit];
+			if (attribute.TryGetUInt16(0, out uintValue))
+				image.HighBit = (int)uintValue;
 
-            cond = sopInstanceDataset.findAndGetUint16(Dcm.HighBit, out ushortValue);
-            if (cond.good())
-                image.HighBit = Convert.ToInt32(ushortValue);
+			int intValue;
+			attribute = sopInstanceDataset[DicomTags.InstanceNumber];
+			if (attribute.TryGetInt32(0, out intValue))
+				image.InstanceNumber = intValue;
 
-            cond = sopInstanceDataset.findAndGetSint32(Dcm.InstanceNumber, out integerValue);
-            if (cond.good())
-                image.InstanceNumber = integerValue;
+			attribute = sopInstanceDataset[DicomTags.PhotometricInterpretation];
+			image.PhotometricInterpretation = PhotometricInterpretationHelper.FromString(attribute.ToString());
 
-			string value;
-			cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.PhotometricInterpretation, out value);
-            if (cond.good())
-                image.PhotometricInterpretation = PhotometricInterpretationHelper.FromString(value);
+			attribute = sopInstanceDataset[DicomTags.PixelRepresentation];
+			if (attribute.TryGetUInt16(0, out uintValue))
+				image.PixelRepresentation = (int)uintValue;
 
-            cond = sopInstanceDataset.findAndGetUint16(Dcm.PixelRepresentation, out ushortValue);
-            if (cond.good())
-                image.PixelRepresentation = Convert.ToInt32(ushortValue);
+			attribute = sopInstanceDataset[DicomTags.PixelSpacing];
+			if (attribute.Count == 2)
+			{
+				double doubleValue1, doubleValue2;
+				if (attribute.TryGetFloat64(0, out doubleValue1) && attribute.TryGetFloat64(1, out doubleValue2))
+					image.PixelSpacing = new PixelSpacing(doubleValue1, doubleValue2);
+			}
 
-            // TODO: this way of getting the string representations of these arrays
-            // and then converting the types to the appropriate double values in an
-            // array is inefficient. We should create some more sophisticated typemaps
-            // for SWIG that will allow us to pass in a managed double array, and have
-            // the values returned there.
-			cond = DicomHelper.TryFindAndGetOFStringArray(sopInstanceDataset, Dcm.PixelSpacing, out value);
-            if (cond.good())
-            {
-                // parse out the string of two values
-                string[] components = value.ToString().Split('\\');
-                image.PixelSpacing = new PixelSpacing(Convert.ToDouble(components[0]), Convert.ToDouble(components[1]));
-            }
+			attribute = sopInstanceDataset[DicomTags.PixelAspectRatio];
+			if (attribute.Count == 2)
+			{
+				double doubleValue1, doubleValue2;
+				if (attribute.TryGetFloat64(0, out doubleValue1) && attribute.TryGetFloat64(1, out doubleValue2))
+					image.PixelAspectRatio = new PixelAspectRatio(doubleValue1, doubleValue2);
+			}
 
-			cond = DicomHelper.TryFindAndGetOFStringArray(sopInstanceDataset, Dcm.PixelAspectRatio, out value);
-            if (cond.good())
-            {
-                // parse out the string of two values
-                string[] components = value.ToString().Split('\\');
-                image.PixelAspectRatio = new PixelAspectRatio(Convert.ToDouble(components[0]), Convert.ToDouble(components[1]));
-            }
+			attribute = sopInstanceDataset[DicomTags.PlanarConfiguration];
+			if (attribute.TryGetUInt16(0, out uintValue))
+				image.PlanarConfiguration = (int)uintValue;
 
-            cond = sopInstanceDataset.findAndGetUint16(Dcm.PlanarConfiguration, out ushortValue);
-            if (cond.good())
-                image.PlanarConfiguration = Convert.ToInt32(ushortValue);
+			double doubleValue;
+			attribute = sopInstanceDataset[DicomTags.RescaleIntercept];
+			if (attribute.TryGetFloat64(0, out doubleValue))
+				image.RescaleIntercept = doubleValue;
 
-            cond = sopInstanceDataset.findAndGetFloat64(Dcm.RescaleIntercept, out doubleValue);
-            if (cond.good())
-                image.RescaleIntercept = doubleValue;
+			attribute = sopInstanceDataset[DicomTags.RescaleSlope];
+			if (attribute.TryGetFloat64(0, out doubleValue))
+				image.RescaleSlope = doubleValue;
 
-            cond = sopInstanceDataset.findAndGetFloat64(Dcm.RescaleSlope, out doubleValue);
-            if (cond.good())
-                image.RescaleSlope = doubleValue;
+			attribute = sopInstanceDataset[DicomTags.Rows];
+			if (attribute.TryGetUInt16(0, out uintValue))
+				image.Rows = (int)uintValue;
 
-            cond = sopInstanceDataset.findAndGetUint16(Dcm.Rows, out ushortValue);
-            if (cond.good())
-                image.Rows = Convert.ToInt32(ushortValue);
+			attribute = sopInstanceDataset[DicomTags.Columns];
+			if (attribute.TryGetUInt16(0, out uintValue))
+				image.Columns = (int)uintValue;
 
-            cond = sopInstanceDataset.findAndGetUint16(Dcm.SamplesPerPixel, out ushortValue);
-            if (cond.good())
-                image.SamplesPerPixel = Convert.ToInt32(ushortValue);
+			attribute = sopInstanceDataset[DicomTags.SamplesperPixel];
+			if (attribute.TryGetUInt16(0, out uintValue))
+				image.SamplesPerPixel = (int)uintValue;
 
-			cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.SOPClassUID, out value);
-            if (cond.good())
-                image.SopClassUid = value;
+			attribute = sopInstanceDataset[DicomTags.SOPClassUID];
+			image.SopClassUid = attribute.ToString();
 
-			cond = DicomHelper.TryFindAndGetOFString(sopInstanceDataset, Dcm.SOPInstanceUID, out value);
-            if (cond.good())
-                image.SopInstanceUid = value;
+			attribute = sopInstanceDataset[DicomTags.SOPInstanceUID];
+			image.SopInstanceUid = attribute.ToString();
 
-			cond = DicomHelper.TryFindAndGetOFString(metaInfo, Dcm.TransferSyntaxUID, out value);
-            if (cond.good())
-                image.TransferSyntaxUid = value;
+			attribute = metaInfo[DicomTags.TransferSyntaxUID];
+			image.TransferSyntaxUid = attribute.ToString();
 
-            // TODO: this way of getting the string representations of these arrays
-            // and then converting the types to the appropriate double values in an
-            // array is inefficient. We should create some more sophisticated typemaps
-            // for SWIG that will allow us to pass in a managed double array, and have
-            // the values returned there.
-			cond = DicomHelper.TryFindAndGetOFStringArray(sopInstanceDataset, Dcm.WindowWidth, out value);
-            if (cond.good())
-            {
-				string value2;
-				cond = DicomHelper.TryFindAndGetOFStringArray(sopInstanceDataset, Dcm.WindowCenter, out value2);
-                if (cond.good())
-                {
-                    string[] widthComponents = value.Split('\\');
-                    string[] centerComponents = value2.Split('\\');
-
-                    for (int i = 0; i < widthComponents.Length; ++i)
-                    {
-                        image.WindowValues.Add(new Window(Convert.ToDouble(widthComponents[i]), Convert.ToDouble(centerComponents[i])));
-                    }
+			attribute = sopInstanceDataset[DicomTags.WindowWidth];
+			if (attribute.Count > 0 && !attribute.IsNull && !attribute.IsEmpty)
+			{
+				DicomAttribute attribute2 = sopInstanceDataset[DicomTags.WindowCenter];
+				if (attribute.Count == attribute2.Count && !attribute2.IsNull && !attribute2.IsEmpty)
+				{
+					for (int i = 0; i < attribute.Count; ++i)
+					{
+						double doubleValue1, doubleValue2;
+						if (attribute.TryGetFloat64(i, out doubleValue1) && attribute2.TryGetFloat64(i, out doubleValue2))
+							image.WindowValues.Add(new Window(doubleValue1, doubleValue2));
+					}
                 }
             }
 
-			cond = DicomHelper.TryFindAndGetOFStringArray(sopInstanceDataset, Dcm.SpecificCharacterSet, out value);
-            if (cond.good())
-                image.SpecificCharacterSet = value;
+			attribute = sopInstanceDataset[DicomTags.SpecificCharacterSet];
+			image.SpecificCharacterSet = attribute.ToString();
 
             return image;
         }

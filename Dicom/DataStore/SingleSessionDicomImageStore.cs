@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Dicom.DataStore;
-using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Dicom.DataStore
@@ -14,7 +13,7 @@ namespace ClearCanvas.Dicom.DataStore
     {
         #region IDicomPersistentStore Members
 
-        public void InsertSopInstance(DcmMetaInfo metaInfo, DcmDataset sopInstanceDataset, string fileName)
+        public void InsertSopInstance(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset, string fileName)
         {
             ISopInstance newSop = GetSopInstance(metaInfo, sopInstanceDataset, fileName);
             IStudy study = GetStudy(metaInfo, sopInstanceDataset);
@@ -60,7 +59,7 @@ namespace ClearCanvas.Dicom.DataStore
         #endregion
 
         #region Handcoded Members
-        private IStudy GetStudy(DcmMetaInfo metaInfo, DcmDataset sopInstanceDataset)
+		private IStudy GetStudy(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
         {
             return base.GetStudy(metaInfo, sopInstanceDataset, typeof(SingleSessionDataAccessLayer));
         }

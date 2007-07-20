@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Services
 		private string _patientId;
 		private string _patientsName;
 		private string _studyDescription;
-		private DateTime _studyDate;
+		private DateTime? _studyDate;
 
 		public StudyInformation()
 		{
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Services
 		}
 
 		[DataMember(IsRequired = true)]
-		public DateTime StudyDate
+		public DateTime? StudyDate
 		{
 			get { return _studyDate; }
 			set { _studyDate = value; }

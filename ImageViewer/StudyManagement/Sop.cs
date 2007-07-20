@@ -4,7 +4,6 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.OffisWrapper;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -86,7 +85,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string transferSyntaxInstanceUID;
-				GetTag(Dcm.TransferSyntaxUID, out transferSyntaxInstanceUID, out tagExists);
+				GetTag(DicomTags.TransferSyntaxUID, out transferSyntaxInstanceUID, out tagExists);
 				return transferSyntaxInstanceUID ?? "";
 			}
 		}
@@ -100,7 +99,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string sopInstanceUID;
-				GetTag(Dcm.SOPInstanceUID, out sopInstanceUID, out tagExists);
+				GetTag(DicomTags.SOPInstanceUID, out sopInstanceUID, out tagExists);
 				return sopInstanceUID ?? "";
 			}
 		}
@@ -116,7 +115,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string patientsName;
-				GetTag(Dcm.PatientsName, out patientsName, out tagExists);
+				GetTag(DicomTags.PatientsName, out patientsName, out tagExists);
 				return new PersonName(patientsName ?? "");
 			}
 		}
@@ -130,7 +129,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string patientId;
-				GetTag(Dcm.PatientId, out patientId, out tagExists);
+				GetTag(DicomTags.PatientID, out patientId, out tagExists);
 				return patientId ?? "";
 			}
 		}
@@ -144,7 +143,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string patientsBirthDate;
-				GetTag(Dcm.PatientsBirthDate, out patientsBirthDate, out tagExists);
+				GetTag(DicomTags.PatientsBirthDate, out patientsBirthDate, out tagExists);
 				return patientsBirthDate ?? "";
 			}
 		}
@@ -158,7 +157,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string patientsSex;
-				GetTag(Dcm.PatientsSex, out patientsSex, out tagExists);
+				GetTag(DicomTags.PatientsSex, out patientsSex, out tagExists);
 				return patientsSex ?? "";
 			}
 		}
@@ -176,7 +175,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string studyInstanceUID;
-				GetTag(Dcm.StudyInstanceUID, out studyInstanceUID, out tagExists);
+				GetTag(DicomTags.StudyInstanceUID, out studyInstanceUID, out tagExists);
 				return studyInstanceUID ?? "";
 			}
 		}
@@ -190,7 +189,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string studyDate;
-				GetTag(Dcm.StudyDate, out studyDate, out tagExists);
+				GetTag(DicomTags.StudyDate, out studyDate, out tagExists);
 				return studyDate ?? "";
 			}
 		}
@@ -204,7 +203,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string studyTime;
-				GetTag(Dcm.StudyTime, out studyTime, out tagExists);
+				GetTag(DicomTags.StudyTime, out studyTime, out tagExists);
 				return studyTime ?? "";
 			}
 		}
@@ -218,7 +217,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string referringPhysiciansName;
-				GetTag(Dcm.ReferringPhysiciansName, out referringPhysiciansName, out tagExists);
+				GetTag(DicomTags.ReferringPhysiciansName, out referringPhysiciansName, out tagExists);
 				return new PersonName(referringPhysiciansName ?? "");
 			}
 		}
@@ -232,7 +231,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string accessionNumber;
-				GetTag(Dcm.AccessionNumber, out accessionNumber, out tagExists);
+				GetTag(DicomTags.AccessionNumber, out accessionNumber, out tagExists);
 				return accessionNumber ?? "";
 			}
 		}
@@ -246,7 +245,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string studyDescription;
-				GetTag(Dcm.StudyDescription, out studyDescription, out tagExists);
+				GetTag(DicomTags.StudyDescription, out studyDescription, out tagExists);
 				return studyDescription ?? "";
 			}
 		}
@@ -260,7 +259,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string nameOfPhysiciansReadingStudy;
-				GetTagArray(Dcm.NameOfPhysiciansReadingStudy, out nameOfPhysiciansReadingStudy, out tagExists);
+				GetTagArray(DicomTags.NameofPhysiciansReadingStudy, out nameOfPhysiciansReadingStudy, out tagExists);
 				return VMStringConverter.ToPersonNameArray(nameOfPhysiciansReadingStudy);
 			}
 		}
@@ -278,7 +277,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string admittingDiagnosesDescription;
-				GetTagArray(Dcm.AdmittingDiagnosesDescription, out admittingDiagnosesDescription, out tagExists);
+				GetTagArray(DicomTags.AdmittingDiagnosesDescription, out admittingDiagnosesDescription, out tagExists);
 				return VMStringConverter.ToStringArray(admittingDiagnosesDescription);
 			}
 		}
@@ -292,7 +291,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string patientsAge;
-				GetTag(Dcm.PatientsAge, out patientsAge, out tagExists);
+				GetTag(DicomTags.PatientsAge, out patientsAge, out tagExists);
 				return patientsAge ?? "";
 			}
 		}
@@ -306,7 +305,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string additionalPatientsHistory;
-				GetTag(Dcm.AdditionalPatientHistory, out additionalPatientsHistory, out tagExists);
+				GetTag(DicomTags.AdditionalPatientHistory, out additionalPatientsHistory, out tagExists);
 				return additionalPatientsHistory ?? "";
 			}
 		}
@@ -324,7 +323,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string manufacturer;
-				GetTag(Dcm.Manufacturer, out manufacturer, out tagExists);
+				GetTag(DicomTags.Manufacturer, out manufacturer, out tagExists);
 				return manufacturer ?? "";
 			}
 		}
@@ -338,7 +337,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string institutionName;
-				GetTag(Dcm.InstitutionName, out institutionName, out tagExists);
+				GetTag(DicomTags.InstitutionName, out institutionName, out tagExists);
 				return institutionName ?? "";
 			}
 		}
@@ -352,7 +351,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string stationName;
-				GetTag(Dcm.StationName, out stationName, out tagExists);
+				GetTag(DicomTags.StationName, out stationName, out tagExists);
 				return stationName ?? "";
 			}
 		}
@@ -366,7 +365,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string institutionalDepartmentName;
-				GetTag(Dcm.InstitutionalDepartmentName, out institutionalDepartmentName, out tagExists);
+				GetTag(DicomTags.InstitutionalDepartmentName, out institutionalDepartmentName, out tagExists);
 				return institutionalDepartmentName ?? "";
 			}
 		}
@@ -380,7 +379,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string manufacturersModelName;
-				GetTag(Dcm.ManufacturersModelName, out manufacturersModelName, out tagExists);
+				GetTag(DicomTags.ManufacturersModelName, out manufacturersModelName, out tagExists);
 				return manufacturersModelName ?? "";
 			}
 		}
@@ -398,7 +397,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string modality;
-				GetTag(Dcm.Modality, out modality, out tagExists);
+				GetTag(DicomTags.Modality, out modality, out tagExists);
 				return modality ?? "";
 			}
 		}
@@ -412,7 +411,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string seriesInstanceUID;
-				GetTag(Dcm.SeriesInstanceUID, out seriesInstanceUID, out tagExists);
+				GetTag(DicomTags.SeriesInstanceUID, out seriesInstanceUID, out tagExists);
 				return seriesInstanceUID ?? "";
 			}
 		}
@@ -426,7 +425,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				int seriesNumber;
-				GetTag(Dcm.SeriesNumber, out seriesNumber, out tagExists);
+				GetTag(DicomTags.SeriesNumber, out seriesNumber, out tagExists);
 				return seriesNumber;
 			}
 		}
@@ -440,7 +439,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string laterality;
-				GetTag(Dcm.Laterality, out laterality, out tagExists);
+				GetTag(DicomTags.Laterality, out laterality, out tagExists);
 				return laterality ?? "";
 			}
 		}
@@ -454,7 +453,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string seriesDate;
-				GetTag(Dcm.SeriesDate, out seriesDate, out tagExists);
+				GetTag(DicomTags.SeriesDate, out seriesDate, out tagExists);
 				return seriesDate ?? "";
 			}
 		}
@@ -468,7 +467,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string seriesTime;
-				GetTag(Dcm.SeriesTime, out seriesTime, out tagExists);
+				GetTag(DicomTags.SeriesTime, out seriesTime, out tagExists);
 				return seriesTime ?? "";
 			}
 		}
@@ -482,7 +481,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string performingPhysiciansNames;
-				GetTagArray(Dcm.PerformingPhysiciansName, out performingPhysiciansNames, out tagExists);
+				GetTagArray(DicomTags.PerformingPhysiciansName, out performingPhysiciansNames, out tagExists);
 				return VMStringConverter.ToPersonNameArray(performingPhysiciansNames);
 			}
 		}
@@ -496,7 +495,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string protocolName;
-				GetTag(Dcm.ProtocolName, out protocolName, out tagExists);
+				GetTag(DicomTags.ProtocolName, out protocolName, out tagExists);
 				return protocolName ?? "";
 			}
 		}
@@ -510,7 +509,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string seriesDescription;
-				GetTag(Dcm.SeriesDescription, out seriesDescription, out tagExists);
+				GetTag(DicomTags.SeriesDescription, out seriesDescription, out tagExists);
 				return seriesDescription ?? "";
 			}
 		}
@@ -524,7 +523,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string operatorsNames;
-				GetTagArray(Dcm.OperatorsName, out operatorsNames, out tagExists);
+				GetTagArray(DicomTags.OperatorsName, out operatorsNames, out tagExists);
 				return VMStringConverter.ToPersonNameArray(operatorsNames);
 			}
 		}
@@ -538,7 +537,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string bodyPartExamined;
-				GetTag(Dcm.BodyPartExamined, out bodyPartExamined, out tagExists);
+				GetTag(DicomTags.BodyPartExamined, out bodyPartExamined, out tagExists);
 				return bodyPartExamined ?? "";
 			}
 		}
@@ -552,7 +551,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string bodyPartExamined;
-				GetTag(Dcm.BodyPartExamined, out bodyPartExamined, out tagExists);
+				GetTag(DicomTags.BodyPartExamined, out bodyPartExamined, out tagExists);
 				return bodyPartExamined ?? "";
 			}
 		}
@@ -574,7 +573,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="val"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out ushort value, out bool tagExists);
+		public abstract void GetTag(uint tag, out ushort value, out bool tagExists);
 
 		/// <summary>
 		/// Gets a DICOM tag with value multiplicity (16 bit, unsigned).
@@ -589,7 +588,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="val"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out ushort value, uint position, out bool tagExists);
+		public abstract void GetTag(uint tag, out ushort value, uint position, out bool tagExists);
 
 		/// <summary>
 		/// Gets a DICOM tag (integer).
@@ -603,7 +602,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="val"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out int value, out bool tagExists);
+		public abstract void GetTag(uint tag, out int value, out bool tagExists);
 
 		/// <summary>
 		/// Gets a DICOM tag with value multiplicity (integer).
@@ -618,7 +617,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="val"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out int value, uint position, out bool tagExists);
+		public abstract void GetTag(uint tag, out int value, uint position, out bool tagExists);
 
 		/// <summary>
 		/// Gets a DICOM tag (double).
@@ -632,7 +631,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="val"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out double value, out bool tagExists);
+		public abstract void GetTag(uint tag, out double value, out bool tagExists);
 
 		/// <summary>
 		/// Gets a DICOM tag with value multiplicity (double).
@@ -647,7 +646,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="val"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out double value, uint position, out bool tagExists);
+		public abstract void GetTag(uint tag, out double value, uint position, out bool tagExists);
 
 		/// <summary>
 		/// Gets a DICOM tag (string).
@@ -661,7 +660,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="val"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out string value, out bool tagExists);
+		public abstract void GetTag(uint tag, out string value, out bool tagExists);
 
 		/// <summary>
 		/// Gets a DICOM tag with value multiplicity (string).
@@ -676,7 +675,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="val"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTag(DcmTagKey tag, out string value, uint position, out bool tagExists);
+		public abstract void GetTag(uint tag, out string value, uint position, out bool tagExists);
 
 		/// <summary>
 		/// Gets an entire DICOM tag to a string, encoded as a Dicom array if VM > 1.
@@ -690,7 +689,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <param name="tag"></param>
 		/// <param name="val"></param>
 		/// <param name="tagExists"></param>
-		public abstract void GetTagArray(DcmTagKey tag, out string value, out bool tagExists);
+		public abstract void GetTagArray(uint tag, out string value, out bool tagExists);
 
 		#endregion
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -23,12 +22,6 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             _dataStoreStudy = _dataStoreImageSopInstance.GetParentSeries().GetParentStudy() as ClearCanvas.Dicom.DataStore.Study;
             _dataStoreSeries = _dataStoreImageSopInstance.GetParentSeries() as ClearCanvas.Dicom.DataStore.Series;
 		}
-
-        /// <summary>
-        /// </summary>
-        protected LocalDataStoreImageSop()
-        {
-        }
 
         private ImageSopInstance DataStoreImageSopInstance
         {
@@ -281,8 +274,8 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
             {
 				if (this.DataStoreImageSopInstance.RescaleSlope != 0.0)
                     return this.DataStoreImageSopInstance.RescaleSlope;
-				else
-					return 1.0;
+
+				return 1.0;
             }
 		}
 

@@ -7,7 +7,6 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.OffisWrapper;
 using System.Runtime.InteropServices;
 using ClearCanvas.Common.Utilities;
 using System.ComponentModel;

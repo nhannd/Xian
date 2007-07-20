@@ -151,7 +151,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="Tests\DcmDataTest.cs" />
     <Compile Include="Tests\DcmNetTest.cs" />
     <Compile Include="Tests\DateTimeTests.cs" />
     <Compile Include="Tests\ImageOrientationPatientTests.cs" />
@@ -159,7 +158,6 @@
     <Compile Include="Tests\VMStringConverterTests.cs" />
     <Compile Include="TimeParser.cs" />
     <Compile Include="TransferSyntax.cs" />
-    <Compile Include="TransferSyntaxHelper.cs" />
     <Compile Include="Uid.cs" />
     <Compile Include="VMStringConverter.cs" />
     <Compile Include="Window.cs" />

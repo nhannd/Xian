@@ -42,9 +42,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
                 return;
 
             StandardPresentationImage image = this.SelectedPresentationImage as StandardPresentationImage;
-            FileDicomImage dicomImage = image.ImageSop.NativeDicomObject as FileDicomImage;
-            
-            Platform.OpenFileBrowser(dicomImage.Filename);
+			DicomFile dicomFile = image.ImageSop.NativeDicomObject as DicomFile;
+			if (dicomFile == null)
+				return;
+
+			Platform.OpenFileBrowser(dicomFile.Filename);
         }
     }
 }

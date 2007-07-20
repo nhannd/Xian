@@ -88,7 +88,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							(
 								"Dicom.GeneralStudy.StudyId",
 								this,
-								new DicomTagAsStringRetriever(Dcm.StudyID).GetTagValue,
+								new DicomTagAsStringRetriever(DicomTags.StudyID).GetTagValue,
 								DicomBasicResultFormatter.RawStringFormat
 							)
 						);

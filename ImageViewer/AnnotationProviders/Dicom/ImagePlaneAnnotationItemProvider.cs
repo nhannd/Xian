@@ -35,11 +35,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								this,
 								delegate(ImageSop imageSop)
 								{
-									double val = double.NaN;
-									bool tagExists;
-									imageSop.GetTag(Dcm.SliceThickness, out val, out tagExists);
-									string str = String.Format("{0:F1} mm", val);
-									return str;
+									return String.Format("{0:F1} mm", imageSop.SliceThickness);
 								},
 								DicomBasicResultFormatter.RawStringFormat
 							)
@@ -53,11 +49,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								this,
 								delegate(ImageSop imageSop)
 								{
-									double val = double.NaN;
-									bool tagExists;
-									imageSop.GetTag(Dcm.SliceLocation, out val, out tagExists);
-									string str = String.Format("{0:F1} mm", val);
-									return str;
+									return String.Format("{0:F1} mm", imageSop.SliceLocation);
 								},
 								DicomBasicResultFormatter.RawStringFormat
 							)

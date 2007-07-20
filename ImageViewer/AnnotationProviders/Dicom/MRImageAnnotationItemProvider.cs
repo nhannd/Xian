@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								{
 									double val = double.NaN;
 									bool tagExists;
-									imageSop.GetTag(Dcm.EchoTime, out val, out tagExists);
+									imageSop.GetTag(DicomTags.EchoTime, out val, out tagExists);
 									string str = String.Format("{0:F2} ms", val);
 									return str;
 								},
@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								{
 									double val = double.NaN;
 									bool tagExists;
-									imageSop.GetTag(Dcm.MagneticFieldStrength, out val, out tagExists);
+									imageSop.GetTag(DicomTags.MagneticFieldStrength, out val, out tagExists);
 
 									double strengthInTeslas = val / 10000;
 									string str = String.Format("{0:F1}T", strengthInTeslas);
@@ -75,10 +75,10 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								{
 									ushort frequencyRows, frequencyColumns, phaseRows, phaseColumns;
 									bool tagExists;
-									imageSop.GetTag(Dcm.AcquisitionMatrix, out frequencyRows, 0, out tagExists);
-									imageSop.GetTag(Dcm.AcquisitionMatrix, out frequencyColumns, 1, out tagExists);
-									imageSop.GetTag(Dcm.AcquisitionMatrix, out phaseRows, 2, out tagExists);
-									imageSop.GetTag(Dcm.AcquisitionMatrix, out phaseColumns, 3, out tagExists);
+									imageSop.GetTag(DicomTags.AcquisitionMatrix, out frequencyRows, 0, out tagExists);
+									imageSop.GetTag(DicomTags.AcquisitionMatrix, out frequencyColumns, 1, out tagExists);
+									imageSop.GetTag(DicomTags.AcquisitionMatrix, out phaseRows, 2, out tagExists);
+									imageSop.GetTag(DicomTags.AcquisitionMatrix, out phaseColumns, 3, out tagExists);
 
 									// Just include freq for now
 									string str = String.Format("{0} x {1}", frequencyColumns, phaseRows);
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								{
 									string val;
 									bool tagExists;
-									imageSop.GetTag(Dcm.ReceiveCoilName, out val, out tagExists);
+									imageSop.GetTag(DicomTags.ReceiveCoilName, out val, out tagExists);
 									return val;
 								},
 								DicomBasicResultFormatter.RawStringFormat
@@ -115,7 +115,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								{
 									double val = double.NaN;
 									bool tagExists;
-									imageSop.GetTag(Dcm.RepetitionTime, out val, out tagExists);
+									imageSop.GetTag(DicomTags.RepetitionTime, out val, out tagExists);
 									string str = String.Format("{0:F2} ms", val);
 									return str;
 								},
@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								{
 									int val;
 									bool tagExists;
-									imageSop.GetTag(Dcm.EchoTrainLength, out val, out tagExists);
+									imageSop.GetTag(DicomTags.EchoTrainLength, out val, out tagExists);
 									string str = String.Format("{0}", val);
 									return str;
 								},

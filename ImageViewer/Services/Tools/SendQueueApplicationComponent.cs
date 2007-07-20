@@ -262,14 +262,29 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					SR.TitleStudyDate,
 					delegate(SendQueueItem item)
 					{
-						if (item.StudyInformation.StudyDate == default(DateTime))
+						if (item.StudyInformation.StudyDate == null)
 							return "";
 
-						return item.StudyInformation.StudyDate.ToString(Format.DateFormat);
+						return ((DateTime)item.StudyInformation.StudyDate).ToString(Format.DateFormat);
 					},
 					null,
 					0.5f,
-					delegate(SendQueueItem one, SendQueueItem two) { return one.StudyInformation.StudyDate.CompareTo(two.StudyInformation.StudyDate); });
+					delegate(SendQueueItem one, SendQueueItem two)
+					{
+						if (one.StudyInformation.StudyDate == null)
+						{
+							if (two.StudyInformation.StudyDate == null)
+								return 0;
+
+							return -1;
+						}
+						else if (two.StudyInformation.StudyDate == null)
+							return 1;
+
+						DateTime date1 = (DateTime)one.StudyInformation.StudyDate;
+						DateTime date2 = (DateTime)two.StudyInformation.StudyDate;
+						return date1.CompareTo(date2);
+					});
 
 			_sendTable.Columns.Add(column);
 

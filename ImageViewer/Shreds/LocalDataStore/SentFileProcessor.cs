@@ -6,7 +6,6 @@ using System.Threading;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.DataStore;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Services;
 
@@ -84,44 +83,19 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			private StudyInformation GetStudyInformation(string sopInstanceFilename)
 			{
-				using (DcmFileFormat file = new DcmFileFormat())
+				DicomFile dicomFile = new DicomFile(sopInstanceFilename);
+				try
 				{
-					OFCondition condition = file.loadFile(sopInstanceFilename);
-
-					if (!condition.good())
-						throw new Exception(String.Format(SR.FormatUnableToParseFile, sopInstanceFilename));
-
-					DcmDataset dataset = file.getDataset();
-
-					StudyInformation information = new StudyInformation();
-					string value;
-
-					condition = DicomHelper.TryFindAndGetOFString(dataset, Dcm.PatientId, out value);
-					if (condition.good())
-						information.PatientId = value;
-
-					condition = DicomHelper.TryFindAndGetOFString(dataset, Dcm.PatientsName, out value);
-					if (condition.good()) 
-						information.PatientsName = value;
-
-					condition = DicomHelper.TryFindAndGetOFString(dataset, Dcm.StudyDate, out value);
-					if (condition.good())
-					{
-						DateTime studyDate;
-						DateParser.Parse(value, out studyDate);
-						information.StudyDate = studyDate;
-					}
-
-					condition = DicomHelper.TryFindAndGetOFString(dataset, Dcm.StudyDescription, out value);
-					if (condition.good())
-						information.StudyDescription = value;
-
-					condition = DicomHelper.TryFindAndGetOFString(dataset, Dcm.StudyInstanceUID, out value);
-					if (condition.good()) 
-						information.StudyInstanceUid = value;
-
-					return information;
+					dicomFile.Load(DicomReadOptions.Default);
 				}
+				catch (Exception e)
+				{
+					throw new Exception(String.Format(SR.FormatUnableToParseFile, sopInstanceFilename), e);
+				}
+
+				StudyInformationFieldExchanger information = new StudyInformationFieldExchanger();
+				dicomFile.DataSet.LoadDicomFields(information);
+				return information;
 			}
 
 			private SendProgressItem GetProgressItem(string toAETitle, StudyInformation studyInformation)

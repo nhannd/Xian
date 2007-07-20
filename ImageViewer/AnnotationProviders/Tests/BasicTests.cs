@@ -7,7 +7,6 @@ using NUnit.Framework;
 using ClearCanvas.Common;
 using System.Reflection;
 using ClearCanvas.ImageViewer.Annotations;
-using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.ImageViewer.AnnotationProviders.Dicom;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Tests

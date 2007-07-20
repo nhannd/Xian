@@ -4,21 +4,20 @@ using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Dicom.OffisWrapper;
 
 namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 {
 	public abstract class DicomTagRetriever<T>
 	{
-		private DcmTagKey _dicomTag;
+		private uint _dicomTag;
 
-		public DicomTagRetriever(DcmTagKey dicomTag)
+		public DicomTagRetriever(uint dicomTag)
 		{
 			Platform.CheckForNullReference(dicomTag, "dicomTag");
 			_dicomTag = dicomTag;
 		}
 
-		public DcmTagKey DicomTag
+		public uint DicomTag
 		{
 			get { return _dicomTag; }
 		}
@@ -29,7 +28,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 
 	public class DicomTagAsStringRetriever : DicomTagRetriever<string>
 	{
-		public DicomTagAsStringRetriever(DcmTagKey dicomTag)
+		public DicomTagAsStringRetriever(uint dicomTag)
 			: base(dicomTag)
 		{
 		}
@@ -48,7 +47,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 
 	public class DicomTagAsDoubleRetriever : DicomTagRetriever<double>
 	{
-		public DicomTagAsDoubleRetriever(DcmTagKey dicomTag)
+		public DicomTagAsDoubleRetriever(uint dicomTag)
 			: base(dicomTag)
 		{
 		}
@@ -68,7 +67,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 
 	public class DicomTagAsRawStringArrayRetriever : DicomTagRetriever<string>
 	{
-		public DicomTagAsRawStringArrayRetriever(DcmTagKey dicomTag)
+		public DicomTagAsRawStringArrayRetriever(uint dicomTag)
 			: base(dicomTag)
 		{
 		}
@@ -87,7 +86,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 
 	public class DicomTagAsStringArrayRetriever : DicomTagRetriever<string[]>
 	{
-		public DicomTagAsStringArrayRetriever(DcmTagKey dicomTag)
+		public DicomTagAsStringArrayRetriever(uint dicomTag)
 			: base(dicomTag)
 		{
 		}
@@ -106,7 +105,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 
 	public class DicomTagAsDoubleArrayRetriever : DicomTagRetriever<double[]>
 	{
-		public DicomTagAsDoubleArrayRetriever(DcmTagKey dicomTag)
+		public DicomTagAsDoubleArrayRetriever(uint dicomTag)
 			: base(dicomTag)
 		{
 		}

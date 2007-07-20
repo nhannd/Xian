@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Dicom.DataStore;
-using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Services.LocalDataStore;
 using ClearCanvas.Common.Utilities;
@@ -448,16 +447,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			#region File Parse / Import Methods
 
-			private bool ConfirmProcessableFile(DcmMetaInfo metaInfo, DcmDataset dataset)
+			private bool ConfirmProcessableFile(DicomAttributeCollection metaInfo, DicomAttributeCollection dataset)
 			{
-				string value;
-				OFCondition cond = DicomHelper.TryFindAndGetOFString(metaInfo, Dcm.MediaStorageSOPClassUID, out value);
-				if (cond.good())
-				{
-					// we want to skip Media Storage Directory Storage (DICOMDIR directories)
-					if ("1.2.840.10008.1.3.10" == value)
-						return false;
-				}
+				DicomAttribute attribute = metaInfo[DicomTags.MediaStorageSOPClassUID];
+				// we want to skip Media Storage Directory Storage (DICOMDIR directories)
+				if ("1.2.840.10008.1.3.10" == attribute.ToString())
+					return false;
 
 				return true;
 			}
@@ -467,26 +462,42 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				FileImportInformation fileImportInformation = jobInformation.FileImportInformation;
 				FileImportJobStatusReportDelegate fileImportJobStatusReportDelegate = jobInformation.FileImportJobStatusReportDelegate;
 
-				DcmFileFormat file = new DcmFileFormat();
+				DicomFile dicomFile = new DicomFile(fileImportInformation.SourceFile);
+
 				//use this private interface to set the values as we go along.
 				IFileImportInformation setImportInformation = (IFileImportInformation)fileImportInformation;
 
 				try
 				{
-					OFCondition condition = file.loadFile(fileImportInformation.SourceFile);
-					bool good = condition.good();
+					Exception exception = null;
+					bool processable = true;
 
-					DcmMetaInfo metaInfo = file.getMetaInfo();
-					DcmDataset dataset = file.getDataset();
-
-					bool processable = ConfirmProcessableFile(metaInfo, dataset);
-
-					if (!condition.good() || !processable)
+					try
 					{
-						file.Dispose();
-						file = null;
+						dicomFile.Load(DicomReadOptions.Default);
 
-						StringBuilder errorString = new StringBuilder("");
+						processable = ConfirmProcessableFile(dicomFile.MetaInfo, dicomFile.DataSet);
+
+						if (processable)
+						{
+							//parse the file and create study, series and sop objects for (potential) insertion into the datastore.
+							setImportInformation.Study = CreateNewStudy(dicomFile.MetaInfo, dicomFile.DataSet);
+							setImportInformation.Series = CreateNewSeries(dicomFile.MetaInfo, dicomFile.DataSet);
+							setImportInformation.SopInstance = CreateNewSopInstance(dicomFile.MetaInfo, dicomFile.DataSet);
+
+							ValidateStudy(setImportInformation.Study);
+							ValidateSeries(setImportInformation.Series);
+							ValidateSopInstance(setImportInformation.SopInstance);
+						}
+					}
+					catch (Exception e)
+					{
+						exception = e;
+					}
+
+					if (!processable || exception != null)
+					{
+						StringBuilder errorString = new StringBuilder(512);
 						if (!processable)
 							errorString.AppendFormat(SR.FormatFileFormatNotAppropriateForDatastore, fileImportInformation.SourceFile);
 						else
@@ -507,27 +518,22 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							errorString.AppendFormat(SR.MessageFileHasBeenDeleted);
 						}
 
-						setImportInformation.Error = new Exception(errorString.ToString());
+						if (exception == null)
+							setImportInformation.Error = new Exception(errorString.ToString());
+						else
+							setImportInformation.Error = new Exception(errorString.ToString(), exception);
+
 						setImportInformation.BadFile = true;
 						fileImportJobStatusReportDelegate(fileImportInformation);
 						return;
 					}
-
-					//parse the file and create study, series and sop objects for (potential) insertion into the datastore.
-					setImportInformation.Study = CreateNewStudy(metaInfo, dataset);
-					setImportInformation.Series = CreateNewSeries(metaInfo, dataset);
-					setImportInformation.SopInstance = CreateNewSopInstance(metaInfo, dataset);
-
-					ValidateStudy(setImportInformation.Study);
-					ValidateSeries(setImportInformation.Series);
-					ValidateSopInstance(setImportInformation.SopInstance);
 
 					setImportInformation.StudyInstanceUid = setImportInformation.Study.StudyInstanceUid;
 					setImportInformation.SeriesInstanceUid = setImportInformation.Series.SeriesInstanceUid;
 					setImportInformation.SopInstanceUid = setImportInformation.SopInstance.SopInstanceUid;
 					setImportInformation.StudyDate = fileImportInformation.Study.StudyDateRaw;
 					setImportInformation.PatientId = fileImportInformation.Study.PatientId;
-					setImportInformation.PatientsName = (fileImportInformation.Study.PatientsName == null) ? "" : fileImportInformation.Study.PatientsName.ToString();
+					setImportInformation.PatientsName = fileImportInformation.Study.PatientsName ?? "";
 					setImportInformation.StudyDescription = fileImportInformation.Study.StudyDescription;
 
 					//report the progress.
@@ -538,14 +544,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					setImportInformation.Error = new Exception(SR.ExceptionFailedToParseFile, e);
 					fileImportJobStatusReportDelegate(fileImportInformation);
-				}
-				finally
-				{
-					if (file != null)
-					{
-						file.Dispose();
-						file = null;
-					}
 				}
 			}
 

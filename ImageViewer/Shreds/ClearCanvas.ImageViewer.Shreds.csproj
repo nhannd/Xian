@@ -71,6 +71,7 @@
     <Compile Include="LocalDataStore\ReceivedFileProcessor.cs" />
     <Compile Include="LocalDataStore\ReindexProcessor.cs" />
     <Compile Include="LocalDataStore\SentFileProcessor.cs" />
+    <Compile Include="StudyInformationFieldExchanger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>

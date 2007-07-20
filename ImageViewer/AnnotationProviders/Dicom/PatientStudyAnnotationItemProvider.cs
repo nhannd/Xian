@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							(
 								"Dicom.PatientStudy.Occupation",
 								this,
-								new DicomTagAsStringRetriever(Dcm.Occupation).GetTagValue,
+								new DicomTagAsStringRetriever(DicomTags.Occupation).GetTagValue,
 								DicomBasicResultFormatter.RawStringFormat
 							)
 						);
@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							(
 								"Dicom.PatientStudy.PatientsAge",
 								this,
-								new DicomTagAsStringRetriever(Dcm.PatientsAge).GetTagValue,
+								new DicomTagAsStringRetriever(DicomTags.PatientsAge).GetTagValue,
 								DicomBasicResultFormatter.RawStringFormat
 							)
 						);
@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							(
 								"Dicom.PatientStudy.PatientsSize",
 								this,
-								new DicomTagAsDoubleRetriever(Dcm.PatientsSize).GetTagValue,
+								new DicomTagAsDoubleRetriever(DicomTags.PatientsSize).GetTagValue,
 								delegate(double input)
 								{
 									return String.Format("{0} {1}", input.ToString("F2"), SR.Label_metres);
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							(
 								"Dicom.PatientStudy.PatientsWeight",
 								this,
-								new DicomTagAsDoubleRetriever(Dcm.PatientsWeight).GetTagValue,
+								new DicomTagAsDoubleRetriever(DicomTags.PatientsWeight).GetTagValue,
 								delegate(double input)
 								{
 									return String.Format("{0} {1}", input.ToString("F2"), SR.Label_kilograms);

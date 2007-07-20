@@ -539,47 +539,47 @@ namespace ClearCanvas.ImageViewer.Tests
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void GetTag(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out ushort val, out bool tagExists)
+		public override void GetTag(uint tag, out ushort val, out bool tagExists)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void GetTag(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out ushort val, uint position, out bool tagExists)
+		public override void GetTag(uint tag, out ushort val, uint position, out bool tagExists)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void GetTag(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out int val, out bool tagExists)
+		public override void GetTag(uint tag, out int val, out bool tagExists)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void GetTag(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out int val, uint position, out bool tagExists)
+		public override void GetTag(uint tag, out int val, uint position, out bool tagExists)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void GetTag(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out double val, out bool tagExists)
+		public override void GetTag(uint tag, out double val, out bool tagExists)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void GetTag(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out double val, uint position, out bool tagExists)
+		public override void GetTag(uint tag, out double val, uint position, out bool tagExists)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void GetTag(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out string val, out bool tagExists)
+		public override void GetTag(uint tag, out string val, out bool tagExists)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void GetTag(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out string val, uint position, out bool tagExists)
+		public override void GetTag(uint tag, out string val, uint position, out bool tagExists)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
 
-		public override void GetTagArray(ClearCanvas.Dicom.OffisWrapper.DcmTagKey tag, out string val, out bool tagExists)
+		public override void GetTagArray(uint tag, out string val, out bool tagExists)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}

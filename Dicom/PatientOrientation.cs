@@ -15,24 +15,25 @@ namespace ClearCanvas.Dicom
 
 		public PatientOrientation(string row, string column)
 		{
-			_row = row;
-			_column = column;
+			this.Row = row;
+			this.Column = column;
 		}
 
 		protected PatientOrientation()
+			: this("", "")
 		{ 
 		}
 
-		string Row
+		public string Row
 		{
 			get { return _row; }
-			set { _row = value; }
+			protected set { _row = value ?? ""; }
 		}
 
-		string Column
+		public string Column
 		{
 			get { return _column; }
-			set { _column = value; }
+			protected set { _column = value ?? ""; }
 		}
 	}
 }

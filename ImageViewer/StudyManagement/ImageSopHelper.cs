@@ -51,12 +51,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				String.Compare(imageSop.Modality, "MG", true) == 0)
 			{
 				bool tagExists;
-				imageSop.GetTag(Dcm.ImagerPixelSpacing, out pixelSpacingY, 0, out tagExists);
+				imageSop.GetTag(DicomTags.ImagerPixelSpacing, out pixelSpacingY, 0, out tagExists);
 
 				if (!tagExists)
 					return;
 
-				imageSop.GetTag(Dcm.ImagerPixelSpacing, out pixelSpacingX, 1, out tagExists);
+				imageSop.GetTag(DicomTags.ImagerPixelSpacing, out pixelSpacingX, 1, out tagExists);
 			}
 			else
 			{

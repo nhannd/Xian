@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Codecs;
 using ClearCanvas.Common;
 
@@ -24,7 +23,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				int instanceNumber;
-				GetTag(Dcm.InstanceNumber, out instanceNumber, out tagExists);
+				GetTag(DicomTags.InstanceNumber, out instanceNumber, out tagExists);
 				return instanceNumber;
 			}
 		}
@@ -42,7 +41,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string patientOrientation;
-				GetTagArray(Dcm.PatientOrientation, out patientOrientation, out tagExists);
+				GetTagArray(DicomTags.PatientOrientation, out patientOrientation, out tagExists);
 				if (tagExists)
 				{
 					string[] values = VMStringConverter.ToStringArray(patientOrientation);
@@ -63,7 +62,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string imageType;
-				GetTagArray(Dcm.ImageType, out imageType, out tagExists);
+				GetTagArray(DicomTags.ImageType, out imageType, out tagExists);
 				return imageType ?? "";
 			}
 		}
@@ -77,7 +76,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				int acquisitionNumber;
-				GetTag(Dcm.AcquisitionNumber, out acquisitionNumber, out tagExists);
+				GetTag(DicomTags.AcquisitionNumber, out acquisitionNumber, out tagExists);
 				return acquisitionNumber;
 			}
 		}
@@ -91,7 +90,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string acquisitionDate;
-				GetTag(Dcm.AcquisitionDate, out acquisitionDate, out tagExists);
+				GetTag(DicomTags.AcquisitionDate, out acquisitionDate, out tagExists);
 				return acquisitionDate ?? "";
 			}
 		}
@@ -105,7 +104,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string acquisitionTime;
-				GetTag(Dcm.AcquisitionTime, out acquisitionTime, out tagExists);
+				GetTag(DicomTags.AcquisitionTime, out acquisitionTime, out tagExists);
 				return acquisitionTime ?? "";
 			}
 		}
@@ -119,7 +118,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string acquisitionDateTime;
-				GetTag(Dcm.AcquisitionDatetime, out acquisitionDateTime, out tagExists);
+				GetTag(DicomTags.AcquisitionDatetime, out acquisitionDateTime, out tagExists);
 				return acquisitionDateTime ?? "";
 			}
 		}
@@ -133,7 +132,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				int imagesInAcquisition;
-				GetTag(Dcm.ImagesInAcquisition, out imagesInAcquisition, out tagExists);
+				GetTag(DicomTags.ImagesinAcquisition, out imagesInAcquisition, out tagExists);
 				return imagesInAcquisition;
 			}
 		}
@@ -147,7 +146,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string imageComments;
-				GetTag(Dcm.ImageComments, out imageComments, out tagExists);
+				GetTag(DicomTags.ImageComments, out imageComments, out tagExists);
 				return imageComments ?? "";
 			}
 		}
@@ -161,7 +160,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string lossyImageCompression;
-				GetTag(Dcm.LossyImageCompression, out lossyImageCompression, out tagExists);
+				GetTag(DicomTags.LossyImageCompression, out lossyImageCompression, out tagExists);
 				return lossyImageCompression ?? "";
 			}
 		}
@@ -175,7 +174,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string lossyImageCompressionRatios;
-				GetTagArray(Dcm.LossyImageCompressionRatio, out lossyImageCompressionRatios, out tagExists);
+				GetTagArray(DicomTags.LossyImageCompressionRatio, out lossyImageCompressionRatios, out tagExists);
 				return VMStringConverter.ToDoubleArray(lossyImageCompressionRatios);
 			}
 		}
@@ -189,7 +188,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string presentationLUTShape;
-				GetTag(Dcm.PresentationLUTShape, out presentationLUTShape, out tagExists);
+				GetTag(DicomTags.PresentationLUTShape, out presentationLUTShape, out tagExists);
 				return presentationLUTShape ?? "";
 			}
 		}
@@ -210,7 +209,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string pixelSpacing;
-				GetTagArray(Dcm.PixelSpacing, out pixelSpacing, out tagExists);
+				GetTagArray(DicomTags.PixelSpacing, out pixelSpacing, out tagExists);
 				if (tagExists)
 				{
 					double[] values = VMStringConverter.ToDoubleArray(pixelSpacing);
@@ -234,7 +233,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string imageOrientationPatient;
-				GetTagArray(Dcm.ImageOrientationPatient, out imageOrientationPatient, out tagExists);
+				GetTagArray(DicomTags.ImageOrientationPatient, out imageOrientationPatient, out tagExists);
 				if (tagExists)
 				{
 					double[] values = VMStringConverter.ToDoubleArray(imageOrientationPatient);
@@ -258,7 +257,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string imagePositionPatient;
-				GetTagArray(Dcm.ImagePositionPatient, out imagePositionPatient, out tagExists);
+				GetTagArray(DicomTags.ImagePositionPatient, out imagePositionPatient, out tagExists);
 				if (tagExists)
 				{
 					double[] values = VMStringConverter.ToDoubleArray(imagePositionPatient);
@@ -279,7 +278,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				double sliceThickness;
-				GetTag(Dcm.SliceThickness, out sliceThickness, out tagExists);
+				GetTag(DicomTags.SliceThickness, out sliceThickness, out tagExists);
 				return sliceThickness;
 			}
 		}
@@ -293,7 +292,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				double sliceLocation;
-				GetTag(Dcm.SliceLocation, out sliceLocation, out tagExists);
+				GetTag(DicomTags.SliceLocation, out sliceLocation, out tagExists);
 				return sliceLocation;
 			}
 		}
@@ -313,7 +312,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				ushort samplesPerPixel;
-				GetTag(Dcm.SamplesPerPixel, out samplesPerPixel, out tagExists);
+				GetTag(DicomTags.SamplesperPixel, out samplesPerPixel, out tagExists);
 				return (int)samplesPerPixel;
 			}
 		}
@@ -327,7 +326,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string photometricInterpretation;
-				GetTag(Dcm.PhotometricInterpretation, out photometricInterpretation, out tagExists);
+				GetTag(DicomTags.PhotometricInterpretation, out photometricInterpretation, out tagExists);
 				return PhotometricInterpretationHelper.FromString(photometricInterpretation);
 			}
 		}
@@ -341,7 +340,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				ushort rows;
-				GetTag(Dcm.Rows, out rows, out tagExists);
+				GetTag(DicomTags.Rows, out rows, out tagExists);
 				return (int)rows;
 			}
 		}
@@ -355,7 +354,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				ushort columns;
-				GetTag(Dcm.Columns, out columns, out tagExists);
+				GetTag(DicomTags.Columns, out columns, out tagExists);
 				return (int)columns;
 			}
 		}
@@ -369,7 +368,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				ushort bitsAllocated;
-				GetTag(Dcm.BitsAllocated, out bitsAllocated, out tagExists);
+				GetTag(DicomTags.BitsAllocated, out bitsAllocated, out tagExists);
 				return (int)bitsAllocated;
 			}
 		}
@@ -383,7 +382,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				ushort bitsStored;
-				GetTag(Dcm.BitsStored, out bitsStored, out tagExists);
+				GetTag(DicomTags.BitsStored, out bitsStored, out tagExists);
 				return (int)bitsStored;
 			}
 		}
@@ -397,7 +396,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				ushort highBit;
-				GetTag(Dcm.HighBit, out highBit, out tagExists);
+				GetTag(DicomTags.HighBit, out highBit, out tagExists);
 				return (int)highBit;
 			}
 		}
@@ -411,7 +410,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				ushort pixelRepresentation;
-				GetTag(Dcm.PixelRepresentation, out pixelRepresentation, out tagExists);
+				GetTag(DicomTags.PixelRepresentation, out pixelRepresentation, out tagExists);
 				return (int)pixelRepresentation;
 			}
 		}
@@ -428,7 +427,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				ushort planarConfiguration;
-				GetTag(Dcm.PlanarConfiguration, out planarConfiguration, out tagExists);
+				GetTag(DicomTags.PlanarConfiguration, out planarConfiguration, out tagExists);
 				return (int)planarConfiguration;
 			}
 		}
@@ -445,7 +444,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string pixelAspectRatio;
-				GetTagArray(Dcm.PixelAspectRatio, out pixelAspectRatio, out tagExists);
+				GetTagArray(DicomTags.PixelAspectRatio, out pixelAspectRatio, out tagExists);
 				if (tagExists)
 				{
 					double[] values = VMStringConverter.ToDoubleArray(pixelAspectRatio);
@@ -471,7 +470,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				double rescaleIntercept;
-				GetTag(Dcm.RescaleIntercept, out rescaleIntercept, out tagExists);
+				GetTag(DicomTags.RescaleIntercept, out rescaleIntercept, out tagExists);
 				return rescaleIntercept;
 			}
 		}
@@ -488,7 +487,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				double rescaleSlope;
-				GetTag(Dcm.RescaleSlope, out rescaleSlope, out tagExists);
+				GetTag(DicomTags.RescaleSlope, out rescaleSlope, out tagExists);
 				if (rescaleSlope == 0.0)
 					return 1.0;
 
@@ -505,7 +504,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string rescaleType;
-				GetTag(Dcm.RescaleType, out rescaleType, out tagExists);
+				GetTag(DicomTags.RescaleType, out rescaleType, out tagExists);
 				return rescaleType ?? "";
 			}
 		}
@@ -523,11 +522,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string windowCenterValues;
-				GetTagArray(Dcm.WindowCenter, out windowCenterValues, out tagExists);
+				GetTagArray(DicomTags.WindowCenter, out windowCenterValues, out tagExists);
 				if (tagExists)
 				{
 					string windowWidthValues;
-					GetTagArray(Dcm.WindowWidth, out windowWidthValues, out tagExists);
+					GetTagArray(DicomTags.WindowWidth, out windowWidthValues, out tagExists);
 					if (tagExists)
 					{
 						if (!String.IsNullOrEmpty(windowCenterValues) && !String.IsNullOrEmpty(windowWidthValues))
@@ -563,7 +562,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string windowCenterAndWidthExplanations;
-				GetTagArray(Dcm.WindowCenterWidthExplanation, out windowCenterAndWidthExplanations, out tagExists);
+				GetTagArray(DicomTags.WindowCenterWidthExplanation, out windowCenterAndWidthExplanations, out tagExists);
 				return VMStringConverter.ToStringArray(windowCenterAndWidthExplanations);
 			}
 		}

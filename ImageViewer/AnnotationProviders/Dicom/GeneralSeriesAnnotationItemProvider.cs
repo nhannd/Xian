@@ -77,7 +77,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							(
 								"Dicom.GeneralSeries.PerformedProcedureStepDescription",
 								this,
-								new DicomTagAsStringRetriever(Dcm.PerformedProcedureStepDescription).GetTagValue,
+								new DicomTagAsStringRetriever(DicomTags.PerformedProcedureStepDescription).GetTagValue,
 								DicomBasicResultFormatter.RawStringFormat
 							)
 						);
@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							(
 								"Dicom.GeneralSeries.ProtocolName",
 								this,
-								new DicomTagAsStringRetriever(Dcm.ProtocolName).GetTagValue,
+								new DicomTagAsStringRetriever(DicomTags.ProtocolName).GetTagValue,
 								DicomBasicResultFormatter.RawStringFormat
 							)
 						);

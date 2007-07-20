@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							(
 								"Dicom.GeneralEquipment.DateOfLastCalibration",
 								this,
-								new DicomTagAsStringRetriever(Dcm.DateOfLastCalibration).GetTagValue,
+								new DicomTagAsStringRetriever(DicomTags.DateofLastCalibration).GetTagValue,
 								DicomBasicResultFormatter.DateFormat
 							)
 						);
@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							(
 								"Dicom.GeneralEquipment.TimeOfLastCalibration",
 								this,
-								new DicomTagAsStringRetriever(Dcm.TimeOfLastCalibration).GetTagValue,
+								new DicomTagAsStringRetriever(DicomTags.TimeofLastCalibration).GetTagValue,
 								DicomBasicResultFormatter.TimeFormat
 							)
 						);
@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							(
 								"Dicom.GeneralEquipment.DeviceSerialNumber",
 								this,
-								new DicomTagAsStringRetriever(Dcm.DeviceSerialNumber).GetTagValue,
+								new DicomTagAsStringRetriever(DicomTags.DeviceSerialNumber).GetTagValue,
 								DicomBasicResultFormatter.RawStringFormat
 							)
 						);
@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							(
 								"Dicom.GeneralEquipment.InstitutionAddress",
 								this,
-								new DicomTagAsStringRetriever(Dcm.InstitutionAddress).GetTagValue,
+								new DicomTagAsStringRetriever(DicomTags.InstitutionAddress).GetTagValue,
 								DicomBasicResultFormatter.RawStringFormat
 							)
 						);
@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							(
 								"Dicom.GeneralEquipment.SoftwareVersions",
 								this,
-								new DicomTagAsStringArrayRetriever(Dcm.SoftwareVersions).GetTagValue,
+								new DicomTagAsStringArrayRetriever(DicomTags.SoftwareVersions).GetTagValue,
 								DicomBasicResultFormatter.StringListFormat
 							)
 						);

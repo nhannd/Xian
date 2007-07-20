@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								{
 									double val = double.NaN;
 									bool tagExists;
-									imageSop.GetTag(Dcm.KVP, out val, out tagExists);
+									imageSop.GetTag(DicomTags.KVP, out val, out tagExists);
 									string str = String.Format("{0} kV", val);
 									return str;
 								},
@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								{
 									int val;
 									bool tagExists;
-									imageSop.GetTag(Dcm.XRayTubeCurrent, out val, out tagExists);
+									imageSop.GetTag(DicomTags.XrayTubeCurrent, out val, out tagExists);
 									string str = String.Format("{0} mA", val);
 									return str;
 								},
@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								{
 									double val = double.NaN;
 									bool tagExists;
-									imageSop.GetTag(Dcm.GantryDetectorTilt, out val, out tagExists);
+									imageSop.GetTag(DicomTags.GantryDetectorTilt, out val, out tagExists);
 									string str = String.Format("{0}°", val);
 									return str;
 								},
@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								{
 									int val;
 									bool tagExists;
-									imageSop.GetTag(Dcm.ExposureTime, out val, out tagExists);
+									imageSop.GetTag(DicomTags.ExposureTime, out val, out tagExists);
 									string str = String.Format("{0} ms", val);
 									return str;
 								},
@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								{
 									string val;
 									bool tagExists;
-									imageSop.GetTag(Dcm.ConvolutionKernel, out val, out tagExists);
+									imageSop.GetTag(DicomTags.ConvolutionKernel, out val, out tagExists);
 									return val;
 								},
 								DicomBasicResultFormatter.RawStringFormat
