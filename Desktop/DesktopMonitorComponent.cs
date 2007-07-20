@@ -14,7 +14,7 @@ namespace ClearCanvas.Desktop
 {
     
 #if DEBUG   // only include this tool in debug builds
-    [MenuAction("launch", "global-menus/Test/Monitor")]
+    [MenuAction("launch", "global-menus/Tools/Utilities/Desktop Monitor")]
     [ClickHandler("launch", "Launch")]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
@@ -57,14 +57,19 @@ namespace ClearCanvas.Desktop
 
         class EventLogItem
         {
-            private DesktopObject _source;
+            private string _objectName;
+            private string _objectTitle;
             private string _message;
             private int _index;
             private static int _indexCounter = 0;
 
             public EventLogItem(DesktopObject source, string message)
             {
-                _source = source;
+                // note that we don't cache a reference to the DesktopObject, as this might
+                // affect results of GC tests
+                _objectName = source.Name;
+                _objectTitle = source.Title;
+
                 _message = message;
                 _index = ++_indexCounter;
             }
@@ -74,9 +79,14 @@ namespace ClearCanvas.Desktop
                 get { return _index; }
             }
 
-            public DesktopObject Source
+            public string Name
             {
-                get { return _source; }
+                get { return _objectName; }
+            }
+
+            public string Title
+            {
+                get { return _objectTitle; }
             }
 
             public string Message
@@ -122,8 +132,8 @@ namespace ClearCanvas.Desktop
 
             _events = new Table<EventLogItem>();
             _events.Columns.Add(new TableColumn<EventLogItem, int>("#", delegate(EventLogItem item) { return item.Index; }, 0.2F));
-            _events.Columns.Add(new TableColumn<EventLogItem, string>("Name", delegate(EventLogItem item) { return item.Source.Name; }));
-            _events.Columns.Add(new TableColumn<EventLogItem, string>("Title", delegate(EventLogItem item) { return item.Source.Title; }));
+            _events.Columns.Add(new TableColumn<EventLogItem, string>("Name", delegate(EventLogItem item) { return item.Name; }));
+            _events.Columns.Add(new TableColumn<EventLogItem, string>("Title", delegate(EventLogItem item) { return item.Title; }));
             _events.Columns.Add(new TableColumn<EventLogItem, string>("Message", delegate(EventLogItem item) { return item.Message; }));
             
             // add newer events to the top of the list
