@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
         #region Public Static Methods
 
-        public static void Listen(ServerAssociationParameters parameters, StartAssociation acceptor)
+        public static bool Listen(ServerAssociationParameters parameters, StartAssociation acceptor)
         {
             if (_listeners.ContainsKey(parameters.LocalEndPoint))
             {
@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                 if (theListener._applications.ContainsKey(parameters.CalledAE))
                 {
                     DicomLogger.LogError("Already listening with AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
-                    return;
+                    return false;
                 }
 
                 theListener._applications.Add(parameters.CalledAE,info);
@@ -62,9 +62,11 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
                 DicomLogger.LogInfo("Starting to listen with AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
             }
+
+            return true;
         }
 
-        public static void StopListening(ServerAssociationParameters parameters)
+        public static bool StopListening(ServerAssociationParameters parameters)
         {
             Listener theListener;
 
@@ -85,8 +87,19 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                     }
                     DicomLogger.LogInfo("Stopping listening wiith AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
                 }
+                else
+                {
+                    DicomLogger.LogError("Unable to stop listening on AE {0}, assembly was not listening with this AE.", parameters.CalledAE);
+                    return false;
+                }
+            }
+            else
+            {
+                DicomLogger.LogError("Unable to stop listening, assembly was not listening on end point {0}.", parameters.LocalEndPoint.ToString());
+                return false;
             }
 
+            return true;
         }
         #endregion
 
@@ -105,7 +118,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         }
         #endregion
 
-        public void StartThread()
+        private void StartThread()
         {
             
             _theThread = new Thread(new ThreadStart(Listen));
@@ -114,7 +127,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             _theThread.Start();
         }
 
-        public void StopThread()
+        private void StopThread()
         {
             _stop = true;
             _threadStop.Set();

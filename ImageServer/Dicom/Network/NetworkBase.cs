@@ -1,6 +1,3 @@
-/*
- * Taken from code Copyright (c) Colby Dillion, 2007
- */
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -38,6 +35,9 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         Worklist
     }
 
+    /// <summary>
+    /// An enumerated value representing the priority values encoded in the tag <see cref="DicomTags.Priority"/>.
+    /// </summary>
     public enum DicomPriority : ushort
     {
         Low = 0x0002,
@@ -45,6 +45,9 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         High = 0x0001
     }
 
+    /// <summary>
+    /// An enumerated value represneting the values for the tag <see cref="DicomTags.CommandField"/>.
+    /// </summary>
     public enum DicomCommandField : ushort
     {
         CStoreRequest = 0x0001,
@@ -90,6 +93,12 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         }
     }
 
+    /// <summary>
+    /// Class used for DICOM network communications.
+    /// </summary>
+    /// <remarks>
+    /// The classes <see cref="DicomClient"/>"/> and <see cref="DicomServer"/> inherit from this class, to implement network functionality.
+    /// </remarks>
     public abstract class NetworkBase
     {
         #region Protected Members
@@ -165,6 +174,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                 case DicomAssociationState.Sta5_AwaitingAAssociationACOrReject:
                     break;
                 case DicomAssociationState.Sta6_AssociationEstablished:
+                    SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.NotSpecified);
                     break;
                 case DicomAssociationState.Sta7_AwaitingAReleaseRP:
                     break;
@@ -175,11 +185,17 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             }
         }
 
+        /// <summary>
+        /// Callback called on a network error.
+        /// </summary>
+        /// <param name="e"></param>
         protected virtual void OnNetworkError(Exception e)
-        {
-            
+        {            
         }
 
+        /// <summary>
+        /// Callback called on a timeout.
+        /// </summary>
         protected virtual void OnDimseTimeout()
         {
         }
@@ -300,8 +316,12 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
         public void SendAssociateAbort(DicomAbortSource source, DicomAbortReason reason)
         {
-            AAbort pdu = new AAbort(source,reason);
-            SendRawPDU(pdu.Write());
+            if (_state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
+            {
+                AAbort pdu = new AAbort(source, reason);
+                SendRawPDU(pdu.Write());
+                _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
+            }
         }
 
         public void SendAssociateAccept(AssociationParameters associate)
@@ -336,7 +356,8 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         {
             if (_state != DicomAssociationState.Sta6_AssociationEstablished)
             {
-
+                DicomLogger.LogError("Unexpected attempt to send Release Request when in invalid state.");
+                return;
             }
 
             AReleaseRQ pdu = new AReleaseRQ();
@@ -471,8 +492,23 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                     }
                     else if (DateTime.Now > timeout)
                     {
-                        OnDimseTimeout();
-                        _stop = true;
+                        if (_state == DicomAssociationState.Sta6_AssociationEstablished)
+                        {
+                            OnDimseTimeout();
+                            timeout = DateTime.Now.AddSeconds(DimseTimeout);
+                        } 
+                        else if (_state == DicomAssociationState.Sta2_TransportConnectionOpen)
+                        {
+                            DicomLogger.LogError("ARTIM timeout when waiting for AAssociate Request PDU, closing connection.");
+                            _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
+                            _network.Close(); // TODO
+                            
+                        }
+                        else
+                        {
+                            OnDimseTimeout();
+                            timeout = DateTime.Now.AddSeconds(DimseTimeout);
+                        }
                     }
                     else
                     {

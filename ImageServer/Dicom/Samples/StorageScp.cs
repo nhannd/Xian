@@ -9,6 +9,9 @@ using ClearCanvas.ImageServer.Dicom.Network;
 
 namespace ClearCanvas.ImageServer.Dicom.Samples
 {
+    /// <summary>
+    /// DICOM Storage SCP Sample Application
+    /// </summary>
     class StorageScp : IDicomServerHandler
     {
         #region Private Members
@@ -30,6 +33,10 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
         {
             get { return _started; }
         }
+
+        /// <summary>
+        /// The path (directory) to store incoming images.
+        /// </summary>
         public static String StorageLocation
         {
             get { return _staticStorageLocation; }
@@ -183,6 +190,7 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
                 {
                     return new StorageScp(assoc);
                 } );
+
             _started = true;
         }
 

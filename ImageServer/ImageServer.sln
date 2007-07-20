@@ -1,6 +1,12 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 9.00
 # Visual Studio 2005
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Streaming", "Streaming\ClearCanvas.ImageServer.Streaming.csproj", "{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Streaming.XmlGenerator", "Streaming\XmlGenerator\ClearCanvas.ImageServer.Streaming.XmlGenerator.csproj", "{95FEA63F-7E51-4829-923E-8CD02C8DEAE2}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
@@ -13,25 +19,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Dat
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Dicom.DicomDump", "Dicom\DicomDump\ClearCanvas.ImageServer.Dicom.DicomDump.csproj", "{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Streaming", "Streaming\ClearCanvas.ImageServer.Streaming.csproj", "{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Dicom", "Dicom\ClearCanvas.ImageServer.Dicom.csproj", "{F65CF657-84A2-435B-9714-D70B99B39AAE}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator", "Dicom\DataDictionaryGenerator\ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator.csproj", "{04DEAB47-16DD-427A-A7A2-4BED903E5BFE}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -43,12 +31,40 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Dic
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Dicom.DicomDump", "Dicom\DicomDump\ClearCanvas.ImageServer.Dicom.DicomDump.csproj", "{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator", "Dicom\DataDictionaryGenerator\ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator.csproj", "{04DEAB47-16DD-427A-A7A2-4BED903E5BFE}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Common", "..\Common\ClearCanvas.Common.csproj", "{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Common", "Common\ClearCanvas.ImageServer.Common.csproj", "{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{95FEA63F-7E51-4829-923E-8CD02C8DEAE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{95FEA63F-7E51-4829-923E-8CD02C8DEAE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{95FEA63F-7E51-4829-923E-8CD02C8DEAE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -57,26 +73,30 @@ Global
 		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F65CF657-84A2-435B-9714-D70B99B39AAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F65CF657-84A2-435B-9714-D70B99B39AAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F65CF657-84A2-435B-9714-D70B99B39AAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F65CF657-84A2-435B-9714-D70B99B39AAE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{04DEAB47-16DD-427A-A7A2-4BED903E5BFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{04DEAB47-16DD-427A-A7A2-4BED903E5BFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{04DEAB47-16DD-427A-A7A2-4BED903E5BFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{04DEAB47-16DD-427A-A7A2-4BED903E5BFE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F861DCC5-2BC0-4B8B-8DCD-656A3206E2A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F861DCC5-2BC0-4B8B-8DCD-656A3206E2A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F861DCC5-2BC0-4B8B-8DCD-656A3206E2A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F861DCC5-2BC0-4B8B-8DCD-656A3206E2A0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04DEAB47-16DD-427A-A7A2-4BED903E5BFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04DEAB47-16DD-427A-A7A2-4BED903E5BFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04DEAB47-16DD-427A-A7A2-4BED903E5BFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04DEAB47-16DD-427A-A7A2-4BED903E5BFE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

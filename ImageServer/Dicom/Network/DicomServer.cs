@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 {
     public delegate IDicomServerHandler StartAssociation(ServerAssociationParameters assoc);
 
-    public class DicomServer : NetworkBase
+    public sealed class DicomServer : NetworkBase
     {
         #region Static Public Methods
         public static void StartListening(ServerAssociationParameters parameters, StartAssociation acceptor)
@@ -165,7 +165,10 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                 if (_handler != null)
                     _handler.OnNetworkError(this, this._assoc as ServerAssociationParameters, e);
             }
-            catch (Exception) { }
+            catch (Exception x) 
+            {
+                DicomLogger.LogErrorException(x, "Unexpected exception when calling IDicomServerHandler.OnNetworkError");
+            }
 
             _closedOnError = true;
             Close();

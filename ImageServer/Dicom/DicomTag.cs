@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using ClearCanvas.ImageServer.Dicom.IO;
+
 namespace ClearCanvas.ImageServer.Dicom
 {
     /// <summary>
@@ -329,6 +331,17 @@ namespace ClearCanvas.ImageServer.Dicom
             if (t1.Group > t2.Group)
                 return true;
             return false;
+        }
+        #endregion
+
+        #region Public Methds
+        public DicomAttribute CreateDicomAttribute()
+        {
+            return _vr.CreateDicomAttribute(this);
+        }
+        public DicomAttribute CreateDicomAttribute(ByteBuffer bb)
+        {
+            return _vr.CreateDicomAttribute(this,bb);
         }
         #endregion
     }

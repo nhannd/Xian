@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageServer.Dicom
         internal DicomAttributeSingleValueText(DicomTag tag, ByteBuffer item)
             : base(tag)
         {
-            _value = item.GetString();
+            _value = item.GetString();            
             
             // Saw some Osirix images that had padding on SH attributes with a null character, just
             // pull them out here.

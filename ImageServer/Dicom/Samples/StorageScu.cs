@@ -10,6 +10,9 @@ using ClearCanvas.ImageServer.Dicom.Exceptions;
 
 namespace ClearCanvas.ImageServer.Dicom.Samples
 {
+    /// <summary>
+    /// DICOM Storage SCU Sample Application
+    /// </summary>
     public class StorageScu : IDicomClientHandler
     {
         #region Private Classes and Structures
@@ -37,7 +40,6 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
         #region Private Methods
         private bool LoadDirectory(DirectoryInfo dir)
         {
-
             FileInfo[] files = dir.GetFiles();
 
             foreach (FileInfo file in files)
@@ -50,7 +52,6 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
             {
                 DirectoryInfo subDir = new DirectoryInfo(subPath);
                 LoadDirectory(subDir);
-                continue;
             }
 
             return true;
@@ -83,12 +84,17 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
             }
             catch (DicomException e)
             {
-                DicomLogger.LogErrorException(e, "Unexpected exception when loading file for sending {0}", file);
+                DicomLogger.LogErrorException(e, "Unexpected exception when loading file for sending: {0}", file);
                 return false;
             }
             return true;
         }
 
+        /// <summary>
+        /// Add all the files to send.
+        /// </summary>
+        /// <param name="directory">The path of the directory to scan for DICOM files</param>
+        /// <returns></returns>
         public bool AddDirectoryToSend(String directory)
         {
             DirectoryInfo dir = new DirectoryInfo(directory);
@@ -96,6 +102,9 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
 			return LoadDirectory(dir);
 		}
 
+        /// <summary>
+        /// Scan the files to send, and create presentation contexts for each abstract syntax to send.
+        /// </summary>
         public void SetPresentationContexts()
         {
             foreach (FileToSend sendStruct in _fileList)
@@ -121,6 +130,9 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
                     DicomLogger.LogInfo("Not sending, no files to send.");
                     return;
                 }
+
+                DicomLogger.LogInfo("Preparing to connect to AE {0} on host {1} on port {2} and sending {3} images.", remoteAE, host, port, _fileList.Count);
+
                 try
                 {
                     IPAddress addr = null;
@@ -148,7 +160,12 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
             }
         }
 
-        public void SendCStore(DicomClient client, ClientAssociationParameters association)
+        /// <summary>
+        /// Generic routine to send the next C-STORE-RQ message in the _fileList.
+        /// </summary>
+        /// <param name="client">DICOM Client class</param>
+        /// <param name="association">Association Parameters</param>
+        public bool SendCStore(DicomClient client, ClientAssociationParameters association)
         {
             FileToSend fileToSend = _fileList[_fileListIndex];
 
@@ -160,7 +177,9 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
             }
             catch (DicomException e)
             {
-                DicomLogger.LogErrorException(e, "Unexpected exception when loading DICOM file");
+                DicomLogger.LogErrorException(e, "Unexpected exception when loading DICOM file {0}",fileToSend.filename);
+
+                return false;
             }
 
             DicomMessage msg = new DicomMessage(dicomFile);
@@ -168,6 +187,7 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
             byte pcid = association.FindAbstractSyntax(fileToSend.sopClass);
 
             client.SendCStoreRequest(pcid, client.NextMessageID(), DicomPriority.Medium, msg);
+            return true;
         }
         #endregion
 
@@ -176,9 +196,22 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
 
         public void OnReceiveAssociateAccept(DicomClient client, ClientAssociationParameters association)
         {
+            DicomLogger.LogInfo(association.ToString());
+
             _fileListIndex = 0;
 
-            SendCStore(client, association);
+            bool ok = SendCStore(client, association);
+            while (ok == false)
+            {
+                _fileListIndex++;
+                if (_fileListIndex >= _fileList.Count)
+                {
+                    DicomLogger.LogInfo("Completed sending C-STORE-RQ messages, releasing association.");
+                    client.SendReleaseRequest();
+                    return;
+                }
+                ok = SendCStore(client, association);
+            }
         }
 
         public void OnReceiveAssociateReject(DicomClient client, ClientAssociationParameters association, DicomRejectResult result, DicomRejectSource source, DicomRejectReason reason)
@@ -188,24 +221,36 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
 
         public void OnReceiveRequestMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
         {
+            DicomLogger.LogError("Unexpected OnReceiveRequestMessage callback on client.");
+
             throw new Exception("The method or operation is not implemented.");
         }
 
         public void OnReceiveResponseMessage(DicomClient client, ClientAssociationParameters association, byte presentationID, DicomMessage message)
         {
-            _fileListIndex++;
-            if (_fileListIndex >= _fileList.Count)
+            if (message.Status.Status != DicomState.Success)
             {
-                client.SendReleaseRequest();
-                return;
+                DicomLogger.LogError("Failure status received in sending C-STORE: {0}", message.Status.Description);
             }
 
-            SendCStore(client, association);
+            bool ok = false;
+            while (ok == false)
+            {
+                _fileListIndex++;
+                if (_fileListIndex >= _fileList.Count)
+                {
+                    DicomLogger.LogInfo("Completed sending C-STORE-RQ messages, releasing association.");
+                    client.SendReleaseRequest();
+                    return;
+                }
+
+                ok = SendCStore(client, association);
+            }
         }
 
         public void OnReceiveReleaseResponse(DicomClient client, ClientAssociationParameters association)
         {
-            DicomLogger.LogInfo("Association released from ");
+            DicomLogger.LogInfo("Association released to {0}", association.CalledAE);
         }
 
         public void OnReceiveAbort(DicomClient client, ClientAssociationParameters association, DicomAbortSource source, DicomAbortReason reason)

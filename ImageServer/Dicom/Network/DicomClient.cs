@@ -12,7 +12,10 @@ using System.IO;
 
 namespace ClearCanvas.ImageServer.Dicom.Network
 {
-    public class DicomClient : NetworkBase
+    /// <summary>
+    /// Class used by DICOM Clients for all network functionality.
+    /// </summary>
+    public sealed class DicomClient : NetworkBase
     {
         #region Private Members
 		private IPEndPoint _remoteEndPoint;
@@ -120,7 +123,6 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
         public void Close()
         {
-
             lock (this)
             {
                 if (_network != null)
@@ -137,28 +139,28 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                 if (_closedEvent != null)
                 {
                     _closedEvent.Set();
-                    _closedEvent = null;
                 }
             }
             ShutdownNetwork();
 
         }
 
-		public bool Wait() {
+        /// <summary>
+        /// Wait for the background thread for the client to close.
+        /// </summary>
+		public void Join() {
 			_closedEvent.WaitOne();
-			return !_closedOnError;
 		}
 		#endregion
 
 		#region NetworkBase Overrides
         protected void OnClientConnected()
         {
-            DicomLogger.LogInfo("SCU -> Connect: {0}", InternalSocket.RemoteEndPoint);
+            DicomLogger.LogInfo("{0} SCU -> Connect: {0}", _assoc.CallingAE, InternalSocket.RemoteEndPoint.ToString());
 
-            DicomLogger.LogInfo("C-Store SCU -> Association request");
             SendAssociateRequest(_assoc);
-
         }
+
 		protected override bool NetworkHasData() {
 			return _socket.Available > 0;
 		}
@@ -168,7 +170,10 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             {
                 _handler.OnNetworkError(this, this._assoc as ClientAssociationParameters, e);
             }
-            catch (Exception) { }
+            catch (Exception x) 
+            {
+                DicomLogger.LogErrorException(x, "Unexpected exception when calling IDicomClientHandler.OnNetworkError");
+            }
 
 			_closedOnError = true;
 			Close();

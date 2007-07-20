@@ -35,7 +35,9 @@ namespace ClearCanvas.ImageServer.Dicom
         internal DicomAttributeMultiValueText(DicomTag tag, ByteBuffer item)
             : base(tag)
         {
-            String valueArray = item.GetString();
+            String valueArray;
+
+            valueArray = item.GetString();
 
             // store the length before removing pad chars
             StreamLength = (uint)valueArray.Length;

@@ -161,6 +161,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         private int _receiveBufferSize = 128 * 1024;
         private int _readTimeout = 30;
         private int _writeTimeout = 30;
+        private int _artimTimeout = 30;
         #endregion
 
 
@@ -194,6 +195,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             _remoteEndPoint = parameters._remoteEndPoint;
             _sendBufferSize = parameters._sendBufferSize;
             _writeTimeout = parameters._writeTimeout;
+            _artimTimeout = parameters._artimTimeout;
 
             foreach (byte id in parameters._presContexts.Keys)
             {
@@ -255,6 +257,15 @@ namespace ClearCanvas.ImageServer.Dicom.Network
             set { _writeTimeout = value; }
         }
 
+        /// <summary>
+        /// The DICOM ARTIM timeout.
+        /// </summary>
+        public int ArtimTimeout
+        {
+            get { return _artimTimeout; }
+            set { _artimTimeout = value; }
+        }
+
         public String CalledAE
         {
             get { return _calledAE; }
@@ -291,12 +302,18 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 			set { _implVersion = value; }
 		}
 
+        /// <summary>
+        /// The remote end point for the association.
+        /// </summary>
         public IPEndPoint RemoteEndPoint
         {
             get { return _remoteEndPoint; }
             internal set { _remoteEndPoint = value; }
         }
 
+        /// <summary>
+        /// The local end point of the association.
+        /// </summary>
         public IPEndPoint LocalEndPoint
         {
             get { return _localEndPoint; }
@@ -518,25 +535,39 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
         public override string ToString() {
 			StringBuilder sb = new StringBuilder();
-			sb.AppendFormat("Application Context:		{0}\n", _appCtxNm);
-			sb.AppendFormat("Implementation Class:		{0}\n", _implClass);
-			sb.AppendFormat("Implementation Version:	{0}\n", _implVersion);
-            sb.AppendFormat("Maximum PDU Size:			{0}\n", _maxPduLength);
-			sb.AppendFormat("Called AE Title:			{0}\n", _calledAE);
-			sb.AppendFormat("Calling AE Title:			{0}\n", _callingAE);
-			sb.AppendFormat("Presentation Contexts:		{0}\n", _presContexts.Count);
-			foreach (DicomPresContext pctx in _presContexts.Values) {
-				sb.AppendFormat("	Presentation Context {0} [{1}]\n", pctx.ID, pctx.GetResultDescription());
-				sb.AppendFormat("		Abstract: {0}\n", pctx.AbstractSyntax.Name);
+			sb.AppendFormat("Application Context:		{0}", _appCtxNm);
+            sb.AppendLine();
+			sb.AppendFormat("Implementation Class:		{0}", _implClass);
+            sb.AppendLine(); 
+            sb.AppendFormat("Implementation Version:	{0}", _implVersion);
+            sb.AppendLine(); 
+            sb.AppendFormat("Maximum PDU Size:			{0}", _maxPduLength);
+            sb.AppendLine(); 
+            sb.AppendFormat("Called AE Title:			{0}", _calledAE);
+            sb.AppendLine(); 
+            sb.AppendFormat("Calling AE Title:			{0}", _callingAE);
+            sb.AppendLine(); 
+            sb.AppendFormat("Presentation Contexts:		{0}", _presContexts.Count);
+            sb.AppendLine(); 
+            foreach (DicomPresContext pctx in _presContexts.Values)
+            {
+				sb.AppendFormat("	Presentation Context {0} [{1}]", pctx.ID, pctx.GetResultDescription());
+                sb.AppendLine();
+				sb.AppendFormat("		Abstract: {0}", pctx.AbstractSyntax.Name);
+                sb.AppendLine();
 				foreach (TransferSyntax ts in pctx.GetTransfers()) {
-					sb.AppendFormat("		Transfer: {0}\n", (ts.DicomUid.Type == UidType.Unknown) ?
+					sb.AppendFormat("		Transfer: {0}", (ts.DicomUid.Type == UidType.Unknown) ?
 						ts.DicomUid.UID : ts.DicomUid.Description);
+                    sb.AppendLine();
 				}
 			}
 			return sb.ToString();
 		}
     }
 
+    /// <summary>
+    /// Association parameters structure used for client connections.
+    /// </summary>
     public class ClientAssociationParameters : AssociationParameters
     {
         public ClientAssociationParameters(String callingAE, String calledAE, IPEndPoint remoteEndPoint)
@@ -555,6 +586,9 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         }
     }
 
+    /// <summary>
+    /// Association parameters structure used for server connections.
+    /// </summary>
     public class ServerAssociationParameters : AssociationParameters
     {
         internal ServerAssociationParameters()
