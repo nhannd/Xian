@@ -9,12 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class ClaimInterpretationRequest : DataContractBase
     {
-        public ClaimInterpretationRequest(ReportingWorklistItem item)
+        public ClaimInterpretationRequest(EntityRef interpretationStepRef)
         {
-            this.WorklistItem = item;
+            this.InterpretationStepRef = interpretationStepRef;
         }
 
         [DataMember]
-        public ReportingWorklistItem WorklistItem;
+        public EntityRef InterpretationStepRef;
     }
 }

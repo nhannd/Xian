@@ -636,9 +636,34 @@ var Field =
 		element.innerHTML = value ? (value + "").escapeHTML() : "";
 	},
 	
-	show: function(element, showThisField)
+	getValue: function(element)
 	{
-		element.style.display = showThisField ? "" : "none";
+		return element.innerHTML;
+	},
+	
+	show: function(element, state)
+	{
+		element.style.display = state ? "" : "none";
+	},
+
+	disabled: function(element, state)
+	{
+		element.disabled = state ? "disabled" : "";
+	},
+	
+	readOnly: function(element, state)
+	{
+		element.readOnly = state;
+	},
+	
+	setHeight: function(element, height)
+	{
+		element.style.height = height;
+	},
+	
+	setWidth: function(element, width)
+	{
+		element.style.width = width;
 	}
 };
 

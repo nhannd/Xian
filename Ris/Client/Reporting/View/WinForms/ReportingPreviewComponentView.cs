@@ -11,7 +11,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
     /// Provides a Windows Forms view onto <see cref="ReportingPreviewComponent"/>
     /// </summary>
     [ExtensionOf(typeof(ReportingPreviewComponentViewExtensionPoint))]
-    public class ReportingPreviewComponentView : PreviewComponentView
+    public class ReportingPreviewComponentView : DHtmlComponentView
     {
     }
 }

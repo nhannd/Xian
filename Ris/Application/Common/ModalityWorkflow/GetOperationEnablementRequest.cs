@@ -9,12 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     [DataContract]
     public class GetOperationEnablementRequest : DataContractBase
     {
-        public GetOperationEnablementRequest(ModalityWorklistItem item)
+        public GetOperationEnablementRequest(EntityRef procedureStepRef)
         {
-            this.WorklistItem = item;
+            this.ProcedureStepRef = procedureStepRef;
         }
 
         [DataMember]
-        public ModalityWorklistItem WorklistItem;
+        public EntityRef ProcedureStepRef;
     }
 }

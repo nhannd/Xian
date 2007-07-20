@@ -54,9 +54,9 @@ if(window.external)
             window.external.SetData(tag, data);
         },
 		
-		getPreviewData: function(previewLevel)
+		getJsmlData: function(requestJsml)
 		{
-			return window.external.GetPreviewData(previewLevel);
+			return window.external.GetJsmlData(requestJsml);
 		},
 		
 		formatDate: function(date)

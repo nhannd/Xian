@@ -9,12 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class LoadReportForEditRequest : DataContractBase
     {
-        public LoadReportForEditRequest(ReportingWorklistItem item)
+        public LoadReportForEditRequest(EntityRef reportingStepRef)
         {
-            this.WorklistItem = item;
+            this.ReportingStepRef = reportingStepRef;
         }
 
         [DataMember]
-        public ReportingWorklistItem WorklistItem;
+        public EntityRef ReportingStepRef;
     }
 }

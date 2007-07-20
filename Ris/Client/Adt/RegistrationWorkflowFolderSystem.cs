@@ -194,7 +194,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         Platform.GetService<IRegistrationWorkflowService>(
                             delegate(IRegistrationWorkflowService service)
                             {
-                                GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem));
+                                GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem.PatientProfileRef, selectedItem.OrderRef));
                                 _workflowEnablment = response.OperationEnablementDictionary;
                             });
                     });

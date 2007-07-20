@@ -9,12 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class StartVerificationRequest : DataContractBase
     {
-        public StartVerificationRequest(ReportingWorklistItem item)
+        public StartVerificationRequest(EntityRef verificationStepRef)
         {
-            this.WorklistItem = item;
+            this.VerificationStepRef = verificationStepRef;
         }
 
         [DataMember]
-        public ReportingWorklistItem WorklistItem;
+        public EntityRef VerificationStepRef;
     }
 }

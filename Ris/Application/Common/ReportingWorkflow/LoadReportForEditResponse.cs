@@ -9,12 +9,10 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class LoadReportForEditResponse : DataContractBase
     {
-        public LoadReportForEditResponse(string reportContent)
-        {
-            this.ReportContent = reportContent;
-        }
+        [DataMember]
+        public int ReportPartIndex;
 
         [DataMember]
-        public string ReportContent;
+        public ReportSummary Report;
     }
 }

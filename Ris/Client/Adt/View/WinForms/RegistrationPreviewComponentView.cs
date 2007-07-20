@@ -11,7 +11,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     /// Provides a Windows Forms view onto <see cref="RegistrationPreviewComponent"/>
     /// </summary>
     [ExtensionOf(typeof(RegistrationPreviewComponentViewExtensionPoint))]
-    public class RegistrationPreviewComponentView : PreviewComponentView
+    public class RegistrationPreviewComponentView : DHtmlComponentView
     {
     }
 }

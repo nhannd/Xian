@@ -35,7 +35,7 @@ namespace ClearCanvas.Ris.Client.Adt
     /// RegistrationPreviewComponent class
     /// </summary>
     [AssociateView(typeof(RegistrationPreviewComponentViewExtensionPoint))]
-    public class RegistrationPreviewComponent : PreviewApplicationComponent
+    public class RegistrationPreviewComponent : DHtmlComponent
     {
         class RegistrationPreviewToolContext : ToolContext, IRegistrationPreviewToolContext
         {
@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Public Properties
 
-        public override string GetPreviewData(string requestJsml)
+        public override string GetJsmlData(string requestJsml)
         {
             string responseJsml = "";
 

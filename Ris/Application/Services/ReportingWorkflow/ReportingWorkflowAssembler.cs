@@ -77,17 +77,38 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return item;
         }
 
-        public ReportSummary CreateReportSummary(Report report)
+        public ReportSummary CreateReportSummary(RequestedProcedure rp, Report report)
         {
             ReportSummary summary = new ReportSummary();
-            summary.ReportRef = report.GetRef();
-            summary.DiagnosticServiceName = report.Procedure.Order.DiagnosticService.Name;
-            summary.RequestedProcedureName = report.Procedure.Type.Name;
-            summary.Parts = CollectionUtils.Map<ReportPart, ReportPartSummary, List<ReportPartSummary>>(report.Parts,
-                delegate(ReportPart part)
+
+            if (report != null)
+            {
+                summary.ReportRef = report.GetRef();
+                summary.Parts = CollectionUtils.Map<ReportPart, ReportPartSummary, List<ReportPartSummary>>(report.Parts,
+                    delegate(ReportPart part)
+                    {
+                        return CreateReportPartSummary(part);
+                    });
+            }
+
+            Order order = rp.Order;
+            PatientProfile profile = CollectionUtils.SelectFirst<PatientProfile>(order.Patient.Profiles,
+                delegate(PatientProfile thisProfile)
                 {
-                    return CreateReportPartSummary(part);
+                    return thisProfile.Mrn.AssigningAuthority == order.Visit.VisitNumber.AssigningAuthority;
                 });
+
+            PersonNameAssembler nameAssembler = new PersonNameAssembler();
+            summary.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
+            summary.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
+            summary.DateOfBirth = profile.DateOfBirth;
+            summary.VisitNumberId = order.Visit.VisitNumber.Id;
+            summary.VisitNumberAssigningAuthority = order.Visit.VisitNumber.AssigningAuthority;
+            summary.AccessionNumber = order.AccessionNumber;
+            summary.DiagnosticServiceName = order.DiagnosticService.Name;
+            summary.RequestedProcedureName = rp.Type.Name;
+            summary.PerformedLocation = "Not implemented";
+            //summary.PerformedDate = ;
 
             return summary;
         }

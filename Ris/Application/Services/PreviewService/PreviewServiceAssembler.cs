@@ -10,6 +10,8 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common.PreviewService;
 using ClearCanvas.Workflow;
 using ClearCanvas.Workflow.Brokers;
+using ClearCanvas.Ris.Application.Services.ReportingWorkflow;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.PreviewService
 {
@@ -136,7 +138,22 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
 
         private void UpdatePatientOrderData(PatientOrderData data, RequestedProcedure rp, IPersistenceContext context)
         {
-            data.RequestedProcedureTypeName = rp.Type.Name;
+            data.RequestedProcedureName = rp.Type.Name;
+            CollectionUtils.ForEach<ProcedureStep>(rp.ModalitySteps, new Action<ProcedureStep>(
+                delegate(ProcedureStep ps)
+                {
+                    if (ps.StartTime != null)
+                    {
+                        if (data.RequestedProcedureStartTime == null || ps.StartTime.Value.CompareTo(data.RequestedProcedureStartTime.Value) < 0)
+                            data.RequestedProcedureStartTime = ps.StartTime;
+                    }
+
+                    if (ps.EndTime != null)
+                    {
+                        if (data.RequestedProcedureEndTime == null || ps.EndTime.Value.CompareTo(data.RequestedProcedureEndTime.Value) < 0)
+                            data.RequestedProcedureEndTime = ps.EndTime;
+                    }
+                }));
         }
 
         private void UpdatePatientOrderData(PatientOrderData data, ProcedureStep ps, IPersistenceContext context)
@@ -173,7 +190,12 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
             else if (ps.Is<ReportingProcedureStep>())
             {
                 ReportingProcedureStep rps = ps.As<ReportingProcedureStep>();
-                data.ReportContent = rps.ReportPart == null ? "" : rps.ReportPart.Content;
+                if (rps.ReportPart != null)
+                {
+                    ReportingWorkflowAssembler reportingAssembler = new ReportingWorkflowAssembler();
+                    ReportSummary summary = reportingAssembler.CreateReportSummary(rps.RequestedProcedure, rps.ReportPart.Report);
+                    data.Report = summary.FormatHtml();
+                }
             }
         }
 

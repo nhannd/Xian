@@ -105,7 +105,7 @@
     <Compile Include="PagingActionModel.cs" />
     <Compile Include="PagingController.cs" />
     <Compile Include="Formatting\PersonNameFormat.cs" />
-    <Compile Include="PreviewApplicationComponent.cs" />
+    <Compile Include="DHtmlComponent.cs" />
     <Compile Include="RemoteServiceProvider.cs" />
     <Compile Include="SessionManager.cs" />
     <Compile Include="Formatting\TelephoneFormat.cs" />

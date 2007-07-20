@@ -12,14 +12,14 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    public partial class PreviewComponentControl : ApplicationComponentUserControl
+    public partial class DHtmlComponentControl : ApplicationComponentUserControl
     {
-        private PreviewApplicationComponent _component;
+        private DHtmlComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PreviewComponentControl(PreviewApplicationComponent component)
+        public DHtmlComponentControl(DHtmlComponent component)
             : base(component)
         {
             InitializeComponent();

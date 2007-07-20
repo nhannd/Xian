@@ -12,16 +12,16 @@ using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    public abstract class PreviewComponentView : WinFormsView, IApplicationComponentView
+    public abstract class DHtmlComponentView : WinFormsView, IApplicationComponentView
     {
-        private PreviewApplicationComponent _component;
-        private PreviewComponentControl _control;
+        private DHtmlComponent _component;
+        private DHtmlComponentControl _control;
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (PreviewApplicationComponent) component;
+            _component = (DHtmlComponent) component;
         }
 
         #endregion
@@ -32,14 +32,14 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new PreviewComponentControl(_component);
+                    _control = new DHtmlComponentControl(_component);
                     _control.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(NavigatingEventHandler);
                 }
                 return _control;
             }
         }
 
-        public PreviewApplicationComponent Component
+        public DHtmlComponent Component
         {
             get { return _component; }
         }

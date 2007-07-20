@@ -12,7 +12,7 @@ using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client
 {
-    public abstract class PreviewApplicationComponent : ApplicationComponent
+    public abstract class DHtmlComponent : ApplicationComponent
     {
         /// <summary>
         /// The script callback is an object that is made available to the web browser so that
@@ -21,18 +21,28 @@ namespace ClearCanvas.Ris.Client
         [ComVisible(true)]
         public class ScriptCallback
         {
-            private PreviewApplicationComponent _component;
+            protected DHtmlComponent _component;
             private ActionModelRenderer _renderer;
 
-            public ScriptCallback(PreviewApplicationComponent component)
+            public ScriptCallback(DHtmlComponent component)
             {
                 _component = component;
                 _renderer = new ActionModelRenderer();
             }
 
-            public string GetPreviewData(string requestJsml)
+            public string GetData(string tag)
             {
-                return _component.GetPreviewData(requestJsml);
+                return _component.GetData(tag);
+            }
+        
+            public void SetData(string tag, string data)
+            {
+                _component.SetData(tag, data);
+            }
+		
+            public string GetJsmlData(string requestJsml)
+            {
+                return _component.GetJsmlData(requestJsml);
             }
 
             public void Alert(string message)
@@ -99,7 +109,7 @@ namespace ClearCanvas.Ris.Client
         /// <summary>
         /// Constructor
         /// </summary>
-        public PreviewApplicationComponent()
+        public DHtmlComponent()
         {
             _scriptCallback = new ScriptCallback(this);
         }
@@ -116,7 +126,19 @@ namespace ClearCanvas.Ris.Client
 
         #region Public Properties
 
-        public abstract string GetPreviewData(string requestJsml);
+        public virtual string GetData(string tag)
+        {
+            return null;
+        }
+
+        public virtual void SetData(string tag, string data)
+        {
+        }
+
+        public virtual string GetJsmlData(string requestJsml)
+        {
+            return null;
+        }
 
         public abstract string DetailsPageUrl { get; }
 
@@ -128,6 +150,7 @@ namespace ClearCanvas.Ris.Client
         public ScriptCallback ScriptObject
         {
             get { return _scriptCallback; }
+            set { _scriptCallback = value; }
         }
 
         #endregion

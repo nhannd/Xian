@@ -235,6 +235,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 InterpretationStep interpretation = new InterpretationStep(step.RequestedProcedure);
                 interpretation.Assign(step.PerformingStaff);
                 interpretation.Start(step.PerformingStaff);
+                interpretation.ReportPart = step.ReportPart.Report.AddPart("");
                 workflow.AddActivity(interpretation);
                 return interpretation;
             }

@@ -80,6 +80,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="CompleteInterpretationAndVerifyRequest"/></param>
         /// <returns><see cref="CompleteInterpretationAndVerifyResponse"/></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
         CompleteInterpretationAndVerifyResponse CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request);
 
@@ -107,6 +108,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="CompleteVerificationRequest"/></param>
         /// <returns><see cref="CompleteVerificationResponse"/></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
         CompleteVerificationResponse CompleteVerification(CompleteVerificationRequest request);
 

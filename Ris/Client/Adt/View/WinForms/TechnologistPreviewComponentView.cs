@@ -11,7 +11,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     /// Provides a Windows Forms view onto <see cref="TechnologistPreviewComponent"/>
     /// </summary>
     [ExtensionOf(typeof(TechnologistPreviewComponentViewExtensionPoint))]
-    public class TechnologistPreviewComponentView : PreviewComponentView
+    public class TechnologistPreviewComponentView : DHtmlComponentView
     {
     }
 }

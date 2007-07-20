@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -7,6 +8,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
@@ -50,18 +52,19 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [ReadOperation]
         public GetOperationEnablementResponse GetOperationEnablement(GetOperationEnablementRequest request)
         {
-            return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.WorklistItem.ProcedureStepRef)));
+            return new GetOperationEnablementResponse(GetOperationEnablement(new WorklistItemKey(request.ProcedureStepRef)));
         }
 
         [UpdateOperation]
         [OperationEnablement("CanClaimInterpretation")]
         public ClaimInterpretationResponse ClaimInterpretation(ClaimInterpretationRequest request)
         {
-            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
 
             Operations.ClaimInterpretation op = new Operations.ClaimInterpretation();
             op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
+            PersistenceContext.SynchState();
             return new ClaimInterpretationResponse(interpretation.GetRef());
         }
 
@@ -69,11 +72,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [OperationEnablement("CanStartInterpretation")]
         public StartInterpretationResponse StartInterpretation(StartInterpretationRequest request)
         {
-            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
 
             Operations.StartInterpretation op = new Operations.StartInterpretation();
             op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
+            PersistenceContext.SynchState();
             return new StartInterpretationResponse(interpretation.GetRef());
         }
 
@@ -81,11 +85,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [OperationEnablement("CanCompleteInterpretationForTranscription")]
         public CompleteInterpretationForTranscriptionResponse CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request)
         {
-            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
 
             Operations.CompleteInterpretationForTranscription op = new Operations.CompleteInterpretationForTranscription();
             TranscriptionStep transcription = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
+            PersistenceContext.SynchState();
             CompleteInterpretationForTranscriptionResponse response = new CompleteInterpretationForTranscriptionResponse();
             response.InterpretationStepRef = interpretation.GetRef();
             response.TranscriptionStepRef = transcription.GetRef();
@@ -96,11 +101,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [OperationEnablement("CanCompleteInterpretationForVerification")]
         public CompleteInterpretationForVerificationResponse CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request)
         {
-            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
 
             Operations.CompleteInterpretationForVerification op = new Operations.CompleteInterpretationForVerification();
             VerificationStep verification = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
+            PersistenceContext.SynchState();
             CompleteInterpretationForVerificationResponse response = new CompleteInterpretationForVerificationResponse();
             response.InterpretationStepRef = interpretation.GetRef();
             response.VerificationStepRef = verification.GetRef();
@@ -111,11 +117,15 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [OperationEnablement("CanCompleteInterpretationAndVerify")]
         public CompleteInterpretationAndVerifyResponse CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request)
         {
-            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+            InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
+
+            if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.Content))
+                throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
 
             Operations.CompleteInterpretationAndVerify op = new Operations.CompleteInterpretationAndVerify();
             VerificationStep verification = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
+            PersistenceContext.SynchState();
             CompleteInterpretationAndVerifyResponse response = new CompleteInterpretationAndVerifyResponse();
             response.InterpretationStepRef = interpretation.GetRef();
             response.VerificationStepRef = verification.GetRef();
@@ -126,11 +136,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [OperationEnablement("CanCancelPendingTranscription")]
         public CancelPendingTranscriptionResponse CancelPendingTranscription(CancelPendingTranscriptionRequest request)
         {
-            TranscriptionStep transcription = PersistenceContext.Load<TranscriptionStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+            TranscriptionStep transcription = PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef, EntityLoadFlags.CheckVersion);
 
             Operations.CancelPendingTranscription op = new Operations.CancelPendingTranscription();
             InterpretationStep interpretation = op.Execute(transcription, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
+            PersistenceContext.SynchState();
             CancelPendingTranscriptionResponse response = new CancelPendingTranscriptionResponse();
             response.TranscriptionStepRef = transcription.GetRef();
             response.InterpretationStepRef = interpretation.GetRef();
@@ -141,11 +152,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [OperationEnablement("CanStartVerification")]
         public StartVerificationResponse StartVerification(StartVerificationRequest request)
         {
-            VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+            VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.VerificationStepRef, EntityLoadFlags.CheckVersion);
 
             Operations.StartVerification op = new Operations.StartVerification();
             op.Execute(verification, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
+            PersistenceContext.SynchState();
             return new StartVerificationResponse(verification.GetRef());
         }
 
@@ -153,11 +165,15 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [OperationEnablement("CanCompleteVerification")]
         public CompleteVerificationResponse CompleteVerification(CompleteVerificationRequest request)
         {
-            VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+            VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.VerificationStepRef, EntityLoadFlags.CheckVersion);
+
+            if (verification.ReportPart == null || String.IsNullOrEmpty(verification.ReportPart.Content))
+                throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
 
             Operations.CompleteVerification op = new Operations.CompleteVerification();
             op.Execute(verification, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
+            PersistenceContext.SynchState();
             return new CompleteVerificationResponse(verification.GetRef());
         }
 
@@ -165,11 +181,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [OperationEnablement("CanCreateAddendum")]
         public CreateAddendumResponse CreateAddendum(CreateAddendumRequest request)
         {
-            VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
+            VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.VerificationStepRef, EntityLoadFlags.CheckVersion);
 
             Operations.CreateAddendum op = new Operations.CreateAddendum();
             InterpretationStep interpretation = op.Execute(verification, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
+            PersistenceContext.SynchState();
             CreateAddendumResponse response = new CreateAddendumResponse();
             response.VerificationStepRef = verification.GetRef();
             response.InterpretationStepRef = interpretation.GetRef();
@@ -179,15 +196,29 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [ReadOperation]
         public LoadReportForEditResponse LoadReportForEdit(LoadReportForEditRequest request)
         {
-            ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.WorklistItem.ProcedureStepRef, EntityLoadFlags.CheckVersion);
-            string reportPart = (step.ReportPart == null ? "" : step.ReportPart.Content);
-            return new LoadReportForEditResponse(reportPart);
+            ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
+            ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
+
+            LoadReportForEditResponse response = new LoadReportForEditResponse();
+            if (step.ReportPart == null)
+            {
+                response.Report = assembler.CreateReportSummary(step.RequestedProcedure, null);
+                response.ReportPartIndex = 0;
+            }
+            else
+            {
+                response.Report = assembler.CreateReportSummary(step.RequestedProcedure, step.ReportPart.Report);
+                response.ReportPartIndex = int.Parse(step.ReportPart.Id);
+            }
+
+            return response;
         }
 
         [UpdateOperation]
         public SaveReportResponse SaveReport(SaveReportRequest request)
         {
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
+
             if (step.ReportPart != null)
             {
                 step.ReportPart.Content = request.ReportContent;
@@ -196,13 +227,10 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             {
                 Report report = new Report();
                 report.Procedure = step.RequestedProcedure;
-
-                step.ReportPart = new ReportPart("0", request.ReportContent, report);
-                report.AddPart(step.ReportPart);
+                step.ReportPart = report.AddPart(request.ReportContent);
 
                 PersistenceContext.Lock(report, DirtyState.New);
             }
-            
             return new SaveReportResponse(step.GetRef());
         }
 
@@ -217,7 +245,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             List<ReportSummary> listSummary = CollectionUtils.Map<Report, ReportSummary, List<ReportSummary>>(listReports,
                 delegate(Report report)
                 {
-                    return assembler.CreateReportSummary(report);
+                    return assembler.CreateReportSummary(report.Procedure, report);
                 });
 
             return new GetPriorReportResponse(listSummary);

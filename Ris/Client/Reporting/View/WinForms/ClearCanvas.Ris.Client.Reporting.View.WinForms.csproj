@@ -42,13 +42,13 @@
       <DependentUpon>PriorReportComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="PriorReportComponentView.cs" />
-    <Compile Include="ReportContentEditorComponentControl.cs">
+    <Compile Include="ReportEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ReportContentEditorComponentControl.Designer.cs">
-      <DependentUpon>ReportContentEditorComponentControl.cs</DependentUpon>
+    <Compile Include="ReportEditorComponentControl.Designer.cs">
+      <DependentUpon>ReportEditorComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="ReportContentEditorComponentView.cs" />
+    <Compile Include="ReportEditorComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportingPreviewComponentView.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
@@ -88,9 +88,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>PriorReportComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ReportContentEditorComponentControl.resx">
+    <EmbeddedResource Include="ReportEditorComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>ReportContentEditorComponentControl.cs</DependentUpon>
+      <DependentUpon>ReportEditorComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

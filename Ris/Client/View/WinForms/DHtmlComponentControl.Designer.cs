@@ -1,6 +1,6 @@
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    partial class PreviewComponentControl
+    partial class DHtmlComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -41,13 +41,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._webBrowser.Size = new System.Drawing.Size(398, 384);
             this._webBrowser.TabIndex = 0;
             // 
-            // PreviewComponentControl
+            // DHtmlComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._webBrowser);
             this.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
-            this.Name = "PreviewComponentControl";
+            this.Name = "DHtmlComponentControl";
             this.Size = new System.Drawing.Size(398, 384);
             this.ResumeLayout(false);
 

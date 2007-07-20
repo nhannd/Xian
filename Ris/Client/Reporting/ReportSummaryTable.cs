@@ -13,12 +13,16 @@ namespace ClearCanvas.Ris.Client.Reporting
     {
         public ReportSummaryTable()
         {
-            this.Columns.Add(new TableColumn<ReportSummary, string>("Diagnostic Service",
-                delegate(ReportSummary report) { return report.DiagnosticServiceName; }));
+            this.Columns.Add(new TableColumn<ReportSummary, string>("Accession Number",
+                delegate(ReportSummary report) { return report.AccessionNumber; }));
+            this.Columns.Add(new TableColumn<ReportSummary, string>("Visit Number",
+                delegate(ReportSummary report) { return String.Format("{0} {1}", report.VisitNumberAssigningAuthority, report.VisitNumberId); }));
             this.Columns.Add(new TableColumn<ReportSummary, string>("Requested Procedure",
                 delegate(ReportSummary report) { return report.RequestedProcedureName; }));
-            this.Columns.Add(new TableColumn<ReportSummary, string>("Report Content",
-                delegate(ReportSummary report) { return report.Parts[0].Content; }));
+            this.Columns.Add(new TableColumn<ReportSummary, string>("Performed Location",
+                delegate(ReportSummary report) { return report.PerformedLocation; }));
+            this.Columns.Add(new TableColumn<ReportSummary, DateTime?>("Performed Date",
+                delegate(ReportSummary report) { return report.PerformedDate; }));
         }
     }
 }

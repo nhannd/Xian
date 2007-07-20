@@ -54,5 +54,12 @@ namespace ClearCanvas.Healthcare {
             part.Report = this;
             this.Parts.Add(part);
         }
+
+        public ReportPart AddPart(string reportPartContent)
+        {
+            ReportPart part = new ReportPart(this.Parts.Count.ToString(), reportPartContent, this);
+            this.AddPart(part);
+            return part;
+        }
     }
 }

@@ -35,7 +35,7 @@ namespace ClearCanvas.Ris.Client.Reporting
     /// ReportingPreviewComponent class
     /// </summary>
     [AssociateView(typeof(ReportingPreviewComponentViewExtensionPoint))]
-    public class ReportingPreviewComponent : PreviewApplicationComponent
+    public class ReportingPreviewComponent : DHtmlComponent
     {
         class ReportingPreviewToolContext : ToolContext, IReportingPreviewToolContext
         {
@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         #region Presentation Model
 
-        public override string GetPreviewData(string requestJsml)
+        public override string GetJsmlData(string requestJsml)
         {
             string responseJsml = "";
 

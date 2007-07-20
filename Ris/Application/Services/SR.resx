@@ -171,4 +171,7 @@
   <data name="ExceptionWorklistNameRequired" xml:space="preserve">
     <value>A worklist name is required</value>
   </data>
+  <data name="ExceptionVerifyWithNoReport" xml:space="preserve">
+    <value>The report content is required to verify this step</value>
+  </data>
 </root>

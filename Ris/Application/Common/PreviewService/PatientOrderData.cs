@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Application.Common.PreviewService
 {
@@ -146,7 +147,13 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
         #region Requested Procedure
 
         [DataMember]
-        public string RequestedProcedureTypeName;
+        public string RequestedProcedureName;
+
+        [DataMember]
+        public DateTime? RequestedProcedureStartTime;
+
+        [DataMember]
+        public DateTime? RequestedProcedureEndTime;
 
         #endregion
 
@@ -194,7 +201,7 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
         #region Reporting Procedure Step
 
         [DataMember]
-        public string ReportContent;
+        public string Report;
 
         #endregion
 

@@ -41,6 +41,12 @@
     <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\WorkflowFolders.cs" />
     <Compile Include="HomeTool.cs" />
+    <Compile Include="ReportEditorComponentSettings.cs" />
+    <Compile Include="ReportEditorComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ReportEditorComponentSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="ReportingPreviewComponentSettings.cs" />
     <Compile Include="ReportingPreviewComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -50,7 +56,7 @@
     <Compile Include="ReportSummaryTable.cs" />
     <Compile Include="ReportDocument.cs" />
     <Compile Include="PriorReportComponent.cs" />
-    <Compile Include="ReportContentEditorComponent.cs" />
+    <Compile Include="ReportEditorComponent.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReportingPreviewComponent.cs" />
     <Compile Include="ReportingWorkflowTool.cs" />
@@ -144,6 +150,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="ReportEditorComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ReportEditorComponentSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ReportingPreviewComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ReportingPreviewComponentSettings.Designer.cs</LastGenOutput>

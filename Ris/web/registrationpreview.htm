@@ -3,9 +3,6 @@
 	<head>
         <title>Registration Preview</title>
         <link href="css/default.css" rel="stylesheet" type="text/css" />
-        <link href="js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
-        <script type="text/javascript" src="js/calendar/calendar.js"></script>
-        <script type="text/javascript" src="js/calendar/lang/calendar-en.js"></script>
         <script type="text/javascript" src="js/jsx.js"></script>
 	    <script type="text/javascript" src="js/jsml.js"></script>
 	    <script type="text/javascript" src="js/ui.js"></script>
@@ -27,8 +24,7 @@
                                     "GetPatientAlertsRequest": {} };
 
                     var requestJsml = JSML.create(request, "GetDataRequest");
-                    data = JSML.parse(Ris.getPreviewData(requestJsml));
-                                        
+                    data = JSML.parse(Ris.getJsmlData(requestJsml));
                     if (data == null || data.length == 0)
                     {
                         Field.setValue($("myForm"), "");
@@ -51,16 +47,19 @@
 		            }
 
                     // update patient alerts
-		            if (data.GetPatientAlertsResponse && data.GetPatientAlertsResponse.AlertNotifications && data.GetPatientAlertsResponse.AlertNotifications.length > 0)
+		            if (data.GetPatientAlertsResponse 
+		             && data.GetPatientAlertsResponse.AlertNotifications 
+		             && data.GetPatientAlertsResponse.AlertNotifications.length > 0)
 		            {
     	                var alertNotifications = data.GetPatientAlertsResponse.AlertNotifications;
                         var alertHtml = "";
 	                    alertNotifications.each(function(item) { alertHtml += getAlertHtml(item, patientName); });
                         $("alerts").innerHTML = alertHtml;
 		            }
-
                     // update active and past RIC tables
-		            if (data.ListPatientOrdersResponse && data.ListPatientOrdersResponse.PatientOrderData && data.ListPatientOrdersResponse.PatientOrderData.length > 0)
+		            if (data.ListPatientOrdersResponse 
+		             && data.ListPatientOrdersResponse.PatientOrderData 
+		             && data.ListPatientOrdersResponse.PatientOrderData.length > 0)
 		            {
     		            var patientOrderData = data.ListPatientOrdersResponse.PatientOrderData;
 
@@ -69,7 +68,7 @@
                             function(item) { return item.AccessionNumber; }, 
                             function(item, common)
                             {
-                                common.CombineRequestedProcedureName = String.combine(common.values.map(function(item) { return item.RequestedProcedureTypeName; }), "/");
+                                common.CombineRequestedProcedureName = String.combine(common.values.map(function(item) { return item.RequestedProcedureName; }), "/");
                                 common.EarliestScheduledMPSDateTime = item.EarliestScheduledMPSDateTime;
                                 common.OrderStatus = item.OrderStatus;
                                 common.Insurance = "";
@@ -173,7 +172,7 @@
     		
 		    <p>&nbsp;</p>
 	        <table width="640" border="0" id="activeOrdersTable">
-	            <tr class="sectionheading"><td colspan="7">Active Requests for Imaging Consultation</td></tr>
+	            <tr class="sectionheading"><td colspan="6">Active Requests for Imaging Consultation</td></tr>
 	            <tr class="tableheading">
 		            <td>Requested Procedures</td>
 		            <td>Scheduled For</td>
@@ -184,7 +183,7 @@
 	            </tr>
 	        </table>
 	        <table width="640" border="0" id="pastOrdersTable">
-	            <tr class="sectionheading"><td colspan="7">Past Requests for Imaging Consultation</td></tr>
+	            <tr class="sectionheading"><td colspan="6">Past Requests for Imaging Consultation</td></tr>
 	            <tr class="tableheading">
 		            <td>Requested Procedures</td>
 		            <td>Scheduled For</td>

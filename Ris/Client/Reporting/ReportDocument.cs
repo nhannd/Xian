@@ -15,47 +15,46 @@ namespace ClearCanvas.Ris.Client.Reporting
 {
     public class ReportDocument : Document
     {
-        private ReportingWorklistItem _worklistItem;
+        private EntityRef _reportingStepRef;
+        private PersonNameDetail _patientName;
         private IEnumerable _reportFolders;
-        private bool _readOnly;
 
-        public ReportDocument(ReportingWorklistItem item, IEnumerable folders, bool readOnly, IDesktopWindow window)
-            : base(item.ProcedureStepRef, window)
+        public ReportDocument(EntityRef reportingStepRef, PersonNameDetail patientName, IEnumerable folders, IDesktopWindow window)
+            : base(reportingStepRef, window)
         {
-            _worklistItem = item;
+            _reportingStepRef = reportingStepRef;
+            _patientName = patientName;
             _reportFolders = folders;
-            _readOnly = readOnly;
         }
 
         protected override string GetTitle()
         {
-            return String.Format("Report - {0} ({1})", PersonNameFormat.Format(_worklistItem.PersonNameDetail), _worklistItem.RequestedProcedureName);
+            return String.Format("Report - {0}", PersonNameFormat.Format(_patientName));
         }
 
         protected override IApplicationComponent GetComponent()
         {
             // Create tab and tab groups
             TabComponentContainer tabContainer1 = new TabComponentContainer();
-            tabContainer1.Pages.Add(new TabPage("Prior Report", new PriorReportComponent(_worklistItem)));
-            tabContainer1.Pages.Add(new TabPage("Exam", new PriorReportComponent(_worklistItem)));
+            tabContainer1.Pages.Add(new TabPage("Prior Report", new PriorReportComponent(_reportingStepRef)));
 
             TabGroupComponentContainer tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
             tabGroupContainer.AddTabGroup(new TabGroup(tabContainer1, 1.0f));
 
-            ReportContentEditorComponent reportContentEditor = new ReportContentEditorComponent(_worklistItem, _readOnly);
-            reportContentEditor.VerifyEvent += new EventHandler(reportContentEditor_VerifyEvent);
-            reportContentEditor.SendToVerifyEvent += new EventHandler(reportContentEditor_SendToVerifyEvent);
-            reportContentEditor.SendToTranscriptionEvent += new EventHandler(reportContentEditor_SendToTranscriptionEvent);
-            reportContentEditor.CloseComponentEvent += new EventHandler(reportContentEditor_CloseComponentEvent);
+            ReportEditorComponent reportEditor = new ReportEditorComponent(_reportingStepRef);
+            reportEditor.VerifyEvent += new EventHandler(reportEditor_VerifyEvent);
+            reportEditor.SendToVerifyEvent += new EventHandler(reportEditor_SendToVerifyEvent);
+            reportEditor.SendToTranscriptionEvent += new EventHandler(reportEditor_SendToTranscriptionEvent);
+            reportEditor.CloseComponentEvent += new EventHandler(reportEditor_CloseComponentEvent);
 
             // Construct the Patient Biography page
             return new SplitComponentContainer(
-                new SplitPane("", reportContentEditor, 0.5f),
+                new SplitPane("", reportEditor, 0.5f),
                 new SplitPane("", tabGroupContainer, 0.5f),
                 SplitOrientation.Vertical);
         }
 
-        void reportContentEditor_VerifyEvent(object sender, EventArgs e)
+        void reportEditor_VerifyEvent(object sender, EventArgs e)
         {
             IFolder myVerifiedFolder = CollectionUtils.SelectFirst<IFolder>(_reportFolders,
                 delegate(IFolder folder) 
@@ -74,7 +73,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             this.Close();
         }
 
-        void reportContentEditor_SendToVerifyEvent(object sender, EventArgs e)
+        void reportEditor_SendToVerifyEvent(object sender, EventArgs e)
         {
             IFolder myVerificationFolder = CollectionUtils.SelectFirst<IFolder>(_reportFolders,
                 delegate(IFolder folder)
@@ -93,7 +92,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             this.Close();
         }
 
-        void reportContentEditor_SendToTranscriptionEvent(object sender, EventArgs e)
+        void reportEditor_SendToTranscriptionEvent(object sender, EventArgs e)
         {
             IFolder myTranscriptionFolder = CollectionUtils.SelectFirst<IFolder>(_reportFolders,
                 delegate(IFolder folder)
@@ -112,7 +111,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             this.Close();
         }
 
-        void reportContentEditor_CloseComponentEvent(object sender, EventArgs e)
+        void reportEditor_CloseComponentEvent(object sender, EventArgs e)
         {
             this.Close();
         }

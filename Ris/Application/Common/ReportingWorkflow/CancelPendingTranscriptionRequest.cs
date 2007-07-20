@@ -9,12 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class CancelPendingTranscriptionRequest : DataContractBase
     {
-        public CancelPendingTranscriptionRequest(ReportingWorklistItem item)
+        public CancelPendingTranscriptionRequest(EntityRef transcriptionStepRef)
         {
-            this.WorklistItem = item;
+            this.TranscriptionStepRef = transcriptionStepRef;
         }
 
         [DataMember]
-        public ReportingWorklistItem WorklistItem;
+        public EntityRef TranscriptionStepRef;
     }
 }

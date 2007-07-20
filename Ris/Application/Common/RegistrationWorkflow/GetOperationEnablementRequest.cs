@@ -9,12 +9,16 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
     [DataContract]
     public class GetOperationEnablementRequest : DataContractBase
     {
-        public GetOperationEnablementRequest(RegistrationWorklistItem item)
+        public GetOperationEnablementRequest(EntityRef patientProfileRef, EntityRef orderRef)
         {
-            this.WorklistItem = item;
+            this.PatientProfileRef = patientProfileRef;
+            this.OrderRef = orderRef;
         }
 
         [DataMember]
-        public RegistrationWorklistItem WorklistItem;
+        public EntityRef PatientProfileRef;
+
+        [DataMember]
+        public EntityRef OrderRef;
     }
 }

@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     Platform.GetService<IReportingWorkflowService>(
                         delegate(IReportingWorkflowService service)
                         {
-                            service.ClaimInterpretation(new ClaimInterpretationRequest(item));
+                            service.ClaimInterpretation(new ClaimInterpretationRequest(item.ProcedureStepRef));
                         });
 
                     IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
@@ -187,7 +187,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                             Platform.GetService<IReportingWorkflowService>(
                                 delegate(IReportingWorkflowService service)
                                 {
-                                    StartInterpretationResponse response = service.StartInterpretation(new StartInterpretationRequest(item));
+                                    StartInterpretationResponse response = service.StartInterpretation(new StartInterpretationRequest(item.ProcedureStepRef));
                                     item.ProcedureStepRef = response.InterpretationStepRef;
                                 });
                         }
@@ -196,7 +196,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                             Platform.GetService<IReportingWorkflowService>(
                                 delegate(IReportingWorkflowService service)
                                 {
-                                    StartVerificationResponse response = service.StartVerification(new StartVerificationRequest(item));
+                                    StartVerificationResponse response = service.StartVerification(new StartVerificationRequest(item.ProcedureStepRef));
                                     item.ProcedureStepRef = response.VerificationStepRef;
                                 });
 
@@ -206,10 +206,10 @@ namespace ClearCanvas.Ris.Client.Reporting
                             // Not defined
                         }
 
-                        bool readOnly = selectedFolder is Folders.InTranscriptionFolder ||
-                            selectedFolder is Folders.VerifiedFolder;
+                        //bool readOnly = selectedFolder is Folders.InTranscriptionFolder ||
+                        //    selectedFolder is Folders.VerifiedFolder;
 
-                        doc = new ReportDocument(item, folders, readOnly, desktopWindow);
+                        doc = new ReportDocument(item.ProcedureStepRef, item.PersonNameDetail, folders, desktopWindow);
                         doc.Closed += delegate(object sender, EventArgs e)
                         {
                             if (selectedFolder.IsOpen)
@@ -251,7 +251,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     Platform.GetService<IReportingWorkflowService>(
                         delegate(IReportingWorkflowService service)
                         {
-                            service.CompleteInterpretationForTranscription(new CompleteInterpretationForTranscriptionRequest(item));
+                            service.CompleteInterpretationForTranscription(new CompleteInterpretationForTranscriptionRequest(item.ProcedureStepRef));
                         });
 
                     IFolder myTranscriptionFolder = CollectionUtils.SelectFirst<IFolder>(folders,
@@ -289,7 +289,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     Platform.GetService<IReportingWorkflowService>(
                         delegate(IReportingWorkflowService service)
                         {
-                            service.CompleteInterpretationForVerification(new CompleteInterpretationForVerificationRequest(item));
+                            service.CompleteInterpretationForVerification(new CompleteInterpretationForVerificationRequest(item.ProcedureStepRef));
                         });
 
                     IFolder myVerificationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
@@ -326,7 +326,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     Platform.GetService<IReportingWorkflowService>(
                         delegate(IReportingWorkflowService service)
                         {
-                            service.CancelPendingTranscription(new CancelPendingTranscriptionRequest(item));
+                            service.CancelPendingTranscription(new CancelPendingTranscriptionRequest(item.ProcedureStepRef));
                         });
 
                     IFolder myTranscriptionFolder = CollectionUtils.SelectFirst<IFolder>(folders,
@@ -382,7 +382,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         Platform.GetService<IReportingWorkflowService>(
                             delegate(IReportingWorkflowService service)
                             {
-                                service.CompleteInterpretationAndVerify(new CompleteInterpretationAndVerifyRequest(item));
+                                service.CompleteInterpretationAndVerify(new CompleteInterpretationAndVerifyRequest(item.ProcedureStepRef));
                             });
                     }
                     else if (item.StepType == "Verification")
@@ -390,7 +390,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         Platform.GetService<IReportingWorkflowService>(
                             delegate(IReportingWorkflowService service)
                             {
-                                service.CompleteVerification(new CompleteVerificationRequest(item));
+                                service.CompleteVerification(new CompleteVerificationRequest(item.ProcedureStepRef));
                             });
                     }
                     else // (item.StepType == "Transcription")
@@ -411,6 +411,58 @@ namespace ClearCanvas.Ris.Client.Reporting
                 }
             }
         }
+
+        [MenuAction("apply", "folderexplorer-items-contextmenu/Add Addendum")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Add Addendum")]
+        [ClickHandler("apply", "Apply")]
+        [IconSet("apply", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolMedium.png", "Icons.AddToolLarge.png")]
+        [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+        [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
+        public class AddendumTool : WorkflowItemTool
+        {
+            public AddendumTool()
+                : base("CreateAddendum")
+            {
+            }
+
+            protected override bool Execute(ReportingWorklistItem item, IDesktopWindow desktopWindow, IFolder selectedFolder, IEnumerable folders)
+            {
+                Document doc = DocumentManager.Get(item.ProcedureStepRef);
+                if (doc != null)
+                {
+                    doc.Activate();
+                }
+                else
+                {
+                    try
+                    {
+                        CreateAddendumResponse response = null;
+
+                        Platform.GetService<IReportingWorkflowService>(
+                            delegate(IReportingWorkflowService service)
+                            {
+                                response = service.CreateAddendum(new CreateAddendumRequest(item.ProcedureStepRef));
+                                item.ProcedureStepRef = response.VerificationStepRef;
+                            });
+
+                        IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                            delegate(IFolder f) { return f is Folders.InProgressFolder; });
+                        myInterpretationFolder.RefreshCount();
+
+                        doc = new ReportDocument(response.InterpretationStepRef, item.PersonNameDetail, folders, desktopWindow);
+                        doc.Open();
+                    }
+                    catch (Exception e)
+                    {
+                        ExceptionHandler.Report(e, desktopWindow);
+                        return false;
+                    }
+                }
+
+                return true;
+            }
+        }
+
     }
 }
 

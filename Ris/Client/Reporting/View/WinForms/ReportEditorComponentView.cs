@@ -9,20 +9,20 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="ReportContentEditorComponent"/>
+    /// Provides a Windows Forms view onto <see cref="ReportEditorComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(ReportContentEditorComponentViewExtensionPoint))]
-    public class ReportContentEditorComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(ReportEditorComponentViewExtensionPoint))]
+    public class ReportEditorComponentView : WinFormsView, IApplicationComponentView
     {
-        private ReportContentEditorComponent _component;
-        private ReportContentEditorComponentControl _control;
+        private ReportEditorComponent _component;
+        private ReportEditorComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (ReportContentEditorComponent)component;
+            _component = (ReportEditorComponent)component;
         }
 
         #endregion
@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new ReportContentEditorComponentControl(_component);
+                    _control = new ReportEditorComponentControl(_component);
                 }
                 return _control;
             }

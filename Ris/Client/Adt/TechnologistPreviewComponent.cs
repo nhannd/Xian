@@ -35,7 +35,7 @@ namespace ClearCanvas.Ris.Client.Adt
     /// TechnologistPreviewComponent class
     /// </summary>
     [AssociateView(typeof(TechnologistPreviewComponentViewExtensionPoint))]
-    public class TechnologistPreviewComponent : PreviewApplicationComponent
+    public class TechnologistPreviewComponent : DHtmlComponent
     {
         class TechnologistPreviewToolContext : ToolContext, ITechnologistPreviewToolContext
         {
@@ -87,7 +87,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Public Properties
 
-        public override string GetPreviewData(string requestJsml)
+        public override string GetJsmlData(string requestJsml)
         {
             string responseJsml = "";
 

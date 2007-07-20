@@ -180,7 +180,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 Platform.GetService<IModalityWorkflowService>(
                     delegate(IModalityWorkflowService service)
                     {
-                        GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem));
+                        GetOperationEnablementResponse response = service.GetOperationEnablement(new GetOperationEnablementRequest(selectedItem.ProcedureStepRef));
                         _workflowEnablement = response.OperationEnablementDictionary;
                     });
             }

@@ -5,6 +5,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
@@ -23,7 +24,7 @@ namespace ClearCanvas.Ris.Client.Reporting
     [AssociateView(typeof(PriorReportComponentViewExtensionPoint))]
     public class PriorReportComponent : ApplicationComponent
     {
-        private ReportingWorklistItem _worklistItem;
+        private EntityRef _reportingStepRef;
 
         private ReportSummaryTable _reportList;
         private ReportSummary _selectedReport;
@@ -31,9 +32,9 @@ namespace ClearCanvas.Ris.Client.Reporting
         /// <summary>
         /// Constructor
         /// </summary>
-        public PriorReportComponent(ReportingWorklistItem item)
+        public PriorReportComponent(EntityRef reportingStepRef)
         {
-            _worklistItem = item;
+            _reportingStepRef = reportingStepRef;
             _reportList = new ReportSummaryTable();
         }
 
@@ -42,7 +43,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             Platform.GetService<IReportingWorkflowService>(
                 delegate(IReportingWorkflowService service)
                 {
-                    GetPriorReportResponse response = service.GetPriorReport(new GetPriorReportRequest(_worklistItem.ProcedureStepRef));
+                    GetPriorReportResponse response = service.GetPriorReport(new GetPriorReportRequest(_reportingStepRef));
                     _reportList.Items.AddRange(response.Reports);
                 });
 
@@ -77,7 +78,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public string ReportContent
         {
-            get { return _selectedReport == null ? null : _selectedReport.Parts[0].Content; }
+            get { return _selectedReport == null ? null : _selectedReport.Format(); }
         }
 
         private void ReportSelectionChanged()

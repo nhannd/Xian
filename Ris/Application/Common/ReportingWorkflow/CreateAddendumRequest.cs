@@ -9,12 +9,12 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class CreateAddendumRequest : DataContractBase
     {
-        public CreateAddendumRequest(ReportingWorklistItem item)
+        public CreateAddendumRequest(EntityRef verificationStepRef)
         {
-            this.WorklistItem = item;
+            this.VerificationStepRef = verificationStepRef;
         }
 
         [DataMember]
-        public ReportingWorklistItem WorklistItem;
+        public EntityRef VerificationStepRef;
     }
 }
