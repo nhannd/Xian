@@ -13,9 +13,15 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// WinForms implementation of <see cref="IDialogBoxView"/>. 
     /// </summary>
     /// <remarks>
+    /// <para>
     /// This class may subclassed if customization is desired.  In this case, the <see cref="DesktopWindowView"/>
     /// class must also be subclassed in order to instantiate the subclass from 
     /// its <see cref="DesktopWindowView.CreateDialogBoxView"/> method.
+    /// </para>
+    /// <para>
+    /// Reasons for subclassing may include: overriding the <see cref="CreateDialogBoxForm"/> factory method to supply
+    /// a custom subclass of the <see cref="DialogBoxForm"/> class.
+    /// </para>
     /// </remarks>
     public class DialogBoxView : DesktopObjectView, IDialogBoxView
     {
@@ -29,7 +35,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         /// <param name="dialogBox"></param>
         /// <param name="owner"></param>
-        protected internal DialogBoxView(DialogBox dialogBox, IWin32Window owner)
+        protected internal DialogBoxView(DialogBox dialogBox, DesktopWindowView owner)
         {
             IApplicationComponentView componentView = (IApplicationComponentView)ViewFactory.CreateAssociatedView(dialogBox.Component.GetType());
             componentView.SetComponent((IApplicationComponent)dialogBox.Component);
@@ -37,8 +43,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             _form = new DialogBoxForm(dialogBox.Title, (Control)componentView.GuiElement);
             _form.FormClosing += new FormClosingEventHandler(_form_FormClosing);
 
-            _owner = owner;
+            _owner = owner.DesktopForm;
         }
+
+        #region DesktopObjectView overrides
 
         /// <summary>
         /// Not used.
@@ -81,6 +89,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             _form.Text = title;
         }
 
+        #endregion
 
         #region IDialogBoxView Members
 
@@ -144,6 +153,17 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         #endregion
+
+        /// <summary>
+        /// Called to create an instance of a <see cref="DialogBoxForm"/> for use by this view.
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="content"></param>
+        /// <returns></returns>
+        protected virtual DialogBoxForm CreateDialogBoxForm(string title, Control content)
+        {
+            return new DialogBoxForm(title, content);
+        }
     
         private void _form_FormClosing(object sender, FormClosingEventArgs e)
         {

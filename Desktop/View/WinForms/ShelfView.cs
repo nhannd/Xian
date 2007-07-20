@@ -13,9 +13,14 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// WinForms implementation of <see cref="IShelfView"/>. 
     /// </summary>
     /// <remarks>
+    /// <para>
     /// This class may subclassed if customization is desired.  In this case, the <see cref="DesktopWindowView"/>
     /// class must also be subclassed in order to instantiate the subclass from 
     /// its <see cref="DesktopWindowView.CreateShelfView"/> method.
+    /// </para>
+    /// <para>
+    /// Reasons for subclassing may include: overriding <see cref="SetTitle"/> to customize the display of the workspace title.
+    /// </para>
     /// </remarks>
     public class ShelfView : DesktopObjectView, IShelfView
     {

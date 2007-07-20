@@ -18,9 +18,19 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// WinForms implementation of <see cref="IDesktopWindowView"/>. 
     /// </summary>
     /// <remarks>
+    /// <para>
     /// This class may subclassed if customization is desired.  In this case, the <see cref="ApplicationView"/>
     /// class must also be subclassed in order to instantiate the subclass from 
     /// its <see cref="ApplicationView.CreateDesktopWindowView"/> method.
+    /// </para>
+    /// <para>
+    /// Reasons for subclassing may include: overriding the <see cref="CreateDesktopForm"/> factory method to supply
+    /// a custom subclass of the <see cref="DesktopForm"/> class, overriding the <see cref="CreateWorkspaceView"/>,
+    /// <see cref="CreateShelfView"/>,
+    /// or <see cref="CreateDialogBoxView"/> factory methods to supply custom subclasses of these view classes, overriding
+    /// <see cref="SetMenuModel"/> or <see cref="SetToolbarModel"/> to customize the menu/toolbar display,
+    /// and overriding <see cref="ShowMessageBox"/> to customize the display of message boxes.
+    /// </para>
     /// </remarks>
     public class DesktopWindowView : DesktopObjectView, IDesktopWindowView
     {
@@ -35,7 +45,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="window"></param>
         protected internal DesktopWindowView(DesktopWindow window)
         {
-            _form = new DesktopForm();
+            _form = CreateDesktopForm();
             _workspaceActivationOrder = new OrderedSet<WorkspaceView>();
 
             // listen to some events on the form
@@ -58,6 +68,11 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region Form Event Handlers
 
+        /// <summary>
+        /// Cancels the forms closing event, and raises our <see cref="CloseRequested"/> event instead.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void FormFormClosingEventHandler(object sender, FormClosingEventArgs e)
         {
             // cancel the request - don't let winforms close the form
@@ -70,8 +85,15 @@ namespace ClearCanvas.Desktop.View.WinForms
         private void FormDeactivateEventHandler(object sender, EventArgs e)
         {
             // do nothing
+            // note: if we are showing a modal dialog, the form gets de-activated, but we are still the active desktop window
+            // therefore, this event is not really useful to us
         }
 
+        /// <summary>
+        /// Handles the forms Activated event in order to track the currently active window.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void FormActivatedEventHandler(object sender, EventArgs e)
         {
             if (_lastActiveWindow != this)
@@ -87,6 +109,11 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+        /// <summary>
+        /// Handles the forms visible event in order to track our visible status.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private void FormVisibleChangedEventHandler(object sender, EventArgs e)
         {
             this.SetVisibleStatus(_form.Visible);
@@ -99,7 +126,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         internal void AddWorkspaceView(WorkspaceView workspaceView)
         {
             // When we add a new workspace, we need to
-            HideShelves();
+            HideShelvesOnWorkspaceOpen();
 
             _form.TabbedGroups.ActiveLeaf.TabPages.Add(workspaceView.TabPage);
             workspaceView.TabPage.Selected = true;
@@ -294,7 +321,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
-        internal void HideShelves()
+        internal void HideShelvesOnWorkspaceOpen()
         {
             // 1) Retract all visible autohide windows
             // 2) Put docked windows in autohide mode if the tool has specified so
@@ -316,12 +343,16 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             if (shelfView.Content.IsAutoHidden)
             {
+                // auto-hidden - bring into view
                 _form.DockingManager.BringAutoHideIntoView(shelfView.Content);
             }
             else
             {
+                // docked or floating - ensure we are in front
                 shelfView.Content.BringToFront();
             }
+
+            // set focus to the control - this is what actually activates the window
             shelfView.Content.Control.Focus();
         }
 
@@ -392,67 +423,145 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region IDesktopWindowView Members
 
-        public IWorkspaceView CreateWorkspaceView(Workspace workspace)
+        /// <summary>
+        /// Creates a new view for the specified <see cref="Workspace"/>.
+        /// </summary>
+        /// <remarks>
+        /// Override this method if you want to return a custom implementation of <see cref="IWorkspaceView"/>.
+        /// In practice, it is preferable to subclass <see cref="WorkspaceView"/> rather than implement <see cref="IWorkspaceView"/>
+        /// directly.
+        /// </remarks>
+        /// <param name="workspace"></param>
+        /// <returns></returns>
+        public virtual IWorkspaceView CreateWorkspaceView(Workspace workspace)
         {
             return new WorkspaceView(workspace, this);
         }
 
-        public IShelfView CreateShelfView(Shelf shelf)
+        /// <summary>
+        /// Creates a new view for the specified <see cref="Shelf"/>.
+        /// </summary>
+        /// <remarks>
+        /// Override this method if you want to return a custom implementation of <see cref="IShelfView"/>.
+        /// In practice, it is preferable to subclass <see cref="ShelfView"/> rather than implement <see cref="IShelfView"/>
+        /// directly.
+        /// </remarks>
+        /// <param name="shelf"></param>
+        /// <returns></returns>
+        public virtual IShelfView CreateShelfView(Shelf shelf)
         {
             return new ShelfView(shelf, this);
         }
 
-        public void SetMenuModel(ActionModelNode model)
+        /// <summary>
+        /// Creates a new view for the specified <see cref="DialogBox"/>.
+        /// </summary>
+        /// <remarks>
+        /// Override this method if you want to return a custom implementation of <see cref="IDialogBoxView"/>.
+        /// In practice, it is preferable to subclass <see cref="DialogBoxView"/> rather than implement <see cref="IDialogBoxView"/>
+        /// directly.
+        /// </remarks>
+        /// <param name="dialogBox"></param>
+        /// <returns></returns>
+        public virtual IDialogBoxView CreateDialogBoxView(DialogBox dialogBox)
+        {
+            return new DialogBoxView(dialogBox, this);
+        }
+
+        /// <summary>
+        /// Sets the menu model, causing the menu displayed on the screen to be updated.
+        /// </summary>
+        /// <remarks>
+        /// The default implementation just sets the <see cref="DesktopForm.MenuModel"/> property.
+        /// Override this method if you need to perform custom processing.
+        /// </remarks>
+        /// <param name="model"></param>
+        public virtual void SetMenuModel(ActionModelNode model)
         {
             _form.MenuModel = model;
         }
 
-        public void SetToolbarModel(ActionModelNode model)
+        /// <summary>
+        /// Sets the toolbar model, causing the toolbar displayed on the screen to be updated.
+        /// </summary>
+        /// <remarks>
+        /// The default implementation just sets the <see cref="DesktopForm.ToolbarModel"/> property.
+        /// Override this method if you need to perform custom processing.
+        /// </remarks>
+        /// <param name="model"></param>
+        public virtual void SetToolbarModel(ActionModelNode model)
         {
             _form.ToolbarModel = model;
         }
 
-        public DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
+        /// <summary>
+        /// Displays a message box.
+        /// </summary>
+        /// <remarks>
+        /// Override this method if you need to customize the display of message boxes.
+        /// </remarks>
+        /// <param name="message"></param>
+        /// <param name="buttons"></param>
+        /// <returns></returns>
+        public virtual DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
         {
             MessageBox mb = new MessageBox();
             return mb.Show(message, buttons, _form);
-        }
-
-        public IDialogBoxView CreateDialogBoxView(DialogBox dialogBox)
-        {
-            return new DialogBoxView(dialogBox, _form);
         }
 
         #endregion
 
         #region DesktopObjectView overrides
 
+        /// <summary>
+        /// Opens this view, showing the form on the screen.
+        /// </summary>
         public override void Open()
         {
             _form.LoadWindowSettings();
             _form.Show();
         }
 
+        /// <summary>
+        /// Activates the view, activating the form on the screen.
+        /// </summary>
         public override void Activate()
         {
             _form.Activate();
         }
 
+        /// <summary>
+        /// Shows the view, making the form visible on the screen.
+        /// </summary>
         public override void Show()
         {
             _form.Show();
         }
 
+        /// <summary>
+        /// Hides the view, hiding the form on the screen.
+        /// </summary>
         public override void Hide()
         {
             _form.Hide();
         }
 
+        /// <summary>
+        /// Sets the title that is displayed in the form's title bar.
+        /// </summary>
+        /// <remarks>
+        /// Override this method if you need to customize the title that is displayed on the form.
+        /// </remarks>
+        /// <param name="title"></param>
         public override void SetTitle(string title)
         {
             _form.Text = title;
         }
 
+        /// <summary>
+        /// Disposes of this object, closing the form.
+        /// </summary>
+        /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
         {
             if (disposing && _form != null)
@@ -471,5 +580,22 @@ namespace ClearCanvas.Desktop.View.WinForms
         }
 
         #endregion
+
+        /// <summary>
+        /// Called to create an instance of a <see cref="DesktopForm"/> for use by this view.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual DesktopForm CreateDesktopForm()
+        {
+            return new DesktopForm();
+        }
+
+        /// <summary>
+        /// Gets the <see cref="DesktopForm"/> that is displayed on the screen.
+        /// </summary>
+        protected internal DesktopForm DesktopForm
+        {
+            get { return _form; }
+        }
     }
 }

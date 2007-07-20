@@ -63,7 +63,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <summary>
         /// Gets or sets the menu model.
         /// </summary>
-        protected internal ActionModelNode MenuModel
+        public ActionModelNode MenuModel
         {
             get { return _menuModel; }
             set
@@ -76,7 +76,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <summary>
         /// Gets or sets the toolbar model.
         /// </summary>
-        protected internal ActionModelNode ToolbarModel
+        public ActionModelNode ToolbarModel
         {
             get { return _toolbarModel; }
             set
@@ -89,7 +89,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <summary>
         /// Gets the <see cref="TabbedGroups"/> object that manages workspace tab groups.
         /// </summary>
-        protected internal TabbedGroups TabbedGroups
+        public TabbedGroups TabbedGroups
         {
             get { return _tabbedGroups; }
         }
@@ -97,7 +97,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <summary>
         /// Gets the <see cref="DockingManager"/> object that manages shelf docking windows.
         /// </summary>
-        protected internal DockingManager DockingManager
+        public DockingManager DockingManager
         {
             get { return _dockingManager; }
         }
@@ -198,6 +198,10 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <summary>
         /// Called to build menus and toolbars.  Override this method to customize menu and toolbar building.
         /// </summary>
+        /// <remarks>
+        /// The default implementation simply clears and re-creates the toolstrip using methods on the
+        /// utility class <see cref="ToolStripBuilder"/>.
+        /// </remarks>
         /// <param name="kind"></param>
         /// <param name="toolStrip"></param>
         /// <param name="actionModel"></param>

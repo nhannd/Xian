@@ -9,7 +9,12 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// WinForms implementation of <see cref="IApplicationView"/>. 
     /// </summary>
     /// <remarks>
-    /// This class acts as a view onto the application as a whole. It may subclassed if customization is desired.
+    /// <para>
+    /// This class may subclassed if customization is desired.
+    /// Reasons for subclassing may include: overriding the <see cref="CreateDesktopWindowView"/>
+    /// factory method to supply a custom subclasses of <see cref="DesktopWindowView"/>,
+    /// and overriding <see cref="ShowMessageBox"/> to customize the display of message boxes.
+    /// </para>
     /// </remarks>
     [ExtensionOf(typeof(ApplicationViewExtensionPoint))]
     public class ApplicationView : WinFormsView, IApplicationView
@@ -26,9 +31,14 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <summary>
         /// Creates a new view for the specified <see cref="DesktopWindow"/>.
         /// </summary>
+        /// <remarks>
+        /// Override this method if you want to return a custom implementation of <see cref="IDesktopWindowView"/>.
+        /// In practice, it is preferable to subclass <see cref="DesktopWindowView"/> rather than implement <see cref="IDesktopWindowView"/>
+        /// directly.
+        /// </remarks>
         /// <param name="window"></param>
         /// <returns></returns>
-        public IDesktopWindowView CreateDesktopWindowView(DesktopWindow window)
+        public virtual IDesktopWindowView CreateDesktopWindowView(DesktopWindow window)
         {
             return new DesktopWindowView(window);
         }
@@ -36,10 +46,13 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <summary>
         /// Displays a message box.
         /// </summary>
+        /// <remarks>
+        /// Override this method if you need to customize the display of message boxes.
+        /// </remarks>
         /// <param name="message"></param>
         /// <param name="actions"></param>
         /// <returns></returns>
-        public DialogBoxAction ShowMessageBox(string message, MessageBoxActions actions)
+        public virtual DialogBoxAction ShowMessageBox(string message, MessageBoxActions actions)
         {
             MessageBox mb = new MessageBox();
             return mb.Show(message, actions);

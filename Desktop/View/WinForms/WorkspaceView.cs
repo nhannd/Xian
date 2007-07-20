@@ -12,9 +12,14 @@ namespace ClearCanvas.Desktop.View.WinForms
     /// WinForms implementation of <see cref="IWorkspaceView"/>. 
     /// </summary>
     /// <remarks>
+    /// <para>
     /// This class may subclassed if customization is desired.  In this case, the <see cref="DesktopWindowView"/>
     /// class must also be subclassed in order to instantiate the subclass from 
     /// its <see cref="DesktopWindowView.CreateWorkspaceView"/> method.
+    /// </para>
+    /// <para>
+    /// Reasons for subclassing may include: overriding <see cref="SetTitle"/> to customize the display of the workspace title.
+    /// </para>
     /// </remarks>
     public class WorkspaceView : DesktopObjectView, IWorkspaceView
     {
