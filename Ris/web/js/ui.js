@@ -19,6 +19,8 @@ var _IE = document.all;
             options - an object specifying options for the table.
                 The options object has the following properties:
                     editInPlace (bool) - indicates whether to create an edit-in-place style table, vs a read-only table.
+                    flow (bool) - true: the logical columns will be flowed inside of a single TD. false: each logical column given its own TD.
+                    checkBoxes (bool) - inidicates whether the first column of the table should be a checkbox column.
                     
             columns - an array of column objects that maps properties of an item to columns of the table. 
                 For an non edit-in-place table, this may simply be an array of strings. Each string will be treated as a property
@@ -197,12 +199,15 @@ var Table = {
 		    if(this.renderRow)
 		        this.renderRow(this, { htmlRow: tr, rowIndex: index-1, item: obj });
     		
-		    // add checkbox cell at start of row
-		    var td = tr.insertCell(0);
-		    var checkBox = document.createElement("input");
-		    checkBox.type = "checkbox";
-		    td.appendChild(checkBox);
-		    this._checkBoxes[index] = checkBox;
+		    if(this._options.checkBoxes)
+		    {
+		        // add checkbox cell at start of row
+		        var td = tr.insertCell(0);
+		        var checkBox = document.createElement("input");
+		        checkBox.type = "checkbox";
+		        td.appendChild(checkBox);
+		        this._checkBoxes[index] = checkBox;
+		    }
     		
 		    // add errorProvider image next to checkbox
 		    this.errorProvider.setError(checkBox, "");
@@ -225,8 +230,8 @@ var Table = {
 	            }
 	            else
 	            {
-		            // add one cell for each column
-			        cell = tr.insertCell(i+1);
+		            // add one cell for each column, offset by 1 if there is a checkbox column
+			        cell = tr.insertCell(i + this._options.checkBoxes ? 1 : 0);
 	            }
 		        
 		        this._renderCell(index, i, cell, obj);

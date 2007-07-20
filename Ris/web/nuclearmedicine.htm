@@ -95,7 +95,7 @@
 			    
 			    data.injections = data.injections || [];
 			    data.scans = data.scans || [];
-		        var injectionsTable = Table.createTable($("injectionsTable"), { editInPlace: true, flow: true },
+		        var injectionsTable = Table.createTable($("injectionsTable"), { editInPlace: true, flow: true, checkBoxes: true },
 		             [
 		                {   label: "Injection",
 		                    cellType: "choice",
@@ -161,7 +161,7 @@
 		        injectionsTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
 		        injectionsTable.bindItems(data.injections);
 		        
-		        var scansTable = Table.createTable($("scansTable"), { editInPlace: true, flow: true },
+		        var scansTable = Table.createTable($("scansTable"), { editInPlace: true, flow: true, checkBoxes: true },
 		             [
 		                {   label: "Start Time",
 		                    cellType: "datetime",
