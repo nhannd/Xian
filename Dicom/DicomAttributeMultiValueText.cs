@@ -4,7 +4,6 @@ using System.Text;
 using System.Runtime.InteropServices;
 using System.Globalization;
 
-//using ClearCanvas.Dicom.Exceptions;
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom
@@ -20,22 +19,24 @@ namespace ClearCanvas.Dicom
 
         #region Constructors
 
-        internal DicomAttributeMultiValueText(uint tag)
+        internal DicomAttributeMultiValueText(uint tag) 
             : base(tag)
         {
-
+            
         }
 
         internal DicomAttributeMultiValueText(DicomTag tag)
             : base(tag)
         {
-
+            
         }
 
         internal DicomAttributeMultiValueText(DicomTag tag, ByteBuffer item)
             : base(tag)
         {
-            String valueArray = item.GetString();
+            String valueArray;
+
+            valueArray = item.GetString();
 
             // store the length before removing pad chars
             StreamLength = (uint)valueArray.Length;
@@ -90,12 +91,12 @@ namespace ClearCanvas.Dicom
             {
                 if (value == null)
                     value = new StringBuilder(val);
-                else
+                else 
                     value.AppendFormat("\\{0}", val);
             }
 
             if (value == null) return "";
-
+             
             return value.ToString();
         }
 
@@ -127,7 +128,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if ((Count == 1) && (_values != null) && (_values.Length == 0))
+                if ((Count == 1) && (_values!=null) && (_values.Length == 0))
                     return true;
                 return false;
             }
@@ -527,7 +528,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            return DateTime.TryParseExact(_values[i], "yyyyMMddHHmmss.FFFFFF&ZZZZ", CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault, out value);
+            return DateTime.TryParseExact(_values[i],"yyyyMMddHHmmss.FFFFFF&ZZZZ", CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault, out value);
         }
     }
     #endregion
@@ -614,7 +615,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            return ushort.TryParse(_values[i], NumberStyle, CultureInfo.CurrentCulture, out value);
+            return ushort.TryParse(_values[i],NumberStyle, CultureInfo.CurrentCulture, out value);
         }
         public override bool TryGetInt16(int i, out short value)
         {
@@ -650,14 +651,14 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeLO
-    public class DicomAttributeLO : DicomAttributeMultiValueText
+        public class DicomAttributeLO : DicomAttributeMultiValueText
     {
         #region Constructors
 
-        public DicomAttributeLO(uint tag)
+        public DicomAttributeLO(uint tag) 
             : base(tag)
         {
-
+            
         }
 
         public DicomAttributeLO(DicomTag tag)
@@ -680,7 +681,7 @@ namespace ClearCanvas.Dicom
         }
 
 
-        #endregion
+        #endregion 
 
         public override DicomAttribute Copy()
         {

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Runtime.InteropServices;
 
-//using ClearCanvas.Dicom.Exceptions;
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom
@@ -15,23 +14,23 @@ namespace ClearCanvas.Dicom
 
         #region Constructors
 
-        internal DicomAttributeSingleValueText(uint tag)
+        internal DicomAttributeSingleValueText(uint tag) 
             : base(tag)
         {
-
+            
         }
 
         internal DicomAttributeSingleValueText(DicomTag tag)
             : base(tag)
         {
-
+            
         }
 
         internal DicomAttributeSingleValueText(DicomTag tag, ByteBuffer item)
             : base(tag)
         {
-            _value = item.GetString();
-
+            _value = item.GetString();            
+            
             // Saw some Osirix images that had padding on SH attributes with a null character, just
             // pull them out here.
             _value = _value.Trim(new char[] { tag.VR.PadChar, '\0' });

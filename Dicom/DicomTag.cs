@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+using ClearCanvas.Dicom.IO;
+
 namespace ClearCanvas.Dicom
 {
     /// <summary>
@@ -168,7 +170,7 @@ namespace ClearCanvas.Dicom
         {
             get { return _vmHigh; }
         }
-
+        
         /// <summary>
         /// Gets a string representing the value of multiplicity defined by DICOM for the tag.
         /// </summary>
@@ -316,7 +318,7 @@ namespace ClearCanvas.Dicom
                 return true;
             return false;
         }
-
+ 
         /// <summary>
         /// Greater than or equal to operator.
         /// </summary>
@@ -329,6 +331,17 @@ namespace ClearCanvas.Dicom
             if (t1.Group > t2.Group)
                 return true;
             return false;
+        }
+        #endregion
+
+        #region Public Methds
+        public DicomAttribute CreateDicomAttribute()
+        {
+            return _vr.CreateDicomAttribute(this);
+        }
+        public DicomAttribute CreateDicomAttribute(ByteBuffer bb)
+        {
+            return _vr.CreateDicomAttribute(this,bb);
         }
         #endregion
     }

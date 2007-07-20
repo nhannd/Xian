@@ -11,6 +11,17 @@ namespace ClearCanvas.Dicom
         //    _specificCharacterSet = specificCharacterSet;
         //}
 
+        // This is a hack for the time being to attempt to get specific character set encoding working properly.
+        // It still needs work.
+        public static Encoding GetEncoding(string specificCharacterSet)
+        {
+            CharacterSetInfo defaultRepertoire;
+            Dictionary<string, CharacterSetInfo> extensionRepertoires;
+            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
+
+            return Encoding.GetEncoding(defaultRepertoire.MicrosoftCodePage);
+        }
+
         static SpecificCharacterSetParser()
         {
             _characterSetInfo = new Dictionary<string, CharacterSetInfo>();

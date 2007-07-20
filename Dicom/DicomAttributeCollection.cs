@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 
-
 namespace ClearCanvas.Dicom
 {
     /// <summary>
@@ -13,7 +12,7 @@ namespace ClearCanvas.Dicom
     /// </summary>
     /// <remarks>
     /// <para>
-    /// This class represents a collection of <see cref="AbstractAttribute"/> classes.  It is used by the <see cref="AbstractMessage"/> class to 
+    /// This class represents a collection of <see cref="DicomAttribute"/> classes.  It is used by the <see cref="DicomMessageBase"/> class to 
     /// represent the meta info and data set of <see cref="DicomFile"/> and <see cref="DicomMessage"/> objects.
     /// </para>
     /// <para>
@@ -25,7 +24,7 @@ namespace ClearCanvas.Dicom
         #region Member Variables
 
         private SortedDictionary<uint, DicomAttribute> _attributeList = new SortedDictionary<uint, DicomAttribute>();
-
+        private String _specificCharacterSet = "";
         #endregion
 
         #region Constructors
@@ -59,7 +58,35 @@ namespace ClearCanvas.Dicom
 
         #endregion
 
+        #region Public Properties
+        public String SpecificCharacterSet
+        {
+            get { return _specificCharacterSet; }
+            set 
+            { 
+                _specificCharacterSet = value;
+
+                // This line forces the value to be placed in sequences when we don't want it to be, because of how the parser is set
+                //this[DicomTags.SpecificCharacterSet].SetStringValue(_specificCharacterSet);
+            }
+        }
+        #endregion
+
         #region Public Methods
+
+        /// <summary>
+        /// Determines if an attribute collection is empty.
+        /// </summary>
+        /// <returns>true if empty (no tags have a value), false otherwise.</returns>
+        public bool IsEmpty()
+        {
+            foreach (DicomAttribute attr in this)
+            {
+                if (attr.Count > 0)
+                    return false;
+            }
+            return true;
+        }
 
         /// <summary>
         /// Check if a tag is contained in an DicomAttributeCollection and has a value.
@@ -91,31 +118,37 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Indexer to return a specific tag in the attribute collection.
         /// </summary>
-        /// <param name="tag"></param>
+        /// <remarks>
+        /// When setting, if the value is null, the tag will be removed from the collection.
+        /// </remarks>
+        /// <param name="tag">The tag to look for.</param>
         /// <returns></returns>
         public DicomAttribute this[uint tag]
         {
-            get
+            get 
             {
                 DicomAttribute attr = null;
 
                 if (!_attributeList.ContainsKey(tag))
                 {
-                    attr = DicomAttribute.NewAttribute(tag);
+                    DicomTag dicomTag = DicomTagDictionary.Instance[tag];
 
-                    if (attr == null)
+                    if (dicomTag == null)
                     {
                         throw new DicomException("Invalid tag: " + tag.ToString());// TODO:  Hex formating
                     }
+
+                    attr = dicomTag.CreateDicomAttribute();
+
                     _attributeList[tag] = attr;
                 }
-                else
+                else 
                     attr = _attributeList[tag];
 
 
-                return attr;
+                return attr; 
             }
-            set
+            set 
             {
                 if (value == null)
                 {
@@ -126,7 +159,7 @@ namespace ClearCanvas.Dicom
                     if (value.Tag.TagValue != tag)
                         throw new DicomException("Tag being set does not match tag in AbstractAttribute");
                     _attributeList[tag] = value;
-
+                    
                 }
             }
         }
@@ -144,7 +177,7 @@ namespace ClearCanvas.Dicom
 
                 if (!_attributeList.ContainsKey(tag.TagValue))
                 {
-                    attr = DicomAttribute.NewAttribute(tag);
+                    attr = tag.CreateDicomAttribute();
                     if (attr == null)
                     {
                         throw new DicomException("Invalid tag: " + tag.HexString);// TODO:  Hex formating
@@ -166,7 +199,7 @@ namespace ClearCanvas.Dicom
                 {
                     if (value.Tag.TagValue != tag.TagValue)
                         throw new DicomException("Tag being set does not match tag in AbstractAttribute");
-
+     
                     _attributeList[tag.TagValue] = value;
                 }
             }
@@ -248,7 +281,7 @@ namespace ClearCanvas.Dicom
                 if (!thisAttrib.Equals(compareAttrib))
                     return false;
             }
-
+           
             return true;
         }
 
@@ -306,7 +339,7 @@ namespace ClearCanvas.Dicom
 
         public IEnumerator<DicomAttribute> GetEnumerator()
         {
-            return _attributeList.Values.GetEnumerator();
+            return _attributeList.Values.GetEnumerator();   
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -359,7 +392,7 @@ namespace ClearCanvas.Dicom
             }
             catch (Exception e)
             {
-                DicomLogger.LogErrorException(e, "Error in default value type! - {0}", vtype.ToString());
+                DicomLogger.LogErrorException(e,"Error in default value type! - {0}", vtype.ToString());
                 return null;
             }
         }
@@ -381,7 +414,7 @@ namespace ClearCanvas.Dicom
                         float[] array = new float[elem.Count];
                         for (int i = 0; i < array.Length; i++)
                         {
-                            elem.TryGetFloat32(i, out array[i]);
+                             elem.TryGetFloat32(i, out array[i]);
                         }
                         return array;
                     }
@@ -393,7 +426,7 @@ namespace ClearCanvas.Dicom
 
                         return array;
                     }
-
+                    
                     if (vtype.GetElementType() != elem.GetValueType())
                         throw new DicomException("Invalid binding type for Element VR!");
                     //if (elem.GetValueType() == typeof(DateTime))
@@ -508,19 +541,22 @@ namespace ClearCanvas.Dicom
                     try
                     {
                         DicomFieldAttribute dfa = (DicomFieldAttribute)field.GetCustomAttributes(typeof(DicomFieldAttribute), true)[0];
-                        DicomAttribute elem = this[dfa.Tag];
-                        if ((elem == null || (elem.StreamLength == 0 && dfa.UseDefaultForZeroLength)) && dfa.DefaultValue == DicomFieldDefault.None)
+                        if (this.Contains(dfa.Tag))
                         {
-                            // do nothing
-                        }
-                        else
-                        {
-                            field.SetValue(obj, LoadDicomFieldValue(elem, field.FieldType, dfa.DefaultValue, dfa.UseDefaultForZeroLength));
+                            DicomAttribute elem = this[dfa.Tag];
+                            if ((elem.StreamLength == 0 && dfa.UseDefaultForZeroLength) && dfa.DefaultValue == DicomFieldDefault.None)
+                            {
+                                // do nothing
+                            }
+                            else
+                            {
+                                field.SetValue(obj, LoadDicomFieldValue(elem, field.FieldType, dfa.DefaultValue, dfa.UseDefaultForZeroLength));
+                            }
                         }
                     }
                     catch (Exception e)
                     {
-                        DicomLogger.LogErrorException(e, "Unable to bind field");
+                        DicomLogger.LogErrorException(e,"Unable to bind field");
                     }
                 }
             }
@@ -533,19 +569,22 @@ namespace ClearCanvas.Dicom
                     try
                     {
                         DicomFieldAttribute dfa = (DicomFieldAttribute)property.GetCustomAttributes(typeof(DicomFieldAttribute), true)[0];
-                        DicomAttribute elem = this[dfa.Tag];
-                        if ((elem == null || (elem.StreamLength == 0 && dfa.UseDefaultForZeroLength)) && dfa.DefaultValue == DicomFieldDefault.None)
+                        if (this.Contains(dfa.Tag))
                         {
-                            // do nothing
-                        }
-                        else
-                        {
-                            property.SetValue(obj, LoadDicomFieldValue(elem, property.PropertyType, dfa.DefaultValue, dfa.UseDefaultForZeroLength), null);
+                            DicomAttribute elem = this[dfa.Tag];
+                            if ((elem.StreamLength == 0 && dfa.UseDefaultForZeroLength) && dfa.DefaultValue == DicomFieldDefault.None)
+                            {
+                                // do nothing
+                            }
+                            else
+                            {
+                                property.SetValue(obj, LoadDicomFieldValue(elem, property.PropertyType, dfa.DefaultValue, dfa.UseDefaultForZeroLength), null);
+                            }
                         }
                     }
                     catch (Exception e)
                     {
-                        DicomLogger.LogErrorException(e, "Unable to bind field");
+                        DicomLogger.LogErrorException(e,"Unable to bind field");
                     }
                 }
             }
@@ -568,10 +607,10 @@ namespace ClearCanvas.Dicom
                     {
                         if (vtype.GetElementType() != elem.GetValueType())
                             throw new DicomException("Invalid binding type for Element VR!");
-                        //                        if (elem.GetValueType() == typeof(DateTime))
-                        //                          (elem as AbstractAttribute).SetDateTimes((DateTime[])value);
-                        //                    else
-                        elem.Values = (object[])value;
+//                        if (elem.GetValueType() == typeof(DateTime))
+  //                          (elem as AbstractAttribute).SetDateTimes((DateTime[])value);
+    //                    else
+                            elem.Values = (object[])value;
                     }
                     else
                     {
@@ -585,11 +624,11 @@ namespace ClearCanvas.Dicom
                             TransferSyntax ts = (TransferSyntax)value;
                             elem.SetStringValue(ts.DicomUid.UID);
                         }
-                        //  else if (vtype == typeof(DcmDateRange) && elem.GetType().IsSubclassOf(typeof(AbstractAttribute)))
-                        //  {
-                        //      DcmDateRange dr = (DcmDateRange)value;
-                        //      (elem as AbstractAttribute).SetDateTimeRange(dr);
-                        //  }
+                      //  else if (vtype == typeof(DcmDateRange) && elem.GetType().IsSubclassOf(typeof(AbstractAttribute)))
+                      //  {
+                      //      DcmDateRange dr = (DcmDateRange)value;
+                      //      (elem as AbstractAttribute).SetDateTimeRange(dr);
+                      //  }
                         else if (vtype != elem.GetValueType())
                         {
                             if (vtype == typeof(string))

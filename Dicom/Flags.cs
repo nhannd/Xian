@@ -1,12 +1,12 @@
-/*
- * Taken from code Copyright (c) Colby Dillion, 2007
- */
 using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace ClearCanvas.Dicom
 {
+    /// <summary>
+    /// Static helper class for checking if flags have been set.
+    /// </summary>
     public static class Flags
     {
         public static bool IsSet(DicomDumpOptions options, DicomDumpOptions flag)
@@ -23,16 +23,22 @@ namespace ClearCanvas.Dicom
         }
     }
 
+    /// <summary>
+    /// An enumerated value to specify options when generating a dump of a DICOM object.
+    /// </summary>
     [Flags]
     public enum DicomDumpOptions
     {
         None = 0,
         ShortenLongValues = 1,
-        Restrict80CharactersPerLine = 2,
+        Restrict80CharactersPerLine= 2,
         KeepGroupLengthElements = 4,
         Default = DicomDumpOptions.ShortenLongValues | DicomDumpOptions.Restrict80CharactersPerLine
     }
 
+    /// <summary>
+    /// An enumerated value to specify options when reading DICOM files. 
+    /// </summary>
     [Flags]
     public enum DicomReadOptions
     {
@@ -43,6 +49,9 @@ namespace ClearCanvas.Dicom
         Default = DicomReadOptions.UseDictionaryForExplicitUN | DicomReadOptions.AllowSeekingForContext
     }
 
+    /// <summary>
+    /// An enumerated value to specify options when writing DICOM files.
+    /// </summary>
     [Flags]
     public enum DicomWriteOptions
     {
