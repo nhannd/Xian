@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter.View.WinForms
 {
-	[GuiToolkitAttribute(GuiToolkitID.WinForms)]
 	[ExtensionOf(typeof(DropDownButtonActionViewExtensionPoint))]
-	public class DropDownButtonItemView : IActionView
+	public class DropDownButtonItemView : WinFormsView, IActionView
 	{
 		DropDownButtonAction _action;
 		DropDownButtonItem _button;
@@ -24,12 +24,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter.View.WinForms
 
 		#region IView Members
 
-		public GuiToolkitID GuiToolkitID
-		{
-			get { return GuiToolkitID.WinForms; }
-		}
-
-		public object GuiElement
+		public override object GuiElement
 		{
 			get
 			{
