@@ -38,12 +38,27 @@ namespace ClearCanvas.Desktop.Help
 
 		public void ShowWebsite()
 		{
-			Process.Start("http://www.clearcanvas.ca");
+			try
+			{
+				Process.Start("http://www.clearcanvas.ca");
+			}
+			catch
+			{
+				this.Context.DesktopWindow.ShowMessageBox(SR.URLNotFound, MessageBoxActions.Ok);
+			}
 		}
 
 		public void ShowUsersGuide()
 		{
-			Process.Start("https://mirror2.cvsdude.com/trac/clearcanvas/source/wiki/Users");
+			try
+			{
+				Process.Start("https://mirror2.cvsdude.com/trac/clearcanvas/source/wiki/Users");
+			}
+			catch
+			{
+				this.Context.DesktopWindow.ShowMessageBox(SR.URLNotFound, MessageBoxActions.Ok);
+			
+			} 
 		}
 
 		public void ShowLicense()
@@ -60,7 +75,7 @@ namespace ClearCanvas.Desktop.Help
 			}
 			catch
 			{
-				Platform.ShowMessageBox(SR.LicenseNotFound);
+				this.Context.DesktopWindow.ShowMessageBox(SR.LicenseNotFound, MessageBoxActions.Ok);
 			}
 		}
 	}

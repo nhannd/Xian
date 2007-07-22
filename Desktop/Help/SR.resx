@@ -132,4 +132,7 @@
   <data name="MenuWebsite" xml:space="preserve">
     <value>ClearCanvas.ca</value>
   </data>
+  <data name="URLNotFound" xml:space="preserve">
+    <value>Could not reach URL</value>
+  </data>
 </root>
