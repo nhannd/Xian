@@ -156,12 +156,16 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			else
 			{
 				this.Surface.ContextID = e.Graphics.GetHdc();
+
 				DrawArgs args = new DrawArgs(
 					this.Surface, 
 					this.ClientRectangle, 
 					e.ClipRectangle, 
 					ClearCanvas.ImageViewer.Rendering.DrawMode.Refresh);
+				
 				_tile.OnDraw(args);
+				
+				e.Graphics.ReleaseHdc(this.Surface.ContextID);
 			}
 
 			base.OnPaint(e);

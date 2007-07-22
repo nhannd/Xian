@@ -123,6 +123,7 @@ namespace ClearCanvas.ImageViewer.Rendering
                 {
 					System.Drawing.Graphics graphics = System.Drawing.Graphics.FromHdc(_surface.ContextID);
 					_surface.FinalBuffer.RenderTo(graphics, drawArgs.ClipRectangle);
+					graphics.Dispose();
                 }
 			}
 
