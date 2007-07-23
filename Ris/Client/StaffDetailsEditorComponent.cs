@@ -7,6 +7,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise;
 using ClearCanvas.Desktop;
 using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -25,16 +26,17 @@ namespace ClearCanvas.Ris.Client
     public class StaffDetailsEditorComponent : ApplicationComponent
     {
         private StaffDetail _staffDetail;
-        private bool _isPractitioner;
         private bool _isNew;
+        private IList<EnumValueInfo> _staffTypeChoices;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public StaffDetailsEditorComponent(bool isNew)
+        public StaffDetailsEditorComponent(bool isNew, IList<EnumValueInfo> staffTypeChoices)
         {
             _staffDetail = new StaffDetail();
             _isNew = isNew;
+            _staffTypeChoices = staffTypeChoices;
         }
 
         public override void Start()
@@ -53,26 +55,37 @@ namespace ClearCanvas.Ris.Client
             set 
             { 
                 _staffDetail = value;
-                if (_staffDetail.LicenseNumber != null && _staffDetail.LicenseNumber != "")
-                    this.IsPractitioner = true;
             }
         }
 
         #region Presentation Model
 
-        public bool NewStaff
+        public string StaffType
         {
-            get { return _isNew; }
+            get { return _staffDetail.StaffType.Value; }
+            set
+            {
+                _staffDetail.StaffType = EnumValueUtils.MapDisplayValue(_staffTypeChoices, value);
+
+                this.Modified = true;
+
+                // this may have affected whether this is a physician or not
+                NotifyPropertyChanged("IsPractitioner");
+            }
+        }
+
+        public List<string> StaffTypeChoices
+        {
+            get { return EnumValueUtils.GetDisplayValues(_staffTypeChoices); }
         }
 
         public bool IsPractitioner
         {
-            get { return _isPractitioner; }
-            set 
+            get
             {
-                _isPractitioner = value;
-                if (_isPractitioner == false)
-                    _staffDetail.LicenseNumber = "";
+                // JR: this is a really crappy hack but I'm going to fix it later
+                // and if I don't, then someone should punish me
+                return _staffDetail.StaffType.Code.StartsWith("R");
             }
         }
 

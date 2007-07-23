@@ -24,6 +24,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         public EntityRef StaffRef;
 
         [DataMember]
+        public EnumValueInfo StaffType;
+
+        [DataMember]
         public PersonNameDetail PersonNameDetail;
 
         // Member for Practitioner
@@ -38,6 +41,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin
             clone.StaffRef = this.StaffRef;
             clone.PersonNameDetail = (PersonNameDetail)this.PersonNameDetail.Clone();
             clone.LicenseNumber = this.LicenseNumber;
+            clone.StaffType = this.StaffType;
             return clone;
         }
 

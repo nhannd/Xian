@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
                         PersistenceContext.GetBroker<IPractitionerBroker>().Find(criteria, page),
                         delegate(Practitioner s)
                         {
-                            return assembler.CreateStaffSummary(s);
+                            return assembler.CreateStaffSummary(s, PersistenceContext);
                         }));
             }
             else
@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
                         PersistenceContext.GetBroker<IStaffBroker>().Find(criteria, page),
                         delegate(Staff s)
                         {
-                            return assembler.CreateStaffSummary(s);
+                            return assembler.CreateStaffSummary(s, PersistenceContext);
                         }));
             }
         }
@@ -94,7 +94,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
                     }),
                 dummyProvinces,
                 dummyCountries,
-                (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false));
+                (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false),
+                CollectionUtils.Map<StaffTypeEnum, EnumValueInfo, List<EnumValueInfo>>(
+                    PersistenceContext.GetBroker<IStaffTypeEnumBroker>().Load().Items,
+                    delegate(StaffTypeEnum e)
+                    {
+                        return new EnumValueInfo(e.Code.ToString(), e.Value);
+                    })
+                );
 
         }
 
@@ -102,7 +109,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin)]
         public AddStaffResponse AddStaff(AddStaffRequest request)
         {
-            Staff staff = request.IsPractitioner ? new Practitioner() : new Staff();
+            StaffType staffType = (StaffType)Enum.Parse(typeof(StaffType), request.StaffDetail.StaffType.Code);
+            Staff staff = (staffType == StaffType.RAD || staffType == StaffType.RES || staffType == StaffType.REF) ? new Practitioner() : new Staff();
 
             StaffAssembler assembler = new StaffAssembler();
             assembler.UpdateStaff(request.StaffDetail, staff);
@@ -116,7 +124,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
             // ensure the new staff is assigned an OID before using it in the return value
             PersistenceContext.SynchState();
 
-            return new AddStaffResponse(assembler.CreateStaffSummary(staff));
+            return new AddStaffResponse(assembler.CreateStaffSummary(staff, PersistenceContext));
         }
 
         [UpdateOperation]
@@ -132,7 +140,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
                 request.StaffDetail.PersonNameDetail.GivenName,
                 staff);
 
-            return new UpdateStaffResponse(assembler.CreateStaffSummary(staff));
+            return new UpdateStaffResponse(assembler.CreateStaffSummary(staff, PersistenceContext));
         }
 
         #endregion

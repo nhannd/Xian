@@ -134,7 +134,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             ActivityStatusEnumTable statusEnumTable = context.GetBroker<IActivityStatusEnumBroker>().Load();
             summary.State = new EnumValueInfo(mps.State.ToString(), statusEnumTable[mps.State].Value);
 
-            summary.PerformerStaff = staffAssembler.CreateStaffSummary(mps.PerformingStaff);
+            summary.PerformerStaff = staffAssembler.CreateStaffSummary(mps.PerformingStaff, context);
             summary.StartTime = mps.StartTime;
             summary.EndTime = mps.EndTime;
 

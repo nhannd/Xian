@@ -240,6 +240,9 @@
   <data name="ColumnSite" xml:space="preserve">
     <value>Site</value>
   </data>
+  <data name="ColumnStaffType" xml:space="preserve">
+    <value>StaffType</value>
+  </data>
   <data name="ColumnStartTime" xml:space="preserve">
     <value>Start Time</value>
   </data>

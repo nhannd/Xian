@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client
                     LoadStaffEditorFormDataResponse formDataResponse = service.LoadStaffEditorFormData(new LoadStaffEditorFormDataRequest());
 
                     string rootPath = SR.TitleStaff;
-                    this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new StaffDetailsEditorComponent(_isNew)));
+                    this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new StaffDetailsEditorComponent(_isNew, formDataResponse.StaffTypeChoices)));
                     this.Pages.Add(new NavigatorPage(rootPath + "/Addresses", _addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)));
                     this.Pages.Add(new NavigatorPage(rootPath + "/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)));
 
@@ -70,6 +70,7 @@ namespace ClearCanvas.Ris.Client
                     if (_isNew)
                     {
                         _staffDetail = new StaffDetail();
+                        _staffDetail.StaffType = formDataResponse.StaffTypeChoices[0];
                     }
                     else
                     {

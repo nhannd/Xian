@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             detail.Category = categoryAssembler.CreateNoteCategorySummary(note.Category, context);
 
             StaffAssembler staffAssembler = new StaffAssembler();
-            detail.CreatedBy = staffAssembler.CreateStaffSummary(note.CreatedBy);
+            detail.CreatedBy = staffAssembler.CreateStaffSummary(note.CreatedBy, context);
 
             return detail;
         }

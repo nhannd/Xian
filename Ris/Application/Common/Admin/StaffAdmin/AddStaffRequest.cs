@@ -12,13 +12,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
         public AddStaffRequest(StaffDetail staffDetail, bool isPractitioner)
         {
             this.StaffDetail = staffDetail;
-            this.IsPractitioner = isPractitioner;
         }
 
         [DataMember]
         public StaffDetail StaffDetail;
-
-        [DataMember]
-        public bool IsPractitioner;
     }
 }

@@ -15,6 +15,10 @@ namespace ClearCanvas.Ris.Client
                 delegate(StaffSummary staff) { return staff.PersonNameDetail.GivenName; },
                 1.0f));
 
+            this.Columns.Add(new TableColumn<StaffSummary, string>(SR.ColumnStaffType,
+               delegate(StaffSummary staff) { return staff.StaffType.Value; },
+               1.0f));
+
             this.Columns.Add(new TableColumn<StaffSummary, string>(SR.ColumnLicenseNumber,
                 delegate(StaffSummary staff) { return staff.LicenseNumber; },
                 1.0f));

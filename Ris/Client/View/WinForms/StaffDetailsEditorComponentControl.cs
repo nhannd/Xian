@@ -30,16 +30,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _familyName.DataBindings.Add("Value", _component, "FamilyName", true, DataSourceUpdateMode.OnPropertyChanged);
             _givenName.DataBindings.Add("Value", _component, "GivenName", true, DataSourceUpdateMode.OnPropertyChanged);
             _middleName.DataBindings.Add("Value", _component, "MiddleName", true, DataSourceUpdateMode.OnPropertyChanged);
-            _prefix.DataBindings.Add("Value", _component, "Prefix", true, DataSourceUpdateMode.OnPropertyChanged);
-            _suffix.DataBindings.Add("Value", _component, "Suffix", true, DataSourceUpdateMode.OnPropertyChanged);
-            _degree.DataBindings.Add("Value", _component, "Degree", true, DataSourceUpdateMode.OnPropertyChanged);
             
-            _isPractitioner.DataBindings.Add("Enabled", _component, "NewStaff", true, DataSourceUpdateMode.OnPropertyChanged);
-            _isPractitioner.DataBindings.Add("Checked", _component, "IsPractitioner", true, DataSourceUpdateMode.OnPropertyChanged);
-            
-            _licenseNumber.DataBindings.Add("Enabled", _component, "NewStaff", true, DataSourceUpdateMode.OnPropertyChanged);
             _licenseNumber.DataBindings.Add("Visible", _component, "IsPractitioner", true, DataSourceUpdateMode.OnPropertyChanged);
             _licenseNumber.DataBindings.Add("Value", _component, "LicenseNumber", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _staffType.DataSource = _component.StaffTypeChoices;
+            _staffType.DataBindings.Add("Value", _component, "StaffType", true, DataSourceUpdateMode.OnPropertyChanged);
         }
     }
 }

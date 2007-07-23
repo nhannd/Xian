@@ -70,7 +70,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     PersistenceContext.GetBroker<IPractitionerBroker>().FindAll(),
                     delegate(Practitioner p)
                     {
-                        return StaffAssembler.CreateStaffSummary(p);
+                        return StaffAssembler.CreateStaffSummary(p, PersistenceContext);
                     }),
                 CollectionUtils.Map<OrderPriorityEnum, EnumValueInfo, List<EnumValueInfo>>(
                     PersistenceContext.GetBroker<IOrderPriorityEnumBroker>().Load().Items,

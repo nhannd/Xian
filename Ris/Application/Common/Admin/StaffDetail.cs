@@ -30,6 +30,9 @@ namespace ClearCanvas.Ris.Application.Common.Admin
         }
 
         [DataMember]
+        public EnumValueInfo StaffType;
+
+        [DataMember]
         public PersonNameDetail PersonNameDetail;
 
         [DataMember]
