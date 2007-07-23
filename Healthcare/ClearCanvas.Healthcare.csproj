@@ -90,6 +90,7 @@
     <Compile Include="ReportingToBeReportedWorklist.cs" />
     <Compile Include="RequestedProcedureTypeGroup.cs" />
     <Compile Include="RequestedProcedureTypeGroupCategory.cs" />
+    <Compile Include="StaffType.cs" />
     <Compile Include="TechnologistCancelledWorklist.cs" />
     <Compile Include="TechnologistCheckedInWorklist.cs" />
     <Compile Include="TechnologistCompletedWorklist.cs" />
