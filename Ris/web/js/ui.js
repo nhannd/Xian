@@ -231,7 +231,7 @@ var Table = {
 	            else
 	            {
 		            // add one cell for each column, offset by 1 if there is a checkbox column
-			        cell = tr.insertCell(i + eval(this._options.checkBoxes ? 1 : 0));
+                    cell = tr.insertCell(i + (this._options.checkBoxes ? 1 : 0));
 	            }
 		        
 		        this._renderCell(index, i, cell, obj);
