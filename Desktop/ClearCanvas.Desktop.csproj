@@ -260,8 +260,9 @@
   <ItemGroup>
     <None Include="ClassDiagrams\Actions.cd" />
     <None Include="app.config" />
-    <None Include="ClassDiagrams\ApplicationComponents.cd" />
+    <None Include="ClassDiagrams\ApplicationComponentContainers.cd" />
     <None Include="ClassDiagrams\DesktopActions.cd" />
+    <None Include="ClassDiagrams\DesktopObjectModel.cd" />
     <None Include="ClassDiagrams\UndoRedo.cd" />
     <None Include="ClassDiagrams\Desktop.cd" />
     <None Include="ExceptionHandlerSettings.settings">
