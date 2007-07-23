@@ -1,14 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Hibernate;
-using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
-
 using NHibernate;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
@@ -61,6 +57,10 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             " where (rps.State = :rpsState or rps.State = :rpsState2)" +
             " and rps.Scheduling.Performer = :performingStaff";
 
+        private const string _hqlWorklistSubQuery = 
+            " and rp.Type in" +
+            " (select distinct rpt from Worklist w join w.RequestedProcedureTypeGroups rptg join rptg.RequestedProcedureTypes rpt where w = :worklist)";
+
 
         #region Query helpers
 
@@ -103,10 +103,21 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public IList<WorklistItem> GetToBeReportedWorklist()
         {
+            return GetToBeReportedWorklist(null);
+        }
+
+        public IList<WorklistItem> GetToBeReportedWorklist(ReportingToBeReportedWorklist worklist)
+        {
             string hqlQuery = String.Concat(_hqlToBeReportedWorklist, _hqlJoin, _hqlCommunualWorklistCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", "SC"));
+
+            if(worklist != null)
+            {
+                hqlQuery += _hqlWorklistSubQuery;
+                parameters.Add(new QueryParameter("worklist", worklist));
+            }
 
             return GetWorklist(hqlQuery, parameters);
         }
@@ -164,10 +175,21 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public int GetToBeReportedWorklistCount()
         {
+            return GetToBeReportedWorklistCount(null);
+        }
+
+        public int GetToBeReportedWorklistCount(ReportingToBeReportedWorklist worklist)
+        {
             string hqlQuery = String.Concat(_hqlToBeReportedCount, _hqlJoin, _hqlCommunualWorklistCondition);
 
             List<QueryParameter> parameters = new List<QueryParameter>();
             parameters.Add(new QueryParameter("rpsState", "SC"));
+
+            if (worklist != null)
+            {
+                hqlQuery += _hqlWorklistSubQuery;
+                parameters.Add(new QueryParameter("worklist", worklist));
+            }
 
             return GetWorklistCount(hqlQuery, parameters);
         }

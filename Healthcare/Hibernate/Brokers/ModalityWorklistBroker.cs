@@ -1,16 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Hibernate;
-using ClearCanvas.Enterprise.Hibernate.Hql;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Modality;
-
 using NHibernate;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
@@ -69,87 +63,167 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             " (select rp from CheckInProcedureStep cps join cps.RequestedProcedure rp where" +
             " (cps.State = :cpsState and cps.StartTime between :cpsStartTimeBegin and :cpsStartTimeEnd))";
 
+        private const string _hqlWorklistSubQuery = 
+            " and rp.Type in" +
+            " (select distinct rpt from Worklist w join w.RequestedProcedureTypeGroups rptg join rptg.RequestedProcedureTypes rpt where w = :worklist)";
+
         #region IModalityWorklistBroker Members
 
+        #region Worklists
+
         public IList<WorklistItem> GetScheduledWorklist()
+        {
+            return GetScheduledWorklist(null);
+        }
+
+        public IList<WorklistItem> GetScheduledWorklist(TechnologistScheduledWorklist worklist)
         {
             string hqlQuery = String.Concat(_hqlMpsStateQuery, _hqlScheduledSubCondition);
 
             List<QueryParameter> parameters = BaseMpsStateParameters("SC");
             AddSubQueryParameters(parameters);
 
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
             return GetWorklist(hqlQuery, parameters);
         }
 
         public IList<WorklistItem> GetCheckedInWorklist()
+        {
+            return GetCheckedInWorklist(null);
+        }
+
+        public IList<WorklistItem> GetCheckedInWorklist(TechnologistCheckedInWorklist worklist)
         {
             string hqlQuery = String.Concat(_hqlMpsStateQuery, _hqlCheckInSubCondition);
 
             List<QueryParameter> parameters = BaseMpsStateParameters("SC");
             AddSubQueryParameters(parameters);
 
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
             return GetWorklist(hqlQuery, parameters);
         }
 
         public IList<WorklistItem> GetInProgressWorklist()
         {
-            return GetWorklistFromMpsState("IP");
+            return GetInProgressWorklist(null);
+        }
+
+        public IList<WorklistItem> GetInProgressWorklist(TechnologistInProgessWorklist worklist)
+        {
+            return GetWorklistFromMpsState("IP", worklist);
         }
 
         public IList<WorklistItem> GetSuspendedWorklist()
         {
-            return GetWorklistFromMpsState("SU");
+            return GetSuspendedWorklist(null);
+        }
+
+        public IList<WorklistItem> GetSuspendedWorklist(TechnologistSuspendedWorklist worklist)
+        {
+            return GetWorklistFromMpsState("SU", worklist);
         }
 
         public IList<WorklistItem> GetCompletedWorklist()
         {
-            return GetWorklistFromMpsState("CM");
+            return GetCompletedWorklist(null);
+        }
+
+        public IList<WorklistItem> GetCompletedWorklist(TechnologistCompletedWorklist worklist)
+        {
+            return GetWorklistFromMpsState("CM", worklist);
         }
 
         public IList<WorklistItem> GetCancelledWorklist()
         {
-            return GetWorklistFromMpsState("DC");
+            return GetCancelledWorklist(null);
         }
 
+        public IList<WorklistItem> GetCancelledWorklist(TechnologistCancelledWorklist worklist)
+        {
+            return GetWorklistFromMpsState("DC", worklist);
+        }
+
+        #endregion
+
+        #region Counts
+
         public int GetScheduledWorklistCount()
+        {
+            return GetScheduledWorklistCount(null);
+        }
+
+        public int GetScheduledWorklistCount(TechnologistScheduledWorklist worklist)
         {
             string hqlQuery = String.Concat(_hqlMpsStateCountQuery, _hqlScheduledSubCondition);
 
             List<QueryParameter> parameters = BaseMpsStateParameters("SC");
             AddSubQueryParameters(parameters);
 
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
             return GetWorklistCount(hqlQuery, parameters);
         }
 
         public int GetCheckedInWorklistCount()
+        {
+            return GetCheckedInWorklistCount(null);
+        }
+
+        public int GetCheckedInWorklistCount(TechnologistCheckedInWorklist worklist)
         {
             string hqlQuery = String.Concat(_hqlMpsStateCountQuery, _hqlCheckInSubCondition);
 
             List<QueryParameter> parameters = BaseMpsStateParameters("SC");
             AddSubQueryParameters(parameters);
 
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
             return GetWorklistCount(hqlQuery, parameters);
         }
 
         public int GetInProgressWorklistCount()
         {
-            return GetWorklistCountFromMpsState("IP");
+            return GetInProgressWorklistCount(null);
+        }
+
+        public int GetInProgressWorklistCount(TechnologistInProgessWorklist worklist)
+        {
+            return GetWorklistCountFromMpsState("IP", worklist);
         }
 
         public int GetSuspendedWorklistCount()
         {
-            return GetWorklistCountFromMpsState("SU");
+            return GetSuspendedWorklistCount(null);
         }
-        
+
+        public int GetSuspendedWorklistCount(TechnologistSuspendedWorklist worklist)
+        {
+            return GetWorklistCountFromMpsState("SU", worklist);
+        }
+
         public int GetCompletedWorklistCount()
         {
-            return GetWorklistCountFromMpsState("CM");
+            return GetCompletedWorklistCount(null);
+        }
+
+        public int GetCompletedWorklistCount(TechnologistCompletedWorklist worklist)
+        {
+            return GetWorklistCountFromMpsState("CM", worklist);
         }
 
         public int GetCancelledWorklistCount()
         {
-            return GetWorklistCountFromMpsState("DC");
+            return GetCancelledWorklistCount(null);
         }
+
+        public int GetCancelledWorklistCount(TechnologistCancelledWorklist worklist)
+        {
+            return GetWorklistCountFromMpsState("DC", worklist);
+        }
+
+        #endregion
 
         #endregion
 
@@ -196,14 +270,24 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return parameters;
         }
 
-        private IList<WorklistItem> GetWorklistFromMpsState(string state)
+        private IList<WorklistItem> GetWorklistFromMpsState(string state, Worklist worklist)
         {
-            return GetWorklist(_hqlMpsStateQuery, BaseMpsStateParameters(state));
+            string hqlQuery = _hqlMpsStateQuery;
+            List<QueryParameter> parameters = BaseMpsStateParameters(state);
+
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
+            return GetWorklist(hqlQuery, parameters);
         }
 
-        private int GetWorklistCountFromMpsState(string state)
+        private int GetWorklistCountFromMpsState(string state, Worklist worklist)
         {
-            return GetWorklistCount(_hqlMpsStateCountQuery, BaseMpsStateParameters(state));
+            string hqlQuery = _hqlMpsStateCountQuery;
+            List<QueryParameter> parameters = BaseMpsStateParameters(state);
+
+            AddWorklistQueryAndParameters(ref hqlQuery, parameters, worklist);
+
+            return GetWorklistCount(hqlQuery, parameters);
         }
 
         #endregion
@@ -225,5 +309,14 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         #endregion
 
+        private void AddWorklistQueryAndParameters(ref string hqlQuery, List<QueryParameter> parameters, Worklist worklist)
+        {
+            if (worklist != null)
+            {
+                hqlQuery += _hqlWorklistSubQuery;
+                parameters.Add(new QueryParameter("worklist", worklist));
+                AddSubQueryParameters(parameters);
+            }
+        }
     }
 }

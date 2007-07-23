@@ -1,6 +1,4 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 
@@ -9,12 +7,14 @@ namespace ClearCanvas.Healthcare.Brokers
     public interface IReportingWorklistBroker : IPersistenceBroker
     {
         IList<WorklistItem> GetToBeReportedWorklist();
+        IList<WorklistItem> GetToBeReportedWorklist(ReportingToBeReportedWorklist worklist);
         IList<WorklistItem> GetInProgressWorklist(Staff performingStaff);
         IList<WorklistItem> GetInTranscriptionWorklist(Staff performingStaff);
         IList<WorklistItem> GetToBeVerifiedWorklist(Staff performingStaff);
         IList<WorklistItem> GetVerifiedWorklist(Staff performingStaff);
 
         int GetToBeReportedWorklistCount();
+        int GetToBeReportedWorklistCount(ReportingToBeReportedWorklist worklist);
         int GetInProgressWorklistCount(Staff performingStaff);
         int GetInTranscriptionWorklistCount(Staff performingStaff);
         int GetToBeVerifiedWorklistCount(Staff performingStaff);
