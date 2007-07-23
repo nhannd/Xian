@@ -38,6 +38,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BitmapOverlayForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="ComboBoxField.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -111,6 +114,7 @@
     <Compile Include="SplashScreen.designer.cs">
       <DependentUpon>SplashScreen.cs</DependentUpon>
     </Compile>
+    <Compile Include="SplashScreenManager.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -185,6 +189,8 @@
     <Content Include="FileBrowser\Images\BrowserBack.png" />
     <Content Include="FileBrowser\Images\BrowserForward.png" />
     <Content Include="FileBrowser\Images\BrowserUp.png" />
+    <None Include="Resources\SplashShadow.png" />
+    <None Include="Resources\Splash.png" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">

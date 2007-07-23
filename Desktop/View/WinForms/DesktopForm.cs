@@ -39,9 +39,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         public DesktopForm()
         {
-			if (SplashScreen.SplashForm != null)
-				SplashScreen.SplashForm.Owner = this;
-			
+#if !MONO && !DEBUG
+			SplashScreenManager.DismissSplashScreen(this);
+#endif
 			InitializeComponent();
 
             _dockingManager = new DockingManager(_toolStripContainer.ContentPanel, VisualStyle.IDE2005);

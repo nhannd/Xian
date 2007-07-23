@@ -28,32 +28,24 @@ namespace ClearCanvas.Controls.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SplashScreen));
-			this._timer = new System.Windows.Forms.Timer(this.components);
-			this._statusLabel = new System.Windows.Forms.Label();
+			this._status = new System.Windows.Forms.Label();
 			this._versionLabel = new System.Windows.Forms.Label();
 			this.label1 = new System.Windows.Forms.Label();
 			this.SuspendLayout();
 			// 
-			// _timer
+			// _status
 			// 
-			this._timer.Interval = 50;
-			this._timer.Tick += new System.EventHandler(this._Timer_Tick);
-			// 
-			// _statusLabel
-			// 
-			this._statusLabel.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+			this._status.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
 						| System.Windows.Forms.AnchorStyles.Left)
 						| System.Windows.Forms.AnchorStyles.Right)));
-			this._statusLabel.AutoEllipsis = true;
-			this._statusLabel.BackColor = System.Drawing.Color.White;
-			this._statusLabel.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-			this._statusLabel.Location = new System.Drawing.Point(295, 61);
-			this._statusLabel.Name = "_statusLabel";
-			this._statusLabel.Size = new System.Drawing.Size(354, 23);
-			this._statusLabel.TabIndex = 0;
-			this._statusLabel.Text = "Progress text";
+			this._status.AutoEllipsis = true;
+			this._status.BackColor = System.Drawing.Color.White;
+			this._status.Font = new System.Drawing.Font("Arial", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+			this._status.Location = new System.Drawing.Point(295, 61);
+			this._status.Name = "_status";
+			this._status.Size = new System.Drawing.Size(354, 23);
+			this._status.TabIndex = 0;
+			this._status.Text = "Progress text";
 			// 
 			// _versionLabel
 			// 
@@ -82,23 +74,23 @@ namespace ClearCanvas.Controls.WinForms
 			// 
 			// SplashScreen
 			// 
-			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.None;
-			this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
-			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.None;
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.BackgroundImage = global::ClearCanvas.Controls.WinForms.Properties.Resources.Splash;
+			this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
 			this.ClientSize = new System.Drawing.Size(673, 385);
 			this.ControlBox = false;
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this._versionLabel);
-			this.Controls.Add(this._statusLabel);
+			this.Controls.Add(this._status);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 			this.MaximizeBox = false;
 			this.MinimizeBox = false;
 			this.Name = "SplashScreen";
+			this.Shown += new System.EventHandler(this.SplashScreen_Shown);
 			this.ShowInTaskbar = false;
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "ClearCanvas";
-			this.TopMost = true;
-			this.DoubleClick += new System.EventHandler(this.SplashScreen_DoubleClick);
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -106,9 +98,7 @@ namespace ClearCanvas.Controls.WinForms
 
 		#endregion
 
-		private System.Windows.Forms.Timer _timer;
-		private System.Windows.Forms.Label _statusLabel;
-		private System.ComponentModel.IContainer components;
+		private System.Windows.Forms.Label _status;
 		private System.Windows.Forms.Label _versionLabel;
 		private System.Windows.Forms.Label label1;
 	}

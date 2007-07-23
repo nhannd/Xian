@@ -1,153 +1,195 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-using System.Threading;
-using System.Diagnostics;
-using System.Drawing.Drawing2D;
 using System.Reflection;
 
 namespace ClearCanvas.Controls.WinForms
 {
-	public partial class SplashScreen : Form
-	{
-		// Threading
-		private static SplashScreen _splashForm = null;
-		private static Thread _thread = null;
+	/// <summary>
+	/// This class represents the splash screen form.  All access to its properties is 
+	/// mitigated through Invoke to avoid cross-threading form exceptions.
+	/// </summary>
+    public partial class SplashScreen : Form
+    {
+		// Delegate instances used to call user interface functions from other threads
+		public delegate void UpdateStatusDelegate(string status);
+		public delegate void UpdateOpacityDelegate(double opacity);
+		//public delegate void UpdateLicenseInfoDelegate(string licenseText);
+		
+		private const int DropShadowOffset = 20;
+		private BitmapOverlayForm _dropShadow = null;
 
-		// Fade in and out.
-		private double _opacityIncrement = .05;
-		private double _opacityDecrement = .08;
+        public SplashScreen()
+        {
+            InitializeComponent();
 
-		// Status and progress bar
-		private static object _statusLock = new object();
-		private static string _status;
+            Opacity = 0;
 
-		private static double _totalTime = 0;
+			if (BackgroundImage != null)
+				ClientSize = BackgroundImage.Size;
+/*
+            // Set the notice text
+            Assembly asm = Assembly.GetEntryAssembly();
+            string version = Application.ProductVersion.Trim();
+            string companyName = Application.CompanyName.Trim();
 
-		public SplashScreen()
+            AssemblyDescriptionAttribute description;
+            description = (AssemblyDescriptionAttribute)AssemblyDescriptionAttribute.GetCustomAttribute(
+                    asm, typeof(AssemblyDescriptionAttribute));
+
+            AssemblyCopyrightAttribute copyright;
+            copyright = (AssemblyCopyrightAttribute)AssemblyCopyrightAttribute.GetCustomAttribute(
+                        asm, typeof(AssemblyCopyrightAttribute));
+
+			string notice = description.Description + " v." + version + "\r\n" + 
+							copyright.Copyright + "\r\n" + 
+							Properties.Resources.ContactInfo + "\r\n\r\n" + 
+							Properties.Resources.Disclaimer;
+
+			_notice.Text = notice;
+*/
+			// No status at first
+			SetStatus(string.Empty);
+
+			// A license likely hasn't been acquired at this point
+			//SetLicenseInfo(Properties.Resources.AcquiringLicense);
+        }
+
+		/// <summary>
+		/// Shows the splash screen as an about box, rather than a fade-in splash.
+		/// </summary>
+		/// <returns>A dialog result, which is always cancel at the moment.</returns>
+		public DialogResult ShowAsAboutBox()
 		{
-			InitializeComponent();
-			SetVersion();
-			this._statusLabel.ForeColor = Color.FromArgb(60, 150, 208);
-			this.Opacity = .00;
-			_timer.Start();
-			this.ClientSize = this.BackgroundImage.Size;
-			Control.CheckForIllegalCrossThreadCalls = false;
+			StartPosition = FormStartPosition.CenterScreen;
+			Opacity = 1.0;
+
+			//_help.Visible = true;
+			//_close.Visible = true;
+			_status.Visible = false;
+
+			// Set the license info
+			//SetLicenseInfo(LicenseText);
+			
+			return ShowDialog();
 		}
 
-		private void SetVersion()
+		/// <summary>
+		/// Updates the splash screen's status text.
+		/// </summary>
+		/// <param name="status">The splash screen new status text.</param>
+		public void UpdateStatus(string status)
 		{
-			string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
-			this._versionLabel.Text = String.Format(SR.FormatVersion, version);
+			Invoke(new UpdateStatusDelegate(SetStatus), new Object[] { status });
 		}
 
-		// ************* Static Methods *************** //
-
-		// A static method to create the thread and 
-		// launch the SplashScreen.
-		static public void ShowSplashScreen()
+		/// <summary>
+		/// Updates the splash screen's opacity.
+		/// </summary>
+		/// <param name="opacity">The splash screen's new opacity.</param>
+		public void UpdateOpacity(double opacity)
 		{
-			// Make sure it's only launched once.
-			if (_splashForm != null)
-				return;
-
-			// According to MSDN, this needs to be the first call in the Main() function for Winforms apps
-			// in order for visual styles to work properly.
-			// For some reason, the fact that the Splash Screen was being created before this got called
-			// (in WinFormsView constructor) when the DesktopForm is created caused some problems with 
-			// the AENavigator tree control (the folder icons didn't show up).
-			System.Windows.Forms.Application.EnableVisualStyles();
-
-			_thread = new Thread(new ThreadStart(SplashScreen.ShowForm));
-            _thread.IsBackground = true;
-            _thread.SetApartmentState(ApartmentState.STA);
-			_thread.Start();
+			Invoke(new UpdateOpacityDelegate(SetOpacity), new Object[] { opacity });
+		}
+/*
+		/// <summary>
+		/// Updates the splash screen's license information text.
+		/// </summary>
+		public void UpdateLicenseInfo()
+		{
+			Invoke(new UpdateLicenseInfoDelegate(SetLicenseInfo), new Object[] { LicenseText });
+		}
+*/
+		private void SetStatus(string status)
+		{
+			_status.Text = status;
 		}
 
-		// A property returning the splash screen instance
-		static public SplashScreen SplashForm
+		private void SetOpacity(double opacity)
+		{
+			Opacity = opacity;
+
+			// Pass the opacity to the drop shadow form if it exists
+			if (_dropShadow != null && !_dropShadow.IsDisposed)
+				_dropShadow.BitmapOpacity = opacity;
+		}
+/*
+		private void SetLicenseInfo(string licenseText)
+		{
+			_licenseInfo.Text = licenseText;
+		}
+
+		private string LicenseText
 		{
 			get
 			{
-				return _splashForm;
-			}
-		}
+				// Build the license info from the session manager
+				string licenseText = "Licensed To:\n\n";
 
-		// A private entry point for the thread.
-		static private void ShowForm()
-		{
-			_splashForm = new SplashScreen();
-			Application.Run(_splashForm);
-		}
-
-		// A static method to close the SplashScreen
-		static public void CloseForm()
-		{
-			if (_splashForm != null && _splashForm.IsDisposed == false)
-			{
-				// Make it start going away.
-				_splashForm._opacityIncrement = -_splashForm._opacityDecrement;
-			}
-			_thread = null;	// we don't need these any more.
-			//_SplashForm = null;
-		}
-
-		// A static method to set the status and update the reference.
-		static public void SetStatus(string newStatus)
-		{
-			lock (_statusLock)
-			{
-				_status = newStatus;
-			}
-		}
-
-
-		// ************ Private methods ************
-
-
-		//********* Event Handlers ************
-
-
-		// Close the form if they double click on it.
-		private void SplashScreen_DoubleClick(object sender, System.EventArgs e)
-		{
-			CloseForm();
-		}
-
-		// Tick Event handler for the Timer control.  Handle fade in and fade out.  Also
-		// handle the smoothed progress bar.
-		private void _Timer_Tick(object sender, EventArgs e)
-		{
-			lock (_statusLock)
-			{
-				_statusLabel.Text = _status;
-			}
-
-			if (_opacityIncrement > 0)
-			{
-				if (this.Opacity < 1)
-					this.Opacity += _opacityIncrement;
-
-				//fade the form after 5 seconds...loading with native assemblies so hardly take any time at all...
-				_totalTime += _timer.Interval;
-				if (_totalTime > 5000)
-					CloseForm();
-			}
-			else
-			{
-				if (this.Opacity > 0)
-					this.Opacity += _opacityIncrement;
+				if (!AegisSessionManager.LicenseAcquired)
+					licenseText += "UNREGISTERED";
 				else
 				{
-					this.Close();
-					Debug.WriteLine("Called this.Close()");
+					if (AegisSessionManager.LicenseUser != string.Empty)
+						licenseText += AegisSessionManager.LicenseUser + "\n";
+
+					if (AegisSessionManager.LicenseUser != string.Empty)
+						licenseText += AegisSessionManager.LicenseCompany + "\n";
+
+					licenseText += "\n";
+
+					if (AegisSessionManager.IsLicenseTimeLimited)
+						licenseText += "Expiry: " + AegisSessionManager.LicenseExpiryDate + "\n";
+
+					if (AegisSessionManager.IsLicenseRunLimited)
+						licenseText += "Runs Left: " + AegisSessionManager.LicenseNumRunsLeft.ToString() + "\n";
+
+					if (AegisSessionManager.IsLicenseMultiUser)
+						licenseText += "Users: " + AegisSessionManager.LicenseNumUsersActive.ToString() + " of " + AegisSessionManager.LicenseNumUsersAllowed.ToString() + "\n";
+					else
+						licenseText += "Single User License";
 				}
+
+				return licenseText;
 			}
 		}
-	}
+*/
+		private void SplashScreen_Shown(object sender, EventArgs e)
+		{
+			// Create the drop shadow form when the splash screen is shown
+			if (_dropShadow == null)
+			{
+				_dropShadow = new BitmapOverlayForm();
+
+				_dropShadow.Owner = this;
+				_dropShadow.TopMost = false;
+				_dropShadow.ShowInTaskbar = false;
+
+				// Show the drop shadow form
+				_dropShadow.Show();
+			}
+
+			// Position the drop shadow form (has to be done after it's shown)
+			_dropShadow.Top = this.Top - DropShadowOffset;
+			_dropShadow.Left = this.Left - DropShadowOffset;
+			
+			// Pass the drop shadow bitmap to the drop shadow form (done last to avoid flickering redraws during the form's setup)
+			_dropShadow.Bitmap = Properties.Resources.SplashShadow;
+			_dropShadow.BitmapOpacity = Opacity;
+
+			// Make sure the splash screen and drop shadow are the frontmost windows when they appear
+			BringToFront();
+			_dropShadow.BringToFront();
+		}
+/*
+		private void _help_Click(object sender, EventArgs e)
+		{
+			Help.ShowHelp(this, "Aegis.chm", HelpNavigator.TableOfContents);
+		}
+ */ 
+    }
 }

@@ -15,11 +15,11 @@ namespace ClearCanvas.Desktop.Executable
 		static void Main(string[] args)
 		{
 #if !MONO && !DEBUG
-			SplashScreen.ShowSplashScreen();
+			SplashScreenManager.DisplaySplashScreen();
 #endif
-            Platform.PluginManager.PluginLoaded += new EventHandler<PluginLoadedEventArgs>(OnPluginProgress);
+			Platform.PluginManager.PluginLoaded += new EventHandler<PluginLoadedEventArgs>(OnPluginProgress);
 
-            // check for command line arguments
+			// check for command line arguments
             if (args.Length > 0)
             {
                 // for the sake of simplicity, this is a naive implementation (probably needs to change in future)
@@ -41,7 +41,7 @@ namespace ClearCanvas.Desktop.Executable
 		{
 			Platform.CheckForNullReference(e, "e");
 #if !MONO && !DEBUG
-			SplashScreen.SetStatus(e.Message);
+			SplashScreenManager.SetStatus(e.Message);
 #endif
         }
 	}
