@@ -35,19 +35,25 @@ namespace ClearCanvas.Ris.Client
         public static string Serialize<T>(T dataObject, bool includeEmptyTags)
             where T : DataContractBase
         {
+            return Serialize(dataObject, includeEmptyTags);
+        }
+
+        public static string Serialize(DataContractBase dataObject, bool includeEmptyTags)
+        {
             string jsml = "";
 
             using (StringWriter sw = new StringWriter())
             {
                 XmlTextWriter writer = new XmlTextWriter(sw);
                 writer.Formatting = System.Xml.Formatting.Indented;
-                SerializeHelper(dataObject, typeof(T).Name, writer, false);
+                SerializeHelper(dataObject, dataObject.GetType().Name, writer, false);
                 writer.Close();
                 jsml = sw.ToString();
             }
 
             return jsml;
         }
+
 
         /// <summary>
         /// Take a jsml string and deserialize into a DataContractBase object.
@@ -58,15 +64,18 @@ namespace ClearCanvas.Ris.Client
         public static T Deserialize<T>(string jsml)
             where T : DataContractBase, new()
         {
+            return (T)Deserialize(typeof(T), jsml);
+        }
+
+        public static DataContractBase Deserialize(Type dataContract, string jsml)
+        {
             if (String.IsNullOrEmpty(jsml))
                 return null;
 
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(jsml);
 
-            T obj = (T) DeserializeHelper(typeof(T), xmlDoc.DocumentElement);
-
-            return obj;
+            return (DataContractBase)DeserializeHelper(dataContract, xmlDoc.DocumentElement);
         }
 
         public static DateTime? ParseIsoDateTime(string isoDateString)

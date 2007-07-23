@@ -98,6 +98,7 @@
     <Compile Include="ILoginDialog.cs" />
     <Compile Include="IPagingController.cs" />
     <Compile Include="JsmlSerializer.cs" />
+    <Compile Include="JsmlServiceProxy.cs" />
     <Compile Include="LoginSession.cs" />
     <Compile Include="NoteEditorComponent.cs" />
     <Compile Include="NoteSummaryComponent.cs" />
