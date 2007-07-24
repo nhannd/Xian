@@ -23,7 +23,6 @@ namespace ClearCanvas.ImageViewer.Configuration
     [AssociateView(typeof(DicomServerConfigurationComponentViewExtensionPoint))]
     public class DicomServerConfigurationComponent : ConfigurationApplicationComponent
     {
-        private string _hostName;
         private string _aeTitle;
         private int _port;
         private string _storageDir;
@@ -60,14 +59,12 @@ namespace ClearCanvas.ImageViewer.Configuration
 				_enabled = true;
 				DicomServerConfigurationHelper.Refresh(true);
 
-				_hostName = DicomServerConfigurationHelper.Host;
 				_aeTitle = DicomServerConfigurationHelper.AETitle;
 				_port = DicomServerConfigurationHelper.Port;
 				_storageDir = DicomServerConfigurationHelper.InterimStorageDirectory;
 			}
 			catch
 			{
-				_hostName = "";
 				_aeTitle = "";
 				_port = 0;
 				_storageDir = "";
@@ -81,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Configuration
         {
             try
             {
-				DicomServerConfigurationHelper.Update(_hostName, _aeTitle, _port, _storageDir);
+				DicomServerConfigurationHelper.Update("localhost", _aeTitle, _port, _storageDir);
             }
             catch
             {
@@ -91,7 +88,6 @@ namespace ClearCanvas.ImageViewer.Configuration
 
         private void SignalPropertyChanged()
         {
-            NotifyPropertyChanged("HostName");
             NotifyPropertyChanged("AETitle");
             NotifyPropertyChanged("Port");
             NotifyPropertyChanged("InterimStorageDirectory");
@@ -99,16 +95,6 @@ namespace ClearCanvas.ImageViewer.Configuration
         }
 
         #region Properties
-
-        public string HostName
-        {
-            get { return _hostName; }
-            set 
-            { 
-                _hostName = value;
-                this.Modified = true;
-            }
-        }
 
         public string AETitle
         {

@@ -27,12 +27,10 @@ namespace ClearCanvas.ImageViewer.Configuration.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _hostName.DataBindings.Add("Value", _component, "HostName", true, DataSourceUpdateMode.OnPropertyChanged);
             _aeTitle.DataBindings.Add("Value", _component, "AETitle", true, DataSourceUpdateMode.OnPropertyChanged);
             _port.DataBindings.Add("Value", _component, "Port", true, DataSourceUpdateMode.OnPropertyChanged);
             _storageDir.DataBindings.Add("Value", _component, "StorageDir", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _hostName.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _aeTitle.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _port.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
             _storageDir.DataBindings.Add("Enabled", _component, "Enabled", true, DataSourceUpdateMode.OnPropertyChanged);
