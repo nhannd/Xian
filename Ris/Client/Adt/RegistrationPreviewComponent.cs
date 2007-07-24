@@ -9,6 +9,7 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.PreviewService;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common.Jsml;
 
 namespace ClearCanvas.Ris.Client.Adt
 {

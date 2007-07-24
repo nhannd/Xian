@@ -7,6 +7,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Common.Utilities;
 using System.ServiceModel;
+using ClearCanvas.Ris.Application.Common.Jsml;
 
 namespace ClearCanvas.Ris.Client
 {

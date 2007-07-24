@@ -9,7 +9,7 @@ using System.IO;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Client
+namespace ClearCanvas.Ris.Application.Common.Jsml
 {
     public static class JsmlSerializer
     {
