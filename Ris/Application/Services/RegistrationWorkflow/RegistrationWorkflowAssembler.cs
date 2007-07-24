@@ -139,6 +139,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
 
             SexEnum sex = context.GetBroker<ISexEnumBroker>().Load()[domainItem.Sex];
+            OrderPriorityEnum orderPriority = context.GetBroker<IOrderPriorityEnumBroker>().Load()[domainItem.OrderPriority];
+            PatientClassEnum patientClass = context.GetBroker<IPatientClassEnumBroker>().Load()[domainItem.PatientClass];
 
             return new RegistrationWorklistItem(
                 domainItem.ProfileRef,
@@ -149,7 +151,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
                 domainItem.DateOfBirth,
                 new EnumValueInfo(sex.Code.ToString(), sex.Value),
-                domainItem.EarliestScheduledTime);
+                domainItem.EarliestScheduledTime,
+                orderPriority.Value,
+                patientClass.Value);
         }
 
         private string GetRequestedProcedureStatus(Order order, IPersistenceContext context)

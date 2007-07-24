@@ -189,6 +189,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
+    <EmbeddedResource Include="Icons\DoubleExclamation.png" />
+    <EmbeddedResource Include="Icons\SingleExclamation.png" />
     <EmbeddedResource Include="Icons\RefreshToolLarge.png" />
     <EmbeddedResource Include="Icons\RefreshToolMedium.png" />
     <EmbeddedResource Include="Icons\RefreshToolSmall.png" />

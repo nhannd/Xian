@@ -30,6 +30,18 @@ namespace ClearCanvas.Desktop
         }
 
         /// <summary>
+        /// Constructor that assumes all the icons are colour and have the same size
+        /// </summary>
+        /// <param name="icon">The resource name of the icon</param>
+        public IconSet(string icon)
+        {
+            _scheme = IconScheme.Colour;
+            _small = icon;
+            _medium = icon;
+            _large = icon;
+        }
+
+        /// <summary>
         /// The scheme of this icon set.
         /// </summary>
         public IconScheme Scheme { get { return _scheme; } }

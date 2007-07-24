@@ -44,6 +44,8 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         private HealthcardNumber _healthcardNumber;
         private DateTime? _dateOfBirth;
         private Sex _sex;
+        private PatientClass _patientClass;
+        private OrderPriority _orderPriority;
 
         // Order data
         private DateTime? _earliestScheduledTime;
@@ -81,27 +83,10 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             _healthcardNumber = profile.Healthcard;
             _dateOfBirth = profile.DateOfBirth;
             _sex = profile.Sex;
+            _orderPriority = order.Priority;
+            _patientClass = order.Visit.PatientClass;
 
             _earliestScheduledTime = order.EarliestScheduledDateTime;
-        }
-
-        public WorklistItem(EntityRef profileRef,
-            EntityRef orderRef,
-            CompositeIdentifier mrn,
-            PersonName patientName,
-            HealthcardNumber healthcard,
-            DateTime? dateOfBirth,
-            Sex sex,
-            DateTime? earliestScheduledTime)
-            : base(new WorklistItemKey(profileRef, orderRef))
-        {
-            _mrn = mrn;
-            _patientName = patientName;
-            _healthcardNumber = healthcard;
-            _dateOfBirth = dateOfBirth;
-            _sex = sex;
-
-            _earliestScheduledTime = earliestScheduledTime;
         }
 
         #region Public Properties
@@ -144,6 +129,16 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         public DateTime? EarliestScheduledTime
         {
             get { return _earliestScheduledTime; }
+        }
+
+        public OrderPriority OrderPriority
+        {
+            get { return _orderPriority; }
+        }
+
+        public PatientClass PatientClass
+        {
+            get { return _patientClass; }
         }
 
         #endregion

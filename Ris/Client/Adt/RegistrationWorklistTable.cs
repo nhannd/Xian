@@ -5,6 +5,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -12,6 +13,20 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         public RegistrationWorklistTable()
         {
+            TableColumn<RegistrationWorklistItem, IconSet> priorityColumn = new TableColumn<RegistrationWorklistItem, IconSet>(
+                SR.ColumnPriority, delegate(RegistrationWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority); }, 0.5f);
+
+            priorityColumn.Comparison = new Comparison<RegistrationWorklistItem>(
+                delegate(RegistrationWorklistItem item1, RegistrationWorklistItem item2)
+                {
+                    return GetOrderPriorityIndex(item1.OrderPriority) - GetOrderPriorityIndex(item2.OrderPriority);
+                });
+
+            priorityColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
+
+            this.Columns.Add(priorityColumn);
+            this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnPatientClass,
+                delegate(RegistrationWorklistItem item) { return GetPatientClassAbbreviation(item.PatientClass); }, 0.5f));
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnSite,
                 delegate(RegistrationWorklistItem item) { return item.Mrn.AssigningAuthority; }, 0.5f));
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnMRN,
@@ -32,6 +47,46 @@ namespace ClearCanvas.Ris.Client.Adt
                 { return column.Name.Equals(SR.ColumnScheduledFor); });
 
             this.Sort(new TableSortParams(this.Columns[sortColumnIndex], true));
+        }
+
+        private string GetPatientClassAbbreviation(string patientClass)
+        {
+            switch (patientClass)
+            {
+                case "Emergency": return "EP";
+                case "Inpatient": return "IP";
+                case "Outpatient": return "OP";
+                case "Preadmit":
+                case "Recurring":
+                case "Obstetrics":
+                case "Not applicable":
+                case "Unknown":
+                default:
+                    return "SP";
+            }
+        }
+
+        private int GetOrderPriorityIndex(string orderPriority)
+        {
+            if (String.IsNullOrEmpty(orderPriority))
+                return 0;
+
+            switch (orderPriority)
+            {
+                case "Stat": return 2;
+                case "Urgent": return 1;
+                default: return 0;
+            }
+        }
+
+        private IconSet GetOrderPriorityIcon(string orderPriority)
+        {
+            switch (orderPriority)
+            {
+                case "Stat": return new IconSet("DoubleExclamation.png");
+                case "Urgent": return new IconSet("SingleExclamation.png");
+                default: return null;
+            }
         }
    }
 }

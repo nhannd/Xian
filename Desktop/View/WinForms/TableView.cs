@@ -265,8 +265,16 @@ namespace ClearCanvas.Desktop.View.WinForms
                     DataGridViewColumn dgcol;
                     if (col.ColumnType == typeof(bool))
                         dgcol = new DataGridViewCheckBoxColumn();
-                    else if (col.ColumnType == typeof(Image))
+                    else if (col.ColumnType == typeof(Image) || col.ColumnType == typeof(IconSet))
+                    {
                         dgcol = new DataGridViewImageColumn();
+
+                        dgcol.SortMode = DataGridViewColumnSortMode.Automatic;
+
+                        // Set the default to display nothing if not icons are provided.
+                        // Otherwise WinForms will by default display an ugly icon with 'x'
+                        dgcol.DefaultCellStyle.NullValue = null;
+                    }
                     else
                     {
                         // assume any other type of column will be displayed as text

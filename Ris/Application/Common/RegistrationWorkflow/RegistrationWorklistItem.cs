@@ -17,7 +17,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             HealthcardDetail healthcard,
             DateTime? dateOfBirth,
             EnumValueInfo sex,
-            DateTime? earliestScheduledTime)
+            DateTime? earliestScheduledTime,
+            string orderPriority,
+            string patientClass)
         {
             this.PatientProfileRef = profileRef;
             this.OrderRef = orderRef;
@@ -27,6 +29,8 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.DateOfBirth = dateOfBirth;
             this.Sex = sex;
             this.EarliestScheduledTime = earliestScheduledTime;
+            this.OrderPriority = orderPriority;
+            this.PatientClass = patientClass;
         }
 
         [DataMember]
@@ -52,6 +56,12 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 
         [DataMember]
         public DateTime? EarliestScheduledTime;
+
+        [DataMember]
+        public string OrderPriority;
+
+        [DataMember]
+        public string PatientClass;
 
         public override bool Equals(object obj)
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Collections;
 using System.ComponentModel;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Tables
 {
@@ -26,7 +27,12 @@ namespace ClearCanvas.Desktop.Tables
 		/// </summary>
 		bool Visible { get; set; }
 
-		/// <summary>
+        /// <summary>
+        /// Gets or sets a resource resolver
+        /// </summary>
+        IResourceResolver ResourceResolver { get; set; }
+        
+        /// <summary>
 		/// Occurs when the <see cref="Visible"/> property has changed.
 		/// </summary>
 		event EventHandler VisibilityChanged;

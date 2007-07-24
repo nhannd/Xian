@@ -43,6 +43,7 @@ namespace ClearCanvas.Desktop.Tables
         private Comparison<TItem> _comparison;
 		private event EventHandler _visibilityChangedEvent;
 
+        private IResourceResolver _resolver;
 
         /// <summary>
         /// Constructor
@@ -113,7 +114,13 @@ namespace ClearCanvas.Desktop.Tables
 			}
 		}
 
-		public event EventHandler VisibilityChanged
+        public IResourceResolver ResourceResolver
+        {
+            get { return _resolver; }
+            set { _resolver = value; }
+        }
+        
+        public event EventHandler VisibilityChanged
 		{
 			add { _visibilityChangedEvent += value; }
 			remove { _visibilityChangedEvent -= value; }
