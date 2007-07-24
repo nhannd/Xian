@@ -14,7 +14,7 @@ namespace ClearCanvas.Desktop
 {
     
 #if DEBUG   // only include this tool in debug builds
-    [MenuAction("launch", "global-menus/Tools/Utilities/Desktop Monitor")]
+    [MenuAction("launch", "global-menus/MenuTools/MenuUtilities/Desktop Monitor")]
     [ClickHandler("launch", "Launch")]
 
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
