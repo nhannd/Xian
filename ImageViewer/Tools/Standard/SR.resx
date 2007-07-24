@@ -217,10 +217,10 @@
     <value>HU</value>
   </data>
   <data name="MenuLutPresets" xml:space="preserve">
-    <value>Lut Presets</value>
+    <value>W/L Presets</value>
   </data>
   <data name="ToolsPresets" xml:space="preserve">
-    <value>Lut Presets</value>
+    <value>W/L Presets</value>
   </data>
   <data name="LabelPresentationLut" xml:space="preserve">
     <value>PRE</value>
