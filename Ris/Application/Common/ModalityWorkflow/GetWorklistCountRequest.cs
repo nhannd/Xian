@@ -1,6 +1,4 @@
-using System;
 using System.Runtime.Serialization;
-
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
@@ -12,6 +10,14 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         {
             this.WorklistClassName = worklistClassName;
         }
+
+        public GetWorklistCountRequest(EntityRef worklistRef)
+        {
+            WorklistRef = worklistRef;
+        }
+
+        [DataMember]
+        public EntityRef WorklistRef;
 
         [DataMember]
         public string WorklistClassName;

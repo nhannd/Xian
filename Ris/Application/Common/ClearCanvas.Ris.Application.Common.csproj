@@ -191,12 +191,14 @@
     <Compile Include="Admin\WorklistAdmin\UpdateWorklistRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\UpdateWorklistResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistDetail.cs" />
-    <Compile Include="Admin\WorklistAdmin\WorklistSummary.cs" />
+    <Compile Include="WorklistSummary.cs" />
     <Compile Include="DiagnosticServiceDetail.cs" />
     <Compile Include="DiagnosticServiceSummary.cs" />
     <Compile Include="ModalityProcedureStepSummary.cs" />
     <Compile Include="ModalityProcedureStepTypeDetail.cs" />
     <Compile Include="ModalityWorkflow\DiagnosticServiceBreakdownSummary.cs" />
+    <Compile Include="ModalityWorkflow\ListWorklistsRequest.cs" />
+    <Compile Include="ModalityWorkflow\ListWorklistsResponse.cs" />
     <Compile Include="ModalityWorkflow\ResumeProcedureRequest.cs" />
     <Compile Include="ModalityWorkflow\ResumeProcedureResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\DocumentationPageDetail.cs" />
@@ -304,6 +306,8 @@
     <Compile Include="RegistrationWorkflow\GetWorklistRequest.cs" />
     <Compile Include="RegistrationWorkflow\GetWorklistResponse.cs" />
     <Compile Include="RegistrationWorkflow\IRegistrationWorkflowService.cs" />
+    <Compile Include="RegistrationWorkflow\ListWorklistsRequest.cs" />
+    <Compile Include="RegistrationWorkflow\ListWorklistsResponse.cs" />
     <Compile Include="RegistrationWorkflow\LoadWorklistPreviewRequest.cs" />
     <Compile Include="RegistrationWorkflow\LoadWorklistPreviewResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\DiagnosticServiceTreeItem.cs" />

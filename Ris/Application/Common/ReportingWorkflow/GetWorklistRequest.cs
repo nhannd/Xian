@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -14,13 +11,15 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             this.WorklistClassName = worklistClassName;
         }
 
+        public GetWorklistRequest(EntityRef worklistRef)
+        {
+            WorklistRef = worklistRef;
+        }
+
+        [DataMember]
+        public EntityRef WorklistRef;
+
         [DataMember]
         public string WorklistClassName;
-
-        //[DataMember]
-        //public Type StepClass;
-
-        //[DataMember]
-        //public ReportingWorklistSearchCriteria SearchCriteria;
     }
 }

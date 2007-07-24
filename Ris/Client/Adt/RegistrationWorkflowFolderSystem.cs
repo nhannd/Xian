@@ -1,14 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
@@ -164,6 +160,17 @@ namespace ClearCanvas.Ris.Client.Adt
             this.AddFolder(new Folders.CompletedFolder(this));
             this.AddFolder(new Folders.CancelledFolder(this));
             this.AddFolder(_searchFolder = new Folders.SearchFolder(this));
+
+            Platform.GetService<IRegistrationWorkflowService>(
+                delegate(IRegistrationWorkflowService service)
+                {
+                    ListWorklistsResponse response = service.ListWorklists(new ListWorklistsRequest());
+                    foreach (WorklistSummary worklistSummary in response.Worklists)
+                    {
+                        WorkflowFolder<RegistrationWorklistItem> folder = FolderFactory.Instance.GetFolder(worklistSummary.WorklistType, this, worklistSummary);
+                        if(folder != null) this.AddFolder(folder);
+                    }
+                });
 
             _itemToolSet = new ToolSet(new RegistrationWorkflowItemToolExtensionPoint(), new RegistrationWorkflowItemToolContext(this));
             _folderToolSet = new ToolSet(new RegistrationWorkflowFolderToolExtensionPoint(), new RegistrationWorkflowFolderToolContext(this));

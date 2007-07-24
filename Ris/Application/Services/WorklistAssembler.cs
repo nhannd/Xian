@@ -6,8 +6,9 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
+using ClearCanvas.Ris.Application.Services.Admin;
 
-namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
+namespace ClearCanvas.Ris.Application.Services
 {
     internal class WorklistAssembler
     {
@@ -19,9 +20,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             detail.RequestedProcedureTypeGroups = CollectionUtils.Map<RequestedProcedureTypeGroup, RequestedProcedureTypeGroupSummary, List<RequestedProcedureTypeGroupSummary>>(
                 worklist.RequestedProcedureTypeGroups,
                 delegate(RequestedProcedureTypeGroup rptGroup)
-                {
-                    return assembler.GetRequestedProcedureTypeGroupSummary(rptGroup, context);
-                });
+                    {
+                        return assembler.GetRequestedProcedureTypeGroupSummary(rptGroup, context);
+                    });
 
             return detail;
         }
@@ -38,9 +39,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             
             worklist.RequestedProcedureTypeGroups.Clear();
             detail.RequestedProcedureTypeGroups.ForEach(delegate(RequestedProcedureTypeGroupSummary summary)
-            {
-                worklist.RequestedProcedureTypeGroups.Add(context.Load<RequestedProcedureTypeGroup>(summary.EntityRef));
-            });
+                                                            {
+                                                                worklist.RequestedProcedureTypeGroups.Add(context.Load<RequestedProcedureTypeGroup>(summary.EntityRef));
+                                                            });
         }
     }
 
@@ -55,12 +56,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
             // TODO: populate dictionary from worklist classes themselves, not hard-coded
             _worklistTypeMapping = new Dictionary<string, Type>();
             _worklistTypeMapping.Add("Registration - Checked In", typeof(RegistrationCheckedInWorklist));
-            _worklistTypeMapping.Add("Registration - In Progress", typeof(RegistrationInProgessWorklist));
+            _worklistTypeMapping.Add("Registration - In Progress", typeof(RegistrationInProgressWorklist));
             _worklistTypeMapping.Add("Registration - Scheduled", typeof(RegistrationScheduledWorklist));
             _worklistTypeMapping.Add("Registration - Cancelled", typeof(RegistrationCancelledWorklist));
             _worklistTypeMapping.Add("Registration - Completed", typeof(RegistrationCompletedWorklist));
             _worklistTypeMapping.Add("Technologist - Checked In", typeof(TechnologistCheckedInWorklist));
-            _worklistTypeMapping.Add("Technologist - In Progress", typeof(TechnologistInProgessWorklist));
+            _worklistTypeMapping.Add("Technologist - In Progress", typeof(TechnologistInProgressWorklist));
             _worklistTypeMapping.Add("Technologist - Scheduled", typeof(TechnologistScheduledWorklist));
             _worklistTypeMapping.Add("Technologist - Cancelled", typeof(TechnologistCancelledWorklist));
             _worklistTypeMapping.Add("Technologist - Completed", typeof(TechnologistCompletedWorklist));

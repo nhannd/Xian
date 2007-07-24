@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -77,9 +76,11 @@ namespace ClearCanvas.Ris.Client.Adt
         private IconSet _closedIconSet;
         private IconSet _openIconSet;
 
+        private readonly EntityRef _worklistRef;
+
         private string _worklistClassName;
 
-        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
+        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName, EntityRef worklistRef, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
             : base(folderSystem, folderName, new RegistrationWorklistTable())
         {
             _folderSystem = folderSystem;
@@ -92,10 +93,22 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 this.InitDragDropHandling(dropHandlerExtensionPoint, new DropContext(this));
             }
+
+            _worklistRef = worklistRef;
+        }
+
+        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
+            : this(folderSystem, folderName, null, dropHandlerExtensionPoint)
+        {
         }
 
         public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName)
-            :this(folderSystem, folderName, null)
+            :this(folderSystem, folderName, null, null)
+        {
+        }
+
+        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName, EntityRef worklistRef)
+            : this(folderSystem, folderName, worklistRef, null)
         {
         }
 
@@ -141,26 +154,33 @@ namespace ClearCanvas.Ris.Client.Adt
         protected override IList<RegistrationWorklistItem> QueryItems()
         {
             List<RegistrationWorklistItem> worklistItems = null;
+
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
                 {
-                    GetWorklistResponse response = service.GetWorklist(new GetWorklistRequest(this.WorklistClassName));
+                    GetWorklistRequest request = _worklistRef == null 
+                        ? new GetWorklistRequest(this.WorklistClassName) 
+                        : new GetWorklistRequest(_worklistRef);
+
+                    GetWorklistResponse response = service.GetWorklist(request);
                     worklistItems = response.WorklistItems;
                 });
 
-            if (worklistItems == null)
-                worklistItems = new List<RegistrationWorklistItem>();
-
-            return worklistItems;
+            return worklistItems ?? new List<RegistrationWorklistItem>();
         }
 
         protected override int QueryCount()
         {
             int count = -1;
+
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
                 {
-                    GetWorklistCountResponse response = service.GetWorklistCount(new GetWorklistCountRequest(this.WorklistClassName));
+                    GetWorklistCountRequest request = _worklistRef == null
+                        ? new GetWorklistCountRequest(this.WorklistClassName)
+                        : new GetWorklistCountRequest(_worklistRef);
+
+                    GetWorklistCountResponse response = service.GetWorklistCount(request);
                     count = response.ItemCount;
                 });
 

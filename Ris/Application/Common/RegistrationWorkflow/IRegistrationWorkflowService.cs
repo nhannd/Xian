@@ -18,6 +18,9 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         [OperationContract]
         SearchPatientResponse SearchPatient(SearchPatientRequest request);
 
+        [OperationContract]
+        ListWorklistsResponse ListWorklists(ListWorklistsRequest request);
+
         /// <summary>
         /// Get items for a worklist
         /// </summary>

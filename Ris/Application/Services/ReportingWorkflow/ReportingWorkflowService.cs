@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -27,9 +28,14 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
             ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
+
+            IList items = request.WorklistRef == null
+                  ? GetWorklist(request.WorklistClassName)
+                  : GetWorklist(request.WorklistRef);
+
             return new GetWorklistResponse(
                 CollectionUtils.Map<WorklistItem, ReportingWorklistItem, List<ReportingWorklistItem>>(
-                    GetWorklist(request.WorklistClassName),
+                    items,
                     delegate(WorklistItem item)
                     {
                         return assembler.CreateReportingWorklistItem(item, this.PersistenceContext);
@@ -39,7 +45,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         [ReadOperation]
         public GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request)
         {
-            return new GetWorklistCountResponse(GetWorklistCount(request.WorklistClassName));
+            int count = request.WorklistRef == null
+                            ? GetWorklistCount(request.WorklistClassName)
+                            : GetWorklistCount(request.WorklistRef);
+
+            return new GetWorklistCountResponse(count);
         }
 
         [ReadOperation]

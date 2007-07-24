@@ -1,25 +1,17 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Client;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt.Folders
 {
     public class ScheduledFolder : RegistrationWorkflowFolder
     {
-        public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Scheduled")
+        public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, worklistRef)
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
@@ -27,6 +19,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
             this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Scheduled";
+        }
+
+        public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem)
+            : this(folderSystem, "Scheduled", null)
+        {
         }
 
         private void DisplayOption(IDesktopWindow desktopWindow)
@@ -46,15 +43,20 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-        public CheckedInFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Checked In", new DropHandlerExtensionPoint())
+        public CheckedInFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, worklistRef, new DropHandlerExtensionPoint())
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
-			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
+            ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
                 delegate() { DisplayOption(folderSystem.DesktopWindow); });
 
             this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+CheckIn";
+        }
+
+        public CheckedInFolder(RegistrationWorkflowFolderSystem folderSystem)
+            : this(folderSystem, "Checked In", null)
+        {
         }
 
         private void DisplayOption(IDesktopWindow desktopWindow)
@@ -69,8 +71,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
     public class InProgressFolder : RegistrationWorkflowFolder
     {
-        public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "In Progress")
+        public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, worklistRef)
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
@@ -78,6 +80,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
             this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+InProgress";
+        }
+
+        public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem)
+            : this(folderSystem, "In Progress", null)
+        {
         }
 
         private void DisplayOption(IDesktopWindow desktopWindow)
@@ -92,8 +99,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
     public class CompletedFolder : RegistrationWorkflowFolder
     {
-        public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Completed")
+        public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, worklistRef)
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
@@ -101,6 +108,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
             this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Completed";
+        }
+
+        public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem)
+            : this(folderSystem, "Completed", null)
+        {
         }
 
         private void DisplayOption(IDesktopWindow desktopWindow)
@@ -120,8 +132,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-        public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "Cancelled", new DropHandlerExtensionPoint())
+        public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, worklistRef, new DropHandlerExtensionPoint())
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
@@ -129,6 +141,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
             this.RefreshTime = 0;
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Cancelled";
+        }
+
+        public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem)
+            : this(folderSystem, "Cancelled", null)
+        {
         }
 
         private void DisplayOption(IDesktopWindow desktopWindow)

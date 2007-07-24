@@ -1,10 +1,9 @@
-using System;
 using System.Collections.Generic;
-
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -75,9 +74,10 @@ namespace ClearCanvas.Ris.Client.Adt
         private IconSet _closedIconSet;
         private IconSet _openIconSet;
 
+        private readonly EntityRef _worklistRef;
         private string _worklistClassName;
 
-        public TechnologistWorkflowFolderBase(TechnologistWorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<ModalityWorklistItem>> dropHandlerExtensionPoint)
+        public TechnologistWorkflowFolderBase(TechnologistWorkflowFolderSystem folderSystem, string folderName, EntityRef worklistRef, ExtensionPoint<IDropHandler<ModalityWorklistItem>> dropHandlerExtensionPoint)
             : base(folderSystem, folderName, new ModalityWorklistTable())
         {
             _folderSystem = folderSystem;
@@ -90,10 +90,22 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 this.InitDragDropHandling(dropHandlerExtensionPoint, new DropContext(this));
             }
+
+            _worklistRef = worklistRef;
+        }
+
+        public TechnologistWorkflowFolderBase(TechnologistWorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<ModalityWorklistItem>> dropHandlerExtensionPoint)
+            : this(folderSystem, folderName, null, dropHandlerExtensionPoint)
+        {
         }
 
         public TechnologistWorkflowFolderBase(TechnologistWorkflowFolderSystem folderSystem, string folderName)
-            : this(folderSystem, folderName, null)
+            : this(folderSystem, folderName, null, null)
+        {
+        }
+
+        public TechnologistWorkflowFolderBase(TechnologistWorkflowFolderSystem folderSystem, string folderName, EntityRef worklistRef)
+            : this(folderSystem, folderName, worklistRef, null)
         {
         }
 
@@ -144,7 +156,11 @@ namespace ClearCanvas.Ris.Client.Adt
             Platform.GetService<IModalityWorkflowService>(
                 delegate(IModalityWorkflowService service)
                 {
-                    GetWorklistCountResponse response = service.GetWorklistCount(new GetWorklistCountRequest(this.WorklistClassName));
+                    GetWorklistCountRequest request = _worklistRef == null 
+                        ? new GetWorklistCountRequest(this.WorklistClassName)
+                        : new GetWorklistCountRequest(_worklistRef);
+
+                    GetWorklistCountResponse response = service.GetWorklistCount(request);
                     count = response.ItemCount;
                 });
 
@@ -158,7 +174,11 @@ namespace ClearCanvas.Ris.Client.Adt
             Platform.GetService<IModalityWorkflowService>(
                 delegate(IModalityWorkflowService service)
                 {
-                    GetWorklistResponse response = service.GetWorklist(new GetWorklistRequest(this.WorklistClassName));
+                    GetWorklistRequest request = _worklistRef == null 
+                        ? new GetWorklistRequest(this.WorklistClassName)
+                        : new GetWorklistRequest(_worklistRef);
+
+                    GetWorklistResponse response = service.GetWorklist(request);
                     worklistItems = response.WorklistItems;
                 });
 

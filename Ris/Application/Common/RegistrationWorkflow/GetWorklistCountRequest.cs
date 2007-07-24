@@ -14,6 +14,14 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             this.WorklistClassName = worklistClassName;
         }
 
+        public GetWorklistCountRequest(EntityRef worklistRef)
+        {
+            this.WorklistRef = worklistRef;
+        }
+
+        [DataMember]
+        public EntityRef WorklistRef;
+
         [DataMember]
         public string WorklistClassName;
     }

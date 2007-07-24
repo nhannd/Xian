@@ -76,7 +76,7 @@
     <Compile Include="Admin\VisitAdmin\VisitAdminService.cs" />
     <Compile Include="Admin\VisitAssembler.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminService.cs" />
-    <Compile Include="Admin\WorklistAdmin\WorklistAssembler.cs" />
+    <Compile Include="WorklistAssembler.cs" />
     <Compile Include="ApplicationServiceBase.cs" />
     <Compile Include="ApplicationServiceExtensionPoint.cs" />
     <Compile Include="Admin\HL7QueueItemAssembler.cs" />

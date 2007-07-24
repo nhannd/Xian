@@ -1,11 +1,11 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -144,6 +144,17 @@ namespace ClearCanvas.Ris.Client.Adt
             this.AddFolder(new Folders.SuspendedTechnologistWorkflowFolder(this));
             this.AddFolder(new Folders.CancelledTechnologistWorkflowFolder(this));
             this.AddFolder(new Folders.CompletedTechnologistWorkflowFolder(this));
+
+            Platform.GetService<IModalityWorkflowService>(
+                delegate(IModalityWorkflowService service)
+                {
+                    ListWorklistsResponse response = service.ListWorklists(new ListWorklistsRequest());
+                    foreach (WorklistSummary worklistSummary in response.Worklists)
+                    {
+                        WorkflowFolder<ModalityWorklistItem> folder = FolderFactory.Instance.GetFolder(worklistSummary.WorklistType, this, worklistSummary);
+                        if (folder != null) this.AddFolder(folder);
+                    }
+                });
 
             _itemToolSet = new ToolSet(new TechnologistWorkflowItemToolExtensionPoint(), new TechnologistWorkflowItemToolContext(this));
             _folderToolSet = new ToolSet(new TechnologistWorkflowFolderToolExtensionPoint(), new TechnologistWorkflowFolderToolContext(this));

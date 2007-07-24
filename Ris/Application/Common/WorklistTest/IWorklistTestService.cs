@@ -1,7 +1,8 @@
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Application.Common.WorklistTest
 {
@@ -13,6 +14,60 @@ namespace ClearCanvas.Ris.Application.Common.WorklistTest
 
         [OperationContract]
         DoWorklistTestResponse DoWorklistTest(DoWorklistTestRequest request);
+
+        [OperationContract]
+        GetPersistentWorklistResponse GetPersistentWorklist(GetPersistentWorklistRequest request);
+
+        [OperationContract]
+        GetPersistentWorklistCountResponse GetPersistentWorklistCount(GetPersistentWorklistCountRequest request);
+    }
+
+    [DataContract]
+    public class GetPersistentWorklistCountRequest : DataContractBase
+    {
+        public GetPersistentWorklistCountRequest(EntityRef worklistRef)
+        {
+            WorklistRef = worklistRef;
+        }
+
+        [DataMember]
+        public EntityRef WorklistRef;
+    }
+
+    [DataContract]
+    public class GetPersistentWorklistCountResponse : DataContractBase
+    {
+        public GetPersistentWorklistCountResponse(int itemCount)
+        {
+            ItemCount = itemCount;
+        }
+
+        [DataMember]
+        public int ItemCount;
+    }
+
+    [DataContract]
+    public class GetPersistentWorklistRequest : DataContractBase
+    {
+        public GetPersistentWorklistRequest(EntityRef worklistRef)
+        {
+            WorklistRef = worklistRef;
+        }
+
+        [DataMember]
+        public EntityRef WorklistRef;
+    }
+
+    [DataContract]
+    public class GetPersistentWorklistResponse : DataContractBase
+    {
+        public GetPersistentWorklistResponse(List<RegistrationWorklistItem> worklistItems)
+        {
+            WorklistItems = worklistItems;
+        }
+
+        [DataMember]
+        public List<RegistrationWorklistItem> WorklistItems;
     }
 
     [DataContract]

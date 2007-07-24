@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 
 using ClearCanvas.Common;
@@ -6,7 +7,9 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Modality;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
@@ -21,13 +24,30 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         }
 
         [ReadOperation]
+        public ListWorklistsResponse ListWorklists(ListWorklistsRequest request)
+        {
+            WorklistAssembler assembler = new WorklistAssembler();
+            return new ListWorklistsResponse(
+                CollectionUtils.Map<Worklist, WorklistSummary, List<WorklistSummary>>(
+                    this.PersistenceContext.GetBroker<IWorklistBroker>().FindAllTechnologistWorklists(this.CurrentUserStaff),
+                    delegate(Worklist worklist)
+                    {
+                        return assembler.GetWorklistSummary(worklist, this.PersistenceContext);
+                    }));
+        }
+
+        [ReadOperation]
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)
         {
             ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
 
+            IList items = request.WorklistRef == null
+                  ? GetWorklist(request.WorklistClassName)
+                  : GetWorklist(request.WorklistRef);
+
             return new GetWorklistResponse(
                 CollectionUtils.Map<WorklistItem, ModalityWorklistItem, List<ModalityWorklistItem>>(
-                    GetWorklist(request.WorklistClassName),
+                    items,
                     delegate(WorklistItem queryResult)
                     {
                         return assembler.CreateModalityWorklistItem(queryResult, this.PersistenceContext);
@@ -37,8 +57,11 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         [ReadOperation]
         public GetWorklistCountResponse GetWorklistCount(GetWorklistCountRequest request)
         {
-            return new GetWorklistCountResponse(
-                GetWorklistCount(request.WorklistClassName));
+            int count = request.WorklistRef == null
+                            ? GetWorklistCount(request.WorklistClassName)
+                            : GetWorklistCount(request.WorklistRef);
+
+            return new GetWorklistCountResponse(count);
         }
 
         [ReadOperation]

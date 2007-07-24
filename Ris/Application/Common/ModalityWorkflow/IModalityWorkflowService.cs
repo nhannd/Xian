@@ -1,11 +1,13 @@
-﻿using System;
-using System.ServiceModel;
+﻿using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 {
     [ServiceContract]
     public interface IModalityWorkflowService
     {
+        [OperationContract]
+        ListWorklistsResponse ListWorklists(ListWorklistsRequest request);
+
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         GetWorklistResponse GetWorklist(GetWorklistRequest request);

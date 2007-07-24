@@ -5,6 +5,7 @@ using System.Text;
 using System.Reflection;
 
 using ClearCanvas.Common;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
@@ -64,9 +65,21 @@ namespace ClearCanvas.Ris.Application.Services
             return worklist.GetWorklist(this.CurrentUserStaff, this.PersistenceContext);
         }
 
+        protected IList GetWorklist(EntityRef worklistRef)
+        {
+            IWorklist  worklist = this.PersistenceContext.Load<Worklist>(worklistRef);
+            return worklist.GetWorklist(this.CurrentUserStaff, this.PersistenceContext);
+        }
+
         protected int GetWorklistCount(string worklistClassName)
         {
             IWorklist worklist = (IWorklist)_worklistExtPoint.CreateExtension(new ClassNameExtensionFilter(worklistClassName));
+            return worklist.GetWorklistCount(this.CurrentUserStaff, this.PersistenceContext);
+        }
+
+        protected int GetWorklistCount(EntityRef worklistRef)
+        {
+            IWorklist worklist = this.PersistenceContext.Load<Worklist>(worklistRef);
             return worklist.GetWorklistCount(this.CurrentUserStaff, this.PersistenceContext);
         }
 

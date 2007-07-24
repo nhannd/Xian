@@ -1,5 +1,5 @@
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
