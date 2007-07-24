@@ -133,6 +133,15 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to find current user.
+        /// </summary>
+        internal static string ExceptionNoUser {
+            get {
+                return ResourceManager.GetString("ExceptionNoUser", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Patient with MRN {0} {1} not found.
         /// </summary>
         internal static string ExceptionPatientNotFound {

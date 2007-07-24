@@ -1,12 +1,13 @@
 using System.Collections;
+using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare.Brokers
 {
     public interface IWorklistBroker : IEntityBroker<Worklist, WorklistSearchCriteria>
     {
-        IList FindAllRegistrationWorklists(Staff currentStaff);
-        IList FindAllTechnologistWorklists(Staff currentStaff);
-        IList FindAllReportingWorklists(Staff currentStaff);
+        IList FindAllRegistrationWorklists(User currentUser);
+        IList FindAllTechnologistWorklists(User currentUser);
+        IList FindAllReportingWorklists(User currentUser);
     }
 }

@@ -174,4 +174,7 @@
   <data name="ExceptionVerifyWithNoReport" xml:space="preserve">
     <value>The report content is required to verify this step</value>
   </data>
+  <data name="ExceptionNoUser" xml:space="preserve">
+    <value>Unable to find current user</value>
+  </data>
 </root>

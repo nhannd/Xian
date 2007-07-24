@@ -9,22 +9,21 @@ namespace ClearCanvas.Healthcare
         private string _name;
         private string _description;
         private ISet _requestedProcedureTypeGroups;
+        private ISet _users;
 
         public Worklist()
         {
             _requestedProcedureTypeGroups = new HybridSet();
-
+            _users = new HybridSet();
         }
         
         public virtual IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
         {
-            // TODO: Implementation
             return null;
         }
 
         public virtual int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
         {
-            // TODO: Implementation
             return 0;
         }
 
@@ -43,6 +42,11 @@ namespace ClearCanvas.Healthcare
         public ISet RequestedProcedureTypeGroups
         {
             get { return _requestedProcedureTypeGroups; }
+        }
+
+        public ISet Users
+        {
+            get { return _users; }
         }
 
         protected static T GetBroker<T>(IPersistenceContext context) where T : IPersistenceBroker
