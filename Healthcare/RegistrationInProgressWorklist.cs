@@ -5,9 +5,9 @@ using ClearCanvas.Healthcare.Brokers;
 namespace ClearCanvas.Healthcare
 {
     /// <summary>
-    /// TechnologistInProgessWorklist entity
+    /// RegistrationInProgessWorklist entity
     /// </summary>
-    public partial class TechnologistInProgessWorklist : ClearCanvas.Healthcare.Worklist
+    public partial class RegistrationInProgressWorklist : ClearCanvas.Healthcare.Worklist
     {
         /// <summary>
         /// This method is called from the constructor.  Use this method to implement any custom
@@ -17,19 +17,15 @@ namespace ClearCanvas.Healthcare
         {
         }
 
-        #region Worklist overrides
-
         public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
         {
-            return (IList)GetBroker<IModalityWorklistBroker>(context).GetInProgressWorklist(this);
+            return (IList) GetBroker<IRegistrationWorklistBroker>(context).GetInProgressWorklist(this);
         }
 
         public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
         {
-            return GetBroker<IModalityWorklistBroker>(context).GetInProgressWorklistCount(this);
+            return GetBroker<IRegistrationWorklistBroker>(context).GetInProgressWorklistCount(this);
         }
-
-        #endregion
 
         #region Object overrides
 

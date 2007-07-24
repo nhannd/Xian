@@ -2,7 +2,7 @@
 <hibernate-mapping xmlns="urn:nhibernate-mapping-2.0" assembly="ClearCanvas.Healthcare" namespace="ClearCanvas.Healthcare">
   <subclass name="RegistrationScheduledWorklist" proxy="RegistrationScheduledWorklist" extends="Worklist" discriminator-value="REG_SC"/>
   <subclass name="RegistrationCheckedInWorklist" proxy="RegistrationCheckedInWorklist" extends="Worklist" discriminator-value="REG_CI"/>
-  <subclass name="RegistrationInProgessWorklist" proxy="RegistrationInProgessWorklist" extends="Worklist" discriminator-value="REG_IP"/>
+  <subclass name="RegistrationInProgressWorklist" proxy="RegistrationInProgressWorklist" extends="Worklist" discriminator-value="REG_IP"/>
   <subclass name="RegistrationCancelledWorklist" proxy="RegistrationCancelledWorklist" extends="Worklist" discriminator-value="REG_CA"/>
   <subclass name="RegistrationCompletedWorklist" proxy="RegistrationCompletedWorklist" extends="Worklist" discriminator-value="REG_CM"/>
 </hibernate-mapping>

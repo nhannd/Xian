@@ -83,7 +83,7 @@
     <Compile Include="RegistrationCancelledWorklist.cs" />
     <Compile Include="RegistrationCheckedInWorklist.cs" />
     <Compile Include="RegistrationCompletedWorklist.cs" />
-    <Compile Include="RegistrationInProgessWorklist.cs" />
+    <Compile Include="RegistrationInProgressWorklist.cs" />
     <Compile Include="RegistrationScheduledWorklist.cs" />
     <Compile Include="Report.cs" />
     <Compile Include="ReportPart.cs" />
@@ -94,7 +94,7 @@
     <Compile Include="TechnologistCancelledWorklist.cs" />
     <Compile Include="TechnologistCheckedInWorklist.cs" />
     <Compile Include="TechnologistCompletedWorklist.cs" />
-    <Compile Include="TechnologistInProgessWorklist.cs" />
+    <Compile Include="TechnologistInProgressWorklist.cs" />
     <Compile Include="TechnologistScheduledWorklist.cs" />
     <Compile Include="TechnologistSuspendedWorklist.cs" />
     <Compile Include="Workflow\Modality\WorklistItem.cs" />

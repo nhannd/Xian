@@ -12,7 +12,7 @@ namespace ClearCanvas.Healthcare.Brokers
         IList<WorklistItem> GetCheckInWorklist();
         IList<WorklistItem> GetCheckInWorklist(RegistrationCheckedInWorklist worklist);
         IList<WorklistItem> GetInProgressWorklist();
-        IList<WorklistItem> GetInProgressWorklist(RegistrationInProgessWorklist worklist);
+        IList<WorklistItem> GetInProgressWorklist(RegistrationInProgressWorklist worklist);
         IList<WorklistItem> GetCompletedWorklist();
         IList<WorklistItem> GetCompletedWorklist(RegistrationCompletedWorklist worklist);
         IList<WorklistItem> GetCancelledWorklist();
@@ -23,7 +23,7 @@ namespace ClearCanvas.Healthcare.Brokers
         int GetCheckInWorklistCount();
         int GetCheckInWorklistCount(RegistrationCheckedInWorklist worklist);
         int GetInProgressWorklistCount();
-        int GetInProgressWorklistCount(RegistrationInProgessWorklist worklist);
+        int GetInProgressWorklistCount(RegistrationInProgressWorklist worklist);
         int GetCompletedWorklistCount();
         int GetCompletedWorklistCount(RegistrationCompletedWorklist worklist);
         int GetCancelledWorklistCount();

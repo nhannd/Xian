@@ -149,7 +149,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetInProgressWorklist(null);
         }
 
-        public IList<WorklistItem> GetInProgressWorklist(RegistrationInProgessWorklist worklist)
+        public IList<WorklistItem> GetInProgressWorklist(RegistrationInProgressWorklist worklist)
         {
             string hqlQuery = String.Concat(_hqlSelectWorklist, _hqlJoin, _hqlMainCondition, _hqlMPSStartedSubQuery);
 
@@ -246,7 +246,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetInProgressWorklistCount(null);
         }
 
-        public int GetInProgressWorklistCount(RegistrationInProgessWorklist worklist)
+        public int GetInProgressWorklistCount(RegistrationInProgressWorklist worklist)
         {
             string hqlQuery = String.Concat(_hqlSelectCount, _hqlJoin, _hqlMainCondition, _hqlMPSStartedSubQuery);
 

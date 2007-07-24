@@ -110,7 +110,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetInProgressWorklist(null);
         }
 
-        public IList<WorklistItem> GetInProgressWorklist(TechnologistInProgessWorklist worklist)
+        public IList<WorklistItem> GetInProgressWorklist(TechnologistInProgressWorklist worklist)
         {
             return GetWorklistFromMpsState("IP", worklist);
         }
@@ -188,7 +188,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetInProgressWorklistCount(null);
         }
 
-        public int GetInProgressWorklistCount(TechnologistInProgessWorklist worklist)
+        public int GetInProgressWorklistCount(TechnologistInProgressWorklist worklist)
         {
             return GetWorklistCountFromMpsState("IP", worklist);
         }
