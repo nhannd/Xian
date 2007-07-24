@@ -35,7 +35,7 @@ namespace ClearCanvas.Ris.Client
         public static string Serialize<T>(T dataObject, bool includeEmptyTags)
             where T : DataContractBase
         {
-            return Serialize(dataObject, includeEmptyTags);
+            return Serialize((DataContractBase)dataObject, includeEmptyTags);
         }
 
         public static string Serialize(DataContractBase dataObject, bool includeEmptyTags)
