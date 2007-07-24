@@ -100,6 +100,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			_surface.FinalBuffer.Graphics.Clear(Color.Black);
 
+			_firstImage = true;
+
 			DrawSceneGraph(
 				drawArgs.SceneGraph, 
 				drawArgs.ClientRectangle, 
@@ -137,8 +139,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 			Rectangle drawableTileRectangle, 
 			bool fastDraw)
 		{
-			_firstImage = true;
-
 			foreach (Graphic graphic in compositeGraphic.Graphics)
 			{
 				if (graphic.Visible)
