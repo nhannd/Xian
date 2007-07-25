@@ -8,6 +8,8 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt.Folders
 {
+    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [FolderForWorklistType("Registration - Scheduled")]
     public class ScheduledFolder : RegistrationWorkflowFolder
     {
         public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, EntityRef worklistRef)
@@ -26,6 +28,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
+        public ScheduledFolder()
+            : this(null)
+        {
+        }
+
         private void DisplayOption(IDesktopWindow desktopWindow)
         {
             FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
@@ -36,6 +43,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
+    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [FolderForWorklistType("Registration - Checked In")]
     public class CheckedInFolder : RegistrationWorkflowFolder
     {
         [ExtensionPoint]
@@ -59,6 +68,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
+        public CheckedInFolder()
+            : this(null)
+        {
+        }
+
         private void DisplayOption(IDesktopWindow desktopWindow)
         {
             FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
@@ -69,6 +83,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
+    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [FolderForWorklistType("Registration - In Progress")]
     public class InProgressFolder : RegistrationWorkflowFolder
     {
         public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, EntityRef worklistRef)
@@ -87,6 +103,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
+        public InProgressFolder()
+            : this(null)
+        {
+        }
+
         private void DisplayOption(IDesktopWindow desktopWindow)
         {
             FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
@@ -97,6 +118,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
+    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [FolderForWorklistType("Registration - Completed")]
     public class CompletedFolder : RegistrationWorkflowFolder
     {
         public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, EntityRef worklistRef)
@@ -115,6 +138,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
+        public CompletedFolder()
+            : this(null)
+        {
+        }
+
         private void DisplayOption(IDesktopWindow desktopWindow)
         {
             FolderOptionComponent optionComponent = new FolderOptionComponent(this.RefreshTime);
@@ -125,6 +153,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
+    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    [FolderForWorklistType("Registration - Cancelled")]
     public class CancelledFolder : RegistrationWorkflowFolder
     {
         [ExtensionPoint]
@@ -145,6 +175,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
         public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem)
             : this(folderSystem, "Cancelled", null)
+        {
+        }
+
+        public CancelledFolder()
+            : this(null)
         {
         }
 

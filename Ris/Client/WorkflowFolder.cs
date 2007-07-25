@@ -1,14 +1,33 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Desktop;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client
 {
+    [ExtensionPoint]
+    public class WorkflowFolderExtensionPoint : ExtensionPoint<IFolder>
+    {
+    }
+
+    [AttributeUsage(AttributeTargets.Class)]
+    public class FolderForWorklistTypeAttribute : Attribute
+    {
+        private readonly string _worklistType;
+
+        public FolderForWorklistTypeAttribute(string worklistType)
+        {
+            _worklistType = worklistType;
+        }
+
+        public string WorklistType
+        {
+            get { return _worklistType; }
+        }
+    }
+
     public abstract class WorkflowFolder<TItem> : Folder, IDisposable
     {
         private string _folderName;

@@ -66,6 +66,7 @@
       <DependentUpon>EmailAddressEditorComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="ExceptionPolicies.cs" />
+    <Compile Include="WorkflowFolderFactory.cs" />
     <Compile Include="Formatting\AddressFormat.cs" />
     <Compile Include="AddressEditorComponentSettings.cs" />
     <Compile Include="AddressEditorComponentSettings.Designer.cs">
