@@ -39,6 +39,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
 			_lastName.DataBindings.Add("Value", _bindingSource, "LastName", true, DataSourceUpdateMode.OnPropertyChanged);
 			_firstName.DataBindings.Add("Value", _bindingSource, "FirstName", true, DataSourceUpdateMode.OnPropertyChanged);
+			_firstName.DataBindings.Add("Enabled", _bindingSource, "AllowFirstName", true, DataSourceUpdateMode.OnPropertyChanged);
 			_accessionNumber.DataBindings.Add("Value", _bindingSource, "AccessionNumber", true, DataSourceUpdateMode.OnPropertyChanged);
 			_patientID.DataBindings.Add("Value", _bindingSource, "PatientID", true, DataSourceUpdateMode.OnPropertyChanged);
 			_studyDescription.DataBindings.Add("Value", _bindingSource, "StudyDescription", true, DataSourceUpdateMode.OnPropertyChanged);

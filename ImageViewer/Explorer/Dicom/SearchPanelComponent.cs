@@ -98,6 +98,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			}
 		}
 
+		public bool AllowFirstName
+		{
+			get { return !String.IsNullOrEmpty(this.LastName); }
+		}
+
 		public string LastName
 		{
 			get { return _lastName; }
