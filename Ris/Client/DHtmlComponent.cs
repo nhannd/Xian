@@ -110,9 +110,9 @@ namespace ClearCanvas.Ris.Client
                 return new JsmlServiceProxy(serviceContractName);
             }
 
-            public string GetEntityRef()
+            public string GetWorklistItem()
             {
-                return JsmlSerializer.Serialize(_component.EntityRef, "entityRef");
+                return JsmlSerializer.Serialize(_component.GetWorklistItem(), "worklistItem");
             }
         }
 
@@ -152,11 +152,12 @@ namespace ClearCanvas.Ris.Client
             return null;
         }
 
-        public abstract string DetailsPageUrl { get; }
-        public virtual EntityRef EntityRef
+        public virtual object GetWorklistItem()
         {
-            get { throw new NotImplementedException(); }
+            throw new NotImplementedException();
         }
+
+        public abstract string DetailsPageUrl { get; }
 
         public virtual ActionModelNode ActionModel
         {

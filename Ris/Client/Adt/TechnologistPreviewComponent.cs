@@ -10,6 +10,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.PreviewService;
 using ClearCanvas.Ris.Application.Common.Jsml;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -133,6 +134,11 @@ namespace ClearCanvas.Ris.Client.Adt
                 _worklistItem = value;
                 NotifyAllPropertiesChanged();
             }
+        }
+
+        public override object GetWorklistItem()
+        {
+            return _worklistItem;
         }
 
         #endregion

@@ -19,12 +19,17 @@
 		        
 	            try
 	            {
-                    var request = { GetModalityProcedureStepRequest: { GetDiagnosticServiceBreakdown: true },
-                                    GetPatientProfileRequest:        {},
-                                    ListPatientOrdersRequest:        { QueryDetailLevel: "RequestedProcedure" },
-                                    GetPatientAlertsRequest:         {} };
+                    var request = {
+                        ProcedureStepRef: Ris.getWorklistItem().ProcedureStepRef,
+                        GetModalityProcedureStepRequest: { GetDiagnosticServiceBreakdown: true },
+                        GetPatientProfileRequest:        {},
+                        ListPatientOrdersRequest:        { QueryDetailLevel: "RequestedProcedure" },
+                        GetPatientAlertsRequest:         {}
+                    };
+                    
+                    var service = Ris.getService("ClearCanvas.Ris.Application.Common.PreviewService.IPreviewService, ClearCanvas.Ris.Application.Common");
+                    data = service.getData(request);
 
-                    data = Ris.getResponseData(request, "GetDataRequest");                                        
                     if (data == null || data.length == 0)
                     {
                         Field.setValue($("myForm"), "");

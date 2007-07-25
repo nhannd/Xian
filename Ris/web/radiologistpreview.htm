@@ -19,11 +19,16 @@
 		        
 	            try
 	            {
-                    var request = { GetReportingProcedureStepRequest: {},
-                                    GetPatientProfileRequest:         {},
-                                    GetPatientAlertsRequest:          {} };
+                    var request = {
+                        ProcedureStepRef: Ris.getWorklistItem().ProcedureStepRef,
+                        GetReportingProcedureStepRequest: {},
+                        GetPatientProfileRequest:         {},
+                        GetPatientAlertsRequest:          {}
+                    };
 
-                    data = Ris.getResponseData(request, "GetDataRequest");
+                    var service = Ris.getService("ClearCanvas.Ris.Application.Common.PreviewService.IPreviewService, ClearCanvas.Ris.Application.Common");
+                    data = service.getData(request);
+                    
                     if (data == null || data.length == 0)
                     {
                         Field.setValue($("myForm"), "");

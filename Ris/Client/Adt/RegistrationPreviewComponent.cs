@@ -10,6 +10,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.PreviewService;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.Jsml;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -115,12 +116,9 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return RegistrationPreviewComponentSettings.Default.DetailsPageUrl; }
         }
 
-        public override ClearCanvas.Enterprise.Common.EntityRef EntityRef
+        public override object GetWorklistItem()
         {
-            get
-            {
-                return _worklistItem.PatientProfileRef;
-            }
+            return _worklistItem;
         }
 
         public override ActionModelNode ActionModel

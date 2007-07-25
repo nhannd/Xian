@@ -44,14 +44,6 @@ if(window.external)
             return window.external.DateTimeFormat;
         },
         
-		getResponseData: function(requestObject, requestObjectName)
-		{
-            var requestJsml = JSML.create(requestObject, requestObjectName);
-			var responseJsml = window.external.GetJsmlData(requestJsml);
-			var responseObject = JSML.parse(responseJsml);
-			return responseObject;
-		},
-		
         getData: function(tag)
         {
             return window.external.GetData(tag);
@@ -112,7 +104,11 @@ if(window.external)
 		    operations.each(
 		        function(operation)
 		        {
-		            proxy[operation] = 
+		            // create camelCase (as opposed to PascalCase) version of the operation name
+		            var ccOperation = operation.slice(0,1).toLowerCase() + operation.slice(1);
+		            
+		            // allow the operation to be invoked via either camel or pascal casing
+		            proxy[operation] = proxy[ccOperation] = 
 		                function(request)
 		                {
 		                    return JSML.parse( this._innerProxy.InvokeOperation(operation, JSML.create(request, "requestData")) );
@@ -121,9 +117,10 @@ if(window.external)
 		    return proxy;
 		},
 		
-		getEntityRef: function()
+		// for a preview page, obtains the worklist item on which the preview is based
+		getWorklistItem: function()
 		{
-		    return JSML.parse(window.external.GetEntityRef());
+		    return JSML.parse(window.external.GetWorklistItem());
 		}
     };
     
