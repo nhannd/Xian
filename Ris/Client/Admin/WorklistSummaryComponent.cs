@@ -4,7 +4,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
@@ -23,18 +22,18 @@ namespace ClearCanvas.Ris.Client.Admin
     [AssociateView(typeof(WorklistSummaryComponentViewExtensionPoint))]
     public class WorklistSummaryComponent : ApplicationComponent
     {
-        private WorklistSummary _selectedWorklist;
-        private WorklistSummaryTable _worklistSummaryTable;
+        private WorklistAdminSummary _selectedWorklist;
+        private WorklistAdminSummaryTable _worklistAdminSummaryTable;
 
         private SimpleActionModel _worklistActionHandler;
         private readonly string _addWorklistKey = "AddWorklist";
         private readonly string _updateWorklistKey = "UpdateWorklist";
 
-        private IPagingController<WorklistSummary> _pagingController;
+        private IPagingController<WorklistAdminSummary> _pagingController;
 
         public override void Start()
         {
-            _worklistSummaryTable = new WorklistSummaryTable();
+            _worklistAdminSummaryTable = new WorklistAdminSummaryTable();
 
             _worklistActionHandler = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
             _worklistActionHandler.AddAction(_addWorklistKey, SR.TitleAddWorklist, "Icons.AddToolSmall.png", SR.TitleAddWorklist, AddWorklist);
@@ -51,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private void InitialisePaging(ActionModelNode actionModelNode)
         {
-            _pagingController = new PagingController<WorklistSummary>(
+            _pagingController = new PagingController<WorklistAdminSummary>(
                 delegate(int firstRow, int maxRows)
                 {
                     ListWorklistsResponse listResponse = null;
@@ -72,14 +71,14 @@ namespace ClearCanvas.Ris.Client.Admin
 
             if (actionModelNode != null)
             {
-                actionModelNode.Merge(new PagingActionModel<WorklistSummary>(_pagingController, _worklistSummaryTable, Host.DesktopWindow));
+                actionModelNode.Merge(new PagingActionModel<WorklistAdminSummary>(_pagingController, _worklistAdminSummaryTable, Host.DesktopWindow));
             }
         }
 
         private void LoadWorklistTable()
         {
-            _worklistSummaryTable.Items.Clear();
-            _worklistSummaryTable.Items.AddRange(_pagingController.GetFirst());
+            _worklistAdminSummaryTable.Items.Clear();
+            _worklistAdminSummaryTable.Items.AddRange(_pagingController.GetFirst());
         }
 
         public override void Stop()
@@ -93,7 +92,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public ITable Worklists
         {
-            get { return _worklistSummaryTable; }
+            get { return _worklistAdminSummaryTable; }
         }
 
         public ActionModelNode WorklistActionModel
@@ -111,7 +110,7 @@ namespace ClearCanvas.Ris.Client.Admin
             }
             set
             {
-                _selectedWorklist = (WorklistSummary) value.Item;
+                _selectedWorklist = (WorklistAdminSummary) value.Item;
                 SelectedWorklistChanged();
             }
         }

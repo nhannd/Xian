@@ -6,16 +6,16 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     [DataContract]
     public class LoadWorklistForEditResponse : DataContractBase
     {
-        public LoadWorklistForEditResponse(EntityRef entityRef, WorklistDetail worklistDetail)
+        public LoadWorklistForEditResponse(EntityRef entityRef, WorklistAdminDetail detail)
         {
             EntityRef = entityRef;
-            WorklistDetail = worklistDetail;
+            this.Detail = detail;
         }
 
         [DataMember]
         public EntityRef EntityRef;
 
         [DataMember]
-        public WorklistDetail WorklistDetail;
+        public WorklistAdminDetail Detail;
     }
 }

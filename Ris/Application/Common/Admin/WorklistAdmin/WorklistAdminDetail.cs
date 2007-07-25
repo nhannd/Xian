@@ -6,16 +6,16 @@ using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
 namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
 {
     [DataContract]
-    public class WorklistDetail : DataContractBase
+    public class WorklistAdminDetail : DataContractBase
     {
-        public WorklistDetail()
+        public WorklistAdminDetail()
         {
             Users = new List<UserSummary>();
             RequestedProcedureTypeGroups = new List<RequestedProcedureTypeGroupSummary>();
         }
 
 
-        public WorklistDetail(EntityRef entityRef, string name, string description, string worklistType)
+        public WorklistAdminDetail(EntityRef entityRef, string name, string description, string worklistType)
             : this()
         {
             EntityRef = entityRef;

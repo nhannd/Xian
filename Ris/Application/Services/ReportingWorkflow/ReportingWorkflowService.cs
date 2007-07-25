@@ -32,7 +32,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                     this.PersistenceContext.GetBroker<IWorklistBroker>().FindAllReportingWorklists(this.CurrentUser),
                     delegate(Worklist worklist)
                     {
-                        return assembler.GetWorklistSummary(worklist, this.PersistenceContext);
+                        return assembler.GetWorklistSummary(worklist);
                     }));
         }
 

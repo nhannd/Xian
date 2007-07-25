@@ -29,8 +29,8 @@ namespace ClearCanvas.Ris.Client.Admin
         private readonly bool _isNew;
 
         private EntityRef _editedItemEntityRef;
-        private WorklistSummary _editedItemSummary;
-        private WorklistDetail _editedItemDetail;
+        private WorklistAdminSummary _editedItemSummary;
+        private WorklistAdminDetail _editedItemDetail;
 
         private List<string> _typeChoices;
 
@@ -80,7 +80,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
                     if(_isNew)
                     {
-                        _editedItemDetail = new WorklistDetail();
+                        _editedItemDetail = new WorklistAdminDetail();
                         _editedItemDetail.WorklistType = _typeChoices[0];
                     }
                     else
@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Client.Admin
                         LoadWorklistForEditResponse response =
                             service.LoadWorklistForEdit(new LoadWorklistForEditRequest(_editedItemEntityRef));
 
-                        _editedItemDetail = response.WorklistDetail;
+                        _editedItemDetail = response.Detail;
                         _selectedRequestedProcedureTypeGroups.Items.AddRange(_editedItemDetail.RequestedProcedureTypeGroups);
                         _selectedUsers.Items.AddRange(_editedItemDetail.Users);
                     }
@@ -113,7 +113,7 @@ namespace ClearCanvas.Ris.Client.Admin
             base.Stop();
         }
 
-        public WorklistSummary EditedWorklistSummary
+        public WorklistAdminSummary EditedWorklistSummary
         {
             get { return _editedItemSummary; }
         }
@@ -260,15 +260,15 @@ namespace ClearCanvas.Ris.Client.Admin
                             {
                                 AddWorklistResponse response =
                                     service.AddWorklist(new AddWorklistRequest(_editedItemDetail));
-                                _editedItemEntityRef = response.AddedWorklistSummary.EntityRef;
-                                _editedItemSummary = response.AddedWorklistSummary;
+                                _editedItemEntityRef = response.WorklistAdminSummary.EntityRef;
+                                _editedItemSummary = response.WorklistAdminSummary;
                             }
                             else
                             {
                                 UpdateWorklistResponse response =
                                     service.UpdateWorklist(new UpdateWorklistRequest(_editedItemEntityRef, _editedItemDetail));
-                                _editedItemEntityRef = response.WorklistSummary.EntityRef;
-                                _editedItemSummary = response.WorklistSummary;
+                                _editedItemEntityRef = response.WorklistAdminSummary.EntityRef;
+                                _editedItemSummary = response.WorklistAdminSummary;
                             }
                         });
 

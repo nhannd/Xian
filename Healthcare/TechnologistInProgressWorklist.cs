@@ -29,6 +29,11 @@ namespace ClearCanvas.Healthcare
             return GetBroker<IModalityWorklistBroker>(context).GetInProgressWorklistCount(this);
         }
 
+        public override string NameSuffix
+        {
+            get { return " - In Progress"; }
+        }
+
         #endregion
 
         #region Object overrides

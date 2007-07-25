@@ -29,6 +29,11 @@ namespace ClearCanvas.Healthcare
             return GetBroker<IReportingWorklistBroker>(context).GetToBeReportedWorklistCount(this);
         }
 
+        public override string NameSuffix
+        {
+            get { return " - To Be Reported"; }
+        }
+
         #endregion
 
         #region Object overrides

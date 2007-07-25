@@ -148,7 +148,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     ListWorklistsResponse response = service.ListWorklists(new ListWorklistsRequest());
                     foreach (WorklistSummary worklistSummary in response.Worklists)
                     {
-                        WorkflowFolder<ReportingWorklistItem> folder = FolderFactory.Instance.GetFolder(worklistSummary.WorklistType, this, worklistSummary);
+                        WorkflowFolder<ReportingWorklistItem> folder = FolderFactory.Instance.GetFolder(worklistSummary.Type, this, worklistSummary);
                         if (folder != null) this.AddFolder(folder);
                     }
                 });

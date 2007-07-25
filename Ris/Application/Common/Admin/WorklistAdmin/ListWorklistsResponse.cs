@@ -9,10 +9,10 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     {
         public ListWorklistsResponse()
         {
-            WorklistSummaries = new List<WorklistSummary>();
+            WorklistSummaries = new List<WorklistAdminSummary>();
         }
 
         [DataMember]
-        public List<WorklistSummary> WorklistSummaries;
+        public List<WorklistAdminSummary> WorklistSummaries;
     }
 }

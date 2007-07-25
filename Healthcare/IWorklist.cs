@@ -16,6 +16,6 @@ namespace ClearCanvas.Healthcare
     {
         IList GetWorklist(Staff currentUserStaff, IPersistenceContext context);
         int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context);
-        string Name { get; set; }
+        string DisplayName { get; }
     }
 }

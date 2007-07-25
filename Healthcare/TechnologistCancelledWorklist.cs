@@ -29,6 +29,11 @@ namespace ClearCanvas.Healthcare
             return GetBroker<IModalityWorklistBroker>(context).GetCancelledWorklistCount(this);
         }
 
+        public override string NameSuffix
+        {
+            get { return " - Cancelled In"; }
+        }
+
         #endregion
 
         #region Object overrides

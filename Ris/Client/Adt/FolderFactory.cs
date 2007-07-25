@@ -52,7 +52,7 @@ namespace ClearCanvas.Ris.Client.Adt
             //    : null;
             try
             {
-                return (WorkflowFolder<RegistrationWorklistItem>)Activator.CreateInstance(foundType, folderSystem, worklistSummary.Name, worklistSummary.EntityRef);
+                return (WorkflowFolder<RegistrationWorklistItem>)Activator.CreateInstance(foundType, folderSystem, worklistSummary.DisplayName, worklistSummary.EntityRef);
             }
             catch (MissingMethodException)
             {
@@ -72,7 +72,7 @@ namespace ClearCanvas.Ris.Client.Adt
             //    : null;
             try
             {
-                return (WorkflowFolder<ModalityWorklistItem>)Activator.CreateInstance(foundType, folderSystem, worklistSummary.Name, worklistSummary.EntityRef);
+                return (WorkflowFolder<ModalityWorklistItem>)Activator.CreateInstance(foundType, folderSystem, worklistSummary.DisplayName, worklistSummary.EntityRef);
             }
             catch (MissingMethodException)
             {

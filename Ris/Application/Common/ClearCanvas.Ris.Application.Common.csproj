@@ -190,7 +190,7 @@
     <Compile Include="Admin\WorklistAdmin\LoadWorklistForEditResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\UpdateWorklistRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\UpdateWorklistResponse.cs" />
-    <Compile Include="Admin\WorklistAdmin\WorklistDetail.cs" />
+    <Compile Include="Admin\WorklistAdmin\WorklistAdminDetail.cs" />
     <Compile Include="Jsml\GetOperationNamesRequest.cs" />
     <Compile Include="Jsml\GetOperationNamesResponse.cs" />
     <Compile Include="Jsml\IJsmlShimService.cs" />
@@ -200,7 +200,7 @@
     <Compile Include="Jsml\JsmlSerializer.cs" />
     <Compile Include="ReportingWorkflow\ListWorklistsRequest.cs" />
     <Compile Include="ReportingWorkflow\ListWorklistsResponse.cs" />
-    <Compile Include="WorklistSummary.cs" />
+    <Compile Include="Admin\WorklistAdmin\WorklistAdminSummary.cs" />
     <Compile Include="DiagnosticServiceDetail.cs" />
     <Compile Include="DiagnosticServiceSummary.cs" />
     <Compile Include="ModalityProcedureStepSummary.cs" />
@@ -395,7 +395,7 @@
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\GetProcedureStepsForWorklistItemResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\ITechnologistDocumentationService.cs" />
     <Compile Include="TelephoneDetail.cs" />
-    <Compile Include="WorklistTest\IWorklistTestService.cs" />
+    <Compile Include="WorklistSummary.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="SR.resx">

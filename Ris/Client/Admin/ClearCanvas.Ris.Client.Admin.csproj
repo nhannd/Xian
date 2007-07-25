@@ -73,9 +73,8 @@
     <Compile Include="UserTable.cs" />
     <Compile Include="WorklistEditorComponent.cs" />
     <Compile Include="WorklistSummaryComponent.cs" />
-    <Compile Include="WorklistSummaryTable.cs" />
+    <Compile Include="WorklistAdminSummaryTable.cs" />
     <Compile Include="WorklistSummaryTool.cs" />
-    <Compile Include="WorklistTestTool.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

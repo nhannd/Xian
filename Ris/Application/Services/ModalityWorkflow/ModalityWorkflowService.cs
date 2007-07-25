@@ -1,7 +1,6 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
@@ -32,7 +31,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                     this.PersistenceContext.GetBroker<IWorklistBroker>().FindAllTechnologistWorklists(this.CurrentUser),
                     delegate(Worklist worklist)
                     {
-                        return assembler.GetWorklistSummary(worklist, this.PersistenceContext);
+                        return assembler.GetWorklistSummary(worklist);
                     }));
         }
 

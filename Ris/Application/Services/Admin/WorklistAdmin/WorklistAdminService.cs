@@ -56,15 +56,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         public ListWorklistsResponse ListWorklists(ListWorklistsRequest request)
         {
             ListWorklistsResponse response = new ListWorklistsResponse();
-            WorklistAssembler assembler = new WorklistAssembler();
+            WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
 
-            response.WorklistSummaries = CollectionUtils.Map<Worklist, WorklistSummary, List<WorklistSummary>>(
+            response.WorklistSummaries = CollectionUtils.Map<Worklist, WorklistAdminSummary, List<WorklistAdminSummary>>(
                 this.PersistenceContext.GetBroker<IWorklistBroker>().Find(
                     new WorklistSearchCriteria(),
                     new SearchResultPage(request.PageRequest.FirstRow, request.PageRequest.MaxRows)),
                 delegate(Worklist worklist)
                 {
-                    return assembler.GetWorklistSummary(worklist, this.PersistenceContext);
+                    return adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext);
                 });
 
             return response;
@@ -75,9 +75,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         public LoadWorklistForEditResponse LoadWorklistForEdit(LoadWorklistForEditRequest request)
         {
             Worklist worklist = PersistenceContext.Load<Worklist>(request.EntityRef);
-            WorklistAssembler assembler = new WorklistAssembler();
-            WorklistDetail detail = assembler.GetWorklistDetail(worklist, this.PersistenceContext);
-            return new LoadWorklistForEditResponse(worklist.GetRef(), detail);
+            WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
+            WorklistAdminDetail adminDetail = adminAssembler.GetWorklistDetail(worklist, this.PersistenceContext);
+            return new LoadWorklistForEditResponse(worklist.GetRef(), adminDetail);
         }
 
         [UpdateOperation]
@@ -94,14 +94,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 throw new RequestValidationException(string.Format(SR.ExceptionWorklistNameAlreadyExists, request.Detail.Name));
             }
 
-            WorklistAssembler assembler = new WorklistAssembler();
+            WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
             Worklist worklist = WorklistFactory.Instance.GetWorklist(request.Detail.WorklistType);
-            assembler.UpdateWorklist(worklist, request.Detail, this.PersistenceContext);
+            adminAssembler.UpdateWorklist(worklist, request.Detail, this.PersistenceContext);
 
             PersistenceContext.Lock(worklist, DirtyState.New);
             PersistenceContext.SynchState();
 
-            return new AddWorklistResponse(assembler.GetWorklistSummary(worklist, this.PersistenceContext));
+            return new AddWorklistResponse(adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext));
         }
 
         [UpdateOperation]
@@ -109,10 +109,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         public UpdateWorklistResponse UpdateWorklist(UpdateWorklistRequest request)
         {
             Worklist worklist = this.PersistenceContext.Load<Worklist>(request.EntityRef);
-            WorklistAssembler assembler = new WorklistAssembler();
-            assembler.UpdateWorklist(worklist, request.WorklistDetail, this.PersistenceContext);
+            WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
+            adminAssembler.UpdateWorklist(worklist, request.Detail, this.PersistenceContext);
 
-            return new UpdateWorklistResponse(assembler.GetWorklistSummary(worklist, this.PersistenceContext));
+            return new UpdateWorklistResponse(adminAssembler.GetWorklistSummary(worklist, this.PersistenceContext));
         }
 
         #endregion

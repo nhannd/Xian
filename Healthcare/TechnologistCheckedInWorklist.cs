@@ -29,6 +29,11 @@ namespace ClearCanvas.Healthcare
             return GetBroker<IModalityWorklistBroker>(context).GetCheckedInWorklistCount(this);
         }
 
+        public override string NameSuffix
+        {
+            get { return " - Checked In"; }
+        }
+
         #endregion
 
         #region Object overrides

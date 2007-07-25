@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             try
             {
                 Type foundType = GetWorklistType(type);
-                return (WorkflowFolder<ReportingWorklistItem>)Activator.CreateInstance(foundType, folderSystem, worklistSummary.Name, worklistSummary.EntityRef);
+                return (WorkflowFolder<ReportingWorklistItem>)Activator.CreateInstance(foundType, folderSystem, worklistSummary.DisplayName, worklistSummary.EntityRef);
             }
             catch (MissingMethodException)
             {

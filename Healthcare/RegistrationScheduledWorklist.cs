@@ -27,6 +27,11 @@ namespace ClearCanvas.Healthcare
             return GetBroker<IRegistrationWorklistBroker>(context).GetScheduledWorklistCount(this);
         }
 
+        public override string NameSuffix
+        {
+            get { return " - Scheduled"; }
+        }
+
         #region Object overrides
 
         public override bool Equals(object that)

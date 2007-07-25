@@ -76,9 +76,11 @@
     <Compile Include="Admin\VisitAdmin\VisitAdminService.cs" />
     <Compile Include="Admin\VisitAssembler.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminService.cs" />
+    <Compile Include="Admin\WorklistAdmin\WorklistAdminAssembler.cs" />
     <Compile Include="InProcessApplicationServiceProvider.cs" />
     <Compile Include="Jsml\JsmlShimService.cs" />
     <Compile Include="WorklistAssembler.cs" />
+    <Compile Include="WorklistFactory.cs" />
     <Compile Include="ApplicationServiceBase.cs" />
     <Compile Include="ApplicationServiceExtensionPoint.cs" />
     <Compile Include="Admin\HL7QueueItemAssembler.cs" />
@@ -119,7 +121,6 @@
     <Compile Include="TelephoneNumberAssembler.cs" />
     <Compile Include="Tests\AdtServiceTest.cs" />
     <Compile Include="WorkflowServiceBase.cs" />
-    <Compile Include="WorklistTest\WorklistTestService.cs" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />

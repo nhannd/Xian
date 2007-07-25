@@ -6,24 +6,29 @@ namespace ClearCanvas.Ris.Application.Common
     [DataContract]
     public class WorklistSummary : DataContractBase
     {
-        public WorklistSummary(EntityRef entityRef, string name, string description, string worklistType)
+        public WorklistSummary(EntityRef entityRef, string displayName, string description, string type)
         {
             EntityRef = entityRef;
-            Name = name;
+            DisplayName = displayName;
             Description = description;
-            WorklistType = worklistType;
+            Type = type;
+        }
+
+        public WorklistSummary(EntityRef entityRef, string displayName, string description)
+            : this(entityRef, displayName, description, "")
+        {
         }
 
         [DataMember]
         public EntityRef EntityRef;
 
         [DataMember]
-        public string Name;
+        public string DisplayName;
 
         [DataMember]
         public string Description;
 
         [DataMember]
-        public string WorklistType;
+        public string Type;
     }
 }

@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     this.PersistenceContext.GetBroker<IWorklistBroker>().FindAllRegistrationWorklists(this.CurrentUser),
                     delegate(Worklist worklist)
                     {
-                        return assembler.GetWorklistSummary(worklist, this.PersistenceContext);
+                        return assembler.GetWorklistSummary(worklist);
                     }));
         }
 

@@ -6,12 +6,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     [DataContract]
     public class UpdateWorklistResponse : DataContractBase
     {
-        public UpdateWorklistResponse(WorklistSummary worklistSummary)
+        public UpdateWorklistResponse(WorklistAdminSummary worklistAdminSummary)
         {
-            WorklistSummary = worklistSummary;
+            WorklistAdminSummary = worklistAdminSummary;
         }
 
         [DataMember]
-        public WorklistSummary WorklistSummary;
+        public WorklistAdminSummary WorklistAdminSummary;
     }
 }

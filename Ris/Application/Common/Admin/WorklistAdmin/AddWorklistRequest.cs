@@ -6,12 +6,12 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     [DataContract]
     public class AddWorklistRequest : DataContractBase
     {
-        public AddWorklistRequest(WorklistDetail detail)
+        public AddWorklistRequest(WorklistAdminDetail detail)
         {
             Detail = detail;
         }
 
         [DataMember]
-        public WorklistDetail Detail;
+        public WorklistAdminDetail Detail;
     }
 }
