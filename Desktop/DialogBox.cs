@@ -37,7 +37,7 @@ namespace ClearCanvas.Desktop
 
             public override void SetTitle(string title)
             {
-                _owner.SetTitle(title);
+                _owner.Title = title;
             }
 
         }
@@ -46,6 +46,7 @@ namespace ClearCanvas.Desktop
         private IApplicationComponent _component;
         private bool _exitRequestedByComponent;
         private Host _host;
+        private string _title;
 
         /// <summary>
         /// Constructor.
@@ -95,15 +96,6 @@ namespace ClearCanvas.Desktop
         private void EndModal(DialogBoxAction action)
         {
             this.DialogBoxView.EndModal(action);
-        }
-
-        /// <summary>
-        /// Sets the title of the dialog.
-        /// </summary>
-        /// <param name="title"></param>
-        private void SetTitle(string title)
-        {
-            this.DialogBoxView.SetTitle(title);
         }
 
         /// <summary>
