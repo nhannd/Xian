@@ -39,6 +39,9 @@ namespace ClearCanvas.ImageViewer.Configuration
         {
 			Refresh();
 			base.Start();
+
+			this.Validation.Add(new AETitleValidatonRule());
+			this.Validation.Add(new PortValidationRule());
         }
 
         public override void Stop()

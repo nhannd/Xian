@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Desktop.Validation;
 
 namespace ClearCanvas.Desktop.Configuration
 {
@@ -17,6 +18,10 @@ namespace ClearCanvas.Desktop.Configuration
 			public ConfigurationNavigatorComponentContainer(string initialPagePath)
 				: base()
 			{
+				// We want to validate all configuration pages
+				this.ValidationStrategy = new AllNodesContainerValidationStrategy();
+				ShowValidation(false);
+
 				_configurationPageManager = new ConfigurationPageManager();
 
 				List<NavigatorPage> pages = new List<NavigatorPage>();
@@ -53,6 +58,34 @@ namespace ClearCanvas.Desktop.Configuration
 			{
 				get { return _configurationPageManager.Pages; }
 			}
+
+			public override void Accept()
+			{
+				if (this.HasValidationErrors)
+					ShowValidation(true);
+				else
+				{
+					try
+					{
+						foreach (IConfigurationPage configurationPage in this.ConfigurationPages)
+						{
+							if (configurationPage.GetComponent().Modified)
+								configurationPage.SaveConfiguration();
+						}
+
+						this.Host.Exit();
+					}
+					catch (Exception e)
+					{
+						ExceptionHandler.Report(e, SR.ExceptionFailedToSave, this.Host.DesktopWindow,
+							delegate()
+							{
+								this.ExitCode = ApplicationComponentExitCode.Error;
+								this.Host.Exit();
+							});
+					}
+				}
+			}
 		}
 
 		public static ApplicationComponentExitCode Show(IDesktopWindow desktopWindow)
@@ -64,14 +97,6 @@ namespace ClearCanvas.Desktop.Configuration
 		{
 			ConfigurationNavigatorComponentContainer container = new ConfigurationNavigatorComponentContainer(initialPageIdentifier);
 			ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(desktopWindow, container, SR.TitleMenuOptions);
-			if (ApplicationComponentExitCode.Normal == exitCode)
-			{
-				foreach (IConfigurationPage configurationPage in container.ConfigurationPages)
-				{
-					if (configurationPage.GetComponent().Modified)
-						configurationPage.SaveConfiguration();
-				}
-			}
 
 			return exitCode;
 		}

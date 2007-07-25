@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ExceptionFailedToSave" xml:space="preserve">
+    <value>An error occured while attempting to save changes to this item</value>
+  </data>
   <data name="ExceptionOnlyDefaultProfileSupported" xml:space="preserve">
     <value>Only the default profile is currently supported.  User profiles must be modified via standard means (e.g. Tools/Options).</value>
   </data>
