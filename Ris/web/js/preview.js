@@ -149,3 +149,67 @@ function orderDataComparison(data1, data2)
 {
 	return Date.compareMoreRecent(data1.EarliestScheduledMPSDateTime, data2.EarliestScheduledMPSDateTime);
 }
+
+// group patientOrderData by AccessionNumber
+function groupDataToOrders(listData)
+{
+    var orders = [];
+    for(var i = 0; i < listData.length; i++)
+	{
+	    var thisAccessionNumber = listData[i].AccessionNumber;
+		var thisOrder = orders.find(function(order) { return order.AccessionNumber == thisAccessionNumber; });
+
+		if (thisOrder)
+		{
+			thisOrder.values.push(listData[i]);
+		}
+		else
+		{
+			thisOrder = { key: thisAccessionNumber, values:[] };
+			thisOrder.values.push(listData[i]);
+			orders.push(thisOrder);
+		}
+	}
+
+	// set the common properties only at the end, since some properties in setCommonPropertiesFunc may be a composite value of each element
+	for (var j = 0; j < orders.length; j++)
+	{
+	    var thisOrder = orders[j];
+		var firstData = thisOrder.values[0];
+
+        var listRequestedProcedureName = thisOrder.values.map(function(item) { return item.RequestedProcedureName; });
+        
+        thisOrder.CombineRequestedProcedureName = String.combine(listRequestedProcedureName, "/");
+        thisOrder.EarliestScheduledMPSDateTime = firstData.EarliestScheduledMPSDateTime;
+        thisOrder.OrderStatus = firstData.OrderStatus;
+        thisOrder.Insurance = "";
+        thisOrder.OrderingFacilityName = firstData.OrderingFacilityName;
+        thisOrder.OrderingPractitionerName = firstData.OrderingPractitionerName;
+	}
+
+    return orders;
+}
+
+function formatReport(report)
+{
+    if (report == null || report.Parts == null || report.Parts.length == 0)
+        return "";
+        
+    var formattedReport = "";
+    
+    for (var i = report.Parts.length-1; i > 0; i--)
+    {
+        var addendumPart = report.Parts[i];
+        var addendum = addendumPart && addendumPart.Content ? addendumPart.Content : null;
+        if (addendum)
+            formattedReport += "Addendum " + i + ": " + addendum + "<br><br>";
+    }
+    
+    var mainReport = JSML.parse(report.Parts[0].Content);
+
+    formattedReport += "Main Report: <br>";
+    formattedReport += "Impression: " + mainReport.Impression + "<br>";    
+    formattedReport += "Finding: " + mainReport.Finding + "<br>";
+    
+    return formattedReport;
+}

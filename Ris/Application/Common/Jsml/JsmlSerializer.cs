@@ -40,6 +40,9 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
 
         public static string Serialize(DataContractBase dataObject, bool includeEmptyTags)
         {
+            if (dataObject == null)
+                return "";
+
             string jsml = "";
 
             using (StringWriter sw = new StringWriter())

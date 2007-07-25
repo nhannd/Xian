@@ -10,6 +10,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Ris.Application.Common.Jsml;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -44,11 +45,6 @@ namespace ClearCanvas.Ris.Client.Reporting
             public void Alert(string message)
             {
                 _component.Host.ShowMessageBox(message, MessageBoxActions.Ok);
-            }
-
-            public bool IsEditingAddendum()
-            {
-                return _component.IsEditingAddendum;
             }
 
             public string GetData(string tag)
@@ -110,14 +106,14 @@ namespace ClearCanvas.Ris.Client.Reporting
             base.Stop();
         }
 
-        public string ReportEditorPageUrl
+        public string EditorUrl
         {
-            get { return ReportEditorComponentSettings.Default.ReportEditorPageUrl; }
+            get { return this.IsEditingAddendum ? ReportEditorComponentSettings.Default.AddendumEditorPageUrl : ReportEditorComponentSettings.Default.ReportEditorPageUrl; }
         }
 
-        public string ReportPreviewPageUrl
+        public string PreviewUrl
         {
-            get { return IsEditingAddendum ? ReportEditorComponentSettings.Default.ReportPreviewPageUrl : "about:blank"; }
+            get { return this.IsEditingAddendum ? ReportEditorComponentSettings.Default.ReportPreviewPageUrl : "about:blank"; }
         }
 
         public ScriptCallback ScriptObject
@@ -345,13 +341,15 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             switch (tag)
             {
-                case "ReportContent":
-                    ReportPartSummary part = _report[_reportPartIndex];
-                    _reportContent = part == null ? "" : part.Content;
-                    return _reportContent;
-                case "ReportPreview":
+                case "Report":
+                    ReportPartSummary reportPart = _report.GetPart(0);
+                    return reportPart == null ? "" : reportPart.Content;
+                case "Addendum":
+                    ReportPartSummary addendumPart = _report.GetPart(_reportPartIndex);
+                    return addendumPart == null ? "" : addendumPart.Content;
+                case "Preview":
                 default:
-                    return _report.FormatHtml();
+                    return JsmlSerializer.Serialize<ReportSummary>(_report);
             }
         }
 
@@ -359,8 +357,9 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             switch (tag)
             {
-                case "Editor":
-                    _reportContent = data;
+                case "Report":
+                case "Addendum":
+                    this.ReportContent = data;
                     break;
                 default:
                     break;

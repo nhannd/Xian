@@ -28,10 +28,10 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this._reportList = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this._reportContent = new ClearCanvas.Controls.WinForms.TextAreaField();
+            this._browser = new System.Windows.Forms.WebBrowser();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // 
             // splitContainer1.Panel2
             // 
-            this.splitContainer1.Panel2.Controls.Add(this._reportContent);
+            this.splitContainer1.Panel2.Controls.Add(this._browser);
             this.splitContainer1.Size = new System.Drawing.Size(443, 428);
             this.splitContainer1.SplitterDistance = 181;
             this.splitContainer1.TabIndex = 1;
@@ -63,7 +63,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._reportList.MenuModel = null;
             this._reportList.Name = "_reportList";
             this._reportList.ReadOnly = false;
-            this._reportList.Selection = selection2;
+            this._reportList.Selection = selection1;
             this._reportList.Size = new System.Drawing.Size(443, 181);
             this._reportList.TabIndex = 2;
             this._reportList.Table = null;
@@ -71,17 +71,14 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._reportList.ToolStripItemDisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
             this._reportList.ToolStripRightToLeft = System.Windows.Forms.RightToLeft.No;
             // 
-            // _reportContent
+            // _browser
             // 
-            this._reportContent.Dock = System.Windows.Forms.DockStyle.Fill;
-            this._reportContent.LabelText = "Report Content";
-            this._reportContent.Location = new System.Drawing.Point(0, 0);
-            this._reportContent.Margin = new System.Windows.Forms.Padding(2);
-            this._reportContent.Name = "_reportContent";
-            this._reportContent.ReadOnly = true;
-            this._reportContent.Size = new System.Drawing.Size(443, 243);
-            this._reportContent.TabIndex = 0;
-            this._reportContent.Value = null;
+            this._browser.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._browser.Location = new System.Drawing.Point(0, 0);
+            this._browser.MinimumSize = new System.Drawing.Size(20, 20);
+            this._browser.Name = "_browser";
+            this._browser.Size = new System.Drawing.Size(443, 243);
+            this._browser.TabIndex = 0;
             // 
             // PriorReportComponentControl
             // 
@@ -101,7 +98,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 
         private System.Windows.Forms.SplitContainer splitContainer1;
         private ClearCanvas.Desktop.View.WinForms.TableView _reportList;
-        private ClearCanvas.Controls.WinForms.TextAreaField _reportContent;
+        private System.Windows.Forms.WebBrowser _browser;
 
     }
 }

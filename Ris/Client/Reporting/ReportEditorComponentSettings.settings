@@ -8,5 +8,8 @@
     <Setting Name="ReportPreviewPageUrl" Type="System.String" Scope="User">
       <Value Profile="(Default)">http://localhost/RIS/reportpreview.htm</Value>
     </Setting>
+    <Setting Name="AddendumEditorPageUrl" Type="System.String" Scope="User">
+      <Value Profile="(Default)">http://localhost/RIS/addendumeditor.htm</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

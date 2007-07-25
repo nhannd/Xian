@@ -118,7 +118,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             ReportPartSummary summary = new ReportPartSummary();
 
             summary.ReportPartRef = reportPart.GetRef();
-            summary.Index = reportPart.Id;
+            summary.Index = reportPart.Index;
             summary.Content = reportPart.Content;
 
             return summary;

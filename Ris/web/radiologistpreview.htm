@@ -19,13 +19,11 @@
 		        
 	            try
 	            {
-                    var request = { "GetReportingProcedureStepRequest": {},
-                                    "GetPatientProfileRequest": {},
-                                    "GetPatientAlertsRequest": {} };
+                    var request = { GetReportingProcedureStepRequest: {},
+                                    GetPatientProfileRequest:         {},
+                                    GetPatientAlertsRequest:          {} };
 
-                    var requestJsml = JSML.create(request, "GetDataRequest");
-                    data = JSML.parse(Ris.getJsmlData(requestJsml));
-                                        
+                    data = Ris.getResponseData(request, "GetDataRequest");
                     if (data == null || data.length == 0)
                     {
                         Field.setValue($("myForm"), "");
@@ -70,7 +68,7 @@
 		                    Field.setValue($("RequestedProcedureStartTime"), Ris.formatDateTime(rpsData.RequestedProcedureStartTime));
 		                    Field.setValue($("RequestedProcedureEndTime"), Ris.formatDateTime(rpsData.RequestedProcedureEndTime));
 
-       		                $("report").innerHTML = rpsData.Report || "";
+       		                $("report").innerHTML = formatReport(rpsData.Report);
 		                }
 		            }
 	            }

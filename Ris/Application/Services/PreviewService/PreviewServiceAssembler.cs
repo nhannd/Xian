@@ -193,8 +193,7 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
                 if (rps.ReportPart != null)
                 {
                     ReportingWorkflowAssembler reportingAssembler = new ReportingWorkflowAssembler();
-                    ReportSummary summary = reportingAssembler.CreateReportSummary(rps.RequestedProcedure, rps.ReportPart.Report);
-                    data.Report = summary.FormatHtml();
+                    data.Report = reportingAssembler.CreateReportSummary(rps.RequestedProcedure, rps.ReportPart.Report);
                 }
             }
         }

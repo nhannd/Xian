@@ -1,7 +1,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
-        <title>Report Editor</title>
+        <title>Addendum Editor</title>
         <link href="css/default.css" rel="stylesheet" type="text/css" />
         <script type="text/javascript" src="js/jsx.js"></script>
 	    <script type="text/javascript" src="js/jsml.js"></script>
@@ -13,11 +13,7 @@
             // this no-arg method must be implemented for the component to save report
             function saveData()
             {
-                var report = { Finding:    Field.getValue($("finding")),
-                               Impression: Field.getValue($("impression")) };
-                var reportJsml = JSML.create(report, "Report");
-
-                Ris.setData("Report", reportJsml);
+                Ris.setData("Addendum", Field.getValue($("addendum")));
             }
             
 		    function onBodyLoad()
@@ -27,14 +23,8 @@
 
 	            try
 	            {
-                    data = Ris.getData("Report");
-                    var report = JSML.parse(data);
-                    
-                    if (report != null)
-                    {
-                        Field.setValue($("finding"), report.Finding);
-                        Field.setValue($("impression"), report.Impression);
-                    }
+                    data = Ris.getData("Addendum");
+                    Field.setValue($("addendum"), data);
 	            }
 	            catch(e)
 	            {
@@ -47,10 +37,8 @@
 	</head>
 	<body onload="javascript: onBodyLoad()" style="padding-top:0">
 		<form id="myForm" style="padding-top:0">
-		    <p class="sectionheading">Impression</p>
-			<textarea style="width:99%" rows="15" border="0" id="impression"></textarea>
-		    <p class="sectionheading">Finding</p>
-			<textarea style="width:99%" rows="15" border="0" id="finding"></textarea>
+		    <p class="sectionheading">Addendum</p>
+			<textarea style="width:99%" rows="5" border="0" id="addendum"></textarea>
 		</form>
 	</body>
 </html>

@@ -231,7 +231,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             else
             {
                 response.Report = assembler.CreateReportSummary(step.RequestedProcedure, step.ReportPart.Report);
-                response.ReportPartIndex = int.Parse(step.ReportPart.Id);
+                response.ReportPartIndex = int.Parse(step.ReportPart.Index);
             }
 
             return response;

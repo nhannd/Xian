@@ -7,6 +7,8 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using System.Runtime.InteropServices;
+using ClearCanvas.Ris.Application.Common.Jsml;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -24,6 +26,34 @@ namespace ClearCanvas.Ris.Client.Reporting
     [AssociateView(typeof(PriorReportComponentViewExtensionPoint))]
     public class PriorReportComponent : ApplicationComponent
     {
+        /// <summary>
+        /// The script callback is an object that is made available to the web browser so that
+        /// the javascript code can invoke methods on the host.  It must be COM-visible.
+        /// </summary>
+        [ComVisible(true)]
+        public class ScriptCallback
+        {
+            private PriorReportComponent _component;
+
+            public ScriptCallback(PriorReportComponent component)
+            {
+                _component = component;
+            }
+
+            public void Alert(string message)
+            {
+                _component.Host.ShowMessageBox(message, MessageBoxActions.Ok);
+            }
+
+            public string GetData(string tag)
+            {
+                string temp = _component.GetData(tag);
+                return temp;
+            }
+        }
+
+        private ScriptCallback _scriptCallback;
+
         private EntityRef _reportingStepRef;
 
         private ReportSummaryTable _reportList;
@@ -34,6 +64,8 @@ namespace ClearCanvas.Ris.Client.Reporting
         /// </summary>
         public PriorReportComponent(EntityRef reportingStepRef)
         {
+            _scriptCallback = new ScriptCallback(this);
+
             _reportingStepRef = reportingStepRef;
             _reportList = new ReportSummaryTable();
         }
@@ -71,19 +103,25 @@ namespace ClearCanvas.Ris.Client.Reporting
                 if (_selectedReport != newSelection)
                 {
                     _selectedReport = newSelection;
-                    ReportSelectionChanged();
+                    NotifyAllPropertiesChanged();
                 }
             }
         }
 
-        public string ReportContent
+        public string PreviewUrl
         {
-            get { return _selectedReport == null ? null : _selectedReport.Format(); }
+            get { return ReportEditorComponentSettings.Default.ReportPreviewPageUrl; }
         }
 
-        private void ReportSelectionChanged()
+        public ScriptCallback ScriptObject
         {
-            NotifyAllPropertiesChanged();
+            get { return _scriptCallback; }
         }
+
+        public string GetData(string tag)
+        {
+            return JsmlSerializer.Serialize<ReportSummary>(_selectedReport);
+        }
+
     }
 }

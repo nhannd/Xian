@@ -19,14 +19,12 @@
 		        
 	            try
 	            {
-                    var request = { "GetModalityProcedureStepRequest": { "GetDiagnosticServiceBreakdown": true },
-                                    "GetPatientProfileRequest": {},
-                                    "ListPatientOrdersRequest": { "QueryDetailLevel": "RequestedProcedure" },
-                                    "GetPatientAlertsRequest": {} };
+                    var request = { GetModalityProcedureStepRequest: { GetDiagnosticServiceBreakdown: true },
+                                    GetPatientProfileRequest:        {},
+                                    ListPatientOrdersRequest:        { QueryDetailLevel: "RequestedProcedure" },
+                                    GetPatientAlertsRequest:         {} };
 
-                    var requestJsml = JSML.create(request, "GetDataRequest");
-                    data = JSML.parse(Ris.getJsmlData(requestJsml));
-                                        
+                    data = Ris.getResponseData(request, "GetDataRequest");                                        
                     if (data == null || data.length == 0)
                     {
                         Field.setValue($("myForm"), "");
@@ -98,17 +96,7 @@
     		            var patientOrderData = data.ListPatientOrdersResponse.PatientOrderData;
 
                         // group patientOrderData by AccessionNumber
-                        var orders = patientOrderData.group(
-                            function(item) { return item.AccessionNumber; }, 
-                            function(item, common)
-                            {
-                                common.CombineRequestedProcedureName = String.combine(common.values.map(function(item) { return item.RequestedProcedureName; }), "/");
-                                common.EarliestScheduledMPSDateTime = item.EarliestScheduledMPSDateTime;
-                                common.OrderStatus = item.OrderStatus;
-                                common.Insurance = "";
-                                common.OrderingFacilityName = item.OrderingFacilityName;
-                                common.OrderingPractitionerName = item.OrderingPractitionerName;
-                            });
+                        var orders = groupDataToOrders(patientOrderData);
 
 		                var today = Date.today();
 		                var pastOrders = orders.select(

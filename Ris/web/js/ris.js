@@ -44,6 +44,14 @@ if(window.external)
             return window.external.DateTimeFormat;
         },
         
+		getResponseData: function(requestObject, requestObjectName)
+		{
+            var requestJsml = JSML.create(requestObject, requestObjectName);
+			var responseJsml = window.external.GetJsmlData(requestJsml);
+			var responseObject = JSML.parse(responseJsml);
+			return responseObject;
+		},
+		
         getData: function(tag)
         {
             return window.external.GetData(tag);
@@ -53,11 +61,6 @@ if(window.external)
         {
             window.external.SetData(tag, data);
         },
-		
-		getJsmlData: function(requestJsml)
-		{
-			return window.external.GetJsmlData(requestJsml);
-		},
 		
 		formatDate: function(date)
 		{

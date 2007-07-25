@@ -201,7 +201,7 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
         #region Reporting Procedure Step
 
         [DataMember]
-        public string Report;
+        public ReportSummary Report;
 
         #endregion
 

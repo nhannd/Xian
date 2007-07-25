@@ -26,10 +26,10 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             InitializeComponent();
             _component = component;
 
-            _editorBrowser.Url = new Uri(_component.ReportEditorPageUrl);
+            _editorBrowser.Url = new Uri(_component.EditorUrl);
             _editorBrowser.ObjectForScripting = _component.ScriptObject;
 
-            _previewBrowser.Url = new Uri(_component.ReportPreviewPageUrl);
+            _previewBrowser.Url = new Uri(_component.PreviewUrl);
             _previewBrowser.ObjectForScripting = _component.ScriptObject;
 
             _patientName.DataBindings.Add("Text", _component, "PatientName", true, DataSourceUpdateMode.OnPropertyChanged);

@@ -25,11 +25,19 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         {
             InitializeComponent();
             _component = component;
+            _component.AllPropertiesChanged += new EventHandler(_component_AllPropertiesChanged);
+
+            _browser.Url = new Uri(_component.PreviewUrl);
+            _browser.ObjectForScripting = _component.ScriptObject;
 
             _reportList.Table = _component.Reports;
             _reportList.DataBindings.Add("Selection", _component, "SelectedReport", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _reportContent.DataBindings.Add("Value", _component, "ReportContent", true, DataSourceUpdateMode.OnPropertyChanged);
+        }
+
+        void _component_AllPropertiesChanged(object sender, EventArgs e)
+        {
+            _browser.Document.InvokeScript("refresh", null);
         }
     }
 }

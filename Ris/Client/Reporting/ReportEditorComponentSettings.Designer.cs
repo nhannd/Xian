@@ -43,5 +43,17 @@ namespace ClearCanvas.Ris.Client.Reporting {
                 this["ReportPreviewPageUrl"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("http://localhost/RIS/addendumeditor.htm")]
+        public string AddendumEditorPageUrl {
+            get {
+                return ((string)(this["AddendumEditorPageUrl"]));
+            }
+            set {
+                this["AddendumEditorPageUrl"] = value;
+            }
+        }
     }
 }
