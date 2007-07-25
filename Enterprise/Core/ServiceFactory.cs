@@ -52,10 +52,24 @@ namespace ClearCanvas.Enterprise.Core
             }
         }
 
-        public ICollection<Type> ListServices()
+        public ICollection<Type> ListServiceClasses()
         {
             return CollectionUtils.Map<ExtensionInfo, Type>(_serviceExtensionPoint.ListExtensions(),
                 delegate(ExtensionInfo info) { return info.ExtensionClass; });
+        }
+
+        public ICollection<Type> ListServiceContracts()
+        {
+            return CollectionUtils.Map<ExtensionInfo, Type>(_serviceExtensionPoint.ListExtensions(),
+                delegate(ExtensionInfo info)
+                {
+                    ServiceImplementsContractAttribute a = CollectionUtils.FirstElement<ServiceImplementsContractAttribute>(
+                        info.ExtensionClass.GetCustomAttributes(typeof(ServiceImplementsContractAttribute), false));
+
+                    //TODO: should throw if a == null
+
+                    return a == null ? null : a.ServiceContract;
+                });
         }
 
         public bool HasService(Type serviceContract)

@@ -10,6 +10,7 @@ using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.PreviewService;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common.Jsml;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -103,6 +104,16 @@ namespace ClearCanvas.Ris.Client
                 TelephoneDetail detail = JsmlSerializer.Deserialize<TelephoneDetail>(jsml);
                 return detail == null ? "" : TelephoneFormat.Format(detail);
             }
+
+            public JsmlServiceProxy GetServiceProxy(string serviceContractName)
+            {
+                return new JsmlServiceProxy(serviceContractName);
+            }
+
+            public string GetEntityRef()
+            {
+                return JsmlSerializer.Serialize(_component.EntityRef, "entityRef");
+            }
         }
 
         private ScriptCallback _scriptCallback;
@@ -142,6 +153,10 @@ namespace ClearCanvas.Ris.Client
         }
 
         public abstract string DetailsPageUrl { get; }
+        public virtual EntityRef EntityRef
+        {
+            get { throw new NotImplementedException(); }
+        }
 
         public virtual ActionModelNode ActionModel
         {

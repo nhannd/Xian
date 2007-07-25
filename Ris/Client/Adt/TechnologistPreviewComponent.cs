@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             request.ProcedureStepRef = _worklistItem.ProcedureStepRef;
 
                             GetDataResponse response = service.GetData(request);
-                            responseJsml = JsmlSerializer.Serialize<GetDataResponse>(response);
+                            responseJsml = JsmlSerializer.Serialize(response, "response");
                         });
                 }
             }

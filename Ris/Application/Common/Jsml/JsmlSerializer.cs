@@ -8,37 +8,24 @@ using System.IO;
 
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Jsml
 {
     public static class JsmlSerializer
     {
         /// <summary>
-        /// Take an object of type DataContractBase and serialize all members with DataMemberAttribute to Jsml format.
+        /// Take an object and serialize all members with DataMemberAttribute to Jsml format.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="dataObject"></param>
         /// <returns></returns>
-        public static string Serialize<T>(T dataObject)
-            where T : DataContractBase
+        public static string Serialize(object dataObject, string objectName)
         {
-            return Serialize<T>(dataObject, false);
+            return Serialize(dataObject, objectName, false);
         }
 
-        /// <summary>
-        /// Take an object of type DataContractBase and serialize all members with DataMemberAttribute to Jsml format.
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="dataObject"></param>
-        /// <param name="includeEmptyTags"></param>
-        /// <returns></returns>
-        public static string Serialize<T>(T dataObject, bool includeEmptyTags)
-            where T : DataContractBase
-        {
-            return Serialize((DataContractBase)dataObject, includeEmptyTags);
-        }
-
-        public static string Serialize(DataContractBase dataObject, bool includeEmptyTags)
+        public static string Serialize(object dataObject, string objectName, bool includeEmptyTags)
         {
             if (dataObject == null)
                 return "";
@@ -49,7 +36,7 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
             {
                 XmlTextWriter writer = new XmlTextWriter(sw);
                 writer.Formatting = System.Xml.Formatting.Indented;
-                SerializeHelper(dataObject, dataObject.GetType().Name, writer, false);
+                SerializeHelper(dataObject, objectName, writer, false);
                 writer.Close();
                 jsml = sw.ToString();
             }
@@ -59,18 +46,18 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
 
 
         /// <summary>
-        /// Take a jsml string and deserialize into a DataContractBase object.
+        /// Take a jsml string and deserialize into an object of the specified type.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="jsml"></param>
         /// <returns></returns>
         public static T Deserialize<T>(string jsml)
-            where T : DataContractBase, new()
+            where T : new()
         {
             return (T)Deserialize(typeof(T), jsml);
         }
 
-        public static DataContractBase Deserialize(Type dataContract, string jsml)
+        public static object Deserialize(Type dataContract, string jsml)
         {
             if (String.IsNullOrEmpty(jsml))
                 return null;
@@ -78,7 +65,7 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
             XmlDocument xmlDoc = new XmlDocument();
             xmlDoc.LoadXml(jsml);
 
-            return (DataContractBase)DeserializeHelper(dataContract, xmlDoc.DocumentElement);
+            return (object)DeserializeHelper(dataContract, xmlDoc.DocumentElement);
         }
 
         public static DateTime? ParseIsoDateTime(string isoDateString)
@@ -120,9 +107,18 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
         /// <param name="includeEmptyTags"></param>
         private static void SerializeHelper(object dataObject, string objectName, XmlTextWriter writer, bool includeEmptyTags)
         {
-            if (dataObject is DataContractBase)
+            if (dataObject == null)
             {
-                List<FieldInfo> dataMemberFields = GetDataMemberFields((DataContractBase)dataObject);
+                if (includeEmptyTags)
+                    writer.WriteElementString(objectName, String.Empty);
+            }
+            else if (dataObject is EntityRef)
+            {
+                writer.WriteElementString(objectName, SerializeEntityRef((EntityRef)dataObject));
+            }
+            else if (IsDataContract(dataObject.GetType()))
+            {
+                List<FieldInfo> dataMemberFields = GetDataMemberFields(dataObject);
                 if (dataMemberFields.Count > 0)
                 {
                     writer.WriteStartElement(objectName);
@@ -133,45 +129,37 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
                     writer.WriteEndElement();
                 }
             }
+            else if (dataObject is string)
+            {
+                writer.WriteElementString(objectName, dataObject.ToString());
+            }
+            else if (dataObject is DateTime)
+            {
+                writer.WriteElementString(objectName, GetIsoDateTime((DateTime)dataObject));
+            }
+            else if (dataObject is DateTime?)
+            {
+                writer.WriteElementString(objectName, GetIsoDateTime(((DateTime?)dataObject).Value));
+            }
+            else if (dataObject is bool)
+            {
+                writer.WriteElementString(objectName, (bool)dataObject ? "true" : "false");
+            }
+            else if (dataObject is IList)
+            {
+                writer.WriteStartElement(objectName);
+                writer.WriteAttributeString("array", "true");
+
+                foreach (object item in (IList)dataObject)
+                {
+                    SerializeHelper(item, "item", writer, includeEmptyTags);
+                }
+
+                writer.WriteEndElement();
+            }
             else
             {
-                if (dataObject == null)
-                {
-                    if (includeEmptyTags)
-                        writer.WriteElementString(objectName, String.Empty);
-                }
-                else if (dataObject is string)
-                {
-                    writer.WriteElementString(objectName, dataObject.ToString());
-                }
-                else if (dataObject is DateTime)
-                {
-                    writer.WriteElementString(objectName, GetIsoDateTime((DateTime)dataObject));
-                }
-                else if (dataObject is DateTime?)
-                {
-                    writer.WriteElementString(objectName, GetIsoDateTime(((DateTime?)dataObject).Value));
-                }
-                else if (dataObject is bool)
-                {
-                    writer.WriteElementString(objectName, (bool)dataObject ? "true" : "false");
-                }
-                else if (dataObject is IList)
-                {
-                    writer.WriteStartElement(objectName);
-                    writer.WriteAttributeString("array", "true");
-
-                    foreach (object item in (IList)dataObject)
-                    {
-                        SerializeHelper(item, "item", writer, includeEmptyTags);
-                    }
-
-                    writer.WriteEndElement();
-                }
-                else
-                {
-                    writer.WriteElementString(objectName, dataObject.ToString());
-                }
+                writer.WriteElementString(objectName, dataObject.ToString());
             }
         }
 
@@ -185,7 +173,11 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
         {
             object dataObject = null;
 
-            if (dataType.BaseType == typeof(DataContractBase))
+            if (dataType == typeof(EntityRef))
+            {
+                dataObject = DeserializeEntityRef(xmlElement.InnerText);
+            }
+            else if (IsDataContract(dataType))
             {
                 dataObject = Activator.CreateInstance(dataType);
 
@@ -200,36 +192,33 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
                     }
                 }
             }
+            else if (dataType == typeof(string))
+            {
+                dataObject = xmlElement.InnerText;
+            }
+            else if (dataType == typeof(DateTime) || dataType == typeof(DateTime?))
+            {
+                dataObject = ParseIsoDateTime(xmlElement.InnerText);
+            }
+            else if (dataType == typeof(bool))
+            {
+                dataObject = xmlElement.InnerText.Equals("true") ? true : false;
+            }
+            else if (dataType.GetInterface("IList") == typeof(IList))
+            {
+                dataObject = Activator.CreateInstance(dataType);
+                Type[] genericTypes = dataType.GetGenericArguments();
+                
+                XmlNodeList nodeList = xmlElement.GetElementsByTagName("item");
+                foreach (XmlNode node in nodeList)
+                {
+                    object iteratorObject = DeserializeHelper(genericTypes[0], (XmlElement)node);
+                    ((IList)dataObject).Add(iteratorObject);
+                }
+            }
             else
             {
-                if (dataType == typeof(string))
-                {
-                    dataObject = xmlElement.InnerText;
-                }
-                else if (dataType == typeof(DateTime) || dataType == typeof(DateTime?))
-                {
-                    dataObject = ParseIsoDateTime(xmlElement.InnerText);
-                }
-                else if (dataType == typeof(bool))
-                {
-                    dataObject = xmlElement.InnerText.Equals("true") ? true : false;
-                }
-                else if (dataType.GetInterface("IList") == typeof(IList))
-                {
-                    dataObject = Activator.CreateInstance(dataType);
-                    Type[] genericTypes = dataType.GetGenericArguments();
-                    
-                    XmlNodeList nodeList = xmlElement.GetElementsByTagName("item");
-                    foreach (XmlNode node in nodeList)
-                    {
-                        object iteratorObject = DeserializeHelper(genericTypes[0], (XmlElement)node);
-                        ((IList)dataObject).Add(iteratorObject);
-                    }
-                }
-                else
-                {
-                    dataObject = xmlElement.InnerText;
-                }
+                dataObject = xmlElement.InnerText;
             }
 
             return dataObject;
@@ -240,10 +229,10 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
         /// </summary>
         /// <param name="dataContract"></param>
         /// <returns></returns>
-        private static List<FieldInfo> GetDataMemberFields(DataContractBase dataContract)
+        private static List<FieldInfo> GetDataMemberFields(object dataObject)
         {
             List<FieldInfo> dataMemberFields = CollectionUtils.Select<FieldInfo, List<FieldInfo>>(
-                dataContract.GetType().GetFields(),
+                dataObject.GetType().GetFields(),
                 delegate(FieldInfo info)
                 {
                     object[] attribs = info.GetCustomAttributes(typeof(DataMemberAttribute), true);
@@ -262,6 +251,56 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
         {
             // Format integers to have at least two digits.
             return n < 10 ? '0' + n.ToString() : n.ToString();
+        }
+
+        private static bool IsDataContract(Type t)
+        {
+            return t.GetCustomAttributes(typeof(DataContractAttribute), false).Length > 0;
+        }
+
+        private static string SerializeEntityRef(EntityRef entityRef)
+        {
+            return string.Format("{0}:{1}:{2}:{3}",
+                EntityRefUtils.GetClassName(entityRef),
+                EntityRefUtils.GetOID(entityRef).GetType().AssemblyQualifiedName,
+                EntityRefUtils.GetOID(entityRef),
+                EntityRefUtils.GetVersion(entityRef));
+        }
+
+        private static EntityRef DeserializeEntityRef(string value)
+        {
+            Platform.CheckForNullReference(value, "value");
+
+            string[] parts = value.Split(':');
+            if (parts.Length != 4)
+                throw new SerializationException("Invalid EntityRef string");
+
+            string entityClassName = parts[0];
+            Type oidType = Type.GetType(parts[1], true);
+            string oidValue = parts[2];
+            int version = int.Parse(parts[3]);
+
+            object oid = null;
+            if(oidType == typeof(int))
+            {
+                oid = int.Parse(oidValue);
+            }
+            else if(oidType == typeof(long))
+            {
+                oid = long.Parse(oidValue);
+            }
+            else if(oidType == typeof(string))
+            {
+                oid = oidValue;
+            }
+            else if(oidType == typeof(Guid))
+            {
+                oid = new Guid(oidValue);
+            }
+            else
+                throw new SerializationException("Invalid EntityRef string");
+
+            return new EntityRef(entityClassName, oid, version);
         }
 
         #endregion

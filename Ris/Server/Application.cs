@@ -62,7 +62,7 @@ namespace ClearCanvas.Ris.Server
             IServiceFactory serviceFactory = new ServiceFactory(serviceLayer);
             serviceFactory.ServiceCreation += ServiceCreationEventHandler;
 
-            ICollection<Type> serviceClasses = serviceFactory.ListServices();
+            ICollection<Type> serviceClasses = serviceFactory.ListServiceClasses();
             foreach (Type serviceClass in serviceClasses)
             {
                 ServiceImplementsContractAttribute a = CollectionUtils.FirstElement<ServiceImplementsContractAttribute>(

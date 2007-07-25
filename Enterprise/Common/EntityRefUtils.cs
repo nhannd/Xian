@@ -18,7 +18,12 @@ namespace ClearCanvas.Enterprise.Common
 
         public static Type GetClass(EntityRef entityRef)
         {
-            return Type.GetType(entityRef.Class);
+            return Type.GetType(entityRef.ClassName, true);
+        }
+
+        public static string GetClassName(EntityRef entityRef)
+        {
+            return entityRef.ClassName;
         }
     }
 }

@@ -38,7 +38,8 @@ namespace ClearCanvas.Enterprise.Core
         object GetService(Type serviceContract);
 
 
-        ICollection<Type> ListServices();
+        ICollection<Type> ListServiceClasses();
+        ICollection<Type> ListServiceContracts();
 
         bool HasService(Type serviceContract);
     }

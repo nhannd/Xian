@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             request.PatientProfileRef = _worklistItem.PatientProfileRef;
 
                             GetDataResponse response = service.GetData(request);
-                            responseJsml = JsmlSerializer.Serialize<GetDataResponse>(response);
+                            responseJsml = JsmlSerializer.Serialize(response, "response");
                         });
                 }
             }
@@ -113,6 +113,14 @@ namespace ClearCanvas.Ris.Client.Adt
         public override string DetailsPageUrl
         {
             get { return RegistrationPreviewComponentSettings.Default.DetailsPageUrl; }
+        }
+
+        public override ClearCanvas.Enterprise.Common.EntityRef EntityRef
+        {
+            get
+            {
+                return _worklistItem.PatientProfileRef;
+            }
         }
 
         public override ActionModelNode ActionModel

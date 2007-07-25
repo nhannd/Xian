@@ -65,7 +65,7 @@ namespace ClearCanvas.Enterprise.Common
         /// <returns></returns>
         public bool Supercedes(EntityChange other)
         {
-            if (!_entityRef.Class.Equals(other._entityRef.Class) || !_entityRef.OID.Equals(other._entityRef.OID))
+            if (!_entityRef.ClassName.Equals(other._entityRef.ClassName) || !_entityRef.OID.Equals(other._entityRef.OID))
                 throw new ArgumentException("Argument must represent a change to the same entity");
 
             return _entityRef.Version > other._entityRef.Version || (_entityRef.Version == other._entityRef.Version && _changeType > other._changeType);

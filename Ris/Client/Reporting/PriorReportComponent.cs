@@ -120,7 +120,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public string GetData(string tag)
         {
-            return JsmlSerializer.Serialize<ReportSummary>(_selectedReport);
+            return JsmlSerializer.Serialize(_selectedReport, "report");
         }
 
     }

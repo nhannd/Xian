@@ -191,6 +191,12 @@
     <Compile Include="Admin\WorklistAdmin\UpdateWorklistRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\UpdateWorklistResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistDetail.cs" />
+    <Compile Include="Jsml\GetOperationNamesRequest.cs" />
+    <Compile Include="Jsml\GetOperationNamesResponse.cs" />
+    <Compile Include="Jsml\IJsmlShimService.cs" />
+    <Compile Include="Jsml\InvokeOperationRequest.cs" />
+    <Compile Include="Jsml\InvokeOperationResponse.cs" />
+    <Compile Include="Jsml\JsmlBlob.cs" />
     <Compile Include="Jsml\JsmlSerializer.cs" />
     <Compile Include="ReportingWorkflow\ListWorklistsRequest.cs" />
     <Compile Include="ReportingWorkflow\ListWorklistsResponse.cs" />

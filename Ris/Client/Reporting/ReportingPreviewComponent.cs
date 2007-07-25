@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                             request.ProcedureStepRef = _worklistItem.ProcedureStepRef;
 
                             GetDataResponse response = service.GetData(request);
-                            responseJsml = JsmlSerializer.Serialize<GetDataResponse>(response);
+                            responseJsml = JsmlSerializer.Serialize(response, "response");
                         });
                 }
             }

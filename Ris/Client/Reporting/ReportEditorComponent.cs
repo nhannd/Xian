@@ -349,7 +349,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     return addendumPart == null ? "" : addendumPart.Content;
                 case "Preview":
                 default:
-                    return JsmlSerializer.Serialize<ReportSummary>(_report);
+                    return JsmlSerializer.Serialize(_report, "report");
             }
         }
 

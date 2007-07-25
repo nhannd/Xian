@@ -30,8 +30,19 @@ namespace ClearCanvas.Enterprise.Common
         /// <param name="entityOid"></param>
         /// <param name="version"></param>
         public EntityRef(Type entityClass, object entityOid, int version)
+            :this(entityClass.AssemblyQualifiedName, entityOid, version)
         {
-            _entityClass = entityClass.AssemblyQualifiedName;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="entityClassName">The assembly-qualified class name of the entity class.</param>
+        /// <param name="entityOid"></param>
+        /// <param name="version"></param>
+        public EntityRef(string entityClassName, object entityOid, int version)
+        {
+            _entityClass = entityClassName;
             _entityOid = entityOid;
             _version = version;
         }
@@ -40,7 +51,7 @@ namespace ClearCanvas.Enterprise.Common
         /// Returns the class of the entity that this reference refers to
         /// </summary>
         [DataMember]
-        internal string Class
+        internal string ClassName
         {
             get { return _entityClass; }
             private set { _entityClass = value; }
