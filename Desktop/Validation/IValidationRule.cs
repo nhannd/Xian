@@ -13,12 +13,12 @@ namespace ClearCanvas.Desktop.Validation
     public interface IValidationRule
     {
         /// <summary>
-        /// The name of the property on the application component that this rule applies to.
+        /// Gets the name of the property on the application component that this rule applies to.
         /// </summary>
         string PropertyName { get; }
 
         /// <summary>
-        /// Obtains the current result of evaluating this rule based on the current runtime state.
+        /// Obtains the current result of evaluating this rule based on the current state of the application component.
         /// </summary>
         ValidationResult GetResult(IApplicationComponent component);
     }
