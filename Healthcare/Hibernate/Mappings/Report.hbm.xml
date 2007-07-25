@@ -10,7 +10,7 @@
 
     <list name="Parts" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
       <key column="ReportOID_"/>
-      <index column="Id_"/>
+      <index column="Index_"/>
       <one-to-many class="ReportPart"/>
     </list>
 
