@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 		{	
 		}
 
-		#region IDiagnosticLayoutManager Members
+		#region ILayoutManager Members
 
 		public void SetImageViewer(IImageViewer imageViewer)
 		{

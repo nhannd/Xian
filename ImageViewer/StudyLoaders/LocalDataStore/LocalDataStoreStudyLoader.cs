@@ -66,22 +66,5 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 			return localImage;
         }
-
-        //private void MapImageObjectToLocalImageObject(ImageSopInstance imageObject, IDicomPropertySettable localImage)
-        //{
-        //    ClearCanvas.Dicom.DataStore.Study study = imageObject.GetParentSeries().GetParentStudy() as ClearCanvas.Dicom.DataStore.Study;
-        //    ClearCanvas.Dicom.DataStore.Series series = imageObject.GetParentSeries().GetParentStudy() as ClearCanvas.Dicom.DataStore.Series;
-
-        //    // string properties
-        //    localImage.SetStringProperty("PatientId", study.PatientId);
-        //    localImage.SetStringProperty("StudyInstanceUid", study.StudyInstanceUid);
-        //    localImage.SetStringProperty("SeriesInstanceUid", series.SeriesInstanceUid);
-        //    localImage.SetStringProperty("TransferSyntaxUid", imageObject.TransferSyntaxUid);
-        //    localImage.SetStringProperty("SopInstanceUid", imageObject.SopInstanceUid);
-
-        //    // integer properties
-        //    localImage.SetInt32Property("SamplesPerPixel", imageObject.SamplesPerPixel);
-        //    localImage.SetInt32Property("Rows", imageObject.Rows);
-        //}
     }
 }
