@@ -100,6 +100,30 @@ if(window.external)
 		formatTelephone: function(telephone)
 		{
 			return telephone ? window.external.FormatTelephone(JSML.create(telephone, "Telephone")) : "";
+		},
+		
+		// obtains a proxy to a RIS web-service
+		getService: function(serviceContractName)
+		{
+		    var innerProxy = window.external.GetServiceProxy(serviceContractName);
+		    var operations = JSML.parse(innerProxy.GetOperationNames());
+		    
+		    var proxy = { _innerProxy: innerProxy };
+		    operations.each(
+		        function(operation)
+		        {
+		            proxy[operation] = 
+		                function(request)
+		                {
+		                    return JSML.parse( this._innerProxy.InvokeOperation(operation, JSML.create(request, "requestData")) );
+		                };
+		        });
+		    return proxy;
+		},
+		
+		getEntityRef: function()
+		{
+		    return JSML.parse(window.external.GetEntityRef());
 		}
     };
     
