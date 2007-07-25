@@ -1,12 +1,15 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 using ClearCanvas.Ris.Application.Services.Admin;
+using ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -20,9 +23,17 @@ namespace ClearCanvas.Ris.Application.Services
             detail.RequestedProcedureTypeGroups = CollectionUtils.Map<RequestedProcedureTypeGroup, RequestedProcedureTypeGroupSummary, List<RequestedProcedureTypeGroupSummary>>(
                 worklist.RequestedProcedureTypeGroups,
                 delegate(RequestedProcedureTypeGroup rptGroup)
-                    {
-                        return assembler.GetRequestedProcedureTypeGroupSummary(rptGroup, context);
-                    });
+                {
+                    return assembler.GetRequestedProcedureTypeGroupSummary(rptGroup, context);
+                });
+
+            UserAssembler userAssembler = new UserAssembler();
+            detail.Users = CollectionUtils.Map<User, UserSummary, List<UserSummary>>(
+                worklist.Users,
+                delegate(User user)
+                {
+                    return userAssembler.GetUserSummary(user);
+                });
 
             return detail;
         }
@@ -39,9 +50,15 @@ namespace ClearCanvas.Ris.Application.Services
             
             worklist.RequestedProcedureTypeGroups.Clear();
             detail.RequestedProcedureTypeGroups.ForEach(delegate(RequestedProcedureTypeGroupSummary summary)
-                                                            {
-                                                                worklist.RequestedProcedureTypeGroups.Add(context.Load<RequestedProcedureTypeGroup>(summary.EntityRef));
-                                                            });
+            {
+                worklist.RequestedProcedureTypeGroups.Add(context.Load<RequestedProcedureTypeGroup>(summary.EntityRef));
+            });
+
+            worklist.Users.Clear();
+            detail.Users.ForEach(delegate (UserSummary summary)
+            {
+                 worklist.Users.Add(context.Load<User>(summary.EntityRef));
+            });
         }
     }
 

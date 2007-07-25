@@ -1,6 +1,4 @@
-using System;
 using System.Runtime.Serialization;
-
 using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin
@@ -23,5 +21,23 @@ namespace ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin
 
         [DataMember]
         public string UserId;
+
+
+        protected bool Equals(UserSummary userSummary)
+        {
+            if (userSummary == null) return false;
+            return Equals(UserId, userSummary.UserId);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(this, obj)) return true;
+            return Equals(obj as UserSummary);
+        }
+
+        public override int GetHashCode()
+        {
+            return UserId.GetHashCode();
+        }
     }
 }

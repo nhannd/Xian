@@ -3,13 +3,17 @@ using System.Security.Permissions;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Authentication;
+using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
+using ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 {
@@ -31,6 +35,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 delegate(RequestedProcedureTypeGroup rptGroup)
                 {
                     return assembler.GetRequestedProcedureTypeGroupSummary(rptGroup, this.PersistenceContext);
+                });
+
+            UserAssembler userAssembler = new UserAssembler();
+            response.Users = CollectionUtils.Map<User, UserSummary, List<UserSummary>>(
+                this.PersistenceContext.GetBroker<IUserBroker>().FindAll(),
+                delegate(User user)
+                {
+                    return userAssembler.GetUserSummary(user);
                 });
 
             response.WorklistTypes = new List<string>();

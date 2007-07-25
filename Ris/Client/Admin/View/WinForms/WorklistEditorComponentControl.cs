@@ -33,24 +33,46 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _selectedRequestedProcedureTypes.Table = _component.SelectedRequestedProcedureTypeGroups;
             _selectedRequestedProcedureTypes.DataBindings.Add("Selection", _component, "SelectedRequestedProcedureTypeGroupsSelection", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _addButton.DataBindings.Add("Enabled", _component, "AddSelectionEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-            _removeButton.DataBindings.Add("Enabled", _component, "RemoveSelectionEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _addRequestedProceduerTypeButton.DataBindings.Add("Enabled", _component, "AddSelectionEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _removeRequestedProcedureTypeButton.DataBindings.Add("Enabled", _component, "RemoveSelectionEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
+            _availableUsers.Table = _component.AvailableUsers;
+            _availableUsers.DataBindings.Add("Selection", _component, "AvailableUsersSelection", true, DataSourceUpdateMode.OnPropertyChanged);
+            _selectedUsers.Table = _component.SelectedUsers;
+            _selectedUsers.DataBindings.Add("Selection", _component, "SelectedUsersSelection", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _addUserButton.DataBindings.Add("Enabled", _component, "AddUserSelectionEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _removeUserButton.DataBindings.Add("Enabled", _component, "RemoveUserSelectionEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            
             _acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _component.RequestedProcedureTypeGroupTablesChanged += OnRequestedProcedureTypeGroupTablesChanged;
-            SortTables();
+            _component.UserTablesChanged += OnUserTablesChanged;
+
+            SortRequestedProcedureTypeGroupTables();
+            SortUserTables();
         }
 
         private void OnRequestedProcedureTypeGroupTablesChanged(object sender, EventArgs e)
         {
-            SortTables();
+            SortRequestedProcedureTypeGroupTables();
         }
 
-        private void SortTables()
+        private void OnUserTablesChanged(object sender, EventArgs e)
+        {
+            SortUserTables();
+        }
+
+        private void SortRequestedProcedureTypeGroupTables()
         {
             _availableRequestedProcedureTypes.Table.Sort();
             _selectedRequestedProcedureTypes.Table.Sort();
+        }
+
+        private void SortUserTables()
+        {
+            _availableUsers.Table.Sort();
+            _selectedUsers.Table.Sort();
         }
 
 
@@ -64,14 +86,24 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _component.Cancel();
         }
 
-        private void AddSelection(object sender, System.EventArgs e)
+        private void AddRequestedProcedureTypeSelection(object sender, EventArgs e)
         {
-            _component.AddSelection(_availableRequestedProcedureTypes.Selection);
+            _component.AddRequestedProcedureTypeSelection(_availableRequestedProcedureTypes.Selection);
         }
 
-        private void RemoveSelection(object sender, System.EventArgs e)
+        private void RemoveRequestedProcedureTypeSelection(object sender, EventArgs e)
         {
-            _component.RemoveSelection(_selectedRequestedProcedureTypes.Selection);
+            _component.RemoveRequestedProcedureTypeSelection(_selectedRequestedProcedureTypes.Selection);
+        }
+
+        private void AddUserSelection(object sender, EventArgs e)
+        {
+            _component.AddUserSelection(_availableUsers.Selection);
+        }
+
+        private void RemoveUserSelection(object sender, EventArgs e)
+        {
+            _component.RemoveUserSelection(_selectedUsers.Selection);
         }
     }
 }

@@ -7,6 +7,7 @@ using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
 
 namespace ClearCanvas.Ris.Client.Admin
@@ -32,12 +33,19 @@ namespace ClearCanvas.Ris.Client.Admin
         private WorklistDetail _editedItemDetail;
 
         private List<string> _typeChoices;
+
         private RequestedProcedureTypeGroupSummaryTable _availableRequestedProcedureTypeGroups;
         private RequestedProcedureTypeGroupSummaryTable _selectedRequestedProcedureTypeGroups;
         private RequestedProcedureTypeGroupSummary _selectedRequestedProcedureTypeGroupSelection;
         private RequestedProcedureTypeGroupSummary _availableRequestedProcedureTypeGroupSelection;
 
+        private UserTable _availableUsers;
+        private UserTable _selectedUsers;
+        private UserSummary _selectedUserSelection;
+        private UserSummary _availableUserSelection;
+
         private event EventHandler _requestedProcedureTypeGroupSummaryTablesChanged;
+        private event EventHandler _userSummaryTablesChanged;
 
         /// <summary>
         /// Constructor
@@ -58,6 +66,9 @@ namespace ClearCanvas.Ris.Client.Admin
             _availableRequestedProcedureTypeGroups = new RequestedProcedureTypeGroupSummaryTable();
             _selectedRequestedProcedureTypeGroups = new RequestedProcedureTypeGroupSummaryTable();
 
+            _availableUsers = new UserTable();
+            _selectedUsers = new UserTable();
+
             Platform.GetService<IWorklistAdminService>(
                 delegate(IWorklistAdminService service)
                 {
@@ -65,6 +76,7 @@ namespace ClearCanvas.Ris.Client.Admin
                         service.GetWorklistEditFormData(new GetWorklistEditFormDataRequest());
                     _typeChoices = formDataResponse.WorklistTypes;
                     _availableRequestedProcedureTypeGroups.Items.AddRange(formDataResponse.RequestedProcedureTypeGroups);
+                    _availableUsers.Items.AddRange(formDataResponse.Users);
 
                     if(_isNew)
                     {
@@ -78,11 +90,17 @@ namespace ClearCanvas.Ris.Client.Admin
 
                         _editedItemDetail = response.WorklistDetail;
                         _selectedRequestedProcedureTypeGroups.Items.AddRange(_editedItemDetail.RequestedProcedureTypeGroups);
+                        _selectedUsers.Items.AddRange(_editedItemDetail.Users);
                     }
 
                     foreach (RequestedProcedureTypeGroupSummary selectedSummary in _selectedRequestedProcedureTypeGroups.Items)
                     {
                         _availableRequestedProcedureTypeGroups.Items.Remove(selectedSummary);
+                    }
+
+                    foreach (UserSummary selectedUserSummary in _selectedUsers.Items)
+                    {
+                        _availableUsers.Items.Remove(selectedUserSummary);
                     }
 
                 });
@@ -178,6 +196,40 @@ namespace ClearCanvas.Ris.Client.Admin
             remove { _requestedProcedureTypeGroupSummaryTablesChanged -= value; }
         }
 
+        public ITable AvailableUsers
+        {
+            get { return _availableUsers; }
+        }
+
+        public ITable SelectedUsers
+        {
+            get { return _selectedUsers; }
+        }
+
+        public ISelection SelectedUsersSelection
+        {
+            get { return _selectedUserSelection == null ? Selection.Empty : new Selection(_selectedUserSelection); }
+            set
+            {
+                _selectedUserSelection = (UserSummary)value.Item;
+            }
+        }
+
+        public ISelection AvailableUsersSelection
+        {
+            get { return _availableUserSelection == null ? Selection.Empty : new Selection(_availableUserSelection); }
+            set
+            {
+                _availableUserSelection = (UserSummary)value.Item;
+            }
+        }
+
+        public event EventHandler UserTablesChanged
+        {
+            add { _userSummaryTablesChanged += value; }
+            remove { _userSummaryTablesChanged -= value; }
+        }
+
         #endregion
 
         public bool AcceptEnabled
@@ -197,6 +249,9 @@ namespace ClearCanvas.Ris.Client.Admin
                 {
                     _editedItemDetail.RequestedProcedureTypeGroups.Clear();
                     _editedItemDetail.RequestedProcedureTypeGroups.AddRange(_selectedRequestedProcedureTypeGroups.Items);
+
+                    _editedItemDetail.Users.Clear();
+                    _editedItemDetail.Users.AddRange(_selectedUsers.Items);
 
                     Platform.GetService<IWorklistAdminService>(
                         delegate(IWorklistAdminService service)
@@ -237,12 +292,14 @@ namespace ClearCanvas.Ris.Client.Admin
             Host.Exit();
         }
 
+        #region RequestedProcedureTypeGroup manipulations
+
         public bool AddSelectionEnabled
         {
             get { return _availableRequestedProcedureTypeGroupSelection != null; }
         }
 
-        public void AddSelection(ISelection selection)
+        public void AddRequestedProcedureTypeSelection(ISelection selection)
         {
             foreach (RequestedProcedureTypeGroupSummary summary in selection.Items)
             {
@@ -258,7 +315,7 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _selectedRequestedProcedureTypeGroupSelection != null; }
         }
 
-        public void RemoveSelection(ISelection selection)
+        public void RemoveRequestedProcedureTypeSelection(ISelection selection)
         {
             foreach (RequestedProcedureTypeGroupSummary summary in selection.Items)
             {
@@ -268,5 +325,40 @@ namespace ClearCanvas.Ris.Client.Admin
             EventsHelper.Fire(_requestedProcedureTypeGroupSummaryTablesChanged, this, EventArgs.Empty);
             this.Modified = true;
         }
+
+        #endregion
+
+        public bool AddUserSelectionEnabled
+        {
+            get { return _availableUserSelection != null; }
+        }
+
+        public void AddUserSelection(ISelection selection)
+        {
+            foreach (UserSummary summary in selection.Items)
+            {
+                _selectedUsers.Items.Add(summary);
+                _availableUsers.Items.Remove(summary);
+            }
+            EventsHelper.Fire(_userSummaryTablesChanged, this, EventArgs.Empty);
+            this.Modified = true;
+        }
+
+        public bool RemoveUserSelectionEnabled
+        {
+            get { return _selectedUserSelection != null; }
+        }
+
+        public void RemoveUserSelection(ISelection selection)
+        {
+            foreach (UserSummary summary in selection.Items)
+            {
+                _selectedUsers.Items.Remove(summary);
+                _availableUsers.Items.Add(summary);
+            }
+            EventsHelper.Fire(_userSummaryTablesChanged, this, EventArgs.Empty);
+            this.Modified = true;
+        }
+
     }
 }
