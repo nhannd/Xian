@@ -2,91 +2,61 @@
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Font Name="Tahoma" Size="8.25" />
   <Class Name="ClearCanvas.ImageViewer.Graphics.ImageGraphic" Collapsed="true">
-    <Position X="4.25" Y="1.5" Width="1.5" />
+    <Position X="4.5" Y="1.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Graphics\ImageGraphic.cs</FileName>
-      <HashCode>CAoAAQAAIIBIEECQQAKAhFkAAIAAACBEACgBAAkCAAA=</HashCode>
+      <HashCode>AAIAAQAAAIBAEUCQAAAggAgAAIAACiBEQAgBABgAQAA=</HashCode>
     </TypeIdentifier>
-    <Members>
-      <Field Name="_bitsAllocated" Hidden="true" />
-      <Field Name="_bitsStored" Hidden="true" />
-      <Field Name="_columns" Hidden="true" />
-      <Field Name="_doubleWordAlignedColumns" Hidden="true" />
-      <Field Name="_highBit" Hidden="true" />
-      <Field Name="_pixelData" Hidden="true" />
-      <Field Name="_pixelDataRaw" Hidden="true" />
-      <Field Name="_pixelRepresentation" Hidden="true" />
-      <Field Name="_planarConfiguration" Hidden="true" />
-      <Field Name="_rows" Hidden="true" />
-      <Field Name="_samplesPerPixel" Hidden="true" />
-      <Field Name="_sizeInBytes" Hidden="true" />
-      <Field Name="_sizeInPixels" Hidden="true" />
-      <Property Name="BitsAllocated" Hidden="true" />
-      <Property Name="BitsStored" Hidden="true" />
-      <Property Name="Columns" Hidden="true" />
-      <Property Name="DoubleWordAlignedColumns" Hidden="true" />
-      <Property Name="HighBit" Hidden="true" />
-      <Method Name="HitTest" Hidden="true" />
-      <Method Name="ImageGraphic" Hidden="true" />
-      <Property Name="IsDoubleWordAligned" Hidden="true" />
-      <Property Name="IsPlanar" Hidden="true" />
-      <Property Name="IsSigned" Hidden="true" />
-      <Method Name="Move" Hidden="true" />
-      <Property Name="PixelDataRaw" Hidden="true" />
-      <Property Name="PixelRepresentation" Hidden="true" />
-      <Property Name="PlanarConfiguration" Hidden="true" />
-      <Property Name="Rows" Hidden="true" />
-      <Property Name="SamplesPerPixel" Hidden="true" />
-      <Property Name="SizeInBytes" Hidden="true" />
-      <Property Name="SizeInPixels" Hidden="true" />
-    </Members>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.StandardColorImageGraphic" Collapsed="true">
-    <Position X="5.5" Y="2.75" Width="2.25" />
+    <Position X="6.25" Y="4.25" Width="2.25" />
     <TypeIdentifier>
       <FileName>Graphics\StandardColorImageGraphic.cs</FileName>
-      <HashCode>BAAAAAAAAAAAFAAAAAAAAAAAAAAAAAABgAAAEAAIAAA=</HashCode>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAMAAA=</HashCode>
     </TypeIdentifier>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.IndexedImageGraphic" Collapsed="true">
-    <Position X="2.75" Y="2.75" Width="1.75" />
+    <Position X="2.25" Y="2.75" Width="1.75" />
     <TypeIdentifier>
       <FileName>Graphics\IndexedImageGraphic.cs</FileName>
-      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAIAAEAAAAAAAQAAAACABAEAAAAAACAAAAAAAAACQAI=</HashCode>
     </TypeIdentifier>
-    <Members>
-      <Method Name="IndexedImageGraphic" Hidden="true" />
-    </Members>
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.StandardGrayscaleImageGraphic" Collapsed="true">
-    <Position X="0.5" Y="5.75" Width="2.5" />
+    <Position X="1.75" Y="5.75" Width="2.5" />
     <TypeIdentifier>
       <FileName>Graphics\StandardGrayscaleImageGraphic.cs</FileName>
-      <HashCode>AAAAAAQAAAAAEAAAAAAAAAQAAAIAiAAAIAAFEAAIAAA=</HashCode>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAQAAAIAiAAAIAAFEAAIAAA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ClearCanvas.ImageViewer.Graphics.StandardPaletteColorImageGraphic" Collapsed="true">
-    <Position X="4" Y="4.25" Width="2.75" />
-    <TypeIdentifier>
-      <FileName>Graphics\StandardPaletteColorImageGraphic.cs</FileName>
-      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAA=</HashCode>
-    </TypeIdentifier>
-  </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.GrayscaleImageGraphic" Collapsed="true">
-    <Position X="0.75" Y="4.25" Width="2" />
+    <Position X="2" Y="4.25" Width="2" />
     <TypeIdentifier>
       <FileName>Graphics\GrayscaleImageGraphic.cs</FileName>
-      <HashCode>kAgAAEAAACQAABABAAAAAABEAAQCAAAAAAAAAABCgAA=</HashCode>
+      <HashCode>kAgAAEAAACQAARABAAAAAABEAAQCAAAAAAAAAABCgAA=</HashCode>
     </TypeIdentifier>
+    <InheritanceLine Type="ClearCanvas.ImageViewer.Graphics.IndexedImageGraphic" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="3.125" Y="3.38" />
+        <Point X="3.125" Y="4.25" />
+      </Path>
+    </InheritanceLine>
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.Graphic" Collapsed="true">
-    <Position X="4.25" Y="0.5" Width="1.5" />
+    <Position X="4.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
       <FileName>Graphics\Graphic.cs</FileName>
       <HashCode>AAKAISEAAKBAggAAAoAAAgQMAAABEgIIAABQAIAAAAA=</HashCode>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ClearCanvas.ImageViewer.Graphics.ColorImageGraphic" Collapsed="true">
+    <Position X="6.5" Y="2.75" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Graphics\ColorImageGraphic.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAQAA=</HashCode>
+    </TypeIdentifier>
   </Class>
 </ClassDiagram>
