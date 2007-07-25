@@ -104,8 +104,17 @@ namespace ClearCanvas.ImageViewer
 
 		private void OnWorkspaceActivated(object sender, ItemEventArgs<Workspace> e)
 		{
-            IImageViewer imageViewer = ImageViewerComponent.GetAsImageViewer(_imageViewerToolContext.DesktopWindow.ActiveWorkspace);
-            this.ImageViewer = imageViewer;
+			Workspace activeWorkspace = _imageViewerToolContext.DesktopWindow.ActiveWorkspace;
+
+			if (activeWorkspace == null)
+			{
+				this.ImageViewer = null;
+			}
+			else
+			{
+				IImageViewer imageViewer = ImageViewerComponent.GetAsImageViewer(activeWorkspace);
+				this.ImageViewer = imageViewer;
+			}
 		}
 
 		/// <summary>
