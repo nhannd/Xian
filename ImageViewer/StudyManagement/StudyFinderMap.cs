@@ -17,7 +17,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// <summary>
 	/// A map of <see cref="IStudyFinder"/> objects.
 	/// </summary>
-    public sealed class StudyFinderMap : IEnumerable
+    internal sealed class StudyFinderMap : IEnumerable
 	{
         Dictionary<string, IStudyFinder> _studyFinderMap = new Dictionary<string, IStudyFinder>();
 
