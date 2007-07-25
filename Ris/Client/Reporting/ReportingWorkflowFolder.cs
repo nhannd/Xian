@@ -1,10 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Client.Reporting
@@ -72,13 +71,14 @@ namespace ClearCanvas.Ris.Client.Reporting
             #endregion
         }
 
-        private ReportingWorkflowFolderSystem _folderSystem;
+        private readonly ReportingWorkflowFolderSystem _folderSystem;
         private IconSet _closedIconSet;
         private IconSet _openIconSet;
 
+        private readonly EntityRef _worklistRef;
         private string _worklistClassName;
 
-        public ReportingWorkflowFolder(ReportingWorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
+        public ReportingWorkflowFolder(ReportingWorkflowFolderSystem folderSystem, string folderName, EntityRef worklistRef, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
             :base(folderSystem, folderName, new ReportingWorklistTable())
         {
             _folderSystem = folderSystem;
@@ -91,10 +91,22 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 this.InitDragDropHandling(dropHandlerExtensionPoint, new DropContext(this));
             }
+
+            _worklistRef = worklistRef;
+        }
+
+        public ReportingWorkflowFolder(ReportingWorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
+            : this(folderSystem, folderName, null, dropHandlerExtensionPoint)
+        {
         }
 
         public ReportingWorkflowFolder(ReportingWorkflowFolderSystem folderSystem, string folderName)
-            :this(folderSystem, folderName, null)
+            : this(folderSystem, folderName, null, null)
+        {
+        }
+
+        public ReportingWorkflowFolder(ReportingWorkflowFolderSystem folderSystem, string folderName, EntityRef worklistRef)
+            : this(folderSystem, folderName, worklistRef, null)
         {
         }
 
@@ -143,7 +155,11 @@ namespace ClearCanvas.Ris.Client.Reporting
             Platform.GetService<IReportingWorkflowService>(
                 delegate(IReportingWorkflowService service)
                 {
-                    GetWorklistResponse response = service.GetWorklist(new GetWorklistRequest(this.WorklistClassName));
+                    GetWorklistRequest request = _worklistRef == null
+                        ? new GetWorklistRequest(this.WorklistClassName)
+                        : new GetWorklistRequest(_worklistRef);
+
+                    GetWorklistResponse response = service.GetWorklist(request);
                     worklistItems = response.WorklistItems;
                 });
 
@@ -159,7 +175,11 @@ namespace ClearCanvas.Ris.Client.Reporting
             Platform.GetService<IReportingWorkflowService>(
                 delegate(IReportingWorkflowService service)
                 {
-                    GetWorklistCountResponse response = service.GetWorklistCount(new GetWorklistCountRequest(this.WorklistClassName));
+                    GetWorklistCountRequest request = _worklistRef == null
+                        ? new GetWorklistCountRequest(this.WorklistClassName)
+                        : new GetWorklistCountRequest(_worklistRef);
+
+                    GetWorklistCountResponse response = service.GetWorklistCount(request);
                     count = response.ItemCount;
                 });
 

@@ -1,14 +1,10 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
@@ -50,7 +46,7 @@ namespace ClearCanvas.Ris.Client.Reporting
     {
         class ReportingWorkflowItemToolContext : ToolContext, IReportingWorkflowItemToolContext
         {
-            private ReportingWorkflowFolderSystem _owner;
+            private readonly ReportingWorkflowFolderSystem _owner;
 
             public ReportingWorkflowItemToolContext(ReportingWorkflowFolderSystem owner)
             {
@@ -95,7 +91,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         class ReportingWorkflowFolderToolContext : ToolContext, IReportingWorkflowFolderToolContext
         {
-            private ReportingWorkflowFolderSystem _owner;
+            private readonly ReportingWorkflowFolderSystem _owner;
 
             public ReportingWorkflowFolderToolContext(ReportingWorkflowFolderSystem owner)
             {
@@ -146,6 +142,17 @@ namespace ClearCanvas.Ris.Client.Reporting
             this.AddFolder(new Folders.ToBeVerifiedFolder(this));
             this.AddFolder(new Folders.VerifiedFolder(this));
 
+            Platform.GetService<IReportingWorkflowService>(
+                delegate(IReportingWorkflowService service)
+                {
+                    ListWorklistsResponse response = service.ListWorklists(new ListWorklistsRequest());
+                    foreach (WorklistSummary worklistSummary in response.Worklists)
+                    {
+                        WorkflowFolder<ReportingWorklistItem> folder = FolderFactory.Instance.GetFolder(worklistSummary.WorklistType, this, worklistSummary);
+                        if (folder != null) this.AddFolder(folder);
+                    }
+                });
+
             _itemToolSet = new ToolSet(new ReportingWorkflowItemToolExtensionPoint(), new ReportingWorkflowItemToolContext(this));
             _folderToolSet = new ToolSet(new ReportingWorkflowFolderToolExtensionPoint(), new ReportingWorkflowFolderToolContext(this));
 
@@ -159,7 +166,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 return _workflowEnablement == null ? false : _workflowEnablement[operationName];
             }
-            catch (KeyNotFoundException e)
+            catch (KeyNotFoundException)
             {
                 Platform.Log(string.Format(SR.ExceptionOperationEnablementUnknown, operationName), LogLevel.Error);
                 return false;

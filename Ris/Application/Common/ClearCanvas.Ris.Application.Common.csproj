@@ -192,6 +192,8 @@
     <Compile Include="Admin\WorklistAdmin\UpdateWorklistResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistDetail.cs" />
     <Compile Include="Jsml\JsmlSerializer.cs" />
+    <Compile Include="ReportingWorkflow\ListWorklistsRequest.cs" />
+    <Compile Include="ReportingWorkflow\ListWorklistsResponse.cs" />
     <Compile Include="WorklistSummary.cs" />
     <Compile Include="DiagnosticServiceDetail.cs" />
     <Compile Include="DiagnosticServiceSummary.cs" />

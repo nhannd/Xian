@@ -1,4 +1,3 @@
-using System;
 using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
@@ -6,6 +5,14 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [ServiceContract]
     public interface IReportingWorkflowService
     {
+        /// <summary>
+        /// Get a list of all reporting worklists
+        /// </summary>
+        /// <param name="request"><see cref="ListWorklistsRequest"/></param>
+        /// <returns><see cref="ListWorklistsResponse"/></returns>
+        [OperationContract]
+        ListWorklistsResponse ListWorklists(ListWorklistsRequest request);
+
         /// <summary>
         /// Get items for a worklist
         /// </summary>
@@ -115,8 +122,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <summary>
         /// Start an addendum step
         /// </summary>
-        /// <param name="request"><see cref="StartAddendumRequest"/></param>
-        /// <returns><see cref="StartAddendumResponse"/></returns>
+        /// <param name="request"><see cref="CreateAddendumRequest"/></param>
+        /// <returns><see cref="CreateAddendumResponse"/></returns>
         [OperationContract]
         [FaultContract(typeof(ConcurrentModificationException))]
         CreateAddendumResponse CreateAddendum(CreateAddendumRequest request);

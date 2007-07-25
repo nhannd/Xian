@@ -3,13 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
@@ -23,6 +22,20 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         #region IReportingWorkflowService Members
+
+        [ReadOperation]
+        public ListWorklistsResponse ListWorklists(ListWorklistsRequest request)
+        {
+            WorklistAssembler assembler = new WorklistAssembler();
+            return new ListWorklistsResponse(
+                CollectionUtils.Map<Worklist, WorklistSummary, List<WorklistSummary>>(
+                    this.PersistenceContext.GetBroker<IWorklistBroker>().FindAllReportingWorklists(this.CurrentUser),
+                    delegate(Worklist worklist)
+                    {
+                        return assembler.GetWorklistSummary(worklist, this.PersistenceContext);
+                    }));
+        }
+
 
         [ReadOperation]
         public GetWorklistResponse GetWorklist(GetWorklistRequest request)

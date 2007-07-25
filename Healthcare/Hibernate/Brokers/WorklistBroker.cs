@@ -13,7 +13,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         #region Private Fields
 
         private readonly string _selectHql = "select w from Worklist w join w.Users u"
-                                             + " where u = :user";
+                                             + " where u = :user ";
 
         private readonly string _registrationWorklistHql = " and (w.class = RegistrationScheduledWorklist"
                                                            + " or w.class = RegistrationCheckedInWorklist"
@@ -27,7 +27,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                                                            + " or w.class = TechnologistCancelledWorklist"
                                                            + " or w.class = TechnologistCompletedWorklist)";
 
-        private readonly string _reportingWorklistHql = "and (w.class = ReportingToBeReportedWorklist)";
+        private readonly string _reportingWorklistHql = " and (w.class = ReportingToBeReportedWorklist)";
 
         #endregion
 
