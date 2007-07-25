@@ -9,5 +9,6 @@ namespace ClearCanvas.Healthcare.Brokers
         IList FindAllRegistrationWorklists(User currentUser);
         IList FindAllTechnologistWorklists(User currentUser);
         IList FindAllReportingWorklists(User currentUser);
+        bool NameExistsForType(string name, string type);
     }
 }

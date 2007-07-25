@@ -89,7 +89,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 throw new RequestValidationException(SR.ExceptionWorklistNameRequired);
             }
 
-            if(WorklistExists(request.Detail.Name))
+            if(WorklistExists(request.Detail.Name, request.Detail.WorklistType))
             {
                 throw new RequestValidationException(string.Format(SR.ExceptionWorklistNameAlreadyExists, request.Detail.Name));
             }
@@ -108,6 +108,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
         public UpdateWorklistResponse UpdateWorklist(UpdateWorklistRequest request)
         {
+            if (WorklistExists(request.Detail.Name, request.Detail.WorklistType))
+            {
+                throw new RequestValidationException(string.Format(SR.ExceptionWorklistNameAlreadyExists, request.Detail.Name));
+            }
+
             Worklist worklist = this.PersistenceContext.Load<Worklist>(request.EntityRef);
             WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
             adminAssembler.UpdateWorklist(worklist, request.Detail, this.PersistenceContext);
@@ -117,11 +122,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
         #endregion
 
-        private bool WorklistExists(string name)
+        private bool WorklistExists(string name, string type)
         {
-            WorklistSearchCriteria criteria = new WorklistSearchCriteria();
-            criteria.Name.EqualTo(name);
-            return this.PersistenceContext.GetBroker<IWorklistBroker>().Find(criteria).Count != 0;
+            return this.PersistenceContext.GetBroker<IWorklistBroker>().NameExistsForType(name, type);
         }
     }
 }

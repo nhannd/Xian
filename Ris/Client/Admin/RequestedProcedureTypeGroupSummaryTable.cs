@@ -11,13 +11,13 @@ namespace ClearCanvas.Ris.Client.Admin
                 delegate (RequestedProcedureTypeGroupSummary summary) { return summary.Name; },
                 0.5f));
 
-            this.Columns.Add(new TableColumn<RequestedProcedureTypeGroupSummary, string>(SR.ColumnDescription,
-                delegate (RequestedProcedureTypeGroupSummary summary) { return summary.Description; },
+            this.Columns.Add(new TableColumn<RequestedProcedureTypeGroupSummary, string>(SR.ColumnCategory,
+                delegate(RequestedProcedureTypeGroupSummary summary) { return summary.Category.Value; },
                 0.5f));
 
-            this.Columns.Add(new TableColumn<RequestedProcedureTypeGroupSummary, string>(SR.ColumnCategory,
-                delegate (RequestedProcedureTypeGroupSummary summary) { return summary.Category.Value; },
-                0.5f));
+            this.Columns.Add(new TableColumn<RequestedProcedureTypeGroupSummary, string>(SR.ColumnDescription,
+                delegate (RequestedProcedureTypeGroupSummary summary) { return summary.Description; },
+                1.5f));
         }
     }
 }

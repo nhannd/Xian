@@ -48,6 +48,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return DoQuery(currentUser, _reportingWorklistHql);
         }
 
+        public bool NameExistsForType(string name, string type)
+        {
+            WorklistSearchCriteria criteria = new WorklistSearchCriteria();
+            criteria.Name.EqualTo(name);
+            return this.Find(criteria).Count != 0;
+        }
+
         #endregion
 
         #region Private Methods
