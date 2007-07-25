@@ -7,7 +7,7 @@
     <ProjectGuid>{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DicomDump</RootNamespace>
+    <RootNamespace>ClearCanvas.ImageServer.Dicom.DicomDump</RootNamespace>
     <AssemblyName>DicomDump</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">

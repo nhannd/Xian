@@ -7,8 +7,8 @@
     <ProjectGuid>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Common</RootNamespace>
-    <AssemblyName>Common</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageServer.Common</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageServer.Common</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
