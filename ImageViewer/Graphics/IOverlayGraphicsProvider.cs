@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// any type of <see cref="PresentationImage"/> that implements the provider interface.
 	/// </para>
 	/// </remarks>
-	public interface IOverlayGraphicsProvider : IDrawable
+	public interface IOverlayGraphicsProvider
 	{
 		/// <summary>
 		/// Gets a <see cref="GraphicCollection"/>.
