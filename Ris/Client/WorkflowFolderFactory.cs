@@ -58,7 +58,7 @@ namespace ClearCanvas.Ris.Client
         public WorkflowFolder<TItem> GetFolder<TItem>(string type, WorkflowFolderSystem<TItem> folderSystem, WorklistSummary worklistSummary)
         {
             Type foundType = GetWorklistType(type);
-            return (WorkflowFolder<TItem>)Activator.CreateInstance(foundType, folderSystem, worklistSummary.DisplayName, worklistSummary.EntityRef);
+            return (WorkflowFolder<TItem>)Activator.CreateInstance(foundType, folderSystem, worklistSummary.DisplayName, worklistSummary.Description, worklistSummary.EntityRef);
         }
 
         public Type GetWorklistType(string type)

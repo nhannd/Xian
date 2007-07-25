@@ -80,8 +80,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private string _worklistClassName;
 
-        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName, EntityRef worklistRef, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
-            : base(folderSystem, folderName, new RegistrationWorklistTable())
+        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
+            : base(folderSystem, folderName, folderDescription, new RegistrationWorklistTable())
         {
             _folderSystem = folderSystem;
 
@@ -98,17 +98,17 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<RegistrationWorklistItem>> dropHandlerExtensionPoint)
-            : this(folderSystem, folderName, null, dropHandlerExtensionPoint)
+            : this(folderSystem, folderName, null, null, dropHandlerExtensionPoint)
         {
         }
 
         public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName)
-            :this(folderSystem, folderName, null, null)
+            :this(folderSystem, folderName, null, null, null)
         {
         }
 
-        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName, EntityRef worklistRef)
-            : this(folderSystem, folderName, worklistRef, null)
+        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
+            : this(folderSystem, folderName, folderDescription, worklistRef, null)
         {
         }
 

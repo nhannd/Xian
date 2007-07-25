@@ -78,8 +78,8 @@ namespace ClearCanvas.Ris.Client.Reporting
         private readonly EntityRef _worklistRef;
         private string _worklistClassName;
 
-        public ReportingWorkflowFolder(ReportingWorkflowFolderSystem folderSystem, string folderName, EntityRef worklistRef, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
-            :base(folderSystem, folderName, new ReportingWorklistTable())
+        public ReportingWorkflowFolder(ReportingWorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
+            :base(folderSystem, folderName, folderDescription, new ReportingWorklistTable())
         {
             _folderSystem = folderSystem;
 
@@ -96,17 +96,17 @@ namespace ClearCanvas.Ris.Client.Reporting
         }
 
         public ReportingWorkflowFolder(ReportingWorkflowFolderSystem folderSystem, string folderName, ExtensionPoint<IDropHandler<ReportingWorklistItem>> dropHandlerExtensionPoint)
-            : this(folderSystem, folderName, null, dropHandlerExtensionPoint)
+            : this(folderSystem, folderName, null, null, dropHandlerExtensionPoint)
+        {
+        }
+
+        public ReportingWorkflowFolder(ReportingWorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
+            : this(folderSystem, folderName, folderDescription, worklistRef, null)
         {
         }
 
         public ReportingWorkflowFolder(ReportingWorkflowFolderSystem folderSystem, string folderName)
-            : this(folderSystem, folderName, null, null)
-        {
-        }
-
-        public ReportingWorkflowFolder(ReportingWorkflowFolderSystem folderSystem, string folderName, EntityRef worklistRef)
-            : this(folderSystem, folderName, worklistRef, null)
+            : this(folderSystem, folderName, null, null, null)
         {
         }
 

@@ -12,8 +12,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderForWorklistType("Registration - Scheduled")]
     public class ScheduledFolder : RegistrationWorkflowFolder
     {
-        public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, worklistRef)
+        public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
@@ -24,7 +24,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Scheduled", null)
+            : this(folderSystem, "Scheduled", null, null)
         {
         }
 
@@ -52,8 +52,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-        public CheckedInFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, worklistRef, new DropHandlerExtensionPoint())
+        public CheckedInFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
             ((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
@@ -64,7 +64,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public CheckedInFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Checked In", null)
+            : this(folderSystem, "Checked In", null, null)
         {
         }
 
@@ -87,8 +87,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderForWorklistType("Registration - In Progress")]
     public class InProgressFolder : RegistrationWorkflowFolder
     {
-        public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, worklistRef)
+        public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
@@ -99,7 +99,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "In Progress", null)
+            : this(folderSystem, "In Progress", null, null)
         {
         }
 
@@ -122,8 +122,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     [FolderForWorklistType("Registration - Completed")]
     public class CompletedFolder : RegistrationWorkflowFolder
     {
-        public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, worklistRef)
+        public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
@@ -134,7 +134,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Completed", null)
+            : this(folderSystem, "Completed", null, null)
         {
         }
 
@@ -162,8 +162,8 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         {
         }
 
-        public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, worklistRef, new DropHandlerExtensionPoint())
+        public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef, new DropHandlerExtensionPoint())
         {
             this.MenuModel = new SimpleActionModel(new ResourceResolver(this.GetType().Assembly));
 			((SimpleActionModel)this.MenuModel).AddAction("ScheduledOption", "Option", "EditToolSmall.png", "Option",
@@ -174,7 +174,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Cancelled", null)
+            : this(folderSystem, "Cancelled", null, null)
         {
         }
 

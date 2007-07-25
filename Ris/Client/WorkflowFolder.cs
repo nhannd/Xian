@@ -31,6 +31,7 @@ namespace ClearCanvas.Ris.Client
     public abstract class WorkflowFolder<TItem> : Folder, IDisposable
     {
         private string _folderName;
+        private string _folderTooltip;
         private Table<TItem> _itemsTable;
         private bool _isPopulated;
         private int _itemCount = -1;
@@ -46,10 +47,11 @@ namespace ClearCanvas.Ris.Client
         private BackgroundTask _queryItemsTask;
         private BackgroundTask _queryCountTask;
 
-        public WorkflowFolder(WorkflowFolderSystem<TItem> folderSystem, string folderName, Table<TItem> itemsTable)
+        public WorkflowFolder(WorkflowFolderSystem<TItem> folderSystem, string folderName, string folderTooltip, Table<TItem> itemsTable)
         {
             _folderSystem = folderSystem;
             _folderName = folderName;
+            _folderTooltip = folderTooltip;
             _itemsTable = itemsTable;
             _itemsTable.Items.ItemsChanged += delegate(object sender, ItemChangedEventArgs args)
                 {
@@ -97,6 +99,14 @@ namespace ClearCanvas.Ris.Client
             {
                 return _isPopulated || _itemCount >= 0 ?
                     string.Format("{0} ({1})", _folderName, _itemCount) : _folderName;
+            }
+        }
+
+        public override string Tooltip
+        {
+            get
+            {
+                return _folderTooltip;
             }
         }
 

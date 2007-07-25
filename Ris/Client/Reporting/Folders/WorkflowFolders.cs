@@ -8,14 +8,14 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
     [FolderForWorklistType("Reporting - To Be Reported")]
     public class ToBeReportedFolder : ReportingWorkflowFolder
     {
-        public ToBeReportedFolder(ReportingWorkflowFolderSystem folderSystem, string folderDisplayName, EntityRef worklistRef)
-            : base(folderSystem, folderDisplayName, worklistRef)
+        public ToBeReportedFolder(ReportingWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
+            : base(folderSystem, folderDisplayName, folderDescription, worklistRef)
         {
             this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+ToBeReported";
         }
 
         public ToBeReportedFolder(ReportingWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "To be Reported", null)
+            : this(folderSystem, "To be Reported", null, null)
         {
         }
 

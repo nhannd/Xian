@@ -144,6 +144,7 @@ namespace ClearCanvas.Ris.Client
             binding.CanHaveSubTreeHandler = delegate(IFolder folder) { return false; };     // for now, assume only one level of folders
             binding.CanAcceptDropHandler = CanFolderAcceptDrop;
             binding.AcceptDropHandler = FolderAcceptDrop;
+            binding.TooltipTextProvider = delegate(IFolder folder) { return folder.Tooltip; };
 
             _folderTree = new Tree<IFolder>(binding);
             _folderTree.Items.ItemsChanged += new EventHandler<ItemChangedEventArgs>(RootFoldersChangedEventHandler);

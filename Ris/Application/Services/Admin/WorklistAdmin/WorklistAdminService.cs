@@ -108,12 +108,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
         public UpdateWorklistResponse UpdateWorklist(UpdateWorklistRequest request)
         {
-            if (WorklistExists(request.Detail.Name, request.Detail.WorklistType))
+            Worklist worklist = this.PersistenceContext.Load<Worklist>(request.EntityRef);
+
+            if (worklist.Name != request.Detail.Name && WorklistExists(request.Detail.Name, request.Detail.WorklistType))
             {
                 throw new RequestValidationException(string.Format(SR.ExceptionWorklistNameAlreadyExists, request.Detail.Name));
             }
 
-            Worklist worklist = this.PersistenceContext.Load<Worklist>(request.EntityRef);
             WorklistAdminAssembler adminAssembler = new WorklistAdminAssembler();
             adminAssembler.UpdateWorklist(worklist, request.Detail, this.PersistenceContext);
 
