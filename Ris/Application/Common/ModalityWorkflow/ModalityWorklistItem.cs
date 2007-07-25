@@ -58,5 +58,19 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
 
         [DataMember]
         public EnumValueInfo Priority;
+
+        public override bool Equals(object obj)
+        {
+            ModalityWorklistItem that = obj as ModalityWorklistItem;
+            if (that != null)
+                return this.ProcedureStepRef.Equals(that.ProcedureStepRef);
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ProcedureStepRef.GetHashCode();
+        }
     }
 }

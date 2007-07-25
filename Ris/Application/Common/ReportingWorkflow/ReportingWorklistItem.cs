@@ -35,5 +35,19 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 
         [DataMember]
         public string StepType;
+
+        public override bool Equals(object obj)
+        {
+            ReportingWorklistItem that = obj as ReportingWorklistItem;
+            if (that != null)
+                return this.ProcedureStepRef.Equals(that.ProcedureStepRef);
+
+            return false;
+        }
+
+        public override int GetHashCode()
+        {
+            return this.ProcedureStepRef.GetHashCode();
+        }
     }
 }
