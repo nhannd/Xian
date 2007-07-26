@@ -132,7 +132,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         public string Description
         {
-            get { return ""; }
+            get { return _editedItemDetail.Description; }
             set
             {
                 _editedItemDetail.Description = value;
