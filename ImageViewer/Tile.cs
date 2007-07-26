@@ -32,6 +32,7 @@ namespace ClearCanvas.ImageViewer
 		private ImageBox _parentImageBox;
 		private PresentationImage _presentationImage;
 		private RectangleF _normalizedRectangle;
+		private Rectangle _clientRectangle; 
 		private bool _selected = false;
 		private InformationBox _informationBox;
 		private static int _borderWidth = 1;
@@ -250,6 +251,14 @@ namespace ClearCanvas.ImageViewer
 			internal set { _normalizedRectangle = value; }
 		}
 
+		/// <summary>
+		/// Gets this <see cref="Tile"/>'s client rectangle.
+		/// </summary>
+		public Rectangle ClientRectangle
+		{
+			get { return _clientRectangle; }
+		}
+
 		public InformationBox InformationBox
 		{
 			get { return _informationBox; }
@@ -395,6 +404,8 @@ namespace ClearCanvas.ImageViewer
 			// No PresentationImage associated with this Tile, so nothing to draw
 			if (_presentationImage == null)
 				return;
+
+			_clientRectangle = drawArgs.ClientRectangle;
 
 			drawArgs.Tile = this;
 			drawArgs.ImageBox = this.ParentImageBox;

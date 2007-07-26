@@ -46,6 +46,11 @@ namespace ClearCanvas.ImageViewer
 		RectangleF NormalizedRectangle { get; }
 
 		/// <summary>
+		/// Gets this <see cref="ITile"/>'s client rectangle.
+		/// </summary>
+		Rectangle ClientRectangle { get; }
+
+		/// <summary>
 		/// Gets the presentation image index.
 		/// </summary>
 		int PresentationImageIndex { get; }
