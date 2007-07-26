@@ -12,6 +12,12 @@ namespace ClearCanvas.ImageServer.Database
         public ProcedureEntity()
             : base()
         {
+
+        }
+        
+        public void SetOid(object oid)
+        {
+            OID = oid;
         }
     }
 }

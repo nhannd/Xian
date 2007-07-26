@@ -79,6 +79,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Mod
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.TestApp", "TestApp\ClearCanvas.ImageServer.TestApp.csproj", "{7462F6BA-5634-4ED5-A4E1-707F3F43D113}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -137,6 +143,10 @@ Global
 		{2C9126D3-5B73-4539-BBC9-D56E6097D335}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2C9126D3-5B73-4539-BBC9-D56E6097D335}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2C9126D3-5B73-4539-BBC9-D56E6097D335}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7462F6BA-5634-4ED5-A4E1-707F3F43D113}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7462F6BA-5634-4ED5-A4E1-707F3F43D113}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7462F6BA-5634-4ED5-A4E1-707F3F43D113}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7462F6BA-5634-4ED5-A4E1-707F3F43D113}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

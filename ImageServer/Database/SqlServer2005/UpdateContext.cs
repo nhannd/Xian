@@ -11,9 +11,10 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
     public class UpdateContext : PersistenceContext,IUpdateContext
     {
         private SqlTransaction _transaction;
+        private UpdateContextSyncMode _mode;
 
-        internal UpdateContext(SqlConnection connection)
-            : base (connection)
+        internal UpdateContext(SqlConnection connection, ITransactionNotifier transactionNotifier, UpdateContextSyncMode mode)
+            : base (connection, transactionNotifier)
         {
             _transaction = connection.BeginTransaction();
         }
@@ -32,6 +33,7 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
 
         void IUpdateContext.Resume(UpdateContextSyncMode syncMode)
         {
+            _mode = syncMode;
             throw new Exception("The method or operation is not implemented.");
         }
 
@@ -41,5 +43,36 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
         }
 
         #endregion
+
+        #region IDisposable Members
+
+        /// <summary>
+        /// Commits the transaction (does not flush anything to the database)
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_transaction != null)
+                {
+                    try
+                    {
+                        _transaction.Commit();
+                    }
+                    catch (SqlException e)
+                    {
+                        Platform.Log(e, LogLevel.Error);
+                    }
+                }
+                // end the transaction
+            }
+
+            // important to call base class to close the session, etc.
+            base.Dispose(disposing);
+        }
+
+        #endregion
+
     }
 }

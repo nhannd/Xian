@@ -7,11 +7,11 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.ImageServer.Database
 {
-    public delegate void SelectCallback(ProcedureEntity row);
+    public delegate void SelectCallback<T>(T row);
 
     public interface IProcedureEntitySelectBroker<TInput, TOutput> : IPersistenceBroker
         where TInput : ProcedureSearchCriteria
-        where TOutput : ProcedureEntity
+        where TOutput : ProcedureEntity, new()
     {
         /// <summary>
         /// Retrieves all entities matching the specified criteria.
@@ -35,7 +35,7 @@ namespace ClearCanvas.ImageServer.Database
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        void Execute(TInput criteria, SelectCallback callback);
+        void Execute(TInput criteria, SelectCallback<TOutput> callback);
 
         /// <summary>
         /// Retrieves all entities matching any of the specified criteria (the criteria are combined using OR),
@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Database
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        void Execute(TInput[] criteria, SelectCallback page);
+        void Execute(TInput[] criteria, SelectCallback<TOutput> page);
 
     }
 }

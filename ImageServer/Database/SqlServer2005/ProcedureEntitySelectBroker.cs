@@ -8,8 +8,15 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
 {
     public abstract class ProcedureEntitySelectBroker<TInput,TOutput> : Broker,IProcedureEntitySelectBroker<TInput,TOutput>
         where TInput : ProcedureSearchCriteria
-        where TOutput : ProcedureEntity
+        where TOutput : ProcedureEntity, new()
     {
+        private String _procedureName;
+
+        protected ProcedureEntitySelectBroker(String procedureName)
+        {
+            _procedureName = procedureName;
+        }
+
         #region IProcedureEntitySelectBroker<TInput,TOutput> Members
 
         public IList<TOutput> Execute(TInput criteria)
@@ -22,12 +29,12 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
             throw new Exception("The method or operation is not implemented.");
         }
 
-        public void Execute(TInput criteria, SelectCallback callback)
+        public void Execute(TInput criteria, SelectCallback<TOutput> callback)
         {
             throw new Exception("The method or operation is not implemented.");
         }
 
-        public void Execute(TInput[] criteria, SelectCallback page)
+        public void Execute(TInput[] criteria, SelectCallback<TOutput> page)
         {
             throw new Exception("The method or operation is not implemented.");
         }

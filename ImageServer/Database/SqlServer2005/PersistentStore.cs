@@ -9,23 +9,24 @@ using ClearCanvas.Enterprise.Core;
 namespace ClearCanvas.ImageServer.Database.SqlServer2005
 {
     /// <summary>
-    /// SQL Server implemenation of <see cref="IPersistentStore"/>.
+    /// SQL Server implementation of <see cref="IPersistentStore"/>.
     /// </summary>
     [ExtensionOf(typeof(PersistentStoreExtensionPoint))]
     public class PersistentStore : IPersistentStore
     {
-        private String _connectionString;
+        private String _connectionString = "Data Source=127.0.0.1;User ID=sa;Password=swsoftware;Initial Catalog=ImageServer";
+        private ITransactionNotifier _transactionNotifier;
 
         #region IPersistentStore Members
 
         public void Initialize()
         {
-            throw new Exception("The method or operation is not implemented.");
+            
         }
 
         public void SetTransactionNotifier(ITransactionNotifier transactionNotifier)
         {
-            throw new Exception("The method or operation is not implemented.");
+            _transactionNotifier = transactionNotifier;
         }
 
         public IReadContext OpenReadContext()
@@ -33,8 +34,10 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
             try
             {
                 SqlConnection connection = new SqlConnection(_connectionString);
+                
+                connection.Open();
 
-                return new ReadContext(connection);
+                return new ReadContext(connection, _transactionNotifier);
             }
             catch (Exception e)
             {
@@ -49,7 +52,7 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
             {
                 SqlConnection connection = new SqlConnection(_connectionString);
 
-                return new UpdateContext(connection);
+                return new UpdateContext(connection, _transactionNotifier, mode);
             }
             catch (Exception e)
             {

@@ -36,6 +36,20 @@
     <Compile Include="FileSystemMonitor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
+      <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
+      <Name>ClearCanvas.Enterprise.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Database\ClearCanvas.ImageServer.Database.csproj">
+      <Project>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</Project>
+      <Name>ClearCanvas.ImageServer.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Model\ClearCanvas.ImageServer.Model.csproj">
+      <Project>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</Project>
+      <Name>ClearCanvas.ImageServer.Model</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

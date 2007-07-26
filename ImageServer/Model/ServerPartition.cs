@@ -21,26 +21,31 @@ namespace ClearCanvas.ImageServer.Model
         public bool Enabled
         {
             get { return _enabled; }
+            set { _enabled = value; }
         }
 
         public String Description
         {
             get { return _description; }
+            set { _description = value; }
         }
 
         public String AeTitle
         {
             get { return _aeTitle; }
+            set { _aeTitle = value; }
         }
 
         public int Port
         {
             get { return _port; }
+            set { _port = value; }
         }
 
         public String FolderName
         {
             get { return _folderName; }
+            set { _folderName = value; }
         }
         #endregion
     }

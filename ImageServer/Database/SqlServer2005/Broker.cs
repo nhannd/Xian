@@ -8,17 +8,22 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.ImageServer.Database.SqlServer2005
 {
-    public class Broker : IPersistenceBroker
+    public abstract class Broker : IPersistenceBroker
     {
-        protected PersistenceContext _context;
+        private PersistenceContext _context;
 
-        #region IPersistenceBroker Members
+        /// <summary>
+        /// Returns the persistence context associated with this broker instance.
+        /// </summary>
+        protected PersistenceContext Context
+        {
+            get { return _context; }
+        }
 
-        void IPersistenceBroker.SetContext(IPersistenceContext context)
+        public void SetContext(IPersistenceContext context)
         {
             this._context = (PersistenceContext)context;
         }
 
-        #endregion
     }
 }

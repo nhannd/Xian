@@ -8,9 +8,15 @@ using ClearCanvas.ImageServer.Database;
 
 namespace ClearCanvas.ImageServer.Database.SqlServer2005
 {
-    public class ProcedureUpdateBroker<TInput> : Broker, IProcedureUpdateBroker<TInput>
+    public abstract class ProcedureUpdateBroker<TInput> : Broker, IProcedureUpdateBroker<TInput>
         where TInput : ProcedureSearchCriteria
     {
+        private String _procedureName;
+
+        protected ProcedureUpdateBroker(String procedureName)
+        {
+            _procedureName = procedureName;
+        }
 
         #region IProcedureUpdateBroker<TInput> Members
 

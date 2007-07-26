@@ -21,14 +21,16 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
     public abstract class PersistenceContext : IPersistenceContext
     {
         #region Constructors
-        protected PersistenceContext(SqlConnection connection)
+        protected PersistenceContext(SqlConnection connection, ITransactionNotifier transactionNotifier)
         {
             _connection = connection;
+            _transactionNotifier = transactionNotifier;
         }
         #endregion
 
         #region Private Members
         private SqlConnection _connection;
+        private ITransactionNotifier _transactionNotifier;
         #endregion
 
         #region Internal Properties
@@ -107,13 +109,30 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
 
         #endregion
 
-        #region IDisposable Members
+        #region IDisposable members
 
         public void Dispose()
         {
-            throw new Exception("The method or operation is not implemented.");
+            Dispose(true);
         }
 
         #endregion
+
+        /// <summary>
+        /// Commits the transaction (does not flush anything to the database)
+        /// </summary>
+        /// <param name="disposing"></param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_connection != null)
+                {
+                    _connection.Close();
+                    _connection.Dispose();
+                    _connection = null;
+                }
+            }
+        }
     }
 }

@@ -7,10 +7,10 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.ImageServer.Database
 {
-    public delegate void ReadCallback(ProcedureEntity row);
+    public delegate void ReadCallback<T>(T row);
 
     public interface IProcedureEntityReadBroker<TOutput> : IPersistenceBroker
-        where TOutput : ProcedureEntity
+        where TOutput : ProcedureEntity, new()
     {
         /// <summary>
         /// Retrieves all entities matching the specified criteria.
@@ -26,6 +26,6 @@ namespace ClearCanvas.ImageServer.Database
         /// </summary>
         /// <param name="criteria"></param>
         /// <returns></returns>
-        void Execute(ReadCallback callback);
+        void Execute(ReadCallback<TOutput> callback);
     }
 }
