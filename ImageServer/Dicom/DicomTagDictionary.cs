@@ -1179,9 +1179,9 @@ namespace ClearCanvas.ImageServer.Dicom
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tags.Add(DicomTags.ResponsibleOrganization,
+            _tags.Add(DicomTags.NewResponsibleOrganization,
                       new DicomTag(
-                          DicomTags.ResponsibleOrganization,
+                          DicomTags.NewResponsibleOrganization,
                           "Responsible Organization",
                           DicomVr.STvr,
                           false, //isMultiVrTag
