@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("ClearCanvas.ImageServer.Streaming.XmlGenerator")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
+[assembly: AssemblyCompany("ClearCanvas")]
 [assembly: AssemblyProduct("ClearCanvas.ImageServer.Streaming.XmlGenerator")]
-[assembly: AssemblyCopyright("Copyright ©  2007 ClearCanvas")]
+[assembly: AssemblyCopyright("Copyright ©  2007")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

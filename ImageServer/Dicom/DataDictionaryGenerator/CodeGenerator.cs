@@ -96,51 +96,44 @@ namespace ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator
             writer.WriteLine("    {");
             writer.WriteLine("        // Internal members");
             writer.WriteLine("        private static Dictionary<uint,DicomTag> _tags = new Dictionary<uint,DicomTag>();");
-            writer.WriteLine("        private static DicomTagDictionary _instance;");
-            writer.WriteLine("");    
+            writer.WriteLine("");
             writer.WriteLine("        // Static constructor");
             writer.WriteLine("        static DicomTagDictionary()");
             writer.WriteLine("        {");
-            writer.WriteLine("            _instance = new DicomTagDictionary();");
             writer.WriteLine("            InitStandardTags();");
             writer.WriteLine("        }");
             writer.WriteLine("");
             writer.WriteLine("        /// <summary>");
-            writer.WriteLine("        /// Public instance of class, used to access the Indexer for the class");
+            writer.WriteLine("        /// Retrieve a strongly typed list containing all DICOM tags.");
             writer.WriteLine("        /// </summary>");
-            writer.WriteLine("        public static DicomTagDictionary Instance");
+            writer.WriteLine("        /// <returns>A <see cref=\"System.Collections.Generic.List\"/>.</returns>");
+            writer.WriteLine("        public static IList<DicomTag> GetDicomTagList()");
             writer.WriteLine("        {");
-            writer.WriteLine("            get { return _instance; }");
+            writer.WriteLine("            return new List<DicomTag>(_tags.Values);");
             writer.WriteLine("        }");
             writer.WriteLine("");
             writer.WriteLine("        /// <summary>");
-            writer.WriteLine("        /// Indexer for retrieving DicomTag instances for specific DICOM attributes.");
+            writer.WriteLine("        /// Method used to retrieve DicomTag instances for specific DICOM attributes.");
             writer.WriteLine("        /// </summary>");
-            writer.WriteLine("        public DicomTag this[uint tag]");
+            writer.WriteLine("        /// <param name=\"group\"></param>");
+            writer.WriteLine("        /// <param name=\"element\"></param>");
+            writer.WriteLine("        /// <returns>A DicomTag instance, if the tag exists, or null if it doesn't.</returns>");
+            writer.WriteLine("        public static DicomTag GetDicomTag(ushort group, ushort element)");
             writer.WriteLine("        {");
-            writer.WriteLine("            get ");
-            writer.WriteLine("            {");
-            writer.WriteLine("                if (!_tags.ContainsKey(tag))");
-            writer.WriteLine("                    return null;");
-            writer.WriteLine("");        
-            writer.WriteLine("                return _tags[tag]; ");
-            writer.WriteLine("            }");
-            writer.WriteLine("            set { _tags[tag] = value; }");
+            writer.WriteLine("            return GetDicomTag((uint)group << 16 | (uint)element);");
             writer.WriteLine("        }");
             writer.WriteLine("");
             writer.WriteLine("        /// <summary>");
-            writer.WriteLine("        /// Indexer for retrieving DicomTag instances for specific DICOM attributes.");
+            writer.WriteLine("        /// Method used to retrieve DicomTag instances for specific DICOM attributes.");
             writer.WriteLine("        /// </summary>");
-            writer.WriteLine("        public DicomTag this[ushort group, ushort element]");
+            writer.WriteLine("        /// <param name=\"tag\">The DICOM tag to retrieve.</param>");
+            writer.WriteLine("        /// <returns>A DicomTag instance, if the tag exists, or null if it doesn't.</returns>");
+            writer.WriteLine("        public static DicomTag GetDicomTag(uint tag)");
             writer.WriteLine("        {");
-            writer.WriteLine("            get ");
-            writer.WriteLine("            {");
-            writer.WriteLine("                if (!_tags.ContainsKey((uint)group << 16 | (uint)element))");
-            writer.WriteLine("                    return null;");
+            writer.WriteLine("            if (!_tags.ContainsKey(tag))");
+            writer.WriteLine("                return null;");
             writer.WriteLine("");
-            writer.WriteLine("                return _tags[(uint)group << 16 | (uint)element]; ");
-            writer.WriteLine("            }");
-            writer.WriteLine("            set { _tags[(uint)group << 16 | (uint)element] = value; }");
+            writer.WriteLine("            return _tags[tag]; ");
             writer.WriteLine("        }");
             writer.WriteLine("");
             writer.WriteLine("        /// <summary>");
@@ -202,7 +195,7 @@ namespace ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator
                     {
 
                         // Just take the first VR listed
-                        writer.WriteLine("                          DicomVr." + tag.vr.Substring(0,2) + "vr,");
+                        writer.WriteLine("                          DicomVr." + tag.vr.Substring(0, 2) + "vr,");
                         writer.WriteLine("                          true, //isMultiVrTag");
                     }
                 }
@@ -218,7 +211,7 @@ namespace ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator
                 else
                     writer.WriteLine("                          false // isRetired");
                 writer.WriteLine("                          ));");
-                    
+
             }
             writer.WriteLine("        }");
 

@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
-//using ClearCanvas.Dicom.Exceptions;
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom
@@ -40,14 +39,6 @@ namespace ClearCanvas.Dicom
 
             _filename = filename;
         }
-        /*public DicomFile(DicomMessage msg, String filename)
-        {
-            base._metaInfo = new DicomAttributeCollection();
-            base._dataSet = msg.DataSet;
-
-            _filename = filename;
-        }
-         */
         #endregion
 
         #region Properties
@@ -75,7 +66,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                String sopClassUid = base.MetaInfo[DicomTags.MediaStorageSOPClassUID].GetString(0, "");
+                String sopClassUid = base.MetaInfo[DicomTags.MediaStorageSOPClassUID].GetString(0,"");
 
                 SopClass sop = SopClass.GetSopClass(sopClassUid);
 
@@ -116,7 +107,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string MediaStorageSopClassUid
         {
-            get { return _metaInfo[DicomTags.MediaStorageSOPClassUID].GetString(0, ""); }
+            get { return _metaInfo[DicomTags.MediaStorageSOPClassUID].GetString(0,""); }
             set { _metaInfo[DicomTags.MediaStorageSOPClassUID].Values = value; }
         }
         /// <summary>
@@ -124,7 +115,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string MediaStorageSopInstanceUid
         {
-            get { return _metaInfo[DicomTags.MediaStorageSOPInstanceUID].GetString(0, ""); }
+            get { return _metaInfo[DicomTags.MediaStorageSOPInstanceUID].GetString(0,""); }
             set { _metaInfo[DicomTags.MediaStorageSOPInstanceUID].Values = value; }
         }
         /// <summary>
@@ -135,7 +126,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string ImplementationClassUid
         {
-            get { return _metaInfo[DicomTags.ImplementationClassUID].GetString(0, ""); }
+            get { return _metaInfo[DicomTags.ImplementationClassUID].GetString(0,""); }
             set { _metaInfo[DicomTags.ImplementationClassUID].Values = value; }
         }
         /// <summary>
@@ -145,7 +136,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string ImplementationVersionName
         {
-            get { return _metaInfo[DicomTags.ImplementationVersionName].GetString(0, ""); }
+            get { return _metaInfo[DicomTags.ImplementationVersionName].GetString(0,""); }
             set { _metaInfo[DicomTags.ImplementationVersionName].Values = value; }
         }
         /// <summary>
@@ -154,7 +145,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string TransferSyntaxUid
         {
-            get { return _metaInfo[DicomTags.TransferSyntaxUID].GetString(0, ""); }
+            get { return _metaInfo[DicomTags.TransferSyntaxUID].GetString(0,""); }
             set { _metaInfo[DicomTags.TransferSyntaxUID].Values = value; }
         }
         /// <summary>
@@ -165,7 +156,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string SourceApplicationEntityTitle
         {
-            get { return _metaInfo[DicomTags.SourceApplicationEntityTitle].GetString(0, ""); }
+            get { return _metaInfo[DicomTags.SourceApplicationEntityTitle].GetString(0,""); }
             set { _metaInfo[DicomTags.SourceApplicationEntityTitle].Values = value; }
         }
         /// <summary>
@@ -175,7 +166,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string PrivateInformationCreatorUid
         {
-            get { return _metaInfo[DicomTags.PrivateInformationCreatorUID].GetString(0, ""); }
+            get { return _metaInfo[DicomTags.PrivateInformationCreatorUID].GetString(0,""); }
             set { _metaInfo[DicomTags.PrivateInformationCreatorUID].Values = value; }
         }
         #endregion
@@ -201,7 +192,7 @@ namespace ClearCanvas.Dicom
                 dsr.Dataset = base._dataSet;
                 dsr.TransferSyntax = TransferSyntax;
 
-                DicomTag stopDicomTag = DicomTagDictionary.Instance[stopTag];
+                DicomTag stopDicomTag = DicomTagDictionary.GetDicomTag(stopTag);
                 if (stopDicomTag == null)
                     stopDicomTag = new DicomTag(stopTag, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false);
                 dsr.Read(stopDicomTag, options);
@@ -219,7 +210,7 @@ namespace ClearCanvas.Dicom
                 dsr.TransferSyntax = TransferSyntax.ExplicitVRLittleEndian;
 
                 dsr.Dataset = base._metaInfo;
-                dsr.Read(new DicomTag(0x0002FFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false), options);
+                dsr.Read(new DicomTag(0x0002FFFF,"Bogus Tag",DicomVr.UNvr,false,1,1,false), options);
                 dsr.Dataset = base._dataSet;
                 dsr.TransferSyntax = TransferSyntax;
                 if (stopTag == null)
@@ -250,8 +241,8 @@ namespace ClearCanvas.Dicom
                 DicomStreamWriter dsw = new DicomStreamWriter(fs);
                 dsw.Write(TransferSyntax.ExplicitVRLittleEndian,
                     base._metaInfo, options | DicomWriteOptions.CalculateGroupLengths);
-
-                dsw.Write(this.TransferSyntax, base._dataSet, options);
+                
+                dsw.Write(this.TransferSyntax,base._dataSet, options);
             }
 
             return true;

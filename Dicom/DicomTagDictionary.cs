@@ -13,52 +13,45 @@ namespace ClearCanvas.Dicom
     public class DicomTagDictionary
     {
         // Internal members
-        private static Dictionary<uint, DicomTag> _tags = new Dictionary<uint, DicomTag>();
-        private static DicomTagDictionary _instance;
+        private static Dictionary<uint,DicomTag> _tags = new Dictionary<uint,DicomTag>();
 
         // Static constructor
         static DicomTagDictionary()
         {
-            _instance = new DicomTagDictionary();
             InitStandardTags();
         }
 
         /// <summary>
-        /// Public instance of class, used to access the Indexer for the class
+        /// Retrieve a strongly typed list containing all DICOM tags.
         /// </summary>
-        public static DicomTagDictionary Instance
+        /// <returns>A <see cref="System.Collections.Generic.List"/>.</returns>
+        public static IList<DicomTag> GetDicomTagList()
         {
-            get { return _instance; }
+            return new List<DicomTag>(_tags.Values);
         }
 
         /// <summary>
-        /// Indexer for retrieving DicomTag instances for specific DICOM attributes.
+        /// Method used to retrieve DicomTag instances for specific DICOM attributes.
         /// </summary>
-        public DicomTag this[uint tag]
+        /// <param name="group"></param>
+        /// <param name="element"></param>
+        /// <returns>A DicomTag instance, if the tag exists, or null if it doesn't.</returns>
+        public static DicomTag GetDicomTag(ushort group, ushort element)
         {
-            get
-            {
-                if (!_tags.ContainsKey(tag))
-                    return null;
-
-                return _tags[tag];
-            }
-            set { _tags[tag] = value; }
+            return GetDicomTag((uint)group << 16 | (uint)element);
         }
 
         /// <summary>
-        /// Indexer for retrieving DicomTag instances for specific DICOM attributes.
+        /// Method used to retrieve DicomTag instances for specific DICOM attributes.
         /// </summary>
-        public DicomTag this[ushort group, ushort element]
+        /// <param name="tag">The DICOM tag to retrieve.</param>
+        /// <returns>A DicomTag instance, if the tag exists, or null if it doesn't.</returns>
+        public static DicomTag GetDicomTag(uint tag)
         {
-            get
-            {
-                if (!_tags.ContainsKey((uint)group << 16 | (uint)element))
-                    return null;
+            if (!_tags.ContainsKey(tag))
+                return null;
 
-                return _tags[(uint)group << 16 | (uint)element];
-            }
-            set { _tags[(uint)group << 16 | (uint)element] = value; }
+            return _tags[tag]; 
         }
 
         /// <summary>
@@ -999,7 +992,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.ReferringPhysiciansName,
                       new DicomTag(
                           DicomTags.ReferringPhysiciansName,
-                          "Referring Physician’s Name",
+                          "Referring Physicianâ€™s Name",
                           DicomVr.PNvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -1019,7 +1012,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.ReferringPhysiciansTelephoneNumbers,
                       new DicomTag(
                           DicomTags.ReferringPhysiciansTelephoneNumbers,
-                          "Referring Physician’s Telephone Numbers",
+                          "Referring Physicianâ€™s Telephone Numbers",
                           DicomVr.SHvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -1289,7 +1282,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.PerformingPhysiciansName,
                       new DicomTag(
                           DicomTags.PerformingPhysiciansName,
-                          "Performing Physician’s Name",
+                          "Performing Physicianâ€™s Name",
                           DicomVr.PNvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -1329,7 +1322,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.OperatorsName,
                       new DicomTag(
                           DicomTags.OperatorsName,
-                          "Operators’ Name",
+                          "Operatorsâ€™ Name",
                           DicomVr.PNvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -1369,7 +1362,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.ManufacturersModelName,
                       new DicomTag(
                           DicomTags.ManufacturersModelName,
-                          "Manufacturer’s Model Name",
+                          "Manufacturerâ€™s Model Name",
                           DicomVr.LOvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -2069,7 +2062,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.PatientsName,
                       new DicomTag(
                           DicomTags.PatientsName,
-                          "Patient’s Name",
+                          "Patientâ€™s Name",
                           DicomVr.PNvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -2149,7 +2142,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.PatientsPrimaryLanguageCodeSequence,
                       new DicomTag(
                           DicomTags.PatientsPrimaryLanguageCodeSequence,
-                          "Patient’s Primary Language Code Sequence",
+                          "Patientâ€™s Primary Language Code Sequence",
                           DicomVr.SQvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -2159,7 +2152,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.PatientsPrimaryLanguageCodeModifierSequence,
                       new DicomTag(
                           DicomTags.PatientsPrimaryLanguageCodeModifierSequence,
-                          "Patient’s Primary Language Code Modifier Sequence",
+                          "Patientâ€™s Primary Language Code Modifier Sequence",
                           DicomVr.SQvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -2339,7 +2332,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.PatientsTelephoneNumbers,
                       new DicomTag(
                           DicomTags.PatientsTelephoneNumbers,
-                          "Patient’s Telephone Numbers",
+                          "Patientâ€™s Telephone Numbers",
                           DicomVr.SHvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -2439,7 +2432,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.PatientsSexNeutered,
                       new DicomTag(
                           DicomTags.PatientsSexNeutered,
-                          "Patient’s Sex Neutered",
+                          "Patientâ€™s Sex Neutered",
                           DicomVr.CSvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -2516,9 +2509,9 @@ namespace ClearCanvas.Dicom
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tags.Add(DicomTags.NewResponsibleOrganization,
+            _tags.Add(DicomTags.ResponsibleOrganization,
                       new DicomTag(
-                          DicomTags.NewResponsibleOrganization,
+                          DicomTags.ResponsibleOrganization,
                           "Responsible Organization",
                           DicomVr.LOvr,
                           false, //isMultiVrTag
@@ -3319,7 +3312,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.SecondaryCaptureDeviceManufacturersModelName,
                       new DicomTag(
                           DicomTags.SecondaryCaptureDeviceManufacturersModelName,
-                          "Secondary Capture Device Manufacturer’s Model Name",
+                          "Secondary Capture Device Manufacturerâ€™s Model Name",
                           DicomVr.LOvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -5979,7 +5972,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.DetectorManufacturersModelName,
                       new DicomTag(
                           DicomTags.DetectorManufacturersModelName,
-                          "Detector Manufacturer’s Model Name",
+                          "Detector Manufacturerâ€™s Model Name",
                           DicomVr.LOvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -9339,7 +9332,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.RRIntervalTimeMeasured,
                       new DicomTag(
                           DicomTags.RRIntervalTimeMeasured,
-                          "R – R Interval Time Measured",
+                          "R â€“ R Interval Time Measured",
                           DicomVr.FDvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -11309,7 +11302,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.PatientsInstitutionResidence,
                       new DicomTag(
                           DicomTags.PatientsInstitutionResidence,
-                          "Patient’s Institution Residence",
+                          "Patientâ€™s Institution Residence",
                           DicomVr.LOvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -11679,7 +11672,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.ScheduledPerformingPhysiciansName,
                       new DicomTag(
                           DicomTags.ScheduledPerformingPhysiciansName,
-                          "Scheduled Performing Physician’s Name",
+                          "Scheduled Performing Physicianâ€™s Name",
                           DicomVr.PNvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -12469,7 +12462,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.PersonsAddress,
                       new DicomTag(
                           DicomTags.PersonsAddress,
-                          "Person’s Address",
+                          "Personâ€™s Address",
                           DicomVr.STvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -12479,7 +12472,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.PersonsTelephoneNumbers,
                       new DicomTag(
                           DicomTags.PersonsTelephoneNumbers,
-                          "Person’s Telephone Numbers",
+                          "Personâ€™s Telephone Numbers",
                           DicomVr.LOvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -12559,7 +12552,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.OrderEnterersLocation,
                       new DicomTag(
                           DicomTags.OrderEnterersLocation,
-                          "Order Enterer’s Location",
+                          "Order Entererâ€™s Location",
                           DicomVr.SHvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -12909,7 +12902,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.HumanPerformersOrganization,
                       new DicomTag(
                           DicomTags.HumanPerformersOrganization,
-                          "Human Performer’s Organization",
+                          "Human Performerâ€™s Organization",
                           DicomVr.LOvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -12919,7 +12912,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.HumanPerformersName,
                       new DicomTag(
                           DicomTags.HumanPerformersName,
-                          "Human Performer’s Name",
+                          "Human Performerâ€™s Name",
                           DicomVr.PNvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -15159,7 +15152,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.ContentCreatorsName,
                       new DicomTag(
                           DicomTags.ContentCreatorsName,
-                          "Content Creator’s Name",
+                          "Content Creatorâ€™s Name",
                           DicomVr.PNvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -15169,7 +15162,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.ContentCreatorsIdentificationCodeSequence,
                       new DicomTag(
                           DicomTags.ContentCreatorsIdentificationCodeSequence,
-                          "Content Creator’s Identification Code Sequence",
+                          "Content Creatorâ€™s Identification Code Sequence",
                           DicomVr.SQvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -23319,7 +23312,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.OverlayDescriptorGrayRetired,
                       new DicomTag(
                           DicomTags.OverlayDescriptorGrayRetired,
-                          "Overlay Descriptor – Gray",
+                          "Overlay Descriptor â€“ Gray",
                           DicomVr.USvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -23329,7 +23322,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.OverlayDescriptorRedRetired,
                       new DicomTag(
                           DicomTags.OverlayDescriptorRedRetired,
-                          "Overlay Descriptor – Red",
+                          "Overlay Descriptor â€“ Red",
                           DicomVr.USvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -23339,7 +23332,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.OverlayDescriptorGreenRetired,
                       new DicomTag(
                           DicomTags.OverlayDescriptorGreenRetired,
-                          "Overlay Descriptor – Green",
+                          "Overlay Descriptor â€“ Green",
                           DicomVr.USvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -23349,7 +23342,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.OverlayDescriptorBlueRetired,
                       new DicomTag(
                           DicomTags.OverlayDescriptorBlueRetired,
-                          "Overlay Descriptor – Blue",
+                          "Overlay Descriptor â€“ Blue",
                           DicomVr.USvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -23369,7 +23362,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.OverlaysRedRetired,
                       new DicomTag(
                           DicomTags.OverlaysRedRetired,
-                          "Overlays – Red",
+                          "Overlays â€“ Red",
                           DicomVr.USvr,
                           false, //isMultiVrTag
                           1, // vmLow
@@ -23379,7 +23372,7 @@ namespace ClearCanvas.Dicom
             _tags.Add(DicomTags.OverlaysGreenRetired,
                       new DicomTag(
                           DicomTags.OverlaysGreenRetired,
-                          "Overlays – Green",
+                          "Overlays â€“ Green",
                           DicomVr.USvr,
                           false, //isMultiVrTag
                           1, // vmLow

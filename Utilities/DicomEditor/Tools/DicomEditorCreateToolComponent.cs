@@ -52,7 +52,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
 
         public uint TagId
         {
-            get { return DicomTagDictionary.Instance[_group, _element].TagValue; }
+            get { return DicomTagDictionary.GetDicomTag(_group, _element).TagValue; }
         }
 
         public string Group
@@ -135,7 +135,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
 
         private void UpdateDialog()
         {       
-            DicomTag entry = DicomTagDictionary.Instance[_group, _element];
+            DicomTag entry = DicomTagDictionary.GetDicomTag(_group, _element);
 
             if (entry != null)
             {

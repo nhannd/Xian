@@ -196,7 +196,7 @@ namespace ClearCanvas.Dicom
 
 		private static DicomTag NewTag(uint tag)
 		{
-			DicomTag returnTag = DicomTagDictionary.Instance[tag];
+			DicomTag returnTag = DicomTagDictionary.GetDicomTag(tag);
 			if (returnTag == null)
 				returnTag = new DicomTag(tag, "Unknown Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
 

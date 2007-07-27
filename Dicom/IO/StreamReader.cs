@@ -155,7 +155,7 @@ namespace ClearCanvas.Dicom.IO
                                     }
                                     _privateCreatorId = ds[pct].ToString();
                                 }
-                                _tag = DicomTagDictionary.Instance[g, e];
+                                _tag = DicomTagDictionary.GetDicomTag(g, e);
                                 if (_tag == null)
                                     _tag = new DicomTag((uint)g << 16 | (uint)e, "Private Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
                             }
@@ -164,7 +164,7 @@ namespace ClearCanvas.Dicom.IO
                                 if (e == 0x0000)
                                     _tag = new DicomTag((uint)g << 16 | (uint)e, "Group Length", DicomVr.ULvr, false, 1, 1, false);
                                 else
-                                    _tag = DicomTagDictionary.Instance[g, e];
+                                    _tag = DicomTagDictionary.GetDicomTag(g, e);
 
                                 if (_tag == null)
                                     _tag = new DicomTag((uint)g << 16 | (uint)e, "Private Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);

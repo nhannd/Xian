@@ -14,51 +14,44 @@ namespace ClearCanvas.ImageServer.Dicom
     {
         // Internal members
         private static Dictionary<uint,DicomTag> _tags = new Dictionary<uint,DicomTag>();
-        private static DicomTagDictionary _instance;
 
         // Static constructor
         static DicomTagDictionary()
         {
-            _instance = new DicomTagDictionary();
             InitStandardTags();
         }
 
         /// <summary>
-        /// Public instance of class, used to access the Indexer for the class
+        /// Retrieve a strongly typed list containing all DICOM tags.
         /// </summary>
-        public static DicomTagDictionary Instance
+        /// <returns>A <see cref="System.Collections.Generic.List"/>.</returns>
+        public static IList<DicomTag> GetDicomTagList()
         {
-            get { return _instance; }
+            return new List<DicomTag>(_tags.Values);
         }
 
         /// <summary>
-        /// Indexer for retrieving DicomTag instances for specific DICOM attributes.
+        /// Method used to retrieve DicomTag instances for specific DICOM attributes.
         /// </summary>
-        public DicomTag this[uint tag]
+        /// <param name="group"></param>
+        /// <param name="element"></param>
+        /// <returns>A DicomTag instance, if the tag exists, or null if it doesn't.</returns>
+        public static DicomTag GetDicomTag(ushort group, ushort element)
         {
-            get 
-            {
-                if (!_tags.ContainsKey(tag))
-                    return null;
-
-                return _tags[tag]; 
-            }
-            set { _tags[tag] = value; }
+            return GetDicomTag((uint)group << 16 | (uint)element);
         }
 
         /// <summary>
-        /// Indexer for retrieving DicomTag instances for specific DICOM attributes.
+        /// Method used to retrieve DicomTag instances for specific DICOM attributes.
         /// </summary>
-        public DicomTag this[ushort group, ushort element]
+        /// <param name="tag">The DICOM tag to retrieve.</param>
+        /// <returns>A DicomTag instance, if the tag exists, or null if it doesn't.</returns>
+        public static DicomTag GetDicomTag(uint tag)
         {
-            get 
-            {
-                if (!_tags.ContainsKey((uint)group << 16 | (uint)element))
-                    return null;
+            if (!_tags.ContainsKey(tag))
+                return null;
 
-                return _tags[(uint)group << 16 | (uint)element]; 
-            }
-            set { _tags[(uint)group << 16 | (uint)element] = value; }
+            return _tags[tag]; 
         }
 
         /// <summary>
@@ -2516,9 +2509,9 @@ namespace ClearCanvas.ImageServer.Dicom
                           1, // vmHigh
                           false // isRetired
                           ));
-            _tags.Add(DicomTags.NewResponsibleOrganization,
+            _tags.Add(DicomTags.ResponsibleOrganization,
                       new DicomTag(
-                          DicomTags.NewResponsibleOrganization,
+                          DicomTags.ResponsibleOrganization,
                           "Responsible Organization",
                           DicomVr.LOvr,
                           false, //isMultiVrTag

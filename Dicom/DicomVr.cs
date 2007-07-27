@@ -23,9 +23,40 @@ namespace ClearCanvas.Dicom
         private char _padChar = ' ';
         private int _unitSize = 1;
         private CreateAttribute _createDelegate;
+        private static IDictionary<String,DicomVr> _vrs = new Dictionary<String,DicomVr>();
         #endregion
 
         #region Public Static Members
+
+        static DicomVr()
+        {
+            _vrs.Add(AEvr.Name, AEvr);
+            _vrs.Add(ASvr.Name, ASvr);
+            _vrs.Add(ATvr.Name, ATvr);
+            _vrs.Add(CSvr.Name, CSvr);
+            _vrs.Add(DAvr.Name, DAvr);
+            _vrs.Add(DSvr.Name, DSvr);
+            _vrs.Add(DTvr.Name, DTvr);
+            _vrs.Add(FLvr.Name, FLvr);
+            _vrs.Add(FDvr.Name, FDvr);
+            _vrs.Add(ISvr.Name, ISvr);
+            _vrs.Add(LOvr.Name, LOvr);
+            _vrs.Add(LTvr.Name, LTvr);
+            _vrs.Add(OBvr.Name, OBvr);
+            _vrs.Add(OFvr.Name, OFvr);
+            _vrs.Add(OWvr.Name, OWvr);
+            _vrs.Add(PNvr.Name, PNvr);
+            _vrs.Add(SHvr.Name, SHvr);
+            _vrs.Add(SLvr.Name, SLvr);
+            _vrs.Add(SQvr.Name, SQvr);
+            _vrs.Add(SSvr.Name, SSvr);
+            _vrs.Add(STvr.Name, STvr);
+            _vrs.Add(TMvr.Name, TMvr);
+            _vrs.Add(UIvr.Name, UIvr);
+            _vrs.Add(ULvr.Name, ULvr);
+            _vrs.Add(USvr.Name, USvr);
+            _vrs.Add(UTvr.Name, UTvr);
+        }
 
         /// <summary>
         /// The Application Entity VR.
@@ -316,36 +347,15 @@ namespace ClearCanvas.Dicom
         /// <returns>A DicomVr instance for <paramref name="name"/>.</returns>
         public static DicomVr GetVR(String name)
         {
-            if (name.Equals(AEvr.Name)) return AEvr;
-            if (name.Equals(ASvr.Name)) return ASvr;
-            if (name.Equals(ATvr.Name)) return ATvr;
-            if (name.Equals(CSvr.Name)) return CSvr;
-            if (name.Equals(DAvr.Name)) return DAvr;
-            if (name.Equals(DSvr.Name)) return DSvr;
-            if (name.Equals(DTvr.Name)) return DTvr;
-            if (name.Equals(FLvr.Name)) return FLvr;
-            if (name.Equals(FDvr.Name)) return FDvr;
-            if (name.Equals(ISvr.Name)) return ISvr;
-            if (name.Equals(LOvr.Name)) return LOvr;
-            if (name.Equals(LTvr.Name)) return LTvr;
-            if (name.Equals(OBvr.Name)) return OBvr;
-            if (name.Equals(OFvr.Name)) return OFvr;
-            if (name.Equals(OWvr.Name)) return OWvr;
-            if (name.Equals(PNvr.Name)) return PNvr;
-            if (name.Equals(SHvr.Name)) return SHvr;
-            if (name.Equals(SLvr.Name)) return SLvr;
-            if (name.Equals(SQvr.Name)) return SQvr;
-            if (name.Equals(SSvr.Name)) return SSvr;
-            if (name.Equals(STvr.Name)) return STvr;
-            if (name.Equals(TMvr.Name)) return TMvr;
-            if (name.Equals(UIvr.Name)) return UIvr;
-            if (name.Equals(ULvr.Name)) return ULvr;
-            if (name.Equals(USvr.Name)) return USvr;
-            if (name.Equals(UTvr.Name)) return UTvr;
-
+            if (_vrs.ContainsKey(name))
+                return _vrs[name];
             return UNvr;
         }
 
+        public static IList<DicomVr> GetDicomVrList()
+        {
+            return new List<DicomVr>(_vrs.Values);
+        }
         #endregion
 
         /// <summary>

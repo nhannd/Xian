@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Streaming
 
                     uint tagValue = uint.Parse(tag,NumberStyles.HexNumber);
 
-                    DicomTag theTag = DicomTagDictionary.Instance[tagValue];
+                    DicomTag theTag = DicomTagDictionary.GetDicomTag(tagValue);
                     if (theTag == null)
                         theTag = new DicomTag(tagValue,"Unknown tag",DicomVr.GetVR(vr),false,1,uint.MaxValue,false);
 

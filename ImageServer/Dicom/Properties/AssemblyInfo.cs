@@ -8,9 +8,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("ClearCanvas.ImageServer.Dicom")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("ClearCanvas.ImageServer.Dicom")]
-[assembly: AssemblyCopyright("Copyright ©  2007 ClearCanvas")]
+[assembly: AssemblyCompany("ClearCanvas")]
+[assembly: AssemblyProduct("Dicom")]
+[assembly: AssemblyCopyright("Copyright ©  2007")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

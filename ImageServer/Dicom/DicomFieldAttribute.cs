@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageServer.Dicom
 
         public DicomFieldAttribute(uint tag)
         {
-            _tag = DicomTagDictionary.Instance[tag];
+            _tag = DicomTagDictionary.GetDicomTag(tag);
             if (_tag == null)
                 _tag = new DicomTag(tag, "Unknown Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
 

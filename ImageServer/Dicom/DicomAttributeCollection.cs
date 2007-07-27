@@ -132,7 +132,7 @@ namespace ClearCanvas.ImageServer.Dicom
 
                 if (!_attributeList.ContainsKey(tag))
                 {
-                    DicomTag dicomTag = DicomTagDictionary.Instance[tag];
+                    DicomTag dicomTag = DicomTagDictionary.GetDicomTag(tag);
 
                     if (dicomTag == null)
                     {

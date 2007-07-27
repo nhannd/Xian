@@ -152,7 +152,7 @@ namespace ClearCanvas.Dicom
         /// <param name="tag">The DICOM tag associated with the attribute being created.</param>
         internal DicomAttribute(uint tag)
         {
-            _tag = DicomTagDictionary.Instance[tag];
+            _tag = DicomTagDictionary.GetDicomTag(tag);
         }
 
         /// <summary>

@@ -200,7 +200,7 @@ namespace ClearCanvas.ImageServer.Dicom
                 dsr.Dataset = base._dataSet;
                 dsr.TransferSyntax = TransferSyntax;
 
-                DicomTag stopDicomTag = DicomTagDictionary.Instance[stopTag];
+                DicomTag stopDicomTag = DicomTagDictionary.GetDicomTag(stopTag);
                 if (stopDicomTag == null)
                     stopDicomTag = new DicomTag(stopTag, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false);
                 dsr.Read(stopDicomTag, options);

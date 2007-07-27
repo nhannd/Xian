@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             bool testResult = false;
             try
             {
-                DicomAttributeAE attrib = new DicomAttributeAE(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
+                DicomAttributeAE attrib = new DicomAttributeAE(DicomTagDictionary.GetDicomTag(DicomTags.AccessionNumber));
             }
             catch (DicomException)
             {
@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             testResult = true;
             try
             {
-                DicomAttributeAE attrib = new DicomAttributeAE(DicomTagDictionary.Instance[DicomTags.RetrieveAETitle]);
+                DicomAttributeAE attrib = new DicomAttributeAE(DicomTagDictionary.GetDicomTag(DicomTags.RetrieveAETitle));
                 testResult = true;
             }
             catch (DicomException)
@@ -49,7 +49,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             bool testResult = false;
             try
             {
-                DicomAttributeAS attrib = new DicomAttributeAS(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
+                DicomAttributeAS attrib = new DicomAttributeAS(DicomTagDictionary.GetDicomTag(DicomTags.AccessionNumber));
             }
             catch (DicomException)
             {
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             testResult = true;
             try
             {
-                DicomAttributeAS attrib = new DicomAttributeAS(DicomTagDictionary.Instance[DicomTags.PatientsAge]);
+                DicomAttributeAS attrib = new DicomAttributeAS(DicomTagDictionary.GetDicomTag(DicomTags.PatientsAge));
                 testResult = true;
             }
             catch (DicomException)
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             bool testResult = false;
             try
             {
-                DicomAttributeAT attrib = new DicomAttributeAT(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
+                DicomAttributeAT attrib = new DicomAttributeAT(DicomTagDictionary.GetDicomTag(DicomTags.AccessionNumber));
             }
             catch (DicomException)
             {
@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             testResult = true;
             try
             {
-                DicomAttributeAT attrib = new DicomAttributeAT(DicomTagDictionary.Instance[DicomTags.FrameIncrementPointer]);
+                DicomAttributeAT attrib = new DicomAttributeAT(DicomTagDictionary.GetDicomTag(DicomTags.FrameIncrementPointer));
                 testResult = true;
             }
             catch (DicomException)
@@ -110,7 +110,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             bool testResult = false;
             try
             {
-                DicomAttributeCS attrib = new DicomAttributeCS(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
+                DicomAttributeCS attrib = new DicomAttributeCS(DicomTagDictionary.GetDicomTag(DicomTags.AccessionNumber));
             }
             catch (DicomException)
             {
@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             testResult = true;
             try
             {
-                DicomAttributeCS attrib = new DicomAttributeCS(DicomTagDictionary.Instance[DicomTags.ImageType]);
+                DicomAttributeCS attrib = new DicomAttributeCS(DicomTagDictionary.GetDicomTag(DicomTags.ImageType));
                 testResult = true;
             }
             catch (DicomException)
@@ -141,7 +141,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             bool testResult = false;
             try
             {
-                DicomAttributeDA attrib = new DicomAttributeDA(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
+                DicomAttributeDA attrib = new DicomAttributeDA(DicomTagDictionary.GetDicomTag(DicomTags.AccessionNumber));
             }
             catch (DicomException)
             {
@@ -152,7 +152,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             testResult = true;
             try
             {
-                DicomAttributeDA attrib = new DicomAttributeDA(DicomTagDictionary.Instance[DicomTags.StudyDate]);
+                DicomAttributeDA attrib = new DicomAttributeDA(DicomTagDictionary.GetDicomTag(DicomTags.StudyDate));
                 testResult = true;
             }
             catch (DicomException)
@@ -172,7 +172,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             bool testResult = false;
             try
             {
-                DicomAttributeDS attrib = new DicomAttributeDS(DicomTagDictionary.Instance[DicomTags.AccessionNumber]);
+                DicomAttributeDS attrib = new DicomAttributeDS(DicomTagDictionary.GetDicomTag(DicomTags.AccessionNumber));
             }
             catch (DicomException)
             {
@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
             testResult = true;
             try
             {
-                DicomAttributeDS attrib = new DicomAttributeDS(DicomTagDictionary.Instance[DicomTags.WindowCenter]);
+                DicomAttributeDS attrib = new DicomAttributeDS(DicomTagDictionary.GetDicomTag(DicomTags.WindowCenter));
                 testResult = true;
             }
             catch (DicomException)
