@@ -8,7 +8,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.Utilities.DicomEditor
+namespace ClearCanvas.Utilities.DicomEditor.Tools
 {
     [ButtonAction("activate", "dicomeditor-toolbar/ToolbarNext")]
     [ClickHandler("activate", "Next")]

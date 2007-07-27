@@ -7,7 +7,6 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Common;
-using System.Runtime.InteropServices;
 using ClearCanvas.Common.Utilities;
 using System.ComponentModel;
 
@@ -26,24 +25,26 @@ namespace ClearCanvas.Utilities.DicomEditor
     {
         int LoadedFileDumpIndex { get; set; }
 
-        void RevertAllEdits();
+        void RevertEdits(bool revertAll);
 
-        void RemoveAllPrivateTags();
+        void RemoveAllPrivateTags(bool applyToAll);
 
         void SaveAll();
 
-        void ApplyEdit(DicomEditorTag Tag, EditType Type, bool ApplyToAll);
+        bool TagExists(uint tag);
+
+        void EditTag(uint tag, string value, bool applyToAll);
+
+        void DeleteTag(uint tag, bool applyToAll);
     }
 
 	public interface IDicomEditorToolContext : IToolContext
 	{
         IDicomEditorDumpManagement DumpManagement { get; }
 
-		DicomEditorTag SelectedTag { get; }
+        DicomEditorTag SelectedTag { get; }
 
-        DicomDump DisplayedDump { get; }
-
-		IList<DicomEditorTag> SelectedTags { get; }
+        IList<DicomEditorTag> SelectedTags { get; }
 
 		event EventHandler SelectedTagChanged;
 
@@ -84,17 +85,6 @@ namespace ClearCanvas.Utilities.DicomEditor
                         return null;
 
                     return _component._currentSelection.Item as DicomEditorTag;
-                }
-            }
-
-            public DicomDump DisplayedDump
-            {
-                get
-                {
-                    if (_component._displayedDump == null)
-                        return null;
-
-                    return _component._displayedDump;
                 }
             }
 
@@ -152,76 +142,167 @@ namespace ClearCanvas.Utilities.DicomEditor
             get { return _position; }
             set 
             {
-                Platform.CheckPositive(_loadedDicomDumps.Count, "_loadedDicomDumps.Length");
+                Platform.CheckPositive(_loadedFiles.Count, "_loadedDicomDumps.Length");
 
                 if (value < 0)
                     _position = 0;
-                else if (value > _loadedDicomDumps.Count - 1)
-                    _position = _loadedDicomDumps.Count - 1;
+                else if (value > _loadedFiles.Count - 1)
+                    _position = _loadedFiles.Count - 1;
                 else
                     _position = value;
             }
         }
 
-        public void RevertAllEdits()
+        public void RevertEdits(bool revertAll)
         {
-            for (int i = 0; i < _loadedDicomDumps.Count; i++)
+            if (revertAll == true)
             {
-                _loadedDicomDumps[i].RevertEdits();
+                for (int i = 0; i < _loadedFiles.Count; i++)
+                {
+                    _loadedFiles[i] = new DicomFile(_loadedFiles[i].Filename);
+                    _loadedFiles[i].Load(DicomReadOptions.KeepGroupLengths);
+                }
+            }
+            else
+            {
+                _loadedFiles[_position] = new DicomFile(_loadedFiles[_position].Filename);
+                _loadedFiles[_position].Load(DicomReadOptions.KeepGroupLengths);
             }
         }
 
-        public void RemoveAllPrivateTags()
+        public void RemoveAllPrivateTags(bool applyToAll)
         {
-            for (int i = 0; i < _loadedDicomDumps.Count; i++)
+            List<DicomTag> privateTags;
+
+            if (applyToAll == false)
             {
-                _loadedDicomDumps[i].RemovePrivateTags();
+                privateTags = new List<DicomTag>();
+                foreach (DicomAttribute attribute in _loadedFiles[_position].DataSet)
+                {
+                    if (attribute.Tag.Name == "Private Tag")
+                        privateTags.Add(attribute.Tag);                        
+                }
+
+                foreach (DicomTag tag in privateTags)
+                {
+                    _loadedFiles[_position].DataSet[tag] = null;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < _loadedFiles.Count; i++)
+                {
+                    privateTags = new List<DicomTag>();
+                    foreach (DicomAttribute attribute in _loadedFiles[i].DataSet)
+                    {
+                        if (attribute.Tag.Name == "Private Tag")
+                            privateTags.Add(attribute.Tag);
+                    }
+
+                    foreach (DicomTag tag in privateTags)
+                    {
+                        _loadedFiles[i].DataSet[tag] = null;
+                    }
+                }
             }
         }
 
         public void SaveAll()
         {
-            for (int i = 0; i < _loadedDicomDumps.Count; i++)
+            for (int i = 0; i < _loadedFiles.Count; i++)
             {
-                _loadedDicomDumps[i].Save();
+                _loadedFiles[i].Save(DicomWriteOptions.Default);
             }
         }
 
-        public void ApplyEdit(DicomEditorTag Tag, EditType Type, bool ApplyToAll)
+        public bool TagExists(uint tag)
         {
-            if (ApplyToAll == false)
+            if (this.IsMetainfoTag(tag))
             {
-                _loadedDicomDumps[_position].AddEditItem(new EditItem(Tag, Type));
+                return _loadedFiles[_position].MetaInfo.Contains(tag);
             }
             else
             {
-                for (int i = 0; i < _loadedDicomDumps.Count; i++)
-                {
-                    _loadedDicomDumps[i].AddEditItem(new EditItem(Tag, Type));
-                }
+                return _loadedFiles[_position].DataSet.Contains(tag);
             }
         }
+
+        public void EditTag(uint tag, string value, bool applyToAll)
+        {
+                if (applyToAll == false)
+                {
+                    if (this.IsMetainfoTag(tag))
+                    {
+                        _loadedFiles[_position].MetaInfo[tag].SetStringValue(value);
+                    }
+                    else
+                    {
+                        _loadedFiles[_position].DataSet[tag].SetStringValue(value);
+                    }
+                }
+                else
+                {
+                    for (int i = 0; i < _loadedFiles.Count; i++)
+                    {
+                        if (this.IsMetainfoTag(tag))
+                        {
+                            _loadedFiles[_position].MetaInfo[tag].SetStringValue(value);
+                        }
+                        else
+                        {
+                            _loadedFiles[i].DataSet[tag].SetStringValue(value);
+                        }
+                    }
+                }
+        }
+
+        public void DeleteTag(uint tag, bool applyToAll)
+        {
+            if (applyToAll == false)
+            {
+                if (this.IsMetainfoTag(tag))
+                {
+                    _loadedFiles[_position].MetaInfo[tag] = null;
+                }
+                else
+                {
+                    _loadedFiles[_position].DataSet[tag] = null;
+                }
+            }
+            else
+            {
+                for (int i = 0; i < _loadedFiles.Count; i++)
+                {
+                    if (this.IsMetainfoTag(tag))
+                    {
+                        _loadedFiles[i].MetaInfo[tag] = null;
+                    }
+                    else
+                    {
+                        _loadedFiles[i].DataSet[tag] = null;
+                    }
+                }
+            }
+        }    
 
         #endregion
 
         public DicomEditorComponent()
         {
             _dicomTagData = new Table<DicomEditorTag>();
-            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingGroupElement, delegate(DicomEditorTag d) { return d.DisplayKey; }, null, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return this.TagCompare(one, two, SortType.GroupElement); }));
-            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingTagName, delegate(DicomEditorTag d) { return d.TagName; }, null, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return this.TagCompare(one, two, SortType.TagName); }));
-            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingVR, delegate(DicomEditorTag d) { return d.Vr; }, null, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return this.TagCompare(one, two, SortType.Vr); }));
-            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingLength, delegate(DicomEditorTag d) { return d.Length.ToString(); }, null, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return this.TagCompare(one, two, SortType.Length); }));
-			_dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingValue, delegate(DicomEditorTag d) { return d.Value; }, delegate(DicomEditorTag d, string value)
-			{
-                                                                                                                                                                if (this.IsTagEditable(d))
-                                                                                                                                                                {
-                                                                                                                                                                    d.Value = value;
-                                                                                                                                                                    this.ChangeTagValue();
-                                                                                                                                                                }
-                                                                                                                                                            }, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return this.TagCompare(one, two, SortType.Value); }));
-
+            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingGroupElement, delegate(DicomEditorTag d) { return d.DisplayKey; }, null, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return DicomEditorTag.TagCompare(one, two, SortType.GroupElement); }));
+            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingTagName, delegate(DicomEditorTag d) { return d.TagName; }, null, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return DicomEditorTag.TagCompare(one, two, SortType.TagName); }));
+            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingVR, delegate(DicomEditorTag d) { return d.Vr; }, null, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return DicomEditorTag.TagCompare(one, two, SortType.Vr); }));
+            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingLength, delegate(DicomEditorTag d) { return d.Length; }, null, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return DicomEditorTag.TagCompare(one, two, SortType.Length); }));
+            _dicomTagData.Columns.Add(new TableColumn<DicomEditorTag, string>(SR.ColumnHeadingValue, delegate(DicomEditorTag d) { return d.Value; }, delegate(DicomEditorTag d, string value)
+                                                                                                                                                    {
+                                                                                                                                                        if (d.IsEditable())
+                                                                                                                                                        {
+                                                                                                                                                            d.Value = value;
+                                                                                                                                                        }
+                                                                                                                                                    }, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return DicomEditorTag.TagCompare(one, two, SortType.Value); }));
             _title = "";
-            _loadedDicomDumps = new List<DicomDump>();
+            _loadedFiles = new List<DicomFile>();
             _position = 0;
         }
 
@@ -254,18 +335,23 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         #endregion
 
-        public void UpdateComponent()
+        public void Load(string file)
         {
-            _displayedDump = _loadedDicomDumps[_position];
-            _dicomTagData.Items.Clear();
-            foreach (DicomEditorTag d in _displayedDump.DisplayTagList)
-            {
-                _dicomTagData.Items.Add(d);
-            }
-            this.DicomFileTitle = _displayedDump.Filename;
-            EventsHelper.Fire(_displayedDumpChangedEvent, this, new DisplayedDumpChangedEventArgs(_position == 0, _position == (_loadedDicomDumps.Count - 1), _loadedDicomDumps.Count == 1));
+            DicomFile dicomFile = new DicomFile(file);
+           
+            dicomFile.Load(ClearCanvas.Dicom.DicomReadOptions.Default);   
+            
+            _loadedFiles.Add(dicomFile);
+            _position = 0;
         }
 
+        public void Clear()
+        {
+            _loadedFiles.Clear();
+            _position = 0;
+
+        }
+        
         public void SetSelection(ISelection selection)
         {
             if (_currentSelection != selection)
@@ -273,6 +359,52 @@ namespace ClearCanvas.Utilities.DicomEditor
                 _currentSelection = selection;
                 EventsHelper.Fire(_selectedTagChangedEvent, this, EventArgs.Empty);
             }
+        }
+
+        public void UpdateComponent()
+        {
+            _dicomTagData.Items.Clear();
+
+            this.ReadAttributeCollection(_loadedFiles[_position].MetaInfo, null, DisplayLevel.Attribute);          
+            this.ReadAttributeCollection(_loadedFiles[_position].DataSet, null,  DisplayLevel.Attribute);
+
+            this.DicomFileTitle = _loadedFiles[_position].Filename;
+
+            EventsHelper.Fire(_displayedDumpChangedEvent, this, new DisplayedDumpChangedEventArgs(_position == 0, _position == (_loadedFiles.Count - 1), _loadedFiles.Count == 1));
+        }
+
+
+        private void ReadAttributeCollection(DicomAttributeCollection set, DicomEditorTag parent, DisplayLevel displayLevel)
+        {
+            foreach (DicomAttribute attribute in set)
+            {
+                if (attribute is DicomAttributeSQ)
+                {
+                    DicomEditorTag editorSq = new DicomEditorTag(attribute, null, displayLevel);
+                    _dicomTagData.Items.Add(editorSq);
+
+                    DicomSequenceItem[] items = (DicomSequenceItem[])((DicomAttributeSQ)attribute).Values;
+                    if (items.Length != 0)
+                    {
+                        DicomEditorTag editorSqItem = new DicomEditorTag("fffe", "e000", "Sequence Item", editorSq, DisplayLevel.SequenceItem);
+                        _dicomTagData.Items.Add(editorSqItem);
+
+                        foreach (DicomSequenceItem sequenceItem in items)
+                        {
+                            this.ReadAttributeCollection(sequenceItem, editorSqItem, DisplayLevel.SequenceItemAttribute);
+                        }
+                    }
+                }
+                else
+                {
+                    _dicomTagData.Items.Add(new DicomEditorTag(attribute, parent, displayLevel));
+                }
+            }
+        }
+
+        private bool IsMetainfoTag(uint attribute)
+        {
+            return attribute <= 267546;
         }
 
         private void OnPropertyChanged(string propertyName)
@@ -285,55 +417,11 @@ namespace ClearCanvas.Utilities.DicomEditor
             }
         }
 
-        private void ChangeTagValue()
-        {
-            DicomEditorTag tag = (DicomEditorTag)this._currentSelection.Item;
-            this.ApplyEdit(tag, EditType.Update, false);
-
-            //while ApplyEditToCurrent already updates the underlying length this is needed to prevent flicker
-            DicomEditorTag original = _displayedDump.GetOriginalTag(tag.UidKey);
-            string groupLengthKey = DicomEditorTag.GenerateUidSearchKey(tag.Group, 0, tag.ParentTag);
-
-            DicomEditorTag originalGroupLengthTag = this._displayedDump.GetOriginalTag(groupLengthKey);
-            if (originalGroupLengthTag != null)
-            {
-                int index = _dicomTagData.Items.FindIndex(delegate(DicomEditorTag d) { return d.UidKey == groupLengthKey; });
-
-                int groupLength = int.Parse(originalGroupLengthTag.Value) + tag.Length - original.Length;
-                //_dicomTagData.Items[index].Value = groupLength.ToString();
-                _dicomTagData.Items[index] = new DicomEditorTag(originalGroupLengthTag.Group, originalGroupLengthTag.Element, originalGroupLengthTag.TagName, originalGroupLengthTag.Vr, originalGroupLengthTag.Length, groupLength.ToString(), null, DisplayLevel.Attribute);
-            }
-        }
-
-        private bool IsTagEditable(DicomEditorTag tag)
-        {
-            ICollection<string> unEditableVRList = new string[] { "SQ", @"??", "OB", "OW"};
-
-            return !unEditableVRList.Contains(tag.Vr) && tag.ParentTag == null && !tag.DisplayKey.Contains(",0000)") && !tag.DisplayKey.Contains("(0002,") && !((tag.Vr == "UL" || tag.Vr == "US") && tag.Value.Contains(@"\"));
-        }
-
-        private int TagCompare(DicomEditorTag one, DicomEditorTag two, SortType type)
-        {
-            return one.SortKey(type).CompareTo(two.SortKey(type));
-        }
-
         #region INotifyPropertyChanged Members
 
         public event PropertyChangedEventHandler PropertyChanged;
 
         #endregion
-
-        public IEnumerable<DicomDump> Dumps
-        {
-            set 
-            {
-                _loadedDicomDumps.Clear();
-                _loadedDicomDumps.AddRange(value);
-                _position = 0;
-
-                this.UpdateComponent();
-            }
-        }
 
         public string DicomFileTitle
         {
@@ -351,11 +439,11 @@ namespace ClearCanvas.Utilities.DicomEditor
         }
 
         #region Private Members
-        private Table<DicomEditorTag> _dicomTagData;
-
         private string _title;
-        private DicomDump _displayedDump;
-        private List<DicomDump> _loadedDicomDumps;
+        
+        private Table<DicomEditorTag> _dicomTagData;
+       
+        private List<DicomFile> _loadedFiles;
         private int _position;
 
         private ISelection _currentSelection;

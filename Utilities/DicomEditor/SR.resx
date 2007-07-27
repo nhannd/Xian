@@ -162,6 +162,9 @@
   <data name="MenuSave" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="MessageConfirmAnonymizeAllFiles" xml:space="preserve">
+    <value>Would you like to anonymize *all* loaded files in addition to this one?</value>
+  </data>
   <data name="MessageConfirmDeleteSelectedTags" xml:space="preserve">
     <value>The selected tag(s) will be deleted.  Are you sure you want to continue?</value>
   </data>
@@ -188,6 +191,9 @@
   </data>
   <data name="MessagePleaseSelectAnImage" xml:space="preserve">
     <value>This tool is only valid when a DICOM Image is selected.</value>
+  </data>
+  <data name="MessageTagCannotBeCreated" xml:space="preserve">
+    <value>The tag cannot be created.  Please ensure that the values are properly entered and are appropriate for the tag being created.</value>
   </data>
   <data name="TitleCreateTag" xml:space="preserve">
     <value>Create Tag</value>

@@ -8,27 +8,28 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.Utilities.DicomEditor
+namespace ClearCanvas.Utilities.DicomEditor.Tools
 {
-    [ButtonAction("activate", "dicomeditor-toolbar/ToolbarPrevious")]
-    [ClickHandler("activate", "Previous")]
+    [ButtonAction("activate", "dicomeditor-toolbar/ToolbarReplicate")]
+    [MenuAction("activate", "dicomeditor-contextmenu/MenuReplicate")]
+    [ClickHandler("activate", "Replicate")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
-    [Tooltip("activate", "TooltipPrevious")]
-	[IconSet("activate", IconScheme.Colour, "Icons.PreviousToolSmall.png", "Icons.PreviousToolSmall.png", "Icons.PreviousToolSmall.png")]
+    [Tooltip("activate", "TooltipReplicate")]
+	[IconSet("activate", IconScheme.Colour, "Icons.CopyToolSmall.png", "Icons.CopyToolSmall.png", "Icons.CopyToolSmall.png")]
     [ExtensionOf(typeof(DicomEditorToolExtensionPoint))]
-    class PreviousTool : Tool<DicomEditorComponent.DicomEditorToolContext>
+    class ReplicateTool : Tool<DicomEditorComponent.DicomEditorToolContext>
     {
         private bool _enabled;
         private event EventHandler _enabledChanged;
 
-        public PreviousTool()
+        public ReplicateTool()
         {
         }
-
+        
         public override void Initialize()
         {
             base.Initialize();
-            this.Enabled = false;
+            this.Enabled = true;
             this.Context.DisplayedDumpChanged += new EventHandler<DisplayedDumpChangedEventArgs>(OnDisplayedDumpChanged);
         }
 
@@ -54,15 +55,21 @@ namespace ClearCanvas.Utilities.DicomEditor
             remove { _enabledChanged -= value; }
         }
 
-        private void Previous()
+        private void Replicate()
         {
-            this.Context.DumpManagement.LoadedFileDumpIndex -= 1;
-            this.Context.UpdateDisplay();
+			if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmReplicateTagsInAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+            {
+                foreach (DicomEditorTag tag in this.Context.SelectedTags)
+                {
+                    this.Context.DumpManagement.EditTag(tag.TagId, tag.Value, true);
+                }
+                this.Context.UpdateDisplay();
+            }
         }
 
         protected void OnDisplayedDumpChanged(object sender, DisplayedDumpChangedEventArgs e)
         {
-            this.Enabled = !(e.IsCurrentTheOnly || e.IsCurrentFirst);
+            this.Enabled = !e.IsCurrentTheOnly;
         }
     }
 }

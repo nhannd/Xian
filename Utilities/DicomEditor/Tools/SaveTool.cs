@@ -8,7 +8,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.Utilities.DicomEditor
+namespace ClearCanvas.Utilities.DicomEditor.Tools
 {
     //[MenuAction("activate", "global-menus/MenuTools/MenuToolsMyTools/SaveTool")]
     [ButtonAction("activate", "dicomeditor-toolbar/ToolbarSave")]

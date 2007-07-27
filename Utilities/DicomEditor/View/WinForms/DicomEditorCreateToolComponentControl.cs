@@ -7,6 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Utilities.DicomEditor.Tools;
 
 namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 {
@@ -28,11 +29,10 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 
             _group.DataBindings.Add("Text", _component, "Group", true, DataSourceUpdateMode.OnPropertyChanged);
             _element.DataBindings.Add("Text", _component, "Element", true, DataSourceUpdateMode.OnPropertyChanged);
-            _tagName.DataBindings.Add("Text", _component, "TagName", true, DataSourceUpdateMode.OnPropertyChanged);
-            _vr.DataSource = _component.VrList;
+            _tagName.DataBindings.Add("Value", _component, "TagName", true, DataSourceUpdateMode.OnPropertyChanged);
             _vr.DataBindings.Add("Value", _component, "Vr", true, DataSourceUpdateMode.OnPropertyChanged);
-            _vr.DataBindings.Add("Enabled", _component, "VrEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-            _value.DataBindings.Add("value", _component, "Value", true, DataSourceUpdateMode.OnPropertyChanged);
+            _vr.DataBindings.Add("Enabled", _component, "VrEnabled", true, DataSourceUpdateMode.Never);
+            _value.DataBindings.Add("Value", _component, "Value", true, DataSourceUpdateMode.OnPropertyChanged);
             _accept.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.Never);
 
 			base.AcceptButton = _accept;

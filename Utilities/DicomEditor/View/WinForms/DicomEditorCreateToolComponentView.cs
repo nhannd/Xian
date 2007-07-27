@@ -5,6 +5,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Utilities.DicomEditor.Tools;
 
 namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 {

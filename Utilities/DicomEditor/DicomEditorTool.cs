@@ -79,18 +79,18 @@ namespace ClearCanvas.Utilities.DicomEditor
                 IImageViewerToolContext context = this.ContextBase as IImageViewerToolContext;
                 StandardPresentationImage image = context.Viewer.SelectedPresentationImage as StandardPresentationImage;
                 if (image == null)
-                {
-                    Platform.ShowMessageBox(SR.MessagePleaseSelectAnImage);
+                {                    
+                    context.DesktopWindow.ShowMessageBox(SR.MessagePleaseSelectAnImage, MessageBoxActions.Ok);
                     return;
                 }
-                FileDicomImage file = image.ImageSop.NativeDicomObject as FileDicomImage;
+                DicomFile file = image.ImageSop.NativeDicomObject as DicomFile;
 
                 //Fix for Ticket #623 - HH - It turns out that for memory usage optimization the pixel data tag is stripped from the in memory dataset.  
                 //So while there are probably many better ways to address the missing pixel data tag a small hack was introduced because this entire utility will 
                 //be completely refactored in the very near future to make use of the methods the pacs uses to parse the tags.
-                file = new FileDicomImage(file.Filename);
-
-                DicomFileAccessor accessor = new DicomFileAccessor();
+                //Addendum to Comment above - HH 07/27/07 - Turns out that our implementation continues to remove the pixel data for optimization at this time so 
+                //the workaround is still needed.
+                file = new DicomFile(file.Filename);
 
 				if (_shelf != null)
 				{
@@ -111,31 +111,41 @@ namespace ClearCanvas.Utilities.DicomEditor
 									_component = null; 
 								});
                 }
-                
-                _component.Dumps = new DicomDump[1] { accessor.LoadDicomDump(file) };
-                
+
+                _component.Clear();
+                _component.Load(file.Filename);
+                _component.UpdateComponent();
+
             }
             else if (this.ContextBase is ILocalImageExplorerToolContext)
             {
                 ILocalImageExplorerToolContext context = this.ContextBase as ILocalImageExplorerToolContext;
-                List<FileDicomImage> files = new List<FileDicomImage>();
-                List<DicomDump> dumps = new List<DicomDump>();
+                List<string> files = new List<string>();
+                bool newComponent = false;
 
                 foreach (string rawPath in context.SelectedPaths)
                 {
-                    FileProcessor.ProcessFile process = new FileProcessor.ProcessFile(delegate(string path) { files.Add(new FileDicomImage(path)); });
+                    FileProcessor.ProcessFile process = new FileProcessor.ProcessFile(delegate(string path) { files.Add(path); });
                     FileProcessor.Process(rawPath, "*.*", process, true);
                 }
-                    
-                DicomFileAccessor accessor = new DicomFileAccessor();
+
+                if (_component == null)
+                {
+                    _component = new DicomEditorComponent();
+                    newComponent = true;
+                }
+                else
+                {
+                    _component.Clear();
+                }
 
                 bool userCancelled = false;
-                
+
                 BackgroundTask task = new BackgroundTask(delegate(IBackgroundTaskContext backgroundcontext)
                 {
                     int i = 0;
 
-                    foreach (FileDicomImage file in files)
+                    foreach (string file in files)
                     {
                         if (backgroundcontext.CancelRequested)
                         {
@@ -145,11 +155,11 @@ namespace ClearCanvas.Utilities.DicomEditor
                         }
                         try
                         {
-                            dumps.Add(accessor.LoadDicomDump(file));
+                            _component.Load(file);
                         }
                         catch (GeneralDicomException e)
                         {
-                            backgroundcontext.Error(e);                            
+                            backgroundcontext.Error(e);
                             return;
                         }
                         backgroundcontext.ReportProgress(new BackgroundTaskProgress((int)(((double)(i + 1) / (double)files.Count) * 100.0), SR.MessageDumpProgressBar));
@@ -161,25 +171,20 @@ namespace ClearCanvas.Utilities.DicomEditor
 
                 try
                 {
-                    ProgressDialog.Show(task, context.DesktopWindow, true);                   
+                    ProgressDialog.Show(task, context.DesktopWindow, true);
                 }
                 catch (Exception e)
-                {                    
-                    ExceptionHandler.Report(e, SR.MessageFailedDump, context.DesktopWindow);                    
+                {
+                    ExceptionHandler.Report(e, SR.MessageFailedDump, context.DesktopWindow);
                     return;
                 }
 
                 if (userCancelled == true)
                     return;
 
-				if (_shelf != null)
-				{
-					_shelf.Activate();
-				}
-				else
-                {
-					_component = new DicomEditorComponent();
 
+                if (newComponent == true)
+                {
 					_shelf = ApplicationComponent.LaunchAsShelf(
 								context.DesktopWindow,
 								_component,
@@ -191,9 +196,9 @@ namespace ClearCanvas.Utilities.DicomEditor
 									_component = null; 
 								});
 				}
-                
-                _component.Dumps = dumps;
-            }            
+
+                _component.UpdateComponent();
+            }
         }
     }
 }

@@ -7,8 +7,9 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Dicom;
 
-namespace ClearCanvas.Utilities.DicomEditor
+namespace ClearCanvas.Utilities.DicomEditor.Tools
 {
     [ButtonAction("activate", "dicomeditor-toolbar/ToolbarCreate")]
     [MenuAction("activate", "dicomeditor-contextmenu/MenuCreate")]
@@ -58,10 +59,19 @@ namespace ClearCanvas.Utilities.DicomEditor
         private void Create()
         {
             DicomEditorCreateToolComponent creator = new DicomEditorCreateToolComponent();
-			ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, creator, SR.TitleCreateTag);
+            ApplicationComponentExitCode result = ApplicationComponent.LaunchAsDialog(this.Context.DesktopWindow, creator, SR.TitleCreateTag);
             if (result == ApplicationComponentExitCode.Normal)
             {
-                this.Context.DumpManagement.ApplyEdit(creator.Tag, EditType.Create, false);
+                try
+                {
+                    this.Context.DumpManagement.EditTag(creator.TagId, creator.Value, false);
+                }
+                catch (DicomException)
+                {
+                    this.Context.DesktopWindow.ShowMessageBox(SR.MessageTagCannotBeCreated, MessageBoxActions.Ok);
+                    return;
+                }
+
                 this.Context.UpdateDisplay();
             }
         }

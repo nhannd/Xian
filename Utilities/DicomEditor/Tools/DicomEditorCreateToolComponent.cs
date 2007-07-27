@@ -4,12 +4,9 @@ using System.Text;
 
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-
-using ClearCanvas.Dicom.OffisWrapper;
-using System.Runtime.InteropServices;
 using ClearCanvas.Dicom;
 
-namespace ClearCanvas.Utilities.DicomEditor
+namespace ClearCanvas.Utilities.DicomEditor.Tools
 {
     /// <summary>
     /// Extension point for views onto <see cref="DicomEditorCreateToolComponent"/>
@@ -27,7 +24,6 @@ namespace ClearCanvas.Utilities.DicomEditor
     {
         private bool _vrEnabled;
         private bool _acceptEnabled;
-        private string[] _vrList;
         private ushort _group;
         private ushort _element;
         private string _tagName;
@@ -39,15 +35,6 @@ namespace ClearCanvas.Utilities.DicomEditor
         {
             _vrEnabled = false;
             _acceptEnabled = false;
-
-            DcmVR tempVr;
-            List<string> list = new List<string>();
-            foreach (DcmEVR evr in System.Enum.GetValues(typeof(DcmEVR)))
-            {
-                tempVr = new DcmVR(evr);
-                list.Add(tempVr.getValidVRName());
-            }
-            _vrList = list.ToArray();
         }        
 
         public override void Start()
@@ -63,9 +50,9 @@ namespace ClearCanvas.Utilities.DicomEditor
             base.Stop();
         }
 
-        public DicomEditorTag Tag
+        public uint TagId
         {
-            get { return new DicomEditorTag(_group, _element, _tagName, _vr, _length, _value, null, DisplayLevel.Attribute); }
+            get { return DicomTagDictionary.Instance[_group, _element].TagValue; }
         }
 
         public string Group
@@ -127,16 +114,11 @@ namespace ClearCanvas.Utilities.DicomEditor
             set { _vrEnabled = value; }
         }
 
-        public string[] VrList
-        {
-            get { return _vrList; }
-        }
-
         public void Accept()
         {
             //check if exists
             this.ExitCode = ApplicationComponentExitCode.Normal;
-            this.Host.Exit();
+            this.Host.Exit();            
         }
 
         public bool AcceptEnabled
@@ -153,13 +135,12 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         private void UpdateDialog()
         {       
-            DcmDataDictionary dictionary = new DcmDataDictionary(true, false);
-            DcmDictEntry entry = dictionary.findEntry(new DcmTagKey(_group, _element), null);
+            DicomTag entry = DicomTagDictionary.Instance[_group, _element];
 
             if (entry != null)
             {
-                this.TagName = entry.getTagName();
-                this.Vr = entry.getVR().getVRName();
+                this.TagName = entry.Name;
+                this.Vr = entry.VR.ToString();
                 this.VrEnabled = false;
             }
             else

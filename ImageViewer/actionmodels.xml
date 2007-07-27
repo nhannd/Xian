@@ -21,7 +21,7 @@
     <action id="ClearCanvas.ImageViewer.Services.Tools.DicomSendReceiveActivityTool:activate" path="global-menus/MenuTools/MenuUtilities/MenuDicomSendReceiveActivity" group-hint="" />
     <action id="ClearCanvas.ImageViewer.Services.Tools.DicomFileImportActivityTool:activate" path="global-menus/MenuTools/MenuUtilities/MenuDicomFileImportActivity" group-hint="" />
     <action id="ClearCanvas.ImageViewer.Services.Tools.LocalDataStoreReindexTool:activate" path="global-menus/MenuTools/MenuUtilities/MenuLocalDataStoreReindex" group-hint="" />
-    <action id="ClearCanvas.Utilities.DicomEditor.DicomEditorTool:activate" path="global-menus/MenuTools/MenuUtilities/MenuDicomEditor" group-hint="" />
+    <action id="ClearCanvas.Utilities.DicomEditor.Tools.DicomEditorTool:activate" path="global-menus/MenuTools/MenuUtilities/MenuDicomEditor" group-hint="" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.LocateOnDiskTool:activate" path="global-menus/MenuTools/MenuUtilities/MenuLocateOnDisk" group-hint="" />
     <action id="ClearCanvas.Desktop.Configuration.SettingsManagementLaunchTool:activate" path="global-menus/MenuTools/MenuUtilities/MenuConfigureSettings" group-hint="" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.MemoryUsageTool:apply" path="global-menus/MenuTools/MenuUtilities/MenuMemoryUsage" group-hint="" />
@@ -75,7 +75,7 @@
   <action-model id="ClearCanvas.ImageViewer.Explorer.Local.LocalImageExplorerComponent:explorerlocal-contextmenu">
     <action id="ClearCanvas.ImageViewer.Explorer.Local.Tools.DicomImageLoaderTool:Open" path="explorerlocal-contextmenu/MenuOpenFiles" group-hint="" />
     <action id="ClearCanvas.ImageViewer.Services.Tools.DicomFileImportTool:Import" path="explorerlocal-contextmenu/ImportDicomFiles" group-hint="" />
-    <action id="ClearCanvas.Utilities.DicomEditor.DicomEditorTool:activate" path="explorerlocal-contextmenu/MenuDumpFiles" group-hint="Tools.Dicom.Editor" />
+    <action id="ClearCanvas.Utilities.DicomEditor.Tools.DicomEditorTool:activate" path="explorerlocal-contextmenu/MenuDumpFiles" group-hint="Tools.Dicom.Editor" />
   </action-model>
   <action-model id="ClearCanvas.ImageViewer.Explorer.Dicom.AENavigatorComponent:dicomaenavigator-toolbar">
     <action id="ClearCanvas.ImageViewer.Explorer.Dicom.AddServerTool:activate" path="dicomaenavigator-toolbar/ToolbarAddServer" group-hint="" />
@@ -92,21 +92,21 @@
     <action id="ClearCanvas.ImageViewer.Explorer.Dicom.VerifyServerTool:activate" path="dicomaenavigator-contextmenu/MenuVerify" group-hint="" />
   </action-model>
   <action-model id="ClearCanvas.Utilities.DicomEditor.DicomEditorComponent:dicomeditor-toolbar">
-    <action id="ClearCanvas.Utilities.DicomEditor.PreviousTool:activate" path="dicomeditor-toolbar/ToolbarPrevious" group-hint="" />
-    <action id="ClearCanvas.Utilities.DicomEditor.NextTool:activate" path="dicomeditor-toolbar/ToolbarNext" group-hint="" />
-    <action id="ClearCanvas.Utilities.DicomEditor.QuickAnonymizeTool:activate" path="dicomeditor-toolbar/ToolbarQuickAnonymize" group-hint="" />
-    <action id="ClearCanvas.Utilities.DicomEditor.CreateTool:activate" path="dicomeditor-toolbar/ToolbarCreate" group-hint="" />
-    <action id="ClearCanvas.Utilities.DicomEditor.DeleteTool:activate" path="dicomeditor-toolbar/ToolbarDelete" group-hint="" />
-    <action id="ClearCanvas.Utilities.DicomEditor.ReplicateTool:activate" path="dicomeditor-toolbar/ToolbarReplicate" group-hint="" />
-    <action id="ClearCanvas.Utilities.DicomEditor.RevertTool:activate" path="dicomeditor-toolbar/ToolbarRevert" group-hint="" />
-    <action id="ClearCanvas.Utilities.DicomEditor.SaveTool:activate" path="dicomeditor-toolbar/ToolbarSaveAll" group-hint="" />
+    <action id="ClearCanvas.Utilities.DicomEditor.Tools.PreviousTool:activate" path="dicomeditor-toolbar/ToolbarPrevious" group-hint="" />
+    <action id="ClearCanvas.Utilities.DicomEditor.Tools.NextTool:activate" path="dicomeditor-toolbar/ToolbarNext" group-hint="" />
+    <action id="ClearCanvas.Utilities.DicomEditor.Tools.QuickAnonymizeTool:activate" path="dicomeditor-toolbar/ToolbarQuickAnonymize" group-hint="" />
+    <action id="ClearCanvas.Utilities.DicomEditor.Tools.CreateTool:activate" path="dicomeditor-toolbar/ToolbarCreate" group-hint="" />
+    <action id="ClearCanvas.Utilities.DicomEditor.Tools.DeleteTool:activate" path="dicomeditor-toolbar/ToolbarDelete" group-hint="" />
+    <action id="ClearCanvas.Utilities.DicomEditor.Tools.ReplicateTool:activate" path="dicomeditor-toolbar/ToolbarReplicate" group-hint="" />
+    <action id="ClearCanvas.Utilities.DicomEditor.Tools.RevertTool:activate" path="dicomeditor-toolbar/ToolbarRevert" group-hint="" />
+    <action id="ClearCanvas.Utilities.DicomEditor.Tools.SaveTool:activate" path="dicomeditor-toolbar/ToolbarSaveAll" group-hint="" />
   </action-model>
   <action-model id="ClearCanvas.Utilities.DicomEditor.DicomEditorComponent:dicomeditor-contextmenu">
-    <action id="ClearCanvas.Utilities.DicomEditor.QuickAnonymizeTool:activate" path="dicomeditor-contextmenu/MenuQuickAnonymize" group-hint="" />
-    <action id="ClearCanvas.Utilities.DicomEditor.CreateTool:activate" path="dicomeditor-contextmenu/MenuCreate" group-hint="" />
-    <action id="ClearCanvas.Utilities.DicomEditor.DeleteTool:activate" path="dicomeditor-contextmenu/MenuDelete" group-hint="" />
-    <action id="ClearCanvas.Utilities.DicomEditor.ReplicateTool:activate" path="dicomeditor-contextmenu/MenuReplicate" group-hint="" />
-    <action id="ClearCanvas.Utilities.DicomEditor.RevertTool:activate" path="dicomeditor-contextmenu/MenuRevert" group-hint="" />
+    <action id="ClearCanvas.Utilities.DicomEditor.Tools.QuickAnonymizeTool:activate" path="dicomeditor-contextmenu/MenuQuickAnonymize" group-hint="" />
+    <action id="ClearCanvas.Utilities.DicomEditor.Tools.CreateTool:activate" path="dicomeditor-contextmenu/MenuCreate" group-hint="" />
+    <action id="ClearCanvas.Utilities.DicomEditor.Tools.DeleteTool:activate" path="dicomeditor-contextmenu/MenuDelete" group-hint="" />
+    <action id="ClearCanvas.Utilities.DicomEditor.Tools.ReplicateTool:activate" path="dicomeditor-contextmenu/MenuReplicate" group-hint="" />
+    <action id="ClearCanvas.Utilities.DicomEditor.Tools.RevertTool:activate" path="dicomeditor-contextmenu/MenuRevert" group-hint="" />
   </action-model>
   <action-model id="ClearCanvas.ImageViewer.Services.Tools.ReceiveQueueApplicationComponent:receive-queue-toolbar">
     <action id="ClearCanvas.ImageViewer.Services.Tools.ReceiveQueueTools:clearSelected" path="receive-queue-toolbar/ClearSelected" group-hint="" />

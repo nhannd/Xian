@@ -8,37 +8,40 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
-    public class DicomEditorTag 
+    public class DicomEditorTag
     {
-        public DicomEditorTag(DicomEditorTag original)
+        public DicomEditorTag(DicomAttribute attribute)
+            : this(attribute, null, DisplayLevel.Attribute) 
         {
-            _group = original.Group;
-            _element = original.Element;
-            _key = original.UidKey;
-            _tagName = original.TagName;
-            _vr = original.Vr;
-            _length = original.Length;
-            _value = original.Value;
-            _parentTag = original._parentTag;
-            _displayLevel = original._displayLevel;
-        }
+        }        
 
-        public DicomEditorTag(ushort group, ushort element, string tagName, string vr, int length, string value, DicomEditorTag parentTag, DisplayLevel displayLevel)
+        public DicomEditorTag(DicomAttribute attribute, DicomEditorTag parentTag, DisplayLevel displayLevel)
         {
-            _group = group;
-            _element = element;            
-            _tagName = tagName;
-            _vr = vr;
-            _length = length;
-            _value = value;
+            _attribute = attribute;
+
+            _group = _attribute.Tag.Group;
+            _element = _attribute.Tag.Element;
+            _tagName = _attribute.Tag.Name;            
+
             _parentTag = parentTag;
             _displayLevel = displayLevel;
-            _key = this.SortKey(SortType.GroupElement);
         }
 
-        public string UidKey
+        public DicomEditorTag(string group, string element, string tagName, DicomEditorTag parentTag, DisplayLevel displayLevel)
         {
-            get { return this.SortKey(SortType.GroupElement); }
+            _attribute = null;
+
+            _group = ushort.Parse(group, System.Globalization.NumberStyles.HexNumber);
+            _element = ushort.Parse(element, System.Globalization.NumberStyles.HexNumber);            
+            _tagName = tagName;
+
+            _parentTag = parentTag;
+            _displayLevel = displayLevel;            
+        }
+
+        public uint TagId
+        {
+            get { return _attribute.Tag.TagValue; } 
         }
 
         public ushort Group
@@ -59,53 +62,53 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         public string Vr
         {
-            get { return _vr; }
-            set { _vr = value; }
+            get { return _attribute == null? String.Empty : _attribute.Tag.VR.Name; }
         }
 
-        public int Length
+        public string Length
         {
-            get { return _length; }
-            set { _length = value; }
+            get { return _attribute == null? String.Empty : _attribute.StreamLength.ToString(); }            
         }
 
         public string Value
         {
-            get { return _value; }
+            get 
+            {
+                if (_attribute == null)
+                    return String.Empty;
+                else
+                {
+                    if (_attribute.Values == null)
+                    {
+                        return byte.Parse(_attribute.Tag.HexString.Substring(0, Math.Min(22, _attribute.Tag.HexString.Length)), System.Globalization.NumberStyles.HexNumber).ToString();
+                    }
+                    else
+                    {
+                        return _attribute.ToString();                        
+                    }
+                }
+            }
             set 
             { 
-                _value = value;
-                if (_value == null)
-                {
-                    this._length = 0;
-                }
-                else if (this._vr != "US" && this._vr != "UL")
-                {
-                    this._length = value.Length % 2 == 0 ? value.Length : value.Length + 1;
-                }
+                _attribute.SetStringValue(value);                
             }
         }
 
-        public DicomEditorTag ParentTag
-        {
-            get { return _parentTag; }
-        }
-
-        #region Display Items
+        #region Display Utilities
 
         public string DisplayKey
         {
             get
             {
-                string display = String.Format("({0:x4},", _group) + String.Format("{0:x4})", _element);
+                StringBuilder display = new StringBuilder();
 
                 switch (_displayLevel)
                 {
                     case DisplayLevel.SequenceItemAttribute:
-                        display = "      " + display;
+                        display.Append("      ");
                         break;
                     case DisplayLevel.SequenceItem:
-                        display = "   " + display;
+                        display.Append("   ");
                         break;
                     case DisplayLevel.Attribute:
                         break;
@@ -113,14 +116,28 @@ namespace ClearCanvas.Utilities.DicomEditor
                         break;
                 }
 
-                return display;
+                display.AppendFormat("({0:x4}, {1:x4})", _group, _element);                
+
+                return display.ToString();
             }
         }
 
-        public string SortKey(SortType type)
+        public bool IsEditable()
+        {
+            ICollection<string> unEditableVRList = new string[] { "SQ", @"??", "OB", "OW", "UN", String.Empty };
+
+            return !unEditableVRList.Contains(this.Vr) && !this.DisplayKey.Contains(",0000)") && !this.DisplayKey.Contains("(0002,");
+        }
+
+        public static int TagCompare(DicomEditorTag one, DicomEditorTag two, SortType type)
+        {
+            return one.SortKey(type).CompareTo(two.SortKey(type));
+        }
+
+        private string SortKey(SortType type)
         {
             DicomEditorTag parentTag = _parentTag;
-            string typeSpecificModifier;            
+            string typeSpecificModifier;
 
             switch (type)
             {
@@ -132,7 +149,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                     else
                     {
                         return _parentTag.SortKey(type) + String.Format("({0:x4},", _group) + String.Format("{0:x4})", _element);
-                    }                       
+                    }
                     break;
                 case SortType.TagName:
                     typeSpecificModifier = _tagName;
@@ -143,26 +160,26 @@ namespace ClearCanvas.Utilities.DicomEditor
                     }
                     break;
                 case SortType.Vr:
-                    typeSpecificModifier = _vr;
+                    typeSpecificModifier = this.Vr;
                     while (parentTag != null)
                     {
-                        typeSpecificModifier = parentTag._vr;
+                        typeSpecificModifier = parentTag.Vr;
                         parentTag = parentTag._parentTag;
                     }
                     break;
                 case SortType.Length:
-                    typeSpecificModifier = _length.ToString();
+                    typeSpecificModifier = this.Length;
                     while (parentTag != null)
                     {
-                        typeSpecificModifier = parentTag._length.ToString();
+                        typeSpecificModifier = parentTag.Length;
                         parentTag = parentTag._parentTag;
                     }
                     break;
                 case SortType.Value:
-                    typeSpecificModifier = _value;
+                    typeSpecificModifier = this.Value;
                     while (parentTag != null)
                     {
-                        typeSpecificModifier = parentTag._value;
+                        typeSpecificModifier = parentTag.Value;
                         parentTag = parentTag._parentTag;
                     }
                     break;
@@ -170,33 +187,19 @@ namespace ClearCanvas.Utilities.DicomEditor
                     typeSpecificModifier = String.Format("({0:x4},", _group) + String.Format("{0:x4})", _element);
                     break;
             }
- 
-            return typeSpecificModifier + this.SortKey(SortType.GroupElement);                                
+
+            return typeSpecificModifier + this.SortKey(SortType.GroupElement);
         }
 
         #endregion
 
-        public static string GenerateUidSearchKey(ushort group, ushort element, DicomEditorTag parent)
-        {
-            if (parent == null)
-            {
-                return String.Format("({0:x4},", group) + String.Format("{0:x4})", element);
-            }
-            else
-            {
-                return parent.SortKey(SortType.GroupElement) + String.Format("({0:x4},", group) + String.Format("{0:x4})", element);
-            }           
-        }
-
-        private string _key;
         private ushort _group;
         private ushort _element;
-        private string _tagName;
-        private string _vr;
-        private int _length;
-        private string _value;
+        private string _tagName;      
         private DisplayLevel _displayLevel;
         private DicomEditorTag _parentTag;
+
+        private DicomAttribute _attribute;
     }
 
     public enum SortType

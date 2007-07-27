@@ -8,7 +8,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.Utilities.DicomEditor
+namespace ClearCanvas.Utilities.DicomEditor.Tools
 {
     [ButtonAction("activate", "dicomeditor-toolbar/ToolbarRevert")]
     [MenuAction("activate", "dicomeditor-contextmenu/MenuRevert")]
@@ -64,18 +64,18 @@ namespace ClearCanvas.Utilities.DicomEditor
                 {
 					if (Platform.ShowMessageBox(SR.MessageConfirmRevertAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
                     {
-                        this.Context.DumpManagement.RevertAllEdits();
+                        this.Context.DumpManagement.RevertEdits(true);
                         this.Context.UpdateDisplay();
                     }
                     else
                     {
-                        this.Context.DisplayedDump.RevertEdits();
+                        this.Context.DumpManagement.RevertEdits(false);
                         this.Context.UpdateDisplay();
                     }
                 }
                 else
                 {
-                    this.Context.DisplayedDump.RevertEdits();
+                    this.Context.DumpManagement.RevertEdits(false);
                     this.Context.UpdateDisplay();
                 }
             }
