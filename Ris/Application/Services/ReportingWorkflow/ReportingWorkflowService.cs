@@ -254,6 +254,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
                 PersistenceContext.Lock(report, DirtyState.New);
             }
+
+            PersistenceContext.SynchState();
             return new SaveReportResponse(step.GetRef());
         }
 
