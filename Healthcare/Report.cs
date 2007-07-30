@@ -57,9 +57,28 @@ namespace ClearCanvas.Healthcare {
 
         public ReportPart AddPart(string reportPartContent)
         {
-            ReportPart part = new ReportPart(this.Parts.Count.ToString(), reportPartContent, this);
+            ReportPart part = new ReportPart(this.Parts.Count.ToString(), reportPartContent, ReportPartStatus.P, this);
             this.AddPart(part);
             return part;
+        }
+
+        public virtual void Finalized()
+        {
+            if (this.Status == ReportStatus.P)
+                this.Status = ReportStatus.F;
+            else
+                throw new HealthcareWorkflowException("Only reports in the preliminary status can be finalized");
+        
+        }
+
+        public virtual void Corrected()
+        {
+            this.Status = ReportStatus.C;
+        }
+
+        public virtual void Cancelled()
+        {
+            this.Status = ReportStatus.X;
         }
     }
 }

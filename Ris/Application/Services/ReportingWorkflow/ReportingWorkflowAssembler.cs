@@ -77,17 +77,20 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return item;
         }
 
-        public ReportSummary CreateReportSummary(RequestedProcedure rp, Report report)
+        public ReportSummary CreateReportSummary(RequestedProcedure rp, Report report, IPersistenceContext context)
         {
             ReportSummary summary = new ReportSummary();
 
             if (report != null)
             {
+                ReportStatusEnum reportStatusEnum = context.GetBroker<IReportStatusEnumBroker>().Load()[report.Status];
+
                 summary.ReportRef = report.GetRef();
+                summary.ReportStatus = new EnumValueInfo(reportStatusEnum.Code.ToString(), reportStatusEnum.Value, reportStatusEnum.Description);
                 summary.Parts = CollectionUtils.Map<ReportPart, ReportPartSummary, List<ReportPartSummary>>(report.Parts,
                     delegate(ReportPart part)
                     {
-                        return CreateReportPartSummary(part);
+                        return CreateReportPartSummary(part, context);
                     });
             }
 
@@ -113,13 +116,16 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return summary;
         }
 
-        public ReportPartSummary CreateReportPartSummary(ReportPart reportPart)
+        public ReportPartSummary CreateReportPartSummary(ReportPart reportPart, IPersistenceContext context)
         {
             ReportPartSummary summary = new ReportPartSummary();
+
+            ReportPartStatusEnum reportPartStatusEnum = context.GetBroker<IReportPartStatusEnumBroker>().Load()[reportPart.Status];
 
             summary.ReportPartRef = reportPart.GetRef();
             summary.Index = reportPart.Index;
             summary.Content = reportPart.Content;
+            summary.Status = new EnumValueInfo(reportPartStatusEnum.Code.ToString(), reportPartStatusEnum.Value, reportPartStatusEnum.Description);
 
             return summary;
         }

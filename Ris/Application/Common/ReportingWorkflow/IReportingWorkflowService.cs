@@ -82,7 +82,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         CompleteInterpretationForVerificationResponse CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request);
 
         /// <summary>
-        /// Complete an interpretation step and and verify it.
+        /// Complete an interpretation step and verify it.
         /// </summary>
         /// <param name="request"><see cref="CompleteInterpretationAndVerifyRequest"/></param>
         /// <returns><see cref="CompleteInterpretationAndVerifyResponse"/></returns>
@@ -92,13 +92,13 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         CompleteInterpretationAndVerifyResponse CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request);
 
         /// <summary>
-        /// Cancel an interpretation step and and verify it.
+        /// Cancel a reporting step and create a new interpretation step.
         /// </summary>
-        /// <param name="request"><see cref="CompleteInterpretationAndVerifyRequest"/></param>
-        /// <returns><see cref="CompleteInterpretationAndVerifyResponse"/></returns>
+        /// <param name="request"><see cref="CancelReportingStepRequest"/></param>
+        /// <returns><see cref="CancelReportingStepResponse"/></returns>
         [OperationContract]
         [FaultContract(typeof(ConcurrentModificationException))]
-        CancelPendingTranscriptionResponse CancelPendingTranscription(CancelPendingTranscriptionRequest request);
+        CancelReportingStepResponse CancelReportingStep(CancelReportingStepRequest request);
 
         /// <summary>
         /// Start an verification step

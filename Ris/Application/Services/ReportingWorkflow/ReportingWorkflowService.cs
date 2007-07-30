@@ -171,18 +171,18 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [UpdateOperation]
-        [OperationEnablement("CanCancelPendingTranscription")]
-        public CancelPendingTranscriptionResponse CancelPendingTranscription(CancelPendingTranscriptionRequest request)
+        [OperationEnablement("CanCancelReportingStep")]
+        public CancelReportingStepResponse CancelReportingStep(CancelReportingStepRequest request)
         {
-            TranscriptionStep transcription = PersistenceContext.Load<TranscriptionStep>(request.TranscriptionStepRef, EntityLoadFlags.CheckVersion);
+            ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
 
-            Operations.CancelPendingTranscription op = new Operations.CancelPendingTranscription();
-            InterpretationStep interpretation = op.Execute(transcription, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            Operations.CancelReportingStep op = new Operations.CancelReportingStep();
+            InterpretationStep interpretation = op.Execute(step, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
             PersistenceContext.SynchState();
-            CancelPendingTranscriptionResponse response = new CancelPendingTranscriptionResponse();
-            response.TranscriptionStepRef = transcription.GetRef();
-            response.InterpretationStepRef = interpretation.GetRef();
+            CancelReportingStepResponse response = new CancelReportingStepResponse();
+            response.ReportingStepRef = step.GetRef();
+            response.InterpretationStepRef = interpretation == null ? null : interpretation.GetRef();
             return response;
         }
 
@@ -240,12 +240,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             LoadReportForEditResponse response = new LoadReportForEditResponse();
             if (step.ReportPart == null)
             {
-                response.Report = assembler.CreateReportSummary(step.RequestedProcedure, null);
+                response.Report = assembler.CreateReportSummary(step.RequestedProcedure, null, this.PersistenceContext);
                 response.ReportPartIndex = 0;
             }
             else
             {
-                response.Report = assembler.CreateReportSummary(step.RequestedProcedure, step.ReportPart.Report);
+                response.Report = assembler.CreateReportSummary(step.RequestedProcedure, step.ReportPart.Report, this.PersistenceContext);
                 response.ReportPartIndex = int.Parse(step.ReportPart.Index);
             }
 
@@ -290,7 +290,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             List<ReportSummary> listSummary = CollectionUtils.Map<Report, ReportSummary, List<ReportSummary>>(listReports,
                 delegate(Report report)
                 {
-                    return assembler.CreateReportSummary(report.Procedure, report);
+                    return assembler.CreateReportSummary(report.Procedure, report, this.PersistenceContext);
                 });
 
             return new GetPriorReportResponse(listSummary);
@@ -325,9 +325,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             return CanExecuteOperation(new Operations.CompleteInterpretationAndVerify(), itemKey);
         }
 
-        public bool CanCancelPendingTranscription(IWorklistItemKey itemKey)
+        public bool CanCancelReportingStep(IWorklistItemKey itemKey)
         {
-            return CanExecuteOperation(new Operations.CancelPendingTranscription(), itemKey);
+            return CanExecuteOperation(new Operations.CancelReportingStep(), itemKey);
         }
 
         public bool CanStartVerification(IWorklistItemKey itemKey)

@@ -19,5 +19,34 @@ namespace ClearCanvas.Healthcare {
 		private void CustomInitialize()
 		{
 		}
-	}
+
+        public bool IsAddendum
+        {
+            get { return int.Parse(this.Index) > 0; }
+        }
+
+        public virtual void Finalized()
+        {
+            if (this.Status == ReportPartStatus.P)
+            {
+                this.Status = ReportPartStatus.F;
+
+                if (this.IsAddendum)
+                    this.Report.Corrected();
+                else
+                    this.Report.Finalized();
+            }
+            else
+                throw new HealthcareWorkflowException("Only report part in the preliminary status can be finalized");
+
+        }
+
+        public virtual void Cancelled()
+        {
+            this.Status = ReportPartStatus.X;
+
+            if (this.IsAddendum == false)
+                this.Report.Cancelled();
+        }
+    }
 }

@@ -32,6 +32,14 @@ namespace ClearCanvas.Healthcare {
         {
             get { return "Verification"; }
         }
+
+        public override void Complete()
+        {
+            if (this.ReportPart != null)
+                this.ReportPart.Finalized();
+
+            base.Complete();
+        }
 		
 		#region Object overrides
 		

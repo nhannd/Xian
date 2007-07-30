@@ -345,13 +345,13 @@
     <Compile Include="RegistrationWorkflow\RICSummary.cs" />
     <Compile Include="RegistrationWorkflow\SearchPatientRequest.cs" />
     <Compile Include="RegistrationWorkflow\SearchPatientResponse.cs" />
-    <Compile Include="ReportingWorkflow\CancelPendingTranscriptionRequest.cs" />
+    <Compile Include="ReportingWorkflow\CancelReportingStepRequest.cs" />
     <Compile Include="ReportingWorkflow\ClaimInterpretationRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationAndVerifyRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationForTranscriptionRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationForVerificationRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteVerificationRequest.cs" />
-    <Compile Include="ReportingWorkflow\CancelPendingTranscriptionResponse.cs" />
+    <Compile Include="ReportingWorkflow\CancelReportingStepResponse.cs" />
     <Compile Include="ReportingWorkflow\ClaimInterpretationResponse.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationAndVerifyResponse.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationForTranscriptionResponse.cs" />

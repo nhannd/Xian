@@ -30,5 +30,14 @@ namespace ClearCanvas.Healthcare
             get { return _reportPart; }
             set { _reportPart = value; }
         }
+
+        public override void Discontinue()
+        {
+            if (this.ReportPart != null)
+                this.ReportPart.Cancelled();
+
+            base.Discontinue();
+        }
+
     }
 }

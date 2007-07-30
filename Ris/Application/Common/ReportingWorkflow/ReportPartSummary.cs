@@ -17,5 +17,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 
         [DataMember]
         public string Content;
+
+        [DataMember]
+        public EnumValueInfo Status;
     }
 }

@@ -138,32 +138,38 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             }
         }
 
-        public class CancelPendingTranscription : ReportingOperation
+        public class CancelReportingStep : ReportingOperation
         {
-            public InterpretationStep Execute(TranscriptionStep step, Staff currentUserStaff, IWorkflow workflow)
+            public InterpretationStep Execute(ReportingProcedureStep step, Staff currentUserStaff, IWorkflow workflow)
             {
                 step.Discontinue();
 
-                InterpretationStep interpretation = new InterpretationStep(step);
+                if (step.ReportPart != null && step.ReportPart.IsAddendum)
+                {
+                    // if this is an addendum step, no need to create new interpretation step
+                    return null;
+                }
+                else
+                {
+                    // Create a new interpretation step for a cancel step
+                    InterpretationStep interpretation = new InterpretationStep(step.RequestedProcedure);
 
-                // TODO assign the new interpretation back to the dictating physician, from the Report object
-                //interpretation.Assign();
+                    // TODO assign the new interpretation back to the dictating physician, from the Report object
+                    //interpretation.Assign();
 
-                workflow.AddActivity(interpretation);
-                return interpretation;
+                    workflow.AddActivity(interpretation);
+                    return interpretation;
+                }
             }
 
             public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
             {
-                if (step.Is<TranscriptionStep>() == false)
-                    return false;
-
                 // step already completed or cancelled
                 if (step.State == ActivityStatus.CM || step.State == ActivityStatus.DC)
                     return false;
 
-                // step already claim by the same staff
-                if (Equals(step.AssignedStaff, currentUserStaff))
+                // cannot cancel an unclaimed interpretation step
+                if (step.Is<InterpretationStep>() && step.AssignedStaff == null)
                     return false;
 
                 return true;

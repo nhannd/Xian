@@ -7,10 +7,10 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
     [DataContract]
-    public class CancelPendingTranscriptionResponse : DataContractBase
+    public class CancelReportingStepResponse : DataContractBase
     {
         [DataMember]
-        public EntityRef TranscriptionStepRef;
+        public EntityRef ReportingStepRef;
 
         [DataMember]
         public EntityRef InterpretationStepRef;

@@ -306,16 +306,16 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
         }
 
-        [MenuAction("apply", "folderexplorer-items-contextmenu/Cancel Transcription")]
-        [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel Transcription")]
+        [MenuAction("apply", "folderexplorer-items-contextmenu/Cancel Step")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Cancel Step")]
         [ClickHandler("apply", "Apply")]
         [IconSet("apply", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
         [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-        public class CancelPendingTranscriptionTool : WorkflowItemTool
+        public class CancelReportingStepTool : WorkflowItemTool
         {
-            public CancelPendingTranscriptionTool()
-                : base("CancelPendingTranscription")
+            public CancelReportingStepTool()
+                : base("CancelReportingStep")
             {
             }
 
@@ -326,12 +326,12 @@ namespace ClearCanvas.Ris.Client.Reporting
                     Platform.GetService<IReportingWorkflowService>(
                         delegate(IReportingWorkflowService service)
                         {
-                            service.CancelPendingTranscription(new CancelPendingTranscriptionRequest(item.ProcedureStepRef));
+                            service.CancelReportingStep(new CancelReportingStepRequest(item.ProcedureStepRef));
                         });
 
-                    IFolder myTranscriptionFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.InTranscriptionFolder; });
-                    myTranscriptionFolder.Refresh();
+                    IFolder toBeReportedFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                        delegate(IFolder f) { return f is Folders.ToBeReportedFolder; });
+                    toBeReportedFolder.Refresh();
 
                     return true;
                 }

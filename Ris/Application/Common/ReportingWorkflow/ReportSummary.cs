@@ -13,6 +13,9 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         public EntityRef ReportRef;
 
         [DataMember]
+        public EnumValueInfo ReportStatus;
+
+        [DataMember]
         public List<ReportPartSummary> Parts;
 
         [DataMember]

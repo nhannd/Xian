@@ -9,6 +9,8 @@
     <property name="Index" column="Index_" type="String" length="30" not-null="true"/>
     <property name="Content" column="Content_" type="StringClob" length="65000" not-null="false"/>
 
+    <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ReportPartStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+
     <many-to-one name="Report" class="Report" column="ReportOID_" not-null="true" fetch="join"/>
   </class>
 </hibernate-mapping>
