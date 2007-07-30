@@ -19,8 +19,15 @@
 		            
 	            try
 	            {
+					var worklistItem = Ris.getWorklistItem();
+					if (worklistItem == null)
+					{
+                        Field.setValue($("myForm"), "");
+                        return;
+					}
+
                     var request = {
-                        PatientProfileRef: Ris.getWorklistItem().PatientProfileRef,
+                        PatientProfileRef: worklistItem.PatientProfileRef,
                         GetPatientProfileRequest: {},
                         ListPatientOrdersRequest: { QueryDetailLevel: "RequestedProcedure" },
                         GetPatientAlertsRequest:  {}

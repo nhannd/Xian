@@ -19,8 +19,15 @@
 		        
 	            try
 	            {
+					var worklistItem = Ris.getWorklistItem();
+					if (worklistItem == null)
+					{
+                        Field.setValue($("myForm"), "");
+                        return;
+					}
+
                     var request = {
-                        ProcedureStepRef: Ris.getWorklistItem().ProcedureStepRef,
+                        ProcedureStepRef: worklistItem.ProcedureStepRef,
                         GetModalityProcedureStepRequest: { GetDiagnosticServiceBreakdown: true },
                         GetPatientProfileRequest:        {},
                         ListPatientOrdersRequest:        { QueryDetailLevel: "RequestedProcedure" },
