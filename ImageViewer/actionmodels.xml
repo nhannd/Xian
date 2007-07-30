@@ -129,4 +129,8 @@
     <action id="ClearCanvas.ImageViewer.Services.Tools.DicomFileImportCancelTool:cancel" path="dicom-file-import-contextmenu/Cancel" group-hint="" />
     <action id="ClearCanvas.ImageViewer.Services.Tools.DicomFileImportCancelTool:clear" path="dicom-file-import-contextmenu/Clear" group-hint="" />
   </action-model>
+  <action-model id="ClearCanvas.ImageViewer.InteractiveGraphics.ROIGraphic:basicgraphic-menu">
+    <action id="ClearCanvas.ImageViewer.Tools.Measurement.DeleteGraphicTool:closemenu" path="basicgraphic-menu/MenuClose" group-hint="" />
+    <action id="ClearCanvas.ImageViewer.Tools.Measurement.DeleteGraphicTool:delete" path="basicgraphic-menu/DeleteGraphicTool" group-hint="" />
+  </action-model>
 </action-models>
