@@ -189,6 +189,8 @@ namespace ClearCanvas.Desktop
         private bool _showValidationErrors;
         private event EventHandler _validationVisibleChanged;
 
+        private IResourceResolver _resourceResolver;
+
 
         /// <summary>
         /// Default constructor
@@ -196,9 +198,15 @@ namespace ClearCanvas.Desktop
         protected ApplicationComponent()
         {
             _exitCode = ApplicationComponentExitCode.Normal;    // default exit code
+
+            // default resource resolver
+            _resourceResolver = new ResourceResolver(this.GetType().Assembly);
             
             // default empty validation rule set
             _validation = new ValidationRuleSet();
+
+            // process validation rules that are defined as attributes on properties
+            ProcessAttributeValidationRules();
         }
 
 
@@ -487,10 +495,8 @@ namespace ClearCanvas.Desktop
             {
                 if (_showValidationErrors && _validation != null)
                 {
-                    ValidationResult result = _validation.GetResults(this, propertyName).Find(
-                        delegate(ValidationResult r) { return !r.Success; });
-
-                    return result == null ? null : result.GetMessageString("\n");
+                    ValidationResult result = ValidationResult.Combine(_validation.GetResults(this, propertyName));
+                    return result.Success ? null : result.GetMessageString("\n");
                 }
                 else
                 {
@@ -513,6 +519,17 @@ namespace ClearCanvas.Desktop
         {
             if (_started)
                 throw new InvalidOperationException(SR.ExceptionComponentAlreadyStarted);
+        }
+
+        private void ProcessAttributeValidationRules()
+        {
+            foreach (PropertyInfo property in this.GetType().GetProperties())
+            {
+                foreach (ValidationAttribute a in property.GetCustomAttributes(typeof(ValidationAttribute), true))
+                {
+                    _validation.Add(a.CreateRule(property, _resourceResolver));
+                }
+            }
         }
 
         #endregion

@@ -197,6 +197,8 @@
     <Compile Include="Validation\IValidationRuleSet.cs" />
     <Compile Include="Validation\IValidationRule.cs" />
     <Compile Include="Validation\NoNodesContainerValidationStrategy.cs" />
+    <Compile Include="Validation\ValidationAttributes.cs" />
+    <Compile Include="Validation\ValidationAttributeException.cs" />
     <Compile Include="Validation\ValidationRulesSettings.cs" />
     <Compile Include="Validation\ValidationResult.cs" />
     <Compile Include="Validation\ValidationRuleSet.cs" />

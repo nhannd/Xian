@@ -9,6 +9,23 @@ namespace ClearCanvas.Desktop.Validation
     /// </summary>
     public class ValidationResult
     {
+        /// <summary>
+        /// Combines a collection of validation results into a single result.
+        /// </summary>
+        /// <param name="results"></param>
+        /// <returns></returns>
+        public static ValidationResult Combine(IEnumerable<ValidationResult> results)
+        {
+            List<string> messages = new List<string>();
+            foreach (ValidationResult result in results)
+            {
+                if (!result.Success)
+                    messages.AddRange(result.Messages);
+            }
+
+            return new ValidationResult(messages.Count == 0, messages.ToArray());
+        }
+
         private bool _success;
         private string[] _messages;
 
