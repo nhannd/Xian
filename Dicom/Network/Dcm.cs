@@ -1,7 +1,7 @@
 using System;
 using ClearCanvas.Dicom.OffisWrapper;
 
-namespace ClearCanvas.Dicom
+namespace ClearCanvas.Dicom.Network
 {
 	/// <summary>
 	/// A helper class that supplies various DICOM tags using a symbolic name rather than

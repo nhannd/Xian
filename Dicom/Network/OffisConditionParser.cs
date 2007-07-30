@@ -3,17 +3,14 @@ namespace ClearCanvas.Dicom.Network
     using System;
     using System.Collections.Generic;
     using System.Text;
-    using ClearCanvas.Dicom;
     using ClearCanvas.Dicom.OffisWrapper;
 
     /// <summary>
     /// Parses the condition code returned from the OFFIS library and determines a proper error message 
     /// as represented by a string.
     /// </summary>
-    internal class OffisConditionParser
+    public static class OffisConditionParser
     {
-        private OffisConditionParser() { }
-
         internal static string GetTextString(ApplicationEntity ae, DicomRuntimeApplicationException e)
         {
             ushort module = e.Module; // module in the OFFIS library 0x06 is dcmnet
@@ -103,7 +100,7 @@ namespace ClearCanvas.Dicom.Network
                             errorText = SR.ExceptionOffisDimseNoDataDictionary;
                             break;
                         default:
-                            throw new GeneralDicomException(SR.ExceptionOffisUnknownError);
+                            throw new DicomException(SR.ExceptionOffisUnknownError);
                     }
 
                     break;
@@ -179,7 +176,7 @@ namespace ClearCanvas.Dicom.Network
                             errorText = SR.ExceptionOffisDulWrongDataType;
                             break;
                         default:
-                            throw new GeneralDicomException(SR.ExceptionOffisUnknownError);
+							throw new DicomException(SR.ExceptionOffisUnknownError);
                     }
 
                     break;

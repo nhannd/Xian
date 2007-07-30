@@ -33,7 +33,7 @@ namespace ClearCanvas.Dicom.Network
 					try
 					{
 						OFCondition cond = _association.ProcessServerCommands(-1, _parent.SaveDirectory);
-						if (DicomHelper.CompareConditions(cond, OffisDcm.DUL_PEERREQUESTEDRELEASE))
+						if (OffisDicomHelper.CompareConditions(cond, OffisDcm.DUL_PEERREQUESTEDRELEASE))
 						{
 							needRelease = false;
 							_association.RespondToReleaseRequest();
@@ -82,7 +82,7 @@ namespace ClearCanvas.Dicom.Network
 		public DicomServer(ApplicationEntity ownAEParameters, string saveDirectory)
         {
 			_myOwnAE = ownAEParameters;
-            _saveDirectory = DicomHelper.NormalizeDirectory(saveDirectory);
+            _saveDirectory = OffisDicomHelper.NormalizeDirectory(saveDirectory);
 			_threadList = new List<Thread>();
         }
 

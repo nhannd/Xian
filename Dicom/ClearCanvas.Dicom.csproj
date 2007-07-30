@@ -99,14 +99,12 @@
     <Compile Include="DicomException.cs" />
     <Compile Include="DicomFieldAttribute.cs" />
     <Compile Include="DicomFile.cs" />
-    <Compile Include="DicomImage.cs" />
     <Compile Include="DicomSequenceItem.cs" />
     <Compile Include="DicomTag.cs" />
     <Compile Include="DicomTagDictionary.cs" />
     <Compile Include="DicomTags.cs" />
     <Compile Include="DicomUid.cs" />
     <Compile Include="DicomVr.cs" />
-    <Compile Include="FileDicomImage.cs" />
     <Compile Include="Flags.cs" />
     <Compile Include="ImageOrientationPatient.cs" />
     <Compile Include="ImagePositionPatient.cs" />
@@ -128,7 +126,6 @@
     <Compile Include="Network\RetrieveProgressUpdatedEventArgs.cs" />
     <Compile Include="Network\SendProgressUpdatedEventArgs.cs" />
     <Compile Include="Network\SocketManager.cs" />
-    <Compile Include="OffisConditionParser.cs" />
     <Compile Include="PatientOrientation.cs" />
     <Compile Include="PhotometricInterpretation.cs" />
     <Compile Include="PixelAspectRatio.cs" />
@@ -138,12 +135,6 @@
     <Compile Include="PersonName.cs" />
     <Compile Include="QueryResult.cs" />
     <Compile Include="QueryResultCollection.cs" />
-    <Compile Include="Dcm.cs">
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="DicomHelper.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="SopClass.cs" />
     <Compile Include="SpecificCharacterSetParser.cs" />
     <Compile Include="SR.Designer.cs">
@@ -151,7 +142,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="Tests\DcmNetTest.cs" />
     <Compile Include="Tests\DateTimeTests.cs" />
     <Compile Include="Tests\ImageOrientationPatientTests.cs" />
     <Compile Include="Tests\TypeTests.cs" />
@@ -186,6 +176,11 @@
     <Compile Include="DicomValidationException.cs" />
     <Compile Include="DicomValidator.cs" />
     <Compile Include="IDicomCharacterSetParser.cs" />
+    <Compile Include="Network\Dcm.cs" />
+    <Compile Include="Network\NetworkDicomException.cs" />
+    <Compile Include="Network\OffisConditionParser.cs" />
+    <Compile Include="Network\OffisDicomHelper.cs" />
+    <Compile Include="Network\Tests\DcmNetTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />

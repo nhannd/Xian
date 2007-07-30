@@ -3,16 +3,15 @@ using System.Text;
 using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom.OffisWrapper;
-using ClearCanvas.Dicom;
 using MySR = ClearCanvas.Dicom.SR;
 
-namespace ClearCanvas.Dicom
+namespace ClearCanvas.Dicom.Network
 {
 	/// <summary>
 	/// Encapsulates a set of static functions that helps with work on various aspects to
     /// do with the OFFIS DICOM Toolkit.
 	/// </summary>
-	public static class DicomHelper
+	public static class OffisDicomHelper
 	{
         /// <summary>
         /// Check the OFCondition object that is returned from many of the OFFIS functions/methods.
@@ -46,7 +45,7 @@ namespace ClearCanvas.Dicom
 				if (status.code() == 1 || status.code() == 2)
 					tagExists = false;
 				else
-					throw new GeneralDicomException(String.Format(SR.ExceptionDICOMTag, tag.toString(), status.text()));
+					throw new DicomException(String.Format(SR.ExceptionDICOMTag, tag.toString(), status.text()));
 			}
 			else
 			{
@@ -67,7 +66,7 @@ namespace ClearCanvas.Dicom
 			Platform.CheckForNullReference(filename, "filename");
 
 			if (status.bad())
-				throw new GeneralDicomException(String.Format(SR.ExceptionDICOMFile, filename, status.text()));
+				throw new DicomException(String.Format(SR.ExceptionDICOMFile, filename, status.text()));
 		}
 
         /// <summary>
@@ -126,21 +125,21 @@ namespace ClearCanvas.Dicom
 		public static OFCondition FindAndGetOFString(DcmItem item, DcmTagKey tag, out string value, out bool tagExists)
 		{
 			OFCondition status = TryFindAndGetOFString(item, tag, out value);
-			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+			OffisDicomHelper.CheckReturnValue(status, tag, out tagExists);
 			return status;
 		}
 
 		public static OFCondition FindAndGetOFString(DcmItem item, DcmTagKey tag, uint position, out string value, out bool tagExists)
 		{
 			OFCondition status = TryFindAndGetOFString(item, tag, position, out value);
-			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+			OffisDicomHelper.CheckReturnValue(status, tag, out tagExists);
 			return status;
 		}
 
 		public static OFCondition FindAndGetOFStringArray(DcmItem item, DcmTagKey tag, out string valueArray, out bool tagExists)
 		{
 			OFCondition status = TryFindAndGetOFStringArray(item, tag, out valueArray);
-			DicomHelper.CheckReturnValue(status, tag, out tagExists);
+			OffisDicomHelper.CheckReturnValue(status, tag, out tagExists);
 			return status;
 		}
 

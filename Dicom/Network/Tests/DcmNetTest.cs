@@ -5,10 +5,9 @@ using System.Text;
 using System.Threading;
 using System.IO;
 using NUnit.Framework;
-using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.Network;
 
-namespace ClearCanvas.Dicom.Tests
+namespace ClearCanvas.Dicom.Network.Tests
 {
    [TestFixture]
     public class DcmNetTest

@@ -6,7 +6,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.OffisWrapper;
-using ClearCanvas.Dicom;
 using MySR = ClearCanvas.Dicom.SR;
 using System.IO;
 using ClearCanvas.Common;
@@ -418,7 +417,7 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="saveDirectory">The path to where the incoming images are stored.</param>
         public void RetrieveSeries(ApplicationEntity serverAE, Uid seriesInstanceUid, System.String saveDirectory)
         {
-            string normalizedSaveDirectory = DicomHelper.NormalizeDirectory(saveDirectory);
+            string normalizedSaveDirectory = OffisDicomHelper.NormalizeDirectory(saveDirectory);
 
             DcmDataset cMoveDataset = new DcmDataset();
 
@@ -441,7 +440,7 @@ namespace ClearCanvas.Dicom.Network
         /// descend recursively or not.</param>
         public void Store(ApplicationEntity serverAE, String directory, Boolean recursivelyDescend)
         {
-            String normalizedDirectory = DicomHelper.NormalizeDirectory(directory);
+            String normalizedDirectory = OffisDicomHelper.NormalizeDirectory(directory);
 
             string[] fileList = Directory.GetFiles(directory,
                 "*",
@@ -677,7 +676,7 @@ namespace ClearCanvas.Dicom.Network
 
         protected void PrepareForRetrieve(Uid studyInstanceUid, string saveDirectory, out string normalizedSaveDirectory, out DcmDataset cMoveDataset)
         {
-            normalizedSaveDirectory = DicomHelper.NormalizeDirectory(saveDirectory);
+            normalizedSaveDirectory = OffisDicomHelper.NormalizeDirectory(saveDirectory);
 
             cMoveDataset = new DcmDataset();
 

@@ -222,7 +222,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					break;
 
 				string studyInstanceUID;
-				DicomHelper.TryFindAndGetOFString(info.RequestIdentifiers, Dcm.StudyInstanceUID, out studyInstanceUID);
+				OffisDicomHelper.TryFindAndGetOFString(info.RequestIdentifiers, Dcm.StudyInstanceUID, out studyInstanceUID);
 				if (String.IsNullOrEmpty(studyInstanceUID))
 				{
 					info.Response.DimseStatus = (ushort)OffisDcm.STATUS_MOVE_Failed_UnableToProcess;
@@ -370,31 +370,31 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			// TODO: Edit these when we need to expand the support of search parameters
 			string value;
-			cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.PatientId, out value);
+			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.PatientId, out value);
 			if (cond.good())
 				queryKey.Add(DicomTags.PatientID, value);
 
-			cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.AccessionNumber, out value);
+			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.AccessionNumber, out value);
 			if (cond.good())
 				queryKey.Add(DicomTags.AccessionNumber, value);
 
-			cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.PatientsName, out value);
+			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.PatientsName, out value);
 			if (cond.good())
 				queryKey.Add(DicomTags.PatientsName, value);
 
-			cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyDate, out value);
+			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyDate, out value);
 			if (cond.good())
 				queryKey.Add(DicomTags.StudyDate, value);
 
-			cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyDescription, out value);
+			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyDescription, out value);
 			if (cond.good())
 				queryKey.Add(DicomTags.StudyDescription, value);
 
-			cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.ModalitiesInStudy, out value);
+			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.ModalitiesInStudy, out value);
 			if (cond.good())
 				queryKey.Add(DicomTags.ModalitiesinStudy, value);
 
-			cond = DicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyInstanceUID, out value);
+			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyInstanceUID, out value);
 			if (cond.good())
 				queryKey.Add(DicomTags.StudyInstanceUID, value);
 

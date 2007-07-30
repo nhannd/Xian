@@ -157,7 +157,7 @@ namespace ClearCanvas.Utilities.DicomEditor
                         {
                             _component.Load(file);
                         }
-                        catch (GeneralDicomException e)
+                        catch (DicomException e)
                         {
                             backgroundcontext.Error(e);
                             return;
