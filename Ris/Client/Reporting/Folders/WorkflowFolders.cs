@@ -25,17 +25,17 @@ namespace ClearCanvas.Ris.Client.Reporting.Folders
         }
     }
 
-    public class InProgressFolder : ReportingWorkflowFolder
+    public class DraftFolder : ReportingWorkflowFolder
     {
         [ExtensionPoint]
         public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ReportingWorklistItem>>
         {
         }
 
-        public InProgressFolder(ReportingWorkflowFolderSystem folderSystem)
-            : base(folderSystem, "In Progress", new DropHandlerExtensionPoint())
+        public DraftFolder(ReportingWorkflowFolderSystem folderSystem)
+            : base(folderSystem, "Draft", new DropHandlerExtensionPoint())
         {
-            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+InProgress";
+            this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Reporting.Worklists+Draft";
         }
     }
 

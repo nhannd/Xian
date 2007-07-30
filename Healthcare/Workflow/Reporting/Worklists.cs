@@ -27,16 +27,16 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         }
 
         [ExtensionOf(typeof(WorklistExtensionPoint))]
-        public class InProgress : WorklistBase<IReportingWorklistBroker>
+        public class Draft : WorklistBase<IReportingWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
             {
-                return (IList)GetBroker(context).GetInProgressWorklist(currentUserStaff);
+                return (IList)GetBroker(context).GetDraftWorklist(currentUserStaff);
             }
 
             public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
             {
-                return GetBroker(context).GetInProgressWorklistCount(currentUserStaff);
+                return GetBroker(context).GetDraftWorklistCount(currentUserStaff);
             }
         }
 

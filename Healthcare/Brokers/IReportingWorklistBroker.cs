@@ -8,14 +8,14 @@ namespace ClearCanvas.Healthcare.Brokers
     {
         IList<WorklistItem> GetToBeReportedWorklist();
         IList<WorklistItem> GetToBeReportedWorklist(ReportingToBeReportedWorklist worklist);
-        IList<WorklistItem> GetInProgressWorklist(Staff performingStaff);
+        IList<WorklistItem> GetDraftWorklist(Staff performingStaff);
         IList<WorklistItem> GetInTranscriptionWorklist(Staff performingStaff);
         IList<WorklistItem> GetToBeVerifiedWorklist(Staff performingStaff);
         IList<WorklistItem> GetVerifiedWorklist(Staff performingStaff);
 
         int GetToBeReportedWorklistCount();
         int GetToBeReportedWorklistCount(ReportingToBeReportedWorklist worklist);
-        int GetInProgressWorklistCount(Staff performingStaff);
+        int GetDraftWorklistCount(Staff performingStaff);
         int GetInTranscriptionWorklistCount(Staff performingStaff);
         int GetToBeVerifiedWorklistCount(Staff performingStaff);
         int GetVerifiedWorklistCount(Staff performingStaff);

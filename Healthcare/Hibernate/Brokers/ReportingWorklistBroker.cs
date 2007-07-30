@@ -122,7 +122,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetWorklist(hqlQuery, parameters);
         }
 
-        public IList<WorklistItem> GetInProgressWorklist(Staff performingStaff)
+        public IList<WorklistItem> GetDraftWorklist(Staff performingStaff)
         {
             string hqlQuery = String.Concat(_hqlToBeReportedWorklist, _hqlJoin, _hqlMyDualStateCondition);
 
@@ -194,7 +194,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetWorklistCount(hqlQuery, parameters);
         }
 
-        public int GetInProgressWorklistCount(Staff performingStaff)
+        public int GetDraftWorklistCount(Staff performingStaff)
         {
             string hqlQuery = String.Concat(_hqlToBeReportedCount, _hqlJoin, _hqlMyDualStateCondition);
 

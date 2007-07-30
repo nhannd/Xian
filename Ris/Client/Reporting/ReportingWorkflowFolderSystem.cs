@@ -137,7 +137,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             this.SelectedItemDoubleClicked += SelectedItemDoubleClickedEventHandler;
 
             this.AddFolder(new Folders.ToBeReportedFolder(this));
-            this.AddFolder(new Folders.InProgressFolder(this));
+            this.AddFolder(new Folders.DraftFolder(this));
             this.AddFolder(new Folders.InTranscriptionFolder(this));
             this.AddFolder(new Folders.ToBeVerifiedFolder(this));
             this.AddFolder(new Folders.VerifiedFolder(this));

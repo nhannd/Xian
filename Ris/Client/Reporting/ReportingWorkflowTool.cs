@@ -104,7 +104,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         });
 
                     IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                        delegate(IFolder f) { return f is Folders.InProgressFolder; });
+                        delegate(IFolder f) { return f is Folders.DraftFolder; });
                     myInterpretationFolder.RefreshCount();
 
                     return true;
@@ -124,7 +124,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
         [LabelValueObserver("apply", "Label", "LabelChanged")]
         [ExtensionOf(typeof(ReportingWorkflowItemToolExtensionPoint))]
-        [ExtensionOf(typeof(Folders.InProgressFolder.DropHandlerExtensionPoint))]
+        [ExtensionOf(typeof(Folders.DraftFolder.DropHandlerExtensionPoint))]
         public class EditReportTool : WorkflowItemTool
         {
             public EditReportTool()
@@ -446,7 +446,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                             });
 
                         IFolder myInterpretationFolder = CollectionUtils.SelectFirst<IFolder>(folders,
-                            delegate(IFolder f) { return f is Folders.InProgressFolder; });
+                            delegate(IFolder f) { return f is Folders.DraftFolder; });
                         myInterpretationFolder.RefreshCount();
 
                         doc = new ReportDocument(response.InterpretationStepRef, item.PersonNameDetail, folders, desktopWindow);
