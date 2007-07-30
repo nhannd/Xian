@@ -6,6 +6,8 @@
     </id>
     <version name="Version" column="Version_"/>
 
+    <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.ReportStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+    
     <many-to-one name="Procedure" class="RequestedProcedure" column="ProcedureOID_" not-null="true"/>
 
     <list name="Parts" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
