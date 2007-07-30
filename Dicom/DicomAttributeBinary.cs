@@ -4,7 +4,6 @@ using System.Text;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
-//using ClearCanvas.Dicom.Exceptions;
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom
@@ -118,7 +117,7 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Abstract Methods
-        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax)
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
             int len = _values.Length * Tag.VR.UnitSize;
             byte[] byteVal = new byte[len];
@@ -1234,7 +1233,7 @@ namespace ClearCanvas.Dicom
             return new DicomAttributeUN(this);
         }
 
-        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax)
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
             ByteBuffer bb = new ByteBuffer(syntax.Endian);
 
@@ -1352,3 +1351,4 @@ namespace ClearCanvas.Dicom
     #endregion
 
 }
+

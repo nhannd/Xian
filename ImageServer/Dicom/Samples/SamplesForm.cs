@@ -26,7 +26,8 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
 
             foreach (String file in this.openFileDialogStorageScu.FileNames)
             {
-                _storageScu.AddFileToSend(file);
+                if (file != null)
+                    _storageScu.AddFileToSend(file);
             }
             
         }
@@ -65,6 +66,8 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
         private void buttonStorageScuSelectDirectory_Click(object sender, EventArgs e)
         {
             folderBrowserDialogStorageScu.ShowDialog();
+            if (folderBrowserDialogStorageScu.SelectedPath == null)
+                return;
 
             _storageScu.AddDirectoryToSend(folderBrowserDialogStorageScu.SelectedPath);
         }

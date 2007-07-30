@@ -4,15 +4,83 @@ using System.Text;
 
 namespace ClearCanvas.ImageServer.Dicom
 {
-
-
-    public class SpecificCharacterSetParser
+    /// <summary>
+    /// Default Specific Character Set parser for the DICOM library
+    /// </summary>
+    public class SpecificCharacterSetParser : IDicomCharacterSetParser
     {
-        //public SpecificCharacterSetParser(string specificCharacterSet)
-        //{
-        //    _specificCharacterSet = specificCharacterSet;
-        //}
+        public SpecificCharacterSetParser()
+        {
+        }
 
+        #region IDicomCharacterSetParser Members
+
+        public byte[] Encode(string dataInUnicode, string specificCharacterSet)
+        {
+            byte[] rawBytes;
+
+            if (null == specificCharacterSet || "" == specificCharacterSet)
+            {
+                rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(dataInUnicode);
+                return rawBytes;
+            }
+
+            CharacterSetInfo defaultRepertoire;
+            Dictionary<string, CharacterSetInfo> extensionRepertoires;
+            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
+
+            // TODO: here's where the hack starts
+            // pick the first one and use that for decoding
+            foreach (CharacterSetInfo info in extensionRepertoires.Values)
+            {
+                Encode(dataInUnicode, info, out rawBytes);
+                return rawBytes;
+            }
+
+            // if nothing happened with extension repertoires, use default repertoire
+            if (null != defaultRepertoire)
+            {
+                Encode(dataInUnicode, defaultRepertoire, out rawBytes);
+                return rawBytes;
+            }
+
+            rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(dataInUnicode);
+            return rawBytes;
+        }
+
+        public string Decode(byte[] rawData, string specificCharacterSet)
+        {
+            if (null == specificCharacterSet || "" == specificCharacterSet)
+            {
+                // this takes the raw bytes, and converts it into a Unicode string
+                // represention of the original raw bytes
+                return System.Text.Encoding.GetEncoding("Windows-1252").GetString(rawData);
+            }
+
+            CharacterSetInfo defaultRepertoire;
+            Dictionary<string, CharacterSetInfo> extensionRepertoires;
+            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
+
+            // TODO: here's where the hack starts
+            // pick the first one and use that for decoding
+            foreach (CharacterSetInfo info in extensionRepertoires.Values)
+            {
+                return Decode(rawData, info);
+            }
+
+            // if nothing happened with extension repertoires, use default repertoire
+            if (null != defaultRepertoire)
+            {
+                return Decode(rawData, defaultRepertoire);
+            }
+            // this takes the raw bytes, and converts it into a Unicode string
+            // represention of the original raw bytes
+            return System.Text.Encoding.GetEncoding("Windows-1252").GetString(rawData);
+        }
+
+        #endregion
+
+        #region Static Methods
         static SpecificCharacterSetParser()
         {
             _characterSetInfo = new Dictionary<string, CharacterSetInfo>();
@@ -46,127 +114,7 @@ namespace ClearCanvas.ImageServer.Dicom
             _characterSetInfo.Add("GB18030", new CharacterSetInfo("GB18030", 54936, "", "", "Chinese (Simplified) Extended"));
         }
 
-        public static string Unparse(string specificCharacterSet, string dataInUnicode)
-        {
-            if (null == specificCharacterSet || "" == specificCharacterSet)
-                return dataInUnicode;
 
-            CharacterSetInfo defaultRepertoire;
-            Dictionary<string, CharacterSetInfo> extensionRepertoires;
-            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
-
-            // TODO: here's where the hack starts
-            // pick the first one and use that for decoding
-            foreach (CharacterSetInfo info in extensionRepertoires.Values)
-            {
-                return Encode(dataInUnicode, info);
-            }
-
-            // if nothing happened with extension repertoires, use default repertoire
-            if (null != defaultRepertoire)
-            {
-                return Encode(dataInUnicode, defaultRepertoire);
-            }
-            else
-            {
-                return dataInUnicode;
-            }
-        }
-
-        public static void Unparse(string specificCharacterSet, string dataInUnicode, out byte[] rawBytes)
-        {
-            if (null == specificCharacterSet || "" == specificCharacterSet)
-            {
-                rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(dataInUnicode);
-                return;
-            }
-
-            CharacterSetInfo defaultRepertoire;
-            Dictionary<string, CharacterSetInfo> extensionRepertoires;
-            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
-
-            // TODO: here's where the hack starts
-            // pick the first one and use that for decoding
-            foreach (CharacterSetInfo info in extensionRepertoires.Values)
-            {
-                Encode(dataInUnicode, info, out rawBytes);
-                return;
-            }
-
-            // if nothing happened with extension repertoires, use default repertoire
-            if (null != defaultRepertoire)
-            {
-                Encode(dataInUnicode, defaultRepertoire, out rawBytes);
-                return;
-            }
-            else
-            {
-                rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(dataInUnicode);
-                return;
-            }
-        }
-
-        public static string Parse(string specificCharacterSet, byte[] rawData)
-        {
-            if (null == specificCharacterSet || "" == specificCharacterSet)
-            {
-                // this takes the raw bytes, and converts it into a Unicode string
-                // represention of the original raw bytes
-                return System.Text.Encoding.GetEncoding("Windows-1252").GetString(rawData);
-            }
-
-            CharacterSetInfo defaultRepertoire;
-            Dictionary<string, CharacterSetInfo> extensionRepertoires;
-            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
-
-            // TODO: here's where the hack starts
-            // pick the first one and use that for decoding
-            foreach (CharacterSetInfo info in extensionRepertoires.Values)
-            {
-                return Decode(rawData, info);
-            }
-
-            // if nothing happened with extension repertoires, use default repertoire
-            if (null != defaultRepertoire)
-            {
-                return Decode(rawData, defaultRepertoire);
-            }
-            else
-            {
-                // this takes the raw bytes, and converts it into a Unicode string
-                // represention of the original raw bytes
-                return System.Text.Encoding.GetEncoding("Windows-1252").GetString(rawData);
-
-            }
-        }
-
-        public static string Parse(string specificCharacterSet, string rawData)
-        {
-            if (null == specificCharacterSet || "" == specificCharacterSet)
-                return rawData;
-
-            CharacterSetInfo defaultRepertoire;
-            Dictionary<string, CharacterSetInfo> extensionRepertoires;
-            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
-
-            // TODO: here's where the hack starts
-            // pick the first one and use that for decoding
-            foreach (CharacterSetInfo info in extensionRepertoires.Values)
-            {
-                return Decode(rawData, info);
-            }
-
-            // if nothing happened with extension repertoires, use default repertoire
-            if (null != defaultRepertoire)
-            {
-                return Decode(rawData, defaultRepertoire);
-            }
-            else
-            {
-                return rawData;
-            }
-
-        }
         public static Encoding GetEncoding(string specificCharacterSet)
         {
             CharacterSetInfo defaultRepertoire;
@@ -279,6 +227,8 @@ namespace ClearCanvas.ImageServer.Dicom
             byte[] rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(rawData);
             return Decode(rawBytes, repertoire);
         }
+        #endregion
+
 
         protected class CharacterSetInfo
         {
@@ -356,6 +306,8 @@ namespace ClearCanvas.ImageServer.Dicom
         #region Private fields
         private static Dictionary<string, CharacterSetInfo> _characterSetInfo;
         #endregion
+
+  
     }
     
 

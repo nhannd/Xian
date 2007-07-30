@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageServer.Dicom
                     }
 
                     attr = dicomTag.CreateDicomAttribute();
-
+                    attr.ParentCollection = this;
                     _attributeList[tag] = attr;
                 }
                 else 
@@ -153,14 +153,19 @@ namespace ClearCanvas.ImageServer.Dicom
             {
                 if (value == null)
                 {
-                    _attributeList.Remove(tag);
+                    if (_attributeList.ContainsKey(tag))
+                    {
+                        DicomAttribute attr = _attributeList[tag];
+                        attr.ParentCollection = null;
+                        _attributeList.Remove(tag);
+                    }
                 }
                 else
                 {
                     if (value.Tag.TagValue != tag)
                         throw new DicomException("Tag being set does not match tag in AbstractAttribute");
                     _attributeList[tag] = value;
-                    
+                    value.ParentCollection = this;                    
                 }
             }
         }
@@ -183,6 +188,7 @@ namespace ClearCanvas.ImageServer.Dicom
                     {
                         throw new DicomException("Invalid tag: " + tag.HexString);// TODO:  Hex formating
                     }
+                    attr.ParentCollection = this;
                     _attributeList[tag.TagValue] = attr;
                 }
                 else
@@ -194,7 +200,12 @@ namespace ClearCanvas.ImageServer.Dicom
             {
                 if (value == null)
                 {
-                    _attributeList.Remove(tag.TagValue);
+                    if (_attributeList.ContainsKey(tag.TagValue))
+                    {
+                        DicomAttribute attr = _attributeList[tag.TagValue];
+                        attr.ParentCollection = null;
+                        _attributeList.Remove(tag.TagValue);
+                    }
                 }
                 else
                 {
@@ -202,6 +213,7 @@ namespace ClearCanvas.ImageServer.Dicom
                         throw new DicomException("Tag being set does not match tag in AbstractAttribute");
      
                     _attributeList[tag.TagValue] = value;
+                    value.ParentCollection = this;
                 }
             }
         }

@@ -25,6 +25,7 @@ namespace ClearCanvas.ImageServer.Dicom
         private DicomTag _tag;
         private long _valueCount = 0;
         private uint _length = 0;
+        private DicomAttributeCollection _parentCollection = null;
         #endregion
 
         #region Abstract and Virtual Methods
@@ -42,7 +43,7 @@ namespace ClearCanvas.ImageServer.Dicom
         public abstract void SetStringValue(String stringValue);
         public abstract Type GetValueType(); 
         
-        internal abstract ByteBuffer GetByteBuffer(TransferSyntax syntax);
+        internal abstract ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet);
         internal abstract DicomAttribute Copy(bool copyBinary);
         
         internal virtual uint CalculateWriteLength(TransferSyntax syntax, DicomWriteOptions options)
@@ -137,6 +138,14 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #endregion
 
+        #region Internal Properties
+        internal DicomAttributeCollection ParentCollection
+        {
+            get { return _parentCollection; }
+            set { _parentCollection = value; }
+        }
+        #endregion
+
         #region Constructors
         /// <summary>
         /// Internal constructor when a <see cref="DicomTag"/> is used to identify the tag being added.
@@ -179,7 +188,7 @@ namespace ClearCanvas.ImageServer.Dicom
             get { return _tag; }
         }
 
-        public uint StreamLength
+        public virtual uint StreamLength
         {
             get
             {
@@ -199,6 +208,7 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #endregion
 
+        #region Operators
         /// <summary>
         /// Implicit cast to a String object, for ease of use.
         /// </summary>
@@ -207,6 +217,7 @@ namespace ClearCanvas.ImageServer.Dicom
             // Uses the actual ToString implementation of the derived class.
             return attr.ToString();
         }
+        #endregion
 
         #region Dump
         public virtual void Dump(StringBuilder sb, string prefix, DicomDumpOptions options)

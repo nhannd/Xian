@@ -4,24 +4,83 @@ using System.Text;
 
 namespace ClearCanvas.Dicom
 {
-    public class SpecificCharacterSetParser
+    /// <summary>
+    /// Default Specific Character Set parser for the DICOM library
+    /// </summary>
+    public class SpecificCharacterSetParser : IDicomCharacterSetParser
     {
-        //public SpecificCharacterSetParser(string specificCharacterSet)
-        //{
-        //    _specificCharacterSet = specificCharacterSet;
-        //}
-
-        // This is a hack for the time being to attempt to get specific character set encoding working properly.
-        // It still needs work.
-        public static Encoding GetEncoding(string specificCharacterSet)
+        public SpecificCharacterSetParser()
         {
+        }
+
+        #region IDicomCharacterSetParser Members
+
+        public byte[] Encode(string dataInUnicode, string specificCharacterSet)
+        {
+            byte[] rawBytes;
+
+            if (null == specificCharacterSet || "" == specificCharacterSet)
+            {
+                rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(dataInUnicode);
+                return rawBytes;
+            }
+
             CharacterSetInfo defaultRepertoire;
             Dictionary<string, CharacterSetInfo> extensionRepertoires;
             GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
 
-            return Encoding.GetEncoding(defaultRepertoire.MicrosoftCodePage);
+            // TODO: here's where the hack starts
+            // pick the first one and use that for decoding
+            foreach (CharacterSetInfo info in extensionRepertoires.Values)
+            {
+                Encode(dataInUnicode, info, out rawBytes);
+                return rawBytes;
+            }
+
+            // if nothing happened with extension repertoires, use default repertoire
+            if (null != defaultRepertoire)
+            {
+                Encode(dataInUnicode, defaultRepertoire, out rawBytes);
+                return rawBytes;
+            }
+
+            rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(dataInUnicode);
+            return rawBytes;
         }
 
+        public string Decode(byte[] rawData, string specificCharacterSet)
+        {
+            if (null == specificCharacterSet || "" == specificCharacterSet)
+            {
+                // this takes the raw bytes, and converts it into a Unicode string
+                // represention of the original raw bytes
+                return System.Text.Encoding.GetEncoding("Windows-1252").GetString(rawData);
+            }
+
+            CharacterSetInfo defaultRepertoire;
+            Dictionary<string, CharacterSetInfo> extensionRepertoires;
+            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
+
+            // TODO: here's where the hack starts
+            // pick the first one and use that for decoding
+            foreach (CharacterSetInfo info in extensionRepertoires.Values)
+            {
+                return Decode(rawData, info);
+            }
+
+            // if nothing happened with extension repertoires, use default repertoire
+            if (null != defaultRepertoire)
+            {
+                return Decode(rawData, defaultRepertoire);
+            }
+            // this takes the raw bytes, and converts it into a Unicode string
+            // represention of the original raw bytes
+            return System.Text.Encoding.GetEncoding("Windows-1252").GetString(rawData);
+        }
+
+        #endregion
+
+        #region Static Methods
         static SpecificCharacterSetParser()
         {
             _characterSetInfo = new Dictionary<string, CharacterSetInfo>();
@@ -55,126 +114,14 @@ namespace ClearCanvas.Dicom
             _characterSetInfo.Add("GB18030", new CharacterSetInfo("GB18030", 54936, "", "", "Chinese (Simplified) Extended"));
         }
 
-        public static string Unparse(string specificCharacterSet, string dataInUnicode)
-        {
-            if (null == specificCharacterSet || "" == specificCharacterSet)
-                return dataInUnicode;
 
+        public static Encoding GetEncoding(string specificCharacterSet)
+        {
             CharacterSetInfo defaultRepertoire;
             Dictionary<string, CharacterSetInfo> extensionRepertoires;
             GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
 
-            // TODO: here's where the hack starts
-            // pick the first one and use that for decoding
-            foreach (CharacterSetInfo info in extensionRepertoires.Values)
-            {
-                return Encode(dataInUnicode, info);
-            }
-
-            // if nothing happened with extension repertoires, use default repertoire
-            if (null != defaultRepertoire)
-            {
-                return Encode(dataInUnicode, defaultRepertoire);
-            }
-            else
-            {
-                return dataInUnicode;
-            }
-        }
-
-        public static void Unparse(string specificCharacterSet, string dataInUnicode, out byte[] rawBytes)
-        {
-            if (null == specificCharacterSet || "" == specificCharacterSet)
-            {
-                rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(dataInUnicode);
-                return;
-            }
-
-            CharacterSetInfo defaultRepertoire;
-            Dictionary<string, CharacterSetInfo> extensionRepertoires;
-            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
-
-            // TODO: here's where the hack starts
-            // pick the first one and use that for decoding
-            foreach (CharacterSetInfo info in extensionRepertoires.Values)
-            {
-                Encode(dataInUnicode, info, out rawBytes);
-                return;
-            }
-
-            // if nothing happened with extension repertoires, use default repertoire
-            if (null != defaultRepertoire)
-            {
-                Encode(dataInUnicode, defaultRepertoire, out rawBytes);
-                return;
-            }
-            else
-            {
-                rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(dataInUnicode);
-                return;
-            }
-        }
-
-        public static string Parse(string specificCharacterSet, byte[] rawData)
-        {
-            if (null == specificCharacterSet || "" == specificCharacterSet)
-            {
-                // this takes the raw bytes, and converts it into a Unicode string
-                // represention of the original raw bytes
-                return System.Text.Encoding.GetEncoding("Windows-1252").GetString(rawData);
-            }
-
-            CharacterSetInfo defaultRepertoire;
-            Dictionary<string, CharacterSetInfo> extensionRepertoires;
-            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
-
-            // TODO: here's where the hack starts
-            // pick the first one and use that for decoding
-            foreach (CharacterSetInfo info in extensionRepertoires.Values)
-            {
-                return Decode(rawData, info);
-            }
-
-            // if nothing happened with extension repertoires, use default repertoire
-            if (null != defaultRepertoire)
-            {
-                return Decode(rawData, defaultRepertoire);
-            }
-            else
-            {
-                // this takes the raw bytes, and converts it into a Unicode string
-                // represention of the original raw bytes
-                return System.Text.Encoding.GetEncoding("Windows-1252").GetString(rawData);
-
-            }
-        }
-
-        public static string Parse(string specificCharacterSet, string rawData)
-        {
-            if (null == specificCharacterSet || "" == specificCharacterSet)
-                return rawData;
-
-            CharacterSetInfo defaultRepertoire;
-            Dictionary<string, CharacterSetInfo> extensionRepertoires;
-            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
-
-            // TODO: here's where the hack starts
-            // pick the first one and use that for decoding
-            foreach (CharacterSetInfo info in extensionRepertoires.Values)
-            {
-                return Decode(rawData, info);
-            }
-
-            // if nothing happened with extension repertoires, use default repertoire
-            if (null != defaultRepertoire)
-            {
-                return Decode(rawData, defaultRepertoire);
-            }
-            else
-            {
-                return rawData;
-            }
-            
+            return Encoding.GetEncoding(defaultRepertoire.MicrosoftCodePage);
         }
 
         private static void GetRepertoires(string specificCharacterSet, out CharacterSetInfo defaultRepertoire, out Dictionary<string, CharacterSetInfo> extensionRepertoires)
@@ -206,20 +153,20 @@ namespace ClearCanvas.Dicom
                     defaultRepertoire = SpecificCharacterSetParser.CharacterSetDatabase["ISO 2022 IR 6"];
             }
 
-			// Here we are accounting for cases where the same character sets are repeated, so
-			// we need to select out the unique ones.  It should never really happen, but it 
-			// does happen with a particular dataset when querying JDicom.
-			List<string> uniqueExtensionRepertoireDefinedTerms = new List<string>();
-			for (int i = 1; i < specificCharacterSetValues.Length; ++i)
-			{ 
-				string value = specificCharacterSetValues[i];
-				if (value != defaultRepertoire.DefinedTerm && !uniqueExtensionRepertoireDefinedTerms.Contains(value))
-					uniqueExtensionRepertoireDefinedTerms.Add(value);
-			}
+            // Here we are accounting for cases where the same character sets are repeated, so
+            // we need to select out the unique ones.  It should never really happen, but it 
+            // does happen with a particular dataset when querying JDicom.
+            List<string> uniqueExtensionRepertoireDefinedTerms = new List<string>();
+            for (int i = 1; i < specificCharacterSetValues.Length; ++i)
+            {
+                string value = specificCharacterSetValues[i];
+                if (value != defaultRepertoire.DefinedTerm && !uniqueExtensionRepertoireDefinedTerms.Contains(value))
+                    uniqueExtensionRepertoireDefinedTerms.Add(value);
+            }
 
             // parse out the extension repertoires
             extensionRepertoires = new Dictionary<string, CharacterSetInfo>();
-            foreach(string value in uniqueExtensionRepertoireDefinedTerms)
+            foreach (string value in uniqueExtensionRepertoireDefinedTerms)
             {
                 if (SpecificCharacterSetParser.CharacterSetDatabase.ContainsKey(value) && !extensionRepertoires.ContainsKey(value))
                 {
@@ -240,7 +187,7 @@ namespace ClearCanvas.Dicom
                     // we put in the default repertoire. Technically, it may
                     // not be ISO 2022 IR 6, but ISO_IR 6, but the information
                     // we want to use is the same
-					extensionRepertoires.Add(value, SpecificCharacterSetParser.CharacterSetDatabase["ISO 2022 IR 6"]);
+                    extensionRepertoires.Add(value, SpecificCharacterSetParser.CharacterSetDatabase["ISO 2022 IR 6"]);
                 }
             }
         }
@@ -269,7 +216,7 @@ namespace ClearCanvas.Dicom
             if ("" != repertoire.G1Sequence)
                 return rawDataDecoded.Replace(repertoire.G1Sequence, "");
             else
-                return rawDataDecoded;            
+                return rawDataDecoded;
         }
 
         private static string Decode(string rawData, CharacterSetInfo repertoire)
@@ -280,6 +227,8 @@ namespace ClearCanvas.Dicom
             byte[] rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(rawData);
             return Decode(rawBytes, repertoire);
         }
+        #endregion
+
 
         protected class CharacterSetInfo
         {
@@ -305,26 +254,26 @@ namespace ClearCanvas.Dicom
                 get { return _g1Sequence; }
                 set { _g1Sequence = value; }
             }
-	
+
             public string G0Sequence
             {
                 get { return _g0Sequence; }
                 set { _g0Sequence = value; }
             }
-	
+
             public string Description
             {
                 get { return _description; }
                 set { _description = value; }
             }
-	
+
 
             public int MicrosoftCodePage
             {
                 get { return _microsoftCodePage; }
                 set { _microsoftCodePage = value; }
             }
-	
+
             public string DefinedTerm
             {
                 get { return _definedTerm; }
@@ -357,5 +306,8 @@ namespace ClearCanvas.Dicom
         #region Private fields
         private static Dictionary<string, CharacterSetInfo> _characterSetInfo;
         #endregion
+
+
     }
+    
 }

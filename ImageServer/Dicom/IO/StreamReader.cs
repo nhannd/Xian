@@ -539,11 +539,11 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                                         if (_sqrs.Count > 0)
                                         {
                                             SequenceRecord rec = _sqrs.Peek();
-                                            bb.Encoding = SpecificCharacterSetParser.GetEncoding(rec._current.SpecificCharacterSet);
+                                            bb.SpecificCharacterSet = rec._current.SpecificCharacterSet;
                                         }
                                         else
                                         {
-                                            bb.Encoding = SpecificCharacterSetParser.GetEncoding(_dataset.SpecificCharacterSet);
+                                            bb.SpecificCharacterSet = _dataset.SpecificCharacterSet;
                                         }
                                     }
 

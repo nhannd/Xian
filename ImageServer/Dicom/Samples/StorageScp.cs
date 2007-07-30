@@ -252,7 +252,8 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
             
             dicomFile.Save(DicomWriteOptions.None);
 
-            DicomLogger.LogInfo("Received SOP Instance: {0}", sopInstanceUid);
+            String patientName = dicomFile.DataSet[DicomTags.PatientsName].GetString(0, "");
+            DicomLogger.LogInfo("Received SOP Instance: {0} for patient {1}", sopInstanceUid, patientName);
 
             server.SendCStoreResponse(presentationID, message.MessageId,
                 sopInstanceUid, 

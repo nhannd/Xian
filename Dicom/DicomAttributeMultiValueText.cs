@@ -19,16 +19,16 @@ namespace ClearCanvas.Dicom
 
         #region Constructors
 
-        internal DicomAttributeMultiValueText(uint tag) 
+        internal DicomAttributeMultiValueText(uint tag)
             : base(tag)
         {
-            
+
         }
 
         internal DicomAttributeMultiValueText(DicomTag tag)
             : base(tag)
         {
-            
+
         }
 
         internal DicomAttributeMultiValueText(DicomTag tag, ByteBuffer item)
@@ -79,6 +79,18 @@ namespace ClearCanvas.Dicom
 
         #region Abstract Method Implementation
 
+        public override uint StreamLength
+        {
+            get
+            {
+                if (ParentCollection.SpecificCharacterSet != null)
+                {
+                    return (uint)GetByteBuffer(TransferSyntax.ExplicitVRBigEndian, ParentCollection.SpecificCharacterSet).Length;
+                }
+                return base.StreamLength;
+            }
+        }
+
         public override string ToString()
         {
             if (_values == null)
@@ -91,12 +103,12 @@ namespace ClearCanvas.Dicom
             {
                 if (value == null)
                     value = new StringBuilder(val);
-                else 
+                else
                     value.AppendFormat("\\{0}", val);
             }
 
             if (value == null) return "";
-             
+
             return value.ToString();
         }
 
@@ -128,7 +140,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if ((Count == 1) && (_values!=null) && (_values.Length == 0))
+                if ((Count == 1) && (_values != null) && (_values.Length == 0))
                     return true;
                 return false;
             }
@@ -199,9 +211,12 @@ namespace ClearCanvas.Dicom
         public abstract override DicomAttribute Copy();
         internal abstract override DicomAttribute Copy(bool copyBinary);
 
-        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax)
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
             ByteBuffer bb = new ByteBuffer(syntax.Endian);
+
+            if (Tag.VR.SpecificCharacterSet)
+                bb.SpecificCharacterSet = specificCharacterSet;
 
             bb.SetString(ToString(), (byte)' ');
 
@@ -528,7 +543,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            return DateTime.TryParseExact(_values[i],"yyyyMMddHHmmss.FFFFFF&ZZZZ", CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault, out value);
+            return DateTime.TryParseExact(_values[i], "yyyyMMddHHmmss.FFFFFF&ZZZZ", CultureInfo.CurrentCulture, DateTimeStyles.NoCurrentDateDefault, out value);
         }
     }
     #endregion
@@ -615,7 +630,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            return ushort.TryParse(_values[i],NumberStyle, CultureInfo.CurrentCulture, out value);
+            return ushort.TryParse(_values[i], NumberStyle, CultureInfo.CurrentCulture, out value);
         }
         public override bool TryGetInt16(int i, out short value)
         {
@@ -651,14 +666,14 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeLO
-        public class DicomAttributeLO : DicomAttributeMultiValueText
+    public class DicomAttributeLO : DicomAttributeMultiValueText
     {
         #region Constructors
 
-        public DicomAttributeLO(uint tag) 
+        public DicomAttributeLO(uint tag)
             : base(tag)
         {
-            
+
         }
 
         public DicomAttributeLO(DicomTag tag)
@@ -681,7 +696,7 @@ namespace ClearCanvas.Dicom
         }
 
 
-        #endregion 
+        #endregion
 
         public override DicomAttribute Copy()
         {
@@ -909,7 +924,7 @@ namespace ClearCanvas.Dicom
         }
 
 
-        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax)
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
             ByteBuffer bb = new ByteBuffer(syntax.Endian);
 

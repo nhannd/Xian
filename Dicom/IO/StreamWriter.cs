@@ -193,7 +193,7 @@ namespace ClearCanvas.Dicom.IO
                         _writer.Write((uint)de.StreamLength);
                     }
 
-                    de.GetByteBuffer(_syntax).CopyTo(_writer.BaseStream);
+                    de.GetByteBuffer(_syntax, dataset.SpecificCharacterSet).CopyTo(_writer.BaseStream);
                 }
             }
 

@@ -14,23 +14,23 @@ namespace ClearCanvas.Dicom
 
         #region Constructors
 
-        internal DicomAttributeSingleValueText(uint tag) 
+        internal DicomAttributeSingleValueText(uint tag)
             : base(tag)
         {
-            
+
         }
 
         internal DicomAttributeSingleValueText(DicomTag tag)
             : base(tag)
         {
-            
+
         }
 
         internal DicomAttributeSingleValueText(DicomTag tag, ByteBuffer item)
             : base(tag)
         {
-            _value = item.GetString();            
-            
+            _value = item.GetString();
+
             // Saw some Osirix images that had padding on SH attributes with a null character, just
             // pull them out here.
             _value = _value.Trim(new char[] { tag.VR.PadChar, '\0' });
@@ -52,6 +52,18 @@ namespace ClearCanvas.Dicom
 
 
         #region Abstract Method Implementation
+
+        public override uint StreamLength
+        {
+            get
+            {
+                if (ParentCollection.SpecificCharacterSet != null)
+                {
+                    return (uint)GetByteBuffer(TransferSyntax.ExplicitVRBigEndian, ParentCollection.SpecificCharacterSet).Length;
+                }
+                return base.StreamLength;
+            }
+        }
 
         public override bool TryGetString(int i, out String value)
         {
@@ -147,9 +159,12 @@ namespace ClearCanvas.Dicom
         public abstract override DicomAttribute Copy();
         internal abstract override DicomAttribute Copy(bool copyBinary);
 
-        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax)
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
             ByteBuffer bb = new ByteBuffer(syntax.Endian);
+
+            if (Tag.VR.SpecificCharacterSet)
+                bb.SpecificCharacterSet = specificCharacterSet;
 
             bb.SetString(_value, (byte)' ');
             return bb;

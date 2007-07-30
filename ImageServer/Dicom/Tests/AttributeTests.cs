@@ -196,7 +196,36 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
         }
         #endregion
 
+        #region SpecificCharacterSet Test
+        [Test]
+        public void SpecificCharacterSetTest()
+        {
+            bool testResult = false;
+            try
+            {
+                DicomAttributeDS attrib = new DicomAttributeDS(DicomTagDictionary.GetDicomTag(DicomTags.AccessionNumber));
+            }
+            catch (DicomException)
+            {
+                testResult = true;
+            }
+            Assert.AreEqual(testResult, true);
 
+            testResult = true;
+            try
+            {
+                DicomAttributeDS attrib = new DicomAttributeDS(DicomTagDictionary.GetDicomTag(DicomTags.WindowCenter));
+                testResult = true;
+            }
+            catch (DicomException)
+            {
+                testResult = false;
+            }
+            Assert.AreEqual(testResult, true);
+
+
+        }
+        #endregion
     }
 }
 

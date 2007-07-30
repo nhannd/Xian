@@ -5,6 +5,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 
+
 namespace ClearCanvas.Dicom
 {
     /// <summary>
@@ -62,8 +63,8 @@ namespace ClearCanvas.Dicom
         public String SpecificCharacterSet
         {
             get { return _specificCharacterSet; }
-            set 
-            { 
+            set
+            {
                 _specificCharacterSet = value;
 
                 // This line forces the value to be placed in sequences when we don't want it to be, because of how the parser is set
@@ -125,7 +126,7 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public DicomAttribute this[uint tag]
         {
-            get 
+            get
             {
                 DicomAttribute attr = null;
 
@@ -139,27 +140,32 @@ namespace ClearCanvas.Dicom
                     }
 
                     attr = dicomTag.CreateDicomAttribute();
-
+                    attr.ParentCollection = this;
                     _attributeList[tag] = attr;
                 }
-                else 
+                else
                     attr = _attributeList[tag];
 
 
-                return attr; 
+                return attr;
             }
-            set 
+            set
             {
                 if (value == null)
                 {
-                    _attributeList.Remove(tag);
+                    if (_attributeList.ContainsKey(tag))
+                    {
+                        DicomAttribute attr = _attributeList[tag];
+                        attr.ParentCollection = null;
+                        _attributeList.Remove(tag);
+                    }
                 }
                 else
                 {
                     if (value.Tag.TagValue != tag)
                         throw new DicomException("Tag being set does not match tag in AbstractAttribute");
                     _attributeList[tag] = value;
-                    
+                    value.ParentCollection = this;
                 }
             }
         }
@@ -182,6 +188,7 @@ namespace ClearCanvas.Dicom
                     {
                         throw new DicomException("Invalid tag: " + tag.HexString);// TODO:  Hex formating
                     }
+                    attr.ParentCollection = this;
                     _attributeList[tag.TagValue] = attr;
                 }
                 else
@@ -193,14 +200,20 @@ namespace ClearCanvas.Dicom
             {
                 if (value == null)
                 {
-                    _attributeList.Remove(tag.TagValue);
+                    if (_attributeList.ContainsKey(tag.TagValue))
+                    {
+                        DicomAttribute attr = _attributeList[tag.TagValue];
+                        attr.ParentCollection = null;
+                        _attributeList.Remove(tag.TagValue);
+                    }
                 }
                 else
                 {
                     if (value.Tag.TagValue != tag.TagValue)
                         throw new DicomException("Tag being set does not match tag in AbstractAttribute");
-     
+
                     _attributeList[tag.TagValue] = value;
+                    value.ParentCollection = this;
                 }
             }
         }
@@ -281,7 +294,7 @@ namespace ClearCanvas.Dicom
                 if (!thisAttrib.Equals(compareAttrib))
                     return false;
             }
-           
+
             return true;
         }
 
@@ -339,7 +352,7 @@ namespace ClearCanvas.Dicom
 
         public IEnumerator<DicomAttribute> GetEnumerator()
         {
-            return _attributeList.Values.GetEnumerator();   
+            return _attributeList.Values.GetEnumerator();
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -392,7 +405,7 @@ namespace ClearCanvas.Dicom
             }
             catch (Exception e)
             {
-                DicomLogger.LogErrorException(e,"Error in default value type! - {0}", vtype.ToString());
+                DicomLogger.LogErrorException(e, "Error in default value type! - {0}", vtype.ToString());
                 return null;
             }
         }
@@ -414,7 +427,7 @@ namespace ClearCanvas.Dicom
                         float[] array = new float[elem.Count];
                         for (int i = 0; i < array.Length; i++)
                         {
-                             elem.TryGetFloat32(i, out array[i]);
+                            elem.TryGetFloat32(i, out array[i]);
                         }
                         return array;
                     }
@@ -426,7 +439,7 @@ namespace ClearCanvas.Dicom
 
                         return array;
                     }
-                    
+
                     if (vtype.GetElementType() != elem.GetValueType())
                         throw new DicomException("Invalid binding type for Element VR!");
                     //if (elem.GetValueType() == typeof(DateTime))
@@ -556,7 +569,7 @@ namespace ClearCanvas.Dicom
                     }
                     catch (Exception e)
                     {
-                        DicomLogger.LogErrorException(e,"Unable to bind field");
+                        DicomLogger.LogErrorException(e, "Unable to bind field");
                     }
                 }
             }
@@ -584,7 +597,7 @@ namespace ClearCanvas.Dicom
                     }
                     catch (Exception e)
                     {
-                        DicomLogger.LogErrorException(e,"Unable to bind field");
+                        DicomLogger.LogErrorException(e, "Unable to bind field");
                     }
                 }
             }
@@ -607,10 +620,10 @@ namespace ClearCanvas.Dicom
                     {
                         if (vtype.GetElementType() != elem.GetValueType())
                             throw new DicomException("Invalid binding type for Element VR!");
-//                        if (elem.GetValueType() == typeof(DateTime))
-  //                          (elem as AbstractAttribute).SetDateTimes((DateTime[])value);
-    //                    else
-                            elem.Values = (object[])value;
+                        //                        if (elem.GetValueType() == typeof(DateTime))
+                        //                          (elem as AbstractAttribute).SetDateTimes((DateTime[])value);
+                        //                    else
+                        elem.Values = (object[])value;
                     }
                     else
                     {
@@ -624,11 +637,11 @@ namespace ClearCanvas.Dicom
                             TransferSyntax ts = (TransferSyntax)value;
                             elem.SetStringValue(ts.DicomUid.UID);
                         }
-                      //  else if (vtype == typeof(DcmDateRange) && elem.GetType().IsSubclassOf(typeof(AbstractAttribute)))
-                      //  {
-                      //      DcmDateRange dr = (DcmDateRange)value;
-                      //      (elem as AbstractAttribute).SetDateTimeRange(dr);
-                      //  }
+                        //  else if (vtype == typeof(DcmDateRange) && elem.GetType().IsSubclassOf(typeof(AbstractAttribute)))
+                        //  {
+                        //      DcmDateRange dr = (DcmDateRange)value;
+                        //      (elem as AbstractAttribute).SetDateTimeRange(dr);
+                        //  }
                         else if (vtype != elem.GetValueType())
                         {
                             if (vtype == typeof(string))

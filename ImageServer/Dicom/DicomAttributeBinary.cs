@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageServer.Dicom
         #endregion
 
         #region Abstract Methods
-        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax)
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {    
             int len = _values.Length * Tag.VR.UnitSize;
             byte[] byteVal = new byte[len];
@@ -1234,7 +1234,7 @@ namespace ClearCanvas.ImageServer.Dicom
             return new DicomAttributeUN(this);
         }
 
-        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax)
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
             ByteBuffer bb = new ByteBuffer(syntax.Endian);
 

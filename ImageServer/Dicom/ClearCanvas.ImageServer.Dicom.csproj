@@ -42,6 +42,7 @@
     <Compile Include="DicomFieldAttribute.cs" />
     <Compile Include="DicomLogger.cs" />
     <Compile Include="Exceptions\DicomDataException.cs" />
+    <Compile Include="IDicomCharacterSetParser.cs" />
     <Compile Include="Network\AssociationParameters.cs" />
     <Compile Include="DicomAttributeBinary.cs" />
     <Compile Include="DicomAttributeMultiValueText.cs" />

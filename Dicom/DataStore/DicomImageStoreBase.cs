@@ -138,9 +138,7 @@ namespace ClearCanvas.Dicom.DataStore
 			study.SpecificCharacterSet = attribute.ToString();
 
 			attribute = sopInstanceDataset[DicomTags.PatientsName];
-			// !!TODO: this needs to be fixed once the managed toolkit is changed to support character sets.
-			study.PatientsNameRaw = Encoding.ASCII.GetBytes(attribute.ToString());
-			study.PatientsName = new PersonName(SpecificCharacterSetParser.Parse(study.SpecificCharacterSet, study.PatientsNameRaw));
+			study.PatientsName = new PersonName(attribute.ToString());
 
             study.StoreTime = Platform.Time;
 

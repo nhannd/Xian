@@ -180,10 +180,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DicomAttributeMultiValueText.cs" />
+    <Compile Include="DicomImplementation.cs" />
     <Compile Include="DicomLogger.cs" />
     <Compile Include="DicomTagPath.cs" />
     <Compile Include="DicomValidationException.cs" />
     <Compile Include="DicomValidator.cs" />
+    <Compile Include="IDicomCharacterSetParser.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />

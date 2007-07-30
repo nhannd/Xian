@@ -51,17 +51,19 @@ namespace ClearCanvas.ImageServer.Dicom
             {
                 _values = new DicomSequenceItem[1];
                 _values[0] = item;
+                if (item.SpecificCharacterSet == null)
+                    item.SpecificCharacterSet = this.ParentCollection.SpecificCharacterSet;
                 return;
             }
 
             DicomSequenceItem[] oldValues = _values;
 
             _values = new DicomSequenceItem[oldValues.Length + 1];
-            for (int i = 0; i < oldValues.Length; i++)
-            {
-                _values[i] = oldValues[i];
-            }
+            oldValues.CopyTo(_values, 0);
             _values[oldValues.Length] = item;
+
+            if (item.SpecificCharacterSet == null)
+                item.SpecificCharacterSet = this.ParentCollection.SpecificCharacterSet;
 
             base.Count = _values.Length;
             base.StreamLength = (uint)base.Count;
@@ -163,7 +165,7 @@ namespace ClearCanvas.ImageServer.Dicom
             throw new DicomException("Function all incompatible with SQ VR type");
         }
 
-        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax)
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
             throw new DicomException("Unexpected call to GetByteBuffer() for a SQ attribute");
         }

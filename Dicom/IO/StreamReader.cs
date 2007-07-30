@@ -31,7 +31,7 @@ namespace ClearCanvas.Dicom.IO
 
             public long _curpos;
             public long _curlen;
-        
+
         }
         #endregion
 
@@ -206,7 +206,7 @@ namespace ClearCanvas.Dicom.IO
                                         _tag = new DicomTag(_tag.TagValue, "Private Tag", _vr, false, 1, uint.MaxValue, false);
                                     else if (!_tag.VR.Equals(_vr))
                                     {
-                                        DicomTag tag = new DicomTag(_tag.TagValue,_tag.Name,_vr,_tag.MultiVR,_tag.VMLow,_tag.VMHigh,_tag.Retired);
+                                        DicomTag tag = new DicomTag(_tag.TagValue, _tag.Name, _vr, _tag.MultiVR, _tag.VMLow, _tag.VMHigh, _tag.Retired);
                                         _tag = tag;
                                         ; // TODO, log something
                                     }
@@ -445,7 +445,7 @@ namespace ClearCanvas.Dicom.IO
                             }
                             else
                             {
-                                
+
                             }
 
                         }
@@ -483,7 +483,7 @@ namespace ClearCanvas.Dicom.IO
                                 rec._current = null;
                                 rec._tag = _tag.TagValue;
                                 rec._len = UndefinedLength;
-                                
+
                                 _sqrs.Push(rec);
                             }
                             else
@@ -539,11 +539,11 @@ namespace ClearCanvas.Dicom.IO
                                         if (_sqrs.Count > 0)
                                         {
                                             SequenceRecord rec = _sqrs.Peek();
-                                            bb.Encoding = SpecificCharacterSetParser.GetEncoding(rec._current.SpecificCharacterSet);
+                                            bb.SpecificCharacterSet = rec._current.SpecificCharacterSet;
                                         }
                                         else
                                         {
-                                            bb.Encoding = SpecificCharacterSetParser.GetEncoding(_dataset.SpecificCharacterSet);
+                                            bb.SpecificCharacterSet = _dataset.SpecificCharacterSet;
                                         }
                                     }
 

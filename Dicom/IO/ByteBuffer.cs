@@ -17,6 +17,7 @@ namespace ClearCanvas.Dicom.IO
         private BinaryWriter _bw;
         private Endian _endian;
         private Encoding _encoding;
+        private String _specificCharacterSet;
         #endregion
 
         #region Public Constructors
@@ -29,6 +30,7 @@ namespace ClearCanvas.Dicom.IO
         {
             _endian = endian;
             _encoding = Encoding.ASCII;
+            _specificCharacterSet = null;
         }
 
         public ByteBuffer(byte[] data)
@@ -41,6 +43,7 @@ namespace ClearCanvas.Dicom.IO
             _data = data;
             _endian = endian;
             _encoding = Encoding.ASCII;
+            _specificCharacterSet = null;
         }
         #endregion
 
@@ -107,6 +110,12 @@ namespace ClearCanvas.Dicom.IO
         {
             get { return _encoding; }
             set { _encoding = value; }
+        }
+
+        public String SpecificCharacterSet
+        {
+            get { return _specificCharacterSet; }
+            set { _specificCharacterSet = value; }
         }
 
         public int Length
@@ -275,26 +284,47 @@ namespace ClearCanvas.Dicom.IO
 
         public string GetString()
         {
+            if (_specificCharacterSet != null)
+                return DicomImplementation.CharacterParser.Decode(ToBytes(), _specificCharacterSet);
+
             return _encoding.GetString(ToBytes());
         }
 
         public void SetString(string val)
         {
-            _data = _encoding.GetBytes(val);
+            if (_specificCharacterSet != null)
+                _data = DicomImplementation.CharacterParser.Encode(val, _specificCharacterSet);
+            else
+                _data = _encoding.GetBytes(val);
             _ms = null;
         }
 
         public void SetString(string val, byte pad)
         {
-            int count = _encoding.GetByteCount(val);
-            if ((count & 1) == 1)
-                count++;
+            if (_specificCharacterSet != null)
+            {
+                _data = DicomImplementation.CharacterParser.Encode(val, _specificCharacterSet);
+                if ((_data.Length & 1) == 1)
+                {
+                    byte[] rawBytes = new byte[_data.Length + 1];
+                    rawBytes[_data.Length] = pad;
 
-            byte[] bytes = new byte[count];
-            if (_encoding.GetBytes(val, 0, val.Length, bytes, 0) < count)
-                bytes[count - 1] = pad;
+                    _data.CopyTo(rawBytes, 0);
+                    _data = rawBytes;
+                }
+            }
+            else
+            {
+                int count = _encoding.GetByteCount(val);
+                if ((count & 1) == 1)
+                    count++;
 
-            _data = bytes;
+                byte[] bytes = new byte[count];
+                if (_encoding.GetBytes(val, 0, val.Length, bytes, 0) < count)
+                    bytes[count - 1] = pad;
+
+                _data = bytes;
+            }
             _ms = null;
         }
 

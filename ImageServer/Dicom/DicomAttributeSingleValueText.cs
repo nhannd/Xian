@@ -54,6 +54,18 @@ namespace ClearCanvas.ImageServer.Dicom
 
         #region Abstract Method Implementation
 
+        public override uint StreamLength
+        {
+            get
+            {
+                if (ParentCollection.SpecificCharacterSet != null)
+                {
+                    return (uint)GetByteBuffer(TransferSyntax.ExplicitVRBigEndian, ParentCollection.SpecificCharacterSet).Length;
+                }
+                return base.StreamLength;
+            }
+        }
+
         public override bool TryGetString(int i, out String value)
         {
             if (i == 0)
@@ -148,9 +160,12 @@ namespace ClearCanvas.ImageServer.Dicom
         public abstract override DicomAttribute Copy();
         internal abstract override DicomAttribute Copy(bool copyBinary);
 
-        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax)
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {
             ByteBuffer bb = new ByteBuffer(syntax.Endian);
+
+            if (Tag.VR.SpecificCharacterSet)
+                bb.SpecificCharacterSet = specificCharacterSet;
 
             bb.SetString(_value, (byte)' ');
             return bb;
