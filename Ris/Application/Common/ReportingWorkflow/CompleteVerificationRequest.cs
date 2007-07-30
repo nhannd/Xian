@@ -14,7 +14,16 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             this.VerificationStepRef = verificationStepRef;
         }
 
+        public CompleteVerificationRequest(EntityRef verificationStepRef, string reportContent)
+        {
+            this.VerificationStepRef = verificationStepRef;
+            this.ReportContent = reportContent;
+        }
+
         [DataMember]
         public EntityRef VerificationStepRef;
+
+        [DataMember]
+        public string ReportContent;
     }
 }

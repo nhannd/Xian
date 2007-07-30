@@ -231,8 +231,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     Platform.GetService<IReportingWorkflowService>(
                         delegate(IReportingWorkflowService service)
                         {
-                            SaveReportResponse saveResponse = service.SaveReport(new SaveReportRequest(_reportingStepRef, this.ReportContent));
-                            service.CompleteInterpretationAndVerify(new CompleteInterpretationAndVerifyRequest(saveResponse.ReportingStepRef));
+                            service.CompleteInterpretationAndVerify(new CompleteInterpretationAndVerifyRequest(_reportingStepRef, this.ReportContent));
                         });
                 }
                 else if (_canCompleteVerification)
@@ -240,8 +239,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     Platform.GetService<IReportingWorkflowService>(
                         delegate(IReportingWorkflowService service)
                         {
-                            SaveReportResponse saveResponse = service.SaveReport(new SaveReportRequest(_reportingStepRef, this.ReportContent));
-                            service.CompleteVerification(new CompleteVerificationRequest(saveResponse.ReportingStepRef));
+                            service.CompleteVerification(new CompleteVerificationRequest(_reportingStepRef, this.ReportContent));
                         });
                 }
 
@@ -265,8 +263,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {
-                        SaveReportResponse saveResponse = service.SaveReport(new SaveReportRequest(_reportingStepRef, this.ReportContent));
-                        service.CompleteInterpretationForVerification(new CompleteInterpretationForVerificationRequest(saveResponse.ReportingStepRef));
+                        service.CompleteInterpretationForVerification(new CompleteInterpretationForVerificationRequest(_reportingStepRef, this.ReportContent));
                     });
 
                 EventsHelper.Fire(_sendToVerifyEvent, this, EventArgs.Empty);
@@ -289,8 +286,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {
-                        SaveReportResponse saveResponse = service.SaveReport(new SaveReportRequest(_reportingStepRef, this.ReportContent));
-                        service.CompleteInterpretationForTranscription(new CompleteInterpretationForTranscriptionRequest(saveResponse.ReportingStepRef));
+                        service.CompleteInterpretationForTranscription(new CompleteInterpretationForTranscriptionRequest(_reportingStepRef, this.ReportContent));
                     });
 
                 EventsHelper.Fire(_sendToTranscriptionEvent, this, EventArgs.Empty);

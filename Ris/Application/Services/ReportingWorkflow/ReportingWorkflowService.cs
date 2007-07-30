@@ -110,6 +110,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
 
+            if (String.IsNullOrEmpty(request.ReportContent) == false)
+            {
+                SaveReportHelper(interpretation, request.ReportContent);
+            }
+
             Operations.CompleteInterpretationForTranscription op = new Operations.CompleteInterpretationForTranscription();
             TranscriptionStep transcription = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
@@ -126,6 +131,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
 
+            if (String.IsNullOrEmpty(request.ReportContent) == false)
+            {
+                SaveReportHelper(interpretation, request.ReportContent);
+            }
+
             Operations.CompleteInterpretationForVerification op = new Operations.CompleteInterpretationForVerification();
             VerificationStep verification = op.Execute(interpretation, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
 
@@ -141,6 +151,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public CompleteInterpretationAndVerifyResponse CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request)
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
+
+            if (String.IsNullOrEmpty(request.ReportContent) == false)
+            {
+                SaveReportHelper(interpretation, request.ReportContent);
+            }
 
             if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.Content))
                 throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
@@ -242,21 +257,26 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         {
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
 
+            SaveReportHelper(step, request.ReportContent);
+
+            PersistenceContext.SynchState();
+            return new SaveReportResponse(step.GetRef());
+        }
+
+        private void SaveReportHelper(ReportingProcedureStep step, string reportContent)
+        {
             if (step.ReportPart != null)
             {
-                step.ReportPart.Content = request.ReportContent;
+                step.ReportPart.Content = reportContent;
             }
             else
             {
                 Report report = new Report();
                 report.Procedure = step.RequestedProcedure;
-                step.ReportPart = report.AddPart(request.ReportContent);
+                step.ReportPart = report.AddPart(reportContent);
 
                 PersistenceContext.Lock(report, DirtyState.New);
             }
-
-            PersistenceContext.SynchState();
-            return new SaveReportResponse(step.GetRef());
         }
 
         [ReadOperation]

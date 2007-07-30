@@ -14,7 +14,16 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             this.InterpretationStepRef = interpretationStepRef;
         }
 
+        public CompleteInterpretationForTranscriptionRequest(EntityRef interpretationStepRef, string reportContent)
+        {
+            this.InterpretationStepRef = interpretationStepRef;
+            this.ReportContent = reportContent;
+        }
+
         [DataMember]
         public EntityRef InterpretationStepRef;
+
+        [DataMember]
+        public string ReportContent;
     }
 }
