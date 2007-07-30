@@ -35,7 +35,16 @@ namespace ClearCanvas.Desktop
         /// Not all hosts support this method.
         /// </remarks>
         /// <param name="title"></param>
+        [Obsolete("Use the IApplicationComponentHost.Title property instead.")]
         void SetTitle(string title);
+
+        /// <summary>
+        /// Gets or sets the title that the host displays in the UI above this component.s
+        /// </summary>
+        /// <remarks>
+        /// Not all hosts support this property.
+        /// </remarks>
+        string Title { get; set; }
 
         /// <summary>
         /// Gets the <see cref="CommandHistory"/> object associated with this host.

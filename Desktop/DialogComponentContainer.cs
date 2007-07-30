@@ -50,6 +50,12 @@ namespace ClearCanvas.Desktop
                 get { return _owner.Host.DesktopWindow; }
             }
 
+            public override string Title
+            {
+                get { return _owner.Host.Title; }
+                set { _owner.Host.Title = value; }
+            }
+
             #endregion
         }
 

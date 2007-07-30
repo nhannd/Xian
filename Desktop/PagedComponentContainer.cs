@@ -54,6 +54,13 @@ namespace ClearCanvas.Desktop
                 get { return _container.Host.DesktopWindow; }
             }
 
+            public override string Title
+            {
+                get { return _container.Host.Title; }
+                // individual components cannot set the title for the container
+                set { throw new NotSupportedException(); }
+            }
+            
             #endregion
         }
 

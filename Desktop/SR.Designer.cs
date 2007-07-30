@@ -367,11 +367,11 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Save changes before closing?.
+        ///   Looks up a localized string similar to Data has been modified and changes will be lost.  Discard changes and close?.
         /// </summary>
-        public static string MessageConfirmSaveChangesBeforeClosing {
+        public static string MessageConfirmDiscardChangesBeforeClosing {
             get {
-                return ResourceManager.GetString("MessageConfirmSaveChangesBeforeClosing", resourceCulture);
+                return ResourceManager.GetString("MessageConfirmDiscardChangesBeforeClosing", resourceCulture);
             }
         }
         

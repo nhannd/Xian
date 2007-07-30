@@ -341,9 +341,9 @@ namespace ClearCanvas.Desktop
         /// The default implementation simply check the <see cref="Modified"/> property to see if data has been modified.
         /// If data has been modified, and <see cref="UserInteraction.NotAllowed"/> is specified, it returns false.
         /// If data has been modified, and <see cref="UserInteraction.Allowed"/> is specified, it presents a standard
-        /// confirmation dialog asking the user whether or not data should be saved or discarded, or the exit cancelled.
-        /// If the user elects to save or discard data, the <see cref="ExitCode"/> property is set accordingly and a value
-        /// of true is returned.  If the user elects to cancel, a value of false is returned.
+        /// confirmation dialog asking the user whether the changes should be discarded, or the exit cancelled.
+        /// If the user elects to discard data, the <see cref="ExitCode"/> property is set to <see cref="ApplicationComponentExitCode.Cancelled"/>
+        /// and a value of true is returned.  If the user elects to cancel, a value of false is returned.
         /// </para>
         /// <para>
         /// Override this method to provide custom logic for responding to this query.
@@ -356,23 +356,15 @@ namespace ClearCanvas.Desktop
             if (interactive == UserInteraction.NotAllowed)
                 return !_modified;
 
-            if (_modified)
+            if (_modified &&
+                this.Host.ShowMessageBox(SR.MessageConfirmDiscardChangesBeforeClosing, MessageBoxActions.OkCancel) == DialogBoxAction.Cancel)
             {
-				DialogBoxAction result = this.Host.ShowMessageBox(SR.MessageConfirmSaveChangesBeforeClosing, MessageBoxActions.YesNoCancel);
-                switch (result)
-                {
-                    case DialogBoxAction.Yes:
-                        this.ExitCode = ApplicationComponentExitCode.Normal;
-                        return true;
-                    case DialogBoxAction.No:
-                        this.ExitCode = ApplicationComponentExitCode.Cancelled;
-                        return true;
-                    default:
-                        return false;
-                }
+                // user has cancelled the "close" operation, therefore we can't exit
+                return false;
             }
             else
             {
+                // data was not modified, or the user has chosen to discard the changes
                 // this is equivalent to cancelling
                 this.ExitCode = ApplicationComponentExitCode.Cancelled;
                 return true;

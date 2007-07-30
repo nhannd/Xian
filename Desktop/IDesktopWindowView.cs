@@ -50,6 +50,6 @@ namespace ClearCanvas.Desktop
         /// <param name="message"></param>
         /// <param name="buttons"></param>
         /// <returns></returns>
-        DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons);
+        DialogBoxAction ShowMessageBox(string message, string title, MessageBoxActions buttons);
     }
 }

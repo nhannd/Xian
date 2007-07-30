@@ -48,9 +48,11 @@ namespace ClearCanvas.Desktop
 
             #region ApplicationComponentHost overrides
 
-            public override void SetTitle(string title)
+            public override string Title
             {
-                _owner.Host.SetTitle(title);
+                get { return _owner.Host.Title; }
+                // individual components cannot set the title for the container
+                set { throw new NotSupportedException(); }
             }
 
             public override DesktopWindow DesktopWindow

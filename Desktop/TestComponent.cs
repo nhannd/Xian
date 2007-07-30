@@ -65,7 +65,7 @@ namespace ClearCanvas.Desktop
 
         public void SetTitle()
         {
-            this.Host.SetTitle(_text);
+            this.Host.Title = _text;
         }
 
         public void Modify()

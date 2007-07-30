@@ -38,9 +38,10 @@ namespace ClearCanvas.Desktop
                 get { return _shelf._desktopWindow; }
             }
 
-            public override void SetTitle(string title)
+            public override string Title
             {
-                _shelf.Title = title;
+                get { return _shelf.Title; }
+                set { _shelf.Title = value; }
             }
         }
 

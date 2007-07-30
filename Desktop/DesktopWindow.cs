@@ -141,9 +141,14 @@ namespace ClearCanvas.Desktop
         /// <returns></returns>
         public DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
         {
+            return this.DesktopWindowView.ShowMessageBox(message, null, buttons);
+        }
+
+        public DialogBoxAction ShowMessageBox(string message, string title, MessageBoxActions buttons)
+        {
             AssertState(new DesktopObjectState[] { DesktopObjectState.Open, DesktopObjectState.Closing });
 
-            return this.DesktopWindowView.ShowMessageBox(message, buttons);
+            return this.DesktopWindowView.ShowMessageBox(message, title, buttons);
         }
 
         /// <summary>

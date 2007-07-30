@@ -46,13 +46,14 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         public DialogBoxAction Show(string message, ClearCanvas.Common.MessageBoxActions buttons)
         {
-            return Show(message, buttons, null);
+            return Show(message, null, buttons, null);
         }
 
-        internal DialogBoxAction Show(string message, ClearCanvas.Common.MessageBoxActions buttons, IWin32Window owner)
+        internal DialogBoxAction Show(string message, string title, ClearCanvas.Common.MessageBoxActions buttons, IWin32Window owner)
         {
+            title = string.IsNullOrEmpty(title) ? Application.Name : string.Format("{0} - {1}", Application.Name, title);
             DialogResult dr = System.Windows.Forms.MessageBox.Show(owner,
-                message, Application.Name, _buttonMap[(int)buttons]);
+                message, title, _buttonMap[(int)buttons]);
             return (DialogBoxAction)_resultMap[dr];
         }
     }

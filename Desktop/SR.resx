@@ -219,8 +219,8 @@
   <data name="MessageConfirmCancelTask" xml:space="preserve">
     <value>The background task is still running.  Are you sure you want to cancel?</value>
   </data>
-  <data name="MessageConfirmSaveChangesBeforeClosing" xml:space="preserve">
-    <value>Save changes before closing?</value>
+  <data name="MessageConfirmDiscardChangesBeforeClosing" xml:space="preserve">
+    <value>Data has been modified and changes will be lost.  Discard changes and close?</value>
   </data>
   <data name="MessageNoConfigurationPagesExist" xml:space="preserve">
     <value>No configuration pages exist.</value>

@@ -105,16 +105,26 @@ namespace ClearCanvas.Desktop
         /// <returns></returns>
         public virtual DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
         {
-            return this.DesktopWindow.ShowMessageBox(message, buttons);
+            return this.DesktopWindow.ShowMessageBox(message, this.Title, buttons);
         }
 
         /// <summary>
         /// Asks the host to set the title in the user-interface.
         /// </summary>
         /// <exception cref="NotSupportedException">The host does not support titles.</exception>
-        public virtual void SetTitle(string title)
+        public void SetTitle(string title)
         {
-            throw new NotSupportedException();
+            this.Title = title;
+        }
+
+        /// <summary>
+        /// Gets or sets the title displayed in the user-interface.
+        /// </summary>
+        /// <exception cref="NotSupportedException">The host does not support titles.</exception>
+        public virtual string Title
+        {
+            get { throw new NotSupportedException(); }
+            set { throw new NotSupportedException(); }
         }
 
         /// <summary>

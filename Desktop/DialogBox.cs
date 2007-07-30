@@ -35,9 +35,10 @@ namespace ClearCanvas.Desktop
                 get { return _owner._desktopWindow; }
             }
 
-            public override void SetTitle(string title)
+            public override string Title
             {
-                _owner.Title = title;
+                get { return _owner.Title; }
+                set { _owner.Title = value; }
             }
 
         }

@@ -503,10 +503,10 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <param name="message"></param>
         /// <param name="buttons"></param>
         /// <returns></returns>
-        public virtual DialogBoxAction ShowMessageBox(string message, MessageBoxActions buttons)
+        public virtual DialogBoxAction ShowMessageBox(string message, string title, MessageBoxActions buttons)
         {
             MessageBox mb = new MessageBox();
-            return mb.Show(message, buttons, _form);
+            return mb.Show(message, title, buttons, _form);
         }
 
         #endregion
