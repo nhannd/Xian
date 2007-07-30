@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[IconSet("activate", IconScheme.Colour, "Icons.StackToolSmall.png", "Icons.StackToolMedium.png", "Icons.StackToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Stacking.Standard")]
 
-	[MouseToolWheelControl("StackDown", "StackUp")]
+	[MouseWheelHandler(StopDelayMilliseconds = 500)]
 	[MouseToolButton(XMouseButtons.Left, true)]
 
 	[KeyboardAction("stackup", "imageviewer-keyboard/ToolsStandardStack/StackUp", KeyStroke = XKeys.PageUp)]
@@ -198,6 +198,27 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override void Cancel()
 		{
 			this.CaptureEndState();
+		}
+
+		protected override void StartWheel()
+		{
+			IImageBox imageBox = this.Context.Viewer.SelectedTile.ParentImageBox;
+			CaptureBeginState(imageBox);
+		}
+
+		protected override void WheelDown()
+		{
+			AdvanceImage(1, this.Context.Viewer.SelectedTile.ParentImageBox);
+		}
+
+		protected override void WheelUp()
+		{
+			AdvanceImage(-1, this.Context.Viewer.SelectedTile.ParentImageBox);
+		}
+
+		protected override void StopWheel()
+		{
+			CaptureEndState();
 		}
 	}
 }

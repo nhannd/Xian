@@ -8,9 +8,9 @@ using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Actions;
-using System.Diagnostics;
+using ClearCanvas.ImageViewer.InputManagement;
 
-namespace ClearCanvas.ImageViewer.InputManagement
+namespace ClearCanvas.ImageViewer
 {
 	public sealed class TileController : IInputController, IMouseInformation
 	{
@@ -24,7 +24,10 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		private Rectangle _tileClientRectangle;
 
 		private IMouseButtonHandler _captureHandler;
- 
+		private IMouseWheelHandler _captureMouseWheelHandler;
+		private Timer _wheelHandlerTimer;
+		private DateTime _timeOfLastWheel;
+
 		private CursorToken _cursorToken;
 		
 		private bool _contextMenuEnabled; 
@@ -97,7 +100,11 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			}
 		}
 
-		public IMouseButtonHandler CaptureHandler
+		#endregion
+
+		#region Capture Handler Properties
+
+		private IMouseButtonHandler CaptureHandler
 		{
 			get { return _captureHandler; }
 			set
@@ -109,6 +116,46 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				_captureHandler = value;
 				EventsHelper.Fire(_captureChangingEvent, this, args);
 			}
+		}
+
+		private IMouseWheelHandler CaptureMouseWheelHandler
+		{
+			get { return _captureMouseWheelHandler; }
+			set 
+			{
+				if (_captureMouseWheelHandler == value)
+					return;
+
+				if (_captureMouseWheelHandler != null)
+				{
+					_captureMouseWheelHandler.Stop();
+					_wheelHandlerTimer.Stop();
+				}
+
+				_captureMouseWheelHandler = value;
+				
+				if (_captureMouseWheelHandler != null)
+				{
+					if (_wheelHandlerTimer == null)
+					{
+						_wheelHandlerTimer = new Timer(OnTimer);
+						_wheelHandlerTimer.Interval = 10;
+					}
+
+					_wheelHandlerTimer.Start();
+					_captureMouseWheelHandler.Start();
+				}
+			}
+		}
+
+		private void OnTimer(object nothing)
+		{
+			if (_captureMouseWheelHandler == null)
+				return;
+
+			TimeSpan elapsed = Platform.Time.Subtract(_timeOfLastWheel);
+			if (elapsed.Milliseconds >= _captureMouseWheelHandler.StopDelayMilliseconds)
+				this.CaptureMouseWheelHandler = null;
 		}
 
 		#endregion
@@ -160,6 +207,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				return true;
 
 			ReleaseCapture(true);
+			this.CaptureMouseWheelHandler = null;
 
 			IClickAction action = _shortcutManager.GetKeyboardAction(keyboardMessage.Shortcut);
 			if (action != null)
@@ -178,7 +226,10 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			IMouseWheelHandler handler = _shortcutManager.GetMouseWheelHandler(wheelMessage.Shortcut);
 			if (handler != null)
 			{
-				handler.Activate(wheelMessage.WheelDelta);
+				this.CaptureMouseWheelHandler = handler;
+
+				handler.Wheel(wheelMessage.WheelDelta);
+				_timeOfLastWheel = Platform.Time;
 				return true;
 			}
 
@@ -193,6 +244,8 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				_contextMenuEnabled = false;
 				return true;
 			}
+
+			this.CaptureMouseWheelHandler = null;
 
 			_activeButton = buttonMessage.Shortcut.MouseButton;
 			_clickCount = buttonMessage.ClickCount;
@@ -376,6 +429,16 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		public bool ProcessMessage(IInputMessage message)
 		{
+			if (message is KeyboardButtonDownPreview)
+			{
+				//Right now, we can't determine what these keystrokes are going to do, so we just release mouse wheel capture.
+				KeyboardButtonDownPreview preview = message as KeyboardButtonDownPreview;
+				if (preview.Shortcut.KeyData != XKeys.None)
+					this.CaptureMouseWheelHandler = null;
+
+				return false;
+			}
+			
 			if (message is MouseButtonMessage)
 			{
 				return ProcessMouseButtonMessage(message as MouseButtonMessage);
@@ -410,10 +473,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 				}
 
 				if (message is MouseLeaveMessage)
-				{
-					if (_tile.PresentationImage != null)
-						_tile.PresentationImage.FocussedGraphic = null;
-				}
+					_tile.PresentationImage.FocussedGraphic = null;
 			}
 
 			return false;

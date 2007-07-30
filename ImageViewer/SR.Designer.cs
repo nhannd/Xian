@@ -331,6 +331,24 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A mouse tool must have a button assignment ({0})..
+        /// </summary>
+        public static string ExceptionMouseToolMustHaveButtonAssignment {
+            get {
+                return ResourceManager.GetString("ExceptionMouseToolMustHaveButtonAssignment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A mouse tool must have a default button assignment ({0})..
+        /// </summary>
+        public static string ExceptionMouseToolMustHaveDefault {
+            get {
+                return ResourceManager.GetString("ExceptionMouseToolMustHaveDefault", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A mouse tool can only be assigned a valid mouse button..
         /// </summary>
         public static string ExceptionMouseToolMustHaveValidAssignment {
@@ -340,16 +358,7 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to A mouse tool should have a default button assignment ({0}).  The tool may have no effect..
-        /// </summary>
-        public static string ExceptionMouseToolShouldHaveDefault {
-            get {
-                return ResourceManager.GetString("ExceptionMouseToolShouldHaveDefault", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The specified mouse wheel assignment is in use ({0})..
+        ///   Looks up a localized string similar to The specified mouse wheel assignment is in use ({0}:{1})..
         /// </summary>
         public static string ExceptionMouseWheelAssignmentInUse {
             get {
@@ -408,6 +417,24 @@ namespace ClearCanvas.ImageViewer {
         public static string ExceptionStatefulGraphicMustBeIMemorable {
             get {
                 return ResourceManager.GetString("ExceptionStatefulGraphicMustBeIMemorable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} : {1}.
+        /// </summary>
+        public static string FormatMouseButtonShortcutDescription {
+            get {
+                return ResourceManager.GetString("FormatMouseButtonShortcutDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Wheel : {0}.
+        /// </summary>
+        public static string FormatMouseWheelShortcutDescription {
+            get {
+                return ResourceManager.GetString("FormatMouseWheelShortcutDescription", resourceCulture);
             }
         }
         

@@ -6,6 +6,12 @@ namespace ClearCanvas.ImageViewer.InputManagement
 {
 	public interface IMouseWheelHandler
 	{
-		void Activate(int wheelDelta);
+		void Start();
+
+		void Wheel(int wheelDelta);
+
+		void Stop();
+
+		uint StopDelayMilliseconds { get; }
 	}
 }

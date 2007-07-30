@@ -8,16 +8,21 @@ using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.BaseTools
 {
 	/// <summary>
 	/// A base class for image viewer tools.
 	/// </summary>
-	public abstract class ImageViewerTool : Tool<IImageViewerToolContext>
+	public abstract class ImageViewerTool : Tool<IImageViewerToolContext>, IMouseWheelHandler
 	{
 		private bool _enabled = true;
 		private event EventHandler _enabledChanged;
+
+		private MouseWheelShortcut _mouseWheelShortcut;
+		private event EventHandler _mouseWheelShortcutChanged;
+		private uint _mouseWheelStopDelayMilliseconds;
 
 		public override void Initialize()
 		{
@@ -25,6 +30,8 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			this.Context.Viewer.EventBroker.PresentationImageSelected += new EventHandler<PresentationImageSelectedEventArgs>(OnPresentationImageSelected);
 
 			base.Initialize();
+
+			ImageViewerToolAttributeProcessor.Process(this);
 		}
 
 		/// <summary>
@@ -206,6 +213,78 @@ namespace ClearCanvas.ImageViewer.BaseTools
 				this.Enabled = false;
 			else
 				this.Enabled = true;
+		}
+
+		public MouseWheelShortcut MouseWheelShortcut
+		{
+			get { return _mouseWheelShortcut; }
+			set 
+			{
+				if (_mouseWheelShortcut != null && _mouseWheelShortcut.Equals(value))
+					return;
+
+				_mouseWheelShortcut = value;
+				EventsHelper.Fire(_mouseWheelShortcutChanged, this, EventArgs.Empty);
+			}
+		}
+
+		public event EventHandler MouseWheelShortcutChanged
+		{
+			add { _mouseWheelShortcutChanged += value; }
+			remove { _mouseWheelShortcutChanged -= value; }
+		}
+
+		#region IMouseWheelHandler Members
+
+		void IMouseWheelHandler.Start()
+		{
+			this.StartWheel();
+		}
+
+		void IMouseWheelHandler.Wheel(int wheelDelta)
+		{
+			this.Wheel(wheelDelta);
+		}
+
+		void IMouseWheelHandler.Stop()
+		{
+			this.StopWheel();
+		}
+
+		uint IMouseWheelHandler.StopDelayMilliseconds
+		{
+			get { return _mouseWheelStopDelayMilliseconds; }
+		}
+
+		#endregion
+
+		protected virtual void StartWheel()
+		{
+		}
+
+		protected virtual void Wheel(int wheelDelta)
+		{
+			if (wheelDelta > 0)
+				WheelUp();
+			else if (wheelDelta < 0)
+				WheelDown();
+		}
+
+		protected virtual void WheelUp()
+		{
+		}
+
+		protected virtual void WheelDown()
+		{
+		}
+
+		protected virtual void StopWheel()
+		{
+		}
+
+		internal uint MouseWheelStopDelayMilliseconds
+		{
+			set { _mouseWheelStopDelayMilliseconds = value; }
 		}
 	}
 }

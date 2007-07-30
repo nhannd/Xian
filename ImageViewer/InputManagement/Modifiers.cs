@@ -62,5 +62,10 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		{
 			return _modifierFlags.GetHashCode();
 		}
+
+		public override string ToString()
+		{
+			return _modifierFlags.ToString();
+		}
 	}
 }

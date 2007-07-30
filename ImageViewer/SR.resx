@@ -207,14 +207,17 @@
   <data name="ExceptionMouseToolHasNoAssignment" xml:space="preserve">
     <value>The mouse tool does not have a shortcut assignment ({0}).  The tool cannot be activated.</value>
   </data>
+  <data name="ExceptionMouseToolMustHaveButtonAssignment" xml:space="preserve">
+    <value>A mouse tool must have a button assignment ({0}).</value>
+  </data>
+  <data name="ExceptionMouseToolMustHaveDefault" xml:space="preserve">
+    <value>A mouse tool must have a default button assignment ({0}).</value>
+  </data>
   <data name="ExceptionMouseToolMustHaveValidAssignment" xml:space="preserve">
     <value>A mouse tool can only be assigned a valid mouse button.</value>
   </data>
-  <data name="ExceptionMouseToolShouldHaveDefault" xml:space="preserve">
-    <value>A mouse tool should have a default button assignment ({0}).  The tool may have no effect.</value>
-  </data>
   <data name="ExceptionMouseWheelAssignmentInUse" xml:space="preserve">
-    <value>The specified mouse wheel assignment is in use ({0}).</value>
+    <value>The specified mouse wheel assignment is in use ({0}:{1}).</value>
   </data>
   <data name="ExceptionNoDisplaySetAssociatedWithImageBoxTile" xml:space="preserve">
     <value>Is the ImageBox to which this Tile belongs supposed to be empty?</value>
@@ -233,6 +236,12 @@
   </data>
   <data name="ExceptionStatefulGraphicMustBeIMemorable" xml:space="preserve">
     <value>For undo support, your StatefulGraphic subclass must implement IMemorable.</value>
+  </data>
+  <data name="FormatMouseButtonShortcutDescription" xml:space="preserve">
+    <value>{0} : {1}</value>
+  </data>
+  <data name="FormatMouseWheelShortcutDescription" xml:space="preserve">
+    <value>Wheel : {0}</value>
   </data>
   <data name="LabelError" xml:space="preserve">
     <value>Error:</value>

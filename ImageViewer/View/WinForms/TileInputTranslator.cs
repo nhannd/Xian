@@ -21,6 +21,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 							Keys.ShiftKey,
 							Keys.LShiftKey,
 							Keys.RShiftKey,
+							Keys.Menu
 						};
 
 		public TileInputTranslator(TileControl tileControl)
@@ -120,11 +121,23 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			if (msg.Msg == 0x100 && alreadyHandled)
 			{
 				Keys keyData = (Keys)msg.WParam;
-				if (ConsumeKeyStroke(keyData))
-					return null;
+				if (!ConsumeKeyStroke(keyData))
+				{
+					//when a keystroke gets handled by a control other than the tile, we release the capture.
+					return new ReleaseCaptureMessage();
+				}
+			}
 
-				//when a keystroke gets handled by a control other than the tile, we release the capture.
-				return new ReleaseCaptureMessage();
+			return null;
+		}
+
+		public IInputMessage PreProcessMessage(Message msg)
+		{
+			if (msg.Msg == 0x100)
+			{
+				Keys keyData = (Keys)msg.WParam;
+				if (!ConsumeKeyStroke(keyData))
+					return new KeyboardButtonDownPreview((XKeys)msg.WParam);
 			}
 
 			return null;

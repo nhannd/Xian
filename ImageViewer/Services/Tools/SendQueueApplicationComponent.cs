@@ -150,7 +150,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			_toolSet = new ToolSet(new SendQueueApplicationComponentToolExtensionPoint(), new SendQueueApplicationComponentToolContext(this));
 
-			_timer = new Timer(this.OnTimer, 30000, 30000);
+			_timer = new Timer(this.OnTimer);
+			_timer.Interval = 30000;
+			_timer.Start();
 
 			LocalDataStoreActivityMonitor.Instance.LostConnection += new EventHandler(OnLostConnection);
 			LocalDataStoreActivityMonitor.Instance.Connected += new EventHandler(OnConnected);
@@ -189,7 +191,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			SetTitle();
 		}
 
-		private void OnTimer()
+		private void OnTimer(object nothing)
 		{
 			foreach (SendQueueItem item in _sendTable.Items)
 			{

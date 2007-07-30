@@ -8,25 +8,27 @@ namespace ClearCanvas.ImageViewer.InputManagement
 	public sealed class MouseWheelShortcut
 	{
 		private Modifiers _modifiers;
+		private string _description;
 
 		public MouseWheelShortcut()
 			: this(false, false, false)
-		{ 
+		{
 		}
 
 		public MouseWheelShortcut(Modifiers modifiers)
 		{
 			_modifiers = modifiers;
+			_description = String.Format(SR.FormatMouseWheelShortcutDescription, _modifiers.ToString());
 		}
 
 		public MouseWheelShortcut(ModifierFlags modifierFlags)
+			: this(new Modifiers(modifierFlags))
 		{
-			_modifiers = new Modifiers(modifierFlags);
 		}
 
 		public MouseWheelShortcut(bool control, bool alt, bool shift)
+			: this(new Modifiers(control, alt, shift))
 		{
-			_modifiers = new Modifiers(control, alt, shift);
 		}
 
 		public Modifiers Modifiers
@@ -48,6 +50,11 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		public override int GetHashCode()
 		{
 			return _modifiers.GetHashCode();
+		}
+
+		public override string ToString()
+		{
+			return _description;
 		}
 	}
 }

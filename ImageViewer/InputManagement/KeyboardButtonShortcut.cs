@@ -6,7 +6,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
-	public sealed class KeyboardButtonShortcut
+	public sealed class KeyboardButtonShortcut : IEquatable<KeyboardButtonShortcut>, IEquatable<XKeys>
 	{
 		private XKeys _keyData;
 
@@ -44,20 +44,49 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			get { return ((_keyData & XKeys.Shift) == XKeys.Shift); }
 		}
 
+		public override int GetHashCode()
+		{
+			return _keyData.GetHashCode();
+		}
+
 		public override bool Equals(object obj)
 		{
+			if (obj == this)
+				return true;
+
 			if (obj is KeyboardButtonShortcut)
 			{
-				KeyboardButtonShortcut shortcut = (KeyboardButtonShortcut)obj;
-				return (shortcut.KeyData == this.KeyData);
+				return this.Equals(obj as KeyboardButtonShortcut);
+			}
+			if (obj is XKeys)
+			{
+				return this.Equals((XKeys)obj);
 			}
 
 			return false;
 		}
 
-		public override int GetHashCode()
+		#region IEquatable<KeyboardButtonShortcut> Members
+
+		public bool Equals(KeyboardButtonShortcut other)
 		{
-			return _keyData.GetHashCode();
+			return (other != null && other.KeyData == this.KeyData);
+		}
+
+		#endregion
+
+		#region IEquatable<XKeys> Members
+
+		public bool Equals(XKeys other)
+		{
+			return this.KeyData == other;
+		}
+
+		#endregion
+
+		public override string ToString()
+		{
+			return _keyData.ToString();
 		}
 	}
 }

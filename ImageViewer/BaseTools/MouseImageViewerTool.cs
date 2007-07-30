@@ -18,8 +18,8 @@ namespace ClearCanvas.ImageViewer.BaseTools
     /// </remarks>
 
 	public abstract class MouseImageViewerTool :
-		ImageViewerTool, 
-		IMouseButtonHandler, 
+		ImageViewerTool,
+		IMouseButtonHandler,
 		ICursorTokenProvider
 	{
 		#region Private fields
@@ -35,6 +35,9 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		private XMouseButtons _mouseButton;
 		private event EventHandler _mouseButtonChanged;
 
+		private MouseButtonShortcut _modifiedMouseButtonShortcut;
+		private event EventHandler _modifiedMouseButtonShortcutChanged;
+
         private bool _active;
         private event EventHandler _activationChangedEvent;
 
@@ -48,6 +51,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 			_tooltipPrefix = tooltipPrefix;
 
 			_mouseButton = XMouseButtons.None;
+			_modifiedMouseButtonShortcut = null;
 			_active = false;
 		}
 
@@ -125,35 +129,6 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-		/// Gets or sets the mouse button assigned to this tool.
-		/// </summary>
-		/// <remarks>
-		/// It is expected that on creation of this tool, this property will be set to
-		/// something other than 'None'.  Currently this is done in the overridden <see cref="Initialize" /> method.
-		/// </remarks>
-		public XMouseButtons MouseButton
-		{
-			get
-			{
-				return _mouseButton;
-			}
-			set
-			{
-				if (value == XMouseButtons.None)
-					throw new ArgumentException(SR.ExceptionMouseToolMustHaveValidAssignment);
-
-				if (_mouseButton == value)
-					return;
-
-				_mouseButton = value;
-				EventsHelper.Fire(_mouseButtonChanged, this, EventArgs.Empty);
-
-				//the mouse button assignment affects the tooltip.
-				EventsHelper.Fire(_tooltipChangedEvent, this, EventArgs.Empty);
-			}
-		}
-
-		/// <summary>
 		/// Gets or sets a value indicating whether this tool is currently active or not.  
 		/// </summary>
 		/// <remarks>
@@ -192,15 +167,6 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-		/// Occurs when the <see cref="MouseButton"/> property has changed.
-		/// </summary>
-		public event EventHandler MouseButtonChanged
-		{
-			add { _mouseButtonChanged += value; }
-			remove { _mouseButtonChanged -= value; }
-		}
-
-		/// <summary>
 		/// Overrides <see cref="ToolBase.Initialize"/>.  Initialization of the <see cref="MouseButton"/> member
 		/// is done here using the <see cref="MouseImageViewerToolInitializer.Initialize"/> method.
 		/// </summary>
@@ -213,7 +179,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		public override void Initialize()
 		{
 			base.Initialize();
-			MouseImageViewerToolInitializer.Initialize(this);
+			MouseImageViewerToolAttributeProcessor.Process(this);
 		}
 
         /// <summary>
@@ -223,6 +189,75 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		public void Select()
 		{
 			this.Active = true;
+		}
+
+		/// <summary>
+		/// Gets or sets the mouse button assigned to this tool.
+		/// </summary>
+		/// <remarks>
+		/// It is expected that on creation of this tool, this property will be set to
+		/// something other than 'None'.  Currently this is done in the overridden <see cref="Initialize" /> method.
+		/// </remarks>
+		public XMouseButtons MouseButton
+		{
+			get
+			{
+				return _mouseButton;
+			}
+			set
+			{
+				if (value == XMouseButtons.None)
+					throw new ArgumentException(SR.ExceptionMouseToolMustHaveValidAssignment);
+
+				if (_mouseButton == value)
+					return;
+
+				_mouseButton = value;
+				EventsHelper.Fire(_mouseButtonChanged, this, EventArgs.Empty);
+
+				//the mouse button assignment affects the tooltip.
+				EventsHelper.Fire(_tooltipChangedEvent, this, EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the modified mouse button shortcut assigned to this tool.
+		/// </summary>
+		public MouseButtonShortcut ModifiedMouseButtonShortcut
+		{
+			get { return _modifiedMouseButtonShortcut; }
+			set
+			{
+				if (value != null)
+				{
+					if (value.Equals(_modifiedMouseButtonShortcut))
+					return;
+
+					if (!value.IsModified)
+						throw new ArgumentException(String.Format(SR.ExceptionAdditionalMouseToolAssignmentsMustBeModified, this.GetType().FullName));
+				}
+
+				_modifiedMouseButtonShortcut = value;
+				EventsHelper.Fire(_modifiedMouseButtonShortcutChanged, this, EventArgs.Empty);
+			}
+		}
+
+		/// <summary>
+		/// Fired when the <see cref="MouseButton"/> property has changed.
+		/// </summary>
+		public event EventHandler MouseButtonChanged
+		{
+			add { _mouseButtonChanged += value; }
+			remove { _mouseButtonChanged -= value; }
+		}
+
+		/// <summary>
+		/// Fired when the <see cref="ModifiedMouseButtonShortcut"/> property has changed.
+		/// </summary>
+		public event EventHandler ModifiedMouseButtonShortcutChanged
+		{
+			add { _modifiedMouseButtonShortcutChanged += value; }
+			remove { _modifiedMouseButtonShortcutChanged -= value; }
 		}
 
 		#region IMouseButtonHandler

@@ -6,30 +6,29 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.BaseTools;
 
-namespace ClearCanvas.ImageViewer.InputManagement
+namespace ClearCanvas.ImageViewer
 {
-	public sealed class ViewerShortcutManager : IViewerShortcutManager
+	internal sealed class ViewerShortcutManager : IViewerShortcutManager
 	{
-		private Dictionary<MouseImageViewerTool, XMouseButtons> _mouseToolButtonMap;
+		private Dictionary<IMouseButtonHandler, XMouseButtons> _mouseToolButtonMap;
 		private Dictionary<MouseButtonShortcut, IMouseButtonHandler> _activeMouseButtonShortcutMap;
-		private Dictionary<MouseWheelShortcut, IMouseWheelHandler> _activeMouseWheelShortcutMap;
-		private Dictionary<KeyboardButtonShortcut, IClickAction> _keyStrokeShortcutMap;
+		private Dictionary<ITool, ITool> _setRegisteredTools;
 
 		public ViewerShortcutManager()
 		{
-			_mouseToolButtonMap = new Dictionary<MouseImageViewerTool, XMouseButtons>();
+			_mouseToolButtonMap = new Dictionary<IMouseButtonHandler, XMouseButtons>();
 			_activeMouseButtonShortcutMap = new Dictionary<MouseButtonShortcut, IMouseButtonHandler>();
-			_activeMouseWheelShortcutMap = new Dictionary<MouseWheelShortcut, IMouseWheelHandler>();
-			_keyStrokeShortcutMap = new Dictionary<KeyboardButtonShortcut, IClickAction>();
+			_setRegisteredTools = new Dictionary<ITool, ITool>();
 		}
 
 		private void RegisterMouseToolButton(MouseImageViewerTool mouseTool)
 		{
 			if (mouseTool.MouseButton == XMouseButtons.None)
 			{
-				Platform.Log(String.Format(SR.ExceptionMouseToolShouldHaveDefault, mouseTool.GetType().FullName));
+				Platform.Log(String.Format(SR.ExceptionMouseToolMustHaveButtonAssignment, mouseTool.GetType().FullName));
 				return;
 			}
 
@@ -40,65 +39,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 			mouseTool.MouseButtonChanged += new EventHandler(OnMouseToolMouseButtonChanged);
 			mouseTool.ActivationChanged += new EventHandler(OnMouseToolActivationChanged);
-		}
-
-		private void RegisterModifiedMouseToolButton(MouseImageViewerTool mouseTool)
-		{
-			object[] modifiedButtonAssignments = mouseTool.GetType().GetCustomAttributes(typeof(ModifiedMouseToolButtonAttribute), true);
-			if (modifiedButtonAssignments == null || modifiedButtonAssignments.Length == 0)
-				return;
-
-			ModifiedMouseToolButtonAttribute attribute = modifiedButtonAssignments[0] as ModifiedMouseToolButtonAttribute;
-
-			if (attribute.Shortcut.Modifiers.ModifierFlags == ModifierFlags.None)
-			{
-				Platform.Log(String.Format(SR.ExceptionAdditionalMouseToolAssignmentsMustBeModified, mouseTool.GetType().FullName));
-			}
-			else if (_activeMouseButtonShortcutMap.ContainsKey(attribute.Shortcut))
-			{
-				Platform.Log(String.Format(SR.ExceptionMouseToolAssignmentInUse, mouseTool.GetType().FullName));
-			}
-			else
-			{
-				_activeMouseButtonShortcutMap.Add(attribute.Shortcut, mouseTool);
-			}
-		}
-
-		private void RegisterMouseWheelShortcuts(MouseImageViewerTool mouseTool)
-		{
-			object[] mouseWheelControlAssignments = mouseTool.GetType().GetCustomAttributes(typeof(MouseToolWheelControlAttribute), true);
-			if (mouseWheelControlAssignments == null || mouseWheelControlAssignments.Length == 0)
-				return;
-
-			foreach (MouseToolWheelControlAttribute attribute in mouseWheelControlAssignments)
-			{
-				if (_activeMouseWheelShortcutMap.ContainsKey(attribute.Shortcut))
-				{
-					Platform.Log(String.Format(SR.ExceptionMouseWheelAssignmentInUse, mouseTool));
-				}
-				else
-				{
-					IMouseWheelHandler handler = new MouseWheelHandler(mouseTool, attribute.WheelIncrementDelegateName, attribute.WheelDecrementDelegateName);
-					_activeMouseWheelShortcutMap.Add(attribute.Shortcut, handler);
-				}
-			}
-		}
-
-		private void RegisterKeyboardShortcut(IClickAction clickAction)
-		{
-			if (clickAction.KeyStroke == XKeys.None)
-				return;
-
-			KeyboardButtonShortcut shortcut = new KeyboardButtonShortcut(clickAction.KeyStroke);
-
-			if (_keyStrokeShortcutMap.ContainsKey(shortcut))
-			{
-				Platform.Log(String.Format(SR.ExceptionKeyStrokeAssignmentInUse, clickAction.Path.ToString()));
-			}
-			else
-			{
-				_keyStrokeShortcutMap.Add(shortcut, clickAction);
-			}
 		}
 
 		private void DeactivateMouseTool(MouseImageViewerTool mouseTool)
@@ -129,7 +69,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			{
 				if (!replaceExisting)
 					return;
-				
+
 				MouseImageViewerTool oldMouseTool = (MouseImageViewerTool)_activeMouseButtonShortcutMap[shortcut];
 				if (oldMouseTool != activateMouseTool)
 				{
@@ -184,40 +124,19 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// Registers the tool with the viewer shortcut manager.
 		/// </summary>
 		/// <param name="tool">the tool to register.</param>
-		/// <remarks>
-		/// The tool's attributes are inspected and its behaviour determined.
-		/// </remarks>
 		public void RegisterImageViewerTool(ITool tool)
 		{
+			Platform.CheckForNullReference(tool, "tool");
+
 			if (tool is MouseImageViewerTool)
 			{
-				MouseImageViewerTool mouseTool = tool as MouseImageViewerTool;
-				RegisterMouseToolButton(mouseTool);
-				RegisterModifiedMouseToolButton(mouseTool);
-				RegisterMouseWheelShortcuts(mouseTool);
+				RegisterMouseToolButton(tool as MouseImageViewerTool);
 			}
 
-			foreach (IAction action in tool.Actions)
-			{
-				if (action is IClickAction)
-					RegisterKeyboardShortcut(action as IClickAction);
-			}
+			_setRegisteredTools[tool] = tool;
 		}
 
 		#region IViewerShortcutManager Members
-
-		/// <summary>
-		/// Gets the <see cref="IClickAction"/> associated with a shortcut.
-		/// </summary>
-		/// <param name="shortcut">The shortcut for which an <see cref="IClickAction"/> is to be found.</param>
-		/// <returns>An <see cref="IClickAction"/> or null.</returns>
-		public IClickAction GetKeyboardAction(KeyboardButtonShortcut shortcut)
-		{
-			if (_keyStrokeShortcutMap.ContainsKey(shortcut))
-				return _keyStrokeShortcutMap[shortcut];
-
-			return null;
-		}
 
 		/// <summary>
 		/// Gets the <see cref="IMouseButtonHandler"/> associated with a shortcut.
@@ -226,8 +145,20 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// <returns>An <see cref="IMouseButtonHandler"/> or null.</returns>
 		public IMouseButtonHandler GetMouseButtonHandler(MouseButtonShortcut shortcut)
 		{
+			Platform.CheckForNullReference(shortcut, "shortcut");
+
 			if (_activeMouseButtonShortcutMap.ContainsKey(shortcut))
 				return _activeMouseButtonShortcutMap[shortcut];
+
+			foreach (ITool tool in _setRegisteredTools.Keys)
+			{
+				MouseImageViewerTool mouseButtonHandler = tool as MouseImageViewerTool;
+				if (mouseButtonHandler != null)
+				{
+					if (shortcut.Equals(mouseButtonHandler.ModifiedMouseButtonShortcut))
+						return mouseButtonHandler;
+				}
+			}
 
 			return null;
 		}
@@ -239,8 +170,40 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		/// <returns>An <see cref="IMouseWheelHandler"/> or null.</returns>
 		public IMouseWheelHandler GetMouseWheelHandler(MouseWheelShortcut shortcut)
 		{
-			if (_activeMouseWheelShortcutMap.ContainsKey(shortcut))
-				return _activeMouseWheelShortcutMap[shortcut];
+			Platform.CheckForNullReference(shortcut, "shortcut");
+
+			foreach (ITool tool in _setRegisteredTools.Keys)
+			{
+				ImageViewerTool viewerTool = tool as ImageViewerTool;
+				if (viewerTool != null)
+				{
+					if (shortcut.Equals(viewerTool.MouseWheelShortcut))
+						return viewerTool;
+				}
+			}
+
+			return null;
+		}
+
+		/// <summary>
+		/// Gets the <see cref="IClickAction"/> associated with a shortcut.
+		/// </summary>
+		/// <param name="shortcut">The shortcut for which an <see cref="IClickAction"/> is to be found.</param>
+		/// <returns>An <see cref="IClickAction"/> or null.</returns>
+		public IClickAction GetKeyboardAction(KeyboardButtonShortcut shortcut)
+		{
+			foreach (ITool tool in _setRegisteredTools.Keys)
+			{
+				foreach (IAction action in tool.Actions)
+				{
+					IClickAction clickAction = action as IClickAction;
+					if (clickAction != null)
+					{
+						if (shortcut.Equals(clickAction.KeyStroke))
+							return clickAction;
+					}
+				}
+			}
 
 			return null;
 		}

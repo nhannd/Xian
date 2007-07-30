@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[KeyboardAction("zoomout", "imageviewer-keyboard/ToolsStandardZoom/ZoomOut", KeyStroke = XKeys.Oemcomma)]
 	[ClickHandler("zoomout", "ZoomOut")]
 
-	[MouseToolWheelControl("ZoomIn", "ZoomOut", ModifierFlags.Control)]
+	[MouseWheelHandler(ModifierFlags.Control, StopDelayMilliseconds = 500)]
 	[MouseToolButton(XMouseButtons.Right, false)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
@@ -153,6 +153,28 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		public override void Cancel()
 		{
 			this.CaptureEndState();
+		}
+
+		protected override void StartWheel()
+		{
+			CaptureBeginState();
+		}
+
+		protected override void StopWheel()
+		{
+			CaptureEndState();
+		}
+
+		protected override void WheelDown()
+		{
+			float increment = 0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
+			IncrementZoom(increment);
+		}
+
+		protected override void WheelUp()
+		{
+			float increment = -0.1F * this.SelectedSpatialTransformProvider.SpatialTransform.Scale;
+			IncrementZoom(increment);
 		}
 	}
 }

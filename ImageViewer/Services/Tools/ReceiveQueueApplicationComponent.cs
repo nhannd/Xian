@@ -146,7 +146,9 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 			_toolSet = new ToolSet(new ReceiveQueueApplicationComponentToolExtensionPoint(), new ReceiveQueueApplicationComponentToolContext(this));
 
-			_timer = new Timer(this.OnTimer, 30000, 30000);
+			_timer = new Timer(this.OnTimer);
+			_timer.Interval = 30000;
+			_timer.Start();
 
 			LocalDataStoreActivityMonitor.Instance.LostConnection += new EventHandler(OnLostConnection);
 			LocalDataStoreActivityMonitor.Instance.Connected += new EventHandler(OnConnected);
@@ -186,7 +188,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			SetTitle();
 		}
 
-		private void OnTimer()
+		private void OnTimer(object nothing)
 		{
 			foreach (ReceiveQueueItem item in _receiveTable.Items)
 			{

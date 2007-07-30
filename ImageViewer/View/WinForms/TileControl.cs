@@ -277,9 +277,13 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 		public override bool PreProcessMessage(ref Message msg)
 		{
+			IInputMessage message = _inputTranslator.PreProcessMessage(msg);
+			if (message != null)
+				_tileController.ProcessMessage(message);
+
 			bool returnValue = base.PreProcessMessage(ref msg);
 
-			IInputMessage message = _inputTranslator.PostProcessMessage(msg, returnValue);
+			message = _inputTranslator.PostProcessMessage(msg, returnValue);
 			if (message != null)
 				_tileController.ProcessMessage(message);
 

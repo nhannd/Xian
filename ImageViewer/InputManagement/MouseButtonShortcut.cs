@@ -10,17 +10,23 @@ namespace ClearCanvas.ImageViewer.InputManagement
 	{
 		private XMouseButtons _mouseButton;
 		private Modifiers _modifiers;
+		private string _description;
 
-		public MouseButtonShortcut(XMouseButtons mouseButton, ModifierFlags modifiers)
+		public MouseButtonShortcut(XMouseButtons mouseButton, ModifierFlags modifierFlags)
+			: this(mouseButton, new Modifiers(modifierFlags))
+		{
+		}
+
+		public MouseButtonShortcut(XMouseButtons mouseButton, Modifiers modifiers)
 		{
 			_mouseButton = mouseButton;
-			_modifiers = new Modifiers(modifiers);
+			_modifiers = modifiers ?? new Modifiers(ModifierFlags.None);
+			_description = String.Format(SR.FormatMouseButtonShortcutDescription, _mouseButton.ToString(), _modifiers.ToString());
 		}
 
 		public MouseButtonShortcut(XMouseButtons mouseButton, bool control, bool alt, bool shift)
+			: this(mouseButton, new Modifiers(control, alt, shift))
 		{
-			_mouseButton = mouseButton;
-			_modifiers = new Modifiers(control, alt, shift);
 		}
 
 		public MouseButtonShortcut(XMouseButtons mouseButton)
@@ -42,6 +48,11 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			get { return _modifiers; }
 		}
 
+		public bool IsModified
+		{
+			get { return _modifiers.ModifierFlags != ModifierFlags.None; }
+		}
+
 		public override bool Equals(object obj)
 		{
 			if (obj is MouseButtonShortcut)
@@ -59,6 +70,11 @@ namespace ClearCanvas.ImageViewer.InputManagement
 			returnvalue = 11 * returnvalue + _modifiers.GetHashCode();
 			returnvalue = 11 * returnvalue + _mouseButton.GetHashCode();
 			return returnvalue;
+		}
+
+		public override string ToString()
+		{
+			return _description;
 		}
 	}
 }

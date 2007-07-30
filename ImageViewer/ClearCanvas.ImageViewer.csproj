@@ -122,10 +122,11 @@
     <Compile Include="Annotations\StoredAnnotatationLayoutProvider.cs" />
     <Compile Include="Annotations\Tests\AnnotationLayoutStoreTests.cs" />
     <Compile Include="ActiveImageViewerChangedEventArgs.cs" />
+    <Compile Include="BaseTools\ImageViewerToolAttributeProcessor.cs" />
     <Compile Include="BaseTools\ModifiedMouseToolButtonAttribute.cs" />
-    <Compile Include="BaseTools\MouseImageViewerToolInitializer.cs" />
+    <Compile Include="BaseTools\MouseImageViewerToolAttributeProcessor.cs" />
     <Compile Include="BaseTools\MouseToolButtonAttribute.cs" />
-    <Compile Include="BaseTools\MouseToolWheelControlAttribute.cs" />
+    <Compile Include="BaseTools\MouseWheelHandlerAttribute.cs" />
     <Compile Include="Comparers\ComparerBase.cs" />
     <Compile Include="Comparers\AcquisitionNumberComparer.cs" />
     <Compile Include="Comparers\StandardImageSetComparer.cs" />
@@ -152,6 +153,7 @@
     <Compile Include="Graphics\StandardGrayscaleImageGraphicVoiLutLinearStateBase.cs" />
     <Compile Include="Graphics\StandardPaletteColorImageGraphic.cs" />
     <Compile Include="Graphics\StandardVoiLutManager.cs" />
+    <Compile Include="InputManagement\KeyboardButtonDownPreview.cs" />
     <Compile Include="StudyManagement\SopValidationException.cs" />
     <Compile Include="Imaging\StandardVoiLutLinear.cs" />
     <Compile Include="Graphics\StandardGrayscaleImageGraphicVoiLutLinearState.cs" />
@@ -214,15 +216,12 @@
     <Compile Include="InputManagement\MouseButtonShortcut.cs" />
     <Compile Include="InputManagement\KeyboardButtonMessage.cs" />
     <Compile Include="InputManagement\MouseLeaveMessage.cs" />
-    <Compile Include="InputManagement\MouseWheelHandler.cs" />
     <Compile Include="InputManagement\MouseWheelMessage.cs" />
     <Compile Include="InputManagement\ReleaseCaptureMessage.cs" />
-    <Compile Include="InputManagement\ViewerShortcutManager.cs" />
     <Compile Include="InputManagement\MouseButtonMessage.cs" />
     <Compile Include="InputManagement\IMouseInformation.cs" />
     <Compile Include="InputManagement\MouseWheelShortcut.cs" />
     <Compile Include="InputManagement\TrackMousePositionMessage.cs" />
-    <Compile Include="InputManagement\TileController.cs" />
     <Compile Include="InformationBox.cs" />
     <Compile Include="InformationBoxChangedEventArgs.cs" />
     <Compile Include="Graphics\IGraphic.cs" />
@@ -404,9 +403,11 @@
     <Compile Include="StudyManagement\StudyTree.cs" />
     <Compile Include="Tile.cs" />
     <Compile Include="TileCollection.cs" />
+    <Compile Include="TileController.cs" />
     <Compile Include="TileEventArgs.cs" />
     <Compile Include="TileMemento.cs" />
     <Compile Include="TileSelectedEventArgs.cs" />
+    <Compile Include="ViewerShortcutManager.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Codecs\ClearCanvas.Codecs.csproj">
