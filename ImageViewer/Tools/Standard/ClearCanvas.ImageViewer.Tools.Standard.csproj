@@ -129,13 +129,14 @@
     <Compile Include="LutPresets\VoiLutLinearPresetApplicatorFactory.cs" />
     <Compile Include="LutPresets\VoiLutPresetFactory.cs" />
     <Compile Include="MemoryUsageTool.cs" />
-    <Compile Include="RotateTool.cs" />
     <Compile Include="WindowLevelConfigurationPageProvider.cs" />
     <Compile Include="FlipHorizontalTool.cs" />
     <Compile Include="FlipVerticalTool.cs" />
     <Compile Include="PanTool.cs" />
     <Compile Include="ProbeTool.cs" />
     <Compile Include="ResetTool.cs" />
+    <Compile Include="RotateLeftTool.cs" />
+    <Compile Include="RotateRightTool.cs" />
     <EmbeddedResource Include="SR.resx">
       <SubType>Designer</SubType>
       <Generator>ResXFileCodeGenerator</Generator>
