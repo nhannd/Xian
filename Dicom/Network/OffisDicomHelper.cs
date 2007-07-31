@@ -193,14 +193,16 @@ namespace ClearCanvas.Dicom.Network
 			return status;
 		}
 		
-		public static OFCondition FindAndGetRawStringFromItem(DcmItem dcmItem, DcmTagKey tagKey, out byte[] rawBytes)
+		public static OFCondition TryFindAndGetRawStringFromItem(DcmItem dcmItem, DcmTagKey tagKey, out byte[] rawBytes)
         {
             int lengthRequiredOfArray = 0;
-            OffisDcm.findAndGetRawStringFromItemGetLength(dcmItem, tagKey, ref lengthRequiredOfArray, false);
+			OFCondition status = OffisDcm.findAndGetRawStringFromItemGetLength(dcmItem, tagKey, ref lengthRequiredOfArray, false);
 
-            rawBytes = new byte[lengthRequiredOfArray];
-            OFCondition cond = OffisDcm.findAndGetRawStringFromItem(dcmItem, tagKey, rawBytes, ref lengthRequiredOfArray, false);
-            return cond;
+			rawBytes = new byte[lengthRequiredOfArray];
+			if (lengthRequiredOfArray > 0)
+				status = OffisDcm.findAndGetRawStringFromItem(dcmItem, tagKey, rawBytes, ref lengthRequiredOfArray, false);
+
+			return status;
         }
 	}
 }

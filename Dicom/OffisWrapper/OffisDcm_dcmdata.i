@@ -92,7 +92,7 @@ OFCondition findAndGetRawStringFromItem(DcmItem& item,
 		/* get the value */
 		status = elem->getString(OFconst_cast(char *&, arrayForStringRawBytes));
 
-		if (status.bad())
+		if (status.bad() || arrayForStringRawBytes == NULL)
 		{
 			arrayForStringRawBytes = NULL;
 			lengthRequiredOfArray = 0;
