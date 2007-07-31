@@ -21,16 +21,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
         {
             _className = this.GetType().ToString();
             _diskspaceManagerEndpointName = "DiskspaceManager";
-            System.Diagnostics.Trace.WriteLine(_className + ": constructed");
         }
 
         public override void Start()
         {
-            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked on Http port " + this.SharedHttpPort.ToString());
+			Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
 
 			DiskspaceManagerProcessor.Instance.StartProcessor();
-			
-			StartHttpHost<DiskspaceManagerServiceType, IDiskspaceManagerService>(_diskspaceManagerEndpointName, "DiskspaceManager");
+
+			StartNetPipeHost<DiskspaceManagerServiceType, IDiskspaceManagerService>(_diskspaceManagerEndpointName, "DiskspaceManager");
         }
 
         public override void Stop()

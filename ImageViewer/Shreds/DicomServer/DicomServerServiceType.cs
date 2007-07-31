@@ -29,7 +29,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
     {
         public DicomServerServiceType()
         {
-			Platform.Log("[" + AppDomain.CurrentDomain.FriendlyName + "]: DicomServerServiceType Constructor");
 		}
 
 		#region IDicomServerService Members

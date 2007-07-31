@@ -19,8 +19,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			_className = this.GetType().ToString();
 			_localDataStoreEndpointName = "LocalDataStore";
 			_localDataStoreActivityMonitorEndpointName = "LocalDataStoreActivityMonitor";
-
-			System.Diagnostics.Trace.WriteLine(_className + ": constructed");
 		}
 
 		public override void Start()

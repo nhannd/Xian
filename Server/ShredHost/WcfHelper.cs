@@ -160,7 +160,7 @@ namespace ClearCanvas.Server.ShredHost
 			else if (bindingType == HostBindingType.NamedPipes)
 			{
 				//the servicehost will automatically append the endpointname.
-				endpoints.Add(new UriBuilder("net.pipe://localhost/Shreds/").Uri);
+				endpoints.Add(new UriBuilder(String.Format("net.pipe://localhost/{0}", endpointName)).Uri);
 			}
 
 			endpoints.Add(new UriBuilder(String.Format("http://localhost:{0}/{1}", httpPort, endpointName)).Uri);

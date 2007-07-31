@@ -25,16 +25,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         {
             _className = this.GetType().ToString();
             _dicomServerEndpointName = "DicomServer";
-            System.Diagnostics.Trace.WriteLine(_className + ": constructed");
         }
 
         public override void Start()
         {
-            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked on Http port " + this.SharedHttpPort.ToString());
+            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
 
 			DicomServerManager.Instance.Start();
 
-			StartHttpHost<DicomServerServiceType, IDicomServerService>(_dicomServerEndpointName, "DicomServer");
+			StartNetPipeHost<DicomServerServiceType, IDicomServerService>(_dicomServerEndpointName, "DicomServer");
         }
 
         public override void Stop()
