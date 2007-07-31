@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		{
 			this.CancelEnabled = this.Context.CanCancelSelected();
 			this.ClearEnabled = this.Context.CanClearSelected();
-			this.ClearInactiveEnabled = this.Context.NumberOfEntries > 0;
+			this.ClearInactiveEnabled = this.Context.CanClearInactive();
 		}
 
 		public bool CancelEnabled

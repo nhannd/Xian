@@ -24,8 +24,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		event EventHandler SelectionUpdated;
 
-		int NumberOfEntries { get; }
-
 		bool CanCancelSelected();
 		bool CanClearSelected();
 		bool CanClearInactive();
@@ -132,6 +130,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			base.Start();
 
 			InitializeTable();
+
 			_toolSet = new ToolSet(new DicomFileImportComponentToolExtensionPoint(), new DicomFileImportComponentToolContext(this));
 
 			LocalDataStoreActivityMonitor.Instance.LostConnection += new EventHandler(OnLostConnection);
@@ -141,6 +140,8 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			Clear();
 			if (!LocalDataStoreActivityMonitor.Instance.IsConnected)
 				this.SelectedStatusMessage = SR.MessageActivityMonitorServiceUnavailable;
+			else
+				this.SelectedStatusMessage = SR.MessageNothingSelected;
 		}
 
 		public override void Stop()
@@ -173,7 +174,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				});
 
 			ImportProgressItem existingItem = null;
-			bool sort = false;
 			if (index >= 0)
 			{
 				existingItem = _importTable.Items[index];
@@ -181,7 +181,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				if (e.Item.Removed)
 				{
 					_importTable.Items.Remove(existingItem);
-					sort = true;
 				}
 				else
 				{
@@ -196,14 +195,10 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 				if (!e.Item.Removed)
 				{
 					_importTable.Items.Add(e.Item);
-					sort = true;
 				}
 			}
 
-			UpateSelectedItemStats();
-
-			if (sort)
-				_importTable.Sort();
+			UpdateSelectedItemStats();
 
 			if (existingItem == _selectedProgressItem)
 				EventsHelper.Fire(_selectionUpdated, this, EventArgs.Empty);
@@ -216,28 +211,22 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 			this.SelectedTotalToProcess = 0;
 			this.SelectedFailedSteps = 0;
 			this.SelectedCancelEnabled = false;
+			this.SelectedClearEnabled = false;
 			this.SelectedStatusMessage = "";
 		}
 		
-		private void UpateSelectedItemStats()
+		private void UpdateSelectedItemStats()
 		{
 			if (_selectedProgressItem == null)
-			{
-				Clear();
-				this.SelectedStatusMessage = SR.MessageNothingSelected;
-			}
-			else
-			{
-				//need to set this to zero first, so we avoid the case where Total Processed > Total To Process.
-				this.SelectedTotalProcessed = 0;
-				this.SelectedTotalToProcess = _selectedProgressItem.TotalFilesToImport;
-				this.SelectedAvailableCount = _selectedProgressItem.NumberOfFilesCommittedToDataStore;
-				this.SelectedFailedSteps = _selectedProgressItem.TotalDataStoreCommitFailures;
-				this.SelectedTotalProcessed = _selectedProgressItem.TotalImportsProcessed;
-				this.SelectedStatusMessage = _selectedProgressItem.StatusMessage;
-				this.SelectedCancelEnabled = (_selectedProgressItem.AllowedCancellationOperations & CancellationFlags.Cancel) == CancellationFlags.Cancel;
-				this.SelectedClearEnabled = (_selectedProgressItem.AllowedCancellationOperations & CancellationFlags.Clear) == CancellationFlags.Clear;
-			}
+				return;
+
+			this.SelectedTotalToProcess = _selectedProgressItem.TotalFilesToImport;
+			this.SelectedAvailableCount = _selectedProgressItem.NumberOfFilesCommittedToDataStore;
+			this.SelectedFailedSteps = _selectedProgressItem.TotalDataStoreCommitFailures;
+			this.SelectedTotalProcessed = _selectedProgressItem.TotalImportsProcessed;
+			this.SelectedStatusMessage = _selectedProgressItem.StatusMessage;
+			this.SelectedCancelEnabled = (_selectedProgressItem.AllowedCancellationOperations & CancellationFlags.Cancel) == CancellationFlags.Cancel;
+			this.SelectedClearEnabled = (_selectedProgressItem.AllowedCancellationOperations & CancellationFlags.Clear) == CancellationFlags.Clear;
 		}
 
 		private string FormatString(string input)
@@ -282,7 +271,6 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 					2f);
 
 			_importTable.Columns.Add(column);
-
 		}
 
 		private void InternalCancel(CancellationFlags flags)
@@ -323,10 +311,23 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 		public void SetSelection(ISelection selection)
 		{
 			_selection = selection;
+			ImportProgressItem lastSelection = _selectedProgressItem;
 			_selectedProgressItem = (ImportProgressItem)_selection.Item;
-			this.UpateSelectedItemStats();
 
-			EventsHelper.Fire(_selectionUpdated, this, EventArgs.Empty);
+			if (lastSelection != _selectedProgressItem)
+			{
+				Clear();
+				if (_selectedProgressItem == null)
+				{
+					this.SelectedStatusMessage = SR.MessageNothingSelected;
+				}
+				else
+				{
+					this.UpdateSelectedItemStats();
+				}
+
+				EventsHelper.Fire(_selectionUpdated, this, EventArgs.Empty);
+			}
 		}
 
 		public string SelectedStatusMessage
@@ -437,7 +438,7 @@ namespace ClearCanvas.ImageViewer.Services.Tools
 
 		public bool ClearInactiveEnabled
 		{
-			get { return true; }
+			get { return _importTable.Items.Count > 0; }
 		}
 
 		public void CancelSelected()
