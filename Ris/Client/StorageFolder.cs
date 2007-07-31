@@ -39,12 +39,12 @@ namespace ClearCanvas.Ris.Client
             get { return _itemsTable; }
         }
 
-        public override void Refresh()
+        protected override void OnRefreshDelegate(object nothing)
         {
             // do nothing
         }
 
-        public override void RefreshCount()
+        protected override void OnRefreshCountDelegate(object nothing)
         {
             // do nothing
         }

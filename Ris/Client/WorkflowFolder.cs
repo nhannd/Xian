@@ -143,7 +143,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public override void Refresh()
+        protected override void OnRefreshDelegate(object nothing)
         {
             if (_queryItemsTask != null)
             {
@@ -200,7 +200,7 @@ namespace ClearCanvas.Ris.Client
             this.RestartRefreshTimer();
         }
 
-        public override void RefreshCount()
+        protected override void OnRefreshCountDelegate(object nothing)
         {
             if (_queryCountTask != null)
             {
@@ -305,6 +305,7 @@ namespace ClearCanvas.Ris.Client
         {
             if (_refreshTimer != null)
             {
+                _refreshTimer.Stop();
                 _refreshTimer.Dispose();
                 _refreshTimer = null;
             }
@@ -312,9 +313,12 @@ namespace ClearCanvas.Ris.Client
             if (_refreshTime > 0)
             {
                 if (this.IsOpen)
-                    _refreshTimer = new Timer(new TimerDelegate(Refresh), _refreshTime, _refreshTime);
+                    _refreshTimer = new Timer(new TimerDelegate(OnRefreshDelegate));
                 else
-                    _refreshTimer = new Timer(new TimerDelegate(RefreshCount), _refreshTime, _refreshTime);
+                    _refreshTimer = new Timer(new TimerDelegate(OnRefreshCountDelegate));
+
+                _refreshTimer.Interval = _refreshTime;
+                _refreshTimer.Start();
             }
         }
 

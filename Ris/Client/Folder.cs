@@ -41,8 +41,19 @@ namespace ClearCanvas.Ris.Client
         #region IFolder Members
 
         public abstract string Text { get; }
-        public abstract void Refresh();
-        public abstract void RefreshCount();
+
+        public void Refresh()
+        {
+            OnRefreshDelegate(null);
+        }
+
+        public void RefreshCount()
+        {
+            OnRefreshCountDelegate(null);
+        }
+
+        protected abstract void OnRefreshDelegate(object stateObject);
+        protected abstract void OnRefreshCountDelegate(object stateObject);
 
         public virtual void OpenFolder() 
         {
