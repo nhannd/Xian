@@ -128,7 +128,6 @@
     <Compile Include="BaseTools\MouseToolButtonAttribute.cs" />
     <Compile Include="BaseTools\MouseWheelHandlerAttribute.cs" />
     <Compile Include="Comparers\ComparerBase.cs" />
-    <Compile Include="Comparers\AcquisitionNumberComparer.cs" />
     <Compile Include="Comparers\StandardImageSetComparer.cs" />
     <Compile Include="Comparers\ImageSetComparer.cs" />
     <Compile Include="Comparers\StandardDisplaySetComparer.cs" />

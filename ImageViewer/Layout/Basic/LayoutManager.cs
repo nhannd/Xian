@@ -221,9 +221,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			// This has been added so that the initial presentation of each display set has a reasonable 
 			// sort order.  When proper sorting support is added, the sorters will be extensions.
 			displaySet.PresentationImages.Sort(new InstanceNumberComparer());
-
-			if (AtLeastTwoImageNumbersEqual(displaySet.PresentationImages))
-				displaySet.PresentationImages.Sort(new AcquisitionNumberComparer());
 		}
 
 		private IPresentationImage AddImage(IDisplaySet displaySet, ImageSop image)
@@ -313,24 +310,6 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 				imageBox.DisplaySet = logicalWorkspace.ImageSets[imageSetIndex].DisplaySets[displaySetIndex];
 				displaySetIndex++;
 			}
-		}
-
-		private bool AtLeastTwoImageNumbersEqual(PresentationImageCollection presentationImages)
-		{
-			int previous = -1;
-
-			foreach (IPresentationImage image in presentationImages)
-			{
-				IImageSopProvider provider = image as IImageSopProvider;
-				int current = provider.ImageSop.InstanceNumber;
-
-				if (current == previous)
-					return true;
-				else
-					previous = current;
-			}
-
-			return false;
 		}
 	}
 }
