@@ -23,6 +23,8 @@ namespace ClearCanvas.Ris.Client.Reporting
                 delegate(ReportSummary report) { return report.PerformedLocation; }));
             this.Columns.Add(new TableColumn<ReportSummary, DateTime?>("Performed Date",
                 delegate(ReportSummary report) { return report.PerformedDate; }));
+            this.Columns.Add(new TableColumn<ReportSummary, string>("Status",
+                delegate(ReportSummary report) { return report.ReportStatus.Value; }));
         }
     }
 }

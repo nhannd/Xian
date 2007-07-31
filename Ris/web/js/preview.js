@@ -196,20 +196,33 @@ function formatReport(report)
         return "";
         
     var formattedReport = "";
-    
-    for (var i = report.Parts.length-1; i > 0; i--)
+ 
+    if (report.Parts.length > 1)
     {
-        var addendumPart = report.Parts[i];
-        var addendum = addendumPart && addendumPart.Content ? addendumPart.Content : null;
-        if (addendum)
-            formattedReport += "Addendum " + i + ": " + addendum + "<br><br>";
+        for (var i = report.Parts.length-1; i > 0; i--)
+        {
+            var addendumPart = report.Parts[i];
+            var addendumContent = addendumPart && addendumPart.Content ? addendumPart.Content : "";
+            
+            if (addendumContent)
+            {
+                if (addendumPart.Status.Code == 'P')
+                    formattedReport += "<font color='red'>Draft: " + addendumContent + "</font><br><br>";
+                else if (addendumPart.Status.Code == 'F')
+                    formattedReport += addendumContent + "<br><br>";
+            }
+        }
+
+        if (formattedReport)
+            formattedReport = "<h3>Addendum:</h3>" + formattedReport;
+
     }
-    
+        
     var mainReport = JSML.parse(report.Parts[0].Content);
 
-    formattedReport += "Main Report: <br>";
-    formattedReport += "Impression: " + mainReport.Impression + "<br>";    
-    formattedReport += "Finding: " + mainReport.Finding + "<br>";
+    formattedReport += "<h3>Main Report:</h3>";
+    formattedReport += "<B>Impression:</B> " + mainReport.Impression + "<br>";    
+    formattedReport += "<B>Finding:</B> " + mainReport.Finding + "<br>";
     
     return formattedReport;
 }
