@@ -143,7 +143,7 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        protected override void OnRefreshDelegate(object nothing)
+        public override void  Refresh()
         {
             if (_queryItemsTask != null)
             {
@@ -200,7 +200,7 @@ namespace ClearCanvas.Ris.Client
             this.RestartRefreshTimer();
         }
 
-        protected override void OnRefreshCountDelegate(object nothing)
+        public override void RefreshCount()
         {
             if (_queryCountTask != null)
             {
@@ -312,13 +312,20 @@ namespace ClearCanvas.Ris.Client
 
             if (_refreshTime > 0)
             {
-                if (this.IsOpen)
-                    _refreshTimer = new Timer(new TimerDelegate(OnRefreshDelegate));
-                else
-                    _refreshTimer = new Timer(new TimerDelegate(OnRefreshCountDelegate));
+                try
+                {
+                    TimerDelegate timerDelegate = this.IsOpen
+                        ? new TimerDelegate(delegate(object state) { Refresh(); })
+                        : new TimerDelegate(delegate(object state) { RefreshCount(); });
 
-                _refreshTimer.Interval = _refreshTime;
-                _refreshTimer.Start();
+                    _refreshTimer = new Timer(timerDelegate);
+                    _refreshTimer.Interval = _refreshTime;
+                    _refreshTimer.Start();
+                }
+                catch (Exception)
+                {
+                    Platform.Log(SR.ExceptionFolderRefresh, LogLevel.Error);
+                }
             }
         }
 

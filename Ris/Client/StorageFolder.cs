@@ -1,9 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -39,12 +36,12 @@ namespace ClearCanvas.Ris.Client
             get { return _itemsTable; }
         }
 
-        protected override void OnRefreshDelegate(object nothing)
+        public override void Refresh()
         {
             // do nothing
         }
 
-        protected override void OnRefreshCountDelegate(object nothing)
+        public override void RefreshCount()
         {
             // do nothing
         }
