@@ -49,11 +49,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
                 StudyItem item = new StudyItem();
                 item.SpecificCharacterSet = result.SpecificCharacterSet;
                 item.PatientId = result.PatientId.ToString();
-
-                if (item.SpecificCharacterSet == String.Empty)
-                    item.PatientsName = result.PatientsName;
-                else
-                    item.PatientsName = new PersonName(SpecificCharacterSetParser.Parse(item.SpecificCharacterSet, result.PatientsName));
+				item.PatientsName = result.PatientsName;
 
                 item.PatientsBirthDate = result[DicomTags.PatientsBirthDate];
                 item.StudyDate = result.StudyDate;
