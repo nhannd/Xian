@@ -206,10 +206,12 @@ function formatReport(report)
             
             if (addendumContent)
             {
-                if (addendumPart.Status.Code == 'P')
-                    formattedReport += "<font color='red'>Draft: " + addendumContent + "</font><br><br>";
-                else if (addendumPart.Status.Code == 'F')
-                    formattedReport += addendumContent + "<br><br>";
+                var isAddendumDraft = new Boolean(addendumPart.Status.Code == 'P');
+                
+                formattedReport += isAddendumDraft == true ? "<font color='red'>Draft: " : "";
+                formattedReport += addendumContent;
+                formattedReport += isAddendumDraft == true ? "</font>" : "";
+                formattedReport += "<br><br>";
             }
         }
 
@@ -219,10 +221,16 @@ function formatReport(report)
     }
         
     var mainReport = JSML.parse(report.Parts[0].Content);
-
-    formattedReport += "<h3>Main Report:</h3>";
+    var isDraft = new Boolean(report.Parts[0].Status.Code == 'P');
+   
+    formattedReport += isDraft == true ? "<font color='red'>" : ""; 
+    formattedReport += "<h3>";
+    formattedReport += "Main Report";
+    formattedReport += isDraft == true ? " (Draft)" : "";
+    formattedReport += "</h3>";
     formattedReport += "<B>Impression:</B> " + mainReport.Impression + "<br>";    
     formattedReport += "<B>Finding:</B> " + mainReport.Finding + "<br>";
-    
+    formattedReport += isDraft == true ? "</font>" : ""; 
+
     return formattedReport;
 }
