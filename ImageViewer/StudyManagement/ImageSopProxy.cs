@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			_realImageSop = realImageSop;
 		}
 
-		public override object NativeDicomObject
+		public override DicomMessageBase NativeDicomObject
 		{
 			get 
 			{ 

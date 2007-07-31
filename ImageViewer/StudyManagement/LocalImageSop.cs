@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			base.Dispose(disposing);
 		}
 
-        public override object NativeDicomObject
+        public override DicomMessageBase NativeDicomObject
         {
             get { return _dicomFile; }
         }

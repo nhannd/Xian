@@ -57,24 +57,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		}
 
 		/// <summary>
-		/// Gets the underlying native DICOM object.
+		/// Gets the underlying native DICOM message.
 		/// </summary>
-		/// <remarks>
-		/// <para>
-		/// Sometimes, it is necessary to break the SOP abstraction and expose
-		/// the underlying implementation object, since providing a wrapper for the object
-		/// in <see cref="Sop"/> would be prohibitive because of the large number of
-		/// methods that would have to be wrapped.
-		/// </para>
-		/// <para>
-		/// Because <see cref="NativeDicomObject"/> returns an <see cref="Object"/>, it
-		/// needs to be cast to a known class.  Note that if the interface to that
-		/// known class changes at some point in the future, client code may break.
-		/// For this reason, <see cref="NativeDicomObject"/> should be used
-		/// carefully and sparingly.
-		/// </para>
-		/// </remarks>
-		public abstract object NativeDicomObject { get; }
+		public abstract DicomMessageBase NativeDicomObject { get; }
 
 		/// <summary>
 		/// Gets the Transfer Syntax UID.
