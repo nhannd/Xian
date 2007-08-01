@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 		{
 		}
 
-        public override object NativeDicomObject
+        public override DicomMessageBase NativeDicomObject
         {
             get { throw new Exception("The method or operation is not implemented."); }
         }
