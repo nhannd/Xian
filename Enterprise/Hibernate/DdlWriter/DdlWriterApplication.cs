@@ -1,5 +1,4 @@
 using System;
-using System.Windows.Forms;
 using System.IO;
 
 using ClearCanvas.Common;
@@ -13,40 +12,53 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
     {
         public void RunApplication(string[] args)
         {
-            string outputFile = "model.ddl";
-            string databaseType = "SQL";
+            string outputFile = "";
 
             if (args.Length > 0)
             {
                 foreach (string arg in args)
                 {
-                    TryParseArg(arg, "OutputFile", ref outputFile);
-                    TryParseArg(arg, "DatabaseType", ref databaseType);
+                    TryParseArg(arg, "out", ref outputFile);
                 }
             }
 
-            Dialect dialect = (databaseType == "SQLite") ? (Dialect)new NHibernate.Dialect.SQLiteDialect() : (Dialect)new CustomSqlDialect();
+            Dialect dialect = new CustomSqlDialect();   // SQL Server 
 
-            using (StreamWriter sw = File.CreateText(outputFile))
+            // if a file name was supplied, write to the file
+            if (!string.IsNullOrEmpty(outputFile))
             {
-                try
+                using (StreamWriter sw = File.CreateText(outputFile))
                 {
-                    PersistentStore store = new PersistentStore();
-                    store.Initialize();
-
-                    ScriptWriter scriptWriter = new ScriptWriter(store, dialect);
-
-                    // for now, write the drop script first, and then write the create script to the same file
-                    // in future, might be good to control this using command line flags
-                    scriptWriter.WriteDropScript(sw);
-                    scriptWriter.WriteCreateScript(sw);
-                }
-                catch (Exception e)
-                {
-                    Platform.Log(e, LogLevel.Error);
-                    Console.WriteLine(e);
+                    WriteCreateScripts(sw, dialect);
                 }
             }
+            else
+            {
+                // by default write to stdout
+                WriteCreateScripts(Console.Out, dialect);
+            }
+        }
+
+        private void WriteCreateScripts(TextWriter writer, Dialect dialect)
+        {
+            try
+            {
+                PersistentStore store = new PersistentStore();
+                store.Initialize();
+
+                ScriptWriter scriptWriter = new ScriptWriter(store, dialect);
+                scriptWriter.WriteCreateScript(writer);
+            }
+            catch (Exception e)
+            {
+                Log(e.Message, LogLevel.Error);
+            }
+        }
+
+        private void Log(object obj, LogLevel level)
+        {
+            Platform.Log(obj, LogLevel.Error);
+            Console.WriteLine(obj);
         }
 
         private bool TryParseArg(string arg, string command, ref string val)

@@ -47,10 +47,10 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
         }
 
         /// <summary>
-        /// Writes a database creation script to the specified <see cref="StreamWriter"/>
+        /// Writes a database creation script to the specified <see cref="TextWriter"/>
         /// </summary>
         /// <param name="sw"></param>
-        public void WriteCreateScript(StreamWriter sw)
+        public void WriteCreateScript(TextWriter sw)
         {
             foreach (IDdlScriptGenerator gen in _generators)
             {
