@@ -226,6 +226,14 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
 
         }
         #endregion
+
+        #region DicomUid Test
+        [Test]
+        public void DicomUidTest()
+        {
+            DicomUid uid = DicomUid.GenerateUid();
+        }
+        #endregion
     }
 }
 

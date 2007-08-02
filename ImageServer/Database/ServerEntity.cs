@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageServer.Database
 
         public ServerEntityKey GetKey()
         {
-            if (_oid == null)
+            if (_key == null)
                 throw new InvalidOperationException("Cannot generate entity ref on transient entity");
 
             return _key;

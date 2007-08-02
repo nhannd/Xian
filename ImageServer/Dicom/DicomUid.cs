@@ -4,6 +4,8 @@ using System.Text;
 using System.Net;
 using System.Net.NetworkInformation;
 
+using ClearCanvas.ImageServer.Dicom.Exceptions;
+
 namespace ClearCanvas.ImageServer.Dicom
 {
 
@@ -55,10 +57,10 @@ namespace ClearCanvas.ImageServer.Dicom
             return base.GetHashCode();
         }
 
-        private static long _timestamp;
-        private static String _mac = null;
+        private static String _lastTimestamp;
+        private static String _baseUid = null;
         private static Object _lock = new object();
-        private static int count = 0;
+        private static short count = 0;
 
         public static DicomUid GenerateUid()
         {
@@ -66,7 +68,7 @@ namespace ClearCanvas.ImageServer.Dicom
             {
                 StringBuilder uid = new StringBuilder();
 
-                if (_mac == null)
+                if (_baseUid == null)
                 {
                     NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
                     if (nics.Length == 0)
@@ -74,31 +76,33 @@ namespace ClearCanvas.ImageServer.Dicom
 
                     PhysicalAddress address = nics[0].GetPhysicalAddress();
 
-                    String rawMac = address.ToString();
+                    byte[] addressBytes = address.GetAddressBytes();
 
                     StringBuilder sb = new StringBuilder();
 
                     sb.Append("1.2.840.");
 
-                    foreach (char c in rawMac.ToUpper().ToCharArray())
+                    foreach (byte b in addressBytes)
                     {
-                        int i = (int)c;  
-                        sb.AppendFormat("{0}",i);
+                        sb.AppendFormat("{0}",b);
                     }
+
+                    _baseUid = sb.ToString();
 
                 }
 
+                String time = DateTime.Now.ToString("YYYYMMDDHHMMSS");
+                uid.AppendFormat(_baseUid);
+                uid.AppendFormat(".{0}", time);
 
-                uid.AppendFormat(_mac);
-                if (count == int.MaxValue)
+                if (count == short.MaxValue)
                 {
-                    _timestamp++;
                     count = 1;
                 }
                 count++;
                 uid.AppendFormat(".{0}", count);
 
-                return uid.ToString();
+                return new DicomUid(uid.ToString(),"Instance UID",UidType.SOPInstance);
             }
 
 
