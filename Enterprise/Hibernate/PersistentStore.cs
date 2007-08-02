@@ -40,24 +40,11 @@ namespace ClearCanvas.Enterprise.Hibernate
             // this will automatically read from the hibernate.xml.cfg file
             _cfg.Configure();
 
-            // build the set of all assemblies containing Broker extensions
-            // the assumption is that these assemblies also contain the .hbm.xml mapping files
-            BrokerExtensionPoint xp = new BrokerExtensionPoint();
-            ExtensionInfo[] extensions = xp.ListExtensions();
-            HybridSet assemblies = new HybridSet();
-            foreach (ExtensionInfo extension in extensions)
-            {
-                assemblies.Add(extension.ExtensionClass.Assembly);
-            }
-
-            // add this assembly too, since we have some mapping files
-            assemblies.Add(this.GetType().Assembly);
-
             // add each assembly to the hibernate configuration
             // this tells NHibernate to look for .hbm.xml embedded resources in these assemblies
-            foreach (Assembly asm in assemblies)
+            foreach (PluginInfo plugin in Platform.PluginManager.Plugins)
             {
-                _cfg.AddAssembly(asm);
+                _cfg.AddAssembly(plugin.Assembly);
             }
 
             // if a second-level cache has been specified

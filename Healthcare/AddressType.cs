@@ -10,6 +10,7 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// AddressType enumeration
     /// </summary>
+    [EnumValueClass(typeof(AddressTypeEnum))]
 	public enum AddressType
 	{
         /// <summary>

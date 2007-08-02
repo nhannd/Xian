@@ -14,14 +14,15 @@ class CodeGen
     #Template.new("EntityInfo.gen.ct", "Support/<%=@className%>Info.gen.cs", true)
   ]
   
-  # specifies a set of templates that will be applied to enum classes
+  # specifies a set of templates that will be applied to all enum classes
   @@enumTemplates = [
-    Template.new("enum.ct", "<%=@enumName%>.cs", false),
-    Template.new("EnumValue.gen.ct", "<%=@className%>.gen.cs", true),
-    Template.new("EnumTable.gen.ct", "<%=@className%>Table.gen.cs", true),
-    Template.new("IEnumBroker.gen.ct", "Brokers/I<%=@className%>Broker.gen.cs", true),
-    Template.new("EnumBroker.gen.ct", "Hibernate/Brokers/<%=@className%>Broker.gen.cs", true),
-    Template.new("EnumHbm.gen.ct", "Hibernate/<%=@className%>Hbm.gen.cs", true)
+     Template.new("EnumValue.gen.ct", "<%=@className%>.gen.cs", true)
+  ]
+  
+  # specifies a set of templates that will be applied to enum classes where the isHardEnum property returns  true
+  @@hardEnumTemplates = [
+     Template.new("enum.ct", "<%=@enumName%>.cs", false),
+     Template.new("EnumHbm.gen.ct", "Hibernate/<%=@className%>Hbm.gen.cs", true)
   ]
   
     # specifies a set of templates that will be applied to component classes
@@ -71,15 +72,14 @@ class CodeGen
       if File.fnmatch?("*.hbm.xml", file, File::FNM_DOTMATCH) || File.fnmatch?("*.hrq.xml", file, File::FNM_DOTMATCH)
         #add the file to the model
     	filePath = File.expand_path(file, srcDir)
-#    	if(!shouldIgnoreFile(filePath))
-    		model.add(filePath, shouldIgnoreFile(filePath))
-#    	end
-      end
+    	model.add(filePath, parseDirectives(filePath))
+     end
     end
     
     #process each template
     applyTemplates(@@entityTemplates, model.entityDefs, destDir)
     applyTemplates(@@enumTemplates, model.enumDefs, destDir)
+    applyTemplates(@@hardEnumTemplates, model.enumDefs.select {|enumDef| enumDef.isHardEnum }, destDir)
     applyTemplates(@@componentTemplates, model.componentDefs, destDir)
     applyTemplates(@@queryTemplates, model.queryDefs, destDir)
     
@@ -116,12 +116,13 @@ class CodeGen
     exit
   end
   
-  def CodeGen.shouldIgnoreFile(filename)
-	  ignore = nil
-	  open(filename) do |file|
-		  ignore = file.readlines.detect { |line| line.include?("<!--") && line.include?("@codegen") && line.include?("ignore") }
+  def CodeGen.parseDirectives(filename)
+	  # scan file for lines that look something like <!-- @codegen: ignore -->, and extract the word following @codegen:
+	  # e.g. the word "ignore" in this case is the directive
+	  #return an array of directives
+  	  open(filename) do |file|
+		  file.readlines.map {|line| /\s*<!--\s*@codegen:\s*(\w+)\s*-->/.match(line) }.select { |md| md }.map { |md| md[1] }
 	  end
-	  return ignore != nil
   end
 end
 

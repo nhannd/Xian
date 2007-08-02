@@ -10,7 +10,8 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// NoteSeverity enumeration
     /// </summary>
-	public enum NoteSeverity
+    [EnumValueClass(typeof(NoteSeverityEnum))]
+    public enum NoteSeverity
 	{
         /// <summary>
         /// Low

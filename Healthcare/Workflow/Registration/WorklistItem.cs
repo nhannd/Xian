@@ -44,7 +44,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         private HealthcardNumber _healthcardNumber;
         private DateTime? _dateOfBirth;
         private Sex _sex;
-        private PatientClass _patientClass;
+        private PatientClassEnum _patientClass;
         private OrderPriority _orderPriority;
 
         // Order data
@@ -136,7 +136,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             get { return _orderPriority; }
         }
 
-        public PatientClass PatientClass
+        public PatientClassEnum PatientClass
         {
             get { return _patientClass; }
         }

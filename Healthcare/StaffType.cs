@@ -12,7 +12,8 @@ namespace ClearCanvas.Healthcare {
     /// to make workflow decisions, but under no circumstances may it be used to for authorization
     /// decisions.  
     /// </summary>
-	public enum StaffType
+    [EnumValueClass(typeof(StaffTypeEnum))]
+    public enum StaffType
 	{
         /// <summary>
         /// Unspecified

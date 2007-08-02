@@ -57,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Adt
             TableColumn<TechnologistDocumentationTableItem, string> statusColumn = 
                 new TableColumn<TechnologistDocumentationTableItem, string>(
                     "Status",
-                    delegate(TechnologistDocumentationTableItem d) { return d.ProcedureStep.Status; },
+                    delegate(TechnologistDocumentationTableItem d) { return d.ProcedureStep.Status.Value; },
                     1.0f);
             this.Columns.Add(statusColumn);
 

@@ -9,7 +9,6 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common.PreviewService;
 using ClearCanvas.Workflow;
-using ClearCanvas.Workflow.Brokers;
 using ClearCanvas.Ris.Application.Services.ReportingWorkflow;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
@@ -76,9 +75,6 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
         private void UpdatePatientOrderData(PatientOrderData data, PatientProfile profile, IPersistenceContext context)
         {
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            SexEnum sex = context.GetBroker<ISexEnumBroker>().Load()[profile.Sex];
-            SpokenLanguageEnum primaryLanguage = context.GetBroker<ISpokenLanguageEnumBroker>().Load()[profile.PrimaryLanguage];
-            ReligionEnum religion = context.GetBroker<IReligionEnumBroker>().Load()[profile.Religion];
 
             data.MrnId = profile.Mrn.Id;
             data.MrnAssigningAuthority = profile.Mrn.AssigningAuthority;
@@ -90,9 +86,9 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
 
             data.PatientName = nameAssembler.CreatePersonNameDetail(profile.Name);
             data.DateOfBirth = profile.DateOfBirth;
-            data.Sex = sex.Value;
-            data.PrimaryLanguage = primaryLanguage.Value;
-            data.Religion = religion.Value;
+            data.Sex = EnumUtils.GetValue(profile.Sex, context);
+            data.PrimaryLanguage = EnumUtils.GetValue(profile.PrimaryLanguage);
+            data.Religion = EnumUtils.GetValue(profile.Religion);
             data.DeathIndicator = profile.DeathIndicator;
             data.TimeOfDeath = profile.TimeOfDeath;
         }
@@ -103,10 +99,10 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
 
             data.VisitNumberId = visit.VisitNumber.Id;
             data.VisitNumberAssigningAuthority = visit.VisitNumber.AssigningAuthority;
-            data.PatientClass = context.GetBroker<IPatientClassEnumBroker>().Load()[visit.PatientClass].Value;
-            data.PatientType = context.GetBroker<IPatientTypeEnumBroker>().Load()[visit.PatientType].Value;
-            data.AdmissionType = context.GetBroker<IAdmissionTypeEnumBroker>().Load()[visit.AdmissionType].Value;
-            data.VisitStatus = context.GetBroker<IVisitStatusEnumBroker>().Load()[visit.VisitStatus].Value;
+            data.PatientClass = EnumUtils.GetValue(visit.PatientClass);
+            data.PatientType = EnumUtils.GetValue(visit.PatientType);
+            data.AdmissionType = EnumUtils.GetValue(visit.AdmissionType);
+            data.VisitStatus = EnumUtils.GetValue(visit.VisitStatus, context);
             data.AdmitDateTime = visit.AdmitDateTime;
             data.DischargeDateTime = visit.DischargeDateTime;
             data.VisitFacilityName = visit.Facility.Name;
@@ -118,9 +114,6 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
         private void UpdatePatientOrderData(PatientOrderData data, Order order, IPersistenceContext context)
         {
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            OrderPriorityEnumTable priorityEnumTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
-            OrderCancelReasonEnumTable cancelReasonEnumTable = context.GetBroker<IOrderCancelReasonEnumBroker>().Load();
-            OrderStatusEnumTable orderStatusEnumTable = context.GetBroker<IOrderStatusEnumBroker>().Load();
 
             data.PlacerNumber = order.PlacerNumber;
             data.AccessionNumber = order.AccessionNumber;
@@ -130,9 +123,9 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
             data.OrderingPractitionerName = nameAssembler.CreatePersonNameDetail(order.OrderingPractitioner.Name);
             data.OrderingFacilityName = order.OrderingFacility.Name;
             data.ReasonForStudy = order.ReasonForStudy;
-            data.OrderPriority = priorityEnumTable[order.Priority].Value;
-            data.CancelReason = cancelReasonEnumTable[order.CancelReason].Value;
-            data.OrderStatus = orderStatusEnumTable[order.Status].Value;
+            data.OrderPriority = EnumUtils.GetValue(order.Priority, context);
+            data.CancelReason = EnumUtils.GetValue(order.CancelReason);
+            data.OrderStatus = EnumUtils.GetValue(order.Status, context);
             data.EarliestScheduledMPSDateTime = order.EarliestScheduledDateTime;
         }
 
@@ -159,9 +152,8 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
         private void UpdatePatientOrderData(PatientOrderData data, ProcedureStep ps, IPersistenceContext context)
         {
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
-            ActivityStatusEnumTable statusEnumTable = context.GetBroker<IActivityStatusEnumBroker>().Load();
 
-            data.ProcedureStepStatus = statusEnumTable[ps.State].Value;
+            data.ProcedureStepStatus = EnumUtils.GetValue(ps.State, context);
             if (ps.Scheduling != null)
             {
                 //TODO ScheduledPerformerStaff for ModalityProcedureStepSummary

@@ -123,6 +123,9 @@
   <data name="ExceptionEntityVersion" xml:space="preserve">
     <value>Entity version does not match the version in the database (OID: {0})</value>
   </data>
+  <data name="ExceptionEnumValueNotFound" xml:space="preserve">
+    <value>The enumeration value {0} was not found for class {1}</value>
+  </data>
   <data name="ExceptionIncompatiblePersistenceContext" xml:space="preserve">
     <value>Cannot inherit read-context as an update-context</value>
   </data>

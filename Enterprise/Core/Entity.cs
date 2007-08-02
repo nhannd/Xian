@@ -42,17 +42,6 @@ namespace ClearCanvas.Enterprise.Core
         }
 
         /// <summary>
-        /// Gets the class of this entity.  Note that the class of this entity is not necessarily the same as the
-        /// type of this object, because this object may be a proxy.  Therefore, use this method rather
-        /// than <see cref="GetType"/>.
-        /// </summary>
-        /// <returns></returns>
-        public virtual Type GetClass()
-        {
-            return GetRawInstance().GetType();
-        }
-
-        /// <summary>
         /// Gets a <see cref="EntityRef"/> that represents this entity.
         /// </summary>
         /// <returns></returns>
@@ -64,16 +53,6 @@ namespace ClearCanvas.Enterprise.Core
             return new EntityRef(GetClass(), _oid, _version);
         }
 
-        /// <summary>
-        /// In the case where this object is a proxy, returns the raw instance underlying the proxy.  This
-        /// method must be virtual for correct behaviour, however, it is not intended to be overridden by
-        /// subclasses and is not intended for use by application code.
-        /// </summary>
-        /// <returns></returns>
-        protected virtual Entity GetRawInstance()
-        {
-            return this;
-        }
 
         /// <summary>
         /// Performs a downcast on this object to the specified subclass type.  If this object is a proxy,

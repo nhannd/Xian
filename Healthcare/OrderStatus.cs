@@ -10,7 +10,8 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// OrderStatus enumeration as defined by HL7 (4.5.1.5)
     /// </summary>
-	public enum OrderStatus
+    [EnumValueClass(typeof(OrderStatusEnum))]
+    public enum OrderStatus
 	{
         /// <summary>
         /// Scheduled

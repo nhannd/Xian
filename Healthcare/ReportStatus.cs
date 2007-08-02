@@ -7,7 +7,8 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Healthcare {
 
-	public enum ReportStatus
+    [EnumValueClass(typeof(ReportStatusEnum))]
+    public enum ReportStatus
 	{
         /// <summary>
         /// Preliminary

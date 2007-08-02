@@ -14,28 +14,12 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
         public string[] GenerateCreateScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
         {
-            string[] scripts = store.Configuration.GenerateSchemaCreationScript(dialect);
-            if (dialect is SQLiteDialect)
-            {
-                AppendSemicolon(scripts);
-            }
-            return scripts;
+            return store.Configuration.GenerateSchemaCreationScript(dialect);
         }
 
         public string[] GenerateDropScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
         {
-            string[] scripts = store.Configuration.GenerateDropSchemaScript(dialect);
-            if (dialect is SQLiteDialect)
-            {
-                AppendSemicolon(scripts);
-            }
-            return scripts;
-        }
-
-        private void AppendSemicolon(string[] scripts)
-        {
-            for (int i = 0; i < scripts.Length; i++)
-                scripts[i] = scripts[i] + ";";
+            return store.Configuration.GenerateDropSchemaScript(dialect);
         }
 
         #endregion

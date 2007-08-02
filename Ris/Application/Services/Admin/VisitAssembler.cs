@@ -22,10 +22,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             summary.VisitNumberAssigningAuthority = visit.VisitNumber.AssigningAuthority;
             summary.VisitNumberId = visit.VisitNumber.Id;
 
-            summary.AdmissionType = context.GetBroker<IAdmissionTypeEnumBroker>().Load()[visit.AdmissionType].Value;
-            summary.PatientClass = context.GetBroker<IPatientClassEnumBroker>().Load()[visit.PatientClass].Value;
-            summary.PatientType = context.GetBroker<IPatientTypeEnumBroker>().Load()[visit.PatientType].Value;
-            summary.Status = context.GetBroker<IVisitStatusEnumBroker>().Load()[visit.VisitStatus].Value;
+            summary.AdmissionType = visit.AdmissionType.Value;
+            summary.PatientClass = visit.PatientClass.Value;
+            summary.PatientType = visit.PatientType.Value;
+            summary.Status = EnumUtils.GetValue(visit.VisitStatus, context);
 
             summary.AdmitDateTime = visit.AdmitDateTime;
             summary.DischargeDateTime = visit.DischargeDateTime;
@@ -40,18 +40,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             detail.Patient = visit.Patient.GetRef();
             detail.VisitNumberAssigningAuthority = visit.VisitNumber.AssigningAuthority;
             detail.VisitNumberId = visit.VisitNumber.Id;
-
-            AdmissionTypeEnum admissionType = context.GetBroker<IAdmissionTypeEnumBroker>().Load()[visit.AdmissionType];
-            detail.AdmissionType = new EnumValueInfo(admissionType.Code.ToString(), admissionType.Value);
-
-            PatientClassEnum patientClass = context.GetBroker<IPatientClassEnumBroker>().Load()[visit.PatientClass];
-            detail.PatientClass = new EnumValueInfo(patientClass.Code.ToString(), patientClass.Value);
-
-            PatientTypeEnum patientType = context.GetBroker<IPatientTypeEnumBroker>().Load()[visit.PatientType];
-            detail.PatientType = new EnumValueInfo(patientType.Code.ToString(), patientType.Value);
-
-            VisitStatusEnum visitStatus = context.GetBroker<IVisitStatusEnumBroker>().Load()[visit.VisitStatus];
-            detail.Status = new EnumValueInfo(visitStatus.Code.ToString(), visitStatus.Value);
+            detail.AdmissionType = EnumUtils.GetEnumValueInfo(visit.AdmissionType);
+            detail.PatientClass = EnumUtils.GetEnumValueInfo(visit.PatientClass);
+            detail.PatientType = EnumUtils.GetEnumValueInfo(visit.PatientType);
+            detail.Status = EnumUtils.GetEnumValueInfo(visit.VisitStatus, context);
 
 
             detail.AdmitDateTime = visit.AdmitDateTime;
@@ -74,12 +66,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             }
 
             detail.AmbulatoryStatuses = new List<EnumValueInfo>();
-            AmbulatoryStatusEnumTable ambulatoryStatuses = context.GetBroker<IAmbulatoryStatusEnumBroker>().Load();
-            foreach (AmbulatoryStatus ambulatoryStatus in visit.AmbulatoryStatuses)
+            foreach (AmbulatoryStatusEnum ambulatoryStatus in visit.AmbulatoryStatuses)
 	        {
-                detail.AmbulatoryStatuses.Add(new EnumValueInfo(
-                    ambulatoryStatuses[ambulatoryStatus].Code.ToString(), 
-                    ambulatoryStatuses[ambulatoryStatus].Value));
+                detail.AmbulatoryStatuses.Add(EnumUtils.GetEnumValueInfo(ambulatoryStatus));
 	        }   
          
             detail.PreadmitNumber = visit.PreadmitNumber;
@@ -96,10 +85,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             visit.VisitNumber.Id = detail.VisitNumberId;
             visit.VisitNumber.AssigningAuthority = detail.VisitNumberAssigningAuthority;
 
-            visit.AdmissionType = (AdmissionType)Enum.Parse(typeof(AdmissionType), detail.AdmissionType.Code);
-            visit.PatientClass = (PatientClass)Enum.Parse(typeof(PatientClass), detail.PatientClass.Code);
-            visit.PatientType = (PatientType)Enum.Parse(typeof(PatientType), detail.PatientType.Code);
-            visit.VisitStatus = (VisitStatus)Enum.Parse(typeof(VisitStatus), detail.Status.Code);
+            visit.AdmissionType = EnumUtils.GetEnumValue<AdmissionTypeEnum>(detail.AdmissionType, context);
+            visit.PatientClass = EnumUtils.GetEnumValue<PatientClassEnum>(detail.PatientClass, context);
+            visit.PatientType = EnumUtils.GetEnumValue<PatientTypeEnum>(detail.PatientType, context);
+            visit.VisitStatus = EnumUtils.GetEnumValue<VisitStatus>(detail.Status);
 
             visit.AdmitDateTime = detail.AdmitDateTime;
             visit.DischargeDateTime = detail.DischargeDateTime;
@@ -119,7 +108,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             {
                 visit.Locations.Add(new VisitLocation(
                     context.Load<Location>(vlDetail.Location.LocationRef, EntityLoadFlags.Proxy),
-                    (VisitLocationRole)Enum.Parse(typeof(VisitLocationRole), vlDetail.Role.Code),
+                    EnumUtils.GetEnumValue<VisitLocationRole>(vlDetail.Role),
                     vlDetail.StartTime,
                     vlDetail.EndTime));
             }
@@ -129,7 +118,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             {
                 visit.Practitioners.Add(new VisitPractitioner(
                     context.Load<Practitioner>(vpDetail.Practitioner.StaffRef, EntityLoadFlags.Proxy),
-                    (VisitPractitionerRole)Enum.Parse(typeof(VisitPractitionerRole), vpDetail.Role.Code),
+                    EnumUtils.GetEnumValue<VisitPractitionerRole>(vpDetail.Role),
                     vpDetail.StartTime,
                     vpDetail.EndTime));
             }
@@ -137,7 +126,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             visit.AmbulatoryStatuses.Clear();
             foreach (EnumValueInfo ambulatoryStatus in detail.AmbulatoryStatuses)
             {
-                visit.AmbulatoryStatuses.Add((AmbulatoryStatus)Enum.Parse(typeof(AmbulatoryStatus), ambulatoryStatus.Code));   
+                visit.AmbulatoryStatuses.Add(EnumUtils.GetEnumValue<AmbulatoryStatusEnum>(ambulatoryStatus, context));   
             }
         }
 
@@ -146,9 +135,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             VisitLocationDetail detail = new VisitLocationDetail();
 
             detail.Location = new LocationAssembler().CreateLocationSummary(vl.Location);
-
-            VisitLocationRoleEnum role = context.GetBroker<IVisitLocationRoleEnumBroker>().Load()[vl.Role];
-            detail.Role = new EnumValueInfo(role.Code.ToString(), role.Value);
+            detail.Role = EnumUtils.GetEnumValueInfo(vl.Role, context);
 
             detail.StartTime = vl.StartTime;
             detail.EndTime = vl.EndTime;
@@ -161,9 +148,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             VisitPractitionerDetail detail = new VisitPractitionerDetail();
             
             detail.Practitioner = new StaffAssembler().CreateStaffSummary(vp.Practitioner, context);
-            
-            VisitPractitionerRoleEnum role = context.GetBroker<IVisitPractitionerRoleEnumBroker>().Load()[vp.Role];
-            detail.Role = new EnumValueInfo(role.Code.ToString(), role.Value);
+
+            detail.Role = EnumUtils.GetEnumValueInfo(vp.Role, context);
 
             detail.StartTime = vp.StartTime;
             detail.EndTime = vp.EndTime;

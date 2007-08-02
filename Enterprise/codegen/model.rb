@@ -23,10 +23,12 @@ class Model < ElementDef
   end
   
   # add the specified file to the model
-  # suppressCodeGen is a boolean that will suppress code generation for the classes defined in the specified file (hbm only)
-  def add(fileName, suppressCodeGen)
+  # directives is an array of strings that affect code generation. valid directives are:
+  #	"ignore" - suppress code generation for all classes defined in this file
+  #	"hardenum" - for enum classes only, forces generation of hard enum classes, even if not referenced
+  def add(fileName, directives)
     case
-      when fileName.include?('.hbm.xml') : addHbmFile(fileName, suppressCodeGen)
+      when fileName.include?('.hbm.xml') : addHbmFile(fileName, directives)
       when fileName.include?('.hrq.xml') : addHrqFile(fileName)
     end
   end
@@ -61,7 +63,7 @@ class Model < ElementDef
   end
   
 protected
-  def addHbmFile(hbmFile, suppressCodeGen)
+  def addHbmFile(hbmFile, directives)
     # read the hbm xml file
     mappings = REXML::Document.new(File.new(hbmFile))
     
@@ -74,10 +76,10 @@ protected
         namespace = TypeNameUtils.getNamespace(className) || mappings.root.attributes['namespace']
         
         if(/Enum$/.match(className))	#does the class name end with "Enum"?
-          processEnum(c, namespace, suppressCodeGen)
+          processEnum(c, namespace, directives)
         else
           superClassName = c.attributes['extends'] ? TypeNameUtils.getQualifiedName(c.attributes['extends'], namespace) : "ClearCanvas.Enterprise.Core.Entity"
-          processEntity(c, namespace, superClassName, suppressCodeGen)
+          processEntity(c, namespace, superClassName, directives)
         end
       end
     end
@@ -101,20 +103,20 @@ protected
   end
   
   # processes classNode to create instances of EntityDef
-  def processEntity(classNode, namespace, superClassName, suppressCodeGen)
+  def processEntity(classNode, namespace, superClassName, directives)
     #create EntityDef for classNode
-    entityDef = EntityDef.new(self, classNode, namespace, superClassName, suppressCodeGen)
+    entityDef = EntityDef.new(self, classNode, namespace, superClassName, directives)
     addDef(entityDef.qualifiedName, entityDef)
     
     #process any contained subclassses recursively
     classNode.each_element do |subclassNode|
-      processEntity(subclassNode, namespace, entityDef.qualifiedName, suppressCodeGen) if(NHIBERNATE_CLASS_TYPES.include?(subclassNode.name))
+      processEntity(subclassNode, namespace, entityDef.qualifiedName, directives) if(NHIBERNATE_CLASS_TYPES.include?(subclassNode.name))
     end
   end
   
   # processes classNode to create instances of EnumDef
-  def processEnum(classNode, namespace, suppressCodeGen)
-    enumDef = EnumDef.new(self, classNode, namespace, suppressCodeGen)
+  def processEnum(classNode, namespace, directives)
+    enumDef = EnumDef.new(self, classNode, namespace, directives)
     addDef(enumDef.qualifiedName, enumDef)
   end
   

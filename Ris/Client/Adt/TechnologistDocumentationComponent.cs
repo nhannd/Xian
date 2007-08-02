@@ -11,6 +11,7 @@ using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 using ClearCanvas.Ris.Client.Formatting;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -235,16 +236,17 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             else
             {
+                EnumValueInfo schedStatus = new EnumValueInfo("SC", "Scheduled");
                 _procedureSteps = new List<ProcedureStepDetail>();
-                _procedureSteps.Add(new ProcedureStepDetail("Procedure 1", "Scheduled", new DocumentationPageDetail("http://localhost/RIS/nuclearmedicine.htm")));
-                _procedureSteps.Add(new ProcedureStepDetail("Procedure 2", "Scheduled", new DocumentationPageDetail("http://localhost/RIS/breastimaging.htm")));
-                _procedureSteps.Add(new ProcedureStepDetail("Procedure 3", "Scheduled", new DocumentationPageDetail("http://localhost/RIS/nuclearmedicine.htm")));
-                _procedureSteps.Add(new ProcedureStepDetail("Procedure 4", "Scheduled", new DocumentationPageDetail("http://localhost/RIS/breastimaging.htm")));
-                _procedureSteps.Add(new ProcedureStepDetail("Procedure 5", "Scheduled", new DocumentationPageDetail("http://localhost/RIS/breastimaging2.htm")));
-                _procedureSteps.Add(new ProcedureStepDetail("Procedure 6", "Scheduled", new DocumentationPageDetail("http://localhost/RIS/breastimaging2.htm")));
+                _procedureSteps.Add(new ProcedureStepDetail("Procedure 1", schedStatus, new DocumentationPageDetail("http://localhost/RIS/nuclearmedicine.htm")));
+                _procedureSteps.Add(new ProcedureStepDetail("Procedure 2", schedStatus, new DocumentationPageDetail("http://localhost/RIS/breastimaging.htm")));
+                _procedureSteps.Add(new ProcedureStepDetail("Procedure 3", schedStatus, new DocumentationPageDetail("http://localhost/RIS/nuclearmedicine.htm")));
+                _procedureSteps.Add(new ProcedureStepDetail("Procedure 4", schedStatus, new DocumentationPageDetail("http://localhost/RIS/breastimaging.htm")));
+                _procedureSteps.Add(new ProcedureStepDetail("Procedure 5", schedStatus, new DocumentationPageDetail("http://localhost/RIS/breastimaging2.htm")));
+                _procedureSteps.Add(new ProcedureStepDetail("Procedure 6", schedStatus, new DocumentationPageDetail("http://localhost/RIS/breastimaging2.htm")));
 
                 ProcedureStepDetail started =
-                    new ProcedureStepDetail("Procedure 7", "In Progress", new DocumentationPageDetail("http://localhost/RIS/breastimaging2.htm"));
+                    new ProcedureStepDetail("Procedure 7", new EnumValueInfo("IP", "In Progress"), new DocumentationPageDetail("http://localhost/RIS/breastimaging2.htm"));
                 started.PerformedProcedureStep = new PerformedProcedureStepDetail();
                 started.PerformedProcedureStep.StartTime = Platform.Time;
                 _procedureSteps.Add(started);
@@ -378,13 +380,13 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             ExtendItemSelection(checkedItem, true);
             RefreshTableItemCheckStatuses(checkedItem);
-            UpdateActionEnablement(checkedItem.ProcedureStep.Status);
+            UpdateActionEnablement(checkedItem.ProcedureStep.Status.Value);
             LoadDocumentationPage(checkedItem);
         }
 
         private void LoadDocumentationPage(TechnologistDocumentationTableItem checkedItem)
         {
-            if (checkedItem.ProcedureStep.Status == "Scheduled") return;
+            if (checkedItem.ProcedureStep.Status.Value == "Scheduled") return;
 
             if (this.DisplayedDocumentationPageUrl == null)
             {
@@ -474,7 +476,7 @@ namespace ClearCanvas.Ris.Client.Adt
             //UpdateSelectedStatuses("Completed");
             foreach (TechnologistDocumentationTableItem item in CheckedItems())
             {
-                item.ProcedureStep.Status = "Completed";
+                item.ProcedureStep.Status = new EnumValueInfo("CM", "Completed");
                 item.ProcedureStep.Dirty = true;
                 item.ProcedureStep.PerformedProcedureStep.EndTime = time;
                 _documentationTable.Items.NotifyItemUpdated(item);
@@ -491,7 +493,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             foreach (TechnologistDocumentationTableItem item in CheckedItems())
             {
-                item.ProcedureStep.Status = "In Progress";
+                item.ProcedureStep.Status = new EnumValueInfo("IP", "In Progress");
                 item.ProcedureStep.Dirty = true;
                 item.ProcedureStep.PerformedProcedureStep = pps;
                 _documentationTable.Items.NotifyItemUpdated(item);

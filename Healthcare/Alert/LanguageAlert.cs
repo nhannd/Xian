@@ -23,11 +23,10 @@ namespace ClearCanvas.Healthcare.Alert
         public override IAlertNotification Test(PatientProfile profile, IPersistenceContext context)
         {
             LanguageAlertNotification alertNotification = new LanguageAlertNotification();
-            SpokenLanguageEnumTable languageEnumTable = context.GetBroker<ISpokenLanguageEnumBroker>().Load();
-
-            if (profile.PrimaryLanguage != SpokenLanguage.en)
+            if (profile.PrimaryLanguage != null && profile.PrimaryLanguage.Code != "en")
             {
-                alertNotification.Reasons.Add(languageEnumTable[profile.PrimaryLanguage].Value);
+                SpokenLanguageEnum language = context.GetBroker<IEnumBroker>().Lookup<SpokenLanguageEnum>(profile.PrimaryLanguage.ToString());
+                alertNotification.Reasons.Add(language.Value);
                 return alertNotification;
             }
 

@@ -39,28 +39,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             dummyProvinces.Add("Ontario");
             response.AddressProvinceChoices = dummyProvinces;
 
-            response.AddressTypeChoices = CollectionUtils.Map<AddressTypeEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IAddressTypeEnumBroker>().Load().Items,
-                delegate(AddressTypeEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
-            response.ContactPersonRelationshipChoices = CollectionUtils.Map<ContactPersonRelationshipEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IContactPersonRelationshipEnumBroker>().Load().Items,
-                delegate(ContactPersonRelationshipEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
-
-            response.ContactPersonTypeChoices = CollectionUtils.Map<ContactPersonTypeEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IContactPersonTypeEnumBroker>().Load().Items,
-                delegate(ContactPersonTypeEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
+            response.AddressTypeChoices = EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext);
+            response.ContactPersonRelationshipChoices = EnumUtils.GetEnumValueList<ContactPersonRelationshipEnum>(PersistenceContext);
+            response.ContactPersonTypeChoices = EnumUtils.GetEnumValueList<ContactPersonTypeEnum>(PersistenceContext);
 
             List<string> dummyHealthcardChoices = new List<string>();
             dummyHealthcardChoices.Add("Ontario");
@@ -89,27 +70,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
                         return categoryAssembler.CreateNoteCategorySummary(category, this.PersistenceContext);
                     });
 
-            response.PrimaryLanguageChoices = CollectionUtils.Map<SpokenLanguageEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<ISpokenLanguageEnumBroker>().Load().Items,
-                delegate(SpokenLanguageEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
-            response.ReligionChoices = CollectionUtils.Map<ReligionEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IReligionEnumBroker>().Load().Items,
-                delegate(ReligionEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
-            response.SexChoices = CollectionUtils.Map<SexEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<ISexEnumBroker>().Load().Items,
-                delegate(SexEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
+            response.PrimaryLanguageChoices = EnumUtils.GetEnumValueList<SpokenLanguageEnum>(PersistenceContext);
+            response.ReligionChoices = EnumUtils.GetEnumValueList<ReligionEnum>(PersistenceContext);
+            response.SexChoices = EnumUtils.GetEnumValueList<SexEnum>(PersistenceContext);
             response.PhoneTypeChoices = (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false);
 
             return response;

@@ -36,6 +36,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
             // the order of generator execution is important, so add the static generators first
             _generators.Add(new TableSchemaGenerator());
+            _generators.Add(new EnumForeignKeyConstraintGenerator());
             _generators.Add(new EnumValueInsertGenerator());
 
             // subsequently we can add extension generators, with uncontrolled ordering

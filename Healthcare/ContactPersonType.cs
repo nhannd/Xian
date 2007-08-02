@@ -10,7 +10,8 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// ContactPersonType enumeration
     /// </summary>
-	public enum ContactPersonType
+    [EnumValueClass(typeof(ContactPersonTypeEnum))]
+    public enum ContactPersonType
 	{
         /// <summary>
         /// 

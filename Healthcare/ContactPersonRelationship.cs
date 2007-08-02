@@ -10,7 +10,8 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// ContactPersonRelationship enumeration
     /// </summary>
-	public enum ContactPersonRelationship
+    [EnumValueClass(typeof(ContactPersonRelationshipEnum))]
+    public enum ContactPersonRelationship
 	{
         /// <summary>
         /// Mother

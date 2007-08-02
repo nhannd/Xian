@@ -27,40 +27,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
 
             LoadVisitEditorFormDataResponse response = new LoadVisitEditorFormDataResponse();
 
-            response.AdmissionTypeChoices = CollectionUtils.Map<AdmissionTypeEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IAdmissionTypeEnumBroker>().Load().Items,
-                delegate(AdmissionTypeEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
-            response.AmbulatoryStatusChoices = CollectionUtils.Map<AmbulatoryStatusEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IAmbulatoryStatusEnumBroker>().Load().Items,
-                delegate(AmbulatoryStatusEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
-            response.PatientClassChoices = CollectionUtils.Map<PatientClassEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IPatientClassEnumBroker>().Load().Items,
-                delegate(PatientClassEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
-            response.PatientTypeChoices = CollectionUtils.Map<PatientTypeEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IPatientTypeEnumBroker>().Load().Items,
-                delegate(PatientTypeEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
-            response.VisitLocationRoleChoices = CollectionUtils.Map<VisitLocationRoleEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IVisitLocationRoleEnumBroker>().Load().Items,
-                delegate(VisitLocationRoleEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
+            response.AdmissionTypeChoices = EnumUtils.GetEnumValueList<AdmissionTypeEnum>(PersistenceContext);
+            response.AmbulatoryStatusChoices = EnumUtils.GetEnumValueList<AmbulatoryStatusEnum>(PersistenceContext);
+            response.PatientClassChoices = EnumUtils.GetEnumValueList<PatientClassEnum>(PersistenceContext);
+            response.PatientTypeChoices = EnumUtils.GetEnumValueList<PatientTypeEnum>(PersistenceContext);
+            response.VisitLocationRoleChoices = EnumUtils.GetEnumValueList<VisitLocationRoleEnum>(PersistenceContext);
 
             //TODO:  replace dummy values
             List<string> dummyVisitNumberChoices = new List<string>();
@@ -75,19 +46,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.VisitAdmin
             //        return new EnumValueInfo(e.Code.ToString(), e.Value);
             //    });
 
-            response.VisitPractitionerRoleChoices = CollectionUtils.Map<VisitPractitionerRoleEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IVisitPractitionerRoleEnumBroker>().Load().Items,
-                delegate(VisitPractitionerRoleEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
-            response.VisitStatusChoices = CollectionUtils.Map<VisitStatusEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IVisitStatusEnumBroker>().Load().Items,
-                delegate(VisitStatusEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
+            response.VisitPractitionerRoleChoices = EnumUtils.GetEnumValueList<VisitPractitionerRoleEnum>(PersistenceContext);
+            response.VisitStatusChoices = EnumUtils.GetEnumValueList<VisitStatusEnum>(PersistenceContext);
 
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             response.FacilityChoices = CollectionUtils.Map<Facility, FacilitySummary, List<FacilitySummary>>(

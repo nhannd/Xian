@@ -25,8 +25,8 @@
     </component>
     <property name="DateOfBirth" column="DateOfBirth_" type="DateTime" not-null="true" access="field.camelcase-underscore"/>
     <property name="Sex" column="Sex_" type="ClearCanvas.Healthcare.Hibernate.SexEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
-    <property name="PrimaryLanguage" column="PrimaryLanguage_" type="ClearCanvas.Healthcare.Hibernate.SpokenLanguageEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="false"/>
-    <property name="Religion" column="Religion_" type="ClearCanvas.Healthcare.Hibernate.ReligionEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="false"/>
+    <many-to-one name="PrimaryLanguage" class="SpokenLanguageEnum" column="PrimaryLanguage_"/>
+    <many-to-one name="Religion" class="ReligionEnum" column="Religion_"/>
     <property name="DeathIndicator" column="DeathIndicator_" type="Boolean" not-null="true"/>
     <property name="TimeOfDeath" column="TimeOfDeath_" type="DateTime" not-null="false"/>
 

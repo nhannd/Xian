@@ -10,6 +10,7 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// OrderPriority enumeration, defined by HL7 (see Timing Quantity TQ data-type)
     /// </summary>
+    [EnumValueClass(typeof(OrderPriorityEnum))]
 	public enum OrderPriority
 	{
         /// <summary>

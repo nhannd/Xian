@@ -103,7 +103,6 @@
     <EmbeddedResource Include="Mappings\Location.hbm.xml" />
     <EmbeddedResource Include="Mappings\Patient.hbm.xml" />
     <EmbeddedResource Include="Mappings\PatientClassEnum.hbm.xml" />
-    <EmbeddedResource Include="Mappings\PatientIdentifierTypeEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\PatientProfile.hbm.xml" />
     <EmbeddedResource Include="Mappings\PatientTypeEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\Practitioner.hbm.xml" />

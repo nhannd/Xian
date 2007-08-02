@@ -5,7 +5,8 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// RequestedProcedureTypeGroupCategory enumeration
     /// </summary>
-	public enum RequestedProcedureTypeGroupCategory
+    [EnumValueClass(typeof(RequestedProcedureTypeGroupCategoryEnum))]
+    public enum RequestedProcedureTypeGroupCategory
 	{
         /// <summary> 
         /// Reading

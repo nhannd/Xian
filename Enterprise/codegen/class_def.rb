@@ -8,17 +8,17 @@ require 'type_name_utils'
 # There are several different categories of logical classes:
 # see subclasses EnumDef, EntityDef, and ComponentDef
 class ClassDef < ElementDef
-  attr_reader :className, :model, :fields, :suppressCodeGen
+  attr_reader :className, :model, :fields
   
   # model - the model to which this class belongs
   # className - the short name of this class
   # namespace - the namespace in which this class is contained
-  # suppressCodeGen - a boolean flag indicating whether to suppress code generation for this class
-  def initialize(model, className, namespace, suppressCodeGen)
+  # directives - array of directives that affect code generation for this class
+  def initialize(model, className, namespace, directives)
     @model = model
     @className = className
     @namespace = namespace
-    @suppressCodeGen = suppressCodeGen
+    @directives = directives
     @fields = []
   end
   
@@ -37,6 +37,10 @@ class ClassDef < ElementDef
   # the kind of class (:entity, :enum, :component)
   def kind
     nil # defer to subclass
+  end
+  
+  def suppressCodeGen
+    @directives.include?("ignore")
   end
   
   # returns the set of non-collection fields defined in this class, not including superclass fields
@@ -107,15 +111,15 @@ protected
     # check for components/composite elements, and process them
     if(fieldNode.name == 'component')
       # pass the namespace of this class as the default namespace for the component
-      processComponent(fieldNode, namespace, suppressCodeGen) 
+      processComponent(fieldNode, namespace, @directives) 
     elsif(field.kind == :collection && (compositeElementNode = fieldNode.elements['composite-element']))
-      processComponent(compositeElementNode, namespace, suppressCodeGen)
+      processComponent(compositeElementNode, namespace, @directives)
     end
   end
   
   # processes componentNode to create instances of ComponentDef
-  def processComponent(componentNode, defaultNamespace, suppressCodeGen)
-   componentDef = ComponentDef.new(@model, componentNode, defaultNamespace, suppressCodeGen)
+  def processComponent(componentNode, defaultNamespace, directives)
+   componentDef = ComponentDef.new(@model, componentNode, defaultNamespace, directives)
    
    # only add the component def to the model if it wasn't already defined by another entity class
    @model.addDef(componentDef.qualifiedName, componentDef) if !@model.findDef(componentDef.qualifiedName)

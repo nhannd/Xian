@@ -50,6 +50,8 @@
     <Compile Include="Broker.cs" />
     <Compile Include="CodedValueBroker.cs" />
     <Compile Include="CustomSqlDialect.cs" />
+    <Compile Include="Ddl\DdlScriptGenerator.cs" />
+    <Compile Include="Ddl\EnumForeignKeyConstraintGenerator.cs" />
     <Compile Include="Ddl\ScriptWriter.cs" />
     <Compile Include="Ddl\EnumValueInsertGenerator.cs" />
     <Compile Include="Ddl\TableSchemaGenerator.cs" />

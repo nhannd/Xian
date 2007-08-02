@@ -5,6 +5,7 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.Workflow
 {
+    [EnumValueClass(typeof(ActivityStatusEnum))]
     public enum ActivityStatus
     {
         /// <summary>

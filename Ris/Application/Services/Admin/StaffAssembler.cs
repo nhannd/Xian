@@ -18,13 +18,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             if (staff == null)
                 return null;
 
-            PersonNameAssembler assembler = new PersonNameAssembler();
-            StaffTypeEnum staffType = context.GetBroker<IStaffTypeEnumBroker>().Load()[staff.Type];
-
             StaffSummary summary = new StaffSummary();
             summary.StaffRef = staff.GetRef();
-            summary.PersonNameDetail = assembler.CreatePersonNameDetail(staff.Name);
-            summary.StaffType = new EnumValueInfo(staff.Type.ToString(), staffType.Value);
+            summary.PersonNameDetail = new PersonNameAssembler().CreatePersonNameDetail(staff.Name);
+            summary.StaffType = EnumUtils.GetEnumValueInfo<StaffType>(staff.Type, context);
             summary.LicenseNumber = staff.Is<Practitioner>() ? staff.As<Practitioner>().LicenseNumber : "";
             return summary;
         }
@@ -35,10 +32,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
             AddressAssembler addressAssembler = new AddressAssembler();
 
-            StaffTypeEnum staffType = context.GetBroker<IStaffTypeEnumBroker>().Load()[staff.Type];
-
             StaffDetail detail = new StaffDetail();
-            detail.StaffType = new EnumValueInfo(staff.Type.ToString(), staffType.Value);
+            detail.StaffType = EnumUtils.GetEnumValueInfo<StaffType>(staff.Type, context);
             detail.PersonNameDetail = assembler.CreatePersonNameDetail(staff.Name);
             detail.TelephoneNumbers = CollectionUtils.Map<TelephoneNumber, TelephoneDetail, List<TelephoneDetail>>(
                     staff.TelephoneNumbers,
@@ -63,8 +58,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             TelephoneNumberAssembler telephoneNumberAssembler = new TelephoneNumberAssembler();
             AddressAssembler addressAssembler = new AddressAssembler();
 
-            staff.Type = (StaffType)Enum.Parse(typeof(StaffType), detail.StaffType.Code);
-
             assembler.UpdatePersonName(detail.PersonNameDetail, staff.Name);
 
             foreach (TelephoneDetail phoneDetail in detail.TelephoneNumbers)
@@ -77,7 +70,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                 addressAssembler.AddAddress(addressDetail, staff.Addresses);
             }
 
-            staff.Type = (StaffType)Enum.Parse(typeof(StaffType), detail.StaffType.Code);
+            staff.Type = EnumUtils.GetEnumValue<StaffType>(detail.StaffType);
             if (staff.Is<Practitioner>())
             {
                 // JR: this is the wrong place to be doing this validation (should be in model)

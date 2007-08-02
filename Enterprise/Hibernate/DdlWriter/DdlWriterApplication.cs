@@ -43,6 +43,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
                 }
                 catch (Exception e)
                 {
+                    Platform.Log(e, LogLevel.Error);
                     Console.WriteLine(e);
                 }
             }

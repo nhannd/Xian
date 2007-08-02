@@ -16,9 +16,9 @@
     <property name="AdmitDateTime" column="AdmitDateTime_" type="DateTime" not-null="false"/>
 
     <!--  Following three encompass "Visit Type" -->
-    <property name="PatientClass" column="PatientClass_" type="ClearCanvas.Healthcare.Hibernate.PatientClassEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
-    <property name="PatientType" column="PatientType_" type="ClearCanvas.Healthcare.Hibernate.PatientTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
-    <property name="AdmissionType" column="AdmissionType_" type="ClearCanvas.Healthcare.Hibernate.AdmissionTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+    <many-to-one name="PatientClass" class="PatientClassEnum" column="PatientClass_"/>
+    <many-to-one name="PatientType" class="PatientTypeEnum" column="PatientType_"/>
+    <many-to-one name="AdmissionType" class="AdmissionTypeEnum" column="AdmissionType_"/>
     
     <many-to-one name="Facility" class="Facility" column="FacilityOID_" not-null="true" fetch="join"/>
 
@@ -59,9 +59,8 @@
         <generator class="guid.comb"/>
       </collection-id>
       <key column="VisitOID_"/>
-      <!--<property name="AmbulatoryStatus" column="AmbulatoryStatus_" type="ClearCanvas.Healthcare.Hibernate.AmbulatoryStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="false"/>-->
-      <element column="AmbulatoryStatus_" type="ClearCanvas.Healthcare.Hibernate.AmbulatoryStatusEnumHbm, ClearCanvas.Healthcare.Hibernate"/>
+      <many-to-many column="AmbulatoryStatus_" class="AmbulatoryStatusEnum"/>
     </idbag>
-    
+
   </class>
 </hibernate-mapping>

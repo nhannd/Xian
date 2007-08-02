@@ -8,9 +8,12 @@ using ClearCanvas.Enterprise.Core;
 
 namespace <%= namespace %> {
     /// <summary>
-    /// <%= className %> wrapper for <see cref="<%= enumName %>"/>
+    /// <%= className %> enumeration
     /// </summary>
-    public class <%= className %> : EnumValue<<%= enumName %>>
+    public class <%= className %> : EnumValue
     {
+		protected <%= className %>()
+		{
+		}
     }
 }

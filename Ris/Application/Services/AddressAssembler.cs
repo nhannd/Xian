@@ -27,8 +27,7 @@ namespace ClearCanvas.Ris.Application.Services
             addressDetail.PostalCode = address.PostalCode;
             addressDetail.Country = address.Country;
 
-            AddressTypeEnumTable typeEnumTable = context.GetBroker<IAddressTypeEnumBroker>().Load();
-            addressDetail.Type = new EnumValueInfo(address.Type.ToString(), typeEnumTable[address.Type].Value);
+            addressDetail.Type = EnumUtils.GetEnumValueInfo(address.Type, context);
 
             addressDetail.ValidRangeFrom = address.ValidRange.From;
             addressDetail.ValidRangeUntil = address.ValidRange.Until;
@@ -49,7 +48,7 @@ namespace ClearCanvas.Ris.Application.Services
             newAddress.Province = addressDetail.Province;
             newAddress.PostalCode = addressDetail.PostalCode;
             newAddress.Country = addressDetail.Country;
-            newAddress.Type = (AddressType)Enum.Parse(typeof(AddressType), addressDetail.Type.Code);
+            newAddress.Type = EnumUtils.GetEnumValue<AddressType>(addressDetail.Type);
             newAddress.ValidRange.From = addressDetail.ValidRangeFrom;
             newAddress.ValidRange.Until = addressDetail.ValidRangeUntil;
 

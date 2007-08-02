@@ -27,12 +27,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.RequestedProcedureTypeGroup
             GetRequestedProcedureTypeGroupEditFormDataResponse response = new GetRequestedProcedureTypeGroupEditFormDataResponse();
 
             // Category choices
-            response.Categories = CollectionUtils.Map<RequestedProcedureTypeGroupCategoryEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IRequestedProcedureTypeGroupCategoryEnumBroker>().Load().Items,
-                delegate(RequestedProcedureTypeGroupCategoryEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
+            response.Categories = EnumUtils.GetEnumValueList<RequestedProcedureTypeGroupCategoryEnum>(PersistenceContext);
 
             // RequestedProcedureType choices
             RequestedProcedureTypeAssembler assembler = new RequestedProcedureTypeAssembler();

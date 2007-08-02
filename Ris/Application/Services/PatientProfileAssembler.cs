@@ -23,7 +23,7 @@ namespace ClearCanvas.Ris.Application.Services
             summary.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
             summary.PatientRef = profile.Patient.GetRef();
             summary.ProfileRef = profile.GetRef();
-            summary.Sex = new EnumValueInfo(profile.Sex.ToString(), context.GetBroker<ISexEnumBroker>().Load()[profile.Sex].Value);
+            summary.Sex = EnumUtils.GetEnumValueInfo<Sex>(profile.Sex, context);
 
             return summary;
         }
@@ -50,25 +50,12 @@ namespace ClearCanvas.Ris.Application.Services
 
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             detail.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
-
-            SexEnum sex = context.GetBroker<ISexEnumBroker>().Load()[profile.Sex];
-            detail.Sex = new EnumValueInfo(
-                sex.Code.ToString(),
-                sex.Value);
-
+            detail.Sex = EnumUtils.GetEnumValueInfo<Sex>(profile.Sex, context);
             detail.DateOfBirth = profile.DateOfBirth;
             detail.DeathIndicator = profile.DeathIndicator;
             detail.TimeOfDeath = profile.TimeOfDeath;
-
-            SpokenLanguageEnum primaryLanguage = context.GetBroker<ISpokenLanguageEnumBroker>().Load()[profile.PrimaryLanguage];
-            detail.PrimaryLanguage = new EnumValueInfo(
-                primaryLanguage.Code.ToString(),
-                primaryLanguage.Value);
-
-            ReligionEnum religion = context.GetBroker<IReligionEnumBroker>().Load()[profile.Religion];
-            detail.Religion = new EnumValueInfo(
-                religion.Code.ToString(),
-                religion.Value);
+            detail.PrimaryLanguage = EnumUtils.GetEnumValueInfo(profile.PrimaryLanguage);
+            detail.Religion = EnumUtils.GetEnumValueInfo(profile.Religion);
 
             AddressAssembler addressAssembler = new AddressAssembler();
             detail.CurrentHomeAddress = addressAssembler.CreateAddressDetail(profile.CurrentHomeAddress, context);
@@ -142,13 +129,13 @@ namespace ClearCanvas.Ris.Application.Services
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             nameAssembler.UpdatePersonName(detail.Name, profile.Name);
 
-            profile.Sex = (Sex)Enum.Parse(typeof(Sex), detail.Sex.Code.ToString());
+            profile.Sex = EnumUtils.GetEnumValue<Sex>(detail.Sex);
             profile.DateOfBirth = detail.DateOfBirth.Value;
             profile.DeathIndicator = detail.DeathIndicator;
             profile.TimeOfDeath = detail.TimeOfDeath;
 
-            profile.PrimaryLanguage = (SpokenLanguage)Enum.Parse(typeof(SpokenLanguage), detail.PrimaryLanguage.Code);
-            profile.Religion = (Religion)Enum.Parse(typeof(Religion), detail.Religion.Code);
+            profile.PrimaryLanguage = EnumUtils.GetEnumValue<SpokenLanguageEnum>(detail.PrimaryLanguage, context);
+            profile.Religion = EnumUtils.GetEnumValue<ReligionEnum>(detail.Religion, context);
 
             TelephoneNumberAssembler telephoneAssembler = new TelephoneNumberAssembler();
             profile.TelephoneNumbers.Clear();

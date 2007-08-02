@@ -67,9 +67,10 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="EntitySearchCriteria.cs" />
-    <Compile Include="EnumTable.cs" />
     <Compile Include="EnumValue.cs" />
     <Compile Include="EnumValueAttribute.cs" />
+    <Compile Include="EnumValueClassAttribute.cs" />
+    <Compile Include="EnumValueNotFoundException.cs" />
     <Compile Include="IAuthenticationService.cs" />
     <Compile Include="ICodedValueBroker.cs" />
     <Compile Include="IEntityBroker.cs" />

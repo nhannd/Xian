@@ -28,19 +28,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
         {
             GetHL7QueueFormDataResponse response = new GetHL7QueueFormDataResponse();
 
-            response.DirectionChoices = CollectionUtils.Map<HL7MessageDirectionEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IHL7MessageDirectionEnumBroker>().Load().Items,
-                delegate(HL7MessageDirectionEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
+            response.DirectionChoices = EnumUtils.GetEnumValueList<HL7MessageDirectionEnum>(PersistenceContext);
 
-            response.StatusCodeChoices = CollectionUtils.Map<HL7MessageStatusCodeEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IHL7MessageStatusCodeEnumBroker>().Load().Items,
-                delegate(HL7MessageStatusCodeEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
+            response.StatusCodeChoices = EnumUtils.GetEnumValueList<HL7MessageStatusCodeEnum>(PersistenceContext);
 
             //TODO: fix message type
             response.MessageTypeChoices = new List<string>();
@@ -50,27 +40,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.HL7Admin
             response.MessageTypeChoices.Add("ADT_A04");
             response.MessageTypeChoices.Add("ADT_A05");
             response.MessageTypeChoices.Add("ORM_O01");
-
-            response.MessageFormatChoices = CollectionUtils.Map<HL7MessageFormatEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IHL7MessageFormatEnumBroker>().Load().Items,
-                delegate(HL7MessageFormatEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
-            response.MessageVersionChoices = CollectionUtils.Map<HL7MessageVersionEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IHL7MessageVersionEnumBroker>().Load().Items,
-                delegate(HL7MessageVersionEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
-            response.PeerChoices = CollectionUtils.Map<HL7MessagePeerEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IHL7MessagePeerEnumBroker>().Load().Items,
-                delegate(HL7MessagePeerEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
+            response.MessageFormatChoices = EnumUtils.GetEnumValueList<HL7MessageFormatEnum>(PersistenceContext);
+            response.MessageVersionChoices = EnumUtils.GetEnumValueList<HL7MessageVersionEnum>(PersistenceContext);
+            response.PeerChoices = EnumUtils.GetEnumValueList<HL7MessagePeerEnum>(PersistenceContext);
 
             return response;
         }

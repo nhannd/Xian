@@ -86,21 +86,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
             dummyProvinces.Add("Ontario");
 
             return new LoadStaffEditorFormDataResponse(
-                CollectionUtils.Map<AddressTypeEnum, EnumValueInfo, List<EnumValueInfo>>(
-                    PersistenceContext.GetBroker<IAddressTypeEnumBroker>().Load().Items,
-                    delegate(AddressTypeEnum e)
-                    {
-                        return new EnumValueInfo(e.Code.ToString(), e.Value);
-                    }),
+                EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext),
                 dummyProvinces,
                 dummyCountries,
                 (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false),
-                CollectionUtils.Map<StaffTypeEnum, EnumValueInfo, List<EnumValueInfo>>(
-                    PersistenceContext.GetBroker<IStaffTypeEnumBroker>().Load().Items,
-                    delegate(StaffTypeEnum e)
-                    {
-                        return new EnumValueInfo(e.Code.ToString(), e.Value);
-                    })
+                EnumUtils.GetEnumValueList<StaffTypeEnum>(PersistenceContext)
                 );
 
         }
@@ -109,7 +99,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.StaffAdmin)]
         public AddStaffResponse AddStaff(AddStaffRequest request)
         {
-            StaffType staffType = (StaffType)Enum.Parse(typeof(StaffType), request.StaffDetail.StaffType.Code);
+            StaffType staffType = EnumUtils.GetEnumValue<StaffType>(request.StaffDetail.StaffType);
             Staff staff = (staffType == StaffType.RAD || staffType == StaffType.RES || staffType == StaffType.REF) ? new Practitioner() : new Staff();
 
             StaffAssembler assembler = new StaffAssembler();

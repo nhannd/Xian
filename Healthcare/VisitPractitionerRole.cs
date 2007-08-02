@@ -10,7 +10,8 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// VisitPhysicianRole enumeration
     /// </summary>
-	public enum VisitPractitionerRole
+    [EnumValueClass(typeof(VisitPractitionerRoleEnum))]
+    public enum VisitPractitionerRole
 	{
         /// <summary>
         /// Referring

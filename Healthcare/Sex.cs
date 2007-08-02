@@ -9,7 +9,8 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// HL7 Sex enumeration
     /// </summary>
-	public enum Sex
+    [EnumValueClass(typeof(SexEnum))]
+    public enum Sex
 	{
         /// <summary>
         /// Unknown

@@ -30,7 +30,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
 
         public class Cancel : RegistrationOperation
         {
-            public void Execute(Order order, OrderCancelReason reason)
+            public void Execute(Order order, OrderCancelReasonEnum reason)
             {
                 order.Cancel(reason);
             }

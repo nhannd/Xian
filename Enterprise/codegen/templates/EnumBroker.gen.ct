@@ -12,7 +12,7 @@ namespace <%= namespace %>.Hibernate.Brokers
     /// NHibernate implementation of <see cref="I<%= className %>Broker"/>.
     /// </summary>
     [ClearCanvas.Common.ExtensionOf(typeof(BrokerExtensionPoint))]
-	public partial class <%= className %>Broker : EnumBroker<<%= className %>, <%= className %>Table>, I<%= className %>Broker
+	public partial class <%= className %>Broker : EnumBroker<<%= className %>>, I<%= className %>Broker
 	{
 	}
 }

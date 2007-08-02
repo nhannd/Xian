@@ -9,7 +9,8 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// TelephoneEquipment enumeration - HL7 2.9.55.3
     /// </summary>
-	public enum TelephoneEquipment
+    [EnumValueClass(typeof(TelephoneEquipmentEnum))]
+    public enum TelephoneEquipment
 	{
         /// <summary>
         /// Telephone

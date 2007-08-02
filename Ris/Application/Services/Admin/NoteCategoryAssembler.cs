@@ -22,8 +22,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             detail.Category = category.Name;
             detail.Description = category.Description;
 
-            NoteSeverityEnumTable severityEnumTable = context.GetBroker<INoteSeverityEnumBroker>().Load();
-            detail.Severity = new EnumValueInfo(category.Severity.ToString(), severityEnumTable[category.Severity].Value);
+            detail.Severity = EnumUtils.GetEnumValueInfo(category.Severity, context);
 
             return detail;
         }
@@ -39,8 +38,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             summary.Name = category.Name;
             summary.Description = category.Description;
 
-            NoteSeverityEnumTable severityEnumTable = context.GetBroker<INoteSeverityEnumBroker>().Load();
-            summary.Severity = new EnumValueInfo(category.Severity.ToString(), severityEnumTable[category.Severity].Value);
+            summary.Severity = EnumUtils.GetEnumValueInfo(category.Severity, context);
 
             return summary;
         }
@@ -49,7 +47,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         {
             category.Name = detail.Category;
             category.Description = detail.Description;
-            category.Severity = (NoteSeverity)Enum.Parse(typeof(NoteSeverity), detail.Severity.Code);
+            category.Severity = EnumUtils.GetEnumValue<NoteSeverity>(detail.Severity);
         }
     }
 }

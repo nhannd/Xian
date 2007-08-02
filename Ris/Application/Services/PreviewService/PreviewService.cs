@@ -14,7 +14,6 @@ using ClearCanvas.Ris.Application.Common.PreviewService;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Workflow;
-using ClearCanvas.Workflow.Brokers;
 
 namespace ClearCanvas.Ris.Application.Services.PreviewService
 {
@@ -92,7 +91,6 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
                         }));
                 }
 
-                ActivityStatusEnumTable activityStatusTable = PersistenceContext.GetBroker<IActivityStatusEnumBroker>().Load();
                 response.DiagnosticServiceBreakdown = CollectionUtils.Map<ModalityProcedureStep, DiagnosticServiceBreakdownSummary, List<DiagnosticServiceBreakdownSummary>>(
                     mpsList,
                     delegate(ModalityProcedureStep siblingMps)
@@ -100,7 +98,7 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
                         return new DiagnosticServiceBreakdownSummary(siblingMps.RequestedProcedure.Order.DiagnosticService.Name,
                             siblingMps.RequestedProcedure.Type.Name,
                             siblingMps.Name,
-                            activityStatusTable[siblingMps.State].Value,
+                            EnumUtils.GetValue(siblingMps.State, PersistenceContext),
                             siblingMps.Equals(mps));
                     });
             }

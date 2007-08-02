@@ -13,7 +13,6 @@ using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Services.Admin;
-using ClearCanvas.Workflow.Brokers;
 using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
@@ -38,12 +37,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             detail.OrderingPractitioner = StaffAssembler.CreateStaffDetail(order.OrderingPractitioner, context);
             detail.OrderingFacility = facilityAssembler.CreateFacilityDetail(order.OrderingFacility);
             detail.ReasonForStudy = order.ReasonForStudy;
-            
-            OrderPriorityEnumTable priorityEnumTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
-            detail.OrderPriority = new EnumValueInfo(order.Priority.ToString(), priorityEnumTable[order.Priority].Value);
-
-            OrderCancelReasonEnumTable cancelReasonEnumTable = context.GetBroker<IOrderCancelReasonEnumBroker>().Load();
-            detail.CancelReason = new EnumValueInfo(order.CancelReason.ToString(), cancelReasonEnumTable[order.CancelReason].Value);
+            detail.OrderPriority = EnumUtils.GetEnumValueInfo(order.Priority, context);
+            detail.CancelReason = EnumUtils.GetEnumValueInfo(order.CancelReason);
 
             foreach (RequestedProcedure rp in order.RequestedProcedures)
             {
@@ -67,9 +62,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             summary.OrderingPractitioner = StaffAssembler.CreateStaffDetail(order.OrderingPractitioner, context);
             summary.OrderingFacility = order.OrderingFacility.Name;
             summary.ReasonForStudy = order.ReasonForStudy;
-
-            OrderPriorityEnumTable priorityEnumTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
-            summary.OrderPriority = new EnumValueInfo(order.Priority.ToString(), priorityEnumTable[order.Priority].Value);
+            summary.OrderPriority = EnumUtils.GetEnumValueInfo(order.Priority, context);
 
             return summary;
         }
@@ -131,8 +124,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             
             summary.Type = this.CreateModalityProcedureStepTypeDetail(mps.Type);
 
-            ActivityStatusEnumTable statusEnumTable = context.GetBroker<IActivityStatusEnumBroker>().Load();
-            summary.State = new EnumValueInfo(mps.State.ToString(), statusEnumTable[mps.State].Value);
+            summary.State = EnumUtils.GetEnumValueInfo(mps.State, context);
 
             summary.PerformerStaff = staffAssembler.CreateStaffSummary(mps.PerformingStaff, context);
             summary.StartTime = mps.StartTime;

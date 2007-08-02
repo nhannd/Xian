@@ -10,16 +10,16 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
     public class ProcedureStepDetail
     {
         public ProcedureStepDetail()
-            : this("Scheduled", new DocumentationPageDetail("about:blank"))
+            : this(new EnumValueInfo("SC", "Scheduled"), new DocumentationPageDetail("about:blank"))
         {
         }
 
-        public ProcedureStepDetail(string status, DocumentationPageDetail documentationPage)
+        public ProcedureStepDetail(EnumValueInfo status, DocumentationPageDetail documentationPage)
             : this(null, status, documentationPage)
         {
         }
 
-        public ProcedureStepDetail(string name, string status, DocumentationPageDetail documentationPage)
+        public ProcedureStepDetail(string name, EnumValueInfo status, DocumentationPageDetail documentationPage)
         {
             this.Name = name;
             this.Status = status;
@@ -37,7 +37,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
         public string Name;
 
         [DataMember]
-        public string Status;
+        public EnumValueInfo Status;
 
         [DataMember]
         public DocumentationPageDetail DocumentationPage;

@@ -9,7 +9,8 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// TelephoneUse enumeration
     /// </summary>
-	public enum TelephoneUse
+    [EnumValueClass(typeof(TelephoneUseEnum))]
+    public enum TelephoneUse
 	{
         /// <summary>
         /// Primary residence number

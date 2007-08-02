@@ -47,27 +47,9 @@ namespace ClearCanvas.Ris.Application.Services.PatientBiography
         {
             LoadPatientProfileFormDataResponse response = new LoadPatientProfileFormDataResponse();
 
-            response.AddressTypeChoices = CollectionUtils.Map<AddressTypeEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IAddressTypeEnumBroker>().Load().Items,
-                delegate(AddressTypeEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
-            response.ContactPersonRelationshipChoices = CollectionUtils.Map<ContactPersonRelationshipEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IContactPersonRelationshipEnumBroker>().Load().Items,
-                delegate(ContactPersonRelationshipEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
-            response.ContactPersonTypeChoices = CollectionUtils.Map<ContactPersonTypeEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<IContactPersonTypeEnumBroker>().Load().Items,
-                delegate(ContactPersonTypeEnum e)
-                {
-                    return new EnumValueInfo(e.Code.ToString(), e.Value);
-                });
-
+            response.AddressTypeChoices = EnumUtils.GetEnumValueList<AddressTypeEnum>(PersistenceContext);
+            response.ContactPersonRelationshipChoices = EnumUtils.GetEnumValueList<ContactPersonRelationshipEnum>(PersistenceContext);
+            response.ContactPersonTypeChoices = EnumUtils.GetEnumValueList<ContactPersonTypeEnum>(PersistenceContext);
             response.PhoneTypeChoices = (new SimplifiedPhoneTypeAssembler()).GetSimplifiedPhoneTypeChoices(false);
 
             return response;

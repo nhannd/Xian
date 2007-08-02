@@ -18,18 +18,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
             summary.QueueItemRef = queueItem.GetRef();
 
-            summary.Direction = context.GetBroker<IHL7MessageDirectionEnumBroker>().Load()[queueItem.Direction].Value;
-
-            summary.StatusCode = context.GetBroker<IHL7MessageStatusCodeEnumBroker>().Load()[queueItem.Status.Code].Value;
+            summary.Direction = EnumUtils.GetValue(queueItem.Direction, context);
+            summary.StatusCode = EnumUtils.GetValue(queueItem.Status.Code, context);
             summary.StatusDescription = queueItem.Status.Description;
             summary.CreationDateTime = queueItem.Status.CreationDateTime;
             summary.UpdateDateTime = queueItem.Status.UpdateDateTime;
 
-            summary.Peer = context.GetBroker<IHL7MessagePeerEnumBroker>().Load()[queueItem.Message.Peer].Value;
+            summary.Peer = EnumUtils.GetValue(queueItem.Message.Peer, context);
             summary.MessageType = queueItem.Message.MessageType;
             summary.MessageEvent = queueItem.Message.Event;
-            summary.MessageVersion = context.GetBroker<IHL7MessageVersionEnumBroker>().Load()[queueItem.Message.Version].Value;
-            summary.MessageFormat = context.GetBroker<IHL7MessageFormatEnumBroker>().Load()[queueItem.Message.Format].Value;
+            summary.MessageVersion = EnumUtils.GetValue(queueItem.Message.Version, context);
+            summary.MessageFormat = EnumUtils.GetValue(queueItem.Message.Format, context);
 
             return summary;
         }
@@ -40,38 +39,18 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
             detail.QueueItemRef = queueItem.GetRef();
 
-            HL7MessageDirectionEnum direction = context.GetBroker<IHL7MessageDirectionEnumBroker>().Load()[queueItem.Direction];
-            detail.Direction = new EnumValueInfo(
-                direction.Code.ToString(),
-                direction.Value);
-
-            HL7MessageStatusCodeEnum status = context.GetBroker<IHL7MessageStatusCodeEnumBroker>().Load()[queueItem.Status.Code];
-            detail.StatusCode = new EnumValueInfo(
-                status.Code.ToString(),
-                status.Value);
-
+            detail.Direction = EnumUtils.GetEnumValueInfo(queueItem.Direction, context);
+            detail.StatusCode = EnumUtils.GetEnumValueInfo(queueItem.Status.Code, context);
             detail.StatusDescription = queueItem.Status.Description;
             detail.CreationDateTime = queueItem.Status.CreationDateTime;
             detail.UpdateDateTime = queueItem.Status.UpdateDateTime;
 
-            HL7MessagePeerEnum peer = context.GetBroker<IHL7MessagePeerEnumBroker>().Load()[queueItem.Message.Peer];
-            detail.Peer = new EnumValueInfo(
-                peer.Code.ToString(),
-                peer.Value);
+            detail.Peer = EnumUtils.GetEnumValueInfo(queueItem.Message.Peer, context);
 
             detail.MessageType = queueItem.Message.MessageType;
             detail.MessageEvent = queueItem.Message.Event;
-
-            HL7MessageVersionEnum version = context.GetBroker<IHL7MessageVersionEnumBroker>().Load()[queueItem.Message.Version];
-            detail.MessageVersion = new EnumValueInfo(
-                version.Code.ToString(),
-                version.Value);
-
-            HL7MessageFormatEnum format = context.GetBroker<IHL7MessageFormatEnumBroker>().Load()[queueItem.Message.Format];
-            detail.MessageFormat = new EnumValueInfo(
-                format.Code.ToString(),
-                format.Value);
-            
+            detail.MessageVersion = EnumUtils.GetEnumValueInfo(queueItem.Message.Version, context);
+            detail.MessageFormat = EnumUtils.GetEnumValueInfo(queueItem.Message.Format, context);
             detail.MessageText = queueItem.Message.Text;
 
             return detail;
@@ -82,10 +61,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             HL7QueueItemSearchCriteria criteria = new HL7QueueItemSearchCriteria();
 
             if (request.Direction != null)
-                criteria.Direction.EqualTo((HL7MessageDirection)Enum.Parse(typeof(HL7MessageDirection), request.Direction.Code));
+                criteria.Direction.EqualTo(EnumUtils.GetEnumValue<HL7MessageDirection>(request.Direction));
 
             if (request.StatusCode != null)
-                criteria.Status.Code.EqualTo((HL7MessageStatusCode)Enum.Parse(typeof(HL7MessageStatusCode), request.StatusCode.Code));
+                criteria.Status.Code.EqualTo(EnumUtils.GetEnumValue<HL7MessageStatusCode>(request.StatusCode));
 
             if (request.StartingCreationDateTime.HasValue && request.EndingCreationDateTime.HasValue)
                 criteria.Status.CreationDateTime.Between(request.StartingCreationDateTime.Value, request.EndingCreationDateTime.Value);
@@ -105,7 +84,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                 criteria.Message.MessageType.EqualTo(request.MessageType);
     
             if (request.Peer != null)
-                criteria.Message.Peer.EqualTo((HL7MessagePeer)Enum.Parse(typeof(HL7MessagePeer), request.Peer.Code));
+                criteria.Message.Peer.EqualTo(EnumUtils.GetEnumValue<HL7MessagePeer>(request.Peer));
 
             return criteria;
         }

@@ -44,15 +44,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
         [ReadOperation]
         public GetNoteCategoryEditFormDataResponse GetNoteCategoryEditFormData(GetNoteCategoryEditFormDataRequest request)
         {
-            List<EnumValueInfo> severityChoices = new List<EnumValueInfo>();
-
-            severityChoices = CollectionUtils.Map<NoteSeverityEnum, EnumValueInfo, List<EnumValueInfo>>(
-                PersistenceContext.GetBroker<INoteSeverityEnumBroker>().Load().Items,
-                delegate(NoteSeverityEnum ns)
-                {
-                    return new EnumValueInfo(ns.Code.ToString(), ns.Value);
-                });
-
+            List<EnumValueInfo> severityChoices = EnumUtils.GetEnumValueList<NoteSeverityEnum>(PersistenceContext);
             return new GetNoteCategoryEditFormDataResponse(severityChoices);
 
         }

@@ -6,7 +6,6 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 using ClearCanvas.Workflow;
-using ClearCanvas.Workflow.Brokers;
 using Iesi.Collections;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocumentation
@@ -19,11 +18,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             detail.EntityRef = ps.GetRef();
             detail.Name = ps.Name;
 
-            ActivityStatusEnumTable activityStatusEnumTable = context.GetBroker<IActivityStatusEnumBroker>().Load();
-            detail.Status = activityStatusEnumTable[ps.State].Value;
-
+            detail.Status = EnumUtils.GetEnumValueInfo(ps.State, context);
             detail.DocumentationPage = new DocumentationPageDetail("http://localhost/RIS/nuclearmedicine.htm");
-
             detail.PerformedProcedureStep = CreatePerformedProcedureStepDetail(ps.PerformedSteps);
 
             return detail;
@@ -42,8 +38,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 
         public void UpdateProcedureStep(ProcedureStep procedureStep, ProcedureStepDetail detail, Staff staff, IDictionary<int, EntityRef> ppsDictionary, IPersistenceContext context)
         {
-            ActivityStatusEnumTable activityStatusEnumTable = context.GetBroker<IActivityStatusEnumBroker>().Load();
-            ActivityStatus detailStatus = activityStatusEnumTable[detail.Status].Code;
+            ActivityStatus detailStatus = EnumUtils.GetEnumValue<ActivityStatus>(detail.Status);
 
             PerformedProcedureStep pps = GetPerformedProcedureStep(detail.PerformedProcedureStep, ppsDictionary, context);
 

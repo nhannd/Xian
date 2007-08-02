@@ -160,9 +160,7 @@ namespace ClearCanvas.Enterprise.Hibernate
             {
                 // use a proxy if EntityLoadFlags.Proxy is specified and EntityLoadFlags.CheckVersion is not specified (CheckVersion overrides Proxy)
                 bool useProxy = (flags & EntityLoadFlags.CheckVersion) == 0 && (flags & EntityLoadFlags.Proxy) == EntityLoadFlags.Proxy;
-                Entity entity = useProxy ?
-                    (Entity)this.Session.Load(EntityRefUtils.GetClass(entityRef), EntityRefUtils.GetOID(entityRef), LockMode.None)
-                    : (Entity)this.Session.Get(EntityRefUtils.GetClass(entityRef), EntityRefUtils.GetOID(entityRef));
+                Entity entity = (Entity)Load(EntityRefUtils.GetClass(entityRef), EntityRefUtils.GetOID(entityRef), useProxy);
 
                 // check version if necessary
                 if ((flags & EntityLoadFlags.CheckVersion) == EntityLoadFlags.CheckVersion && !EntityRefUtils.GetVersion(entityRef).Equals(entity.Version))
@@ -177,6 +175,20 @@ namespace ClearCanvas.Enterprise.Hibernate
                 // if the entity is proxied, verification of its existence is deferred until the proxy is realized
                 throw new EntityNotFoundException(hibernateException);
             }
+        }
+
+        internal EnumValue LoadEnumValue(Type enumValueClass, string code)
+        {
+            // always use a proxy
+            // no need to check for ObjectNotFoundException, because we are using a proxy, so we won't get this exception anyway
+            return (EnumValue)Load(enumValueClass, code, true);
+        }
+
+        private object Load(Type persistentClass, object oid, bool useProxy)
+        {
+            return useProxy ?
+                this.Session.Load(persistentClass, oid, LockMode.None)
+                : this.Session.Get(persistentClass, oid);
         }
 
         public bool IsProxyLoaded(Entity entity)

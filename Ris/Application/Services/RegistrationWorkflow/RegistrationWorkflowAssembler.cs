@@ -14,7 +14,6 @@ using ClearCanvas.Ris.Application.Services.Admin;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common;
 using ClearCanvas.Workflow;
-using ClearCanvas.Workflow.Brokers;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -28,7 +27,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
             TelephoneNumberAssembler phoneAssembler = new TelephoneNumberAssembler();
             AddressAssembler addressAssembler = new AddressAssembler();
-            SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
 
             IPatientProfileBroker profileBroker = context.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = profileBroker.Load(item.PatientProfileRef);
@@ -39,7 +37,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             preview.Name = nameAssembler.CreatePersonNameDetail(profile.Name);
             preview.Healthcard = healthcardAssembler.CreateHealthcardDetail(profile.Healthcard);
             preview.DateOfBirth = profile.DateOfBirth;
-            preview.Sex = sexEnumTable[profile.Sex].Value;
+            preview.Sex = EnumUtils.GetValue(profile.Sex, context);
             preview.CurrentHomeAddress = addressAssembler.CreateAddressDetail(profile.CurrentHomeAddress, context);
             preview.CurrentWorkAddress = addressAssembler.CreateAddressDetail(profile.CurrentWorkAddress, context);
             preview.CurrentHomePhone = phoneAssembler.CreateTelephoneDetail(profile.CurrentHomePhone, context);
@@ -121,7 +119,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 profileCriteria.Name.GivenName.StartsWith(criteria.GivenName);
 
             if (criteria.Sex != null)
-                profileCriteria.Sex.EqualTo((Sex)Enum.Parse(typeof(Sex), criteria.Sex.Code));
+                profileCriteria.Sex.EqualTo(EnumUtils.GetEnumValue<Sex>(criteria.Sex));
 
             if (criteria.DateOfBirth != null)
             {
@@ -138,10 +136,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             HealthcardAssembler healthcardAssembler = new HealthcardAssembler();
 
-            SexEnum sex = context.GetBroker<ISexEnumBroker>().Load()[domainItem.Sex];
-            OrderPriorityEnum orderPriority = context.GetBroker<IOrderPriorityEnumBroker>().Load()[domainItem.OrderPriority];
-            PatientClassEnum patientClass = context.GetBroker<IPatientClassEnumBroker>().Load()[domainItem.PatientClass];
-
             return new RegistrationWorklistItem(
                 domainItem.ProfileRef,
                 domainItem.OrderRef,
@@ -150,34 +144,32 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 nameAssembler.CreatePersonNameDetail(domainItem.PatientName),
                 healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
                 domainItem.DateOfBirth,
-                new EnumValueInfo(sex.Code.ToString(), sex.Value),
+                EnumUtils.GetEnumValueInfo(domainItem.Sex, context),
                 domainItem.EarliestScheduledTime,
-                orderPriority.Value,
-                patientClass.Value);
+                EnumUtils.GetValue(domainItem.OrderPriority, context),
+                EnumUtils.GetValue(domainItem.OrderPriority, context));
         }
 
         private string GetRequestedProcedureStatus(Order order, IPersistenceContext context)
         {
-            ActivityStatusEnumTable activityStatusTable = context.GetBroker<IActivityStatusEnumBroker>().Load();
-
             try
             {
                 if (order.IsAllRequestedProcedureScheduled)
                 {
-                    return activityStatusTable[ActivityStatus.SC].Value;
+                    return EnumUtils.GetValue(ActivityStatus.SC, context);
                 }
                 else if (order.IsAllRequestedProcedureDiscontinued)
                 {
-                    return activityStatusTable[ActivityStatus.DC].Value;
+                    return EnumUtils.GetValue(ActivityStatus.DC, context);
                 }
                 else if (order.IsAllRequestedProcedureCompletedOrDiscontinued)
                 {
-                    return activityStatusTable[ActivityStatus.CM].Value;
+                    return EnumUtils.GetValue(ActivityStatus.CM, context);
                 }
                 else
                 {
                     if (order.IsMPSStarted)
-                        return activityStatusTable[ActivityStatus.IP].Value;
+                        return EnumUtils.GetValue(ActivityStatus.IP, context);
                     else
                         return SR.TextCheckedIn;
                 }

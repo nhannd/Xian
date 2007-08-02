@@ -146,13 +146,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public LoadPatientSearchComponentFormDataResponse LoadPatientSearchComponentFormData(LoadPatientSearchComponentFormDataRequest request)
         {
-            return new LoadPatientSearchComponentFormDataResponse(
-                CollectionUtils.Map<SexEnum, EnumValueInfo, List<EnumValueInfo>>(
-                    PersistenceContext.GetBroker<ISexEnumBroker>().Load().Items,
-                    delegate(SexEnum e)
-                    {
-                        return new EnumValueInfo(e.Code.ToString(), e.Value);
-                    }));           
+            return new LoadPatientSearchComponentFormDataResponse(EnumUtils.GetEnumValueList<SexEnum>(PersistenceContext));
         }
 
         [ReadOperation]
@@ -160,8 +154,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             IPatientProfileBroker patientProfileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
             PatientProfile profile = patientProfileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
-
-            OrderPriorityEnumTable orderPriorityEnumTable = PersistenceContext.GetBroker<IOrderPriorityEnumBroker>().Load();
 
             return new GetDataForCancelOrderTableResponse(
                 CollectionUtils.Map<Order, CancelOrderTableItem, List<CancelOrderTableItem>>(
@@ -172,7 +164,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         item.OrderRef = o.GetRef();
                         item.AccessionNumber = o.AccessionNumber;
                         item.SchedulingRequestDate = o.SchedulingRequestDateTime;
-                        item.Priority = new EnumValueInfo(o.Priority.ToString(), orderPriorityEnumTable[o.Priority].Value);
+                        item.Priority = EnumUtils.GetEnumValueInfo(o.Priority, PersistenceContext);
                         item.RequestedProcedureNames = StringUtilities.Combine<string>(
                             CollectionUtils.Map<RequestedProcedure, string>(o.RequestedProcedures,
                                 delegate(RequestedProcedure rp)
@@ -183,13 +175,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
                         return item;
                     }),
-                CollectionUtils.Map<OrderCancelReasonEnum, EnumValueInfo, List<EnumValueInfo>>(
-                    PersistenceContext.GetBroker<IOrderCancelReasonEnumBroker>().Load().Items,
-                    delegate(OrderCancelReasonEnum ocrEnum)
-                    {
-                        EnumValueInfo cancelReason = new EnumValueInfo(ocrEnum.Code.ToString(), ocrEnum.Value, ocrEnum.Description);
-                        return cancelReason;
-                    }));
+                    EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(PersistenceContext)
+                    );
         }
 
         [UpdateOperation]
@@ -197,7 +184,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         public CancelOrderResponse CancelOrder(CancelOrderRequest request)
         {
             IOrderBroker broker = PersistenceContext.GetBroker<IOrderBroker>();
-            OrderCancelReason reason = (OrderCancelReason)Enum.Parse(typeof(OrderCancelReason), request.CancelReason.Code);
+            OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelReason, PersistenceContext);
 
             Operations.Cancel op = new Operations.Cancel();
             foreach (EntityRef orderRef in request.CancelledOrders)

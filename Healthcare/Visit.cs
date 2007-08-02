@@ -38,7 +38,7 @@ namespace ClearCanvas.Healthcare {
             //this.AmbulatoryStatus = v.AmbulatoryStatus;
             this.PreadmitNumber = v.PreadmitNumber;
 
-            foreach (AmbulatoryStatus a in v.AmbulatoryStatuses)
+            foreach (AmbulatoryStatusEnum a in v.AmbulatoryStatuses)
             {
                 this.AmbulatoryStatuses.Add(a);
             }
@@ -75,30 +75,6 @@ namespace ClearCanvas.Healthcare {
         {
             if (this.AdmitDateTime.HasValue) this.VisitStatus = VisitStatus.Admitted;
             if (this.DischargeDateTime.HasValue) this.VisitStatus = VisitStatus.Discharged;
-        }
-
-        public void ChangeInpatientToOutpatient()
-        {
-            if (this.PatientClass == PatientClass.I)
-            {
-                this.PatientClass = PatientClass.O;
-            }
-            else
-            {
-                throw new PatientClassConversionException();
-            }
-        }
-
-        public void ChangeOutpatientToInpatient()
-        {
-            if (this.PatientClass == PatientClass.O)
-            {
-                this.PatientClass = PatientClass.I;
-            }
-            else
-            {
-                throw new PatientClassConversionException();
-            }
         }
 
         public void Discharge(DateTime dischargeDateTime, string dischargeDispostion)

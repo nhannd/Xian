@@ -68,7 +68,6 @@
     <Compile Include="ReportPartStatus.cs" />
     <Compile Include="ReportStatus.cs" />
     <Compile Include="DiagnosticServiceTreeNode.cs" />
-    <Compile Include="OrderCancelReason.cs" />
     <Compile Include="NoteCategory.cs" />
     <Compile Include="NoteSeverity.cs" />
     <Compile Include="OrderStatus.cs" />
@@ -104,8 +103,6 @@
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Address.cs" />
     <Compile Include="AddressType.cs" />
-    <Compile Include="AdmissionType.cs" />
-    <Compile Include="AmbulatoryStatus.cs" />
     <Compile Include="Brokers\IAccessionNumberBroker.cs" />
     <Compile Include="Brokers\IRegistrationWorklistBroker.cs" />
     <Compile Include="Brokers\IModalityWorklistBroker.cs" />
@@ -134,10 +131,8 @@
     <Compile Include="Order.cs" />
     <Compile Include="OrderPriority.cs" />
     <Compile Include="Patient.cs" />
-    <Compile Include="PatientClass.cs" />
     <Compile Include="PatientIdentifierType.cs" />
     <Compile Include="PatientProfile.cs" />
-    <Compile Include="PatientType.cs" />
     <Compile Include="PerformedProcedureStep.cs" />
     <Compile Include="PerformedProcedureStepSearchCriteria.cs" />
     <Compile Include="PersonName.cs" />
@@ -147,7 +142,6 @@
     <Compile Include="ProcedureStepPerformerSearchCriteria.cs" />
     <Compile Include="ProcedureStepSearchCriteria.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Religion.cs" />
     <Compile Include="ReportingPerformedProcedureStep.cs" />
     <Compile Include="ReportingProcedureStep.cs" />
     <Compile Include="ReportingProcedureStepSearchCriteria.cs" />
@@ -156,7 +150,6 @@
     <Compile Include="RequestedProcedureType.cs" />
     <Compile Include="ModalityProcedureStepType.cs" />
     <Compile Include="Sex.cs" />
-    <Compile Include="SpokenLanguage.cs" />
     <Compile Include="Staff.cs" />
     <Compile Include="TelephoneEquipment.cs" />
     <Compile Include="TelephoneNumber.cs" />
@@ -216,6 +209,15 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Alert\IncompleteDemographicDataAlert.val.xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="AdmissionTypeEnum.enum.xml" />
+    <EmbeddedResource Include="AmbulatoryStatusEnum.enum.xml" />
+    <EmbeddedResource Include="OrderCancelReasonEnum.enum.xml" />
+    <EmbeddedResource Include="PatientClassEnum.enum.xml" />
+    <EmbeddedResource Include="PatientTypeEnum.enum.xml" />
+    <EmbeddedResource Include="ReligionEnum.enum.xml" />
+    <EmbeddedResource Include="SpokenLanguageEnum.enum.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

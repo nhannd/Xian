@@ -9,7 +9,6 @@ using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Workflow;
-using ClearCanvas.Workflow.Brokers;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Ris.Application.Services.Admin;
 
@@ -19,8 +18,6 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
     {
         public ReportingWorklistPreview CreateReportingWorklistPreview(ReportingWorklistItem item, IPersistenceContext context)
         {
-            SexEnumTable sexEnumTable = context.GetBroker<ISexEnumBroker>().Load();
-
             ReportingProcedureStep step = context.Load<ReportingProcedureStep>(item.ProcedureStepRef);
             PatientProfile profile = CollectionUtils.SelectFirst<PatientProfile>(step.RequestedProcedure.Order.Patient.Profiles,
                 delegate(PatientProfile thisProfile)
@@ -39,7 +36,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             preview.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
             preview.Name = new PersonNameAssembler().CreatePersonNameDetail(profile.Name);
             preview.DateOfBirth = profile.DateOfBirth;
-            preview.Sex = sexEnumTable[profile.Sex].Value;
+            preview.Sex = EnumUtils.GetValue(profile.Sex, context);
 
             // Order Details
             preview.AccessionNumber = step.RequestedProcedure.Order.AccessionNumber;
@@ -65,13 +62,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             item.AccessionNumber = domainItem.AccessionNumber;
             item.RequestedProcedureName = domainItem.RequestedProcedureName;
             item.DiagnosticServiceName = domainItem.DiagnosticServiceName;
-
-            OrderPriorityEnumTable orderPriorityTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
-            item.Priority = orderPriorityTable[domainItem.Priority].Value;
-
-            ActivityStatusEnumTable activityStatusTable = context.GetBroker<IActivityStatusEnumBroker>().Load();
-            item.ActivityStatus = new EnumValueInfo(domainItem.ActivityStatus.ToString(), activityStatusTable[domainItem.ActivityStatus].Value);
-
+            item.Priority = EnumUtils.GetValue(domainItem.Priority, context);
+            item.ActivityStatus = EnumUtils.GetEnumValueInfo(domainItem.ActivityStatus, context);
             item.StepType = domainItem.StepType;
 
             return item;
@@ -83,10 +75,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             if (report != null)
             {
-                ReportStatusEnum reportStatusEnum = context.GetBroker<IReportStatusEnumBroker>().Load()[report.Status];
-
                 summary.ReportRef = report.GetRef();
-                summary.ReportStatus = new EnumValueInfo(reportStatusEnum.Code.ToString(), reportStatusEnum.Value, reportStatusEnum.Description);
+                summary.ReportStatus = EnumUtils.GetEnumValueInfo(report.Status, context);
                 summary.Parts = CollectionUtils.Map<ReportPart, ReportPartSummary, List<ReportPartSummary>>(report.Parts,
                     delegate(ReportPart part)
                     {
@@ -120,13 +110,10 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         {
             ReportPartSummary summary = new ReportPartSummary();
 
-            ReportPartStatusEnum reportPartStatusEnum = context.GetBroker<IReportPartStatusEnumBroker>().Load()[reportPart.Status];
-
             summary.ReportPartRef = reportPart.GetRef();
             summary.Index = reportPart.Index;
             summary.Content = reportPart.Content;
-            summary.Status = new EnumValueInfo(reportPartStatusEnum.Code.ToString(), reportPartStatusEnum.Value, reportPartStatusEnum.Description);
-
+            summary.Status = EnumUtils.GetEnumValueInfo(reportPart.Status, context);
             return summary;
         }
     }

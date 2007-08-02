@@ -108,7 +108,7 @@ namespace ClearCanvas.Healthcare {
         /// Cancels the order.
         /// </summary>
         /// <param name="reason"></param>
-        public void Cancel(OrderCancelReason reason)
+        public void Cancel(OrderCancelReasonEnum reason)
         {
             if (this.Status == OrderStatus.SC)
             {
@@ -128,7 +128,7 @@ namespace ClearCanvas.Healthcare {
         /// Discontinues the order.
         /// </summary>
         /// <param name="reason"></param>
-        public void Discontinue(OrderCancelReason reason)
+        public void Discontinue(OrderCancelReasonEnum reason)
         {
             if (this.Status == OrderStatus.IP)
             {

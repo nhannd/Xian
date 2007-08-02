@@ -12,7 +12,6 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Services.Admin;
 using ClearCanvas.Workflow;
-using ClearCanvas.Workflow.Brokers;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
@@ -34,9 +33,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             item.RequestedProcedureStepName = domainItem.RequestedProcedureType.Name;
             item.ModalityName = domainItem.Modality.Name;
 
-            OrderPriorityEnumTable orderPriorities = context.GetBroker<IOrderPriorityEnumBroker>().Load();
-            item.Priority = new EnumValueInfo(domainItem.Priority.ToString(), orderPriorities[domainItem.Priority].Value);
-
+            item.Priority = EnumUtils.GetEnumValueInfo<OrderPriority>(domainItem.Priority, context);
             return item;
         }
 
@@ -55,8 +52,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                     preview.Healthcard = new HealthcardAssembler().CreateHealthcardDetail(profile.Healthcard);
                     preview.Mrn = new MrnDetail(profile.Mrn.Id, profile.Mrn.AssigningAuthority);
                     preview.Name = new PersonNameAssembler().CreatePersonNameDetail(profile.Name);
-                    SexEnumTable sexTable = context.GetBroker<ISexEnumBroker>().Load();
-                    preview.Sex = sexTable[profile.Sex].Value;
+                    preview.Sex = EnumUtils.GetValue(profile.Sex, context);
                     preview.DateOfBirth = profile.DateOfBirth;
 
                     IPatientReconciliationStrategy strategy = (IPatientReconciliationStrategy)(new PatientReconciliationStrategyExtensionPoint()).CreateExtension();
@@ -70,8 +66,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
             // Order level details
             preview.AccessionNumber = mps.RequestedProcedure.Order.AccessionNumber;
-            OrderPriorityEnumTable priorityTable = context.GetBroker<IOrderPriorityEnumBroker>().Load();
-            preview.Priority = priorityTable[mps.RequestedProcedure.Order.Priority].Value;
+            preview.Priority = EnumUtils.GetValue(mps.RequestedProcedure.Order.Priority, context);
             preview.OrderingPhysician = new StaffAssembler().CreateStaffDetail(mps.RequestedProcedure.Order.OrderingPractitioner, context);
             preview.Facility = new FacilityAssembler().CreateFacilityDetail(mps.RequestedProcedure.Order.OrderingFacility);
 
@@ -92,7 +87,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                     }));
             }
 
-            ActivityStatusEnumTable activityStatusTable = context.GetBroker<IActivityStatusEnumBroker>().Load();
             preview.DSBreakdown = CollectionUtils.Map<ModalityProcedureStep, DiagnosticServiceBreakdownSummary, List<DiagnosticServiceBreakdownSummary>>(
                 mpsList,
                 delegate(ModalityProcedureStep siblingMps)
@@ -100,13 +94,13 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                     return new DiagnosticServiceBreakdownSummary(siblingMps.RequestedProcedure.Order.DiagnosticService.Name,
                         siblingMps.RequestedProcedure.Type.Name,
                         siblingMps.Name,
-                        activityStatusTable[siblingMps.State].Value,
+                        EnumUtils.GetValue(siblingMps.State, context),
                         siblingMps.Equals(mps));
                 });
 
             preview.MpsName = mps.Name;
             preview.Modality = new ModalityAssembler().CreateModalityDetail(mps.Modality);
-            preview.Status = activityStatusTable[mps.State].Value;
+            preview.Status = EnumUtils.GetValue(mps.State, context);
             preview.DiscontinueReason = "";
             
             StaffAssembler staffAssembler = new StaffAssembler();
@@ -122,7 +116,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             preview.StartTime = mps.StartTime;
             preview.EndTime = mps.EndTime;
 
-            OrderStatusEnumTable orderStatusTable = context.GetBroker<IOrderStatusEnumBroker>().Load();
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
             preview.RICs = CollectionUtils.Map<Order, RICSummary, List<RICSummary>>(
                     context.GetBroker<IRegistrationWorklistBroker>().GetOrdersForPatientPreview(mps.RequestedProcedure.Order.Patient),
@@ -132,7 +125,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                         summary.OrderingFacility = o.OrderingFacility.Name;
                         summary.OrderingPractitioner = nameAssembler.CreatePersonNameDetail(o.OrderingPractitioner.Name);
                         summary.Insurance = "";
-                        summary.Status = orderStatusTable[o.Status].Value;
+                        summary.Status = EnumUtils.GetValue(o.Status, context);
 
                         summary.RequestedProcedureName = StringUtilities.Combine<string>(
                             CollectionUtils.Map<RequestedProcedure, string>(o.RequestedProcedures,

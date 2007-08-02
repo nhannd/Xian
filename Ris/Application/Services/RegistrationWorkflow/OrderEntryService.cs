@@ -72,13 +72,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     {
                         return StaffAssembler.CreateStaffSummary(p, PersistenceContext);
                     }),
-                CollectionUtils.Map<OrderPriorityEnum, EnumValueInfo, List<EnumValueInfo>>(
-                    PersistenceContext.GetBroker<IOrderPriorityEnumBroker>().Load().Items,
-                    delegate(OrderPriorityEnum opEnum)
-                    {
-                        EnumValueInfo orderPriority = new EnumValueInfo(opEnum.Code.ToString(), opEnum.Value);
-                        return orderPriority;
-                    }),
+                EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext),
                 CollectionUtils.Map<DiagnosticServiceTreeNode, DiagnosticServiceTreeItem, List<DiagnosticServiceTreeItem>>(
                     PersistenceContext.GetBroker<IDiagnosticServiceTreeNodeBroker>().Find(topLevelDiagnosticServiceTreeCriteria),
                     delegate(DiagnosticServiceTreeNode n)
@@ -138,7 +132,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             Visit visit = PersistenceContext.GetBroker<IVisitBroker>().Load(request.Visit, EntityLoadFlags.Proxy);
             Practitioner orderingPhysician = PersistenceContext.GetBroker<IPractitionerBroker>().Load(request.OrderingPhysician, EntityLoadFlags.Proxy);
             Facility orderingFacility = PersistenceContext.GetBroker<IFacilityBroker>().Load(request.OrderingFacility, EntityLoadFlags.Proxy);
-            OrderPriority orderingPriority = (OrderPriority)Enum.Parse(typeof(OrderPriority), request.OrderPriority.Code);
+            OrderPriority orderingPriority = EnumUtils.GetEnumValue<OrderPriority>(request.OrderPriority);
             DiagnosticService diagnosticService = PersistenceContext.GetBroker<IDiagnosticServiceBroker>().Load(request.DiagnosticService);
 
             IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
@@ -154,7 +148,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     request.SchedulingRequestTime, 
                     orderingPhysician, 
                     orderingFacility, 
-                    (OrderPriority) Enum.Parse(typeof(OrderPriority), request.OrderPriority.Code),
+                    EnumUtils.GetEnumValue<OrderPriority>(request.OrderPriority),
                     request.ScheduleOrder);
 
             PersistenceContext.Lock(order, DirtyState.New);

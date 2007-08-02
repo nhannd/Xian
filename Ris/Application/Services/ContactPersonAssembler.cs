@@ -18,16 +18,8 @@ namespace ClearCanvas.Ris.Application.Services
             detail.Address = cp.Address;
             detail.HomePhoneNumber = cp.HomePhone;
             detail.BusinessPhoneNumber = cp.BusinessPhone;
-            
-            ContactPersonRelationshipEnum relationship = context.GetBroker<IContactPersonRelationshipEnumBroker>().Load()[cp.Relationship];
-            detail.Relationship = new EnumValueInfo(
-                relationship.Code.ToString(),
-                relationship.Value);
-
-            ContactPersonTypeEnum type = context.GetBroker<IContactPersonTypeEnumBroker>().Load()[cp.Type];
-            detail.Type = new EnumValueInfo(
-                type.Code.ToString(),
-                type.Value);
+            detail.Relationship = EnumUtils.GetEnumValueInfo(cp.Relationship, context);
+            detail.Type = EnumUtils.GetEnumValueInfo(cp.Type, context);
 
             return detail;
         }
@@ -40,8 +32,8 @@ namespace ClearCanvas.Ris.Application.Services
             cp.Address = detail.Address;
             cp.HomePhone = detail.HomePhoneNumber;
             cp.BusinessPhone = detail.BusinessPhoneNumber;
-            cp.Relationship = (ContactPersonRelationship)Enum.Parse(typeof(ContactPersonRelationship), detail.Relationship.Code);
-            cp.Type = (ContactPersonType)Enum.Parse(typeof(ContactPersonType), detail.Type.Code);
+            cp.Relationship = EnumUtils.GetEnumValue<ContactPersonRelationship>(detail.Relationship);
+            cp.Type = EnumUtils.GetEnumValue<ContactPersonType>(detail.Type);
 
             return cp;
         }

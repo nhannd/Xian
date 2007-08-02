@@ -10,7 +10,8 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// VisitStatus enumeration
     /// </summary>
-	public enum VisitStatus
+    [EnumValueClass(typeof(VisitStatusEnum))]
+    public enum VisitStatus
 	{
         /// <summary>
         /// Pre-Admit

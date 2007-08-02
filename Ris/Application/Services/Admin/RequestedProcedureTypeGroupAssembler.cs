@@ -40,18 +40,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
         private EnumValueInfo GetCategoryEnumValueInfo(RequestedProcedureTypeGroup rptGroup, IPersistenceContext context)
         {
-            RequestedProcedureTypeGroupCategoryEnumTable table = context.GetBroker<IRequestedProcedureTypeGroupCategoryEnumBroker>().Load();
-            return new EnumValueInfo(
-                rptGroup.Category.ToString(),
-                table[rptGroup.Category].Value,
-                table[rptGroup.Category].Description);
+            return EnumUtils.GetEnumValueInfo(rptGroup.Category, context);
         }
 
         public void UpdateRequestedProcedureTypeGroup(RequestedProcedureTypeGroup group, RequestedProcedureTypeGroupDetail detail, IPersistenceContext context)
         {
             group.Name = detail.Name;
             group.Description = detail.Description;
-            group.Category = (RequestedProcedureTypeGroupCategory)Enum.Parse(typeof (RequestedProcedureTypeGroupCategory), detail.Category.Code);
+            group.Category = EnumUtils.GetEnumValue<RequestedProcedureTypeGroupCategory>(detail.Category);
             
             group.RequestedProcedureTypes.Clear();
             detail.RequestedProcedureTypes.ForEach(
