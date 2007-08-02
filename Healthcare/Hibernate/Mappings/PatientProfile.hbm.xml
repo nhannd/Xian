@@ -36,12 +36,12 @@
       </collection-id>
       <key column="PatientProfileOID_"/>
       <composite-element class="ContactPerson">
-        <property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.ContactPersonTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
+        <property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.ContactPersonTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
         <property name="Name" column="Name_" type="String" length="50" not-null="true"/>
         <property name="Address" column="Address_" type="String" length="255" not-null="true"/>
         <property name="HomePhone" column="HomePhone_" type="String" length="25" not-null="true"/>
         <property name="BusinessPhone" column="BusinessPhone_" type="String" length="25" not-null="false"/>
-        <property name="Relationship" column="Relationship_" type="ClearCanvas.Healthcare.Hibernate.ContactPersonRelationshipEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
+        <property name="Relationship" column="Relationship_" type="ClearCanvas.Healthcare.Hibernate.ContactPersonRelationshipEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
       </composite-element>
     </idbag>
     
@@ -69,8 +69,8 @@
         <property name="AreaCode" column="AreaCode_" type="String" length="10" not-null="false"/>
         <property name="Number" column="Number_" type="String" length="10" not-null="true"/>
         <property name="Extension" column="Extension_" type="String" length="10" not-null="false"/>
-        <property name="Use" column="Use_" type="ClearCanvas.Healthcare.Hibernate.TelephoneUseEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
-        <property name="Equipment" column="Equipment_" type="ClearCanvas.Healthcare.Hibernate.TelephoneEquipmentEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
+        <property name="Use" column="Use_" type="ClearCanvas.Healthcare.Hibernate.TelephoneUseEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+        <property name="Equipment" column="Equipment_" type="ClearCanvas.Healthcare.Hibernate.TelephoneEquipmentEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
         <property name="ValidRange" type="ClearCanvas.Healthcare.Hibernate.DateTimeRangeHbm, ClearCanvas.Healthcare.Hibernate">
           <column name="ValidFrom_"/>
           <column name="ValidUntil_"/>
@@ -90,7 +90,7 @@
         <property name="Province" column="Province_" type="String" length="50" not-null="true"/>
         <property name="PostalCode" column="PostalCode_" type="String" length="20" not-null="true"/>
         <property name="Country" column="Country_" type="String" length="50" not-null="true"/>
-        <property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.AddressTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" length="10" not-null="true"/>
+        <property name="Type" column="Type_" type="ClearCanvas.Healthcare.Hibernate.AddressTypeEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
         <property name="ValidRange" type="ClearCanvas.Healthcare.Hibernate.DateTimeRangeHbm, ClearCanvas.Healthcare.Hibernate">
           <column name="ValidFrom_"/>
           <column name="ValidUntil_"/>
