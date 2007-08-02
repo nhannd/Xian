@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Net;
+using System.Net.NetworkInformation;
+using System.Diagnostics;
 
 namespace ClearCanvas.Dicom
 {
@@ -27,6 +30,9 @@ namespace ClearCanvas.Dicom
 
         internal DicomUid(string uid, string desc, UidType type)
         {
+            if (uid.Length > 64)
+                throw new DicomException("Invalid UID length: " + uid.Length + "!");
+
             UID = uid;
             Description = desc;
             Type = type;
@@ -52,7 +58,139 @@ namespace ClearCanvas.Dicom
         {
             return base.GetHashCode();
         }
-    }
+
+        /* members for UID Generation */
+        private static String _lastTimestamp;
+        private static String _baseUid = null;
+        private static Object _lock = new object();
+        private static short _count = 0;
+
+        /// <summary>
+        /// This routine generates a DICOM Unique Identifier.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The UID generator uses the ClearCanvas UID base, the computers MAC address, a timestamp,
+        /// a process ID, and a counter to ensure uniqueness for the UID.  The UID has the following
+        /// components:
+        /// </para>
+        /// <list type="table">
+        ///   <listheader>
+        ///     <term>UID Component</term>
+        /// <description>Description</description>
+        ///   </listheader>
+        /// <item>
+        ///   <term> 1.3.6.1.4.1.25403 </term>
+        ///   <description>
+        ///   The ClearCanvas assigned UID root.  This root has been assigned to ClearCanvas by IANA.  This
+        ///   component uses 17 characters.
+        ///   </description>
+        /// </item>
+        /// <item>
+        ///   <term>MAC Address (.NNNNNNNNNNNNNNN)</term>
+        ///   <description>
+        ///   The 6 bytes encoded in the network card's MAC address are masked into an unsigned long, and then 
+        ///   added as decimal to the UID.  This component guarentees that the UID is
+        ///   unique to the computer that it is running on.  This component uses 16 characters.
+        ///   </description>
+        /// </item>
+        /// <item>
+        ///   <term> Process ID (.NNNNNNNNNN)</term>
+        ///   <description>
+        ///   The process ID of the process creating the UID.  This component along with the timestamp guarentee
+        ///   that the UID is unique to the specific process that is generating it.  This component has a maximum
+        ///   of 11 chracters.
+        ///   </description>
+        /// </item>
+        /// <item>
+        ///   <term> Time Stamp (.YYYYMMDDhhmmss) </term>
+        ///   <description>
+        ///   The timestamp contains The year/month/day/hour/minute/second that the UID was created.  This
+        ///   component uses 15 characters.
+        ///   </description>
+        /// </item>
+        /// <item>
+        ///   <term> Counter (.NNNN)</term>
+        ///   <description>
+        ///   The counter is used in case more than one UID is generated within a second.  This component has a 
+        ///   maximum of 5 characters.
+        ///   </description>
+        /// </item>
+        /// </list>
+        /// <para>
+        /// The UID generator uses the above components to insure uniqueness.  The use of the MAC address ensures that 
+        /// the UID is unique to the system that the generator is run on.  The use of a timestamp and process ID ensures 
+        /// that the Uid is unique to a specific process, and the counter ensures that if more than one Uid is generated
+        /// within a second by a process, that it is unique.
+        /// </para>
+        /// <para>
+        /// Note that the definition of the components of the Uid may allow the Uid to reach the maximum length of 
+        /// 64 characters, although it is unlikely this will ever happen.
+        /// </para>
+        /// </remarks>
+        /// <returns></returns>
+        public static DicomUid GenerateUid()
+        {
+            lock (_lock)
+            {
+                if (_baseUid == null)
+                {
+                    NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+                    if (nics.Length == 0)
+                        throw new DicomException("No network cards in system, unable to generate UID");
+
+                    byte[] addressBytes = nics[0].GetPhysicalAddress().GetAddressBytes();
+
+                    if (addressBytes.Length > 6)
+                        throw new DicomException("Unexpected length for MAC address, unable to generate a UID");
+
+                    ulong address = 0;
+
+                    foreach (byte b in addressBytes)
+                    {
+                        address <<= 8;
+                        address |= (ulong)b;
+                    }
+
+                    StringBuilder sb = new StringBuilder();
+
+                    // ClearCanvas root from IANA
+                    sb.Append("1.3.6.1.4.1.25403");
+
+                    // MAC address converted to decimal
+                    sb.AppendFormat(".{0}", address);
+
+                    // Process Id
+                    sb.AppendFormat(".{0}", (uint)Process.GetCurrentProcess().Id);
+
+                    _baseUid = sb.ToString();
+
+                    _lastTimestamp = DateTime.Now.ToString("yyyyMMddhhmmss");
+                }
+
+                StringBuilder uid = new StringBuilder();
+                uid.Append(_baseUid);
+
+                String time = DateTime.Now.ToString("yyyyMMddhhmmss");
+                if (time.Equals(_lastTimestamp))
+                {
+                    if (_count == 9999)
+                        throw new DicomException("Unexpected count reached max value in UID generator!");
+
+                    _count++;
+                }
+                else
+                {
+                    _count = 1;
+                    _lastTimestamp = time;
+                }
+
+                uid.AppendFormat(".{0}.{1}", time, _count);
+
+                return new DicomUid(uid.ToString(), "Instance UID", UidType.SOPInstance);
+            }
+        }
+    } 
 
     public static class DicomUids
     {

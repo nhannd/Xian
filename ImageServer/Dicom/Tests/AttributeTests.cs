@@ -232,6 +232,8 @@ namespace ClearCanvas.ImageServer.Dicom.Tests
         public void DicomUidTest()
         {
             DicomUid uid = DicomUid.GenerateUid();
+            DicomUid uid2 = DicomUid.GenerateUid();
+            Assert.AreNotEqual(uid.UID, uid2.UID);
         }
         #endregion
     }
