@@ -35,6 +35,8 @@ namespace ClearCanvas.ImageServer.Streaming.XmlGenerator
             this.folderBrowserDialog = new System.Windows.Forms.FolderBrowserDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this._buttonLoadXml = new System.Windows.Forms.Button();
+            this._buttonGenerateGzipXml = new System.Windows.Forms.Button();
+            this._buttonLoadGzipXml = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // _buttonLoadFile
@@ -86,11 +88,33 @@ namespace ClearCanvas.ImageServer.Streaming.XmlGenerator
             this._buttonLoadXml.UseVisualStyleBackColor = true;
             this._buttonLoadXml.Click += new System.EventHandler(this._buttonLoadXml_Click);
             // 
+            // _buttonGenerateGzipXml
+            // 
+            this._buttonGenerateGzipXml.Location = new System.Drawing.Point(148, 98);
+            this._buttonGenerateGzipXml.Name = "_buttonGenerateGzipXml";
+            this._buttonGenerateGzipXml.Size = new System.Drawing.Size(109, 23);
+            this._buttonGenerateGzipXml.TabIndex = 4;
+            this._buttonGenerateGzipXml.Text = "Generate Gzip XML";
+            this._buttonGenerateGzipXml.UseVisualStyleBackColor = true;
+            this._buttonGenerateGzipXml.Click += new System.EventHandler(this._buttonGenerateGzipXml_Click);
+            // 
+            // _buttonLoadGzipXml
+            // 
+            this._buttonLoadGzipXml.Location = new System.Drawing.Point(148, 140);
+            this._buttonLoadGzipXml.Name = "_buttonLoadGzipXml";
+            this._buttonLoadGzipXml.Size = new System.Drawing.Size(109, 23);
+            this._buttonLoadGzipXml.TabIndex = 5;
+            this._buttonLoadGzipXml.Text = "Load Gzip Xml";
+            this._buttonLoadGzipXml.UseVisualStyleBackColor = true;
+            this._buttonLoadGzipXml.Click += new System.EventHandler(this._buttonLoadGzipXml_Click);
+            // 
             // MainDialog
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(292, 266);
+            this.ClientSize = new System.Drawing.Size(271, 199);
+            this.Controls.Add(this._buttonLoadGzipXml);
+            this.Controls.Add(this._buttonGenerateGzipXml);
             this.Controls.Add(this._buttonLoadXml);
             this.Controls.Add(this._buttonGenerateXml);
             this.Controls.Add(this._buttonLoadDirectory);
@@ -110,6 +134,8 @@ namespace ClearCanvas.ImageServer.Streaming.XmlGenerator
 		private System.Windows.Forms.FolderBrowserDialog folderBrowserDialog;
 		private System.Windows.Forms.SaveFileDialog saveFileDialog;
         private System.Windows.Forms.Button _buttonLoadXml;
+        private System.Windows.Forms.Button _buttonGenerateGzipXml;
+        private System.Windows.Forms.Button _buttonLoadGzipXml;
     }
 }
 

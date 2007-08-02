@@ -103,31 +103,18 @@ namespace ClearCanvas.ImageServer.Streaming.XmlGenerator
 
 		private void _buttonGenerateXml_Click(object sender, EventArgs e)
 		{
+            saveFileDialog.DefaultExt = "xml";
 			saveFileDialog.ShowDialog();
 
 			String file = saveFileDialog.FileName;
 
 			XmlDocument doc = _theStream.GetMomento();
 
-			StreamWriter writer = new StreamWriter(file);
+            Stream fileStream = saveFileDialog.OpenFile();
 
-			XmlWriterSettings xmlSettings = new XmlWriterSettings();
+            StreamingIo.Write(doc, fileStream);
 
-			xmlSettings.Encoding = Encoding.UTF8;
-			xmlSettings.ConformanceLevel = ConformanceLevel.Document;
-			xmlSettings.Indent = false;
-			xmlSettings.NewLineOnAttributes = false;
-			xmlSettings.CheckCharacters = true;
-			xmlSettings.IndentChars = "";
-
-			XmlWriter tw = XmlWriter.Create(writer, xmlSettings);
-
-			doc.WriteTo(tw);
-
-			tw.Close();
-			tw = null;
-			writer.Close();
-
+            fileStream.Close();
 		}
 
         private void _buttonLoadXml_Click(object sender, EventArgs e)
@@ -135,15 +122,52 @@ namespace ClearCanvas.ImageServer.Streaming.XmlGenerator
             openFileDialog.DefaultExt = "xml";
             openFileDialog.ShowDialog();
 
+            Stream fileStream = openFileDialog.OpenFile();
+
             XmlDocument theDoc = new XmlDocument();
 
-            theDoc.Load(openFileDialog.FileName);
+            StreamingIo.Read(theDoc, fileStream);
+
+            fileStream.Close();
 
             _theStream = new StudyStream();
 
             _theStream.SetMemento(theDoc);
+        }
 
+        private void _buttonGenerateGzipXml_Click(object sender, EventArgs e)
+        {
+            saveFileDialog.DefaultExt = "gzip";
 
+            saveFileDialog.ShowDialog();
+
+            String file = saveFileDialog.FileName;
+
+            XmlDocument doc = _theStream.GetMomento();
+
+            Stream fileStream = saveFileDialog.OpenFile();
+
+            StreamingIo.WriteGzip(doc, fileStream);
+
+            fileStream.Close();
+        }
+
+        private void _buttonLoadGzipXml_Click(object sender, EventArgs e)
+        {
+            openFileDialog.DefaultExt = "gzip";
+            openFileDialog.ShowDialog();
+
+            Stream fileStream = openFileDialog.OpenFile();
+
+            XmlDocument theDoc = new XmlDocument();
+
+            StreamingIo.ReadGzip(theDoc, fileStream);
+
+            fileStream.Close();
+
+            _theStream = new StudyStream();
+
+            _theStream.SetMemento(theDoc);
         }
     }
 }
