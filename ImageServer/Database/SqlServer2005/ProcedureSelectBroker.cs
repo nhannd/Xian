@@ -9,25 +9,38 @@ using System.Data.SqlTypes;
 using System.Data.Sql;
 
 using ClearCanvas.Common;
+using ClearCanvas.ImageServer.Database;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.ImageServer.Database;
 
 namespace ClearCanvas.ImageServer.Database.SqlServer2005
 {
-    public abstract class ProcedureUpdateBroker<TInput> : Broker, IProcedureUpdateBroker<TInput>
+    public abstract class ProcedureSelectBroker<TInput,TOutput> : Broker,IProcedureSelectBroker<TInput,TOutput>
         where TInput : ProcedureParameters
+        where TOutput : ServerEntity, new()
     {
         private String _procedureName;
 
-        protected ProcedureUpdateBroker(String procedureName)
+        protected ProcedureSelectBroker(String procedureName)
         {
             _procedureName = procedureName;
         }
 
-        #region IProcedureUpdateBroker<TInput> Members
+        #region IProcedureSelectBroker<TInput,TOutput> Members
 
-        public bool Execute(TInput criteria)
+        public IList<TOutput> Execute(TInput criteria)
+        {
+            IList<TOutput> list = new List<TOutput>();
+
+            Execute(criteria, delegate(TOutput row)
+            {
+                list.Add(row);
+            });
+
+            return list;
+        }
+
+        public void Execute(TInput criteria, SelectCallback<TOutput> callback)
         {
             SqlDataReader myReader = null;
             SqlCommand command = null;
@@ -40,14 +53,34 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
                 // Set parameters
                 SetParameters(command, criteria);
 
-                int rows = command.ExecuteNonQuery();
 
+                myReader = command.ExecuteReader();
+                if (myReader == null)
+                {
+                    Platform.Log(LogLevel.Error, "Unable to execute stored procedure '{0}'", _procedureName);
+                    command.Dispose();
+                    return;
+                }
+                else
+                {
+                    if (myReader.HasRows)
+                    {
+                        while (myReader.Read())
+                        {
+                            TOutput row = new TOutput();
+
+                            PopulateEntity(myReader, row, typeof(TOutput));
+
+                            callback(row);
+                        }
+                    }
+                }
             }
             catch (Exception e)
             {
                 Platform.Log(e, LogLevel.Error, "Unexpected exception when calling stored procedure: {0}", _procedureName);
 
-                return false;
+                throw new PersistenceException("Unexpected problem with stored procedure: " + _procedureName, e);
             }
             finally
             {
@@ -62,7 +95,6 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
                     command.Dispose();
             }
 
-            return true;
         }
 
         #endregion

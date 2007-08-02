@@ -8,7 +8,7 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public interface IGetServerPartitions : IProcedureReadBroker<ServerPartition>
+    public interface ISelectStudyStorageLocation : IProcedureSelectBroker<StudyStorageLocationSelectParameters, StudyStorageLocation>
     {
     }
 }

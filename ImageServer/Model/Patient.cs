@@ -8,10 +8,17 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.ImageServer.Model
 {
-    public class Patient : ProcedureEntity
+    public class Patient : ServerEntity
     {
+        #region Constructors
+        public Patient()
+            : base("Patient")
+        {
+        }
+        #endregion
+
         #region Private Members
-        private EntityRef _serverPartitionRef;
+        private ServerEntityKey _serverPartitionRef;
         private String _patientName;
         private String _patientId;
         private String _issuerOfPatientId;
@@ -21,7 +28,7 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
-        public EntityRef ServerPartitionRef
+        public ServerEntityKey ServerPartitionRef
         {
             get { return _serverPartitionRef; }
             set { _serverPartitionRef = value; }

@@ -6,7 +6,11 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Database
 {
-    public class ProcedureSearchCriteria : SearchCriteria
+    public class ProcedureParameters : SearchCriteria
     {
+        public ProcedureParameters(string key)
+            : base(key)
+        {
+        }
     }
 }

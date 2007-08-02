@@ -11,7 +11,8 @@ namespace ClearCanvas.ImageServer.Common
 {
     public class FileSystemMonitor
     {
-        private IList<ServerPartition> _list;
+        private IList<ServerPartition> _partitionList;
+        private IList<Filesystem> _filesystemList;
         private IPersistentStore _store;
         public FileSystemMonitor(IPersistentStore persistentStore)
         {
@@ -24,7 +25,21 @@ namespace ClearCanvas.ImageServer.Common
 
             IGetServerPartitions partitionsQuery = dbRead.GetBroker<IGetServerPartitions>();
 
-            _list = partitionsQuery.Execute();
+            _partitionList = partitionsQuery.Execute();
+
+            IGetFilesystems filesystemQuery = dbRead.GetBroker<IGetFilesystems>();
+
+            _filesystemList = filesystemQuery.Execute();
         }
+
+        public IList<ServerPartition> Partitions
+        {
+            get { return _partitionList; }
+        }
+        public IList<Filesystem> Filesystems
+        {
+            get { return _filesystemList; }
+        }
+
     }
 }

@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Net;
+using System.Net.NetworkInformation;
 
 namespace ClearCanvas.ImageServer.Dicom
 {
@@ -52,7 +54,56 @@ namespace ClearCanvas.ImageServer.Dicom
         {
             return base.GetHashCode();
         }
-    }
+
+        private static long _timestamp;
+        private static String _mac = null;
+        private static Object _lock = new object();
+        private static int count = 0;
+
+        public static DicomUid GenerateUid()
+        {
+            lock (_lock)
+            {
+                StringBuilder uid = new StringBuilder();
+
+                if (_mac == null)
+                {
+                    NetworkInterface[] nics = NetworkInterface.GetAllNetworkInterfaces();
+                    if (nics.Length == 0)
+                        throw new DicomException("No network cards in system, unable to generate UID");
+
+                    PhysicalAddress address = nics[0].GetPhysicalAddress();
+
+                    String rawMac = address.ToString();
+
+                    StringBuilder sb = new StringBuilder();
+
+                    sb.Append("1.2.840.");
+
+                    foreach (char c in rawMac.ToUpper().ToCharArray())
+                    {
+                        int i = (int)c;  
+                        sb.AppendFormat("{0}",i);
+                    }
+
+                }
+
+
+                uid.AppendFormat(_mac);
+                if (count == int.MaxValue)
+                {
+                    _timestamp++;
+                    count = 1;
+                }
+                count++;
+                uid.AppendFormat(".{0}", count);
+
+                return uid.ToString();
+            }
+
+
+        }
+    } 
 
     public static class DicomUids
     {

@@ -6,14 +6,15 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Database.SqlServer2005;
 
-namespace ClearCanvas.ImageServer.Database.SqlServer2005.Brokers
+namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class GetServerPartitions : ProcedureEntityReadBroker<ServerPartition>, IGetServerPartitions
+    public class GetFilesystemTiers : ProcedureReadBroker<FilesystemTier>, IGetFilesystemTiers
     {
-        public GetServerPartitions()
-            : base("ReadServerPartitions")
+        public GetFilesystemTiers()
+            : base("ReadFilesystemTiers")
         { }
     }
 }

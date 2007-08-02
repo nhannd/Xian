@@ -7,14 +7,22 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Model
 {
-    public class ServerPartition : ProcedureEntity
+    public class ServerPartition : ServerEntity
     {
+        #region Constructors
+        public ServerPartition()
+            : base("ServerPartition")
+        {
+        }
+        #endregion
+
         #region Private Members
         private bool _enabled;
         private String _description;
         private string _aeTitle;
         private int _port;
-        private string _folderName;
+        private string _partitionFolder;
+        ServerEntityKey _serverPartitionRef;
         #endregion
 
         #region Public Properties
@@ -23,29 +31,30 @@ namespace ClearCanvas.ImageServer.Model
             get { return _enabled; }
             set { _enabled = value; }
         }
-
         public String Description
         {
             get { return _description; }
             set { _description = value; }
         }
-
         public String AeTitle
         {
             get { return _aeTitle; }
             set { _aeTitle = value; }
         }
-
         public int Port
         {
             get { return _port; }
             set { _port = value; }
         }
-
-        public String FolderName
+        public String PartitionFolder
         {
-            get { return _folderName; }
-            set { _folderName = value; }
+            get { return _partitionFolder; }
+            set { _partitionFolder = value; }
+        }
+        public ServerEntityKey ServerPartitionRef
+        {
+            get { return _serverPartitionRef; }
+            set { _serverPartitionRef = value; }
         }
         #endregion
     }

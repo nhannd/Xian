@@ -124,6 +124,7 @@ copy $(ProjectDir)..\..\Enterprise\Common\$(OutDir)ClearCanvas.Enterprise.Common
 copy $(ProjectDir)..\..\ImageServer\Database\$(OutDir)ClearCanvas.ImageServer.Database.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Database\SqlServer2005\$(OutDir)ClearCanvas.ImageServer.Database.SqlServer2005.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Model\$(OutDir)ClearCanvas.ImageServer.Model.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\ImageServer\Model\SqlServer2005\$(OutDir)ClearCanvas.ImageServer.Model.SqlServer2005.dll $(TargetDir)plugins
 
 rem copy referenced assemblies
 copy $(ProjectDir)..\..\ReferencedAssemblies\log4net.dll $(TargetDir)common

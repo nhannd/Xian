@@ -7,7 +7,7 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ClearCanvas.ImageServer.Database.SqlServer2005")]
+[assembly: AssemblyTitle("ClearCanvas.ImageServer.Model.SqlServer2005")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ClearCanvas")]
@@ -22,7 +22,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("59460003-5547-4e3d-8eea-d43ff8fe0cd1")]
+[assembly: Guid("1ec5f182-7c97-487c-8a6e-ef524db8bd5c")]
 
 // Version information for an assembly consists of the following four values:
 //

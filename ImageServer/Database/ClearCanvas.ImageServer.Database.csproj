@@ -33,12 +33,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IProcedureEntityReadBroker.cs" />
-    <Compile Include="IProcedureEntitySelectBroker.cs" />
+    <Compile Include="IProcedureReadBroker.cs" />
+    <Compile Include="IProcedureSelectBroker.cs" />
     <Compile Include="IProcedureUpdateBroker.cs" />
-    <Compile Include="ProcedureEntity.cs" />
-    <Compile Include="ProcedureEntityRef.cs" />
-    <Compile Include="ProcedureSearchCriteria.cs" />
+    <Compile Include="ServerEntity.cs" />
+    <Compile Include="ServerEntityKey.cs" />
+    <Compile Include="ProcedureParameter.cs" />
+    <Compile Include="ProcedureParameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
