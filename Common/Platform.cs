@@ -2,6 +2,8 @@ using System;
 using System.IO;
 using System.Reflection;
 using System.Resources;
+using System.Text;
+
 using log4net;
 //using log4net.spi;
 using log4net.Config;
@@ -450,6 +452,38 @@ namespace ClearCanvas.Common
         /// Logs the specified message at the specified <see cref="LogLevel"/>.
         /// </summary>
         /// <remarks>This method is thread-safe.</remarks>
+        /// <param name="category"></param>
+        /// <param name="message">Format message, as used with <see cref="System.Text.StringBuilder"/></param>
+        /// <param name="args">Optional arguments used with <paramref name="message"/></param>
+        public static void Log(LogLevel category,String message, params object[] args)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendFormat(message, args);
+
+            switch (category)
+            {
+                case LogLevel.Debug:
+                    _log.Debug(sb.ToString());
+                    break;
+                case LogLevel.Info:
+                    _log.Info(sb.ToString());
+                    break;
+                case LogLevel.Warn:
+                    _log.Warn(sb.ToString());
+                    break;
+                case LogLevel.Error:
+                    _log.Error(sb.ToString());
+                    break;
+                case LogLevel.Fatal:
+                    _log.Fatal(sb.ToString());
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// Logs the specified message at the specified <see cref="LogLevel"/>.
+        /// </summary>
+        /// <remarks>This method is thread-safe.</remarks>
         /// <param name="message"></param>
         /// <param name="category"></param>
 		public static void Log(object message, LogLevel category)
@@ -501,6 +535,40 @@ namespace ClearCanvas.Common
 					break;
 			}
 		}
+        /// <summary>
+        /// Logs the specified exception at the specified <see cref="LogLevel"/>.
+        /// </summary>
+        /// <remarks>This method is thread-safe.</remarks>
+        /// <param name="ex"></param>
+        /// <param name="category"></param>
+        /// <param name="message">Format message, as used with <see cref="System.Text.StringBuilder"/></param>
+        /// <param name="args">Optional arguments used with <paramref name="message"/></param>
+        public static void Log(Exception ex, LogLevel category, String message, params object[] args)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(SR.ExceptionThrown);
+            sb.AppendLine();
+            sb.AppendFormat(message, args);
+            
+            switch (category)
+            {
+                case LogLevel.Debug:
+                    _log.Debug(sb.ToString(), ex);
+                    break;
+                case LogLevel.Info:
+                    _log.Info(sb.ToString(), ex);
+                    break;
+                case LogLevel.Warn:
+                    _log.Warn(sb.ToString(), ex);
+                    break;
+                case LogLevel.Error:
+                    _log.Error(sb.ToString(), ex);
+                    break;
+                case LogLevel.Fatal:
+                    _log.Fatal(sb.ToString(), ex);
+                    break;
+            }
+        }
 
         /// <summary>
         /// Displays a message box with the specified message.
