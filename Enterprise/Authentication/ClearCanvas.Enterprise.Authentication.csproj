@@ -46,6 +46,7 @@
     <Compile Include="Brokers\*.gen.cs" />
     <Compile Include="Brokers\IAuthorityTokenBroker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Setup\SetupApplication.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

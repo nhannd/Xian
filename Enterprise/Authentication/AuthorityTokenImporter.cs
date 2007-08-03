@@ -27,7 +27,8 @@ namespace ClearCanvas.Enterprise.Authentication
         /// </summary>
         /// <param name="context">Persistence context</param>
         /// <param name="statusLog">A log to which the importer will write status messages</param>
-        public void ImportFromPlugins(IUpdateContext context, TextWriter statusLog)
+        /// <returns>A complete list of all existing authority tokens (including any that existed prior to this import).</returns>
+        public IList<AuthorityToken> ImportFromPlugins(IUpdateContext context, TextWriter statusLog)
         {
             statusLog.WriteLine("Loading existing tokens...");
 
@@ -48,15 +49,17 @@ namespace ClearCanvas.Enterprise.Authentication
                         object[] attrs = field.GetCustomAttributes(typeof(AuthorityTokenAttribute), false);
                         if (attrs.Length == 1)
                         {
-                            ProcessToken(field, (AuthorityTokenAttribute)attrs[0], existingTokens, context);
+                            AuthorityToken token = ProcessToken(field, (AuthorityTokenAttribute)attrs[0], existingTokens, context);
+                            existingTokens.Add(token);
                         }
                     }
                 }
             }
 
+            return existingTokens;
         }
 
-        private static void ProcessToken(FieldInfo field, AuthorityTokenAttribute a, IList<AuthorityToken> existingTokens, IUpdateContext context)
+        private static AuthorityToken ProcessToken(FieldInfo field, AuthorityTokenAttribute a, IList<AuthorityToken> existingTokens, IUpdateContext context)
         {
             string tokenName = (string)field.GetValue(null);
 
@@ -74,6 +77,8 @@ namespace ClearCanvas.Enterprise.Authentication
 
             // update the description
             token.Description = a.Description;
+
+            return token;
         }
 
         #region IApplicationRoot Members
