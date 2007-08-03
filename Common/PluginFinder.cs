@@ -46,16 +46,16 @@ namespace ClearCanvas.Common
 			{
 				// Encountered an unmanaged DLL in the plugin directory; this is okay
 				// but we'll log it anyway
-				Platform.Log(String.Format(SR.LogFoundUnmanagedDLL, e.FileName));
+                Platform.Log(LogLevel.Info, SR.LogFoundUnmanagedDLL, e.FileName);
 			}
 			catch (FileNotFoundException e)
 			{
-				Platform.Log(e, LogLevel.Error);
+				Platform.Log(LogLevel.Error,e);
 				throw e;
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e, LogLevel.Error);
+				Platform.Log(LogLevel.Error,e);
 				throw e;
 			}
 		}

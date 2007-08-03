@@ -54,7 +54,7 @@ namespace ClearCanvas.Server.ShredHost
             }
             catch (ConfigurationErrorsException err)
             {
-                Platform.Log(err);
+                Platform.Log(LogLevel.Info, err);
                 return false;
             }
 

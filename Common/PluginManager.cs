@@ -150,20 +150,19 @@ namespace ClearCanvas.Common
                 catch (ReflectionTypeLoadException e)
                 {
                     // this exception usually means one of the dependencies is missing
-                    Platform.Log(string.Format(SR.LogFailedToProcessPluginAssembly, assemblies[i].FullName), LogLevel.Error);
+                    Platform.Log(LogLevel.Error, SR.LogFailedToProcessPluginAssembly, assemblies[i].FullName);
                     
                     // log a detail message for each missing dependency
                     foreach (Exception loaderException in e.LoaderExceptions)
                     {
                         // just log the message, don't need the full stack trace
-                        Platform.Log(loaderException.Message, LogLevel.Error);
+                        Platform.Log(LogLevel.Error, loaderException.Message);
                     }
                 }
                 catch (Exception e)
                 {
                     // there was a problem processing this assembly
-                    Platform.Log(string.Format(SR.LogFailedToProcessPluginAssembly, assemblies[i].FullName), LogLevel.Error);
-                    Platform.Log(e, LogLevel.Error);
+                    Platform.Log(LogLevel.Error, e, SR.LogFailedToProcessPluginAssembly, assemblies[i].FullName);
                 }
             }
             return plugins.ToArray();
@@ -219,7 +218,7 @@ namespace ClearCanvas.Common
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e, LogLevel.Error);
+				Platform.Log(LogLevel.Error,e);
 				throw e;
 			}
 			finally

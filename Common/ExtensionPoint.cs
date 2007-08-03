@@ -107,17 +107,18 @@ namespace ClearCanvas.Common
                 // is the extension a concrete class?
                 if (!IsConcreteClass(extension.ExtensionClass))
                 {
-                    Platform.Log(string.Format(SR.ExceptionExtensionMustBeConcreteClass,
-                        extension.ExtensionClass.FullName), LogLevel.Warn);
+                    Platform.Log(LogLevel.Warn, SR.ExceptionExtensionMustBeConcreteClass,
+                        extension.ExtensionClass.FullName);
                     continue;
                 }
 
                 // does the extension implement the required interface?
                 if (!InterfaceType.IsAssignableFrom(extension.ExtensionClass))
                 {
-                    Platform.Log(string.Format(SR.ExceptionExtensionDoesNotImplementRequiredInterface,
+                    Platform.Log(LogLevel.Warn, SR.ExceptionExtensionDoesNotImplementRequiredInterface,
                         extension.ExtensionClass.FullName,
-                        InterfaceType), LogLevel.Warn);
+                        InterfaceType);
+
                     continue;
                 }
 
@@ -130,7 +131,7 @@ namespace ClearCanvas.Common
                 catch (Exception e)
                 {
                     // instantiation failed
-					Platform.Log(e, LogLevel.Error);
+					Platform.Log(LogLevel.Error, e);
 				}
             }
 

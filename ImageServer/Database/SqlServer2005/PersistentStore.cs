@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
             }
             catch (Exception e)
             {
-                Platform.Log(e, LogLevel.Fatal);
+                Platform.Log(LogLevel.Fatal, e);
             }
             return null;
         }
@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
             }
             catch (Exception e)
             {
-                Platform.Log(e, LogLevel.Fatal);
+                Platform.Log(LogLevel.Fatal, e);
             }
             return null;
         }

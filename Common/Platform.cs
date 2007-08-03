@@ -268,7 +268,7 @@ namespace ClearCanvas.Common
                             catch (NotSupportedException)
                             {
                                 // can't find time provider, default to local time
-                                Log(SR.LogTimeProviderNotFound, LogLevel.Warn);
+                                Log(LogLevel.Warn, SR.LogTimeProviderNotFound);
 
                                 _timeProvider = new LocalTimeProvider();
                             }
@@ -386,7 +386,7 @@ namespace ClearCanvas.Common
                         // do not allow exceptions thrown from Dispose() because it may have the effect of
                         // hiding an exception that was thrown from the service itself
                         // if the service fails to dispose properly, we don't care, just log it and move on
-                        Platform.Log(e);
+                        Platform.Log(LogLevel.Error, e);
                     }
                 }
             }
@@ -432,23 +432,57 @@ namespace ClearCanvas.Common
             throw new UnknownServiceException(string.Format(SR.ExceptionNoServiceProviderCanProvide, service.FullName));
         }
 
-		/// <summary>
-        /// Logs the specified message at <see cref="LogLevel.Info"/>.
-        /// </summary>
-		/// <param name="message"></param>
-		public static void Log(object message)
-		{
-			Log(message, LogLevel.Info);
-		}
-
         /// <summary>
-        /// Logs the specified exception at <see cref="LogLevel.Error"/>.
+        /// Logs the specified message at the specified <see cref="LogLevel"/>.
         /// </summary>
         /// <remarks>This method is thread-safe.</remarks>
-        /// <param name="ex"></param>
-        public static void Log(Exception ex)
+        /// <param name="message"></param>
+        /// <param name="category"></param>
+        public static void Log(LogLevel category, object message)
         {
-            Log(ex, LogLevel.Error);
+            Exception ex = message as Exception;
+            if (ex != null)
+            {
+                switch (category)
+                {
+                    case LogLevel.Debug:
+                        _log.Debug(SR.ExceptionThrown, ex);
+                        break;
+                    case LogLevel.Info:
+                        _log.Info(SR.ExceptionThrown, ex);
+                        break;
+                    case LogLevel.Warn:
+                        _log.Warn(SR.ExceptionThrown, ex);
+                        break;
+                    case LogLevel.Error:
+                        _log.Error(SR.ExceptionThrown, ex);
+                        break;
+                    case LogLevel.Fatal:
+                        _log.Fatal(SR.ExceptionThrown, ex);
+                        break;
+                }
+            }
+            else
+            {
+                switch (category)
+                {
+                    case LogLevel.Debug:
+                        _log.Debug(message);
+                        break;
+                    case LogLevel.Info:
+                        _log.Info(message);
+                        break;
+                    case LogLevel.Warn:
+                        _log.Warn(message);
+                        break;
+                    case LogLevel.Error:
+                        _log.Error(message);
+                        break;
+                    case LogLevel.Fatal:
+                        _log.Fatal(message);
+                        break;
+                }
+            }
         }
 
         /// <summary>
@@ -484,61 +518,6 @@ namespace ClearCanvas.Common
         }
 
         /// <summary>
-        /// Logs the specified message at the specified <see cref="LogLevel"/>.
-        /// </summary>
-        /// <remarks>This method is thread-safe.</remarks>
-        /// <param name="message"></param>
-        /// <param name="category"></param>
-		public static void Log(object message, LogLevel category)
-		{
-			switch (category)
-			{
-				case LogLevel.Debug:
-					_log.Debug(message);
-					break;
-				case LogLevel.Info:
-					_log.Info(message);
-					break;
-				case LogLevel.Warn:
-					_log.Warn(message);
-					break;
-				case LogLevel.Error:
-					_log.Error(message);
-					break;
-				case LogLevel.Fatal:
-					_log.Fatal(message);
-					break;
-			}
-		}
-
-        /// <summary>
-        /// Logs the specified exception at the specified <see cref="LogLevel"/>.
-        /// </summary>
-        /// <remarks>This method is thread-safe.</remarks>
-        /// <param name="ex"></param>
-        /// <param name="category"></param>
-		public static void Log(Exception ex, LogLevel category)
-		{
-			switch (category)
-			{
-				case LogLevel.Debug:
-					_log.Debug(SR.ExceptionThrown, ex);
-					break;
-				case LogLevel.Info:
-					_log.Info(SR.ExceptionThrown, ex);
-					break;
-				case LogLevel.Warn:
-					_log.Warn(SR.ExceptionThrown, ex);
-					break;
-				case LogLevel.Error:
-					_log.Error(SR.ExceptionThrown, ex);
-					break;
-				case LogLevel.Fatal:
-					_log.Fatal(SR.ExceptionThrown, ex);
-					break;
-			}
-		}
-        /// <summary>
         /// Logs the specified exception at the specified <see cref="LogLevel"/>.
         /// </summary>
         /// <remarks>This method is thread-safe.</remarks>
@@ -546,7 +525,7 @@ namespace ClearCanvas.Common
         /// <param name="category"></param>
         /// <param name="message">Format message, as used with <see cref="System.Text.StringBuilder"/></param>
         /// <param name="args">Optional arguments used with <paramref name="message"/></param>
-        public static void Log(Exception ex, LogLevel category, String message, params object[] args)
+        public static void Log(LogLevel category, Exception ex, String message, params object[] args)
         {
             StringBuilder sb = new StringBuilder();
             sb.AppendLine(SR.ExceptionThrown);

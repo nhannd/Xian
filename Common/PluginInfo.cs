@@ -57,7 +57,7 @@ namespace ClearCanvas.Common
                 catch (ExtensionPointException e)
                 {
                     // log and continue discovering extension points
-                    Platform.Log(e.Message, LogLevel.Error);
+                    Platform.Log(LogLevel.Error, e.Message);
                 }
             }
             return extensionPointList.ToArray();

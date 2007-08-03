@@ -32,16 +32,16 @@ namespace ClearCanvas.Common
 				Assembly asm = Assembly.LoadFrom(path);
                 _pluginList.Add(asm);
 
-				Platform.Log(String.Format(SR.LogPluginLoaded, path));
+				Platform.Log(LogLevel.Info, SR.LogPluginLoaded, path);
 			}
 			catch (FileNotFoundException e)
 			{
-				Platform.Log(e, LogLevel.Error);
+				Platform.Log(LogLevel.Error, e);
 				throw e;
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e, LogLevel.Error);
+				Platform.Log(LogLevel.Error, e);
 				throw e;
 			}
 		}

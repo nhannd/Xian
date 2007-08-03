@@ -81,7 +81,7 @@ namespace ClearCanvas.Common.Utilities
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e, LogLevel.Warn);
+				Platform.Log(LogLevel.Warn, e);
 				throw e;
 			}
 		}
@@ -96,7 +96,7 @@ namespace ClearCanvas.Common.Utilities
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e, LogLevel.Warn);
+				Platform.Log(LogLevel.Warn, e);
 				throw e;
 			}
 

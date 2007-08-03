@@ -17,20 +17,20 @@ namespace ClearCanvas.Server.ShredHost
 
         public void Pause()
         {
-            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "] Pause invoked");
+            Platform.Log(LogLevel.Info,_className + "[" + AppDomain.CurrentDomain.FriendlyName + "] Pause invoked");
             System.Diagnostics.Trace.WriteLine(_className + ": Pause invoked");
         }
 
         public void Stop()
         {
-            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
+            Platform.Log(LogLevel.Info, _className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
             System.Diagnostics.Trace.WriteLine(_className + ": Stop invoked");
 
         }
 
         public void Unpause()
         {
-            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Unpause invoked");
+            Platform.Log(LogLevel.Info, _className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Unpause invoked");
             System.Diagnostics.Trace.WriteLine(_className + ": Unpause invoked");
         }
 

@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
             }
             catch (Exception e)
             {
-                Platform.Log(e, LogLevel.Error, "Unexpected exception when calling stored procedure: {0}", _procedureName);
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when calling stored procedure: {0}", _procedureName);
 
                 return false;
             }

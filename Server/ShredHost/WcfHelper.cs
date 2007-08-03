@@ -95,7 +95,7 @@ namespace ClearCanvas.Server.ShredHost
 				}
 				catch
 				{
-					Platform.Log(String.Format("unable to load binding configuration {0}; using default binding configuration", configurationName));
+                    Platform.Log(LogLevel.Info, String.Format("unable to load binding configuration {0}; using default binding configuration", configurationName));
 					binding = new NetTcpBinding();
 				}
 
@@ -110,7 +110,7 @@ namespace ClearCanvas.Server.ShredHost
 				}
 				catch
 				{
-					Platform.Log(String.Format("unable to load binding configuration {0}; using default binding configuration", configurationName));
+                    Platform.Log(LogLevel.Info, "unable to load binding configuration {0}; using default binding configuration", configurationName);
 					binding = new NetNamedPipeBinding();
 				}
 			}
@@ -123,7 +123,7 @@ namespace ClearCanvas.Server.ShredHost
 				}
 				catch
 				{
-					Platform.Log(String.Format("unable to load binding configuration {0}; using default binding configuration", configurationName));
+                    Platform.Log(LogLevel.Info, "unable to load binding configuration {0}; using default binding configuration", configurationName);
 					binding = new WSDualHttpBinding();
 				}
 			}
@@ -136,7 +136,7 @@ namespace ClearCanvas.Server.ShredHost
 				}
 				catch
 				{
-					Platform.Log(String.Format("unable to load binding configuration {0}; using default binding configuration", configurationName));
+                    Platform.Log(LogLevel.Info, "unable to load binding configuration {0}; using default binding configuration", configurationName);
 					binding = new WSHttpBinding();
 				}
 			}

@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
                     }
                     catch (SqlException e)
                     {
-                        Platform.Log(e, LogLevel.Error);
+                        Platform.Log(LogLevel.Error, e);
                     }
                 }
                 // end the transaction

@@ -47,7 +47,7 @@ namespace ClearCanvas.Common.Utilities
 				}
 				catch (Exception e)
 				{
-					Platform.Log(e, LogLevel.Error);
+                    Platform.Log(LogLevel.Error, e);
 					throw e;
 				}
 			}

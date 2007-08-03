@@ -44,7 +44,7 @@ namespace ClearCanvas.Common.Auditing
 				}
 				catch (Exception e)
 				{
-					Platform.Log(e, LogLevel.Error);
+					Platform.Log(LogLevel.Error, e);
 				}
 			}
 		}

@@ -24,7 +24,7 @@ namespace ClearCanvas.Server.ShredHost
                 _runningState = RunningState.Transition;
             }
 
-            Platform.Log("Starting up in AppDomain [" + AppDomain.CurrentDomain.FriendlyName + "]");
+            Platform.Log(LogLevel.Info, "Starting up in AppDomain [" + AppDomain.CurrentDomain.FriendlyName + "]");
 
             // the ShredList and shreds objects are proxy objects that actually exist
             // in the secondary AppDomain
@@ -40,7 +40,7 @@ namespace ClearCanvas.Server.ShredHost
             {
                 // There was a problem loading the plugins, including if there were no plugins found
                 // This is an innocuous problem, and just means that there are no shreds to run
-                Platform.Log(pluginException, LogLevel.Warn);
+                Platform.Log(LogLevel.Warn, pluginException);
             }
 
             StartShreds(shredStartupInfoList);
@@ -50,7 +50,7 @@ namespace ClearCanvas.Server.ShredHost
 			//AppDomain.Unload(stagingDomain);
 
 			_sed = WcfHelper.StartHttpHost<ShredHostServiceType, IShredHost>("ShredHost", "Host program of multiple indepdent service-like subprograms", ShredHostServiceSettings.Instance.ShredHostHttpPort);
-			Platform.Log("ShredHost WCF Service started on port " + ShredHostServiceSettings.Instance.ShredHostHttpPort.ToString());
+            Platform.Log(LogLevel.Info, "ShredHost WCF Service started on port " + ShredHostServiceSettings.Instance.ShredHostHttpPort.ToString());
             lock (_lockObject)
             {
                 _runningState = RunningState.Running;
@@ -75,11 +75,11 @@ namespace ClearCanvas.Server.ShredHost
 
             // correct sequence should be to stop the WCF host so that we don't
             // receive any more incoming requests
-            Platform.Log("Shred Host stop request received");
+            Platform.Log(LogLevel.Info, "Shred Host stop request received");
             WcfHelper.StopHost(_sed);
-            Platform.Log("ShredHost WCF Service stopped");
+            Platform.Log(LogLevel.Info, "ShredHost WCF Service stopped");
             StopShreds();
-            Platform.Log("Completing Shred Host stop");
+            Platform.Log(LogLevel.Info, "Completing Shred Host stop");
 
 
             _shredInfoList.Clear();
@@ -107,13 +107,13 @@ namespace ClearCanvas.Server.ShredHost
 
         static public bool StartShred(WcfDataShred shred)
         {
-            Platform.Log("Attempting to start shred: " + shred.Name);
+            Platform.Log(LogLevel.Info, "Attempting to start shred: " + shred.Name);
             return ShredHost.ShredControllerList[shred.Id].Start();
         }
 
         static public bool StopShred(WcfDataShred shred)
         {
-            Platform.Log("Attempting to stop shred: " + shred.Name);
+            Platform.Log(LogLevel.Info, "Attempting to stop shred: " + shred.Name);
             return ShredHost.ShredControllerList[shred.Id].Stop();
         }
 
@@ -156,9 +156,9 @@ namespace ClearCanvas.Server.ShredHost
             foreach (ShredController shredController in _shredInfoList)
             {
                 string displayName = shredController.Shred.GetDisplayName();
-                Platform.Log(displayName + ": Signalling stop");
+                Platform.Log(LogLevel.Info, displayName + ": Signalling stop");
                 shredController.Stop();
-                Platform.Log(displayName + ": Stopped");
+                Platform.Log(LogLevel.Info, displayName + ": Stopped");
             }
 
         }

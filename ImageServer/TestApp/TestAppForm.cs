@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageServer.TestApp
             }
             catch (Exception x)
             {
-                Platform.Log(x);
+                Platform.Log(LogLevel.Error, x);
             }
         }
     }
