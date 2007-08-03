@@ -8,6 +8,7 @@ using NHibernate.Mapping;
 using ClearCanvas.Common.Utilities;
 using System.Collections;
 using NHibernate.Type;
+using NHibernate.Dialect;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -15,25 +16,28 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     {
         class FKConstraint
         {
-            public string ConstrainedTable;
-            public string ConstrainedColumn;
-            public string ReferencedTable;
+            public Table ConstrainedTable;
+            public Column ConstrainedColumn;
+            public Table ReferencedTable;
 
-            public string GetCreateScript()
+            public string GetCreateScript(Dialect dialect, string defaultSchema)
             {
                 // don't really know if this will be unique or not...
-                int unique = ConstrainedTable.GetHashCode() ^ ConstrainedColumn.GetHashCode() ^ ReferencedTable.GetHashCode();
+                int unique = ConstrainedTable.Name.GetHashCode() ^ ConstrainedColumn.Name.GetHashCode() ^ ReferencedTable.Name.GetHashCode();
+                string fkName = string.Format("FK{0}", unique.ToString("X"));
 
                 return string.Format("alter table {0} add constraint {1} foreign key ({2}) references {3}",
-                    this.ConstrainedTable,
-                    string.Format("FK{0}", unique.ToString("X")),
-                    this.ConstrainedColumn,
-                    this.ReferencedTable);
+                    this.ConstrainedTable.GetQualifiedName(dialect, defaultSchema),
+                    fkName,
+                    this.ConstrainedColumn.GetQuotedName(dialect),
+                    this.ReferencedTable.GetQualifiedName(dialect, defaultSchema));
             }
         }
 
-        public override string[] GenerateCreateScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
+        public override string[] GenerateCreateScripts(PersistentStore store, Dialect dialect)
         {
+            string defaultSchema = store.Configuration.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
+
             List<FKConstraint> constraints = new List<FKConstraint>();
             foreach (PersistentClass pc in store.Configuration.ClassMappings)
             {
@@ -41,7 +45,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             }
 
             return CollectionUtils.Map<FKConstraint, string, List<string>>(constraints,
-                delegate(FKConstraint c) { return c.GetCreateScript(); }).ToArray();
+                delegate(FKConstraint c) { return c.GetCreateScript(dialect, defaultSchema); }).ToArray();
         }
 
         public override string[] GenerateDropScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
@@ -78,8 +82,8 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
 
                         // build a constraint for this column
                         FKConstraint constraint = new FKConstraint();
-                        constraint.ConstrainedTable = prop.Value.Table.Name;
-                        constraint.ConstrainedColumn = CollectionUtils.FirstElement<Column>(prop.ColumnCollection).Name;
+                        constraint.ConstrainedTable = prop.Value.Table;
+                        constraint.ConstrainedColumn = CollectionUtils.FirstElement<Column>(prop.ColumnCollection);
                         constraint.ReferencedTable = GetTableForEnumClass(enumClass, store);
 
                         constraints.Add(constraint);
@@ -99,7 +103,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             return attr.EnumValueClass;
         }
 
-        private string GetTableForEnumClass(Type enumClass, PersistentStore store)
+        private Table GetTableForEnumClass(Type enumClass, PersistentStore store)
         {
             PersistentClass pclass = CollectionUtils.SelectFirst<PersistentClass>(store.Configuration.ClassMappings,
                 delegate(PersistentClass c) { return c.MappedClass == enumClass; });
@@ -107,7 +111,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             if (pclass == null)
                 throw new Exception(string.Format("{0} is not a persistent class", enumClass.FullName));
 
-            return pclass.Table.Name;
+            return pclass.Table;
         }
 
         #region unused

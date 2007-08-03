@@ -29,10 +29,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
             public string[] GenerateCreateScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
             {
+                string defaultSchema = store.Configuration.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
+                string tableName = !string.IsNullOrEmpty(defaultSchema) ? defaultSchema + "." + TABLE_NAME : TABLE_NAME;
+                    
                 return new string[]
 				{
-                    string.Format("create table {0} ( {1} {2} );", TABLE_NAME, COLUMN_NAME, dialect.GetTypeName( NHibernate.SqlTypes.SqlTypeFactory.GetInt64() )),
-					string.Format("insert into {0} values ( {1} )", TABLE_NAME, INITIAL_VALUE)
+                    string.Format("create table {0} ( {1} {2} );", tableName, COLUMN_NAME, dialect.GetTypeName( NHibernate.SqlTypes.SqlTypeFactory.GetInt64() )),
+					string.Format("insert into {0} values ( {1} )", tableName, INITIAL_VALUE)
 				};
             }
 

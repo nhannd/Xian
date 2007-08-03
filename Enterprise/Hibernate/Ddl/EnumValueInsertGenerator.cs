@@ -11,6 +11,7 @@ using NHibernate.Mapping;
 using ClearCanvas.Common;
 using System.IO;
 using System.Xml;
+using NHibernate.Dialect;
 
 namespace ClearCanvas.Enterprise.Hibernate.Ddl
 {
@@ -21,15 +22,15 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
     {
         class Insert
         {
-            public string Table;
+            public Table Table;
             public string Code;
             public string Value;
             public string Description;
 
-            public string GetCreateScript()
+            public string GetCreateScript(Dialect dialect, string defaultSchema)
             {
                 return string.Format("insert into {0} (Code_, Value_, Description_) values ({1}, {2}, {3})",
-                    Table,
+                    Table.GetQualifiedName(dialect, defaultSchema),
                     SqlFormat(Code),
                     SqlFormat(Value),
                     SqlFormat(Description));
@@ -45,7 +46,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             }
         }
 
-        public override string[] GenerateCreateScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
+        public override string[] GenerateCreateScripts(PersistentStore store, Dialect dialect)
         {
             // build a map between enum classes and C# enums
             Dictionary<Type, Type> mapClassToEnum = new Dictionary<Type,Type>();
@@ -72,13 +73,15 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             foreach (PersistentClass pclass in persistentEnumClasses)
             {
                 if (mapClassToEnum.ContainsKey(pclass.MappedClass))
-                    ProcessHardEnum(mapClassToEnum[pclass.MappedClass], pclass.Table.Name, inserts);
+                    ProcessHardEnum(mapClassToEnum[pclass.MappedClass], pclass.Table, inserts);
                 else
-                    ProcessSoftEnum(pclass.MappedClass, pclass.Table.Name, inserts);
+                    ProcessSoftEnum(pclass.MappedClass, pclass.Table, inserts);
             }
 
+            string defaultSchema = store.Configuration.GetProperty(NHibernate.Cfg.Environment.DefaultSchema);
+
             return CollectionUtils.Map<Insert, string, List<string>>(inserts,
-                delegate(Insert i) { return i.GetCreateScript(); }).ToArray();
+                delegate(Insert i) { return i.GetCreateScript(dialect, defaultSchema); }).ToArray();
         }
 
         public override string[] GenerateDropScripts(PersistentStore store, NHibernate.Dialect.Dialect dialect)
@@ -86,7 +89,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             return new string[] { };    // nothing to do
         }
 
-        private void ProcessSoftEnum(Type enumValueClass, string tableName, List<Insert> inserts)
+        private void ProcessSoftEnum(Type enumValueClass, Table table, List<Insert> inserts)
         {
             // look for an embedded resource that matches the enum class
             string res = string.Format("{0}.enum.xml", enumValueClass.FullName);
@@ -102,7 +105,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                         enumValueElement.GetAttribute("code");
 
                         Insert insert = new Insert();
-                        insert.Table = tableName;
+                        insert.Table = table;
                         insert.Code = enumValueElement.GetAttribute("code");
                         XmlElement valueNode = CollectionUtils.FirstElement<XmlElement>(enumValueElement.GetElementsByTagName("value"));
                         if (valueNode != null)
@@ -121,7 +124,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
             }
         }
 
-        private void ProcessHardEnum(Type enumType, string tableName, List<Insert> inserts)
+        private void ProcessHardEnum(Type enumType, Table table, List<Insert> inserts)
         {
             foreach (FieldInfo fi in enumType.GetFields())
             {
@@ -130,7 +133,7 @@ namespace ClearCanvas.Enterprise.Hibernate.Ddl
                 if (attrs.Length > 0)
                 {
                     Insert insert = new Insert();
-                    insert.Table = tableName;
+                    insert.Table = table;
                     insert.Code = fi.Name;
                     insert.Value = ((EnumValueAttribute)attrs[0]).Value;
                     insert.Description = ((EnumValueAttribute)attrs[0]).Description;
