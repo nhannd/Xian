@@ -60,12 +60,12 @@ namespace ClearCanvas.Healthcare {
 
         public void Cancel()
         {
-            this.VisitStatus = VisitStatus.Cancelled;
+            this.VisitStatus = VisitStatus.CX;
         }
 
         public void CancelPreAdmit()
         {
-            this.VisitStatus = VisitStatus.PreadmitCancelled;
+            this.VisitStatus = VisitStatus.PC;
         }
 
         /// <summary>
@@ -73,15 +73,15 @@ namespace ClearCanvas.Healthcare {
         /// </summary>
         public void InferVisitStatus()
         {
-            if (this.AdmitDateTime.HasValue) this.VisitStatus = VisitStatus.Admitted;
-            if (this.DischargeDateTime.HasValue) this.VisitStatus = VisitStatus.Discharged;
+            if (this.AdmitDateTime.HasValue) this.VisitStatus = VisitStatus.AA;
+            if (this.DischargeDateTime.HasValue) this.VisitStatus = VisitStatus.DC;
         }
 
         public void Discharge(DateTime dischargeDateTime, string dischargeDispostion)
         {
-            if (this.VisitStatus != VisitStatus.Discharged && this.VisitStatus != VisitStatus.Cancelled)
+            if (this.VisitStatus != VisitStatus.DC && this.VisitStatus != VisitStatus.CX)
             {
-                this.VisitStatus = VisitStatus.Discharged;
+                this.VisitStatus = VisitStatus.DC;
                 this.DischargeDateTime = dischargeDateTime;
                 this.DischargeDisposition = dischargeDispostion;
             }

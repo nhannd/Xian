@@ -45,6 +45,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             reportEditor.VerifyEvent += new EventHandler(reportEditor_VerifyEvent);
             reportEditor.SendToVerifyEvent += new EventHandler(reportEditor_SendToVerifyEvent);
             reportEditor.SendToTranscriptionEvent += new EventHandler(reportEditor_SendToTranscriptionEvent);
+            reportEditor.SaveEvent += new EventHandler(reportEditor_SaveEvent);
             reportEditor.CloseComponentEvent += new EventHandler(reportEditor_CloseComponentEvent);
 
             // Construct the Patient Biography page
@@ -108,6 +109,28 @@ namespace ClearCanvas.Ris.Client.Reporting
                     myTranscriptionFolder.RefreshCount();
             }
 
+            this.Close();
+        }
+
+        void reportEditor_SaveEvent(object sender, EventArgs e)
+        {
+            IFolder toBeReportedFolder = CollectionUtils.SelectFirst<IFolder>(_reportFolders,
+                delegate(IFolder folder)
+                {
+                    return folder is Folders.ToBeReportedFolder;
+                });
+
+            if (toBeReportedFolder != null && toBeReportedFolder.IsOpen)
+            {
+                IFolder draftFolder = CollectionUtils.SelectFirst<IFolder>(_reportFolders,
+                    delegate(IFolder folder)
+                    {
+                        return folder is Folders.DraftFolder;
+                    });
+
+                draftFolder.RefreshCount();
+            }
+           
             this.Close();
         }
 

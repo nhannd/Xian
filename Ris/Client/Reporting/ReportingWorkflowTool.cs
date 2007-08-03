@@ -218,6 +218,10 @@ namespace ClearCanvas.Ris.Client.Reporting
                                 selectedFolder.RefreshCount();
                         };                       
                         doc.Open();
+
+                        IViewerIntegration viewerIntegration = (IViewerIntegration)(new ViewerIntegrationExtensionPoint()).CreateExtension();
+                        if (viewerIntegration != null)
+                            viewerIntegration.OpenStudy(item.AccessionNumber);
                     }
                     catch (Exception e)
                     {

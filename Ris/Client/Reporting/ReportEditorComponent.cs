@@ -72,6 +72,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         private event EventHandler _verifyEvent;
         private event EventHandler _sendToVerifyEvent;
         private event EventHandler _sendToTranscriptionEvent;
+        private event EventHandler _saveEvent;
         private event EventHandler _closeComponentEvent;
 
         private string _reportContent;
@@ -150,6 +151,12 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             add { _sendToTranscriptionEvent += value; }
             remove { _sendToTranscriptionEvent -= value; }
+        }
+
+        public event EventHandler SaveEvent
+        {
+            add { _saveEvent += value; }
+            remove { _saveEvent -= value; }
         }
 
         public event EventHandler CloseComponentEvent
@@ -312,7 +319,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                         service.SaveReport(new SaveReportRequest(_reportingStepRef, this.ReportContent));
                     });
 
-                EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
+                EventsHelper.Fire(_saveEvent, this, EventArgs.Empty);
             }
             catch (Exception e)
             {

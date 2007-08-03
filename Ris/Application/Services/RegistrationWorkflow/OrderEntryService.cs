@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             VisitSearchCriteria criteria = new VisitSearchCriteria();
             criteria.Patient.EqualTo(profile.Patient);
-            criteria.VisitStatus.NotEqualTo(VisitStatus.Discharged);
+            criteria.VisitStatus.NotEqualTo(VisitStatus.DC);
 
             VisitAssembler assembler = new VisitAssembler();
             return new ListActiveVisitsForPatientResponse(

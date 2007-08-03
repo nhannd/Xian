@@ -221,16 +221,19 @@ function formatReport(report)
     }
         
     var mainReport = JSML.parse(report.Parts[0].Content);
-    var isDraft = new Boolean(report.Parts[0].Status.Code == 'P');
-   
-    formattedReport += isDraft == true ? "<font color='red'>" : ""; 
-    formattedReport += "<h3>";
-    formattedReport += "Main Report";
-    formattedReport += isDraft == true ? " (Draft)" : "";
-    formattedReport += "</h3>";
-    formattedReport += "<B>Impression:</B> " + mainReport.Impression + "<br>";    
-    formattedReport += "<B>Finding:</B> " + mainReport.Finding + "<br>";
-    formattedReport += isDraft == true ? "</font>" : ""; 
-
+	if (mainReport)
+	{
+	    var isDraft = new Boolean(report.Parts[0].Status.Code == 'P');
+	   
+	    formattedReport += isDraft == true ? "<font color='red'>" : ""; 
+	    formattedReport += "<h3>";
+	    formattedReport += "Main Report";
+	    formattedReport += isDraft == true ? " (Draft)" : "";
+	    formattedReport += "</h3>";
+	    formattedReport += "<B>Impression:</B> " + mainReport.Impression + "<br>";    
+	    formattedReport += "<B>Finding:</B> " + mainReport.Finding + "<br>";
+	    formattedReport += isDraft == true ? "</font>" : ""; 
+	}
+	
     return formattedReport;
 }
