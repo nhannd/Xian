@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Integration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Failed to find a Diagnostic Service mapping for study description: {0} in {1}.
+        ///   Looks up a localized string similar to Failed to find a Diagnostic Service mapping for study description: {0}.
         /// </summary>
         internal static string MessageFailedToFindDiagnosticServiceName {
             get {

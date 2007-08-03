@@ -48,5 +48,8 @@ namespace ClearCanvas.Ris.Application.Common
 
         [AuthorityToken(Description = "Allow administration of worklists")]
         public const string WorklistAdmin = "WorklistAdmin";
+
+        [AuthorityToken(Description = "Allow access to the Demo components")]
+        public const string DemoAdmin = "DemoAdmin";  
     }
 }

@@ -26,45 +26,36 @@ namespace ClearCanvas.Ris.Integration {
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Dictionary.DiagnosticServices.csv")]
-        public string MappingFile {
+        public string DiagnosticServiceDictionary {
             get {
-                return ((string)(this["MappingFile"]));
+                return ((string)(this["DiagnosticServiceDictionary"]));
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Dictionary.Name.Male.txt")]
         public string MaleNameDictionary {
             get {
                 return ((string)(this["MaleNameDictionary"]));
             }
-            set {
-                this["MaleNameDictionary"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Dictionary.Name.Female.txt")]
         public string FemaleNameDictionary {
             get {
                 return ((string)(this["FemaleNameDictionary"]));
             }
-            set {
-                this["FemaleNameDictionary"] = value;
-            }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("Dictionary.Name.Family.txt")]
         public string FamilyNameDictionary {
             get {
                 return ((string)(this["FamilyNameDictionary"]));
-            }
-            set {
-                this["FamilyNameDictionary"] = value;
             }
         }
     }

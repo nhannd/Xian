@@ -119,10 +119,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <EmbeddedResource Include="DataFiles\Dictionary.DiagnosticServices.csv" />
     <None Include="IntegrationSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>IntegrationSettings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="DataFiles\Dictionary.Name.Family.txt" />
+    <EmbeddedResource Include="DataFiles\Dictionary.Name.Female.txt" />
+    <EmbeddedResource Include="DataFiles\Dictionary.Name.Male.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

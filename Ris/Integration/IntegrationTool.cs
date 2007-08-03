@@ -32,6 +32,7 @@ namespace ClearCanvas.Ris.Integration
     [Tooltip("apply", "Integration")]
     [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
     [ClickHandler("apply", "Apply")]
+    [ActionPermission("apply", ClearCanvas.Ris.Application.Common.AuthorityTokens.DemoAdmin)]
     [ExtensionOf(typeof(DesktopToolExtensionPoint))]
     public class IntegrationTool : Tool<IDesktopToolContext>
     {
@@ -51,20 +52,21 @@ namespace ClearCanvas.Ris.Integration
 
         private void IntegrationMethod(IBackgroundTaskContext context)
         {
-            try
+            context.ReportProgress(new BackgroundTaskProgress(0, "Find all studies in viewer database..."));
+            StudyItemList studies = GetAllStudies();
+
+            int step = 0;
+            int studyIndex = 0;
+            int totalStep = 6 * studies.Count;
+
+            List<Exception> failedException = new List<Exception>();
+            foreach (StudyItem study in studies)
             {
-                context.ReportProgress(new BackgroundTaskProgress(0, "Find all studies in viewer database..."));
-                StudyItemList studies = GetAllStudies();
-
-                int step = 0;
-                int studyNumber = 0;
-                int totalStep = 6 * studies.Count;
-
-                foreach (StudyItem study in studies)
+                try
                 {
-                    studyNumber++;
+                    studyIndex++;
 
-                    string commonMessage = String.Format("Study #{0}: {1} {2}\r\n", studyNumber, study.PatientsName.FirstName, study.PatientsName.LastName);
+                    string commonMessage = String.Format("Study #{0}: {1} {2}\r\n", studyIndex + 1, study.PatientsName.FirstName, study.PatientsName.LastName);
 
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Find diagnostic service name with study description..."));
                     string diagnosticServiceName = GetDiagnosticServiceName(study.StudyDescription);
@@ -87,10 +89,30 @@ namespace ClearCanvas.Ris.Integration
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Importing new study..."));
                     ImportFiles(filePaths);
                 }
+                catch (Exception e)
+                {
+                    string errorMessage = String.Format("Accession#: {0}\r\n{1}", study.AccessionNumber, e.Message);
+                    failedException.Add(new Exception(errorMessage, e));
+                }
             }
-            catch (Exception e)
+
+            if (failedException.Count == 1)
             {
-                context.Error(e);
+                context.Error(failedException[0]);
+            }
+            else if (failedException.Count > 1)
+            {
+                string errorMessage = CollectionUtils.Reduce<Exception, string>(failedException, "Failed to perform actions on one or more studies",
+                    delegate(Exception e, string memo)
+                    {
+                        StringBuilder builder = new StringBuilder(memo);
+                        if (String.IsNullOrEmpty(memo) == false)
+                            builder.AppendLine();
+
+                        builder.Append(e.Message);
+                        return builder.ToString();
+                    });
+                context.Error(new Exception(errorMessage));
             }
         }
 
@@ -100,20 +122,20 @@ namespace ClearCanvas.Ris.Integration
             return (int)Math.Floor(result);
         }
 
-        private string GetRandomName(string fileName)
+        private string GetRandomName(string names)
         {
-            List<string> names = new List<string>();
+            List<string> nameList = new List<string>();
 
-            using (StreamReader reader = File.OpenText(fileName))
+            using (TextReader reader = new StringReader(names))
             {
                 string line = null;
                 while ((line = reader.ReadLine()) != null)
                 {
-                    names.Add(line);
+                    nameList.Add(line);
                 }
             }
 
-            return RandomUtils.ChooseRandom<string>(names);
+            return RandomUtils.ChooseRandom<string>(nameList);
         }
 
         #region Ris Related Functions
@@ -123,13 +145,13 @@ namespace ClearCanvas.Ris.Integration
             string diagnosticServiceName = "";
 
             // Using the study description, look for a corresponding diagnostic service name in a CSV mapping file
-            using (StreamReader reader = File.OpenText(IntegrationSettings.Default.MappingFile))
+            using (TextReader reader = new StringReader(IntegrationSettings.Default.DiagnosticServiceDictionary))
             {
                 string line = null;
                 while ((line = reader.ReadLine()) != null)
                 {
                     string[] row = line.Split(new string[] { "," }, StringSplitOptions.None);
-                    if (String.Compare(row[0], studyDescription) == 0)
+                    if (String.Compare(row[0], studyDescription, true) == 0)
                     {
                         diagnosticServiceName = row[1];
                         break;
@@ -138,7 +160,7 @@ namespace ClearCanvas.Ris.Integration
             }
 
             if (String.IsNullOrEmpty(diagnosticServiceName))
-                throw new Exception(String.Format(SR.MessageFailedToFindDiagnosticServiceName, studyDescription, IntegrationSettings.Default.MappingFile));
+                throw new Exception(String.Format(SR.MessageFailedToFindDiagnosticServiceName, studyDescription));
 
             return diagnosticServiceName;
         }
