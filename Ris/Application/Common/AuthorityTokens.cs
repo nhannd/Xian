@@ -2,6 +2,9 @@ using ClearCanvas.Common.Authorization;
 
 namespace ClearCanvas.Ris.Application.Common
 {
+    /// <summary>
+    /// Defines constants for all RIS authority tokens.
+    /// </summary>
     public static class AuthorityTokens
     {
         [AuthorityToken(Description="Allow administration of patient profiles")]

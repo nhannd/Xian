@@ -191,6 +191,7 @@
     <Compile Include="Admin\WorklistAdmin\UpdateWorklistRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\UpdateWorklistResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminDetail.cs" />
+    <Compile Include="DefaultAuthorityGroups.cs" />
     <Compile Include="Jsml\GetOperationNamesRequest.cs" />
     <Compile Include="Jsml\GetOperationNamesResponse.cs" />
     <Compile Include="Jsml\IJsmlShimService.cs" />
