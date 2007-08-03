@@ -313,6 +313,9 @@ namespace ClearCanvas.Common
             catch (Exception e)
             {
 				Platform.Log(e, LogLevel.Fatal);
+
+                // for convenience, if this is console app, also print the message to the console
+                Console.WriteLine(e.Message);
             }
 #endif
         }
