@@ -19,16 +19,10 @@ namespace ClearCanvas.Desktop
         string ContextualMessage { get; }
 
         ///<summary>
-        /// Logs the specified exception as an error
-        ///</summary>
-        ///<param name="e"></param>
-        void Log(Exception e);
-
-        ///<summary>
         ///</summary>
         ///<param name="e"></param>
         ///<param name="level"></param>
-        void Log(Exception e, LogLevel level);
+        void Log(LogLevel level, Exception e);
 
         ///<summary>
         ///</summary>

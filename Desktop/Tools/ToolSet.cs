@@ -55,7 +55,7 @@ namespace ClearCanvas.Desktop.Tools
                 {
                     // a tool failed to initialize - log and continue
                     // (this tool will not be included in the set)
-                    Platform.Log(e, LogLevel.Error);
+                    Platform.Log(LogLevel.Error, e);
                 }
             }
         }
@@ -77,7 +77,7 @@ namespace ClearCanvas.Desktop.Tools
                     catch (Exception e)
                     {
                         // log and continue disposing of other tools
-                        Platform.Log(e);
+                        Platform.Log(LogLevel.Error, e);
                     }
                 }
             }
@@ -118,7 +118,7 @@ namespace ClearCanvas.Desktop.Tools
             catch (Exception e)
             {
                 // shouldn't throw anything from inside Dispose()
-                Platform.Log(e);
+                Platform.Log(LogLevel.Error, e);
             }
         }
 

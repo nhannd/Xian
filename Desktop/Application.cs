@@ -429,7 +429,7 @@ namespace ClearCanvas.Desktop
             }
             catch (Exception ex)
             {
-                Platform.Log(ex, LogLevel.Fatal);
+                Platform.Log(LogLevel.Fatal, ex);
                 return;
             }
 
@@ -442,7 +442,7 @@ namespace ClearCanvas.Desktop
                 }
                 catch (Exception ex)
                 {
-                    Platform.Log(ex, LogLevel.Fatal);
+                    Platform.Log(LogLevel.Fatal, ex);
                     _guiToolkit.Terminate();
                     return;
                 }
@@ -498,7 +498,7 @@ namespace ClearCanvas.Desktop
             }
             catch (Exception e)
             {
-                Platform.Log(e);
+                Platform.Log(LogLevel.Error, e);
             }
 
             // shut down the GUI message loop
@@ -516,12 +516,12 @@ namespace ClearCanvas.Desktop
             try
             {
                 _sessionManager = (ISessionManager)(new SessionManagerExtensionPoint()).CreateExtension();
-                Platform.Log(string.Format("Using session manager extension: {0}", _sessionManager.GetType().FullName), LogLevel.Info);
+                Platform.Log(LogLevel.Info, string.Format("Using session manager extension: {0}", _sessionManager.GetType().FullName));
             }
             catch (NotSupportedException)
             {
                 _sessionManager = new DefaultSessionManager();
-                Platform.Log("No session manager extension found", LogLevel.Info);
+                Platform.Log(LogLevel.Info, "No session manager extension found");
             }
 
             try
@@ -531,7 +531,7 @@ namespace ClearCanvas.Desktop
             catch (Exception ex)
             {
                 // log error as fatal
-                Platform.Log(ex, LogLevel.Fatal);
+                Platform.Log(LogLevel.Fatal, ex);
 
                 // any exception thrown here should be considered a "false" return value
                 return false;

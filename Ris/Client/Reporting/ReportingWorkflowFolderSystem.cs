@@ -169,7 +169,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             }
             catch (KeyNotFoundException)
             {
-                Platform.Log(string.Format(SR.ExceptionOperationEnablementUnknown, operationName), LogLevel.Error);
+                Platform.Log(LogLevel.Error, string.Format(SR.ExceptionOperationEnablementUnknown, operationName));
                 return false;
             }
         }

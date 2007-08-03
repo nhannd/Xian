@@ -57,7 +57,7 @@ namespace ClearCanvas.Enterprise.Hibernate.DdlWriter
 
         private void Log(object obj, LogLevel level)
         {
-            Platform.Log(obj, LogLevel.Error);
+            Platform.Log(LogLevel.Error, obj);
             Console.WriteLine(obj);
         }
 

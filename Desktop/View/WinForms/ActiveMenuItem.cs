@@ -51,7 +51,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 catch (Exception e)
                 {
                     // the icon was either null or not found - log some helpful message
-                    Platform.Log(e);
+                    Platform.Log(LogLevel.Error, e);
                 }
             }
 
@@ -61,7 +61,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
             catch (Exception e)
             {
-                Platform.Log(e);
+                Platform.Log(LogLevel.Error, e);
             }
         }
 

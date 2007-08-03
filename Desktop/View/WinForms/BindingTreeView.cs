@@ -305,7 +305,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                 }
                 catch (Exception ex)
                 {
-                    Platform.Log(ex, LogLevel.Error);
+                    Platform.Log(LogLevel.Error, ex);
                 }
 
                 // remove highlighting from drop target node

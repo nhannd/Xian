@@ -28,14 +28,9 @@ namespace ClearCanvas.Desktop
             get { return _contextualMessage; }
         }
 
-        public void Log(Exception e)
+        public void Log(LogLevel level, Exception e)
         {
-            Platform.Log(e);
-        }
-
-        public void Log(Exception e, LogLevel level)
-        {
-            Platform.Log(e, level);
+            Platform.Log(level, e);
         }
 
         public void Abort()
@@ -56,7 +51,7 @@ namespace ClearCanvas.Desktop
             }
             catch (Exception e)
             {
-                Platform.Log(e);
+                Platform.Log(LogLevel.Error, e);
                 ShowExceptionDialog(e, SR.ExceptionCannotLoadExceptionDialogSetting);
             }
 

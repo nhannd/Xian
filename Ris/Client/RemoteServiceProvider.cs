@@ -51,7 +51,7 @@ namespace ClearCanvas.Ris.Client
                 // service providers the chance to provide the requested service
                 // therefore, we just log the exception and don't rethrow it
                 // (this is somewhat unfortunate, maybe we should not use the .NET IServiceProvider interface???)
-                Platform.Log(e);
+                Platform.Log(LogLevel.Error, e);
 
                 return null;
             }

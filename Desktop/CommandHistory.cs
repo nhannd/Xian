@@ -116,7 +116,7 @@ namespace ClearCanvas.Desktop
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e, LogLevel.Error);
+				Platform.Log(LogLevel.Error, e);
 			}
 
 			EventsHelper.Fire(_currentCommandChangedEvent, this, EventArgs.Empty);
@@ -138,7 +138,7 @@ namespace ClearCanvas.Desktop
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e, LogLevel.Error);
+				Platform.Log(LogLevel.Error, e);
 			}
 
 			_currentCommandIndex--;

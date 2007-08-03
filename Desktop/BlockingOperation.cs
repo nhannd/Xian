@@ -32,7 +32,7 @@ namespace ClearCanvas.Desktop
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e);
+                Platform.Log(LogLevel.Error, e);
 			}
 
 			if (operationView == null)

@@ -189,7 +189,7 @@ namespace ClearCanvas.Ris.Client
             }
             else
             {
-                Platform.Log(args.Exception, LogLevel.Error);
+                Platform.Log(LogLevel.Error, args.Exception);
             }
 
             // dispose of the task
@@ -239,7 +239,7 @@ namespace ClearCanvas.Ris.Client
             }
             else
             {
-                Platform.Log(args.Exception, LogLevel.Error);
+                Platform.Log(LogLevel.Error, args.Exception);
             }
 
             // dispose of the task
@@ -312,20 +312,13 @@ namespace ClearCanvas.Ris.Client
 
             if (_refreshTime > 0)
             {
-                try
-                {
-                    TimerDelegate timerDelegate = this.IsOpen
-                        ? new TimerDelegate(delegate(object state) { Refresh(); })
-                        : new TimerDelegate(delegate(object state) { RefreshCount(); });
+                TimerDelegate timerDelegate = this.IsOpen
+                    ? new TimerDelegate(delegate(object state) { Refresh(); })
+                    : new TimerDelegate(delegate(object state) { RefreshCount(); });
 
-                    _refreshTimer = new Timer(timerDelegate);
-                    _refreshTimer.Interval = _refreshTime;
-                    _refreshTimer.Start();
-                }
-                catch (Exception)
-                {
-                    Platform.Log(SR.ExceptionFolderRefresh, LogLevel.Error);
-                }
+                _refreshTimer = new Timer(timerDelegate);
+                _refreshTimer.Interval = _refreshTime;
+                _refreshTimer.Start();
             }
         }
 

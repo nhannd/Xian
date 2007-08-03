@@ -80,7 +80,7 @@ namespace ClearCanvas.Desktop.View.WinForms
                     }
                     catch (Exception e)
                     {
-                        Platform.Log(e, LogLevel.Warn);
+                        Platform.Log(LogLevel.Error, e);
                         this.ImageIndex = -1;
                     }
                 }

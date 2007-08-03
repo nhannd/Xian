@@ -22,7 +22,7 @@ namespace ClearCanvas.Ris.Client
         public void Handle(Exception e, IExceptionHandlingContext context)
         {
             // only log this if debugging
-            context.Log(e, LogLevel.Debug);
+            context.Log(LogLevel.Debug, e);
 
             // report to user
             context.ShowMessageBox(e.Message, true);
@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client
         public void Handle(Exception e, IExceptionHandlingContext context)
         {
             // only log this if debugging
-            context.Log(e, LogLevel.Debug);
+            context.Log(LogLevel.Debug, e);
 
             // report to user
             context.ShowMessageBox(SR.MessageConcurrentModification, true);
@@ -61,7 +61,7 @@ namespace ClearCanvas.Ris.Client
         public void Handle(Exception e, IExceptionHandlingContext context)
         {
             // log this as an error
-            context.Log(e, LogLevel.Error);
+            context.Log(LogLevel.Error, e);
 
             // report to user
             context.ShowMessageBox(SR.MessageTimeout, true);
@@ -77,7 +77,7 @@ namespace ClearCanvas.Ris.Client
     {
         public void Handle(Exception e, IExceptionHandlingContext context)
         {
-            context.Log(e, LogLevel.Error);
+            context.Log(LogLevel.Error, e);
             context.ShowMessageBox(SR.MessageCommunicationError, true);
         }
     }
@@ -91,7 +91,7 @@ namespace ClearCanvas.Ris.Client
     {
         public void Handle(Exception e, IExceptionHandlingContext context)
         {
-            context.Log(e, LogLevel.Debug);
+            context.Log(LogLevel.Debug, e);
             context.ShowMessageBox(SR.MessageAccessDenied, true);
 
             // this exception is not recoverable

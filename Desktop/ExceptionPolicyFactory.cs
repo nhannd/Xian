@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop
 {
@@ -17,7 +18,7 @@ namespace ClearCanvas.Desktop
         {
             public void Handle(Exception e, IExceptionHandlingContext context)
             {
-                context.Log(e);
+                context.Log(LogLevel.Error, e);
                 context.ShowMessageBox(e.Message, true);
             }
         }
