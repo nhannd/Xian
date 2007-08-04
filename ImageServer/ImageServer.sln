@@ -91,6 +91,30 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Mod
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Server.ShredHost", "..\Server\ShredHost\ClearCanvas.Server.ShredHost.csproj", "{8347B928-805E-42E7-B980-08D8AF1A0671}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Server.ShredHostService", "..\Server\ShredHostService\ClearCanvas.Server.ShredHostService.csproj", "{8FC2F7CD-F35B-4AF2-BD98-3F3F75FA9E07}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Shreds", "Shreds\ClearCanvas.ImageServer.Shreds.csproj", "{9CE68574-CA73-43A3-9B33-8E26CECBC527}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.DicomServices", "..\DicomServices\ClearCanvas.DicomServices.csproj", "{734E6EA2-DC6B-4387-B671-EED0A603D73E}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -157,6 +181,22 @@ Global
 		{7C4EDB0A-B94C-4078-846A-DEA974348B2B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7C4EDB0A-B94C-4078-846A-DEA974348B2B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7C4EDB0A-B94C-4078-846A-DEA974348B2B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8347B928-805E-42E7-B980-08D8AF1A0671}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8FC2F7CD-F35B-4AF2-BD98-3F3F75FA9E07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FC2F7CD-F35B-4AF2-BD98-3F3F75FA9E07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FC2F7CD-F35B-4AF2-BD98-3F3F75FA9E07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FC2F7CD-F35B-4AF2-BD98-3F3F75FA9E07}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9CE68574-CA73-43A3-9B33-8E26CECBC527}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9CE68574-CA73-43A3-9B33-8E26CECBC527}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9CE68574-CA73-43A3-9B33-8E26CECBC527}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9CE68574-CA73-43A3-9B33-8E26CECBC527}.Release|Any CPU.Build.0 = Release|Any CPU
+		{734E6EA2-DC6B-4387-B671-EED0A603D73E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{734E6EA2-DC6B-4387-B671-EED0A603D73E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{734E6EA2-DC6B-4387-B671-EED0A603D73E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{734E6EA2-DC6B-4387-B671-EED0A603D73E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

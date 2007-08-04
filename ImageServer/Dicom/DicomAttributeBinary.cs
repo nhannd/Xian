@@ -1315,20 +1315,25 @@ namespace ClearCanvas.ImageServer.Dicom
             get { return _values; }
             set
             {
-                if (value is ushort[])
+                _values = value as ushort[];
+                if (_values != null)
                 {
-                    _values = (ushort[])value;
                     SetStreamLength();
+                    return;
                 }
-                else if (value is ushort)
+                
+                String str = value as string;
+                if (str != null)
+                {
+                    SetStringValue((String)value);
+                    return;
+                }
+
+                if (value is ushort)
                 {
                     _values = new ushort[1];
                     _values[0] = (ushort)value;
                     SetStreamLength();
-                }
-                else if (value is String)
-                {
-                    SetStringValue((String)value);
                 }
                 else
                 {

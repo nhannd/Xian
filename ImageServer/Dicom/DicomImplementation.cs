@@ -4,7 +4,6 @@ using System.Text;
 
 namespace ClearCanvas.ImageServer.Dicom
 {
-
     public static class DicomImplementation
     {
         public static DicomUid ClassUID = new DicomUid("1.3.6.1.4.1.25403.1.1.1", "Implementation Class UID", UidType.Unknown);
