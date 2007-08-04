@@ -70,7 +70,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 					}
 					catch (Exception e)
 					{
-						Platform.Log(e);
+						Platform.Log(LogLevel.Error, e);
 					}
 					finally
 					{

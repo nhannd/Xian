@@ -147,7 +147,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				}
 				catch (Exception e)
 				{
-					Platform.Log(e);
+					Platform.Log(LogLevel.Error, e);
 					Platform.ShowMessageBox(e.Message);
 				}
 			}
@@ -208,7 +208,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				}
 				catch (Exception e)
 				{
-					Platform.Log(e);
+					Platform.Log(LogLevel.Error, e);
 					Platform.ShowMessageBox(e.Message);
 				}
 			}

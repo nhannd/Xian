@@ -196,7 +196,7 @@ namespace ClearCanvas.ImageViewer.Configuration
 				catch (Exception e)
 				{
 					if (!(e.InnerException is EndpointNotFoundException))
-						Platform.Log(e);
+						Platform.Log(LogLevel.Error, e);
 				}
 			};
 

@@ -95,7 +95,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e);
+				Platform.Log(LogLevel.Error, e);
 				throw new Exception("Unable to decode pixel data.", e);
 			}
 

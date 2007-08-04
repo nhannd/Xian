@@ -665,7 +665,7 @@ namespace ClearCanvas.ImageViewer.Services.ServerTree
 				}
 				catch (Exception e)
 				{
-					Platform.Log(e);
+					Platform.Log(LogLevel.Error, e);
 					aeDescText.AppendFormat(SR.LocalDataStoreConfigurationUnavailable);
 				}
 			}

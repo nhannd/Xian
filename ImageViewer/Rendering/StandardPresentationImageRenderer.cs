@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			catch (Exception e)
 			{
 				// shouldn't throw anything from inside Dispose()
-				Platform.Log(e);
+				Platform.Log(LogLevel.Error, e);
 			}
 		}
 
@@ -526,7 +526,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e);
+				Platform.Log(LogLevel.Error, e);
 				font = new Font(AnnotationBox.DefaultFont, fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
 			}
 
@@ -546,7 +546,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 				}
 				catch (Exception e)
 				{
-					Platform.Log(e);
+					Platform.Log(LogLevel.Error, e);
 					font = new Font(AnnotationBox.DefaultFont, fontSize, FontStyle.Regular, GraphicsUnit.Pixel);
 				}
 			}

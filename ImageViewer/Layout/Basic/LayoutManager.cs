@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 			catch (Exception e)
 			{
 				// shouldn't throw anything from inside Dispose()
-				Platform.Log(e);
+				Platform.Log(LogLevel.Error, e);
 			}
 		}
 

@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 				}
 				catch (Exception e)
 				{
-					Platform.Log(e); //don't throw.
+					Platform.Log(LogLevel.Error, e); //don't throw.
 				}
 			}
 		}

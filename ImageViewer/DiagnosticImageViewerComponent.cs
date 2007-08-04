@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer
 			}
 			catch (NotSupportedException e)
 			{
-				Platform.Log(e, LogLevel.Warn);
+				Platform.Log(LogLevel.Error, e);
 				throw e;
 			}
 		}

@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				// 3) file is a valid DICOM image, but we can't handle this type of DICOM image
 
 				_failedImages++;
-				Platform.Log(e, LogLevel.Error);
+				Platform.Log(LogLevel.Error, e);
 			}
 
 			_totalImages++;

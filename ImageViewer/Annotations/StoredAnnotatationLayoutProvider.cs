@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 				}
 				catch(Exception e)
 				{
-					Platform.Log(e);
+					Platform.Log(LogLevel.Error, e);
 
 					StoredAnnotationLayout layout = new StoredAnnotationLayout("error");
 					layout.AnnotationBoxGroups.Add(new StoredAnnotationBoxGroup("errorgroup"));

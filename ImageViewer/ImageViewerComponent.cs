@@ -424,7 +424,7 @@ namespace ClearCanvas.ImageViewer
 				catch (Exception e)
 				{
 					failedImages++;
-					Platform.Log(e);
+					Platform.Log(LogLevel.Error, e);
 				}
 
 				numberOfImages++;
@@ -506,7 +506,7 @@ namespace ClearCanvas.ImageViewer
 			catch (Exception e)
 			{
 				// shouldn't throw anything from inside Dispose()
-				Platform.Log(e);
+				Platform.Log(LogLevel.Error, e);
 			}
 		}
 

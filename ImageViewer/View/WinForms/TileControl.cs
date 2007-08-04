@@ -349,7 +349,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 				}
 				catch (Exception exception)
 				{
-					Platform.Log(exception);
+					Platform.Log(LogLevel.Error, exception);
 					this.Cursor = this.DefaultCursor;
 					_currentCursorWrapper = null;
 				}

@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter.View.WinForms
 				catch (Exception e)
 				{
 					// the icon was either null or not found - log some helpful message
-					Platform.Log(e);
+					Platform.Log(LogLevel.Error, e);
 				}
 			}
 

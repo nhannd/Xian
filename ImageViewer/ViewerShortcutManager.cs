@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (mouseTool.MouseButton == XMouseButtons.None)
 			{
-				Platform.Log(String.Format(SR.ExceptionMouseToolMustHaveButtonAssignment, mouseTool.GetType().FullName));
+				Platform.Log(LogLevel.Error, String.Format(SR.ExceptionMouseToolMustHaveButtonAssignment, mouseTool.GetType().FullName));
 				return;
 			}
 
@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			if (!_mouseToolButtonMap.ContainsKey(activateMouseTool))
 			{
-				Platform.Log(String.Format(SR.ExceptionMouseToolHasNoAssignment, activateMouseTool.GetType().FullName));
+				Platform.Log(LogLevel.Error, String.Format(SR.ExceptionMouseToolHasNoAssignment, activateMouseTool.GetType().FullName));
 				return;
 			}
 

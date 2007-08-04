@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e);
+				Platform.Log(LogLevel.Error, e);
 			}
 		}
 
@@ -503,7 +503,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 					_isConnected = false;
 
-					Platform.Log(e);
+					Platform.Log(LogLevel.Error, e);
 				}
 			}
 		}
@@ -522,7 +522,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				catch (Exception e)
 				{
 					_serviceClient.Abort();
-					Platform.Log(e);
+					Platform.Log(LogLevel.Error, e);
 				}
 				finally
 				{
@@ -547,7 +547,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 					}
 					catch (Exception e)
 					{
-						Platform.Log(e);
+						Platform.Log(LogLevel.Error, e);
 						CloseConnection();
 					}
 				}
