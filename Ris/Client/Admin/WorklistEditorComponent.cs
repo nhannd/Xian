@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
@@ -36,16 +34,9 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private RequestedProcedureTypeGroupSummaryTable _availableRequestedProcedureTypeGroups;
         private RequestedProcedureTypeGroupSummaryTable _selectedRequestedProcedureTypeGroups;
-        private RequestedProcedureTypeGroupSummary _selectedRequestedProcedureTypeGroupSelection;
-        private RequestedProcedureTypeGroupSummary _availableRequestedProcedureTypeGroupSelection;
 
         private UserTable _availableUsers;
         private UserTable _selectedUsers;
-        private UserSummary _selectedUserSelection;
-        private UserSummary _availableUserSelection;
-
-        private event EventHandler _requestedProcedureTypeGroupSummaryTablesChanged;
-        private event EventHandler _userSummaryTablesChanged;
 
         /// <summary>
         /// Constructor
@@ -172,30 +163,6 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _selectedRequestedProcedureTypeGroups; }
         }
 
-        public ISelection SelectedRequestedProcedureTypeGroupsSelection
-        {
-            get { return _selectedRequestedProcedureTypeGroupSelection == null ? Selection.Empty : new Selection(_selectedRequestedProcedureTypeGroupSelection); }
-            set
-            {
-                _selectedRequestedProcedureTypeGroupSelection = (RequestedProcedureTypeGroupSummary)value.Item;
-            }
-        }
-
-        public ISelection AvailableRequestedProcedureTypeGroupsSelection
-        {
-            get { return _availableRequestedProcedureTypeGroupSelection == null ? Selection.Empty : new Selection(_availableRequestedProcedureTypeGroupSelection); }
-            set
-            {
-                _availableRequestedProcedureTypeGroupSelection = (RequestedProcedureTypeGroupSummary)value.Item;
-            }
-        }
-
-        public event EventHandler RequestedProcedureTypeGroupTablesChanged
-        {
-            add { _requestedProcedureTypeGroupSummaryTablesChanged += value; }
-            remove { _requestedProcedureTypeGroupSummaryTablesChanged -= value; }
-        }
-
         public ITable AvailableUsers
         {
             get { return _availableUsers; }
@@ -206,36 +173,7 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _selectedUsers; }
         }
 
-        public ISelection SelectedUsersSelection
-        {
-            get { return _selectedUserSelection == null ? Selection.Empty : new Selection(_selectedUserSelection); }
-            set
-            {
-                _selectedUserSelection = (UserSummary)value.Item;
-            }
-        }
-
-        public ISelection AvailableUsersSelection
-        {
-            get { return _availableUserSelection == null ? Selection.Empty : new Selection(_availableUserSelection); }
-            set
-            {
-                _availableUserSelection = (UserSummary)value.Item;
-            }
-        }
-
-        public event EventHandler UserTablesChanged
-        {
-            add { _userSummaryTablesChanged += value; }
-            remove { _userSummaryTablesChanged -= value; }
-        }
-
         #endregion
-
-        public bool AcceptEnabled
-        {
-            get { return this.Modified; }
-        }
 
         public void Accept()
         {
@@ -292,73 +230,9 @@ namespace ClearCanvas.Ris.Client.Admin
             Host.Exit();
         }
 
-        #region RequestedProcedureTypeGroup manipulations
-
-        public bool AddSelectionEnabled
+        public void ItemsAddedOrRemoved()
         {
-            get { return _availableRequestedProcedureTypeGroupSelection != null; }
-        }
-
-        public void AddRequestedProcedureTypeSelection(ISelection selection)
-        {
-            foreach (RequestedProcedureTypeGroupSummary summary in selection.Items)
-            {
-                _selectedRequestedProcedureTypeGroups.Items.Add(summary);
-                _availableRequestedProcedureTypeGroups.Items.Remove(summary);
-            }
-            EventsHelper.Fire(_requestedProcedureTypeGroupSummaryTablesChanged, this, EventArgs.Empty);
             this.Modified = true;
         }
-
-        public bool RemoveSelectionEnabled
-        {
-            get { return _selectedRequestedProcedureTypeGroupSelection != null; }
-        }
-
-        public void RemoveRequestedProcedureTypeSelection(ISelection selection)
-        {
-            foreach (RequestedProcedureTypeGroupSummary summary in selection.Items)
-            {
-                _selectedRequestedProcedureTypeGroups.Items.Remove(summary);
-                _availableRequestedProcedureTypeGroups.Items.Add(summary);
-            }
-            EventsHelper.Fire(_requestedProcedureTypeGroupSummaryTablesChanged, this, EventArgs.Empty);
-            this.Modified = true;
-        }
-
-        #endregion
-
-        public bool AddUserSelectionEnabled
-        {
-            get { return _availableUserSelection != null; }
-        }
-
-        public void AddUserSelection(ISelection selection)
-        {
-            foreach (UserSummary summary in selection.Items)
-            {
-                _selectedUsers.Items.Add(summary);
-                _availableUsers.Items.Remove(summary);
-            }
-            EventsHelper.Fire(_userSummaryTablesChanged, this, EventArgs.Empty);
-            this.Modified = true;
-        }
-
-        public bool RemoveUserSelectionEnabled
-        {
-            get { return _selectedUserSelection != null; }
-        }
-
-        public void RemoveUserSelection(ISelection selection)
-        {
-            foreach (UserSummary summary in selection.Items)
-            {
-                _selectedUsers.Items.Remove(summary);
-                _availableUsers.Items.Add(summary);
-            }
-            EventsHelper.Fire(_userSummaryTablesChanged, this, EventArgs.Empty);
-            this.Modified = true;
-        }
-
     }
 }

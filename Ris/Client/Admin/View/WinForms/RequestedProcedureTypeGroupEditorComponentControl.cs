@@ -27,41 +27,18 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _category.DataSource = _component.CategoryChoices;
             _category.DataBindings.Add("Value", _component, "Category", true, DataSourceUpdateMode.OnPropertyChanged);
 
-            _availableRequestedProcedureTypes.Table = _component.AvailableRequestedProcedureTypes;
-            _availableRequestedProcedureTypes.DataBindings.Add("Selection", _component, "AvailableRequestedProcedureTypesSelection", true, DataSourceUpdateMode.OnPropertyChanged);
-            _selectedRequestedProcedureTypes.Table = _component.SelectedRequestedProcedureTypes;
-            _selectedRequestedProcedureTypes.DataBindings.Add("Selection", _component, "SelectedRequestedProcedureTypesSelection", true, DataSourceUpdateMode.OnPropertyChanged);
+            _requestedProcedureTypesSelector.AvailableItemsTable = _component.AvailableRequestedProcedureTypes;
+            _requestedProcedureTypesSelector.SelectedItemsTable = _component.SelectedRequestedProcedureTypes;
 
-            _addButton.DataBindings.Add("Enabled", _component, "AddSelectionEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-            _removeButton.DataBindings.Add("Enabled", _component, "RemoveSelectionEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
+            _requestedProcedureTypesSelector.ItemAdded += OnItemsAddedOrRemoved;
+            _requestedProcedureTypesSelector.ItemRemoved += OnItemsAddedOrRemoved;
 
-            _acceptButton.DataBindings.Add("Enabled", _component, "AcceptEnabled", true, DataSourceUpdateMode.OnPropertyChanged);
-
-            _component.RequestedProcedureTypeTablesChanged += OnRequestedProcedureTypeTablesChanged;
-            SortTables();
+            _acceptButton.DataBindings.Add("Enabled", _component, "Modified", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
-        private void OnRequestedProcedureTypeTablesChanged(object sender, EventArgs e)
+        private void OnItemsAddedOrRemoved(object sender, EventArgs e)
         {
-            SortTables();
-        }
-
-        private void SortTables()
-        {
-            _availableRequestedProcedureTypes.Table.Sort();
-            _selectedRequestedProcedureTypes.Table.Sort();
-        }
-
-        // Event handler for Add button and Available list double-click
-        private void AddSelection(object sender, EventArgs e)
-        {
-            _component.AddSelection(_availableRequestedProcedureTypes.Selection);
-        }
-
-        // Event handler for Remove button and Selected list double-click
-        private void RemoveSelection(object sender, EventArgs e)
-        {
-            _component.RemoveSelection(_selectedRequestedProcedureTypes.Selection);
+            _component.ItemsAddedOrRemoved();
         }
 
         private void _acceptButton_Click(object sender, EventArgs e)

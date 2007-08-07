@@ -1,6 +1,6 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 using System.ComponentModel;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tables;
@@ -277,7 +277,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 
         #region IEnumerable Members
 
-        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        IEnumerator System.Collections.IEnumerable.GetEnumerator()
         {
             return _table.Items.GetEnumerator();
         }

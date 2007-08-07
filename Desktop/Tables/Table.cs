@@ -1,8 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common.Utilities;
 using System.Collections;
+using System.Collections.Generic;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Tables
 {
@@ -10,13 +9,17 @@ namespace ClearCanvas.Desktop.Tables
     /// A useful generic implementation of <see cref="ITable"/>
     /// </summary>
     /// <typeparam name="TItem">The type of item that this table holds</typeparam>
-    public class Table<TItem> : ITable
+    public class Table<TItem> : ITable, ITable<TItem>
     {
         private TableColumnCollection<TItem> _columns;
         private ItemCollection<TItem> _data;
         private float _baseColumnWidth;
 
         private TableSortParams _sortParams;
+
+        private bool _isFiltered = false;
+        private TableFilterParams _filterParams;
+        private FilteredItemCollection<TItem> _filteredData;
 
         /// <summary>
         /// Constructor
@@ -39,22 +42,7 @@ namespace ClearCanvas.Desktop.Tables
             };
 
             _data = new ItemCollection<TItem>();
-        }
-
-        /// <summary>
-        /// Gets the collection of columns for the table.  Use this property to add <see cref="TableColumn"/> objects.
-        /// </summary>
-        public TableColumnCollection<TItem> Columns
-        {
-            get { return _columns; }
-        }
-
-        /// <summary>
-        /// Gets the collection of items in the table.
-        /// </summary>
-        public ItemCollection<TItem> Items
-        {
-            get { return _data; }
+            _filteredData = null;
         }
 
         #region ITable members
@@ -95,6 +83,53 @@ namespace ClearCanvas.Desktop.Tables
         }
 
         IItemCollection ITable.Items
+        {
+            get { return _isFiltered ? _filteredData : _data; }
+        }
+
+        public bool IsFiltered
+        {
+            get { return _isFiltered; }
+        }
+
+        public void Filter(TableFilterParams filterParams)
+        {
+            _filterParams = filterParams;
+            Filter();
+        }
+
+        public void Filter()
+        {
+            if(_filterParams != null && _filterParams.Value != null)
+            {
+                _isFiltered = true;
+                
+                _filteredData = new FilteredItemCollection<TItem>(this, _filterParams);
+            }
+        }
+
+        public void RemoveFilter()
+        {
+            _isFiltered = false;
+        }
+
+        #endregion
+
+        #region ITable<TItem> members
+
+        /// <summary>
+        /// Gets the collection of columns for the table.  Use this property to add <see cref="ITableColumn"/> objects.
+        /// </summary>
+        public TableColumnCollection<TItem> Columns
+        {
+            get { return _columns; }
+        }
+
+        /// <summary>
+        /// Gets the collection of items in the table.
+        /// </summary>
+        /// <remarks>The returned collection is never filtered.</remarks>
+        public ItemCollection<TItem> Items
         {
             get { return _data; }
         }

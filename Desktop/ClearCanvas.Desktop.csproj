@@ -82,6 +82,8 @@
     <Compile Include="IDesktopObjectView.cs" />
     <Compile Include="IGuiToolkit.cs" />
     <Compile Include="ISessionManager.cs" />
+    <Compile Include="Tables\FilteredItemCollection.cs" />
+    <Compile Include="Tables\TableFilterParams.cs" />
     <Compile Include="UserInteraction.cs" />
     <Compile Include="PrincipalPermissionSpecification.cs" />
     <Compile Include="Actions\Tests\ActionModelStoreTests.cs" />

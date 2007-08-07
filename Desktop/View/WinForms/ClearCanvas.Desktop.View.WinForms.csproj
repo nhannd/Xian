@@ -64,6 +64,12 @@
     <Compile Include="DesktopMonitorComponentView.cs" />
     <Compile Include="DesktopObjectView.cs" />
     <Compile Include="GuiToolkit.cs" />
+    <Compile Include="ListItemSelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ListItemSelector.Designer.cs">
+      <DependentUpon>ListItemSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="ShelfView.cs" />
     <Compile Include="TestComponentControl.cs">
       <SubType>UserControl</SubType>
@@ -238,6 +244,10 @@
     <EmbeddedResource Include="DialogComponentContainerControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>DialogComponentContainerControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ListItemSelector.resx">
+      <DependentUpon>ListItemSelector.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="StackTab.resx">
       <DependentUpon>StackTab.cs</DependentUpon>

@@ -1,6 +1,6 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
 
 namespace ClearCanvas.Desktop
 {
@@ -31,13 +31,13 @@ namespace ClearCanvas.Desktop
     }
 
     /// <summary>
-    /// Provides data for the <see cref="IItemCollection.ItemChanged"/> event.
+    /// Provides data for the <see cref="IItemCollection.ItemsChanged"/> event.
     /// </summary>
     public class ItemChangedEventArgs : EventArgs
     {
-        private object _item;
-        private int _itemIndex;
-        private ItemChangeType _changeType;
+        private readonly object _item;
+        private readonly int _itemIndex;
+        private readonly ItemChangeType _changeType;
 
         internal ItemChangedEventArgs(ItemChangeType changeType, int itemIndex, object item)
         {
@@ -74,7 +74,7 @@ namespace ClearCanvas.Desktop
     /// <summary>
     /// Defines the interface to the collection of items.
     /// </summary>
-    public interface IItemCollection : System.Collections.IEnumerable
+    public interface IItemCollection : IEnumerable, IList
     {
         /// <summary>
         /// Occurs when an item in the collection has changed.
@@ -82,15 +82,56 @@ namespace ClearCanvas.Desktop
         event EventHandler<ItemChangedEventArgs> ItemsChanged;
 
         /// <summary>
-        /// Gets the number of items in the collection
-        /// </summary>
-        int Count { get; }
-
-        /// <summary>
-        /// Gets the item at the specified index
+        /// Notifies the table that the item at the specified index has changed in some way.  Use this method
+        /// to cause the view to update itself to reflect the changed item.
         /// </summary>
         /// <param name="index"></param>
-        /// <returns></returns>
-        object this[int index] { get; }
+        void NotifyItemUpdated(int index);
+
+        /// <summary>
+        /// Adds all items in the specified enumerable
+        /// </summary>
+        /// <param name="enumerable"></param>
+        void AddRange(IEnumerable enumerable);
+    }
+
+    /// <summary>
+    /// Defines the interface to the collection of items
+    /// </summary>
+    /// <typeparam name="TItem">Item type</typeparam>
+    public interface IItemCollection<TItem> : IItemCollection, IEnumerable<TItem>, IList<TItem>
+    {
+        /// <summary>
+        /// Notifies the table that the specified item has changed in some way.  Use this method
+        /// to cause the view to update itself to reflect the changed item.
+        /// </summary>
+        /// <param name="item"></param>
+        void NotifyItemUpdated(TItem item);
+
+        /// <summary>
+        /// Adds all items in the specified enumerable
+        /// </summary>
+        /// <param name="enumerable"></param>
+        void AddRange(IEnumerable<TItem> enumerable);
+
+        /// <summary>
+        /// Sorts items in the collection using the specified <see cref="IComparer{TItem}"/>
+        /// </summary>
+        /// <param name="comparer"></param>
+        void Sort(IComparer<TItem> comparer);
+
+        /// <summary>
+        /// Sets any items in the collection matching the specified constraint to the specified new value. 
+        /// </summary>
+        /// <param name="constraint"></param>
+        /// <param name="newValue"></param>
+        void Replace(Predicate<TItem> constraint, TItem newValue);
+
+        /// <summary>
+        /// Searches the collection for an item that satisfies the specified constraint and returns
+        /// the index of the first such item.
+        /// </summary>
+        /// <returns>The index of the first matching item, or -1 if no matching items are found</returns>
+        int FindIndex(Predicate<TItem> constraint);
     }
 }
