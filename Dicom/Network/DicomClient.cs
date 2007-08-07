@@ -832,7 +832,16 @@ namespace ClearCanvas.Dicom.Network
 											DcmElement element = OffisDcm.castToDcmElement(item);
 											if (null != element)
 											{
-												queryResult.Add(DicomTag.GetTagValue(element.getGTag(), element.getETag()), element.ToString());
+                                                if (DicomImplementation.CharacterParser.IsVRRelevant(element.getVR().ToString()))
+                                                {
+                                                    byte[] rawBytes;
+                                                    OffisDicomHelper.TryGetRawStringFromElement(element, out rawBytes);
+                                                    queryResult.Add(DicomTag.GetTagValue(element.getGTag(), element.getETag()), DicomImplementation.CharacterParser.ConvertRawToIsomorphicString(rawBytes));
+                                                }
+                                                else
+                                                {
+                                                    queryResult.Add(DicomTag.GetTagValue(element.getGTag(), element.getETag()), element.ToString());
+                                                }
 											}
 
 											item = responseData.nextInContainer(item);

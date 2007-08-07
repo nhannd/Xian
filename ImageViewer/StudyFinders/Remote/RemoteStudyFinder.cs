@@ -48,12 +48,12 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
             {
                 StudyItem item = new StudyItem();
                 item.SpecificCharacterSet = result.SpecificCharacterSet;
-                item.PatientId = result.PatientId.ToString();
-				item.PatientsName = result.PatientsName;
+                item.PatientsName = new PersonName(DicomImplementation.CharacterParser.DecodeFromIsomorphicString(result.PatientsName, result.SpecificCharacterSet));
+                item.StudyDescription = DicomImplementation.CharacterParser.DecodeFromIsomorphicString(result.StudyDescription, result.SpecificCharacterSet);
 
+                item.PatientId = result.PatientId.ToString();
                 item.PatientsBirthDate = result[DicomTags.PatientsBirthDate];
                 item.StudyDate = result.StudyDate;
-                item.StudyDescription = result.StudyDescription;
                 item.ModalitiesInStudy = result.ModalitiesInStudy;
                 item.AccessionNumber = result.AccessionNumber;
                 item.StudyLoaderName = this.Name;
