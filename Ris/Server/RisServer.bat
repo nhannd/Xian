@@ -9,7 +9,6 @@ copy "..\..\..\..\Ris\Client\Adt\actionmodels.xml "."
 copy "..\..\..\..\..\Ris\Server\setup\ddl-writer.bat" .
 copy "..\..\..\..\..\Ris\Server\setup\import-authority-tokens.bat" .
 copy "..\..\..\..\..\Ris\Server\setup\import-authority-groups.bat" .
-copy "..\..\..\..\..\Ris\Server\setup\default-authority-groups.xml" .
 
 copy "..\..\..\..\..\Jscript\bin\%1\ClearCanvas.Jscript.dll" .\plugins
 
