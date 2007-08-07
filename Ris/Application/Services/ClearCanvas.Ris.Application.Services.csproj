@@ -59,6 +59,7 @@
     <Compile Include="Admin\AuthenticationAdmin\AuthorityTokenAssembler.cs" />
     <Compile Include="Admin\AuthenticationAdmin\UserAssembler.cs" />
     <Compile Include="Admin\DataImporterBase.cs" />
+    <Compile Include="Admin\FacilityAdmin\FacilityImporter.cs" />
     <Compile Include="Admin\IDataImporter.cs" />
     <Compile Include="Admin\Import\ImportService.cs" />
     <Compile Include="Admin\ModalityAdmin\ModalityImporter.cs" />
