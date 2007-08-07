@@ -22,15 +22,17 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.DiagnosticServiceAdmin)]
         public BatchImportResponse BatchImport(BatchImportRequest request)
         {
-            try
+            throw new NotImplementedException();
+ /*           try
             {
-                DiagnosticServiceBatchImporter.Import((IUpdateContext)this.PersistenceContext, request.ImportData);
+                DiagnosticServiceImporter.Import((IUpdateContext)this.PersistenceContext, request.ImportData);
                 return new BatchImportResponse();
             }
             catch (ImportException e)
             {
                 throw new RequestValidationException(e.Message);
             }
+  */
         }
     }
 }

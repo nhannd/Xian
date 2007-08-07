@@ -39,6 +39,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.Runtime.Serialization.dll</HintPath>
     </Reference>
+    <Reference Include="System.ServiceModel, Version=3.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\..\..\Program Files\Reference Assemblies\Microsoft\Framework\v3.0\System.ServiceModel.dll</HintPath>
+    </Reference>
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -49,7 +53,7 @@
     <Compile Include="FacilitySummaryComponent.cs" />
     <Compile Include="FacilityEditorComponent.cs" />
     <Compile Include="FacilityTable.cs" />
-    <Compile Include="ImportDiagnosticServicesComponent.cs" />
+    <Compile Include="DataImportComponent.cs" />
     <Compile Include="LocationSummaryComponent.cs" />
     <Compile Include="LocationEditorComponent.cs" />
     <Compile Include="LocationTable.cs" />

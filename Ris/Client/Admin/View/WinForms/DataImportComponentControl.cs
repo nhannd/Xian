@@ -13,21 +13,23 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="ImportDiagnosticServicesComponent"/>
     /// </summary>
-    public partial class ImportDiagnosticServicesComponentControl : ApplicationComponentUserControl
+    public partial class DataImportComponentControl : ApplicationComponentUserControl
     {
-        private ImportDiagnosticServicesComponent _component;
+        private DataImportComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public ImportDiagnosticServicesComponentControl(ImportDiagnosticServicesComponent component)
+        public DataImportComponentControl(DataImportComponent component)
             : base(component)
         {
             InitializeComponent();
             _component = component;
 
-            _filename.DataBindings.Add("Value", _component, "FileName", true, DataSourceUpdateMode.OnPropertyChanged);
-            _batchSize.DataBindings.Add("Value", _component, "BatchSize", true, DataSourceUpdateMode.OnPropertyChanged);
+            _importer.DataSource = _component.ImportTypeChoices;
+            _importer.DataBindings.Add("Value", _component, "ImportType", true, DataSourceUpdateMode.OnPropertyChanged);
+            _dataFile.DataBindings.Add("Text", _component, "FileName", true, DataSourceUpdateMode.OnPropertyChanged);
+            //_batchSize.DataBindings.Add("Value", _component, "BatchSize", true, DataSourceUpdateMode.OnPropertyChanged);
         }
 
         private void _browseButton_Click(object sender, EventArgs e)
@@ -40,13 +42,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
             if (openFileDialog1.ShowDialog() == DialogResult.OK)
             {
-                _filename.Value = openFileDialog1.FileName;
+                _dataFile.Text = openFileDialog1.FileName;
             }
         }
 
         private void _startButton_Click(object sender, EventArgs e)
         {
-            _component.OpenFile();
             _component.StartImport();
         }
     }

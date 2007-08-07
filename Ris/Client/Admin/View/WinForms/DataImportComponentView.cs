@@ -11,18 +11,18 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
     /// <summary>
     /// Provides a Windows Forms view onto <see cref="ImportDiagnosticServicesComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(ImportDiagnosticServicesComponentViewExtensionPoint))]
-    public class ImportDiagnosticServicesComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(DataImportComponentViewExtensionPoint))]
+    public class DataImportComponentView : WinFormsView, IApplicationComponentView
     {
-        private ImportDiagnosticServicesComponent _component;
-        private ImportDiagnosticServicesComponentControl _control;
+        private DataImportComponent _component;
+        private DataImportComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (ImportDiagnosticServicesComponent)component;
+            _component = (DataImportComponent)component;
         }
 
         #endregion
@@ -33,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new ImportDiagnosticServicesComponentControl(_component);
+                    _control = new DataImportComponentControl(_component);
                 }
                 return _control;
             }

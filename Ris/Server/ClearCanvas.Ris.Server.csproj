@@ -89,7 +89,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="RisServer.bat" />
+    <None Include="RisServer.bat">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="setup\ddl-writer.bat" />
     <None Include="setup\import-authority-groups.bat" />
     <None Include="setup\import-authority-tokens.bat" />

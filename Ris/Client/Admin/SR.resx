@@ -306,8 +306,8 @@
   <data name="TitleFacilities" xml:space="preserve">
     <value>Facilities</value>
   </data>
-  <data name="TitleImportDiagnosticServices" xml:space="preserve">
-    <value>Import Diagnostic Services</value>
+  <data name="TitleImportData" xml:space="preserve">
+    <value>Import Data</value>
   </data>
   <data name="TitleLocations" xml:space="preserve">
     <value>Locations</value>

@@ -7,18 +7,13 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 {
-    internal class DiagnosticServiceBatchImporter
+    [ExtensionOf(typeof(DataImporterExtensionPoint), Name="Diagnostic Services Importer")]
+    public class DiagnosticServiceImporter : DataImporterBase
     {
-        internal static void Import(IUpdateContext context, IList<string[]> data)
-        {
-            DiagnosticServiceBatchImporter importer = new DiagnosticServiceBatchImporter(context);
-            importer.DoImport(data);
-        }
-
-
         private IUpdateContext _updateContext;
         private IDiagnosticServiceBroker _dsBroker;
         private IRequestedProcedureTypeBroker _rptBroker;
@@ -30,21 +25,23 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
         private List<ModalityProcedureStepType> _spTypes = new List<ModalityProcedureStepType>();
         private List<Modality> _modalities = new List<Modality>();
 
-        private DiagnosticServiceBatchImporter(IUpdateContext updateContext)
+        public DiagnosticServiceImporter()
         {
-            _updateContext = updateContext;
+        }
+
+        public override void Import(List<string> lines, IUpdateContext context)
+        {
+            _updateContext = context;
             _dsBroker = _updateContext.GetBroker<IDiagnosticServiceBroker>();
             _rptBroker = _updateContext.GetBroker<IRequestedProcedureTypeBroker>();
             _sptBroker = _updateContext.GetBroker<IModalityProcedureStepTypeBroker>();
             _modalityBroker = _updateContext.GetBroker<IModalityBroker>();
-        }
 
-        private void DoImport(IList<string[]> data)
-        {
-            foreach (string[] row in data)
+            foreach (string line in lines)
             {
-                if (row.Length < 8)
-                    throw new ImportException("Input record must contain 8 elements");
+                // expect 8 fields in the row
+                string[] row = ParseCsv(line, 8);
+
 
                 string dsId = row[0];
                 string dsName = row[1];
@@ -71,7 +68,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
                 }
             }
         }
-
+        
         private DiagnosticService GetDiagnosticService(string id, string name)
         {
             // first check if we have it in memory
@@ -198,7 +195,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 
             return modality;
         }
-
 
     }
 }
