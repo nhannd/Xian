@@ -61,6 +61,22 @@ namespace ClearCanvas.Common
 
     public abstract class ExtensionPointBase : IExtensionPoint
     {
+        class PredicateExtensionFilter : ExtensionFilter
+        {
+            private Predicate<ExtensionInfo> _predicate;
+
+            public PredicateExtensionFilter(Predicate<ExtensionInfo> predicate)
+            {
+                _predicate = predicate;
+            }
+
+            public override bool Test(ExtensionInfo extension)
+            {
+                return _predicate(extension);
+            }
+        }
+
+
         public ExtensionInfo[] ListExtensions()
         {
             return ListExtensions(this.GetType(), null).ToArray();
@@ -71,6 +87,11 @@ namespace ClearCanvas.Common
             return ListExtensions(this.GetType(), filter).ToArray();
         }
 
+        public ExtensionInfo[] ListExtensions(Predicate<ExtensionInfo> filter)
+        {
+            return ListExtensions(new PredicateExtensionFilter(filter));
+        }
+
         public object CreateExtension()
         {
             return AtLeastOne(CreateExtensionsHelper(this.GetType(), null, true), this.GetType());
@@ -79,6 +100,11 @@ namespace ClearCanvas.Common
         public object CreateExtension(ExtensionFilter filter)
         {
             return AtLeastOne(CreateExtensionsHelper(this.GetType(), filter, true), this.GetType());
+        }
+
+        public object CreateExtension(Predicate<ExtensionInfo> filter)
+        {
+            return CreateExtension(new PredicateExtensionFilter(filter));
         }
 
         public object[] CreateExtensions()

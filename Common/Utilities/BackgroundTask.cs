@@ -86,6 +86,7 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="message"></param>
         public BackgroundTaskProgress(int percent, string message)
         {
+            Platform.CheckArgumentRange(percent, 0, 100, "percent");
             _percent = percent;
             _message = message;
         }
