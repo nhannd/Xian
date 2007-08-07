@@ -139,7 +139,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 			attribute = sopInstanceDataset[DicomTags.PatientsName];            
 			study.PatientsName = new PersonName(attribute.ToString());
-            study.PatientsNameRaw = DicomImplementation.CharacterParser.Encode(study.PatientsName, sopInstanceDataset.SpecificCharacterSet);
+            study.PatientsNameRaw = DicomImplementation.CharacterParser.EncodeAsIsomorphicString(study.PatientsName, sopInstanceDataset.SpecificCharacterSet);
 
             study.StoreTime = Platform.Time;
 

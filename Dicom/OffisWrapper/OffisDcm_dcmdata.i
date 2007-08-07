@@ -136,6 +136,44 @@ DcmElement*    findAndGetElementFromItem(DcmItem& item,
 	return NULL;
 }
 
+OFCondition getRawStringFromElementGetLength(DcmElement& element, int &lengthRequiredOfArray)
+{
+        char *dummy_string = "Dummy String";
+        char **holderOfString = &dummy_string;
+
+        OFCondition status = element.getString(OFconst_cast(char *&, *holderOfString));
+
+        if (status.bad() || NULL == *holderOfString)
+                lengthRequiredOfArray = 0;
+        else
+                lengthRequiredOfArray = strlen(*holderOfString);
+
+        return status;
+}
+
+OFCondition getRawStringFromElement(DcmElement& element, const char *&arrayForStringRawBytes, int &lengthRequiredOfArray)
+{
+        OFCondition status = element.getString(OFconst_cast(char *&, arrayForStringRawBytes));
+
+        if (status.bad() || NULL == arrayForStringRawBytes)
+                lengthRequiredOfArray = 0;
+        else
+                lengthRequiredOfArray = strlen(arrayForStringRawBytes);
+
+        return status;
+}
+
+OFCondition putAndInsertRawStringIntoItem(DcmItem& item, const DcmTagKey& tagKey, const char *arrayOfStringRawBytes)
+{
+        // TODO
+        // I cannot decide whether or not we have to make a copy of
+        // arrayOfStringRawBytes so that we can null-terminate it since
+        // the conversion using GetEncoding() does not append a
+        // null terminator
+        OFCondition status = item.putAndInsertString(tagKey, arrayOfStringRawBytes, true);
+        return status;
+}
+
 %}
 
 namespace std

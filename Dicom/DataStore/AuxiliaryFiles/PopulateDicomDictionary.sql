@@ -51,6 +51,9 @@ UPDATE temp_index SET next_index = next_index + 1;
 INSERT INTO DictionaryEntries_ (EntryOid_, TagName_, Path_, IsComputed_, ValueRepresentation_, Index_)
 SELECT current_uid, 'SOPClassesInStudy', '(0008,0062)', 1, 'UI', temp_index.next_index from DicomDictionaryContainer_ as container inner join temp_uid on container.EntryOid_ = temp_uid.current_uid , temp_index;
 UPDATE temp_index SET next_index = next_index + 1;
+INSERT INTO DictionaryEntries_ (EntryOid_, TagName_, Path_, IsComputed_, ValueRepresentation_, Index_)
+SELECT current_uid, 'SpecificCharacterSet', '(0008,0005)', 1, 'UI', temp_index.next_index from DicomDictionaryContainer_ as container inner join temp_uid on container.EntryOid_ = temp_uid.current_uid , temp_index;
+UPDATE temp_index SET next_index = next_index + 1;
 
 /*
 	Create the default results dictionary (Unicode) which returns certain column values independently of the columns used for querying.
@@ -108,6 +111,9 @@ SELECT current_uid, 'ModalitiesInStudy', '(0008,0061)', 0, 'CS', temp_index.next
 UPDATE temp_index SET next_index = next_index + 1;
 INSERT INTO DictionaryEntries_ (EntryOid_, TagName_, Path_, IsComputed_, ValueRepresentation_, Index_)
 SELECT current_uid, 'SOPClassesInStudy', '(0008,0062)', 1, 'UI', temp_index.next_index from DicomDictionaryContainer_ as container inner join temp_uid on container.EntryOid_ = temp_uid.current_uid , temp_index;
+UPDATE temp_index SET next_index = next_index + 1;
+INSERT INTO DictionaryEntries_ (EntryOid_, TagName_, Path_, IsComputed_, ValueRepresentation_, Index_)
+SELECT current_uid, 'SpecificCharacterSet', '(0008,0005)', 1, 'UI', temp_index.next_index from DicomDictionaryContainer_ as container inner join temp_uid on container.EntryOid_ = temp_uid.current_uid , temp_index;
 UPDATE temp_index SET next_index = next_index + 1;
 
 /*

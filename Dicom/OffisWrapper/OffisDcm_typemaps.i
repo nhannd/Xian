@@ -176,6 +176,20 @@
 		memcpy($input, *$1, strlen(*$1));
 %}
 
+//
+// Handle the char* type for putAndInsertString helper function
+// that takes in a byte[] parameter of raw string data
+//
+%typemap(ctype) char *arrayOfStringRawBytes "char *"
+%typemap(imtype, inattributes="[MarshalAs(UnmanagedType.LPArray, SizeConst=1025)]") char *arrayOfStringRawBytes "byte []"
+%typemap(cstype) char *arrayOfStringRawBytes "byte []"
+%typemap(csin) char *arrayOfStringRawBytes "$csinput"
+
+%typemap(in, canthrow=1) char *arrayOfStringRawBytes
+%{
+        $1 = (char *) $input;
+%}
+
 %typemap(ctype) int& "int *"
 %typemap(imtype) int& "ref int"
 %typemap(cstype) int& "ref int"

@@ -204,5 +204,23 @@ namespace ClearCanvas.Dicom.Network
 
 			return status;
         }
+
+        public static OFCondition TryGetRawStringFromElement(DcmElement element, out byte[] rawBytes)
+        {
+            int lengthRequiredOfArray = 0;
+            OFCondition status = OffisDcm.getRawStringFromElementGetLength(element, ref lengthRequiredOfArray);
+
+            rawBytes = new byte[lengthRequiredOfArray];
+            if (lengthRequiredOfArray > 0)                
+                status = OffisDcm.getRawStringFromElement(element, rawBytes, ref lengthRequiredOfArray);
+
+            return status;
+        }
+
+        public static OFCondition PutAndInsertRawStringIntoItem(DcmItem dcmItem, DcmTagKey tagKey, byte[] rawBytes)
+        {
+            return OffisDcm.putAndInsertRawStringIntoItem(dcmItem, tagKey, rawBytes);
+        }
+
 	}
 }

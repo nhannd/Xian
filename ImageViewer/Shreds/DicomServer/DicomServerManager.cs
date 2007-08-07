@@ -398,6 +398,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			if (cond.good())
 				queryKey.Add(DicomTags.StudyInstanceUID, value);
 
+            cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.SpecificCharacterSet, out value);
+            if (cond.good())
+                queryKey.Add(DicomTags.SpecificCharacterSet, value);
+
 			return queryKey;
 		}
 
@@ -461,15 +465,22 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			// Edit these when we need to expand the list of supported return tags
 			responseIdentifiers.clear();
 			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.PatientId), result.PatientId);
-			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.PatientsName), result.PatientsName);
+
+            // strings that can have Specific Character Set effects
+            byte[] encodedString = DicomImplementation.CharacterParser.Encode(result.PatientsName, result.SpecificCharacterSet);
+            ClearCanvas.Dicom.Network.OffisDicomHelper.PutAndInsertRawStringIntoItem(responseIdentifiers, new DcmTag(Dcm.PatientsName), encodedString);
+            encodedString = DicomImplementation.CharacterParser.Encode(result.StudyDescription, result.SpecificCharacterSet);
+            ClearCanvas.Dicom.Network.OffisDicomHelper.PutAndInsertRawStringIntoItem(responseIdentifiers, new DcmTag(Dcm.StudyDescription), encodedString);
+
 			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyDate), result.StudyDate);
 			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyTime), result.StudyTime);
-			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyDescription), result.StudyDescription);
+
 			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.ModalitiesInStudy), result.ModalitiesInStudy);
 			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.AccessionNumber), result.AccessionNumber);
 			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), result.StudyInstanceUid);
 			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.QueryRetrieveLevel), "STUDY");
 			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), result.StudyInstanceUid);
+            responseIdentifiers.putAndInsertString(new DcmTag(Dcm.SpecificCharacterSet), result.SpecificCharacterSet);
 
 			return OffisDcm.STATUS_Pending;
 		}

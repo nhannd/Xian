@@ -18,64 +18,33 @@ namespace ClearCanvas.Dicom
         public byte[] Encode(string dataInUnicode, string specificCharacterSet)
         {
             byte[] rawBytes;
-
-            if (null == specificCharacterSet || "" == specificCharacterSet)
-            {
-                rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(dataInUnicode);
-                return rawBytes;
-            }
-
-            CharacterSetInfo defaultRepertoire;
-            Dictionary<string, CharacterSetInfo> extensionRepertoires;
-            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
-
-            // TODO: here's where the hack starts
-            // pick the first one and use that for decoding
-            foreach (CharacterSetInfo info in extensionRepertoires.Values)
-            {
-                Encode(dataInUnicode, info, out rawBytes);
-                return rawBytes;
-            }
-
-            // if nothing happened with extension repertoires, use default repertoire
-            if (null != defaultRepertoire)
-            {
-                Encode(dataInUnicode, defaultRepertoire, out rawBytes);
-                return rawBytes;
-            }
-
-            rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(dataInUnicode);
+            SpecificCharacterSetParser.Unparse(specificCharacterSet, dataInUnicode, out rawBytes);
             return rawBytes;
+        }
+
+        public string EncodeAsIsomorphicString(string dataInUnicode, string specificCharacterSet)
+        {
+            return SpecificCharacterSetParser.Unparse(specificCharacterSet, dataInUnicode);
         }
 
         public string Decode(byte[] rawData, string specificCharacterSet)
         {
-            if (null == specificCharacterSet || "" == specificCharacterSet)
-            {
-                // this takes the raw bytes, and converts it into a Unicode string
-                // represention of the original raw bytes
-                return System.Text.Encoding.GetEncoding("Windows-1252").GetString(rawData);
-            }
+            return SpecificCharacterSetParser.Parse(specificCharacterSet, rawData);
+        }
 
-            CharacterSetInfo defaultRepertoire;
-            Dictionary<string, CharacterSetInfo> extensionRepertoires;
-            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
+        public string DecodeFromIsomorphicString(string repertoireStringAsUnicode, string specificCharacterSet)
+        {
+            return SpecificCharacterSetParser.Parse(specificCharacterSet, repertoireStringAsUnicode);
+        }
 
-            // TODO: here's where the hack starts
-            // pick the first one and use that for decoding
-            foreach (CharacterSetInfo info in extensionRepertoires.Values)
-            {
-                return Decode(rawData, info);
-            }
+        public string ConvertRawToIsomorphicString(byte[] value)
+        {
+            return SpecificCharacterSetParser.GetIsomorphicString(value);
+        }
 
-            // if nothing happened with extension repertoires, use default repertoire
-            if (null != defaultRepertoire)
-            {
-                return Decode(rawData, defaultRepertoire);
-            }
-            // this takes the raw bytes, and converts it into a Unicode string
-            // represention of the original raw bytes
-            return System.Text.Encoding.GetEncoding("Windows-1252").GetString(rawData);
+        public bool IsVRRelevant(string vr)
+        {
+            return SpecificCharacterSetParser.DoesSpecificCharacterSetApplyToThisVR(vr);
         }
 
         #endregion
@@ -112,8 +81,40 @@ namespace ClearCanvas.Dicom
             _characterSetInfo.Add("ISO 2022 IR 159", new CharacterSetInfo("ISO 2022 IR 159", 50222, "\x1b\x24\x28\x44", "", "JIS X 0212 (Kanji) Extended"));
             _characterSetInfo.Add("ISO 2022 IR 149", new CharacterSetInfo("ISO 2022 IR 149", 20949, "", "\x1b\x24\x29\x43", "KS X 1001 (Hangul and Hanja) Extended"));
             _characterSetInfo.Add("GB18030", new CharacterSetInfo("GB18030", 54936, "", "", "Chinese (Simplified) Extended"));
+
+            _repertoireAppliesVRDictionary = new Dictionary<string, bool>();
+            _repertoireAppliesVRDictionary.Add("EVR_SH", true);
+            _repertoireAppliesVRDictionary.Add("EVR_LO", true);
+            _repertoireAppliesVRDictionary.Add("EVR_ST", true);
+            _repertoireAppliesVRDictionary.Add("EVR_LT", true);
+            _repertoireAppliesVRDictionary.Add("EVR_PN", true);
+            _repertoireAppliesVRDictionary.Add("EVR_UT", true);
+            _repertoireAppliesVRDictionary.Add("SH", true);
+            _repertoireAppliesVRDictionary.Add("LO", true);
+            _repertoireAppliesVRDictionary.Add("ST", true);
+            _repertoireAppliesVRDictionary.Add("LT", true);
+            _repertoireAppliesVRDictionary.Add("PN", true);
+            _repertoireAppliesVRDictionary.Add("UT", true);
+
         }
 
+        const string IsomorphicCodePage = "Windows-1256";
+
+        public static bool DoesSpecificCharacterSetApplyToThisVR(string vr)
+        {
+            return _repertoireAppliesVRDictionary.ContainsKey(vr);
+        }
+
+        public static string GetIsomorphicString(byte[] rawBytes)
+        {
+            return Encoding.GetEncoding(IsomorphicCodePage).GetString(rawBytes);
+        }
+
+        public static byte[] GetIsomorphicBytes(string rawBytesEncodedAsString)
+        {
+            // add a null terminator, otherwise we're going to have problems in the unamanged world
+            return Encoding.GetEncoding(IsomorphicCodePage).GetBytes(rawBytesEncodedAsString);
+        }
 
         public static Encoding GetEncoding(string specificCharacterSet)
         {
@@ -122,6 +123,127 @@ namespace ClearCanvas.Dicom
             GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
 
             return Encoding.GetEncoding(defaultRepertoire.MicrosoftCodePage);
+        }
+
+        public static string Unparse(string specificCharacterSet, string dataInUnicode)
+        {
+            if (null == specificCharacterSet || "" == specificCharacterSet)
+                return dataInUnicode;
+
+            CharacterSetInfo defaultRepertoire;
+            Dictionary<string, CharacterSetInfo> extensionRepertoires;
+            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
+
+            // TODO: here's where the hack starts
+            // pick the first one and use that for decoding
+            foreach (CharacterSetInfo info in extensionRepertoires.Values)
+            {
+                return Encode(dataInUnicode, info);
+            }
+
+            // if nothing happened with extension repertoires, use default repertoire
+            if (null != defaultRepertoire)
+            {
+                return Encode(dataInUnicode, defaultRepertoire);
+            }
+            else
+            {
+                return dataInUnicode;
+            }
+        }
+
+        public static void Unparse(string specificCharacterSet, string dataInUnicode, out byte[] rawBytes)
+        {
+            if (null == specificCharacterSet || "" == specificCharacterSet)
+            {
+                rawBytes = GetIsomorphicBytes(dataInUnicode);
+                return;
+            }
+
+            CharacterSetInfo defaultRepertoire;
+            Dictionary<string, CharacterSetInfo> extensionRepertoires;
+            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
+
+            // TODO: here's where the hack starts
+            // pick the first one and use that for decoding
+            foreach (CharacterSetInfo info in extensionRepertoires.Values)
+            {
+                Encode(dataInUnicode, info, out rawBytes);
+                return;
+            }
+
+            // if nothing happened with extension repertoires, use default repertoire
+            if (null != defaultRepertoire)
+            {
+                Encode(dataInUnicode, defaultRepertoire, out rawBytes);
+                return;
+            }
+            else
+            {
+                rawBytes = GetIsomorphicBytes(dataInUnicode);
+                return;
+            }
+        }
+
+        public static string Parse(string specificCharacterSet, byte[] rawData)
+        {
+            if (null == specificCharacterSet || "" == specificCharacterSet)
+            {
+                // this takes the raw bytes, and converts it into a Unicode string
+                // represention of the original raw bytes
+                return GetIsomorphicString(rawData);
+            }
+
+            CharacterSetInfo defaultRepertoire;
+            Dictionary<string, CharacterSetInfo> extensionRepertoires;
+            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
+
+            // TODO: here's where the hack starts
+            // pick the first one and use that for decoding
+            foreach (CharacterSetInfo info in extensionRepertoires.Values)
+            {
+                return Decode(rawData, info);
+            }
+
+            // if nothing happened with extension repertoires, use default repertoire
+            if (null != defaultRepertoire)
+            {
+                return Decode(rawData, defaultRepertoire);
+            }
+            else
+            {
+                // this takes the raw bytes, and converts it into a Unicode string
+                // represention of the original raw bytes
+                return GetIsomorphicString(rawData);
+
+            }
+        }
+
+        public static string Parse(string specificCharacterSet, string rawData)
+        {
+            if (null == specificCharacterSet || "" == specificCharacterSet)
+                return rawData;
+
+            CharacterSetInfo defaultRepertoire;
+            Dictionary<string, CharacterSetInfo> extensionRepertoires;
+            GetRepertoires(specificCharacterSet, out defaultRepertoire, out extensionRepertoires);
+
+            // TODO: here's where the hack starts
+            // pick the first one and use that for decoding
+            foreach (CharacterSetInfo info in extensionRepertoires.Values)
+            {
+                return Decode(rawData, info);
+            }
+
+            // if nothing happened with extension repertoires, use default repertoire
+            if (null != defaultRepertoire)
+            {
+                return Decode(rawData, defaultRepertoire);
+            }
+            else
+            {
+                return rawData;
+            }
         }
 
         private static void GetRepertoires(string specificCharacterSet, out CharacterSetInfo defaultRepertoire, out Dictionary<string, CharacterSetInfo> extensionRepertoires)
@@ -192,20 +314,61 @@ namespace ClearCanvas.Dicom
             }
         }
 
+        /// <summary>
+        /// Changes fully translated Unicode data, e.g. with Japanaese Kanji characters, into
+        /// a string of characters that represents the raw, ISO character repertoire representation, i.e.
+        /// with escape sequences, but encoded as a Unicode string
+        /// </summary>
+        /// <param name="unicodeData">Fully translated Unicode data</param>
+        /// <param name="repertoire">Target repertoire to be transformed into</param>
+        /// <returns></returns>
         private static string Encode(string unicodeData, CharacterSetInfo repertoire)
         {
             byte[] rawBytes;
             Encode(unicodeData, repertoire, out rawBytes);
-            char[] rawCharacters = Encoding.GetEncoding("Windows-1252").GetChars(rawBytes);
+            char[] rawCharacters = Encoding.GetEncoding(IsomorphicCodePage).GetChars(rawBytes);
             return new string(rawCharacters);
         }
 
+        /// <summary>
+        /// Changes fully translated Unicode data, e.g. with Japanese Kanji characters, into
+        /// a raw byte array containing the 8-bit representation in the target repertoire
+        /// </summary>
+        /// <param name="unicodeData">Fully translated Unicode data</param>
+        /// <param name="repertoire">Target repertoire to be transformed into</param>
+        /// <param name="encoded">Output: byte array to hold the results</param>
         private static void Encode(string unicodeData, CharacterSetInfo repertoire, out byte[] encoded)
         {
             byte[] rawBytes = Encoding.GetEncoding(repertoire.MicrosoftCodePage).GetBytes(unicodeData);
             encoded = rawBytes;
         }
 
+        /// <summary>
+        /// Takes a string that is a representation of the raw sequence of bytes 
+        /// encoded using an ISO repertoire, but current encoded as a Unicode string
+        /// and gives back a true Unicode string, e.g. containing the Japanese Kanji 
+        /// characters
+        /// </summary>
+        /// <param name="rawData">Sequence of bytes formatted in Unicode</param>
+        /// <param name="repertoire">Original ISO repertoire used in the encoding</param>
+        /// <returns>True Unicode string</returns>
+        private static string Decode(string rawData, CharacterSetInfo repertoire)
+        {
+            // get it back to byte array form using a character set that includes 
+            // both GR and GL areas (characters up to \xff in binary value)
+            // and it seems Windows-1252 works better than ISO-8859-1
+            byte[] rawBytes = Encoding.GetEncoding(IsomorphicCodePage).GetBytes(rawData);
+            return Decode(rawBytes, repertoire);
+        }
+
+        /// <summary>
+        /// Takes a string that is encoded using the ISO repertoires, as a raw sequence
+        /// of bytes, and then gives back a fully translated Unicode representation, e.g.
+        /// with the correct Japanese Kanji characters in Unicode
+        /// </summary>
+        /// <param name="rawData">Byte sequence encoded using ISO repertoire</param>
+        /// <param name="repertoire">Repertoire the byte sequence is encoded using</param>
+        /// <returns>Unicode string</returns>
         private static string Decode(byte[] rawData, CharacterSetInfo repertoire)
         {
             Encoding rawEncoding = Encoding.GetEncoding(repertoire.MicrosoftCodePage);
@@ -219,16 +382,7 @@ namespace ClearCanvas.Dicom
                 return rawDataDecoded;
         }
 
-        private static string Decode(string rawData, CharacterSetInfo repertoire)
-        {
-            // get it back to byte array form using a character set that includes 
-            // both GR and GL areas (characters up to \xff in binary value)
-            // and it seems Windows-1252 works better than ISO-8859-1
-            byte[] rawBytes = Encoding.GetEncoding("Windows-1252").GetBytes(rawData);
-            return Decode(rawBytes, repertoire);
-        }
         #endregion
-
 
         protected class CharacterSetInfo
         {
@@ -305,9 +459,8 @@ namespace ClearCanvas.Dicom
 
         #region Private fields
         private static Dictionary<string, CharacterSetInfo> _characterSetInfo;
+        private static Dictionary<string, bool> _repertoireAppliesVRDictionary;
         #endregion
-
-
     }
     
 }
