@@ -29,7 +29,12 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
         {
         }
 
-        public override void Import(List<string> lines, IUpdateContext context)
+        public override bool SupportsCsv
+        {
+            get { return true; }
+        }
+
+        public override void ImportCsv(List<string> lines, IUpdateContext context)
         {
             _updateContext = context;
             _dsBroker = _updateContext.GetBroker<IDiagnosticServiceBroker>();

@@ -12,16 +12,21 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
     [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "Facility Importer")]
     public class FacilityImporter : DataImporterBase
     {
-        private List<Facility> _facilities = new List<Facility>();
-
         public FacilityImporter()
         {
 
         }
 
-        public override void Import(List<string> rows, IUpdateContext context)
+        public override bool SupportsCsv
         {
-            foreach (string line in rows)
+            get { return true; }
+        }
+
+        public override void ImportCsv(List<string> rows, IUpdateContext context)
+        {
+           List<Facility> facilities = new List<Facility>();
+
+           foreach (string line in rows)
             {
                 // expect 2 fields in the row
                 string[] fields = ParseCsv(line, 2);
@@ -30,7 +35,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
                 string name = fields[1];
 
                 // first check if we have it in memory
-                Facility facility = CollectionUtils.SelectFirst<Facility>(_facilities,
+                Facility facility = CollectionUtils.SelectFirst<Facility>(facilities,
                     delegate(Facility f) { return f.Code == id && f.Name == name; });
 
                 // if not, check the database
@@ -50,7 +55,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
                         context.Lock(facility, DirtyState.New);
                     }
 
-                    _facilities.Add(facility);
+                    facilities.Add(facility);
                 }
             }
         }

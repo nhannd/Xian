@@ -15,6 +15,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.Import
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ImportException))]
-        ImportDataResponse ImportData(ImportDataRequest request);
+        ImportCsvResponse ImportCsv(ImportCsvRequest request);
     }
 }

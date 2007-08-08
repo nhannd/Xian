@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.Import
         }
 
         [UpdateOperation]
-        public ImportDataResponse ImportData(ImportDataRequest request)
+        public ImportCsvResponse ImportCsv(ImportCsvRequest request)
         {
             IDataImporter importer = null;
             try
@@ -46,9 +46,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.Import
                 throw new RequestValidationException(string.Format("{0} is not supported.", request.Importer));
             }
 
-            importer.Import(request.Rows, (IUpdateContext)PersistenceContext);
+            importer.ImportCsv(request.Rows, (IUpdateContext)PersistenceContext);
 
-            return new ImportDataResponse();
+            return new ImportCsvResponse();
         }
 
         #endregion

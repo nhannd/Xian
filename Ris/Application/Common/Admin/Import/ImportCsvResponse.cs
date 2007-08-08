@@ -7,7 +7,7 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Admin.Import
 {
     [DataContract]
-    public class ImportDataResponse : DataContractBase
+    public class ImportCsvResponse : DataContractBase
     {
     }
 }

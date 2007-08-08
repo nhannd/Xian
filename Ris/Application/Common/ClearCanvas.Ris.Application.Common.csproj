@@ -94,8 +94,8 @@
     <Compile Include="Admin\HL7QueueItemDetail.cs" />
     <Compile Include="Admin\HL7QueueItemSummary.cs" />
     <Compile Include="Admin\Import\IImportService.cs" />
-    <Compile Include="Admin\Import\ImportDataRequest.cs" />
-    <Compile Include="Admin\Import\ImportDataResponse.cs" />
+    <Compile Include="Admin\Import\ImportCsvRequest.cs" />
+    <Compile Include="Admin\Import\ImportCsvResponse.cs" />
     <Compile Include="Admin\Import\ListImportersRequest.cs" />
     <Compile Include="Admin\Import\ListImportersResponse.cs" />
     <Compile Include="Admin\NoteCategoryAdmin\AddNoteCategoryRequest.cs" />

@@ -7,14 +7,14 @@ using System.Runtime.Serialization;
 namespace ClearCanvas.Ris.Application.Common.Admin.Import
 {
     [DataContract]
-    public class ImportDataRequest : DataContractBase
+    public class ImportCsvRequest : DataContractBase
     {
-        public ImportDataRequest()
+        public ImportCsvRequest()
         {
 
         }
 
-        public ImportDataRequest(string importer, List<string> rows)
+        public ImportCsvRequest(string importer, List<string> rows)
         {
             this.Importer = importer;
             this.Rows = rows;

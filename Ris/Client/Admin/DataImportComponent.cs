@@ -182,44 +182,23 @@ namespace ClearCanvas.Ris.Client.Admin
             }
         }
 
-        private delegate bool WithBatchCallback(List<string> lines);
-
-        private bool ReadBatches(WithBatchCallback callback)
+        private List<string> ReadLines(StreamReader reader, int numLines)
         {
-            using (StreamReader reader = File.OpenText(_filename))
+            List<string> lines = new List<string>();
+            string line = null;
+            while (lines.Count < numLines && (line = reader.ReadLine()) != null)
             {
-                string line = null;
-                List<string> lines = new List<string>();
-
-                while ((line = reader.ReadLine()) != null)
-                {
-                    if(!string.IsNullOrEmpty(line))
-                        lines.Add(line);
-
-                    if (lines.Count == _batchSize)
-                    {
-                        // send batch
-                        bool next = callback(lines);
-                        if (!next)
-                            return false;
-                        lines.Clear();
-                    }
-                }
-
-                if (lines.Count > 0)
-                {
-                    // send final batch
-                    return callback(lines);
-                }
-                return true;
+                if (!string.IsNullOrEmpty(line))
+                    lines.Add(line);
             }
+            return lines;
         }
-
+        
         private void UpdateProgress(IBackgroundTaskContext context, string status, int batch, int lineCount)
         {
             int importedRows = Math.Min(batch * _batchSize, lineCount);
             float percentage = (lineCount == 0) ? 0 : 100 * ((float)importedRows) / (float)lineCount;
-            string message = string.Format("{0} - Imported {1} rows.", status, importedRows);
+            string message = string.Format("{0} - processed {1} rows.", status, importedRows);
             context.ReportProgress(new BackgroundTaskProgress((int)percentage, message));
         }
 
@@ -230,51 +209,43 @@ namespace ClearCanvas.Ris.Client.Admin
             try
             {
                 lineCount = PrescanFile();
-                bool complete = ReadBatches(
-                    delegate(List<string> rows)
+
+                using (StreamReader reader = File.OpenText(_filename))
+                {
+                    // treat as csv
+                    List<string> lines = null;
+                    while ((lines = ReadLines(reader, _batchSize)).Count > 0)
                     {
                         if (context.CancelRequested)
-                            return false;
+                            break;
 
-                        batch++;
                         try
                         {
                             Platform.GetService<IImportService>(
                                 delegate(IImportService service)
                                 {
-                                    service.ImportData(new ImportDataRequest(_importType, rows));
+                                    service.ImportCsv(new ImportCsvRequest(_importType, lines));
                                 });
                         }
                         catch (FaultException<ImportException> e)
                         {
-                            // handle import exceptions so that we can add information about the 
-                            // row where the exception occured to the error message
-                            if (e.Detail.DataRow > -1)
-                            {
-                                string message = string.Format("Error importing row {0}: {1}",
-                                    batch * _batchSize + e.Detail.DataRow,
-                                    e.Detail.Message);
-
-                                throw new Exception(message);
-                            }
-                            else
-                                throw e.Detail;
+                            // unwrap the fault exception
+                            throw e.Detail;
                         }
 
-                        UpdateProgress(context, "Importing", batch, lineCount);
-                        
-                        return true;    // get next batch
-                    });
-
-                if (complete)
-                {
-                    UpdateProgress(context, "Completed", batch, lineCount);
-                    context.Complete(null);
+                        UpdateProgress(context, "Importing", batch++, lineCount);
+                    }
                 }
-                else
+
+                if (context.CancelRequested)
                 {
                     UpdateProgress(context, "Cancelled", batch, lineCount);
                     context.Cancel();
+                }
+                else
+                {
+                    UpdateProgress(context, "Completed", batch, lineCount);
+                    context.Complete(null);
                 }
             }
             catch (Exception e)

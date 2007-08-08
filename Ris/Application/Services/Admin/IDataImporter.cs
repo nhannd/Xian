@@ -3,12 +3,17 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using System.Xml;
 
 namespace ClearCanvas.Ris.Application.Services.Admin
 {
     public interface IDataImporter
     {
-        void Import(List<string> rows, IUpdateContext context);
+        bool SupportsCsv { get; }
+        bool SupportsXml { get; }
+
+        void ImportCsv(List<string> rows, IUpdateContext context);
+        void ImportXml(XmlDocument xmlDocument, IUpdateContext context);
     }
 
     [ExtensionPoint]

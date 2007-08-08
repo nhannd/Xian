@@ -5,6 +5,7 @@ using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common;
 using ClearCanvas.Ris.Application.Common;
 using System.IO;
+using System.Xml;
 
 namespace ClearCanvas.Ris.Application.Services.Admin
 {
@@ -14,13 +15,30 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
         public DataImporterBase()
         {
-
         }
 
 
         #region IDataImporter Members
 
-        public abstract void Import(List<string> rows, IUpdateContext context);
+        public virtual bool SupportsCsv
+        {
+            get { return false; }
+        }
+
+        public virtual bool SupportsXml
+        {
+            get { return false; }
+        }
+
+        public virtual void ImportCsv(List<string> rows, IUpdateContext context)
+        {
+            throw new NotImplementedException();
+        }
+
+        public virtual void ImportXml(XmlDocument xmlDocument, IUpdateContext context)
+        {
+            throw new NotImplementedException();
+        }
 
         #endregion
 
@@ -34,51 +52,40 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                 return;
             }
 
-            int batch = 0;
             try
             {
                 using (StreamReader reader = File.OpenText(args[0]))
                 {
-                    string line = null;
-                    List<string> lines = new List<string>();
-
-                    while ((line = reader.ReadLine()) != null)
+                    if(args[0].EndsWith(".xml", StringComparison.CurrentCultureIgnoreCase))
                     {
-                        if (!string.IsNullOrEmpty(line))
-                            lines.Add(line);
-
-                        if (lines.Count == DEFAULT_BATCH_SIZE)
+                        // treat as xml
+                        XmlDocument xmlDoc = new XmlDocument();
+                        xmlDoc.Load(reader);
+                        using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
                         {
-                            // send batch
-                            batch++;
-                            ImportBatch(lines);
-                            lines.Clear();
+                            ImportXml(xmlDoc, (IUpdateContext)PersistenceScope.Current);
+                            scope.Complete();
                         }
                     }
-
-                    if (lines.Count > 0)
+                    else
                     {
-                        // send final batch
-                        batch++;
-                        ImportBatch(lines);
+                        // treat as csv
+                        List<string> lines = null;
+                        while ((lines = ReadLines(reader, DEFAULT_BATCH_SIZE)).Count > 0)
+                        {
+                            using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
+                            {
+                                ImportCsv(lines, (IUpdateContext)PersistenceScope.Current);
+                                scope.Complete();
+                            }
+                        }
                     }
                 }
 
             }
-            catch (ImportException e)
+            catch (Exception e)
             {
-                // handle import exceptions so that we can add information about the 
-                // row where the exception occured to the error message
-                if (e.DataRow > -1)
-                {
-                    string message = string.Format("Error importing row {0}: {1}",
-                        batch * DEFAULT_BATCH_SIZE + e.DataRow,
-                        e.Message);
-
-                    Platform.Log(LogLevel.Error, message);
-                }
-                else
-                    Platform.Log(LogLevel.Error, e.Message);
+                Log(LogLevel.Error, e.Message);
             }
         }
 
@@ -99,13 +106,22 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             return fields;
         }
 
-        private void ImportBatch(List<string> rows)
+        protected void Log(LogLevel level, string message)
         {
-            using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
+            Platform.Log(level, message);
+            Console.WriteLine(message);
+        }
+
+        private List<string> ReadLines(StreamReader reader, int numLines)
+        {
+            List<string> lines = new List<string>();
+            string line = null;
+            while (lines.Count < numLines && (line = reader.ReadLine()) != null)
             {
-                Import(rows, (IUpdateContext)PersistenceScope.Current);
-                scope.Complete();
+                if (!string.IsNullOrEmpty(line))
+                    lines.Add(line);
             }
+            return lines;
         }
 
         #endregion
