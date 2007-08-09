@@ -46,7 +46,7 @@ namespace ClearCanvas.Dicom.Network
 					}
 					catch (Exception e)
 					{
-						Platform.Log(e);
+						Platform.Log(LogLevel.Error, e);
 					}
 
 					try
@@ -56,7 +56,7 @@ namespace ClearCanvas.Dicom.Network
 					}
 					catch (Exception e)
 					{
-						Platform.Log(e);
+						Platform.Log(LogLevel.Error, e);
 					}
 
 					_parent.RemoveThread(Thread.CurrentThread);
@@ -209,7 +209,7 @@ namespace ClearCanvas.Dicom.Network
 					}
 					catch (Exception e)
 					{
-						Platform.Log(e);
+						Platform.Log(LogLevel.Error, e);
 					}
 
 				} while (!_stopWaitForIncomingAssociationsThread);
