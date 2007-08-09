@@ -14,7 +14,7 @@ namespace ClearCanvas.Desktop.Executable
 		[STAThread]
 		static void Main(string[] args)
 		{
-#if !MONO && !DEBUG
+#if !MONO
 			SplashScreenManager.DisplaySplashScreen();
 #endif
 			Platform.PluginManager.PluginLoaded += new EventHandler<PluginLoadedEventArgs>(OnPluginProgress);
@@ -40,7 +40,7 @@ namespace ClearCanvas.Desktop.Executable
 		private static void OnPluginProgress(object sender, PluginLoadedEventArgs e)
 		{
 			Platform.CheckForNullReference(e, "e");
-#if !MONO && !DEBUG
+#if !MONO
 			SplashScreenManager.SetStatus(e.Message);
 #endif
         }

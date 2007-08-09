@@ -39,7 +39,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// </summary>
         public DesktopForm()
         {
-#if !MONO && !DEBUG
+#if !MONO
 			SplashScreenManager.DismissSplashScreen(this);
 #endif
 			InitializeComponent();
