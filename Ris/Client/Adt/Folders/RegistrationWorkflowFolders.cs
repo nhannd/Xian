@@ -5,12 +5,11 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt.Folders
 {
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.RegistrationScheduledWorklist)]
+    [FolderForWorklistType("Registration - Scheduled")]
     public class ScheduledFolder : RegistrationWorkflowFolder
     {
         public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
@@ -45,7 +44,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.RegistrationCheckedInWorklist)]
+    [FolderForWorklistType("Registration - Checked In")]
     public class CheckedInFolder : RegistrationWorkflowFolder
     {
         [ExtensionPoint]
@@ -85,7 +84,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.RegistrationInProgressWorklist)]
+    [FolderForWorklistType("Registration - In Progress")]
     public class InProgressFolder : RegistrationWorkflowFolder
     {
         public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
@@ -120,7 +119,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.RegistrationCompletedWorklist)]
+    [FolderForWorklistType("Registration - Completed")]
     public class CompletedFolder : RegistrationWorkflowFolder
     {
         public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
@@ -155,7 +154,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
-    [FolderForWorklistType(WorklistTokens.RegistrationCancelledWorklist)]
+    [FolderForWorklistType("Registration - Cancelled")]
     public class CancelledFolder : RegistrationWorkflowFolder
     {
         [ExtensionPoint]
