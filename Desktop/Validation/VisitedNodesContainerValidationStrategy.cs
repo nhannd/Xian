@@ -8,7 +8,7 @@ namespace ClearCanvas.Desktop.Validation
     /// <summary>
     /// Implements a validation strategy that considers only the contained nodes that have been visited.
     /// </summary>
-    public class VisitedNodesContainerValidationStrategy
+	public class VisitedNodesContainerValidationStrategy : IApplicationComponentContainerValidationStrategy
     {
         #region IApplicationComponentContainerValidationStrategy Members
 
