@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Configuration
     public class DicomServerConfigurationComponent : ConfigurationApplicationComponent
     {
         private string _aeTitle;
-        private int _port;
+        private string _port;
         private string _storageDir;
 		private bool _enabled;
 
@@ -63,13 +63,13 @@ namespace ClearCanvas.ImageViewer.Configuration
 				DicomServerConfigurationHelper.Refresh(true);
 
 				_aeTitle = DicomServerConfigurationHelper.AETitle;
-				_port = DicomServerConfigurationHelper.Port;
+				_port = DicomServerConfigurationHelper.Port.ToString();
 				_storageDir = DicomServerConfigurationHelper.InterimStorageDirectory;
 			}
 			catch
 			{
 				_aeTitle = "";
-				_port = 0;
+				_port = "";
 				_storageDir = "";
 				_enabled = false;
 
@@ -81,7 +81,9 @@ namespace ClearCanvas.ImageViewer.Configuration
         {
             try
             {
-				DicomServerConfigurationHelper.Update("localhost", _aeTitle, _port, _storageDir);
+				// This should never throw an exception because we should have validated the port already.
+				int port = Convert.ToInt32(_port);
+				DicomServerConfigurationHelper.Update("localhost", _aeTitle, port, _storageDir);
             }
             catch
             {
@@ -93,7 +95,6 @@ namespace ClearCanvas.ImageViewer.Configuration
         {
             NotifyPropertyChanged("AETitle");
             NotifyPropertyChanged("Port");
-            NotifyPropertyChanged("InterimStorageDirectory");
             NotifyPropertyChanged("Enabled");
         }
 
@@ -103,28 +104,22 @@ namespace ClearCanvas.ImageViewer.Configuration
         {
             get { return _aeTitle; }
             set 
-            { 
-                _aeTitle = value;
+            {
+				if (value != null)
+					_aeTitle = value.Trim();
+				else
+					_aeTitle = String.Empty;
+
                 this.Modified = true;
             }
         }
 
-        public int Port
+        public string Port
         {
             get { return _port; }
             set 
             { 
                 _port = value;
-                this.Modified = true;
-            }
-        }
-
-        public string StorageDir
-        {
-            get { return _storageDir; }
-            set 
-            { 
-                _storageDir = value;
                 this.Modified = true;
             }
         }

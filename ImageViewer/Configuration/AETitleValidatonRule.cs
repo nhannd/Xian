@@ -26,11 +26,11 @@ namespace ClearCanvas.ImageViewer.Configuration
 
 			string aeTitle = dicomComponent.AETitle;
 
+			if (String.IsNullOrEmpty(aeTitle))
+				return new ValidationResult(false, SR.ValidationAETitleMustBeSpecified);
+
 			if (aeTitle.Length < 1 || aeTitle.Length > 16)
 				return new ValidationResult(false, SR.ValidationAETitleLengthIncorrect);
-
-			if (aeTitle == "                ")
-				return new ValidationResult(false, SR.ValidationAETitleAllSpaces);
 
 			return new ValidationResult(true, "");
 		}

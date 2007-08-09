@@ -24,9 +24,25 @@ namespace ClearCanvas.ImageViewer.Configuration
 		{
 			DicomServerConfigurationComponent dicomComponent = component as DicomServerConfigurationComponent;
 
-			int port = dicomComponent.Port;
+			if (String.IsNullOrEmpty(dicomComponent.Port))
+				return new ValidationResult(false, SR.ValidationPortMustBeSpecified);
 
-			if (port < 0 || port > 65535)
+			int port;
+
+			try
+			{
+				port = Convert.ToInt32(dicomComponent.Port);
+			}
+			catch (FormatException e)
+			{
+				return new ValidationResult(false, SR.ValidationPortMustBeNumeric);
+			}
+			catch (OverflowException e)
+			{
+				return new ValidationResult(false, SR.ValidationPortOutOfRange);
+			}
+
+			if (port < 1 || port > 65535)
 				return new ValidationResult(false, SR.ValidationPortOutOfRange);
 
 			return new ValidationResult(true, "");

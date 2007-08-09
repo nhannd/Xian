@@ -178,15 +178,6 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to AE Title cannot contain 16 spaces..
-        /// </summary>
-        internal static string ValidationAETitleAllSpaces {
-            get {
-                return ResourceManager.GetString("ValidationAETitleAllSpaces", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to AE Title must contain between 1 and 16 characters inclusive..
         /// </summary>
         internal static string ValidationAETitleLengthIncorrect {
@@ -196,7 +187,34 @@ namespace ClearCanvas.ImageViewer.Configuration {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Port must be between 0 and 65535..
+        ///   Looks up a localized string similar to AE Title must be specified..
+        /// </summary>
+        internal static string ValidationAETitleMustBeSpecified {
+            get {
+                return ResourceManager.GetString("ValidationAETitleMustBeSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Port must be numeric..
+        /// </summary>
+        internal static string ValidationPortMustBeNumeric {
+            get {
+                return ResourceManager.GetString("ValidationPortMustBeNumeric", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Port must be specified..
+        /// </summary>
+        internal static string ValidationPortMustBeSpecified {
+            get {
+                return ResourceManager.GetString("ValidationPortMustBeSpecified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Port must be between 1 and 65535..
         /// </summary>
         internal static string ValidationPortOutOfRange {
             get {
