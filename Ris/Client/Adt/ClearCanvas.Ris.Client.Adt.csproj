@@ -77,7 +77,7 @@
     <Compile Include="OrderSummaryTable.cs" />
     <Compile Include="CancelOrderTable.cs" />
     <Compile Include="Folders\FolderOptionComponent.cs" />
-    <Compile Include="Folders\WorkflowFolders.cs" />
+    <Compile Include="Folders\RegistrationWorkflowFolders.cs" />
     <Compile Include="OrderEntryComponent.cs" />
     <Compile Include="HL7QueueItemSummaryTable.cs" />
     <Compile Include="HL7QueuePatientSearchTool.cs" />
@@ -130,7 +130,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>TechnologistPreviewComponentSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="TechnologistWorkflowFolderBase.cs" />
+    <Compile Include="TechnologistWorkflowFolder.cs" />
     <Compile Include="TechnologistWorkflowFolderSystem.cs" />
     <Compile Include="TechnologistWorkflowFolderSystemTool.cs" />
     <Compile Include="TechnologistWorkflowTool.cs" />

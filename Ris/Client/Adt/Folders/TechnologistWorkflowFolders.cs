@@ -6,7 +6,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 {
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
     [FolderForWorklistType("Technologist - Scheduled")]
-    public class ScheduledTechnologistWorkflowFolder : TechnologistWorkflowFolderBase
+    public class ScheduledTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
         public ScheduledTechnologistWorkflowFolder(TechnologistWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
             : base(folderSystem, folderDisplayName, folderDescription, worklistRef, null)
@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
     [FolderForWorklistType("Technologist - Checked In")]
-    public class CheckedInTechnologistWorkflowFolder : TechnologistWorkflowFolderBase
+    public class CheckedInTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
         [ExtensionPoint]
         public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ModalityWorklistItem>>
@@ -53,7 +53,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
     [FolderForWorklistType("Technologist - In Progress")]
-    public class InProgressTechnologistWorkflowFolder : TechnologistWorkflowFolderBase
+    public class InProgressTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
         [ExtensionPoint]
         public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ModalityWorklistItem>>
@@ -79,7 +79,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
     [FolderForWorklistType("Technologist - Completed")]
-    public class CompletedTechnologistWorkflowFolder : TechnologistWorkflowFolderBase
+    public class CompletedTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
         [ExtensionPoint]
         public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ModalityWorklistItem>>
@@ -105,7 +105,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
     [FolderForWorklistType("Technologist - Suspended")]
-    public class SuspendedTechnologistWorkflowFolder : TechnologistWorkflowFolderBase
+    public class SuspendedTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
         [ExtensionPoint]
         public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ModalityWorklistItem>>
@@ -131,7 +131,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
 
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
     [FolderForWorklistType("Technologist - Cancelled")]
-    public class CancelledTechnologistWorkflowFolder : TechnologistWorkflowFolderBase
+    public class CancelledTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
         [ExtensionPoint]
         public class DropHandlerExtensionPoint : ExtensionPoint<IDropHandler<ModalityWorklistItem>>
