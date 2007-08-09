@@ -6,7 +6,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.OffisWrapper;
 using System.Runtime.InteropServices;
 
-namespace ClearCanvas.Dicom.Network
+namespace ClearCanvas.Dicom.OffisNetwork
 {
 	public class DicomEventArgs : EventArgs
 	{

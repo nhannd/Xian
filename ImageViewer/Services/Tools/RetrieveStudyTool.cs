@@ -10,7 +10,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Services.DicomServer;
 using ClearCanvas.ImageViewer.Explorer.Dicom;
 using System.ServiceModel;
-using ClearCanvas.Dicom.Network;
+using ClearCanvas.Dicom.OffisNetwork;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Services.Tools

@@ -6,7 +6,7 @@ namespace ClearCanvas.Dicom.Tests
     using System.Collections.Generic;
     using System.Diagnostics;
     using System.Text;
-    using ClearCanvas.Dicom.Network;
+    using ClearCanvas.Dicom.OffisNetwork;
     using NUnit.Framework;
     using ClearCanvas.Dicom;
 

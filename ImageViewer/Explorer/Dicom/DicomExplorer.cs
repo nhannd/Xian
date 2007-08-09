@@ -4,7 +4,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Explorer;
 using ClearCanvas.Desktop;
-using ClearCanvas.Dicom.Network;
+using ClearCanvas.Dicom.OffisNetwork;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom

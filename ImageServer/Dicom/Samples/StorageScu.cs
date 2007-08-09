@@ -196,7 +196,7 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
 
         public void OnReceiveAssociateAccept(DicomClient client, ClientAssociationParameters association)
         {
-            DicomLogger.LogInfo(association.ToString());
+            DicomLogger.LogInfo("Association Accepted:\r\n{0}", association.ToString());
 
             _fileListIndex = 0;
 

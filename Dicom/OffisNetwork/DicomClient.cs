@@ -10,7 +10,7 @@ using MySR = ClearCanvas.Dicom.SR;
 using System.IO;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.Dicom.Network
+namespace ClearCanvas.Dicom.OffisNetwork
 {
     /// <summary>
     /// Main entry point for DICOM networking functionality. Allows the client to 

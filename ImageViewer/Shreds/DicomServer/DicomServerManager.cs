@@ -8,7 +8,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
-using ClearCanvas.Dicom.Network;
+using ClearCanvas.Dicom.OffisNetwork;
 using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Server.ShredHost;
 using ClearCanvas.ImageViewer.Services;
@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 		private List<BackgroundTaskContainer> _sendRetrieveTasks;
 		private object _sendRetrieveTaskLock = new object();
 
-		private volatile ClearCanvas.Dicom.Network.DicomServer _dicomServer;
+        private volatile ClearCanvas.Dicom.OffisNetwork.DicomServer _dicomServer;
 
 		private object _restartServerLock = new object();
 		private bool _restartingServer;
@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					new AETitle(DicomServerSettings.Instance.AETitle),
 					new ListeningPort(DicomServerSettings.Instance.Port));
 
-				_dicomServer = new ClearCanvas.Dicom.Network.DicomServer(myApplicationEntity, DicomServerSettings.Instance.InterimStorageDirectory);
+                _dicomServer = new ClearCanvas.Dicom.OffisNetwork.DicomServer(myApplicationEntity, DicomServerSettings.Instance.InterimStorageDirectory);
 			}
 
 			try
@@ -468,9 +468,9 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
             // strings that can have Specific Character Set effects
             byte[] encodedString = DicomImplementation.CharacterParser.Encode(result.PatientsName, result.SpecificCharacterSet);
-            ClearCanvas.Dicom.Network.OffisDicomHelper.PutAndInsertRawStringIntoItem(responseIdentifiers, new DcmTag(Dcm.PatientsName), encodedString);
+            ClearCanvas.Dicom.OffisNetwork.OffisDicomHelper.PutAndInsertRawStringIntoItem(responseIdentifiers, new DcmTag(Dcm.PatientsName), encodedString);
             encodedString = DicomImplementation.CharacterParser.Encode(result.StudyDescription, result.SpecificCharacterSet);
-            ClearCanvas.Dicom.Network.OffisDicomHelper.PutAndInsertRawStringIntoItem(responseIdentifiers, new DcmTag(Dcm.StudyDescription), encodedString);
+            ClearCanvas.Dicom.OffisNetwork.OffisDicomHelper.PutAndInsertRawStringIntoItem(responseIdentifiers, new DcmTag(Dcm.StudyDescription), encodedString);
 
 			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyDate), result.StudyDate);
 			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyTime), result.StudyTime);

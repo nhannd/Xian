@@ -256,26 +256,26 @@ namespace ClearCanvas.ImageServer.Dicom
         public DicomMessage(DicomAttributeCollection command, DicomAttributeCollection data) : base()
         {
             if (command == null)
-                base._metaInfo = new DicomAttributeCollection();
+                base._metaInfo = new DicomAttributeCollection(0x00000000,0x0000FFFF);
             else
                 base._metaInfo = command;
 
             if (data == null)
-                base._dataSet = new DicomAttributeCollection();
+                base._dataSet = new DicomAttributeCollection(0x00080000,0xFFFFFFFF);
             else
                 base._dataSet = data;
         }
 
         public DicomMessage(DicomFile file)
         {
-            base._metaInfo = new DicomAttributeCollection();
+            base._metaInfo = new DicomAttributeCollection(0x00000000,0x0000FFFF);
             base._dataSet = file.DataSet;
         }
 
         public DicomMessage()
         {
-            base._metaInfo = new DicomAttributeCollection();
-            base._dataSet = new DicomAttributeCollection();
+            base._metaInfo = new DicomAttributeCollection(0x00000000, 0x0000FFFF);
+            base._dataSet = new DicomAttributeCollection(0x00080000, 0xFFFFFFFF);
         }
         #endregion
 

@@ -8,7 +8,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using MySR = ClearCanvas.Dicom.SR;
 
-namespace ClearCanvas.Dicom.Network
+namespace ClearCanvas.Dicom.OffisNetwork
 {
 	public sealed class DicomServer
     {

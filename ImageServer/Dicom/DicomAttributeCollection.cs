@@ -26,6 +26,8 @@ namespace ClearCanvas.ImageServer.Dicom
 
         private SortedDictionary<uint, DicomAttribute> _attributeList = new SortedDictionary<uint, DicomAttribute>();
         private String _specificCharacterSet = "";
+        private uint _startTag = 0x00000000;
+        private uint _stopTag = 0xFFFFFFFF;       
         #endregion
 
         #region Constructors
@@ -35,6 +37,17 @@ namespace ClearCanvas.ImageServer.Dicom
         /// </summary>
         public DicomAttributeCollection()
         {
+        }
+
+        /// <summary>
+        /// Contructor that sets the range of tags in use for the collection.
+        /// </summary>
+        /// <param name="startTag"></param>
+        /// <param name="stopTag"></param>
+        public DicomAttributeCollection(uint startTag, uint stopTag)
+        {
+            _startTag = startTag;
+            _stopTag = stopTag;
         }
 
         /// <summary>
@@ -70,6 +83,14 @@ namespace ClearCanvas.ImageServer.Dicom
                 // This line forces the value to be placed in sequences when we don't want it to be, because of how the parser is set
                 //this[DicomTags.SpecificCharacterSet].SetStringValue(_specificCharacterSet);
             }
+        }
+
+        /// <summary>
+        /// The number of attributes in the collection.
+        /// </summary>
+        public int Count
+        { 
+            get { return _attributeList.Count; } 
         }
         #endregion
 
@@ -132,6 +153,9 @@ namespace ClearCanvas.ImageServer.Dicom
 
                 if (!_attributeList.ContainsKey(tag))
                 {
+                    if ((tag < _startTag) || (tag > _stopTag))
+                        throw new DicomException("Tag is out of range for collection: " + tag.ToString());
+
                     DicomTag dicomTag = DicomTagDictionary.GetDicomTag(tag);
 
                     if (dicomTag == null)
@@ -162,8 +186,12 @@ namespace ClearCanvas.ImageServer.Dicom
                 }
                 else
                 {
+                    if ((tag < _startTag) || (tag > _stopTag))
+                        throw new DicomException("Tag is out of range for collection: " + tag.ToString());
+
                     if (value.Tag.TagValue != tag)
-                        throw new DicomException("Tag being set does not match tag in AbstractAttribute");
+                        throw new DicomException("Tag being set does not match tag in DicomAttribute");
+
                     _attributeList[tag] = value;
                     value.ParentCollection = this;                    
                 }
@@ -183,6 +211,9 @@ namespace ClearCanvas.ImageServer.Dicom
 
                 if (!_attributeList.ContainsKey(tag.TagValue))
                 {
+                    if ((tag.TagValue < _startTag) || (tag.TagValue > _stopTag))
+                        throw new DicomException("Tag is out of range for collection: " + tag.ToString());
+
                     attr = tag.CreateDicomAttribute();
                     if (attr == null)
                     {
@@ -210,8 +241,11 @@ namespace ClearCanvas.ImageServer.Dicom
                 else
                 {
                     if (value.Tag.TagValue != tag.TagValue)
-                        throw new DicomException("Tag being set does not match tag in AbstractAttribute");
-     
+                        throw new DicomException("Tag being set does not match tag in DicomAttribute");
+
+                    if ((tag.TagValue < _startTag) || (tag.TagValue > _stopTag))
+                        throw new DicomException("Tag is out of range for collection: " + tag.ToString());
+
                     _attributeList[tag.TagValue] = value;
                     value.ParentCollection = this;
                 }
@@ -709,7 +743,7 @@ namespace ClearCanvas.ImageServer.Dicom
         {
             foreach (DicomAttribute item in this)
             {
-                item.Dump(sb, prefix, DicomDumpOptions.Default);
+                item.Dump(sb, prefix, options);
                 sb.AppendLine();
             }
         }

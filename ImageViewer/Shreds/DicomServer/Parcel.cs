@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Dicom;
-using ClearCanvas.Dicom.Network;
+using ClearCanvas.Dicom.OffisNetwork;
 using ClearCanvas.Dicom.DataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.DicomServer

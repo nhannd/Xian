@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
     using ClearCanvas.Common;
     using ClearCanvas.ImageViewer.StudyManagement;
     using ClearCanvas.Dicom;
-    using ClearCanvas.Dicom.Network;
+    using ClearCanvas.Dicom.OffisNetwork;
 	using ClearCanvas.ImageViewer.Configuration;
 
     [ClearCanvas.Common.ExtensionOf(typeof(ClearCanvas.ImageViewer.StudyManagement.StudyFinderExtensionPoint))]

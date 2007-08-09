@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Dicom.Network
+namespace ClearCanvas.Dicom.OffisNetwork
 {
     /// <summary>
     /// Argument type that encapsulates data pertinent to a

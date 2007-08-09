@@ -5,7 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom.OffisWrapper;
 using MySR = ClearCanvas.Dicom.SR;
 
-namespace ClearCanvas.Dicom.Network
+namespace ClearCanvas.Dicom.OffisNetwork
 {
 	/// <summary>
 	/// Encapsulates a set of static functions that helps with work on various aspects to

@@ -543,6 +543,12 @@ namespace ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator
             writer.WriteLine("        private static Dictionary<String,SopClass> _sopList = new Dictionary<String,SopClass>();");
             writer.WriteLine("        private static bool _bIsFirst = true;");
             writer.WriteLine("");
+            writer.WriteLine("        /// <summary>Override that displays the name of the SOP Class.</summary>");
+            writer.WriteLine("        public override string ToString()");
+            writer.WriteLine("        {");
+            writer.WriteLine("            return this.Name;");
+            writer.WriteLine("        }");
+            writer.WriteLine("");
             writer.WriteLine("        /// <summary>Retrieve a SopClass object associated with the Uid.</summary>");
             writer.WriteLine("        public static SopClass GetSopClass(String uid)");
             writer.WriteLine("        {");

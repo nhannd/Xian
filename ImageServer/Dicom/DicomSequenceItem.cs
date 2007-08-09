@@ -8,7 +8,7 @@ namespace ClearCanvas.ImageServer.Dicom
 {
     public class DicomSequenceItem : DicomAttributeCollection
     {
-        public DicomSequenceItem() : base()
+        public DicomSequenceItem() : base(0x00000000,0xFFFFFFFF)
         {
         }
 

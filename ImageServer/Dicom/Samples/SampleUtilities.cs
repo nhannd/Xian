@@ -12,33 +12,29 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
     {
         private static TextBox _tb;
         private static int _threadId;
-        private static StringBuilder _saveLogs = null;
         public static void Log(DicomLogInfo info)
         {
-            if (_threadId != Thread.CurrentThread.ManagedThreadId)
-            {
-                if (_saveLogs == null)
-                    _saveLogs = new StringBuilder();
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine();
+            sb.AppendFormat("({0}) {1} {2} ({3}) {4}", info.ThreadId,
+                         info.Time.ToShortDateString(), info.Time.ToLongTimeString(),
+                         info.Level, info.Message);
 
-                _saveLogs.AppendLine();
-                _saveLogs.AppendFormat("({0}) {1} {2} ({3}) {4}", info.ThreadId, 
-                             info.Time.ToShortDateString(), info.Time.ToLongTimeString(),
-                             info.Level, info.Message);
+            AppendToTextBox(sb.ToString());
+        }
+
+        private static void AppendToTextBox(string info)
+        {
+            if (_tb == null)
+                return;
+
+            if (!_tb.InvokeRequired)
+            {
+                _tb.AppendText(info);
             }
             else
             {
-                if (_saveLogs != null)
-                {
-                    _tb.AppendText(_saveLogs.ToString());
-                    _saveLogs = null;
-                }
-                StringBuilder sb = new StringBuilder();
-                sb.AppendLine();
-                sb.AppendFormat("({0}) {1} {2} ({3}) {4}", info.ThreadId,
-                             info.Time.ToShortDateString(), info.Time.ToLongTimeString(),
-                             info.Level, info.Message);
-
-                _tb.AppendText( sb.ToString() );
+                _tb.BeginInvoke(new Action<string>(AppendToTextBox), new object[] { info });
             }
         }
 

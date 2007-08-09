@@ -111,13 +111,16 @@ namespace ClearCanvas.ImageServer.Dicom
         }
     }
 
+    /// <summary>
+    /// Default implementation of a logger that logs the DICOM log to a file.
+    /// </summary>
     public class DicomFileLogger
     {
         private static String _logFile = "DicomLog.log";
 
         /// <summary>
         /// Static property containing the name of the log file.
-        /// The default value is 'DicomLogDelegate.txt'.
+        /// The default value is 'DicomLog.txt'.
         /// </summary>
         public static String LogFile
         {
@@ -140,8 +143,7 @@ namespace ClearCanvas.ImageServer.Dicom
             {
                 StreamWriter writer;
                 try
-                {
-                    
+                {                    
                     String logFileDate = _logFile;
                     int index = logFileDate.IndexOf(".log");
                     if (index < 0)

@@ -156,7 +156,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 		#region NetworkBase Overrides
         private void OnClientConnected()
         {
-            DicomLogger.LogInfo("{0} SCU -> Connect: {0}", _assoc.CallingAE, InternalSocket.RemoteEndPoint.ToString());
+            DicomLogger.LogInfo("{0} SCU -> Connect: {1}", _assoc.CallingAE, InternalSocket.RemoteEndPoint.ToString());
 
             SendAssociateRequest(_assoc);
         }

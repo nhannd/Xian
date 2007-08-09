@@ -389,7 +389,7 @@ namespace ClearCanvas.ImageServer.Dicom.IO
                         }
                         else if (_tag == DicomTag.SequenceDelimitationItem)
                         {
-                            _dataset[_tag] = _fragment;
+                            _dataset[_fragment.Tag] = _fragment;
                             _fragment = null;
                         }
                         else

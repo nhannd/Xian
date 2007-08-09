@@ -8,7 +8,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.Dicom.Network;
+using ClearCanvas.Dicom.OffisNetwork;
 using ClearCanvas.Dicom;
 using System.ComponentModel;
 using ClearCanvas.Common.Utilities;

@@ -48,7 +48,11 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
         #region Private Methods
         private static void AddPresentationContexts(ServerAssociationParameters assoc)
         {
-            byte pcid = assoc.AddPresentationContext(SopClass.MRImageStorage);
+            byte pcid = assoc.AddPresentationContext(SopClass.VerificationSOPClass);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+
+            pcid = assoc.AddPresentationContext(SopClass.MRImageStorage);
             assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
             assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
 
@@ -171,8 +175,6 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
             pcid = assoc.AddPresentationContext(SopClass.ChestCADSR);
             assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
             assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
-
-
         }
         #endregion
 
@@ -215,6 +217,12 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
         void IDicomServerHandler.OnReceiveRequestMessage(DicomServer server, ServerAssociationParameters association, byte presentationID, DicomMessage message)
         {
 
+            if (message.CommandField == DicomCommandField.CEchoRequest)
+            {
+                server.SendCEchoResponse(presentationID, message.MessageId, DicomStatuses.Success);
+                return;
+            }
+
             String studyInstanceUid = null;
             String seriesInstanceUid = null;
             DicomUid sopInstanceUid = null;
@@ -232,6 +240,8 @@ namespace ClearCanvas.ImageServer.Dicom.Samples
                 return;
             }
 
+            if (!Directory.Exists(StorageScp.StorageLocation))
+                Directory.CreateDirectory(StorageScp.StorageLocation);
 
             StringBuilder path = new StringBuilder();
             path.AppendFormat("{0}{1}{2}{3}{4}", StorageScp.StorageLocation,  Path.DirectorySeparatorChar,

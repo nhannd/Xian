@@ -70,6 +70,7 @@
     </Compile>
     <Compile Include="StorageScp.cs" />
     <Compile Include="StorageScu.cs" />
+    <Compile Include="VerificationScu.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ClearCanvas.ImageServer.Dicom.csproj">

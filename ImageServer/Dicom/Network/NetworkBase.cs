@@ -379,6 +379,8 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
         public void SendCEchoRequest(byte presentationID, ushort messageID)
         {
+            DicomLogger.LogInfo("Sending C Echo request, pres ID: {0}, messageID = {1}", presentationID, messageID);
+
             DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
             DicomAttributeCollection command = CreateRequest(messageID, DicomCommandField.CEchoRequest, affectedClass, false);
             SendDimse(presentationID, command, null);
@@ -455,7 +457,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
         #region Private Methods
         private DicomAttributeCollection CreateRequest(ushort messageID, DicomCommandField commandField, DicomUid affectedClass, bool hasDataset)
         {
-            DicomAttributeCollection command = new DicomAttributeCollection();
+            DicomAttributeCollection command = new DicomAttributeCollection(0x00000000,0x0000FFFF);
             command[DicomTags.MessageID].Values = messageID;
             command[DicomTags.CommandField].Values = (ushort)commandField;
             command[DicomTags.AffectedSOPClassUID].Values = affectedClass.UID;
@@ -641,7 +643,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
 
                         if (_dimse.Command == null)
                         {
-                            _dimse.Command = new DicomAttributeCollection();
+                            _dimse.Command = new DicomAttributeCollection(0x00000000, 0x0000FFFF);
                         }
 
                         if (_dimse.CommandReader == null)
@@ -689,7 +691,7 @@ namespace ClearCanvas.ImageServer.Dicom.Network
                         if (_dimse.Dataset == null)
                         {
                             
-                            _dimse.Dataset = new DicomAttributeCollection();
+                            _dimse.Dataset = new DicomAttributeCollection(0x00080000,0xFFFFFFFF);
                         }
 
                         if (_dimse.DatasetReader == null)

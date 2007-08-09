@@ -8,7 +8,7 @@ using System.Configuration;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.DataStore;
-using ClearCanvas.Dicom.Network;
+using ClearCanvas.Dicom.OffisNetwork;
 using ClearCanvas.Dicom.OffisWrapper;
 using ClearCanvas.Server.ShredHost;
 using ClearCanvas.ImageViewer.Services.DicomServer;

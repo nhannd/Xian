@@ -2153,6 +2153,12 @@ namespace ClearCanvas.ImageServer.Dicom
         private static Dictionary<String,SopClass> _sopList = new Dictionary<String,SopClass>();
         private static bool _bIsFirst = true;
 
+        /// <summary>Override that displays the name of the SOP Class.</summary>");
+        public override string ToString()
+        {
+            return this.Name;
+        }
+
         /// <summary>Retrieve a SopClass object associated with the Uid.</summary>
         public static SopClass GetSopClass(String uid)
         {

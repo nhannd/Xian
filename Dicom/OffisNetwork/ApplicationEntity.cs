@@ -1,4 +1,4 @@
-namespace ClearCanvas.Dicom.Network
+namespace ClearCanvas.Dicom.OffisNetwork
 {
     using System;
     using System.Collections.Generic;
