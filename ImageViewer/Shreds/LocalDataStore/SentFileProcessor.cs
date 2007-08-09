@@ -146,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							}
 							catch (Exception e)
 							{
-								Platform.Log(e); //this only happens if we can't parse the file, so not much we can do.
+								Platform.Log(LogLevel.Error, e); //this only happens if we can't parse the file, so not much we can do.
 							}
 						}
 					);

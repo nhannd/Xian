@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
         public override void Start()
         {
-            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
+            Platform.Log(LogLevel.Info, _className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
 
 			DicomServerManager.Instance.Start();
 
@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			DicomServerManager.Instance.Stop();
 			
-			Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
+			Platform.Log(LogLevel.Info, _className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
         }
 
         public override string GetDisplayName()

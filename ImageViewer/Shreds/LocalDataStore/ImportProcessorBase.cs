@@ -173,7 +173,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 								break;
 						}
 
-						Platform.Log(results.Error);
+						Platform.Log(LogLevel.Error, results.Error);
 
 						if (jobInformation.ProgressItem.IsImportComplete())
 						{

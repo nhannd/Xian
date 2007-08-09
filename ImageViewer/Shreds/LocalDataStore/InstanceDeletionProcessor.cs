@@ -84,8 +84,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						}
 					}
 					catch(Exception e)
-					{ 
-						Platform.Log(e);
+					{
+						Platform.Log(LogLevel.Error, e);
 					}
 				}
 			}
@@ -171,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						if (study == null)
 						{
 							errorMessage = String.Format(SR.ExceptionCannotDeleteStudyDoesNotExist, instanceUid);
-							Platform.Log(new Exception(errorMessage));
+							Platform.Log(LogLevel.Error, new Exception(errorMessage));
 							publish();
 							continue;
 						}
@@ -188,21 +188,21 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						}
 						catch (Exception e)
 						{
-							Platform.Log(e);
+							Platform.Log(LogLevel.Error, e);
 							errorMessage = String.Format(SR.ExceptionFailedToDeleteStudy, instanceUid);
 						}
 
 						GetStatistics(sopInstances, out numberRelatedSopInstancesExistAfter, out totalUsedSpaceAfter);
 						actualFreedSpace = totalUsedSpaceBefore - totalUsedSpaceAfter;
 
-						Platform.Log(String.Format("Study Deletion Info - StudyInstanceUid: {0}, Space Freed (bytes): {1}, Number of Related Sop Instances Deleted: {2}",
+						Platform.Log(LogLevel.Info, String.Format("Study Deletion Info - StudyInstanceUid: {0}, Space Freed (bytes): {1}, Number of Related Sop Instances Deleted: {2}",
 							instanceUid, actualFreedSpace, numberRelatedSopInstancesExistBefore - numberRelatedSopInstancesExistAfter));
 
 						publish();
 					}
 					catch (Exception e)
 					{
-						Platform.Log(e);
+						Platform.Log(LogLevel.Error, e);
 						errorMessage = String.Format(SR.ExceptionFailedToDeleteStudy, instanceUid);
 						publish();
 					}

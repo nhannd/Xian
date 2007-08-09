@@ -106,7 +106,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				_dicomServer.Stop();
 				_dicomServer = null;
 
-				Platform.Log("DICOM Server stopped", LogLevel.Info);
+				Platform.Log(LogLevel.Info, "DICOM Server stopped");
 			}
 		}
 
@@ -129,11 +129,11 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			try
 			{
 				_dicomServer.Start();
-				Platform.Log("DICOM Server started", LogLevel.Info);
+				Platform.Log(LogLevel.Info, "DICOM Server started");
 			}
 			catch (Exception e)
 			{
-				Platform.Log(new Exception("Failed to start Dicom Server", e));
+				Platform.Log(LogLevel.Error, new Exception("Failed to start Dicom Server", e));
 			}
 		}
 
@@ -201,7 +201,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 			catch (Exception ex)
 			{
-				Platform.Log(ex);
+				Platform.Log(LogLevel.Error, ex);
 				destinationAE = null;
 			}
 
@@ -240,7 +240,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				}
 				catch (Exception ex)
 				{
-					Platform.Log(ex);
+					Platform.Log(LogLevel.Error, ex);
 				}
 
 			}, false);
@@ -317,7 +317,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			catch (Exception ex)
 			{
 				client.Abort();
-				Platform.Log(ex);
+				Platform.Log(LogLevel.Error, ex);
 			}
 
 			info.DimseStatus = (ushort)OffisDcm.STATUS_Success;
@@ -355,7 +355,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			catch (Exception ex)
 			{
 				client.Abort();
-				Platform.Log(ex);
+				Platform.Log(LogLevel.Error, ex);
 			}
 		}
 
@@ -422,7 +422,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 			catch (Exception exception)
 			{
-				Platform.Log(exception);
+				Platform.Log(LogLevel.Error, exception);
 				return OffisDcm.STATUS_FIND_Failed_UnableToProcess;
 			}
 
@@ -458,7 +458,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 			catch (Exception exception)
 			{
-				Platform.Log(exception, LogLevel.Error);
+				Platform.Log(LogLevel.Error, exception);
 				return OffisDcm.STATUS_FIND_Failed_UnableToProcess;
 			}
 
@@ -618,7 +618,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				catch (Exception e)
 				{
 					//not much we can do other than just log it.
-					Platform.Log(e);
+					Platform.Log(LogLevel.Error, e);
 					serviceClient.Abort();
 				}
 
@@ -628,7 +628,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				}
 				catch (Exception e)
 				{
-					Platform.Log(e);
+					Platform.Log(LogLevel.Error, e);
 
 					List<SendStudyInformation> incompleteStudyInformation = ConvertToSendStudyInformation(parcel.UnsentSopInstancesByStudy);
 
@@ -650,7 +650,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					catch (Exception ex)
 					{
 						//not much we can do other than just log it.
-						Platform.Log(ex);
+						Platform.Log(LogLevel.Error, ex);
 						serviceClient.Abort();
 					}
 				}
@@ -709,7 +709,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					catch (Exception ex)
 					{
 						//can't tell the Local Data Store service about the pending retrieve operation, not much we can do.
-						Platform.Log(ex);
+						Platform.Log(LogLevel.Error, ex);
 						serviceClient.Abort();
 					}
 
@@ -726,7 +726,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					}
 					catch (Exception e)
 					{
-						Platform.Log(e);
+						Platform.Log(LogLevel.Error, e);
 
 						serviceClient = new LocalDataStoreServiceClient();
 
@@ -742,7 +742,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 						catch (Exception ex)
 						{
 							//again, not much we can do.
-							Platform.Log(ex);
+							Platform.Log(LogLevel.Error, ex);
 							serviceClient.Abort();
 						}
 					}

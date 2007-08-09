@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 		public override void Start()
 		{
-			Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
+			Platform.Log(LogLevel.Info, _className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
 
 			try
 			{
@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e);
+				Platform.Log(LogLevel.Error, e);
 			}
 
 			StartNetPipeHost<LocalDataStoreServiceType, ILocalDataStoreService>(_localDataStoreEndpointName, SR.LocalDataStoreService);
@@ -49,10 +49,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e);
+				Platform.Log(LogLevel.Error, e);
 			}
 
-			Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
+			Platform.Log(LogLevel.Info, _className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
 		}
 
 		public override string GetDisplayName()

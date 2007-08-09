@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e);
+				Platform.Log(LogLevel.Error, e);
 				//we throw a serializable, non-FaultException-derived exception so that the 
 				//client channel *does* get closed.
 				string message = SR.ExceptionFailedToInitiateSend;
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e);
+				Platform.Log(LogLevel.Error, e);
 				//we throw a serializable, non-FaultException-derived exception so that the 
 				//client channel *does* get closed.
 				string message = SR.ExceptionFailedToInitiateRetrieve;
@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e);
+				Platform.Log(LogLevel.Error, e);
 				//we throw a serializable, non-FaultException-derived exception so that the 
 				//client channel *does* get closed.
 				string message = SR.ExceptionFailedToGetServerConfiguration;
@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e);
+				Platform.Log(LogLevel.Error, e);
 				//we throw a serializable, non-FaultException-derived exception so that the 
 				//client channel *does* get closed.
 				string message = SR.ExceptionFailedToUpdateServerConfiguration;

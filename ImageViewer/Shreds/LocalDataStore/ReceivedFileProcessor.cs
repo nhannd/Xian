@@ -233,7 +233,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							LocalDataStoreActivityPublisher.Instance.ReceiveProgressChanged(progressItem.Clone());
 						}
 
-						Platform.Log(results.Error);
+						Platform.Log(LogLevel.Error, results.Error);
 					}
 
 					return;
@@ -268,7 +268,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						}
 
 						this.FormatErrorMessage(progressItem, results.Error);
-						Platform.Log(results.Error);
+						Platform.Log(LogLevel.Error, results.Error);
 					}
 					else if (receivedFileImportInformation.CompletedStage == DicomFileImporter.ImportStage.FileParsed)
 					{

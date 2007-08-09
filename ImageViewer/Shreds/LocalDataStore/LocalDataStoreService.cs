@@ -304,7 +304,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e);
+				Platform.Log(LogLevel.Error, e);
 				_disabled = true;
 			}
 		}
@@ -330,7 +330,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			}
 			catch (Exception e)
 			{
-				Platform.Log(e);
+				Platform.Log(LogLevel.Error, e);
 			}
 
 			return returnPath;

@@ -233,7 +233,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					catch (Exception e)
 					{
 						clearFailed = true;
-						Platform.Log(e);
+						Platform.Log(LogLevel.Error, e);
 
 						lock (_syncLock)
 						{

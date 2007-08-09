@@ -817,7 +817,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						}
 						catch (Exception e)
 						{
-							Platform.Log(e);
+							Platform.Log(LogLevel.Error, e);
 						}
 
 						if (_stopDatabaseThread)

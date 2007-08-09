@@ -126,7 +126,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 					}
 					catch (Exception e)
 					{
-						Platform.Log(e);
+						Platform.Log(LogLevel.Error, e);
 					}
 
 					lock (_settingsSyncLock)
@@ -154,7 +154,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 				}
 				catch (Exception e)
 				{
-					Platform.Log(e);
+					Platform.Log(LogLevel.Error, e);
 				}
 			}
 			while (!_stop);
@@ -164,12 +164,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 		{
 			_currentDriveInfo.Refresh();
 
-			Platform.Log(String.Format(SR.FormatCheckUsage, _currentDriveInfo.UsedSpacePercentage, _currentDriveInfo.HighWatermark, _currentDriveInfo.LowWatermark));
+			Platform.Log(LogLevel.Info, String.Format(SR.FormatCheckUsage, _currentDriveInfo.UsedSpacePercentage, _currentDriveInfo.HighWatermark, _currentDriveInfo.LowWatermark));
 		}
 
 		private bool RemoveStudies()
 		{
-			Platform.Log(SR.MessageBeginDeleting);
+			Platform.Log(LogLevel.Info, SR.MessageBeginDeleting);
 
 			IDataStoreReader reader = SingleSessionDataAccessLayer.GetIDataStoreReader();
 			List<IStudy> studies = new List<IStudy>(reader.GetStudies());
@@ -196,7 +196,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 						}
 						catch (Exception e)
 						{
-							Platform.Log(e);
+							Platform.Log(LogLevel.Error, e);
 						}
 					}
 
@@ -209,7 +209,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 				}
 				catch (Exception e)
 				{
-					Platform.Log(e);
+					Platform.Log(LogLevel.Error, e);
 				}
 			}
 
@@ -218,7 +218,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
 			if (deleteStudyUids.Count == 0)
 			{
-				Platform.Log(SR.MessageNothingToDelete); 
+				Platform.Log(LogLevel.Info, SR.MessageNothingToDelete); 
 				return false;
 			}
 
@@ -227,7 +227,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 			request.InstanceLevel = InstanceLevel.Study;
 			request.InstanceUids = deleteStudyUids;
 
-			Platform.Log(String.Format(SR.FormatDeletionRequest, deleteStudyUids.Count, totalExpectedFreeSpace));
+			Platform.Log(LogLevel.Info, String.Format(SR.FormatDeletionRequest, deleteStudyUids.Count, totalExpectedFreeSpace));
 
 			try
 			{
@@ -279,7 +279,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 					}
 					catch (Exception e)
 					{
-						Platform.Log(e);
+						Platform.Log(LogLevel.Error, e);
 						_currentDriveInfo = null;
 					}
 				}

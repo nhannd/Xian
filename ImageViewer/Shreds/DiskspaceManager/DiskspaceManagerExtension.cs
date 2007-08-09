@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 
         public override void Start()
         {
-			Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
+			Platform.Log(LogLevel.Info, _className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Start invoked");
 
 			DiskspaceManagerProcessor.Instance.StartProcessor();
 
@@ -37,8 +37,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 			StopHost(_diskspaceManagerEndpointName);
 			
 			DiskspaceManagerProcessor.Instance.StopProcessor();
-			
-            Platform.Log(_className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
+
+			Platform.Log(LogLevel.Info, _className + "[" + AppDomain.CurrentDomain.FriendlyName + "]: Stop invoked");
         }
 
         public override string GetDisplayName()
