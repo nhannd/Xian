@@ -4,7 +4,7 @@ using System.Collections;
 using System.Text;
 using System.Xml;
 
-using ClearCanvas.ImageServer.Dicom;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Streaming
 {

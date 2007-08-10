@@ -5,7 +5,7 @@ using System.Text;
 using NUnit.Framework;
 
 using ClearCanvas.ImageServer.Streaming;
-using ClearCanvas.ImageServer.Dicom;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Streaming.Tests
 {

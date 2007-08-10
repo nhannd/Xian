@@ -34,8 +34,15 @@ namespace ClearCanvas.Dicom
 
         public DicomFile(String filename)
         {
-            base._metaInfo = new DicomAttributeCollection();
-            base._dataSet = new DicomAttributeCollection();
+            base._metaInfo = new DicomAttributeCollection(0x00020000, 0x0002FFFF);
+            base._dataSet = new DicomAttributeCollection(0x00040000, 0xFFFFFFFF);
+
+            _filename = filename;
+        }
+        public DicomFile(DicomMessage msg, String filename)
+        {
+            base._metaInfo = new DicomAttributeCollection(0x00020000,0x0002FFFF);
+            base._dataSet = msg.DataSet;
 
             _filename = filename;
         }
@@ -180,52 +187,61 @@ namespace ClearCanvas.Dicom
 
         public void Load(uint stopTag, DicomReadOptions options)
         {
-            using (FileStream fs = File.OpenRead(Filename))
-            {
-                fs.Seek(128, SeekOrigin.Begin);
-                CheckFileHeader(fs);
-                DicomStreamReader dsr = new DicomStreamReader(fs);
-                dsr.TransferSyntax = TransferSyntax.ExplicitVRLittleEndian;
-
-                dsr.Dataset = base._metaInfo;
-                dsr.Read(new DicomTag(0x0002FFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false), options);
-                dsr.Dataset = base._dataSet;
-                dsr.TransferSyntax = TransferSyntax;
-
-                DicomTag stopDicomTag = DicomTagDictionary.GetDicomTag(stopTag);
-                if (stopDicomTag == null)
-                    stopDicomTag = new DicomTag(stopTag, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false);
-                dsr.Read(stopDicomTag, options);
-            }
+            DicomTag stopDicomTag = DicomTagDictionary.GetDicomTag(stopTag);
+            if (stopDicomTag == null)
+                stopDicomTag = new DicomTag(stopTag, "Bogus Tag", DicomVr.NONE, false, 1, 1, false);
+            Load(stopDicomTag, options);
         }
 
 
         public void Load(DicomTag stopTag, DicomReadOptions options)
         {
+            if (!File.Exists(Filename))
+                throw new FileNotFoundException(Filename);
+
+            if (stopTag == null)
+                stopTag = new DicomTag(0xFFFFFFFF, "Bogus Tag", DicomVr.NONE, false, 1, 1, false);
+
             using (FileStream fs = File.OpenRead(Filename))
             {
                 fs.Seek(128, SeekOrigin.Begin);
-                CheckFileHeader(fs);
-                DicomStreamReader dsr = new DicomStreamReader(fs);
-                dsr.TransferSyntax = TransferSyntax.ExplicitVRLittleEndian;
+                DicomStreamReader dsr;
+                if (!FileHasPart10Header(fs))
+                {
+                    fs.Seek(0, SeekOrigin.Begin);
+                    dsr = new DicomStreamReader(fs);
+                    dsr.TransferSyntax = TransferSyntax.ImplicitVRLittleEndian;
+                    dsr.Dataset = base._dataSet;
+                    dsr.Read(stopTag, options);
 
-                dsr.Dataset = base._metaInfo;
-                dsr.Read(new DicomTag(0x0002FFFF,"Bogus Tag",DicomVr.UNvr,false,1,1,false), options);
-                dsr.Dataset = base._dataSet;
-                dsr.TransferSyntax = TransferSyntax;
-                if (stopTag == null)
-                    stopTag = new DicomTag(0xFFFFFFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false);
-                dsr.Read(stopTag, options);
+                    TransferSyntax = TransferSyntax.ImplicitVRLittleEndian;
+                    if (DataSet.Contains(DicomTags.SOPClassUID))
+                        MediaStorageSopClassUid = DataSet[DicomTags.SOPClassUID].ToString();
+                    if (DataSet.Contains(DicomTags.SOPInstanceUID))
+                        MediaStorageSopInstanceUid = DataSet[DicomTags.SOPInstanceUID].ToString();
+
+                    // TODO: put important tag values in the MetaHeader... like TransferSyntax, SopClassUid, etc.
+                }
+                else
+                {
+                    dsr = new DicomStreamReader(fs);
+                    dsr.TransferSyntax = TransferSyntax.ExplicitVRLittleEndian;
+
+                    dsr.Dataset = base._metaInfo;
+                    dsr.Read(new DicomTag(0x0002FFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false), options);
+                    dsr.Dataset = base._dataSet;
+                    dsr.TransferSyntax = TransferSyntax;
+                    dsr.Read(stopTag, options);
+                }
             }
         }
 
-        protected static void CheckFileHeader(FileStream fs)
+        protected static bool FileHasPart10Header(FileStream fs)
         {
-            if (fs.ReadByte() != (byte)'D' ||
+            return (!(fs.ReadByte() != (byte)'D' ||
                 fs.ReadByte() != (byte)'I' ||
                 fs.ReadByte() != (byte)'C' ||
-                fs.ReadByte() != (byte)'M')
-                throw new DicomException("Invalid DICOM file: " + fs.Name);
+                fs.ReadByte() != (byte)'M'));
         }
 
         public bool Save(DicomWriteOptions options)

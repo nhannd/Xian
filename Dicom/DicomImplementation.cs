@@ -10,4 +10,5 @@ namespace ClearCanvas.Dicom
         public static string Version = "Dicom 0.1";
         public static IDicomCharacterSetParser CharacterParser = new SpecificCharacterSetParser();
     }
+
 }

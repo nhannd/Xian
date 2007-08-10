@@ -1,0 +1,600 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Net;
+
+namespace ClearCanvas.Dicom.Network
+{
+    public enum DicomRoleSelection {
+		Disabled,
+		SCU,
+		SCP,
+		Both,
+		None
+	}
+
+	public enum DicomPresContextResult : byte {
+		Proposed = 255,
+		Accept = 0,
+		RejectUser = 1,
+		RejectNoReason = 2,
+		RejectAbstractSyntaxNotSupported = 3,
+		RejectTransferSyntaxesNotSupported = 4
+	}
+
+	internal class DicomPresContext {
+		#region Private Members
+		private byte _pcid;
+		private DicomPresContextResult _result;
+		private DicomRoleSelection _roles;
+		private SopClass _abstract;
+		private List<TransferSyntax> _transfers;
+		#endregion
+
+		#region Public Constructor
+		public DicomPresContext(byte pcid, SopClass abstractSyntax) {
+			_pcid = pcid;
+			_result = DicomPresContextResult.Proposed;
+			_roles = DicomRoleSelection.Disabled;
+			_abstract = abstractSyntax;
+			_transfers = new List<TransferSyntax>();
+		}
+
+		internal DicomPresContext(byte pcid, SopClass abstractSyntax, TransferSyntax transferSyntax, DicomPresContextResult result) {
+			_pcid = pcid;
+			_result = result;
+			_roles = DicomRoleSelection.Disabled;
+			_abstract = abstractSyntax;
+			_transfers = new List<TransferSyntax>();
+			_transfers.Add(transferSyntax);
+		}
+		#endregion
+
+		#region Public Properties
+		public byte ID {
+			get { return _pcid; }
+		}
+
+		public DicomPresContextResult Result {
+			get { return _result; }
+		}
+
+		public bool IsRoleSelect {
+			get { return _roles != DicomRoleSelection.Disabled; }
+		}
+		public bool IsSupportScuRole {
+			get { return _roles == DicomRoleSelection.SCU || _roles == DicomRoleSelection.Both; }
+		}
+		public bool IsSupportScpRole {
+			get { return _roles == DicomRoleSelection.SCP || _roles == DicomRoleSelection.Both; }
+		}
+
+		public SopClass AbstractSyntax {
+			get { return _abstract; }
+		}
+
+		public TransferSyntax AcceptedTransferSyntax {
+			get {
+				if (_transfers.Count > 0)
+					return _transfers[0];
+				return null;
+			}
+		}
+		#endregion
+
+		#region Public Members
+		public void SetResult(DicomPresContextResult result) {
+			_result = result;
+		}
+
+		public void SetRoleSelect(DicomRoleSelection roles) {
+			_roles = roles;
+		}
+		public DicomRoleSelection GetRoleSelect() {
+			return _roles;
+		}
+
+		public void AddTransfer(TransferSyntax ts) {
+			if (!_transfers.Contains(ts))
+				_transfers.Add(ts);
+		}
+
+		public void RemoveTransfer(TransferSyntax ts) {
+			if (_transfers.Contains(ts))
+				_transfers.Remove(ts);
+		}
+
+		public void ClearTransfers() {
+			_transfers.Clear();
+		}
+
+		public IList<TransferSyntax> GetTransfers() {
+			return _transfers.AsReadOnly();
+		}
+
+		public bool HasTransfer(TransferSyntax ts) {
+			return _transfers.Contains(ts);
+		}
+
+		public string GetResultDescription() {
+			switch (_result) {
+			case DicomPresContextResult.Accept:
+				return "Accept";
+			case DicomPresContextResult.Proposed:
+				return "Proposed";
+			case DicomPresContextResult.RejectAbstractSyntaxNotSupported:
+				return "Reject - Abstract Syntax Not Supported";
+			case DicomPresContextResult.RejectNoReason:
+				return "Reject - No Reason";
+			case DicomPresContextResult.RejectTransferSyntaxesNotSupported:
+				return "Reject - Transfer Syntaxes Not Supported";
+			case DicomPresContextResult.RejectUser:
+				return "Reject - User";
+			default:
+				return "Unknown";
+			}
+		}
+		#endregion
+	}
+
+    public class AssociationParameters
+    {
+        
+        #region Private Members
+        private uint _maxPduLength = 128 * 1024;
+        private String _calledAE;
+        private String _callingAE;
+        private DicomUid _appCtxNm;
+        private DicomUid _implClass;
+        private string _implVersion;
+        private SortedList<byte, DicomPresContext> _presContexts;
+        private IPEndPoint _localEndPoint;
+        private IPEndPoint _remoteEndPoint;
+
+        // Sizes that result in PDUs that are multiples of the MTU work better.
+        private int _sendBufferSize = 128 * 1024;
+        private int _receiveBufferSize = 128 * 1024;
+        private int _readTimeout = 30;
+        private int _writeTimeout = 30;
+        private int _artimTimeout = 30;
+        #endregion
+
+
+		#region Constructors
+		protected AssociationParameters(String callingAE, String calledAE, IPEndPoint localEndPoint, IPEndPoint remoteEndPoint) {
+            _maxPduLength = 128 * 1024;
+			_appCtxNm = DicomUids.DICOMApplicationContextName;
+			_implClass = DicomImplementation.ClassUID;
+			_implVersion = DicomImplementation.Version;
+			_presContexts = new SortedList<byte, DicomPresContext>();
+
+            _calledAE = calledAE;
+            _callingAE = callingAE;
+
+            _localEndPoint = localEndPoint;
+            _remoteEndPoint = remoteEndPoint;
+		}
+
+        protected AssociationParameters(AssociationParameters parameters)
+        {
+
+            _appCtxNm = parameters._appCtxNm;
+            _calledAE = parameters._calledAE;
+            _callingAE = parameters._callingAE;
+            _implClass = parameters._implClass;
+            _implVersion = parameters._implVersion;
+            _localEndPoint = parameters._localEndPoint;
+            _maxPduLength = parameters._maxPduLength;
+            _readTimeout = parameters._readTimeout;
+            _receiveBufferSize = parameters._receiveBufferSize;
+            _remoteEndPoint = parameters._remoteEndPoint;
+            _sendBufferSize = parameters._sendBufferSize;
+            _writeTimeout = parameters._writeTimeout;
+            _artimTimeout = parameters._artimTimeout;
+
+            foreach (byte id in parameters._presContexts.Keys)
+            {
+                AddPresentationContext(id,parameters._presContexts[id].AbstractSyntax);
+
+                foreach (TransferSyntax ts in parameters._presContexts[id].GetTransfers())
+                {
+                    AddTransferSyntax(id,ts);
+                }
+
+                SetRoleSelect(id, parameters._presContexts[id].GetRoleSelect());
+
+            }
+        }
+		#endregion
+
+		#region Public Properties
+        /// <summary>
+        /// The Maximum PDU Length negotiated for the association
+        /// </summary>
+        public uint MaximumPduLength
+        {
+            get { return _maxPduLength; }
+            set { _maxPduLength = value; }
+        }
+        /// <summary>
+        /// The network Send Buffer size utilized by this application.
+        /// </summary>
+        public int SendBufferSize
+        {
+            get { return _sendBufferSize; }
+            set { _sendBufferSize = value; }
+        }
+
+        /// <summary>
+        /// The network Receive Buffer size utilized by this application.
+        /// </summary>
+        public int ReceiveBufferSize
+        {
+            get { return _receiveBufferSize; }
+            set { _receiveBufferSize = value; }
+        }
+
+        /// <summary>
+        /// The timeout for any network Read operations.
+        /// </summary>
+        public int ReadTimeout
+        {
+            get { return _readTimeout; }
+            set { _readTimeout = value; }
+        }
+
+        /// <summary>
+        /// The timeout for any network write operations.
+        /// </summary>
+        public int WriteTimeout
+        {
+            get { return _writeTimeout; }
+            set { _writeTimeout = value; }
+        }
+
+        /// <summary>
+        /// The DICOM ARTIM timeout.
+        /// </summary>
+        public int ArtimTimeout
+        {
+            get { return _artimTimeout; }
+            set { _artimTimeout = value; }
+        }
+
+        public String CalledAE
+        {
+            get { return _calledAE; }
+            set { _calledAE = value; }
+        }
+
+        public String CallingAE
+        {
+            get { return _callingAE; }
+            set { _callingAE = value; }
+        }
+
+		/// <summary>
+		/// Gets or sets the Application Context Name.
+		/// </summary>
+		public DicomUid ApplicationContextName {
+			get { return _appCtxNm; }
+			set { _appCtxNm = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the Implementation Class UID.
+		/// </summary>
+		public DicomUid ImplementationClass {
+			get { return _implClass; }
+			set { _implClass = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the Implementation Version Name.
+		/// </summary>
+		public string ImplementationVersion {
+			get { return _implVersion; }
+			set { _implVersion = value; }
+		}
+
+        /// <summary>
+        /// The remote end point for the association.
+        /// </summary>
+        public IPEndPoint RemoteEndPoint
+        {
+            get { return _remoteEndPoint; }
+            internal set { _remoteEndPoint = value; }
+        }
+
+        /// <summary>
+        /// The local end point of the association.
+        /// </summary>
+        public IPEndPoint LocalEndPoint
+        {
+            get { return _localEndPoint; }
+            internal set { _localEndPoint = value; }
+        }
+
+		#endregion
+
+        #region Internal Properties
+        internal SortedList<byte, DicomPresContext> PresentationContexts
+        {
+            get { return _presContexts; }
+            set { _presContexts = value; }
+        }
+        #endregion
+
+        #region Public Methods
+        /// <summary>
+		/// Adds a Presentation Context to the DICOM Associate.
+		/// </summary>
+		public void AddPresentationContext(byte pcid, SopClass abstractSyntax) {
+			_presContexts.Add(pcid, new DicomPresContext(pcid, abstractSyntax));
+		}
+
+		/// <summary>
+		/// Adds a Presentation Context to the DICOM Associate.
+		/// </summary>
+		public byte AddPresentationContext(SopClass abstractSyntax) {
+			byte pcid = 1;
+			foreach (byte id in _presContexts.Keys) {
+				if (_presContexts[id].AbstractSyntax == abstractSyntax)
+					return id;
+				if (id >= pcid)
+					pcid = (byte)(id + 2);
+			}
+			AddPresentationContext(pcid, abstractSyntax);
+			return pcid;
+		}
+
+		/// <summary>
+		/// Determines if the specified Presentation Context ID exists.
+		/// </summary>
+		/// <param name="pcid">Presentation Context ID</param>
+		/// <returns>True if exists.</returns>
+		public bool HasPresentationContextID(byte pcid) {
+			return _presContexts.ContainsKey(pcid);
+		}
+
+		/// <summary>
+		/// Gets a list of the Presentation Context IDs in the DICOM Associate.
+		/// </summary>
+		public IList<byte> GetPresentationContextIDs() {
+			return _presContexts.Keys;
+		}
+
+		/// <summary>
+		/// Sets the result of the specified Presentation Context.
+		/// </summary>
+		/// <param name="pcid">Presentation Context ID</param>
+		/// <param name="result">Result</param>
+		public void SetPresentationContextResult(byte pcid, DicomPresContextResult result) {
+			GetPresentationContext(pcid).SetResult(result);
+		}
+
+		/// <summary>
+		/// Gets the result of the specified Presentation Context.
+		/// </summary>
+		/// <param name="pcid">Presentation Context ID</param>
+		/// <returns>Result</returns>
+		public DicomPresContextResult GetPresentationContextResult(byte pcid) {
+			return GetPresentationContext(pcid).Result;
+		}
+
+		/// <summary>
+		/// Adds a Transfer Syntax to the specified Presentation Context.
+		/// </summary>
+		/// <param name="pcid">Presentation Context ID</param>
+		/// <param name="ts">Transfer Syntax</param>
+		public void AddTransferSyntax(byte pcid, TransferSyntax ts) {
+			GetPresentationContext(pcid).AddTransfer(ts);
+		}
+
+		/// <summary>
+		/// Gets the number of Transfer Syntaxes in the specified Presentation Context.
+		/// </summary>
+		/// <param name="pcid">Presentation Context ID</param>
+		/// <returns>Number of Transfer Syntaxes</returns>
+		public int GetTransferSyntaxCount(byte pcid) {
+			return GetPresentationContext(pcid).GetTransfers().Count;
+		}
+
+		/// <summary>
+		/// Gets the Transfer Syntax at the specified index.
+		/// </summary>
+		/// <param name="pcid">Presentation Context ID</param>
+		/// <param name="index">Index of Transfer Syntax</param>
+		/// <returns>Transfer Syntax</returns>
+		public TransferSyntax GetTransferSyntax(byte pcid, int index) {
+			return GetPresentationContext(pcid).GetTransfers()[index];
+		}
+
+		/// <summary>
+		/// Removes a Transfer Syntax from the specified Presentation Context.
+		/// </summary>
+		/// <param name="pcid">Presentation Context ID</param>
+		/// <param name="ts">Transfer Syntax</param>
+		public void RemoveTransferSyntax(byte pcid, TransferSyntax ts) {
+			GetPresentationContext(pcid).RemoveTransfer(ts);
+		}
+
+		/// <summary>
+		/// Gets the Abstract Syntax for the specified Presentation Context.
+		/// </summary>
+		/// <param name="pcid">Presentation Context ID</param>
+		/// <returns>Abstract Syntax</returns>
+		public DicomUid GetAbstractSyntax(byte pcid) {
+            SopClass sop = GetPresentationContext(pcid).AbstractSyntax;
+			return sop.DicomUid;
+		}
+
+		/// <summary>
+		/// Gets the accepted Transfer Syntax for the specified Presentation Context.
+		/// </summary>
+		/// <param name="pcid">Presentation Context ID</param>
+		/// <returns>Transfer Syntax</returns>
+		public TransferSyntax GetAcceptedTransferSyntax(byte pcid) {
+			return GetPresentationContext(pcid).AcceptedTransferSyntax;
+		}
+
+		public void SetAcceptedTransferSyntax(byte pcid, int index) {
+			TransferSyntax ts = GetPresentationContext(pcid).GetTransfers()[index];
+			GetPresentationContext(pcid).ClearTransfers();
+			GetPresentationContext(pcid).AddTransfer(ts);
+		}
+
+		public void SetAcceptedTransferSyntax(byte pcid, TransferSyntax ts) {
+			GetPresentationContext(pcid).ClearTransfers();
+			GetPresentationContext(pcid).AddTransfer(ts);
+		}
+
+		/// <summary>
+		/// Finds the Presentation Context with the specified Abstract Syntax.
+		/// </summary>
+		/// <param name="abstractSyntax">Abstract Syntax</param>
+		/// <returns>Presentation Context ID</returns>
+		public byte FindAbstractSyntax(SopClass abstractSyntax) {
+			foreach (DicomPresContext ctx in _presContexts.Values) {
+				if (ctx.AbstractSyntax.Uid == abstractSyntax.Uid)
+					return ctx.ID;
+			}
+			return 0;
+		}
+
+		/// <summary>
+		/// Finds the Presentation Context with the specified Abstract Syntax and Transfer Syntax.
+		/// </summary>
+		/// <param name="abstractSyntax">Abstract Syntax</param>
+		/// <param name="transferSyntax">Transfer Syntax</param>
+		/// <returns>Presentation Context ID</returns>
+		public byte FindAbstractSyntaxWithTransferSyntax(SopClass abstractSyntax, TransferSyntax transferSyntax) {
+			foreach (DicomPresContext ctx in _presContexts.Values) {
+				if (ctx.AbstractSyntax.Uid == abstractSyntax.Uid && ctx.HasTransfer(transferSyntax))
+					return ctx.ID;
+			}
+			return 0;
+		}
+
+		/// <summary>
+		/// Determines if Role Selection is enabled for the specified Presentation Context.
+		/// </summary>
+		/// <param name="pcid">Presentation Context ID</param>
+		public bool IsRoleSelect(byte pcid) {
+			return GetPresentationContext(pcid).IsRoleSelect;
+		}
+
+		/// <summary>
+		/// Determines whether the User Role is supported for the specified Presentation Context.
+		/// </summary>
+		/// <param name="pcid">Presentation Context ID</param>
+		public bool IsSupportScuRole(byte pcid) {
+			return GetPresentationContext(pcid).IsSupportScuRole;
+		}
+
+		/// <summary>
+		/// Determines whether the Provider Role is supported for the specified Presentation Context.
+		/// </summary>
+		/// <param name="pcid">Presentation Context ID</param>
+		public bool IsSupportScpRole(byte pcid) {
+			return GetPresentationContext(pcid).IsSupportScpRole;
+		}
+
+		/// <summary>
+		/// Enables or disables Role Selection. It also sets the User Role and Provider Role, if enabled, for the specified Presentation Context.
+		/// </summary>
+		/// <param name="pcid">Presentation Context ID</param>
+		/// <param name="roles">Supported Roles</param>
+		public void SetRoleSelect(byte pcid, DicomRoleSelection roles) {
+			GetPresentationContext(pcid).SetRoleSelect(roles);
+		}
+		#endregion
+
+		#region Internal Methods
+		internal void AddPresentationContext(byte pcid, DicomUid abstractSyntax, TransferSyntax transferSyntax, DicomPresContextResult result) {
+			_presContexts.Add(pcid, new DicomPresContext(pcid, SopClass.GetSopClass(abstractSyntax.UID), transferSyntax, result));
+		}
+
+		internal DicomPresContext GetPresentationContext(byte pcid) {
+			DicomPresContext ctx = null;
+			if (!_presContexts.TryGetValue(pcid, out ctx))
+				throw new NetworkException("Invalid Presentaion Context ID");
+			return ctx;
+		}
+
+		internal IList<DicomPresContext> GetPresentationContexts() {
+			return _presContexts.Values;
+		}
+		#endregion
+
+
+        public override string ToString() {
+			StringBuilder sb = new StringBuilder();
+			sb.AppendFormat("Application Context:		{0}", _appCtxNm);
+            sb.AppendLine();
+			sb.AppendFormat("Implementation Class:		{0}", _implClass);
+            sb.AppendLine(); 
+            sb.AppendFormat("Implementation Version:	{0}", _implVersion);
+            sb.AppendLine(); 
+            sb.AppendFormat("Maximum PDU Size:			{0}", _maxPduLength);
+            sb.AppendLine(); 
+            sb.AppendFormat("Called AE Title:			{0}", _calledAE);
+            sb.AppendLine(); 
+            sb.AppendFormat("Calling AE Title:			{0}", _callingAE);
+            sb.AppendLine(); 
+            sb.AppendFormat("Presentation Contexts:		{0}", _presContexts.Count);
+            sb.AppendLine(); 
+            foreach (DicomPresContext pctx in _presContexts.Values)
+            {
+				sb.AppendFormat("	Presentation Context {0} [{1}]", pctx.ID, pctx.GetResultDescription());
+                sb.AppendLine();
+				sb.AppendFormat("		Abstract: {0}", pctx.AbstractSyntax.Name);
+                sb.AppendLine();
+				foreach (TransferSyntax ts in pctx.GetTransfers()) {
+					sb.AppendFormat("		Transfer: {0}", (ts.DicomUid.Type == UidType.Unknown) ?
+						ts.DicomUid.UID : ts.DicomUid.Description);
+                    sb.AppendLine();
+				}
+			}
+			return sb.ToString();
+		}
+    }
+
+    /// <summary>
+    /// Association parameters structure used for client connections.
+    /// </summary>
+    public class ClientAssociationParameters : AssociationParameters
+    {
+        public ClientAssociationParameters(String callingAE, String calledAE, IPEndPoint remoteEndPoint)
+            : base(callingAE,calledAE,null,remoteEndPoint)
+        {
+		}
+
+        private ClientAssociationParameters(ClientAssociationParameters parameters)
+            : base(parameters)
+        {
+        }
+
+        internal ClientAssociationParameters Copy(ClientAssociationParameters sourceParameters)
+        {
+            return new ClientAssociationParameters(sourceParameters);
+        }
+    }
+
+    /// <summary>
+    /// Association parameters structure used for server connections.
+    /// </summary>
+    public class ServerAssociationParameters : AssociationParameters
+    {
+        internal ServerAssociationParameters()
+            : base(null, null, null, null)
+        {
+        }
+
+        public ServerAssociationParameters(String CalledAE, IPEndPoint localEndPoint )
+            : base(null,CalledAE,localEndPoint,null)
+        {
+        }
+
+    }
+}

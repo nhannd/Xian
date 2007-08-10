@@ -45,9 +45,9 @@
     <Compile Include="StreamingIo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Dicom\ClearCanvas.ImageServer.Dicom.csproj">
-      <Project>{F65CF657-84A2-435B-9714-D70B99B39AAE}</Project>
-      <Name>ClearCanvas.ImageServer.Dicom</Name>
+    <ProjectReference Include="..\..\Dicom\ClearCanvas.Dicom.csproj">
+      <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
+      <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

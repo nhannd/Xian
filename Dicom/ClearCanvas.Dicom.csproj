@@ -170,12 +170,26 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DicomAttributeMultiValueText.cs" />
+    <Compile Include="DicomDataException.cs" />
     <Compile Include="DicomImplementation.cs" />
     <Compile Include="DicomLogger.cs" />
+    <Compile Include="DicomMessage.cs" />
     <Compile Include="DicomTagPath.cs" />
     <Compile Include="DicomValidationException.cs" />
     <Compile Include="DicomValidator.cs" />
     <Compile Include="IDicomCharacterSetParser.cs" />
+    <Compile Include="NetworkException.cs" />
+    <Compile Include="Network\AssociationParameters.cs" />
+    <Compile Include="Network\DicomClient.cs" />
+    <Compile Include="Network\DicomServer.cs" />
+    <Compile Include="Network\DicomStatus.cs" />
+    <Compile Include="Network\IDicomClientHandler.cs" />
+    <Compile Include="Network\IDicomServerHandler.cs" />
+    <Compile Include="Network\Listener.cs" />
+    <Compile Include="Network\NetworkBase.cs" />
+    <Compile Include="Network\PDataTFStream.cs" />
+    <Compile Include="Network\PDU.cs" />
+    <Compile Include="Network\TransferMonitor.cs" />
     <Compile Include="OffisNetwork\Dcm.cs" />
     <Compile Include="OffisNetwork\NetworkDicomException.cs" />
     <Compile Include="OffisNetwork\OffisConditionParser.cs" />

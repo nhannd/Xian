@@ -5,7 +5,6 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 
-
 namespace ClearCanvas.Dicom
 {
     /// <summary>
@@ -26,6 +25,8 @@ namespace ClearCanvas.Dicom
 
         private SortedDictionary<uint, DicomAttribute> _attributeList = new SortedDictionary<uint, DicomAttribute>();
         private String _specificCharacterSet = "";
+        private uint _startTag = 0x00000000;
+        private uint _stopTag = 0xFFFFFFFF;       
         #endregion
 
         #region Constructors
@@ -35,6 +36,17 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public DicomAttributeCollection()
         {
+        }
+
+        /// <summary>
+        /// Contructor that sets the range of tags in use for the collection.
+        /// </summary>
+        /// <param name="startTag"></param>
+        /// <param name="stopTag"></param>
+        public DicomAttributeCollection(uint startTag, uint stopTag)
+        {
+            _startTag = startTag;
+            _stopTag = stopTag;
         }
 
         /// <summary>
@@ -63,13 +75,21 @@ namespace ClearCanvas.Dicom
         public String SpecificCharacterSet
         {
             get { return _specificCharacterSet; }
-            set
-            {
+            set 
+            { 
                 _specificCharacterSet = value;
 
                 // This line forces the value to be placed in sequences when we don't want it to be, because of how the parser is set
                 //this[DicomTags.SpecificCharacterSet].SetStringValue(_specificCharacterSet);
             }
+        }
+
+        /// <summary>
+        /// The number of attributes in the collection.
+        /// </summary>
+        public int Count
+        { 
+            get { return _attributeList.Count; } 
         }
         #endregion
 
@@ -126,12 +146,15 @@ namespace ClearCanvas.Dicom
         /// <returns></returns>
         public DicomAttribute this[uint tag]
         {
-            get
+            get 
             {
                 DicomAttribute attr = null;
 
                 if (!_attributeList.ContainsKey(tag))
                 {
+                    if ((tag < _startTag) || (tag > _stopTag))
+                        throw new DicomException("Tag is out of range for collection: " + tag.ToString());
+
                     DicomTag dicomTag = DicomTagDictionary.GetDicomTag(tag);
 
                     if (dicomTag == null)
@@ -143,13 +166,13 @@ namespace ClearCanvas.Dicom
                     attr.ParentCollection = this;
                     _attributeList[tag] = attr;
                 }
-                else
+                else 
                     attr = _attributeList[tag];
 
 
-                return attr;
+                return attr; 
             }
-            set
+            set 
             {
                 if (value == null)
                 {
@@ -162,10 +185,14 @@ namespace ClearCanvas.Dicom
                 }
                 else
                 {
+                    if ((tag < _startTag) || (tag > _stopTag))
+                        throw new DicomException("Tag is out of range for collection: " + tag.ToString());
+
                     if (value.Tag.TagValue != tag)
-                        throw new DicomException("Tag being set does not match tag in AbstractAttribute");
+                        throw new DicomException("Tag being set does not match tag in DicomAttribute");
+
                     _attributeList[tag] = value;
-                    value.ParentCollection = this;
+                    value.ParentCollection = this;                    
                 }
             }
         }
@@ -183,6 +210,9 @@ namespace ClearCanvas.Dicom
 
                 if (!_attributeList.ContainsKey(tag.TagValue))
                 {
+                    if ((tag.TagValue < _startTag) || (tag.TagValue > _stopTag))
+                        throw new DicomException("Tag is out of range for collection: " + tag.ToString());
+
                     attr = tag.CreateDicomAttribute();
                     if (attr == null)
                     {
@@ -210,7 +240,10 @@ namespace ClearCanvas.Dicom
                 else
                 {
                     if (value.Tag.TagValue != tag.TagValue)
-                        throw new DicomException("Tag being set does not match tag in AbstractAttribute");
+                        throw new DicomException("Tag being set does not match tag in DicomAttribute");
+
+                    if ((tag.TagValue < _startTag) || (tag.TagValue > _stopTag))
+                        throw new DicomException("Tag is out of range for collection: " + tag.ToString());
 
                     _attributeList[tag.TagValue] = value;
                     value.ParentCollection = this;
@@ -294,7 +327,7 @@ namespace ClearCanvas.Dicom
                 if (!thisAttrib.Equals(compareAttrib))
                     return false;
             }
-
+           
             return true;
         }
 
@@ -352,7 +385,7 @@ namespace ClearCanvas.Dicom
 
         public IEnumerator<DicomAttribute> GetEnumerator()
         {
-            return _attributeList.Values.GetEnumerator();
+            return _attributeList.Values.GetEnumerator();   
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -405,7 +438,7 @@ namespace ClearCanvas.Dicom
             }
             catch (Exception e)
             {
-                DicomLogger.LogErrorException(e, "Error in default value type! - {0}", vtype.ToString());
+                DicomLogger.LogErrorException(e,"Error in default value type! - {0}", vtype.ToString());
                 return null;
             }
         }
@@ -415,7 +448,7 @@ namespace ClearCanvas.Dicom
             if (vtype.IsSubclassOf(typeof(DicomAttribute)))
             {
                 if (elem != null && vtype != elem.GetType())
-                    throw new DicomException("Invalid binding type for Element VR!");
+                    throw new DicomDataException("Invalid binding type for Element VR!");
                 return elem;
             }
             else if (vtype.IsArray)
@@ -427,7 +460,7 @@ namespace ClearCanvas.Dicom
                         float[] array = new float[elem.Count];
                         for (int i = 0; i < array.Length; i++)
                         {
-                            elem.TryGetFloat32(i, out array[i]);
+                             elem.TryGetFloat32(i, out array[i]);
                         }
                         return array;
                     }
@@ -439,9 +472,9 @@ namespace ClearCanvas.Dicom
 
                         return array;
                     }
-
+                    
                     if (vtype.GetElementType() != elem.GetValueType())
-                        throw new DicomException("Invalid binding type for Element VR!");
+                        throw new DicomDataException("Invalid binding type for Element VR!");
                     //if (elem.GetValueType() == typeof(DateTime))
                     //    return (elem as AbstractAttribute).GetDateTimes();
                     else
@@ -530,7 +563,7 @@ namespace ClearCanvas.Dicom
                             return elem.Values;
                         }
                         else
-                            throw new DicomException("Invalid binding type for Element VR!");
+                            throw new DicomDataException("Invalid binding type for Element VR!");
                     }
                     else
                     {
@@ -569,7 +602,7 @@ namespace ClearCanvas.Dicom
                     }
                     catch (Exception e)
                     {
-                        DicomLogger.LogErrorException(e, "Unable to bind field");
+                        DicomLogger.LogErrorException(e,"Unable to bind field");
                     }
                 }
             }
@@ -597,7 +630,7 @@ namespace ClearCanvas.Dicom
                     }
                     catch (Exception e)
                     {
-                        DicomLogger.LogErrorException(e, "Unable to bind field");
+                        DicomLogger.LogErrorException(e,"Unable to bind field");
                     }
                 }
             }
@@ -619,11 +652,11 @@ namespace ClearCanvas.Dicom
                     if (vtype.IsArray)
                     {
                         if (vtype.GetElementType() != elem.GetValueType())
-                            throw new DicomException("Invalid binding type for Element VR!");
-                        //                        if (elem.GetValueType() == typeof(DateTime))
-                        //                          (elem as AbstractAttribute).SetDateTimes((DateTime[])value);
-                        //                    else
-                        elem.Values = (object[])value;
+                            throw new DicomDataException("Invalid binding type for Element VR!");
+//                        if (elem.GetValueType() == typeof(DateTime))
+  //                          (elem as AbstractAttribute).SetDateTimes((DateTime[])value);
+    //                    else
+                            elem.Values = (object[])value;
                     }
                     else
                     {
@@ -637,11 +670,11 @@ namespace ClearCanvas.Dicom
                             TransferSyntax ts = (TransferSyntax)value;
                             elem.SetStringValue(ts.DicomUid.UID);
                         }
-                        //  else if (vtype == typeof(DcmDateRange) && elem.GetType().IsSubclassOf(typeof(AbstractAttribute)))
-                        //  {
-                        //      DcmDateRange dr = (DcmDateRange)value;
-                        //      (elem as AbstractAttribute).SetDateTimeRange(dr);
-                        //  }
+                      //  else if (vtype == typeof(DcmDateRange) && elem.GetType().IsSubclassOf(typeof(AbstractAttribute)))
+                      //  {
+                      //      DcmDateRange dr = (DcmDateRange)value;
+                      //      (elem as AbstractAttribute).SetDateTimeRange(dr);
+                      //  }
                         else if (vtype != elem.GetValueType())
                         {
                             if (vtype == typeof(string))
@@ -649,7 +682,7 @@ namespace ClearCanvas.Dicom
                                 elem.SetStringValue((string)value);
                             }
                             else
-                                throw new DicomException("Invalid binding type for Element VR!");
+                                throw new DicomDataException("Invalid binding type for Element VR!");
                         }
                         else
                         {
@@ -709,7 +742,7 @@ namespace ClearCanvas.Dicom
         {
             foreach (DicomAttribute item in this)
             {
-                item.Dump(sb, prefix, DicomDumpOptions.Default);
+                item.Dump(sb, prefix, options);
                 sb.AppendLine();
             }
         }

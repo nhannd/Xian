@@ -16,14 +16,14 @@ namespace ClearCanvas.Dicom
         protected NumberStyles _numberStyle = NumberStyles.Any;
 
         #region Constructors
-        internal DicomAttributeBinary(uint tag)
+        internal DicomAttributeBinary(uint tag) 
             : base(tag)
-        {
+        {            
         }
 
         internal DicomAttributeBinary(DicomTag tag)
             : base(tag)
-        {
+        {   
         }
 
         internal DicomAttributeBinary(DicomTag tag, ByteBuffer item)
@@ -35,7 +35,7 @@ namespace ClearCanvas.Dicom
             Buffer.BlockCopy(item.ToBytes(), 0, _values, 0, _values.Length * tag.VR.UnitSize);
 
             Count = _values.Length;
-            StreamLength = (uint)(Count * tag.VR.UnitSize);
+            StreamLength = (uint)( Count * tag.VR.UnitSize);
         }
 
         internal DicomAttributeBinary(DicomAttributeBinary<T> attrib)
@@ -118,13 +118,13 @@ namespace ClearCanvas.Dicom
 
         #region Abstract Methods
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
-        {
+        {    
             int len = _values.Length * Tag.VR.UnitSize;
             byte[] byteVal = new byte[len];
 
             Buffer.BlockCopy(_values, 0, byteVal, 0, len);
 
-            ByteBuffer bb = new ByteBuffer(byteVal, syntax.Endian);
+            ByteBuffer bb = new ByteBuffer(byteVal,syntax.Endian);
             if (syntax.Endian != ByteBuffer.LocalMachineEndian)
             {
                 bb.Swap(Tag.VR.UnitSize);
@@ -1131,7 +1131,7 @@ namespace ClearCanvas.Dicom
 
         #endregion
     }
-    #endregion
+    #endregion 
 
     #region DicomAttributeUN
     public class DicomAttributeUN : DicomAttributeBinary<byte>
@@ -1314,20 +1314,25 @@ namespace ClearCanvas.Dicom
             get { return _values; }
             set
             {
-                if (value is ushort[])
+                _values = value as ushort[];
+                if (_values != null)
                 {
-                    _values = (ushort[])value;
                     SetStreamLength();
+                    return;
                 }
-                else if (value is ushort)
+                
+                String str = value as string;
+                if (str != null)
+                {
+                    SetStringValue((String)value);
+                    return;
+                }
+
+                if (value is ushort)
                 {
                     _values = new ushort[1];
                     _values[0] = (ushort)value;
                     SetStreamLength();
-                }
-                else if (value is String)
-                {
-                    SetStringValue((String)value);
                 }
                 else
                 {
@@ -1351,4 +1356,3 @@ namespace ClearCanvas.Dicom
     #endregion
 
 }
-

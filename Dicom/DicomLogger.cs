@@ -7,13 +7,23 @@ using System.Threading;
 namespace ClearCanvas.Dicom
 {
     /// <summary>
+    /// Enumerated value for DICOM log levels
+    /// </summary>
+    public enum DicomLogLevel
+    {
+        Info,
+        Error,
+        Warning
+    }
+
+    /// <summary>
     /// Structure containing log information passed to delegates that receive log information.
     /// </summary>
     public struct DicomLogInfo
     {
         public DateTime Time;
         public String Message;
-        public String Level;
+        public DicomLogLevel Level;
         public int ThreadId;
     }
 
@@ -25,20 +35,6 @@ namespace ClearCanvas.Dicom
     public class DicomLogger
     {
         public static DicomLogDelegate LogDelegates = DicomFileLogger.Log;
-
-        private static String logFile = "DicomLog.txt";
-
-        /// <summary>
-        /// Static property containing the name of the log file.
-        /// The default value is 'PortalServiceLog.txt'.
-        /// </summary>
-        public static String LogFile
-        {
-            set
-            {
-                logFile = value;
-            }
-        }
 
         /// <summary>
         /// Log an error message related to an exception to the log file.
@@ -55,34 +51,36 @@ namespace ClearCanvas.Dicom
             sb.AppendLine("Stack Trace:");
             sb.AppendLine(e.StackTrace);
 
-            WriteLog(sb.ToString(), "Error");
+            WriteLog(sb.ToString(), DicomLogLevel.Error);
         }
 
 
         /// <summary>
         /// Log an error message to the log file.
         /// </summary>
-        /// <param name="msg">The message to log.</param>
-        public static void LogError(String msg, params object[] args)
+        /// <param name="msg">The message/format string to log.</param>
+        /// <param name="args">Variable arguments used with the format string.</param>
+        public static void LogError(String msg,params object[] args)
         {
             StringBuilder sb = new StringBuilder();
 
-            sb.AppendFormat(msg, args);
+            sb.AppendFormat(msg,args);
 
-            WriteLog(sb.ToString(), "Error");
+            WriteLog(sb.ToString(), DicomLogLevel.Error);
         }
 
         /// <summary>
         /// Log an informational message to the log file.
         /// </summary>
-        /// <param name="msg">The informational message to log.</param>
+        /// <param name="msg">The informational message/format string to log.</param>
+        /// <param name="args">Variable arguments used with the format string.</param>
         public static void LogInfo(String msg, params object[] args)
         {
             StringBuilder sb = new StringBuilder();
 
             sb.AppendFormat(msg, args);
 
-            WriteLog(sb.ToString(), "Info");
+            WriteLog(sb.ToString(), DicomLogLevel.Info);
         }
 
 
@@ -96,7 +94,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <param name="msg">The message to log.</param>
         /// <param name="type">A string describing the type of log message.</param>
-        private static void WriteLog(String msg, String type)
+        private static void WriteLog(String msg, DicomLogLevel type)
         {
             if (LogDelegates != null)
             {
@@ -115,20 +113,21 @@ namespace ClearCanvas.Dicom
         }
     }
 
+    /// <summary>
+    /// Default implementation of a logger that logs the DICOM log to a file.
+    /// </summary>
     public class DicomFileLogger
     {
-        private static String logFile = "DicomLog.log";
+        private static String _logFile = "DicomLog.log";
 
         /// <summary>
         /// Static property containing the name of the log file.
-        /// The default value is 'DicomLogDelegate.txt'.
+        /// The default value is 'DicomLog.txt'.
         /// </summary>
         public static String LogFile
         {
-            set
-            {
-                logFile = value;
-            }
+            set { _logFile = value; }
+            get { return _logFile; }
         }
 
         /// <summary>
@@ -146,9 +145,8 @@ namespace ClearCanvas.Dicom
             {
                 StreamWriter writer;
                 try
-                {
-
-                    String logFileDate = logFile;
+                {                    
+                    String logFileDate = _logFile;
                     int index = logFileDate.IndexOf(".log");
                     if (index < 0)
                         logFileDate = logFileDate + "_" + info.Time.ToString("MM-dd-yyyy") + ".log";
@@ -156,9 +154,16 @@ namespace ClearCanvas.Dicom
                         logFileDate = logFileDate.Insert(index, "_" + info.Time.ToString("MM-dd-yyyy"));
 
                     writer = File.AppendText(logFileDate);
+                    String level = "";
+                    switch (info.Level)
+                    {
+                        case DicomLogLevel.Error: level = "Error"; break;
+                        case DicomLogLevel.Info: level = "Info"; break;
+                        case DicomLogLevel.Warning: level = "Warn"; break;
+                    }
 
                     StringBuilder sb = new StringBuilder();
-                    sb = sb.AppendFormat("({0}) {1} {2} ({3}) {4}", info.ThreadId, info.Time.ToShortDateString(), info.Time.ToLongTimeString(), info.Level,
+                    sb = sb.AppendFormat("({0}) {1} {2} ({3}) {4}",info.ThreadId,info.Time.ToShortDateString(),info.Time.ToLongTimeString(),level,
                         info.Message);
 
 

@@ -2,13 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-
 namespace ClearCanvas.Dicom
 {
     public class DicomSequenceItem : DicomAttributeCollection
     {
-        public DicomSequenceItem()
-            : base()
+        public DicomSequenceItem() : base(0x00000000,0xFFFFFFFF)
         {
         }
 
@@ -24,9 +22,8 @@ namespace ClearCanvas.Dicom
 
         public override DicomAttributeCollection Copy(bool copyBinary)
         {
-            return new DicomSequenceItem(this, copyBinary);
+            return new DicomSequenceItem(this,copyBinary);
         }
 
     }
 }
-

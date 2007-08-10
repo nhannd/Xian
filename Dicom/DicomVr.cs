@@ -369,6 +369,7 @@ namespace ClearCanvas.Dicom
         /// <param name="is16bitLength">The VR is encoded with a 16 bit length for Explict VRs</param>
         /// <param name="padChar">The character used for padding with the VR.</param>
         /// <param name="unitSize">The size in bytes for binary VRs of each value encoded</param>
+        /// <param name="createDelegate">A delegate to create <see cref="DicomAttribute"/> instances for the specific Vr.</param>
         private DicomVr( String name,
                         bool isText,
                         bool isSpecificCharacterSet,

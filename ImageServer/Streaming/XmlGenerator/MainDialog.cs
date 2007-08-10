@@ -9,9 +9,8 @@ using System.IO;
 using System.Xml;
 
 using ClearCanvas.ImageServer;
-using ClearCanvas.ImageServer.Dicom;
-using ClearCanvas.ImageServer.Dicom.Exceptions;
-using ClearCanvas.ImageServer.Dicom.IO;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.IO;
 using ClearCanvas.ImageServer.Streaming;
 
 namespace ClearCanvas.ImageServer.Streaming.XmlGenerator

@@ -19,30 +19,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Dat
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Dicom", "Dicom\ClearCanvas.ImageServer.Dicom.csproj", "{F65CF657-84A2-435B-9714-D70B99B39AAE}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Dicom.Samples", "Dicom\Samples\ClearCanvas.ImageServer.Dicom.Samples.csproj", "{F861DCC5-2BC0-4B8B-8DCD-656A3206E2A0}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Dicom.DicomDump", "Dicom\DicomDump\ClearCanvas.ImageServer.Dicom.DicomDump.csproj", "{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator", "Dicom\DataDictionaryGenerator\ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator.csproj", "{04DEAB47-16DD-427A-A7A2-4BED903E5BFE}"
-	ProjectSection(WebsiteProperties) = preProject
-		Debug.AspNetCompiler.Debug = "True"
-		Release.AspNetCompiler.Debug = "False"
-	EndProjectSection
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Common", "..\Common\ClearCanvas.Common.csproj", "{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
@@ -115,6 +91,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.DicomServices",
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom", "..\Dicom\ClearCanvas.Dicom.csproj", "{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -133,22 +115,6 @@ Global
 		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F65CF657-84A2-435B-9714-D70B99B39AAE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F65CF657-84A2-435B-9714-D70B99B39AAE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F65CF657-84A2-435B-9714-D70B99B39AAE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F65CF657-84A2-435B-9714-D70B99B39AAE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F861DCC5-2BC0-4B8B-8DCD-656A3206E2A0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F861DCC5-2BC0-4B8B-8DCD-656A3206E2A0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F861DCC5-2BC0-4B8B-8DCD-656A3206E2A0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F861DCC5-2BC0-4B8B-8DCD-656A3206E2A0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C9F71CD6-84E8-461F-A0A6-F7C359F0A6D1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{04DEAB47-16DD-427A-A7A2-4BED903E5BFE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{04DEAB47-16DD-427A-A7A2-4BED903E5BFE}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{04DEAB47-16DD-427A-A7A2-4BED903E5BFE}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{04DEAB47-16DD-427A-A7A2-4BED903E5BFE}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -197,6 +163,10 @@ Global
 		{734E6EA2-DC6B-4387-B671-EED0A603D73E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{734E6EA2-DC6B-4387-B671-EED0A603D73E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{734E6EA2-DC6B-4387-B671-EED0A603D73E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

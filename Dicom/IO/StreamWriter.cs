@@ -1,6 +1,3 @@
-/*
- * Taken from code Copyright (c) Colby Dillion, 2007
- */
 using System;
 using System.Collections.Generic;
 using System.Text;

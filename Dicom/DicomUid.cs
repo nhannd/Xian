@@ -187,7 +187,7 @@ namespace ClearCanvas.Dicom
 
                 uid.AppendFormat(".{0}.{1}", time, _count);
 
-                return new DicomUid(uid.ToString(), "Instance UID", UidType.SOPInstance);
+                return new DicomUid(uid.ToString(),"Instance UID",UidType.SOPInstance);
             }
         }
     } 
@@ -1012,5 +1012,5 @@ namespace ClearCanvas.Dicom
         public static DicomUid UniversalCoordinatedTime = new DicomUid("1.2.840.10008.15.1.1", "Universal Coordinated Time", UidType.SynchronizationFrameOfReference);
         #endregion
     }
-
+    
 }
