@@ -1,24 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using System.Xml;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin
 {
-    public interface IDataImporter
+    public interface IDataExporter
     {
         bool SupportsCsv { get; }
         bool SupportsXml { get; }
 
-        void ImportCsv(List<string> rows, IUpdateContext context);
-        void ImportXml(XmlReader reader, IUpdateContext context);
+        int ExportCsv(int batch, List<string> data, IReadContext context);
+        void ExportXml(XmlWriter writer, IReadContext context);
     }
 
     [ExtensionPoint]
-    public class DataImporterExtensionPoint : ExtensionPoint<IDataImporter>
+    public class DataExporterExtensionPoint : ExtensionPoint<IDataImporter>
     {
     }
-
 }

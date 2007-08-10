@@ -11,7 +11,8 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 {
-    [ExtensionOf(typeof(DataImporterExtensionPoint), Name="Diagnostic Services Importer")]
+    [ExtensionOf(typeof(DataImporterExtensionPoint), Name="Procedure Plan Importer")]
+    [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class DiagnosticServiceImporter : DataImporterBase
     {
         private IUpdateContext _updateContext;
@@ -20,10 +21,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
         private IModalityProcedureStepTypeBroker _sptBroker;
         private IModalityBroker _modalityBroker;
 
-        private List<DiagnosticService> _diagnosticServices = new List<DiagnosticService>();
-        private List<RequestedProcedureType> _rpTypes = new List<RequestedProcedureType>();
-        private List<ModalityProcedureStepType> _spTypes = new List<ModalityProcedureStepType>();
-        private List<Modality> _modalities = new List<Modality>();
+        private List<DiagnosticService> _diagnosticServices;
+        private List<RequestedProcedureType> _rpTypes;
+        private List<ModalityProcedureStepType> _spTypes;
+        private List<Modality> _modalities;
 
         public DiagnosticServiceImporter()
         {
@@ -41,6 +42,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
             _rptBroker = _updateContext.GetBroker<IRequestedProcedureTypeBroker>();
             _sptBroker = _updateContext.GetBroker<IModalityProcedureStepTypeBroker>();
             _modalityBroker = _updateContext.GetBroker<IModalityBroker>();
+
+            _diagnosticServices = new List<DiagnosticService>();
+            _rpTypes = new List<RequestedProcedureType>();
+            _spTypes = new List<ModalityProcedureStepType>();
+            _modalities = new List<Modality>();
 
             foreach (string line in lines)
             {
@@ -165,7 +171,11 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
                 throw new ImportException(SR.ExceptionImportEntityNameIdMismatch);
 
             if (!spType.DefaultModality.Equals(modality))
-                throw new ImportException("Scheduled Procedure Step Type default modality mismatch");
+            {
+                string message = string.Format("{0} {1} has default modality {2} {3} which does not match modality {4} {5}",
+                    spType.Id, spType.Name, spType.DefaultModality.Id, spType.DefaultModality.Name, modality.Id, modality.Name);
+                throw new ImportException(message);
+            }
 
             return spType;
         }

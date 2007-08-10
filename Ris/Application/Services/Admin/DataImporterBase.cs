@@ -35,7 +35,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             throw new NotImplementedException();
         }
 
-        public virtual void ImportXml(XmlDocument xmlDocument, IUpdateContext context)
+        public virtual void ImportXml(XmlReader reader, IUpdateContext context)
         {
             throw new NotImplementedException();
         }
@@ -59,13 +59,14 @@ namespace ClearCanvas.Ris.Application.Services.Admin
                     if(args[0].EndsWith(".xml", StringComparison.CurrentCultureIgnoreCase))
                     {
                         // treat as xml
-                        XmlDocument xmlDoc = new XmlDocument();
-                        xmlDoc.Load(reader);
+                        XmlTextReader xmlReader = new XmlTextReader(reader);
+                        xmlReader.WhitespaceHandling = WhitespaceHandling.None;
                         using (PersistenceScope scope = new PersistenceScope(PersistenceContextType.Update))
                         {
-                            ImportXml(xmlDoc, (IUpdateContext)PersistenceScope.Current);
+                            ImportXml(xmlReader, (IUpdateContext)PersistenceScope.Current);
                             scope.Complete();
                         }
+                        xmlReader.Close();
                     }
                     else
                     {

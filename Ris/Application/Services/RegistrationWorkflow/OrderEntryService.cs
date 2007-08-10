@@ -14,6 +14,7 @@ using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Services.Admin;
 using ClearCanvas.Ris.Application.Common;
+using System.Collections;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -48,9 +49,19 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             FacilityAssembler facilityAssembler = new FacilityAssembler();
             StaffAssembler StaffAssembler = new StaffAssembler();
 
-            DiagnosticServiceTreeNodeSearchCriteria topLevelDiagnosticServiceTreeCriteria = new DiagnosticServiceTreeNodeSearchCriteria();
-            topLevelDiagnosticServiceTreeCriteria.Parent.IsNull();
-            topLevelDiagnosticServiceTreeCriteria.DisplayOrder.SortAsc(0);
+            IList topLevelDiagnosticServiceTreeNodes = null;
+            try 
+	        {	        
+		        DiagnosticServiceTreeNodeSearchCriteria rootNodeDiagnosticServiceTreeCriteria = new DiagnosticServiceTreeNodeSearchCriteria();
+                rootNodeDiagnosticServiceTreeCriteria.Parent.IsNull();
+                DiagnosticServiceTreeNode rootNode = PersistenceContext.GetBroker<IDiagnosticServiceTreeNodeBroker>().FindOne(rootNodeDiagnosticServiceTreeCriteria);
+                topLevelDiagnosticServiceTreeNodes = rootNode.Children;
+            }
+	        catch (Exception)
+	        {
+                // no diagnostic service tree - just create an empty list
+                topLevelDiagnosticServiceTreeNodes = new ArrayList();
+	        }
 
             // TODO: figure out how to determine which physicians are "ordering" physicians
             return new GetOrderEntryFormDataResponse(
@@ -74,7 +85,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     }),
                 EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext),
                 CollectionUtils.Map<DiagnosticServiceTreeNode, DiagnosticServiceTreeItem, List<DiagnosticServiceTreeItem>>(
-                    PersistenceContext.GetBroker<IDiagnosticServiceTreeNodeBroker>().Find(topLevelDiagnosticServiceTreeCriteria),
+                    topLevelDiagnosticServiceTreeNodes,
                     delegate(DiagnosticServiceTreeNode n)
                     {
                         return orderEntryAssembler.CreateDiagnosticServiceTreeItem(n);
@@ -192,15 +203,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             DiagnosticServiceTreeNode node = PersistenceContext.Load<DiagnosticServiceTreeNode>(request.NodeRef, EntityLoadFlags.Proxy);
 
-            DiagnosticServiceTreeNodeSearchCriteria subTreeCriteria = new DiagnosticServiceTreeNodeSearchCriteria();
-            subTreeCriteria.Parent.EqualTo(node);
-            subTreeCriteria.DisplayOrder.SortAsc(0);
-
             OrderEntryAssembler assembler = new OrderEntryAssembler();
-
             return new GetDiagnosticServiceSubTreeResponse(
                 CollectionUtils.Map<DiagnosticServiceTreeNode, DiagnosticServiceTreeItem, List<DiagnosticServiceTreeItem>>(
-                    PersistenceContext.GetBroker<IDiagnosticServiceTreeNodeBroker>().Find(subTreeCriteria),
+                    node.Children,
                     delegate(DiagnosticServiceTreeNode n)
                     {
                         return assembler.CreateDiagnosticServiceTreeItem(n);
