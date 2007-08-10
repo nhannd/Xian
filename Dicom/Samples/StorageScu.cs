@@ -58,6 +58,12 @@ namespace ClearCanvas.Dicom.Samples
         #endregion
 
         #region Public Methods
+
+        public void ClearFiles()
+        {
+            _fileList.Clear();
+        }
+
         public bool AddFileToSend(String file)
         {
 
@@ -120,7 +126,7 @@ namespace ClearCanvas.Dicom.Samples
             }
         }
 
-        public void Send(String remoteAE, String host, int port)
+        public void Send(String localAE, String remoteAE, String host, int port)
         {
             if (_dicomClient == null)
             {
@@ -146,7 +152,7 @@ namespace ClearCanvas.Dicom.Samples
                         DicomLogger.LogError("No Valid IP addresses for host {0}", host);
                         return;
                     }
-                    _assocParams = new ClientAssociationParameters("StorageSCU", remoteAE, new IPEndPoint(addr, port));
+                    _assocParams = new ClientAssociationParameters(localAE, remoteAE, new IPEndPoint(addr, port));
 
                     SetPresentationContexts();
 
@@ -189,7 +195,6 @@ namespace ClearCanvas.Dicom.Samples
             return true;
         }
         #endregion
-
 
         #region IDicomClientHandler Members
 

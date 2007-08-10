@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.ImageServer.Dicom;
-using ClearCanvas.ImageServer.Dicom.IO;
+using ClearCanvas.Dicom;
+using ClearCanvas.Dicom.IO;
 
-namespace ClearCanvas.ImageServer.Dicom.DicomDump
+namespace ClearCanvas.Dicom.DicomDump
 {
     class DicomDump
     {

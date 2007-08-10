@@ -53,6 +53,11 @@ namespace ClearCanvas.Dicom.Samples
             this.openFileDialogStorageScu = new System.Windows.Forms.OpenFileDialog();
             this.folderBrowserDialogStorageScp = new System.Windows.Forms.FolderBrowserDialog();
             this.folderBrowserDialogStorageScu = new System.Windows.Forms.FolderBrowserDialog();
+            this._buttonStorageScuVerify = new System.Windows.Forms.Button();
+            this._buttonOutputClearLog = new System.Windows.Forms.Button();
+            this._textBoxStorageScuLocalAe = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this._buttonStorageScuClearFiles = new System.Windows.Forms.Button();
             this.SamplesSplitContainer.Panel1.SuspendLayout();
             this.SamplesSplitContainer.Panel2.SuspendLayout();
             this.SamplesSplitContainer.SuspendLayout();
@@ -75,10 +80,11 @@ namespace ClearCanvas.Dicom.Samples
             // 
             // SamplesSplitContainer.Panel2
             // 
+            this.SamplesSplitContainer.Panel2.Controls.Add(this._buttonOutputClearLog);
             this.SamplesSplitContainer.Panel2.Controls.Add(this.OutputTextBox);
             this.SamplesSplitContainer.Panel2.RightToLeft = System.Windows.Forms.RightToLeft.No;
             this.SamplesSplitContainer.Size = new System.Drawing.Size(924, 590);
-            this.SamplesSplitContainer.SplitterDistance = 176;
+            this.SamplesSplitContainer.SplitterDistance = 155;
             this.SamplesSplitContainer.TabIndex = 0;
             // 
             // SamplesTabs
@@ -91,11 +97,15 @@ namespace ClearCanvas.Dicom.Samples
             this.SamplesTabs.Location = new System.Drawing.Point(3, 0);
             this.SamplesTabs.Name = "SamplesTabs";
             this.SamplesTabs.SelectedIndex = 0;
-            this.SamplesTabs.Size = new System.Drawing.Size(918, 174);
+            this.SamplesTabs.Size = new System.Drawing.Size(918, 152);
             this.SamplesTabs.TabIndex = 0;
             // 
             // StorageScuTab
             // 
+            this.StorageScuTab.Controls.Add(this._buttonStorageScuClearFiles);
+            this.StorageScuTab.Controls.Add(this.label7);
+            this.StorageScuTab.Controls.Add(this._textBoxStorageScuLocalAe);
+            this.StorageScuTab.Controls.Add(this._buttonStorageScuVerify);
             this.StorageScuTab.Controls.Add(this._buttonStorageScuSelectDirectory);
             this.StorageScuTab.Controls.Add(this._buttonStorageScuConnect);
             this.StorageScuTab.Controls.Add(this.buttonStorageScuSelectFiles);
@@ -108,14 +118,14 @@ namespace ClearCanvas.Dicom.Samples
             this.StorageScuTab.Location = new System.Drawing.Point(4, 22);
             this.StorageScuTab.Name = "StorageScuTab";
             this.StorageScuTab.Padding = new System.Windows.Forms.Padding(3);
-            this.StorageScuTab.Size = new System.Drawing.Size(910, 148);
+            this.StorageScuTab.Size = new System.Drawing.Size(910, 126);
             this.StorageScuTab.TabIndex = 0;
             this.StorageScuTab.Text = "StorageSCU";
             this.StorageScuTab.UseVisualStyleBackColor = true;
             // 
             // _buttonStorageScuSelectDirectory
             // 
-            this._buttonStorageScuSelectDirectory.Location = new System.Drawing.Point(205, 81);
+            this._buttonStorageScuSelectDirectory.Location = new System.Drawing.Point(9, 81);
             this._buttonStorageScuSelectDirectory.Name = "_buttonStorageScuSelectDirectory";
             this._buttonStorageScuSelectDirectory.Size = new System.Drawing.Size(100, 23);
             this._buttonStorageScuSelectDirectory.TabIndex = 8;
@@ -125,7 +135,7 @@ namespace ClearCanvas.Dicom.Samples
             // 
             // _buttonStorageScuConnect
             // 
-            this._buttonStorageScuConnect.Location = new System.Drawing.Point(355, 81);
+            this._buttonStorageScuConnect.Location = new System.Drawing.Point(274, 81);
             this._buttonStorageScuConnect.Name = "_buttonStorageScuConnect";
             this._buttonStorageScuConnect.Size = new System.Drawing.Size(100, 23);
             this._buttonStorageScuConnect.TabIndex = 7;
@@ -135,9 +145,9 @@ namespace ClearCanvas.Dicom.Samples
             // 
             // buttonStorageScuSelectFiles
             // 
-            this.buttonStorageScuSelectFiles.Location = new System.Drawing.Point(9, 81);
+            this.buttonStorageScuSelectFiles.Location = new System.Drawing.Point(140, 81);
             this.buttonStorageScuSelectFiles.Name = "buttonStorageScuSelectFiles";
-            this.buttonStorageScuSelectFiles.Size = new System.Drawing.Size(136, 23);
+            this.buttonStorageScuSelectFiles.Size = new System.Drawing.Size(100, 23);
             this.buttonStorageScuSelectFiles.TabIndex = 6;
             this.buttonStorageScuSelectFiles.Text = "Select Files";
             this.buttonStorageScuSelectFiles.UseVisualStyleBackColor = true;
@@ -145,16 +155,17 @@ namespace ClearCanvas.Dicom.Samples
             // 
             // _textBoxStorageScuRemotePort
             // 
-            this._textBoxStorageScuRemotePort.Location = new System.Drawing.Point(355, 35);
+            this._textBoxStorageScuRemotePort.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScuRemotePort", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this._textBoxStorageScuRemotePort.Location = new System.Drawing.Point(413, 35);
             this._textBoxStorageScuRemotePort.Name = "_textBoxStorageScuRemotePort";
             this._textBoxStorageScuRemotePort.Size = new System.Drawing.Size(100, 20);
             this._textBoxStorageScuRemotePort.TabIndex = 5;
-            this._textBoxStorageScuRemotePort.Text = "2112";
+            this._textBoxStorageScuRemotePort.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScuRemotePort;
             // 
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(352, 18);
+            this.label3.Location = new System.Drawing.Point(410, 18);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(66, 13);
             this.label3.TabIndex = 4;
@@ -162,16 +173,17 @@ namespace ClearCanvas.Dicom.Samples
             // 
             // _textBoxStorageScuRemoteHost
             // 
-            this._textBoxStorageScuRemoteHost.Location = new System.Drawing.Point(205, 35);
+            this._textBoxStorageScuRemoteHost.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScuRemoteHost", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this._textBoxStorageScuRemoteHost.Location = new System.Drawing.Point(274, 35);
             this._textBoxStorageScuRemoteHost.Name = "_textBoxStorageScuRemoteHost";
             this._textBoxStorageScuRemoteHost.Size = new System.Drawing.Size(100, 20);
             this._textBoxStorageScuRemoteHost.TabIndex = 3;
-            this._textBoxStorageScuRemoteHost.Text = "localhost";
+            this._textBoxStorageScuRemoteHost.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScuRemoteHost;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(202, 18);
+            this.label2.Location = new System.Drawing.Point(271, 18);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(69, 13);
             this.label2.TabIndex = 2;
@@ -179,16 +191,17 @@ namespace ClearCanvas.Dicom.Samples
             // 
             // _textBoxStorageScuRemoteAe
             // 
-            this._textBoxStorageScuRemoteAe.Location = new System.Drawing.Point(9, 35);
+            this._textBoxStorageScuRemoteAe.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScuRemoteAETitle", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this._textBoxStorageScuRemoteAe.Location = new System.Drawing.Point(140, 35);
             this._textBoxStorageScuRemoteAe.Name = "_textBoxStorageScuRemoteAe";
-            this._textBoxStorageScuRemoteAe.Size = new System.Drawing.Size(136, 20);
+            this._textBoxStorageScuRemoteAe.Size = new System.Drawing.Size(100, 20);
             this._textBoxStorageScuRemoteAe.TabIndex = 1;
-            this._textBoxStorageScuRemoteAe.Text = "StorageSCP";
+            this._textBoxStorageScuRemoteAe.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScuRemoteAETitle;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 18);
+            this.label1.Location = new System.Drawing.Point(137, 18);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(61, 13);
             this.label1.TabIndex = 0;
@@ -207,7 +220,7 @@ namespace ClearCanvas.Dicom.Samples
             this.StorageScpTab.Location = new System.Drawing.Point(4, 22);
             this.StorageScpTab.Name = "StorageScpTab";
             this.StorageScpTab.Padding = new System.Windows.Forms.Padding(3);
-            this.StorageScpTab.Size = new System.Drawing.Size(910, 148);
+            this.StorageScpTab.Size = new System.Drawing.Size(910, 126);
             this.StorageScpTab.TabIndex = 1;
             this.StorageScpTab.Text = "StorageSCP";
             this.StorageScpTab.UseVisualStyleBackColor = true;
@@ -223,11 +236,12 @@ namespace ClearCanvas.Dicom.Samples
             // 
             // _textBoxStorageScpAeTitle
             // 
+            this._textBoxStorageScpAeTitle.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScpAETitle", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this._textBoxStorageScpAeTitle.Location = new System.Drawing.Point(181, 37);
             this._textBoxStorageScpAeTitle.Name = "_textBoxStorageScpAeTitle";
             this._textBoxStorageScpAeTitle.Size = new System.Drawing.Size(124, 20);
             this._textBoxStorageScpAeTitle.TabIndex = 6;
-            this._textBoxStorageScpAeTitle.Text = "StorageSCP";
+            this._textBoxStorageScpAeTitle.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScpAETitle;
             // 
             // _buttonStorageScuSelectStorageLocation
             // 
@@ -250,10 +264,12 @@ namespace ClearCanvas.Dicom.Samples
             // 
             // _textBoxStorageScpStorageLocation
             // 
+            this._textBoxStorageScpStorageLocation.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScpStorageFolder", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this._textBoxStorageScpStorageLocation.Location = new System.Drawing.Point(503, 37);
             this._textBoxStorageScpStorageLocation.Name = "_textBoxStorageScpStorageLocation";
             this._textBoxStorageScpStorageLocation.Size = new System.Drawing.Size(198, 20);
             this._textBoxStorageScpStorageLocation.TabIndex = 3;
+            this._textBoxStorageScpStorageLocation.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScpStorageFolder;
             // 
             // _buttonStorageScpStartStop
             // 
@@ -267,11 +283,12 @@ namespace ClearCanvas.Dicom.Samples
             // 
             // _textBoxStorageScpPort
             // 
+            this._textBoxStorageScpPort.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScpPort", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
             this._textBoxStorageScpPort.Location = new System.Drawing.Point(354, 37);
             this._textBoxStorageScpPort.Name = "_textBoxStorageScpPort";
             this._textBoxStorageScpPort.Size = new System.Drawing.Size(100, 20);
             this._textBoxStorageScpPort.TabIndex = 1;
-            this._textBoxStorageScpPort.Text = "2112";
+            this._textBoxStorageScpPort.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScpPort;
             // 
             // label4
             // 
@@ -287,12 +304,12 @@ namespace ClearCanvas.Dicom.Samples
             this.OutputTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
                         | System.Windows.Forms.AnchorStyles.Left)
                         | System.Windows.Forms.AnchorStyles.Right)));
-            this.OutputTextBox.Location = new System.Drawing.Point(0, 0);
+            this.OutputTextBox.Location = new System.Drawing.Point(3, 30);
             this.OutputTextBox.MaxLength = 65536;
             this.OutputTextBox.Multiline = true;
             this.OutputTextBox.Name = "OutputTextBox";
             this.OutputTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.OutputTextBox.Size = new System.Drawing.Size(921, 407);
+            this.OutputTextBox.Size = new System.Drawing.Size(921, 401);
             this.OutputTextBox.TabIndex = 0;
             this.OutputTextBox.WordWrap = false;
             // 
@@ -301,6 +318,54 @@ namespace ClearCanvas.Dicom.Samples
             this.openFileDialogStorageScu.FileName = "openFileDialogStorageScu";
             this.openFileDialogStorageScu.Filter = "DICOM files|*.dcm|All files|*.*";
             this.openFileDialogStorageScu.Title = "Open DICOM File";
+            // 
+            // _buttonStorageScuVerify
+            // 
+            this._buttonStorageScuVerify.Location = new System.Drawing.Point(413, 81);
+            this._buttonStorageScuVerify.Name = "_buttonStorageScuVerify";
+            this._buttonStorageScuVerify.Size = new System.Drawing.Size(100, 23);
+            this._buttonStorageScuVerify.TabIndex = 9;
+            this._buttonStorageScuVerify.Text = "Verify";
+            this._buttonStorageScuVerify.UseVisualStyleBackColor = true;
+            this._buttonStorageScuVerify.Click += new System.EventHandler(this._buttonStorageScuVerify_Click);
+            // 
+            // _buttonOutputClearLog
+            // 
+            this._buttonOutputClearLog.Location = new System.Drawing.Point(16, 3);
+            this._buttonOutputClearLog.Name = "_buttonOutputClearLog";
+            this._buttonOutputClearLog.Size = new System.Drawing.Size(75, 23);
+            this._buttonOutputClearLog.TabIndex = 1;
+            this._buttonOutputClearLog.Text = "Clear Log";
+            this._buttonOutputClearLog.UseVisualStyleBackColor = true;
+            this._buttonOutputClearLog.Click += new System.EventHandler(this._buttonOutputClearLog_Click);
+            // 
+            // _textBoxStorageScuLocalAe
+            // 
+            this._textBoxStorageScuLocalAe.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::ClearCanvas.Dicom.Samples.Properties.Settings.Default, "ScuLocalAETitle", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
+            this._textBoxStorageScuLocalAe.Location = new System.Drawing.Point(9, 34);
+            this._textBoxStorageScuLocalAe.Name = "_textBoxStorageScuLocalAe";
+            this._textBoxStorageScuLocalAe.Size = new System.Drawing.Size(100, 20);
+            this._textBoxStorageScuLocalAe.TabIndex = 10;
+            this._textBoxStorageScuLocalAe.Text = global::ClearCanvas.Dicom.Samples.Properties.Settings.Default.ScuLocalAETitle;
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Location = new System.Drawing.Point(9, 17);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(50, 13);
+            this.label7.TabIndex = 11;
+            this.label7.Text = "Local AE";
+            // 
+            // _buttonStorageScuClearFiles
+            // 
+            this._buttonStorageScuClearFiles.Location = new System.Drawing.Point(552, 81);
+            this._buttonStorageScuClearFiles.Name = "_buttonStorageScuClearFiles";
+            this._buttonStorageScuClearFiles.Size = new System.Drawing.Size(100, 23);
+            this._buttonStorageScuClearFiles.TabIndex = 12;
+            this._buttonStorageScuClearFiles.Text = "Clear Files";
+            this._buttonStorageScuClearFiles.UseVisualStyleBackColor = true;
+            this._buttonStorageScuClearFiles.Click += new System.EventHandler(this._buttonStorageScuClearFiles_Click);
             // 
             // SamplesForm
             // 
@@ -350,6 +415,11 @@ namespace ClearCanvas.Dicom.Samples
         private System.Windows.Forms.FolderBrowserDialog folderBrowserDialogStorageScu;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TextBox _textBoxStorageScpAeTitle;
+        private System.Windows.Forms.Button _buttonStorageScuVerify;
+        private System.Windows.Forms.Button _buttonOutputClearLog;
+        private System.Windows.Forms.Label label7;
+        private System.Windows.Forms.TextBox _textBoxStorageScuLocalAe;
+        private System.Windows.Forms.Button _buttonStorageScuClearFiles;
     }
 }
 

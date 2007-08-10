@@ -22,5 +22,89 @@ namespace ClearCanvas.Dicom.Samples.Properties {
                 return defaultInstance;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("StorageSCP")]
+        public string ScpAETitle {
+            get {
+                return ((string)(this["ScpAETitle"]));
+            }
+            set {
+                this["ScpAETitle"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
+        public string ScpStorageFolder {
+            get {
+                return ((string)(this["ScpStorageFolder"]));
+            }
+            set {
+                this["ScpStorageFolder"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("StorageSCP")]
+        public string ScuRemoteAETitle {
+            get {
+                return ((string)(this["ScuRemoteAETitle"]));
+            }
+            set {
+                this["ScuRemoteAETitle"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("localhost")]
+        public string ScuRemoteHost {
+            get {
+                return ((string)(this["ScuRemoteHost"]));
+            }
+            set {
+                this["ScuRemoteHost"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("StorageSCU")]
+        public string ScuLocalAETitle {
+            get {
+                return ((string)(this["ScuLocalAETitle"]));
+            }
+            set {
+                this["ScuLocalAETitle"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2112")]
+        public string ScpPort {
+            get {
+                return ((string)(this["ScpPort"]));
+            }
+            set {
+                this["ScpPort"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("2112")]
+        public string ScuRemotePort {
+            get {
+                return ((string)(this["ScuRemotePort"]));
+            }
+            set {
+                this["ScuRemotePort"] = value;
+            }
+        }
     }
 }
