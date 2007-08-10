@@ -97,15 +97,22 @@ namespace ClearCanvas.Ris.Client.Adt
 
         protected void OpenPatient(EntityRef profile, IDesktopWindow window)
         {
-            Document doc = DocumentManager.Get(profile.ToString());
-            if (doc == null)
+            try
             {
-                doc = new PatientOverviewDocument(profile, window);
-                doc.Open();
+                Document doc = DocumentManager.Get(profile.ToString());
+                if (doc == null)
+                {
+                    doc = new PatientOverviewDocument(profile, window);
+                    doc.Open();
+                }
+                else
+                {
+                    doc.Activate();
+                }
             }
-            else
+            catch (Exception e)
             {
-                doc.Activate();
+                ExceptionHandler.Report(e, window);
             }
         }
     }
