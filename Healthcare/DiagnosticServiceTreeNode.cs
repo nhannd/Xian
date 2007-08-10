@@ -12,6 +12,18 @@ namespace ClearCanvas.Healthcare {
     /// </summary>
 	public partial class DiagnosticServiceTreeNode : ClearCanvas.Enterprise.Core.Entity
 	{
+
+        public DiagnosticServiceTreeNode(DiagnosticServiceTreeNode parent)
+        {
+            if (parent != null)
+            {
+                parent.AddChild(this);
+            }
+
+            _children = new ArrayList();
+
+            CustomInitialize();
+        }
 	
 		/// <summary>
 		/// This method is called from the constructor.  Use this method to implement any custom
@@ -20,6 +32,16 @@ namespace ClearCanvas.Healthcare {
 		private void CustomInitialize()
 		{
 		}
+
+        public virtual void AddChild(DiagnosticServiceTreeNode child)
+        {
+            if (child.Parent != null)
+            {
+                child.Parent.Children.Remove(child);
+            }
+            child.Parent = this;
+            this.Children.Add(child);
+        }
 		
 		#region Object overrides
 		

@@ -7,16 +7,14 @@
     <version name="Version" column="Version_"/>
 
     <property name="Description" column="Description_" type="String" length="64" not-null="true" unique="false"/>
-    <property name="DisplayOrder" column="DisplayOrder_" type="Int32" not-null="true" unique="false"/>
-
     <many-to-one name="DiagnosticService" class="DiagnosticService" column="DiagnosticServiceOID_" not-null="false"/>
-    
-    <many-to-one name="Parent" class="DiagnosticServiceTreeNode" column="ParentOID_" not-null="false" fetch="join"/>
 
-    <set name="Children" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
+    <many-to-one name="Parent" class="DiagnosticServiceTreeNode" column="ParentOID_" not-null="false" fetch="join"/>
+    <list name="Children" lazy="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
       <key column="ParentOID_"/>
+      <index column="DisplayOrder_"/>
       <one-to-many class="DiagnosticServiceTreeNode"/>
-    </set>
+    </list>
 
     </class>
 </hibernate-mapping>

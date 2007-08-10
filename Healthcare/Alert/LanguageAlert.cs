@@ -25,8 +25,7 @@ namespace ClearCanvas.Healthcare.Alert
             LanguageAlertNotification alertNotification = new LanguageAlertNotification();
             if (profile.PrimaryLanguage != null && profile.PrimaryLanguage.Code != "en")
             {
-                SpokenLanguageEnum language = context.GetBroker<IEnumBroker>().Lookup<SpokenLanguageEnum>(profile.PrimaryLanguage.Code);
-                alertNotification.Reasons.Add(language.Value);
+                alertNotification.Reasons.Add(profile.PrimaryLanguage.Value);
                 return alertNotification;
             }
 
