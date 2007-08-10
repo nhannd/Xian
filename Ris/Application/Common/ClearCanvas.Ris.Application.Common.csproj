@@ -66,8 +66,6 @@
     <Compile Include="Admin\AuthenticationAdmin\UpdateAuthorityGroupResponse.cs" />
     <Compile Include="Admin\AuthenticationAdmin\UpdateUserRequest.cs" />
     <Compile Include="Admin\AuthenticationAdmin\UpdateUserResponse.cs" />
-    <Compile Include="Admin\DiagnosticServiceAdmin\BatchImportRequest.cs" />
-    <Compile Include="Admin\DiagnosticServiceAdmin\BatchImportResponse.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\IDiagnosticServiceAdminService.cs" />
     <Compile Include="Admin\FacilityDetail.cs" />
     <Compile Include="Admin\FacilitySummary.cs" />

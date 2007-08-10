@@ -8,6 +8,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Common;
+using System.Security.Permissions;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 {
@@ -35,6 +36,22 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
             get { return true; }
         }
 
+
+        /// <summary>
+        /// Import procedure plans from CSV format.
+        /// </summary>
+        /// <param name="lines">
+        /// Each string in the list must contain 8 CSV fields, as follows:
+        ///     0 - Diagnostic Service ID
+        ///     1 - Diagnostic Service Name
+        ///     2 - Requested Procedure Type ID
+        ///     3 - Requested Procedure Type Name
+        ///     4 - Modality Procedure Step Type ID
+        ///     5 - Modality Procedure Step Type Name
+        ///     6 - Default Modality ID
+        ///     7 - Default Modality Name
+        /// </param>
+        /// <param name="context"></param>
         public override void ImportCsv(List<string> lines, IUpdateContext context)
         {
             _updateContext = context;

@@ -14,25 +14,9 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 {
-    [ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
-    [ServiceImplementsContract(typeof(IDiagnosticServiceAdminService))]
+    //[ExtensionOf(typeof(ApplicationServiceExtensionPoint))]
+    //[ServiceImplementsContract(typeof(IDiagnosticServiceAdminService))]
     public class DiagnosticServiceAdminService : ApplicationServiceBase, IDiagnosticServiceAdminService
     {
-        [UpdateOperation]
-        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.DiagnosticServiceAdmin)]
-        public BatchImportResponse BatchImport(BatchImportRequest request)
-        {
-            throw new NotImplementedException();
- /*           try
-            {
-                DiagnosticServiceImporter.Import((IUpdateContext)this.PersistenceContext, request.ImportData);
-                return new BatchImportResponse();
-            }
-            catch (ImportException e)
-            {
-                throw new RequestValidationException(e.Message);
-            }
-  */
-        }
     }
 }
