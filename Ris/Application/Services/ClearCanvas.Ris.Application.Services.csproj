@@ -62,6 +62,7 @@
     <Compile Include="Admin\DataImporterBase.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceTreeExporter.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceTreeImporter.cs" />
+    <Compile Include="Admin\DiagnosticServiceAdmin\ProcedurePlanImporter.cs" />
     <Compile Include="Admin\FacilityAdmin\FacilityImporter.cs" />
     <Compile Include="Admin\IDataExporter.cs" />
     <Compile Include="Admin\IDataImporter.cs" />
@@ -70,7 +71,6 @@
     <Compile Include="Admin\ModalityAssembler.cs" />
     <Compile Include="Admin\NoteCategoryAdmin\NoteCategoryAdminService.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceAdminService.cs" />
-    <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceImporter.cs" />
     <Compile Include="Admin\FacilityAssembler.cs" />
     <Compile Include="Admin\FacilityAdmin\FacilityAdminService.cs" />
     <Compile Include="Admin\HL7Admin\HL7QueueService.cs" />

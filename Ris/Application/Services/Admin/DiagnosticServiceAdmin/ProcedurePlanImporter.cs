@@ -13,7 +13,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
 {
     [ExtensionOf(typeof(DataImporterExtensionPoint), Name="Procedure Plan Importer")]
     [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
-    public class DiagnosticServiceImporter : DataImporterBase
+    public class ProcedurePlanImporter : DataImporterBase
     {
         private IUpdateContext _updateContext;
         private IDiagnosticServiceBroker _dsBroker;
@@ -26,7 +26,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.DiagnosticServiceAdmin
         private List<ModalityProcedureStepType> _spTypes;
         private List<Modality> _modalities;
 
-        public DiagnosticServiceImporter()
+        public ProcedurePlanImporter()
         {
         }
 
