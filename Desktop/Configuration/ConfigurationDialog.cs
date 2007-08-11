@@ -20,7 +20,6 @@ namespace ClearCanvas.Desktop.Configuration
 			{
 				// We want to validate all configuration pages
 				this.ValidationStrategy = new VisitedNodesContainerValidationStrategy();
-				ShowValidation(false);
 
 				_configurationPageManager = new ConfigurationPageManager();
 
