@@ -8,7 +8,7 @@ using System.Windows.Forms;
 using System.Collections;
 using System.Xml;
 
-namespace ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator
+namespace ClearCanvas.Dicom.DataDictionaryGenerator
 {
     public partial class MainForm : Form
     {
@@ -321,6 +321,8 @@ namespace ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator
             gen.WriteSopClasses("SopClass.cs");
 
             gen.WriteTagDictionary("DicomTagDictionary.cs");
+
+            gen.WriteSqlInsert("sopClassInsert.sql");
         }
     }
 }

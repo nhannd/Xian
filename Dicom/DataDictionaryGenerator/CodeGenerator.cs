@@ -443,6 +443,36 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         /// Create the SopClass.cs file.
         /// </summary>
         /// <param name="sopsFile"></param>
+        public void WriteSqlInsert(String sopsFile)
+        {
+            StreamWriter writer = new StreamWriter(sopsFile);
+
+            WriterHeader(writer);
+
+            IEnumerator iter = _sopList.GetEnumerator();
+
+            while (iter.MoveNext())
+            {
+                SopClass sopClass = (SopClass)((DictionaryEntry)iter.Current).Value;
+                
+                
+                writer.WriteLine("INSERT INTO [ImageServer].[dbo].[SopClass] ([GUID],[SopClassUid],[Description],[NonImage])");
+                if (sopClass.name.ToLower().Contains("image"))
+                    writer.WriteLine("VALUES (newid(), '" + sopClass.uid + "', '" + sopClass.name + "', 0);");
+                else
+                    writer.WriteLine("VALUES (newid(), '" + sopClass.uid + "', '" + sopClass.name + "', 1);");
+                writer.WriteLine("");
+                
+            }
+
+
+            writer.Close();
+        }
+
+        /// <summary>
+        /// Create the SopClass.cs file.
+        /// </summary>
+        /// <param name="sopsFile"></param>
         public void WriteSopClasses(String sopsFile)
         {
             StreamWriter writer = new StreamWriter(sopsFile);

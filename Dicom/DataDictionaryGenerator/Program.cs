@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace DataDictionaryGenerator
+namespace ClearCanvas.Dicom.DataDictionaryGenerator
 {
     static class Program
     {
@@ -14,7 +14,7 @@ namespace DataDictionaryGenerator
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new MainForm());
         }
     }
 }

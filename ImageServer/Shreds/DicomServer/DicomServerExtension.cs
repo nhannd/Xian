@@ -27,23 +27,14 @@ namespace ClearCanvas.ImageServer.Shreds.DicomServer
         {
             Platform.Log(LogLevel.Info,"{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
 
-            IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
-
-            IReadContext read = store.OpenReadContext();
-
-            IGetServerPartitions broker = read.GetBroker<IGetServerPartitions>();
-            IList<ServerPartition> partitions = broker.Execute();
-
-            //DicomServerManager.Instance.Start();
-
-            //StartNetPipeHost<DicomServerServiceType, IDicomServerService>(_workQueueServerEndpointName, "DicomServer");
+            DicomServerManager.Instance.Start();
         }
 
         public override void Stop()
         {
             StopHost(_dicomServerEndpointName);
 
-            //DicomServerManager.Instance.Stop();
+            DicomServerManager.Instance.Stop();
 
             Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
         }

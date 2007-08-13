@@ -45,7 +45,7 @@ namespace ClearCanvas.Dicom
             StringBuilder sb = new StringBuilder();
 
             sb.AppendFormat(msg, args);
-
+            sb.AppendLine();
             sb.AppendFormat("Exception: {0} ", e.Message);
             sb.AppendLine();
             sb.AppendLine("Stack Trace:");

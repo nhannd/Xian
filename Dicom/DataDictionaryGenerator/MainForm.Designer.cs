@@ -1,4 +1,4 @@
-namespace ClearCanvas.ImageServer.Dicom.DataDictionaryGenerator
+namespace ClearCanvas.Dicom.DataDictionaryGenerator
 {
     partial class MainForm
     {

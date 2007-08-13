@@ -97,6 +97,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Dicom", "..\Dic
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.DicomServices.ImageServer", "..\DicomServices\ImageServer\ClearCanvas.DicomServices.ImageServer.csproj", "{316C730A-492A-4201-87CD-3C2F3260571C}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.ShredHostExe", "ShredHostExe\ClearCanvas.ImageServer.ShredHostExe.csproj", "{9B38E701-F797-4517-9B33-025794A7CC32}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -167,6 +179,14 @@ Global
 		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{316C730A-492A-4201-87CD-3C2F3260571C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{316C730A-492A-4201-87CD-3C2F3260571C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{316C730A-492A-4201-87CD-3C2F3260571C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{316C730A-492A-4201-87CD-3C2F3260571C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9B38E701-F797-4517-9B33-025794A7CC32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9B38E701-F797-4517-9B33-025794A7CC32}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9B38E701-F797-4517-9B33-025794A7CC32}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9B38E701-F797-4517-9B33-025794A7CC32}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

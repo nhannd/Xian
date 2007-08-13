@@ -49,6 +49,14 @@
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\DicomServices\ClearCanvas.DicomServices.csproj">
+      <Project>{734E6EA2-DC6B-4387-B671-EED0A603D73E}</Project>
+      <Name>ClearCanvas.DicomServices</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\DicomServices\ImageServer\ClearCanvas.DicomServices.ImageServer.csproj">
+      <Project>{316C730A-492A-4201-87CD-3C2F3260571C}</Project>
+      <Name>ClearCanvas.DicomServices.ImageServer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>

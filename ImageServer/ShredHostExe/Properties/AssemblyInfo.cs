@@ -2,16 +2,14 @@
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-[assembly: ClearCanvas.Common.Plugin]
-
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("ClearCanvas.ImageServer.Database.SqlServer2005")]
+[assembly: AssemblyTitle("ShredHostExe")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ClearCanvas Inc.")]
-[assembly: AssemblyProduct("ImageServer")]
+[assembly: AssemblyCompany("")]
+[assembly: AssemblyProduct("ShredHostExe")]
 [assembly: AssemblyCopyright("Copyright ©  2007")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -22,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("59460003-5547-4e3d-8eea-d43ff8fe0cd1")]
+[assembly: Guid("b566d54c-7d37-48fa-9c6e-dbed641a5517")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -31,7 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-// You can specify all the values or you can default the Revision and Build Numbers 
-// by using the '*' as shown below:
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
