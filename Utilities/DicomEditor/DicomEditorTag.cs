@@ -73,21 +73,19 @@ namespace ClearCanvas.Utilities.DicomEditor
             {
                 if (_attribute == null)
                     return String.Empty;
+                else if (this.Vr == "OB" && _attribute.StreamLength > 22)
+                {
+                    return "<OB Data>";
+                }
                 else
                 {
-                    if (_attribute.Values == null)
-                    {
-                        return byte.Parse(_attribute.Tag.HexString.Substring(0, Math.Min(22, _attribute.Tag.HexString.Length)), System.Globalization.NumberStyles.HexNumber).ToString();
-                    }
-                    else
-                    {
-                        return _attribute.ToString();                        
-                    }
+                    return _attribute.ToString();                        
                 }
             }
             set 
             { 
-                _attribute.SetStringValue(value);                
+                if (this.IsEditable())
+                    _attribute.SetStringValue(value);                
             }
         }
 
@@ -121,9 +119,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         public bool IsEditable()
         {
-            ICollection<string> unEditableVRList = new string[] { "SQ", @"??", "OB", "OW", "UN", String.Empty };
-
-            return !unEditableVRList.Contains(this.Vr) && !this.DisplayKey.Contains(",0000)") && !this.DisplayKey.Contains("(0002,");
+            return !_unEditableVRList.Contains(this.Vr) && !this.DisplayKey.Contains(",0000)") && !this.DisplayKey.Contains("(0002,");
         }
 
         public static int TagCompare(DicomEditorTag one, DicomEditorTag two, SortType type)
@@ -197,6 +193,7 @@ namespace ClearCanvas.Utilities.DicomEditor
         private DicomEditorTag _parentTag;
 
         private DicomAttribute _attribute;
+        private ICollection<string> _unEditableVRList = new string[] { "SQ", @"??", "OB", "OW", "UN", String.Empty };
     }
 
     public enum SortType
