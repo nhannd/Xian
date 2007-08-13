@@ -55,6 +55,7 @@ namespace ClearCanvas.Controls.WinForms
 			// No status at first
 			SetStatus(string.Empty);
 
+			SetVersion();
 			// A license likely hasn't been acquired at this point
 			//SetLicenseInfo(Properties.Resources.AcquiringLicense);
         }
@@ -104,6 +105,12 @@ namespace ClearCanvas.Controls.WinForms
 			Invoke(new UpdateLicenseInfoDelegate(SetLicenseInfo), new Object[] { LicenseText });
 		}
 */
+		private void SetVersion()
+		{
+			string version = Assembly.GetExecutingAssembly().GetName().Version.ToString();
+			this._versionLabel.Text = String.Format(SR.FormatVersion, version); 
+		}
+
 		private void SetStatus(string status)
 		{
 			_status.Text = status;
