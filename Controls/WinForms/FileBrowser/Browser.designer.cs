@@ -31,9 +31,9 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Browser));
 			this.browseSplitter = new System.Windows.Forms.SplitContainer();
-			this.folderView = new ClearCanvas.Controls.WinForms.FileBrowser.BrowserTreeView();
+			this._folderContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.viewSplitContainer = new System.Windows.Forms.SplitContainer();
-			this.fileView = new ClearCanvas.Controls.WinForms.FileBrowser.BrowserListView();
+			this._fileContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.browseToolStrip = new System.Windows.Forms.ToolStripContainer();
 			this.navigationBar = new System.Windows.Forms.ToolStrip();
 			this.navBackButton = new System.Windows.Forms.ToolStripSplitButton();
@@ -42,9 +42,9 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.navFoldersButton = new System.Windows.Forms.ToolStripButton();
 			this.navAddressLabel = new System.Windows.Forms.ToolStripLabel();
-			this.navAddressBox = new ClearCanvas.Controls.WinForms.FileBrowser.BrowserComboBox();
-			this._folderContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-			this._fileContextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+			this.navAddressBox = new System.Windows.Forms.ToolStripTextBox();
+			this.folderView = new ClearCanvas.Controls.WinForms.FileBrowser.BrowserTreeView();
+			this.fileView = new ClearCanvas.Controls.WinForms.FileBrowser.BrowserListView();
 			this.browseSplitter.Panel1.SuspendLayout();
 			this.browseSplitter.Panel2.SuspendLayout();
 			this.browseSplitter.SuspendLayout();
@@ -78,18 +78,10 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
 			this.browseSplitter.MouseMove += new System.Windows.Forms.MouseEventHandler(this.splitter_MouseMove);
 			this.browseSplitter.MouseUp += new System.Windows.Forms.MouseEventHandler(this.splitter_MouseUp);
 			// 
-			// folderView
+			// _folderContextMenu
 			// 
-			this.folderView.ContextMenuStrip = this._folderContextMenu;
-			this.folderView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.folderView.HideSelection = false;
-			this.folderView.HotTracking = true;
-			this.folderView.Location = new System.Drawing.Point(0, 0);
-			this.folderView.Name = "folderView";
-			this.folderView.ShowLines = false;
-			this.folderView.ShowRootLines = false;
-			this.folderView.Size = new System.Drawing.Size(162, 408);
-			this.folderView.TabIndex = 0;
+			this._folderContextMenu.Name = "_folderContextMenu";
+			this._folderContextMenu.Size = new System.Drawing.Size(61, 4);
 			// 
 			// viewSplitContainer
 			// 
@@ -115,22 +107,10 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
 			this.viewSplitContainer.TabIndex = 1;
 			this.viewSplitContainer.Resize += new System.EventHandler(this.viewSplitContainer_Resize);
 			// 
-			// fileView
+			// _fileContextMenu
 			// 
-			this.fileView.Alignment = System.Windows.Forms.ListViewAlignment.Left;
-			this.fileView.AllowColumnReorder = true;
-			this.fileView.ColumnHeaderContextMenu = null;
-			this.fileView.ContextMenuStrip = this._fileContextMenu;
-			this.fileView.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.fileView.HideSelection = false;
-			this.fileView.Location = new System.Drawing.Point(0, 0);
-			this.fileView.Name = "fileView";
-			this.fileView.OwnerDraw = true;
-			this.fileView.Size = new System.Drawing.Size(371, 408);
-			this.fileView.SuspendHeaderContextMenu = false;
-			this.fileView.TabIndex = 0;
-			this.fileView.UseCompatibleStateImageBehavior = false;
-			this.fileView.View = System.Windows.Forms.View.List;
+			this._fileContextMenu.Name = "_fileContextMenu";
+			this._fileContextMenu.Size = new System.Drawing.Size(61, 4);
 			// 
 			// browseToolStrip
 			// 
@@ -235,28 +215,49 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
 			this.navAddressLabel.MergeIndex = 0;
 			this.navAddressLabel.Name = "navAddressLabel";
 			this.navAddressLabel.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
-			this.navAddressLabel.Size = new System.Drawing.Size(66, 28);
+			this.navAddressLabel.Size = new System.Drawing.Size(46, 28);
 			this.navAddressLabel.Text = "Address";
 			// 
 			// navAddressBox
 			// 
-			this.navAddressBox.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
-			this.navAddressBox.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.FileSystemDirectories;
-			this.navAddressBox.CurrentItem = null;
-			this.navAddressBox.MaxDropDownItems = 14;
+			this.navAddressBox.AutoSize = false;
+			this.navAddressBox.BackColor = System.Drawing.SystemColors.Control;
+			this.navAddressBox.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
 			this.navAddressBox.MergeIndex = 0;
 			this.navAddressBox.Name = "navAddressBox";
-			this.navAddressBox.Size = new System.Drawing.Size(200, 31);
+			this.navAddressBox.Overflow = System.Windows.Forms.ToolStripItemOverflow.Never;
+			this.navAddressBox.ReadOnly = true;
+			this.navAddressBox.Size = new System.Drawing.Size(45, 31);
 			// 
-			// _folderContextMenu
+			// folderView
 			// 
-			this._folderContextMenu.Name = "_folderContextMenu";
-			this._folderContextMenu.Size = new System.Drawing.Size(61, 4);
+			this.folderView.ContextMenuStrip = this._folderContextMenu;
+			this.folderView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.folderView.HideSelection = false;
+			this.folderView.HotTracking = true;
+			this.folderView.Location = new System.Drawing.Point(0, 0);
+			this.folderView.Name = "folderView";
+			this.folderView.ShowLines = false;
+			this.folderView.ShowRootLines = false;
+			this.folderView.Size = new System.Drawing.Size(162, 408);
+			this.folderView.TabIndex = 0;
 			// 
-			// _fileContextMenu
+			// fileView
 			// 
-			this._fileContextMenu.Name = "_fileContextMenu";
-			this._fileContextMenu.Size = new System.Drawing.Size(61, 4);
+			this.fileView.Alignment = System.Windows.Forms.ListViewAlignment.Left;
+			this.fileView.AllowColumnReorder = true;
+			this.fileView.ColumnHeaderContextMenu = null;
+			this.fileView.ContextMenuStrip = this._fileContextMenu;
+			this.fileView.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.fileView.HideSelection = false;
+			this.fileView.Location = new System.Drawing.Point(0, 0);
+			this.fileView.Name = "fileView";
+			this.fileView.OwnerDraw = true;
+			this.fileView.Size = new System.Drawing.Size(371, 408);
+			this.fileView.SuspendHeaderContextMenu = false;
+			this.fileView.TabIndex = 0;
+			this.fileView.UseCompatibleStateImageBehavior = false;
+			this.fileView.View = System.Windows.Forms.View.List;
 			// 
 			// Browser
 			// 
@@ -287,9 +288,7 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
         private BrowserTreeView folderView;
         private BrowserListView fileView;
         private System.Windows.Forms.ToolStripContainer browseToolStrip;
-        private System.Windows.Forms.ToolStrip navigationBar;
-        private System.Windows.Forms.ToolStripLabel navAddressLabel;
-        private BrowserComboBox navAddressBox;
+		private System.Windows.Forms.ToolStrip navigationBar;
         private System.Windows.Forms.ToolStripButton navUpButton;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripButton navFoldersButton;
@@ -298,6 +297,8 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
 		private System.Windows.Forms.SplitContainer viewSplitContainer;
 		private System.Windows.Forms.ContextMenuStrip _folderContextMenu;
 		private System.Windows.Forms.ContextMenuStrip _fileContextMenu;
+		private System.Windows.Forms.ToolStripLabel navAddressLabel;
+		private System.Windows.Forms.ToolStripTextBox navAddressBox;
 
     }
 }

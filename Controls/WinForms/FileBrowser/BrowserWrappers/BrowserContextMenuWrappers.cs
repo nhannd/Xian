@@ -1683,17 +1683,6 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser.BrowserWrappers
                         #endregion
                         break;
 
-                    case Keys.F4:
-                        #region AddressBox
-                        {
-                            br.NavAddressBox.Focus();
-                            br.NavAddressBox.DroppedDown = true;
-                        }
-                        e.Handled = true;
-                        e.SuppressKeyPress = true;
-                        #endregion
-                        break;
-
                     case Keys.F2:
                         #region Rename
                         if (sender.Equals(br.FolderView))

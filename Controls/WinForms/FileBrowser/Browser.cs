@@ -178,9 +178,6 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
             Load += new EventHandler(Browser_Load);
             HandleCreated += new EventHandler(FileBrowser_HandleCreated);
             HandleDestroyed += new EventHandler(FileBrowser_HandleDestroyed);
-
-            navAddressBox.SelectedIndexChanged += new EventHandler(navAddressBox_SelectedIndexChanged);
-            navAddressBox.KeyDown += new KeyEventHandler(navAddressBox_KeyDown);
         }
 
         /// <summary>
@@ -285,8 +282,6 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
             else
                 SelectPath(otherStartupDir, true);
 
-            navAddressBox.SelectionLength = 0;
-            navAddressBox.Text = navAddressBox.CurrentItem.Text;
             folderView.Focus();
         }
 
@@ -307,11 +302,8 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
             desktopNode.Name = desktopNode.Text;
 
             folderView.Nodes.Add(desktopNode);
-            navAddressBox.Items.Clear();
-            navAddressBox.Items.Add(new BrowserComboItem(ShellBrowser.DesktopItem, 0));
 
-            navAddressBox.CurrentItem = (BrowserComboItem)navAddressBox.Items[0];
-            selectedNode = desktopNode;
+			selectedNode = desktopNode;
             selectedItem = ShellBrowser.DesktopItem;
 
             ShellBrowser.DesktopItem.Expand(false, true, IntPtr.Zero);
@@ -324,8 +316,6 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
                     desktopChild.SelectedImageIndex);
                 desktopChildNode.Tag = desktopChild;
                 desktopChildNode.Name = desktopChildNode.Text;
-
-                navAddressBox.Items.Add(new BrowserComboItem(desktopChild, 1));
 
                 if (desktopChildNode.Text == ShellBrowser.MyComputerName)
                 {
@@ -344,7 +334,6 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
                         if (myCompChild.HasSubfolder)
                             myCompChildNode.Nodes.Add(string.Empty);
 
-                        navAddressBox.Items.Add(new BrowserComboItem(myCompChild, 2));
                         desktopChildNode.Nodes.Add(myCompChildNode);
                     }
                 }
@@ -527,7 +516,7 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
 		/// <param name="e">The SelectedFolderChangedEventArgs to pass on</param>
 		private void OnSelectedFolderChanged(SelectedFolderChangedEventArgs e)
         {
-            ChangeNavBarItem(e);
+            ChangeNavBarText(e);
             selectedNode = e.Node;
 
             if (SelectedFolderChanged != null)
@@ -1430,9 +1419,6 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
         internal BrowserListView FileView { get { return fileView; } }
 
         [Browsable(false)]
-        internal BrowserComboBox NavAddressBox { get { return navAddressBox; } }
-
-        [Browsable(false)]
         internal Panel SpecialViewPanel { get { return viewSplitContainer.Panel1; } }
 
         [Browsable(false)]
@@ -1790,155 +1776,22 @@ namespace ClearCanvas.Controls.WinForms.FileBrowser
 
         /// <summary>
         /// This method will set the current directory of the navigation bar to match the current selected
-        /// directory of the browser. It will add and remove items to make it look like the Windows Explorer
-        /// ComboBox.
+        /// directory of the browser.
         /// </summary>
-        private void ChangeNavBarItem(SelectedFolderChangedEventArgs e)
+        private void ChangeNavBarText(SelectedFolderChangedEventArgs e)
         {
-			if (navAddressBox.CurrentItem.ShellItem.Equals(e.Item))
-				return;
-
-            int currentIndex = navAddressBox.Items.IndexOf(navAddressBox.CurrentItem);
-            BrowserComboItem currentItem = navAddressBox.CurrentItem;
-            int maxIndent = folderView.IsParentNode(myCompNode, selectedNode) ? 3 : 2;
-            TreeNode[] path;
-
-            bool isMyCompChild = folderView.IsParentNode(myCompNode, e.Node);
-            if (selectedNode.Nodes.Contains(e.Node) &&
-                ((isMyCompChild && e.Node.Level >= 3) || (!isMyCompChild && e.Node.Level >= 2)))
-            {
-                navAddressBox.Items.Insert(currentIndex + 1, new BrowserComboItem(e.Item, e.Node.Level));
-                navAddressBox.SelectedIndex = currentIndex + 1;
-            }
-            else if (folderView.IsParentNode(e.Node, selectedNode, out path))
-            {
-                if (e.Node.Equals(desktopNode))
-                    navAddressBox.SelectedIndex = 0;
-                else if (e.Node.Equals(myCompNode))
-                    navAddressBox.SelectedIndex = desktopNode.Nodes.IndexOf(myCompNode) + 1;
-                else
-                    navAddressBox.SelectedIndex = currentIndex - path.Length + 1;
-
-                while (currentItem.Indent >= maxIndent && !currentItem.ShellItem.Equals(e.Item))
-                {
-					navAddressBox.Items.Remove(currentItem);
-                    currentIndex--;
-                    currentItem = (BrowserComboItem)navAddressBox.Items[currentIndex];
-                }
-            }
-            else
-            {
-				while (currentItem.Indent >= maxIndent && !e.Node.Equals(myCompNode))
-				{
-					navAddressBox.Items.Remove(currentItem);
-					currentIndex--;
-					currentItem = (BrowserComboItem)navAddressBox.Items[currentIndex];
-				}
-
-				if (folderView.IsParentNode(myCompNode, e.Node, out path))
-				{
-					if (path.Length > 2)
-					{
-						int startIndex = 1 + (desktopNode.Nodes.IndexOf(myCompNode) + 1) +
-										  (myCompNode.Nodes.IndexOf(path[1]) + 1);
-
-						for (int i = 2; i < path.Length; i++)
-						{
-							navAddressBox.Items.Insert(startIndex++,
-								new BrowserComboItem((ShellItem)path[i].Tag, i + 1));
-						}
-
-						navAddressBox.SelectedIndex = startIndex - 1;
-					}
-					else
-					{
-						navAddressBox.SelectedIndex =
-							desktopNode.Nodes.IndexOf(myCompNode) +
-							myCompNode.Nodes.IndexOf(e.Node) + 2;
-					}
-				}
-				else if (folderView.IsParentNode(desktopNode, e.Node, out path))
-				{
-					if (path.Length > 2)
-					{
-						int startIndex = 1 + (desktopNode.Nodes.IndexOf(path[1]) + 1);
-						if (desktopNode.Nodes.IndexOf(path[1]) > desktopNode.Nodes.IndexOf(myCompNode))
-							startIndex += myCompNode.Nodes.Count;
-
-						for (int i = 2; i < path.Length; i++)
-						{
-							navAddressBox.Items.Insert(startIndex++,
-								new BrowserComboItem((ShellItem)path[i].Tag, i));
-						}
-
-						navAddressBox.SelectedIndex = startIndex - 1;
-					}
-					else
-					{
-						if (desktopNode.Nodes.IndexOf(e.Node) <= desktopNode.Nodes.IndexOf(myCompNode))
-							navAddressBox.SelectedIndex = desktopNode.Nodes.IndexOf(e.Node) + 1;
-						else
-							navAddressBox.SelectedIndex = desktopNode.Nodes.IndexOf(e.Node) + myCompNode.Nodes.Count + 1;
-					}
-				}
-				else
-					navAddressBox.SelectedIndex = 0;
-			}
+			navAddressBox.Text = this.SelectedItem.Path;
         }
 
         /// <summary>
-        /// This method will take care of resizing the Navigation ComboBox to make it as long as possible
+        /// This method will take care of resizing the Navigation box to make it as long as possible
         /// </summary>
         private void navigationBar_Resize(object sender, EventArgs e)
         {
             int newSize = navigationBar.Width - navAddressLabel.Bounds.Right - 15;
 
-            if (newSize > 0)
-                navAddressBox.Size = new Size(newSize, navAddressBox.Height);
-
-            navAddressBox.SelectionLength = 0;
-        }
-
-        /// <summary>
-        /// When another item is selected from the navigationbar, 
-        /// this method will set the current selected directory to math it
-        /// </summary>
-        void navAddressBox_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (navAddressBox.SelectedIndex > -1)
-            {
-                ShellItem item = ((BrowserComboItem)navAddressBox.Items[navAddressBox.SelectedIndex]).ShellItem;
-
-                if (!selectedItem.Equals(item))
-                {
-                    TreeNode oldNode = selectedNode;
-                    int currentIndex = navAddressBox.Items.IndexOf(navAddressBox.CurrentItem);
-                    BrowserComboItem currentItem = navAddressBox.CurrentItem;
-                    int maxIndent = folderView.IsParentNode(myCompNode, selectedNode) ? 3 : 2;
-
-                    navAddressBox.CurrentItem = (BrowserComboItem)navAddressBox.Items[navAddressBox.SelectedIndex];
-                    TreeNode newNode = SelectPath(item, false);
-
-                    if (folderView.IsParentNode(newNode, oldNode))
-                    {
-                        while (!currentItem.ShellItem.Equals(item) && currentItem.Indent >= maxIndent)
-                        {
-                            navAddressBox.Items.Remove(currentItem);
-                            currentIndex--;
-                            currentItem = (BrowserComboItem)navAddressBox.Items[currentIndex];
-                        }
-                    }
-                    else
-                    {
-                        while (currentItem.Indent >= maxIndent)
-                        {
-                            navAddressBox.Items.Remove(currentItem);
-                            currentIndex--;
-                            currentItem = (BrowserComboItem)navAddressBox.Items[currentIndex];
-                        }
-                    }
-                }
-            }
+			if (newSize > 0)
+				navAddressBox.Width = newSize;
         }
 
         #endregion
