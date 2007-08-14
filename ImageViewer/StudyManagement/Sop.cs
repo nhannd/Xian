@@ -245,7 +245,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				bool tagExists;
 				string nameOfPhysiciansReadingStudy;
 				GetTagArray(DicomTags.NameofPhysiciansReadingStudy, out nameOfPhysiciansReadingStudy, out tagExists);
-				return VMStringConverter.ToPersonNameArray(nameOfPhysiciansReadingStudy);
+				return DicomStringHelper.GetPersonNameArray(nameOfPhysiciansReadingStudy);
 			}
 		}
 
@@ -263,7 +263,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				bool tagExists;
 				string admittingDiagnosesDescription;
 				GetTagArray(DicomTags.AdmittingDiagnosesDescription, out admittingDiagnosesDescription, out tagExists);
-				return VMStringConverter.ToStringArray(admittingDiagnosesDescription);
+				return DicomStringHelper.GetStringArray(admittingDiagnosesDescription);
 			}
 		}
 
@@ -467,7 +467,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				bool tagExists;
 				string performingPhysiciansNames;
 				GetTagArray(DicomTags.PerformingPhysiciansName, out performingPhysiciansNames, out tagExists);
-				return VMStringConverter.ToPersonNameArray(performingPhysiciansNames);
+				return DicomStringHelper.GetPersonNameArray(performingPhysiciansNames);
 			}
 		}
 
@@ -509,7 +509,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				bool tagExists;
 				string operatorsNames;
 				GetTagArray(DicomTags.OperatorsName, out operatorsNames, out tagExists);
-				return VMStringConverter.ToPersonNameArray(operatorsNames);
+				return DicomStringHelper.GetPersonNameArray(operatorsNames);
 			}
 		}
 

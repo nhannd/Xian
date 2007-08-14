@@ -123,8 +123,6 @@ namespace ClearCanvas.Dicom
 		
 		#region Private fields
         private string _personsName;
-        private string _lastName;
-        private string _firstName;
 		private string _formattedName;
 
         private ComponentGroup[] _componentGroups = { ComponentGroup.GetEmptyComponentGroup(), 

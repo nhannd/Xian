@@ -431,7 +431,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			//underlying IStudyFinder(s) must handle this special case, either by ignoring the filter
 			//or by running multiple queries, one per modality specified (for example).
 
-			string modalityFilter = VMStringConverter.ToDicomStringArray<string>(_searchPanelComponent.SearchModalities);
+			string modalityFilter = DicomStringHelper.GetDicomStringArray<string>(_searchPanelComponent.SearchModalities);
 
 			QueryParameters queryParams = new QueryParameters();
 			queryParams.Add("PatientsName", patientsName);
@@ -611,7 +611,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			if (newStudies.Count > 0)
 			{
-				string studyUids = VMStringConverter.ToDicomStringArray<string>(newStudies);
+				string studyUids = DicomStringHelper.GetDicomStringArray<string>(newStudies);
 				if (String.IsNullOrEmpty(studyUids))
 					return;
 

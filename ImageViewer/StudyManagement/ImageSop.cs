@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				GetTagArray(DicomTags.PatientOrientation, out patientOrientation, out tagExists);
 				if (tagExists)
 				{
-					string[] values = VMStringConverter.ToStringArray(patientOrientation);
+					string[] values = DicomStringHelper.GetStringArray(patientOrientation);
 					if (values.Length == 2)
 						return new PatientOrientation(values[0], values[1]);
 				}
@@ -168,6 +168,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the lossy image compression ratio.
 		/// </summary>
+		/// <remarks>
+		/// Will return as many parsable values as possible up to the first non-parsable value.  For example, if there are 3 values, but the last one is poorly encoded, 2 values will be returned.
+		/// </remarks>
 		public virtual double[] LossyImageCompressionRatio
 		{
 			get
@@ -175,7 +178,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				bool tagExists;
 				string lossyImageCompressionRatios;
 				GetTagArray(DicomTags.LossyImageCompressionRatio, out lossyImageCompressionRatios, out tagExists);
-				return VMStringConverter.ToDoubleArray(lossyImageCompressionRatios);
+				
+				double[] values;
+				DicomStringHelper.TryGetDoubleArray(lossyImageCompressionRatios, out values);
+				return values;
 			}
 		}
 
@@ -201,7 +207,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets the pixel spacing.
 		/// </summary>
 		/// <remarks>
-		/// a <see cref="PixelSpacing"/> object is always returned, but when no data is available, its properties have values of 0.
+		/// Returns a <see cref="PixelSpacing"/> object with zero for all its values when no data is available or the existing data is bad/incorrect.
 		/// </remarks>
 		public virtual PixelSpacing PixelSpacing
 		{
@@ -212,8 +218,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				GetTagArray(DicomTags.PixelSpacing, out pixelSpacing, out tagExists);
 				if (tagExists)
 				{
-					double[] values = VMStringConverter.ToDoubleArray(pixelSpacing);
-					if (values.Length == 2)
+					double[] values;
+					if (DicomStringHelper.TryGetDoubleArray(pixelSpacing, out values) && values.Length == 2)
 						return new PixelSpacing(values[0], values[1]);
 				}
 
@@ -225,7 +231,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets the image orientation patient.
 		/// </summary>
 		/// <remarks>
-		/// null is returned when no data is available.
+		/// Returns an <see cref="ImageOrientationPatient"/> object with zero for all its values when no data is available or the existing data is bad/incorrect.
 		/// </remarks>
 		public virtual ImageOrientationPatient ImageOrientationPatient
 		{
@@ -236,12 +242,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				GetTagArray(DicomTags.ImageOrientationPatient, out imageOrientationPatient, out tagExists);
 				if (tagExists)
 				{
-					double[] values = VMStringConverter.ToDoubleArray(imageOrientationPatient);
-					if (values.Length == 6)
+					double[] values;
+					if (DicomStringHelper.TryGetDoubleArray(imageOrientationPatient, out values) && values.Length == 6)
 						return new ImageOrientationPatient(values[0], values[1], values[2], values[3], values[4], values[5]);
 				}
 
-				return null;
+				return new ImageOrientationPatient(0, 0, 0, 0, 0, 0);
 			}
 		}
 
@@ -249,7 +255,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Gets the image position patient.
 		/// </summary>
 		/// <remarks>
-		/// null is returned when no data is available.
+		/// Returns an <see cref="ImagePositionPatient"/> object with zero for all its values when no data is available or the existing data is bad/incorrect.
 		/// </remarks>
 		public virtual ImagePositionPatient ImagePositionPatient
 		{
@@ -260,12 +266,12 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				GetTagArray(DicomTags.ImagePositionPatient, out imagePositionPatient, out tagExists);
 				if (tagExists)
 				{
-					double[] values = VMStringConverter.ToDoubleArray(imagePositionPatient);
-					if (values.Length == 3)
+					double[] values;
+					if (DicomStringHelper.TryGetDoubleArray(imagePositionPatient, out values) && values.Length == 3)
 						return new ImagePositionPatient(values[0], values[1], values[2]);
 				}
 
-				return null;
+				return new ImagePositionPatient(0, 0, 0);
 			}
 		}
 
@@ -447,8 +453,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				GetTagArray(DicomTags.PixelAspectRatio, out pixelAspectRatio, out tagExists);
 				if (tagExists)
 				{
-					double[] values = VMStringConverter.ToDoubleArray(pixelAspectRatio);
-					if (values.Length == 2)
+					double[] values;
+					if (DicomStringHelper.TryGetDoubleArray(pixelAspectRatio, out values) && values.Length == 2)
 						return new PixelAspectRatio(values[0], values[1]);
 				}
 
@@ -516,6 +522,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the window width and center.
 		/// </summary>
+		/// <remarks>
+		/// Will return as many parsable values as possible up to the first non-parsable value.  For example, if there are 3 values, but the last one is poorly encoded, 2 values will be returned.
+		/// </remarks>
 		public virtual Window[] WindowCenterAndWidth
 		{
 			get
@@ -533,15 +542,15 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 						{
 							List<Window> windows = new List<Window>();
 
-							double[] windowCenters = VMStringConverter.ToDoubleArray(windowCenterValues);
-							double[] windowWidths = VMStringConverter.ToDoubleArray(windowWidthValues);
+							double[] windowCenters;
+							double[] windowWidths;
+							DicomStringHelper.TryGetDoubleArray(windowCenterValues, out windowCenters);
+							DicomStringHelper.TryGetDoubleArray(windowWidthValues, out windowWidths);
 
 							if (windowCenters.Length > 0 && windowCenters.Length == windowWidths.Length)
 							{
 								for (int i = 0; i < windowWidths.Length; ++i)
-								{
 									windows.Add(new Window(windowWidths[i], windowCenters[i]));
-								}
 
 								return windows.ToArray();
 							}
@@ -563,7 +572,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				bool tagExists;
 				string windowCenterAndWidthExplanations;
 				GetTagArray(DicomTags.WindowCenterWidthExplanation, out windowCenterAndWidthExplanations, out tagExists);
-				return VMStringConverter.ToStringArray(windowCenterAndWidthExplanations);
+				return DicomStringHelper.GetStringArray(windowCenterAndWidthExplanations);
 			}
 		}
 

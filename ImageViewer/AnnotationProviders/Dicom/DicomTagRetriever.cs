@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 			if (tagExists)
 				value = "";
 
-			return VMStringConverter.ToStringArray(value);
+			return DicomStringHelper.GetStringArray(value);
 		}
 	}
 
@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 			if (tagExists)
 				value = "";
 
-			return VMStringConverter.ToDoubleArray(value);
+			return DicomStringHelper.GetDoubleArray(value);
 		}
 	}
 }

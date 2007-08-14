@@ -1,0 +1,257 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using ClearCanvas.Common.Utilities;
+
+namespace ClearCanvas.Dicom
+{
+	/// <summary>
+	/// A static helper class containing methods for converting to and from multi-valued dicom arrays.  Any VR with VM > 1 is a string VR,
+	/// but many must be convertible to numbers.  For example: IS (Integer String), DS (Decimal String), etc.
+	/// </summary>
+	/// <remarks>
+	/// In the documentation for each method, the term <B>Dicom String Array</B> is used repeatedly.  This refers to a string representation of an 
+	/// array as is used in Dicom.  For example, an array of integers (1, 2, 3) would be represented as "1\2\3" in Dicom.
+	/// </remarks>
+	public static class DicomStringHelper
+	{
+		/// <summary>
+		/// Gets a Dicom String Array from the input values of an arbitrary type.
+		/// </summary>
+		/// <typeparam name="T">any arbitrary Type that may be used to encode a Dicom String Array.</typeparam>
+		/// <param name="values">the input values.</param>
+		/// <returns>A Dicom String Array representation of <see cref="values"/>.</returns>
+		/// <remarks>
+		/// It is assumed that the <see cref="T.ToString"/> method returns the string that is to be encoded into the Dicom String Array.
+		/// </remarks>
+		static public string GetDicomStringArray<T>(IEnumerable<T> values)
+		{
+			return StringUtilities.Combine<T>(values, "\\");
+		}
+
+		/// <summary>
+		/// Gets a Dicom String Array from the input values of an arbitrary type.
+		/// </summary>
+		/// <typeparam name="T">any arbitrary Type that may be used to encode a Dicom String Array.</typeparam>
+		/// <param name="values">the input values.</param>
+		/// <param name="formatDelegate">A delegate that is used to format each value in <see cref="values"/> before encoding it into the Dicom String Array.</param>
+		/// <returns>A Dicom String Array representation of <see cref="values"/>.</returns>
+		/// <remarks>
+		/// It is assumed that the <see cref="T.ToString"/> method returns the string that is to be encoded into the Dicom String Array.
+		/// </remarks>
+		static public string GetDicomStringArray<T>(IEnumerable<T> values, StringUtilities.FormatDelegate<T> formatDelegate)
+		{
+			return StringUtilities.Combine<T>(values, "\\", formatDelegate);
+		}
+
+		/// <summary>
+		/// Gets a Dicom String array from the input <see cref="double"/> values.
+		/// </summary>
+		/// <param name="values">the input values.</param>
+		/// <param name="formatSpecifier">A format specifier that is used to format each value in <see cref="values"/> before encoding it into the Dicom String Array.</param>
+		/// <returns>A Dicom String Array representation of <see cref="values"/>.</returns>
+		/// <remarks>The value of <see cref="formatSpecifier"/> must be valid for Type <see cref="double"/> or an exception will be thrown.  Internally, <see cref="double.ToString"/> is used to format the value for the Dicom String Array.</remarks>
+		static public string GetDicomDoubleArray(IEnumerable<double> values, string formatSpecifier)
+		{
+			return StringUtilities.CombineDouble(values, "\\", formatSpecifier);
+		}
+
+		/// <summary>
+		/// Gets a Dicom String array from the input <see cref="float"/> values.
+		/// </summary>
+		/// <param name="values">the input values.</param>
+		/// <param name="formatSpecifier">A format specifier that is used to format each value in <see cref="values"/> before encoding it into the Dicom String Array.</param>
+		/// <returns>A Dicom String Array representation of <see cref="values"/>.</returns>
+		/// <remarks>The value of <see cref="formatSpecifier"/> must be valid for Type <see cref="float"/> or an exception will be thrown.  Internally, <see cref="float.ToString"/> is used to format the value for the Dicom String Array.</remarks>
+		static public string GetDicomFloatArray(IEnumerable<float> values, string formatSpecifier)
+		{
+			return StringUtilities.CombineFloat(values, "\\", formatSpecifier);
+		}
+
+		/// <summary>
+		/// Gets a Dicom String array from the input <see cref="int"/> values.
+		/// </summary>
+		/// <param name="values">the input values.</param>
+		/// <param name="formatSpecifier">A format specifier that is used to format each value in <see cref="values"/> before encoding it into the Dicom String Array.</param>
+		/// <returns>A Dicom String Array representation of <see cref="values"/>.</returns>
+		/// <remarks>The value of <see cref="formatSpecifier"/> must be valid for Type <see cref="int"/> or an exception will be thrown.  Internally, <see cref="int.ToString"/> is used to format the value for the Dicom String Array.</remarks>
+		static public string GetDicomIntArray(IEnumerable<int> values, string formatSpecifier)
+		{
+			return StringUtilities.CombineInt(values, "\\", formatSpecifier);
+		}
+
+		/// <summary>
+		/// Gets a Dicom String Array from the input <see cref="PersonName"/> values.
+		/// </summary>
+		/// <param name="values">the input values.</param>
+		/// <returns>A Dicom String Array representation of <see cref="values"/>.</returns>
+		static public string GetDicomPersonNameArray(IEnumerable<PersonName> values)
+		{
+			return StringUtilities.Combine(values, "\\");
+		}
+
+		/// <summary>
+		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="string"/>s.
+		/// </summary>
+		/// <param name="dicomStringArray">the Dicom String Array to be split up.</param>
+		/// <returns>An array of <see cref="string"/>s.</returns>
+		static public string[] GetStringArray(string dicomStringArray)
+		{
+			if (dicomStringArray == null)
+				dicomStringArray = ""; //return an empty array.
+
+			return dicomStringArray.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
+		}
+
+		/// <summary>
+		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="double"/>s.
+		/// </summary>
+		/// <param name="dicomStringArray">The Dicom String Array to be split up.</param>
+		/// <returns>An array of <see cref="double"/>s.</returns>
+		/// <remarks>The input string must consist of valid <see cref="double"/> values or an exception will be thrown.  Internally, <see cref="double.Parse"/> is used to convert the individual values.</remarks>
+		static public double[] GetDoubleArray(string dicomStringArray)
+		{
+			string[] stringValues = GetStringArray(dicomStringArray);
+
+			List<double> doubleValues = new List<double>();
+			foreach(string value in stringValues)
+				doubleValues.Add(double.Parse(value));
+
+			return doubleValues.ToArray();
+		}
+
+		/// <summary>
+		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="double"/>s without throwing an exception.
+		/// </summary>
+		/// <param name="dicomStringArray">The Dicom String Array to be split up.</param>
+		/// <param name="returnValues">The return values.</param>
+		/// <returns>True if all values were parsed successfully.  Otherwise, false.</returns>
+		/// <remarks>The input string must consist of valid <see cref="double"/> values.  If not, all valid values up to, but not including, the first invalid value are returned.</remarks>
+		static public bool TryGetDoubleArray(string dicomStringArray, out double[] returnValues)
+		{
+			string[] stringValues = GetStringArray(dicomStringArray);
+
+			List<double> doubleValues = new List<double>();
+			foreach (string value in stringValues)
+			{
+				double outValue;
+				if (!double.TryParse(value, out outValue))
+				{
+					returnValues = doubleValues.ToArray();
+					return false;
+				}
+
+				doubleValues.Add(outValue);
+			}
+
+			returnValues = doubleValues.ToArray();
+			return true;
+		}
+
+		/// <summary>
+		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="float"/>s.
+		/// </summary>
+		/// <param name="dicomStringArray">The Dicom String Array to be split up.</param>
+		/// <returns>An array of <see cref="float"/>s.</returns>
+		/// <remarks>The input string must consist of valid <see cref="float"/> values or an exception will be thrown.  Internally, <see cref="float.Parse"/> is used to convert the individual values.</remarks>
+		static public float[] GetFloatArray(string dicomStringArray)
+		{
+			string[] stringValues = GetStringArray(dicomStringArray);
+
+			List<float> floatValues = new List<float>();
+			foreach (string value in stringValues)
+				floatValues.Add(float.Parse(value));
+
+			return floatValues.ToArray();
+		}
+
+		/// <summary>
+		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="float"/>s without throwing an exception.
+		/// </summary>
+		/// <param name="dicomStringArray">The Dicom String Array to be split up.</param>
+		/// <param name="returnValues">The return values.</param>
+		/// <returns>True if all values were parsed successfully.  Otherwise, false.</returns>
+		/// <remarks>The input string must consist of valid <see cref="float"/> values.  If not, all valid values up to, but not including, the first invalid value are returned.</remarks>
+		static public bool TryGetFloatArray(string dicomStringArray, out float[] returnValues)
+		{
+			string[] stringValues = GetStringArray(dicomStringArray);
+
+			List<float> floatValues = new List<float>();
+			foreach (string value in stringValues)
+			{
+				float outValue;
+				if (!float.TryParse(value, out outValue))
+				{
+					returnValues = floatValues.ToArray();
+					return false;
+				}
+
+				floatValues.Add(outValue);
+			}
+
+			returnValues = floatValues.ToArray();
+			return true;
+		}
+
+		/// <summary>
+		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="int"/>s.
+		/// </summary>
+		/// <param name="dicomStringArray">The Dicom String Array to be split up.</param>
+		/// <returns>An array of <see cref="int"/>s.</returns>
+		/// <remarks>The input string must consist of valid <see cref="int"/> values or an exception will be thrown.  Internally, <see cref="int.Parse"/> is used to convert the individual values.</remarks>
+		static public int[] GetIntArray(string dicomStringArray)
+		{
+			string[] stringValues = GetStringArray(dicomStringArray);
+
+			List<int> intValues = new List<int>();
+			foreach (string value in stringValues)
+				intValues.Add(int.Parse(value));
+
+			return intValues.ToArray();
+		}
+
+		/// <summary>
+		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="int"/>s without throwing an exception.
+		/// </summary>
+		/// <param name="dicomStringArray">The Dicom String Array to be split up.</param>
+		/// <param name="returnValues">The return values.</param>
+		/// <returns>True if all values were parsed successfully.  Otherwise, false.</returns>
+		/// <remarks>The input string must consist of valid <see cref="int"/> values.  If not, all valid values up to, but not including, the first invalid value are returned.</remarks>
+		static public bool TryGetIntArray(string dicomStringArray, out int[] returnValues)
+		{
+			string[] stringValues = GetStringArray(dicomStringArray);
+
+			List<int> intValues = new List<int>();
+			foreach (string value in stringValues)
+			{
+				int outValue;
+				if (!int.TryParse(value, out outValue))
+				{
+					returnValues = intValues.ToArray();
+					return false;
+				}
+
+				intValues.Add(outValue);
+			}
+
+			returnValues = intValues.ToArray();
+			return true;
+		}
+
+		/// <summary>
+		/// Splits a Dicom String Array (<see cref="dicomStringArray"/>) into its component <see cref="PersonName"/>s.
+		/// </summary>
+		/// <param name="dicomStringArray">The Dicom String Array to be split up.</param>
+		/// <returns>An array of <see cref="PersonName"/>s.</returns>
+		static public PersonName[] GetPersonNameArray(string dicomStringArray)
+		{
+			string[] stringValues = GetStringArray(dicomStringArray);
+
+			List<PersonName> personNames = new List<PersonName>();
+			foreach (string value in stringValues)
+				personNames.Add(new PersonName(value));
+
+			return personNames.ToArray();
+		}
+	}
+}

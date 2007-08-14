@@ -452,7 +452,7 @@ namespace ClearCanvas.Dicom.DataStore
 				foreach (Series series in study.Series)
 					setModalities[series.Modality] = series.Modality;
 
-				string modalities = VMStringConverter.ToDicomStringArray<string>(setModalities.Keys);
+				string modalities = DicomStringHelper.GetDicomStringArray<string>(setModalities.Keys);
 				result.Add(DicomTags.ModalitiesinStudy, modalities);
 
 				results.Add(result);
@@ -504,7 +504,7 @@ namespace ClearCanvas.Dicom.DataStore
 			}
 			else
 			{
-				List<string> modalities = new List<string>(VMStringConverter.ToStringArray(modalitiesInStudyQuery));
+				List<string> modalities = new List<string>(DicomStringHelper.GetStringArray(modalitiesInStudyQuery));
 				string modalitiesList = StringUtilities.Combine<string>(modalities, ", ", delegate(string value) { return String.Format("'{0}'", value); });
 				returnBuilder.AppendFormat("exists(from study.InternalSeries as series where series.Modality in ( {0} ))", modalitiesList);
 			}
@@ -515,7 +515,7 @@ namespace ClearCanvas.Dicom.DataStore
 			if (String.IsNullOrEmpty(listOfUidQueryString))
 				return;
 
-			List<string> uids = new List<string>(VMStringConverter.ToStringArray(listOfUidQueryString));
+			List<string> uids = new List<string>(DicomStringHelper.GetStringArray(listOfUidQueryString));
 			string uidList = StringUtilities.Combine<string>(uids, ", ", delegate(string value) { return String.Format("'{0}'", value); });
 			returnBuilder.AppendFormat("{0} in ( {1} )", columnName + "_", uidList);
 		}

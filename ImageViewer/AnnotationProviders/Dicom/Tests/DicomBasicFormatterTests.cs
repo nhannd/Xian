@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom.Tests
 		public void TestListFormatters()
 		{
 			string input = @"The\brown\dog\\jumped";
-			string result = DicomBasicResultFormatter.StringListFormat(VMStringConverter.ToStringArray(input));
+			string result = DicomBasicResultFormatter.StringListFormat(DicomStringHelper.GetStringArray(input));
 			Assert.AreEqual(result, "The,\nbrown,\ndog,\njumped");
 
 			input = @"Doe^John^^^";
@@ -35,23 +35,23 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom.Tests
 			Assert.AreEqual(result, "Doe");
 
 			input = @"Doe^John^^^\Doe^Jane^^^";
-			result = DicomBasicResultFormatter.PersonNameListFormatter(VMStringConverter.ToPersonNameArray(input));
+			result = DicomBasicResultFormatter.PersonNameListFormatter(DicomStringHelper.GetPersonNameArray(input));
 			Assert.AreEqual(result, "Doe, John,\nDoe, Jane");
 
 			input = @"^John^^^\Doe^Jane^^^";
-			result = DicomBasicResultFormatter.PersonNameListFormatter(VMStringConverter.ToPersonNameArray(input));
+			result = DicomBasicResultFormatter.PersonNameListFormatter(DicomStringHelper.GetPersonNameArray(input));
 			Assert.AreEqual(result, "John,\nDoe, Jane");
 
 			input = @"^John^^^\Doe^^^^";
-			result = DicomBasicResultFormatter.PersonNameListFormatter(VMStringConverter.ToPersonNameArray(input));
+			result = DicomBasicResultFormatter.PersonNameListFormatter(DicomStringHelper.GetPersonNameArray(input));
 			Assert.AreEqual(result, "John,\nDoe");
 
 			input = @"^^^^\Doe^^^^";
-			result = DicomBasicResultFormatter.PersonNameListFormatter(VMStringConverter.ToPersonNameArray(input));
+			result = DicomBasicResultFormatter.PersonNameListFormatter(DicomStringHelper.GetPersonNameArray(input));
 			Assert.AreEqual(result, "Doe");
 
 			input = @"^^^^\^^^^";
-			result = DicomBasicResultFormatter.PersonNameListFormatter(VMStringConverter.ToPersonNameArray(input));
+			result = DicomBasicResultFormatter.PersonNameListFormatter(DicomStringHelper.GetPersonNameArray(input));
 			Assert.AreEqual(result, "");
 		}
 	}
