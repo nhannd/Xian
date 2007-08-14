@@ -116,10 +116,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			get 
 			{
-				if (_pixelData != null)
-					return _pixelData;
-				else
-					return _pixelDataGetter();
+				return GetPixelData();
 			}
 		}
 
@@ -303,6 +300,14 @@ namespace ClearCanvas.ImageViewer.Graphics
 		protected abstract int GetPixelInternal(int i);
 
 		protected abstract void SetPixelInternal(int i, int value);
+
+		protected byte[] GetPixelData()
+		{
+			if (_pixelData != null)
+				return _pixelData;
+			else
+				return _pixelDataGetter();
+		}
 
 		#endregion
 

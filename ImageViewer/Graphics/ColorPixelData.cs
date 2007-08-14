@@ -150,15 +150,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		protected override PixelData CloneInternal()
 		{
-			return new ColorPixelData(_rows, _columns, (byte[])_pixelData.Clone());
+			return new ColorPixelData(_rows, _columns, (byte[])GetPixelData().Clone());
 		}
 
 		protected override int GetPixelInternal(int i)
 		{
-			int b = (int)_pixelData[i];
-			int g = (int)_pixelData[i + 1];
-			int r = (int)_pixelData[i + 2];
-			int a = (int)_pixelData[i + 3];
+			byte[] pixelData = GetPixelData();
+
+			int b = (int)pixelData[i];
+			int g = (int)pixelData[i + 1];
+			int r = (int)pixelData[i + 2];
+			int a = (int)pixelData[i + 3];
 
 			int argb = a << 24 | r << 16 | g << 8 | b;
 			return argb;
@@ -166,10 +168,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		protected override void SetPixelInternal(int i, int value)
 		{
-			_pixelData[i]     = (byte)(value & 0x000000ff);
-			_pixelData[i + 1] = (byte)((value & 0x0000ff00) >> 8);
-			_pixelData[i + 2] = (byte)((value & 0x00ff0000) >> 16);
-			_pixelData[i + 3] = (byte)((value & 0xff000000) >> 24);
+			byte[] pixelData = GetPixelData();
+
+			pixelData[i]     = (byte)(value & 0x000000ff);
+			pixelData[i + 1] = (byte)((value & 0x0000ff00) >> 8);
+			pixelData[i + 2] = (byte)((value & 0x00ff0000) >> 16);
+			pixelData[i + 3] = (byte)((value & 0xff000000) >> 24);
 		}
 
 		#endregion
@@ -178,10 +182,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void SetPixelInternal(int i, byte a, byte r, byte g, byte b)
 		{
-			_pixelData[i] = b;
-			_pixelData[i + 1] = g;
-			_pixelData[i + 2] = r;
-			_pixelData[i + 3] = a;
+			byte[] pixelData = GetPixelData();
+
+			pixelData[i] = b;
+			pixelData[i + 1] = g;
+			pixelData[i + 2] = r;
+			pixelData[i + 3] = a;
 		}
 
 		#endregion
