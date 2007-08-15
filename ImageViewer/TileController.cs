@@ -24,9 +24,11 @@ namespace ClearCanvas.ImageViewer
 		private Rectangle _tileClientRectangle;
 
 		private IMouseButtonHandler _captureHandler;
-		private IMouseWheelHandler _captureMouseWheelHandler;
-		private Timer _wheelHandlerTimer;
-		private DateTime _timeOfLastWheel;
+
+		//The wheel can only act on one tile at a time, and a click in another tile should stop the timer, therefore use statics.
+		private static IMouseWheelHandler _captureMouseWheelHandler;
+		private static Timer _wheelHandlerTimer;
+		private static DateTime _timeOfLastWheel;
 
 		private CursorToken _cursorToken;
 		
@@ -238,14 +240,14 @@ namespace ClearCanvas.ImageViewer
 
 		private bool ProcessMouseButtonDownMessage(MouseButtonMessage buttonMessage)
 		{
+			this.CaptureMouseWheelHandler = null;
+
 			//don't allow multiple buttons, it's just cleaner and easier to manage behaviour.
 			if (_activeButton != 0)
 			{
 				_contextMenuEnabled = false;
 				return true;
 			}
-
-			this.CaptureMouseWheelHandler = null;
 
 			_activeButton = buttonMessage.Shortcut.MouseButton;
 			_clickCount = buttonMessage.ClickCount;
