@@ -27,7 +27,9 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Public Static Members
-
+        /// <summary>
+        /// Static constructor.
+        /// </summary>
         static DicomVr()
         {
             _vrs.Add(AEvr.Name, AEvr);
@@ -408,11 +410,22 @@ namespace ClearCanvas.Dicom
             return myVr.ToString();
         }
 
+        /// <summary>
+        /// Internal method for creating a new <see cref="DicomAttribute"/> derived class for the VR.
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <returns></returns>
         internal DicomAttribute CreateDicomAttribute(DicomTag tag)
         {
             return _createDelegate(tag, null);
         }
 
+        /// <summary>
+        /// Internal method for creating a new <see cref="DicomAttribute"/> derived class for the VR.
+        /// </summary>
+        /// <param name="tag"></param>
+        /// <param name="bb"></param>
+        /// <returns></returns>
         internal DicomAttribute CreateDicomAttribute(DicomTag tag, ByteBuffer bb)
         {
             return _createDelegate(tag,bb);

@@ -9,6 +9,8 @@ namespace ClearCanvas.Dicom
     /// <summary>
     /// Class representing a DICOM Message to be transferred over the network.
     /// </summary>
+    /// <seealso cref="DicomMessageBase"/>
+    /// <seealso cref="DicomFile"/>
     public class DicomMessage : DicomMessageBase
     {
         #region Command Element Properties
@@ -231,11 +233,19 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Public Properties
+        /// <summary>
+        /// A <see cref="DicomAttributeCollection"/> instance representing the group 0x000 elements within the message.
+        /// </summary>
         public DicomAttributeCollection CommandSet
         {
             get { return MetaInfo; }
         }
 
+        /// <summary>
+        /// The <see cref="SopClass"/> associated with the message.
+        /// </summary>
+        /// <remarks>If the SOP Clas is unknown, an new SopClass instance is
+        /// returned with the SOP Class UID set appropriately.</remarks>
         public SopClass SopClass
         {
             get
@@ -253,6 +263,11 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Constructor for creating a new DicomMessage instance from existing command and data sets.
+        /// </summary>
+        /// <param name="command">The command set.</param>
+        /// <param name="data">The data set.</param>
         public DicomMessage(DicomAttributeCollection command, DicomAttributeCollection data) : base()
         {
             if (command == null)
@@ -266,12 +281,22 @@ namespace ClearCanvas.Dicom
                 base._dataSet = data;
         }
 
+        /// <summary>
+        /// Creates a new DicomMessage instance from an existing <see cref="DicomFile"/>.
+        /// </summary>
+        /// <remarks>
+        /// This method creates a new command set for the DicomMessage, but shares the DataSet with <paramref name="file"/>.
+        /// </remarks>
+        /// <param name="file">The <see cref="DicomFile"/> to change into a DicomMessage.</param>
         public DicomMessage(DicomFile file)
         {
             base._metaInfo = new DicomAttributeCollection(0x00000000,0x0000FFFF);
             base._dataSet = file.DataSet;
         }
 
+        /// <summary>
+        /// Default constructor that creates an empty message.
+        /// </summary>
         public DicomMessage()
         {
             base._metaInfo = new DicomAttributeCollection(0x00000000, 0x0000FFFF);

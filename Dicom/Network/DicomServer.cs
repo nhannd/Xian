@@ -9,15 +9,38 @@ using System.IO;
 namespace ClearCanvas.Dicom.Network
 {
     public delegate IDicomServerHandler StartAssociation(ServerAssociationParameters assoc);
-
+    /// <summary>
+    /// Class used by DICOM server applications for network related activites.
+    /// </summary>
     public sealed class DicomServer : NetworkBase
     {
         #region Static Public Methods
+        /// <summary>
+        /// Start listening for incoming associations.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Note that StartListening can be called multiple times with different association parameters.
+        /// </para>
+        /// </remarks>
+        /// <param name="parameters">The parameters to use when listening for associations.</param>
+        /// <param name="acceptor">A delegate to be called to return a class instance that implements
+        /// the <see cref="IDicomServerHandler"/> interface to handle an incoming association.</param>
         public static void StartListening(ServerAssociationParameters parameters, StartAssociation acceptor)
         {
             Listener.Listen(parameters, acceptor);
         }
 
+        /// <summary>
+        /// Stop listening for incoming associations.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// Note that <see cref="StartListening"/> can be called multiple times with different association
+        /// parameters.
+        /// </para>
+        /// </remarks>
+        /// <param name="parameters">The parameters to stop listening on.</param>
         public static void StopListening(ServerAssociationParameters parameters)
         {
             Listener.StopListening(parameters);
@@ -35,13 +58,16 @@ namespace ClearCanvas.Dicom.Network
 		#endregion
 
         #region Public Properties
+        /// <summary>
+        /// Property that tells if an association was closed because of an error.
+        /// </summary>
         public bool ClosedOnError
         {
             get { return _closedOnError; }
         }
         #endregion
 
-        #region Public Constructors
+        #region Constructors
 
         internal DicomServer(Socket socket, Dictionary<String,ListenerInfo> appList)
             : base()
@@ -124,6 +150,9 @@ namespace ClearCanvas.Dicom.Network
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Close the association.
+        /// </summary>
         public void Close()
         {
             lock (this)
@@ -150,6 +179,10 @@ namespace ClearCanvas.Dicom.Network
         #endregion
 
         #region NetworkBase Overrides
+        /// <summary>
+        /// Used internally to determine if the connection has network data available.
+        /// </summary>
+        /// <returns></returns>
         protected override bool NetworkHasData()
         {
             if (!_socket.Connected)
@@ -158,6 +191,10 @@ namespace ClearCanvas.Dicom.Network
             return _socket.Available > 0;
         }
 
+        /// <summary>
+        /// Method called on a network error.
+        /// </summary>
+        /// <param name="e">The exception that caused the network error</param>
         protected override void OnNetworkError(Exception e)
         {
             try
@@ -174,6 +211,10 @@ namespace ClearCanvas.Dicom.Network
             Close();
         }
 
+        /// <summary>
+        /// Method called when receiving an association request.
+        /// </summary>
+        /// <param name="association"></param>
         protected override void OnReceiveAssociateRequest(ServerAssociationParameters association)
         {
             if (!_appList.ContainsKey(association.CalledAE))

@@ -33,6 +33,11 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <returns></returns>
         public abstract override string ToString();
+        /// <summary>
+        /// Method to check if two attributes are equal.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns>true if the attributes are equal.</returns>
         public abstract override bool Equals(object obj);
         public abstract override int GetHashCode();
         public abstract bool IsNull { get; }
@@ -45,6 +50,12 @@ namespace ClearCanvas.Dicom
         internal abstract ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet);
         internal abstract DicomAttribute Copy(bool copyBinary);
 
+        /// <summary>
+        /// Calculate the length to write the attribute.
+        /// </summary>
+        /// <param name="syntax">The transfer syntax to calculate the length for.</param>
+        /// <param name="options">The write options to calculate the length for.</param>
+        /// <returns></returns>
         internal virtual uint CalculateWriteLength(TransferSyntax syntax, DicomWriteOptions options)
         {
             uint length = 4; // element tag
@@ -119,17 +130,38 @@ namespace ClearCanvas.Dicom
             return value;
         }
 
+        /// <summary>
+        /// Retrieves a <see cref="DicomUid"/> instance for a value.
+        /// </summary>
+        /// <remarks>This function only works for <see cref="DicomAttributeUI"/> attributes.</remarks>
+        /// <param name="i"></param>
+        /// <param name="value"></param>
+        /// <returns>True on success, false on failure.</returns>
         public virtual bool TryGetUid(int i, out DicomUid value)
         {
             value = null;
             return false;
         }
+
+        /// <summary>
+        /// Method to retrieve a <see cref="DateTime"/> attribute for the tag.
+        /// </summary>
+        /// <param name="i">A zero index value to retrieve.</param>
+        /// <param name="value"></param>
+        /// <returns>true on success, false on failure.</returns>
         public virtual bool TryGetDateTime(int i, out DateTime value)
         {
             value = new DateTime();
             return false;
         }
 
+        /// <summary>
+        /// Method for adding a <see cref="DicomSequenceItem"/> to an attributes value.
+        /// </summary>
+        /// <remarks>
+        /// This method is value for <see cref="DicomAttributeSQ"/> attributes only.
+        /// </remarks>
+        /// <param name="item">The <see cref="DicomSequenceItem"/> to add to the attribute.</param>
         public virtual void AddSequenceItem(DicomSequenceItem item)
         {
             throw new DicomException(SR.InvalidType);
@@ -138,6 +170,12 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Internal Properties
+        /// <summary>
+        /// The <see cref="DicomAttributeCollection"/> that the attribute is contained in.
+        /// </summary>
+        /// <remarks>
+        /// This field is used to determine the Specific Character Set of a string attribute.
+        /// </remarks>
         internal DicomAttributeCollection ParentCollection
         {
             get { return _parentCollection; }
@@ -187,6 +225,9 @@ namespace ClearCanvas.Dicom
             get { return _tag; }
         }
 
+        /// <summary>
+        /// The length in bytes if the attribute was placed in a DICOM stream.
+        /// </summary>
         public virtual uint StreamLength
         {
             get
@@ -199,6 +240,9 @@ namespace ClearCanvas.Dicom
             protected set { _length = value; }
         }
 
+        /// <summary>
+        /// The number of values assigned to the attribute.
+        /// </summary>
         public long Count
         {
             get { return _valueCount; }
@@ -219,6 +263,12 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Dump
+        /// <summary>
+        /// Method for dumping the contents of the attribute to a string.
+        /// </summary>
+        /// <param name="sb">The StringBuilder to write the attribute to.</param>
+        /// <param name="prefix">A prefix to place before the value.</param>
+        /// <param name="options">The <see cref="DicomDumpOptions"/> to use for the output string.</param>
         public virtual void Dump(StringBuilder sb, string prefix, DicomDumpOptions options)
         {
             int ValueWidth = 40 - prefix.Length;

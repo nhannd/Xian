@@ -4,6 +4,9 @@ using System.Text;
 
 namespace ClearCanvas.Dicom.Network
 {
+    /// <summary>
+    /// Enumerated value representing classes of DICOM status codes.
+    /// </summary>
     public enum DicomState
     {
         Success,
@@ -13,6 +16,9 @@ namespace ClearCanvas.Dicom.Network
         Failure
     }
 
+    /// <summary>
+    /// Representation of a DICOM Status code set in a DICOM response message.
+    /// </summary>
     public class DicomStatus
     {
         public readonly ushort Code;
@@ -20,6 +26,12 @@ namespace ClearCanvas.Dicom.Network
         public readonly DicomState Status;
         public readonly string Description;
 
+        /// <summary>
+        /// Construcotr.
+        /// </summary>
+        /// <param name="code">The hex value of the code.</param>
+        /// <param name="status">The type of the code</param>
+        /// <param name="desc">The description of the code.</param>
         public DicomStatus(string code, DicomState status, string desc)
         {
             Code = ushort.Parse(code.Replace('x', '0'), System.Globalization.NumberStyles.HexNumber);
@@ -69,6 +81,9 @@ namespace ClearCanvas.Dicom.Network
         }
     }
 
+    /// <summary>
+    /// Lookup table of DICOM status values.
+    /// </summary>
     public static class DicomStatuses
     {
         public static List<DicomStatus> Entries = new List<DicomStatus>();

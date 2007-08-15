@@ -51,6 +51,9 @@ namespace ClearCanvas.Dicom.Network
         }
     }
 
+    /// <summary>
+    /// Class to monitor performance of DICOM network transfers.
+    /// </summary>
     public class TransferMonitor
     {
         #region Private Members

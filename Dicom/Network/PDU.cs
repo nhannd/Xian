@@ -619,12 +619,18 @@ namespace ClearCanvas.Dicom.Network
     #endregion
 
     #region A-Associate-RJ
+    /// <summary>
+    /// An enumerated value to represent if the association is being rejected for permanent or transient reasons.
+    /// </summary>
     public enum DicomRejectResult
     {
         Permanent = 1,
         Transient = 2
     }
 
+    /// <summary>
+    /// An enumerated value to represent the source of an association being rejected.
+    /// </summary>
     public enum DicomRejectSource
     {
         ServiceUser = 1,
@@ -632,6 +638,9 @@ namespace ClearCanvas.Dicom.Network
         ServiceProviderPresentation = 3
     }
 
+    /// <summary>
+    /// An enumerated value represneting the reason for an association being rejected.
+    /// </summary>
     public enum DicomRejectReason
     {
         // Service User

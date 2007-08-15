@@ -7,7 +7,9 @@ using System.Diagnostics;
 
 namespace ClearCanvas.Dicom
 {
-
+    /// <summary>
+    /// Enumerated value for the various types of DICOM UIDs.
+    /// </summary>
     public enum UidType
     {
         TransferSyntax,
@@ -20,24 +22,70 @@ namespace ClearCanvas.Dicom
         Unknown
     }
 
+    /// <summary>
+    /// Class used to represent a DICOM unique identifier (UID).
+    /// </summary>
     public class DicomUid
     {
-        public readonly string UID;
-        public readonly string Description;
-        public readonly UidType Type;
+        #region Private Members
+        private string _uid;
+        private string _description;
+        private UidType _type;
+        #endregion
 
+        #region Constructors
+        /// <summary>
+        /// Default private constructor.
+        /// </summary>
         private DicomUid() { }
 
-        internal DicomUid(string uid, string desc, UidType type)
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+        /// <param name="uid">The UID string.</param>
+        /// <param name="desc">A description of the UID.</param>
+        /// <param name="type">The type of the UID.</param>
+        public DicomUid(string uid, string desc, UidType type)
         {
             if (uid.Length > 64)
                 throw new DicomException("Invalid UID length: " + uid.Length + "!");
 
-            UID = uid;
-            Description = desc;
-            Type = type;
+            _uid = uid;
+            _description = desc;
+            _type = type;
+        }
+        #endregion
+
+        #region Public Properties
+        /// <summary>
+        /// The string representation of the UID.
+        /// </summary>
+        public string UID
+        {
+            get { return _uid; }
         }
 
+        /// <summary>
+        /// A description of the UID.
+        /// </summary>
+        public string Description
+        {
+            get { return _description; }
+        }
+
+        /// <summary>
+        /// The type of the UID.
+        /// </summary>
+        public UidType Type
+        {
+            get { return _type; }
+        }
+        #endregion
+
+        /// <summary>
+        /// Override that displays the type of the UID if known, or else the UID value itself.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             if (Type == UidType.Unknown)
@@ -45,20 +93,34 @@ namespace ClearCanvas.Dicom
             return "==" + Description;
         }
 
+        /// <summary>
+        /// Override that compares if two DicomUid instances are equal.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public override bool Equals(object obj)
         {
-            if (obj is DicomUid)
-                return ((DicomUid)obj).UID.Equals(UID);
-            if (obj is String)
-                return (String)obj == UID;
+            DicomUid uid = obj as DicomUid;
+            if (uid != null)
+                return uid.UID.Equals(UID);
+
+            String value = obj as String;
+            if (value != null)
+                return value == UID;
+
             return false;
         }
 
+        /// <summary>
+        /// An override that determines a hash code for the instance.
+        /// </summary>
+        /// <returns>The hash code of the UID string.</returns>
         public override int GetHashCode()
         {
-            return base.GetHashCode();
+            return _uid.GetHashCode();
         }
 
+        #region Static UID Generation Routines
         /* members for UID Generation */
         private static String _lastTimestamp;
         private static String _baseUid = null;
@@ -190,9 +252,10 @@ namespace ClearCanvas.Dicom
                 return new DicomUid(uid.ToString(),"Instance UID",UidType.SOPInstance);
             }
         }
+        #endregion
     } 
 
-    public static class DicomUids
+    internal static class DicomUids
     {
         public static Dictionary<string, DicomUid> Entries = new Dictionary<string, DicomUid>();
 

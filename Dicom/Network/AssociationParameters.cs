@@ -5,6 +5,9 @@ using System.Net;
 
 namespace ClearCanvas.Dicom.Network
 {
+    /// <summary>
+    /// Enumerated value representing the various DICOM Role selections that can be negotiated. 
+    /// </summary>
     public enum DicomRoleSelection {
 		Disabled,
 		SCU,
@@ -13,6 +16,9 @@ namespace ClearCanvas.Dicom.Network
 		None
 	}
 
+    /// <summary>
+    /// Enumerated value that represents the various DICOM presentation context status values.
+    /// </summary>
 	public enum DicomPresContextResult : byte {
 		Proposed = 255,
 		Accept = 0,
@@ -22,6 +28,9 @@ namespace ClearCanvas.Dicom.Network
 		RejectTransferSyntaxesNotSupported = 4
 	}
 
+    /// <summary>
+    /// Internal representation of a presentation context.
+    /// </summary>
 	internal class DicomPresContext {
 		#region Private Members
 		private byte _pcid;
@@ -137,6 +146,9 @@ namespace ClearCanvas.Dicom.Network
 		#endregion
 	}
 
+    /// <summary>
+    /// Class used to represent parameters used to negotiate an association.
+    /// </summary>
     public class AssociationParameters
     {
         
@@ -158,7 +170,6 @@ namespace ClearCanvas.Dicom.Network
         private int _writeTimeout = 30;
         private int _artimTimeout = 30;
         #endregion
-
 
 		#region Constructors
 		protected AssociationParameters(String callingAE, String calledAE, IPEndPoint localEndPoint, IPEndPoint remoteEndPoint) {
@@ -314,7 +325,6 @@ namespace ClearCanvas.Dicom.Network
             get { return _localEndPoint; }
             internal set { _localEndPoint = value; }
         }
-
 		#endregion
 
         #region Internal Properties

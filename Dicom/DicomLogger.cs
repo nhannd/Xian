@@ -39,7 +39,9 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Log an error message related to an exception to the log file.
         /// </summary>
-        /// <param name="msg">The message to log.</param>
+        /// <param name="msg">A message format string to log.</param>
+        /// <param name="e">The exception to log informaton about.</param>
+        /// <param name="args">Arguments to be used with the <paramref name="msg"/> format string.</param>
         public static void LogErrorException(Exception e, String msg, params object[] args)
         {
             StringBuilder sb = new StringBuilder();

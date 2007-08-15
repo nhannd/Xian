@@ -9,6 +9,9 @@ using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom.Network
 {
+    /// <summary>
+    /// Internal enumerated value used to represent the DICOM Upper Layer State Machine (Part PS 3.8, Section 9.2.1
+    /// </summary>
     internal enum DicomAssociationState
     {
         Sta1_Idle,
@@ -26,6 +29,9 @@ namespace ClearCanvas.Dicom.Network
         Sta13_AwaitingTransportConnectionClose
     }
 
+    /// <summary>
+    /// Query/Retrieve levels defined by DICOM
+    /// </summary>
     public enum DicomQueryRetrieveLevel
     {
         Patient,
@@ -302,11 +308,19 @@ namespace ClearCanvas.Dicom.Network
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Returns the next message Id to be used over the association.
+        /// </summary>
+        /// <returns></returns>
         public ushort NextMessageID()
         {
             return _messageId++;
         }
 
+        /// <summary>
+        /// Method used to send an association request.
+        /// </summary>
+        /// <param name="associate">The parameters used in the association request.</param>
         public void SendAssociateRequest(AssociationParameters associate)
         {
             _assoc = associate;
@@ -314,6 +328,11 @@ namespace ClearCanvas.Dicom.Network
             SendRawPDU(pdu.Write());
         }
 
+        /// <summary>
+        /// Method to send an association abort PDU.
+        /// </summary>
+        /// <param name="source">The source of the abort.</param>
+        /// <param name="reason">The reason for the abort.</param>
         public void SendAssociateAbort(DicomAbortSource source, DicomAbortReason reason)
         {
             if (_state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
@@ -324,6 +343,10 @@ namespace ClearCanvas.Dicom.Network
             }
         }
 
+        /// <summary>
+        /// Method to send an association accept.
+        /// </summary>
+        /// <param name="associate">The parameters to use for the association accept.</param>
         public void SendAssociateAccept(AssociationParameters associate)
         {
             if (_state != DicomAssociationState.Sta3_AwaitingLocalAAssociationResponsePrimative)
@@ -338,6 +361,12 @@ namespace ClearCanvas.Dicom.Network
             _state = DicomAssociationState.Sta6_AssociationEstablished;
         }
 
+        /// <summary>
+        /// Method to send an association rejection.
+        /// </summary>
+        /// <param name="result">The </param>
+        /// <param name="source"></param>
+        /// <param name="reason"></param>
         public void SendAssociateReject(DicomRejectResult result, DicomRejectSource source, DicomRejectReason reason)
         {
             if (_state != DicomAssociationState.Sta3_AwaitingLocalAAssociationResponsePrimative)
@@ -352,6 +381,9 @@ namespace ClearCanvas.Dicom.Network
             _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
         }
 
+        /// <summary>
+        /// Method to send an association release request.  this method can only be used by clients.
+        /// </summary>
         public void SendReleaseRequest()
         {
             if (_state != DicomAssociationState.Sta6_AssociationEstablished)
@@ -366,6 +398,9 @@ namespace ClearCanvas.Dicom.Network
             _state = DicomAssociationState.Sta7_AwaitingAReleaseRP;
         }
 
+        /// <summary>
+        /// Method to send an association release response.
+        /// </summary>
         protected void SendReleaseResponse()
         {
             if (_state != DicomAssociationState.Sta8_AwaitingAReleaseRPLocalUser)
@@ -377,6 +412,11 @@ namespace ClearCanvas.Dicom.Network
             _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
         }
 
+        /// <summary>
+        /// Method to send a DICOM C-ECHO-RQ message.
+        /// </summary>
+        /// <param name="presentationID">The presentation context to send the request on.</param>
+        /// <param name="messageID">The messageID to use.</param>
         public void SendCEchoRequest(byte presentationID, ushort messageID)
         {
             DicomLogger.LogInfo("Sending C Echo request, pres ID: {0}, messageID = {1}", presentationID, messageID);
@@ -386,6 +426,12 @@ namespace ClearCanvas.Dicom.Network
             SendDimse(presentationID, command, null);
         }
 
+        /// <summary>
+        /// Method to send a DICOM C-ECHO-RSP message.
+        /// </summary>
+        /// <param name="presentationID"></param>
+        /// <param name="messageID"></param>
+        /// <param name="status"></param>
         public void SendCEchoResponse(byte presentationID, ushort messageID, DicomStatus status)
         {
             DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
@@ -393,12 +439,28 @@ namespace ClearCanvas.Dicom.Network
             SendDimse(presentationID, msg.CommandSet, null);
         }
 
+        /// <summary>
+        /// Method to send a DICOM C-STORE-RQ message.
+        /// </summary>
+        /// <param name="presentationID"></param>
+        /// <param name="messageID"></param>
+        /// <param name="priority"></param>
+        /// <param name="message"></param>
         public void SendCStoreRequest(byte presentationID, ushort messageID,
             DicomPriority priority, DicomMessage message)
         {
             SendCStoreRequest(presentationID, messageID, priority, null, 0, message);
         }
 
+        /// <summary>
+        /// Method to send a DICOM C-STORE-RQ message.
+        /// </summary>
+        /// <param name="presentationID"></param>
+        /// <param name="messageID"></param>
+        /// <param name="priority"></param>
+        /// <param name="moveAE"></param>
+        /// <param name="moveMessageID"></param>
+        /// <param name="message"></param>
         public void SendCStoreRequest(byte presentationID, ushort messageID,
             DicomPriority priority, string moveAE, ushort moveMessageID, DicomMessage message)
         {
@@ -430,6 +492,13 @@ namespace ClearCanvas.Dicom.Network
             SendDimse(presentationID, command, message.DataSet);
         }
 
+        /// <summary>
+        /// Method to send a DICOM C-STORE-RSP message.
+        /// </summary>
+        /// <param name="presentationID"></param>
+        /// <param name="messageID"></param>
+        /// <param name="affectedInstance"></param>
+        /// <param name="status"></param>
         public void SendCStoreResponse(byte presentationID, ushort messageID, string affectedInstance, DicomStatus status)
         {
             DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
@@ -438,6 +507,12 @@ namespace ClearCanvas.Dicom.Network
             SendDimse(presentationID, msg.CommandSet, null);
         }
 
+        /// <summary>
+        /// Method to send a DICOM C-FIND-RQ message.
+        /// </summary>
+        /// <param name="presentationID"></param>
+        /// <param name="messageID"></param>
+        /// <param name="dataset"></param>
         public void SendCFindRequest(byte presentationID, ushort messageID, DicomAttributeCollection dataset)
         {
             DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
@@ -445,6 +520,13 @@ namespace ClearCanvas.Dicom.Network
             SendDimse(presentationID, command, dataset);
         }
 
+        /// <summary>
+        /// Method to send a DICOM C-MOVE-RQ message.
+        /// </summary>
+        /// <param name="presentationID"></param>
+        /// <param name="messageID"></param>
+        /// <param name="destinationAE"></param>
+        /// <param name="dataset"></param>
         public void SendCMoveRequest(byte presentationID, ushort messageID, string destinationAE, DicomAttributeCollection dataset)
         {
             DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
@@ -476,6 +558,9 @@ namespace ClearCanvas.Dicom.Network
             return msg;
         }
 
+        /// <summary>
+        /// Main processing routine for processing a network connection.
+        /// </summary>
         private void Process()
         {
             try
@@ -756,6 +841,13 @@ namespace ClearCanvas.Dicom.Network
             }
         }
 
+        /// <summary>
+        /// Method for sending a DIMSE mesage.
+        /// </summary>
+        /// <param name="pcid"></param>
+        /// <param name="command"></param>
+        /// <param name="dataset"></param>
+        /// <returns></returns>
         private bool SendDimse(byte pcid, DicomAttributeCollection command, DicomAttributeCollection dataset)
         {
             try

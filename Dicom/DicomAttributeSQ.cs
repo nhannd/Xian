@@ -6,6 +6,9 @@ using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom
 {
+    /// <summary>
+    /// <see cref="DicomAttribute"/> derived class for storing DICOM SQ value representation attributes.
+    /// </summary>
     public class DicomAttributeSQ : DicomAttribute
     {
         DicomSequenceItem[] _values = null;

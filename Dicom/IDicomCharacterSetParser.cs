@@ -4,6 +4,10 @@ using System.Text;
 
 namespace ClearCanvas.Dicom
 {
+    /// <summary>
+    /// Public interface used to define a parser to convert between raw bytes
+    /// and Unicode.
+    /// </summary>
     public interface IDicomCharacterSetParser
     {
         byte[] Encode(string unicodeString, string specificCharacterSet);

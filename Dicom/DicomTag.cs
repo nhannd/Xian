@@ -13,7 +13,7 @@ namespace ClearCanvas.Dicom
     /// <para>The DicomTag class is used as described in the Flyweight pattern.  A single instance should only be allocated
     /// for each DICOM tag, and that instance will be shared in any <see cref="DicomAttributeCollection"/> 
     /// that references the specific tag.</para>
-    /// <para>Note, however, that non standard DICOM tags (or tags not in stored in the <see cref="DicomTagDictionary">
+    /// <para>Note, however, that non standard DICOM tags (or tags not in stored in the <see cref="DicomTagDictionary"/>
     /// will have a specific instance allocated to store their information when they are encountered by the assembly.</para>
     /// </remarks>
     public class DicomTag
@@ -24,7 +24,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <param name="group">The Group for the tag.</param>
         /// <param name="element">The Element for the tag.</param>
-        /// <returns><code>(uint)group << 16 | (uint)element</code></returns>
+        /// <returns></returns>
         public static uint GetTagValue(ushort group, ushort element)
         {
             return (uint)group << 16 | (uint)element;
@@ -335,10 +335,20 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Public Methds
+        /// <summary>
+        /// This method creates a <see cref="DicomAttribute"/> derived class for the tag.
+        /// </summary>
+        /// <returns></returns>
         public DicomAttribute CreateDicomAttribute()
         {
             return _vr.CreateDicomAttribute(this);
         }
+        /// <summary>
+        /// This method creates a <see cref="DicomAttribute"/> derived class for the tag, and 
+        /// sets the intial value of the tag to the value contains in <paramref name="bb"/>.
+        /// </summary>
+        /// <param name="bb">A ByteBuffer containing an intial raw value for the tag.</param>
+        /// <returns></returns>
         public DicomAttribute CreateDicomAttribute(ByteBuffer bb)
         {
             return _vr.CreateDicomAttribute(this,bb);

@@ -10,6 +10,10 @@ namespace ClearCanvas.Dicom
 {
 
     #region DicomAttributeBinary<T>
+    /// <summary>
+    /// <see cref="DicomAttribute"/> derived class used to represent tags with binary values.
+    /// </summary>
+    /// <typeparam name="T">The type that the attribute is storing.</typeparam>
     public abstract class DicomAttributeBinary<T> : DicomAttribute
     {
         protected T[] _values;
@@ -50,6 +54,9 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Properties
+        /// <summary>
+        /// The number style for the attribute.
+        /// </summary>
         public NumberStyles NumberStyle
         {
             get { return _numberStyle; }
@@ -57,6 +64,7 @@ namespace ClearCanvas.Dicom
         }
 
         #endregion
+
         #region private Methods
         private object ParseNumber(string val)
         {
@@ -170,6 +178,10 @@ namespace ClearCanvas.Dicom
             }
         }
 
+        /// <summary>
+        /// The type that the attribute stores.
+        /// </summary>
+        /// <returns></returns>
         public override Type GetValueType()
         {
             return typeof(T);
@@ -248,7 +260,9 @@ namespace ClearCanvas.Dicom
                 return false;
             }
         }
-
+        /// <summary>
+        /// Abstract property for setting or getting the values associated with the attribute.
+        /// </summary>
         public abstract override Object Values { get; set; }
         public abstract override DicomAttribute Copy();
         internal abstract override DicomAttribute Copy(bool copyBinary);
@@ -258,6 +272,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeAT
+    /// <summary>
+    /// <see cref="DicomAttributeBinary"/> derived class for storing AT value representation tags.
+    /// </summary>
     public class DicomAttributeAT : DicomAttributeBinary<uint>
     {
 
@@ -353,6 +370,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeFD
+    /// <summary>
+    /// <see cref="DicomAttributeBinary"/> derived class for storing FD value representation tags.
+    /// </summary>
     public class DicomAttributeFD : DicomAttributeBinary<double>
     {
         #region Constructors
@@ -454,6 +474,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeFL
+    /// <summary>
+    /// <see cref="DicomAttributeBinary"/> derived class for storing FL value representation tags.
+    /// </summary>
     public class DicomAttributeFL : DicomAttributeBinary<float>
     {
         #region Constructors
@@ -555,6 +578,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeOB
+    /// <summary>
+    /// <see cref="DicomAttributeBinary"/> derived class for storing OB value representation tags.
+    /// </summary>
     public class DicomAttributeOB : DicomAttributeBinary<byte>
     {
         #region Protected Members
@@ -707,6 +733,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeOF
+    /// <summary>
+    /// <see cref="DicomAttributeBinary"/> derived class for storing OF value representation tags.
+    /// </summary>
     public class DicomAttributeOF : DicomAttributeBinary<float>
     {
         public DicomAttributeOF(uint tag)
@@ -775,6 +804,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeOW
+    /// <summary>
+    /// <see cref="DicomAttributeBinary"/> derived class for storing OW value representation tags.
+    /// </summary>
     public class DicomAttributeOW : DicomAttributeBinary<ushort>
     {
         public DicomAttributeOW(uint tag)
@@ -851,6 +883,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeSL
+    /// <summary>
+    /// <see cref="DicomAttributeBinary"/> derived class for storing SL value representation tags.
+    /// </summary>
     public class DicomAttributeSL : DicomAttributeBinary<int>
     {
         public DicomAttributeSL(uint tag)
@@ -936,6 +971,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeSS
+    /// <summary>
+    /// <see cref="DicomAttributeBinary"/> derived class for storing SS value representation tags.
+    /// </summary>
     public class DicomAttributeSS : DicomAttributeBinary<short>
     {
         #region Constructors
@@ -1035,6 +1073,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeUL
+    /// <summary>
+    /// <see cref="DicomAttributeBinary"/> derived class for storing UL value representation tags.
+    /// </summary>
     public class DicomAttributeUL : DicomAttributeBinary<uint>
     {
         #region Constructors
@@ -1134,6 +1175,9 @@ namespace ClearCanvas.Dicom
     #endregion 
 
     #region DicomAttributeUN
+    /// <summary>
+    /// <see cref="DicomAttributeBinary"/> derived class for storing UN value representation tags.
+    /// </summary>
     public class DicomAttributeUN : DicomAttributeBinary<byte>
     {
         #region Constructors
@@ -1246,6 +1290,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeUS
+    /// <summary>
+    /// <see cref="DicomAttributeBinary"/> derived class for storing US value representation tags.
+    /// </summary>
     public class DicomAttributeUS : DicomAttributeBinary<ushort>
     {
         #region Constructors

@@ -22,7 +22,6 @@ namespace ClearCanvas.Dicom
     public class DicomAttributeCollection : IEnumerable<DicomAttribute>
     {
         #region Member Variables
-
         private SortedDictionary<uint, DicomAttribute> _attributeList = new SortedDictionary<uint, DicomAttribute>();
         private String _specificCharacterSet = "";
         private uint _startTag = 0x00000000;
@@ -41,8 +40,19 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Contructor that sets the range of tags in use for the collection.
         /// </summary>
-        /// <param name="startTag"></param>
-        /// <param name="stopTag"></param>
+        /// <remarks>
+        /// <para>
+        /// This constructor is used to set a range of valid tags for the collection.
+        /// All tags must be greater than or equal to <paramref name="startTag"/>
+        /// ad less than or equal to <paramref name="stopTag"/>.  
+        /// </para>
+        /// <para>
+        /// The <see cref="DicomMessage"/> and <see cref="DicomFile"/> classes use 
+        /// this form of the constructor when creating the DataSet and MetaInfo 
+        /// <see cref="DicomAttributeCollection"/> instances.</para>
+        /// </remarks>
+        /// <param name="startTag">The valid start tag for attributes in the collection.</param>
+        /// <param name="stopTag">The value stop tag for attributes in the collection.</param>
         public DicomAttributeCollection(uint startTag, uint stopTag)
         {
             _startTag = startTag;
@@ -52,7 +62,7 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Internal constructor used when creating a copy of an DicomAttributeCollection.
         /// </summary>
-        /// <param name="source"></param>
+        /// <param name="source">The source collection to copy attributes from.</param>
         /// <param name="copyBinary"></param>
         internal DicomAttributeCollection(DicomAttributeCollection source, bool copyBinary)
         {
@@ -68,10 +78,14 @@ namespace ClearCanvas.Dicom
                 }
             }
         }
-
         #endregion
 
         #region Public Properties
+        /// <summary>
+        /// The specific character set string associated with the collection.
+        /// </summary>
+        /// <remarks>An empty string is returned if the specific character set
+        /// tag is not set for the collection.</remarks>
         public String SpecificCharacterSet
         {
             get { return _specificCharacterSet; }
@@ -127,7 +141,6 @@ namespace ClearCanvas.Dicom
         /// </summary>
         /// <param name="tag"></param>
         /// <returns></returns>
-
         public bool Contains(DicomTag tag)
         {
             if (!_attributeList.ContainsKey(tag.TagValue))
@@ -140,7 +153,9 @@ namespace ClearCanvas.Dicom
         /// Indexer to return a specific tag in the attribute collection.
         /// </summary>
         /// <remarks>
-        /// When setting, if the value is null, the tag will be removed from the collection.
+        /// <para>When setting, if the value is null, the tag will be removed from the collection.</para>
+        /// <para>If the tag does not exist within the collection, a new <see cref="DicomAttribute"/>
+        /// derived instance will be created and returned by this indexer.</para>
         /// </remarks>
         /// <param name="tag">The tag to look for.</param>
         /// <returns></returns>
@@ -200,6 +215,11 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Indexer when retrieving a specific tag in the collection.
         /// </summary>
+        /// <remarks>
+        /// <para>When setting, if the value is null, the tag will be removed from the collection.</para>
+        /// <para>If the tag does not exist within the collection, a new <see cref="DicomAttribute"/>
+        /// derived instance will be created and returned by this indexer.</para>
+        /// </remarks>
         /// <param name="tag"></param>
         /// <returns></returns>
         public DicomAttribute this[DicomTag tag]
@@ -266,17 +286,35 @@ namespace ClearCanvas.Dicom
             return Copy(true);
         }
 
+        /// <summary>
+        /// Create a duplicate copy of the DicomAttributeCollection.
+        /// </summary>
+        /// <remarks>This method will not copy <see cref="DicomAttributeOB"/>,
+        /// <see cref="DicomAttributeOW"/> and <see cref="DicomAttributeOF"/>
+        /// instances if the <paramref name="copyBinary"/> parameter is set
+        /// to false.</remarks>
+        /// <param name="copyBinary">Flag to set if binary VR attributes will be copied.</param>
+        /// <returns>a new DicomAttributeCollection.</returns>
         public virtual DicomAttributeCollection Copy(bool copyBinary)
         {
             return new DicomAttributeCollection(this, copyBinary);
         }
 
+        /// <summary>
+        /// Check if the contents of the DicomAttributeCollection is identical to another DicomAttributeCollection instance.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This method compares the contents of two attribute collections to see if they are equal.  The method
+        /// will step through each of the tags within the collection, and compare them to see if they are equal.  The
+        /// method will also recurse into sequence attributes to be sure they are equal.</para>
+        /// </remarks>
+        /// <param name="obj">The objec to compare to.</param>
+        /// <returns>true if the collections are equal.</returns>
         public override bool Equals(object obj)
         {
-            //Check for null and compare run-time types.
-            if (obj == null || GetType() != obj.GetType()) return false;
-
-            DicomAttributeCollection a = (DicomAttributeCollection)obj;
+            DicomAttributeCollection a = obj as DicomAttributeCollection;
+            if (a == null) return false;
 
             IEnumerator<DicomAttribute> thisEnumerator = GetEnumerator();
             IEnumerator<DicomAttribute> compareEnumerator = a.GetEnumerator();
@@ -331,6 +369,10 @@ namespace ClearCanvas.Dicom
             return true;
         }
 
+        /// <summary>
+        /// Override to get a hash code to represent the object.
+        /// </summary>
+        /// <returns>The hash code.</returns>
         public override int GetHashCode()
         {
             return base.GetHashCode(); // TODO
@@ -339,8 +381,13 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Internal Methods
-
-
+        /// <summary>
+        /// Used to calculate group lengths.
+        /// </summary>
+        /// <param name="group"></param>
+        /// <param name="syntax"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
         internal uint CalculateGroupWriteLength(ushort group, TransferSyntax syntax, DicomWriteOptions options)
         {
             uint length = 0;
@@ -355,6 +402,12 @@ namespace ClearCanvas.Dicom
             return length;
         }
 
+        /// <summary>
+        /// Used to calculate the write length of the collection.
+        /// </summary>
+        /// <param name="syntax"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
         internal uint CalculateWriteLength(TransferSyntax syntax, DicomWriteOptions options)
         {
             uint length = 0;
@@ -378,16 +431,23 @@ namespace ClearCanvas.Dicom
             }
             return length;
         }
-
         #endregion
 
         #region IEnumerable Implementation
 
+        /// <summary>
+        /// Method for implementing the <see cref="IEnumerable"/> interface.
+        /// </summary>
+        /// <returns></returns>
         public IEnumerator<DicomAttribute> GetEnumerator()
         {
             return _attributeList.Values.GetEnumerator();   
         }
 
+        /// <summary>
+        /// Method for implementing the <see cref="IEnumerable"/> interface.
+        /// </summary>
+        /// <returns></returns>
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
@@ -396,6 +456,12 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Binding
+        /// <summary>
+        /// Internal method for getting a default value for an attribute.
+        /// </summary>
+        /// <param name="vtype"></param>
+        /// <param name="deflt"></param>
+        /// <returns></returns>
         private object GetDefaultValue(Type vtype, DicomFieldDefault deflt)
         {
             try
@@ -577,6 +643,19 @@ namespace ClearCanvas.Dicom
             }
         }
 
+        /// <summary>
+        /// Load the contents of attributes in the collection into a structure or class.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This method will use reflection to look at the contents of the object specified by
+        /// <paramref name="obj"/> and copy the values of attributes within this collection to
+        /// fields in the object with the <see cref="DicomFieldAttribute"/> attribute set for
+        /// them.
+        /// </para>
+        /// </remarks>
+        /// <param name="obj"></param>
+        /// <seealso cref="DicomFieldAttribute"/>
         public void LoadDicomFields(object obj)
         {
             FieldInfo[] fields = obj.GetType().GetFields();
@@ -704,6 +783,13 @@ namespace ClearCanvas.Dicom
             }
         }
 
+        /// <summary>
+        /// This method will copy attributes from the input object into the collection.
+        /// </summary>
+        /// <remarks>
+        /// </remarks>
+        /// <param name="obj">The object to copy values out of into the collection.</param>
+        /// <seealso cref="DicomFieldAttribute"/>
         public void SaveDicomFields(object obj)
         {
             FieldInfo[] fields = obj.GetType().GetFields();
@@ -731,6 +817,9 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Dump
+        /// <summary>
+        /// Method to dump the contents of the collection to the console.
+        /// </summary>
         public void Dump()
         {
             StringBuilder sb = new StringBuilder();
@@ -738,6 +827,12 @@ namespace ClearCanvas.Dicom
             Console.WriteLine(sb.ToString());
         }
 
+        /// <summary>
+        /// Method to dump the contents of the collection to a <see>StringBuilder</see> instance.
+        /// </summary>
+        /// <param name="sb"></param>
+        /// <param name="prefix"></param>
+        /// <param name="options"></param>
         public void Dump(StringBuilder sb, String prefix, DicomDumpOptions options)
         {
             foreach (DicomAttribute item in this)

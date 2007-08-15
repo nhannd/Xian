@@ -8,12 +8,14 @@ using ClearCanvas.Dicom.IO;
 namespace ClearCanvas.Dicom
 {
     #region DicomAttributeSingleValueText
+    /// <summary>
+    /// <see cref="DicomAttribute"/> derived class for storing single value text value representation attributes.
+    /// </summary>
     public abstract class DicomAttributeSingleValueText : DicomAttribute
     {
         private String _value = null;
 
         #region Constructors
-
         internal DicomAttributeSingleValueText(uint tag)
             : base(tag)
         {
@@ -47,12 +49,12 @@ namespace ClearCanvas.Dicom
             _value = String.Copy(value);
 
         }
-
         #endregion
 
-
         #region Abstract Method Implementation
-
+        /// <summary>
+        /// The StreamLength of the attribute.
+        /// </summary>
         public override uint StreamLength
         {
             get
@@ -175,6 +177,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeLT
+    /// <summary>
+    /// <see cref="DicomAttributeSingleValueText"/> derived class for storing LT value representation attributes.
+    /// </summary>
     public class DicomAttributeLT : DicomAttributeSingleValueText
     {
         #region Constructors
@@ -220,6 +225,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeST
+    /// <summary>
+    /// <see cref="DicomAttributeSingleValueText"/> derived class for storing ST value representation attributes.
+    /// </summary>
     public class DicomAttributeST : DicomAttributeSingleValueText
     {
         #region Constructors
@@ -266,6 +274,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeUT
+    /// <summary>
+    /// <see cref="DicomAttributeSingleValueText"/> derived class for storing UT value representation attributes.
+    /// </summary>
     public class DicomAttributeUT : DicomAttributeSingleValueText
     {
         #region Constructors

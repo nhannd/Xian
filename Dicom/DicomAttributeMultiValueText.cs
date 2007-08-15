@@ -9,6 +9,9 @@ using ClearCanvas.Dicom.IO;
 namespace ClearCanvas.Dicom
 {
     #region DicomAttributeMultiValueText
+    /// <summary>
+    /// <see cref="DicomAttribute"/> derived class for storing character based DICOM value representation attributes with multiple values.
+    /// </summary>
     public abstract class DicomAttributeMultiValueText : DicomAttribute
     {
         #region Private Members
@@ -229,6 +232,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeAE
+    /// <summary>
+    /// <see cref="DicomAttributeMultiValueText"/> derived class for storing AE value representation attributes.
+    /// </summary>
     public class DicomAttributeAE : DicomAttributeMultiValueText
     {
         #region Constructors
@@ -276,6 +282,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeAS
+    /// <summary>
+    /// <see cref="DicomAttributeMultiValueText"/> derived class for storing AS value representation attributes.
+    /// </summary>
     public class DicomAttributeAS : DicomAttributeMultiValueText
     {
         #region Constructors
@@ -320,6 +329,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeCS
+    /// <summary>
+    /// <see cref="DicomAttributeMultiValueText"/> derived class for storing CS value representation attributes.
+    /// </summary>
     public class DicomAttributeCS : DicomAttributeMultiValueText
     {
         #region Constructors
@@ -365,6 +377,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeDA
+    /// <summary>
+    /// <see cref="DicomAttributeMultiValueText"/> derived class for storing DA value representation attributes.
+    /// </summary>
     public class DicomAttributeDA : DicomAttributeMultiValueText
     {
         #region Constructors
@@ -419,6 +434,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeDS
+    /// <summary>
+    /// <see cref="DicomAttributeMultiValueText"/> derived class for storing DS value representation attributes.
+    /// </summary>
     public class DicomAttributeDS : DicomAttributeMultiValueText
     {
         protected NumberStyles _numberStyle = NumberStyles.Any;
@@ -495,6 +513,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeDT
+    /// <summary>
+    /// <see cref="DicomAttributeMultiValueText"/> derived class for storing DT value representation attributes.
+    /// </summary>
     public class DicomAttributeDT : DicomAttributeMultiValueText
     {
         #region Constructors
@@ -549,6 +570,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeIS
+    /// <summary>
+    /// <see cref="DicomAttributeMultiValueText"/> derived class for storing IS value representation attributes.
+    /// </summary>
     public class DicomAttributeIS : DicomAttributeMultiValueText
     {
         protected NumberStyles _numberStyle = NumberStyles.Any;
@@ -666,6 +690,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeLO
+    /// <summary>
+    /// <see cref="DicomAttributeMultiValueText"/> derived class for storing LO value representation attributes.
+    /// </summary>
     public class DicomAttributeLO : DicomAttributeMultiValueText
     {
         #region Constructors
@@ -712,6 +739,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributePN
+    /// <summary>
+    /// <see cref="DicomAttributeMultiValueText"/> derived class for storing PN value representation attributes.
+    /// </summary>
     public class DicomAttributePN : DicomAttributeMultiValueText
     {
         #region Constructors
@@ -758,6 +788,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeSH
+    /// <summary>
+    /// <see cref="DicomAttributeMultiValueText"/> derived class for storing SH value representation attributes.
+    /// </summary>
     public class DicomAttributeSH : DicomAttributeMultiValueText
     {
         #region Constructors
@@ -804,6 +837,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeTM
+    /// <summary>
+    /// <see cref="DicomAttributeMultiValueText"/> derived class for storing TM value representation attributes.
+    /// </summary>
     public class DicomAttributeTM : DicomAttributeMultiValueText
     {
         #region Constructors
@@ -861,6 +897,9 @@ namespace ClearCanvas.Dicom
     #endregion
 
     #region DicomAttributeUI
+    /// <summary>
+    /// <see cref="DicomAttributeMultiValueText"/> derived class for storing UI value representation attributes.
+    /// </summary>
     public class DicomAttributeUI : DicomAttributeMultiValueText
     {
         #region Constructors
