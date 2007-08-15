@@ -27,5 +27,18 @@ namespace ClearCanvas.ImageServer.Database
         {
             get { return _name; }
         }
+
+        public override int GetHashCode()
+        {
+            return _key.GetHashCode();
+        }
+
+        public override bool Equals(object obj)
+        {
+            ServerEntityKey key = obj as ServerEntityKey;
+            if (key == null) return false;
+
+            return _key.Equals(key.Key);
+        }
     }
 }

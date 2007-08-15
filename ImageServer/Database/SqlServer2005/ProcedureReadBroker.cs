@@ -75,7 +75,7 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
             {
                 Platform.Log(LogLevel.Error, e, "Unexpected exception when calling stored procedure: {0}", _procedureName);
 
-                throw new PersistenceException("Unexpected problem with stored procedure: " + _procedureName, e);
+                throw new PersistenceException(String.Format("Unexpected problem with stored procedure: {0}: {1}", _procedureName, e.Message), e);
             }
             finally
             {

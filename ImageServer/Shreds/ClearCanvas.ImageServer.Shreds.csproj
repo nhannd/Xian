@@ -65,6 +65,10 @@
       <Project>{8347B928-805E-42E7-B980-08D8AF1A0671}</Project>
       <Name>ClearCanvas.Server.ShredHost</Name>
     </ProjectReference>
+    <ProjectReference Include="..\Common\ClearCanvas.ImageServer.Common.csproj">
+      <Project>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</Project>
+      <Name>ClearCanvas.ImageServer.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Database\ClearCanvas.ImageServer.Database.csproj">
       <Project>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</Project>
       <Name>ClearCanvas.ImageServer.Database</Name>

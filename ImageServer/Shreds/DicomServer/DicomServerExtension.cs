@@ -11,6 +11,9 @@ using ClearCanvas.ImageServer.Database;
 
 namespace ClearCanvas.ImageServer.Shreds.DicomServer
 {
+    /// <summary>
+    /// Plugin to handle the DICOM Server Shred for the ImageServer
+    /// </summary>
     [ExtensionOf(typeof(ShredExtensionPoint))]
     public class DicomServerExtension : WcfShred
     {

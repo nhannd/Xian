@@ -25,6 +25,12 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Create a DicomFile instance from existing MetaInfo and DataSet.
+        /// </summary>
+        /// <param name="filename">The name for the file.</param>
+        /// <param name="metaInfo">A <see cref="DicomAttributeCollection"/> for the MetaInfo (group 0x0002 attributes).</param>
+        /// <param name="dataSet">A <see cref="DicomAttributeCollection"/> for the DataSet.</param>
         public DicomFile(String filename, DicomAttributeCollection metaInfo, DicomAttributeCollection dataSet)
         {
             base._metaInfo = metaInfo;
@@ -32,6 +38,10 @@ namespace ClearCanvas.Dicom
             _filename = filename;
         }
 
+        /// <summary>
+        /// Create a new empty DICOM Part 10 format file.
+        /// </summary>
+        /// <param name="filename"></param>
         public DicomFile(String filename)
         {
             base._metaInfo = new DicomAttributeCollection(0x00020000, 0x0002FFFF);
@@ -39,10 +49,32 @@ namespace ClearCanvas.Dicom
 
             _filename = filename;
         }
+
+        /// <summary>
+        /// Creates a new DicomFile instance from an existing <see cref="DicomMessage"/> instance.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This routine assigns the existing <see cref="DicomMessage.DataSet"/> into the new 
+        /// DicomFile instance.
+        /// </para>
+        /// <para>
+        /// A new <see cref="DicomAttributeCollection"/> is created for the MetaInfo.  The 
+        /// Media Storage SOP Instance UID, Media Storage SOP Class UID, Implementation Version Name,
+        /// and Implementation Class UID tags are automatically set in the meta information.
+        /// </para>
+        /// </remarks>
+        /// <param name="msg"></param>
+        /// <param name="filename"></param>
         public DicomFile(DicomMessage msg, String filename)
         {
             base._metaInfo = new DicomAttributeCollection(0x00020000,0x0002FFFF);
             base._dataSet = msg.DataSet;
+
+            MediaStorageSopInstanceUid = msg.AffectedSopInstanceUid;
+            MediaStorageSopClassUid = msg.AffectedSopClassUid;
+            ImplementationVersionName = DicomImplementation.Version;
+            ImplementationClassUid = DicomImplementation.ClassUID.UID;
 
             _filename = filename;
         }
@@ -179,12 +211,42 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Load a DICOM file with the default <see cref="DicomReadOptions"/> set.
+        /// </summary>
+        /// <remarks>
+        /// Note:  If the file does not contain DICM encoded in it, the routine will assume
+        /// the file is not a Part 10 format file, and is instead encoded as just a DataSet
+        /// with the transfer syntax set to Implicit VR Little Endian.
+        /// </remarks>
+        public void Load()
+        {
+            Load(DicomReadOptions.Default);
+        }
 
+        /// <summary>
+        /// Load a DICOM file.
+        /// </summary>
+        /// <remarks>
+        /// Note:  If the file does not contain DICM encoded in it, the routine will assume
+        /// the file is not a Part 10 format file, and is instead encoded as just a DataSet
+        /// with the transfer syntax set to Implicit VR Little Endian.
+        /// </remarks>
+        /// <param name="options">The options to use when reading the file.</param>
         public void Load(DicomReadOptions options)
         {
             Load(null, options);
         }
-
+        /// <summary>
+        /// Load a DICOM file.
+        /// </summary>
+        /// <remarks>
+        /// Note:  If the file does not contain DICM encoded in it, the routine will assume
+        /// the file is not a Part 10 format file, and is instead encoded as just a DataSet
+        /// with the transfer syntax set to Implicit VR Little Endian.
+        /// </remarks>
+        /// <param name="stopTag">A tag to stop at when reading the file.  See the constants in <see cref="DicomTags"/>.</param>
+        /// <param name="options">The options to use when reading the file.</param>
         public void Load(uint stopTag, DicomReadOptions options)
         {
             DicomTag stopDicomTag = DicomTagDictionary.GetDicomTag(stopTag);
@@ -193,7 +255,16 @@ namespace ClearCanvas.Dicom
             Load(stopDicomTag, options);
         }
 
-
+        /// <summary>
+        /// Load a DICOM file.
+        /// </summary>
+        /// <remarks>
+        /// Note:  If the file does not contain DICM encoded in it, the routine will assume
+        /// the file is not a Part 10 format file, and is instead encoded as just a DataSet
+        /// with the transfer syntax set to Implicit VR Little Endian.
+        /// </remarks>
+        /// <param name="stopTag"></param>
+        /// <param name="options">The options to use when reading the file.</param>
         public void Load(DicomTag stopTag, DicomReadOptions options)
         {
             if (!File.Exists(Filename))
@@ -236,6 +307,11 @@ namespace ClearCanvas.Dicom
             }
         }
 
+        /// <summary>
+        /// Internal routine to see if the file is encoded as a DICOM Part 10 format file.
+        /// </summary>
+        /// <param name="fs">The <see cref="FileStream"/> being used to read the file.</param>
+        /// <returns>true if the file has a DICOM Part 10 format file header.</returns>
         protected static bool FileHasPart10Header(FileStream fs)
         {
             return (!(fs.ReadByte() != (byte)'D' ||
@@ -244,6 +320,20 @@ namespace ClearCanvas.Dicom
                 fs.ReadByte() != (byte)'M'));
         }
 
+        /// <summary>
+        /// Save the file as a DICOM Part 10 format file with the default <see cref="DicomWriteOptions"/>.
+        /// </summary>
+        /// <returns>true on success, false on failure.</returns>
+        public bool Save()
+        {
+            return Save(DicomWriteOptions.Default);
+        }
+
+        /// <summary>
+        /// Save the file as a DICOM Part 10 format file.
+        /// </summary>
+        /// <param name="options">The options to use when saving the file.</param>
+        /// <returns></returns>
         public bool Save(DicomWriteOptions options)
         {
             using (FileStream fs = File.Create(Filename))

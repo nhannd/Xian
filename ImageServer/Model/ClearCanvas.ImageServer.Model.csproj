@@ -39,6 +39,7 @@
     <Compile Include="Brokers\IInsertServerPartition.cs" />
     <Compile Include="Brokers\IInsertStudyStorage.cs" />
     <Compile Include="Brokers\IGetSopClasses.cs" />
+    <Compile Include="Brokers\IInsertWorkQueueStudyProcess.cs" />
     <Compile Include="Brokers\ISelectServerPartitionSopClasses.cs" />
     <Compile Include="Brokers\ISelectStudyStorageLocation.cs" />
     <Compile Include="Filesystem.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="StudyStorageLocationSelectParameters.cs" />
     <Compile Include="ServerPartition.cs" />
     <Compile Include="StudyStorageLocation.cs" />
+    <Compile Include="WorkQueueStudyProcessInsertParameters.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">

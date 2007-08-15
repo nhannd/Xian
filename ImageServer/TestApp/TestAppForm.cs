@@ -27,23 +27,20 @@ namespace ClearCanvas.ImageServer.TestApp
         {
             try
             {
-                IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
 
-                FileSystemMonitor monitor = new FileSystemMonitor(store);
+                FilesystemMonitor monitor = new FilesystemMonitor();
 
                 monitor.Load();
 
 
 
-                IReadContext ctx = store.OpenReadContext();
+                IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
 
                 IInsertStudyStorage insert = ctx.GetBroker<IInsertStudyStorage>();
 
                 StudyStorageInsertParameters criteria = new StudyStorageInsertParameters();
 
                 criteria.StudyInstanceUid = "1.2.3.4";
-                criteria.ExpirationTime = DateTime.Now;
-                criteria.ScheduledTime = DateTime.Now;
                 criteria.FilesystemRef = monitor.Filesystems[0].GetKey();
                 criteria.Folder = "20070101";
                 criteria.ServerPartitionRef = monitor.Partitions[0].GetKey();

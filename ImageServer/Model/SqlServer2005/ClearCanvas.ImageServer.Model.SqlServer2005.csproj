@@ -39,6 +39,7 @@
     <Compile Include="Brokers\GetSopClasses.cs" />
     <Compile Include="Brokers\InsertServerPartition.cs" />
     <Compile Include="Brokers\InsertStudyStorage.cs" />
+    <Compile Include="Brokers\InsertWorkQueueStudyProcess.cs" />
     <Compile Include="Brokers\SelectPartitionSopClasses.cs" />
     <Compile Include="Brokers\SelectStudyStorageLocation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

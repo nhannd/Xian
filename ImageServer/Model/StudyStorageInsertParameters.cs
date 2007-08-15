@@ -31,14 +31,5 @@ namespace ClearCanvas.ImageServer.Model
         {
             set { this.SubCriteria["Folder"] = new ProcedureParameter<String>("Folder", value); }
         }
-        public DateTime ExpirationTime
-        {
-            set { this.SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
-        }
-        public DateTime ScheduledTime
-        {
-            set { this.SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
-        }
-
     }
 }

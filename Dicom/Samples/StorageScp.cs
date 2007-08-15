@@ -235,7 +235,7 @@ namespace ClearCanvas.Dicom.Samples
             {
                 DicomLogger.LogError("Unable to retrieve UIDs from request message, sending failure status.");
 
-                server.SendCStoreResponse(presentationID, message.MessageId, sopInstanceUid,
+                server.SendCStoreResponse(presentationID, message.MessageId, sopInstanceUid.UID,
                     DicomStatuses.ProcessingFailure);
                 return;
             }
@@ -266,7 +266,7 @@ namespace ClearCanvas.Dicom.Samples
             DicomLogger.LogInfo("Received SOP Instance: {0} for patient {1}", sopInstanceUid, patientName);
 
             server.SendCStoreResponse(presentationID, message.MessageId,
-                sopInstanceUid, 
+                sopInstanceUid.UID, 
                 DicomStatuses.Success);
         }
 

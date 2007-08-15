@@ -17,6 +17,7 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
+        private ServerEntityKey _serverPartitionRef;
         private string _studyInstanceUid;
         private DateTime _lastAccessed;
         private short _statusEnum;
@@ -29,6 +30,11 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
+        public ServerEntityKey ServerPartitionRef
+        {
+            get { return _serverPartitionRef; }
+            set { _serverPartitionRef = value; }
+        }
         public string StudyInstanceUid
         {
             get { return _studyInstanceUid; }

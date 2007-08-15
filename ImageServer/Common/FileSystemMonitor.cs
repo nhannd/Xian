@@ -9,27 +9,29 @@ using ClearCanvas.ImageServer.Database;
 
 namespace ClearCanvas.ImageServer.Common
 {
-    public class FileSystemMonitor
+    public class FilesystemMonitor
     {
         private IList<ServerPartition> _partitionList;
         private IList<Filesystem> _filesystemList;
         private IPersistentStore _store;
-        public FileSystemMonitor(IPersistentStore persistentStore)
+        public FilesystemMonitor()
         {
-            _store = persistentStore;
+            _store = PersistentStoreRegistry.GetDefaultStore();
         }
 
         public void Load()
         {
-            IReadContext dbRead = _store.OpenReadContext();
+            IReadContext read = _store.OpenReadContext();
 
-            IGetServerPartitions partitionsQuery = dbRead.GetBroker<IGetServerPartitions>();
+            IGetServerPartitions partitionsQuery = read.GetBroker<IGetServerPartitions>();
 
             _partitionList = partitionsQuery.Execute();
 
-            IGetFilesystems filesystemQuery = dbRead.GetBroker<IGetFilesystems>();
+            IGetFilesystems filesystemQuery = read.GetBroker<IGetFilesystems>();
 
             _filesystemList = filesystemQuery.Execute();
+
+            read.Dispose();
         }
 
         public IList<ServerPartition> Partitions

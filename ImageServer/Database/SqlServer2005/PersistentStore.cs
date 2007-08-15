@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Data.SqlClient;
+using System.Configuration;
 
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
@@ -14,14 +15,23 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
     [ExtensionOf(typeof(PersistentStoreExtensionPoint))]
     public class PersistentStore : IPersistentStore
     {
-        private String _connectionString = "Data Source=127.0.0.1;User ID=sa;Password=swsoftware;Initial Catalog=ImageServer";
+        private String _connectionString;
         private ITransactionNotifier _transactionNotifier;
 
         #region IPersistentStore Members
 
         public void Initialize()
         {
-            
+            // Retrieve the partial connection string named databaseConnection
+            // from the application's app.config or web.config file.
+            ConnectionStringSettings settings =
+                ConfigurationManager.ConnectionStrings["ImageServerConnectString"];
+
+            if (null != settings)
+            {
+                // Retrieve the partial connection string.
+                _connectionString = settings.ConnectionString;
+            }
         }
 
         public void SetTransactionNotifier(ITransactionNotifier transactionNotifier)

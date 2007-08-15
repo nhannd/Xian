@@ -6,6 +6,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.DicomServices;
 using ClearCanvas.DicomServices.ImageServer;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Database;
@@ -13,6 +14,9 @@ using ClearCanvas.ImageServer.Database;
 
 namespace ClearCanvas.ImageServer.Shreds.DicomServer
 {
+    /// <summary>
+    /// This class manages the DICOM SCP Shred for the ImageServer.
+    /// </summary>
     public class DicomServerManager
     {
         #region Private Members
@@ -21,12 +25,18 @@ namespace ClearCanvas.ImageServer.Shreds.DicomServer
         #endregion
 
         #region Contructors
+        /// <summary>
+        /// Constructor.
+        /// </summary>
         public DicomServerManager()
         {
         }
         #endregion
 
         #region Properties
+        /// <summary>
+        /// Singleton instance of the class.
+        /// </summary>
         public static DicomServerManager Instance
         {
             get
@@ -44,6 +54,16 @@ namespace ClearCanvas.ImageServer.Shreds.DicomServer
         #endregion
 
         #region Public Methods
+        /// <summary>
+        /// Method called when starting the DICOM SCP.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// The method starts a <see cref="DicomScp"/> instance for each server partition configured in
+        /// the database.  It assumes that the combination of the configured AE Title and Port for the 
+        /// partition is unique.  
+        /// </para>
+        /// </remarks>
         public void Start()
         {
             IPersistentStore store = PersistentStoreRegistry.GetDefaultStore();
@@ -51,14 +71,16 @@ namespace ClearCanvas.ImageServer.Shreds.DicomServer
 
             IGetServerPartitions broker = read.GetBroker<IGetServerPartitions>();
             IList<ServerPartition> partitions = broker.Execute();
-            
+            FilesystemMonitor monitor = new FilesystemMonitor();
+            monitor.Load();
+
             read.Dispose();
             
             foreach (ServerPartition part in partitions)
             {
                 if (part.Enabled)
                 {
-                    DicomScpParameters parms = new DicomScpParameters(part);
+                    DicomScpParameters parms = new DicomScpParameters(part, monitor);
 
                     DicomScp scp = new DicomScp(parms);
 
@@ -76,6 +98,9 @@ namespace ClearCanvas.ImageServer.Shreds.DicomServer
             }
         }
 
+        /// <summary>
+        /// Method called when stopping the DICOM SCP.
+        /// </summary>
         public void Stop()
         {
             foreach (DicomScp scp in _listenerList)

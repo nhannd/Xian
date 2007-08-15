@@ -430,11 +430,11 @@ namespace ClearCanvas.Dicom.Network
             SendDimse(presentationID, command, message.DataSet);
         }
 
-        public void SendCStoreResponse(byte presentationID, ushort messageID, DicomUid affectedInstance, DicomStatus status)
+        public void SendCStoreResponse(byte presentationID, ushort messageID, string affectedInstance, DicomStatus status)
         {
             DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
             DicomMessage msg = CreateResponse(messageID, DicomCommandField.CStoreResponse, affectedClass, status);
-            msg.AffectedSopInstanceUid = affectedInstance.UID;
+            msg.AffectedSopInstanceUid = affectedInstance;
             SendDimse(presentationID, msg.CommandSet, null);
         }
 

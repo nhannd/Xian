@@ -152,6 +152,9 @@ namespace ClearCanvas.Dicom.Network
         #region NetworkBase Overrides
         protected override bool NetworkHasData()
         {
+            if (!_socket.Connected)
+                ShutdownNetwork();
+
             return _socket.Available > 0;
         }
 
