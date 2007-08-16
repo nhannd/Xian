@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private ServerEntityKey _serverPartitionRef;
+        private ServerEntityKey _serverPartitionKey;
         private String _patientName;
         private String _patientId;
         private String _issuerOfPatientId;
@@ -28,10 +28,10 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
-        public ServerEntityKey ServerPartitionRef
+        public ServerEntityKey ServerPartitionKey
         {
-            get { return _serverPartitionRef; }
-            set { _serverPartitionRef = value; }
+            get { return _serverPartitionKey; }
+            set { _serverPartitionKey = value; }
         }
 
         public String PatientName

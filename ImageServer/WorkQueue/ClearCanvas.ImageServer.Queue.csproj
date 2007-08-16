@@ -4,11 +4,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</ProjectGuid>
+    <ProjectGuid>{65B9B08C-EAE4-4EE2-B164-905B03134443}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.ImageServer.Database</RootNamespace>
-    <AssemblyName>ClearCanvas.ImageServer.Database</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageServer.Queue</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageServer.Queue</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,16 +33,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IEnumBroker.cs" />
-    <Compile Include="IProcedureReadBroker.cs" />
-    <Compile Include="IProcedureSelectBroker.cs" />
-    <Compile Include="IProcedureUpdateBroker.cs" />
-    <Compile Include="ServerEntity.cs" />
-    <Compile Include="ServerEntityKey.cs" />
-    <Compile Include="ProcedureParameter.cs" />
-    <Compile Include="ProcedureParameters.cs" />
+    <Compile Include="IWorkQueueProcessor.cs" />
+    <Compile Include="WorkQueueExtensionPoint.cs" />
+    <Compile Include="WorkQueueProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ServerEnum.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
@@ -56,6 +50,18 @@
     <ProjectReference Include="..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
       <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
       <Name>ClearCanvas.Enterprise.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Common\ClearCanvas.ImageServer.Common.csproj">
+      <Project>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</Project>
+      <Name>ClearCanvas.ImageServer.Common</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Database\ClearCanvas.ImageServer.Database.csproj">
+      <Project>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</Project>
+      <Name>ClearCanvas.ImageServer.Database</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Model\ClearCanvas.ImageServer.Model.csproj">
+      <Project>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</Project>
+      <Name>ClearCanvas.ImageServer.Model</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

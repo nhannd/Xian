@@ -14,9 +14,9 @@ namespace ClearCanvas.ImageServer.Model
             : base("InsertWorkQueueStudyProcess")
         { }
 
-        public ServerEntityKey StudyStorageRef
+        public ServerEntityKey StudyStorageKey
         {
-            set { this.SubCriteria["StudyStorageRef"] = new ProcedureParameter<ServerEntityKey>("StudyStorageRef", value); }
+            set { this.SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
         }
         public DateTime ExpirationTime
         {

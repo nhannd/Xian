@@ -15,9 +15,9 @@ namespace ClearCanvas.ImageServer.Model
         {
         }
 
-        public ServerEntityKey ServerPartitionRef
+        public ServerEntityKey ServerPartitionKey
         {
-            set { this.SubCriteria["ServerPartitionRef"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionRef", value); }
+            set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
         }
     }
 }

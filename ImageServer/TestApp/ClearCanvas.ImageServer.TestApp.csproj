@@ -113,22 +113,37 @@
     <PostBuildEvent>mkdir $(TargetDir)common
 mkdir $(TargetDir)plugins
 
+rem copy ShredHost assembly
+copy $(ProjectDir)..\..\Server\ShredHost\$(OutDir)ClearCanvas.Server.ShredHost.dll $(TargetDir)common
+
+rem copy shred assemblies
+copy $(ProjectDir)..\..\ImageServer\Shreds\$(Outdir)ClearCanvas.ImageServer.Shreds.dll $(TargetDir)plugins
+
 rem copy common assemblies
 copy $(ProjectDir)..\..\Common\$(OutDir)ClearCanvas.Common.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ImageServer\Common\$(OutDir)ClearCanvas.ImageServer.Common.dll $(TargetDir)common
-copy $(ProjectDir)..\..\ImageServer\Model\$(OutDir)ClearCanvas.ImageServer.Model.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ImageServer\Model\$(Outdir)ClearCanvas.ImageServer.Model.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ImageServer\Database\$(OutDir)ClearCanvas.ImageServer.Database.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ImageServer\Common\$(OutDir)ClearCanvas.ImageServer.Common.dll $(TargetDir)common
+copy $(ProjectDir)..\..\Dicom\$(OutDir)ClearCanvas.Dicom.dll $(TargetDir)common
+copy $(ProjectDir)..\..\DicomServices\$(OutDir)ClearCanvas.DicomServices.dll $(TargetDir)common
+copy $(ProjectDir)..\..\Server\ServiceModelEx\$(Outdir)ServiceModelEx.dll $(TargetDir)common
 
 rem copy plugins
 copy $(ProjectDir)..\..\Enterprise\Core\$(OutDir)ClearCanvas.Enterprise.Core.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\Enterprise\Common\$(OutDir)ClearCanvas.Enterprise.Common.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\ImageServer\Database\$(OutDir)ClearCanvas.ImageServer.Database.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Database\SqlServer2005\$(OutDir)ClearCanvas.ImageServer.Database.SqlServer2005.dll $(TargetDir)plugins
-copy $(ProjectDir)..\..\ImageServer\Model\$(OutDir)ClearCanvas.ImageServer.Model.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Model\SqlServer2005\$(OutDir)ClearCanvas.ImageServer.Model.SqlServer2005.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\DicomServices\ImageServer\$(OutDir)ClearCanvas.DicomServices.ImageServer.dll $(TargetDir)plugins
 
 rem copy referenced assemblies
+copy $(ProjectDir)..\..\ReferencedAssemblies\Iesi.Collections.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\log4net.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\Spring.Aop.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\Spring.Core.dll $(TargetDir)common
+
+rem copy Offis dlls
+copy $(ProjectDir)..\..\Dicom\OffisWrapper\csharp\$(ConfigurationName)\ClearCanvas.Dicom.OffisWrapper.dll $(TargetDir)common
+copy $(ProjectDir)..\..\Dicom\OffisWrapper\cppwrapper\$(ConfigurationName)\OffisDcm.dll $(TargetDir)common
 
 rem copy config files
 copy $(ProjectDir)..\..\Desktop\Executable\Logging.config $(TargetDir)

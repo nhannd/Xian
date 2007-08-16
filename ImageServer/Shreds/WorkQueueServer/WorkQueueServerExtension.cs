@@ -24,17 +24,14 @@ namespace ClearCanvas.ImageServer.Shreds.WorkQueueServer
         {
             Platform.Log(LogLevel.Info,"{0}[{1}]: Start invoked", _className, AppDomain.CurrentDomain.FriendlyName);
 
-            
-            //DicomServerManager.Instance.Start();
-
-            //StartNetPipeHost<DicomServerServiceType, IDicomServerService>(_workQueueServerEndpointName, "DicomServer");
+            WorkQueueServerManager.Instance.Start();
         }
 
         public override void Stop()
         {
             StopHost(_workQueueServerEndpointName);
 
-            //DicomServerManager.Instance.Stop();
+            WorkQueueServerManager.Instance.Stop();
 
             Platform.Log(LogLevel.Info, "{0}[{1}]: Stop invoked", _className, AppDomain.CurrentDomain.FriendlyName);
         }

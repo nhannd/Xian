@@ -18,23 +18,23 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Private Members
-        private ServerEntityKey _serverPartitionRef;
-        private ServerEntityKey _sopClassRef;
+        private ServerEntityKey _serverPartitionKey;
+        private ServerEntityKey _sopClassKey;
         private String _sopClassUid;
         private String _description;
         private bool _nonImage;
         private bool _enabled;
         #endregion
 
-        public ServerEntityKey ServerPartitionRef
+        public ServerEntityKey ServerPartitionKey
         {
-            get { return _serverPartitionRef; }
-            set { _serverPartitionRef = value; }
+            get { return _serverPartitionKey; }
+            set { _serverPartitionKey = value; }
         }
-        public ServerEntityKey SopClassRef
+        public ServerEntityKey SopClassKey
         {
-            get { return _sopClassRef; }
-            set { _sopClassRef = value; }
+            get { return _sopClassKey; }
+            set { _sopClassKey = value; }
         }
         public String SopClassUid
         {

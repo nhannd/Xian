@@ -33,6 +33,8 @@ namespace ClearCanvas.ImageServer.TestApp
                 monitor.Load();
 
 
+                TypeEnum t = new TypeEnum();
+                t.SetEnum(200);
 
                 IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
 
@@ -41,9 +43,9 @@ namespace ClearCanvas.ImageServer.TestApp
                 StudyStorageInsertParameters criteria = new StudyStorageInsertParameters();
 
                 criteria.StudyInstanceUid = "1.2.3.4";
-                criteria.FilesystemRef = monitor.Filesystems[0].GetKey();
+                criteria.FilesystemKey = monitor.Filesystems[0].GetKey();
                 criteria.Folder = "20070101";
-                criteria.ServerPartitionRef = monitor.Partitions[0].GetKey();
+                criteria.ServerPartitionKey = monitor.Partitions[0].GetKey();
 
                 IList<StudyStorageLocation> storage = insert.Execute(criteria);
 

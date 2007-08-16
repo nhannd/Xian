@@ -42,6 +42,9 @@
     <Compile Include="Brokers\InsertWorkQueueStudyProcess.cs" />
     <Compile Include="Brokers\SelectPartitionSopClasses.cs" />
     <Compile Include="Brokers\SelectStudyStorageLocation.cs" />
+    <Compile Include="Brokers\SelectWorkQueue.cs" />
+    <Compile Include="Brokers\StatusEnumBroker.cs" />
+    <Compile Include="Brokers\TypeEnumBroker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

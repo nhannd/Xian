@@ -15,17 +15,17 @@ namespace ClearCanvas.ImageServer.Model
         {
         }
 
-        public ServerEntityKey ServerPartitionRef
+        public ServerEntityKey ServerPartitionKey
         {
-            set { this.SubCriteria["ServerPartitionRef"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionRef", value); }
+            set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
         }
         public String StudyInstanceUid
         {
             set { this.SubCriteria["StudyInstanceUid"] = new ProcedureParameter<String>("StudyInstanceUid", value); }
         }
-        public ServerEntityKey FilesystemRef
+        public ServerEntityKey FilesystemKey
         {
-            set { this.SubCriteria["FilesystemRef"] = new ProcedureParameter<ServerEntityKey>("FilesystemRef", value); }
+            set { this.SubCriteria["FilesystemKey"] = new ProcedureParameter<ServerEntityKey>("FilesystemKey", value); }
         }
         public String Folder
         {

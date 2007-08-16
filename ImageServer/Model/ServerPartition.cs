@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageServer.Model
         private string _aeTitle;
         private int _port;
         private string _partitionFolder;
-        ServerEntityKey _serverPartitionRef;
+        ServerEntityKey _serverPartitionKey;
         #endregion
 
         #region Public Properties
@@ -51,10 +51,10 @@ namespace ClearCanvas.ImageServer.Model
             get { return _partitionFolder; }
             set { _partitionFolder = value; }
         }
-        public ServerEntityKey ServerPartitionRef
+        public ServerEntityKey ServerPartitionKey
         {
-            get { return _serverPartitionRef; }
-            set { _serverPartitionRef = value; }
+            get { return _serverPartitionKey; }
+            set { _serverPartitionKey = value; }
         }
         #endregion
     }

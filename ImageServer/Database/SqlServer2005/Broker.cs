@@ -51,7 +51,7 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
                 }
                 else if (parm is ProcedureParameter<ServerEntityKey>)
                 {
-                    sqlParmName = sqlParmName.Replace("Ref", "GUID");
+                    sqlParmName = sqlParmName.Replace("Key", "GUID");
                     ProcedureParameter<ServerEntityKey> parm2 = (ProcedureParameter<ServerEntityKey>)parm;
 
                     command.Parameters.AddWithValue(sqlParmName, parm2.Value.Key);
@@ -66,6 +66,12 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
                     ProcedureParameter<string> parm2 = (ProcedureParameter<string>)parm;
 
                     command.Parameters.AddWithValue(sqlParmName, parm2.Value);
+                }
+                else if (parm is ProcedureParameter<ServerEnum>)
+                {
+                    ProcedureParameter<ServerEnum> parm2 = (ProcedureParameter<ServerEnum>)parm;
+
+                    command.Parameters.AddWithValue(sqlParmName, parm2.Value.Enum);
                 }
                 else
                     throw new PersistenceException("Unknown procedure parameter type: " + parm.GetType().ToString(), null);
@@ -87,8 +93,10 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
                     continue;
                 }
 
+                if (columnName.Equals(entity.Name) && columnName.Contains("Enum"))
+                    columnName = "Enum";
                 if (columnName.Contains("GUID"))
-                    columnName = columnName.Replace("GUID", "Ref");
+                    columnName = columnName.Replace("GUID", "Key");
 
                 PropertyDescriptor prop = props[columnName];
                 if (prop == null)
@@ -111,7 +119,15 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
                 else if (prop.PropertyType == typeof(ServerEntityKey))
                 {
                     Guid uid = reader.GetGuid(i);
-                    prop.SetValue(entity, new ServerEntityKey(columnName.Replace("Ref",""), uid));
+                    prop.SetValue(entity, new ServerEntityKey(columnName.Replace("Key",""), uid));
+                }
+                else if (prop.PropertyType == typeof(ServerEnum))
+                {
+                    short enumVal = reader.GetInt16(i);
+                    ConstructorInfo construct = prop.PropertyType.GetConstructor(new Type[0]);
+                    ServerEnum val = (ServerEnum)construct.Invoke(null);
+                    val.SetEnum(enumVal);
+                    prop.SetValue(entity, val);
                 }
                 else if (prop.PropertyType == typeof(bool))
                     prop.SetValue(entity, reader.GetBoolean(i));
