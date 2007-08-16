@@ -252,4 +252,10 @@
   <data name="MessageErrorLoadingAnnotationLayout" xml:space="preserve">
     <value>An unrecoverable error occurred while attempting to load the text overlay.  Please see the log for details.</value>
   </data>
+  <data name="SeparatorPatientDescription" xml:space="preserve">
+    <value>-</value>
+  </data>
+  <data name="SeparatorPatientsLoaded" xml:space="preserve">
+    <value>::</value>
+  </data>
 </root>

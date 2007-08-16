@@ -250,6 +250,15 @@ namespace ClearCanvas.Desktop {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to {0} [{1}].
+        /// </summary>
+        public static string FormatDesktopWindowTitle {
+            get {
+                return ResourceManager.GetString("FormatDesktopWindowTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The custom date format must be from the available list..
         /// </summary>
         public static string InvalidCustomDateFormat {

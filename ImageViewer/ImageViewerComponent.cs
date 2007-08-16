@@ -17,15 +17,15 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer
 {
-    [ExtensionPoint()]
-    public class ImageViewerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
+	[ExtensionPoint()]
+	public class ImageViewerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	{
+	}
 
-    [ExtensionPoint()]
-    public class ImageViewerToolExtensionPoint : ExtensionPoint<ITool>
-    {
-    }
+	[ExtensionPoint()]
+	public class ImageViewerToolExtensionPoint : ExtensionPoint<ITool>
+	{
+	}
 
 	/// <summary>
 	/// An <see cref="ApplicationComponent"/> capable of image display.
@@ -38,39 +38,39 @@ namespace ClearCanvas.ImageViewer
 	/// to extend the functionality of the IVC.
 	/// </remarks>
 	public abstract class ImageViewerComponent : ApplicationComponent, IImageViewer, IContextMenuProvider
-    {
-        internal class ImageViewerToolContext : ToolContext, IImageViewerToolContext
-        {
-            private ImageViewerComponent _component;
+	{
+		internal class ImageViewerToolContext : ToolContext, IImageViewerToolContext
+		{
+			private ImageViewerComponent _component;
 
-            internal ImageViewerToolContext(ImageViewerComponent component)
-            {
-                _component = component;
-            }
+			internal ImageViewerToolContext(ImageViewerComponent component)
+			{
+				_component = component;
+			}
 
-            #region IImageViewerToolContext Members
+			#region IImageViewerToolContext Members
 
-            public IImageViewer Viewer
-            {
-                get { return _component; }
-            }
+			public IImageViewer Viewer
+			{
+				get { return _component; }
+			}
 
 			public IDesktopWindow DesktopWindow
 			{
 				get { return _component.Host.DesktopWindow; }
 			}
 
-            #endregion
+			#endregion
 		}
 
 		#region Private fields
 
 		private StudyTree _studyTree;
 		private ILogicalWorkspace _logicalWorkspace;
-        private IPhysicalWorkspace _physicalWorkspace;
-        private EventBroker _eventBroker;
+		private IPhysicalWorkspace _physicalWorkspace;
+		private EventBroker _eventBroker;
 		private ViewerShortcutManager _shortcutManager;
-        private ToolSet _toolSet;
+		private ToolSet _toolSet;
 
 		private static StudyFinderMap _studyFinders;
 		private static StudyLoaderMap _studyLoaders;
@@ -86,16 +86,16 @@ namespace ClearCanvas.ImageViewer
 		/// For internal Framework use only.
 		/// </remarks>
 		public override void Start()
-        {
-            base.Start();
+		{
+			base.Start();
 
-            _toolSet = new ToolSet(new ImageViewerToolExtensionPoint(), new ImageViewerToolContext(this));
+			_toolSet = new ToolSet(new ImageViewerToolExtensionPoint(), new ImageViewerToolContext(this));
 
 			_shortcutManager = new ViewerShortcutManager();
 
 			foreach (ITool tool in _toolSet.Tools)
 				_shortcutManager.RegisterImageViewerTool(tool);
-        }
+		}
 
 		/// <summary>
 		/// Override of <see cref="ApplicationComponent.Stop"/>
@@ -104,10 +104,10 @@ namespace ClearCanvas.ImageViewer
 		/// For internal Framework use only.
 		/// </remarks>
 		public override void Stop()
-        {
+		{
 			EventsHelper.Fire(_closingEvent, this, EventArgs.Empty);
 
-            base.Stop();
+			base.Stop();
 		}
 
 		#region Public Properties
@@ -117,116 +117,116 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="ToolSet"/>.
 		/// </summary>
 		public override IActionSet ExportedActions
-        {
-            get
-            {
-                // we should technically only export the actions that target the global menus
-                // or toolbars, but it doesn't matter - the desktop will sort it out
-                return _toolSet.Actions;
-            }
-        }
+		{
+			get
+			{
+				// we should technically only export the actions that target the global menus
+				// or toolbars, but it doesn't matter - the desktop will sort it out
+				return _toolSet.Actions;
+			}
+		}
 
-        /// <summary>
-        /// Gets the command history.
-        /// </summary>
+		/// <summary>
+		/// Gets the command history.
+		/// </summary>
 		/// <remarks>
 		/// Each <see cref="ImageViewerComponent"/> (IVC) maintains its own 
 		/// <see cref="CommandHistory"/>.
 		/// </remarks>
-        public CommandHistory CommandHistory
-        {
-            get { return this.Host.CommandHistory; }
-        }
+		public CommandHistory CommandHistory
+		{
+			get { return this.Host.CommandHistory; }
+		}
 
-        /// <summary>
-        /// Gets the <see cref="IPhysicalWorkspace"/>.
-        /// </summary>
-        public IPhysicalWorkspace PhysicalWorkspace
-        {
-            get
+		/// <summary>
+		/// Gets the <see cref="IPhysicalWorkspace"/>.
+		/// </summary>
+		public IPhysicalWorkspace PhysicalWorkspace
+		{
+			get
 			{
 				if (_physicalWorkspace == null)
 					_physicalWorkspace = new PhysicalWorkspace(this);
 
-				return _physicalWorkspace; 
+				return _physicalWorkspace;
 			}
-        }
+		}
 
-        /// <summary>
-        /// Gets the <see cref="ILogicalWorkspace"/>.
-        /// </summary>
-        public ILogicalWorkspace LogicalWorkspace
-        {
-            get 
+		/// <summary>
+		/// Gets the <see cref="ILogicalWorkspace"/>.
+		/// </summary>
+		public ILogicalWorkspace LogicalWorkspace
+		{
+			get
 			{
 				if (_logicalWorkspace == null)
 					_logicalWorkspace = new LogicalWorkspace(this);
 
-				return _logicalWorkspace; 
+				return _logicalWorkspace;
 			}
-        }
+		}
 
 		/// <summary>
 		/// Gets the <see cref="EventBroker"/>.
 		/// </summary>
-        public EventBroker EventBroker
-        {
-            get
+		public EventBroker EventBroker
+		{
+			get
 			{
 				if (_eventBroker == null)
 					_eventBroker = new EventBroker();
 
-				return _eventBroker; 
+				return _eventBroker;
 			}
-        }
+		}
 
-        /// <summary>
-        /// Gets the currently selected <see cref="IImageBox"/>
-        /// </summary>
+		/// <summary>
+		/// Gets the currently selected <see cref="IImageBox"/>
+		/// </summary>
 		/// <value>The currently selected <see cref="IImageBox"/>, or <b>null</b> if
 		/// no <see cref="IImageBox"/> is currently selected.</value>
 		public IImageBox SelectedImageBox
-        {
-            get
-            {
-                if (this.PhysicalWorkspace == null)
-                    return null;
-                else
-                    return this.PhysicalWorkspace.SelectedImageBox;
-            }
-        }
+		{
+			get
+			{
+				if (this.PhysicalWorkspace == null)
+					return null;
+				else
+					return this.PhysicalWorkspace.SelectedImageBox;
+			}
+		}
 
-        /// <summary>
-        /// Gets the currently selected <see cref="Tile"/>
-        /// </summary>
+		/// <summary>
+		/// Gets the currently selected <see cref="Tile"/>
+		/// </summary>
 		/// <value>The currently selected <see cref="ITile"/>, or <b>null</b> if
 		/// no <see cref="ITile"/> is currently selected.</value>
 		public ITile SelectedTile
-        {
-            get
-            {
-                if (this.SelectedImageBox == null)
-                    return null;
-                else
-                    return this.SelectedImageBox.SelectedTile;
-            }
-        }
+		{
+			get
+			{
+				if (this.SelectedImageBox == null)
+					return null;
+				else
+					return this.SelectedImageBox.SelectedTile;
+			}
+		}
 
-        /// <summary>
-        /// Gets the currently selected <see cref="PresentationImage"/>
-        /// </summary>
+		/// <summary>
+		/// Gets the currently selected <see cref="PresentationImage"/>
+		/// </summary>
 		/// <value>The currently selected <see cref="IPresentationImage"/>, or <b>null</b> if
 		/// no <see cref="IPresentationImage"/> is currently selected.</value>
 		public IPresentationImage SelectedPresentationImage
-        {
-            get
-            {
-                if (this.SelectedTile == null)
-                    return null;
-                else
-                    return this.SelectedTile.PresentationImage;
-            }
-        }
+		{
+			get
+			{
+				if (this.SelectedTile == null)
+					return null;
+				else
+					return this.SelectedTile.PresentationImage;
+			}
+		}
 
 		/// <summary>
 		/// Gets the <see cref="IViewerShortcutManager"/>.
@@ -235,12 +235,12 @@ namespace ClearCanvas.ImageViewer
 		/// It is unlikely you will ever need to use this property.
 		/// </remarks>
 		public IViewerShortcutManager ShortcutManager
-        {
-            get 
+		{
+			get
 			{
-				return _shortcutManager; 
+				return _shortcutManager;
 			}
-        }
+		}
 
 		/// <summary>
 		/// Gets the <see cref="StudyTree"/>.
@@ -270,12 +270,12 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				return StringUtilities.Combine<Patient>(this.StudyTree.Patients.Values, " :: ",
+				return StringUtilities.Combine<Patient>(this.StudyTree.Patients.Values, String.Format(" {0} ", SR.SeparatorPatientsLoaded),
 					delegate(Patient patient)
 					{
 						PersonName name = patient.PatientsName;
 						string formattedName = name.FormattedName;
-						return StringUtilities.Combine<string>(new string[] { formattedName, patient.PatientId } , " · ");
+						return StringUtilities.Combine<string>(new string[] { formattedName, patient.PatientId } , String.Format(" {0} ", SR.SeparatorPatientDescription));
 					});
 			}
 		}
@@ -362,7 +362,7 @@ namespace ClearCanvas.ImageViewer
 		/// by <see cref="IStudyFinder.Name"/>.</param>
 		/// <returns></returns>
 		public static StudyItemList FindStudy(
-			QueryParameters queryParameters, 
+			QueryParameters queryParameters,
 			object targetServer,
 			string studyFinderName)
 		{
@@ -486,8 +486,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			Platform.CheckForNullReference(workspace, "workspace");
 
-            // return the hosted IImageViewer, or null if the hosted component is not an IImageViewer
-            return workspace.Component as IImageViewer;
+			// return the hosted IImageViewer, or null if the hosted component is not an IImageViewer
+			return workspace.Component as IImageViewer;
 		}
 
 		#endregion
@@ -534,7 +534,7 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		#endregion 
+		#endregion
 
 		#region Private methods
 

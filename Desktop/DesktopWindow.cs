@@ -278,7 +278,7 @@ namespace ClearCanvas.Desktop
         {
             if (activeWorkspace != null)
             {
-                return string.Format("{0} - {1}", activeWorkspace.Title, baseTitle);
+				return string.Format(SR.FormatDesktopWindowTitle, activeWorkspace.Title, baseTitle);
             }
             else
             {

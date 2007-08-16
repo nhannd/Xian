@@ -180,6 +180,9 @@
   <data name="ExceptionTableItemNotFoundInCollection" xml:space="preserve">
     <value>Table item not found in collection.</value>
   </data>
+  <data name="FormatDesktopWindowTitle" xml:space="preserve">
+    <value>{0} [{1}]</value>
+  </data>
   <data name="InvalidCustomDateFormat" xml:space="preserve">
     <value>The custom date format must be from the available list.</value>
   </data>
