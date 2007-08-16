@@ -48,6 +48,8 @@ namespace ClearCanvas.Controls.WinForms
 		/// </summary>
 		public static void DisplaySplashScreen()
 		{
+			Application.EnableVisualStyles();
+
 			// Shared resource access follows
 			mutex.WaitOne();
 
