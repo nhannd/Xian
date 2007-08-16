@@ -30,9 +30,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			{
 				PointF mousePoint = new PointF(mouseInformation.Location.X, mouseInformation.Location.Y);
 #if MONO
-				Size offset = new Size(50, 30);
+				Size offset = new Size(0, 30);
 #else
-				SizeF offset = new SizeF(50, 30);
+				SizeF offset = new SizeF(0, 30);
 #endif
 
 				PointF calloutLocation = mousePoint - offset;

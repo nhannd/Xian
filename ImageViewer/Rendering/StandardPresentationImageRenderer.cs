@@ -422,11 +422,13 @@ namespace ClearCanvas.ImageViewer.Rendering
 				_brush,
 				textPrimitive.AnchorPoint + del);
 #else
+			PointF boundingBoxTopLeft = new PointF(textPrimitive.BoundingBox.Left, textPrimitive.BoundingBox.Top);
+
 			_surface.FinalBuffer.Graphics.DrawString(
 				textPrimitive.Text,
 				font,
 				_brush,
-				textPrimitive.AnchorPoint + dropShadowOffset);
+				boundingBoxTopLeft + dropShadowOffset);
 #endif
 			// Draw text
 			_brush.Color = textPrimitive.Color;
@@ -435,7 +437,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 				textPrimitive.Text,
 				font,
 				_brush,
-				textPrimitive.AnchorPoint);
+				boundingBoxTopLeft);
 
 			font.Dispose();
 

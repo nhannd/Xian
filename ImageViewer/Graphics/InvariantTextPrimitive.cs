@@ -116,13 +116,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets the bounding box of the text in source or destination coordinates.
+		/// Gets the bounding box of the text in source or destination coordinates.  The centre of the 
+		/// bounding box should be <see cref="AnchorPoint"/>.
 		/// </summary>
 		public RectangleF BoundingBox
 		{
 			get
 			{
-				return new RectangleF(this.AnchorPoint, this.Dimensions);
+				float halfWidth = this.Dimensions.Width / 2F;
+				float halfHeight = this.Dimensions.Height / 2F;
+
+				return RectangleF.FromLTRB(this.AnchorPoint.X - halfWidth, this.AnchorPoint.Y - halfHeight, this.AnchorPoint.X + halfWidth, this.AnchorPoint.Y + halfHeight);
 			}
 		}
 
