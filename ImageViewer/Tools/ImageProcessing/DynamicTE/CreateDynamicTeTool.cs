@@ -14,6 +14,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 using System.IO;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 {
@@ -95,14 +96,22 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 				{
 					currentSliceLocation = imageSop.SliceLocation;
 
-					FileDicomImage pdMap = FindMap(imageSop.StudyInstanceUID, imageSop.SliceLocation, "PD");
-					FileDicomImage t2Map = FindMap(imageSop.StudyInstanceUID, imageSop.SliceLocation, "T2");
+					DicomFile pdMap = FindMap(imageSop.StudyInstanceUID, imageSop.SliceLocation, "PD");
+					pdMap.Load(DicomReadOptions.Default);
+
+					DicomFile t2Map = FindMap(imageSop.StudyInstanceUID, imageSop.SliceLocation, "T2");
+					t2Map.Load(DicomReadOptions.Default);
+
+					DicomFile probMap = FindMap(imageSop.StudyInstanceUID, imageSop.SliceLocation, "CHI2PROB");
+					probMap.Load(DicomReadOptions.Default);
 
 					DynamicTePresentationImage t2Image = new DynamicTePresentationImage(
 						imageSop,
-						pdMap.GetPixelData(),
-						t2Map.GetPixelData());
+						ConvertToByte((ushort[])pdMap.DataSet[DicomTags.PixelData].Values),
+						ConvertToByte((ushort[])t2Map.DataSet[DicomTags.PixelData].Values),
+						ConvertToByte((ushort[])probMap.DataSet[DicomTags.PixelData].Values));
 
+					t2Image.SetProbabilityThreshold(20, Color.FromArgb(128, 255, 0, 0));
 					t2Image.DynamicTe.Te = 50.0f;
 					t2DisplaySet.PresentationImages.Add(t2Image);
 				}
@@ -111,16 +120,24 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 			this.ImageViewer.LogicalWorkspace.ImageSets[0].DisplaySets.Add(t2DisplaySet);
 		}
 
-		private FileDicomImage FindMap(string studyUID, double sliceLocation, string suffix)
+		private byte[] ConvertToByte(ushort[] pixelData)
 		{
-			string[] files = Directory.GetFiles("C:\\dicom_datastore\\te_data");
+			byte[] newPixelData = new byte[pixelData.Length * 2];
+			Buffer.BlockCopy(pixelData, 0, newPixelData, 0, newPixelData.Length);
+			return newPixelData;
+		}
+
+		private DicomFile FindMap(string studyUID, double sliceLocation, string suffix)
+		{
+			string directory = String.Format("C:\\dicom_datastore\\T2_MAPS\\{0}", studyUID);
+			string[] files = Directory.GetFiles(directory);
 
 			foreach (string file in files)
 			{
 				string str = String.Format("loc{0:F2}_{1}", sliceLocation, suffix);
 
 				if (file.Contains(str))
-					return new FileDicomImage(file);
+					return new DicomFile(file);
 			}
 
 			return null;

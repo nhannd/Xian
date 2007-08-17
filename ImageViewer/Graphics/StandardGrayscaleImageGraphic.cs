@@ -23,6 +23,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Public constructor
 
+		public StandardGrayscaleImageGraphic(ImageSop imageSop, int rows, int columns)
+			: base(rows, columns)
+		{
+			Platform.CheckForNullReference(imageSop, "image");
+			_imageSop = imageSop;
+
+			_voiLutManager = CreateVoiLutManager();
+			Platform.CheckForNullReference(_voiLutManager, "_voiLutManager");
+
+			if (imageSop.PhotometricInterpretation != PhotometricInterpretation.Monochrome1 &&
+				imageSop.PhotometricInterpretation != PhotometricInterpretation.Monochrome2)
+				throw new InvalidOperationException("Image must be MONOCHROME1 or MONOCHROME2.");
+
+			ApplyInitialVoiLut();
+		}
+
 		/// <summary>
 		/// Instantiates a new instance of <see cref="StandardGrayscaleImageGraphic"/>
 		/// with the specified <see cref="ImageSop"/>.
