@@ -61,7 +61,35 @@ namespace ClearCanvas.Dicom
             }
         }
 
-        /// <summary>
+		/// <summary>
+		/// Gets Patient's Birth Date as a string.
+		/// </summary>
+		public string PatientsBirthDate
+		{
+			get
+			{
+				if (this.ContainsTag(DicomTags.PatientsBirthDate))
+					return this[DicomTags.PatientsBirthDate];
+				else
+					return "";
+			}
+		}
+
+		/// <summary>
+		/// Gets Patient's Sex as a string.
+		/// </summary>
+		public string PatientsSex
+		{
+			get
+			{
+				if (this.ContainsTag(DicomTags.PatientsSex))
+					return this[DicomTags.PatientsSex];
+				else
+					return "";
+			}
+		}
+
+		/// <summary>
         /// Gets Modalities In Study as a string.
         /// </summary>
         public string ModalitiesInStudy
@@ -89,7 +117,21 @@ namespace ClearCanvas.Dicom
             }
         }
 
-        /// <summary>
+		/// <summary>
+		/// Gets Study ID as a string.
+		/// </summary>
+		public string StudyID
+		{
+			get
+			{
+				if (this.ContainsTag(DicomTags.StudyID))
+					return this[DicomTags.StudyID];
+				else
+					return "";
+			}
+		}
+		
+		/// <summary>
         /// Gets Study Date as a string.
         /// </summary>
         public string StudyDate

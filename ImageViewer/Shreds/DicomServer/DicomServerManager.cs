@@ -183,6 +183,8 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			// Start the Query
 			info.Response.DimseStatus = (ushort)QueryDB(info.QueryRetrieveOperationIdentifier, info.RequestIdentifiers);
+			if (info.Response.DimseStatus == OffisDcm.STATUS_FIND_Failed_UnableToProcess)
+				return;
 
 			ApplicationEntity destinationAE = null;
 
@@ -368,12 +370,20 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			OFCondition cond;
 			QueryKey queryKey = new QueryKey();
 
-			// TODO: Edit these when we need to expand the support of search parameters
+			//See Dicom PS 3.4 Table C.6-5.  All required tags are supported for C-FIND except for Study Time.
+			//Currently, Study Time can be returned, but not queried upon.
 			string value;
-			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.PatientId, out value);
-			if (cond.good())
-				queryKey.Add(DicomTags.PatientID, value);
 
+			#region Required tags
+
+			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyDate, out value);
+			if (cond.good())
+				queryKey.Add(DicomTags.StudyDate, value);
+
+			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyTime, out value);
+			if (cond.good())
+				queryKey.Add(DicomTags.StudyTime, value);
+			
 			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.AccessionNumber, out value);
 			if (cond.good())
 				queryKey.Add(DicomTags.AccessionNumber, value);
@@ -382,9 +392,21 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			if (cond.good())
 				queryKey.Add(DicomTags.PatientsName, value);
 
-			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyDate, out value);
+			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.PatientId, out value);
 			if (cond.good())
-				queryKey.Add(DicomTags.StudyDate, value);
+				queryKey.Add(DicomTags.PatientID, value);
+
+			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyID, out value);
+			if (cond.good())
+				queryKey.Add(DicomTags.StudyID, value);
+
+			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyInstanceUID, out value);
+			if (cond.good())
+				queryKey.Add(DicomTags.StudyInstanceUID, value);
+
+			#endregion
+
+			#region Optional Tags
 
 			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyDescription, out value);
 			if (cond.good())
@@ -394,13 +416,23 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			if (cond.good())
 				queryKey.Add(DicomTags.ModalitiesinStudy, value);
 
-			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyInstanceUID, out value);
+			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.PatientsBirthDate, out value);
 			if (cond.good())
-				queryKey.Add(DicomTags.StudyInstanceUID, value);
+				queryKey.Add(DicomTags.PatientsBirthDate, value);
 
-            cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.SpecificCharacterSet, out value);
+			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.PatientsSex, out value);
+			if (cond.good())
+				queryKey.Add(DicomTags.PatientsSex, value);
+
+			#endregion
+
+			#region Conditional Tags
+
+			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.SpecificCharacterSet, out value);
             if (cond.good())
                 queryKey.Add(DicomTags.SpecificCharacterSet, value);
+
+			#endregion
 
 			return queryKey;
 		}
@@ -410,14 +442,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			try
 			{
 				// Query DB for results
-				ReadOnlyQueryResultCollection queryResults = DataAccessLayer.GetIDataStoreReader().StudyQuery(BuildQueryKey(requestIdentifiers));
+				QueryKey key = BuildQueryKey(requestIdentifiers);
+				ReadOnlyQueryResultCollection queryResults = DataAccessLayer.GetIDataStoreReader().StudyQuery(key);
 				if (queryResults.Count == 0)
 					return OffisDcm.STATUS_Success;
 
 				// Remember the query results for this session.  The DicomServer will call back to get query results
 				lock (_querySessionLock)
 				{
-					_querySessionDictionary[operationIdentifier] = new DicomQuerySession(queryResults);
+					_querySessionDictionary[operationIdentifier] = new DicomQuerySession(key, queryResults);
 				}
 			}
 			catch (Exception exception)
@@ -431,56 +464,96 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private int GetNextQueryResult(uint operationIdentifier, DcmDataset responseIdentifiers)
 		{
+			QueryKey key;
 			QueryResult result;
-			DicomQuerySession querySession;
 
-			try
+			lock (_querySessionLock)
 			{
-				lock (_querySessionLock)
+				// if key is not found, we return STATUS_Success anyway.  It means CFind has completed successfully.
+				if (!_querySessionDictionary.ContainsKey(operationIdentifier))
+					return OffisDcm.STATUS_Success;
+
+				DicomQuerySession querySession = _querySessionDictionary[operationIdentifier];
+				if (querySession.CurrentIndex >= querySession.QueryResults.Count)
 				{
-					querySession = _querySessionDictionary[operationIdentifier];
-					if (querySession.CurrentIndex >= querySession.QueryResults.Count)
-					{
-						// If all the results had been retrieved, remove this query session from dictionary
-						_querySessionDictionary.Remove(operationIdentifier);
-						return OffisDcm.STATUS_Success;
-					}
+					// If all the results have been retrieved, remove this query session from dictionary
+					_querySessionDictionary.Remove(operationIdentifier);
+					return OffisDcm.STATUS_Success;
 				}
 
+				key = querySession.QueryKey;
 				// Otherwise, return the next query result based on the current query index
 				result = querySession.QueryResults[querySession.CurrentIndex];
-				querySession.CurrentIndex++;
-			}
-			catch (KeyNotFoundException)
-			{
-				// if key is not found, we return STATUS_Success anyway.  It means CFind has completed successfully
-				return OffisDcm.STATUS_Success;
-			}
-			catch (Exception exception)
-			{
-				Platform.Log(LogLevel.Error, exception);
-				return OffisDcm.STATUS_FIND_Failed_UnableToProcess;
+				++querySession.CurrentIndex;
 			}
 
-			// Edit these when we need to expand the list of supported return tags
+			//According to Dicom, we should include SpecificCharacterSet if any tags in the response could be affected by character replacement.  Otherwise, it should not be present.
+			bool specificCharacterSetRequired = false;
+
+			#region Required Tags
+
 			responseIdentifiers.clear();
-			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.PatientId), result.PatientId);
 
-            // strings that can have Specific Character Set effects
-            byte[] encodedString = DicomImplementation.CharacterParser.Encode(result.PatientsName, result.SpecificCharacterSet);
-            ClearCanvas.Dicom.OffisNetwork.OffisDicomHelper.PutAndInsertRawStringIntoItem(responseIdentifiers, new DcmTag(Dcm.PatientsName), encodedString);
-            encodedString = DicomImplementation.CharacterParser.Encode(result.StudyDescription, result.SpecificCharacterSet);
-            ClearCanvas.Dicom.OffisNetwork.OffisDicomHelper.PutAndInsertRawStringIntoItem(responseIdentifiers, new DcmTag(Dcm.StudyDescription), encodedString);
-
-			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyDate), result.StudyDate);
-			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyTime), result.StudyTime);
-
-			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.ModalitiesInStudy), result.ModalitiesInStudy);
-			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.AccessionNumber), result.AccessionNumber);
 			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), result.StudyInstanceUid);
 			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.QueryRetrieveLevel), "STUDY");
-			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyInstanceUID), result.StudyInstanceUid);
-            responseIdentifiers.putAndInsertString(new DcmTag(Dcm.SpecificCharacterSet), result.SpecificCharacterSet);
+			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.RetrieveAETitle), _dicomServer.AETitle);
+			responseIdentifiers.putAndInsertString(new DcmTag(Dcm.InstanceAvailability), "ONLINE");
+			
+			if (key.ContainsTag(DicomTags.StudyDate))
+				responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyDate), result.StudyDate);
+			
+			if (key.ContainsTag(DicomTags.StudyTime))
+				responseIdentifiers.putAndInsertString(new DcmTag(Dcm.StudyTime), result.StudyTime);
+
+			if (key.ContainsTag(DicomTags.AccessionNumber))
+				responseIdentifiers.putAndInsertString(new DcmTag(Dcm.AccessionNumber), result.AccessionNumber);
+
+            // can have Specific Character Set effects
+			if (key.ContainsTag(DicomTags.PatientsName))
+			{
+				specificCharacterSetRequired = true;
+				byte[] encodedString = DicomImplementation.CharacterParser.Encode(result.PatientsName, result.SpecificCharacterSet);
+				OffisDicomHelper.PutAndInsertRawStringIntoItem(responseIdentifiers, new DcmTag(Dcm.PatientsName), encodedString);
+			}
+
+			if (key.ContainsTag(DicomTags.PatientID))
+				responseIdentifiers.putAndInsertString(new DcmTag(Dcm.PatientId), result.PatientId);
+
+			if (key.ContainsTag(DicomTags.StudyID))
+			{
+				specificCharacterSetRequired = true;
+				byte[] encodedString = encodedString = DicomImplementation.CharacterParser.Encode(result.StudyID, result.SpecificCharacterSet);
+				OffisDicomHelper.PutAndInsertRawStringIntoItem(responseIdentifiers, new DcmTag(Dcm.StudyID), encodedString);
+			}
+
+			#endregion
+
+			#region Optional Tags
+
+			if (key.ContainsTag(DicomTags.StudyDescription))
+			{
+				specificCharacterSetRequired = true;
+				byte[] encodedString = encodedString = DicomImplementation.CharacterParser.Encode(result.StudyDescription, result.SpecificCharacterSet);
+				OffisDicomHelper.PutAndInsertRawStringIntoItem(responseIdentifiers, new DcmTag(Dcm.StudyDescription), encodedString);
+			}
+
+			if (key.ContainsTag(DicomTags.ModalitiesinStudy))
+				responseIdentifiers.putAndInsertString(new DcmTag(Dcm.ModalitiesInStudy), result.ModalitiesInStudy);
+
+			if (key.ContainsTag(DicomTags.PatientsBirthDate))
+				responseIdentifiers.putAndInsertString(new DcmTag(Dcm.PatientsBirthDate), result.PatientsBirthDate);
+
+			if (key.ContainsTag(DicomTags.PatientsSex))
+				responseIdentifiers.putAndInsertString(new DcmTag(Dcm.PatientsSex), result.PatientsSex);
+
+			#endregion
+
+			#region Conditional Tags
+
+			if (specificCharacterSetRequired)
+				responseIdentifiers.putAndInsertString(new DcmTag(Dcm.SpecificCharacterSet), result.SpecificCharacterSet);
+
+			#endregion
 
 			return OffisDcm.STATUS_Pending;
 		}

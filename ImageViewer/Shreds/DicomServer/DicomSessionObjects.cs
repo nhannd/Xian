@@ -12,16 +12,23 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 	{
 		internal class DicomQuerySession
 		{
-			ReadOnlyQueryResultCollection _queryResults;
-			int _currentIndex;
+			private QueryKey _queryKey;
+			private ReadOnlyQueryResultCollection _queryResults;
+			private int _currentIndex;
 
-			public DicomQuerySession(ReadOnlyQueryResultCollection queryResults)
+			public DicomQuerySession(QueryKey queryKey, ReadOnlyQueryResultCollection queryResults)
 			{
 				_queryResults = queryResults;
+				_queryKey = queryKey;
 				_currentIndex = 0;
 			}
 
 			#region Properties
+
+			public QueryKey QueryKey
+			{
+				get { return _queryKey; }
+			}
 
 			public ReadOnlyQueryResultCollection QueryResults
 			{

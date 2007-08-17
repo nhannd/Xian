@@ -357,6 +357,10 @@ namespace ClearCanvas.Dicom.DataStore
             {
                 if (queryKey[path].Length > 0)
                 {
+					//Unsupported query keys are just ignored.
+					if (!queryDictionary.Contains(path))
+						continue;
+
 					DictionaryEntry column = queryDictionary.GetColumn(path);
 
 					if (column.IsComputed)
