@@ -77,6 +77,7 @@ copy $(ProjectDir)..\..\ImageServer\Common\$(OutDir)ClearCanvas.ImageServer.Comm
 copy $(ProjectDir)..\..\Dicom\$(OutDir)ClearCanvas.Dicom.dll $(TargetDir)common
 copy $(ProjectDir)..\..\DicomServices\$(OutDir)ClearCanvas.DicomServices.dll $(TargetDir)common
 copy $(ProjectDir)..\..\Server\ServiceModelEx\$(Outdir)ServiceModelEx.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ImageServer\Queue\$(OutDir)ClearCanvas.ImageServer.Queue.dll $(TargetDir)common
 
 rem copy plugins
 copy $(ProjectDir)..\..\Enterprise\Core\$(OutDir)ClearCanvas.Enterprise.Core.dll $(TargetDir)plugins
@@ -84,6 +85,7 @@ copy $(ProjectDir)..\..\Enterprise\Common\$(OutDir)ClearCanvas.Enterprise.Common
 copy $(ProjectDir)..\..\ImageServer\Database\SqlServer2005\$(OutDir)ClearCanvas.ImageServer.Database.SqlServer2005.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Model\SqlServer2005\$(OutDir)ClearCanvas.ImageServer.Model.SqlServer2005.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\DicomServices\ImageServer\$(OutDir)ClearCanvas.DicomServices.ImageServer.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\ImageServer\Queue\Work\$(OutDir)ClearCanvas.ImageServer.Queue.Work.dll $(TargetDir)plugins
 
 rem copy referenced assemblies
 copy $(ProjectDir)..\..\ReferencedAssemblies\Iesi.Collections.dll $(TargetDir)common

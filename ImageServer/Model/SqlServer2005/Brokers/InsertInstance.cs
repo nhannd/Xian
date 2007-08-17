@@ -12,10 +12,10 @@ using ClearCanvas.ImageServer.Database.SqlServer2005;
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class SelectPartitionSopClasses : ProcedureSelectBroker<PartitionSopClassSelectParameters, PartitionSopClass>, ISelectServerPartitionSopClasses
+    public class InsertInstance : ProcedureSelectBroker<InstanceInsertParameters,InstanceKeys>
     {
-        public SelectPartitionSopClasses()
-            : base("SelectServerPartitionSopClasses")
+        public InsertInstance()
+            : base("InsertInstance")
         {
         }
     }

@@ -40,5 +40,10 @@ namespace ClearCanvas.ImageServer.Database
 
             return _key.Equals(key.Key);
         }
+
+        public override string ToString()
+        {
+            return _key.ToString();
+        }
     }
 }

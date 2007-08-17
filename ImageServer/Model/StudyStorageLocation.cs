@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.IO;
 
 using ClearCanvas.ImageServer.Database;
 using ClearCanvas.Enterprise.Core;
@@ -79,6 +80,17 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _writeOnly; }
             set { _writeOnly = value; }
+        }
+        #endregion
+
+        #region Public Methods
+        public string GetStudyPath()
+        {
+            string path = Path.Combine(FilesystemPath, this.PartitionFolder);
+            path = Path.Combine(path, this.StudyFolder);
+            path = Path.Combine(path, this.StudyInstanceUid);
+
+            return path;
         }
         #endregion
     }

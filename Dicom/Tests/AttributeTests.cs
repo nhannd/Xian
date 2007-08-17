@@ -4,10 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
-using ClearCanvas.ImageServer.Dicom;
-using ClearCanvas.ImageServer.Dicom.Exceptions;
+using ClearCanvas.Dicom;
 
-namespace ClearCanvas.ImageServer.Dicom.Tests
+namespace ClearCanvas.Dicom.Tests
 {
     [TestFixture]
     public class AttributeTests : AbstractTest

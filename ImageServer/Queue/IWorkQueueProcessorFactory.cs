@@ -6,10 +6,10 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Queue
 {
-    public interface IWorkQueueProcessor
+    public interface IWorkQueueProcessorFactory
     {
         TypeEnum GetWorkQueueType();
 
-        void Process(WorkQueue item);
+        IWorkQueueItemProcessor GetItemProcessor();
     }
 }

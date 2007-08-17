@@ -9,7 +9,7 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public interface IInsertStudyStorage : IProcedureSelectBroker<StudyStorageInsertParameters, StudyStorageLocation>
+    public interface IInsertInstance : IProcedureSelectBroker<InstanceInsertParameters,InstanceKeys>
     {
     }
 }

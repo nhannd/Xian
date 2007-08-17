@@ -7,7 +7,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageServer.Queue
 {
     [ExtensionPoint()]
-    public class WorkQueueExtensionPoint : ExtensionPoint<IWorkQueueProcessor>
+    public class WorkQueueFactoryExtensionPoint : ExtensionPoint<IWorkQueueProcessorFactory>
     {
     }
 }

@@ -33,16 +33,19 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Brokers\DeleteWorkQueueUid.cs" />
     <Compile Include="Brokers\GetFilesystems.cs" />
     <Compile Include="Brokers\GetFilesystemTiers.cs" />
     <Compile Include="Brokers\GetServerPartitions.cs" />
     <Compile Include="Brokers\GetSopClasses.cs" />
+    <Compile Include="Brokers\InsertInstance.cs" />
     <Compile Include="Brokers\InsertServerPartition.cs" />
     <Compile Include="Brokers\InsertStudyStorage.cs" />
     <Compile Include="Brokers\InsertWorkQueueStudyProcess.cs" />
     <Compile Include="Brokers\SelectPartitionSopClasses.cs" />
     <Compile Include="Brokers\SelectStudyStorageLocation.cs" />
     <Compile Include="Brokers\SelectWorkQueue.cs" />
+    <Compile Include="Brokers\SelectWorkQueueUids.cs" />
     <Compile Include="Brokers\StatusEnumBroker.cs" />
     <Compile Include="Brokers\TypeEnumBroker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

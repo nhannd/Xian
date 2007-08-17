@@ -20,7 +20,6 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Private Members
         private ServerEntityKey _studyStorageKey;
-        private String _seriesInstanceUid;
         private TypeEnum _typeEnum;
         private StatusEnum _statusEnum;
         private DateTime _expirationTime;
@@ -35,37 +34,32 @@ namespace ClearCanvas.ImageServer.Model
             get { return _studyStorageKey; }
             set { _studyStorageKey = value; }
         }
-        private String SeriesInstanceUid
-        {
-            get { return _seriesInstanceUid; }
-            set { _seriesInstanceUid = value; }
-        }
-        private TypeEnum TypeEnum
+        public TypeEnum TypeEnum
         {
             get { return _typeEnum; }
             set { _typeEnum = value; }
         }
-        private StatusEnum StatusEnum
+        public StatusEnum StatusEnum
         {
             get { return _statusEnum; }
             set { _statusEnum = value; }
         }
-        private DateTime ExpirationTime
+        public DateTime ExpirationTime
         {
             get { return _expirationTime; }
             set { _expirationTime = value; }
         }
-        private DateTime ScheduledTime
+        public DateTime ScheduledTime
         {
             get { return _scheduledTime; }
             set { _scheduledTime = value; }
         }
-        private DateTime InsertTime
+        public DateTime InsertTime
         {
             get { return _insertTime; }
             set { _insertTime = value; }
         }
-        private XmlDocument Data
+        public XmlDocument Data
         {
             get { return _data; }
             set { _data = value; }

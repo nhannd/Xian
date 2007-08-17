@@ -43,6 +43,18 @@ namespace ClearCanvas.ImageServer.Database
         }
         #endregion
 
+        public override int GetHashCode()
+        {
+            return Enum;
+        }
+        public override bool Equals(object obj)
+        {
+            ServerEnum e = obj as ServerEnum;
+            if (e == null)
+                return false;
+            return e.Enum == Enum;
+        }
+
         public abstract void SetEnum(short val);
 
     }

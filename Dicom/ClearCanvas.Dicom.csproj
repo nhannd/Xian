@@ -194,7 +194,11 @@
     <Compile Include="OffisNetwork\OffisConditionParser.cs" />
     <Compile Include="OffisNetwork\OffisDicomHelper.cs" />
     <Compile Include="OffisNetwork\Tests\DcmNetTest.cs" />
+    <Compile Include="Tests\AbstractTest.cs" />
+    <Compile Include="Tests\AttributeTests.cs" />
+    <Compile Include="Tests\DicomFieldTests.cs" />
     <Compile Include="Tests\DicomStringHelperTests.cs" />
+    <Compile Include="Tests\FileTest.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Import Project="..\Common\ClearCanvas.Strings.targets" />

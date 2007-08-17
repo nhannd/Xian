@@ -18,6 +18,7 @@ namespace ClearCanvas.ImageServer.Model
         {
             set { this.SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
         }
+
         public DateTime ExpirationTime
         {
             set { this.SubCriteria["ExpirationTime"] = new ProcedureParameter<DateTime>("ExpirationTime", value); }
@@ -27,6 +28,15 @@ namespace ClearCanvas.ImageServer.Model
         {
             set { this.SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
         }
-        
+
+        public string SeriesInstanceUid
+        {
+            set { this.SubCriteria["SeriesInstanceUid"] = new ProcedureParameter<string>("SeriesInstanceUid", value); }
+        }
+
+        public string SopInstanceUid
+        {
+            set { this.SubCriteria["SopInstanceUid"] = new ProcedureParameter<string>("SopInstanceUid", value); }
+        }
     }
 }

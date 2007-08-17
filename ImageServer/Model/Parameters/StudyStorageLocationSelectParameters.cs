@@ -15,6 +15,14 @@ namespace ClearCanvas.ImageServer.Model
         {
         }
 
+        /// <summary>
+        /// StudyStorageKey must be set or ServerPartitionKey and StudyInstanceUID
+        /// </summary>
+        public ServerEntityKey StudyStorageKey
+        {
+            set { this.SubCriteria["StudyStorageKey"] = new ProcedureParameter<ServerEntityKey>("StudyStorageKey", value); }
+        }
+
         public ServerEntityKey ServerPartitionKey
         {
             set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }

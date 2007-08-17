@@ -9,7 +9,7 @@ INSERT INTO [ImageServer].[dbo].[TypeEnum]
 INSERT INTO [ImageServer].[dbo].[StatusEnum]
            ([GUID],[StatusEnum],[Lookup],[Description],[LongDescription])
      VALUES
-           (newid(),100,'Pending','Online','Online')
+           (newid(),100,'Online','Online','Online')
 
 INSERT INTO [ImageServer].[dbo].[StatusEnum]
            ([GUID],[StatusEnum],[Lookup],[Description],[LongDescription])

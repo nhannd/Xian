@@ -7,6 +7,7 @@ using System.Text;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Data.Sql;
+using System.Xml;
 
 using ClearCanvas.ImageServer.Database;
 using ClearCanvas.Enterprise.Core;
@@ -102,6 +103,12 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
                 if (prop == null)
                     throw new EntityNotFoundException("Unable to match column to property: " + columnName, null);
 
+                if (reader.IsDBNull(i))
+                {
+                    prop.SetValue(entity,null);
+                    continue;
+                }
+
                 if (prop.PropertyType == typeof(String))
                     prop.SetValue(entity, reader.GetString(i));
                 else if (prop.PropertyType == typeof(Int32))
@@ -116,12 +123,20 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
                     prop.SetValue(entity, reader.GetFloat(i));
                 else if (prop.PropertyType == typeof(DateTime))
                     prop.SetValue(entity, reader.GetDateTime(i));
+                else if (prop.PropertyType == typeof(bool))
+                    prop.SetValue(entity, reader.GetBoolean(i));
+                else if (prop.PropertyType == typeof(XmlDocument))
+                {
+                    SqlXml xml = reader.GetSqlXml(i);
+                    XmlDocument xmlDoc = new XmlDocument();
+                    //TODO
+                }
                 else if (prop.PropertyType == typeof(ServerEntityKey))
                 {
                     Guid uid = reader.GetGuid(i);
-                    prop.SetValue(entity, new ServerEntityKey(columnName.Replace("Key",""), uid));
+                    prop.SetValue(entity, new ServerEntityKey(columnName.Replace("Key", ""), uid));
                 }
-                else if (prop.PropertyType == typeof(ServerEnum))
+                else if (prop.PropertyType.BaseType == typeof(ServerEnum))
                 {
                     short enumVal = reader.GetInt16(i);
                     ConstructorInfo construct = prop.PropertyType.GetConstructor(new Type[0]);
@@ -129,8 +144,6 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
                     val.SetEnum(enumVal);
                     prop.SetValue(entity, val);
                 }
-                else if (prop.PropertyType == typeof(bool))
-                    prop.SetValue(entity, reader.GetBoolean(i));
                 else
                     throw new EntityNotFoundException("Unsupported property type: " + prop.PropertyType, null);
             }

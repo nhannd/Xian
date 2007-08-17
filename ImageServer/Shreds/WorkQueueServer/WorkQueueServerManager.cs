@@ -2,12 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using ClearCanvas.ImageServer.WorkQueue;
+using ClearCanvas.ImageServer.Queue;
 
 namespace ClearCanvas.ImageServer.Shreds.WorkQueueServer
 {
     public class WorkQueueServerManager
     {
+        #region Private Members
+        private static WorkQueueServerManager _instance;
+        #endregion
+
         #region Constructors
         public WorkQueueServerManager()
         { }

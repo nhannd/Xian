@@ -33,8 +33,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IWorkQueueProcessor.cs" />
-    <Compile Include="WorkQueueExtensionPoint.cs" />
+    <Compile Include="IWorkQueueItemProcessor.cs" />
+    <Compile Include="IWorkQueueProcessorFactory.cs" />
+    <Compile Include="WorkQueueFactoryExtensionPoint.cs" />
     <Compile Include="WorkQueueProcessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

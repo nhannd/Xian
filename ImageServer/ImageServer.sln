@@ -60,6 +60,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Tes
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{7C4EDB0A-B94C-4078-846A-DEA974348B2B} = {7C4EDB0A-B94C-4078-846A-DEA974348B2B}
+		{221FC797-CCE8-406B-94AB-0EB290A387A6} = {221FC797-CCE8-406B-94AB-0EB290A387A6}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Model.SqlServer2005", "Model\SqlServer2005\ClearCanvas.ImageServer.Model.SqlServer2005.csproj", "{7C4EDB0A-B94C-4078-846A-DEA974348B2B}"
 	ProjectSection(WebsiteProperties) = preProject
@@ -104,6 +108,22 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.DicomServices.I
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.ShredHostExe", "ShredHostExe\ClearCanvas.ImageServer.ShredHostExe.csproj", "{9B38E701-F797-4517-9B33-025794A7CC32}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+	ProjectSection(ProjectDependencies) = postProject
+		{7C4EDB0A-B94C-4078-846A-DEA974348B2B} = {7C4EDB0A-B94C-4078-846A-DEA974348B2B}
+		{221FC797-CCE8-406B-94AB-0EB290A387A6} = {221FC797-CCE8-406B-94AB-0EB290A387A6}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Queue", "Queue\ClearCanvas.ImageServer.Queue.csproj", "{65B9B08C-EAE4-4EE2-B164-905B03134443}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Queue.Work", "Queue\Work\ClearCanvas.ImageServer.Queue.Work.csproj", "{976C123A-D08B-436E-A324-993F4CC686BA}"
 	ProjectSection(WebsiteProperties) = preProject
 		Debug.AspNetCompiler.Debug = "True"
 		Release.AspNetCompiler.Debug = "False"
@@ -187,6 +207,14 @@ Global
 		{9B38E701-F797-4517-9B33-025794A7CC32}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9B38E701-F797-4517-9B33-025794A7CC32}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9B38E701-F797-4517-9B33-025794A7CC32}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65B9B08C-EAE4-4EE2-B164-905B03134443}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65B9B08C-EAE4-4EE2-B164-905B03134443}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65B9B08C-EAE4-4EE2-B164-905B03134443}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65B9B08C-EAE4-4EE2-B164-905B03134443}.Release|Any CPU.Build.0 = Release|Any CPU
+		{976C123A-D08B-436E-A324-993F4CC686BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{976C123A-D08B-436E-A324-993F4CC686BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{976C123A-D08B-436E-A324-993F4CC686BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{976C123A-D08B-436E-A324-993F4CC686BA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

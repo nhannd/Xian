@@ -6,10 +6,9 @@ using System.Text;
 using System.Globalization;
 
 using NUnit.Framework;
-using ClearCanvas.ImageServer.Dicom;
-using ClearCanvas.ImageServer.Dicom.Exceptions;
+using ClearCanvas.Dicom;
 
-namespace ClearCanvas.ImageServer.Dicom.Tests
+namespace ClearCanvas.Dicom.Tests
 {
     [TestFixture]
     public class DicomFieldTests : AbstractTest
