@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : base(folderSystem)
+            : this(folderSystem, "Scheduled", null, null)
         {
         }
 
@@ -65,7 +65,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public CheckedInFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : base(folderSystem)
+            : this(folderSystem, "Checked In", null, null)
         {
         }
 
@@ -100,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : base(folderSystem)
+            : this(folderSystem, "In Progress", null, null)
         {
         }
 
@@ -135,7 +135,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : base(folderSystem)
+            : this(folderSystem, "Completed", null, null)
         {
         }
 
@@ -175,7 +175,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : base(folderSystem)
+            : this(folderSystem, "Cancelled", null, null)
         {
         }
 
