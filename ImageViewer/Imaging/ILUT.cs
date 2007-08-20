@@ -5,7 +5,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Defines a lookup table.
 	/// </summary>
-	public interface ILUT
+	public interface ILut
 	{
 		/// <summary>
 		/// Gets the number of entries in the LUT.

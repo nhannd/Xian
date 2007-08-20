@@ -10,7 +10,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// A <see cref="CalculatedLUT"/> stores no actual values, but instead
 	/// calculates the value whenever a lookup is performed.
 	/// </remarks>
-	public abstract class CalculatedLUT : IComposableLUT
+	public abstract class CalculatedLut : IComposableLut
 	{
 		private int _minInputValue;
 		private int _maxInputValue;
@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Occurs when the LUT has changed.
 		/// </summary>
-		public event EventHandler LUTChanged
+		public event EventHandler LutChanged
 		{
 			add { _lutChangedEvent += value; }
 			remove { _lutChangedEvent -= value; }

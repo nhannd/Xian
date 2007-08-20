@@ -183,7 +183,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// When an <see cref="IRenderer"/> renders an <see cref="IndexedImageGraphic"/>, it should
 		/// use <see cref="OutputLUT"/> to determine the ARGB value to display for a given pixel value.
 		/// </remarks>
-		public abstract int[] OutputLUT { get; }
+		public abstract int[] OutputLut { get; }
 
 		#endregion
 

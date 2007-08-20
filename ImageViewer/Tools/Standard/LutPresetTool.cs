@@ -17,6 +17,7 @@ using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.BaseTools;
 using System.ComponentModel;
 
+/*
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	//it's ok to assign the same keystroke more than once as long as it's for the same ClickAction.
@@ -305,3 +306,4 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 	}
 }
+*/

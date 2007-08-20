@@ -38,7 +38,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			IndexedImageGraphic grayscaleImage = imageGraphic as IndexedImageGraphic;
 
 			if (grayscaleImage != null)
-				lutData = grayscaleImage.OutputLUT;
+				lutData = grayscaleImage.OutputLut;
 
 			ColorImageGraphic colorImage = imageGraphic as ColorImageGraphic;
 

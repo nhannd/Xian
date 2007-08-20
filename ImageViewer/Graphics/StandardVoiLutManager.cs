@@ -6,6 +6,7 @@ using ClearCanvas.Dicom;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
 
+/*
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	public class StandardVoiLutManager : IVoiLutManager, IAutoVoiLutApplicator
@@ -143,3 +144,4 @@ namespace ClearCanvas.ImageViewer.Graphics
 		#endregion
 	}
 }
+*/

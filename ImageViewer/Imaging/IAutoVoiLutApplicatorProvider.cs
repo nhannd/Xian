@@ -4,6 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/*
 	/// <summary>
 	/// Provides access to <see cref="IAutoVoiLutApplicator"/>.  Image classes wishing to provide
 	/// automatically determined/calculated Luts should derive from this interface.
@@ -15,5 +16,5 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// This property should never return null.
 		/// </summary>
 		IAutoVoiLutApplicator AutoVoiLutApplicator { get; }
-	}
+	}*/
 }

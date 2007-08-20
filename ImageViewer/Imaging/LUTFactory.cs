@@ -8,21 +8,21 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	// LUT flyweight factory
-	internal sealed class LUTFactory : IReferenceCountable, IDisposable
+	internal sealed class LutFactory : IReferenceCountable, IDisposable
 	{
-		private static volatile LUTFactory _instance;
+		private static volatile LutFactory _instance;
 		private static object _syncRoot = new Object();
 
-		private List<ModalityLUTLinear> _modalityLUTs;
-		private List<PresentationLUT> _presentationLUTs;
+		private List<ModalityLutLinear> _modalityLUTs;
+		private List<PresentationLut> _presentationLUTs;
 		private int _referenceCount = 0;
 
-		private LUTFactory()
+		private LutFactory()
 		{
 
 		}
 
-		public static LUTFactory NewInstance
+		public static LutFactory NewInstance
 		{
 			get
 			{
@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 					lock (_syncRoot)
 					{
 						if (_instance == null)
-							_instance = new LUTFactory();
+							_instance = new LutFactory();
 					}
 				}
 
@@ -41,29 +41,29 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private List<ModalityLUTLinear> ModalityLUTs
+		private List<ModalityLutLinear> ModalityLuts
 		{
 			get
 			{
 				if (_modalityLUTs == null)
-					_modalityLUTs = new List<ModalityLUTLinear>();
+					_modalityLUTs = new List<ModalityLutLinear>();
 
 				return _modalityLUTs;
 			}
 		}
 
-		private List<PresentationLUT> PresentationLUTs
+		private List<PresentationLut> PresentationLuts
 		{
 			get
 			{
 				if (_presentationLUTs == null)
-					_presentationLUTs = new List<PresentationLUT>();
+					_presentationLUTs = new List<PresentationLut>();
 
 				return _presentationLUTs;
 			}
 		}
 
-		internal ModalityLUTLinear GetModalityLUTLinear(
+		internal ModalityLutLinear GetModalityLutLinear(
 			int bitsStored,
 			bool isSigned,
 			double rescaleSlope,
@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			if (rescaleSlope == 0 || double.IsNaN(rescaleSlope))
 				rescaleSlope = 1;
 
-			foreach (ModalityLUTLinear lut in this.ModalityLUTs)
+			foreach (ModalityLutLinear lut in this.ModalityLuts)
 			{
 				if (lut.BitsStored == bitsStored &&
 					lut.IsSigned == isSigned &&
@@ -81,23 +81,23 @@ namespace ClearCanvas.ImageViewer.Imaging
 					return lut;
 			}
 
-			ModalityLUTLinear modalityLut = new ModalityLUTLinear(
+			ModalityLutLinear modalityLut = new ModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
 				rescaleIntercept);
 
-			this.ModalityLUTs.Add(modalityLut);
+			this.ModalityLuts.Add(modalityLut);
 
 			return modalityLut;
 		}
 
-		internal PresentationLUT GetPresentationLUT(
+		internal PresentationLut GetPresentationLut(
 			int minInputValue,
 			int maxInputValue,
 			bool invert)
 		{
-			foreach (PresentationLUT lut in this.PresentationLUTs)
+			foreach (PresentationLut lut in this.PresentationLuts)
 			{
 				if (lut.MaxInputValue == maxInputValue &&
 					lut.MinInputValue == minInputValue &&
@@ -105,12 +105,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 					return lut;
 			}
 
-			PresentationLUT presentationLut = new PresentationLUT(
+			PresentationLut presentationLut = new GrayscalePresentationLut(
 				minInputValue, 
 				maxInputValue, 
 				invert);
 
-			this.PresentationLUTs.Add(presentationLut);
+			this.PresentationLuts.Add(presentationLut);
 
 			return presentationLut;
 		}

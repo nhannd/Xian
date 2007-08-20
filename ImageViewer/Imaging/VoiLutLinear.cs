@@ -2,18 +2,46 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public abstract class VoiLutLinearStateBase
-		: CalculatedLUT, IVOILUTLinear
+	internal class WindowLevelMemento : IMemento
 	{
+		private double _windowWidth;
+		private double _windowCenter;
+
+		public WindowLevelMemento(double windowWidth, double windowCenter)
+		{
+			_windowWidth = windowWidth;
+			_windowCenter = windowCenter;	
+		}
+
+		public double WindowWidth
+		{
+			get { return _windowWidth; }
+			set { _windowWidth = value; }
+		}
+
+		public double WindowCenter
+		{
+			get { return _windowCenter; }
+			set { _windowCenter = value; }
+		}
+	}
+
+	public class VoiLutLinear
+		: CalculatedLut, IVoiLutLinear
+	{
+		private double _windowWidth = 1;
+		private double _windowCenter = 0;
 		private double _windowRegionStart;
 		private double _windowRegionEnd;
 		private int _outputRange;
 		private bool _recalculate;
 
-		public VoiLutLinearStateBase(int minInputValue, int maxInputValue)
+		public VoiLutLinear(int minInputValue, int maxInputValue)
 		{
 			if (minInputValue >= maxInputValue)
 				throw new ArgumentException(SR.ExceptionLUTMinGreaterThanEqualToMax);
@@ -64,6 +92,41 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the window width.
+		/// </summary>
+		public double WindowWidth
+		{
+			get { return _windowWidth; }
+			set
+			{
+				if (value == _windowWidth)
+					return;
+
+				if (value < 1)
+					value = 1;
+
+				_windowWidth = value;
+				Recalculate();
+			}
+		}
+
+		/// <summary>
+		/// Gets or sets the window center.
+		/// </summary>
+		public double WindowCenter
+		{
+			get { return _windowCenter; }
+			set
+			{
+				if (value == _windowCenter)
+					return;
+
+				_windowCenter = value;
+				Recalculate();
+			}
+		}
+
 		public override string GetKey()
 		{
 			return String.Format("{0}_{1}_{2:F2}_{3:F2}",
@@ -71,11 +134,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 				this.MaxInputValue,
 				this.WindowWidth,
 				this.WindowCenter);
-		}
-
-		protected override void NotifyLUTChanged()
-		{
-			base.NotifyLUTChanged();
 		}
 
 		protected void Recalculate()
@@ -91,10 +149,36 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_windowRegionEnd = this.WindowCenter - 0.5 + halfWindow;
 		}
 
-		#region IVOILUTLinear Members
 
-		public abstract double WindowWidth { get; set; }
-		public abstract double WindowCenter { get; set; }
+		#region IMemorable Members
+
+		public IMemento CreateMemento()
+		{
+			WindowLevelMemento memento = new WindowLevelMemento(
+				this.WindowWidth, 
+				this.WindowCenter);
+
+			return memento;
+		}
+
+		public void SetMemento(IMemento memento)
+		{
+			Platform.CheckForNullReference(memento, "memento");
+			WindowLevelMemento windowLevelMemento = memento as WindowLevelMemento;
+			Platform.CheckForInvalidCast(windowLevelMemento, "memento", "WindowLevelMemento");
+
+			this.WindowWidth = windowLevelMemento.WindowWidth;
+			this.WindowCenter = windowLevelMemento.WindowCenter;
+		}
+
+		#endregion
+
+		#region IVoiLut Members
+
+		public string Name
+		{
+			get { return "Dynamic Window/Level"; }
+		}
 
 		#endregion
 	}

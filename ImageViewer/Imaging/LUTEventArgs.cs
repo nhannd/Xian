@@ -9,20 +9,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Provides data for the <see cref="LUTCollection"/> events.
 	/// </summary>
-	public class LUTEventArgs : CollectionEventArgs<IComposableLUT>
+	public class LutEventArgs : CollectionEventArgs<IComposableLut>
 	{
-		public LUTEventArgs()
+		public LutEventArgs()
 		{
 
 		}
 
-		public LUTEventArgs(IComposableLUT lut)
+		public LutEventArgs(IComposableLut lut)
 		{
 			Platform.CheckForNullReference(lut, "lut");
 
 			base.Item = lut;
 		}
 
-		public IComposableLUT Lut { get { return base.Item; } }
+		public IComposableLut Lut { get { return base.Item; } }
 	}
 }

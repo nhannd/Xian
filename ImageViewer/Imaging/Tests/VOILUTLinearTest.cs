@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		{
 		}
 
-		[Test]
+/*		[Test]
 		public void Unsigned1()
 		{
 			double windowWidth = 1;
@@ -199,7 +199,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 
 			lut.WindowWidth = windowWidth;
 			lut.WindowCenter = windowLevel;
-		}
+		}*/
 	}
 }
 

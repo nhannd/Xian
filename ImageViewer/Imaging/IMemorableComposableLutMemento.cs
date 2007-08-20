@@ -5,6 +5,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/*
 	/// <summary>
 	/// Should be used in conjunction with a <see cref="VoiLutOperationApplicator"/> to implement
 	/// the Memento pattern without need for explicit knowledge of the contents of the memento.
@@ -42,5 +43,5 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <param name="memento">the memento</param>
 		/// <returns>whether or not the memento can be used internally to restore/return to a given state</returns>
 		bool TrySetMemento(IMemorableComposableLutMemento memento);
-	}
+	}*/
 }

@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 1;
 			double rescaleIntercept = 100;
 
-			ModalityLUTLinear lut = new ModalityLUTLinear(
+			ModalityLutLinear lut = new ModalityLutLinear(
 				bitsStored,
 				isSigned, 
 				rescaleSlope, 
@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 1;
 			double rescaleIntercept = 100;
 
-			ModalityLUTLinear lut = new ModalityLUTLinear(
+			ModalityLutLinear lut = new ModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 100;
 
-			ModalityLUTLinear lut = new ModalityLUTLinear(
+			ModalityLutLinear lut = new ModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 100;
 
-			ModalityLUTLinear lut = new ModalityLUTLinear(
+			ModalityLutLinear lut = new ModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 100;
 
-			ModalityLUTLinear lut = new ModalityLUTLinear(
+			ModalityLutLinear lut = new ModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 100;
 
-			ModalityLUTLinear lut = new ModalityLUTLinear(
+			ModalityLutLinear lut = new ModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 
@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			double rescaleSlope = 0.5;
 			double rescaleIntercept = 100;
 
-			ModalityLUTLinear lut = new ModalityLUTLinear(
+			ModalityLutLinear lut = new ModalityLutLinear(
 				bitsStored, 
 				isSigned, 
 				rescaleSlope, 

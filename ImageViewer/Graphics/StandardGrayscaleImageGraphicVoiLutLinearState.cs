@@ -5,6 +5,7 @@ using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common;
 
+/*
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
@@ -83,3 +84,4 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 	}
 }
+*/

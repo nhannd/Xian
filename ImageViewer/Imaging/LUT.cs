@@ -6,12 +6,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// A lookup table.
 	/// </summary>
-	public class LUT : ILUT
+	public class Lut : ILut
 	{
 		private int _length;
 		private int[] _table;
 
-		protected LUT()
+		protected Lut()
 		{
 		}
 
@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// number of entries.
 		/// </summary>
 		/// <param name="length"></param>
-		public LUT(int length)
+		public Lut(int length)
 		{
 			Platform.CheckPositive(length, "length");
 			_length = length;

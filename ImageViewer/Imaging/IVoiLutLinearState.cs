@@ -1,6 +1,7 @@
 ﻿using System;
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/*
 	/// <summary>
 	/// It is not recommended that you actually implement your own <see cref="IVoiLutLinearState"/> 
 	/// and <see cref="IStatefulVoiLutLinear"/>, but instead use the sealed class <see cref="StatefulVoiLutLinear"/>
@@ -32,5 +33,5 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Should be used only by the owner Lut to get/set its own WindowWidth.
 		/// </summary>
 		double WindowWidth { get; set; }
-	}
+	}*/
 }

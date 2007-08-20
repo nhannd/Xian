@@ -1,22 +1,18 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
 	/// A grayscale <see cref="IndexedImageGraphic"/>.
 	/// </summary>
-	public class GrayscaleImageGraphic : IndexedImageGraphic, IVOILUTLinearProvider
+	public class GrayscaleImageGraphic : IndexedImageGraphic, IVoiLutLinearProvider
 	{
 		#region Private fields
 
-		private LUTComposer _lutComposer;
-		private LUTFactory _lutFactory;
+		private LutComposer _lutComposer;
+		private LutFactory _lutFactory;
 		
 		private int _minPixelValue;
 		private int _maxPixelValue;
@@ -142,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_minPixelValue = int.MinValue;
 			_maxPixelValue = int.MaxValue;
 
-			InstallGrayscaleLUTs(rescaleSlope, rescaleIntercept, inverted);
+			InstallGrayscaleLuts(rescaleSlope, rescaleIntercept, inverted);
 		}
 
 		#endregion
@@ -210,43 +206,48 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Gets the modality LUT.
 		/// </summary>
-		public IComposableLUT ModalityLUT
+		public IComposableLut ModalityLut
 		{
-			get { return this.LUTComposer.LUTCollection[0]; }
+			get { return this.LutComposer.LutCollection[0]; }
+		}
+
+		public void SetVoiLut(string name)
+		{
+			
 		}
 
 		/// <summary>
 		/// Gets the VOI LUT.
 		/// </summary>
-		public IComposableLUT VoiLUT
+		public IVoiLut VoiLut
 		{
-			get { return this.LUTComposer.LUTCollection[1]; }
-			protected set
-			{
-				Platform.CheckForNullReference(value, "value");
-				this.LUTComposer.LUTCollection[1] = value; 
-			}
+			get { return this.LutComposer.LutCollection[1] as IVoiLut; }
+		}
+
+		public void SetPresentationLut(string name)
+		{
+			
 		}
 
 		/// <summary>
 		/// Gets the presentation LUT.
 		/// </summary>
-		public IComposableLUT PresentationLUT
+		public IPresentationLut PresentationLut
 		{
-			get { return this.LUTComposer.LUTCollection[2]; }
+			get { return this.LutComposer.LutCollection[2] as IPresentationLut; }
 		}
 
 		/// <summary>
 		/// The output of the LUT pipeline.
 		/// </summary>
 		/// <remarks>
-		/// Each entry in the <see cref="OutputLUT"/> array is 32-bit ARGB value.
+		/// Each entry in the <see cref="OutputLut"/> array is 32-bit ARGB value.
 		/// When an <see cref="IRenderer"/> renders an <see cref="IndexedImageGraphic"/>, it should
-		/// use <see cref="OutputLUT"/> to determine the ARGB value to display for a given pixel value.
+		/// use <see cref="OutputLut"/> to determine the ARGB value to display for a given pixel value.
 		/// </remarks>
-		public override int[] OutputLUT
+		public override int[] OutputLut
 		{
-			get { return this.LUTComposer.OutputLUT; }
+			get { return this.LutComposer.OutputLut; }
 		}
 
 		#region IVOILUTLinearProvider Members
@@ -256,9 +257,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		/// <value>The linear VOI LUT or <b>null</b> if the VOI LUT
 		/// is not linear.</value>
-		public virtual IVOILUTLinear VoiLutLinear
+		public virtual IVoiLutLinear VoiLutLinear
 		{
-			get { return this.VoiLUT as IVOILUTLinear; }
+			get { return this.VoiLut as IVoiLutLinear; }
 		}
 
 		#endregion
@@ -268,25 +269,25 @@ namespace ClearCanvas.ImageViewer.Graphics
 		#region Private properties
 
 		/// <summary>
-		/// Gets the <see cref="LUTComposer"/>.
+		/// Gets the <see cref="LutComposer"/>.
 		/// </summary>
-		private LUTComposer LUTComposer
+		private LutComposer LutComposer
 		{
 			get
 			{
 				if (_lutComposer == null)
-					_lutComposer = new LUTComposer();
+					_lutComposer = new LutComposer();
 
 				return _lutComposer;
 			}
 		}
 
-		private LUTFactory LUTFactory
+		private LutFactory LutFactory
 		{
 			get
 			{
 				if (_lutFactory == null)
-					_lutFactory = LUTFactory.NewInstance;
+					_lutFactory = LutFactory.NewInstance;
 
 				return _lutFactory;
 			}
@@ -310,44 +311,44 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
-		#region Static methods
+		//#region Static methods
 
-		public static IStatefulVoiLutLinear NewVoiLutLinear(GrayscaleImageGraphic fromGraphic, IVoiLutLinearState state)
-		{
-			return new StatefulVoiLutLinear(state, fromGraphic.ModalityLUT.MinOutputValue, fromGraphic.ModalityLUT.MaxOutputValue);
-		}
+		//public static IStatefulVoiLutLinear NewVoiLutLinear(GrayscaleImageGraphic fromGraphic, IVoiLutLinearState state)
+		//{
+		//    return new StatefulVoiLutLinear(state, fromGraphic.ModalityLUT.MinOutputValue, fromGraphic.ModalityLUT.MaxOutputValue);
+		//}
 
-		public static IStatefulVoiLutLinear NewVoiLutLinear(GrayscaleImageGraphic fromGraphic)
-		{
-			return new StatefulVoiLutLinear(fromGraphic.ModalityLUT.MinOutputValue, fromGraphic.ModalityLUT.MaxOutputValue);
-		}
+		//public static IStatefulVoiLutLinear NewVoiLutLinear(GrayscaleImageGraphic fromGraphic)
+		//{
+		//    return new StatefulVoiLutLinear(fromGraphic.ModalityLUT.MinOutputValue, fromGraphic.ModalityLUT.MaxOutputValue);
+		//}
 
-		#endregion
+		//#endregion
 
 		#region Private methods
 
-		private void InstallGrayscaleLUTs(
+		private void InstallGrayscaleLuts(
 			double rescaleSlope, 
 			double rescaleIntercept,
 			bool inverted)
 		{
-			ModalityLUTLinear modalityLut = this.LUTFactory.GetModalityLUTLinear(
+			ModalityLutLinear modalityLut = this.LutFactory.GetModalityLutLinear(
 				this.BitsStored,
 				this.IsSigned,
 				rescaleSlope,
 				rescaleIntercept);
 
-			this.LUTComposer.LUTCollection.Add(modalityLut);
+			this.LutComposer.LutCollection.Add(modalityLut);
 
-			IStatefulVoiLutLinear voiLut = NewVoiLutLinear(this);
-			this.LUTComposer.LUTCollection.Add(voiLut);
+			VoiLutLinear voiLut = new VoiLutLinear(modalityLut.MinOutputValue, modalityLut.MaxOutputValue);
+			this.LutComposer.LutCollection.Add(voiLut);
 
-			PresentationLUT presentationLut = this.LUTFactory.GetPresentationLUT(
+			PresentationLut presentationLut = this.LutFactory.GetPresentationLut(
 				voiLut.MinOutputValue,
 				voiLut.MaxOutputValue,
 				inverted);
 
-			this.LUTComposer.LUTCollection.Add(presentationLut);
+			this.LutComposer.LutCollection.Add(presentationLut);
 		}
 
 		#endregion

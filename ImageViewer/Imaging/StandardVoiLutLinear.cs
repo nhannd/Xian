@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 
+/*
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
@@ -134,3 +135,4 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 	}
 }
+*/

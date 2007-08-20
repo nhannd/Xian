@@ -5,7 +5,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Defines a LUT that can be added to <see cref="LUTCollection"/>.
 	/// </summary>
-	public interface IComposableLUT : ILUT
+	public interface IComposableLut : ILut
 	{
 		/// <summary>
 		/// Gets the minimum input value.
@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Occurs when the LUT has changed.
 		/// </summary>
-		event EventHandler LUTChanged;
+		event EventHandler LutChanged;
 
 		/// <summary>
 		/// Gets a string key that identifies this particular LUT.

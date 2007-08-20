@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Dicom;
 
+/*
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
@@ -98,3 +99,4 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 	}
 }
+*/

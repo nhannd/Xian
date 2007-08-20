@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.ImageViewer.Imaging;
 
+/*
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
@@ -15,3 +16,4 @@ namespace ClearCanvas.ImageViewer.Graphics
 		StandardGrayscaleImageGraphic Graphic { get; set; }
 	}
 }
+*/

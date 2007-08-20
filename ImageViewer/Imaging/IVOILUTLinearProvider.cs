@@ -21,11 +21,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// any type of <see cref="PresentationImage"/> that implements the provider interface.
 	/// </para>
 	/// </remarks>
-	public interface IVOILUTLinearProvider : IDrawable
+	public interface IVoiLutLinearProvider : IDrawable
 	{
 		/// <summary>
 		/// Gets an <see cref="IVOILUTLinear"/>.
 		/// </summary>
-		IVOILUTLinear VoiLutLinear { get; }
+		IVoiLutLinear VoiLutLinear { get; }
 	}
 }

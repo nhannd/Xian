@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		[Test]
 		public void CreateLUT()
 		{
-			LUT lut = new LUT(10);
+			Lut lut = new Lut(10);
 			Assert.AreEqual(10, lut.Length);
 
 			lut[0] = -8;
@@ -46,21 +46,21 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		[ExpectedException(typeof(ArgumentException))]
 		public void NumEntriesZero()
 		{
-			LUT lut = new LUT(0);
+			Lut lut = new Lut(0);
 		}
 		
 		[Test]
 		[ExpectedException(typeof(ArgumentException))]
 		public void NumEntriesNegative()
 		{
-			LUT lut = new LUT(-1);
+			Lut lut = new Lut(-1);
 		}
 
 		[Test]
 		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexOutOfRangeTooLow()
 		{
-			LUT lut = new LUT(10);
+			Lut lut = new Lut(10);
 			lut[-1] = -8;
 		}
 
@@ -68,7 +68,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		[ExpectedException(typeof(IndexOutOfRangeException))]
 		public void IndexOutOfRangeTooHigh()
 		{
-			LUT lut = new LUT(10);
+			Lut lut = new Lut(10);
 			lut[10] = -8;
 		}
 

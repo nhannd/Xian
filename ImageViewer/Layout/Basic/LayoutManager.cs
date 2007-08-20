@@ -225,7 +225,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private IPresentationImage AddImage(IDisplaySet displaySet, ImageSop image)
 		{
-			StandardPresentationImage presentationImage = new StandardPresentationImage(image);
+			IPresentationImage presentationImage = PresentationImageFactory.Create(image);
 			presentationImage.Uid = image.SopInstanceUID;
 			displaySet.PresentationImages.Add(presentationImage);
 

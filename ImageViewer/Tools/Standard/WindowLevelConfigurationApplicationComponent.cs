@@ -149,9 +149,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		}
 
 		private VoiLutPresetConfiguration ConvertToLutPresetConfiguration(WindowLevelPreset preset)
-		{ 
+		{
 			return new VoiLutPresetConfiguration(_selectedModality, preset.Key, preset.Name,
-				VoiLutLinearPresetApplicatorFactory.CreateVoiLutLinearApplicatorConfiguration(preset.Window, preset.Level));
+			    VoiLutLinearPresetApplicatorFactory.CreateVoiLutLinearApplicatorConfiguration(preset.Window, preset.Level));
 		}
 
 		private WindowLevelPreset ConvertToWindowLevelPreset(VoiLutPresetConfiguration presetConfiguration)

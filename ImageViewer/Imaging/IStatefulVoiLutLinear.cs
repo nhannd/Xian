@@ -4,6 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/*
 	/// <summary>
 	/// It is not recommended that you actually implement your own <see cref="IVoiLutLinearState"/> 
 	/// and <see cref="IStatefulVoiLutLinear"/>, but instead use the sealed class <see cref="StatefulVoiLutLinear"/>
@@ -17,5 +18,5 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Allows the state of the Lut to be set and retrieved.
 		/// </summary>
 		IVoiLutLinearState State { get; set; }
-	}
+	}*/
 }

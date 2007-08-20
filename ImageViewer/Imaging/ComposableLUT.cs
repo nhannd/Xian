@@ -5,9 +5,9 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// A LUT that can be added to <see cref="LUTCollection"/>.
+	/// A LUT that can be added to <see cref="LutCollection"/>.
 	/// </summary>
-	public class ComposableLUT : LUT, IComposableLUT
+	public class ComposableLut : Lut, IComposableLut
 	{
 		private int _minInputValue;
 		private int _maxInputValue;
@@ -16,18 +16,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private event EventHandler _lutChangedEvent;
 
-		protected ComposableLUT()
+		protected ComposableLut()
 		{
 
 		}
 
 		/// <summary>
-		/// Initializes a new instance of a <see cref="ComposableLUT"/> with an
+		/// Initializes a new instance of a <see cref="ComposableLut"/> with an
 		/// input range specified by the minimum and maximum input values.
 		/// </summary>
 		/// <param name="minInputValue"></param>
 		/// <param name="maxInputValue"></param>
-		public ComposableLUT(
+		public ComposableLut(
 			int minInputValue,
 			int maxInputValue) : base(maxInputValue - minInputValue + 1)
 		{
@@ -76,7 +76,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Occurs when the LUT has changed.
 		/// </summary>
-		public event EventHandler LUTChanged
+		public event EventHandler LutChanged
 		{
 			add { _lutChangedEvent += value; }
 			remove { _lutChangedEvent -= value; }
@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Notify listeners that the LUT has changed.
 		/// </summary>
-		public void NotifyLUTChanged()
+		public void NotifyLutChanged()
 		{
 			EventsHelper.Fire(_lutChangedEvent, this, EventArgs.Empty);
 		}

@@ -12,6 +12,7 @@ using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -41,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
             if (this.SelectedPresentationImage == null)
                 return;
 
-            StandardPresentationImage image = this.SelectedPresentationImage as StandardPresentationImage;
+            IImageSopProvider image = this.SelectedPresentationImage as IImageSopProvider;
 			DicomFile dicomFile = image.ImageSop.NativeDicomObject as DicomFile;
 			if (dicomFile == null)
 				return;

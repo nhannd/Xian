@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		public void Cleanup()
 		{
 		}
-
+/*
 		[Test]
 		public void ComposeUnsigned8()
 		{
@@ -449,7 +449,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			LUTComposer lutComposer = new LUTComposer();
 			lutComposer.LUTCollection.Add(modalityLUT);
 			//lutComposer.Compose();
-		}
+		}*/
 	}
 }
 

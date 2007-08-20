@@ -40,11 +40,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 
 		public bool AppliesTo(IPresentationImage image)
 		{
-			return (image is IVoiLutManagerProvider && image is IVOILUTLinearProvider);
+			return false;
+			//return (image is IVoiLutManagerProvider && image is IVOILUTLinearProvider);
 		}
 
 		public void Apply(IPresentationImage image)
 		{
+			/*
 			Platform.CheckForNullReference(image, "image");
 
 			IVoiLutManagerProvider provider = image as IVoiLutManagerProvider;
@@ -76,6 +78,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 
 			if (!command.EndState.Equals(command.BeginState))
 				image.ImageViewer.CommandHistory.AddCommand(command);
+			*/
 		}
 
 		#endregion

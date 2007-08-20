@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			ROIGraphic roiGraphic = sender as ROIGraphic;
 			
 			PolyLineInteractiveGraphic multiLineGraphic = roiGraphic.Roi as PolyLineInteractiveGraphic;
-			StandardPresentationImage image = roiGraphic.ParentPresentationImage as StandardPresentationImage;
+			IImageSopProvider image = roiGraphic.ParentPresentationImage as IImageSopProvider;
 
 			multiLineGraphic.CoordinateSystem = CoordinateSystem.Source;
 			double widthInPixels = (multiLineGraphic.AnchorPoints[1].X - multiLineGraphic.AnchorPoints[0].X);

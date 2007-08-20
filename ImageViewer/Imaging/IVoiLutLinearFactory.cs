@@ -4,6 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/*
 	/// <summary>
 	/// Implemented by object(s) that implicitly know the correct parameters to create appropriate linear Luts
 	/// without the client having to provide them.
@@ -27,5 +28,5 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		/// <returns>an <see cref="IStatefulVoiLutLinear"/></returns>
 		IStatefulVoiLutLinear CreateStatefulLut(IVoiLutLinearState initialState);
-	}
+	}*/
 }

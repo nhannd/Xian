@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
+/*
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
@@ -87,3 +88,4 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#endregion
 	}
 }
+*/

@@ -5,6 +5,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/*
 	/// <summary>
 	/// An interface that allows for cyclic application of Voi Luts to an image.  Generally,
 	/// these Luts would come from, say, a Dicom Header.
@@ -16,5 +17,5 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Preferably, if none exist, a default one should be determined and applied.
 		/// </summary>
 		void ApplyNext();
-	}
+	}*/
 }

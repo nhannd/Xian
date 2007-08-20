@@ -71,8 +71,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			// this.SelectedVOILUTLinearProvider.VoiLutLinear is null 
 			// when image is not grayscale
 			if (this.SelectedPresentationImage == null ||
-				this.SelectedVOILUTLinearProvider == null ||
-				this.SelectedVOILUTLinearProvider.VoiLutLinear == null)
+				this.SelectedVoiLutLinearProvider == null ||
+				this.SelectedVoiLutLinearProvider.VoiLutLinear == null)
 				return;
 
 			_applicator = new VoiLutOperationApplicator(this.SelectedPresentationImage);
@@ -86,8 +86,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			// this.SelectedVOILUTLinearProvider.VoiLutLinear is null 
 			// when image is not grayscale
 			if (this.SelectedPresentationImage == null ||
-				this.SelectedVOILUTLinearProvider == null ||
-				this.SelectedVOILUTLinearProvider.VoiLutLinear == null)
+				this.SelectedVoiLutLinearProvider == null ||
+				this.SelectedVoiLutLinearProvider.VoiLutLinear == null)
 				return;
 
 			if (_command == null)
@@ -138,16 +138,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			// this.SelectedVOILUTLinearProvider.VoiLutLinear is null 
 			// when image is not grayscale
 			if (this.SelectedPresentationImage == null ||
-				this.SelectedVOILUTLinearProvider == null ||
-				this.SelectedVOILUTLinearProvider.VoiLutLinear == null)
+				this.SelectedVoiLutLinearProvider == null ||
+				this.SelectedVoiLutLinearProvider.VoiLutLinear == null)
 				return;
 
 			CodeClock counter = new CodeClock();
 			counter.Start();
 
-			this.SelectedVOILUTLinearProvider.VoiLutLinear.WindowWidth += windowIncrement;
-			this.SelectedVOILUTLinearProvider.VoiLutLinear.WindowCenter += levelIncrement;
-			this.SelectedVOILUTLinearProvider.Draw();
+			this.SelectedVoiLutLinearProvider.VoiLutLinear.WindowWidth += windowIncrement;
+			this.SelectedVoiLutLinearProvider.VoiLutLinear.WindowCenter += levelIncrement;
+			this.SelectedVoiLutLinearProvider.Draw();
 
 			counter.Stop();
 

@@ -6,22 +6,22 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal sealed class OutputLUTPool : IReferenceCountable, IDisposable
+	internal sealed class OutputLutPool : IReferenceCountable, IDisposable
 	{
-		private static volatile OutputLUTPool _instance;
+		private static volatile OutputLutPool _instance;
 		private static object _syncRoot = new Object();
 
 		private ReferenceCountedObjectCache _lutCache;
-		private List<OutputLUT> _pool;
+		private List<OutputLut> _pool;
 		private int _lutPoolSize = 4;
 		private int _referenceCount = 0;
 
-		private OutputLUTPool()
+		private OutputLutPool()
 		{
 
 		}
 
-		public static OutputLUTPool NewInstance
+		public static OutputLutPool NewInstance
 		{
 			get
 			{
@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 					lock (_syncRoot)
 					{
 						if (_instance == null)
-							_instance = new OutputLUTPool();
+							_instance = new OutputLutPool();
 					}
 				}
 
@@ -51,23 +51,23 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private List<OutputLUT> Pool
+		private List<OutputLut> Pool
 		{
 			get
 			{
 				if (_pool == null)
-					_pool = new List<OutputLUT>();
+					_pool = new List<OutputLut>();
 
 				return _pool;
 			}
 		}
 
-		public OutputLUT Retrieve(string key, int lutSize, out bool composeRequired)
+		public OutputLut Retrieve(string key, int lutSize, out bool composeRequired)
 		{
 			composeRequired = false;
 
 			// See if we can find the desired LUT in the cache
-			OutputLUT lut = this.LutCache[key] as OutputLUT;
+			OutputLut lut = this.LutCache[key] as OutputLut;
 
 			// If not, we'll have to get one from the pool and
 			// add it to the cache
@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			if (key == String.Empty)
 				return;
 
-			OutputLUT lut = this.LutCache[key] as OutputLUT;
+			OutputLut lut = this.LutCache[key] as OutputLut;
 
 			if (lut == null)
 				return;
@@ -106,14 +106,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private OutputLUT RetrieveFromPool(string key, int lutSize)
+		private OutputLut RetrieveFromPool(string key, int lutSize)
 		{
 			// Find a LUT in the pool that's the same size as what's
 			// being requested
-			foreach (OutputLUT lut in this.Pool)
+			foreach (OutputLut lut in this.Pool)
 			{
 				// If we've found one, take it out of the pool and return it
-				if (lut.LUT.Length == lutSize)
+				if (lut.Lut.Length == lutSize)
 				{
 					this.Pool.Remove(lut);
 					lut.Key = key;
@@ -123,7 +123,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			// If we couldn't find one, create a new one and return it.  It'll
 			// be returned to the pool later when Return is called.
-			OutputLUT newLut = new OutputLUT(key, lutSize);
+			OutputLut newLut = new OutputLut(key, lutSize);
 			return newLut;
 		}
 

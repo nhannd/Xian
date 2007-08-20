@@ -5,16 +5,16 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal class OutputLUT : IReferenceCountable
+	internal class OutputLut : IReferenceCountable
 	{
 		private int _referenceCount = 0;
-		private int[] _outputLUT;
+		private int[] _outputLut;
 		private string _key;
 
-		public OutputLUT(string key, int numEntries)
+		public OutputLut(string key, int numEntries)
 		{
 			_key = key;
-			_outputLUT = new int[numEntries];
+			_outputLut = new int[numEntries];
 		}
 
 		public string Key
@@ -23,9 +23,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			set { _key = value; }
 		}
 
-		public int[] LUT
+		public int[] Lut
 		{
-			get { return _outputLUT; }
+			get { return _outputLut; }
 		}
 
 		#region IReferenceCountable Members

@@ -12,38 +12,38 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// Allows <see cref="IComposableLUT"/> objects
 	/// be composed together in a pipeline.
 	/// </summary>
-	public class LUTComposer : IDisposable
+	public class LutComposer : IDisposable
 	{
-		private LUTCollection _lutCollection;
+		private LutCollection _lutCollection;
 		private int _numEntries;
-		private OutputLUT _outputLUT;
+		private OutputLut _outputLut;
 		private int _minInputValue;
 		private int _maxInputValue;
 		private bool _recalculate = true;
 		private bool _validated = false;
 
-		private OutputLUTPool _lutPool;
+		private OutputLutPool _lutPool;
 		private string _key = String.Empty;
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="LUTComposer"/>.
 		/// </summary>
-		public LUTComposer()
+		public LutComposer()
 		{
-			this.LUTCollection.ItemAdded += new EventHandler<LUTEventArgs>(OnLUTAdded);
-			this.LUTCollection.ItemChanging += new EventHandler<LUTEventArgs>(OnLUTChanging); 
-			this.LUTCollection.ItemChanged += new EventHandler<LUTEventArgs>(OnLUTChanged);
+			this.LutCollection.ItemAdded += new EventHandler<LutEventArgs>(OnLutAdded);
+			this.LutCollection.ItemChanging += new EventHandler<LutEventArgs>(OnLutChanging); 
+			this.LutCollection.ItemChanged += new EventHandler<LutEventArgs>(OnLutChanged);
 		}
 
 		/// <summary>
 		/// A collection of <see cref="IComposableLUT"/> objects.
 		/// </summary>
-		public LUTCollection LUTCollection
+		public LutCollection LutCollection
 		{
 			get 
 			{ 
 				if (_lutCollection == null)
-					_lutCollection = new LUTCollection();
+					_lutCollection = new LutCollection();
 
 				return _lutCollection; 
 			}
@@ -52,7 +52,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// The output LUT of the pipeline.
 		/// </summary>
-		public int[] OutputLUT
+		public int[] OutputLut
 		{
 			get 
 			{
@@ -61,16 +61,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 					if (!_validated)
 					{
 						SetInputRange();
-						ValidateLUTCollection();
+						ValidateLutCollection();
 						_validated = true;
 					}
 
-					this.LUTPool.Return(_key);
+					this.LutPool.Return(_key);
 
 					_key = GetKey();
 
 					bool composeRequired;
-					_outputLUT = this.LUTPool.Retrieve(_key, _numEntries, out composeRequired);
+					_outputLut = this.LutPool.Retrieve(_key, _numEntries, out composeRequired);
 
 					if (composeRequired)
 						Compose();
@@ -78,16 +78,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 					_recalculate = false;
 				}
 
-				return _outputLUT.LUT; 
+				return _outputLut.Lut; 
 			}
 		}
 
-		private OutputLUTPool LUTPool
+		private OutputLutPool LutPool
 		{
 			get
 			{
 				if (_lutPool == null)
-					_lutPool = OutputLUTPool.NewInstance;
+					_lutPool = OutputLutPool.NewInstance;
 
 				return _lutPool;
 			}
@@ -104,16 +104,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 				val = i;
 
-				for (int j = 0; j < this.LUTCollection.Count; j++)
+				for (int j = 0; j < this.LutCollection.Count; j++)
 				{
-					IComposableLUT lut = this.LUTCollection[j];
+					IComposableLut lut = this.LutCollection[j];
 					val = lut[val];
 				}
 
 				if (i >= 0)
-					_outputLUT.LUT[i] = val;
+					_outputLut.Lut[i] = val;
 				else
-					_outputLUT.LUT[i + _numEntries] = val;
+					_outputLut.Lut[i + _numEntries] = val;
 			}
 
 			counter.Stop();
@@ -124,45 +124,45 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private void SetInputRange()
 		{
-			IComposableLUT lut = this.LUTCollection[0];
+			IComposableLut lut = this.LutCollection[0];
 			_minInputValue = lut.MinInputValue;
 			_maxInputValue = lut.MaxInputValue;
 			_numEntries = lut.Length;
 		}
 
-		private void ValidateLUTCollection()
+		private void ValidateLutCollection()
 		{
 			// Make sure we have at least one LUT
-			if (this.LUTCollection.Count == 0)
+			if (this.LutCollection.Count == 0)
 				throw new InvalidOperationException(SR.ExceptionLUTNotAdded);
 
 			// Check for null LUTs
-			foreach (IComposableLUT lut in this.LUTCollection)
+			foreach (IComposableLut lut in this.LutCollection)
 			{
 				if (lut == null)
 					throw new InvalidOperationException(SR.ExceptionLUTNotAdded);
 			}
 
 			// If we only have one LUT then no further validation is required
-			if (this.LUTCollection.Count == 1)
+			if (this.LutCollection.Count == 1)
 				return;
 
 			// Verify that the input range of the nth LUT is equal to the output
 			// range of the n-1th LUT.
-			for (int i = 1; i < this.LUTCollection.Count; i++)
+			for (int i = 1; i < this.LutCollection.Count; i++)
 			{
-				IComposableLUT curLUT = this.LUTCollection[i];
-				IComposableLUT prevLUT = this.LUTCollection[i - 1];
+				IComposableLut curLut = this.LutCollection[i];
+				IComposableLut prevLut = this.LutCollection[i - 1];
 
-				if (prevLUT.MinOutputValue != curLUT.MinInputValue ||
-					prevLUT.MaxOutputValue != curLUT.MaxInputValue)
+				if (prevLut.MinOutputValue != curLut.MinInputValue ||
+					prevLut.MaxOutputValue != curLut.MaxInputValue)
 					throw new InvalidOperationException(SR.ExceptionLUTInputOutputRange);
 			}
 
 			// Verify that the last LUT is a PresentationLUT
-			int lastLUT = this.LUTCollection.Count - 1;
+			int lastLUT = this.LutCollection.Count - 1;
 
-			if (!(this.LUTCollection[lastLUT] is PresentationLUT))
+			if (!(this.LutCollection[lastLUT] is PresentationLut))
 				throw new InvalidOperationException("Last LUT in pipeline must be a PresentationLUT");
 		}
 
@@ -170,7 +170,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			StringBuilder key = new StringBuilder();
 
-			foreach (IComposableLUT lut in this.LUTCollection)
+			foreach (IComposableLut lut in this.LutCollection)
 			{
 				key.Append(lut.GetKey());
 			}
@@ -178,20 +178,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return key.ToString();
 		}
 
-		void OnLUTChanging(object sender, LUTEventArgs e)
+		void OnLutChanging(object sender, LutEventArgs e)
 		{
-			e.Lut.LUTChanged -= new EventHandler(OnLutValuesChanged);
+			e.Lut.LutChanged -= new EventHandler(OnLutValuesChanged);
 		}
 
-		void OnLUTChanged(object sender, LUTEventArgs e)
+		void OnLutChanged(object sender, LutEventArgs e)
 		{
 			_recalculate = true;
-			OnLUTAdded(sender, e);
+			OnLutAdded(sender, e);
 		}
 
-		void OnLUTAdded(object sender, LUTEventArgs e)
+		void OnLutAdded(object sender, LutEventArgs e)
 		{
-			e.Lut.LUTChanged += new EventHandler(OnLutValuesChanged);
+			e.Lut.LutChanged += new EventHandler(OnLutValuesChanged);
 			_validated = false;
 		}
 
@@ -231,7 +231,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				if (_lutPool != null)
 					_lutPool.Dispose();
 
-				_outputLUT = null;
+				_outputLut = null;
 			}
 		}
 

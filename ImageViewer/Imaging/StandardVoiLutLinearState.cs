@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
+/*
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	public class StandardVoiLutLinearState : VoiLutLinearState
@@ -63,3 +64,4 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 	}
 }
+*/

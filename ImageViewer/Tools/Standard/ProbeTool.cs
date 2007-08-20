@@ -16,6 +16,7 @@ using System.Diagnostics;
 using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -36,6 +37,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	{
 		private Tile _selectedTile;
 		private ImageGraphic _selectedImageGraphic;
+		private ImageSop _selectedImageSop;
 
 		/// <summary>
 		/// Default constructor.  A no-args constructor is required by the
@@ -75,6 +77,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_selectedTile = mouseInformation.Tile as Tile;
 			_selectedTile.InformationBox = new InformationBox();
 			_selectedImageGraphic = this.SelectedImageGraphicProvider.ImageGraphic;
+			_selectedImageSop = (this.SelectedPresentationImage as IImageSopProvider).ImageSop;
 
 			Probe(mouseInformation.Location);
 
@@ -207,16 +210,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			ref int modalityLutValue,
 			ref string modalityLutString)
 		{
-			if (grayscaleImage.ModalityLUT != null)
+			if (grayscaleImage.ModalityLut != null)
 			{
-				modalityLutValue = grayscaleImage.ModalityLUT[pixelValue];
+				modalityLutValue = grayscaleImage.ModalityLut[pixelValue];
 				modalityLutString = String.Format("{0}: {1}", SR.LabelModalityLut, modalityLutValue);
 
-				StandardGrayscaleImageGraphic standardImage = grayscaleImage as StandardGrayscaleImageGraphic;
-
-				if (standardImage != null)
+				if (_selectedImageSop != null)
 				{
-					if (String.Compare(standardImage.ImageSop.Modality, "CT", true) == 0)
+					if (String.Compare(_selectedImageSop.Modality, "CT", true) == 0)
 						modalityLutString += String.Format(" ({0})", SR.LabelHounsfieldUnitsAbbreviation);
 				}
 			}
@@ -228,9 +229,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			ref int voiLutValue, 
 			ref string voiLutString)
 		{
-			if (grayscaleImage.VoiLUT != null)
+			if (grayscaleImage.VoiLut != null)
 			{
-				voiLutValue = grayscaleImage.VoiLUT[modalityLutValue];
+				voiLutValue = grayscaleImage.VoiLut[modalityLutValue];
 				voiLutString = String.Format("{0}: {1}", SR.LabelVOILut, voiLutValue);
 			}
 		}
@@ -242,9 +243,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			ref int presentationLutValue,
 			ref string presentationLutString)
 		{
-			if (grayscaleImage.PresentationLUT != null)
+			if (grayscaleImage.PresentationLut != null)
 			{
-				presentationLutValue = grayscaleImage.PresentationLUT[voiLutValue];
+				presentationLutValue = grayscaleImage.PresentationLut[voiLutValue];
 				Color color = Color.FromArgb(presentationLutValue);
 				presentationLutString = String.Format("{0}: R={1}, G={2}, B={3}", SR.LabelPresentationLut, color.R, color.G, color.B);
 			}

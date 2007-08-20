@@ -136,19 +136,20 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		/// </summary>
 		/// <value>The selected <see cref="IVOILUTLinearProvider"/> or <b>null</b>
 		/// if no <see cref="IVOILUTLinearProvider"/> is currently selected.</value>
-		protected IVOILUTLinearProvider SelectedVOILUTLinearProvider
+		protected IVoiLutLinearProvider SelectedVoiLutLinearProvider
 		{
 			get
 			{
 				if (this.SelectedPresentationImage != null)
 				{
-					return this.SelectedPresentationImage as IVOILUTLinearProvider;
+					return this.SelectedPresentationImage as IVoiLutLinearProvider;
 				}
 				else
 					return null;
 			}
 		}
 
+		/*
 		/// <summary>
 		/// Gets the selected <see cref="IAutoLutApplicatorProvider"/>.
 		/// </summary>
@@ -165,7 +166,7 @@ namespace ClearCanvas.ImageViewer.BaseTools
 				else
 					return null;
 			}
-		}
+		}*/
 
 		/// <summary>
 		/// Gets the selected <see cref="IOverlayGraphicsProvider"/>.

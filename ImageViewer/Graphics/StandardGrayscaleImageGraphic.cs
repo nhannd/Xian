@@ -7,6 +7,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.Desktop;
 
+/*
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
@@ -156,3 +157,4 @@ namespace ClearCanvas.ImageViewer.Graphics
 		#endregion
 	}
 }
+*/

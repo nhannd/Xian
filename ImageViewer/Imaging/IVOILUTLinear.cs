@@ -8,7 +8,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Defines a linear VOI LUT.
 	/// </summary>
-	public interface IVOILUTLinear
+	public interface IVoiLutLinear : IVoiLut, IMemorable
 	{
 		/// <summary>
 		/// Gets or sets the window width.

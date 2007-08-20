@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		{ 
 		}
 
-		[Test]
+/*		[Test]
 		public void TestSortingDicomImagesByInstanceNumber()
 		{
 			TestSortingDicomImagesByInstanceNumber(false);
@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			PresentationImageCollection nonOrderedCollection = new PresentationImageCollection();
 
 			MockImageSop junkImageSop = NewMockImageSop("123", "1", 0);
-			orderedCollection.Add(new StandardPresentationImage(junkImageSop));
+			orderedCollection.Add(new BasicPresentationImage(junkImageSop));
 
 			AppendCollection(NewDicomSeries("123", "1", 1, 25), orderedCollection);
 			
@@ -103,9 +103,9 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		{ 
 			foreach (PresentationImage image in collection)
 			{
-				if (image is StandardPresentationImage)
+				if (image is BasicPresentationImage)
 				{
-					StandardPresentationImage dicomImage = (StandardPresentationImage)image;
+					BasicPresentationImage dicomImage = (BasicPresentationImage)image;
 					string line = string.Format("StudyUID: {0}, Series: {1}, Instance: {2}", dicomImage.ImageSop.StudyInstanceUID,
 																			dicomImage.ImageSop.SeriesInstanceUID,
 																			dicomImage.ImageSop.InstanceNumber);
@@ -145,20 +145,20 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			{
 				IPresentationImage nonOrderedImage = nonOrderedCollection[index];
 
-				if (!(orderedImage is StandardPresentationImage) && !(nonOrderedImage is StandardPresentationImage))
+				if (!(orderedImage is BasicPresentationImage) && !(nonOrderedImage is BasicPresentationImage))
 				{
 					++index;
 					continue;
 				}
 
-				if (!(orderedImage is StandardPresentationImage) && (nonOrderedImage is StandardPresentationImage))
+				if (!(orderedImage is BasicPresentationImage) && (nonOrderedImage is BasicPresentationImage))
 					return false;
 
-				if ((orderedImage is StandardPresentationImage) && !(nonOrderedImage is StandardPresentationImage))
+				if ((orderedImage is BasicPresentationImage) && !(nonOrderedImage is BasicPresentationImage))
 					return false;
 
-				StandardPresentationImage dicomOrdered = orderedImage as StandardPresentationImage;
-				StandardPresentationImage dicomNonOrdered = nonOrderedImage as StandardPresentationImage;
+				BasicPresentationImage dicomOrdered = orderedImage as BasicPresentationImage;
+				BasicPresentationImage dicomNonOrdered = nonOrderedImage as BasicPresentationImage;
 
 				if (dicomOrdered.ImageSop.StudyInstanceUID != dicomNonOrdered.ImageSop.StudyInstanceUID ||
 					dicomOrdered.ImageSop.SeriesInstanceUID != dicomNonOrdered.ImageSop.SeriesInstanceUID ||
@@ -190,9 +190,9 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 			return listImages;
 		}
 
-		public StandardPresentationImage NewDicomImage(string studyUID, string seriesUID, int instanceNumber)
+		public BasicPresentationImage NewDicomImage(string studyUID, string seriesUID, int instanceNumber)
 		{
-			return new StandardPresentationImage(NewMockImageSop(studyUID, seriesUID, instanceNumber));
+			return new BasicPresentationImage(NewMockImageSop(studyUID, seriesUID, instanceNumber));
 		}
 
 		internal MockImageSop NewMockImageSop(string studyUID, string seriesUID, int instanceNumber)
@@ -206,6 +206,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 
 			return newImageSop;
 		}
+ */
 	}
 }
 

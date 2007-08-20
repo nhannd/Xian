@@ -133,7 +133,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			ROIGraphic roiGraphic = sender as ROIGraphic;
 
 			RectangleInteractiveGraphic rectangleGraphic = roiGraphic.Roi as RectangleInteractiveGraphic;
-			StandardPresentationImage image = roiGraphic.ParentPresentationImage as StandardPresentationImage;
+			IImageSopProvider image = roiGraphic.ParentPresentationImage as IImageSopProvider;
 
 			rectangleGraphic.CoordinateSystem = CoordinateSystem.Source;
 			double widthInPixels = (rectangleGraphic.BottomRight.X - rectangleGraphic.TopLeft.X);

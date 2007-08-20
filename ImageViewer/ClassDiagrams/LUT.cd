@@ -31,6 +31,22 @@
       <HashCode>AAAACkAQAAAAAAAICAAAAAQAAAAAAACAAAAAAAAAABA=</HashCode>
     </TypeIdentifier>
   </Class>
+  <Class Name="ClearCanvas.ImageViewer.Imaging.VoiLutLinear" Collapsed="true">
+    <Position X="6.75" Y="4.5" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Imaging\VoiLutLinear.cs</FileName>
+      <HashCode>AAAAgAAAAAAABAACCAAAAQQAASAAAAEBEgAAAABAAQA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ClearCanvas.ImageViewer.Imaging.CalculatedLUT" Collapsed="true">
+    <Position X="7" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Imaging\CalculatedLUT.cs</FileName>
+      <HashCode>AEAAAAAQABAAAAAAKAAEAARAAAAAACAAAAYAAAIAAJA=</HashCode>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
   <Interface Name="ClearCanvas.ImageViewer.Imaging.ILUT" Collapsed="true">
     <Position X="5.5" Y="0.5" Width="1.5" />
     <TypeIdentifier>

@@ -1,0 +1,91 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Segoe UI" Size="9" />
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.IVoiLutManager">
+    <Position X="3.75" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Imaging\IVoiLutManager.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.IVoiLutLinearFactory">
+    <Position X="2.5" Y="0.5" Width="2.5" />
+    <TypeIdentifier>
+      <FileName>Imaging\IVoiLutLinearFactory.cs</FileName>
+      <HashCode>AAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.IVoiLutManagerProvider">
+    <Position X="0.5" Y="2.25" Width="2" />
+    <TypeIdentifier>
+      <FileName>Imaging\IVoiLutManagerProvider.cs</FileName>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="VoiLutManager" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.IVoiLutLinearState">
+    <Position X="9.75" Y="5.75" Width="2.25" />
+    <TypeIdentifier>
+      <FileName>Imaging\IVoiLutLinearState.cs</FileName>
+      <HashCode>AAAAgAAAAEAACAAAAAAAAAAAAQAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.IVOILUTLinearProvider">
+    <Position X="0.5" Y="3.75" Width="2" />
+    <TypeIdentifier>
+      <FileName>Imaging\IVOILUTLinearProvider.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="VoiLutLinear" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.IVOILUTLinear">
+    <Position X="4.25" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Imaging\IVOILUTLinear.cs</FileName>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.IStatefulVoiLutLinear">
+    <Position X="5.5" Y="6.25" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Imaging\IStatefulVoiLutLinear.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="State" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.IMemorableComposableLutMemento">
+    <Position X="9.75" Y="4" Width="2.75" />
+    <TypeIdentifier>
+      <FileName>Imaging\IMemorableComposableLutMemento.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.IMemorableComposableLut">
+    <Position X="6.25" Y="4" Width="3" />
+    <TypeIdentifier>
+      <FileName>Imaging\IMemorableComposableLutMemento.cs</FileName>
+      <HashCode>AAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.Desktop.IMemorable">
+    <Position X="6" Y="0.5" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.IComposableLUT" Collapsed="true">
+    <Position X="6.5" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Imaging\IComposableLUT.cs</FileName>
+      <HashCode>AEAAAAAQAAAAAAAAIAAAAAQAAAAAAAAAAAQAAAAAABA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.Desktop.IMemorable&lt;T&gt;" Collapsed="true">
+    <Position X="8.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+</ClassDiagram>

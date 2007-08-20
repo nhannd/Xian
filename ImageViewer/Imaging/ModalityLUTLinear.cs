@@ -7,7 +7,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Implements the DICOM concept of a Modality LUT.
 	/// </summary>
-	public class ModalityLUTLinear : ComposableLUT
+	public class ModalityLutLinear : ComposableLut
 	{
 		private bool _lutCreated = false;
 		private int _bitsStored;
@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <param name="pixelRepresentation"></param>
 		/// <param name="rescaleSlope"></param>
 		/// <param name="rescaleIntercept"></param>
-		public ModalityLUTLinear(
+		public ModalityLutLinear(
 			int bitsStored,
 			bool isSigned, 
 			double rescaleSlope,
@@ -91,7 +91,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 				if (!_lutCreated)
 				{
-					CreateLUT();
+					CreateLut();
 					_lutCreated = true;
 				}
 
@@ -108,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				this.RescaleIntercept);
 		}
 
-		private void CreateLUT()
+		private void CreateLut()
 		{
 			for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
 			{

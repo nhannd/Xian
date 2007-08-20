@@ -6,6 +6,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 {
+	/*
 	/// <summary>
 	/// This class is very simple, inheriting from <see cref="StandardVoiLutLinearState"/>.  The only reason for its existence,
 	/// is so that one could add the Lut Preset's name to the text overlay, for example.
@@ -65,7 +66,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.LutPresets
 
 			return (otherState.Name == this.Name && base.Equals(otherState));
 		}
-	}
+	}*/
 }
 
 

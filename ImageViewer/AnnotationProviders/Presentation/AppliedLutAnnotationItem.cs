@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			if (presentationImage == null)
 				return string.Empty;
 
-			IVOILUTLinearProvider image = presentationImage as IVOILUTLinearProvider;
+			IVoiLutLinearProvider image = presentationImage as IVoiLutLinearProvider;
 
 			if (image == null)
 				return string.Empty;

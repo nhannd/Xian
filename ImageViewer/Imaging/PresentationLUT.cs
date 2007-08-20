@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// ARGB values that are used by the <see cref="IRenderer"/>
 	/// to display the image.
 	/// </remarks>
-	public class PresentationLUT : ComposableLUT
+	public abstract class PresentationLut : ComposableLut, IPresentationLut
 	{
 		private bool _invert = false;
 		private bool _lutCreated = false;
@@ -30,7 +30,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <param name="minInputValue"></param>
 		/// <param name="maxInputValue"></param>
 		/// <param name="invert"></param>
-		public PresentationLUT(
+		protected PresentationLut(
 			int minInputValue, 
 			int maxInputValue,
 			bool invert)
@@ -82,7 +82,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 				if (!_lutCreated)
 				{
-					CreateGrayscaleLUT();
+					CreateLut();
 					_lutCreated = true;
 				}
 
@@ -101,22 +101,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 				this.GetType().ToString());
 		}
 
-		private void CreateGrayscaleLUT()
-		{
-			Color color;
+		protected abstract void CreateLut();
 
-			int j = 0;
-			int maxGrayLevel = this.Length - 1;
+		#region IPresentationLut Members
 
-			for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
-			{
-				float scale = (float)j / (float)maxGrayLevel;
-				j++;
+		public abstract string Name { get; }
 
-				int value = (int)(byte.MaxValue * scale);
-				color = Color.FromArgb(255, value, value, value);
-				this[i] = color.ToArgb();
-			}
-		}
+		#endregion
 	}
 }

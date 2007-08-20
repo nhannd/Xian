@@ -32,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		[Test]
 		public void CreateLUTRangePositive()
 		{
-			ComposableLUT lut = new ComposableLUT(10,73);
+			ComposableLut lut = new ComposableLut(10,73);
 			
 			Assert.IsTrue(lut.Length == 64);
 			Assert.IsTrue(lut.MinInputValue == 10);
@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		[Test]
 		public void CreateLUTRangeSigned()
 		{
-			ComposableLUT lut = new ComposableLUT(-10,53);
+			ComposableLut lut = new ComposableLut(-10,53);
 			
 			Assert.IsTrue(lut.Length == 64);
 			Assert.IsTrue(lut.MinInputValue == -10);
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		[Test]
 		public void CreateLUTRangeNegative()
 		{
-			ComposableLUT lut = new ComposableLUT(-74,-11);
+			ComposableLut lut = new ComposableLut(-74,-11);
 			
 			Assert.IsTrue(lut.Length == 64);
 			Assert.IsTrue(lut.MinInputValue == -74);
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Imaging.Tests
 		[Test]
 		public void CreateLUTRangeNegativeZero()
 		{
-			ComposableLUT lut = new ComposableLUT(-63,0);
+			ComposableLut lut = new ComposableLut(-63,0);
 			
 			Assert.IsTrue(lut.Length == 64);
 			Assert.IsTrue(lut.MinInputValue == -63);
