@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public void SetPresentationLut(string name)
 		{
-			_grayscaleImageGraphic.SetVoiLut(name);
+			_grayscaleImageGraphic.SetPresentationLut(name);
 		}
 
 		public IPresentationLut PresentationLut

@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public void SetVoiLut(string name)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			_grayscaleImageGraphic.SetVoiLut(name);
 		}
 
 		public IVoiLut VoiLut
