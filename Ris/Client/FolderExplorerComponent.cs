@@ -137,18 +137,38 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         public FolderExplorerComponent(IExtensionPoint extensionPoint)
         {
-            TreeItemBinding<IFolder> binding = new TreeItemBinding<IFolder>();
-            binding.NodeTextProvider = delegate(IFolder folder) { return folder.Text; };
-            binding.IconSetProvider = delegate(IFolder folder) { return folder.IconSet; };
-            binding.ResourceResolverProvider = delegate(IFolder folder) { return folder.ResourceResolver; };
-            binding.CanHaveSubTreeHandler = delegate(IFolder folder) { return false; };     // for now, assume only one level of folders
-            binding.CanAcceptDropHandler = CanFolderAcceptDrop;
-            binding.AcceptDropHandler = FolderAcceptDrop;
-            binding.TooltipTextProvider = delegate(IFolder folder) { return folder.Tooltip; };
-
-            _folderTree = new Tree<IFolder>(binding);
+            _folderTree = new Tree<IFolder>(GetBinding());
             _folderTree.Items.ItemsChanged += new EventHandler<ItemChangedEventArgs>(RootFoldersChangedEventHandler);
             _folderExplorerToolExtensionPoint = extensionPoint;
+        }
+
+        private TreeItemBinding<IFolder> GetBinding()
+        {
+            TreeItemBinding<IFolder> binding = new TreeItemBinding<IFolder>();
+
+            binding.NodeTextProvider = delegate(IFolder folder) { return folder.Text; };
+            binding.IconSetProvider = delegate(IFolder folder) { return folder.IconSet; };
+            binding.TooltipTextProvider = delegate(IFolder folder) { return folder.Tooltip; };
+            binding.ResourceResolverProvider = delegate(IFolder folder) { return folder.ResourceResolver; };
+
+            binding.CanAcceptDropHandler = CanFolderAcceptDrop;
+            binding.AcceptDropHandler = FolderAcceptDrop;
+
+            binding.CanHaveSubTreeHandler = delegate(IFolder folder) { return folder is IContainerFolder; };
+            binding.SubTreeProvider =
+                delegate(IFolder folder)
+                {
+                    if (folder is IContainerFolder)
+                    {
+                        return new Tree<IFolder>(GetBinding(), ((IContainerFolder)folder).Subfolders);
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                };
+
+            return binding;
         }
 
         #region Application Component overrides

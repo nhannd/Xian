@@ -107,6 +107,11 @@ namespace ClearCanvas.Ris.Client.Adt
         {
         }
 
+        public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem)
+            : this(folderSystem, "All", null, null, null)
+        {
+        }
+
         public RegistrationWorkflowFolder(RegistrationWorkflowFolderSystem folderSystem, string folderName, string folderDescription, EntityRef worklistRef)
             : this(folderSystem, folderName, folderDescription, worklistRef, null)
         {

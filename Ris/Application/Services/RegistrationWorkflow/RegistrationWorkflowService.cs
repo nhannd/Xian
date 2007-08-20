@@ -20,7 +20,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
     {
         public RegistrationWorkflowService()
         {
-            _worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Registration.WorklistExtensionPoint();
+            _worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Registration.RegistrationWorklistExtensionPoint();
         }
 
         #region IRegistrationWorkflowService Members

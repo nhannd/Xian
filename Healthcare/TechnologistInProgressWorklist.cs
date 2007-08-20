@@ -1,12 +1,14 @@
 using System.Collections;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare
 {
     /// <summary>
     /// TechnologistInProgessWorklist entity
     /// </summary>
+    [ExtensionOf(typeof(WorklistExtensionPoint), Name="TechnologistInProgressWorklist")]
     public partial class TechnologistInProgressWorklist : ClearCanvas.Healthcare.Worklist
     {
         /// <summary>

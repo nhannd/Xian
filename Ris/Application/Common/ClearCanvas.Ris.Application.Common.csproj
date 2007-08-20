@@ -399,6 +399,8 @@
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\GetProcedureStepsForWorklistItemResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\ITechnologistDocumentationService.cs" />
     <Compile Include="TelephoneDetail.cs" />
+    <Compile Include="WorklistTokenAttribute.cs" />
+    <Compile Include="WorklistTokens.cs" />
     <Compile Include="WorklistSummary.cs" />
   </ItemGroup>
   <ItemGroup>

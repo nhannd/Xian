@@ -66,7 +66,6 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             {
                 hqlQuery += _hqlWorklistSubQuery;
                 parameters.Add(new QueryParameter("worklist", worklist));
-                AddSubQueryParameters(parameters);
             }
         }
 

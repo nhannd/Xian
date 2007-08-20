@@ -6,13 +6,13 @@ using ClearCanvas.Healthcare.Brokers;
 namespace ClearCanvas.Healthcare.Workflow.Registration
 {
     [ExtensionPoint]
-    public class WorklistExtensionPoint : ExtensionPoint<IWorklist>
+    public class RegistrationWorklistExtensionPoint : ExtensionPoint<IWorklist>
     {
     }
 
     public class Worklists
     {
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(RegistrationWorklistExtensionPoint))]
         public class Scheduled : WorklistBase<IRegistrationWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
@@ -26,7 +26,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             }
         }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(RegistrationWorklistExtensionPoint))]
         public class CheckIn : WorklistBase<IRegistrationWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
@@ -40,7 +40,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             }
         }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(RegistrationWorklistExtensionPoint))]
         public class InProgress : WorklistBase<IRegistrationWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
@@ -54,7 +54,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             }
         }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(RegistrationWorklistExtensionPoint))]
         public class Completed : WorklistBase<IRegistrationWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
@@ -68,7 +68,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             }
         }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(RegistrationWorklistExtensionPoint))]
         public class Cancelled : WorklistBase<IRegistrationWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)

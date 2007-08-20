@@ -7,6 +7,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Ris.Client.Adt.Folders;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -132,18 +133,9 @@ namespace ClearCanvas.Ris.Client.Adt
         //private Folders.SearchFolder _searchFolder;
 
         public TechnologistWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-            : base(folderExplorer)
+            : base(folderExplorer, new TechnologistContainerFolderExtensionPoint())
         {
             this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
-
-            //TODO:  Add folders;
-            //this.AddFolder(_searchFolder = new Folders.SearchFolder(this));
-            this.AddFolder(new Folders.ScheduledTechnologistWorkflowFolder(this));
-            this.AddFolder(new Folders.CheckedInTechnologistWorkflowFolder(this));
-            this.AddFolder(new Folders.InProgressTechnologistWorkflowFolder(this));
-            this.AddFolder(new Folders.SuspendedTechnologistWorkflowFolder(this));
-            this.AddFolder(new Folders.CancelledTechnologistWorkflowFolder(this));
-            this.AddFolder(new Folders.CompletedTechnologistWorkflowFolder(this));
 
             Platform.GetService<IModalityWorkflowService>(
                 delegate(IModalityWorkflowService service)
@@ -156,6 +148,14 @@ namespace ClearCanvas.Ris.Client.Adt
                         if (folder != null) this.AddFolder(folder);
                     }
                 });
+
+            //this.AddFolder(_searchFolder = new Folders.SearchFolder(this));
+            this.AddFolder(new Folders.ScheduledTechnologistWorkflowFolder(this));
+            this.AddFolder(new Folders.CheckedInTechnologistWorkflowFolder(this));
+            this.AddFolder(new Folders.InProgressTechnologistWorkflowFolder(this));
+            this.AddFolder(new Folders.SuspendedTechnologistWorkflowFolder(this));
+            this.AddFolder(new Folders.CancelledTechnologistWorkflowFolder(this));
+            this.AddFolder(new Folders.CompletedTechnologistWorkflowFolder(this));
 
             _itemToolSet = new ToolSet(new TechnologistWorkflowItemToolExtensionPoint(), new TechnologistWorkflowItemToolContext(this));
             _folderToolSet = new ToolSet(new TechnologistWorkflowFolderToolExtensionPoint(), new TechnologistWorkflowFolderToolContext(this));

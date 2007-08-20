@@ -6,13 +6,13 @@ using ClearCanvas.Healthcare.Brokers;
 namespace ClearCanvas.Healthcare.Workflow.Reporting
 {
     [ExtensionPoint]
-    public class WorklistExtensionPoint : ExtensionPoint<IWorklist>
+    public class ReportingWorklistExtensionPoint : ExtensionPoint<IWorklist>
     {
     }
 
     public class Worklists
     {
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
         public class ToBeReported : WorklistBase<IReportingWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
@@ -26,7 +26,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             }
         }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
         public class Draft : WorklistBase<IReportingWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
@@ -40,7 +40,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             }
         }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
         public class InTranscription : WorklistBase<IReportingWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
@@ -54,7 +54,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             }
         }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
         public class ToBeVerified : WorklistBase<IReportingWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
@@ -68,7 +68,7 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             }
         }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
         public class Verified : WorklistBase<IReportingWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)

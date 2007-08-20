@@ -37,7 +37,8 @@ namespace ClearCanvas.Healthcare
 
         public string DisplayName
         {
-            get { return _name + this.NameSuffix; }
+            //get { return _name + this.NameSuffix; }
+            get { return _name; }
         }
 
         public string Description

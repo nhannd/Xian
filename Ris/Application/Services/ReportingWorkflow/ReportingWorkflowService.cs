@@ -18,7 +18,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
     {
         public ReportingWorkflowService()
         {
-            _worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Reporting.WorklistExtensionPoint();
+            _worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Reporting.ReportingWorklistExtensionPoint();
         }
 
         #region IReportingWorkflowService Members

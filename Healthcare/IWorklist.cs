@@ -1,8 +1,14 @@
 using System.Collections;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Common;
+using System;
 
 namespace ClearCanvas.Healthcare
 {
+    [ExtensionPoint]
+    public class WorklistExtensionPoint : ExtensionPoint<IWorklist>
+    { }
+
     public interface IWorklistItemKey
     {
     }

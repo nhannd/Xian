@@ -6,13 +6,13 @@ using ClearCanvas.Healthcare.Brokers;
 namespace ClearCanvas.Healthcare.Workflow.Modality
 {
     [ExtensionPoint]
-    public class WorklistExtensionPoint : ExtensionPoint<IWorklist>
+    public class ModalityWorklistExtensionPoint : ExtensionPoint<IWorklist>
     {
     }
 
     public class Worklists
     {
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(ModalityWorklistExtensionPoint))]
         public class Scheduled : WorklistBase<IModalityWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
@@ -26,7 +26,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             }
         }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(ModalityWorklistExtensionPoint))]
         public class CheckedIn : WorklistBase<IModalityWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
@@ -40,7 +40,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             }
         }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(ModalityWorklistExtensionPoint))]
         public class InProgress : WorklistBase<IModalityWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
@@ -54,7 +54,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             }
         }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(ModalityWorklistExtensionPoint))]
         public class Suspended : WorklistBase<IModalityWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
@@ -68,7 +68,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             }
        }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(ModalityWorklistExtensionPoint))]
         public class Cancelled : WorklistBase<IModalityWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
@@ -82,7 +82,7 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
             }
         }
 
-        [ExtensionOf(typeof(WorklistExtensionPoint))]
+        [ExtensionOf(typeof(ModalityWorklistExtensionPoint))]
         public class Completed : WorklistBase<IModalityWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)

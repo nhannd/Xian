@@ -39,6 +39,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Folders\RefreshTool.cs" />
+    <Compile Include="Folders\ReportingContainerFolders.cs" />
     <Compile Include="Folders\ReportingWorkflowFolders.cs" />
     <Compile Include="HomeTool.cs" />
     <Compile Include="ReportEditorComponentSettings.cs" />

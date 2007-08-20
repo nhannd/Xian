@@ -19,7 +19,7 @@ namespace ClearCanvas.Ris.Client
             {
                 Type folderType = folder.GetType();
                 string worklistType = GetFolderForWorklistTypeAttributeValue(folderType);
-                if(string.IsNullOrEmpty(worklistType) == false)
+                if (string.IsNullOrEmpty(worklistType) == false)
                 {
                     _worklistTypeMapping.Add(worklistType, folderType);
                 }

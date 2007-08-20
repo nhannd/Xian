@@ -1,11 +1,12 @@
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting.Folders
 {
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
-    [FolderForWorklistType("Reporting - To Be Reported")]
+    [FolderForWorklistType(WorklistTokens.ReportingToBeReportedWorklist)]
     public class ToBeReportedFolder : ReportingWorkflowFolder
     {
         public ToBeReportedFolder(ReportingWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)

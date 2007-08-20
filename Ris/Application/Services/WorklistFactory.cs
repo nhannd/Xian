@@ -2,6 +2,9 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common;
+using System.Reflection;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Application.Services
 {
@@ -11,21 +14,87 @@ namespace ClearCanvas.Ris.Application.Services
         private static readonly object _lock = new object();
         private static WorklistFactory _theInstance;
 
+        private struct WorklistTokenInfo
+        {
+            private string _name;
+            private string _description;
+
+            public WorklistTokenInfo(string name, string description)
+            {
+                _name = name;
+                _description = description;
+            }
+
+            public string Name
+            {
+                get { return _name; }
+            }
+
+            public string Description
+            {
+                get { return _description; }
+            }
+        }
+
         private WorklistFactory()
         {
-            // TODO: populate dictionary from worklist classes themselves, not hard-coded
             _worklistTypeMapping = new Dictionary<string, Type>();
-            _worklistTypeMapping.Add("Registration - Checked In", typeof(RegistrationCheckedInWorklist));
-            _worklistTypeMapping.Add("Registration - In Progress", typeof(RegistrationInProgressWorklist));
-            _worklistTypeMapping.Add("Registration - Scheduled", typeof(RegistrationScheduledWorklist));
-            _worklistTypeMapping.Add("Registration - Cancelled", typeof(RegistrationCancelledWorklist));
-            _worklistTypeMapping.Add("Registration - Completed", typeof(RegistrationCompletedWorklist));
-            _worklistTypeMapping.Add("Technologist - Checked In", typeof(TechnologistCheckedInWorklist));
-            _worklistTypeMapping.Add("Technologist - In Progress", typeof(TechnologistInProgressWorklist));
-            _worklistTypeMapping.Add("Technologist - Scheduled", typeof(TechnologistScheduledWorklist));
-            _worklistTypeMapping.Add("Technologist - Cancelled", typeof(TechnologistCancelledWorklist));
-            _worklistTypeMapping.Add("Technologist - Completed", typeof(TechnologistCompletedWorklist));
-            _worklistTypeMapping.Add("Reporting - To Be Reported", typeof(ReportingToBeReportedWorklist));
+
+            IDictionary<string, WorklistTokenInfo> tokens = GetWorklistTokens();
+
+            WorklistExtensionPoint xp = new WorklistExtensionPoint();
+            foreach (IWorklist worklist in xp.CreateExtensions())
+            {
+                try
+                {
+                    Type worklistType = worklist.GetType();
+                    string worklistTypeName = GetNameParameterFromExtensionOfAttribute(worklistType);
+                    
+                    // TODO:  
+                    WorklistTokenInfo tokenInfo = tokens[worklistTypeName];
+                    _worklistTypeMapping.Add(tokenInfo.Name, worklistType);
+                }
+                catch (KeyNotFoundException)
+                {
+                    Platform.Log(LogLevel.Debug, "Worklist token not found for worklist {0}", worklist.GetType().Name);
+                }
+            }
+        }
+
+        private string GetNameParameterFromExtensionOfAttribute(Type worklistType)
+        {
+            object[] attrs = worklistType.GetCustomAttributes(typeof(ExtensionOfAttribute), false);
+            return ((ExtensionOfAttribute)attrs[0]).Name;
+        }
+
+
+        /// <summary>
+        /// Returns a list of all worklist tokens defined in installed plugins
+        /// </summary>
+        /// <returns></returns>
+        private static IDictionary<string, WorklistTokenInfo> GetWorklistTokens()
+        {
+            IDictionary<string, WorklistTokenInfo> tokens = new Dictionary<string, WorklistTokenInfo>();
+
+            WorklistTokenExtensionPoint tokenXp = new WorklistTokenExtensionPoint();
+            foreach (object o in tokenXp.CreateExtensions())
+            {
+                Type worklistTokenClass = o.GetType();
+                foreach (FieldInfo worklistTokenField in worklistTokenClass.GetFields())
+                {
+                    string tokenDescription = "";
+
+                    object[] attrs = worklistTokenField.GetCustomAttributes(typeof(WorklistTokenAttribute), false);
+                    if (attrs.Length == 1)
+                    {
+                        tokenDescription = ((WorklistTokenAttribute)attrs[0]).Description;
+                    }
+
+                    tokens.Add(worklistTokenField.Name, new WorklistTokenInfo(worklistTokenField.Name, tokenDescription));
+                }
+            }
+
+            return tokens;
         }
 
         public static WorklistFactory Instance

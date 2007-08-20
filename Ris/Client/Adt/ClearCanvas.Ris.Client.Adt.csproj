@@ -54,6 +54,8 @@
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
     <Compile Include="Folders\RefreshTool.cs" />
+    <Compile Include="Folders\RegistrationContainerFolders.cs" />
+    <Compile Include="Folders\TechnologistContainerFolders.cs" />
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
     <Compile Include="OrderEntryComponentSettings.cs" />
     <Compile Include="OrderEntryComponentSettings.Designer.cs">

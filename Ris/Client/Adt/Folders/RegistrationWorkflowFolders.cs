@@ -5,11 +5,12 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Adt.Folders
 {
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
-    [FolderForWorklistType("Registration - Scheduled")]
+    [FolderForWorklistType(WorklistTokens.RegistrationScheduledWorklist)]
     public class ScheduledFolder : RegistrationWorkflowFolder
     {
         public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
@@ -24,7 +25,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public ScheduledFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Scheduled", null, null)
+            : base(folderSystem)
         {
         }
 
@@ -44,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
-    [FolderForWorklistType("Registration - Checked In")]
+    [FolderForWorklistType(WorklistTokens.RegistrationCheckedInWorklist)]
     public class CheckedInFolder : RegistrationWorkflowFolder
     {
         [ExtensionPoint]
@@ -64,7 +65,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public CheckedInFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Checked In", null, null)
+            : base(folderSystem)
         {
         }
 
@@ -84,7 +85,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
-    [FolderForWorklistType("Registration - In Progress")]
+    [FolderForWorklistType(WorklistTokens.RegistrationInProgressWorklist)]
     public class InProgressFolder : RegistrationWorkflowFolder
     {
         public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
@@ -99,7 +100,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public InProgressFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "In Progress", null, null)
+            : base(folderSystem)
         {
         }
 
@@ -119,7 +120,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
-    [FolderForWorklistType("Registration - Completed")]
+    [FolderForWorklistType(WorklistTokens.RegistrationCompletedWorklist)]
     public class CompletedFolder : RegistrationWorkflowFolder
     {
         public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem, string folderDisplayName, string folderDescription, EntityRef worklistRef)
@@ -134,7 +135,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public CompletedFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Completed", null, null)
+            : base(folderSystem)
         {
         }
 
@@ -154,7 +155,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
     }
 
     [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
-    [FolderForWorklistType("Registration - Cancelled")]
+    [FolderForWorklistType(WorklistTokens.RegistrationCancelledWorklist)]
     public class CancelledFolder : RegistrationWorkflowFolder
     {
         [ExtensionPoint]
@@ -174,7 +175,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
 
         public CancelledFolder(RegistrationWorkflowFolderSystem folderSystem)
-            : this(folderSystem, "Cancelled", null, null)
+            : base(folderSystem)
         {
         }
 

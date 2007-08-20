@@ -7,6 +7,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Client.Reporting.Folders;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -129,18 +130,12 @@ namespace ClearCanvas.Ris.Client.Reporting
         private IDictionary<string, bool> _workflowEnablement;
 
         public ReportingWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-            :base(folderExplorer)
+            : base(folderExplorer, new ReportingContainerFolderExtensionPoint())
         {
             // important to initialize service before adding any folders, because folders may access service
 
             this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
             this.SelectedItemDoubleClicked += SelectedItemDoubleClickedEventHandler;
-
-            this.AddFolder(new Folders.ToBeReportedFolder(this));
-            this.AddFolder(new Folders.DraftFolder(this));
-            this.AddFolder(new Folders.InTranscriptionFolder(this));
-            this.AddFolder(new Folders.ToBeVerifiedFolder(this));
-            this.AddFolder(new Folders.VerifiedFolder(this));
 
             Platform.GetService<IReportingWorkflowService>(
                 delegate(IReportingWorkflowService service)
@@ -153,6 +148,12 @@ namespace ClearCanvas.Ris.Client.Reporting
                         if (folder != null) this.AddFolder(folder);
                     }
                 });
+
+            this.AddFolder(new Folders.ToBeReportedFolder(this));
+            this.AddFolder(new Folders.DraftFolder(this));
+            this.AddFolder(new Folders.InTranscriptionFolder(this));
+            this.AddFolder(new Folders.ToBeVerifiedFolder(this));
+            this.AddFolder(new Folders.VerifiedFolder(this));
 
             _itemToolSet = new ToolSet(new ReportingWorkflowItemToolExtensionPoint(), new ReportingWorkflowItemToolContext(this));
             _folderToolSet = new ToolSet(new ReportingWorkflowFolderToolExtensionPoint(), new ReportingWorkflowFolderToolContext(this));

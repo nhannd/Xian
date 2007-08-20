@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -11,11 +12,18 @@ namespace ClearCanvas.Ris.Client
     {
         private IFolderExplorerToolContext _folderExplorer;
         private List<WorkflowFolder<TItem>> _folders;
+        private IDictionary<Type, IContainerFolder> _containers;
+
         private event EventHandler _selectedItemDoubleClicked;
         private event EventHandler _selectedItemsChanged;
         private event EventHandler _selectedFolderChanged;
 
         public WorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
+            : this(folderExplorer, null)
+        {
+        }
+
+        public WorkflowFolderSystem(IFolderExplorerToolContext folderExplorer, ExtensionPoint<IContainerFolder> containerExtensionPoint)
         {
             _folders = new List<WorkflowFolder<TItem>>();
 
@@ -23,6 +31,18 @@ namespace ClearCanvas.Ris.Client
             _folderExplorer.SelectedFolderChanged += new EventHandler(_folderExplorer_SelectedFolderChanged);
             _folderExplorer.SelectedItemsChanged += new EventHandler(_folderExplorer_SelectedItemsChanged);
             _folderExplorer.SelectedItemDoubleClicked += new EventHandler(_folderExplorer_SelectedItemDoubleClicked);
+
+            _containers = new Dictionary<Type, IContainerFolder>();
+
+            // Add any containers defined by the provided extension point to the list of folders
+            if (containerExtensionPoint != null)
+            {
+                foreach (IContainerFolder container in containerExtensionPoint.CreateExtensions())
+                {
+                    _containers.Add(container.SubfolderType, container);
+                    _folderExplorer.AddFolder(container);
+                }
+            }
         }
 
         ~WorkflowFolderSystem()
@@ -96,8 +116,18 @@ namespace ClearCanvas.Ris.Client
 
         protected void AddFolder(WorkflowFolder<TItem> folder)
         {
+            try
+            {
+                // Find any containers that exist for this folder type
+                IContainerFolder container = _containers[folder.GetType()];
+                container.AddFolder(folder);
+            }
+            catch (KeyNotFoundException)
+            {
+                // No container, so add to root
+                _folderExplorer.AddFolder(folder);
+            }
             _folders.Add(folder);
-            _folderExplorer.AddFolder(folder);
         }
 
         public IEnumerable<WorkflowFolder<TItem>> Folders

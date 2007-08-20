@@ -127,10 +127,13 @@ namespace ClearCanvas.Ris.Client.Adt
                 IFolder scheduledFolder = CollectionUtils.SelectFirst<IFolder>(context.Folders,
                     delegate(IFolder f) { return f is Folders.ScheduledFolder; });
 
-                if (scheduledFolder.IsOpen)
-                    scheduledFolder.Refresh();
-                else
-                    scheduledFolder.RefreshCount();
+                if (scheduledFolder != null)
+                {
+                    if (scheduledFolder.IsOpen)
+                        scheduledFolder.Refresh();
+                    else
+                        scheduledFolder.RefreshCount();
+                }
             }
             catch (Exception e)
             {

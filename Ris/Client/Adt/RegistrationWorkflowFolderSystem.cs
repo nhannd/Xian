@@ -7,6 +7,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Client.Adt.Folders;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -147,19 +148,12 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         public RegistrationWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
-            :base(folderExplorer)
+            : base(folderExplorer, new RegistrationContainerFolderExtensionPoint())
         {
             // important to initialize service before adding any folders, because folders may access service
 
             this.SelectedItemsChanged += SelectedItemsChangedEventHandler;
             this.SelectedItemDoubleClicked += SelectedItemDoubleClickedEventHandler;
-
-            this.AddFolder(new Folders.ScheduledFolder(this));
-            this.AddFolder(new Folders.CheckedInFolder(this));
-            this.AddFolder(new Folders.InProgressFolder(this));
-            this.AddFolder(new Folders.CompletedFolder(this));
-            this.AddFolder(new Folders.CancelledFolder(this));
-            this.AddFolder(_searchFolder = new Folders.SearchFolder(this));
 
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
@@ -172,6 +166,13 @@ namespace ClearCanvas.Ris.Client.Adt
                         if (folder != null) this.AddFolder(folder);
                     }
                 });
+
+            this.AddFolder(new Folders.ScheduledFolder(this));
+            this.AddFolder(new Folders.CheckedInFolder(this));
+            this.AddFolder(new Folders.InProgressFolder(this));
+            this.AddFolder(new Folders.CompletedFolder(this));
+            this.AddFolder(new Folders.CancelledFolder(this));
+            this.AddFolder(_searchFolder = new Folders.SearchFolder(this));
 
             _itemToolSet = new ToolSet(new RegistrationWorkflowItemToolExtensionPoint(), new RegistrationWorkflowItemToolContext(this));
             _folderToolSet = new ToolSet(new RegistrationWorkflowFolderToolExtensionPoint(), new RegistrationWorkflowFolderToolContext(this));

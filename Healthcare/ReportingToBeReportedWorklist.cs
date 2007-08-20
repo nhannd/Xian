@@ -1,12 +1,14 @@
 using System.Collections;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare.Brokers;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Healthcare
 {
     /// <summary>
     /// ReportingToBeReportedWorklist entity
     /// </summary>
+    [ExtensionOf(typeof(WorklistExtensionPoint), Name="ReportingToBeReportedWorklist")]
     public partial class ReportingToBeReportedWorklist : ClearCanvas.Healthcare.Worklist
     {
         /// <summary>
