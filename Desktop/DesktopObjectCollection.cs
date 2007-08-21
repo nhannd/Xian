@@ -85,6 +85,16 @@ namespace ClearCanvas.Desktop
             return _list.Contains(obj);
         }
 
+        /// <summary>
+        /// Checks if this collection contains an item with the specified name.
+        /// </summary>
+        /// <param name="name">The name of the object to look for.</param>
+        /// <returns></returns>
+        public bool Contains(string name)
+        {
+            return _nameMap.ContainsKey(name);
+        }
+
         #endregion
 
         #region Public events
