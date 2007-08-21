@@ -18,8 +18,10 @@ namespace ClearCanvas.ImageServer.Model
         /// </summary>
         static StatusEnum()
         {
-            IEnumBroker<StatusEnum> broker = PersistentStoreRegistry.GetDefaultStore().OpenReadContext().GetBroker<IStatusEnum>();
+            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
+            IEnumBroker<StatusEnum> broker = read.GetBroker<IStatusEnum>();
             IList<StatusEnum> list = broker.Execute();
+            read.Dispose();
 
             foreach (StatusEnum type in list)
             {

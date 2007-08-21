@@ -58,6 +58,7 @@ namespace ClearCanvas.ImageServer.Queue
                 ISelectWorkQueue select = read.GetBroker<ISelectWorkQueue>();
                 WorkQueueSelectParameters parms = new WorkQueueSelectParameters();
                 IList<WorkQueue> list = select.Execute(parms);
+                read.Dispose();
 
                 foreach (WorkQueue queueItem in list)
                 {

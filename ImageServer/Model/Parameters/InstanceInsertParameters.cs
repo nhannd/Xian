@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
 
         public StatusEnum StatusEnum
         {
-            set { this.SubCriteria["StatusEnum"] = new ProcedureParameter<StatusEnum>("StatusEnum", value); }
+            set { this.SubCriteria["StatusEnum"] = new ProcedureParameter<ServerEnum>("StatusEnum", value); }
         }
 
         [DicomField(DicomTags.PatientID, DefaultValue = DicomFieldDefault.Null)]

@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageServer.Queue.Work
 
             WorkQueueUidDeleteParameters parms = new WorkQueueUidDeleteParameters();
 
-            parms.WorkQueueKey = sop.GetKey();
+            parms.WorkQueueUidKey = sop.GetKey();
 
             delete.Execute(parms);
         }
@@ -71,6 +71,8 @@ namespace ClearCanvas.ImageServer.Queue.Work
             DicomFile file = new DicomFile(path);
 
             file.Load();
+
+            String patientName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
 
             InstanceInsertParameters parms = new InstanceInsertParameters();
 
@@ -82,6 +84,8 @@ namespace ClearCanvas.ImageServer.Queue.Work
             IInsertInstance insert = _readContext.GetBroker<IInsertInstance>();
 
             IList<InstanceKeys> keys = insert.Execute(parms);
+
+            Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientName);
         }
 
         private void ProcessList(WorkQueue item)
@@ -97,12 +101,24 @@ namespace ClearCanvas.ImageServer.Queue.Work
                 }
                 catch (Exception e)
                 {
-                    Platform.Log(LogLevel.Error, e, "Unexpected exception when processing file: {0}", path);
+                    Platform.Log(LogLevel.Error, e, "Unexpected exception when processing file: {0} SOP Instance: {1}", path, sop.SopInstanceUid);
                     continue;
                 }
 
                 // Delete it out of the queue
-                DeleteWorkQueueUid(sop);
+                DeleteWorkQueueUid(sop);                
+            }
+
+            IUpdateWorkQueue update = _readContext.GetBroker<IUpdateWorkQueue>();
+            WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+            parms.StatusEnum = StatusEnum.GetEnum("Pending");
+            parms.WorkQueueKey = item.GetKey();
+            parms.StudyStorageKey = item.StudyStorageKey;
+            parms.ScheduledTime = DateTime.Now.AddSeconds(15.0);
+            parms.ExpirationTime = DateTime.Now.AddMinutes(5.0);
+            if (false == update.Execute(parms))
+            {
+                Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID to Pending: {0}", item.GetKey().ToString()); 
             }
         }
 
@@ -116,20 +132,44 @@ namespace ClearCanvas.ImageServer.Queue.Work
 
             if (_uidList.Count == 0)
             {
+                IUpdateWorkQueue update = _readContext.GetBroker<IUpdateWorkQueue>();
+                WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
+
                 if (item.ExpirationTime < DateTime.Now)
                 {
+                    parms.StatusEnum = StatusEnum.GetEnum("Completed");
+                    parms.WorkQueueKey = item.GetKey();
+                    parms.StudyStorageKey = item.StudyStorageKey;
                 }
                 else
                 {
+                    parms.StatusEnum = StatusEnum.GetEnum("Pending");
+                    parms.WorkQueueKey = item.GetKey();
+                    parms.StudyStorageKey = item.StudyStorageKey;
+                    parms.ScheduledTime = DateTime.Now.AddSeconds(60.0); // 30 second delay to recheck
+                    parms.ExpirationTime = item.ExpirationTime; // Keep the same
+                }
+
+                if (false == update.Execute(parms))
+                {
+                    Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID: {0}", item.GetKey().ToString());
                 }
             }
             else
                 ProcessList(item);
-
-
-
         }
 
+        #endregion
+
+        #region IDisposable Members
+        public void Dispose()
+        {
+            if (_readContext != null)
+            {
+                _readContext.Dispose();
+                _readContext = null;
+            }
+        }
         #endregion
     }
 }

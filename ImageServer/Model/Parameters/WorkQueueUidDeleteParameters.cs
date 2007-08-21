@@ -15,9 +15,9 @@ namespace ClearCanvas.ImageServer.Model
         {
         }
 
-        public ServerEntityKey WorkQueueKey
+        public ServerEntityKey WorkQueueUidKey
         {
-            set { this.SubCriteria["WorkQueueKey"] = new ProcedureParameter<ServerEntityKey>("WorkQueueKey", value); }
+            set { this.SubCriteria["WorkQueueUidKey"] = new ProcedureParameter<ServerEntityKey>("WorkQueueUidKey", value); }
         }
     }
 }

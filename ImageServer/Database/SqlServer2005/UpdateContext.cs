@@ -8,7 +8,7 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Database.SqlServer2005
 {
-    public class UpdateContext : PersistenceContext,IUpdateContext
+    public class UpdateContext : PersistenceContext,IUpdateContext,IDisposable
     {
         private SqlTransaction _transaction;
         private UpdateContextSyncMode _mode;

@@ -6,7 +6,7 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Queue
 {
-    public interface IWorkQueueItemProcessor
+    public interface IWorkQueueItemProcessor : IDisposable
     {
         void Process(WorkQueue item);
     }

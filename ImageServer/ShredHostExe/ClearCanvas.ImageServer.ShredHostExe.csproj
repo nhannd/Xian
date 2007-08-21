@@ -98,6 +98,6 @@ copy $(ProjectDir)..\..\Dicom\OffisWrapper\csharp\$(ConfigurationName)\ClearCanv
 copy $(ProjectDir)..\..\Dicom\OffisWrapper\cppwrapper\$(ConfigurationName)\OffisDcm.dll $(TargetDir)common
 
 rem copy config files
-copy $(ProjectDir)..\..\Desktop\Executable\Logging.config $(TargetDir)</PostBuildEvent>
+copy $(ProjectDir)..\..\ImageServer\Executable\Logging.config $(TargetDir)</PostBuildEvent>
   </PropertyGroup>
 </Project>

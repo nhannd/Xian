@@ -36,9 +36,9 @@ namespace ClearCanvas.ImageServer.TestApp
                 TypeEnum t = new TypeEnum();
                 t.SetEnum(200);
 
-                IReadContext ctx = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
+                IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
 
-                IInsertStudyStorage insert = ctx.GetBroker<IInsertStudyStorage>();
+                IInsertStudyStorage insert = read.GetBroker<IInsertStudyStorage>();
 
                 StudyStorageInsertParameters criteria = new StudyStorageInsertParameters();
 

@@ -48,6 +48,7 @@
     <Compile Include="Brokers\SelectWorkQueueUids.cs" />
     <Compile Include="Brokers\StatusEnumBroker.cs" />
     <Compile Include="Brokers\TypeEnumBroker.cs" />
+    <Compile Include="Brokers\UpdateWorkQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

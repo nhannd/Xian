@@ -8,7 +8,7 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Database.SqlServer2005
 {
-    public class ReadContext : PersistenceContext,IReadContext
+    public class ReadContext : PersistenceContext,IReadContext,IDisposable
     {
         internal ReadContext(SqlConnection connection, ITransactionNotifier transactionNotifier)
             : base(connection, transactionNotifier)

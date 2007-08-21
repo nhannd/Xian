@@ -47,11 +47,13 @@
     <Compile Include="Brokers\ISelectWorkQueueUids.cs" />
     <Compile Include="Brokers\IStatusEnum.cs" />
     <Compile Include="Brokers\ITypeEnum.cs" />
+    <Compile Include="Brokers\IUpdateWorkQueue.cs" />
     <Compile Include="Filesystem.cs" />
     <Compile Include="FilesystemTier.cs" />
     <Compile Include="Brokers\ISelectWorkQueue.cs" />
     <Compile Include="InstanceKeys.cs" />
     <Compile Include="Parameters\InstanceInsertParameters.cs" />
+    <Compile Include="Parameters\WorkQueueUpdateParameters.cs" />
     <Compile Include="PartitionSopClass.cs" />
     <Compile Include="Parameters\PartitionSopClassSelectParameters.cs" />
     <Compile Include="RequestAttribute.cs" />

@@ -52,8 +52,8 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Fatal, e);
+                throw new PersistenceException("Unexpected exception opening database connection", e);
             }
-            return null;
         }
 
         public IUpdateContext OpenUpdateContext(UpdateContextSyncMode mode)
@@ -67,8 +67,8 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
             catch (Exception e)
             {
                 Platform.Log(LogLevel.Fatal, e);
+                throw new PersistenceException("Unexpected exception opening database connection", e);
             }
-            return null;
         }
 
         #endregion

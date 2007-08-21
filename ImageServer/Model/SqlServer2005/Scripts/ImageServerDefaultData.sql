@@ -21,6 +21,11 @@ INSERT INTO [ImageServer].[dbo].[StatusEnum]
      VALUES
            (newid(),201,'In Progress','In Progress','In Progress')
 
+INSERT INTO [ImageServer].[dbo].[StatusEnum]
+           ([GUID],[StatusEnum],[Lookup],[Description],[LongDescription])
+     VALUES
+           (newid(),202,'Completed','Completed','The Queue entry is completed.')
+
 -- SopClass inserts
 INSERT INTO [ImageServer].[dbo].[SopClass] ([GUID],[SopClassUid],[Description],[NonImage])
 VALUES (newid(), '1.2.840.10008.5.1.4.1.1.9.1.1', '12-lead ECG Waveform Storage', 1);

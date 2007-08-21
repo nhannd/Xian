@@ -23,22 +23,22 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
-        private ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
             get { return _serverPartitionKey; }
             set { _serverPartitionKey = value; }
         }
-        private ServerEntityKey PatientKey
+        public ServerEntityKey PatientKey
         {
             get { return _patientKey; }
             set { _patientKey = value; }
         }
-        private ServerEntityKey StudyKey
+        public ServerEntityKey StudyKey
         {
             get { return _studyKey; }
             set { _studyKey = value; }
         }
-        private ServerEntityKey SeriesKey
+        public ServerEntityKey SeriesKey
         {
             get { return _seriesKey; }
             set { _seriesKey = value; }
