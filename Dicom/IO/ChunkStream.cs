@@ -94,6 +94,7 @@ namespace ClearCanvas.Dicom.IO
 
                 Buffer.BlockCopy(chunk, _offset, buffer, dstOffset, bytesInChunk);
 
+                read += bytesInChunk;
                 count -= bytesInChunk;
                 dstOffset += bytesInChunk;
                 _position += bytesInChunk;

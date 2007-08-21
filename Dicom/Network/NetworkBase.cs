@@ -151,6 +151,9 @@ namespace ClearCanvas.Dicom.Network
             _thread.Start();
         }
 
+        /// <summary>
+        /// Method for shutting down the network thread.  Should only be caled from the Close() routine.
+        /// </summary>
         protected void ShutdownNetwork()
         {
             _stop = true;
@@ -180,6 +183,7 @@ namespace ClearCanvas.Dicom.Network
                 case DicomAssociationState.Sta5_AwaitingAAssociationACOrReject:
                     break;
                 case DicomAssociationState.Sta6_AssociationEstablished:
+                    DicomLogger.LogError("Aborting association from {0} to {1}", _assoc.CallingAE, _assoc.CalledAE);
                     SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.NotSpecified);
                     break;
                 case DicomAssociationState.Sta7_AwaitingAReleaseRP:
@@ -309,6 +313,11 @@ namespace ClearCanvas.Dicom.Network
 
         #region Public Methods
         /// <summary>
+        /// Method for closing an association.
+        /// </summary>
+        public abstract void Close();
+
+        /// <summary>
         /// Returns the next message Id to be used over the association.
         /// </summary>
         /// <returns></returns>
@@ -340,6 +349,11 @@ namespace ClearCanvas.Dicom.Network
                 AAbort pdu = new AAbort(source, reason);
                 SendRawPDU(pdu.Write());
                 _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
+            }
+            else
+            {
+                DicomLogger.LogError("Unexpected state for association abort, closing connection from {0} to {1}", _assoc.CallingAE, _assoc.CalledAE);
+                Close();
             }
         }
 
@@ -574,7 +588,9 @@ namespace ClearCanvas.Dicom.Network
                         bool success = ProcessNextPDU();
                         if (!success)
                         {
-                            // TODO
+                            // Start the Abort process, not much else we can do
+                            DicomLogger.LogError("Unexpected error processing PDU.  Aborting Association from {0} to {1}", _assoc.CallingAE, _assoc.CalledAE);
+                            SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.InvalidPDUParameter);
                         }
                     }
                     else if (DateTime.Now > timeout)
@@ -588,8 +604,13 @@ namespace ClearCanvas.Dicom.Network
                         {
                             DicomLogger.LogError("ARTIM timeout when waiting for AAssociate Request PDU, closing connection.");
                             _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
-                            _network.Close(); // TODO
+                            Close(); // TODO
                             
+                        }
+                        else if (_state == DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
+                        {
+                            DicomLogger.LogError("Timeout when waiting for transport connection to close from {0} to {1}.  Dropping Connection.", _assoc.CallingAE, _assoc.CalledAE);
+                            Close(); // TODO
                         }
                         else
                         {
@@ -603,6 +624,7 @@ namespace ClearCanvas.Dicom.Network
                     }
                 }
                 _network.Close();
+                _network.Dispose();
                 _network = null;
             }
             catch (Exception e)
@@ -738,13 +760,22 @@ namespace ClearCanvas.Dicom.Network
                             _dimse.CommandReader.Dataset = _dimse.Command;
                         }
 
-                        _dimse.CommandReader.Read(null, DicomReadOptions.Default);
-
+                        DicomReadStatus stat = _dimse.CommandReader.Read(null, DicomReadOptions.Default);
+                        if (stat == DicomReadStatus.UnknownError)
+                        {
+                            DicomLogger.LogError("Unexpected parsing error when reading command group elements.");
+                            return false;
+                        }
                         bytes += pdv.Value.Length;
                         total = (int)_dimse.CommandReader.BytesEstimated;
 
                         if (pdv.IsLastFragment)
                         {
+                            if (stat == DicomReadStatus.NeedMoreData)
+                            {
+                                DicomLogger.LogError("Unexpected end of StreamReader.  More data needed after reading last PDV fraagment.");
+                                return false;
+                            }
                             _dimse.CommandData = null;
                             _dimse.CommandReader = null;
 
@@ -786,13 +817,23 @@ namespace ClearCanvas.Dicom.Network
                             _dimse.DatasetReader.Dataset = _dimse.Dataset;
                         }
 
-                        _dimse.DatasetReader.Read(null, DicomReadOptions.Default);
+                        DicomReadStatus stat = _dimse.DatasetReader.Read(null, DicomReadOptions.Default);
+                        if (stat == DicomReadStatus.UnknownError)
+                        {
+                            DicomLogger.LogError("Unexpected parsing error when reading DataSet.");
+                            return false;
+                        }
 
                         bytes += pdv.Value.Length;
                         total = (int)_dimse.DatasetReader.BytesEstimated;
 
                         if (pdv.IsLastFragment)
                         {
+                            if (stat == DicomReadStatus.NeedMoreData)
+                            {
+                                DicomLogger.LogError("Unexpected end of StreamReader.  More data needed after reading last PDV fraagment.");
+                                return false;
+                            }
                             _dimse.CommandData = null;
                             _dimse.CommandReader = null;
 

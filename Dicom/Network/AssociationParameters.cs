@@ -169,6 +169,8 @@ namespace ClearCanvas.Dicom.Network
         private int _readTimeout = 30;
         private int _writeTimeout = 30;
         private int _artimTimeout = 30;
+        private ushort _maxOperationsInvoked = 1;
+        private ushort _maxOperationsPerformed = 1;
         #endregion
 
 		#region Constructors
@@ -219,6 +221,17 @@ namespace ClearCanvas.Dicom.Network
 		#endregion
 
 		#region Public Properties
+        public ushort MaxOperationsInvoked
+        {
+            get { return _maxOperationsInvoked; }
+            set { _maxOperationsInvoked = value; }
+        }
+        public ushort MaxOperationsPerformed
+        {
+            get { return _maxOperationsPerformed; }
+            set { _maxOperationsPerformed = value; }
+        }
+
         /// <summary>
         /// The Maximum PDU Length negotiated for the association
         /// </summary>

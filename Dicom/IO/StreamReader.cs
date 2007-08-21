@@ -128,7 +128,6 @@ namespace ClearCanvas.Dicom.IO
                 while (_remain > 0)
                 {
                     uint tagValue = 0;
-
                     if (_tag == null)
                     {
                         if (_remain >= 4)
@@ -415,7 +414,15 @@ namespace ClearCanvas.Dicom.IO
                             DicomSequenceItem ds = new DicomSequenceItem();
 
                             rec._current = ds;
-                            rec._parent[rec._tag].AddSequenceItem(ds);
+
+                            // Do a lookup to see if the parent SQ attribute doesn't exist in the
+                            //dictionary, this prevents an exception being thrown by the _parent
+                            // indexer, and allows us to add the tag
+                            DicomTag dicomTag = DicomTagDictionary.GetDicomTag(rec._tag);
+                            if (dicomTag == null)
+                                dicomTag = new DicomTag(rec._tag, "Unknown SQ Attribute", DicomVr.SQvr, false, 0, uint.MaxValue, false);
+
+                            rec._parent[dicomTag].AddSequenceItem(ds);
 
                             // Specific character set is inherited, save it.  It will be overwritten
                             // if a new value of the tag is encountered in the sequence.
@@ -438,7 +445,13 @@ namespace ClearCanvas.Dicom.IO
                                 DicomStreamReader idsr = new DicomStreamReader(data.Stream);
                                 idsr.Dataset = ds;
                                 idsr._syntax = this._syntax;
-                                idsr.Read(null, options);
+                                DicomReadStatus stat = idsr.Read(null, options);
+                                if (stat == DicomReadStatus.UnknownError)
+                                {
+                                    DicomLogger.LogError("Unexpected parsing error when reading sequence attribute: {0}.",dicomTag.ToString());
+                                    return stat;
+                                }
+
                             }
                             else
                             {

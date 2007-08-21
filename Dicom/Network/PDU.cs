@@ -322,6 +322,18 @@ namespace ClearCanvas.Dicom.Network
             pdu.Write("Item-Length", (ushort)0x0004);
             pdu.Write("Max PDU Length", (uint)_assoc.MaximumPduLength);
 
+            // Asychronous Window
+            /*
+            pdu.Write("Item-Type", (byte)0x53);
+            pdu.Write("Reserved", (byte)0x00);
+            pdu.Write("Item-Length", (ushort)0x0004);
+            pdu.Write("Max Operations Invoked", (ushort)_assoc.MaximumOperationsInvoked);
+            pdu.Write("Max Operations Invoked", (ushort)_assoc.MaximumOperationsPerformed);
+             */
+
+            // SCU / SCP Role Selection
+
+
             // Implementation Class UID
             pdu.Write("Item-Type", (byte)0x52);
             pdu.Write("Reserved", (byte)0x00);
@@ -411,6 +423,11 @@ namespace ClearCanvas.Dicom.Network
                                 else if (ut == 0x52)
                                 {
                                     _assoc.ImplementationClass = new DicomUid(raw.ReadString("Implementation Class UID", ul), "Implementation Class UID", UidType.Unknown);
+                                }
+                                else if (ut == 0x53)
+                                {
+                                    _assoc.MaxOperationsInvoked = raw.ReadUInt16("Max Operations Invoked");
+                                    _assoc.MaxOperationsPerformed = raw.ReadUInt16("Max Operations Performed");
                                 }
                                 else if (ut == 0x55)
                                 {

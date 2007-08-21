@@ -283,15 +283,18 @@ namespace ClearCanvas.Dicom
                     dsr = new DicomStreamReader(fs);
                     dsr.TransferSyntax = TransferSyntax.ImplicitVRLittleEndian;
                     dsr.Dataset = base._dataSet;
-                    dsr.Read(stopTag, options);
+                    DicomReadStatus stat = dsr.Read(stopTag, options);
+                    if (stat != DicomReadStatus.Success)
+                    {
+                        DicomLogger.LogError("Unexpected error when reading file: {0}",Filename);
+                        throw new DicomException("Unexpected read error with file: " + Filename);
+                    }
 
                     TransferSyntax = TransferSyntax.ImplicitVRLittleEndian;
                     if (DataSet.Contains(DicomTags.SOPClassUID))
                         MediaStorageSopClassUid = DataSet[DicomTags.SOPClassUID].ToString();
                     if (DataSet.Contains(DicomTags.SOPInstanceUID))
                         MediaStorageSopInstanceUid = DataSet[DicomTags.SOPInstanceUID].ToString();
-
-                    // TODO: put important tag values in the MetaHeader... like TransferSyntax, SopClassUid, etc.
                 }
                 else
                 {
@@ -299,10 +302,20 @@ namespace ClearCanvas.Dicom
                     dsr.TransferSyntax = TransferSyntax.ExplicitVRLittleEndian;
 
                     dsr.Dataset = base._metaInfo;
-                    dsr.Read(new DicomTag(0x0002FFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false), options);
+                    DicomReadStatus stat = dsr.Read(new DicomTag(0x0002FFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false), options);
+                    if (stat != DicomReadStatus.Success)
+                    {
+                        DicomLogger.LogError("Unexpected error when reading file Meta info for file: {0}", Filename);
+                        throw new DicomException("Unexpected failure reading file Meta info for file: " + Filename);
+                    }
                     dsr.Dataset = base._dataSet;
                     dsr.TransferSyntax = TransferSyntax;
-                    dsr.Read(stopTag, options);
+                    stat = dsr.Read(stopTag, options);
+                    if (stat != DicomReadStatus.Success)
+                    {
+                        DicomLogger.LogError("Unexpected error when reading file: {0}", Filename);
+                        throw new DicomException("Unexpected failure reading file: " + Filename);
+                    }
                 }
             }
         }

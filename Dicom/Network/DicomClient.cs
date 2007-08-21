@@ -118,7 +118,7 @@ namespace ClearCanvas.Dicom.Network
             return client;
 		}
 
-        public void Close()
+        public override void Close()
         {
             lock (this)
             {
@@ -160,8 +160,11 @@ namespace ClearCanvas.Dicom.Network
 
 		protected override bool NetworkHasData() 
         {
+            if (_socket == null)
+                return false;
+
             if (!_socket.Connected)
-                ShutdownNetwork();
+                Close();
 
 			return _socket.Available > 0;
 		}

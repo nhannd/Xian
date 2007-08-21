@@ -60,6 +60,6 @@ namespace ClearCanvas.Dicom
         ExplicitLengthSequence = 2,
         ExplicitLengthSequenceItem = 4,
         WriteFragmentOffsetTable = 8,
-        Default = DicomWriteOptions.CalculateGroupLengths | DicomWriteOptions.WriteFragmentOffsetTable
+        Default = DicomWriteOptions.WriteFragmentOffsetTable
     }
 }

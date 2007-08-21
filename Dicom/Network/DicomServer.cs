@@ -83,7 +83,7 @@ namespace ClearCanvas.Dicom.Network
             _appList = appList;
 
             // Start background thread for incoming associations
-            InitializeNetwork(_network, "Server Handler from: " + remote.ToString());
+            InitializeNetwork(_network, "DicomServer Handler: " + remote.ToString());
         }
 		#endregion
 
@@ -153,13 +153,14 @@ namespace ClearCanvas.Dicom.Network
         /// <summary>
         /// Close the association.
         /// </summary>
-        public void Close()
+        public override void Close()
         {
             lock (this)
             {
                 if (_network != null)
                 {
                     _network.Close();
+                    _network.Dispose();
                     _network = null;
                 }
                 if (_socket != null)
@@ -185,8 +186,11 @@ namespace ClearCanvas.Dicom.Network
         /// <returns></returns>
         protected override bool NetworkHasData()
         {
+            if (_socket == null)
+                return false;
+
             if (!_socket.Connected)
-                ShutdownNetwork();
+                Close();
 
             return _socket.Available > 0;
         }
