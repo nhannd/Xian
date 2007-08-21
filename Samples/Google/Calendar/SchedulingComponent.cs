@@ -9,9 +9,23 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Samples.Google.Calendar
 {
+    public interface ISchedulingToolContext : IToolContext
+    {
+        DesktopWindow DesktopWindow { get; }
+        CalendarEvent SelectedAppointment { get; }
+        IList<CalendarEvent> AllAppointments { get; }
+    }
+
+    [ExtensionPoint]
+    public class SchedulingToolExtensionPoint : ExtensionPoint<ITool>
+    {
+    }
+
     /// <summary>
     /// Extension point for views onto <see cref="SchedulingComponent"/>
     /// </summary>
@@ -26,12 +40,46 @@ namespace ClearCanvas.Samples.Google.Calendar
     [AssociateView(typeof(SchedulingComponentViewExtensionPoint))]
     public class SchedulingComponent : ApplicationComponent
     {
+        public class SchedulingToolContext : ToolContext, ISchedulingToolContext
+        {
+            private SchedulingComponent _owner;
+
+            internal SchedulingToolContext(SchedulingComponent owner)
+            {
+                _owner = owner;
+            }
+
+            #region ISchedulingToolContext Members
+
+            public DesktopWindow DesktopWindow
+            {
+                get { return _owner.Host.DesktopWindow; }
+            }
+
+            public CalendarEvent SelectedAppointment
+            {
+                get { return _owner._selectedAppointment; }
+            }
+
+            public IList<CalendarEvent> AllAppointments
+            {
+                get { return _owner._appointments.Items; }
+            }
+
+            #endregion
+        }
+
         private string _patientInfo;
         private string _comment;
         private DateTime _appointmentDate;
         private Table<CalendarEvent> _appointments;
+        private CalendarEvent _selectedAppointment;
+
 
         private Calendar _calendar;
+
+        private ToolSet _extensionTools;
+        private ActionModelRoot _menuModel;
 
 
         /// <summary>
@@ -52,6 +100,9 @@ namespace ClearCanvas.Samples.Google.Calendar
             _appointments.Columns.Add(new TableColumn<CalendarEvent, string>("Comment",
                 delegate(CalendarEvent e) { return e.Description; }));
 
+            _extensionTools = new ToolSet(new SchedulingToolExtensionPoint(), new SchedulingToolContext(this));
+            _menuModel = ActionModelRoot.CreateModel(this.GetType().FullName, "scheduling-appointments-contextmenu", _extensionTools.Actions);
+
             // initialize patient info from active workspace
             UpdatePatientInfo(this.Host.DesktopWindow.ActiveWorkspace);
 
@@ -64,6 +115,8 @@ namespace ClearCanvas.Samples.Google.Calendar
 
         public override void Stop()
         {
+            _extensionTools.Dispose();
+
             this.Host.DesktopWindow.Workspaces.ItemActivationChanged -= Workspaces_ItemActivationChanged;
 
             base.Stop();
@@ -100,6 +153,11 @@ namespace ClearCanvas.Samples.Google.Calendar
             }
         }
 
+        public ActionModelNode MenuModel
+        {
+            get { return _menuModel; }
+        }
+
         public DateTime Today
         {
             get { return DateTime.Today; }
@@ -108,6 +166,19 @@ namespace ClearCanvas.Samples.Google.Calendar
         public ITable Appointments
         {
             get { return _appointments; }
+        }
+
+        public ISelection SelectedAppointment
+        {
+            get { return new Selection(_selectedAppointment); }
+            set
+            {
+                if (value.Item != _selectedAppointment)
+                {
+                    _selectedAppointment = (CalendarEvent)value.Item;
+                    NotifyPropertyChanged("SelectedAppointment");
+                }
+            }
         }
 
         [ValidateNotNull]
