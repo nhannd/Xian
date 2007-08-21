@@ -8,7 +8,7 @@ using Google.GData.Calendar;
 using ClearCanvas.Common.Utilities;
 
 
-namespace ClearCanvas.Samples.Calendar
+namespace ClearCanvas.Samples.Google.Calendar
 {
     public class Calendar {
 

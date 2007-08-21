@@ -7,8 +7,8 @@
     <ProjectGuid>{496E5404-1CFF-4A52-A9EC-F4955D4B7397}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.Samples.Calendar.View.WinForms</RootNamespace>
-    <AssemblyName>ClearCanvas.Samples.Calendar.View.WinForms</AssemblyName>
+    <RootNamespace>ClearCanvas.Samples.Google.Calendar.View.WinForms</RootNamespace>
+    <AssemblyName>ClearCanvas.Samples.Google.Calendar.View.WinForms</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -48,25 +48,25 @@
     <Service Include="{B4F97281-0DBD-4835-9ED8-7DFB966E87FF}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Common\ClearCanvas.Common.csproj">
+    <ProjectReference Include="..\..\..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Controls\WinForms\ClearCanvas.Controls.WinForms.csproj">
+    <ProjectReference Include="..\..\..\..\..\Controls\WinForms\ClearCanvas.Controls.WinForms.csproj">
       <Project>{CA91515F-D706-4D15-882B-811F3BDC4956}</Project>
       <Name>ClearCanvas.Controls.WinForms</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Desktop\ClearCanvas.Desktop.csproj">
+    <ProjectReference Include="..\..\..\..\..\Desktop\ClearCanvas.Desktop.csproj">
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj">
+    <ProjectReference Include="..\..\..\..\..\Desktop\View\WinForms\ClearCanvas.Desktop.View.WinForms.csproj">
       <Project>{BB434EC3-A580-4744-A635-A2B4029C66DE}</Project>
       <Name>ClearCanvas.Desktop.View.WinForms</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ClearCanvas.Samples.Calendar.csproj">
+    <ProjectReference Include="..\..\ClearCanvas.Samples.Google.Calendar.csproj">
       <Project>{B57AAFAB-EAF0-432E-9F2D-F683608195D5}</Project>
-      <Name>ClearCanvas.Ris.Client.Calendar</Name>
+      <Name>ClearCanvas.Samples.Google.Calendar</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

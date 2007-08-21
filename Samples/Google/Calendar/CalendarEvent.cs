@@ -6,7 +6,7 @@ using Google.GData.Client;
 using Google.GData.Extensions;
 using Google.GData.Calendar;
 
-namespace ClearCanvas.Samples.Calendar
+namespace ClearCanvas.Samples.Google.Calendar
 {
     public class CalendarEvent : IComparable<CalendarEvent> {
 

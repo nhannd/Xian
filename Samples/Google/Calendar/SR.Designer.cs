@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Samples.Calendar {
+namespace ClearCanvas.Samples.Google.Calendar {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.Samples.Calendar {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Samples.Calendar.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Samples.Google.Calendar.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

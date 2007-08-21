@@ -1,4 +1,4 @@
-namespace ClearCanvas.Samples.Calendar.View.WinForms
+namespace ClearCanvas.Samples.Google.Calendar.View.WinForms
 {
     partial class SchedulingComponentControl
     {

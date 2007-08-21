@@ -8,7 +8,7 @@ using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 
-namespace ClearCanvas.Samples.Calendar
+namespace ClearCanvas.Samples.Google.Calendar
 {
     [MenuAction("apply", "global-menus/MenuTools/MenuToolsMyTools/SchedulingTool")]
     [ButtonAction("apply", "global-toolbars/ToolbarMyTools/SchedulingTool")]

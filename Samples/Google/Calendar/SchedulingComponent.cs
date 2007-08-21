@@ -10,7 +10,7 @@ using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop.Tables;
 
-namespace ClearCanvas.Samples.Calendar
+namespace ClearCanvas.Samples.Google.Calendar
 {
     /// <summary>
     /// Extension point for views onto <see cref="SchedulingComponent"/>

@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Controls.WinForms;
 
-namespace ClearCanvas.Samples.Calendar.View.WinForms
+namespace ClearCanvas.Samples.Google.Calendar.View.WinForms
 {
     /// <summary>
     /// Provides a Windows Forms user-interface for <see cref="SchedulingComponent"/>
