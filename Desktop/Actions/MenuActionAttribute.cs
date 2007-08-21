@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Actions
 {
@@ -19,13 +20,28 @@ namespace ClearCanvas.Desktop.Actions
         {
         }
 
-        public override void Apply(IActionBuildingContext builder)
+        /// <summary>
+        /// Attribute constructor
+        /// </summary>
+        /// <param name="actionID">The logical action identifier to associate with this action</param>
+        /// <param name="pathHint">The suggested location of this action in the toolbar model</param>
+        /// <param name="clickHandler">Name of the method that will be invoked when the button is clicked</param>
+        public MenuActionAttribute(string actionID, string pathHint, string clickHandler)
+            : base(actionID, pathHint, clickHandler)
         {
-            ActionPath path = new ActionPath(this.Path, builder.ResourceResolver);
-            builder.Action = new MenuAction(builder.ActionID, path, this.Flags, builder.ResourceResolver);
-            ((ClickAction)builder.Action).SetKeyStroke(this.KeyStroke);
-            builder.Action.Persistent = true;
-            builder.Action.Label = path.LastSegment.LocalizedText;
+        }
+
+        /// <summary>
+        /// Factory method to instantiate the action.
+        /// </summary>
+        /// <param name="actionID"></param>
+        /// <param name="path"></param>
+        /// <param name="flags"></param>
+        /// <param name="resolver"></param>
+        /// <returns></returns>
+        protected override ClickAction CreateAction(string actionID, ActionPath path, ClickActionFlags flags, IResourceResolver resolver)
+        {
+            return new MenuAction(actionID, path, flags, resolver);
         }
     }
 }

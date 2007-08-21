@@ -1,6 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Reflection;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Actions
 {
@@ -10,14 +12,21 @@ namespace ClearCanvas.Desktop.Actions
     public abstract class ClickActionAttribute : ActionInitiatorAttribute
     {
         private string _path;
+        private string _clickHandler;
         private ClickActionFlags _flags;
 		private XKeys _keyStroke;
 
-        public ClickActionAttribute(string actionID, string path)
+        public ClickActionAttribute(string actionID, string path, string clickHandler)
             :base(actionID)
         {
             _path = path;
+            _clickHandler = clickHandler;
             _flags = ClickActionFlags.None; // default value, will override if named parameter is specified
+        }
+
+        public ClickActionAttribute(string actionID, string path)
+            : this(actionID, path, null)
+        {
         }
 
         /// <summary>
@@ -35,10 +44,46 @@ namespace ClearCanvas.Desktop.Actions
 			set { _keyStroke = value; }
 		}
 
+        public override void Apply(IActionBuildingContext builder)
+        {
+            // assert _action == null
+            ActionPath path = new ActionPath(this.Path, builder.ResourceResolver);
+            builder.Action = CreateAction(builder.ActionID, path, this.Flags, builder.ResourceResolver);
+            builder.Action.Persistent = true;
+            ((ClickAction)builder.Action).SetKeyStroke(this.KeyStroke);
+            builder.Action.Label = path.LastSegment.LocalizedText;
+
+            if (!string.IsNullOrEmpty(_clickHandler))
+            {
+                // check that the method exists, etc
+                ValidateClickHandler(builder.ActionTarget, _clickHandler);
+
+                ClickHandlerDelegate clickHandler =
+                    (ClickHandlerDelegate)Delegate.CreateDelegate(typeof(ClickHandlerDelegate), builder.ActionTarget, _clickHandler);
+                ((ClickAction)builder.Action).SetClickHandler(clickHandler);
+            }
+        }
+
+        protected abstract ClickAction CreateAction(string actionID, ActionPath path, ClickActionFlags flags, IResourceResolver resolver);
+
         /// <summary>
         /// The suggested location of the action in the action model.
         /// </summary>
         public string Path { get { return _path; } }
 
+        private void ValidateClickHandler(object target, string methodName)
+        {
+            MethodInfo info = target.GetType().GetMethod(
+                methodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,
+                null,
+                Type.EmptyTypes,
+                null);
+
+            if (info == null)
+            {
+                throw new ActionBuilderException(
+                    string.Format(SR.ExceptionActionBuilderMethodDoesNotExist, methodName, target.GetType().FullName));
+            }
+        }
     }
 }

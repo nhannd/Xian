@@ -15,11 +15,15 @@ namespace ClearCanvas.Desktop.Actions
 
         public override void Apply(IActionBuildingContext builder)
 		{
-            // assert _action == null
-            ActionPath path = new ActionPath(this.Path, builder.ResourceResolver);
-            builder.Action = new KeyboardAction(builder.ActionID, path, this.Flags, builder.ResourceResolver);
-            ((ClickAction)builder.Action).SetKeyStroke(this.KeyStroke);
-            builder.Action.Label = path.LastSegment.LocalizedText;
+            base.Apply(builder);
+
+            // don't need to persist keyboard actions
+            builder.Action.Persistent = false;
         }
-	}
+
+        protected override ClickAction CreateAction(string actionID, ActionPath path, ClickActionFlags flags, ClearCanvas.Common.Utilities.IResourceResolver resolver)
+        {
+            return new KeyboardAction(actionID, path, flags, resolver);
+        }
+    }
 }

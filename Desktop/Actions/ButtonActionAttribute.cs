@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Actions
 {
@@ -19,14 +20,28 @@ namespace ClearCanvas.Desktop.Actions
         {
         }
 
-        public override void Apply(IActionBuildingContext builder)
+        /// <summary>
+        /// Attribute constructor
+        /// </summary>
+        /// <param name="actionID">The logical action identifier to associate with this action</param>
+        /// <param name="pathHint">The suggested location of this action in the toolbar model</param>
+        /// <param name="clickHandler">Name of the method that will be invoked when the button is clicked</param>
+        public ButtonActionAttribute(string actionID, string pathHint, string clickHandler)
+            : base(actionID, pathHint, clickHandler)
         {
-            // assert _action == null
-            ActionPath path = new ActionPath(this.Path, builder.ResourceResolver);
-            builder.Action = new ButtonAction(builder.ActionID, path, this.Flags, builder.ResourceResolver);
-            builder.Action.Persistent = true;
-            ((ClickAction)builder.Action).SetKeyStroke(this.KeyStroke);
-            builder.Action.Label = path.LastSegment.LocalizedText;
+        }
+
+        /// <summary>
+        /// Factory method to instantiate the action.
+        /// </summary>
+        /// <param name="actionID"></param>
+        /// <param name="path"></param>
+        /// <param name="flags"></param>
+        /// <param name="resolver"></param>
+        /// <returns></returns>
+        protected override ClickAction CreateAction(string actionID, ActionPath path, ClickActionFlags flags, IResourceResolver resolver)
+        {
+            return new ButtonAction(actionID, path, flags, resolver);
         }
     }
 }

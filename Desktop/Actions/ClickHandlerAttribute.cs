@@ -11,8 +11,9 @@ namespace ClearCanvas.Desktop.Actions
     /// <remarks>
     /// This attribute binds the click handler of the action specified by the action ID to
     /// the specified method on the target class.  The method name must
-    /// refer to a public void method on the target class that takes no parameters.
+    /// refer to a void method on the target class that takes no parameters.  
     /// </remarks>
+    [Obsolete("Consider binding the click-hanlder directly in the MenuAction/ButtonAction/KeyboardAction attribute.")]
     public class ClickHandlerAttribute : ActionDecoratorAttribute
     {
         private string _handlerMethod;
