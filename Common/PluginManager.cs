@@ -122,6 +122,9 @@ namespace ClearCanvas.Common
             {
                 extList.AddRange(plugin.Extensions);
             }
+
+            // hack: add extensions from ClearCanvas.Common, which isn't technically a plugin
+            extList.AddRange(PluginInfo.DiscoverExtensions(this.GetType().Assembly));
             _extensions = extList.ToArray();
 
             List<ExtensionPointInfo> epList = new List<ExtensionPointInfo>();
@@ -129,6 +132,8 @@ namespace ClearCanvas.Common
             {
                 epList.AddRange(plugin.ExtensionPoints);
             }
+            // hack: add extension points from ClearCanvas.Common, which isn't technically a plugin
+            epList.AddRange(PluginInfo.DiscoverExtensionPoints(this.GetType().Assembly));
             _extensionPoints = epList.ToArray();
         }
 
