@@ -120,6 +120,12 @@
   <data name="AppointmentMustBeInFuture" xml:space="preserve">
     <value>Appointment must be in future</value>
   </data>
+  <data name="AppointmentTableComment" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="AppointmentTableDate" xml:space="preserve">
+    <value>Date</value>
+  </data>
   <data name="SchedulingTool" xml:space="preserve">
     <value>Scheduling</value>
   </data>

@@ -8,7 +8,11 @@ using Google.GData.Calendar;
 
 namespace ClearCanvas.Samples.Google.Calendar
 {
-    public class CalendarEvent : IComparable<CalendarEvent> {
+    /// <summary>
+    /// Represents an event on a Google calendar.
+    /// </summary>
+    public class CalendarEvent : IComparable<CalendarEvent>
+    {
 
         private DateTime _startTime = DateTime.MaxValue;
         private DateTime _endTime = DateTime.MinValue;

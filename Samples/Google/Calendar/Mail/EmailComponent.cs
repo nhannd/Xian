@@ -33,17 +33,17 @@ namespace ClearCanvas.Samples.Google.Calendar.Mail
 
         public override void Start()
         {
-            // TODO prepare the component for its live phase
             base.Start();
         }
 
         public override void Stop()
         {
-            // TODO prepare the component to exit the live phase
-            // This is a good place to do any clean up
             base.Stop();
         }
 
+        /// <summary>
+        /// Gets or sets the email address field.
+        /// </summary>
         [ValidateRegex(@"\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*")]
         public string EmailAddress
         {
@@ -51,18 +51,25 @@ namespace ClearCanvas.Samples.Google.Calendar.Mail
             set { _emailAddress = value; }
         }
 
-
+        /// <summary>
+        /// Called when user presses OK.
+        /// </summary>
         public void Accept()
         {
+            // check for validation errors
             if (this.HasValidationErrors)
             {
                 this.ShowValidation(true);
                 return;
             }
 
+            // exit normally
             this.Exit(ApplicationComponentExitCode.Normal);
         }
 
+        /// <summary>
+        /// Called when user presses Cancel.
+        /// </summary>
         public void Cancel()
         {
             this.Exit(ApplicationComponentExitCode.Cancelled);

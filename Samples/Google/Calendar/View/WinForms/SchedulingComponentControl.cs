@@ -36,6 +36,7 @@ namespace ClearCanvas.Samples.Google.Calendar.View.WinForms
             _appointmentsTableView.Table = _component.Appointments;
             _appointmentsTableView.DataBindings.Add("Selection", _component, "SelectedAppointment", true, DataSourceUpdateMode.OnPropertyChanged);
             _appointmentsTableView.MenuModel = _component.MenuModel;
+            _appointmentsTableView.ToolbarModel = _component.ToolbarModel;
         }
 
         private void _addButton_Click(object sender, EventArgs e)

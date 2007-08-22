@@ -70,6 +70,24 @@ namespace ClearCanvas.Samples.Google.Calendar {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Comment.
+        /// </summary>
+        internal static string AppointmentTableComment {
+            get {
+                return ResourceManager.GetString("AppointmentTableComment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Date.
+        /// </summary>
+        internal static string AppointmentTableDate {
+            get {
+                return ResourceManager.GetString("AppointmentTableDate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Scheduling.
         /// </summary>
         internal static string SchedulingTool {

@@ -35,7 +35,7 @@ namespace ClearCanvas.Samples.Google.Calendar.Mail.View.WinForms
             // 
             // _emailAddress
             // 
-            this._emailAddress.LabelText = "Send To:";
+            this._emailAddress.LabelText = "E-mail Address:";
             this._emailAddress.Location = new System.Drawing.Point(17, 28);
             this._emailAddress.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
             this._emailAddress.Mask = "";
@@ -66,6 +66,7 @@ namespace ClearCanvas.Samples.Google.Calendar.Mail.View.WinForms
             // 
             // EmailComponentControl
             // 
+            this.AcceptButton = this._okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this._okButton);

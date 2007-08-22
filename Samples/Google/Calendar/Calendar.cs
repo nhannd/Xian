@@ -10,7 +10,11 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Samples.Google.Calendar
 {
-    public class Calendar {
+    /// <summary>
+    /// Provides access to a Google calendar.
+    /// </summary>
+    public class Calendar
+    {
 
         const string CALENDAR_URI = "http://www.google.com/calendar/feeds/default/private/full";
 
@@ -22,6 +26,13 @@ namespace ClearCanvas.Samples.Google.Calendar
             _service.setUserCredentials("clearcanvas.demo", "clearcanvas1");
         }
 
+        /// <summary>
+        /// Queries the calendar for events matching the specified criteria.
+        /// </summary>
+        /// <param name="fullTextQuery"></param>
+        /// <param name="from"></param>
+        /// <param name="until"></param>
+        /// <returns></returns>
         public CalendarEvent[] GetEvents(string fullTextQuery, DateTime? from, DateTime? until)
         {
             EventQuery query = new EventQuery();
@@ -48,6 +59,14 @@ namespace ClearCanvas.Samples.Google.Calendar
             return events.ToArray();
         }
 
+        /// <summary>
+        /// Adds a new event to the calendar using the specified information.
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="description"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        /// <returns></returns>
         public CalendarEvent AddEvent(string title, string description, DateTime? start, DateTime? end)
         {
             EventEntry entry = new EventEntry();

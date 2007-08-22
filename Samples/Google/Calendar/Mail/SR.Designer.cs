@@ -59,5 +59,42 @@ namespace ClearCanvas.Samples.Google.Calendar.Mail {
                 resourceCulture = value;
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send Appointment Notification.
+        /// </summary>
+        internal static string EmailDialogTitle {
+            get {
+                return ResourceManager.GetString("EmailDialogTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Appointment scheduled for: {0}
+        ///Comment: {1}.
+        /// </summary>
+        internal static string MailBodyMessage {
+            get {
+                return ResourceManager.GetString("MailBodyMessage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Send Notification.
+        /// </summary>
+        internal static string MenuSendEmail {
+            get {
+                return ResourceManager.GetString("MenuSendEmail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sending mail....
+        /// </summary>
+        internal static string SendingMailMessage {
+            get {
+                return ResourceManager.GetString("SendingMailMessage", resourceCulture);
+            }
+        }
     }
 }
