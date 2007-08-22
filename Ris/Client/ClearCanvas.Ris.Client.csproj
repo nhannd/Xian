@@ -213,6 +213,24 @@
     <EmbeddedResource Include="Icons\NextPageToolSmall.png" />
     <EmbeddedResource Include="Icons\PreviousPageToolSmall.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ContainerFolderClosedLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ContainerFolderOpenSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ContainerFolderClosedMedium.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ContainerFolderClosedSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ContainerFolderOpenLarge.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\ContainerFolderOpenMedium.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

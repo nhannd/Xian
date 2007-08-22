@@ -119,8 +119,7 @@ namespace ClearCanvas.Ris.Client
             try
             {
                 // Find any containers that exist for this folder type
-                IContainerFolder container = _containers[folder.GetType()];
-                container.AddFolder(folder);
+                _folderExplorer.AddFolder(folder, _containers[folder.GetType()]);
             }
             catch (KeyNotFoundException)
             {

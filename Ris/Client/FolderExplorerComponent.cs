@@ -17,6 +17,7 @@ namespace ClearCanvas.Ris.Client
     {
         IDesktopWindow DesktopWindow { get; }
         void AddFolder(IFolder folder);
+        void AddFolder(IFolder folder, IContainerFolder container);
         void RemoveFolder(IFolder folder);
         IFolder SelectedFolder { get; set; }
         event EventHandler SelectedFolderChanged;
@@ -63,12 +64,17 @@ namespace ClearCanvas.Ris.Client
 
             public void AddFolder(IFolder folder)
             {
-                _component._folderTree.Items.Add(folder);
+                _component.AddFolder(folder);
+            }
+
+            public void AddFolder(IFolder folder, IContainerFolder container)
+            {
+                _component.AddFolder(folder, container);
             }
 
             public void RemoveFolder(IFolder folder)
             {
-                _component._folderTree.Items.Remove(folder);
+                _component.RemoveFolder(folder);
             }
 
             public IFolder SelectedFolder
@@ -117,6 +123,7 @@ namespace ClearCanvas.Ris.Client
 
         private IExtensionPoint _folderExplorerToolExtensionPoint;
         private Tree<IFolder> _folderTree;
+        private IDictionary<IFolder, ITree> _containers;
         private IFolder _selectedFolder;
         private event EventHandler _selectedFolderChanged;
         private event EventHandler _folderIconChanged;
@@ -137,8 +144,8 @@ namespace ClearCanvas.Ris.Client
         /// </summary>
         public FolderExplorerComponent(IExtensionPoint extensionPoint)
         {
+            _containers = new Dictionary<IFolder, ITree>();
             _folderTree = new Tree<IFolder>(GetBinding());
-            _folderTree.Items.ItemsChanged += new EventHandler<ItemChangedEventArgs>(RootFoldersChangedEventHandler);
             _folderExplorerToolExtensionPoint = extensionPoint;
         }
 
@@ -160,7 +167,13 @@ namespace ClearCanvas.Ris.Client
                 {
                     if (folder is IContainerFolder)
                     {
-                        return new Tree<IFolder>(GetBinding(), ((IContainerFolder)folder).Subfolders);
+                        // Sub trees need to be cached so that delegates assigned to its ItemsChanged event are not orphaned 
+                        // on successive GetSubTree calls
+                        if (_containers.ContainsKey(folder) == false)
+                        {
+                            _containers.Add(folder, new Tree<IFolder>(GetBinding(), ((IContainerFolder)folder).Subfolders));
+                        }
+                        return _containers[folder];
                     }
                     else
                     {
@@ -179,8 +192,16 @@ namespace ClearCanvas.Ris.Client
 
             _tools = new ToolSet(_folderExplorerToolExtensionPoint, new FolderExplorerToolContext(this));
 
-            foreach (IFolder folder in _folderTree.Items)
+            RefreshCounts(_folderTree);
+        }
+
+        private void RefreshCounts(ITree tree)
+        {
+            if (tree == null) return;
+
+            foreach (IFolder folder in tree.Items)
             {
+                RefreshCounts(tree.Binding.GetSubTree(folder));
                 folder.RefreshCount();
             }
         }
@@ -397,31 +418,57 @@ namespace ClearCanvas.Ris.Client
             return DragDropKind.None;
         }
 
-        private void RootFoldersChangedEventHandler(object sender, ItemChangedEventArgs e)
+        private void AddFolder(IFolder folder)
         {
-            if (e.ChangeType == ItemChangeType.ItemAdded)
-            {
-                IFolder folder = (IFolder)e.Item;
-                folder.TextChanged += FolderTextChangedEventHandler;
-                folder.IconChanged += FolderIconChangedEventHandler;
-            }
+            _folderTree.Items.Add(folder);
+            folder.TextChanged += FolderChangedEventHandler;
+            folder.IconChanged += FolderChangedEventHandler;
+        }
 
-            if (e.ChangeType == ItemChangeType.ItemRemoved)
+        private void RemoveFolder(IFolder folder)
+        {
+            _folderTree.Items.Remove(folder);
+            folder.TextChanged -= FolderChangedEventHandler;
+            folder.IconChanged -= FolderChangedEventHandler;
+        }
+
+        private void AddFolder(IFolder folder, IContainerFolder container)
+        {
+            container.AddFolder(folder);
+            folder.TextChanged += FolderChangedEventHandler;
+            folder.IconChanged += FolderChangedEventHandler;
+        }
+
+        // Tells the item collection holding the specified folder that the folder has been changed
+        private void FolderChangedEventHandler(object sender, EventArgs e)
+        {
+            IFolder folder = (IFolder)sender;
+            ITree tree = GetSubtreeContainingFolder(_folderTree, folder);
+            if (tree != null)
             {
-                IFolder folder = (IFolder)e.Item;
-                folder.TextChanged -= FolderTextChangedEventHandler;
-                folder.IconChanged -= FolderIconChangedEventHandler;
+                ((Tree<IFolder>)tree).Items.NotifyItemUpdated(folder);
             }
         }
 
-        private void FolderTextChangedEventHandler(object sender, EventArgs e)
+        // Recursively finds the correct [sub]tree which holds the specified folder
+        private ITree GetSubtreeContainingFolder(ITree tree, IFolder folder)
         {
-            _folderTree.Items.NotifyItemUpdated((IFolder)sender);
-        }
+            if (tree == null) return null;
 
-        private void FolderIconChangedEventHandler(object sender, EventArgs e)
-        {
-            _folderTree.Items.NotifyItemUpdated((IFolder)sender);
+            if (tree.Items.Contains(folder))
+            {
+                return tree;
+            }
+            else
+            {
+                foreach (IFolder treeFolder in tree.Items)
+                {
+                    ITree subTree = GetSubtreeContainingFolder(tree.Binding.GetSubTree(treeFolder), folder);
+                    if (subTree != null) return subTree;
+                }
+            }
+
+            return null;
         }
 
         #endregion
