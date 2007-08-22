@@ -143,8 +143,10 @@ namespace ClearCanvas.Desktop.Validation
                 delegate(IApplicationComponent component)
                 {
                     string value = (string)getter(component);
-
-                    return new ValidationResult((_allowNull && string.IsNullOrEmpty(value)) || Regex.Match(value, _pattern).Success, message);
+                    if (_allowNull && string.IsNullOrEmpty(value))
+                        return new ValidationResult(true, "");
+                    else
+                        return new ValidationResult(Regex.Match(value ?? "", _pattern).Success, message);
                 });
         }
     }
