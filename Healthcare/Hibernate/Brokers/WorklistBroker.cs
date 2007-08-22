@@ -50,9 +50,9 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         public bool NameExistsForType(string name, string type)
         {
-            WorklistSearchCriteria criteria = new WorklistSearchCriteria();
-            criteria.Name.EqualTo(name);
-            return this.Find(criteria).Count != 0;
+            IQuery query = this.Context.CreateHibernateQuery("select w from Worklist w where w.Name = :name and w.class = " + type);
+            query.SetParameter("name", name);
+            return query.List().Count > 0;
         }
 
         #endregion
