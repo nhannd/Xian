@@ -27,7 +27,6 @@ namespace ClearCanvas.Dicom.Network
         private TcpListener _tcpListener = null;
         private Thread _theThread = null;
         private bool _stop = false;
-        public static ManualResetEvent _threadStop = new ManualResetEvent(false);
 
         #endregion
 
@@ -130,7 +129,6 @@ namespace ClearCanvas.Dicom.Network
         private void StopThread()
         {
             _stop = true;
-            _threadStop.Set();
 
             _theThread.Join();
         }
@@ -138,42 +136,37 @@ namespace ClearCanvas.Dicom.Network
         public void Listen()
         {
             _tcpListener = new TcpListener(_ipEndPoint);
-
             try
             {
-                _tcpListener.Start();
+                _tcpListener.Start(50);
             }
             catch (SocketException e)
             {
                 DicomLogger.LogErrorException(e,"Unexpected exception when starting TCP listener");
+                DicomLogger.LogError("Shutting down listener on {0}", _ipEndPoint.ToString());
                 return;
             }
 
-            while (true)
+            while (_stop == false)
             {
-                _tcpListener.BeginAcceptSocket(
-                    new AsyncCallback(DoBeginAcceptCallback), this);
-
-                _threadStop.WaitOne();
-                _threadStop.Reset();
-
-                if (_stop == true)
-                    return;
-
-                // We have a connection
-                
+                // Tried Async i/o here, but had some weird problems with connections not getting
+                // through.
+                if (_tcpListener.Pending())
+                {
+                    Socket theSocket = _tcpListener.AcceptSocket();
+                    DicomServer server = new DicomServer(theSocket, _applications);
+                    continue;
+                }
+                Thread.Sleep(10);               
             }
-        }
-
-        private void DoBeginAcceptCallback(IAsyncResult ar)
-        {
-            if (_tcpListener == null || _stop == true)
-                return;
-
-            Socket theClient = _tcpListener.EndAcceptSocket(ar);
-            DicomServer server = new DicomServer(theClient,_applications);
-
-            _threadStop.Set();
+            try
+            {
+                _tcpListener.Stop();
+            }
+            catch (SocketException e)
+            {
+                DicomLogger.LogErrorException(e, "Unexpected exception when stoppinging TCP listener on {0}",_ipEndPoint,ToString());
+            }
         }
 
         #region IDisposable Implementation

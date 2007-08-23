@@ -620,7 +620,7 @@ namespace ClearCanvas.Dicom.Network
                     }
                     else
                     {
-                        Thread.Sleep(100);
+                        Thread.Sleep(10);
                     }
                 }
                 _network.Close();
