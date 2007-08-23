@@ -8,6 +8,9 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Shreds.WorkQueueServer
 {
+    /// <summary>
+    /// Plugin to handle WorkQueue processing for the ImageServer.
+    /// </summary>
     [ExtensionOf(typeof(ShredExtensionPoint))]
     public class WorkQueueServerExtension : WcfShred
     {

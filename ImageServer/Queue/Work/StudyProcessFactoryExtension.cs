@@ -8,6 +8,9 @@ using ClearCanvas.ImageServer.Model;
 
 namespace ClearCanvas.ImageServer.Queue.Work
 {
+    /// <summary>
+    /// Plugin for processing 'StudyProcess' WorkQueue items.
+    /// </summary>
     [ExtensionOf(typeof(WorkQueueFactoryExtensionPoint))]
     public class StudyProcessFactoryExtension : IWorkQueueProcessorFactory
     {
@@ -18,8 +21,6 @@ namespace ClearCanvas.ImageServer.Queue.Work
         public StudyProcessFactoryExtension()
         { }
         #endregion
-
-
 
         #region IWorkQueueProcessorFactory Members
 

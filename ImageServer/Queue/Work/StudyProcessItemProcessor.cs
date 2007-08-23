@@ -13,6 +13,9 @@ using ClearCanvas.ImageServer.Model.Brokers;
 
 namespace ClearCanvas.ImageServer.Queue.Work
 {
+    /// <summary>
+    /// Processor for 'StudyProcess' WorkQueue entries.
+    /// </summary>
     public class StudyProcessItemProcessor : IWorkQueueItemProcessor
     {
         private IReadContext _readContext;
@@ -24,12 +27,15 @@ namespace ClearCanvas.ImageServer.Queue.Work
             _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
         }
 
+        /// <summary>
+        /// Load the storage location for the WorkQueue item.
+        /// </summary>
+        /// <param name="item">The item to load the location for.</param>
         private void LoadStorageLocation(WorkQueue item)
         {
             ISelectStudyStorageLocation select = _readContext.GetBroker<ISelectStudyStorageLocation>();
 
             StudyStorageLocationSelectParameters parms = new StudyStorageLocationSelectParameters();
-
             parms.StudyStorageKey = item.StudyStorageKey;
 
             IList<StudyStorageLocation> list = select.Execute(parms);
@@ -43,6 +49,10 @@ namespace ClearCanvas.ImageServer.Queue.Work
             _storageLocation = list[0];
         }
 
+        /// <summary>
+        /// Load the specific SOP Instance Uids in the database for the WorkQueue item.
+        /// </summary>
+        /// <param name="item">The WorkQueue item.</param>
         private void LoadUids(WorkQueue item)
         {
             ISelectWorkQueueUids select = _readContext.GetBroker<ISelectWorkQueueUids>();
@@ -55,12 +65,15 @@ namespace ClearCanvas.ImageServer.Queue.Work
 
         }
 
+        /// <summary>
+        /// Delete an entry in the WorkQueueUid table.
+        /// </summary>
+        /// <param name="sop">The WorkQueueUid entry to delete.</param>
         private void DeleteWorkQueueUid(WorkQueueUid sop)
         {
             IDeleteWorkQueueUid delete = _readContext.GetBroker<IDeleteWorkQueueUid>();
 
             WorkQueueUidDeleteParameters parms = new WorkQueueUidDeleteParameters();
-
             parms.WorkQueueUidKey = sop.GetKey();
 
             delete.Execute(parms);
@@ -72,23 +85,41 @@ namespace ClearCanvas.ImageServer.Queue.Work
 
             file.Load();
 
-            String patientName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
+            // Get the Patients Name for processing purposes.
+            String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
 
+            // Setup the insert parameters
             InstanceInsertParameters parms = new InstanceInsertParameters();
-
             file.DataSet.LoadDicomFields(parms);
-
             parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
             parms.StatusEnum = StatusEnum.GetEnum("Online");
 
+            // Get the Insert Instance broker and do the insert
             IInsertInstance insert = _readContext.GetBroker<IInsertInstance>();
-
             IList<InstanceKeys> keys = insert.Execute(parms);
 
-            Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientName);
+            // If the Request Attributes Sequence is in the dataset, do an insert.
+            if (file.DataSet.Contains(DicomTags.RequestAttributesSequence))
+            {
+                DicomAttributeSQ attribute = file.DataSet[DicomTags.RequestAttributesSequence] as DicomAttributeSQ;
+                if (!attribute.IsEmpty)
+                {
+                    foreach (DicomSequenceItem sequenceItem in (DicomSequenceItem[])attribute.Values)
+                    {
+                        RequestAttributesInsertParameters requestParms = new RequestAttributesInsertParameters();
+                        sequenceItem.LoadDicomFields(requestParms);
+                        requestParms.SeriesKey = keys[0].SeriesKey;
+
+                        IInsertRequestAttributes insertRequest = _readContext.GetBroker<IInsertRequestAttributes>();
+                        insertRequest.Execute(requestParms);
+                    }
+                }
+            }
+
+            Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
         }
 
-        private void ProcessList(WorkQueue item)
+        private void ProcessUidList(WorkQueue item)
         {
             string path = "";
             foreach (WorkQueueUid sop in _uidList)
@@ -109,13 +140,16 @@ namespace ClearCanvas.ImageServer.Queue.Work
                 DeleteWorkQueueUid(sop);                
             }
 
+            // Update the WorkQueue item status and times.
             IUpdateWorkQueue update = _readContext.GetBroker<IUpdateWorkQueue>();
+            
             WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
             parms.StatusEnum = StatusEnum.GetEnum("Pending");
             parms.WorkQueueKey = item.GetKey();
             parms.StudyStorageKey = item.StudyStorageKey;
             parms.ScheduledTime = DateTime.Now.AddSeconds(15.0);
             parms.ExpirationTime = DateTime.Now.AddMinutes(5.0);
+
             if (false == update.Execute(parms))
             {
                 Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID to Pending: {0}", item.GetKey().ToString()); 
@@ -124,10 +158,16 @@ namespace ClearCanvas.ImageServer.Queue.Work
 
         #region IWorkQueueItemProcessor Members
 
+        /// <summary>
+        /// Process a <see cref="WorkQueue"/> item.
+        /// </summary>
+        /// <param name="item">The item to process.</param>
         public void Process(WorkQueue item)
         {
+            //Load the storage location.
             LoadStorageLocation(item);
 
+            //Load the specific UIDs that need to be processed.
             LoadUids(item);
 
             if (_uidList.Count == 0)
@@ -156,7 +196,7 @@ namespace ClearCanvas.ImageServer.Queue.Work
                 }
             }
             else
-                ProcessList(item);
+                ProcessUidList(item);
         }
 
         #endregion

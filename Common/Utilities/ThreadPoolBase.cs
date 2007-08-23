@@ -178,6 +178,7 @@ namespace ClearCanvas.Common.Utilities
 			{
 				ThreadStart threadStart = new ThreadStart(this.RunThread);
 				Thread thread = new Thread(threadStart);
+                thread.Name = String.Format("Pool {0}", thread.ManagedThreadId);
 				thread.IsBackground = true;
 				thread.Priority = _threadPriority;
 

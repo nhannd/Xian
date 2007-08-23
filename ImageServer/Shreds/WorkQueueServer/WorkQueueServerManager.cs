@@ -6,10 +6,14 @@ using ClearCanvas.ImageServer.Queue;
 
 namespace ClearCanvas.ImageServer.Shreds.WorkQueueServer
 {
+    /// <summary>
+    /// Shreds namespace manager of processing threads for the WorkQueue.
+    /// </summary>
     public class WorkQueueServerManager
     {
         #region Private Members
         private static WorkQueueServerManager _instance;
+        private WorkQueueProcessor _theProcessor;
         #endregion
 
         #region Constructors
@@ -41,12 +45,20 @@ namespace ClearCanvas.ImageServer.Shreds.WorkQueueServer
 
         public void Start()
         {
-            WorkQueueProcessor.Start();
+            if (_theProcessor == null)
+            {
+                _theProcessor = new WorkQueueProcessor("WorkQueue Processor",5); // 5 threads for processor
+                _theProcessor.Start();
+            }
         }
 
         public void Stop()
         {
-            WorkQueueProcessor.Stop();
+            if (_theProcessor != null)
+            {
+                _theProcessor.Stop();
+                _theProcessor = null;
+            }
         }
         #endregion
     }

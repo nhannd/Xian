@@ -38,10 +38,12 @@
     <Compile Include="Brokers\IGetFilesystemTiers.cs" />
     <Compile Include="Brokers\IGetServerPartitions.cs" />
     <Compile Include="Brokers\IInsertInstance.cs" />
+    <Compile Include="Brokers\IInsertRequestAttributes.cs" />
     <Compile Include="Brokers\IInsertServerPartition.cs" />
     <Compile Include="Brokers\IInsertStudyStorage.cs" />
     <Compile Include="Brokers\IGetSopClasses.cs" />
     <Compile Include="Brokers\IInsertWorkQueueStudyProcess.cs" />
+    <Compile Include="Brokers\ISelectRequestAttributes.cs" />
     <Compile Include="Brokers\ISelectServerPartitionSopClasses.cs" />
     <Compile Include="Brokers\ISelectStudyStorageLocation.cs" />
     <Compile Include="Brokers\ISelectWorkQueueUids.cs" />
@@ -53,10 +55,12 @@
     <Compile Include="Brokers\ISelectWorkQueue.cs" />
     <Compile Include="InstanceKeys.cs" />
     <Compile Include="Parameters\InstanceInsertParameters.cs" />
+    <Compile Include="Parameters\RequestAttributesInsertParameters.cs" />
+    <Compile Include="Parameters\RequestAttributesSelectParameters.cs" />
     <Compile Include="Parameters\WorkQueueUpdateParameters.cs" />
     <Compile Include="PartitionSopClass.cs" />
     <Compile Include="Parameters\PartitionSopClassSelectParameters.cs" />
-    <Compile Include="RequestAttribute.cs" />
+    <Compile Include="RequestAttributes.cs" />
     <Compile Include="Series.cs" />
     <Compile Include="Parameters\ServerPartitionInsertParameters.cs" />
     <Compile Include="SopClass.cs" />

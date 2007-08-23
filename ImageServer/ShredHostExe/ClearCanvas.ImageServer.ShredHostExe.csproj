@@ -92,6 +92,7 @@ copy $(ProjectDir)..\..\ReferencedAssemblies\Iesi.Collections.dll $(TargetDir)co
 copy $(ProjectDir)..\..\ReferencedAssemblies\log4net.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\Spring.Aop.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\Spring.Core.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\nunit.framework.dll $(TargetDir)common
 
 rem copy Offis dlls
 copy $(ProjectDir)..\..\Dicom\OffisWrapper\csharp\$(ConfigurationName)\ClearCanvas.Dicom.OffisWrapper.dll $(TargetDir)common
