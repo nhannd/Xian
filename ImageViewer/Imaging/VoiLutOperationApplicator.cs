@@ -24,11 +24,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <returns>the <see cref="IVoiLutManager"/> which should be the originator for <b>all</b> Voi Lut undoable operation.</returns>
 		protected override IMemorable GetOriginator(IPresentationImage image)
 		{
-			IVoiLutLinearProvider provider = image as IVoiLutLinearProvider;
+			IVoiLutProvider provider = image as IVoiLutProvider;
 			if (provider == null)
-				throw new Exception("Presentation image does not support IVoiLutManagerProvider");
+				throw new Exception("Presentation image does not support IVoiLutProvider");
 
-			return provider.VoiLutLinear;
+			return provider.VoiLutManager;
 		}
 	}
 }

@@ -5,7 +5,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public interface IVoiLutProvider
+	public interface IVoiLutProvider : IDrawable
 	{
 		IVoiLutManager VoiLutManager { get; }
 	}

@@ -66,13 +66,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			remove { base.TooltipChanged -= value; }
 		}
 
+		private bool CanWindowLevel()
+		{
+			IVoiLutProvider provider = this.SelectedVoiLutProvider;
+			if (provider == null || provider.VoiLutManager == null)
+				return false;
+
+			IVoiLut voiLut = provider.VoiLutManager.GetLut();
+			return (voiLut is IVoiLutLinear);
+		}
+
 		private void CaptureBeginState()
 		{
-			// this.SelectedVOILUTLinearProvider.VoiLutLinear is null 
-			// when image is not grayscale
-			if (this.SelectedPresentationImage == null ||
-				this.SelectedVoiLutLinearProvider == null ||
-				this.SelectedVoiLutLinearProvider.VoiLutLinear == null)
+			if (!CanWindowLevel())
 				return;
 
 			_applicator = new VoiLutOperationApplicator(this.SelectedPresentationImage);
@@ -83,14 +89,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void CaptureEndState()
 		{
-			// this.SelectedVOILUTLinearProvider.VoiLutLinear is null 
-			// when image is not grayscale
-			if (this.SelectedPresentationImage == null ||
-				this.SelectedVoiLutLinearProvider == null ||
-				this.SelectedVoiLutLinearProvider.VoiLutLinear == null)
-				return;
-
-			if (_command == null)
+			if (!CanWindowLevel() || _command == null)
 				return;
 
 			_applicator.ApplyToLinkedImages();
@@ -135,19 +134,26 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private void IncrementWindow(double windowIncrement, double levelIncrement)
 		{
-			// this.SelectedVOILUTLinearProvider.VoiLutLinear is null 
-			// when image is not grayscale
-			if (this.SelectedPresentationImage == null ||
-				this.SelectedVoiLutLinearProvider == null ||
-				this.SelectedVoiLutLinearProvider.VoiLutLinear == null)
+			if (!CanWindowLevel())
 				return;
 
 			CodeClock counter = new CodeClock();
 			counter.Start();
 
-			this.SelectedVoiLutLinearProvider.VoiLutLinear.WindowWidth += windowIncrement;
-			this.SelectedVoiLutLinearProvider.VoiLutLinear.WindowCenter += levelIncrement;
-			this.SelectedVoiLutLinearProvider.Draw();
+			IVoiLutLinear linearLut = this.SelectedVoiLutProvider.VoiLutManager.GetLut() as IVoiLutLinear;
+			IBasicVoiLutLinear standardLut = linearLut as IBasicVoiLutLinear;
+			if (standardLut == null)
+			{
+				BasicVoiLutLinearCreationParameters parameters = new BasicVoiLutLinearCreationParameters();
+				parameters.WindowCenter = linearLut.WindowCenter;
+				parameters.WindowWidth = linearLut.WindowWidth;
+				this.SelectedVoiLutProvider.VoiLutManager.InstallLut(parameters);
+				standardLut = this.SelectedVoiLutProvider.VoiLutManager.GetLut() as IBasicVoiLutLinear;
+			}
+
+			standardLut.WindowWidth += windowIncrement;
+			standardLut.WindowCenter += levelIncrement;
+			this.SelectedVoiLutProvider.Draw();
 
 			counter.Stop();
 

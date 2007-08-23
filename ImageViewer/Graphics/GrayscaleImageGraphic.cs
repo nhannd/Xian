@@ -1,3 +1,4 @@
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Rendering;
@@ -7,15 +8,28 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// A grayscale <see cref="IndexedImageGraphic"/>.
 	/// </summary>
-	public class GrayscaleImageGraphic : IndexedImageGraphic, IVoiLutLinearProvider
+	public class GrayscaleImageGraphic : IndexedImageGraphic, IVoiLutProvider, IPresentationLutProvider
 	{
+		private enum Luts
+		{ 
+			Modality = 1,
+			Voi = 2,
+			Presentation = 3
+		}
+
 		#region Private fields
 
 		private LutComposer _lutComposer;
 		private LutFactory _lutFactory;
 		
-		private int _minPixelValue;
-		private int _maxPixelValue;
+		private double _rescaleSlope;
+		private double _rescaleIntercept;
+
+		private IVoiLutManager _voiLutManager;
+		private IPresentationLutManager _presentationLutManager;
+
+		private VoiLutCreationParameters _defaultVoiLutCreationParameters;
+		private PresentationLutCreationParameters _defaultPresentationLutCreationParameters;
 
 		#endregion
 
@@ -47,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				   15, /* high bit */
 				   false) /* is signed */
 		{
-			Initialize(false, 1.0, 0.0);
+			Initialize(1, 0);
 		}
 
 		/// <summary>
@@ -74,7 +88,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 			int bitsStored,
 			int highBit,
 			bool isSigned,
-			bool inverted,
 			double rescaleSlope,
 			double rescaleIntercept,
 			byte[] pixelData)
@@ -87,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				isSigned,
 				pixelData)
 		{
-			Initialize(inverted, rescaleSlope, rescaleIntercept);
+			Initialize(rescaleSlope, rescaleIntercept);
 		}
 
 		/// <summary>
@@ -130,90 +143,91 @@ namespace ClearCanvas.ImageViewer.Graphics
 				isSigned,
 				pixelDataGetter)
 		{
-			Initialize(inverted, rescaleSlope, rescaleIntercept);
+			Initialize(rescaleSlope, rescaleIntercept);
 		}
 
-		private void Initialize(bool inverted, double rescaleSlope, double rescaleIntercept)
+		private void Initialize(double rescaleSlope, double rescaleIntercept)
 		{
-			_minPixelValue = int.MinValue;
-			_maxPixelValue = int.MaxValue;
-
-			InstallGrayscaleLuts(rescaleSlope, rescaleIntercept, inverted);
+			_rescaleSlope = rescaleSlope <= double.Epsilon ? 1 : rescaleSlope;
+			_rescaleIntercept = rescaleIntercept;
 		}
 
 		#endregion
 
 		#region Public properties
 
-		/// <summary>
-		/// Returns the minimum pixel value in the image pixel data itself.  
-		/// </summary>
-		/// <remarks>
-		/// Note that on first calling the get method
-		/// of this property, both the minimum and maximum pixel values will be calculated, after which they are cached
-		/// for performance reasons.  So, if the pixel data in this image is variable, the minimum and maximum values 
-		/// must also be updated in order to remain correct.		
-		/// </remarks>
-		public virtual int MinPixelValue
+		#region IVoiLutProvider Members
+
+		public IVoiLutManager VoiLutManager
 		{
-			get
+			get 
 			{
-				if (_minPixelValue == int.MinValue)
-					((IndexedPixelData)this.PixelData).CalculateMinMaxPixelValue(out _minPixelValue, out _maxPixelValue);
+				if (_voiLutManager == null)
+					_voiLutManager = new VoiLutManager(this);
 
-				return _minPixelValue;
-			}
-			protected set
-			{
-				Platform.CheckArgumentRange(
-					value, 
-					((IndexedPixelData)this.PixelData).AbsoluteMinPixelValue, 
-					((IndexedPixelData)this.PixelData).AbsoluteMaxPixelValue, "value");
-
-				_minPixelValue = value;
+				return _voiLutManager;
 			}
 		}
 
-		/// <summary>
-		/// Returns the maximum pixel value in the image pixel data itself.
-		/// </summary>
-		/// <remarks>
-		/// Note that on first calling the get method
-		/// of this property, both the minimum and maximum pixel values will be calculated, after which they are cached
-		/// for performance reasons.  So, if the pixel data in this image is variable, the minimum and maximum values 
-		/// must also be updated in order to remain correct.
-		/// </remarks>
-		public virtual int MaxPixelValue
+		#endregion
+
+		#region IPresentationLutProvider Members
+
+		public IPresentationLutManager PresentationLutManager
 		{
 			get
 			{
-				if (_maxPixelValue == int.MaxValue)
-					((IndexedPixelData)this.PixelData).CalculateMinMaxPixelValue(out _minPixelValue, out _maxPixelValue);
+				if (_presentationLutManager == null)
+					_presentationLutManager = new PresentationLutManager(this);
 
-				return _maxPixelValue;
+				return _presentationLutManager;
 			}
-			protected set
-			{
-				Platform.CheckArgumentRange(
-					value, 
-					((IndexedPixelData)this.PixelData).AbsoluteMinPixelValue, 
-					((IndexedPixelData)base.PixelData).AbsoluteMaxPixelValue, "value");
+		}
 
-				_maxPixelValue = value;
+		#endregion
+		
+		public VoiLutCreationParameters DefaultVoiLutCreationParameters
+		{
+			get 
+			{
+				if (_defaultVoiLutCreationParameters == null)
+					_defaultVoiLutCreationParameters = new BasicVoiLutLinearCreationParameters();
+
+				return _defaultVoiLutCreationParameters; 
+			}
+			set
+			{
+				Platform.CheckForNullReference(value, "DefaultVoiLutCreationParameters");
+				_defaultVoiLutCreationParameters = value; 
+			}
+		}
+
+		public PresentationLutCreationParameters DefaultPresentationLutCreationParameters
+		{
+			get 
+			{
+				if (_defaultPresentationLutCreationParameters == null)
+					_defaultPresentationLutCreationParameters = new GrayscalePresentationLutCreationParameters();
+
+				return _defaultPresentationLutCreationParameters; 
+			}
+			set 
+			{
+				Platform.CheckForNullReference(value, "DefaultPresentationLutCreationParameters"); 
+				_defaultPresentationLutCreationParameters = value; 
 			}
 		}
 
 		/// <summary>
 		/// Gets the modality LUT.
 		/// </summary>
-		public IComposableLut ModalityLut
+		public IModalityLut ModalityLut
 		{
-			get { return this.LutComposer.LutCollection[0]; }
-		}
-
-		public void SetVoiLut(string name)
-		{
-			
+			get
+			{
+				InitializeNecessaryLuts(Luts.Modality);
+				return this.LutComposer.LutCollection[0] as IModalityLut; 
+			}
 		}
 
 		/// <summary>
@@ -221,12 +235,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public IVoiLut VoiLut
 		{
-			get { return this.LutComposer.LutCollection[1] as IVoiLut; }
-		}
-
-		public void SetPresentationLut(string name)
-		{
-			
+			get
+			{
+				InitializeNecessaryLuts(Luts.Voi);
+				return this.LutComposer.LutCollection[1] as IVoiLut; 
+			}
 		}
 
 		/// <summary>
@@ -234,7 +247,11 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </summary>
 		public IPresentationLut PresentationLut
 		{
-			get { return this.LutComposer.LutCollection[2] as IPresentationLut; }
+			get 
+			{
+				InitializeNecessaryLuts(Luts.Presentation);
+				return this.LutComposer.LutCollection[2] as IPresentationLut; 
+			}
 		}
 
 		/// <summary>
@@ -247,22 +264,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// </remarks>
 		public override int[] OutputLut
 		{
-			get { return this.LutComposer.OutputLut; }
+			get 
+			{
+				InitializeNecessaryLuts(Luts.Presentation); 
+				return this.LutComposer.OutputLut; 
+			}
 		}
-
-		#region IVOILUTLinearProvider Members
-
-		/// <summary>
-		/// Gets the linear VOI LUT.
-		/// </summary>
-		/// <value>The linear VOI LUT or <b>null</b> if the VOI LUT
-		/// is not linear.</value>
-		public virtual IVoiLutLinear VoiLutLinear
-		{
-			get { return this.VoiLut as IVoiLutLinear; }
-		}
-
-		#endregion
 
 		#endregion
 
@@ -311,46 +318,76 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
-		//#region Static methods
-
-		//public static IStatefulVoiLutLinear NewVoiLutLinear(GrayscaleImageGraphic fromGraphic, IVoiLutLinearState state)
-		//{
-		//    return new StatefulVoiLutLinear(state, fromGraphic.ModalityLUT.MinOutputValue, fromGraphic.ModalityLUT.MaxOutputValue);
-		//}
-
-		//public static IStatefulVoiLutLinear NewVoiLutLinear(GrayscaleImageGraphic fromGraphic)
-		//{
-		//    return new StatefulVoiLutLinear(fromGraphic.ModalityLUT.MinOutputValue, fromGraphic.ModalityLUT.MaxOutputValue);
-		//}
-
-		//#endregion
-
 		#region Private methods
 
-		private void InstallGrayscaleLuts(
-			double rescaleSlope, 
-			double rescaleIntercept,
-			bool inverted)
+		private void InitializeNecessaryLuts(Luts luts)
 		{
-			ModalityLutLinear modalityLut = this.LutFactory.GetModalityLutLinear(
-				this.BitsStored,
-				this.IsSigned,
-				rescaleSlope,
-				rescaleIntercept);
+			if (luts >= Luts.Modality && LutComposer.LutCollection.Count == 0)
+			{
+				IModalityLut modalityLut = this.LutFactory.GetModalityLutLinear(
+					this.BitsStored,
+					this.IsSigned,
+					_rescaleSlope,
+					_rescaleIntercept);
+			
+				this.LutComposer.LutCollection.Add(modalityLut);
+			}
 
-			this.LutComposer.LutCollection.Add(modalityLut);
+			if (luts >= Luts.Voi && LutComposer.LutCollection.Count == 1)
+			{
+				InstallVoiLut(this.DefaultVoiLutCreationParameters);
+			}
 
-			VoiLutLinear voiLut = new VoiLutLinear(modalityLut.MinOutputValue, modalityLut.MaxOutputValue);
-			this.LutComposer.LutCollection.Add(voiLut);
-
-			PresentationLut presentationLut = this.LutFactory.GetPresentationLut(
-				voiLut.MinOutputValue,
-				voiLut.MaxOutputValue,
-				inverted);
-
-			this.LutComposer.LutCollection.Add(presentationLut);
+			if (luts >= Luts.Presentation && LutComposer.LutCollection.Count == 2)
+			{
+				InstallPresentationLut(this.DefaultPresentationLutCreationParameters);
+			}
 		}
 
 		#endregion
+
+		internal void InstallVoiLut(VoiLutCreationParameters creationParameters)
+		{
+			Platform.CheckForNullReference(creationParameters, "creationParameters");
+
+			creationParameters.MinInputValue = this.ModalityLut.MinOutputValue;
+			creationParameters.MaxInputValue = this.ModalityLut.MaxOutputValue;
+
+			if (this.LutComposer.LutCollection.Count == 1)
+			{
+				IVoiLut lut = this.LutFactory.GetVoiLut(creationParameters);
+				this.LutComposer.LutCollection.Add(lut);
+			}
+			else
+			{
+				if (this.VoiLut.TrySetCreationParametersMemento(creationParameters))
+					return;
+
+				IVoiLut lut = this.LutFactory.GetVoiLut(creationParameters);
+				this.LutComposer.LutCollection[1] = lut;
+			}
+		}
+
+		internal void InstallPresentationLut(PresentationLutCreationParameters creationParameters)
+		{
+			Platform.CheckForNullReference(creationParameters, "creationParameters");
+
+			creationParameters.MinInputValue = this.VoiLut.MinOutputValue;
+			creationParameters.MaxInputValue = this.VoiLut.MaxOutputValue;
+
+			if (this.LutComposer.LutCollection.Count == 2)
+			{
+				IPresentationLut lut = this.LutFactory.GetPresentationLut(creationParameters);
+				this.LutComposer.LutCollection.Add(lut);
+			}
+			else
+			{
+				if (this.PresentationLut.TrySetCreationParametersMemento(creationParameters))
+					return;
+
+				IPresentationLut lut = this.LutFactory.GetPresentationLut(creationParameters);
+				this.LutComposer.LutCollection[2] = lut;
+			}
+		}
 	}
 }

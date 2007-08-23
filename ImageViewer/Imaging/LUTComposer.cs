@@ -9,7 +9,7 @@ using System.Text;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Allows <see cref="IComposableLUT"/> objects
+	/// Allows <see cref="ILUT"/> objects
 	/// be composed together in a pipeline.
 	/// </summary>
 	public class LutComposer : IDisposable
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// A collection of <see cref="IComposableLUT"/> objects.
+		/// A collection of <see cref="ILUT"/> objects.
 		/// </summary>
 		public LutCollection LutCollection
 		{
@@ -95,9 +95,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private void Compose()
 		{
-            CodeClock counter = new CodeClock();
-			counter.Start();
 
+#if DEBUG
+			CodeClock counter = new CodeClock();
+			counter.Start();
+#endif
 			int val;
 
 			for (int i = _minInputValue; i <= _maxInputValue; i++)
@@ -106,7 +108,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 				for (int j = 0; j < this.LutCollection.Count; j++)
 				{
-					IComposableLut lut = this.LutCollection[j];
+					ILut lut = this.LutCollection[j];
 					val = lut[val];
 				}
 
@@ -116,18 +118,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 					_outputLut.Lut[i + _numEntries] = val;
 			}
 
+#if DEBUG
 			counter.Stop();
 
 			string str = String.Format("Compose: {0}\n", counter.ToString());
 			Trace.Write(str);
+#endif
 		}
 
 		private void SetInputRange()
 		{
-			IComposableLut lut = this.LutCollection[0];
+			ILut lut = this.LutCollection[0];
 			_minInputValue = lut.MinInputValue;
 			_maxInputValue = lut.MaxInputValue;
-			_numEntries = lut.Length;
+			_numEntries = _maxInputValue - _minInputValue + 1;
 		}
 
 		private void ValidateLutCollection()
@@ -137,7 +141,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				throw new InvalidOperationException(SR.ExceptionLUTNotAdded);
 
 			// Check for null LUTs
-			foreach (IComposableLut lut in this.LutCollection)
+			foreach (ILut lut in this.LutCollection)
 			{
 				if (lut == null)
 					throw new InvalidOperationException(SR.ExceptionLUTNotAdded);
@@ -151,26 +155,26 @@ namespace ClearCanvas.ImageViewer.Imaging
 			// range of the n-1th LUT.
 			for (int i = 1; i < this.LutCollection.Count; i++)
 			{
-				IComposableLut curLut = this.LutCollection[i];
-				IComposableLut prevLut = this.LutCollection[i - 1];
+				ILut curLut = this.LutCollection[i];
+				ILut prevLut = this.LutCollection[i - 1];
 
 				if (prevLut.MinOutputValue != curLut.MinInputValue ||
 					prevLut.MaxOutputValue != curLut.MaxInputValue)
 					throw new InvalidOperationException(SR.ExceptionLUTInputOutputRange);
 			}
 
-			// Verify that the last LUT is a PresentationLUT
+			//Verify that the last LUT is a PresentationLUT
 			int lastLUT = this.LutCollection.Count - 1;
 
-			if (!(this.LutCollection[lastLUT] is PresentationLut))
-				throw new InvalidOperationException("Last LUT in pipeline must be a PresentationLUT");
+			if (!(this.LutCollection[lastLUT] is IPresentationLut))
+			    throw new InvalidOperationException("Last LUT in pipeline must be an IPresentationLUT");
 		}
 
 		private string GetKey()
 		{
 			StringBuilder key = new StringBuilder();
 
-			foreach (IComposableLut lut in this.LutCollection)
+			foreach (ILut lut in this.LutCollection)
 			{
 				key.Append(lut.GetKey());
 			}

@@ -6,9 +6,9 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// A collection of <see cref="IComposableLUT"/> objects.
+	/// A collection of <see cref="ILUT"/> objects.
 	/// </summary>
-	public class LutCollection : ObservableList<IComposableLut, LutEventArgs>
+	public class LutCollection : ObservableList<ILut, LutEventArgs>
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="LUTCollection"/>.

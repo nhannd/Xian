@@ -1,8 +1,11 @@
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Graphics;
+
 
 namespace ClearCanvas.ImageViewer
 {
@@ -32,17 +35,15 @@ namespace ClearCanvas.ImageViewer
 			_imageSop = imageSop;
 			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
 
-			InitalizeVoiLut();
+			InitializeLutCreationParameters();
 		}
 
-		private void InitalizeVoiLut()
+		protected virtual void InitializeLutCreationParameters()
 		{
-			if (_imageSop.WindowCenterAndWidth.Length > 0)
-			{
-				IVoiLutLinear lut = (this.ImageGraphic as IVoiLutLinearProvider).VoiLutLinear;
-				lut.WindowWidth = _imageSop.WindowCenterAndWidth[0].Width;
-				lut.WindowCenter = _imageSop.WindowCenterAndWidth[0].Center;
-			}
+			if (this.ImageSop.WindowCenterAndWidth.Length == 0)
+				base.ImageGraphic.DefaultVoiLutCreationParameters = new MinMaxPixelCalculatedLinearLutCreationParameters(this.ImageGraphic.PixelData, this.ImageGraphic.ModalityLut);
+			else
+				base.ImageGraphic.DefaultVoiLutCreationParameters = new AutoVoiLutLinearCreationParameters(this.ImageSop);
 		}
 
 		#region IImageSopProvider members

@@ -13,8 +13,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private static volatile LutFactory _instance;
 		private static object _syncRoot = new Object();
 
-		private List<ModalityLutLinear> _modalityLUTs;
-		private List<PresentationLut> _presentationLUTs;
+		private List<IVoiLutFactory> _voiLutFactories;
+		private List<IPresentationLutFactory> _presentationLutFactories;
+
+		private List<IModalityLut> _modalityLUTs;
+		private List<IVoiLut> _voiLUTs;
+		private List<IPresentationLut> _presentationLUTs;
 		private int _referenceCount = 0;
 
 		private LutFactory()
@@ -41,76 +45,116 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private List<ModalityLutLinear> ModalityLuts
+		private List<IModalityLut> ModalityLuts
 		{
 			get
 			{
 				if (_modalityLUTs == null)
-					_modalityLUTs = new List<ModalityLutLinear>();
+					_modalityLUTs = new List<IModalityLut>();
 
 				return _modalityLUTs;
 			}
 		}
 
-		private List<PresentationLut> PresentationLuts
+		private List<IVoiLut> VoiLuts
+		{
+			get
+			{
+				if (_voiLUTs == null)
+					_voiLUTs = new List<IVoiLut>();
+
+				return _voiLUTs;
+			}
+		}
+
+		private List<IPresentationLut> PresentationLuts
 		{
 			get
 			{
 				if (_presentationLUTs == null)
-					_presentationLUTs = new List<PresentationLut>();
+					_presentationLUTs = new List<IPresentationLut>();
 
 				return _presentationLUTs;
 			}
 		}
 
-		internal ModalityLutLinear GetModalityLutLinear(
-			int bitsStored,
-			bool isSigned,
-			double rescaleSlope,
-			double rescaleIntercept)
+		private List<IVoiLutFactory> VoiLutFactories
 		{
-			if (rescaleSlope == 0 || double.IsNaN(rescaleSlope))
-				rescaleSlope = 1;
-
-			foreach (ModalityLutLinear lut in this.ModalityLuts)
+			get
 			{
-				if (lut.BitsStored == bitsStored &&
-					lut.IsSigned == isSigned &&
-					lut.RescaleSlope == rescaleSlope &&
-					lut.RescaleIntercept == rescaleIntercept)
-					return lut;
+				if (_voiLutFactories == null)
+				{
+					_voiLutFactories = new List<IVoiLutFactory>();
+
+					object[] extensions = (new VoiLutFactoryExtensionPoint()).CreateExtensions();
+					foreach(IVoiLutFactory factory in extensions)
+						_voiLutFactories.Add(factory);
+				}
+
+				return _voiLutFactories;
 			}
+		}
 
-			ModalityLutLinear modalityLut = new ModalityLutLinear(
-				bitsStored, 
-				isSigned, 
-				rescaleSlope, 
-				rescaleIntercept);
+		private List<IPresentationLutFactory> PresentationLutFactories
+		{
+			get
+			{
+				if (_presentationLutFactories == null)
+				{
+					_presentationLutFactories = new List<IPresentationLutFactory>();
 
-			this.ModalityLuts.Add(modalityLut);
+					object[] extensions = (new PresentationLutFactoryExtensionPoint()).CreateExtensions();
+					foreach (IPresentationLutFactory factory in extensions)
+						_presentationLutFactories.Add(factory);
+				}
+
+				return _presentationLutFactories;
+			}
+		}
+
+
+		internal IModalityLut GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
+		{
+			IModalityLut modalityLut = this.ModalityLuts.Find
+				(
+					delegate(IModalityLut lut) { return lut.GetKey() == ModalityLutLinear.GetKey(bitsStored, isSigned, rescaleSlope, rescaleIntercept); } 
+				);
+
+			if (modalityLut == null)
+			{
+				modalityLut = new ModalityLutLinear(bitsStored, isSigned, rescaleSlope, rescaleIntercept);
+				this.ModalityLuts.Add(modalityLut);
+			}
 
 			return modalityLut;
 		}
 
-		internal PresentationLut GetPresentationLut(
-			int minInputValue,
-			int maxInputValue,
-			bool invert)
+		internal IVoiLut GetVoiLut(VoiLutCreationParameters creationParameters)
 		{
-			foreach (PresentationLut lut in this.PresentationLuts)
+			IVoiLut voiLut = this.VoiLuts.Find(delegate(IVoiLut lut) { return creationParameters.Equals(lut); });
+
+			if (voiLut == null)
 			{
-				if (lut.MaxInputValue == maxInputValue &&
-					lut.MinInputValue == minInputValue &&
-					lut.Invert == invert)
-					return lut;
+				IVoiLutFactory voiLutFactory = this.VoiLutFactories.Find(delegate(IVoiLutFactory factory) { return factory.Name == creationParameters.FactoryName; });
+				Platform.CheckForNullReference(voiLutFactory, "voiLutFactory");
+				voiLut = voiLutFactory.Create(creationParameters);
+				this.VoiLuts.Add(voiLut);
 			}
 
-			PresentationLut presentationLut = new GrayscalePresentationLut(
-				minInputValue, 
-				maxInputValue, 
-				invert);
+			return voiLut;
+		}
 
-			this.PresentationLuts.Add(presentationLut);
+		internal IPresentationLut GetPresentationLut(PresentationLutCreationParameters creationParameters)
+		{
+			IPresentationLut presentationLut = this.PresentationLuts.Find(delegate(IPresentationLut lut) { return creationParameters.Equals(lut); });
+			
+			if (presentationLut == null)
+			{
+				IPresentationLutFactory presentationLutFactory = this.PresentationLutFactories.Find(delegate(IPresentationLutFactory factory) { return factory.Name == creationParameters.FactoryName; });
+				Platform.CheckForNullReference(presentationLutFactory, "presentationLutFactory");
+				presentationLut = presentationLutFactory.Create(creationParameters);
+				this.PresentationLuts.Add(presentationLut);
+			}
 
 			return presentationLut;
 		}

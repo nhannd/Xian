@@ -132,42 +132,22 @@ namespace ClearCanvas.ImageViewer.BaseTools
 		}
 
 		/// <summary>
-		/// Gets the selected <see cref="IVOILUTLinearProvider"/>.
+		/// Gets the selected <see cref="IVoiLutProvider"/>.
 		/// </summary>
-		/// <value>The selected <see cref="IVOILUTLinearProvider"/> or <b>null</b>
-		/// if no <see cref="IVOILUTLinearProvider"/> is currently selected.</value>
-		protected IVoiLutLinearProvider SelectedVoiLutLinearProvider
+		/// <value>The selected <see cref="IVoiLutProvider"/> or <b>null</b>
+		/// if no <see cref="IVoiLutProvider"/> is currently selected.</value>
+		protected IVoiLutProvider SelectedVoiLutProvider
 		{
 			get
 			{
 				if (this.SelectedPresentationImage != null)
 				{
-					return this.SelectedPresentationImage as IVoiLutLinearProvider;
+					return this.SelectedPresentationImage as IVoiLutProvider;
 				}
 				else
 					return null;
 			}
 		}
-
-		/*
-		/// <summary>
-		/// Gets the selected <see cref="IAutoLutApplicatorProvider"/>.
-		/// </summary>
-		/// <value>The selected <see cref="IAutoLutApplicatorProvider"/> or <b>null</b>
-		/// if no <see cref="IAutoLutApplicatorProvider"/> is currently selected.</value>
-		protected IAutoVoiLutApplicatorProvider SelectedAutoLutApplicatorProvider
-		{
-			get
-			{
-				if (this.SelectedPresentationImage != null)
-				{
-					return this.SelectedPresentationImage as IAutoVoiLutApplicatorProvider;
-				}
-				else
-					return null;
-			}
-		}*/
-
 		/// <summary>
 		/// Gets the selected <see cref="IOverlayGraphicsProvider"/>.
 		/// </summary>

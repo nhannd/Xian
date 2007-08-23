@@ -18,7 +18,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private int _bitsStored;
 		private int _highBit;
 		private bool _isSigned;
-		//private IndexedPixelData _pixelDataWrapper;
 
 		#endregion
 

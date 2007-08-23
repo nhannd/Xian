@@ -7,12 +7,8 @@ namespace ClearCanvas.ImageViewer
 	public class GrayscalePresentationImage 
 		: BasicPresentationImage, 
 		IVoiLutProvider, 
-		IVoiLutLinearProvider,
 		IPresentationLutProvider
 	{
-		private IVoiLutManager _voiLutManager;
-		private IPresentationLutManager _presentationLutManager;
-
 		public GrayscalePresentationImage(int rows, int columns)
 			: base(new GrayscaleImageGraphic(rows, columns))
 		{
@@ -52,9 +48,16 @@ namespace ClearCanvas.ImageViewer
 
 		}
 
+		/// <summary>
+		/// Gets the <see cref="GrayscaleImageGraphic"/> associated with this <see cref="GrayscalePresentationImage"/>.
+		/// </summary>
+		public new GrayscaleImageGraphic ImageGraphic
+		{
+			get { return (GrayscaleImageGraphic)base.ImageGraphic; }
+		}
 
 		/// <summary>
-		/// Creates a clone of the <see cref="StandardPresentationImage"/>.
+		/// Creates a clone of the <see cref="GrayscalePresentationImage"/>.
 		/// </summary>
 		/// <returns></returns>
 		public override IPresentationImage Clone()
@@ -75,10 +78,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			get 
 			{
-				if (_voiLutManager == null)
-					_voiLutManager = new VoiLutManager(this.ImageGraphic as GrayscaleImageGraphic);
-
-				return _voiLutManager;
+				return this.ImageGraphic.VoiLutManager;
 			}
 		}
 
@@ -90,21 +90,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				if (_presentationLutManager == null)
-					_presentationLutManager = new PresentationLutManager(this.ImageGraphic as GrayscaleImageGraphic);
-
-				return _presentationLutManager;
+				return this.ImageGraphic.PresentationLutManager;
 			}
-		}
-
-		#endregion
-
-
-		#region IVoiLutLinearProvider Members
-
-		public IVoiLutLinear VoiLutLinear
-		{
-			get { return (this.ImageGraphic as GrayscaleImageGraphic).VoiLutLinear ; }
 		}
 
 		#endregion

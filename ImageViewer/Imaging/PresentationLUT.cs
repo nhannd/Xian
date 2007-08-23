@@ -16,10 +16,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// ARGB values that are used by the <see cref="IRenderer"/>
 	/// to display the image.
 	/// </remarks>
-	public abstract class PresentationLut : ComposableLut, IPresentationLut
+	public abstract class PresentationLut : DataLut, IPresentationLut
 	{
 		private bool _invert = false;
-		private bool _lutCreated = false;
 		private int _minPlusMax;
 
 		/// <summary>
@@ -34,7 +33,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			int minInputValue, 
 			int maxInputValue,
 			bool invert)
-			: base(minInputValue, maxInputValue)
+			: base(minInputValue, maxInputValue, int.MinValue, int.MaxValue)
 		{
 			_invert = invert;
 			_minPlusMax = this.MinInputValue + this.MaxInputValue;
@@ -68,7 +67,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public bool Invert
 		{
 			get { return _invert; }
-			set { _invert = value; }
+			set
+			{
+				if (_invert == value)
+					return;
+
+				_invert = value;
+				OnLutChanged();
+			}
 		}
 
 		/// <summary>
@@ -80,12 +86,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				if (!_lutCreated)
-				{
-					CreateLut();
-					_lutCreated = true;
-				}
-
 				if (_invert)
 					return base[_minPlusMax - index];
 				else
@@ -93,20 +93,25 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		public override string GetKey()
+		public sealed override string GetKey()
 		{
-			return String.Format("{0}-{1}-{2}",
-				this.MinInputValue,
-				this.MaxInputValue,
-				this.GetType().ToString());
+			return GetKey(this.MinInputValue, this.MaxInputValue, this.Invert, this.GetType());
 		}
 
-		protected abstract void CreateLut();
+		internal static string GetKey<T>(int minInputValue, int maxInputValue, bool invert)
+			where T : PresentationLut
+		{
+			return GetKey(minInputValue, maxInputValue,	invert, typeof(T));
+		}
 
-		#region IPresentationLut Members
+		private static string GetKey(int minInputValue, int maxInputValue, bool invert, Type type)
+		{
+			return String.Format("{0}-{1}-{2}-{3}",
+				minInputValue,
+				maxInputValue,
+				invert.ToString(),
+				type.ToString());
+		}
 
-		public abstract string Name { get; }
-
-		#endregion
 	}
 }

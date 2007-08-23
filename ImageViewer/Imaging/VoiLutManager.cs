@@ -7,21 +7,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal class VoiLutManagerMemento : IMemento
-	{
-		private string _name;
-
-		public VoiLutManagerMemento(string name)
-		{
-			_name = name;
-		}
-
-		public string Name
-		{
-			get { return _name; }
-		}
-	}
-
 	internal class VoiLutManager : IVoiLutManager
 	{
 		private GrayscaleImageGraphic _grayscaleImageGraphic;
@@ -32,16 +17,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_grayscaleImageGraphic = grayscaleImageGraphic;
 		}
 
-		#region IVoiLutManager Members
+		#region ILutManager<IVoiLut,VoiLutCreationParameters> Members
 
-		public void SetVoiLut(string name)
+		public IVoiLut GetLut()
 		{
-			_grayscaleImageGraphic.SetVoiLut(name);
+			return _grayscaleImageGraphic.VoiLut;
 		}
 
-		public IVoiLut VoiLut
+		public void InstallLut(VoiLutCreationParameters creationParameters)
 		{
-			get { return _grayscaleImageGraphic.VoiLut; }
+			_grayscaleImageGraphic.InstallVoiLut(creationParameters);
 		}
 
 		#endregion
@@ -50,17 +35,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public IMemento CreateMemento()
 		{
-			return new VoiLutManagerMemento(this.VoiLut.Name);
+			return this.GetLut().GetCreationParametersMemento();
 		}
 
 		public void SetMemento(IMemento memento)
 		{
-			VoiLutManagerMemento voiLutManagerMemento = memento as VoiLutManagerMemento;
-
-			SetVoiLut(voiLutManagerMemento.Name);
+			VoiLutCreationParameters creationParameters = memento as VoiLutCreationParameters;
+			Platform.CheckForInvalidCast(creationParameters, "memento", typeof(VoiLutCreationParameters).Name);
+			_grayscaleImageGraphic.InstallVoiLut(creationParameters);
 		}
 
 		#endregion
-
 	}
 }

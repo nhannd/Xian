@@ -4,9 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	/*
-	public interface IVoiLutManagerProvider
+	public interface IModalityLut : ILut
 	{
-		IVoiLutManager VoiLutManager { get; }
-	}*/
+	}
 }

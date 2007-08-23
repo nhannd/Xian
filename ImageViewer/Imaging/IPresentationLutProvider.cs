@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public interface IPresentationLutProvider
+	public interface IPresentationLutProvider : IDrawable
 	{
 		IPresentationLutManager PresentationLutManager { get; }
 	}

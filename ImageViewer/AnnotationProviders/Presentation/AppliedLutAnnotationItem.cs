@@ -26,17 +26,18 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 		public override string GetAnnotationText(IPresentationImage presentationImage)
 		{
 			if (presentationImage == null)
-				return string.Empty;
+				return String.Empty;
 
-			IVoiLutLinearProvider image = presentationImage as IVoiLutLinearProvider;
+			IVoiLutProvider image = presentationImage as IVoiLutProvider;
 
 			if (image == null)
-				return string.Empty;
+				return String.Empty;
 
-			if (image.VoiLutLinear == null)
-				return string.Empty;
+			IVoiLutLinear voiLut = image.VoiLutManager.GetLut() as IVoiLutLinear;
+			if (voiLut == null)
+				return String.Empty;
 
-			return String.Format("W:{0} L:{1}", image.VoiLutLinear.WindowWidth, image.VoiLutLinear.WindowCenter);
+			return String.Format("W:{0} L:{1}", voiLut.WindowWidth, voiLut.WindowCenter);
 		}
 	}
 }

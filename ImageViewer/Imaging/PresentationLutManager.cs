@@ -7,21 +7,6 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal class PresentationLutManagerMemento : IMemento
-	{
-		private string _name;
-
-		public PresentationLutManagerMemento(string name)
-		{
-			_name = name;
-		}
-
-		public string Name
-		{
-			get { return _name; }
-		}
-	}
-
 	internal class PresentationLutManager : IPresentationLutManager
 	{
 		private GrayscaleImageGraphic _grayscaleImageGraphic;
@@ -32,16 +17,16 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_grayscaleImageGraphic = grayscaleImageGraphic;
 		}
 
-		#region IPresentationLutManager Members
+		#region ILutManager<IPresentationLut,PresentationLutCreationParameters> Members
 
-		public void SetPresentationLut(string name)
+		public IPresentationLut GetLut()
 		{
-			_grayscaleImageGraphic.SetPresentationLut(name);
+			return _grayscaleImageGraphic.PresentationLut;
 		}
 
-		public IPresentationLut PresentationLut
+		public void InstallLut(PresentationLutCreationParameters creationParameters)
 		{
-			get { return _grayscaleImageGraphic.PresentationLut; }
+			_grayscaleImageGraphic.InstallPresentationLut(creationParameters);
 		}
 
 		#endregion
@@ -50,14 +35,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public IMemento CreateMemento()
 		{
-			return new PresentationLutManagerMemento(this.PresentationLut.Name);
+			return this.GetLut().GetCreationParametersMemento();
 		}
 
 		public void SetMemento(IMemento memento)
 		{
-			PresentationLutManagerMemento presentationLutManagerMemento = memento as PresentationLutManagerMemento;
+			PresentationLutCreationParameters creationParameters = memento as PresentationLutCreationParameters;
+			Platform.CheckForInvalidCast(creationParameters, "memento", typeof(PresentationLutCreationParameters).Name);
 
-			SetPresentationLut(presentationLutManagerMemento.Name);
+			if (this.GetLut().TrySetCreationParametersMemento(creationParameters))
+				return;
+
+			_grayscaleImageGraphic.InstallPresentationLut(creationParameters);
 		}
 
 		#endregion

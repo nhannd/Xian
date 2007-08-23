@@ -7,9 +7,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Implements the DICOM concept of a Modality LUT.
 	/// </summary>
-	public class ModalityLutLinear : ComposableLut
+	internal sealed class ModalityLutLinear : DataLut, IModalityLut
 	{
-		private bool _lutCreated = false;
 		private int _bitsStored;
 		private bool _isSigned;
 		private double _rescaleSlope;
@@ -28,6 +27,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 			bool isSigned, 
 			double rescaleSlope,
 			double rescaleIntercept)
+			: base(	GetMinimumInput(bitsStored, isSigned), 
+					GetMaximumInput(bitsStored, isSigned), 
+					GetMinimumOutput(bitsStored, isSigned, rescaleSlope, rescaleIntercept),
+					GetMaximumOutput(bitsStored, isSigned, rescaleSlope, rescaleIntercept))
 		{
 			DicomValidator.ValidateBitsStored(bitsStored);
 
@@ -35,9 +38,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_isSigned = isSigned;
 			this.RescaleSlope = rescaleSlope;
 			this.RescaleIntercept = rescaleIntercept;
-
-			SetInputRange(bitsStored, isSigned);
-			SetOutputRange();
 		}
 
 		internal int BitsStored
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _rescaleSlope; }
 			private set
 			{
-				if (value == 0 || double.IsNaN(value))
+				if (value <= double.Epsilon || double.IsNaN(value))
 					_rescaleSlope = 1;
 				else
 					_rescaleSlope = value;
@@ -80,63 +80,68 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		/// <summary>
-		/// Gets the element at the specified index.
-		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		public override int this[int index]
-		{
-			get
-			{
-				if (!_lutCreated)
-				{
-					CreateLut();
-					_lutCreated = true;
-				}
-
-				return base[index];
-			}
-		}
-
 		public override string GetKey()
 		{
-			return String.Format("{0}_{1}_{2}_{3:F2}",
-				this.BitsStored,
-				this.IsSigned.ToString(),
-				this.RescaleSlope,
-				this.RescaleIntercept);
+			return GetKey(this.BitsStored, this.IsSigned, this.RescaleSlope, this.RescaleIntercept);
 		}
 
-		private void CreateLut()
+		protected override void  CreateLut()
 		{
 			for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
 			{
-				this[i] = (int) (this.RescaleSlope * i + this.RescaleIntercept);
+				base[i] = (int) (this.RescaleSlope * i + this.RescaleIntercept);
 			}
 		}
 
-		private void SetInputRange(int bitsStored, bool isSigned)
+		private static int GetMinimumInput(int bitsStored, bool isSigned)
 		{
-			// Determine input value range
 			if (isSigned)
-			{
-				this.MinInputValue = -(1 << (bitsStored - 1));
-				this.MaxInputValue = (1 << (bitsStored - 1)) - 1;
-			}
+				return -(1 << (bitsStored - 1));
 			else
-			{
-				this.MinInputValue = 0;
-				this.MaxInputValue = (1 << bitsStored) - 1;
-			}
-
-			this.Length = this.MaxInputValue - this.MinInputValue + 1;
+				return 0;
 		}
 
-		private void SetOutputRange()
+		private static int GetMaximumInput(int bitsStored, bool isSigned)
 		{
-			this.MinOutputValue = this[this.MinInputValue];
-			this.MaxOutputValue = this[this.MaxInputValue];
+			if (isSigned)
+				return (1 << (bitsStored - 1)) - 1;
+			else
+				return (1 << bitsStored) - 1;
+		}
+
+		private static int GetMinimumOutput(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
+		{
+			int minimumInputValue = GetMinimumInput(bitsStored, isSigned);
+			int maximumInputValue = GetMaximumInput(bitsStored, isSigned);
+
+			return (int)Math.Min(rescaleSlope * minimumInputValue + rescaleIntercept, rescaleSlope * maximumInputValue + rescaleIntercept);
+		}
+
+		private static int GetMaximumOutput(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
+		{
+			int minimumInputValue = GetMinimumInput(bitsStored, isSigned);
+			int maximumInputValue = GetMaximumInput(bitsStored, isSigned);
+
+			return (int)Math.Max(rescaleSlope * minimumInputValue + rescaleIntercept, rescaleSlope * maximumInputValue + rescaleIntercept);
+		}
+
+		internal static string GetKey(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
+		{
+			return String.Format("{0}_{1}_{2}_{3:F2}",
+				bitsStored,
+				isSigned.ToString(),
+				rescaleSlope,
+				rescaleIntercept);
+		}
+
+		public override LutCreationParameters GetCreationParametersMemento()
+		{
+			throw new Exception("Modality Luts do not currently support undo/redo operations.");
+		}
+
+		public override bool TrySetCreationParametersMemento(LutCreationParameters creationParameters)
+		{
+			throw new Exception("Modality Luts do not currently support undo/redo operations.");
 		}
 	}
 }

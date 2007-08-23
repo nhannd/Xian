@@ -1,71 +1,81 @@
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
 	/// A lookup table.
 	/// </summary>
-	public class Lut : ILut
+	public abstract class Lut : ILut
 	{
-		private int _length;
-		private int[] _table;
+		private event EventHandler _lutChanged;
 
-		protected Lut()
+		protected void OnLutChanged()
 		{
+			EventsHelper.Fire(_lutChanged, this, EventArgs.Empty);
 		}
 
-		/// <summary>
-		/// Initializes a new instance of <see cref="LUT"/> with the specified
-		/// number of entries.
-		/// </summary>
-		/// <param name="length"></param>
-		public Lut(int length)
+		public abstract LutCreationParameters GetCreationParametersMemento();
+		public abstract bool TrySetCreationParametersMemento(LutCreationParameters creationParameters);
+		
+		#region ILUT Members
+
+		public abstract int this[int index] { get; protected set; }
+
+		public event EventHandler LutChanged
 		{
-			Platform.CheckPositive(length, "length");
-			_length = length;
+			add { _lutChanged += value; }
+			remove { _lutChanged -= value; }
 		}
 
-		/// <summary>
-		/// Returns the number of entries in the LUT.
-		/// </summary>
-		public int Length
+		public abstract int MinInputValue { get; }
+
+		public abstract int MaxInputValue { get; }
+		
+		public abstract int MinOutputValue { get; }
+
+		public abstract int MaxOutputValue { get; }
+
+		public abstract string GetKey();
+		
+		#endregion
+
+		public override bool Equals(object obj)
 		{
-			get { return _length; }
-			protected set { _length = value; }
+			if (obj == this)
+				return true;
+
+			if (obj is ILut)
+				return this.Equals(obj as ILut);
+			if (obj is LutCreationParameters)
+				return this.Equals(obj as LutCreationParameters);
+			
+			return false;
 		}
 
-		/// <summary>
-		/// Gets the array in which LUT values are stored.
-		/// </summary>
-		protected int[] Table
+		public override int GetHashCode()
 		{
-			get
-			{
-				if (_table == null)
-					_table = new int[_length];
-
-				return _table;
-			}
+			return this.GetKey().GetHashCode();
 		}
 
-		/// <summary>
-		/// Gets or sets the element at the specified index.
-		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
-		public virtual int this[int index]
+		#region IEquatable<LutCreationParameters> Members
+
+		public bool Equals(LutCreationParameters other)
 		{
-			get
-			{
-				Platform.CheckIndexRange(index, 0, _length - 1, this);
-				return this.Table[index];
-			}
-			set
-			{
-				Platform.CheckIndexRange(index, 0, _length - 1, this);
-				this.Table[index] = value;
-			}
+			return this.GetKey() == other.GetKey();
 		}
+
+		#endregion
+
+		#region IEquatable<ILut> Members
+
+		public bool Equals(ILut other)
+		{
+			return this.GetKey() == other.GetKey();
+		}
+
+		#endregion
 	}
 }
