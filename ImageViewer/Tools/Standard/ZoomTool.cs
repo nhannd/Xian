@@ -76,7 +76,22 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (_command == null)
 				return;
 
-			_applicator.ApplyToLinkedImages();
+			IImageSpatialTransform selectedTransform = this.SelectedSpatialTransformProvider.SpatialTransform as IImageSpatialTransform;
+
+			_applicator.ApplyToAllImages(delegate(IPresentationImage presentationImage)
+			{
+				ISpatialTransformProvider image = presentationImage as ISpatialTransformProvider;
+				if (image == null)
+					return;
+
+				IImageSpatialTransform transform = image.SpatialTransform as IImageSpatialTransform;
+				if (transform == null)
+					return;
+
+				transform.ScaleToFit = false;
+				transform.Scale = selectedTransform.Scale;
+			});
+
 			_command.EndState = _applicator.CreateMemento();
 
 			// If the state hasn't changed since MouseDown just return
@@ -116,6 +131,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			IImageSpatialTransform transform = this.SelectedSpatialTransformProvider.SpatialTransform as IImageSpatialTransform;
+			if (transform == null)
+				return;
 
 			transform.ScaleToFit = false;
 			transform.Scale += scaleIncrement;

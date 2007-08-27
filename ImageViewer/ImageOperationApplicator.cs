@@ -68,7 +68,8 @@ namespace ClearCanvas.ImageViewer
 	/// </remarks>
 	public abstract class ImageOperationApplicator : IMemorable
 	{
-		private delegate void Apply(IPresentationImage image);
+		public delegate void Apply(IPresentationImage image);
+
 		private IPresentationImage _presentationImage;
 
 		protected ImageOperationApplicator(IPresentationImage presentationImage)
@@ -76,24 +77,6 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckForNullReference(presentationImage, "presentationImage");
 			_presentationImage = presentationImage;
 		}
-
-		public void ApplyToLinkedImages()
-		{
-			IMemento memento = GetOriginator(_presentationImage).CreateMemento();
-
-			ApplyToLinkedImages(
-				delegate(IPresentationImage image)
-				{
-					IMemorable originator = GetOriginator(image);
-
-					if (originator != null)
-					{
-						originator.SetMemento(memento);
-						image.Draw();
-					}
-				});
-		}
-
 
 		#region IMemorable Members
 
@@ -105,7 +88,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			List<ImageOriginatorMemento> imageOriginatorMementos = new List<ImageOriginatorMemento>();
 
-			ApplyToLinkedImages(
+			ApplyToAllImages(
 				delegate(IPresentationImage image)
 				{
 					IMemorable originator = GetOriginator(image);
@@ -119,7 +102,7 @@ namespace ClearCanvas.ImageViewer
 
 						imageOriginatorMementos.Add(obj);
 					}
-				});
+				}, false);
 
 			IMemento applicatorMemento = new ImageOperationApplicatorMemento(imageOriginatorMementos);
 			return applicatorMemento;
@@ -175,7 +158,32 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		protected abstract IMemorable GetOriginator(IPresentationImage image);
 
-		private void ApplyToLinkedImages(Apply apply)
+		/// <summary>
+		/// Applies the same operation to the current image as well as all its linked images.
+		/// Each image is drawn automatically by this method.
+		/// </summary>
+		/// <param name="apply">The operation to perform on each image.</param>
+		public void ApplyToAllImages(Apply apply)
+		{
+			ApplyToLinkedImages(apply, false, true);
+		}
+
+		/// <summary>
+		/// Applies the same operation to all images linked to the current image, but not the current image itself.
+		/// Each image is drawn automatically by this method.
+		/// </summary>
+		/// <param name="apply">The operation to perform on each image.</param>
+		public void ApplyToLinkedImages(Apply apply)
+		{
+			ApplyToLinkedImages(apply, true, true);
+		}
+
+		private void ApplyToAllImages(Apply apply, bool draw)
+		{
+			ApplyToLinkedImages(apply, false, draw);
+		}
+
+		private void ApplyToLinkedImages(Apply apply, bool skipThisImage, bool draw)
 		{
 			IDisplaySet displaySet = _presentationImage.ParentDisplaySet;
 			IImageSet imageSet = displaySet.ParentImageSet;
@@ -185,20 +193,27 @@ namespace ClearCanvas.ImageViewer
 			if (displaySet.Linked)
 			{
 				foreach (IDisplaySet currentDisplaySet in imageSet.LinkedDisplaySets)
-					ApplyToLinkedImages(currentDisplaySet, apply);
+					ApplyToLinkedImages(currentDisplaySet, apply, skipThisImage, draw);
 			}
 			// If display set is just selected, then iterate through all the linked images
 			// in that display set
 			else
 			{
-				ApplyToLinkedImages(displaySet, apply);
+				ApplyToLinkedImages(displaySet, apply, skipThisImage, draw);
 			}
 		}
 
-		private void ApplyToLinkedImages(IDisplaySet displaySet, Apply apply)
+		private void ApplyToLinkedImages(IDisplaySet displaySet, Apply apply, bool skipThisImage, bool draw)
 		{
 			foreach (IPresentationImage image in displaySet.LinkedPresentationImages)
+			{
+				if (image == _presentationImage && skipThisImage)
+					continue;
+
 				apply(image);
+				if (draw)
+					image.Draw();
+			}
 		}
 	}
 }

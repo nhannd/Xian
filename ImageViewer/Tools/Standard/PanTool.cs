@@ -81,7 +81,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (_command == null)
 				return;
 
-			_applicator.ApplyToLinkedImages();
+			_applicator.ApplyToLinkedImages(delegate(IPresentationImage presentationImage)
+				{
+					ISpatialTransformProvider image = presentationImage as ISpatialTransformProvider;
+					if (image == null)
+						return;
+
+					image.SpatialTransform.TranslationX = this.SelectedSpatialTransformProvider.SpatialTransform.TranslationX;
+					image.SpatialTransform.TranslationY = this.SelectedSpatialTransformProvider.SpatialTransform.TranslationY;
+				});
+
 			_command.EndState = _applicator.CreateMemento();
 
 			// If the state hasn't changed since MouseDown just return

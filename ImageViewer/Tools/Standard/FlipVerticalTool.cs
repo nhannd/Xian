@@ -39,16 +39,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			command.Name = SR.CommandFlipVertical;
 			command.BeginState = applicator.CreateMemento();
 
-			ISpatialTransformProvider image = this.SelectedSpatialTransformProvider;
+			applicator.ApplyToAllImages(delegate(IPresentationImage presentationImage)
+			{
+				ISpatialTransformProvider image = presentationImage as ISpatialTransformProvider;
+				if (image == null)
+					return;
 
-			// Do the transform
-			if (image.SpatialTransform.RotationXY == 0 || image.SpatialTransform.RotationXY == 180)
-				image.SpatialTransform.FlipX = !image.SpatialTransform.FlipX;
-			// If image is rotated 90 or 270, then a vertical flip is really a horizontal flip
-			else
-				image.SpatialTransform.FlipY = !image.SpatialTransform.FlipY;
+				// Do the transform
+				if (image.SpatialTransform.RotationXY == 0 || image.SpatialTransform.RotationXY == 180)
+					image.SpatialTransform.FlipX = !image.SpatialTransform.FlipX;
+				// If image is rotated 90 or 270, then a vertical flip is really a horizontal flip
+				else
+					image.SpatialTransform.FlipY = !image.SpatialTransform.FlipY;
+			});
 
-			applicator.ApplyToLinkedImages();
 			// Save the new state
 			command.EndState = applicator.CreateMemento();
 

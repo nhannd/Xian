@@ -37,18 +37,25 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			command.Name = SR.CommandReset;
 			command.BeginState = applicator.CreateMemento();
 
-			IImageSpatialTransform transform = this.SelectedSpatialTransformProvider.SpatialTransform as IImageSpatialTransform;
+			applicator.ApplyToAllImages(delegate(IPresentationImage presentationImage)
+			{
+				ISpatialTransformProvider image = presentationImage as ISpatialTransformProvider;
+				if (image == null)
+					return;
 
-			transform.Scale = 1.0f;
-			transform.TranslationX = 0.0f;
-			transform.TranslationY = 0.0f;
-			transform.FlipY = false;
-			transform.FlipX = false;
-			transform.RotationXY = 0;
-			transform.ScaleToFit = true;
-			this.SelectedSpatialTransformProvider.Draw();
+				IImageSpatialTransform transform = image.SpatialTransform as IImageSpatialTransform;
+				if (transform == null)
+					return;
 
-			applicator.ApplyToLinkedImages();
+				transform.Scale = 1.0f;
+				transform.TranslationX = 0.0f;
+				transform.TranslationY = 0.0f;
+				transform.FlipY = false;
+				transform.FlipX = false;
+				transform.RotationXY = 0;
+				transform.ScaleToFit = true;
+			});
+
 			command.EndState = applicator.CreateMemento();
 
             this.Context.Viewer.CommandHistory.AddCommand(command);

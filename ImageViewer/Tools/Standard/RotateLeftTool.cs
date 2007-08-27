@@ -38,9 +38,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			command.Name = SR.CommandRotateLeft;
 			command.BeginState = applicator.CreateMemento();
 
-			this.SelectedSpatialTransformProvider.SpatialTransform.RotationXY -= 90;
+			applicator.ApplyToAllImages(
+				delegate(IPresentationImage image)
+				{
+					ISpatialTransformProvider provider = image as ISpatialTransformProvider;
+					if (provider == null)
+						return;
 
-			applicator.ApplyToLinkedImages();
+					provider.SpatialTransform.RotationXY -= 90;
+				});
+
 			command.EndState = applicator.CreateMemento();
 
             this.Context.Viewer.CommandHistory.AddCommand(command);

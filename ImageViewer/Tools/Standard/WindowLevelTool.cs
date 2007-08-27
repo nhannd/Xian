@@ -92,7 +92,22 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!CanWindowLevel() || _command == null)
 				return;
 
-			_applicator.ApplyToLinkedImages();
+			IVoiLutLinear selectedLut = this.SelectedVoiLutProvider.VoiLutManager.GetLut() as IVoiLutLinear;
+
+			_applicator.ApplyToLinkedImages(
+				delegate(IPresentationImage presentationImage)
+				{
+					IVoiLutProvider provider = presentationImage as IVoiLutProvider;
+					if (provider == null)
+						return;
+
+					InstallLinearLut(provider.VoiLutManager);
+
+					IBasicVoiLutLinear lut = provider.VoiLutManager.GetLut() as IBasicVoiLutLinear;
+					lut.WindowWidth = selectedLut.WindowWidth;
+					lut.WindowCenter = selectedLut.WindowCenter;
+				});
+
 			_command.EndState = _applicator.CreateMemento();
 
 			// If the state hasn't changed since MouseDown just return
@@ -140,17 +155,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			CodeClock counter = new CodeClock();
 			counter.Start();
 
-			IVoiLutLinear linearLut = this.SelectedVoiLutProvider.VoiLutManager.GetLut() as IVoiLutLinear;
-			IBasicVoiLutLinear standardLut = linearLut as IBasicVoiLutLinear;
-			if (standardLut == null)
-			{
-				BasicVoiLutLinearCreationParameters parameters = new BasicVoiLutLinearCreationParameters();
-				parameters.WindowCenter = linearLut.WindowCenter;
-				parameters.WindowWidth = linearLut.WindowWidth;
-				this.SelectedVoiLutProvider.VoiLutManager.InstallLut(parameters);
-				standardLut = this.SelectedVoiLutProvider.VoiLutManager.GetLut() as IBasicVoiLutLinear;
-			}
-
+			InstallLinearLut(this.SelectedVoiLutProvider.VoiLutManager);
+			IBasicVoiLutLinear standardLut = this.SelectedVoiLutProvider.VoiLutManager.GetLut() as IBasicVoiLutLinear; 
 			standardLut.WindowWidth += windowIncrement;
 			standardLut.WindowCenter += levelIncrement;
 			this.SelectedVoiLutProvider.Draw();
@@ -159,6 +165,22 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			string str = String.Format("WindowLevel: {0}\n", counter.ToString());
 			Trace.Write(str);
+		}
+
+		private void InstallLinearLut(IVoiLutManager manager)
+		{
+			if (manager == null)
+				return;
+
+			IVoiLutLinear linearLut = manager.GetLut() as IVoiLutLinear;
+			IBasicVoiLutLinear standardLut = linearLut as IBasicVoiLutLinear;
+			if (standardLut == null)
+			{
+				BasicVoiLutLinearCreationParameters parameters = new BasicVoiLutLinearCreationParameters();
+				parameters.WindowCenter = linearLut.WindowCenter;
+				parameters.WindowWidth = linearLut.WindowWidth;
+				manager.InstallLut(parameters);
+			}
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)

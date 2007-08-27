@@ -30,9 +30,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
             command.Name = SR.CommandZoom;
             command.BeginState = applicator.CreateMemento();
 
-			this.SelectedSpatialTransformProvider.SpatialTransform.Scale = scale;
+			applicator.ApplyToAllImages
+				(
+					delegate(IPresentationImage image)
+					{
+						ISpatialTransformProvider provider = image as ISpatialTransformProvider;
+						if (provider == null)
+							return;
 
-			applicator.ApplyToLinkedImages();
+						provider.SpatialTransform.Scale = scale;
+					}
+				);
+
 			command.EndState = applicator.CreateMemento();
 
             this.Context.Viewer.CommandHistory.AddCommand(command);
