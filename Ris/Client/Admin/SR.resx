@@ -150,6 +150,15 @@
   <data name="ColumnDescription" xml:space="preserve">
     <value>Description</value>
   </data>
+  <data name="ColumnEnumCode" xml:space="preserve">
+    <value>Code</value>
+  </data>
+  <data name="ColumnEnumDescription" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="ColumnEnumValue" xml:space="preserve">
+    <value>Value</value>
+  </data>
   <data name="ColumnFacility" xml:space="preserve">
     <value>Facility</value>
   </data>
@@ -197,6 +206,15 @@
   </data>
   <data name="ColumnUserName" xml:space="preserve">
     <value>Name</value>
+  </data>
+  <data name="ExceptionEnumValueAdd" xml:space="preserve">
+    <value>Unable to add value</value>
+  </data>
+  <data name="ExceptionEnumValueDelete" xml:space="preserve">
+    <value>Unable to delete value</value>
+  </data>
+  <data name="ExceptionEnumValueUpdate" xml:space="preserve">
+    <value>Unable to update value</value>
   </data>
   <data name="ExceptionSaveAuthorityGroup" xml:space="preserve">
     <value>Unable to save Authority Group</value>
@@ -255,6 +273,12 @@
   <data name="MessageDuplicateModalityID" xml:space="preserve">
     <value>This modality ID already exist.  Your changes could not be saved.</value>
   </data>
+  <data name="MessageEnumCodeContainsInvalidChars" xml:space="preserve">
+    <value>Contains invalid characters</value>
+  </data>
+  <data name="MessageEnumConfirmDelete" xml:space="preserve">
+    <value>Warning: Attempting to delete this value will fail if the value has been referenced by another entity.  Delete?</value>
+  </data>
   <data name="TitleAddAuthorityGroup" xml:space="preserve">
     <value>Add Authority Group</value>
   </data>
@@ -303,6 +327,15 @@
   <data name="TitleDiagnosticServices" xml:space="preserve">
     <value>Diagnostic Services</value>
   </data>
+  <data name="TitleEnumAddValue" xml:space="preserve">
+    <value>New Value</value>
+  </data>
+  <data name="TitleEnumEditValue" xml:space="preserve">
+    <value>Edit Value</value>
+  </data>
+  <data name="TitleEnumerationAdmin" xml:space="preserve">
+    <value>Enumerations</value>
+  </data>
   <data name="TitleFacilities" xml:space="preserve">
     <value>Facilities</value>
   </data>
@@ -325,7 +358,7 @@
     <value>Update Authority Group</value>
   </data>
   <data name="TitleUpdateDiagnosticService" xml:space="preserve">
-    <value>Update Diagnostic Service ...</value>
+    <value>Update Diagnostic Service</value>
   </data>
   <data name="TitleUpdateFacility" xml:space="preserve">
     <value>Update Facility</value>

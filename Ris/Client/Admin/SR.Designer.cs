@@ -160,6 +160,33 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Code.
+        /// </summary>
+        internal static string ColumnEnumCode {
+            get {
+                return ResourceManager.GetString("ColumnEnumCode", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Description.
+        /// </summary>
+        internal static string ColumnEnumDescription {
+            get {
+                return ResourceManager.GetString("ColumnEnumDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Value.
+        /// </summary>
+        internal static string ColumnEnumValue {
+            get {
+                return ResourceManager.GetString("ColumnEnumValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Facility.
         /// </summary>
         internal static string ColumnFacility {
@@ -300,6 +327,33 @@ namespace ClearCanvas.Ris.Client.Admin {
         internal static string ColumnUserName {
             get {
                 return ResourceManager.GetString("ColumnUserName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to add value.
+        /// </summary>
+        internal static string ExceptionEnumValueAdd {
+            get {
+                return ResourceManager.GetString("ExceptionEnumValueAdd", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to delete value.
+        /// </summary>
+        internal static string ExceptionEnumValueDelete {
+            get {
+                return ResourceManager.GetString("ExceptionEnumValueDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to update value.
+        /// </summary>
+        internal static string ExceptionEnumValueUpdate {
+            get {
+                return ResourceManager.GetString("ExceptionEnumValueUpdate", resourceCulture);
             }
         }
         
@@ -475,6 +529,24 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Contains invalid characters.
+        /// </summary>
+        internal static string MessageEnumCodeContainsInvalidChars {
+            get {
+                return ResourceManager.GetString("MessageEnumCodeContainsInvalidChars", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Warning: Attempting to delete this value will fail if the value has been referenced by another entity.  Delete?.
+        /// </summary>
+        internal static string MessageEnumConfirmDelete {
+            get {
+                return ResourceManager.GetString("MessageEnumConfirmDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Authority Group.
         /// </summary>
         internal static string TitleAddAuthorityGroup {
@@ -619,6 +691,33 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New Value.
+        /// </summary>
+        internal static string TitleEnumAddValue {
+            get {
+                return ResourceManager.GetString("TitleEnumAddValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Value.
+        /// </summary>
+        internal static string TitleEnumEditValue {
+            get {
+                return ResourceManager.GetString("TitleEnumEditValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enumerations.
+        /// </summary>
+        internal static string TitleEnumerationAdmin {
+            get {
+                return ResourceManager.GetString("TitleEnumerationAdmin", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Facilities.
         /// </summary>
         internal static string TitleFacilities {
@@ -682,7 +781,7 @@ namespace ClearCanvas.Ris.Client.Admin {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Update Diagnostic Service ....
+        ///   Looks up a localized string similar to Update Diagnostic Service.
         /// </summary>
         internal static string TitleUpdateDiagnosticService {
             get {

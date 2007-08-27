@@ -49,6 +49,20 @@
       <DependentUpon>AuthorityGroupSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="AuthorityGroupSummaryComponentView.cs" />
+    <Compile Include="EnumerationEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EnumerationEditorComponentControl.Designer.cs">
+      <DependentUpon>EnumerationEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EnumerationEditorComponentView.cs" />
+    <Compile Include="EnumerationSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="EnumerationSummaryComponentControl.Designer.cs">
+      <DependentUpon>EnumerationSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="EnumerationSummaryComponentView.cs" />
     <Compile Include="FacilitySummaryComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -189,6 +203,14 @@
     <EmbeddedResource Include="AuthorityGroupSummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>AuthorityGroupSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EnumerationEditorComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>EnumerationEditorComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="EnumerationSummaryComponentControl.resx">
+      <SubType>Designer</SubType>
+      <DependentUpon>EnumerationSummaryComponentControl.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FacilitySummaryComponentControl.resx">
       <SubType>Designer</SubType>

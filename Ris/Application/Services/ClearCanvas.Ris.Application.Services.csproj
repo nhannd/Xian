@@ -63,6 +63,7 @@
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceTreeExporter.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceTreeImporter.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\ProcedurePlanImporter.cs" />
+    <Compile Include="Admin\EnumerationAdmin\EnumerationAdminService.cs" />
     <Compile Include="Admin\FacilityAdmin\FacilityImporter.cs" />
     <Compile Include="Admin\IDataExporter.cs" />
     <Compile Include="Admin\IDataImporter.cs" />
