@@ -267,6 +267,7 @@
     <None Include="ClassDiagrams\ApplicationComponentContainers.cd" />
     <None Include="ClassDiagrams\DesktopActions.cd" />
     <None Include="ClassDiagrams\DesktopObjectModel.cd" />
+    <None Include="ClassDiagrams\Tool.cd" />
     <None Include="ClassDiagrams\UndoRedo.cd" />
     <None Include="ClassDiagrams\Desktop.cd" />
     <None Include="ExceptionHandlerSettings.settings">
