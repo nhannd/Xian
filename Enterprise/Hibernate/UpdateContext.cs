@@ -12,18 +12,15 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// </summary>
     public class UpdateContext : PersistenceContext, IUpdateContext
     {
-        private ITransactionNotifier _transactionNotifier;
-
         /// <summary>
         /// Constructor
         /// </summary>
         /// <param name="sessionFactory"></param>
         /// <param name="transactionNotifier"></param>
         /// <param name="mode"></param>
-        internal UpdateContext(ISessionFactory sessionFactory, ITransactionNotifier transactionNotifier, UpdateContextSyncMode mode)
-            :base(sessionFactory, false)
+        internal UpdateContext(PersistentStore pstore, UpdateContextSyncMode mode)
+            : base(pstore, false)
         {
-            _transactionNotifier = transactionNotifier;
             this.Session.FlushMode = mode == UpdateContextSyncMode.Flush ? FlushMode.Auto : FlushMode.Never;
         }
 
@@ -59,9 +56,9 @@ namespace ClearCanvas.Enterprise.Hibernate
 
                 CommitTransaction();
   
-                if (_transactionNotifier != null)
+                if (this.PersistentStore.TransactionNotifier != null)
                 {
-                    _transactionNotifier.Queue(this.Interceptor.EntityChangeSet);
+                    this.PersistentStore.TransactionNotifier.Queue(this.Interceptor.EntityChangeSet);
                 }
             }
             catch (Exception e)

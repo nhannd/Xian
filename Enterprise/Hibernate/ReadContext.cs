@@ -16,8 +16,8 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// Constructor
         /// </summary>
         /// <param name="sessionFactory"></param>
-        internal ReadContext(ISessionFactory sessionFactory)
-            :base(sessionFactory, true)
+        internal ReadContext(PersistentStore pstore)
+            : base(pstore, true)
         {
             // never write changes to the database from a read context
             this.Session.FlushMode = FlushMode.Never;

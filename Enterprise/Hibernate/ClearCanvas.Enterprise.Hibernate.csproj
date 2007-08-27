@@ -48,7 +48,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Broker.cs" />
-    <Compile Include="CodedValueBroker.cs" />
     <Compile Include="CustomSqlDialect.cs" />
     <Compile Include="Ddl\DdlScriptGenerator.cs" />
     <Compile Include="Ddl\EnumForeignKeyConstraintGenerator.cs" />
@@ -71,6 +70,7 @@
     <Compile Include="Hql\HqlSelect.cs" />
     <Compile Include="Hql\HqlSort.cs" />
     <Compile Include="Ddl\IDdlScriptGenerator.cs" />
+    <Compile Include="MetadataBroker.cs" />
     <Compile Include="PersistenceContext.cs" />
     <Compile Include="PersistentStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

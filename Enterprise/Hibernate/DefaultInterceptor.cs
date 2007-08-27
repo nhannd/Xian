@@ -71,6 +71,10 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="types"></param>
         public void OnDelete(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
         {
+            // ignore changes to enum values
+            if (entity is EnumValue)
+                return;
+
             _changeRecords.Add(new ChangeRecord(entity, EntityChangeType.Delete));
         }
 
@@ -86,6 +90,10 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <returns></returns>
         public bool OnFlushDirty(object entity, object id, object[] currentState, object[] previousState, string[] propertyNames, NHibernate.Type.IType[] types)
         {
+            // ignore changes to enum values
+            if (entity is EnumValue)
+                return false;
+
             _changeRecords.Add(new ChangeRecord(entity, EntityChangeType.Update));
             return false;
         }
@@ -103,6 +111,10 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             // HACK: ignore the addition of auditing records
             if (NHibernateUtil.GetClass(entity).Equals(typeof(TransactionRecord)))
+                return false;
+
+            // ignore changes to enum values
+            if (entity is EnumValue)
                 return false;
 
             _changeRecords.Add(new ChangeRecord(entity, EntityChangeType.Create));

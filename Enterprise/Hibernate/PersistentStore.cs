@@ -23,7 +23,6 @@ namespace ClearCanvas.Enterprise.Hibernate
     {
         private ISessionFactory _sessionFactory;
         private NHibernate.Cfg.Configuration _cfg;
-
         private ITransactionNotifier _transactionNotifier;
 
         public PersistentStore()
@@ -66,16 +65,25 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         public IReadContext OpenReadContext()
         {
-            return new ReadContext(_sessionFactory);
+            return new ReadContext(this);
         }
 
         public IUpdateContext OpenUpdateContext(UpdateContextSyncMode mode)
         {
-            return new UpdateContext(_sessionFactory, _transactionNotifier, mode);
+            return new UpdateContext(this, mode);
         }
 
         #endregion
 
+        internal ISessionFactory SessionFactory
+        {
+            get { return _sessionFactory; }
+        }
+
+        internal ITransactionNotifier TransactionNotifier
+        {
+            get { return _transactionNotifier; }
+        }
 
         public NHibernate.Cfg.Configuration Configuration
         {

@@ -55,8 +55,6 @@
   <ItemGroup>
     <Compile Include="AuditAdvice.cs" />
     <Compile Include="CoreServiceExtensionPoint.cs" />
-    <Compile Include="CodedValue.cs" />
-    <Compile Include="CodedValueDictionary.cs" />
     <Compile Include="EntityVersionException.cs" />
     <Compile Include="CoreServiceLayer.cs" />
     <Compile Include="DefaultTransactionRecorder.cs" />
@@ -72,9 +70,9 @@
     <Compile Include="EnumValueClassAttribute.cs" />
     <Compile Include="EnumValueNotFoundException.cs" />
     <Compile Include="IAuthenticationService.cs" />
-    <Compile Include="ICodedValueBroker.cs" />
     <Compile Include="IEntityBroker.cs" />
     <Compile Include="IEnumBroker.cs" />
+    <Compile Include="IMetadataBroker.cs" />
     <Compile Include="InProcessCoreServiceProvider.cs" />
     <Compile Include="IPersistenceBroker.cs" />
     <Compile Include="IPersistenceContext.cs" />

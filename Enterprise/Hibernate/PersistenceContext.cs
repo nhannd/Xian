@@ -25,7 +25,7 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// </summary>
     public abstract class PersistenceContext : IPersistenceContext
     {
-        private ISessionFactory _sessionFactory;
+        private PersistentStore _persistentStore;
         private bool _readOnly;
         private DefaultInterceptor _interceptor;
         private NHibernate.ISession _session;
@@ -37,10 +37,10 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// </summary>
         /// <param name="sessionFactory"></param>
         /// <param name="readOnly"></param>
-        internal PersistenceContext(ISessionFactory sessionFactory, bool readOnly)
+        internal PersistenceContext(PersistentStore persistentStore, bool readOnly)
         {
-            _sessionFactory = sessionFactory;
-            _session = _sessionFactory.OpenSession(_interceptor = new DefaultInterceptor());
+            _persistentStore = persistentStore;
+            _session = persistentStore.SessionFactory.OpenSession(_interceptor = new DefaultInterceptor());
             _readOnly = readOnly;
 
             BeginTransaction();
@@ -177,11 +177,18 @@ namespace ClearCanvas.Enterprise.Hibernate
             }
         }
 
-        internal EnumValue LoadEnumValue(Type enumValueClass, string code)
+        internal EnumValue LoadEnumValue(Type enumValueClass, string code, bool proxy)
         {
-            // always use a proxy
-            // no need to check for ObjectNotFoundException, because we are using a proxy, so we won't get this exception anyway
-            return (EnumValue)Load(enumValueClass, code, true);
+            try
+            {
+                return (EnumValue)Load(enumValueClass, code, proxy);
+            }
+            catch (ObjectNotFoundException hibernateException)
+            {
+                // note that we will only get here if proxy == false in the above block
+                // if the entity is proxied, verification of its existence is deferred until the proxy is realized
+                throw new EnumValueNotFoundException(enumValueClass, code, hibernateException);
+            }
         }
 
         private object Load(Type persistentClass, object oid, bool useProxy)
@@ -325,6 +332,11 @@ namespace ClearCanvas.Enterprise.Hibernate
         internal NHibernate.ISession Session
         {
             get { return _session; }
+        }
+
+        internal PersistentStore PersistentStore
+        {
+            get { return _persistentStore; }
         }
 
         /// <summary>
