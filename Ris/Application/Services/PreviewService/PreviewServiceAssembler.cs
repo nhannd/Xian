@@ -87,8 +87,8 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
             data.PatientName = nameAssembler.CreatePersonNameDetail(profile.Name);
             data.DateOfBirth = profile.DateOfBirth;
             data.Sex = EnumUtils.GetValue(profile.Sex, context);
-            data.PrimaryLanguage = EnumUtils.GetValue(profile.PrimaryLanguage);
-            data.Religion = EnumUtils.GetValue(profile.Religion);
+            data.PrimaryLanguage = EnumUtils.GetDisplayValue(profile.PrimaryLanguage);
+            data.Religion = EnumUtils.GetDisplayValue(profile.Religion);
             data.DeathIndicator = profile.DeathIndicator;
             data.TimeOfDeath = profile.TimeOfDeath;
         }
@@ -99,9 +99,9 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
 
             data.VisitNumberId = visit.VisitNumber.Id;
             data.VisitNumberAssigningAuthority = visit.VisitNumber.AssigningAuthority;
-            data.PatientClass = EnumUtils.GetValue(visit.PatientClass);
-            data.PatientType = EnumUtils.GetValue(visit.PatientType);
-            data.AdmissionType = EnumUtils.GetValue(visit.AdmissionType);
+            data.PatientClass = EnumUtils.GetDisplayValue(visit.PatientClass);
+            data.PatientType = EnumUtils.GetDisplayValue(visit.PatientType);
+            data.AdmissionType = EnumUtils.GetDisplayValue(visit.AdmissionType);
             data.VisitStatus = EnumUtils.GetValue(visit.VisitStatus, context);
             data.AdmitDateTime = visit.AdmitDateTime;
             data.DischargeDateTime = visit.DischargeDateTime;
@@ -124,7 +124,7 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
             data.OrderingFacilityName = order.OrderingFacility.Name;
             data.ReasonForStudy = order.ReasonForStudy;
             data.OrderPriority = EnumUtils.GetValue(order.Priority, context);
-            data.CancelReason = EnumUtils.GetValue(order.CancelReason);
+            data.CancelReason = EnumUtils.GetDisplayValue(order.CancelReason);
             data.OrderStatus = EnumUtils.GetValue(order.Status, context);
             data.EarliestScheduledMPSDateTime = order.EarliestScheduledDateTime;
         }

@@ -35,7 +35,7 @@ namespace ClearCanvas.Ris.Application.Services
             if(attr == null)
                 throw new ArgumentException(string.Format("{0} is not marked with the EnumValueClassAttribute", typeof(TEnum).FullName));
 
-            EnumValue enumValue = context.GetBroker<IEnumBroker>().Lookup(attr.EnumValueClass, code.ToString());
+            EnumValue enumValue = context.GetBroker<IEnumBroker>().Find(attr.EnumValueClass, code.ToString());
             return GetEnumValueInfo(enumValue);
         }
 
@@ -45,7 +45,7 @@ namespace ClearCanvas.Ris.Application.Services
         /// </summary>
         /// <param name="enumValue"></param>
         /// <returns></returns>
-        public static string GetValue(EnumValue enumValue)
+        public static string GetDisplayValue(EnumValue enumValue)
         {
             return enumValue == null ? null : enumValue.Value;
         }
@@ -89,7 +89,7 @@ namespace ClearCanvas.Ris.Application.Services
         public static TEnumValue GetEnumValue<TEnumValue>(EnumValueInfo info, IPersistenceContext context)
             where TEnumValue : EnumValue
         {
-            return info == null ? null : context.GetBroker<IEnumBroker>().Lookup<TEnumValue>(info.Code);
+            return info == null ? null : context.GetBroker<IEnumBroker>().Find<TEnumValue>(info.Code);
         }
 
         /// <summary>
