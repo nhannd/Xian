@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Defines a LUT that can be added to <see cref="LUTCollection"/>.
 	/// </summary>
-	public interface ILut : IEquatable<ILut>
+	public interface ILut : IEquatable<LutCreationParameters>, IEquatable<ILut>
 	{
 		/// <summary>
 		/// Gets the minimum input value.
@@ -40,6 +40,19 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		event EventHandler LutChanged;
 		
+		/// <summary>
+		/// Gets a string key that identifies this particular LUT.
+		/// </summary>
+		/// <remarks>
+		/// Implementors of <see cref="ILUT"/> must implement this
+		/// method.  The string returned should be a string that uniquely 
+		/// identifies the LUT based on the LUT's characteristic parameters so 
+		/// that it can be used as a key in a dictionary.
+		/// </remarks>
+		string GetKey();
+
 		LutCreationParameters GetCreationParametersMemento();
+		
+		bool TrySetCreationParametersMemento(LutCreationParameters creationParameters);
 	}
 }
