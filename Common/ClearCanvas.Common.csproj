@@ -235,6 +235,7 @@
     <Compile Include="Utilities\ObservableList.cs" />
     <Compile Include="Utilities\ResourceResolver.cs" />
     <Compile Include="Utilities\Scope.cs" />
+    <Compile Include="Utilities\AttributeUtils.cs" />
     <Compile Include="Utilities\Win32PerformanceCounter.cs" />
   </ItemGroup>
   <ItemGroup>
