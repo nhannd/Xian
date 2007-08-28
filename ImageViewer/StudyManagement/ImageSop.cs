@@ -15,20 +15,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		#region General Image Module
 
 		/// <summary>
-		/// Gets the instance number.
-		/// </summary>
-		public virtual int InstanceNumber
-		{
-			get
-			{
-				bool tagExists;
-				int instanceNumber;
-				GetTag(DicomTags.InstanceNumber, out instanceNumber, out tagExists);
-				return instanceNumber;
-			}
-		}
-
-		/// <summary>
 		/// Gets the patient orientation.
 		/// </summary>
 		/// <remarks>

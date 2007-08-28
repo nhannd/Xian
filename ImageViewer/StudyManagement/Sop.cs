@@ -61,6 +61,8 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		public abstract DicomMessageBase NativeDicomObject { get; }
 
+		#region Meta info
+
 		/// <summary>
 		/// Gets the Transfer Syntax UID.
 		/// </summary>
@@ -74,6 +76,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				return transferSyntaxInstanceUID ?? "";
 			}
 		}
+
+		#endregion
+
+		#region SOP Common Module
 
 		/// <summary>
 		/// Gets the SOP Instance UID.
@@ -89,8 +95,62 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
+		/// <summary>
+		/// Gets the SOP Class UID.
+		/// </summary>
+		public virtual string SopClassUID
+		{
+			get
+			{
+				bool tagExists;
+				string sopClassUID;
+				GetTag(DicomTags.SOPClassUID, out sopClassUID, out tagExists);
+				return sopClassUID ?? "";
+			}
+		}
+
+		/// <summary>
+		/// Gets the specific character set.
+		/// </summary>
+		public virtual string[] SpecificCharacterSet
+		{
+			get
+			{
+				bool tagExists;
+				string specificCharacterSet;
+				GetTagArray(DicomTags.SpecificCharacterSet, out specificCharacterSet, out tagExists);
+
+				if (tagExists)
+				{
+					string[] values;
+					values = DicomStringHelper.GetStringArray(specificCharacterSet);
+					return values;
+				}
+				else
+				{
+					return new string[0];
+				}
+			}
+		}
+
+		/// <summary>
+		/// Gets the instance number.
+		/// </summary>
+		public virtual int InstanceNumber
+		{
+			get
+			{
+				bool tagExists;
+				int instanceNumber;
+				GetTag(DicomTags.InstanceNumber, out instanceNumber, out tagExists);
+				return instanceNumber;
+			}
+		}
+
+		#endregion
+
 		#region Patient Module
-		
+
 		/// <summary>
 		/// Gets the patient's name.
 		/// </summary>
@@ -556,7 +616,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// should be done in these methods either.  It is expected that the unaltered tag value will be returned.
 		/// </remarks>
 		/// <param name="tag"></param>
-		/// <param name="val"></param>
+		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
 		public abstract void GetTag(uint tag, out ushort value, out bool tagExists);
 
@@ -570,7 +630,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// should be done in these methods either.  It is expected that the unaltered tag value will be returned.
 		/// </remarks>
 		/// <param name="tag"></param>
-		/// <param name="val"></param>
+		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
 		public abstract void GetTag(uint tag, out ushort value, uint position, out bool tagExists);
@@ -585,7 +645,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// should be done in these methods either.  It is expected that the unaltered tag value will be returned.
 		/// </remarks>
 		/// <param name="tag"></param>
-		/// <param name="val"></param>
+		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
 		public abstract void GetTag(uint tag, out int value, out bool tagExists);
 
@@ -599,7 +659,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// should be done in these methods either.  It is expected that the unaltered tag value will be returned.
 		/// </remarks>
 		/// <param name="tag"></param>
-		/// <param name="val"></param>
+		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
 		public abstract void GetTag(uint tag, out int value, uint position, out bool tagExists);
@@ -614,7 +674,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// should be done in these methods either.  It is expected that the unaltered tag value will be returned.
 		/// </remarks>
 		/// <param name="tag"></param>
-		/// <param name="val"></param>
+		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
 		public abstract void GetTag(uint tag, out double value, out bool tagExists);
 
@@ -628,7 +688,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// should be done in these methods either.  It is expected that the unaltered tag value will be returned.
 		/// </remarks>
 		/// <param name="tag"></param>
-		/// <param name="val"></param>
+		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
 		public abstract void GetTag(uint tag, out double value, uint position, out bool tagExists);
@@ -643,7 +703,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// should be done in these methods either.  It is expected that the unaltered tag value will be returned.
 		/// </remarks>
 		/// <param name="tag"></param>
-		/// <param name="val"></param>
+		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
 		public abstract void GetTag(uint tag, out string value, out bool tagExists);
 
@@ -657,7 +717,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// should be done in these methods either.  It is expected that the unaltered tag value will be returned.
 		/// </remarks>
 		/// <param name="tag"></param>
-		/// <param name="val"></param>
+		/// <param name="value"></param>
 		/// <param name="position"></param>
 		/// <param name="tagExists"></param>
 		public abstract void GetTag(uint tag, out string value, uint position, out bool tagExists);
@@ -672,7 +732,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// should be done in these methods either.  It is expected that the unaltered tag value will be returned.
 		/// </remarks>
 		/// <param name="tag"></param>
-		/// <param name="val"></param>
+		/// <param name="value"></param>
 		/// <param name="tagExists"></param>
 		public abstract void GetTagArray(uint tag, out string value, out bool tagExists);
 
@@ -750,6 +810,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		{
 			get { return _referenceCount; }
 		}
+
 #endif
 
 		#endregion
