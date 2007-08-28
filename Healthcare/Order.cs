@@ -23,7 +23,7 @@ namespace ClearCanvas.Healthcare {
             Visit visit,
             DiagnosticService diagnosticService,
             DateTime schedulingRequestDateTime,
-            Practitioner orderingPhysician,
+            ExternalPractitioner orderingPhysician,
             Facility orderingFacility,
             OrderPriority priority)
         {
@@ -44,7 +44,7 @@ namespace ClearCanvas.Healthcare {
             Visit visit,
             DiagnosticService diagnosticService,
             DateTime schedulingRequestDateTime,
-            Practitioner orderingPhysician,
+            ExternalPractitioner orderingPhysician,
             Facility orderingFacility,
             OrderPriority priority,
             bool scheduleOrder)

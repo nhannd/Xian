@@ -177,4 +177,7 @@
   <data name="ExceptionNoUser" xml:space="preserve">
     <value>Unable to find current user</value>
   </data>
+  <data name="ExceptionExternalPractitionerAlreadyExist" xml:space="preserve">
+    <value>A practitioner with the name {0}, {1} already exists</value>
+  </data>
 </root>

@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Application.Common
         public DateTime? SchedulingRequestDateTime;
 
         [DataMember]
-        public StaffDetail OrderingPractitioner;
+        public ExternalPractitionerDetail OrderingPractitioner;
 
         [DataMember]
         public string OrderingFacility;

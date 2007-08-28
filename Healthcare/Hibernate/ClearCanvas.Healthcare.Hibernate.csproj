@@ -105,7 +105,7 @@
     <EmbeddedResource Include="Mappings\PatientClassEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\PatientProfile.hbm.xml" />
     <EmbeddedResource Include="Mappings\PatientTypeEnum.hbm.xml" />
-    <EmbeddedResource Include="Mappings\Practitioner.hbm.xml" />
+    <EmbeddedResource Include="Mappings\ExternalPractitioner.hbm.xml" />
     <EmbeddedResource Include="Mappings\SexEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\Staff.hbm.xml" />
     <EmbeddedResource Include="Mappings\TelephoneEquipmentEnum.hbm.xml" />

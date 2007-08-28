@@ -179,7 +179,7 @@ namespace ClearCanvas.Ris.Client.Admin
             {
                 StaffSummary staffSummary = (StaffSummary)staffComponent.SelectedStaff.Item;
                 _userDetail.StaffRef = staffSummary.StaffRef;
-                _userDetail.Name = staffSummary.PersonNameDetail;
+                _userDetail.Name = staffSummary.Name;
 
                 this.NotifyPropertyChanged("StaffName");
                 this.NotifyPropertyChanged("ClearStaffEnabled");

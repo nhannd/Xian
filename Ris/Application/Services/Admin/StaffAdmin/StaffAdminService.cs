@@ -30,38 +30,19 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
 
             StaffAssembler assembler = new StaffAssembler();
 
-            if (request.ListOnlyPractitioners)
-            {
-                PractitionerSearchCriteria criteria = new PractitionerSearchCriteria();
-                if (!string.IsNullOrEmpty(request.FirstName))
-                    criteria.Name.GivenName.StartsWith(request.FirstName);
-                if (!string.IsNullOrEmpty(request.LastName))
-                    criteria.Name.FamilyName.StartsWith(request.LastName);
+            StaffSearchCriteria criteria = new StaffSearchCriteria();
+            if (!string.IsNullOrEmpty(request.FirstName))
+                criteria.Name.GivenName.StartsWith(request.FirstName);
+            if (!string.IsNullOrEmpty(request.LastName))
+                criteria.Name.FamilyName.StartsWith(request.LastName);
 
-                return new ListStaffResponse(
-                    CollectionUtils.Map<Practitioner, StaffSummary, List<StaffSummary>>(
-                        PersistenceContext.GetBroker<IPractitionerBroker>().Find(criteria, page),
-                        delegate(Practitioner s)
-                        {
-                            return assembler.CreateStaffSummary(s, PersistenceContext);
-                        }));
-            }
-            else
-            {
-                StaffSearchCriteria criteria = new StaffSearchCriteria();
-                if (!string.IsNullOrEmpty(request.FirstName))
-                    criteria.Name.GivenName.StartsWith(request.FirstName);
-                if (!string.IsNullOrEmpty(request.LastName))
-                    criteria.Name.FamilyName.StartsWith(request.LastName);
-
-                return new ListStaffResponse(
-                    CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
-                        PersistenceContext.GetBroker<IStaffBroker>().Find(criteria, page),
-                        delegate(Staff s)
-                        {
-                            return assembler.CreateStaffSummary(s, PersistenceContext);
-                        }));
-            }
+            return new ListStaffResponse(
+                CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(
+                    PersistenceContext.GetBroker<IStaffBroker>().Find(criteria, page),
+                    delegate(Staff s)
+                    {
+                        return assembler.CreateStaffSummary(s, PersistenceContext);
+                    }));
         }
 
         [ReadOperation]
@@ -100,13 +81,13 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
         public AddStaffResponse AddStaff(AddStaffRequest request)
         {
             StaffType staffType = EnumUtils.GetEnumValue<StaffType>(request.StaffDetail.StaffType);
-            Staff staff = (staffType == StaffType.RAD || staffType == StaffType.RES || staffType == StaffType.REF) ? new Practitioner() : new Staff();
+            Staff staff = new Staff();
 
             StaffAssembler assembler = new StaffAssembler();
             assembler.UpdateStaff(request.StaffDetail, staff);
 
-            CheckForDuplicateStaff(request.StaffDetail.PersonNameDetail.FamilyName,
-                request.StaffDetail.PersonNameDetail.GivenName,
+            CheckForDuplicateStaff(request.StaffDetail.Name.FamilyName,
+                request.StaffDetail.Name.GivenName,
                 staff);
 
             PersistenceContext.Lock(staff, DirtyState.New);
@@ -126,8 +107,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
             StaffAssembler assembler = new StaffAssembler();
             assembler.UpdateStaff(request.StaffDetail, staff);
 
-            CheckForDuplicateStaff(request.StaffDetail.PersonNameDetail.FamilyName,
-                request.StaffDetail.PersonNameDetail.GivenName,
+            CheckForDuplicateStaff(request.StaffDetail.Name.FamilyName,
+                request.StaffDetail.Name.GivenName,
                 staff);
 
             return new UpdateStaffResponse(assembler.CreateStaffSummary(staff, PersistenceContext));

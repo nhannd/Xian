@@ -63,6 +63,20 @@
       <DependentUpon>ContactPersonsSummaryComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="ContactPersonsSummaryComponentView.cs" />
+    <Compile Include="ExternalPractitionerSummaryComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ExternalPractitionerSummaryComponentControl.designer.cs">
+      <DependentUpon>ExternalPractitionerSummaryComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExternalPractitionerDetailsEditorComponentControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ExternalPractitionerDetailsEditorComponentControl.designer.cs">
+      <DependentUpon>ExternalPractitionerDetailsEditorComponentControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ExternalPractitionerDetailsEditorComponentView.cs" />
+    <Compile Include="ExternalPractitionerSummaryComponentView.cs" />
     <Compile Include="EmailAddressEditorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -181,6 +195,14 @@
     <EmbeddedResource Include="ContactPersonsSummaryComponentControl.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ContactPersonsSummaryComponentControl.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExternalPractitionerSummaryComponentControl.resx">
+      <DependentUpon>ExternalPractitionerSummaryComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="ExternalPractitionerDetailsEditorComponentControl.resx">
+      <DependentUpon>ExternalPractitionerDetailsEditorComponentControl.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="EmailAddressEditorComponentControl.resx">
       <SubType>Designer</SubType>

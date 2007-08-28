@@ -32,5 +32,8 @@
     <Setting Name="MrnDefaultFormat" Type="System.String" Scope="Application">
       <Value Profile="(Default)">%A %N</Value>
     </Setting>
+    <Setting Name="CompositeIdentifierDefaultFormat" Type="System.String" Scope="Application">
+      <Value Profile="(Default)">%A %N</Value>
+    </Setting>
   </Settings>
 </SettingsFile>

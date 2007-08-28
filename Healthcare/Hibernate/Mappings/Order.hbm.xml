@@ -24,12 +24,12 @@
     <!-- Time that the earliest MPS is scheduled at.  Don't know if we really need this or not-->
     <property name="EarliestScheduledDateTime" column="EarliestScheduledDateTime_" type="DateTime"/>
 
-    <many-to-one name="OrderingPractitioner" class="Practitioner" column="OrderingPractitionerOID_" not-null="true"/>
+    <many-to-one name="OrderingPractitioner" class="ExternalPractitioner" column="OrderingPractitionerOID_" not-null="true"/>
     <many-to-one name="OrderingFacility" class="Facility" column="FacilityOID_" not-null="true"/>
 
     <set name="ResultCopiesToPractitioners" table="OrderResultCopiesToPractitioners_" lazy="true" access="nosetter.camelcase-underscore">
       <key column="OrderOID_"/>
-      <many-to-many column="PractitionerOID_" class="Practitioner" fetch="join"/>
+      <many-to-many column="PractitionerOID_" class="ExternalPractitioner" fetch="join"/>
     </set>
 
     <!-- Indications.... may need to be a coded-value, not sure yet -->

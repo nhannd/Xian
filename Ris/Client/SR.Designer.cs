@@ -430,6 +430,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Staff ID.
+        /// </summary>
+        internal static string ColumnStaffId {
+            get {
+                return ResourceManager.GetString("ColumnStaffId", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to StaffType.
         /// </summary>
         internal static string ColumnStaffType {
@@ -534,6 +543,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string ExceptionFolderRefresh {
             get {
                 return ResourceManager.GetString("ExceptionFolderRefresh", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unable to save practitioner.
+        /// </summary>
+        internal static string ExceptionSaveExternalPractitioner {
+            get {
+                return ResourceManager.GetString("ExceptionSaveExternalPractitioner", resourceCulture);
             }
         }
         
@@ -700,6 +718,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Practitioner.
+        /// </summary>
+        internal static string TitleAddExternalPractitioner {
+            get {
+                return ResourceManager.GetString("TitleAddExternalPractitioner", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Note....
         /// </summary>
         internal static string TitleAddNote {
@@ -741,6 +768,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleEdit {
             get {
                 return ResourceManager.GetString("TitleEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to External Practitioner.
+        /// </summary>
+        internal static string TitleExternalPractitioner {
+            get {
+                return ResourceManager.GetString("TitleExternalPractitioner", resourceCulture);
             }
         }
         
@@ -804,6 +840,15 @@ namespace ClearCanvas.Ris.Client {
         internal static string TitleUpdateEmailAddress {
             get {
                 return ResourceManager.GetString("TitleUpdateEmailAddress", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit Practitioner.
+        /// </summary>
+        internal static string TitleUpdateExternalPractitioner {
+            get {
+                return ResourceManager.GetString("TitleUpdateExternalPractitioner", resourceCulture);
             }
         }
         

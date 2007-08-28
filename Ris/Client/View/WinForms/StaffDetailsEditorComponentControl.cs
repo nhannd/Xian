@@ -30,9 +30,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             _familyName.DataBindings.Add("Value", _component, "FamilyName", true, DataSourceUpdateMode.OnPropertyChanged);
             _givenName.DataBindings.Add("Value", _component, "GivenName", true, DataSourceUpdateMode.OnPropertyChanged);
             _middleName.DataBindings.Add("Value", _component, "MiddleName", true, DataSourceUpdateMode.OnPropertyChanged);
-            
-            _licenseNumber.DataBindings.Add("Visible", _component, "IsPractitioner", true, DataSourceUpdateMode.OnPropertyChanged);
-            _licenseNumber.DataBindings.Add("Value", _component, "LicenseNumber", true, DataSourceUpdateMode.OnPropertyChanged);
+            _staffId.DataBindings.Add("Value", _component, "StaffId", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _staffType.DataSource = _component.StaffTypeChoices;
             _staffType.DataBindings.Add("Value", _component, "StaffType", true, DataSourceUpdateMode.OnPropertyChanged);

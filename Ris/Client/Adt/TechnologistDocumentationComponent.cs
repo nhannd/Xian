@@ -73,7 +73,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 StaffSummary staff;
                 if (StaffFinder.ResolveNameInteractive(search, _component.Host.DesktopWindow, out staff))
                 {
-                    return PersonNameFormat.Format(staff.PersonNameDetail);
+                    return PersonNameFormat.Format(staff.Name);
                 }
                 return null;
             }

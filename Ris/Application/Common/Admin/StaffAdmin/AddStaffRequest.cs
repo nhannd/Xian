@@ -9,7 +9,7 @@ namespace ClearCanvas.Ris.Application.Common.Admin.StaffAdmin
     [DataContract]
     public class AddStaffRequest : DataContractBase
     {
-        public AddStaffRequest(StaffDetail staffDetail, bool isPractitioner)
+        public AddStaffRequest(StaffDetail staffDetail)
         {
             this.StaffDetail = staffDetail;
         }

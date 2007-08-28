@@ -23,8 +23,8 @@ namespace ClearCanvas.Ris.Client
         private bool _isNew;
 
         private StaffDetailsEditorComponent _detailsEditor;
-        private AddressesSummaryComponent _addressesSummary;
-        private PhoneNumbersSummaryComponent _phoneNumbersSummary;
+        //private AddressesSummaryComponent _addressesSummary;
+        //private PhoneNumbersSummaryComponent _phoneNumbersSummary;
 
         /// <summary>
         /// Constructs an editor to edit a new staff
@@ -62,8 +62,8 @@ namespace ClearCanvas.Ris.Client
 
                     string rootPath = SR.TitleStaff;
                     this.Pages.Add(new NavigatorPage(rootPath, _detailsEditor = new StaffDetailsEditorComponent(_isNew, formDataResponse.StaffTypeChoices)));
-                    this.Pages.Add(new NavigatorPage(rootPath + "/Addresses", _addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)));
-                    this.Pages.Add(new NavigatorPage(rootPath + "/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)));
+                    //this.Pages.Add(new NavigatorPage(rootPath + "/Addresses", _addressesSummary = new AddressesSummaryComponent(formDataResponse.AddressTypeChoices)));
+                    //this.Pages.Add(new NavigatorPage(rootPath + "/Phone Numbers", _phoneNumbersSummary = new PhoneNumbersSummaryComponent(formDataResponse.PhoneTypeChoices)));
 
                     this.ValidationStrategy = new AllNodesContainerValidationStrategy();
 
@@ -80,8 +80,8 @@ namespace ClearCanvas.Ris.Client
                     }
 
                     _detailsEditor.StaffDetail = _staffDetail;
-                    _addressesSummary.Subject = _staffDetail.Addresses;
-                    _phoneNumbersSummary.Subject = _staffDetail.TelephoneNumbers;
+                    //_addressesSummary.Subject = _staffDetail.Addresses;
+                    //_phoneNumbersSummary.Subject = _staffDetail.TelephoneNumbers;
                 });
 
             base.Start();
@@ -107,7 +107,7 @@ namespace ClearCanvas.Ris.Client
                     {
                         if (_isNew)
                         {
-                            AddStaffResponse response = service.AddStaff(new AddStaffRequest(_staffDetail, _detailsEditor.IsPractitioner));
+                            AddStaffResponse response = service.AddStaff(new AddStaffRequest(_staffDetail));
                             _staffRef = response.Staff.StaffRef;
                             _staffSummary = response.Staff;
                         }

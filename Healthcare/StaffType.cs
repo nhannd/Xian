@@ -25,54 +25,54 @@ namespace ClearCanvas.Healthcare {
         /// Radiologist (Staff)
         /// </summary>
         [EnumValue("Radiologist", Description="Staff Radiologist")]
-        RAD,
+        PRAD,
 
         /// <summary>
         /// Radiology Resident
         /// </summary>
         [EnumValue("Resident", Description="Radiology Resident or non-staff radiologist")]
-        RES,
+        PRAR,
 
         /// <summary>
         /// Referring Physician
         /// </summary>
-        [EnumValue("Referring Physician", Description = "Referring Physician")]
-        REF,
+        [EnumValue("Emergency Physician", Description = "Emergency Physician")]
+        PEMR,
 
         /// <summary>
         /// Technologist
         /// </summary>
         [EnumValue("Technologist", Description="Radiology Technologist")]
-        TEC,
+        STEC,
 
         /// <summary>
         /// Transcriptionist
         /// </summary>
         [EnumValue("Transcriptionist", Description="Transcriptionist")]
-        TRA,
+        STRA,
 
         /// <summary>
         /// Clerical
         /// </summary>
         [EnumValue("Clerical", Description="Clerical")]
-        CLR,
+        SCLR,
 
         /// <summary>
         /// Healthcare Administrator
         /// </summary>
         [EnumValue("Healthcare Admin", Description="Healthcare Administrative staff")]
-        HAD,
+        SADH,
 
         /// <summary>
         /// System/Technical Administrator
         /// </summary>
         [EnumValue("System Admin", Description="System or Technical Administrative staff")]
-        SAD,
+        SADS,
 
         /// <summary>
         /// System/Technical Support
         /// </summary>
         [EnumValue("Technical Support", Description = "System or Technical Support staff")]
-        SUP
+        SSUP
 	}
 }

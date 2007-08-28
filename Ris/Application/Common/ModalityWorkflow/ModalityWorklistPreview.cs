@@ -22,7 +22,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
             string sex,
             string accessionNumber,
             string priority,
-            StaffDetail orderingPhysician,
+            ExternalPractitionerDetail orderingPhysician,
             FacilityDetail facility,
             List<DiagnosticServiceBreakdownSummary> dsBreakdown,
             string mpsName,
@@ -98,7 +98,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         public string Priority;
 
         [DataMember]
-        public StaffDetail OrderingPhysician;
+        public ExternalPractitionerDetail OrderingPhysician;
 
         [DataMember]
         public FacilityDetail Facility;

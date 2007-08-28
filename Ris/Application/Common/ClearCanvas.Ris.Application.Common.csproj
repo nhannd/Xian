@@ -66,6 +66,19 @@
     <Compile Include="Admin\AuthenticationAdmin\UpdateAuthorityGroupResponse.cs" />
     <Compile Include="Admin\AuthenticationAdmin\UpdateUserRequest.cs" />
     <Compile Include="Admin\AuthenticationAdmin\UpdateUserResponse.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\AddExternalPractitionerRequest.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\AddExternalPractitionerResponse.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\IExternalPractitionerAdminService.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\ListExternalPractitionersRequest.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\ListExternalPractitionersResponse.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\LoadExternalPractitionerEditorFormDataRequest.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\LoadExternalPractitionerEditorFormDataResponse.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\LoadExternalPractitionerForEditRequest.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\LoadExternalPractitionerForEditResponse.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerRequest.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\UpdateExternalPractitionerResponse.cs" />
+    <Compile Include="Admin\ExternalPractitionerDetail.cs" />
+    <Compile Include="Admin\ExternalPractitionerSummary.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\IDiagnosticServiceAdminService.cs" />
     <Compile Include="Admin\EnumerationAdmin\AddValueRequest.cs" />
     <Compile Include="Admin\EnumerationAdmin\AddValueResponse.cs" />
@@ -206,6 +219,7 @@
     <Compile Include="Admin\WorklistAdmin\UpdateWorklistRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\UpdateWorklistResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminDetail.cs" />
+    <Compile Include="CompositeIdentifierDetail.cs" />
     <Compile Include="DefaultAuthorityGroups.cs" />
     <Compile Include="Jsml\GetOperationNamesRequest.cs" />
     <Compile Include="Jsml\GetOperationNamesResponse.cs" />

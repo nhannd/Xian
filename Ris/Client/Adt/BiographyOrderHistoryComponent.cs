@@ -119,7 +119,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string OrderingPhysician
         {
-            get { return _orderDetail == null ? null : String.Format("{0}, {1}", _orderDetail.OrderingPractitioner.PersonNameDetail.FamilyName, _orderDetail.OrderingPractitioner.PersonNameDetail.GivenName); }
+            get { return _orderDetail == null ? null : String.Format("{0}, {1}", _orderDetail.OrderingPractitioner.Name.FamilyName, _orderDetail.OrderingPractitioner.Name.GivenName); }
         }
 
         public string OrderingFacility
@@ -212,7 +212,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string PerformerStaff
         {
-            get { return _selectedMPS == null ? null : String.Format("{0}, {1}", _selectedMPS.PerformerStaff.PersonNameDetail.FamilyName, _selectedMPS.PerformerStaff.PersonNameDetail.GivenName); }
+            get { return _selectedMPS == null ? null : String.Format("{0}, {1}", _selectedMPS.PerformerStaff.Name.FamilyName, _selectedMPS.PerformerStaff.Name.GivenName); }
         }
 
         public string StartTime
@@ -227,7 +227,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string ScheduledPerformerStaff
         {
-            get { return _selectedMPS == null ? null : String.Format("{0}, {1}", _selectedMPS.ScheduledPerformerStaff.PersonNameDetail.FamilyName, _selectedMPS.ScheduledPerformerStaff.PersonNameDetail.GivenName); }
+            get { return _selectedMPS == null ? null : String.Format("{0}, {1}", _selectedMPS.ScheduledPerformerStaff.Name.FamilyName, _selectedMPS.ScheduledPerformerStaff.Name.GivenName); }
         }
 
         public string ScheduledStartTime

@@ -174,7 +174,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         return SR.TextCheckedIn;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return "Error";
             }

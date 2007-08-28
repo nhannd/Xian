@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             foreach (VisitPractitionerDetail vpDetail in detail.Practitioners)
             {
                 visit.Practitioners.Add(new VisitPractitioner(
-                    context.Load<Practitioner>(vpDetail.Practitioner.StaffRef, EntityLoadFlags.Proxy),
+                    context.Load<ExternalPractitioner>(vpDetail.Practitioner.PractitionerRef, EntityLoadFlags.Proxy),
                     EnumUtils.GetEnumValue<VisitPractitionerRole>(vpDetail.Role),
                     vpDetail.StartTime,
                     vpDetail.EndTime));
@@ -147,7 +147,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
         {
             VisitPractitionerDetail detail = new VisitPractitionerDetail();
             
-            detail.Practitioner = new StaffAssembler().CreateStaffSummary(vp.Practitioner, context);
+            detail.Practitioner = new ExternalPractitionerAssembler().CreateExternalPractitionerSummary(vp.Practitioner, context);
 
             detail.Role = EnumUtils.GetEnumValueInfo(vp.Role, context);
 

@@ -43,6 +43,7 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.HL7Admin,
                         AuthorityTokens.NoteAdmin,
                         AuthorityTokens.StaffAdmin,
+                        AuthorityTokens.ExternalPractitionerAdmin,
                         AuthorityTokens.VisitAdmin,
                         AuthorityTokens.UserAdmin,
                         AuthorityTokens.AuthorityGroupAdmin,
@@ -62,6 +63,7 @@ namespace ClearCanvas.Ris.Application.Common
                         AuthorityTokens.HL7Admin,
                         AuthorityTokens.NoteAdmin,
                         AuthorityTokens.StaffAdmin,
+                        AuthorityTokens.ExternalPractitionerAdmin,
                         AuthorityTokens.VisitAdmin,
                         AuthorityTokens.UserAdmin,
                         AuthorityTokens.AuthorityGroupAdmin,
@@ -73,6 +75,7 @@ namespace ClearCanvas.Ris.Application.Common
                     new string[] 
                     {
                         AuthorityTokens.PatientProfileAdmin,
+                        AuthorityTokens.ExternalPractitionerAdmin,
                         AuthorityTokens.ReconcilePatients
                     }),
 

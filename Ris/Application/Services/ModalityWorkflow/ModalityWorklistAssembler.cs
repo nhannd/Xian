@@ -67,7 +67,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             // Order level details
             preview.AccessionNumber = mps.RequestedProcedure.Order.AccessionNumber;
             preview.Priority = EnumUtils.GetValue(mps.RequestedProcedure.Order.Priority, context);
-            preview.OrderingPhysician = new StaffAssembler().CreateStaffDetail(mps.RequestedProcedure.Order.OrderingPractitioner, context);
+            preview.OrderingPhysician = new ExternalPractitionerAssembler().CreateExternalPractitionerDetail(mps.RequestedProcedure.Order.OrderingPractitioner, context);
             preview.Facility = new FacilityAssembler().CreateFacilityDetail(mps.RequestedProcedure.Order.OrderingFacility);
 
             //preview.DSBreakdown = new List<string>();

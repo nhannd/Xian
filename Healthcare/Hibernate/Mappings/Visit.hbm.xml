@@ -44,7 +44,7 @@
       </collection-id>
       <key column="VisitOID_"/>
       <composite-element class="VisitPractitioner">
-        <many-to-one name="Practitioner" class="Practitioner" column="PractitionerOID_" not-null="true" fetch="join"/>
+        <many-to-one name="Practitioner" class="ExternalPractitioner" column="PractitionerOID_" not-null="true" fetch="join"/>
         <property name="Role" column="Role_" type="ClearCanvas.Healthcare.Hibernate.VisitPractitionerRoleEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
         <property name="StartTime" column="StartTime_" type="DateTime" not-null="false"/>
         <property name="EndTime" column="EndTime_" type="DateTime" not-null="false"/>

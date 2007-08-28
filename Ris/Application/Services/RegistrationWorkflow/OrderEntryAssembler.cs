@@ -24,7 +24,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             OrderDetail detail = new OrderDetail();
 
             VisitAssembler visitAssembler = new VisitAssembler();
-            StaffAssembler StaffAssembler = new StaffAssembler();
+            ExternalPractitionerAssembler pracAssembler = new ExternalPractitionerAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
 
             detail.PatientRef = order.Patient.GetRef();
@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             detail.DiagnosticService = this.CreateDiagnosticServiceDetail(order.DiagnosticService);
             detail.EnteredDateTime = order.EnteredDateTime;
             detail.SchedulingRequestDateTime = order.SchedulingRequestDateTime;
-            detail.OrderingPractitioner = StaffAssembler.CreateStaffDetail(order.OrderingPractitioner, context);
+            detail.OrderingPractitioner = pracAssembler.CreateExternalPractitionerDetail(order.OrderingPractitioner, context);
             detail.OrderingFacility = facilityAssembler.CreateFacilityDetail(order.OrderingFacility);
             detail.ReasonForStudy = order.ReasonForStudy;
             detail.OrderPriority = EnumUtils.GetEnumValueInfo(order.Priority, context);
@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
         public OrderSummary CreateOrderSummary(Order order, IPersistenceContext context)
         {
-            StaffAssembler StaffAssembler = new StaffAssembler();
+            ExternalPractitionerAssembler pracAssembler = new ExternalPractitionerAssembler();
 
             OrderSummary summary = new OrderSummary();
 
@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             summary.DiagnosticServiceName = order.DiagnosticService.Name;
             summary.EnteredDateTime = order.EnteredDateTime;
             summary.SchedulingRequestDateTime = order.SchedulingRequestDateTime;
-            summary.OrderingPractitioner = StaffAssembler.CreateStaffDetail(order.OrderingPractitioner, context);
+            summary.OrderingPractitioner = pracAssembler.CreateExternalPractitionerDetail(order.OrderingPractitioner, context);
             summary.OrderingFacility = order.OrderingFacility.Name;
             summary.ReasonForStudy = order.ReasonForStudy;
             summary.OrderPriority = EnumUtils.GetEnumValueInfo(order.Priority, context);

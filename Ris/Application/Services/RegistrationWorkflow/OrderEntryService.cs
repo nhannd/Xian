@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             OrderEntryAssembler orderEntryAssembler = new OrderEntryAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
-            StaffAssembler StaffAssembler = new StaffAssembler();
+            ExternalPractitionerAssembler pracAssembler = new ExternalPractitionerAssembler();
 
             IList topLevelDiagnosticServiceTreeNodes = null;
             try 
@@ -63,7 +63,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 topLevelDiagnosticServiceTreeNodes = new ArrayList();
 	        }
 
-            // TODO: figure out how to determine which physicians are "ordering" physicians
             return new GetOrderEntryFormDataResponse(
                 CollectionUtils.Map<DiagnosticService, DiagnosticServiceSummary, List<DiagnosticServiceSummary>>(
                     PersistenceContext.GetBroker<IDiagnosticServiceBroker>().FindAll(),
@@ -76,12 +75,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     delegate(Facility f)
                     {
                         return facilityAssembler.CreateFacilitySummary(f);
-                    }), 
-                CollectionUtils.Map<Practitioner, StaffSummary, List<StaffSummary>>(
-                    PersistenceContext.GetBroker<IPractitionerBroker>().FindAll(),
-                    delegate(Practitioner p)
+                    }),
+                CollectionUtils.Map<ExternalPractitioner, ExternalPractitionerSummary, List<ExternalPractitionerSummary>>(
+                    PersistenceContext.GetBroker<IExternalPractitionerBroker>().FindAll(),
+                    delegate(ExternalPractitioner p)
                     {
-                        return StaffAssembler.CreateStaffSummary(p, PersistenceContext);
+                        return pracAssembler.CreateExternalPractitionerSummary(p, PersistenceContext);
                     }),
                 EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext),
                 CollectionUtils.Map<DiagnosticServiceTreeNode, DiagnosticServiceTreeItem, List<DiagnosticServiceTreeItem>>(
@@ -141,7 +140,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             Patient patient = PersistenceContext.GetBroker<IPatientBroker>().Load(request.Patient, EntityLoadFlags.Proxy);
             Visit visit = PersistenceContext.GetBroker<IVisitBroker>().Load(request.Visit, EntityLoadFlags.Proxy);
-            Practitioner orderingPhysician = PersistenceContext.GetBroker<IPractitionerBroker>().Load(request.OrderingPhysician, EntityLoadFlags.Proxy);
+            ExternalPractitioner orderingPhysician = PersistenceContext.GetBroker<IExternalPractitionerBroker>().Load(request.OrderingPhysician, EntityLoadFlags.Proxy);
             Facility orderingFacility = PersistenceContext.GetBroker<IFacilityBroker>().Load(request.OrderingFacility, EntityLoadFlags.Proxy);
             OrderPriority orderingPriority = EnumUtils.GetEnumValue<OrderPriority>(request.OrderPriority);
             DiagnosticService diagnosticService = PersistenceContext.GetBroker<IDiagnosticServiceBroker>().Load(request.DiagnosticService);

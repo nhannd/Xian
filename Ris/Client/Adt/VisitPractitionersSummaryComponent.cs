@@ -11,6 +11,7 @@ using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.StaffAdmin;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Common.Admin.ExternalPractitionerAdmin;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -143,21 +144,21 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             try
             {
-                Platform.GetService<IStaffAdminService>(
-                    delegate(IStaffAdminService service)
+                Platform.GetService<IExternalPractitionerAdminService>(
+                    delegate(IExternalPractitionerAdminService service)
                     {
-                        ListStaffResponse findResponse = service.ListStaff(new ListStaffRequest("Who", "", true));
-                        StaffSummary practitioner;
-                        if (findResponse.Staffs.Count == 0)
+                        ListExternalPractitionersResponse findResponse = service.ListExternalPractitioners(new ListExternalPractitionersRequest("Who", ""));
+                        ExternalPractitionerSummary practitioner;
+                        if (findResponse.Practitioners.Count == 0)
                         {
-                            AddStaffResponse addResponse = service.AddStaff(new AddStaffRequest(new StaffDetail(
+                            AddExternalPractitionerResponse addResponse = service.AddExternalPractitioner(new AddExternalPractitionerRequest(new ExternalPractitionerDetail(
                                     new PersonNameDetail("Who", "Doctor", "", "", "", ""),
-                                    null, null, "123456"), true));
-                            practitioner = addResponse.Staff;
+                                    null, null, new CompositeIdentifierDetail("CPSO", "123456"))));
+                            practitioner = addResponse.Practitioner;
                         }
                         else
                         {
-                            practitioner = findResponse.Staffs[0];
+                            practitioner = findResponse.Practitioners[0];
                         }
 
                         VisitPractitionerDetail vp = new VisitPractitionerDetail();

@@ -23,7 +23,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             //TODO PatientNameDetail formatting
             this.Columns.Add(new TableColumn<OrderSummary, string>("Ordered by",
-                delegate(OrderSummary order) { return PersonNameFormat.Format(order.OrderingPractitioner.PersonNameDetail); }));
+                delegate(OrderSummary order) { return PersonNameFormat.Format(order.OrderingPractitioner.Name); }));
 
             this.Columns.Add(new TableColumn<OrderSummary, string>("Ordered From",
                 delegate(OrderSummary order) { return order.OrderingFacility; }));

@@ -240,6 +240,9 @@
   <data name="ColumnSite" xml:space="preserve">
     <value>Site</value>
   </data>
+  <data name="ColumnStaffId" xml:space="preserve">
+    <value>Staff ID</value>
+  </data>
   <data name="ColumnStaffType" xml:space="preserve">
     <value>StaffType</value>
   </data>
@@ -275,6 +278,9 @@
   </data>
   <data name="ExceptionFolderRefresh" xml:space="preserve">
     <value>Cannot refresh folder</value>
+  </data>
+  <data name="ExceptionSaveExternalPractitioner" xml:space="preserve">
+    <value>Unable to save practitioner</value>
   </data>
   <data name="ExceptionSaveStaff" xml:space="preserve">
     <value>Unable to save Staff</value>
@@ -330,6 +336,9 @@
   <data name="TitleAddEmailAddress" xml:space="preserve">
     <value>Add Email Address...</value>
   </data>
+  <data name="TitleAddExternalPractitioner" xml:space="preserve">
+    <value>Add Practitioner</value>
+  </data>
   <data name="TitleAddNote" xml:space="preserve">
     <value>Add Note...</value>
   </data>
@@ -344,6 +353,9 @@
   </data>
   <data name="TitleEdit" xml:space="preserve">
     <value>Edit</value>
+  </data>
+  <data name="TitleExternalPractitioner" xml:space="preserve">
+    <value>External Practitioner</value>
   </data>
   <data name="TitleNext" xml:space="preserve">
     <value>Next Page</value>
@@ -365,6 +377,9 @@
   </data>
   <data name="TitleUpdateEmailAddress" xml:space="preserve">
     <value>Update Email Address...</value>
+  </data>
+  <data name="TitleUpdateExternalPractitioner" xml:space="preserve">
+    <value>Edit Practitioner</value>
   </data>
   <data name="TitleUpdateNote" xml:space="preserve">
     <value>Update Note...</value>

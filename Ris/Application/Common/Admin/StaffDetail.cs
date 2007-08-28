@@ -9,40 +9,25 @@ namespace ClearCanvas.Ris.Application.Common.Admin
     [DataContract]
     public class StaffDetail : DataContractBase
     {
-        public StaffDetail(PersonNameDetail personNameDetail, List<TelephoneDetail> phoneDetails, List<AddressDetail> addressDetails, string licenseNumber)
-            : this(personNameDetail, phoneDetails, addressDetails)
+        public StaffDetail(string staffId, EnumValueInfo staffType, PersonNameDetail personNameDetail)
         {
-            this.LicenseNumber = licenseNumber;
-        }
-
-        public StaffDetail(PersonNameDetail personNameDetail, List<TelephoneDetail> phoneDetails, List<AddressDetail> addressDetails)
-        {
-            this.PersonNameDetail = personNameDetail;
-            this.TelephoneNumbers = phoneDetails;
-            this.Addresses = addressDetails;
+            this.StaffId = staffId;
+            this.StaffType = staffType;
+            this.Name = personNameDetail;
         }
 
         public StaffDetail()
         {
-            this.PersonNameDetail = new PersonNameDetail();
-            this.TelephoneNumbers = new List<TelephoneDetail>();
-            this.Addresses = new List<AddressDetail>();
+            this.Name = new PersonNameDetail();
         }
+
+        [DataMember]
+        public string StaffId;
 
         [DataMember]
         public EnumValueInfo StaffType;
 
         [DataMember]
-        public PersonNameDetail PersonNameDetail;
-
-        [DataMember]
-        public List<TelephoneDetail> TelephoneNumbers;
-
-        [DataMember]
-        public List<AddressDetail> Addresses;
-
-        // Member for Practitioner
-        [DataMember]
-        public string LicenseNumber;
+        public PersonNameDetail Name;
     }
 }

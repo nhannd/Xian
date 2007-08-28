@@ -28,23 +28,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._licenseNumber = new ClearCanvas.Controls.WinForms.TextField();
             this._staffType = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._middleName = new ClearCanvas.Controls.WinForms.TextField();
             this._givenName = new ClearCanvas.Controls.WinForms.TextField();
             this._familyName = new ClearCanvas.Controls.WinForms.TextField();
+            this._staffId = new ClearCanvas.Controls.WinForms.TextField();
             this.SuspendLayout();
-            // 
-            // _licenseNumber
-            // 
-            this._licenseNumber.LabelText = "License Number";
-            this._licenseNumber.Location = new System.Drawing.Point(239, 101);
-            this._licenseNumber.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
-            this._licenseNumber.Mask = "";
-            this._licenseNumber.Name = "_licenseNumber";
-            this._licenseNumber.Size = new System.Drawing.Size(200, 50);
-            this._licenseNumber.TabIndex = 4;
-            this._licenseNumber.Value = null;
             // 
             // _staffType
             // 
@@ -92,14 +81,25 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._familyName.TabIndex = 0;
             this._familyName.Value = null;
             // 
+            // _staffId
+            // 
+            this._staffId.LabelText = "Staff ID";
+            this._staffId.Location = new System.Drawing.Point(239, 101);
+            this._staffId.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this._staffId.Mask = "";
+            this._staffId.Name = "_staffId";
+            this._staffId.Size = new System.Drawing.Size(200, 50);
+            this._staffId.TabIndex = 4;
+            this._staffId.Value = null;
+            // 
             // StaffDetailsEditorComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._staffId);
             this.Controls.Add(this._middleName);
             this.Controls.Add(this._givenName);
             this.Controls.Add(this._familyName);
-            this.Controls.Add(this._licenseNumber);
             this.Controls.Add(this._staffType);
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "StaffDetailsEditorComponentControl";
@@ -110,11 +110,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Controls.WinForms.TextField _licenseNumber;
         private ClearCanvas.Controls.WinForms.ComboBoxField _staffType;
         private ClearCanvas.Controls.WinForms.TextField _middleName;
         private ClearCanvas.Controls.WinForms.TextField _givenName;
         private ClearCanvas.Controls.WinForms.TextField _familyName;
+        private ClearCanvas.Controls.WinForms.TextField _staffId;
 
     }
 }

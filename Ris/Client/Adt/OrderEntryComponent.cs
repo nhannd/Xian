@@ -126,13 +126,13 @@ namespace ClearCanvas.Ris.Client.Adt
         private VisitSummaryTable _visitTable;
         private List<DiagnosticServiceSummary> _diagnosticServiceChoices;
         private List<FacilitySummary> _facilityChoices;
-        private List<StaffSummary> _orderingPhysicianChoices;
+        private List<ExternalPractitionerSummary> _orderingPhysicianChoices;
         private List<EnumValueInfo> _priorityChoices;
 
         private VisitSummary _selectedVisit;
         //private DiagnosticServiceSummary _selectedDiagnosticService;
         private FacilitySummary _selectedFacility;
-        private StaffSummary _selectedOrderingPhysician;
+        private ExternalPractitionerSummary _selectedOrderingPhysician;
         private EnumValueInfo _selectedPriority;
 
         private event EventHandler _diagnosticServiceChanged;
@@ -300,8 +300,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 List<string> physicianStrings = new List<string>();
                 physicianStrings.Add("");
                 physicianStrings.AddRange(
-                    CollectionUtils.Map<StaffSummary, string, List<string>>(_orderingPhysicianChoices,
-                            delegate(StaffSummary p) { return PersonNameFormat.Format(p.PersonNameDetail); }));
+                    CollectionUtils.Map<ExternalPractitionerSummary, string, List<string>>(_orderingPhysicianChoices,
+                            delegate(ExternalPractitionerSummary p) { return PersonNameFormat.Format(p.Name); }));
 
                 return physicianStrings;
             }
@@ -309,12 +309,12 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public string SelectedOrderingPhysician
         {
-            get { return _selectedOrderingPhysician == null ? "" : PersonNameFormat.Format(_selectedOrderingPhysician.PersonNameDetail); }
+            get { return _selectedOrderingPhysician == null ? "" : PersonNameFormat.Format(_selectedOrderingPhysician.Name); }
             set
             {
                 _selectedOrderingPhysician = (value == "") ? null :
-                   CollectionUtils.SelectFirst<StaffSummary>(_orderingPhysicianChoices,
-                       delegate(StaffSummary p) { return PersonNameFormat.Format(p.PersonNameDetail) == value; });
+                   CollectionUtils.SelectFirst<ExternalPractitionerSummary>(_orderingPhysicianChoices,
+                       delegate(ExternalPractitionerSummary p) { return PersonNameFormat.Format(p.Name) == value; });
             }
         }
 
@@ -376,7 +376,7 @@ namespace ClearCanvas.Ris.Client.Adt
                                 //_selectedDiagnosticService.DiagnosticServiceRef,
                                 _selectedDiagnosticServiceTreeItem.DiagnosticService.DiagnosticServiceRef,
                                 _selectedPriority,
-                                _selectedOrderingPhysician.StaffRef,
+                                _selectedOrderingPhysician.PractitionerRef,
                                 _selectedFacility.FacilityRef,
                                 _scheduleOrder,
                                 _schedulingRequestDateTime));

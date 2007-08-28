@@ -68,9 +68,6 @@ namespace ClearCanvas.Ris.Client
                 _staffDetail.StaffType = EnumValueUtils.MapDisplayValue(_staffTypeChoices, value);
 
                 this.Modified = true;
-
-                // this may have affected whether this is a physician or not
-                NotifyPropertyChanged("IsPractitioner");
             }
         }
 
@@ -79,82 +76,72 @@ namespace ClearCanvas.Ris.Client
             get { return EnumValueUtils.GetDisplayValues(_staffTypeChoices); }
         }
 
-        public bool IsPractitioner
+        public string StaffId
         {
-            get
+            get { return _staffDetail.StaffId; }
+            set
             {
-                // JR: this is a really crappy hack but I'm going to fix it later
-                // and if I don't, then someone should punish me
-                return _staffDetail.StaffType.Code.StartsWith("R");
+                _staffDetail.StaffId = value;
+                this.Modified = true;
             }
         }
 
         public string FamilyName
         {
-            get { return _staffDetail.PersonNameDetail.FamilyName; }
+            get { return _staffDetail.Name.FamilyName; }
             set 
             {
-                _staffDetail.PersonNameDetail.FamilyName = value;
+                _staffDetail.Name.FamilyName = value;
                 this.Modified = true;
             }
         }
 
         public string GivenName
         {
-            get { return _staffDetail.PersonNameDetail.GivenName; }
+            get { return _staffDetail.Name.GivenName; }
             set
             {
-                _staffDetail.PersonNameDetail.GivenName = value;
+                _staffDetail.Name.GivenName = value;
                 this.Modified = true;
             }
         }
 
         public string MiddleName
         {
-            get { return _staffDetail.PersonNameDetail.MiddleName; }
+            get { return _staffDetail.Name.MiddleName; }
             set
             {
-                _staffDetail.PersonNameDetail.MiddleName = value;
+                _staffDetail.Name.MiddleName = value;
                 this.Modified = true;
             }
         }
 
         public string Prefix
         {
-            get { return _staffDetail.PersonNameDetail.Prefix; }
+            get { return _staffDetail.Name.Prefix; }
             set
             {
-                _staffDetail.PersonNameDetail.Prefix = value;
+                _staffDetail.Name.Prefix = value;
                 this.Modified = true;
             }
         }
 
         public string Suffix
         {
-            get { return _staffDetail.PersonNameDetail.Suffix; }
+            get { return _staffDetail.Name.Suffix; }
             set
             {
-                _staffDetail.PersonNameDetail.Suffix = value;
+                _staffDetail.Name.Suffix = value;
                 this.Modified = true;
             }
         }
 
         public string Degree
         {
-            get { return _staffDetail.PersonNameDetail.Degree; }
+            get { return _staffDetail.Name.Degree; }
             set
             {
-                _staffDetail.PersonNameDetail.Degree = value;
-                this.Modified = true;
-            }
-        }
-
-        public string LicenseNumber
-        {
-            get { return _staffDetail.LicenseNumber; }
-            set
-            {
-                _staffDetail.LicenseNumber = value;
+                _staffDetail.Name.Degree = value;
                 this.Modified = true;
             }
         }

@@ -58,6 +58,8 @@
     <Compile Include="Admin\AuthenticationAdmin\AuthorityGroupAssembler.cs" />
     <Compile Include="Admin\AuthenticationAdmin\AuthorityTokenAssembler.cs" />
     <Compile Include="Admin\AuthenticationAdmin\UserAssembler.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\ExternalPractitionerAdminService.cs" />
+    <Compile Include="Admin\ExternalPractitionerAssembler.cs" />
     <Compile Include="Admin\DataExporterBase.cs" />
     <Compile Include="Admin\DataImporterBase.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceTreeExporter.cs" />
