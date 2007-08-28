@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.ImageViewer.Annotations.Dicom;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Common;
 
@@ -23,6 +24,7 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckForNullReference(imageSop, "imageSop");
 
 			_imageSop = imageSop;
+			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
 		}
 
 		#region IImageSopProvider members
