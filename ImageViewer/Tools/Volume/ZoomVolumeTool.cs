@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 {
 	[MenuAction("activate", "imageviewer-contextmenu/Zoom Volume", Flags = ClickActionFlags.CheckAction)]
     //[MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
-	[MouseToolButton(XMouseButtons.Right, true)]
+	[MouseToolButton(XMouseButtons.Right, false)]
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ZoomVolume", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]

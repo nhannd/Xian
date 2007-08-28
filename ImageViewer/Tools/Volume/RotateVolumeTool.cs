@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageViewer.Tools.Volume
 {
 	[MenuAction("activate", "imageviewer-contextmenu/Rotate Volume", Flags = ClickActionFlags.CheckAction)]
     //[MenuAction("activate", "global-menus/MenuTools/Standard/MenuToolsStandardPan", Flags = ClickActionFlags.CheckAction)]
-	[MouseToolButton(XMouseButtons.Left, true)]
+	[MouseToolButton(XMouseButtons.Left, false)]
 	[ButtonAction("activate", "global-toolbars/ToolbarStandard/RotateVolume", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
     [ClickHandler("activate", "Select")]
