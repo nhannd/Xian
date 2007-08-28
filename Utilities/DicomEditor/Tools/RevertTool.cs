@@ -32,6 +32,7 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
             base.Initialize();
             this.Enabled = true;
             this.Context.DisplayedDumpChanged += new EventHandler<DisplayedDumpChangedEventArgs>(OnDisplayedDumpChanged);
+            this.Context.TagEditted += new EventHandler(OnTagEditted);
         }
 
         public bool Enabled
@@ -58,25 +59,28 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
 
         private void Revert()
         {
-			if (Platform.ShowMessageBox(SR.MessageConfirmRevert, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+			if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmRevert, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
             {
                 if (_promptForAll)
                 {
-					if (Platform.ShowMessageBox(SR.MessageConfirmRevertAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
+                    if (this.Context.DesktopWindow.ShowMessageBox(SR.MessageConfirmRevertAllFiles, MessageBoxActions.YesNo) == DialogBoxAction.Yes)
                     {
                         this.Context.DumpManagement.RevertEdits(true);
                         this.Context.UpdateDisplay();
+                        this.Enabled = false;
                     }
                     else
                     {
                         this.Context.DumpManagement.RevertEdits(false);
                         this.Context.UpdateDisplay();
+                        this.Enabled = false;
                     }
                 }
                 else
                 {
                     this.Context.DumpManagement.RevertEdits(false);
                     this.Context.UpdateDisplay();
+                    this.Enabled = false;
                 }
             }
         }
@@ -84,6 +88,12 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
         protected void OnDisplayedDumpChanged(object sender, DisplayedDumpChangedEventArgs e)
         {
             _promptForAll = !e.IsCurrentTheOnly;
+            this.Enabled = e.HasCurrentBeenEditted == true ? true : false;
+        }
+
+        protected void OnTagEditted(object sender, EventArgs e)
+        {
+            this.Enabled = true;
         }
     }
 }

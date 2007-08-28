@@ -50,6 +50,8 @@ namespace ClearCanvas.Utilities.DicomEditor
 
         event EventHandler<DisplayedDumpChangedEventArgs> DisplayedDumpChanged;
 
+        event EventHandler TagEditted;
+
 		ClickHandlerDelegate DefaultActionHandler { get; set; }
 
 		IDesktopWindow DesktopWindow { get; }
@@ -116,6 +118,12 @@ namespace ClearCanvas.Utilities.DicomEditor
                 remove { _component._displayedDumpChangedEvent -= value; }
             }
 
+            public event EventHandler TagEditted
+            {
+                add { _component._tagEdittedEvent += value; }
+                remove { _component._tagEdittedEvent -= value; }
+            }
+
             public ClickHandlerDelegate DefaultActionHandler
             {
                 get { return _component._defaultActionHandler; }
@@ -161,12 +169,14 @@ namespace ClearCanvas.Utilities.DicomEditor
                 {
                     _loadedFiles[i] = new DicomFile(_loadedFiles[i].Filename);
                     _loadedFiles[i].Load(DicomReadOptions.KeepGroupLengths);
+                    _dirtyFlags[i] = false;
                 }
             }
             else
             {
                 _loadedFiles[_position] = new DicomFile(_loadedFiles[_position].Filename);
                 _loadedFiles[_position].Load(DicomReadOptions.KeepGroupLengths);
+                _dirtyFlags[_position] = false;
             }
         }
 
@@ -299,11 +309,14 @@ namespace ClearCanvas.Utilities.DicomEditor
                                                                                                                                                         if (d.IsEditable())
                                                                                                                                                         {
                                                                                                                                                             d.Value = value;
+                                                                                                                                                            _dirtyFlags[_position] = true;
+                                                                                                                                                            EventsHelper.Fire(_tagEdittedEvent, this, EventArgs.Empty);
                                                                                                                                                         }
                                                                                                                                                     }, 1.0f, delegate(DicomEditorTag one, DicomEditorTag two) { return DicomEditorTag.TagCompare(one, two, SortType.Value); }));
             _title = "";
             _loadedFiles = new List<DicomFile>();
             _position = 0;
+            _dirtyFlags = new List<bool>();
         }
 
         public ActionModelRoot ToolbarModel
@@ -343,13 +356,14 @@ namespace ClearCanvas.Utilities.DicomEditor
             
             _loadedFiles.Add(dicomFile);
             _position = 0;
+            _dirtyFlags.Add(false);
         }
 
         public void Clear()
         {
             _loadedFiles.Clear();
             _position = 0;
-
+            _dirtyFlags.Clear();
         }
         
         public void SetSelection(ISelection selection)
@@ -370,7 +384,7 @@ namespace ClearCanvas.Utilities.DicomEditor
 
             this.DicomFileTitle = _loadedFiles[_position].Filename;
 
-            EventsHelper.Fire(_displayedDumpChangedEvent, this, new DisplayedDumpChangedEventArgs(_position == 0, _position == (_loadedFiles.Count - 1), _loadedFiles.Count == 1));
+            EventsHelper.Fire(_displayedDumpChangedEvent, this, new DisplayedDumpChangedEventArgs(_position == 0, _position == (_loadedFiles.Count - 1), _loadedFiles.Count == 1, _dirtyFlags[_position] == true));
         }
 
 
@@ -445,10 +459,12 @@ namespace ClearCanvas.Utilities.DicomEditor
        
         private List<DicomFile> _loadedFiles;
         private int _position;
+        private List<bool> _dirtyFlags;
 
         private ISelection _currentSelection;
         private event EventHandler _selectedTagChangedEvent;
         private event EventHandler<DisplayedDumpChangedEventArgs> _displayedDumpChangedEvent;
+        private event EventHandler _tagEdittedEvent;
 
         private ToolSet _toolSet;
         private ClickHandlerDelegate _defaultActionHandler;
