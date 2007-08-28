@@ -58,7 +58,7 @@ namespace ClearCanvas.Enterprise.Authentication.Setup
                 where.UserName.EqualTo(SysAdminUserName);
                 userBroker.FindOne(where);
 
-                log.WriteLine(string.Format("User '{0}' already exists."));
+                log.WriteLine(string.Format("User '{0}' already exists.", SysAdminUserName));
             }
             catch (EntityNotFoundException)
             {
