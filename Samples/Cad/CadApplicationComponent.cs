@@ -189,18 +189,20 @@ namespace ClearCanvas.Samples.Cad
 			IOverlayGraphicsProvider overlayProvider = presImage as IOverlayGraphicsProvider;
 
 			CadOverlayGraphic cadOverlay = GetCadOverlayGraphic(overlayProvider);
-
 			if (cadOverlay == null)
 			{
 				cadOverlay = new CadOverlayGraphic(imageGraphic);
 				overlayProvider.OverlayGraphics.Add(cadOverlay);
 			}
 
+			UndoableCommand command = new UndoableCommand(cadOverlay);
+			command.BeginState = cadOverlay.CreateMemento();
 			cadOverlay.Threshold = (int)this.Threshold;
 			cadOverlay.Opacity = (int)this.Opacity;
 			cadOverlay.Analyze();
+			command.EndState = cadOverlay.CreateMemento();
 
-			presImage.Draw();
+			this.ImageViewer.CommandHistory.AddCommand(command);
 		}
 
 		private CadOverlayGraphic GetCadOverlayGraphic(IOverlayGraphicsProvider provider)
