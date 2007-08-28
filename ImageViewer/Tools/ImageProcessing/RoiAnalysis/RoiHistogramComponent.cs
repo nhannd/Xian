@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			image.PixelData.ForEachPixel(left, top, right, bottom,
 				delegate(int i, int x, int y, int pixelIndex)
 				{
-					roiPixelData[i] = image.ModalityLUT[image.PixelData.GetPixel(pixelIndex)];
+					roiPixelData[i] = image.ModalityLut[image.PixelData.GetPixel(pixelIndex)];
 				});
 
 			Histogram histogram = new Histogram(

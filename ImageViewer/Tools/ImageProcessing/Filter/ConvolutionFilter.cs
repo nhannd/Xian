@@ -38,8 +38,8 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.Filter
 			int stride = width;
 			int stride2 = stride * 2;
 
-			int minInputValue = image.ModalityLUT.MinInputValue;
-			int maxInputValue = image.ModalityLUT.MaxInputValue;
+			int minInputValue = image.ModalityLut.MinInputValue;
+			int maxInputValue = image.ModalityLut.MaxInputValue;
 
 			if (image.BitsPerPixel == 16)
 			{

@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.RoiAnalysis
 			{
 				int rawPixelValue = image.PixelData.GetPixel(pixel.X, pixel.Y);
 				_pixelIndices[i] = i;
-				_pixelValues[i] = image.ModalityLUT[rawPixelValue];
+				_pixelValues[i] = image.ModalityLut[rawPixelValue];
 				i++;
 			}
 
