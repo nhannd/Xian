@@ -11,6 +11,7 @@ using ClearCanvas.Healthcare.Brokers;
 namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
 {
     [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "Modality Importer")]
+    [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class ModalityImporter : DataImporterBase
     {
         public ModalityImporter()

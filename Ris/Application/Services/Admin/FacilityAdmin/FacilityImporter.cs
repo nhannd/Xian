@@ -10,6 +10,7 @@ using ClearCanvas.Common;
 namespace ClearCanvas.Ris.Application.Services.Admin.FacilityAdmin
 {
     [ExtensionOf(typeof(DataImporterExtensionPoint), Name = "Facility Importer")]
+    [ExtensionOf(typeof(ApplicationRootExtensionPoint))]
     public class FacilityImporter : DataImporterBase
     {
         public FacilityImporter()
