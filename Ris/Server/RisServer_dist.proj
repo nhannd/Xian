@@ -26,7 +26,6 @@
 		<SetupFiles Include="$(SetupDirectory)\ddl-writer.bat" />
 		<SetupFiles Include="$(SetupDirectory)\import-authority-tokens.bat" />
 		<SetupFiles Include="$(SetupDirectory)\import-authority-groups.bat" />
-		<SetupFiles Include="$(SetupDirectory)\default-authority-groups.xml" />
 	</ItemGroup>
 
 	<ItemGroup>
