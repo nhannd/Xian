@@ -6,20 +6,27 @@ using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common.PreviewService
 {
+    [Serializable]
+    public enum PatientOrdersQueryDetailLevel
+    {
+        Order,
+        RequestedProcedure,
+        ModalityProcedureStep
+    }
+
     [DataContract]
     public class ListPatientOrdersRequest : DataContractBase
     {
-        public ListPatientOrdersRequest(string queryDetailLevel)
+        public ListPatientOrdersRequest(PatientOrdersQueryDetailLevel queryDetailLevel)
         {
             this.QueryDetailLevel = queryDetailLevel;
         }
 
         public ListPatientOrdersRequest()
         {
-            this.QueryDetailLevel = "Order";
         }
 
         [DataMember]
-        public string QueryDetailLevel;
+        public PatientOrdersQueryDetailLevel QueryDetailLevel;
     }
 }

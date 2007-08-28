@@ -129,6 +129,10 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
                     writer.WriteEndElement();
                 }
             }
+            else if (dataObject is Enum)
+            {
+                writer.WriteElementString(objectName, dataObject.ToString());
+            }
             else if (dataObject is string)
             {
                 writer.WriteElementString(objectName, dataObject.ToString());
@@ -196,6 +200,10 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
             {
                 dataObject = xmlElement.InnerText;
             }
+            else if (dataType.IsEnum)
+            {
+                dataObject = Enum.Parse(dataType, xmlElement.InnerText);
+            }
             else if (dataType == typeof(DateTime) || dataType == typeof(DateTime?))
             {
                 dataObject = ParseIsoDateTime(xmlElement.InnerText);
@@ -208,7 +216,7 @@ namespace ClearCanvas.Ris.Application.Common.Jsml
             {
                 dataObject = Activator.CreateInstance(dataType);
                 Type[] genericTypes = dataType.GetGenericArguments();
-                
+
                 XmlNodeList nodeList = xmlElement.GetElementsByTagName("item");
                 foreach (XmlNode node in nodeList)
                 {

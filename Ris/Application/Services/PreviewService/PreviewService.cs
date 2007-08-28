@@ -139,7 +139,7 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
             OrderSearchCriteria criteria = new OrderSearchCriteria();
             PatientProfile profile = PersistenceContext.Load<PatientProfile>(patientProfileRef, EntityLoadFlags.Proxy);
 
-            if (request.QueryDetailLevel == "Order")
+            if (request.QueryDetailLevel == PatientOrdersQueryDetailLevel.Order)
             {
                 return new ListPatientOrdersResponse(
                     CollectionUtils.Map<Order, PatientOrderData, List<PatientOrderData>>(
@@ -149,7 +149,7 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
                             return assembler.CreatePatientOrderData(order, this.PersistenceContext);
                         }));
             }
-            else if (request.QueryDetailLevel == "RequestedProcedure")
+            else if (request.QueryDetailLevel == PatientOrdersQueryDetailLevel.RequestedProcedure)
             {
                 return new ListPatientOrdersResponse(
                     CollectionUtils.Map<RequestedProcedure, PatientOrderData, List<PatientOrderData>>(
@@ -159,7 +159,7 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
                             return assembler.CreatePatientOrderData(rp, this.PersistenceContext);
                         }));
             }
-            else if (request.QueryDetailLevel == "ModalityProcedureStep")
+            else if (request.QueryDetailLevel == PatientOrdersQueryDetailLevel.ModalityProcedureStep)
             {
                 return new ListPatientOrdersResponse(
                     CollectionUtils.Map<ModalityProcedureStep, PatientOrderData, List<PatientOrderData>>(
