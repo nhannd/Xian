@@ -40,26 +40,7 @@ namespace <%= namespace %> {
 		  	CustomInitialize();
 	  	}
 
-		<% if(mandatoryFields.length > 0) %>
-	  	/// <summary>
-	  	/// Mandatory fields constructor
-	  	/// </summary>
-	  	public <%= @className %>(<%= mandatoryFields.map {|f| "#{f.dataType} #{f.accessorName.downcase}1"}.join(', ') %>)
-	  	{
-			// initialize all fields to default values
-		 	<% initializedFields.each do |f| %>
-		  	<%= f.fieldName %> = <%= f.initialValue %>;
-		  	<% end %>
-		  	
-		  	CustomInitialize();
-                        
-            // set mandatory fields
-            <% mandatoryFields.each do |f| %>
-		  	<%= f.fieldName %> = <%= f.accessorName.downcase %>1;
-		  	<% end %>
-	  	}
-                
-		<% if(fields.length > mandatoryFields.length) %>
+		<% if(fields.length > 0) %>
 	  	/// <summary>
 	  	/// All fields constructor
 	  	/// </summary>
@@ -71,7 +52,6 @@ namespace <%= namespace %> {
 		  	<%= f.fieldName %> = <%= f.accessorName.downcase %>1;
 		  	<% end %>
 	  	}
-		<% end %>
 		<% end %>
                 
 	  	#endregion
