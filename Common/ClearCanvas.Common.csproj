@@ -211,6 +211,7 @@
     <Compile Include="Utilities\StringDiff.cs" />
     <Compile Include="Utilities\BlockingThreadPool.cs" />
     <Compile Include="Utilities\StringUtilities.cs" />
+    <Compile Include="Utilities\Tests\CollectionUtilsTests.cs" />
     <Compile Include="Utilities\Tests\StringUtilitiesTests.cs" />
     <Compile Include="Utilities\Tests\ThreadPoolTests.cs" />
     <Compile Include="Utilities\ThreadPoolBase.cs" />
@@ -222,8 +223,6 @@
     <Compile Include="Utilities\TypeSafeEnumeratorWrapper.cs" />
     <Compile Include="Utilities\EventsHelper.cs" />
     <Compile Include="Utilities\FileProcessor.cs" />
-    <Compile Include="Utilities\FunctionalList.cs" />
-    <Compile Include="Utilities\IFunctionalList.cs" />
     <Compile Include="Utilities\InterthreadMarshaler.cs" />
     <Compile Include="Utilities\IObservableList.cs" />
     <Compile Include="Utilities\IObservablePropertyBinding.cs" />
