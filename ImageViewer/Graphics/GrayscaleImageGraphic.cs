@@ -2,13 +2,14 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Rendering;
+using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
 	/// A grayscale <see cref="IndexedImageGraphic"/>.
 	/// </summary>
-	public class GrayscaleImageGraphic : IndexedImageGraphic, IVoiLutProvider, IPresentationLutProvider
+	public class GrayscaleImageGraphic : IndexedImageGraphic, IModalityLutProvider, IVoiLutProvider, IPresentationLutProvider
 	{
 		private enum Luts
 		{ 
@@ -27,9 +28,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private IVoiLutManager _voiLutManager;
 		private IPresentationLutManager _presentationLutManager;
-
-		private VoiLutCreationParameters _defaultVoiLutCreationParameters;
-		private PresentationLutCreationParameters _defaultPresentationLutCreationParameters;
 
 		#endregion
 
@@ -74,7 +72,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="bitsStored"></param>
 		/// <param name="highBit"></param>
 		/// <param name="isSigned"></param>
-		/// <param name="inverted"></param>
 		/// <param name="rescaleSlope"></param>
 		/// <param name="rescaleIntercept"></param>
 		/// <param name="pixelData"></param>
@@ -186,38 +183,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 		
-		public VoiLutCreationParameters DefaultVoiLutCreationParameters
-		{
-			get 
-			{
-				if (_defaultVoiLutCreationParameters == null)
-					_defaultVoiLutCreationParameters = new BasicVoiLutLinearCreationParameters();
-
-				return _defaultVoiLutCreationParameters; 
-			}
-			set
-			{
-				Platform.CheckForNullReference(value, "DefaultVoiLutCreationParameters");
-				_defaultVoiLutCreationParameters = value; 
-			}
-		}
-
-		public PresentationLutCreationParameters DefaultPresentationLutCreationParameters
-		{
-			get 
-			{
-				if (_defaultPresentationLutCreationParameters == null)
-					_defaultPresentationLutCreationParameters = new GrayscalePresentationLutCreationParameters();
-
-				return _defaultPresentationLutCreationParameters; 
-			}
-			set 
-			{
-				Platform.CheckForNullReference(value, "DefaultPresentationLutCreationParameters"); 
-				_defaultPresentationLutCreationParameters = value; 
-			}
-		}
-
 		/// <summary>
 		/// Gets the modality LUT.
 		/// </summary>
@@ -233,12 +198,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Gets the VOI LUT.
 		/// </summary>
-		public IVoiLut VoiLut
+		public ILut VoiLut
 		{
 			get
 			{
 				InitializeNecessaryLuts(Luts.Voi);
-				return this.LutComposer.LutCollection[1] as IVoiLut; 
+				return this.LutComposer.LutCollection[1]; 
 			}
 		}
 
@@ -324,70 +289,74 @@ namespace ClearCanvas.ImageViewer.Graphics
 		{
 			if (luts >= Luts.Modality && LutComposer.LutCollection.Count == 0)
 			{
-				IModalityLut modalityLut = this.LutFactory.GetModalityLutLinear(
-					this.BitsStored,
-					this.IsSigned,
-					_rescaleSlope,
-					_rescaleIntercept);
+				IModalityLut modalityLut =
+					this.LutFactory.GetModalityLutLinear(this.BitsStored, this.IsSigned, _rescaleSlope, _rescaleIntercept);
 			
 				this.LutComposer.LutCollection.Add(modalityLut);
 			}
 
 			if (luts >= Luts.Voi && LutComposer.LutCollection.Count == 1)
 			{
-				InstallVoiLut(this.DefaultVoiLutCreationParameters);
+				InstallVoiLut(new MinMaxPixelCalculatedLinearLut(this.ParentPresentationImage));
 			}
 
 			if (luts >= Luts.Presentation && LutComposer.LutCollection.Count == 2)
 			{
-				InstallPresentationLut(this.DefaultPresentationLutCreationParameters);
+				InstallPresentationLut(GrayscalePresentationLutFactory.FactoryName);
 			}
 		}
 
 		#endregion
 
-		internal void InstallVoiLut(VoiLutCreationParameters creationParameters)
-		{
-			Platform.CheckForNullReference(creationParameters, "creationParameters");
+		#region Internal Properties / Methods
 
-			creationParameters.MinInputValue = this.ModalityLut.MinOutputValue;
-			creationParameters.MaxInputValue = this.ModalityLut.MaxOutputValue;
+		internal IEnumerable<PresentationLutDescriptor> AvailablePresentationLuts
+		{
+			get
+			{
+				return this.LutFactory.AvailablePresentationLuts;
+			}
+		}
+
+		internal void InstallVoiLut(ILut voiLut)
+		{
+			Platform.CheckForNullReference(voiLut, "voiLut");
+
+			InitializeNecessaryLuts(Luts.Modality);
 
 			if (this.LutComposer.LutCollection.Count == 1)
 			{
-				IVoiLut lut = this.LutFactory.GetVoiLut(creationParameters);
-				this.LutComposer.LutCollection.Add(lut);
+				this.LutComposer.LutCollection.Add(voiLut);
 			}
 			else
 			{
-				if (this.VoiLut.TrySetCreationParametersMemento(creationParameters))
-					return;
-
-				IVoiLut lut = this.LutFactory.GetVoiLut(creationParameters);
-				this.LutComposer.LutCollection[1] = lut;
+				this.LutComposer.LutCollection[1] = voiLut;
 			}
 		}
 
-		internal void InstallPresentationLut(PresentationLutCreationParameters creationParameters)
+		internal void InstallPresentationLut(string name)
 		{
-			Platform.CheckForNullReference(creationParameters, "creationParameters");
+			InstallPresentationLut(this.LutFactory.GetPresentationLut(name));
+		}
 
-			creationParameters.MinInputValue = this.VoiLut.MinOutputValue;
-			creationParameters.MaxInputValue = this.VoiLut.MaxOutputValue;
+		/// <summary>
+		/// Only to be used directly (outside of this class) for restoring Luts from mementos.
+		/// </summary>
+		/// <param name="installLut"></param>
+		internal void InstallPresentationLut(IPresentationLut installLut)
+		{
+			InitializeNecessaryLuts(Luts.Voi);
 
 			if (this.LutComposer.LutCollection.Count == 2)
 			{
-				IPresentationLut lut = this.LutFactory.GetPresentationLut(creationParameters);
-				this.LutComposer.LutCollection.Add(lut);
+				this.LutComposer.LutCollection.Add(installLut);
 			}
 			else
 			{
-				if (this.PresentationLut.TrySetCreationParametersMemento(creationParameters))
-					return;
-
-				IPresentationLut lut = this.LutFactory.GetPresentationLut(creationParameters);
-				this.LutComposer.LutCollection[2] = lut;
+				this.LutComposer.LutCollection[2] = installLut;
 			}
 		}
+
+		#endregion
 	}
 }

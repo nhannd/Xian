@@ -1,62 +1,36 @@
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Text;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public class GrayscalePresentationLutCreationParameters : PresentationLutCreationParameters
-	{
-		internal GrayscalePresentationLutCreationParameters()
-			: base(GrayscalePresentationLutFactory.FactoryName)
-		{
-		}
-
-		public override string GetKey()
-		{
-			return PresentationLut.GetKey<GrayscalePresentationLut>(this.MinInputValue, this.MaxInputValue, this.Invert);
-		}
-	}
-
 	[ExtensionOf(typeof(PresentationLutFactoryExtensionPoint))]
-	public class GrayscalePresentationLutFactory : IPresentationLutFactory
+	public sealed class GrayscalePresentationLutFactory : PresentationLutFactoryBase<GrayscalePresentationLut>
 	{
-		internal static readonly string FactoryName = "Grayscale";
+		public static readonly string FactoryName = "Grayscale";
 
 		public GrayscalePresentationLutFactory()
-		{ 
+		{
 		}
 
-		#region ILutFactory<IPresentationLut,PresentationLutCreationParameters> Members
-
-		public string Name
+		public override string Name
 		{
 			get { return FactoryName; }
 		}
 
-		public IPresentationLut Create(PresentationLutCreationParameters creationParameters)
+		public override string Description
 		{
-			GrayscalePresentationLutCreationParameters parameters = creationParameters as GrayscalePresentationLutCreationParameters;
-			Platform.CheckForInvalidCast(parameters, "creationParameters", typeof(GrayscalePresentationLutCreationParameters).Name);
-
-			return new GrayscalePresentationLut(parameters.MinInputValue, parameters.MaxInputValue, parameters.Invert);
+			get { return FactoryName; }
 		}
-
-		#endregion
 	}
 
-	internal class GrayscalePresentationLut : PresentationLut
+	public sealed class GrayscalePresentationLut : PresentationLut
 	{
-		internal GrayscalePresentationLut(
-			int minInputValue, 
-			int maxInputValue,
-			bool invert) : base(minInputValue, maxInputValue, invert)
+		public GrayscalePresentationLut()
 		{
-			
 		}
 
-		protected override void CreateLut()
+		public override void Create()
 		{
 			Color color;
 
@@ -73,22 +47,143 @@ namespace ClearCanvas.ImageViewer.Imaging
 				this[i] = color.ToArgb();
 			}
 		}
+	}
 
-		public override LutCreationParameters GetCreationParametersMemento()
+	[ExtensionOf(typeof(PresentationLutFactoryExtensionPoint))]
+	public sealed class RedPresentationLutFactory : PresentationLutFactoryBase<RedPresentationLut>
+	{
+		public static readonly string FactoryName = "Red";
+
+		public RedPresentationLutFactory()
 		{
-			GrayscalePresentationLutCreationParameters parameters = new GrayscalePresentationLutCreationParameters();
-			parameters.Invert = this.Invert;
-			return parameters;
 		}
 
-		public override bool TrySetCreationParametersMemento(LutCreationParameters creationParameters)
+		public override string Name
 		{
-			GrayscalePresentationLutCreationParameters parameters = creationParameters as GrayscalePresentationLutCreationParameters;
-			if (parameters == null)
-				return false;
+			get { return FactoryName; }
+		}
 
-			this.Invert = parameters.Invert;
-			return true;
+		public override string Description
+		{
+			get { return FactoryName; }
+		}
+	}
+
+	public sealed class RedPresentationLut : PresentationLut
+	{
+		public RedPresentationLut()
+			: base()
+		{
+		}
+
+		public override void Create()
+		{
+			Color color;
+
+			int j = 0;
+			uint maxGrayLevel = this.Length - 1;
+
+			for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
+			{
+				float scale = (float)j / (float)maxGrayLevel;
+				j++;
+
+				int value = (int)(byte.MaxValue * scale);
+				color = Color.FromArgb(255, value, 0, 0);
+				this[i] = color.ToArgb();
+			}
+		}
+	}
+
+	[ExtensionOf(typeof(PresentationLutFactoryExtensionPoint))]
+	public sealed class GreenPresentationLutFactory : PresentationLutFactoryBase<GreenPresentationLut>
+	{
+		public static readonly string FactoryName = "Green";
+
+		public GreenPresentationLutFactory()
+		{
+		}
+
+		public override string Name
+		{
+			get { return FactoryName; }
+		}
+
+		public override string Description
+		{
+			get { return FactoryName; }
+		}
+	}
+	
+	public sealed class GreenPresentationLut : PresentationLut
+	{
+		public GreenPresentationLut()
+			: base()
+		{
+		}
+
+		public override void Create()
+		{
+			Color color;
+
+			int j = 0;
+			uint maxGrayLevel = this.Length - 1;
+
+			for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
+			{
+				float scale = (float)j / (float)maxGrayLevel;
+				j++;
+
+				int value = (int)(byte.MaxValue * scale);
+				color = Color.FromArgb(255, 0, value, 0);
+				this[i] = color.ToArgb();
+			}
+		}
+	}
+
+	[ExtensionOf(typeof(PresentationLutFactoryExtensionPoint))]
+	public sealed class BluePresentationLutFactory : PresentationLutFactoryBase<BluePresentationLut>
+	{
+		public static readonly string FactoryName = "Blue";
+
+		public BluePresentationLutFactory()
+		{
+		}
+
+		public override string Name
+		{
+			get { return FactoryName; }
+		}
+
+		public override string Description
+		{
+			get { return FactoryName; }
+		}
+	}
+
+	public sealed class BluePresentationLut : PresentationLut
+	{
+		public BluePresentationLut()
+			: base()
+		{
+		}
+
+		public override void Create()
+		{
+			Color color;
+
+			int j = 0;
+			uint maxGrayLevel = this.Length - 1;
+
+			for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
+			{
+				float scale = (float)j / (float)maxGrayLevel;
+				j++;
+
+				int value = (int)(byte.MaxValue * scale);
+				color = Color.FromArgb(255, 0, 0, value);
+				this[i] = color.ToArgb();
+			}
 		}
 	}
 }

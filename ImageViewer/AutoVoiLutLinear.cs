@@ -6,95 +6,43 @@ using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
-	public class AutoVoiLutLinearCreationParameters : VoiLutCreationParameters
+	public interface IAutoVoiLutLinear : IVoiLutLinear
 	{
-		private ImageSop _imageSop;
-
-		public AutoVoiLutLinearCreationParameters(ImageSop imageSop, uint index)
-			: base(AutoVoiLutLinearFactory.FactoryName)
-		{
-			Platform.CheckForNullReference(imageSop, "imageSop");
-			if (imageSop.WindowCenterAndWidth.Length == 0 || index > imageSop.WindowCenterAndWidth.Length - 1)
-				throw new ArgumentException("The index exceeds the available number of window/level values.");
-
-			_imageSop = imageSop;
-			this.Index = index;
-		}
-
-		public AutoVoiLutLinearCreationParameters(ImageSop imageSop)
-			: this(imageSop, 0)
-		{
-		}
-
-		internal ImageSop ImageSop
-		{
-			get { return _imageSop; }
-		}
-
-		public uint Index
-		{
-			get { return (uint)this["Index"]; }
-			set { this["Index"] = value; }
-		}
-
-		public override string GetKey()
-		{
-			return AutoVoiLutLinearFactory.GetKey(_imageSop, this.Index, this.MinInputValue, this.MaxInputValue);
-		}
-	}
-
-	[ExtensionOf(typeof(VoiLutFactoryExtensionPoint))]
-	public class AutoVoiLutLinearFactory : IVoiLutFactory
-	{
-		internal static readonly string FactoryName = "AutoLinear";
-
-		public AutoVoiLutLinearFactory()
-		{ 
-		}
-
-		#region ILutFactory<IVoiLut,VoiLutCreationParameters> Members
-
-		public string Name
-		{
-			get { return FactoryName; }
-		}
-
-		public IVoiLut Create(VoiLutCreationParameters creationParameters)
-		{
-			AutoVoiLutLinearCreationParameters parameters = creationParameters as AutoVoiLutLinearCreationParameters;
-			Platform.CheckForInvalidCast(parameters, "creationParameters", typeof(AutoVoiLutLinearCreationParameters).Name);
-
-			return new AutoVoiLutLinear(parameters);
-		}
-
-		#endregion
-
-		internal static string GetKey(ImageSop imageSop, uint index, int minimumInputValue, int maximumInputValue)
-		{
-			Window window = imageSop.WindowCenterAndWidth[index];
-			return String.Format("Auto Linear: MinIn={0}, MaxIn={1}, WW={2}, WC={3}", minimumInputValue, maximumInputValue, window.Width, window.Center);
-		}
-	}
-
-	public interface IAutoVoiLut : IVoiLut
-	{
-		uint Index { get; }
+		uint Index { get; set; }
 		uint MaximumIndex { get; }
 	}
 
-	internal class AutoVoiLutLinear : CalculatedVoiLutLinear, IAutoVoiLut
+	public sealed class AutoVoiLutLinear : CalculatedVoiLutLinear, IAutoVoiLutLinear
 	{
+		private class AutoVoiLutLinearMemento : IMemento
+		{
+			public readonly uint Index;
+
+			public AutoVoiLutLinearMemento(uint index)
+			{
+				this.Index = index;
+			}
+		}
+
 		private ImageSop _imageSop;
 		private uint _index;
 
-		public AutoVoiLutLinear(AutoVoiLutLinearCreationParameters creationParameters)
-			: base(creationParameters.MinInputValue, creationParameters.MaxInputValue)
+		public AutoVoiLutLinear(ImageSop imageSop, uint index)
 		{
-			_imageSop = creationParameters.ImageSop;
-			this.Index = creationParameters.Index;
+			Platform.CheckForNullReference(imageSop, "imageSop");
+			Platform.CheckIndexRange((int)index, 0, imageSop.WindowCenterAndWidth.Length - 1, imageSop.WindowCenterAndWidth);
+			_imageSop = imageSop;
+			_index = index;
+		}
+
+		public AutoVoiLutLinear(ImageSop imageSop)
+		{
+			_imageSop = imageSop;
+			_index = 0;
 		}
 		
 		private Window[] WindowCenterAndWidth
@@ -125,40 +73,30 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		#region IVoiLutLinear Members
+
 		public override double WindowWidth
 		{
-			get 
-			{
-				return this.WindowCenterAndWidth[_index].Width;
-			}
+			get { return this.WindowCenterAndWidth[_index].Width; }
 		}
 
 		public override double WindowCenter
 		{
-			get
-			{
-				return this.WindowCenterAndWidth[_index].Center;
-			}
+			get { return this.WindowCenterAndWidth[_index].Center; }
 		}
 
-		public override LutCreationParameters GetCreationParametersMemento()
+		#endregion
+
+		public override IMemento CreateMemento()
 		{
-			return new AutoVoiLutLinearCreationParameters(_imageSop, _index);
+			return new AutoVoiLutLinearMemento(Index);
 		}
 
-		public override bool TrySetCreationParametersMemento(LutCreationParameters creationParameters)
+		public override void SetMemento(IMemento memento)
 		{
-			AutoVoiLutLinearCreationParameters parameters = creationParameters as AutoVoiLutLinearCreationParameters;
-			if (parameters == null)
-				return false;
-
-			this.Index = parameters.Index;
-			return true;
-		}
-
-		public override string GetKey()
-		{
-			return AutoVoiLutLinearFactory.GetKey(_imageSop, _index, this.MinInputValue, this.MaxInputValue);
+			AutoVoiLutLinearMemento autoMemento = memento as AutoVoiLutLinearMemento;
+			Platform.CheckForInvalidCast(autoMemento, "memento", typeof(AutoVoiLutLinearMemento).Name);
+			this.Index = autoMemento.Index;
 		}
 	}
 }

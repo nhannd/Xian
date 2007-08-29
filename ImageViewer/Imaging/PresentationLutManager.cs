@@ -7,7 +7,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal class PresentationLutManager : IPresentationLutManager
+	internal sealed class PresentationLutManager : IPresentationLutManager
 	{
 		private GrayscaleImageGraphic _grayscaleImageGraphic;
 
@@ -17,16 +17,29 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_grayscaleImageGraphic = grayscaleImageGraphic;
 		}
 
-		#region ILutManager<IPresentationLut,PresentationLutCreationParameters> Members
+		#region IPresentationLutManager Members
 
 		public IPresentationLut GetLut()
 		{
 			return _grayscaleImageGraphic.PresentationLut;
 		}
 
-		public void InstallLut(PresentationLutCreationParameters creationParameters)
+		public void InstallLut(string name)
 		{
-			_grayscaleImageGraphic.InstallPresentationLut(creationParameters);
+			_grayscaleImageGraphic.InstallPresentationLut(name);
+		}
+
+		public void InstallLut(PresentationLutDescriptor descriptor)
+		{
+			_grayscaleImageGraphic.InstallPresentationLut(descriptor.Name);
+		}
+
+		public IEnumerable<PresentationLutDescriptor> AvailablePresentationLuts
+		{
+			get
+			{
+				return _grayscaleImageGraphic.AvailablePresentationLuts;
+			}
 		}
 
 		#endregion
@@ -35,18 +48,19 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public IMemento CreateMemento()
 		{
-			return this.GetLut().GetCreationParametersMemento();
+			return new LutMemento(_grayscaleImageGraphic.PresentationLut, _grayscaleImageGraphic.PresentationLut.CreateMemento());
 		}
 
 		public void SetMemento(IMemento memento)
 		{
-			PresentationLutCreationParameters creationParameters = memento as PresentationLutCreationParameters;
-			Platform.CheckForInvalidCast(creationParameters, "memento", typeof(PresentationLutCreationParameters).Name);
+			ILutMemento lutMemento = memento as ILutMemento;
+			Platform.CheckForInvalidCast(lutMemento, "memento", typeof(ILutMemento).Name);
 
-			if (this.GetLut().TrySetCreationParametersMemento(creationParameters))
-				return;
+			if (_grayscaleImageGraphic.PresentationLut != lutMemento.OriginatingLut)
+				_grayscaleImageGraphic.InstallPresentationLut(lutMemento.OriginatingLut as IPresentationLut);
 
-			_grayscaleImageGraphic.InstallPresentationLut(creationParameters);
+			if (lutMemento.InnerMemento != null)
+				_grayscaleImageGraphic.PresentationLut.SetMemento(lutMemento.InnerMemento);
 		}
 
 		#endregion

@@ -5,7 +5,9 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public interface IVoiLutManager : ILutManager<IVoiLut, VoiLutCreationParameters>
+	public interface IVoiLutManager : IMemorable
 	{
+		ILut GetLut();
+		void InstallLut(ILut lut);
 	}
 }

@@ -5,7 +5,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public class PresentationLutOperationApplicator : ImageOperationApplicator
+	public sealed class PresentationLutOperationApplicator : ImageOperationApplicator
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="PresentationLutOperationApplicator"/>

@@ -5,7 +5,14 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public interface IPresentationLutManager : ILutManager<IPresentationLut, PresentationLutCreationParameters>
+	public interface IPresentationLutManager : IMemorable
 	{
+		IPresentationLut GetLut();
+		
+		void InstallLut(string name);
+		
+		void InstallLut(PresentationLutDescriptor descriptor);
+
+		IEnumerable<PresentationLutDescriptor> AvailablePresentationLuts { get; }
 	}
 }

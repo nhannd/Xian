@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public interface IModalityLut : ILut
+	public interface IModalityLut : ILut, IEquatable<IModalityLut>
 	{
 	}
 }

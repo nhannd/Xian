@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// Allows <see cref="ILUT"/> objects
 	/// be composed together in a pipeline.
 	/// </summary>
-	public class LutComposer : IDisposable
+	internal class LutComposer : IDisposable
 	{
 		private LutCollection _lutCollection;
 		private int _numEntries;
@@ -182,26 +182,41 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return key.ToString();
 		}
 
-		void OnLutChanging(object sender, LutEventArgs e)
+		private void OnLutChanging(object sender, LutEventArgs e)
 		{
 			e.Lut.LutChanged -= new EventHandler(OnLutValuesChanged);
 		}
 
-		void OnLutChanged(object sender, LutEventArgs e)
+		private void OnLutChanged(object sender, LutEventArgs e)
 		{
 			_recalculate = true;
+			SyncMinMaxValues();
 			OnLutAdded(sender, e);
 		}
 
-		void OnLutAdded(object sender, LutEventArgs e)
+		private void OnLutAdded(object sender, LutEventArgs e)
 		{
 			e.Lut.LutChanged += new EventHandler(OnLutValuesChanged);
+			SyncMinMaxValues();
 			_validated = false;
 		}
 
-		void OnLutValuesChanged(object sender, EventArgs e)
+		private void OnLutValuesChanged(object sender, EventArgs e)
 		{
 			_recalculate = true;
+			SyncMinMaxValues();
+		}
+
+		private void SyncMinMaxValues()
+		{
+			for (int i = 1; i < this.LutCollection.Count; ++i)
+			{
+				ILut curLut = this.LutCollection[i];
+				ILut prevLut = this.LutCollection[i - 1];
+
+				curLut.MinInputValue = prevLut.MinOutputValue;
+				curLut.MaxInputValue = prevLut.MaxOutputValue;
+			}
 		}
 
 		#region Disposal
@@ -232,6 +247,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			if (disposing)
 			{
+				if (_lutCollection != null)
+					_lutCollection.Clear();
+
 				if (_lutPool != null)
 					_lutPool.Dispose();
 

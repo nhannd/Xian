@@ -1,13 +1,10 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal class VoiLutManager : IVoiLutManager
+	internal sealed class VoiLutManager : IVoiLutManager
 	{
 		private GrayscaleImageGraphic _grayscaleImageGraphic;
 
@@ -17,16 +14,22 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_grayscaleImageGraphic = grayscaleImageGraphic;
 		}
 
-		#region ILutManager<IVoiLut,VoiLutCreationParameters> Members
+		#region IVoiLutManager Members
 
-		public IVoiLut GetLut()
+		public ILut GetLut()
 		{
 			return _grayscaleImageGraphic.VoiLut;
 		}
 
-		public void InstallLut(VoiLutCreationParameters creationParameters)
+		public void InstallLut(ILut lut)
 		{
-			_grayscaleImageGraphic.InstallVoiLut(creationParameters);
+			ILut existingLut = GetLut();
+			if (existingLut is IDataLut)
+			{
+				//Clear the data in the data lut so it's not hanging around using up memory.
+				((IDataLut)existingLut).Clear();
+			}
+			_grayscaleImageGraphic.InstallVoiLut(lut);
 		}
 
 		#endregion
@@ -35,14 +38,19 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public IMemento CreateMemento()
 		{
-			return this.GetLut().GetCreationParametersMemento();
+			return new LutMemento(_grayscaleImageGraphic.VoiLut, _grayscaleImageGraphic.VoiLut.CreateMemento());
 		}
 
 		public void SetMemento(IMemento memento)
 		{
-			VoiLutCreationParameters creationParameters = memento as VoiLutCreationParameters;
-			Platform.CheckForInvalidCast(creationParameters, "memento", typeof(VoiLutCreationParameters).Name);
-			_grayscaleImageGraphic.InstallVoiLut(creationParameters);
+			ILutMemento lutMemento = memento as ILutMemento;
+			Platform.CheckForInvalidCast(lutMemento, "memento", typeof(ILutMemento).Name);
+
+			if (_grayscaleImageGraphic.VoiLut != lutMemento.OriginatingLut)
+				this.InstallLut(lutMemento.OriginatingLut);
+
+			if (lutMemento.InnerMemento != null)
+				_grayscaleImageGraphic.VoiLut.SetMemento(lutMemento.InnerMemento);
 		}
 
 		#endregion

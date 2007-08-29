@@ -1,85 +1,35 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
+
 using ClearCanvas.Desktop;
-
-
+using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public class BasicVoiLutLinearCreationParameters : VoiLutCreationParameters
+	public sealed class BasicVoiLutLinear : VoiLutLinearBase, IBasicVoiLutLinear
 	{
-		public BasicVoiLutLinearCreationParameters()
-			: base(BasicVoiLutLinearFactory.FactoryName)
+		private class WindowLevelMemento : IMemento
 		{
-			this.WindowCenter = 0;
-			this.WindowWidth = 1;
+			public readonly double WindowWidth;
+			public readonly double WindowCenter;
+
+			public WindowLevelMemento(double windowWidth, double windowCenter)
+			{
+				WindowWidth = windowWidth;
+				WindowCenter = windowCenter;
+			}
 		}
 
-		public double WindowWidth
-		{
-			get { return (double)this["WindowWidth"]; }
-			set { this["WindowWidth"] = value; }
-		}
-
-		public double WindowCenter
-		{
-			get { return (double)this["WindowCenter"]; }
-			set { this["WindowCenter"] = value; }
-		}
-
-		public override string GetKey()
-		{
-			return BasicVoiLutLinearFactory.GetKey(this.MinInputValue, this.MaxInputValue, this.WindowWidth, this.WindowCenter);
-		}
-	}
-	
-	[ExtensionOf(typeof(VoiLutFactoryExtensionPoint))]
-	public class BasicVoiLutLinearFactory : IVoiLutFactory
-	{
-		internal static readonly string FactoryName = "Linear";
-
-		public BasicVoiLutLinearFactory()
-		{
-		}
-
-		#region IVoiLutFactory Members
-
-		public string Name 
-		{
-			get { return FactoryName; } 
-		}
-
-		public IVoiLut Create(VoiLutCreationParameters creationParameters)
-		{
-			BasicVoiLutLinearCreationParameters parameters = creationParameters as BasicVoiLutLinearCreationParameters;
-			Platform.CheckForInvalidCast(parameters, "creationParameters", typeof(BasicVoiLutLinearCreationParameters).Name);
-
-			return new BasicVoiLutLinear(parameters);
-		}
-
-		#endregion
-
-		internal static string GetKey(int minInputValue, int maxInputValue, double windowWidth, double windowCenter)
-		{
-			return String.Format("{0}_{1}_{2:F2}_{3:F2}",
-				minInputValue,
-				maxInputValue,
-				windowWidth,
-				windowCenter);
-		}
-	}
-
-	internal sealed class BasicVoiLutLinear : VoiLutLinearBase, IBasicVoiLutLinear
-	{
 		private double _windowWidth;
 		private double _windowCenter;
 
-		internal BasicVoiLutLinear(BasicVoiLutLinearCreationParameters creationParameters)
-			: base(creationParameters.MinInputValue, creationParameters.MaxInputValue)
+		public BasicVoiLutLinear(double windowWidth, double windowCenter)
+			: base()
 		{
-			_windowWidth = creationParameters.WindowWidth;
-			_windowCenter = creationParameters.WindowCenter;
+			this.WindowWidth = windowWidth;
+			this.WindowCenter = windowCenter;
+		}
+
+		public BasicVoiLutLinear()
+			: this(1, 0)
+		{
 		}
 
 		protected override double GetWindowWidth()
@@ -127,29 +77,18 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		public override LutCreationParameters GetCreationParametersMemento()
+		public override IMemento CreateMemento()
 		{
-			BasicVoiLutLinearCreationParameters creationParameters = new BasicVoiLutLinearCreationParameters();
-			creationParameters.WindowWidth = this.WindowWidth;
-			creationParameters.WindowCenter = this.WindowCenter;
-			return creationParameters;
+			return new WindowLevelMemento(this.WindowWidth, this.WindowCenter);
 		}
 
-		public override bool TrySetCreationParametersMemento(LutCreationParameters creationParameters)
+		public override void SetMemento(IMemento memento)
 		{
-			BasicVoiLutLinearCreationParameters parameters = creationParameters as BasicVoiLutLinearCreationParameters;
-			if (parameters == null)
-				return false;
+			WindowLevelMemento windowLevelMemento = memento as WindowLevelMemento;
+			Platform.CheckForInvalidCast(windowLevelMemento, "memento", typeof(WindowLevelMemento).Name);
 
-			this.WindowWidth = parameters.WindowWidth;
-			this.WindowCenter = parameters.WindowCenter;
-
-			return true;
-		}
-
-		public override string GetKey()
-		{
-			return BasicVoiLutLinearFactory.GetKey(this.MinInputValue, this.MaxInputValue, this.WindowWidth, this.WindowCenter);
+			this.WindowWidth = windowLevelMemento.WindowWidth;
+			this.WindowCenter = windowLevelMemento.WindowCenter;
 		}
 	}
 }

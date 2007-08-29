@@ -1,30 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public abstract class DataLut : Lut
+	public abstract class DataLut : Lut, IDataLut
 	{
-		private int _firstMappedPixelValue;
-		private uint _length;
+		private int _minimumInputValue;
+		private int _maximimInputValue;
 		private int _minimumOutputValue;
 		private int _maximumOutputValue;
 
 		private int[] _data;
 
-		public DataLut(int firstMappedPixelValue, uint length, int minimumOutputValue, int maximumOutputValue)
+		public DataLut()
 		{
-			_firstMappedPixelValue = firstMappedPixelValue;
-			_length = length;
+			_minimumInputValue = int.MinValue;
+			_maximimInputValue = int.MaxValue;
 
-			_minimumOutputValue = minimumOutputValue;
-			_maximumOutputValue = maximumOutputValue;
-		}
-
-		public DataLut(int minimumInputValue, int maximumInputValue, int minimumOutputValue, int maximumOutputValue)
-			: this(minimumInputValue, (uint)(maximumInputValue - minimumInputValue + 1), minimumOutputValue, maximumOutputValue)
-		{
+			_minimumOutputValue = int.MinValue;
+			_maximumOutputValue = int.MaxValue;
 		}
 
 		protected int[] Data
@@ -32,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get
 			{
 				if (_data == null)
-					_data = new int[_length];
+					_data = new int[this.Length];
 
 				return _data;
 			}
@@ -44,56 +40,93 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 				if (_data == null)
 				{
-					CreateLut();
+					Create();
 					OnLutChanged();
 				}
 
-				if (index < _firstMappedPixelValue)
+				if (index <= _minimumInputValue)
 					return _data[0];
-				else if (index >= _firstMappedPixelValue + _length)
-					return _data[_length - 1];
+				else if (index >= this.MaxInputValue)
+					return _data[this.Length - 1];
 				else
-					return _data[index - _firstMappedPixelValue];
+					return _data[index - this.MinInputValue];
 			}
 			protected set
 			{
-				if (index < _firstMappedPixelValue || index >= _firstMappedPixelValue + _length)
+				if (index < this.MinInputValue || index > this.MaxInputValue)
 					return;
 
-				this.Data[index - _firstMappedPixelValue] = value;
+				this.Data[index - this.MinInputValue] = value;
 			}
 		}
 
-		protected abstract void CreateLut();
-
-		public int FirstMappedPixelValue
-		{
-			get { return _firstMappedPixelValue; }
-		}
+		#region IDataLut Members
 
 		public uint Length
 		{
-			get { return _length; }
+			get { return (uint)(this.MaxInputValue - this.MinInputValue + 1); }
 		}
+
+		public abstract void Create();
+
+		public void Clear()
+		{
+			_data = null;
+		}
+
+		#endregion
+
 
 		public override int MinInputValue
 		{
-			get { return _firstMappedPixelValue; }
+			get { return _minimumInputValue; }
+			set
+			{
+				if (_minimumInputValue == value)
+					return;
+
+				_minimumInputValue = value;
+				OnLutChanged();
+			}
 		}
 
 		public override int MaxInputValue
 		{
-			get { return _firstMappedPixelValue + (int)_length - 1; }
+			get { return _maximimInputValue; }
+			set
+			{
+				if (_maximimInputValue == value)
+					return;
+
+				_maximimInputValue = value;
+				OnLutChanged();
+			}
 		}
 
 		public override int MinOutputValue
 		{
 			get { return _minimumOutputValue; }
+			protected set
+			{
+				if (_minimumOutputValue == value)
+					return;
+				
+				_minimumOutputValue = value;
+				OnLutChanged();
+			}
 		}
 
 		public override int MaxOutputValue
 		{
 			get { return _maximumOutputValue; }
+			protected set
+			{
+				if (_maximumOutputValue == value)
+					return;
+
+				_maximumOutputValue = value;
+				OnLutChanged();
+			}
 		}
 	}
 }

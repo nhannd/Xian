@@ -35,15 +35,13 @@ namespace ClearCanvas.ImageViewer
 			_imageSop = imageSop;
 			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
 
-			InitializeLutCreationParameters();
+			InitializeLuts();
 		}
 
-		protected virtual void InitializeLutCreationParameters()
+		private void InitializeLuts()
 		{
-			if (this.ImageSop.WindowCenterAndWidth.Length == 0)
-				base.ImageGraphic.DefaultVoiLutCreationParameters = new MinMaxPixelCalculatedLinearLutCreationParameters(this.ImageGraphic.PixelData, this.ImageGraphic.ModalityLut);
-			else
-				base.ImageGraphic.DefaultVoiLutCreationParameters = new AutoVoiLutLinearCreationParameters(this.ImageSop);
+			if (this._imageSop.WindowCenterAndWidth.Length > 0)
+				base.ImageGraphic.InstallVoiLut(new AutoVoiLutLinear(this.ImageSop));
 		}
 
 		#region IImageSopProvider members

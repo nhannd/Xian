@@ -4,6 +4,7 @@ using System.Text;
 using System.Drawing;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Rendering;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -11,54 +12,73 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// Implements the DICOM concept of a Presentation LUT.
 	/// </summary>
 	/// <remarks>
-	/// The <see cref="PresentationLUT"/> is always the last LUT in the
-	/// <see cref="LUTCollection"/>.  The values in the LUT represent
+	/// The <see cref="PresentationLut"/> is always the last LUT in the
+	/// <see cref="LutCollection"/>.  The values in the LUT represent
 	/// ARGB values that are used by the <see cref="IRenderer"/>
 	/// to display the image.
 	/// </remarks>
 	public abstract class PresentationLut : DataLut, IPresentationLut
 	{
-		private bool _invert = false;
 		private int _minPlusMax;
+		private bool _invert = false;
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="PresentationLUT"/>
+		/// Initializes a new instance of <see cref="PresentationLut"/>
 		/// with the specified mininum/maximum input values and
 		/// photometric interpretation.
 		/// </summary>
-		/// <param name="minInputValue"></param>
-		/// <param name="maxInputValue"></param>
-		/// <param name="invert"></param>
-		protected PresentationLut(
-			int minInputValue, 
-			int maxInputValue,
-			bool invert)
-			: base(minInputValue, maxInputValue, int.MinValue, int.MaxValue)
+		protected PresentationLut()
 		{
-			_invert = invert;
-			_minPlusMax = this.MinInputValue + this.MaxInputValue;
+			_invert = false;
 		}
 
+		public sealed override int MinInputValue
+		{
+			get
+			{
+				return base.MinInputValue;
+			}
+			set
+			{
+				base.MinInputValue = value;
+				_minPlusMax = this.MinInputValue + this.MaxInputValue;
+			}
+		}
+
+		public sealed override int MaxInputValue
+		{
+			get
+			{
+				return base.MaxInputValue;
+			}
+			set
+			{
+				base.MaxInputValue = value;
+				_minPlusMax = this.MinInputValue + this.MaxInputValue;
+			}
+		}
 		/// <summary>
 		/// Not applicable.
 		/// </summary>
-		public override int MinOutputValue
+		public sealed override int MinOutputValue
 		{
 			get
 			{
 				throw new InvalidOperationException("A Presentation LUT cannot have a minimum output value. ");
 			}
+			protected set { base.MinOutputValue = value;  }
 		}
 
 		/// <summary>
 		/// Not applicable.
 		/// </summary>
-		public override int MaxOutputValue
+		public sealed override int MaxOutputValue
 		{
 			get
 			{
 				throw new InvalidOperationException("A Presentation LUT cannot have a maximum output value. ");
 			}
+			protected set { base.MaxOutputValue = value; }
 		}
 
 		/// <summary>
@@ -82,7 +102,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		/// <param name="index"></param>
 		/// <returns>A 32-bit ARGB value.</returns>
-		public override int this[int index]
+		public sealed override int this[int index]
 		{
 			get
 			{
@@ -91,27 +111,39 @@ namespace ClearCanvas.ImageViewer.Imaging
 				else
 					return base[index];
 			}
+			protected  set
+			{
+				base[index] = value;
+			}
 		}
 
 		public sealed override string GetKey()
 		{
-			return GetKey(this.MinInputValue, this.MaxInputValue, this.Invert, this.GetType());
-		}
-
-		internal static string GetKey<T>(int minInputValue, int maxInputValue, bool invert)
-			where T : PresentationLut
-		{
-			return GetKey(minInputValue, maxInputValue,	invert, typeof(T));
-		}
-
-		private static string GetKey(int minInputValue, int maxInputValue, bool invert, Type type)
-		{
 			return String.Format("{0}-{1}-{2}-{3}",
-				minInputValue,
-				maxInputValue,
-				invert.ToString(),
-				type.ToString());
+				this.MinInputValue,
+				this.MaxInputValue,
+				this.Invert.ToString(),
+				this.GetType().ToString());
 		}
 
+		public sealed override IMemento CreateMemento()
+		{
+			return base.CreateMemento();
+		}
+
+		public sealed override void SetMemento(IMemento memento)
+		{
+			base.SetMemento(memento);
+		}
+
+		#region IEquatable<IPresentationLut> Members
+
+		public bool Equals(IPresentationLut other)
+		{
+			return this.MinInputValue == other.MinInputValue && this.MaxInputValue == other.MaxInputValue &&
+				this.Invert == other.Invert && this.GetType() == other.GetType();
+		}
+
+		#endregion
 	}
 }

@@ -8,5 +8,4 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		IPresentationLutManager PresentationLutManager { get; }
 	}
-
 }

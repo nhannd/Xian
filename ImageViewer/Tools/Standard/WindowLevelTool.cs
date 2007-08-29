@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (provider == null || provider.VoiLutManager == null)
 				return false;
 
-			IVoiLut voiLut = provider.VoiLutManager.GetLut();
+			ILut voiLut = provider.VoiLutManager.GetLut();
 			return (voiLut is IVoiLutLinear);
 		}
 
@@ -176,10 +176,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			IBasicVoiLutLinear standardLut = linearLut as IBasicVoiLutLinear;
 			if (standardLut == null)
 			{
-				BasicVoiLutLinearCreationParameters parameters = new BasicVoiLutLinearCreationParameters();
-				parameters.WindowCenter = linearLut.WindowCenter;
-				parameters.WindowWidth = linearLut.WindowWidth;
-				manager.InstallLut(parameters);
+				BasicVoiLutLinear installLut = new BasicVoiLutLinear(linearLut.WindowWidth, linearLut.WindowCenter);
+				manager.InstallLut(installLut);
 			}
 		}
 

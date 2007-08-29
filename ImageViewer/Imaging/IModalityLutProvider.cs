@@ -4,9 +4,8 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public interface IVoiLutLinear : ILut
+	public interface IModalityLutProvider
 	{
-		double WindowWidth { get; }
-		double WindowCenter { get; }
+		IModalityLut ModalityLut { get; }
 	}
 }

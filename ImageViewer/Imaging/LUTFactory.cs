@@ -4,21 +4,154 @@ using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	// LUT flyweight factory
 	internal sealed class LutFactory : IReferenceCountable, IDisposable
 	{
+		private class PresentationLutProxy : Lut, IPresentationLut
+		{
+			private readonly string _factoryName;
+			private bool _invert;
+			private int _minInputValue;
+			private int _maxInputValue;
+
+			private IPresentationLut _realLut;
+
+			public PresentationLutProxy(string factoryName)
+			{
+				_factoryName = factoryName;
+				_realLut = null;
+				_invert = false;
+			}
+
+			#region IPresentationLut Members
+
+			public bool Invert
+			{
+				get { return _invert; }
+				set
+				{
+					if (value == _invert)
+						return;
+
+					_realLut = null;
+					_invert = value;
+					OnLutChanged();
+				}
+			}
+
+			#endregion
+
+			public override int MinInputValue
+			{
+				get
+				{
+					return _minInputValue;
+				}
+				set
+				{
+					if (value == _minInputValue)
+						return;
+
+					_realLut = null;
+					_minInputValue = value;
+					OnLutChanged();
+				}
+			}
+
+			public override int MaxInputValue
+			{
+				get
+				{
+					return _maxInputValue;
+				}
+				set
+				{
+					if (value == _maxInputValue)
+						return;
+
+					_realLut = null;
+					_maxInputValue = value;
+					OnLutChanged();
+				}
+			}
+
+			public override int MinOutputValue
+			{
+				get { throw new InvalidOperationException("A Presentation LUT cannot have a minimum output value. "); }
+				protected set { throw new InvalidOperationException("A Presentation LUT cannot have a minimum output value. "); }
+			}
+
+			public override int MaxOutputValue
+			{
+				get { throw new InvalidOperationException("A Presentation LUT cannot have a maximum output value. "); }
+				protected set { throw new InvalidOperationException("A Presentation LUT cannot have a maximum output value. "); }
+			}
+
+			public override int this[int index]
+			{
+				get
+				{
+					return this.RealLut[index];
+				}
+				protected set
+				{
+					throw new InvalidOperationException("A Presentation LUT data cannot be altered. ");
+				}
+			}
+
+			public override string GetKey()
+			{
+
+				return this.RealLut.GetKey();
+			}
+
+			private IPresentationLut RealLut
+			{
+				get
+				{
+					if (_realLut == null)
+					{
+						LutFactory factory = LutFactory.NewInstance;
+						_realLut = factory.GetRealPresentationLut(_factoryName, _minInputValue, _maxInputValue, _invert);
+						factory.Dispose();
+					}
+
+					return _realLut;
+				}
+			}
+
+			#region IMemorable Members
+
+			public override IMemento CreateMemento()
+			{
+				//no state to remember, but we do want to remove the reference to the 'real lut'.  It will be recreated later.
+				_realLut = null;
+				return base.CreateMemento();
+			}
+
+			#endregion
+
+			#region IEquatable<IPresentationLut> Members
+
+			public bool Equals(IPresentationLut other)
+			{
+				return false;
+			}
+
+			#endregion
+		}
+
 		private static volatile LutFactory _instance;
-		private static object _syncRoot = new Object();
 
-		private List<IVoiLutFactory> _voiLutFactories;
+		private List<ModalityLutLinear> _modalityLUTs;
+
 		private List<IPresentationLutFactory> _presentationLutFactories;
-
-		private List<IModalityLut> _modalityLUTs;
-		private List<IVoiLut> _voiLUTs;
 		private List<IPresentationLut> _presentationLUTs;
+		
 		private int _referenceCount = 0;
 
 		private LutFactory()
@@ -31,39 +164,41 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get
 			{
 				if (_instance == null)
-				{
-					lock (_syncRoot)
-					{
-						if (_instance == null)
-							_instance = new LutFactory();
-					}
-				}
+					_instance = new LutFactory();
 
 				_instance.IncrementReferenceCount();
-
 				return _instance;
 			}
 		}
 
-		private List<IModalityLut> ModalityLuts
+		private List<ModalityLutLinear> ModalityLuts
 		{
 			get
 			{
 				if (_modalityLUTs == null)
-					_modalityLUTs = new List<IModalityLut>();
+					_modalityLUTs = new List<ModalityLutLinear>();
 
 				return _modalityLUTs;
 			}
 		}
 
-		private List<IVoiLut> VoiLuts
+		private List<IPresentationLutFactory> PresentationLutFactories
 		{
 			get
 			{
-				if (_voiLUTs == null)
-					_voiLUTs = new List<IVoiLut>();
+				if (_presentationLutFactories == null)
+				{
+					_presentationLutFactories = new List<IPresentationLutFactory>();
 
-				return _voiLUTs;
+					object[] factories = new PresentationLutFactoryExtensionPoint().CreateExtensions();
+					foreach (object obj in factories)
+					{
+						if (obj is IPresentationLutFactory)
+							_presentationLutFactories.Add(obj as IPresentationLutFactory);
+					}
+				}
+
+				return _presentationLutFactories;
 			}
 		}
 
@@ -78,85 +213,54 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private List<IVoiLutFactory> VoiLutFactories
+		internal IEnumerable<PresentationLutDescriptor> AvailablePresentationLuts
 		{
 			get
 			{
-				if (_voiLutFactories == null)
+				foreach (IPresentationLutFactory factory in this.PresentationLutFactories)
 				{
-					_voiLutFactories = new List<IVoiLutFactory>();
-
-					object[] extensions = (new VoiLutFactoryExtensionPoint()).CreateExtensions();
-					foreach(IVoiLutFactory factory in extensions)
-						_voiLutFactories.Add(factory);
+					yield return PresentationLutDescriptor.FromFactory(factory);
 				}
-
-				return _voiLutFactories;
 			}
 		}
 
-		private List<IPresentationLutFactory> PresentationLutFactories
+		internal ModalityLutLinear GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
 		{
-			get
-			{
-				if (_presentationLutFactories == null)
-				{
-					_presentationLutFactories = new List<IPresentationLutFactory>();
+			ModalityLutLinear modalityLut = new ModalityLutLinear(bitsStored, isSigned, rescaleSlope, rescaleIntercept);
 
-					object[] extensions = (new PresentationLutFactoryExtensionPoint()).CreateExtensions();
-					foreach (IPresentationLutFactory factory in extensions)
-						_presentationLutFactories.Add(factory);
-				}
+			ModalityLutLinear existingLut = this.ModalityLuts.Find(delegate(ModalityLutLinear lut) { return lut.Equals(modalityLut); });
 
-				return _presentationLutFactories;
-			}
+			if (existingLut == null)
+				this.ModalityLuts.Add(existingLut = modalityLut);
+
+			return existingLut;
 		}
 
-
-		internal IModalityLut GetModalityLutLinear(int bitsStored, bool isSigned, double rescaleSlope, double rescaleIntercept)
+		internal IPresentationLut GetPresentationLut(string name)
 		{
-			IModalityLut modalityLut = this.ModalityLuts.Find
-				(
-					delegate(IModalityLut lut) { return lut.GetKey() == ModalityLutLinear.GetKey(bitsStored, isSigned, rescaleSlope, rescaleIntercept); } 
-				);
+			if (this.PresentationLutFactories.Find(delegate(IPresentationLutFactory factory) { return factory.Name == name; }) == null)
+				throw new ArgumentException(String.Format("No Presentation Lut factory extension exists with the name {0}", name));
 
-			if (modalityLut == null)
-			{
-				modalityLut = new ModalityLutLinear(bitsStored, isSigned, rescaleSlope, rescaleIntercept);
-				this.ModalityLuts.Add(modalityLut);
-			}
-
-			return modalityLut;
+			return new PresentationLutProxy(name);
 		}
 
-		internal IVoiLut GetVoiLut(VoiLutCreationParameters creationParameters)
+		private IPresentationLut GetRealPresentationLut(string factoryName, int minInputValue, int maxInputValue, bool invert)
 		{
-			IVoiLut voiLut = this.VoiLuts.Find(delegate(IVoiLut lut) { return creationParameters.Equals(lut); });
+			IPresentationLutFactory factory =
+				this.PresentationLutFactories.Find(delegate(IPresentationLutFactory testFactory) { return testFactory.Name == factoryName; });
 
-			if (voiLut == null)
-			{
-				IVoiLutFactory voiLutFactory = this.VoiLutFactories.Find(delegate(IVoiLutFactory factory) { return factory.Name == creationParameters.FactoryName; });
-				Platform.CheckForNullReference(voiLutFactory, "voiLutFactory");
-				voiLut = voiLutFactory.Create(creationParameters);
-				this.VoiLuts.Add(voiLut);
-			}
+			IPresentationLut presentationLut = factory.Create();
+			presentationLut.MinInputValue = minInputValue;
+			presentationLut.MaxInputValue = maxInputValue;
+			presentationLut.Invert = invert;
 
-			return voiLut;
-		}
+			IPresentationLut existingLut = this.PresentationLuts.Find(delegate(IPresentationLut lut)
+			                                                          	{ return lut.Equals(presentationLut); });
 
-		internal IPresentationLut GetPresentationLut(PresentationLutCreationParameters creationParameters)
-		{
-			IPresentationLut presentationLut = this.PresentationLuts.Find(delegate(IPresentationLut lut) { return creationParameters.Equals(lut); });
-			
-			if (presentationLut == null)
-			{
-				IPresentationLutFactory presentationLutFactory = this.PresentationLutFactories.Find(delegate(IPresentationLutFactory factory) { return factory.Name == creationParameters.FactoryName; });
-				Platform.CheckForNullReference(presentationLutFactory, "presentationLutFactory");
-				presentationLut = presentationLutFactory.Create(creationParameters);
-				this.PresentationLuts.Add(presentationLut);
-			}
+			if (existingLut == null)
+				this.PresentationLuts.Add(existingLut = presentationLut);
 
-			return presentationLut;
+			return existingLut;
 		}
 
 		#region IReferenceCountable Members

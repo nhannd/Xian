@@ -1,6 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -12,19 +11,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private double _windowRegionEnd;
 		private bool _recalculate;
 
-		internal VoiLutLinearBase(int minInputValue, int maxInputValue)
+		internal VoiLutLinearBase()
 		{
-			if (minInputValue >= maxInputValue)
-				throw new ArgumentException(SR.ExceptionLUTMinGreaterThanEqualToMax);
-
-			_minInputValue = minInputValue;
-			_maxInputValue = maxInputValue;
-
 			_recalculate = true;
-		}
-
-		private VoiLutLinearBase()
-		{
+			_minInputValue = int.MinValue;
+			_maxInputValue = int.MaxValue;
 		}
 
 		protected abstract double GetWindowWidth();
@@ -35,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		/// <param name="index"></param>
 		/// <returns></returns>
-		public override int this[int index]
+		public sealed override int this[int index]
 		{
 			get
 			{
@@ -65,24 +56,51 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		public override int MinInputValue
+		public sealed override int MinInputValue
 		{
 			get { return _minInputValue; }
+			set
+			{
+				if (_minInputValue == value)
+					return;
+
+				_minInputValue = value;
+				Recalculate();
+			}
 		}
 
-		public override int MaxInputValue
+		public sealed override int MaxInputValue
 		{
 			get { return _maxInputValue; }
+			set
+			{
+				if (_maxInputValue == value)
+					return;
+
+				_maxInputValue = value;
+				Recalculate();
+			}
 		}
 
-		public override int MinOutputValue
+		public sealed override int MinOutputValue
 		{
 			get { return _minInputValue; }
+			protected set {throw new InvalidOperationException("The minimum output value is not settable.");}
 		}
 
-		public override int MaxOutputValue
+		public sealed override int MaxOutputValue
 		{
 			get { return _maxInputValue; }
+			protected set { throw new InvalidOperationException("The maximum output value is not settable."); }
+		}
+
+		public sealed override string GetKey()
+		{
+			return String.Format("{0}-{1}-{2}-{3}",
+				this.MinInputValue,
+				this.MinInputValue,
+				this.GetWindowWidth(),
+				this.GetWindowCenter());
 		}
 
 		protected void Recalculate()

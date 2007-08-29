@@ -4,19 +4,19 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Defines a LUT that can be added to <see cref="LUTCollection"/>.
+	/// Defines a LUT that can be added to a <see cref="LutCollection"/>
 	/// </summary>
-	public interface ILut : IEquatable<LutCreationParameters>, IEquatable<ILut>
+	public interface ILut : IMemorable
 	{
 		/// <summary>
-		/// Gets the minimum input value.
+		/// Gets or sets the minimum input value.  This value will be set internally by the framework.
 		/// </summary>
-		int MinInputValue { get; }
+		int MinInputValue { get; set; }
 
 		/// <summary>
-		/// Gets the maximum input value.
+		/// Gets the maximum input value.  This value will be set internally by the framework.
 		/// </summary>
-		int MaxInputValue { get; }
+		int MaxInputValue { get; set; }
 
 		/// <summary>
 		/// Gets the minimum output value.
@@ -41,18 +41,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 		event EventHandler LutChanged;
 		
 		/// <summary>
-		/// Gets a string key that identifies this particular LUT.
+		/// Gets a string key that identifies this particular LUT's characteristics, so that 
+		/// an image's <see cref="OutputLut"/> can be more efficiently determined.
 		/// </summary>
 		/// <remarks>
-		/// Implementors of <see cref="ILUT"/> must implement this
-		/// method.  The string returned should be a string that uniquely 
-		/// identifies the LUT based on the LUT's characteristic parameters so 
-		/// that it can be used as a key in a dictionary.
+		/// This method is not to be confused with <B>equality</B>, since some Luts can be
+		/// dependent upon the actual image to which it belongs.  The method should simply 
+		/// be used to determine if a lut in the <see cref="OutputLutPool"/> is the same 
+		/// as an existing one.
 		/// </remarks>
 		string GetKey();
-
-		LutCreationParameters GetCreationParametersMemento();
-		
-		bool TrySetCreationParametersMemento(LutCreationParameters creationParameters);
 	}
 }
