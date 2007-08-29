@@ -11,7 +11,7 @@ namespace ClearCanvas.Common.Utilities
     public static class CollectionUtils
     {
         public delegate M ReduceDelegate<T, M>(T item, M memo);
-        
+
         /// <summary>
         /// Selects all items in the target collection that match the specified predicate, returning
         /// them as a new collection of the specified type.
@@ -42,7 +42,7 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="target">The collection to operate on</param>
         /// <param name="predicate">The predicate to test</param>
         /// <returns>A collection containing the subset of matching items from the target collection</returns>
-        public static ICollection<TItem> Select<TItem>(IEnumerable target, Predicate<TItem> predicate)
+        public static List<TItem> Select<TItem>(IEnumerable target, Predicate<TItem> predicate)
         {
             List<TItem> result = new List<TItem>();
             foreach (TItem item in target)
@@ -62,7 +62,7 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="target">The collection to operate on</param>
         /// <param name="predicate">The predicate to test</param>
         /// <returns>A collection containing the subset of matching items from the target collection</returns>
-        public static ICollection Select(IEnumerable target, Predicate<object> predicate)
+        public static ArrayList Select(IEnumerable target, Predicate<object> predicate)
         {
             ArrayList result = new ArrayList();
             foreach (object item in target)
@@ -98,7 +98,7 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="target">The collection to operate on</param>
         /// <param name="predicate">The predicate to test</param>
         /// <returns>A collection containing the subset of matching items from the target collection</returns>
-        public static ICollection<TItem> Reject<TItem>(IEnumerable target, Predicate<TItem> predicate)
+        public static List<TItem> Reject<TItem>(IEnumerable target, Predicate<TItem> predicate)
         {
             return Select<TItem>(target, delegate(TItem item) { return !predicate(item); });
         }
@@ -111,7 +111,7 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="target">The collection to operate on</param>
         /// <param name="predicate">The predicate to test</param>
         /// <returns>A collection containing the subset of matching items from the target collection</returns>
-        public static ICollection Reject(IEnumerable target, Predicate<object> predicate)
+        public static ArrayList Reject(IEnumerable target, Predicate<object> predicate)
         {
             return Select(target, delegate(object item) { return !predicate(item); });
         }
@@ -185,9 +185,9 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="target">The collection to operate on</param>
         /// <param name="mapFunction">A delegate that performs the mapping</param>
         /// <returns>A new collection containing a mapped entry for each entry in the target collection</returns>
-        public static ICollection<TResultItem> Map<TItem, TResultItem>(IEnumerable target, Converter<TItem, TResultItem> mapFunction)
+        public static List<TResultItem> Map<TItem, TResultItem>(IEnumerable target, Converter<TItem, TResultItem> mapFunction)
         {
-            ICollection<TResultItem> result = new List<TResultItem>();
+            List<TResultItem> result = new List<TResultItem>();
             foreach (TItem item in target)
             {
                 result.Add(mapFunction(item));
@@ -202,7 +202,7 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="target">The collection to operate on</param>
         /// <param name="mapFunction">A delegate that performs the mapping</param>
         /// <returns>A new collection containing a mapped entry for each entry in the target collection</returns>
-        public static ICollection Map(IEnumerable target, Converter<object, object> mapFunction)
+        public static ArrayList Map(IEnumerable target, Converter<object, object> mapFunction)
         {
             ArrayList result = new ArrayList();
             foreach (object item in target)
@@ -413,7 +413,7 @@ namespace ClearCanvas.Common.Utilities
         /// <param name="target"></param>
         /// <param name="comparison"></param>
         /// <returns></returns>
-        public static IList<TItem> Sort<TItem>(IEnumerable target, Comparison<TItem> comparison)
+        public static List<TItem> Sort<TItem>(IEnumerable target, Comparison<TItem> comparison)
         {
             List<TItem> list = new List<TItem>(new TypeSafeEnumerableWrapper<TItem>(target));
             list.Sort(comparison);
