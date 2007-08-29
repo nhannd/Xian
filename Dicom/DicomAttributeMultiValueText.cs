@@ -42,17 +42,26 @@ namespace ClearCanvas.Dicom
             valueArray = item.GetString();
 
             // store the length before removing pad chars
-            StreamLength = (uint)valueArray.Length;
+            StreamLength = (uint) valueArray.Length;
 
             // Saw some Osirix images that had padding on SH attributes with a null character, just
             // pull them out here.
-            valueArray = valueArray.Trim(new char[] { tag.VR.PadChar, '\0' });
+            valueArray = valueArray.Trim(new char[] {tag.VR.PadChar, '\0'});
 
-            _values = valueArray.Split(new char[] { '\\' });
+            if (valueArray.Length == 0)
+            {
+                _values = new string[0];
+                Count = 1;
+                StreamLength = 0;
+            }
+            else
+            {
+                _values = valueArray.Split(new char[] {'\\'});
 
-            Count = (long)_values.Length;
+                Count = (long) _values.Length;
 
-            StreamLength = (uint)valueArray.Length;
+                StreamLength = (uint) valueArray.Length;
+            }
         }
 
         internal DicomAttributeMultiValueText(DicomAttributeMultiValueText attrib)
@@ -81,6 +90,13 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Abstract Method Implementation
+
+        public override void SetNullValue()
+        {
+            _values = new string[0];
+            base.StreamLength = 0;
+            base.Count = 1;
+        }
 
         public override uint StreamLength
         {
@@ -622,6 +638,27 @@ namespace ClearCanvas.Dicom
         internal override DicomAttribute Copy(bool copyBinary)
         {
             return new DicomAttributeIS(this);
+        }
+
+        public override void AppendInt32(int intValue)
+        {
+            int newArrayLength = 1;
+            int oldArrayLength = 0;
+
+            if (_values != null)
+            {
+                newArrayLength = _values.Length + 1;
+                oldArrayLength = _values.Length;
+            }
+
+            string[] newArray = new string[newArrayLength];
+            if (oldArrayLength > 0)
+                _values.CopyTo(newArray, 0);
+            newArray[newArrayLength - 1] = intValue.ToString();
+            _values = newArray;
+
+            Count = _values.Length;
+            StreamLength = (uint)ToString().Length;            
         }
 
         public override bool TryGetFloat32(int i, out float value)

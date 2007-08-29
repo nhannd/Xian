@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Database;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
@@ -33,6 +33,7 @@ namespace ClearCanvas.ImageServer.Model
         private String _referringPhysiciansName;
         private int _numberOfStudyRelatedSeries;
         private int _numberOfStudyRelatedInstances;
+        private StatusEnum _statusEnum;
         #endregion
 
         #region Public Properties
@@ -46,70 +47,102 @@ namespace ClearCanvas.ImageServer.Model
             get { return _patientKey; }
             set { _patientKey = value; }
         }
+
+        [DicomField(DicomTags.StudyInstanceUID, DefaultValue = DicomFieldDefault.Null)]
         public String StudyInstanceUid
         {
             get { return _studyInstanceUid; }
             set { _studyInstanceUid = value; }
         }
+
+        [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
         public String PatientName
         {
             get { return _patientName; }
             set { _patientName = value; }
         }
+
+        [DicomField(DicomTags.PatientID, DefaultValue = DicomFieldDefault.Null)]
         public String PatientId
         {
             get { return _patientId; }
             set { _patientId = value; }
         }
+
+        [DicomField(DicomTags.PatientsBirthDate, DefaultValue = DicomFieldDefault.Null)]
         public String PatientsBirthDate
         {
             get { return _patientsBirthDate; }
             set { _patientsBirthDate = value; }
         }
+
+        [DicomField(DicomTags.PatientsSex, DefaultValue = DicomFieldDefault.Null)]
         public String PatientsSex
         {
             get { return _patientsSex; }
             set { _patientsSex = value; }
         }
+
+        [DicomField(DicomTags.StudyDate, DefaultValue = DicomFieldDefault.Null)]
         public String StudyDate
         {
             get { return _studyDate; }
             set { _studyDate = value; }
         }
+
+        [DicomField(DicomTags.StudyTime, DefaultValue = DicomFieldDefault.Null)]
         public String StudyTime
         {
             get { return _studyTime; }
             set { _studyTime = value; }
         }
+
+        [DicomField(DicomTags.AccessionNumber, DefaultValue = DicomFieldDefault.Null)]
         public String AccessionNumber
         {
             get { return _accessionNumber; }
             set { _accessionNumber = value; }
         }
+
+        [DicomField(DicomTags.StudyID, DefaultValue = DicomFieldDefault.Null)]
         public String StudyId
         {
             get { return _studyId; }
             set { _studyId = value; }
         }
+
+        [DicomField(DicomTags.StudyDescription, DefaultValue = DicomFieldDefault.Null)]
         public String StudyDescription
         {
             get { return _studyDescription; }
             set { _studyDescription = value; }
         }
+
+        [DicomField(DicomTags.ReferringPhysiciansName, DefaultValue = DicomFieldDefault.Null)]
         public String ReferringPhysiciansName
         {
             get { return _referringPhysiciansName; }
             set { _referringPhysiciansName = value; }
         }
+
+        [DicomField(DicomTags.NumberofStudyRelatedSeries, DefaultValue = DicomFieldDefault.Null)]
         public int NumberOfStudyRelatedSeries
         {
             get { return _numberOfStudyRelatedSeries; }
             set { _numberOfStudyRelatedSeries = value; }
         }
+
+        [DicomField(DicomTags.NumberofStudyRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
         public int NumberOfStudyRelatedInstances
         {
             get { return _numberOfStudyRelatedInstances; }
             set { _numberOfStudyRelatedInstances = value; }
+        }
+
+        public StatusEnum StatusEnum
+        {
+            get { return _statusEnum; }
+            set { _statusEnum = value; }
         }
         #endregion
     }

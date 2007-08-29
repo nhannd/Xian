@@ -3,12 +3,16 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.ImageServer.Database
 {
-    public delegate void SelectCallback<T>(T row);
+    public delegate void ProcedureSelectCallback<T>(T row);
 
+    /// <summary>
+    /// Interface used to define stored procedures that that input parameters and return resultant rows.
+    /// </summary>
+    /// <typeparam name="TInput">Input parameters</typeparam>
+    /// <typeparam name="TOutput">The return type</typeparam>
     public interface IProcedureSelectBroker<TInput, TOutput> : IPersistenceBroker
         where TInput : ProcedureParameters
         where TOutput : ServerEntity, new()
@@ -26,6 +30,7 @@ namespace ClearCanvas.ImageServer.Database
         /// constrained by the specified page constraint.
         /// </summary>
         /// <param name="criteria"></param>
+        /// <param name="callback"></param>
         /// <returns></returns>
         void Execute(TInput criteria, SelectCallback<TOutput> callback);
 

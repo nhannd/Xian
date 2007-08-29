@@ -125,6 +125,13 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Abstract Methods
+
+        public override void SetNullValue()
+        {
+            _values = new T[0];
+            SetStreamLength();
+        }
+
         internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
         {    
             int len = _values.Length * Tag.VR.UnitSize;
@@ -915,6 +922,25 @@ namespace ClearCanvas.Dicom
 
         #region Abstract Method Implementation
 
+        public override void AppendInt32(int intValue)
+        {
+            int newArrayLength = 1;
+            int oldArrayLength = 0;
+
+            if (_values != null)
+            {
+                newArrayLength = _values.Length + 1;
+                oldArrayLength = _values.Length;
+            }
+
+            int[] newArray = new int[newArrayLength];
+            if (oldArrayLength > 0)
+                _values.CopyTo(newArray, 0);
+            newArray[newArrayLength - 1] = (int)intValue;
+            _values = newArray;
+            SetStreamLength();
+        }
+
         public override bool TryGetInt32(int i, out int value)
         {
             if (_values == null || _values.Length <= i)
@@ -1019,6 +1045,25 @@ namespace ClearCanvas.Dicom
 
         #region Abstract Method Implementation
 
+        public override void AppendInt32(int intValue)
+        {
+            int newArrayLength = 1;
+            int oldArrayLength = 0;
+
+            if (_values != null)
+            {
+                newArrayLength = _values.Length + 1;
+                oldArrayLength = _values.Length;
+            }
+
+            short[] newArray = new short[newArrayLength];
+            if (oldArrayLength > 0)
+                _values.CopyTo(newArray, 0);
+            newArray[newArrayLength - 1] = (short)intValue;
+            _values = newArray;
+            SetStreamLength();
+        }
+
         public override bool TryGetInt16(int i, out short value)
         {
             if (_values == null || _values.Length <= i)
@@ -1120,6 +1165,25 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Abstract Method Implementation
+        
+        public override void AppendInt32(int intValue)
+        {
+            int newArrayLength = 1;
+            int oldArrayLength = 0;
+
+            if (_values != null)
+            {
+                newArrayLength = _values.Length + 1;
+                oldArrayLength = _values.Length;
+            }
+
+            uint[] newArray = new uint[newArrayLength];
+            if (oldArrayLength > 0)
+                _values.CopyTo(newArray, 0);
+            newArray[newArrayLength - 1] = (uint)intValue;
+            _values = newArray;
+            SetStreamLength();
+        }
 
         public override bool TryGetUInt32(int i, out uint value)
         {
@@ -1343,6 +1407,25 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Abstract Method Implementation
+
+        public override void AppendInt32(int intValue)
+        {
+            int newArrayLength = 1;
+            int oldArrayLength = 0;
+
+            if (_values != null )
+            {
+                newArrayLength = _values.Length + 1;
+                oldArrayLength = _values.Length;
+            }
+
+            ushort[] newArray = new ushort[newArrayLength];
+            if (oldArrayLength > 0)
+                _values.CopyTo(newArray,0);
+            newArray[newArrayLength - 1] = (ushort)intValue;
+            _values = newArray;
+            SetStreamLength();
+        }
 
         public override bool TryGetUInt16(int i, out ushort value)
         {

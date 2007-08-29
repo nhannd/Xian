@@ -535,6 +535,27 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
+        /// Method to send a DICOM C-FIND-RSP message.
+        /// </summary>
+        /// <param name="presentationID"></param>
+        /// <param name="messageID"></param>
+        /// <param name="affectedInstance"></param>
+        /// <param name="status"></param>
+        /// <param name="msg"></param>
+        public void SendCFindResponse(byte presentationID, ushort messageID, DicomMessage msg, DicomStatus status)
+        {
+            DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
+            msg.CommandField = DicomCommandField.CFindResponse;
+            msg.Status = status;
+            msg.MessageIdBeingRespondedTo = messageID;
+            msg.AffectedSopClassUid = affectedClass.UID;
+            msg.DataSetType = msg.DataSet.IsEmpty() ? (ushort)0x0101 : (ushort)0x0202;
+
+            SendDimse(presentationID, msg.CommandSet, msg.DataSet);
+        }
+
+
+        /// <summary>
         /// Method to send a DICOM C-MOVE-RQ message.
         /// </summary>
         /// <param name="presentationID"></param>
@@ -912,7 +933,7 @@ namespace ClearCanvas.Dicom.Network
                 dsw.Write(TransferSyntax.ImplicitVRLittleEndian,
                     command, DicomWriteOptions.Default | DicomWriteOptions.CalculateGroupLengths);
 
-                if (dataset != null)
+                if ((dataset != null) && !dataset.IsEmpty())
                 {
                     pdustream.IsCommand = false;
                     dsw.Write(ts, dataset, DicomWriteOptions.Default);

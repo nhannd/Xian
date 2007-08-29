@@ -75,6 +75,13 @@ namespace ClearCanvas.Dicom
 
         #region Abstract Method Implementation
 
+        public override void SetNullValue()
+        {
+            _values = new DicomSequenceItem[0];
+            base.StreamLength = 0;
+            base.Count = 1;
+        }
+
         public override string ToString()
         {
             return base.Tag;

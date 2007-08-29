@@ -43,6 +43,7 @@
     <Compile Include="ProcedureUpdateBroker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReadContext.cs" />
+    <Compile Include="SelectBroker.cs" />
     <Compile Include="UpdateContext.cs" />
   </ItemGroup>
   <ItemGroup>

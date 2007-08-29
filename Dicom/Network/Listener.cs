@@ -22,7 +22,7 @@ namespace ClearCanvas.Dicom.Network
         #region Members
 
         static private Dictionary<IPEndPoint, Listener> _listeners = new Dictionary<IPEndPoint, Listener>();
-        private static IPEndPoint _ipEndPoint = null;
+        private IPEndPoint _ipEndPoint = null;
         private Dictionary<String, ListenerInfo> _applications = new Dictionary<String, ListenerInfo>();
         private TcpListener _tcpListener = null;
         private Thread _theThread = null;
@@ -50,7 +50,7 @@ namespace ClearCanvas.Dicom.Network
                 }
 
                 theListener._applications.Add(parameters.CalledAE,info);
-                DicomLogger.LogInfo("Starting to listen with AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
+                DicomLogger.LogInfo("Starting to listen with AE {0} on existing port {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
             }
             else
             {
@@ -59,7 +59,7 @@ namespace ClearCanvas.Dicom.Network
                 _listeners[parameters.LocalEndPoint] = theListener;
                 theListener.StartThread();
 
-                DicomLogger.LogInfo("Starting to listen with AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
+                DicomLogger.LogInfo("Starting to listen with AE {0} on port {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
             }
 
             return true;

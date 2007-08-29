@@ -241,7 +241,7 @@ namespace ClearCanvas.Dicom.Network
         {
             if (!_appList.ContainsKey(association.CalledAE))
             {
-                DicomLogger.LogError("Rejecting association from {0}: Invalid Called AE Title.", association.CallingAE);
+                DicomLogger.LogError("Rejecting association from {0}: Invalid Called AE Title ({1}).", association.CallingAE, association.CalledAE);
                 SendAssociateReject(DicomRejectResult.Permanent, DicomRejectSource.ServiceProviderACSE, DicomRejectReason.CalledAENotRecognized);
                 return;
             }

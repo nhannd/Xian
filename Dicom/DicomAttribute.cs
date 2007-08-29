@@ -46,6 +46,7 @@ namespace ClearCanvas.Dicom
         public abstract DicomAttribute Copy();
         public abstract void SetStringValue(String stringValue);
         public abstract Type GetValueType();
+        public abstract void SetNullValue();
 
         internal abstract ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet);
         internal abstract DicomAttribute Copy(bool copyBinary);
@@ -128,6 +129,11 @@ namespace ClearCanvas.Dicom
             if (!ok)
                 return defaultVal;
             return value;
+        }
+
+        public virtual void AppendInt32(int intValue)
+        {
+            throw new DicomException(SR.InvalidType);
         }
 
         /// <summary>

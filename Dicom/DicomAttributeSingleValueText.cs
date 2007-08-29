@@ -52,6 +52,13 @@ namespace ClearCanvas.Dicom
         #endregion
 
         #region Abstract Method Implementation
+        public override void SetNullValue()
+        {
+            _value = "";
+            base.StreamLength = 0;
+            base.Count = 1;
+        }
+
         /// <summary>
         /// The StreamLength of the attribute.
         /// </summary>

@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Database;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
@@ -34,12 +34,14 @@ namespace ClearCanvas.ImageServer.Model
             set { _serverPartitionKey = value; }
         }
 
+        [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Null)]
         public String PatientName
         {
             get { return _patientName; }
             set { _patientName = value; }
         }
 
+        [DicomField(DicomTags.PatientID, DefaultValue = DicomFieldDefault.Null)]
         public String PatientId
         {
             get { return _patientId; }
@@ -47,22 +49,28 @@ namespace ClearCanvas.ImageServer.Model
                  
         }
 
+        [DicomField(DicomTags.IssuerofPatientID, DefaultValue = DicomFieldDefault.Null)]
         public String IssuerOfPatientId
         {
             get { return _issuerOfPatientId; }
             set { _issuerOfPatientId = value; }
         }
 
+        [DicomField(DicomTags.NumberofPatientRelatedStudies, DefaultValue = DicomFieldDefault.Null)]
         public int NumberOfPatientRelatedStudies
         {
             get { return _numberOfPatientRelatedStudies; }
             set { _numberOfPatientRelatedStudies = value; }
         }
+
+        [DicomField(DicomTags.NumberofPatientRelatedSeries, DefaultValue = DicomFieldDefault.Null)]
         public int NumberOfPatientRelatedSeries
         {
             get { return _numberOfPatientRelatedSeries; }
             set { _numberOfPatientRelatedSeries = value; }
         }
+
+        [DicomField(DicomTags.NumberofPatientRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
         public int NumberOfPatientRelatedInstances
         {
             get { return _numberOfPatientRelatedInstances; }

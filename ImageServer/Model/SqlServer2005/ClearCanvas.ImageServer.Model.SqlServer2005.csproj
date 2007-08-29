@@ -45,6 +45,7 @@
     <Compile Include="Brokers\InsertWorkQueueStudyProcess.cs" />
     <Compile Include="Brokers\SelectPartitionSopClasses.cs" />
     <Compile Include="Brokers\SelectRequestAttributes.cs" />
+    <Compile Include="Brokers\SelectStudy.cs" />
     <Compile Include="Brokers\SelectStudyStorageLocation.cs" />
     <Compile Include="Brokers\SelectWorkQueue.cs" />
     <Compile Include="Brokers\SelectWorkQueueUids.cs" />

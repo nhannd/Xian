@@ -30,6 +30,8 @@
   <ItemGroup>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
@@ -44,7 +46,9 @@
     <Compile Include="Brokers\IGetSopClasses.cs" />
     <Compile Include="Brokers\IInsertWorkQueueStudyProcess.cs" />
     <Compile Include="Brokers\ISelectRequestAttributes.cs" />
+    <Compile Include="Brokers\ISelectSeries.cs" />
     <Compile Include="Brokers\ISelectServerPartitionSopClasses.cs" />
+    <Compile Include="Brokers\ISelectStudy.cs" />
     <Compile Include="Brokers\ISelectStudyStorageLocation.cs" />
     <Compile Include="Brokers\ISelectWorkQueueUids.cs" />
     <Compile Include="Brokers\IStatusEnum.cs" />
@@ -57,6 +61,8 @@
     <Compile Include="Parameters\InstanceInsertParameters.cs" />
     <Compile Include="Parameters\RequestAttributesInsertParameters.cs" />
     <Compile Include="Parameters\RequestAttributesSelectParameters.cs" />
+    <Compile Include="Criteria\SeriesSelectCriteria.cs" />
+    <Compile Include="Criteria\StudySelectCriteria.cs" />
     <Compile Include="Parameters\WorkQueueUpdateParameters.cs" />
     <Compile Include="PartitionSopClass.cs" />
     <Compile Include="Parameters\PartitionSopClassSelectParameters.cs" />

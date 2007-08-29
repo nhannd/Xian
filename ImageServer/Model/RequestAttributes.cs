@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Database;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
@@ -29,11 +29,15 @@ namespace ClearCanvas.ImageServer.Model
             get { return _seriesKey; }
             set { _seriesKey = value; }
         }
+
+        [DicomField(DicomTags.RequestedProcedureID, DefaultValue = DicomFieldDefault.Null)]
         public string RequestedProcedureId
         {
             get { return _requestedProcedureId; }
             set { _requestedProcedureId = value; }
         }
+
+        [DicomField(DicomTags.ScheduledProcedureStepID, DefaultValue = DicomFieldDefault.Null)]
         public string ScheduledProcedureStepId
         {
             get { return _scheduledProcedureStepId; }
