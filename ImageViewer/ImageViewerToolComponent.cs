@@ -30,15 +30,17 @@ namespace ClearCanvas.ImageViewer
 		{
 			_imageViewerToolContext = imageViewerToolContext;
 			this.ImageViewer = imageViewerToolContext.Viewer;
-			_imageViewerToolContext.DesktopWindow.Workspaces.ItemActivationChanged += OnWorkspaceActivated;
+			ImageViewerToolContext.DesktopWindow.Workspaces.ItemActivationChanged += OnWorkspaceActivated;
 		}
 
 		/// <summary>
 		/// Gets the subject <see cref="IImageViewer"/> that this component is associated with.
 		/// </summary>
 		/// <remarks>
-		/// Note that <b>null</b> is a valid value.  Setting this property to null dissociates 
-		/// it from any <see cref="IImageViewer"/>.
+		/// <value>
+		/// The currently active <see cref="IImageViewer"/> or <b>null</b> if the
+		/// there is no currently active <see cref="IImageViewer"/>.
+		/// </value>
 		/// </remarks>
 		public IImageViewer ImageViewer
 		{
@@ -56,6 +58,11 @@ namespace ClearCanvas.ImageViewer
 						oldImageViewer));
 				}
 			}
+		}
+
+		public IImageViewerToolContext ImageViewerToolContext
+		{
+			get { return _imageViewerToolContext; }
 		}
 
 		protected abstract void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e);
@@ -104,7 +111,7 @@ namespace ClearCanvas.ImageViewer
 
 		private void OnWorkspaceActivated(object sender, ItemEventArgs<Workspace> e)
 		{
-			Workspace activeWorkspace = _imageViewerToolContext.DesktopWindow.ActiveWorkspace;
+			Workspace activeWorkspace = ImageViewerToolContext.DesktopWindow.ActiveWorkspace;
 
 			if (activeWorkspace == null)
 			{

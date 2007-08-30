@@ -8,7 +8,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
-	class DicomFilteredAnnotationLayoutProvider : StoredAnnotatationLayoutProvider
+	public class DicomFilteredAnnotationLayoutProvider : StoredAnnotatationLayoutProvider
 	{
 		private IImageSopProvider _image;
 

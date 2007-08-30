@@ -3,7 +3,8 @@
 
 	<ItemGroup>
 		<ImageViewerPluginFiles Include="$(SolutionDir)\Tools\ImageProcessing\DynamicTe\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe.dll" />
-	</ItemGroup>
+    <ImageViewerPluginFiles Include="$(SolutionDir)\Tools\ImageProcessing\DynamicTe\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe.View.WinForms.dll" />
+  </ItemGroup>
 
 	<Target Name="Copy Files">
     <!-- Run the image viewer build file -->
