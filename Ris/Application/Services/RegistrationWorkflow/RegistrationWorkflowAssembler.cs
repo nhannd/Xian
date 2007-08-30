@@ -85,7 +85,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         if (listScheduledTime.Count > 1)
                             listScheduledTime.Sort(new Comparison<DateTime?>(RICSummary.CompreMoreRecent));
 
-                        summary.ScheduledTime = CollectionUtils.FirstElement<DateTime?>(listScheduledTime);
+                        summary.ScheduledTime = CollectionUtils.FirstElement<DateTime?>(listScheduledTime, null);
 
                         return summary;
                     });
