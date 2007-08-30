@@ -13,12 +13,15 @@ using ClearCanvas.ImageViewer.Annotations.Dicom;
 
 namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 {
-	public class DynamicTePresentationImage : StandardPresentationImage, IDynamicTeProvider
+	public class DynamicTePresentationImage 
+		: GrayscalePresentationImage, 
+		IImageSopProvider, 
+		IDynamicTeProvider
 	{
 		#region Private fields
 
+		private ImageSop _imageSop;
 		private DynamicTe _dynamicTe;
-		private byte[] _probabilityMap;
 		private ColorImageGraphic _probabilityOverlay;
 
 		#endregion
@@ -28,14 +31,20 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 			byte[] protonDensityMap,
 			byte[] t2Map,
 			byte[] probabilityMap)
-			: base(imageSop)
+			: base(imageSop.Rows, imageSop.Columns)
 		{
 			Platform.CheckForNullReference(imageSop, "imageSop");
 
-			_dynamicTe = new DynamicTe(this.ImageGraphic as GrayscaleImageGraphic, protonDensityMap, t2Map);
-			_probabilityMap = probabilityMap;
+			_imageSop = imageSop;
+			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
 
 			AddProbabilityOverlay();
+			_dynamicTe = new DynamicTe(
+				this.ImageGraphic as GrayscaleImageGraphic, 
+				protonDensityMap, 
+				t2Map,
+				_probabilityOverlay,
+				probabilityMap);
 		}
 
 		public DynamicTe DynamicTe
@@ -43,13 +52,20 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 			get { return _dynamicTe; }
 		}
 
-		protected override ImageGraphic CreateImageGraphic()
+		public bool ProbabilityOverlayVisible
 		{
-			return new StandardGrayscaleImageGraphic(
-				this.ImageSop,
-				this.ImageSop.Rows,
-				this.ImageSop.Columns);
+			get { return _probabilityOverlay.Visible; }
+			set { _probabilityOverlay.Visible = value; }
 		}
+
+		#region IImageSopProvider Members
+
+		public ImageSop ImageSop
+		{
+			get { return _imageSop; }
+		}
+
+		#endregion
 
 		public override IPresentationImage  Clone()
 		{
@@ -57,27 +73,9 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 				 this.ImageSop, 
 				 this.DynamicTe.ProtonDensityMap, 
 				 this.DynamicTe.T2Map,
-				 _probabilityMap);
+				 this.DynamicTe.ProbabilityMap);
 		}
 
-		public void SetProbabilityThreshold(int probability, Color color)
-		{
-			IndexedPixelData probabilityPixelData = new IndexedPixelData(
-				this.ImageSop.Rows,
-				this.ImageSop.Columns,
-				this.ImageSop.BitsAllocated,
-				this.ImageSop.BitsStored,
-				this.ImageSop.HighBit,
-				this.ImageSop.PixelRepresentation != 0 ? true : false,
-				_probabilityMap);
-
-			probabilityPixelData.ForEachPixel(
-				delegate(int i, int x, int y, int pixelIndex)
-				{
-					if (probabilityPixelData.GetPixel(pixelIndex) < probability)
-						_probabilityOverlay.PixelData.SetPixel(pixelIndex, color);
-				});
-		}
 
 		private void AddProbabilityOverlay()
 		{

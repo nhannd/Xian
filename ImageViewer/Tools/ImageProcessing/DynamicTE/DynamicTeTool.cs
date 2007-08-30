@@ -39,6 +39,18 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 			// change the value passed to the base constructor
 
 		}
+
+		private IDynamicTeProvider SelectedDynamicTeProvider
+		{
+			get
+			{
+				if (this.SelectedPresentationImage != null)
+					return this.SelectedPresentationImage as IDynamicTeProvider;
+				else
+					return null;
+			}
+		}
+
 		/// <summary>
 		/// Called by the framework to initialize this tool.
 		/// </summary>
@@ -73,7 +85,17 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 			if (_command == null)
 				return;
 
-			_applicator.ApplyToLinkedImages();
+			_applicator.ApplyToLinkedImages(
+				delegate(IPresentationImage presentationImage)
+				{
+					IDynamicTeProvider provider = presentationImage as IDynamicTeProvider;
+
+					if (provider == null)
+						return;
+
+					provider.DynamicTe.Te = this.SelectedDynamicTeProvider.DynamicTe.Te;
+				});
+
 			_command.EndState = _applicator.CreateMemento();
 
 			// If the state hasn't changed since MouseDown just return

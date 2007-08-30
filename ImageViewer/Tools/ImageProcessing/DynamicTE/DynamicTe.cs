@@ -3,24 +3,63 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 {
 	public class DynamicTe : IMemorable
 	{
+		public class DynamicTeMemento : IMemento
+		{
+			private double _te;
+			private int _threshold;
+			private int _opacity;
+
+			public DynamicTeMemento(double te, int threshold, int opacity)
+			{
+				_te = te;
+				_threshold = threshold;
+				_opacity = opacity;
+			}
+
+			public double Te
+			{
+				get { return _te; }
+			}
+
+			public int Threshold
+			{
+				get { return _threshold; }
+			}
+
+			public int Opacity
+			{
+				get { return _opacity; }
+			}
+		}
+
 		private GrayscaleImageGraphic _imageGraphic;
+		private ColorImageGraphic _probabilityOverlay;
 		private double _te;
 		private byte[] _protonDensityMap;
 		private byte[] _t2Map;
+		private byte[] _probabilityMap;
+		private int _threshold;
+		private int _opacity;
 
 		public DynamicTe(
 			GrayscaleImageGraphic imageGraphic,
 			byte[] protonDensityMap,
-			byte[] t2Map)
+			byte[] t2Map,
+			ColorImageGraphic probabilityOverlay,
+			byte[] probabilityMap)
 		{
 			_imageGraphic = imageGraphic;
 			_protonDensityMap = protonDensityMap;
 			_t2Map = t2Map;
+
+			_probabilityOverlay = probabilityOverlay;
+			_probabilityMap = probabilityMap;
 		}
 
 		internal byte[] ProtonDensityMap
@@ -31,6 +70,11 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 		internal byte[] T2Map
 		{
 			get { return _t2Map; }
+		}
+
+		internal byte[] ProbabilityMap
+		{
+			get { return _probabilityMap; }
 		}
 
 		public double Te
@@ -48,6 +92,39 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 					CalculatePixelData();
 				}
 			}
+		}
+
+		public bool ProbabilityMapVisible
+		{
+			get { return _probabilityOverlay.Visible; }
+			set { _probabilityOverlay.Visible = value; }
+		}
+
+		public void ApplyProbabilityThreshold(int threshold, int opacity)
+		{
+			if (!this.ProbabilityMapVisible)
+				return;
+
+			_threshold = threshold;
+			_opacity = opacity;
+
+			IndexedPixelData probabilityPixelData = new IndexedPixelData(
+				_imageGraphic.Rows,
+				_imageGraphic.Columns,
+				_imageGraphic.BitsPerPixel,
+				_imageGraphic.BitsStored,
+				_imageGraphic.HighBit,
+				_imageGraphic.IsSigned,
+				_probabilityMap);
+
+			probabilityPixelData.ForEachPixel(
+				delegate(int i, int x, int y, int pixelIndex)
+					{
+						if (probabilityPixelData.GetPixel(pixelIndex) < threshold)
+							_probabilityOverlay.PixelData.SetPixel(pixelIndex, Color.FromArgb(opacity, Color.Red));
+						else
+							_probabilityOverlay.PixelData.SetPixel(pixelIndex, Color.Empty);
+					});
 		}
 
 		private unsafe void CalculatePixelData()
@@ -94,7 +171,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 
 		public IMemento CreateMemento()
 		{
-			return new DynamicTeMemento(this.Te);
+			return new DynamicTeMemento(this.Te, _threshold, _opacity);
 		}
 
 		public void SetMemento(IMemento memento)
@@ -102,6 +179,8 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 			DynamicTeMemento teMemento = memento as DynamicTeMemento;
 
 			this.Te = teMemento.Te;
+			ApplyProbabilityThreshold(teMemento.Threshold, teMemento.Opacity);
+			_imageGraphic.Draw();
 		}
 
 		#endregion
