@@ -79,10 +79,10 @@ namespace ClearCanvas.Common.Utilities
         {
         }
 
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        /// <param name="percent"></param>
+		/// <summary>
+		/// Initializes a new instance of <see cref="BackgroundTaskProgress"/>
+		/// with the specified parameters.
+		/// <param name="percent"></param>
         /// <param name="message"></param>
         public BackgroundTaskProgress(int percent, string message)
         {
@@ -91,7 +91,23 @@ namespace ClearCanvas.Common.Utilities
             _message = message;
         }
 
-        /// <summary>
+		/// <summary>
+		/// Initializes a new instance of <see cref="BackgroundTaskProgress"/>
+		/// with the specified parameters.
+		/// </summary>
+		/// <param name="index">A zero-based index</param>
+		/// <param name="total">Total number of increments</param>
+		/// <param name="message"></param>
+		public BackgroundTaskProgress(int index, int total, string message)
+		{
+			Platform.CheckNonNegative(index, "index");
+			Platform.CheckNonNegative(index, "total");
+
+			_percent = (int)(((float)(index + 1) / total) * 100);
+			_message = message;
+		}
+		
+		/// <summary>
         /// Gets the percent completion, as an integer between 0..100
         /// </summary>
         public virtual int Percent { get { return _percent; } }
