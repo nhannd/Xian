@@ -15,19 +15,11 @@
       <HashCode>AAIAAAAAAAQAAQAAAACABAEAAAAAACAAAAAAAAACQAI=</HashCode>
     </TypeIdentifier>
   </Class>
-  <Class Name="ClearCanvas.ImageViewer.Graphics.StandardGrayscaleImageGraphic" Collapsed="true">
-    <Position X="1.75" Y="5.75" Width="2.5" />
-    <TypeIdentifier>
-      <FileName>Graphics\StandardGrayscaleImageGraphic.cs</FileName>
-      <HashCode>AAAAAAQAAAAAAAAAAAAAAAQAAAIAiAAAIAAFEAAIAAA=</HashCode>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
   <Class Name="ClearCanvas.ImageViewer.Graphics.GrayscaleImageGraphic" Collapsed="true">
     <Position X="2" Y="4" Width="2" />
     <TypeIdentifier>
       <FileName>Graphics\GrayscaleImageGraphic.cs</FileName>
-      <HashCode>AAgAAAAAACQAQZAAAAAAAAAEAJAAAAAAAAAAAIFCgAA=</HashCode>
+      <HashCode>BAgAAAQQgCQAAYAAAAAAAAAAAJIEgAAAAgAAIAACAAA=</HashCode>
     </TypeIdentifier>
     <Lollipop Orientation="Right" Position="0.1" />
   </Class>
