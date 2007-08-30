@@ -1,19 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
-
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.InputManagement;
-using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -37,7 +31,8 @@ namespace ClearCanvas.ImageViewer
 	/// rendering, etc.  An API and a number of extension points allow plugin developers
 	/// to extend the functionality of the IVC.
 	/// </remarks>
-	public abstract class ImageViewerComponent : ApplicationComponent, IImageViewer, IContextMenuProvider
+	[AssociateView(typeof(ImageViewerComponentViewExtensionPoint))]
+	public class ImageViewerComponent : ApplicationComponent, IImageViewer, IContextMenuProvider
 	{
 		internal class ImageViewerToolContext : ToolContext, IImageViewerToolContext
 		{
@@ -71,6 +66,7 @@ namespace ClearCanvas.ImageViewer
 		private EventBroker _eventBroker;
 		private ViewerShortcutManager _shortcutManager;
 		private ToolSet _toolSet;
+		private ILayoutManager _layoutManager;
 
 		private static StudyFinderMap _studyFinders;
 		private static StudyLoaderMap _studyLoaders;
@@ -78,6 +74,21 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler _closingEvent;
 
 		#endregion
+
+		public ImageViewerComponent() : this(new SimpleImageLayoutManager())
+		{
+		}
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="ImageViewerComponent"/>
+		/// with the specified <see cref="ILayoutManager"/>.
+		/// </summary>
+		/// <param name="layoutManager"></param>
+		public ImageViewerComponent(ILayoutManager layoutManager)
+		{
+			Platform.CheckForNullReference(layoutManager, "layoutManager");
+			_layoutManager = layoutManager;
+		}
 
 		/// <summary>
 		/// Override of <see cref="ApplicationComponent.Start"/>
@@ -347,6 +358,14 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the <see cref="ILayoutManager"/>
+		/// </summary>
+		protected ILayoutManager LayoutManager
+		{
+			get { return _layoutManager; }
+		}
+
 		#endregion
 
 		#region Public methods
@@ -478,6 +497,15 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
+		/// Lays out the images in the <see cref="ImageViewerComponent"/> using
+		/// the current layout manager.
+		/// </summary>
+		public void Layout()
+		{
+			this.LayoutManager.Layout(this);
+		}
+
+		/// <summary>
 		/// Tries to get a reference to an <see cref="IImageViewer"/> hosted by a workspace.
 		/// </summary>
 		/// <returns>The active <see cref="IImageViewer"/> or <b>null</b> if 
@@ -531,6 +559,9 @@ namespace ClearCanvas.ImageViewer
 
 				if (this.StudyTree != null)
 					this.StudyTree.Dispose();
+
+				if (_layoutManager != null)
+					_layoutManager.Dispose();
 			}
 		}
 

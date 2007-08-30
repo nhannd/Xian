@@ -13,14 +13,9 @@ namespace ClearCanvas.ImageViewer
 	public interface ILayoutManager : IDisposable
 	{
 		/// <summary>
-		/// Sets the owning <see cref="IImageViewer"/>.
+		/// Lays out images on the specified image viewer.
 		/// </summary>
-		/// <param name="imageViewer">The owning <see cref="IImageViewer"/>.</param>
-		void SetImageViewer(IImageViewer imageViewer);
-
-		/// <summary>
-		/// Lays out images.
-		/// </summary>
-		void Layout();
+		/// <param name="imageViewer"></param>
+		void Layout(IImageViewer imageViewer);
 	}
 }

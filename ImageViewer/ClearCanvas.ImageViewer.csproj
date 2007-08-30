@@ -182,6 +182,9 @@
     <Compile Include="Imaging\VoiLutManager.cs" />
     <Compile Include="InputManagement\KeyboardButtonDownPreview.cs" />
     <Compile Include="PresentationImageFactory.cs" />
+    <Compile Include="SimpleLogicalWorkspaceBuilder.cs" />
+    <Compile Include="SimpleImageLayoutManager.cs" />
+    <Compile Include="SimplePhysicalWorkspaceFiller.cs" />
     <Compile Include="StudyManagement\SopValidationException.cs" />
     <Compile Include="Imaging\VoiLutOperationApplicator.cs" />
     <Compile Include="Imaging\IVoiLutManager.cs" />
@@ -241,7 +244,6 @@
     <Compile Include="InformationBoxChangedEventArgs.cs" />
     <Compile Include="Graphics\IGraphic.cs" />
     <Compile Include="Graphics\SceneGraph.cs" />
-    <Compile Include="LayoutCapableImageViewerComponent.cs" />
     <Compile Include="Rendering\Tests\ImageRendererBilinearInterpolationTests.cs" />
     <Compile Include="Rendering\Tests\ImageRendererMiscTests.cs" />
     <Compile Include="Rendering\Tests\ImageRendererMono16OrientationTests.cs" />
