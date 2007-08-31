@@ -45,6 +45,8 @@
     <Compile Include="Brokers\IInsertStudyStorage.cs" />
     <Compile Include="Brokers\IGetSopClasses.cs" />
     <Compile Include="Brokers\IInsertWorkQueueStudyProcess.cs" />
+    <Compile Include="Brokers\ISelectModalitiesInStudy.cs" />
+    <Compile Include="Brokers\ISelectPatient.cs" />
     <Compile Include="Brokers\ISelectRequestAttributes.cs" />
     <Compile Include="Brokers\ISelectSeries.cs" />
     <Compile Include="Brokers\ISelectServerPartitionSopClasses.cs" />
@@ -54,11 +56,13 @@
     <Compile Include="Brokers\IStatusEnum.cs" />
     <Compile Include="Brokers\ITypeEnum.cs" />
     <Compile Include="Brokers\IUpdateWorkQueue.cs" />
+    <Compile Include="Criteria\PatientSelectCriteria.cs" />
     <Compile Include="Filesystem.cs" />
     <Compile Include="FilesystemTier.cs" />
     <Compile Include="Brokers\ISelectWorkQueue.cs" />
     <Compile Include="InstanceKeys.cs" />
     <Compile Include="Parameters\InstanceInsertParameters.cs" />
+    <Compile Include="Parameters\ModalitiesInStudySelectParameters.cs" />
     <Compile Include="Parameters\RequestAttributesInsertParameters.cs" />
     <Compile Include="Parameters\RequestAttributesSelectParameters.cs" />
     <Compile Include="Criteria\SeriesSelectCriteria.cs" />

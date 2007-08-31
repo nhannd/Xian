@@ -46,7 +46,8 @@ namespace ClearCanvas.Dicom
         KeepGroupLengths = 1,
         UseDictionaryForExplicitUN = 2,
         AllowSeekingForContext = 4,
-        Default = DicomReadOptions.UseDictionaryForExplicitUN | DicomReadOptions.AllowSeekingForContext
+        ReadNonPart10Files = 8,
+        Default = DicomReadOptions.UseDictionaryForExplicitUN | DicomReadOptions.AllowSeekingForContext | DicomReadOptions.ReadNonPart10Files
     }
 
     /// <summary>

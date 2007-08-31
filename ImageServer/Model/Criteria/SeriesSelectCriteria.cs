@@ -7,10 +7,13 @@ using ClearCanvas.ImageServer.Database;
 
 namespace ClearCanvas.ImageServer.Model.Criteria
 {
+    /// <summary>
+    /// Criteria for selects against the <see cref="Series"/> table.
+    /// </summary>
     public class SeriesSelectCriteria : SelectCriteria
     {
         public SeriesSelectCriteria()
-            : base()
+            : base("Series")
         {}
 
         public ISearchCondition<ServerEntityKey> ServerPartitionKey

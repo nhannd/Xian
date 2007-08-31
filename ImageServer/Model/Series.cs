@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Database;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.ImageServer.Model
 {
+    /// <summary>
+    /// A model of the Series entity.
+    /// </summary>
     public class Series: ServerEntity
     {
         #region Constructors
@@ -31,12 +32,12 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
-        private ServerEntityKey ServerPartitionKey
+        public ServerEntityKey ServerPartitionKey
         {
             get { return _serverPartitionKey; }
             set { _serverPartitionKey = value; }
         }
-        private ServerEntityKey StudyKey
+        public ServerEntityKey StudyKey
         {
             get { return _studyKey; }
             set { _studyKey = value; }

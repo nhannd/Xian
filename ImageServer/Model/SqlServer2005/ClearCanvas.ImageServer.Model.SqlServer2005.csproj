@@ -43,8 +43,11 @@
     <Compile Include="Brokers\InsertServerPartition.cs" />
     <Compile Include="Brokers\InsertStudyStorage.cs" />
     <Compile Include="Brokers\InsertWorkQueueStudyProcess.cs" />
+    <Compile Include="Brokers\SelectPatient.cs" />
+    <Compile Include="Brokers\SelectModalitiesInStudy.cs" />
     <Compile Include="Brokers\SelectPartitionSopClasses.cs" />
     <Compile Include="Brokers\SelectRequestAttributes.cs" />
+    <Compile Include="Brokers\SelectSeries.cs" />
     <Compile Include="Brokers\SelectStudy.cs" />
     <Compile Include="Brokers\SelectStudyStorageLocation.cs" />
     <Compile Include="Brokers\SelectWorkQueue.cs" />

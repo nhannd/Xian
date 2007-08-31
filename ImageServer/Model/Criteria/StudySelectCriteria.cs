@@ -7,9 +7,13 @@ using ClearCanvas.ImageServer.Database;
 
 namespace ClearCanvas.ImageServer.Model.Criteria
 {
+    /// <summary>
+    /// Criteria for sleects against the <see cref="Study"/> table.
+    /// </summary>
     public class StudySelectCriteria : SelectCriteria
     {
-        public StudySelectCriteria() : base()
+        public StudySelectCriteria()
+            : base("Study")
         {}
 
         public ISearchCondition<ServerEntityKey> ServerPartitionKey
@@ -176,6 +180,27 @@ namespace ClearCanvas.ImageServer.Model.Criteria
                     this.SubCriteria["ReferringPhysiciansName"] = new SearchCondition<string>("ReferringPhysiciansName");
                 }
                 return (ISearchCondition<string>)this.SubCriteria["ReferringPhysiciansName"];
+            }
+        }
+
+        /// <summary>
+        /// Used for EXISTS or NOT EXISTS subselects against the Series table.
+        /// </summary>
+        /// <remarks>
+        /// A <see cref="SeriesSelectCriteria"/> instance is created with the subselect parameters, 
+        /// and assigned to this Sub-Criteria.  Note that the link between the <see cref="Study"/>
+        /// and <see cref="Series"/> tables is automatically added into the <see cref="SeriesSelectCriteria"/>
+        /// instance by the broker.
+        /// </remarks>
+        public ISubSelect<SelectCriteria> SeriesSubSelect
+        {
+            get
+            {
+                if (!this.SubCriteria.ContainsKey("SeriesSubSelect"))
+                {
+                    this.SubCriteria["SeriesSubSelect"] = new SubSelect<SelectCriteria>("SeriesSubSelect");
+                }
+                return (ISubSelect<SelectCriteria>)this.SubCriteria["SeriesSubSelect"];
             }
         }
     }

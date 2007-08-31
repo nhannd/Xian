@@ -1,17 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
-
 using ClearCanvas.ImageServer.Database;
-using ClearCanvas.ImageServer.Model;
-using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Model.Criteria;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
     /// <summary>
-    /// Broker for loading <see cref="StatusEnum"/> values.
+    /// Broker for dynamic queries against the <see cref="Patient"/> table.
     /// </summary>
-    public interface IStatusEnum : IEnumBroker<StatusEnum>
+    public interface ISelectPatient : ISelectBroker<PatientSelectCriteria, Patient>
     {
     }
 }

@@ -279,6 +279,9 @@ namespace ClearCanvas.Dicom
                 DicomStreamReader dsr;
                 if (!FileHasPart10Header(fs))
                 {
+                    if (!Flags.IsSet(options,DicomReadOptions.ReadNonPart10Files))
+                        throw new DicomException(String.Format("File is not part 10 format file: {0}",Filename));
+
                     fs.Seek(0, SeekOrigin.Begin);
                     dsr = new DicomStreamReader(fs);
                     dsr.TransferSyntax = TransferSyntax.ImplicitVRLittleEndian;

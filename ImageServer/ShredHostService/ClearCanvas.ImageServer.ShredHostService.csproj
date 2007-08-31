@@ -4,11 +4,11 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.50727</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{7462F6BA-5634-4ED5-A4E1-707F3F43D113}</ProjectGuid>
+    <ProjectGuid>{6EABFD8A-B727-4B9C-800D-ADCBDE339639}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.ImageServer.TestApp</RootNamespace>
-    <AssemblyName>ClearCanvas.ImageServer.TestApp</AssemblyName>
+    <RootNamespace>ClearCanvas.ImageServer.ShredHostService</RootNamespace>
+    <AssemblyName>ClearCanvas.ImageServer.ShredHostService</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -29,85 +29,30 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="TestAppForm.cs">
-      <SubType>Form</SubType>
+    <Compile Include="ProjectInstaller.cs">
+      <SubType>Component</SubType>
     </Compile>
-    <Compile Include="TestAppForm.Designer.cs">
-      <DependentUpon>TestAppForm.cs</DependentUpon>
+    <Compile Include="ProjectInstaller.Designer.cs">
+      <DependentUpon>ProjectInstaller.cs</DependentUpon>
+    </Compile>
+    <Compile Include="ShredHostService.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ShredHostService.Designer.cs">
+      <DependentUpon>ShredHostService.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="TestAppForm.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>TestAppForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
-    <None Include="App.config" />
-    <None Include="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
-      <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
-      <Name>ClearCanvas.Common</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DicomServices\ClearCanvas.DicomServices.csproj">
-      <Project>{734E6EA2-DC6B-4387-B671-EED0A603D73E}</Project>
-      <Name>ClearCanvas.DicomServices</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Dicom\ClearCanvas.Dicom.csproj">
-      <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
-      <Name>ClearCanvas.Dicom</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
-      <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
-      <Name>ClearCanvas.Enterprise.Common</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj">
-      <Project>{431E9444-9915-4D49-B92D-9B7EC086622A}</Project>
-      <Name>ClearCanvas.Enterprise.Core</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Common\ClearCanvas.ImageServer.Common.csproj">
-      <Project>{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}</Project>
-      <Name>ClearCanvas.ImageServer.Common</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Database\ClearCanvas.ImageServer.Database.csproj">
-      <Project>{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}</Project>
-      <Name>ClearCanvas.ImageServer.Database</Name>
-      <Private>False</Private>
-    </ProjectReference>
-    <ProjectReference Include="..\Model\ClearCanvas.ImageServer.Model.csproj">
-      <Project>{2C9126D3-5B73-4539-BBC9-D56E6097D335}</Project>
-      <Name>ClearCanvas.ImageServer.Model</Name>
-      <Private>False</Private>
-    </ProjectReference>
+    <None Include="App.config" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -135,6 +80,7 @@ copy $(ProjectDir)..\..\ImageServer\Common\$(OutDir)ClearCanvas.ImageServer.Comm
 copy $(ProjectDir)..\..\Dicom\$(OutDir)ClearCanvas.Dicom.dll $(TargetDir)common
 copy $(ProjectDir)..\..\DicomServices\$(OutDir)ClearCanvas.DicomServices.dll $(TargetDir)common
 copy $(ProjectDir)..\..\Server\ServiceModelEx\$(Outdir)ServiceModelEx.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ImageServer\Queue\$(OutDir)ClearCanvas.ImageServer.Queue.dll $(TargetDir)common
 
 rem copy plugins
 copy $(ProjectDir)..\..\Enterprise\Core\$(OutDir)ClearCanvas.Enterprise.Core.dll $(TargetDir)plugins
@@ -142,19 +88,20 @@ copy $(ProjectDir)..\..\Enterprise\Common\$(OutDir)ClearCanvas.Enterprise.Common
 copy $(ProjectDir)..\..\ImageServer\Database\SqlServer2005\$(OutDir)ClearCanvas.ImageServer.Database.SqlServer2005.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\ImageServer\Model\SqlServer2005\$(OutDir)ClearCanvas.ImageServer.Model.SqlServer2005.dll $(TargetDir)plugins
 copy $(ProjectDir)..\..\DicomServices\ImageServer\$(OutDir)ClearCanvas.DicomServices.ImageServer.dll $(TargetDir)plugins
+copy $(ProjectDir)..\..\ImageServer\Queue\Work\$(OutDir)ClearCanvas.ImageServer.Queue.Work.dll $(TargetDir)plugins
 
 rem copy referenced assemblies
 copy $(ProjectDir)..\..\ReferencedAssemblies\Iesi.Collections.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\log4net.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\Spring.Aop.dll $(TargetDir)common
 copy $(ProjectDir)..\..\ReferencedAssemblies\Spring.Core.dll $(TargetDir)common
+copy $(ProjectDir)..\..\ReferencedAssemblies\nunit.framework.dll $(TargetDir)common
 
 rem copy Offis dlls
 copy $(ProjectDir)..\..\Dicom\OffisWrapper\csharp\$(ConfigurationName)\ClearCanvas.Dicom.OffisWrapper.dll $(TargetDir)common
 copy $(ProjectDir)..\..\Dicom\OffisWrapper\cppwrapper\$(ConfigurationName)\OffisDcm.dll $(TargetDir)common
 
 rem copy config files
-copy $(ProjectDir)..\..\ImageServer\Executable\Logging.config $(TargetDir)
-</PostBuildEvent>
+copy $(ProjectDir)..\..\ImageServer\Executable\Logging.config $(TargetDir)</PostBuildEvent>
   </PropertyGroup>
 </Project>

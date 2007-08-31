@@ -8,6 +8,13 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Database.SqlServer2005
 {
+    /// <summary>
+    /// Baseline implementation of <see cref="IUpdateContext"/> for use with ADO.NET and SQL server.
+    /// </summary>
+    /// <remarks>
+    /// This mechanism uses transaction wrappers in ADO.NET.  The transaction is started when the update
+    /// context is created.
+    /// </remarks>
     public class UpdateContext : PersistenceContext,IUpdateContext,IDisposable
     {
         private SqlTransaction _transaction;

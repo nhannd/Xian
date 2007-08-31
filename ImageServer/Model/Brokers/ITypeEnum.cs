@@ -8,6 +8,9 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
+    /// <summary>
+    /// Broker for accessing <see cref="TypeEnum"/> values.
+    /// </summary>
     public interface ITypeEnum : IEnumBroker<TypeEnum>
     {
     }

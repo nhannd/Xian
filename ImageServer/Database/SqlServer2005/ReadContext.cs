@@ -8,6 +8,9 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Database.SqlServer2005
 {
+    /// <summary>
+    /// Provides implementation of <see cref="IReadContext"/> for use with ADO.NET and Sql Server.
+    /// </summary>
     public class ReadContext : PersistenceContext,IReadContext,IDisposable
     {
         internal ReadContext(SqlConnection connection, ITransactionNotifier transactionNotifier)

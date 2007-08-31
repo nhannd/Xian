@@ -15,6 +15,11 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.ImageServer.Database.SqlServer2005
 {
+    /// <summary>
+    /// Provides base implementation of <see cref="IProcedureSelectBroker{TInput,TOutput}"/>
+    /// </summary>
+    /// <typeparam name="TInput"></typeparam>
+    /// <typeparam name="TOutput"></typeparam>
     public abstract class ProcedureSelectBroker<TInput,TOutput> : Broker,IProcedureSelectBroker<TInput,TOutput>
         where TInput : ProcedureParameters
         where TOutput : ServerEntity, new()

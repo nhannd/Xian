@@ -9,13 +9,13 @@ using ClearCanvas.ImageServer.Model.Criteria;
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
     /// <summary>
-    /// Broker implementation for <see cref="ISelectStudy"/>
+    /// Broker implementation for <see cref="ISelectPatient"/>
     /// </summary>
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class SelectStudy : SelectBroker<StudySelectCriteria, Study>, ISelectStudy
+    public class SelectPatient : SelectBroker<PatientSelectCriteria, Patient>, ISelectPatient
     {
-        public SelectStudy()
-            : base("Study")
-        {}
+        public SelectPatient()
+            : base("Patient")
+        { }
     }
 }

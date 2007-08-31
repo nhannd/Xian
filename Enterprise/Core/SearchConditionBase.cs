@@ -22,10 +22,12 @@ namespace ClearCanvas.Enterprise.Core
         NotEqual,
         Null,
         NotNull,
+        Exists,
+        NotExists,
     }
 
     /// <summary>
-    /// Type-independent base class for the <see cref="SearchCondition"/>
+    /// Type-independent base class for the <see cref="SearchCondition{T}"/> and <see cref="SubSelect{T}"/> classes.
     /// </summary>
     public class SearchConditionBase : SearchCriteria
     {

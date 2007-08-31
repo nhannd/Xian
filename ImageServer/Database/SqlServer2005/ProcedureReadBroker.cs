@@ -15,6 +15,10 @@ using ClearCanvas.ImageServer.Database;
 
 namespace ClearCanvas.ImageServer.Database.SqlServer2005
 {
+    /// <summary>
+    /// Provides base implementation of <see cref="IProcedureReadBroker{TOutput}"/>
+    /// </summary>
+    /// <typeparam name="TOutput"></typeparam>
     public abstract class ProcedureReadBroker<TOutput> : Broker, IProcedureReadBroker<TOutput>
         where TOutput : ServerEntity, new()
     {

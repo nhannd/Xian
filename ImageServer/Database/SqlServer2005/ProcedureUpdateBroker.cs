@@ -15,6 +15,10 @@ using ClearCanvas.ImageServer.Database;
 
 namespace ClearCanvas.ImageServer.Database.SqlServer2005
 {
+    /// <summary>
+    /// Provides base implementation of <see cref="IProcedureUpdateBroker{TInput}"/>
+    /// </summary>
+    /// <typeparam name="TInput"></typeparam>
     public abstract class ProcedureUpdateBroker<TInput> : Broker, IProcedureUpdateBroker<TInput>
         where TInput : ProcedureParameters
     {

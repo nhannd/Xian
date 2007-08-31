@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
@@ -55,6 +57,76 @@ namespace ClearCanvas.ImageServer.TestApp
             {
                 Platform.Log(LogLevel.Error, x);
             }
+        }
+
+        private void buttonSelectDirectory_Click(object sender, EventArgs e)
+        {
+            folderBrowserDialog.ShowDialog();
+
+            folderBrowserDialog.ShowDialog();
+
+            String directory = folderBrowserDialog.SelectedPath;
+
+            DirectoryInfo dir = new DirectoryInfo(directory);
+
+            LoadFiles(dir);
+        }
+
+        private void SearchAttributeSet(DicomAttributeCollection set, string filename)
+        {
+            foreach (DicomAttribute attrib in set)
+            {
+                if (attrib.Tag.IsPrivate && attrib.Tag.VR.Equals(DicomVr.SQvr))
+                {
+                    DicomLogger.LogInfo("Found file with private SQ: {0}", filename);
+                    return;
+                }
+                else if (attrib.Tag.VR.Equals(DicomVr.SQvr) && !attrib.IsNull)
+                {
+                    // Recursive search
+                    foreach (DicomSequenceItem item in (DicomSequenceItem[])attrib.Values)
+                    {
+                        SearchAttributeSet(item,filename);
+                    }
+                }
+            }
+        }
+
+        private void LoadFiles(DirectoryInfo dir)
+        {
+
+            FileInfo[] files = dir.GetFiles();
+
+            DicomLogger.LogInfo("Scanning directory: {0}", dir.FullName);
+
+            foreach (FileInfo file in files)
+            {
+
+                DicomFile dicomFile = new DicomFile(file.FullName);
+
+                try
+                {
+                    DicomReadOptions options = new DicomReadOptions();
+
+                    dicomFile.Load(options);
+
+                    SearchAttributeSet(dicomFile.DataSet,dicomFile.Filename);
+                }
+                catch (DicomException)
+                {
+                    // TODO:  Add some logging for failed files
+                }
+
+            }
+
+            String[] subdirectories = Directory.GetDirectories(dir.FullName);
+            foreach (String subPath in subdirectories)
+            {
+                DirectoryInfo subDir = new DirectoryInfo(subPath);
+                LoadFiles(subDir);
+                continue;
+            }
+
         }
     }
 }
