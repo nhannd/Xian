@@ -225,9 +225,6 @@
   <data name="LabelPresentationLut" xml:space="preserve">
     <value>PRE</value>
   </data>
-  <data name="WindowLevelConfiguration" xml:space="preserve">
-    <value>Window Level Presets</value>
-  </data>
   <data name="MenuLocateOnDisk" xml:space="preserve">
     <value>Locate on Disk</value>
   </data>
@@ -349,5 +346,11 @@ Please ensure that the name/keystroke combination is unique.</value>
   </data>
   <data name="CommandWindowLevelPreset" xml:space="preserve">
     <value>Window/Level Preset</value>
+  </data>
+  <data name="ColourMaps" xml:space="preserve">
+    <value>Colour Maps</value>
+  </data>
+  <data name="PresetVoiLuts" xml:space="preserve">
+    <value>Window Level Presets</value>
   </data>
 </root>

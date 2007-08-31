@@ -57,7 +57,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 					value = 1;
 
 				_windowWidth = value;
-				base.Recalculate();
+				base.OnLutChanged();
 			}
 		}
 
@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 					return;
 
 				_windowCenter = value;
-				base.Recalculate();
+				base.OnLutChanged();
 			}
 		}
 

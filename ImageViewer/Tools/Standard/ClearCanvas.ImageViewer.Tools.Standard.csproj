@@ -106,32 +106,35 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LocateOnDiskTool.cs" />
-    <Compile Include="LutPresets\AvailableLutPresetKeyStrokeSettings.cs" />
-    <Compile Include="LutPresets\AvailableLutPresetKeyStrokeSettings.Designer.cs">
+    <Compile Include="PresetVoiLuts\AvailableLutKeyStrokeSettings.cs" />
+    <Compile Include="PresetVoiLuts\AvailableLutKeyStrokeSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>AvailableLutPresetKeyStrokeSettings.settings</DependentUpon>
+      <DependentUpon>AvailableLutKeyStrokeSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="LutPresets\PresetVoiLutLinearState.cs" />
-    <Compile Include="LutPresets\Tests\VoiLutPresetTests.cs" />
-    <Compile Include="LutPresets\VoiLutPresetConfigurationCollection.cs" />
-    <Compile Include="LutPresets\VoiLutPreset.cs" />
-    <Compile Include="LutPresets\VoiLutPresetConfiguration.cs" />
-    <Compile Include="LutPresets\VoiLutPresetConfigurations.cs" />
-    <Compile Include="LutPresets\VoiLutPresetSettings.cs" />
-    <Compile Include="LutPresets\VoiLutPresetSettings.Designer.cs">
+    <Compile Include="PresetVoiLuts\IPresetVoiLutApplicator.cs" />
+    <Compile Include="PresetVoiLuts\LinearPresetVoiLutApplicator.cs" />
+    <Compile Include="PresetVoiLuts\PresetVoiLutApplicatorFactory.cs" />
+    <Compile Include="PresetVoiLuts\PresetVoiLutLinear.cs" />
+    <Compile Include="PresetVoiLuts\PresetVoiLut.cs" />
+    <Compile Include="PresetVoiLuts\PresetVoiLutApplicator.cs" />
+    <Compile Include="PresetVoiLuts\PresetVoiLutApplicatorFactories.cs" />
+    <Compile Include="PresetVoiLuts\PresetVoiLutApplicatorFactoryExtensionPoint.cs" />
+    <Compile Include="PresetVoiLuts\PresetVoiLutCollection.cs" />
+    <Compile Include="PresetVoiLuts\PresetVoiLutConfiguration.cs" />
+    <Compile Include="PresetVoiLuts\Tests\VoiLutPresetTests.cs" />
+    <Compile Include="PresetVoiLuts\PresetVoiLutGroup.cs" />
+    <Compile Include="PresetVoiLuts\PresetVoiLutGroupCollection.cs" />
+    <Compile Include="PresetVoiLuts\PresetVoiLutSettings.cs" />
+    <Compile Include="PresetVoiLuts\PresetVoiLutSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <DependentUpon>VoiLutPresetSettings.settings</DependentUpon>
+      <DependentUpon>PresetVoiLutSettings.settings</DependentUpon>
     </Compile>
-    <Compile Include="LutPresets\IVoiLutPresetApplicator.cs" />
-    <Compile Include="LutPresets\VoiLutPresetApplicatorConfiguration.cs" />
-    <Compile Include="LutPresets\VoiLutLinearPresetApplicatorFactory.cs" />
-    <Compile Include="LutPresets\VoiLutPresetFactory.cs" />
+    <Compile Include="PresetVoiLutTool.cs" />
     <Compile Include="MemoryUsageTool.cs" />
     <Compile Include="PresentationLutTool.cs" />
-    <Compile Include="VoiLutTool.cs" />
-    <Compile Include="WindowLevelConfigurationPageProvider.cs" />
+    <Compile Include="VoiLutConfigurationPageProvider.cs" />
     <Compile Include="FlipHorizontalTool.cs" />
     <Compile Include="FlipVerticalTool.cs" />
     <Compile Include="PanTool.cs" />
@@ -150,9 +153,6 @@
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
     <Compile Include="StackTool.cs" />
-    <Compile Include="LutPresets\VoiLutLinearPresetApplicator.cs" />
-    <Compile Include="WindowLevelConfigurationApplicationComponent.cs" />
-    <Compile Include="WindowLevelPresetApplicationComponent.cs" />
     <Compile Include="WindowLevelTool.cs" />
     <Compile Include="ZoomFixedTool.cs" />
     <Compile Include="ZoomTool.cs" />
@@ -192,19 +192,19 @@
     <EmbeddedResource Include="Icons\ResetToolSmall.png" />
     <EmbeddedResource Include="Icons\ResetToolMedium.png" />
     <EmbeddedResource Include="ProbeCursor.png" />
-    <EmbeddedResource Include="LutPresets\DefaultVoiLutPresets.xml">
+    <EmbeddedResource Include="PresetVoiLuts\DefaultLutConfiguration.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
-    <None Include="LutPresets\AvailableLutPresetKeyStrokeSettings.settings">
+    <None Include="PresetVoiLuts\AvailableLutKeyStrokeSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>AvailableLutPresetKeyStrokeSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>AvailableLutKeyStrokeSettings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="LutPresets\VoiLutPresetSettings.settings">
+    <None Include="PresetVoiLuts\PresetVoiLutSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>VoiLutPresetSettings.Designer.cs</LastGenOutput>
+      <LastGenOutput>PresetVoiLutSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

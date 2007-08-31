@@ -156,14 +156,12 @@
     <Compile Include="Imaging\PresentationLutDescriptor.cs" />
     <Compile Include="Imaging\PresentationLutFactoryBase.cs" />
     <Compile Include="Imaging\PresentationLutFactoryExtensionPoint.cs" />
-    <Compile Include="Imaging\VoiLutDescriptor.cs" />
     <Compile Include="MinMaxPixelCalculatedLinearLut.cs" />
     <Compile Include="Imaging\IDataLut.cs" />
     <Compile Include="Imaging\ILutMemento.cs" />
     <Compile Include="Imaging\IModalityLut.cs" />
     <Compile Include="Imaging\IPresentationLut.cs" />
     <Compile Include="Imaging\IPresentationLutManager.cs" />
-    <Compile Include="Imaging\VoiLutFactoryExtensionPoint.cs" />
     <Compile Include="Imaging\IVoiLutLinear.cs" />
     <Compile Include="Imaging\IBasicVoiLutLinear.cs" />
     <Compile Include="Graphics\PointPrimitive.cs" />

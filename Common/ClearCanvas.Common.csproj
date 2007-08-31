@@ -208,6 +208,7 @@
     <Compile Include="Utilities\ItemEventArgs.cs" />
     <Compile Include="Utilities\ObservablePropertyCoupler.cs" />
     <Compile Include="Utilities\ReferenceCountedObjectCache.cs" />
+    <Compile Include="Utilities\SimpleSerializer.cs" />
     <Compile Include="Utilities\StringDiff.cs" />
     <Compile Include="Utilities\BlockingThreadPool.cs" />
     <Compile Include="Utilities\StringUtilities.cs" />

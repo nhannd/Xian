@@ -22,7 +22,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private LutComposer _lutComposer;
 		private LutFactory _lutFactory;
-		
+
+		private bool _inverted;
 		private double _rescaleSlope;
 		private double _rescaleIntercept;
 
@@ -59,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				   15, /* high bit */
 				   false) /* is signed */
 		{
-			Initialize(1, 0);
+			Initialize(false, 1, 0);
 		}
 
 		/// <summary>
@@ -97,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				isSigned,
 				pixelData)
 		{
-			Initialize(rescaleSlope, rescaleIntercept);
+			Initialize(false, rescaleSlope, rescaleIntercept);
 		}
 
 		/// <summary>
@@ -140,11 +141,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 				isSigned,
 				pixelDataGetter)
 		{
-			Initialize(rescaleSlope, rescaleIntercept);
+			Initialize(inverted, rescaleSlope, rescaleIntercept);
 		}
 
-		private void Initialize(double rescaleSlope, double rescaleIntercept)
+		private void Initialize(bool inverted, double rescaleSlope, double rescaleIntercept)
 		{
+			_inverted = inverted;
 			_rescaleSlope = rescaleSlope <= double.Epsilon ? 1 : rescaleSlope;
 			_rescaleIntercept = rescaleIntercept;
 		}
@@ -336,7 +338,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		internal void InstallPresentationLut(string name)
 		{
-			InstallPresentationLut(this.LutFactory.GetPresentationLut(name));
+			IPresentationLut lut = this.LutFactory.GetPresentationLut(name);
+			lut.Invert = _inverted;
+			InstallPresentationLut(lut);
 		}
 
 		/// <summary>

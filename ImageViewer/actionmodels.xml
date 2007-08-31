@@ -53,7 +53,8 @@
   <action-model id="ClearCanvas.ImageViewer.DiagnosticImageViewerComponent:imageviewer-contextmenu">
     <action id="ClearCanvas.ImageViewer.Tools.Standard.StackTool:activate" path="imageviewer-contextmenu/MenuStack" group-hint="Tools.Image.Manipulation.Stacking.Standard" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.WindowLevelTool:activate" path="imageviewer-contextmenu/MenuWindowLevel" group-hint="Tools.Image.Manipulation.Lut.WindowLevel" />
-    <action id="ClearCanvas.ImageViewer.Tools.Standard.LutPresetTool:auto" path="imageviewer-contextmenu/MenuLutPresets/auto" group-hint="Tools.Image.Manipulation.Lut.Presets" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLutTool:dummy" path="imageviewer-contextmenu/Luts/dummy" group-hint="Tools.Image.Manipulation.Lut.VoiLuts" />
+    <action id="ClearCanvas.ImageViewer.Tools.Standard.PresentationLutTool:dummy" path="imageviewer-contextmenu/ColourMaps/dummy" group-hint="Tools.Image.Manipulation.Lut.ColourMaps" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.PanTool:activate" path="imageviewer-contextmenu/MenuPan" group-hint="Tools.Image.Manipulation.Pan" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.ZoomTool:activate" path="imageviewer-contextmenu/MenuZoom" group-hint="Tools.Image.Manipulation.Zoom" />
     <action id="ClearCanvas.ImageViewer.Tools.Standard.ProbeTool:activate" path="imageviewer-contextmenu/MenuProbe" group-hint="Tools.Image.Interrogation.Probe" />

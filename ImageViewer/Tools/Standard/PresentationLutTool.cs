@@ -17,22 +17,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class PresentationLutTool : ImageViewerTool
 	{
-		//TODO: load/assign keystrokes.
-
 		private class PresentationLutActionContainer
 		{
-			private PresentationLutTool _ownerTool;
-			private MenuAction _action;
-			private PresentationLutDescriptor _descriptor;
+			private readonly PresentationLutTool _ownerTool;
+			private readonly MenuAction _action;
+			private readonly PresentationLutDescriptor _descriptor;
 
-			public PresentationLutActionContainer(PresentationLutTool ownerTool, PresentationLutDescriptor descriptor)
+			public PresentationLutActionContainer(PresentationLutTool ownerTool, PresentationLutDescriptor descriptor, int index)
 			{
 				_ownerTool = ownerTool;
 				_descriptor = descriptor;
 
-				string actionId = String.Format("apply{0}", _descriptor.Name);
-				ActionPath actionPath = new ActionPath(String.Format("imageviewer-contextmenu/Presentation Luts/{0}", _descriptor.Name), _ownerTool._resolver);
+				string actionId = String.Format("apply{0}", index);
+				ActionPath actionPath = new ActionPath(String.Format("imageviewer-contextmenu/ColourMaps/colourMap{0}", index), _ownerTool._resolver);
 				_action = new MenuAction(actionId, actionPath, ClickActionFlags.None, _ownerTool._resolver);
+				_action.GroupHint = new GroupHint("Tools.Image.Manipulation.Lut.ColourMaps");
 				_action.Label = _descriptor.Description;
 				_action.SetClickHandler(this.Apply);
 			}
@@ -52,19 +51,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 					delegate(IPresentationImage image)
 						{
 							if (image is IPresentationLutProvider)
-							{
-								(image as IPresentationLutProvider).PresentationLutManager.InstallLut(_descriptor);
-							}
+								((IPresentationLutProvider)image).PresentationLutManager.InstallLut(_descriptor);
 						};
 
 				applicator.ApplyToAllImages(del);
+
 				command.EndState = applicator.CreateMemento();
 				if (!command.EndState.Equals(command.BeginState))
 					_ownerTool.Context.Viewer.CommandHistory.AddCommand(command);
 			}
 		}
 
-		private ActionResourceResolver _resolver;
+		private readonly ActionResourceResolver _resolver;
 
 		public PresentationLutTool()
 		{
@@ -83,9 +81,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			if (this.SelectedPresentationImage is IPresentationLutProvider)
 			{
-				foreach (PresentationLutDescriptor descriptor in (this.SelectedPresentationImage as IPresentationLutProvider).PresentationLutManager.AvailablePresentationLuts)
+				int i = 0;
+				foreach (PresentationLutDescriptor descriptor in ((IPresentationLutProvider)this.SelectedPresentationImage).PresentationLutManager.AvailablePresentationLuts)
 				{
-					PresentationLutActionContainer container = new PresentationLutActionContainer(this, descriptor);
+					PresentationLutActionContainer container = new PresentationLutActionContainer(this, descriptor, ++i);
 					yield return container.Action;
 				}
 			}

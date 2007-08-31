@@ -170,16 +170,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 			    throw new InvalidOperationException("Last LUT in pipeline must be an IPresentationLUT");
 		}
 
+		private IEnumerable<string> GetKeys()
+		{
+			foreach (ILut lut in this.LutCollection)
+				yield return lut.GetKey();
+		}
+
 		private string GetKey()
 		{
-			StringBuilder key = new StringBuilder();
-
-			foreach (ILut lut in this.LutCollection)
-			{
-				key.Append(lut.GetKey());
-			}
-
-			return key.ToString();
+			return StringUtilities.Combine(GetKeys(), "/");
 		}
 
 		private void OnLutChanging(object sender, LutEventArgs e)

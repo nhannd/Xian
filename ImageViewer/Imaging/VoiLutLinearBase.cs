@@ -65,7 +65,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 					return;
 
 				_minInputValue = value;
-				Recalculate();
+				OnLutChanged();
 			}
 		}
 
@@ -78,7 +78,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 					return;
 
 				_maxInputValue = value;
-				Recalculate();
+				OnLutChanged();
 			}
 		}
 
@@ -96,17 +96,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public sealed override string GetKey()
 		{
-			return String.Format("{0}-{1}-{2}-{3}",
+			return String.Format("{0}_{1}_{2}_{3}",
 				this.MinInputValue,
-				this.MinInputValue,
+				this.MaxInputValue,
 				this.GetWindowWidth(),
 				this.GetWindowCenter());
 		}
 
-		protected void Recalculate()
+		protected override void OnLutChanged()
 		{
-			base.OnLutChanged();
 			_recalculate = true;
+			base.OnLutChanged();
 		}
 
 		private void Calculate()

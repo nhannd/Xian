@@ -5,8 +5,7 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer
 {
-	[ExtensionOf(typeof(VoiLutFactoryExtensionPoint))]
-	public class MinMaxPixelCalculatedLinearLut : CalculatedVoiLutLinear
+	public sealed class MinMaxPixelCalculatedLinearLut : CalculatedVoiLutLinear
 	{
 		private IndexedPixelData _pixelData;
 		private IModalityLut _modalityLut;
@@ -23,19 +22,14 @@ namespace ClearCanvas.ImageViewer
 		public MinMaxPixelCalculatedLinearLut(IPresentationImage presentationImage)
 			:this()
 		{
-			Initialize(presentationImage);
-		}
-
-		public void Initialize(IPresentationImage presentationImage)
-		{
 			Platform.CheckForNullReference(presentationImage, "presentationImage");
-			
+
 			IImageGraphicProvider imageGraphicProvider = presentationImage as IImageGraphicProvider;
 			Platform.CheckForInvalidCast(imageGraphicProvider, "presentationImage", typeof(IImageGraphicProvider).Name);
 
 			IndexedPixelData pixelData = imageGraphicProvider.ImageGraphic.PixelData as IndexedPixelData;
 			Platform.CheckForInvalidCast(pixelData, "imageGraphicProvider.ImageGraphic.PixelData", typeof(IndexedPixelData).Name);
-			
+
 			IModalityLutProvider modalityLutProvider = presentationImage as IModalityLutProvider;
 			if (modalityLutProvider != null)
 				_modalityLut = modalityLutProvider.ModalityLut;

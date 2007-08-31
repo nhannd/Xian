@@ -119,7 +119,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public sealed override string GetKey()
 		{
-			return String.Format("{0}-{1}-{2}-{3}",
+			return String.Format("{0}_{1}_{2}_{3}",
 				this.MinInputValue,
 				this.MaxInputValue,
 				this.Invert.ToString(),

@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		private event EventHandler _lutChanged;
 
-		protected void OnLutChanged()
+		protected virtual void OnLutChanged()
 		{
 			EventsHelper.Fire(_lutChanged, this, EventArgs.Empty);
 		}

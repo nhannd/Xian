@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="SettingsXml" Type="System.String" Scope="User">
-      <Value Profile="(Default)">DefaultVoiLutPresets.xml</Value>
+      <Value Profile="(Default)">DefaultLutConfiguration.xml</Value>
     </Setting>
   </Settings>
 </SettingsFile>
