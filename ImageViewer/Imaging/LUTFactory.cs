@@ -1,9 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Dicom;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
@@ -107,6 +105,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 
 				return this.RealLut.GetKey();
+			}
+
+			public override string GetDescription()
+			{
+				return this.RealLut.GetDescription();
 			}
 
 			private IPresentationLut RealLut

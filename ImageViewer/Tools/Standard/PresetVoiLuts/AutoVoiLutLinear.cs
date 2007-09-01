@@ -1,19 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.Dicom;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
+using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
 	public interface IAutoVoiLutLinear : IVoiLutLinear
 	{
-		uint Index { get; set; }
-		uint MaximumIndex { get; }
+		void ApplyNext();
 	}
 
 	public sealed class AutoVoiLutLinear : CalculatedVoiLutLinear, IAutoVoiLutLinear
@@ -28,15 +24,11 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
-		private ImageSop _imageSop;
+		private readonly ImageSop _imageSop;
 		private uint _index;
 
 		public AutoVoiLutLinear(ImageSop imageSop, uint index)
 		{
-			Platform.CheckForNullReference(imageSop, "imageSop");
-			Platform.CheckIndexRange((int)index, 0, imageSop.WindowCenterAndWidth.Length - 1, imageSop.WindowCenterAndWidth);
-			_imageSop = imageSop;
-			_index = index;
 		}
 
 		public AutoVoiLutLinear(ImageSop imageSop)
@@ -52,25 +44,11 @@ namespace ClearCanvas.ImageViewer
 
 		#region IAutoVoiLut Members
 
-		public uint Index
+		public void ApplyNext()
 		{
-			get { return _index; }
-			set
-			{
-				uint index = Math.Min((uint)this.WindowCenterAndWidth.Length, value);
-				if (index == _index)
-					return;
-
-				_index = index;
-				base.OnLutChanged();
-			}
+			SetIndex(_index + 1);
 		}
 		
-		public uint MaximumIndex
-		{
-			get { return (uint)this.WindowCenterAndWidth.Length - 1; }
-		}
-
 		#endregion
 
 		#region IVoiLutLinear Members
@@ -87,16 +65,32 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		public override string GetDescription()
+		{
+			return String.Format("W:{0} L:{1} (Auto)", WindowWidth, WindowCenter);
+		}
+
 		public override IMemento CreateMemento()
 		{
-			return new AutoVoiLutLinearMemento(Index);
+			return new AutoVoiLutLinearMemento(_index);
 		}
 
 		public override void SetMemento(IMemento memento)
 		{
 			AutoVoiLutLinearMemento autoMemento = memento as AutoVoiLutLinearMemento;
 			Platform.CheckForInvalidCast(autoMemento, "memento", typeof(AutoVoiLutLinearMemento).Name);
-			this.Index = autoMemento.Index;
+			this.SetIndex(autoMemento.Index);
+		}
+
+		private void SetIndex(uint newIndex)
+		{
+			uint lastIndex = _index;
+			_index = newIndex;
+			if (_index >= this.WindowCenterAndWidth.Length)
+				_index = 0;
+
+			if (lastIndex != _index)
+				base.OnLutChanged();
 		}
 	}
 }

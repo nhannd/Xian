@@ -6,6 +6,8 @@ namespace ClearCanvas.ImageViewer
 {
 	public class GrayscalePresentationImage 
 		: BasicPresentationImage, 
+		IIndexedPixelDataProvider,
+		IModalityLutProvider,
 		IVoiLutProvider, 
 		IPresentationLutProvider
 	{
@@ -72,8 +74,38 @@ namespace ClearCanvas.ImageViewer
 			//return image;
 		}
 
+		#region IIndexedPixelDataProvider Members
+
+		/// <summary>
+		/// Gets this image's <see cref="IndexedPixelData"/>.
+		/// </summary>
+		public new IndexedPixelData PixelData
+		{
+			get { return ImageGraphic.PixelData; }
+		}
+
+		#endregion
+
+		#region IModalityLutProvider Members
+
+		/// <summary>
+		/// Gets this image's <see cref="IModalityLut"/>.
+		/// </summary>
+		public IModalityLut ModalityLut
+		{
+			get
+			{
+				return this.ImageGraphic.ModalityLut;
+			}
+		}
+
+		#endregion
+
 		#region IVoiLutProvider Members
 
+		/// <summary>
+		/// Gets this image's <see cref="IVoiLutManager"/>.
+		/// </summary>
 		public IVoiLutManager VoiLutManager
 		{
 			get 
@@ -86,6 +118,9 @@ namespace ClearCanvas.ImageViewer
 
 		#region IPresentationLutProvider Members
 
+		/// <summary>
+		/// Gets this image's <see cref="IPresentationLutManager"/>.
+		/// </summary>
 		public IPresentationLutManager PresentationLutManager
 		{
 			get

@@ -51,5 +51,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// as an existing one.
 		/// </remarks>
 		string GetKey();
+
+		/// <summary>
+		/// Gets an abbreviated description of the Lut.
+		/// </summary>
+		/// <returns>a string briefly describing the Lut</returns>
+		string GetDescription();
 	}
 }

@@ -10,7 +10,7 @@ using ClearCanvas.ImageViewer.Graphics;
 namespace ClearCanvas.ImageViewer
 {
 	public class DicomGrayscalePresentationImage 
-		: GrayscalePresentationImage, IImageSopProvider 
+		: GrayscalePresentationImage, IImageSopProvider
 	{
 		private ImageSop _imageSop;
 
@@ -34,14 +34,6 @@ namespace ClearCanvas.ImageViewer
 
 			_imageSop = imageSop;
 			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
-
-			InitializeLuts();
-		}
-
-		private void InitializeLuts()
-		{
-			if (this._imageSop.WindowCenterAndWidth.Length > 0)
-				base.ImageGraphic.InstallVoiLut(new AutoVoiLutLinear(this.ImageSop));
 		}
 
 		#region IImageSopProvider members

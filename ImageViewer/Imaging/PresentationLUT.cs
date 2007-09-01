@@ -1,10 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Rendering;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {

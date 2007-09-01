@@ -106,12 +106,16 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="LocateOnDiskTool.cs" />
+    <Compile Include="PresetVoiLuts\AutoPresetVoiLutApplicator.cs" />
+    <Compile Include="PresetVoiLuts\AutoVoiLutApplicator.cs" />
+    <Compile Include="PresetVoiLuts\AutoVoiLutLinear.cs" />
     <Compile Include="PresetVoiLuts\AvailableLutKeyStrokeSettings.cs" />
     <Compile Include="PresetVoiLuts\AvailableLutKeyStrokeSettings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>AvailableLutKeyStrokeSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="PresetVoiLuts\InitialVoiLutProvider.cs" />
     <Compile Include="PresetVoiLuts\IPresetVoiLutApplicator.cs" />
     <Compile Include="PresetVoiLuts\LinearPresetVoiLutApplicator.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutApplicatorFactory.cs" />

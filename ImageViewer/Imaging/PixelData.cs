@@ -1,15 +1,12 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.Dicom;
-using ClearCanvas.Common.Utilities;
-using System.Diagnostics;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.ImageViewer.Graphics
+namespace ClearCanvas.ImageViewer.Imaging
 {
+	public delegate byte[] PixelDataGetter();
+
 	/// <summary>
 	/// A pixel data wrapper.
 	/// </summary>

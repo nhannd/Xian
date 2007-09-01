@@ -1,7 +1,5 @@
 using System;
-using ClearCanvas.Common;
 using ClearCanvas.Dicom;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -115,6 +113,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 				this.IsSigned.ToString(),
 				this.RescaleSlope,
 				this.RescaleIntercept);
+		}
+
+		public override string GetDescription()
+		{
+			return String.Format("Slope: {0:F2} Int.: {1:F2}", _rescaleSlope, _rescaleIntercept);
 		}
 
 		#region IEquatable<IModalityLut> Members

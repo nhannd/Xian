@@ -1,6 +1,7 @@
-
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
+using System;
+
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	public sealed class BasicVoiLutLinear : VoiLutLinearBase, IBasicVoiLutLinear
@@ -75,6 +76,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 				_windowCenter = value;
 				base.OnLutChanged();
 			}
+		}
+
+		public override string GetDescription()
+		{
+			return String.Format("W:{0} L:{1}", WindowWidth, WindowCenter);
 		}
 
 		public override IMemento CreateMemento()

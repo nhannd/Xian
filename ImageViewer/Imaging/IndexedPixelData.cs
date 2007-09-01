@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.Common.Utilities;
 using System.Diagnostics;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.ImageViewer.Graphics
+namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
 	/// An indexed pixel data wrapper.

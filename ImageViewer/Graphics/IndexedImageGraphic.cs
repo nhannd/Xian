@@ -1,9 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.Graphics
@@ -11,7 +7,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// An image where pixel values are indices into a LUT.
 	/// </summary>
-	public abstract class IndexedImageGraphic : ImageGraphic
+	public abstract class IndexedImageGraphic : ImageGraphic, IIndexedPixelDataProvider
 	{
 		#region Private fields
 

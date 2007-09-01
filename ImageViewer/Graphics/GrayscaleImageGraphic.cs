@@ -299,7 +299,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			if (luts >= Luts.Voi && LutComposer.LutCollection.Count == 1)
 			{
-				InstallVoiLut(new MinMaxPixelCalculatedLinearLut(this.ParentPresentationImage));
+				ILut lut = InitialVoiLutProvider.Instance.GetLut(this.ParentPresentationImage);
+				
+				if (lut == null)
+					lut = new MinMaxPixelCalculatedLinearLut(this.PixelData, this.ModalityLut);
+
+				InstallVoiLut(lut);
 			}
 
 			if (luts >= Luts.Presentation && LutComposer.LutCollection.Count == 2)

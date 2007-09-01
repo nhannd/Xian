@@ -25,8 +25,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		Bilinear 
 	};
 
-	public delegate byte[] PixelDataGetter();
-
 	/// <summary>
 	/// An image <see cref="Graphic"/>.
 	/// </summary>
@@ -37,7 +35,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// 
 	/// An <see cref="ImageGraphic"/> is always a leaf in the scene graph.
 	/// </remarks>
-	public abstract class ImageGraphic : Graphic
+	public abstract class ImageGraphic : Graphic, IPixelDataProvider
 	{
 		#region Private fields
 

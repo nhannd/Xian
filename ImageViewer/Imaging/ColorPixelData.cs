@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.Imaging;
 using System.Drawing;
 
-namespace ClearCanvas.ImageViewer.Graphics
+namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
 	/// A colour pixel wrapper.

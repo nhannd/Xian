@@ -1,4 +1,3 @@
-using System;
 using System.Drawing;
 using ClearCanvas.Common;
 
@@ -47,6 +46,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 				this[i] = color.ToArgb();
 			}
 		}
+
+		public override string GetDescription()
+		{
+			return GrayscalePresentationLutFactory.FactoryName;
+		}
 	}
 
 	[ExtensionOf(typeof(PresentationLutFactoryExtensionPoint))]
@@ -92,6 +96,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 				color = Color.FromArgb(255, value, 0, 0);
 				this[i] = color.ToArgb();
 			}
+		}
+
+		public override string GetDescription()
+		{
+			return RedPresentationLutFactory.FactoryName;
 		}
 	}
 
@@ -139,6 +148,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 				this[i] = color.ToArgb();
 			}
 		}
+
+		public override string GetDescription()
+		{
+			return GreenPresentationLutFactory.FactoryName;
+		}
 	}
 
 	[ExtensionOf(typeof(PresentationLutFactoryExtensionPoint))]
@@ -184,6 +198,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 				color = Color.FromArgb(255, 0, 0, value);
 				this[i] = color.ToArgb();
 			}
+		}
+
+		public override string GetDescription()
+		{
+			return BluePresentationLutFactory.FactoryName;
 		}
 	}
 }

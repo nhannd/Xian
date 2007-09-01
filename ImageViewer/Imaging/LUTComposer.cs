@@ -1,10 +1,8 @@
 using System;
 using System.Diagnostics;
-using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using System.Text;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {

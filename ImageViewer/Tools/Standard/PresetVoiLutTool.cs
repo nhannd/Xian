@@ -80,6 +80,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!(this.SelectedPresentationImage is IImageSopProvider))
 				yield break;
 
+			int i = 0;
+			PresetVoiLut autoPreset = new PresetVoiLut(new AutoPresetVoiLutApplicator());
+			autoPreset.KeyStroke = XKeys.F2;
+			yield return new PresetVoiLutActionContainer(this, autoPreset, ++i).Action;
+
 			ImageSop sop = ((IImageSopProvider) this.SelectedPresentationImage).ImageSop;
 
 			PresetVoiLutGroupCollection groups = PresetVoiLutSettings.Default.GetPresetGroups();
@@ -87,7 +92,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (group == null)
 				yield break;
 
-			int i = 0;
 			foreach (PresetVoiLut preset in group.Presets)
 			{
 				if (preset.Applicator.AppliesTo(this.SelectedPresentationImage))

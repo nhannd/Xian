@@ -91,6 +91,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			get { return _parameters.WindowCenter; }
 		}
 
+		public override string GetDescription()
+		{
+			return String.Format("W:{0} L:{1} ({2})", WindowWidth, WindowCenter, this.Name);
+		}
+
 		public override IMemento CreateMemento()
 		{
 			return _parameters;

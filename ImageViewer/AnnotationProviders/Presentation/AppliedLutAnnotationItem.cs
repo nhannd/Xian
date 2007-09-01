@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Presentation
 			if (voiLut == null)
 				return String.Empty;
 
-			return String.Format("W:{0} L:{1}", voiLut.WindowWidth, voiLut.WindowCenter);
+			return voiLut.GetDescription();
 		}
 	}
 }
