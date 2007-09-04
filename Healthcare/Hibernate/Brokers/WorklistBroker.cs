@@ -4,6 +4,7 @@ using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
 using NHibernate;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Hibernate.Brokers
 {
@@ -46,6 +47,13 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         public IList FindAllReportingWorklists(User currentUser)
         {
             return DoQuery(currentUser, _reportingWorklistHql);
+        }
+
+        public Worklist FindWorklist(string name, string type)
+        {
+            IQuery query = this.Context.CreateHibernateQuery("select w from Worklist w where w.Name = :name and w.class = " + type);
+            query.SetParameter("name", name);
+            return CollectionUtils.FirstElement<Worklist>(query.List());
         }
 
         public bool NameExistsForType(string name, string type)

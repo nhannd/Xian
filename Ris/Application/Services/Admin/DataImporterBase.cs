@@ -113,6 +113,22 @@ namespace ClearCanvas.Ris.Application.Services.Admin
             Console.WriteLine(message);
         }
 
+        protected T TryParseOrDefault<T>(string value, T defaultValue)
+        {
+            T parsedValue;
+
+            try
+            {
+                parsedValue = (T)Enum.Parse(typeof(T), value);
+            }
+            catch (Exception)
+            {
+                parsedValue = defaultValue;
+            }
+
+            return parsedValue;
+        }
+
         private List<string> ReadLines(StreamReader reader, int numLines)
         {
             List<string> lines = new List<string>();

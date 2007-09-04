@@ -66,6 +66,7 @@
     <Compile Include="Admin\DiagnosticServiceAdmin\DiagnosticServiceTreeImporter.cs" />
     <Compile Include="Admin\DiagnosticServiceAdmin\ProcedurePlanImporter.cs" />
     <Compile Include="Admin\EnumerationAdmin\EnumerationAdminService.cs" />
+    <Compile Include="Admin\ExternalPractitionerAdmin\ExternalPractitionerImporter.cs" />
     <Compile Include="Admin\FacilityAdmin\FacilityImporter.cs" />
     <Compile Include="Admin\IDataExporter.cs" />
     <Compile Include="Admin\IDataImporter.cs" />
@@ -83,12 +84,15 @@
     <Compile Include="Admin\PatientAdmin\PatientAdminService.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeAssembler.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupAdminService.cs" />
+    <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupImporter.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAssembler.cs" />
     <Compile Include="Admin\StaffAdmin\StaffAdminService.cs" />
+    <Compile Include="Admin\StaffAdmin\StaffUserImporter.cs" />
     <Compile Include="Admin\VisitAdmin\VisitAdminService.cs" />
     <Compile Include="Admin\VisitAssembler.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminService.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminAssembler.cs" />
+    <Compile Include="Admin\WorklistAdmin\WorklistImporter.cs" />
     <Compile Include="EnumUtils.cs" />
     <Compile Include="InProcessApplicationServiceProvider.cs" />
     <Compile Include="Jsml\JsmlShimService.cs" />
