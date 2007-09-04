@@ -84,6 +84,7 @@
     <Compile Include="Admin\PatientAdmin\PatientAdminService.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeAssembler.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupAdminService.cs" />
+    <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupExporter.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAdmin\RequestedProcedureTypeGroupImporter.cs" />
     <Compile Include="Admin\RequestedProcedureTypeGroupAssembler.cs" />
     <Compile Include="Admin\StaffAdmin\StaffAdminService.cs" />
@@ -92,6 +93,7 @@
     <Compile Include="Admin\VisitAssembler.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminService.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminAssembler.cs" />
+    <Compile Include="Admin\WorklistAdmin\WorklistExporter.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistImporter.cs" />
     <Compile Include="EnumUtils.cs" />
     <Compile Include="InProcessApplicationServiceProvider.cs" />
