@@ -5,20 +5,20 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="VoiLutConfigurationComponent"/>
+    /// Provides a Windows Forms view onto <see cref="PresetVoiLutConfigurationComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(VoiLutConfigurationComponentViewExtensionPoint))]
-    public class VoiLutConfigurationComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(PresetVoiLutConfigurationComponentViewExtensionPoint))]
+    public class PresetVoiLutConfigurationComponentView : WinFormsView, IApplicationComponentView
     {
-        private VoiLutConfigurationComponent _component;
-        private VoiLutConfigurationComponentControl _control;
+        private PresetVoiLutConfigurationComponent _component;
+        private PresetVoiLutConfigurationComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (VoiLutConfigurationComponent)component;
+            _component = (PresetVoiLutConfigurationComponent)component;
         }
 
         #endregion
@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new VoiLutConfigurationComponentControl(_component);
+                    _control = new PresetVoiLutConfigurationComponentControl(_component);
                 }
                 return _control;
             }

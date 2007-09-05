@@ -7,9 +7,9 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
-	public class VoiLutConfigurationPageProvider : IConfigurationPageProvider
+	public class PresetVoiLutConfigurationPageProvider : IConfigurationPageProvider
 	{
-		public VoiLutConfigurationPageProvider()
+		public PresetVoiLutConfigurationPageProvider()
 		{
 
 		}
@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			listPages.Add(new ConfigurationPage<VoiLutConfigurationComponent>("Window & Level"));
+			listPages.Add(new ConfigurationPage<PresetVoiLutConfigurationComponent>("Window & Level"));
 
 			return listPages.AsReadOnly();
 		}

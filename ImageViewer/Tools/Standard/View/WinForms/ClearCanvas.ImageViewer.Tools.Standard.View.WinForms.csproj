@@ -50,13 +50,13 @@
     </Compile>
     <Compile Include="EditPresetVoiLutLinearComponentView.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VoiLutConfigurationComponentControl.cs">
+    <Compile Include="PresetVoiLutConfigurationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="VoiLutConfigurationComponentControl.Designer.cs">
-      <DependentUpon>VoiLutConfigurationComponentControl.cs</DependentUpon>
+    <Compile Include="PresetVoiLutConfigurationComponentControl.Designer.cs">
+      <DependentUpon>PresetVoiLutConfigurationComponentControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="VoiLutConfigurationComponentView.cs" />
+    <Compile Include="PresetVoiLutConfigurationComponentView.cs" />
     <Service Include="{94E38DFF-614B-4cbd-B67C-F211BB35CE8B}" />
   </ItemGroup>
   <ItemGroup>
@@ -102,9 +102,9 @@
       <SubType>Designer</SubType>
       <DependentUpon>EditPresetVoiLutLinearComponentControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="VoiLutConfigurationComponentControl.resx">
+    <EmbeddedResource Include="PresetVoiLutConfigurationComponentControl.resx">
       <SubType>Designer</SubType>
-      <DependentUpon>VoiLutConfigurationComponentControl.cs</DependentUpon>
+      <DependentUpon>PresetVoiLutConfigurationComponentControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

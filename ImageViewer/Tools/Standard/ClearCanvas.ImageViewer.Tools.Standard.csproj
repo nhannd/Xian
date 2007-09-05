@@ -141,8 +141,8 @@
     <Compile Include="PresetVoiLutTool.cs" />
     <Compile Include="MemoryUsageTool.cs" />
     <Compile Include="PresentationLutTool.cs" />
-    <Compile Include="VoiLutConfigurationComponent.cs" />
-    <Compile Include="VoiLutConfigurationPageProvider.cs" />
+    <Compile Include="PresetVoiLutConfigurationComponent.cs" />
+    <Compile Include="PresetVoiLutConfigurationPageProvider.cs" />
     <Compile Include="FlipHorizontalTool.cs" />
     <Compile Include="FlipVerticalTool.cs" />
     <Compile Include="PanTool.cs" />

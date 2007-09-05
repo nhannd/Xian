@@ -4,16 +4,16 @@ using System;
 namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="VoiLutConfigurationComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="PresetVoiLutConfigurationComponent"/>
     /// </summary>
-	public partial class VoiLutConfigurationComponentControl : ClearCanvas.Desktop.View.WinForms.ApplicationComponentUserControl
+	public partial class PresetVoiLutConfigurationComponentControl : ClearCanvas.Desktop.View.WinForms.ApplicationComponentUserControl
     {
-        private readonly VoiLutConfigurationComponent _component;
+        private readonly PresetVoiLutConfigurationComponent _component;
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public VoiLutConfigurationComponentControl(VoiLutConfigurationComponent component)
+        public PresetVoiLutConfigurationComponentControl(PresetVoiLutConfigurationComponent component)
             :base(component)
         {
 			_component = component;

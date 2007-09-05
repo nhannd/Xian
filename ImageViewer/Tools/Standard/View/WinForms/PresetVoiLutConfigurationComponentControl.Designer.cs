@@ -1,6 +1,6 @@
 namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
-    partial class VoiLutConfigurationComponentControl
+    partial class PresetVoiLutConfigurationComponentControl
     {
         /// <summary> 
         /// Required designer variable.

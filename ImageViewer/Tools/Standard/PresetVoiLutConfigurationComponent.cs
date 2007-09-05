@@ -13,18 +13,18 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	/// <summary>
-	/// Extension point for views onto <see cref="VoiLutConfigurationComponent"/>
+	/// Extension point for views onto <see cref="PresetVoiLutConfigurationComponent"/>
 	/// </summary>
 	[ExtensionPoint]
-	public class VoiLutConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public class PresetVoiLutConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
 	/// <summary>
 	/// VoiLutConfigurationComponent class
 	/// </summary>
-	[AssociateView(typeof(VoiLutConfigurationComponentViewExtensionPoint))]
-	public sealed class VoiLutConfigurationComponent : ConfigurationApplicationComponent
+	[AssociateView(typeof(PresetVoiLutConfigurationComponentViewExtensionPoint))]
+	public sealed class PresetVoiLutConfigurationComponent : ConfigurationApplicationComponent
 	{
 		private List<string> _availableModalities;
 		private PresetVoiLutGroupCollection _presetVoiLutGroups;
@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// <summary>
 		/// Constructor
 		/// </summary>
-		public VoiLutConfigurationComponent()
+		public PresetVoiLutConfigurationComponent()
 		{
 		}
 
