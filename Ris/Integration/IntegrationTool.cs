@@ -66,7 +66,7 @@ namespace ClearCanvas.Ris.Integration
                 {
                     studyIndex++;
 
-                    string commonMessage = String.Format("Study #{0}: {1} {2}\r\n", studyIndex + 1, study.PatientsName.FirstName, study.PatientsName.LastName);
+                    string commonMessage = String.Format("Study #{0}: {1} {2}\r\n", studyIndex, study.PatientsName.FirstName, study.PatientsName.LastName);
 
                     context.ReportProgress(new BackgroundTaskProgress(CalculatePercentage(step++, totalStep), commonMessage + "Find diagnostic service name with study description..."));
                     string diagnosticServiceName = GetDiagnosticServiceName(study.StudyDescription);
@@ -302,7 +302,7 @@ namespace ClearCanvas.Ris.Integration
                         throw new Exception(String.Format("Cannot find diagnostic service with name {0}", diagnosticServiceName));
 
                     FacilitySummary randomFacility = RandomUtils.ChooseRandom<FacilitySummary>(formChoicesResponse.OrderingFacilityChoices);
-                    StaffSummary randomPhysician = RandomUtils.ChooseRandom<StaffSummary>(formChoicesResponse.OrderingPhysicianChoices);
+                    ExternalPractitionerSummary randomPhysician = RandomUtils.ChooseRandom<ExternalPractitionerSummary>(formChoicesResponse.OrderingPhysicianChoices);
                     EnumValueInfo randomPriority = RandomUtils.ChooseRandom<EnumValueInfo>(formChoicesResponse.OrderPriorityChoices);
 
                     PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(
@@ -310,7 +310,7 @@ namespace ClearCanvas.Ris.Integration
                         visit.entityRef,
                         mappedDS.DiagnosticServiceRef,
                         randomPriority,
-                        randomPhysician.StaffRef,
+                        randomPhysician.PractitionerRef,
                         randomFacility.FacilityRef,
                         true,
                         Platform.Time));

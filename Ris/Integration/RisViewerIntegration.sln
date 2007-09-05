@@ -63,8 +63,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Lay
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Tools.Standard", "..\..\ImageViewer\Tools\Standard\ClearCanvas.ImageViewer.Tools.Standard.csproj", "{9AF0770C-7E9F-483F-8429-D7894F06EB6C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageViewer.Tools.Standard.View.WinForms", "..\..\ImageViewer\Tools\Standard\View\WinForms\ClearCanvas.ImageViewer.Tools.Standard.View.WinForms.csproj", "{36A4206C-5618-4ECA-A123-67D0C1252086}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Integration", "ClearCanvas.Ris.Integration.csproj", "{59B67540-9638-4724-B5B6-50CF6848B43B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Ris.Integration.View.WinForms", "View\WinForms\ClearCanvas.Ris.Integration.View.WinForms.csproj", "{0AADC57A-98D1-4A3B-96A9-8C596EE385C7}"
@@ -209,10 +207,6 @@ Global
 		{9AF0770C-7E9F-483F-8429-D7894F06EB6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9AF0770C-7E9F-483F-8429-D7894F06EB6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9AF0770C-7E9F-483F-8429-D7894F06EB6C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{36A4206C-5618-4ECA-A123-67D0C1252086}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{36A4206C-5618-4ECA-A123-67D0C1252086}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{36A4206C-5618-4ECA-A123-67D0C1252086}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{36A4206C-5618-4ECA-A123-67D0C1252086}.Release|Any CPU.Build.0 = Release|Any CPU
 		{59B67540-9638-4724-B5B6-50CF6848B43B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{59B67540-9638-4724-B5B6-50CF6848B43B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59B67540-9638-4724-B5B6-50CF6848B43B}.Release|Any CPU.ActiveCfg = Release|Any CPU
