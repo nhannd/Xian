@@ -35,8 +35,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.RequestedProcedureTypeGroup
             writer.WriteStartDocument();
             writer.WriteStartElement(tagRequestedProcedureTypeGroups);
 
-            //List<Worklist> worklists = context.GetBroker<IWorklistBroker>().FindAll();
-            //worklists.ForEach(delegate(Worklist worklist) { WriteWorklistXml(worklist, writer); });
             IList<RequestedProcedureTypeGroup> groups = context.GetBroker<IRequestedProcedureTypeGroupBroker>().FindAll();
             CollectionUtils.ForEach<RequestedProcedureTypeGroup>(groups,
                 delegate(RequestedProcedureTypeGroup group) { WriteRequestedProcedureTypeGroupXml(group, writer, context); });

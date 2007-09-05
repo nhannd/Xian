@@ -119,7 +119,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                     criteria.Name.EqualTo(reader.GetAttribute(attrName));
 
                     IRequestedProcedureTypeGroupBroker broker = _context.GetBroker<IRequestedProcedureTypeGroupBroker>();
-                    groups.Add(CollectionUtils.FirstElement<RequestedProcedureTypeGroup>(broker.Find(criteria)));
+                    RequestedProcedureTypeGroup group = CollectionUtils.FirstElement<RequestedProcedureTypeGroup>(broker.Find(criteria));
+                    if (group != null) groups.Add(group);
                 }
             }
 
@@ -147,7 +148,8 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                             criteria.UserName.EqualTo(userName);
 
                             IUserBroker broker = _context.GetBroker<IUserBroker>();
-                            users.Add(CollectionUtils.FirstElement<User>(broker.Find(criteria)));
+                            User user = CollectionUtils.FirstElement<User>(broker.Find(criteria));
+                            if (user != null) users.Add(user);
 
                             break;
                         case "user-group":
@@ -160,9 +162,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
 
                             if (group != null)
                             {
-                                foreach(User user in group.Users)
+                                foreach(User authorityGroupUser in group.Users)
                                 {
-                                    users.Add(user);
+                                    users.Add(authorityGroupUser);
                                 }
                             }
 
