@@ -15,6 +15,19 @@ namespace ClearCanvas.Enterprise.Core
         }
 
         /// <summary>
+        /// This constructor is needed for unit tests, to create fake enum values.
+        /// </summary>
+        /// <param name="code"></param>
+        /// <param name="value"></param>
+        /// <param name="description"></param>
+        public EnumValue(string code, string value, string description)
+        {
+            _code = code;
+            _value = value;
+            _description = description;
+        }
+
+        /// <summary>
         /// </summary>
         public virtual string Code
         {

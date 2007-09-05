@@ -12,7 +12,18 @@ namespace <%= namespace %> {
     /// </summary>
     public class <%= className %> : EnumValue
     {
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		protected <%= className %>()
+		{
+		}
+		
+		/// <summary>
+		/// Constructor for creating dummy values during unit testing. Not for production use.
+		/// </summary>
+		public <%= className %>(string code, string value, string description)
+			:base(code, value, description)
 		{
 		}
     }
