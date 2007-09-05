@@ -29,6 +29,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				//Clear the data in the data lut so it's not hanging around using up memory.
 				((IDataLut)existingLut).Clear();
 			}
+			
 			_grayscaleImageGraphic.InstallVoiLut(lut);
 		}
 

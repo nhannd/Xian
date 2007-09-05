@@ -7,7 +7,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
 	public sealed class PresetVoiLutLinear : CalculatedVoiLutLinear
 	{
-		public sealed class PresetVoiLutLinearParameters : IEquatable<PresetVoiLutLinearParameters>, IMemento
+		public sealed class PresetVoiLutLinearParameters : IMemento, IEquatable<PresetVoiLutLinearParameters>
 		{
 			public readonly string Name;
 			public readonly double WindowWidth;

@@ -105,7 +105,9 @@
     <Compile Include="AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="EditPresetVoiLutComponentContainer.cs" />
     <Compile Include="LocateOnDiskTool.cs" />
+    <Compile Include="EditPresetVoiLutLinearComponent.cs" />
     <Compile Include="PresetVoiLuts\AutoPresetVoiLutApplicator.cs" />
     <Compile Include="PresetVoiLuts\AutoVoiLutApplicator.cs" />
     <Compile Include="PresetVoiLuts\AutoVoiLutLinear.cs" />
@@ -115,9 +117,10 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>AvailableLutKeyStrokeSettings.settings</DependentUpon>
     </Compile>
+    <Compile Include="PresetVoiLuts\EditPresetVoiLutComponentBase.cs" />
     <Compile Include="PresetVoiLuts\InitialVoiLutProvider.cs" />
     <Compile Include="PresetVoiLuts\IPresetVoiLutApplicator.cs" />
-    <Compile Include="PresetVoiLuts\LinearPresetVoiLutApplicator.cs" />
+    <Compile Include="PresetVoiLuts\PresetVoiLutLinearApplicator.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutApplicatorFactory.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLutLinear.cs" />
     <Compile Include="PresetVoiLuts\PresetVoiLut.cs" />
@@ -138,6 +141,7 @@
     <Compile Include="PresetVoiLutTool.cs" />
     <Compile Include="MemoryUsageTool.cs" />
     <Compile Include="PresentationLutTool.cs" />
+    <Compile Include="VoiLutConfigurationComponent.cs" />
     <Compile Include="VoiLutConfigurationPageProvider.cs" />
     <Compile Include="FlipHorizontalTool.cs" />
     <Compile Include="FlipVerticalTool.cs" />
@@ -220,6 +224,15 @@
     <EmbeddedResource Include="Icons\StackToolSmall.png" />
     <EmbeddedResource Include="Icons\WindowLevelToolSmall.png" />
     <EmbeddedResource Include="Icons\ZoomToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\EditToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\DeleteToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\AddToolSmall.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Tests\" />

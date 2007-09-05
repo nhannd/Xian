@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 {
 	public sealed class BasicVoiLutLinear : VoiLutLinearBase, IBasicVoiLutLinear
 	{
-		private class WindowLevelMemento : IMemento
+		private class WindowLevelMemento : IMemento, IEquatable<WindowLevelMemento>
 		{
 			public readonly double WindowWidth;
 			public readonly double WindowCenter;
@@ -16,6 +16,26 @@ namespace ClearCanvas.ImageViewer.Imaging
 				WindowWidth = windowWidth;
 				WindowCenter = windowCenter;
 			}
+
+			public override bool Equals(object obj)
+			{
+				if (obj == this)
+					return true;
+
+				if (obj is WindowLevelMemento)
+					return this.Equals((WindowLevelMemento) obj);
+
+				return false;
+			}
+
+			#region IEquatable<WindowLevelMemento> Members
+
+			public bool Equals(WindowLevelMemento other)
+			{
+				return this.WindowWidth == other.WindowWidth && this.WindowCenter == other.WindowCenter;
+			}
+
+			#endregion
 		}
 
 		private double _windowWidth;

@@ -4,7 +4,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
-	public sealed class PresetVoiLut : IEquatable<PresetVoiLut>
+	internal sealed class PresetVoiLut : IEquatable<PresetVoiLut>
 	{
 		private XKeys _keyStroke;
 		private readonly IPresetVoiLutApplicator _applicator;
@@ -41,15 +41,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		public bool Equals(PresetVoiLut other)
 		{
-			if (_keyStroke != XKeys.None && _keyStroke == other._keyStroke)
-				return true;
-
-			if (_applicator.Name == other._applicator.Name)
-				return true;
-
-			return false;
+			return (String.Compare(this.Applicator.Name, other.Applicator.Name, true) == 0 || (KeyStroke != XKeys.None && KeyStroke == other.KeyStroke));
 		}
 
 		#endregion
+
+		internal PresetVoiLut Clone()
+		{
+			PresetVoiLut clone = new PresetVoiLut(_applicator);
+			clone.KeyStroke = this.KeyStroke;
+			return clone;
+		}
 	}
 }

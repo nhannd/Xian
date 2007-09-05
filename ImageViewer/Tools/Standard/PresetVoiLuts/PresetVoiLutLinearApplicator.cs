@@ -6,29 +6,31 @@ using ClearCanvas.ImageViewer.Imaging;
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
 	[ExtensionOf(typeof(PresetVoiLutApplicatorFactoryExtensionPoint))]
-	public sealed class LinearPresetVoiLutApplicatorFactory : PresetVoiLutApplicatorFactory<LinearPresetVoiLutApplicator>
+	public sealed class PresetVoiLutLinearApplicatorFactory : PresetVoiLutApplicatorFactory<PresetVoiLutLinearApplicator, EditPresetVoiLutLinearComponent>
 	{
-		public LinearPresetVoiLutApplicatorFactory()
+		internal static readonly string FactoryName = "Linear Preset";
+
+		public PresetVoiLutLinearApplicatorFactory()
 		{
 		}
 
 		public override string Name
 		{
-			get { return "Linear Preset"; }
+			get { return FactoryName; }
 		}
 	}
 
-	public sealed class LinearPresetVoiLutApplicator : PresetVoiLutApplicator
+	public sealed class PresetVoiLutLinearApplicator : PresetVoiLutApplicator
 	{
 		private string _presetName;
 		private double _windowWidth;
 		private double _windowCenter;
 
-		public LinearPresetVoiLutApplicator()
+		public PresetVoiLutLinearApplicator()
 		{
-			_presetName = null;
-			_windowWidth = double.NaN;
-			_windowCenter = double.NaN;
+			_presetName = "";
+			_windowWidth = 1;
+			_windowCenter = 0;
 		}
 
 		public override string Name
@@ -38,7 +40,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		public override string Description
 		{
-			get { return String.Format("{0}: WW = {1}, WC = {2}", _presetName, _windowWidth, _windowCenter); }
+			get { return String.Format("W = {0}, L = {1}", _windowWidth, _windowCenter); }
 		}
 
 		[SimpleSerialized]

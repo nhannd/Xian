@@ -18,7 +18,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		public abstract string Name { get; }
 		public abstract string Description { get; }
-		
+
+		public IPresetVoiLutApplicatorFactory SourceFactory
+		{
+			get { return _ownerFactory; }
+		}
+
 		public abstract bool AppliesTo(IPresentationImage presentationImage);
 		public abstract void Apply(IPresentationImage image);
 
@@ -33,6 +38,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		#endregion
 
-		public abstract void Validate();
+		public virtual void Validate()
+		{
+		}
 	}
 }

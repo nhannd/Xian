@@ -58,24 +58,24 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		public static ILut GetInitialLut(IPresentationImage image)
 		{
-			if (!AppliesTo(image))
-				return null;
-
-			IImageSopProvider sopProvider = image as IImageSopProvider;
-			if (sopProvider != null)
+			if (AppliesTo(image))
 			{
-				if (sopProvider.ImageSop.WindowCenterAndWidth.Length > 0)
-					return new AutoVoiLutLinear(sopProvider.ImageSop);
-			}
+				IImageSopProvider sopProvider = image as IImageSopProvider;
+				if (sopProvider != null)
+				{
+					if (sopProvider.ImageSop.WindowCenterAndWidth.Length > 0)
+						return new AutoVoiLutLinear(sopProvider.ImageSop);
+				}
 
-			IIndexedPixelDataProvider pixelDataProvider = image as IIndexedPixelDataProvider;
-			if (pixelDataProvider != null)
-			{
-				IModalityLutProvider modalityLutProvider = image as IModalityLutProvider;
-				if (modalityLutProvider != null)
-					return new MinMaxPixelCalculatedLinearLut(pixelDataProvider.PixelData, modalityLutProvider.ModalityLut);
-				else
-					return new MinMaxPixelCalculatedLinearLut(pixelDataProvider.PixelData);
+				IIndexedPixelDataProvider pixelDataProvider = image as IIndexedPixelDataProvider;
+				if (pixelDataProvider != null)
+				{
+					IModalityLutProvider modalityLutProvider = image as IModalityLutProvider;
+					if (modalityLutProvider != null)
+						return new MinMaxPixelCalculatedLinearLut(pixelDataProvider.PixelData, modalityLutProvider.ModalityLut);
+					else
+						return new MinMaxPixelCalculatedLinearLut(pixelDataProvider.PixelData);
+				}
 			}
 
 			return null;

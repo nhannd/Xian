@@ -14,32 +14,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
 	internal sealed partial class PresetVoiLutSettings
 	{
-		private readonly EnumConverter _xkeysConverter;
+		private readonly TypeConverter _xkeysConverter;
 		private PresetVoiLutGroupCollection _presetGroups;
 
 		private PresetVoiLutSettings()
 		{
-			_xkeysConverter = new EnumConverter(typeof (XKeys));
+			_xkeysConverter = TypeDescriptor.GetConverter(typeof(XKeys));
 			ApplicationSettingsRegister.Instance.RegisterInstance(this);
         }
 
-		private static IEnumerable<IPresetVoiLutApplicatorFactory> ApplicatorFactories
-		{
-			get
-			{
-				return PresetVoiLutApplicatorFactories.Factories;
-			}
-		}
-
-		private static IPresetVoiLutApplicatorFactory GetApplicatorFactory(string name)
-		{
-			return CollectionUtils.SelectFirst <IPresetVoiLutApplicatorFactory>(ApplicatorFactories, delegate(IPresetVoiLutApplicatorFactory factory) { return factory.Name == name; });
-		}
-
 		public PresetVoiLutGroupCollection GetPresetGroups()
 		{
-			//if (_presetGroups != null)
-			//    return _presetGroups;
+			if (_presetGroups != null)
+				return _presetGroups;
 
 			_presetGroups = new PresetVoiLutGroupCollection();
 
@@ -82,7 +69,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 				string factoryName = presetNode.GetAttribute("factory");
 
-				IPresetVoiLutApplicatorFactory factory = GetApplicatorFactory(factoryName);
+				IPresetVoiLutApplicatorFactory factory = PresetVoiLutApplicatorFactories.GetFactory(factoryName);
 				if (factory == null)
 					continue;
 
@@ -150,6 +137,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 						XmlElement configurationItemElement = document.CreateElement("item");
 						configurationItemElement.SetAttribute("key", configurationItem.Key);
 						configurationItemElement.SetAttribute("value", configurationItem.Value);
+
+						configurationElement.AppendChild(configurationItemElement);
 					}
 				}	
 			}

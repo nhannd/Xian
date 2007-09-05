@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 	public sealed class AutoVoiLutLinear : CalculatedVoiLutLinear, IAutoVoiLutLinear
 	{
-		private class AutoVoiLutLinearMemento : IMemento
+		private class AutoVoiLutLinearMemento : IMemento, IEquatable<AutoVoiLutLinearMemento>
 		{
 			public readonly uint Index;
 
@@ -22,6 +22,26 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			{
 				this.Index = index;
 			}
+
+			public override bool Equals(object obj)
+			{
+				if (obj == this)
+					return true;
+
+				if (obj is AutoVoiLutLinearMemento)
+					return this.Equals((AutoVoiLutLinearMemento) obj);
+
+				return false;	
+			}
+
+			#region IEquatable<AutoVoiLutLinearMemento> Members
+
+			public bool Equals(AutoVoiLutLinearMemento other)
+			{
+				return this.Index == other.Index;
+			}
+
+			#endregion
 		}
 
 		private readonly ImageSop _imageSop;

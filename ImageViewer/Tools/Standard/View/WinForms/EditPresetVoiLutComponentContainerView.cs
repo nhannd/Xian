@@ -9,20 +9,19 @@ using ClearCanvas.Desktop.View.WinForms;
 namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="WindowLevelPresetApplicationComponent"/>
+	/// Provides a Windows Forms view onto <see cref="EditPresetVoiLutComponentContainer"/>
     /// </summary>
-    [ExtensionOf(typeof(WindowLevelPresetApplicationComponentViewExtensionPoint))]
-    public class WindowLevelPresetApplicationComponentView : WinFormsView, IApplicationComponentView
+	[ExtensionOf(typeof(EditPresetVoiLutComponentContainerViewExtensionPoint))]
+	public class EditPresetVoiLutComponentContainerView : WinFormsView, IApplicationComponentView
     {
-        private WindowLevelPresetApplicationComponent _component;
-        private WindowLevelPresetApplicationComponentControl _control;
-
+        private EditPresetVoiLutComponentContainer _component;
+        private EditPresetVoiLutComponentContainerControl _control;
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (WindowLevelPresetApplicationComponent)component;
+            _component = (EditPresetVoiLutComponentContainer)component;
         }
 
         #endregion
@@ -33,7 +32,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new WindowLevelPresetApplicationComponentControl(_component);
+                    _control = new EditPresetVoiLutComponentContainerControl(_component);
                 }
                 return _control;
             }

@@ -93,31 +93,33 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				return;
 
 			IVoiLutLinear selectedLut = this.SelectedVoiLutProvider.VoiLutManager.GetLut() as IVoiLutLinear;
-
-			_applicator.ApplyToLinkedImages(
-				delegate(IPresentationImage presentationImage)
-				{
-					IVoiLutProvider provider = presentationImage as IVoiLutProvider;
-					if (provider == null)
-						return;
-
-					InstallLinearLut(provider.VoiLutManager);
-
-					IBasicVoiLutLinear lut = provider.VoiLutManager.GetLut() as IBasicVoiLutLinear;
-					lut.WindowWidth = selectedLut.WindowWidth;
-					lut.WindowCenter = selectedLut.WindowCenter;
-				});
-
-			_command.EndState = _applicator.CreateMemento();
-
-			// If the state hasn't changed since MouseDown just return
-			if (_command.EndState.Equals(_command.BeginState))
+			if (selectedLut is IBasicVoiLutLinear)
 			{
-				_command = null;
-				return;
-			}
+				_applicator.ApplyToLinkedImages(
+					delegate(IPresentationImage presentationImage)
+						{
+							IVoiLutProvider provider = presentationImage as IVoiLutProvider;
+							if (provider == null)
+								return;
 
-			this.Context.Viewer.CommandHistory.AddCommand(_command);
+							InstallLinearLut(provider.VoiLutManager);
+
+							IBasicVoiLutLinear lut = provider.VoiLutManager.GetLut() as IBasicVoiLutLinear;
+							lut.WindowWidth = selectedLut.WindowWidth;
+							lut.WindowCenter = selectedLut.WindowCenter;
+						});
+
+				_command.EndState = _applicator.CreateMemento();
+
+				// If the state hasn't changed since MouseDown just return
+				if (_command.EndState.Equals(_command.BeginState))
+				{
+					_command = null;
+					return;
+				}
+
+				this.Context.Viewer.CommandHistory.AddCommand(_command);
+			}
 		}
 
 		private void IncrementWindowWidth()

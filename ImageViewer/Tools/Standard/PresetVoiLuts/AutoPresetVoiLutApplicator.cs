@@ -27,11 +27,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		public override string Description
 		{
-			get { return this.Name; }
-		}
-
-		public override void Validate()
-		{
+			get { return "Automatically applies window/level"; }
 		}
 
 		public override bool AppliesTo(IPresentationImage presentationImage)

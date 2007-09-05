@@ -80,23 +80,29 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (!(this.SelectedPresentationImage is IImageSopProvider))
 				yield break;
 
-			int i = 0;
+			List<PresetVoiLut> presets = new List<PresetVoiLut>();
+
 			PresetVoiLut autoPreset = new PresetVoiLut(new AutoPresetVoiLutApplicator());
 			autoPreset.KeyStroke = XKeys.F2;
-			yield return new PresetVoiLutActionContainer(this, autoPreset, ++i).Action;
-
+			presets.Add(autoPreset);
+			
 			ImageSop sop = ((IImageSopProvider) this.SelectedPresentationImage).ImageSop;
 
 			PresetVoiLutGroupCollection groups = PresetVoiLutSettings.Default.GetPresetGroups();
 			PresetVoiLutGroup group = CollectionUtils.SelectFirst<PresetVoiLutGroup>(groups, delegate(PresetVoiLutGroup testGroup) { return testGroup.AppliesTo(sop); });
-			if (group == null)
-				yield break;
-
-			foreach (PresetVoiLut preset in group.Presets)
+			if (group != null)
 			{
-				if (preset.Applicator.AppliesTo(this.SelectedPresentationImage))
-					yield return new PresetVoiLutActionContainer(this, preset, ++i).Action;
+				foreach (PresetVoiLut preset in group.Clone().Presets)
+				{
+					if (preset.Applicator.AppliesTo(this.SelectedPresentationImage))
+						presets.Add(preset);
+				}
 			}
+
+			int i = 0;
+			presets.Sort(new PresetVoiLutCollectionSortByKeyStrokeSortByName());
+			foreach(PresetVoiLut preset in presets)
+				yield return new PresetVoiLutActionContainer(this, preset, ++i).Action;
 		}
 	}
 }

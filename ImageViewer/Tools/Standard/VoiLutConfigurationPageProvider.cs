@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			//listPages.Add(new ConfigurationPage<WindowLevelConfigurationApplicationComponent>(SR.WindowLevelConfiguration));
+			listPages.Add(new ConfigurationPage<VoiLutConfigurationComponent>("Window & Level"));
 
 			return listPages.AsReadOnly();
 		}
