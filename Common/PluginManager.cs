@@ -28,6 +28,8 @@ namespace ClearCanvas.Common
 		private string _pluginDir;
 		private event EventHandler<PluginLoadedEventArgs> _pluginProgressEvent;
 
+        private bool _unitTestMode;
+
 		// Constructor is internal, since we only ever one instance of it and that
 		// one instance is created through the Platform class.
 		internal PluginManager(string pluginDir)
@@ -37,6 +39,12 @@ namespace ClearCanvas.Common
 
 			_pluginDir = pluginDir;
 		}
+
+        public bool UnitTestMode
+        {
+            get { return _unitTestMode; }
+            set { _unitTestMode = value; }
+        }
 
         /// <summary>
         /// The set of installed plugins.  If plugins have not yet been loaded into memory,
@@ -108,14 +116,25 @@ namespace ClearCanvas.Common
 		/// a problem with the loading of a plugin.</exception>
 		public void LoadPlugins()
 		{
-            if (!RootPluginDirectoryExists())
-                throw new PluginException(SR.ExceptionPluginDirectoryNotFound);
+            string[] pluginFiles;
+            if (_unitTestMode)
+            {
+                pluginFiles = new string[0];
+            }
+            else
+            {
+                if (!RootPluginDirectoryExists())
+                    throw new PluginException(SR.ExceptionPluginDirectoryNotFound);
 
-            string[] pluginFiles = FindPlugins(_pluginDir);
+                pluginFiles = FindPlugins(_pluginDir);
+            }
+
             Assembly[] assemblies = LoadFoundPlugins(pluginFiles);
             _plugins = ProcessAssemblies(assemblies);
 
-            Validate();
+            // If no plugins could be loaded, throw a fatal exception
+            if (_plugins.Length == 0 && !_unitTestMode)
+                throw new PluginException(SR.ExceptionUnableToLoadPlugins);
 
             List<ExtensionInfo> extList = new List<ExtensionInfo>();
             foreach (PluginInfo plugin in _plugins)
@@ -253,13 +272,6 @@ namespace ClearCanvas.Common
 			}
 
 			return loader.PluginAssemblies;
-		}
-
-        private void Validate()
-		{
-			// If no plugins could be loaded, throw a fatal exception
-			if (_plugins.Length == 0)
-				throw new PluginException(SR.ExceptionUnableToLoadPlugins);
 		}
 	}
 }
