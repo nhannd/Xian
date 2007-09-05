@@ -62,14 +62,20 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
             assembler.UpdatePersonName(detail.Name, prac.Name);
 
-            foreach (TelephoneDetail phoneDetail in detail.TelephoneNumbers)
+            if (detail.TelephoneNumbers != null)
             {
-                telephoneNumberAssembler.AddTelephoneNumber(phoneDetail, prac.TelephoneNumbers);
+                foreach (TelephoneDetail phoneDetail in detail.TelephoneNumbers)
+                {
+                    telephoneNumberAssembler.AddTelephoneNumber(phoneDetail, prac.TelephoneNumbers);
+                }
             }
 
-            foreach (AddressDetail addressDetail in detail.Addresses)
+            if (detail.Addresses != null)
             {
-                addressAssembler.AddAddress(addressDetail, prac.Addresses);
+                foreach (AddressDetail addressDetail in detail.Addresses)
+                {
+                    addressAssembler.AddAddress(addressDetail, prac.Addresses);
+                }
             }
 
             prac.LicenseNumber = new CompositeIdentifier(detail.LicenseNumber.Id, detail.LicenseNumber.AssigningAuthority);
