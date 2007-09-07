@@ -42,7 +42,9 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 
             PerformedProcedureStep pps = GetPerformedProcedureStep(detail.PerformedProcedureStep, ppsDictionary, context);
 
-            if (procedureStep.State != detailStatus)
+            /*
+             ////////////// THIS SHOULD NOT BE IN HERE - BUSINESS LOGIC GOES IN THE MODEL!!!! ///////////////////////////
+           if (procedureStep.State != detailStatus)
             {
                 if (procedureStep.State == ActivityStatus.SC && detailStatus == ActivityStatus.IP)
                 {
@@ -72,6 +74,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
                     //procedureStep.EndTime = detail.PerformedProcedureStep.EndTime;
                 }
             }
+            */
 
             pps.Documentation = detail.PerformedProcedureStep.Blob;
 

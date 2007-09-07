@@ -128,21 +128,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     }));
         }
 
-        [UpdateOperation]
-        [OperationEnablement("CanCheckInProcedure")]
-        public CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
-        {
-            IOrderBroker broker = PersistenceContext.GetBroker<IOrderBroker>();
-            Operations.CheckIn op = new Operations.CheckIn();
-            foreach (EntityRef orderRef in request.Orders)
-            {
-                Order o = broker.Load(orderRef, EntityLoadFlags.CheckVersion);
-                op.Execute(o, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
-            }
-
-            return new CheckInProcedureResponse();
-        }
-
         [ReadOperation]
         public LoadPatientSearchComponentFormDataResponse LoadPatientSearchComponentFormData(LoadPatientSearchComponentFormDataRequest request)
         {
@@ -177,6 +162,21 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     }),
                     EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(PersistenceContext)
                     );
+        }
+
+        [UpdateOperation]
+        [OperationEnablement("CanCheckInProcedure")]
+        public CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request)
+        {
+            IOrderBroker broker = PersistenceContext.GetBroker<IOrderBroker>();
+            Operations.CheckIn op = new Operations.CheckIn();
+            foreach (EntityRef orderRef in request.Orders)
+            {
+                Order o = broker.Load(orderRef, EntityLoadFlags.CheckVersion);
+                op.Execute(o, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            }
+
+            return new CheckInProcedureResponse();
         }
 
         [UpdateOperation]

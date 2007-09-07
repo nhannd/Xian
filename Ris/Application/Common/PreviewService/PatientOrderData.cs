@@ -150,10 +150,7 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
         public string RequestedProcedureName;
 
         [DataMember]
-        public DateTime? RequestedProcedureStartTime;
-
-        [DataMember]
-        public DateTime? RequestedProcedureEndTime;
+        public DateTime? RequestedProcedureScheduledStartTime;
 
         #endregion
 

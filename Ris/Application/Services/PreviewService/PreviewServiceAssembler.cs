@@ -126,27 +126,13 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
             data.OrderPriority = EnumUtils.GetValue(order.Priority, context);
             data.CancelReason = EnumUtils.GetDisplayValue(order.CancelReason);
             data.OrderStatus = EnumUtils.GetValue(order.Status, context);
-            data.EarliestScheduledMPSDateTime = order.EarliestScheduledDateTime;
+            data.EarliestScheduledMPSDateTime = order.ScheduledStartTime;
         }
 
         private void UpdatePatientOrderData(PatientOrderData data, RequestedProcedure rp, IPersistenceContext context)
         {
             data.RequestedProcedureName = rp.Type.Name;
-            CollectionUtils.ForEach<ProcedureStep>(rp.ModalitySteps, new Action<ProcedureStep>(
-                delegate(ProcedureStep ps)
-                {
-                    if (ps.StartTime != null)
-                    {
-                        if (data.RequestedProcedureStartTime == null || ps.StartTime.Value.CompareTo(data.RequestedProcedureStartTime.Value) < 0)
-                            data.RequestedProcedureStartTime = ps.StartTime;
-                    }
-
-                    if (ps.EndTime != null)
-                    {
-                        if (data.RequestedProcedureEndTime == null || ps.EndTime.Value.CompareTo(data.RequestedProcedureEndTime.Value) < 0)
-                            data.RequestedProcedureEndTime = ps.EndTime;
-                    }
-                }));
+            data.RequestedProcedureScheduledStartTime = rp.ScheduledStartTime;
         }
 
         private void UpdatePatientOrderData(PatientOrderData data, ProcedureStep ps, IPersistenceContext context)

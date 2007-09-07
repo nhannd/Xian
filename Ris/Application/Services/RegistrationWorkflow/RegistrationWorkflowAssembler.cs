@@ -78,7 +78,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         List<DateTime?> listScheduledTime = CollectionUtils.Map<RequestedProcedure, DateTime?, List<DateTime?>>(o.RequestedProcedures,
                             delegate(RequestedProcedure rp)
                             {
-                                CheckInProcedureStep cps = rp.CheckInStep;
+                                CheckInProcedureStep cps = rp.CheckInProcedureStep;
                                 return cps.Scheduling.StartTime;
                             });
 
@@ -145,13 +145,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 healthcardAssembler.CreateHealthcardDetail(domainItem.HealthcardNumber),
                 domainItem.DateOfBirth,
                 EnumUtils.GetEnumValueInfo(domainItem.Sex, context),
-                domainItem.EarliestScheduledTime,
+                domainItem.ScheduledStartTime,
                 EnumUtils.GetValue(domainItem.OrderPriority, context),
                 EnumUtils.GetValue(domainItem.OrderPriority, context));
         }
 
         private string GetRequestedProcedureStatus(Order order, IPersistenceContext context)
         {
+            return "WTF";
+            /*
             try
             {
                 if (order.IsAllRequestedProcedureScheduled)
@@ -177,7 +179,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             catch (Exception)
             {
                 return "Error";
-            }
+            }*/
         }
     }
 }

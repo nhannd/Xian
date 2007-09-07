@@ -95,31 +95,16 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         [OperationEnablement("CanStartProcedure")]
         public StartProcedureResponse StartProcedure(StartProcedureRequest request)
         {
-            ExecuteOperation(new StartModalityProcedureStepOperation(), request.ModalityProcedureStepRef);
+            ExecuteOperation(new StartModalityProcedureStepOperation(this.CurrentUserStaff), request.ModalityProcedureStepRef);
             return new StartProcedureResponse();
-        }
-
-        [UpdateOperation]
-        [OperationEnablement("CanSuspendProcedure")]
-        public SuspendProcedureResponse SuspendProcedure(SuspendProcedureRequest request)
-        {
-            ExecuteOperation(new SuspendModalityProcedureStepOperation(), request.ModalityProcedureStepRef);
-            return new SuspendProcedureResponse();
-        }
-
-        [UpdateOperation]
-        [OperationEnablement("CanResumeProcedure")]
-        public ResumeProcedureResponse ResumeProcedure(ResumeProcedureRequest request)
-        {
-            ExecuteOperation(new ResumeModalityProcedureStepOperation(), request.ModalityProcedureStepRef);
-            return new ResumeProcedureResponse();
         }
 
         [UpdateOperation]
         [OperationEnablement("CanCompleteProcedure")]
         public CompleteProcedureResponse CompleteProcedure(CompleteProcedureRequest request)
         {
-            ExecuteOperation(new CompleteModalityProcedureStepOperation(), request.ModalityProcedureStepRef);
+            // TODO determine procedureAborted logic
+            ExecuteOperation(new CompleteModalityProcedureStepOperation(false), request.ModalityProcedureStepRef);
             return new CompleteProcedureResponse();
         }
 
@@ -127,39 +112,30 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         [OperationEnablement("CanCancelProcedure")]
         public CancelProcedureResponse CancelProcedure(CancelProcedureRequest request)
         {
-            ExecuteOperation(new CancelModalityProcedureStepOperation(), request.ModalityProcedureStepRef);
+            // TODO determine procedureAborted logic
+            ExecuteOperation(new CancelModalityProcedureStepOperation(false), request.ModalityProcedureStepRef);
             return new CancelProcedureResponse();
         }
 
         public bool CanStartProcedure(IWorklistItemKey itemKey)
         {
-            return CanExecuteOperation(new StartModalityProcedureStepOperation(), itemKey);
-        }
-
-        public bool CanSuspendProcedure(IWorklistItemKey itemKey)
-        {
-            return CanExecuteOperation(new SuspendModalityProcedureStepOperation(), itemKey);
-        }
-
-        public bool CanResumeProcedure(IWorklistItemKey itemKey)
-        {
-            return CanExecuteOperation(new ResumeModalityProcedureStepOperation(), itemKey);
+            return CanExecuteOperation(new StartModalityProcedureStepOperation(this.CurrentUserStaff), itemKey);
         }
 
         public bool CanCompleteProcedure(IWorklistItemKey itemKey)
         {
-            return CanExecuteOperation(new CompleteModalityProcedureStepOperation(), itemKey);
+            return CanExecuteOperation(new CompleteModalityProcedureStepOperation(false), itemKey);
         }
 
         public bool CanCancelProcedure(IWorklistItemKey itemKey)
         {
-            return CanExecuteOperation(new CancelModalityProcedureStepOperation(), itemKey);
+            return CanExecuteOperation(new CancelModalityProcedureStepOperation(false), itemKey);
         }
 
         private void ExecuteOperation(ModalityOperation op, EntityRef modalityProcedureStepRef)
         {
             ModalityProcedureStep modalityProcedureStep = PersistenceContext.Load<ModalityProcedureStep>(modalityProcedureStepRef);
-            op.Execute(modalityProcedureStep, this.CurrentUserStaff, new PersistentWorkflow(this.PersistenceContext));
+            op.Execute(modalityProcedureStep, new PersistentWorkflow(this.PersistenceContext));
         }
 
         private bool CanExecuteOperation(ModalityOperation op, IWorklistItemKey itemKey)

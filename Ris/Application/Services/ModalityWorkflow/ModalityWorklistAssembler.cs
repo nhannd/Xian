@@ -139,7 +139,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
                         List<DateTime?> listScheduledTime = CollectionUtils.Map<RequestedProcedure, DateTime?, List<DateTime?>>(o.RequestedProcedures,
                             delegate(RequestedProcedure rp)
                             {
-                                CheckInProcedureStep cps = rp.CheckInStep;
+                                CheckInProcedureStep cps = rp.CheckInProcedureStep;
                                 return cps.Scheduling.StartTime;
                             });
 
