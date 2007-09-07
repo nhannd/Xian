@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.Workflow
 {
-    public class IllegalStateTransitionException : Exception
+    public class IllegalStateTransitionException : WorkflowException
     {
         public IllegalStateTransitionException(string message)
             :base(message)

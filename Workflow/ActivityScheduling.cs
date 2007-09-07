@@ -10,6 +10,14 @@ namespace ClearCanvas.Workflow
         private DateTime? _startTime;
         private DateTime? _endTime;
 
+        /// <summary>
+        /// No-args constructor required by NHibernate.
+        /// </summary>
+        public ActivityScheduling()
+        {
+
+        }
+
         public ActivityPerformer Performer
         {
             get { return _performer; }
@@ -19,13 +27,13 @@ namespace ClearCanvas.Workflow
         public DateTime? StartTime
         {
             get { return _startTime; }
-            set { _startTime = value; }
+            internal set { _startTime = value; }
         }
 
         public DateTime? EndTime
         {
             get { return _endTime; }
-            set { _endTime = value; }
+            internal set { _endTime = value; }
         }
     }
 }

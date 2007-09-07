@@ -42,8 +42,12 @@ namespace ClearCanvas.Workflow
                 if (!_transitionLogic.IsAllowed(_state, state))
                     throw new IllegalStateTransitionException(string.Format(SR.ExceptionIllegalStateTransition, _state, state));
             }
+
+            TStateEnum previousState = _state;
             _state = state;
             _lastStateChangeTime = Platform.Time;
+
+            OnStateChanged(previousState, _state);
         }
 
         /// <summary>
@@ -85,6 +89,14 @@ namespace ClearCanvas.Workflow
         }
 
         /// <summary>
+        /// True if this object is in its initial state.
+        /// </summary>
+        public virtual bool IsInitial
+        {
+            get { return _transitionLogic.IsInitial(_state); }
+        }
+
+        /// <summary>
         /// True if this object is in a terminal state.
         /// </summary>
         public virtual bool IsTerminated
@@ -92,5 +104,13 @@ namespace ClearCanvas.Workflow
             get { return _transitionLogic.IsTerminal(_state); }
         }
 
+        /// <summary>
+        /// Called when the state changes to allow subclasses to respond.
+        /// </summary>
+        /// <param name="previousState"></param>
+        /// <param name="newState"></param>
+        protected virtual void OnStateChanged(TStateEnum previousState, TStateEnum newState)
+        {
+        }
     }
 }

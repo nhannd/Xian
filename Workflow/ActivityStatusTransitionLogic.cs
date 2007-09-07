@@ -30,9 +30,14 @@ namespace ClearCanvas.Workflow
             return _transitions[(int)from, (int)to];
         }
 
-        public virtual bool IsTerminal(ActivityStatus status)
+        public virtual bool IsTerminal(ActivityStatus state)
         {
-            return status == ActivityStatus.CM || status == ActivityStatus.DC;
+            return state == ActivityStatus.CM || state == ActivityStatus.DC;
+        }
+
+        public bool IsInitial(ActivityStatus state)
+        {
+            return state == ActivityStatus.SC;
         }
     }
 }

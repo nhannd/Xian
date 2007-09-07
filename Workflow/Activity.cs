@@ -48,13 +48,13 @@ namespace ClearCanvas.Workflow
         }
 
         /// <summary>
-        /// Gets or sets the scheduling for this activity.  May return null, in which case the activity has
+        /// Gets the scheduling for this activity.  May return null, in which case the activity has
         /// no scheduling information.
         /// </summary>
         public virtual ActivityScheduling Scheduling
         {
             get { return _scheduling; }
-            set { _scheduling = value; }
+            private set { _scheduling = value; }
         }
 
 
@@ -90,6 +90,42 @@ namespace ClearCanvas.Workflow
         }
 
         /// <summary>
+        /// Schedules or re-schedules the activity at the specified start time. The end time will be
+        /// set to null.
+        /// </summary>
+        /// <param name="startTime"></param>
+        public virtual void Schedule(DateTime? startTime)
+        {
+            Schedule(startTime, null);
+        }
+
+        /// <summary>
+        /// Schedules or re-schedules the activity at the specified start time. The end time is optional.
+        /// </summary>
+        /// <param name="startTime"></param>
+        /// <param name="endTime"></param>
+        public virtual void Schedule(DateTime? startTime, DateTime? endTime)
+        {
+            if (this.State != ActivityStatus.SC)
+                throw new WorkflowException("Schedule is only allowed from Scheduled state");
+
+            this.Scheduling.StartTime = startTime;
+            this.Scheduling.EndTime = endTime;
+
+            OnSchedulingChanged();
+        }
+
+        public virtual void Assign(ActivityPerformer performer)
+        {
+            if (this.State != ActivityStatus.SC)
+                throw new WorkflowException("Assignment of scheduled performer only allowed from scheduled state");
+
+            this.Scheduling.Performer = performer;
+
+            OnSchedulingChanged();
+        }
+
+        /// <summary>
         /// Starts the activity, setting the state to <see cref="ActivityStatus.IP"/> and recording the specified performer.
         /// </summary>
         /// <param name="performer"></param>
@@ -98,8 +134,8 @@ namespace ClearCanvas.Workflow
             Platform.CheckForNullReference(performer, "performer");
 
             _performer = performer;
-            ChangeState(ActivityStatus.IP);
             _startTime = Platform.Time;
+            ChangeState(ActivityStatus.IP);
         }
 
         /// <summary>
@@ -127,8 +163,8 @@ namespace ClearCanvas.Workflow
         /// </summary>
         public virtual void Discontinue()
         {
-            ChangeState(ActivityStatus.DC);
             _endTime = Platform.Time;
+            ChangeState(ActivityStatus.DC);
         }
 
         /// <summary>
@@ -140,8 +176,8 @@ namespace ClearCanvas.Workflow
             if (_performer == null)
                 throw new WorkflowException("Performer must be assigned");
 
-            ChangeState(ActivityStatus.CM);
             _endTime = Platform.Time;
+            ChangeState(ActivityStatus.CM);
         }
 
         /// <summary>
@@ -193,6 +229,10 @@ namespace ClearCanvas.Workflow
             {
                 step.Activities.Remove(this);
             }
+        }
+
+        protected virtual void OnSchedulingChanged()
+        {
         }
     }
 }

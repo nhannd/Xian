@@ -36,6 +36,11 @@ namespace ClearCanvas.Workflow
             return state == PerformedStepStatus.CM || state == PerformedStepStatus.DC;
         }
 
+        public bool IsInitial(PerformedStepStatus state)
+        {
+            return state == PerformedStepStatus.IP;
+        }
+
         #endregion
     }
 }
