@@ -485,7 +485,6 @@ namespace ClearCanvas.Dicom.Network
             message.MessageId = messageID;
             message.CommandField = DicomCommandField.CStoreRequest;
             message.AffectedSopClassUid = message.SopClass.Uid;
-            //message.DataSetType = true ? (ushort)0x0202 : (ushort)0x0101;
             message.DataSetType = (ushort)0x0202;
             message.Priority = priority;
 
@@ -561,14 +560,51 @@ namespace ClearCanvas.Dicom.Network
         /// <param name="presentationID"></param>
         /// <param name="messageID"></param>
         /// <param name="destinationAE"></param>
-        /// <param name="dataset"></param>
-        public void SendCMoveRequest(byte presentationID, ushort messageID, string destinationAE, DicomAttributeCollection dataset)
+        /// <param name="msg"></param>
+        public void SendCMoveRequest(byte presentationID, ushort messageID, string destinationAE, DicomMessage msg)
+        {
+            if (msg.DataSet.IsEmpty())
+                throw new DicomException("Unexpected empty DataSet when sending C-MOVE-RQ.");
+
+            DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
+            msg.CommandField = DicomCommandField.CMoveRequest;
+            msg.AffectedSopClassUid = affectedClass.UID;
+            msg.Priority = DicomPriority.Medium;
+            msg.DataSetType = (ushort)0x0202;
+            msg.MoveDestination = destinationAE;
+            SendDimse(presentationID, msg.CommandSet, msg.DataSet);
+        }
+
+        public void SendCMoveResponse(byte presentationID, ushort messageID, DicomMessage msg, DicomStatus status)
         {
             DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
-            DicomAttributeCollection command = CreateRequest(messageID, DicomCommandField.CMoveRequest, affectedClass, true);
-            command[DicomTags.MoveDestination].Values = destinationAE;
-            SendDimse(presentationID, command, dataset);
+            msg.CommandField = DicomCommandField.CMoveResponse;
+            msg.Status = status;
+            msg.MessageIdBeingRespondedTo = messageID;
+            msg.AffectedSopClassUid = affectedClass.UID;
+            msg.DataSetType = msg.DataSet.IsEmpty() ? (ushort)0x0101 : (ushort)0x0202;
+
+            SendDimse(presentationID, msg.CommandSet, msg.DataSet);
         }
+
+        public void SendCMoveResponse(byte presentationID, ushort messageID, DicomMessage msg, DicomStatus status,
+            ushort NumberOfCompletedSubOperations, ushort NumberOfRemainingSubOperations,
+            ushort NumberOfFailedSubOperations, ushort NumberOfWarningSubOperations)
+        {
+            DicomUid affectedClass = _assoc.GetAbstractSyntax(presentationID);
+            msg.CommandField = DicomCommandField.CMoveResponse;
+            msg.Status = status;
+            msg.MessageIdBeingRespondedTo = messageID;
+            msg.AffectedSopClassUid = affectedClass.UID;
+            msg.NumberOfCompletedSubOperations = NumberOfCompletedSubOperations;
+            msg.NumberOfRemainingSubOperations = NumberOfRemainingSubOperations;
+            msg.NumberOfFailedSubOperations = NumberOfFailedSubOperations;
+            msg.NumberOfWarningSubOperations = NumberOfWarningSubOperations;
+            msg.DataSetType = msg.DataSet.IsEmpty() ? (ushort) 0x0101 : (ushort) 0x0202;
+
+            SendDimse(presentationID, msg.CommandSet, msg.DataSet);
+        }
+
         #endregion
 
         #region Private Methods

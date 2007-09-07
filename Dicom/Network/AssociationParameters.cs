@@ -153,7 +153,12 @@ namespace ClearCanvas.Dicom.Network
     {
         
         #region Private Members
-        private uint _maxPduLength = 128 * 1024;
+        // Setting the value so a PDU (including the PDU header) fit into 
+        // a multiple of the TCP/IP Maximum Segment Size of 1460 will help 
+        // increase performance.  The PDU header is 6 bytes, and should 
+        // be subtracted from the multiple of 1460 to get the PDU size.
+        // For instance (1460 * 80) - 6 = 116,794 bytes
+        private uint _maxPduLength = 116794;
         private String _calledAE;
         private String _callingAE;
         private DicomUid _appCtxNm;
@@ -164,11 +169,13 @@ namespace ClearCanvas.Dicom.Network
         private IPEndPoint _remoteEndPoint;
 
         // Sizes that result in PDUs that are multiples of the MTU work better.
-        private int _sendBufferSize = 128 * 1024;
-        private int _receiveBufferSize = 128 * 1024;
-        private int _readTimeout = 30;
-        private int _writeTimeout = 30;
-        private int _artimTimeout = 30;
+        // Setting these values to an even multiple of the TCP/IP maximum
+        // segement size of 1460 can help increase performance.
+        private int _sendBufferSize = 81 * 1460;
+        private int _receiveBufferSize = 81 * 1460;
+        private int _readTimeout = 30 * 1000; // 30 seconds
+        private int _writeTimeout = 30 * 1000; // 30 seconds
+        private int _artimTimeout = 30 * 1000; // 30 seconds
         private ushort _maxOperationsInvoked = 1;
         private ushort _maxOperationsPerformed = 1;
         #endregion
@@ -259,7 +266,7 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
-        /// The timeout for any network Read operations.
+        /// The timeout for any network Read operations in milliseconds.
         /// </summary>
         public int ReadTimeout
         {
@@ -268,7 +275,7 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
-        /// The timeout for any network write operations.
+        /// The timeout for any network write operations in milliseconds.
         /// </summary>
         public int WriteTimeout
         {
@@ -277,7 +284,7 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
-        /// The DICOM ARTIM timeout.
+        /// The DICOM ARTIM timeout in milliseconds.
         /// </summary>
         public int ArtimTimeout
         {

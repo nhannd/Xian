@@ -227,6 +227,26 @@ namespace ClearCanvas.Dicom
             StreamLength = (uint)stringValue.Length;
         }
 
+        public override void AppendString(string stringValue)
+        {
+            int newArrayLength = 1;
+            int oldArrayLength = 0;
+
+            if (_values != null)
+            {
+                newArrayLength = _values.Length + 1;
+                oldArrayLength = _values.Length;
+            }
+
+            string[] newArray = new string[newArrayLength];
+            if (oldArrayLength > 0)
+                _values.CopyTo(newArray, 0);
+            newArray[newArrayLength - 1] = (string)stringValue;
+            _values = newArray;
+
+            StreamLength = (uint)this.ToString().Length;
+        }
+
         public abstract override DicomAttribute Copy();
         internal abstract override DicomAttribute Copy(bool copyBinary);
 

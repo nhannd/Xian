@@ -68,13 +68,14 @@ namespace ClearCanvas.Dicom.Network
         #region Private Members
         private int CurrentPduSize()
         {
-            return 6 + (int)_pdu.GetLengthOfPDVs();
+            return (int)_pdu.GetLengthOfPDVs();
         }
 
         private bool CreatePDV()
         {
-            int len = Math.Min(GetBufferLength(), _max - CurrentPduSize() - 6);
+            int len = Math.Min(GetBufferLength(), _max - (CurrentPduSize() + 6));
 
+            //DicomLogger.LogInfo("Created PDV of length: {0}",len);
             if (_bytes == null || _bytes.Length != len || _pdu.PDVs.Count > 0)
             {
                 _bytes = new byte[len];
@@ -100,6 +101,7 @@ namespace ClearCanvas.Dicom.Network
                     _pdu.PDVs[_pdu.PDVs.Count - 1].IsLastFragment = true;
                 }
                 RawPDU raw = _pdu.Write();
+                //DicomLogger.LogInfo("PDU Length {0}", (uint)raw.Length);
                 raw.WritePDU(_network);
                 Stats.Tick((int)_pdu.GetLengthOfPDVs() - (6 * _pdu.PDVs.Count), _total);
                 if (OnTick != null)

@@ -136,6 +136,11 @@ namespace ClearCanvas.Dicom
             throw new DicomException(SR.InvalidType);
         }
 
+        public virtual void AppendString(string stringValue)
+        {
+            throw new DicomException(SR.InvalidType);
+        }
+
         /// <summary>
         /// Retrieves a <see cref="DicomUid"/> instance for a value.
         /// </summary>
