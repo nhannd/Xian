@@ -157,7 +157,10 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
         {
             ICollection<string> badGroups = new string[] {"0000", "0001", "0003"};
 
-            return !(badGroups.Contains(this.Group) || this.TagName.StartsWith("Illegal") || this.Element == "0000");
+            // if the group number is odd, then it's a private tag and we 
+            // cannot handle private tags yet at this point, so we fail out
+            // the validation
+            return !(badGroups.Contains(this.Group) || this.TagName.StartsWith("Illegal") || this.Element == "0000" || (this.Group % 2 > 0));
         }
     }
 }
