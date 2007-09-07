@@ -48,7 +48,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         private OrderPriority _orderPriority;
 
         // Order data
-        private DateTime? _earliestScheduledTime;
+        private DateTime? _scheduledStartTime;
 
         public WorklistItem(PatientProfile profile)
             : base(new WorklistItemKey(profile.GetRef(), null))
@@ -86,7 +86,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             _orderPriority = order.Priority;
             _patientClass = order.Visit.PatientClass;
 
-            _earliestScheduledTime = order.EarliestScheduledDateTime;
+            _scheduledStartTime = order.ScheduledStartTime;
         }
 
         #region Public Properties
@@ -126,9 +126,9 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             get { return _sex; }
         }
 
-        public DateTime? EarliestScheduledTime
+        public DateTime? ScheduledStartTime
         {
-            get { return _earliestScheduledTime; }
+            get { return _scheduledStartTime; }
         }
 
         public OrderPriority OrderPriority

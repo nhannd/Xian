@@ -13,18 +13,48 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 {
     public abstract class ModalityOperation
     {
-        public abstract void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow);
+        public abstract void Execute(ModalityProcedureStep mps, IWorkflow workflow);
         public abstract bool CanExecute(ModalityProcedureStep mps);
+
+        protected void UpdateCheckInStep(RequestedProcedure rp, bool procedureAborted, IWorkflow workflow)
+        {
+            bool allMpsComplete = rp.ModalityProcedureSteps.TrueForAll(
+                delegate(ModalityProcedureStep mps) { return mps.State == ActivityStatus.CM; });
+
+            bool allMpsTerminated = rp.ModalityProcedureSteps.TrueForAll(
+                delegate(ModalityProcedureStep mps) { return mps.IsTerminated; });
+
+
+            if (allMpsComplete || (allMpsTerminated && !procedureAborted))
+            {
+                // complete the check-in
+                rp.CheckInProcedureStep.Complete();
+
+                // schedule an interpretation
+                // Note: in reality, we want to create the Interpretation step earlier (perhaps when an MPS starts)
+                // so the radiologist can start interpreting as soon as the technologist finishes some part of the scan
+                workflow.AddActivity(new InterpretationStep(rp));
+            }
+            else if (allMpsTerminated && procedureAborted)
+            {
+                // discontinue check-in, since procedure was aborted
+                rp.CheckInProcedureStep.Discontinue();
+            }
+        }
     }
 
     public class StartModalityProcedureStepOperation : ModalityOperation
     {
-        public override void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
-        {
-            mps.Start(currentUserStaff);
+        private Staff _technologist;
 
-            if (mps.RequestedProcedure.Status == ActivityStatus.SC)
-                mps.RequestedProcedure.Start(currentUserStaff);
+        public StartModalityProcedureStepOperation(Staff technologist)
+        {
+            _technologist = technologist;
+        }
+
+        public override void Execute(ModalityProcedureStep mps, IWorkflow workflow)
+        {
+            mps.Start(_technologist);
         }
 
         public override bool CanExecute(ModalityProcedureStep mps)
@@ -35,25 +65,18 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
     public class CompleteModalityProcedureStepOperation : ModalityOperation
     {
-        public override void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
+        private bool _procedureAborted;
+
+        public CompleteModalityProcedureStepOperation(bool procedureAborted)
         {
-            if (mps.State == ActivityStatus.IP)
-            {
-                mps.Complete();
-            }
-            else if (mps.State == ActivityStatus.SC)
-            {
-                mps.Complete(currentUserStaff);
-            }
+            _procedureAborted = procedureAborted;
+        }
 
-            if (mps.RequestedProcedure.IsAllMpsCompletedOrDiscontinued)
-            {
-                mps.RequestedProcedure.Complete(currentUserStaff);
-
-                // Note: this is a simplify model.  In reality, we want to create the Interpretation step earlier (perhaps when an MPS starts)
-                // so the radiologist can starts interpreting as soon as the technologist finish some part of the scan
-                workflow.AddActivity(new InterpretationStep(mps.RequestedProcedure));
-            }
+        public override void Execute(ModalityProcedureStep mps, IWorkflow workflow)
+        {
+            // complete the modality step
+            mps.Complete();
+            UpdateCheckInStep(mps.RequestedProcedure, _procedureAborted, workflow);
         }
 
         public override bool CanExecute(ModalityProcedureStep mps)
@@ -64,49 +87,22 @@ namespace ClearCanvas.Healthcare.Workflow.Modality
 
     public class CancelModalityProcedureStepOperation : ModalityOperation
     {
-        public override void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
+        private bool _procedureAborted;
+
+        public CancelModalityProcedureStepOperation(bool procedureAborted)
+        {
+            _procedureAborted = procedureAborted;
+        }
+
+        public override void Execute(ModalityProcedureStep mps, IWorkflow workflow)
         {
             mps.Discontinue();
-
-            if (mps.RequestedProcedure.IsAllMpsDiscontinued)
-            {
-                mps.RequestedProcedure.Discontinue();
-            }
-            else if (mps.RequestedProcedure.IsAllMpsCompletedOrDiscontinued)
-            {
-                mps.RequestedProcedure.Complete(currentUserStaff);
-            }
+            UpdateCheckInStep(mps.RequestedProcedure, _procedureAborted, workflow);
         }
 
         public override bool CanExecute(ModalityProcedureStep mps)
         {
-            return mps.State == ActivityStatus.SC || mps.State == ActivityStatus.IP || mps.State == ActivityStatus.SU;
-        }
-    }
-
-    public class SuspendModalityProcedureStepOperation : ModalityOperation
-    {
-        public override void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
-        {
-            mps.Suspend();
-        }
-
-        public override bool CanExecute(ModalityProcedureStep mps)
-        {
-            return mps.State == ActivityStatus.IP;
-        }
-    }
-
-    public class ResumeModalityProcedureStepOperation : ModalityOperation
-    {
-        public override void Execute(ModalityProcedureStep mps, Staff currentUserStaff, IWorkflow workflow)
-        {
-            mps.Resume();
-        }
-
-        public override bool CanExecute(ModalityProcedureStep mps)
-        {
-            return mps.State == ActivityStatus.SU;
+            return !mps.IsTerminated;
         }
     }
 }

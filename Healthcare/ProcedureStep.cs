@@ -13,25 +13,36 @@ namespace ClearCanvas.Healthcare
     {
         private RequestedProcedure _requestedProcedure;
 
+        /// <summary>
+        /// No-args constructor required by NHibernate.
+        /// </summary>
         public ProcedureStep()
         {
         }
 
+        /// <summary>
+        /// Constructor that assigns this step to a parent procedure.
+        /// </summary>
+        /// <param name="procedure"></param>
         public ProcedureStep(RequestedProcedure procedure)
         {
             _requestedProcedure = procedure;
+            procedure.ProcedureSteps.Add(this);
         }
 
+        /// <summary>
+        /// Gets a user-friendly descriptive name for this procedure step.
+        /// </summary>
         public abstract string Name { get; }
 
 
         /// <summary>
-        /// Gets or sets the associated requested procedure
+        /// Gets the associated requested procedure
         /// </summary>
         public virtual RequestedProcedure RequestedProcedure
         {
             get { return _requestedProcedure; }
-            set { _requestedProcedure = value; }
+            internal set { _requestedProcedure = value; }
         }
 
         /// <summary>
@@ -41,13 +52,7 @@ namespace ClearCanvas.Healthcare
         /// <param name="performer"></param>
         public virtual void Assign(Staff performer)
         {
-            if (this.State != ActivityStatus.SC)
-                throw new WorkflowException("Only procedure steps in the scheduled status can be assigned");
-
-            if (this.Scheduling == null)
-                this.Scheduling = new ActivityScheduling();
-            
-            this.Scheduling.Performer = new ProcedureStepPerformer(performer);
+            Assign(new ProcedureStepPerformer(performer));
         }
 
         /// <summary>
@@ -91,7 +96,30 @@ namespace ClearCanvas.Healthcare
         public virtual void Complete(Staff performer)
         {
             Platform.CheckForNullReference(performer, "performer");
+
             Complete(new ProcedureStepPerformer(performer));
+        }
+
+        /// <summary>
+        /// Called when the scheduling information for this procedure step has changed.
+        /// </summary>
+        protected override void OnSchedulingChanged()
+        {
+            _requestedProcedure.UpdateScheduling();
+
+            base.OnSchedulingChanged();
+        }
+
+        /// <summary>
+        /// Called after this procedure step undergoes a state transition.
+        /// </summary>
+        /// <param name="previousState"></param>
+        /// <param name="newState"></param>
+        protected override void OnStateChanged(ActivityStatus previousState, ActivityStatus newState)
+        {
+            _requestedProcedure.UpdateStatus();
+
+            base.OnStateChanged(previousState, newState);
         }
     }
 }

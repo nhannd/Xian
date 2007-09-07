@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;UNIT_TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -31,6 +31,10 @@
     <Reference Include="Iesi.Collections, Version=1.0.0.1, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\ReferencedAssemblies\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\ReferencedAssemblies\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.configuration" />
@@ -90,6 +94,7 @@
     <Compile Include="Report.cs" />
     <Compile Include="ReportPart.cs" />
     <Compile Include="ReportingToBeReportedWorklist.cs" />
+    <Compile Include="RequestedProcedureStatus.cs" />
     <Compile Include="RequestedProcedureTypeGroup.cs" />
     <Compile Include="RequestedProcedureTypeGroupCategory.cs" />
     <Compile Include="StaffType.cs" />
@@ -99,6 +104,14 @@
     <Compile Include="TechnologistInProgressWorklist.cs" />
     <Compile Include="TechnologistScheduledWorklist.cs" />
     <Compile Include="TechnologistSuspendedWorklist.cs" />
+    <Compile Include="Tests\TestDiagnosticServiceFactory.cs" />
+    <Compile Include="Tests\TestVisitFactory.cs" />
+    <Compile Include="Tests\TestPatientFactory.cs" />
+    <Compile Include="Tests\TestExternalPractitionerFactory.cs" />
+    <Compile Include="Tests\TestFacilityFactory.cs" />
+    <Compile Include="Tests\TestOrderFactory.cs" />
+    <Compile Include="Tests\ScheduledWorkflowTests.cs" />
+    <Compile Include="Tests\TestStaffFactory.cs" />
     <Compile Include="Workflow\Modality\WorklistItem.cs" />
     <Compile Include="Workflow\Modality\Worklists.cs" />
     <Compile Include="Brokers\*.gen.cs" />

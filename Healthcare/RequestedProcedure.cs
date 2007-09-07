@@ -20,75 +20,20 @@ namespace ClearCanvas.Healthcare {
         public RequestedProcedure(Order order, RequestedProcedureType type, string index)
         {
             _order = order;
+            _order.RequestedProcedures.Add(this);
+
             _type = type;
             _index = index;
 
             _procedureSteps = new HybridSet();
         }
 	
-		/// <summary>
-		/// This method is called from the constructor.  Use this method to implement any custom
-		/// object initialization.
-		/// </summary>
-		private void CustomInitialize()
-		{
-		}
-
-        #region Public Operations
-
-        public void Start(Staff currentUserStaff)
-        {
-            CheckInProcedureStep cps = this.CheckInStep;
-
-            // The CPS should be created when each RP of an order is created, but just in case it's not
-            if (cps == null)
-            {
-                cps = new CheckInProcedureStep(this);
-            }
-
-            cps.Start(currentUserStaff);
-
-            if (this.Order.Status == OrderStatus.SC)
-                this.Order.Status = OrderStatus.IP;
-        }
-
-        public void Complete(Staff currentUserStaff)
-        {
-            if (this.CheckInStep.State == ActivityStatus.IP)
-            {
-                this.CheckInStep.Complete();
-            }
-            else if (this.CheckInStep.State == ActivityStatus.SC)
-            {
-                this.CheckInStep.Complete(currentUserStaff);
-            }
-
-            // Order is not complete until all the Reporting Step are complete
-        }
-
-        public void Discontinue()
-        {
-            this.CheckInStep.Discontinue();
-
-            if (this.Order.IsAllRequestedProcedureDiscontinued == true)
-            {
-                this.Order.Status = OrderStatus.DC;
-            }
-        }
-
-    #endregion
-
         #region Public Properties
 
-        public ActivityStatus Status
-        {
-            get 
-            {
-                return this.CheckInStep == null ? ActivityStatus.SC : this.CheckInStep.State;
-            }
-        }
-
-        public CheckInProcedureStep CheckInStep
+        /// <summary>
+        /// Gets the check-in procedure step.
+        /// </summary>
+        public CheckInProcedureStep CheckInProcedureStep
         {
             get
             {
@@ -102,51 +47,89 @@ namespace ClearCanvas.Healthcare {
             }
         }
 
-        public ICollection<ProcedureStep> ModalitySteps
+        /// <summary>
+        /// Gets the modality procedure steps.
+        /// </summary>
+        public List<ModalityProcedureStep> ModalityProcedureSteps
         {
             get
             {
-                return CollectionUtils.Select<ProcedureStep>(this.ProcedureSteps,
-                    delegate(ProcedureStep ps)
-                    {
-                        return ps.Is<ModalityProcedureStep>();
-                    });
+                return CollectionUtils.Map<ProcedureStep, ModalityProcedureStep>(
+                    CollectionUtils.Select<ProcedureStep>(this.ProcedureSteps,
+                        delegate(ProcedureStep ps)
+                        {
+                            return ps.Is<ModalityProcedureStep>();
+                        }), delegate(ProcedureStep ps) { return ps.As<ModalityProcedureStep>(); });
             }
         }
 
-        public bool IsMpsStarted
+        /// <summary>
+        /// Gets a value indicating whether this procedure is in a terminal state.
+        /// </summary>
+        public virtual bool IsTerminated
         {
             get
             {
-                return CollectionUtils.Contains<ProcedureStep>(this.ModalitySteps,
-                    delegate(ProcedureStep ps)
-                    {
-                        return (ps.State == ActivityStatus.IP);
-                    });
+                return _status == RequestedProcedureStatus.CM || _status == RequestedProcedureStatus.CA || _status == RequestedProcedureStatus.DC;
             }
         }
 
-        public bool IsAllMpsDiscontinued
+        #endregion
+
+        #region Public Operations
+
+        /// <summary>
+        /// Adds a procedure step.  Use this method rather than adding directly to the <see cref="ProcedureSteps"/>
+        /// collection.
+        /// </summary>
+        /// <param name="step"></param>
+        public virtual void AddProcedureStep(ProcedureStep step)
         {
-            get
+            if (step.RequestedProcedure != null)
             {
-                return CollectionUtils.TrueForAll<ProcedureStep>(this.ModalitySteps,
-                    delegate(ProcedureStep ps)
-                    {
-                        return (ps.State == ActivityStatus.DC);
-                    });
+                step.RequestedProcedure.ProcedureSteps.Remove(step);
+            }
+
+            step.RequestedProcedure = this;
+            this.ProcedureSteps.Add(step);
+        }
+
+        /// <summary>
+        /// Discontinue this procedure and any procedure steps in the scheduled state.
+        /// </summary>
+        public virtual void Discontinue()
+        {
+            if (_status != RequestedProcedureStatus.IP)
+                throw new WorkflowException("Only procedures in the IP status can be discontinued");
+
+            // update the status prior to cancelling the procedure steps
+            // (otherwise cancelling the steps will cause them to try and update the procedure status)
+            SetStatus(RequestedProcedureStatus.DC);
+            
+            // discontinue any procedure steps in the scheduled status
+            foreach (ProcedureStep ps in _procedureSteps)
+            {
+                if (ps.State == ActivityStatus.SC)
+                    ps.Discontinue();
             }
         }
 
-        public bool IsAllMpsCompletedOrDiscontinued
+        /// <summary>
+        /// Cancel this procedure and all procedure steps.
+        /// </summary>
+        public virtual void Cancel()
         {
-            get
+            if (_status != RequestedProcedureStatus.SC)
+                throw new WorkflowException("Only procedures in the SC status can be cancelled");
+
+            // update the status prior to cancelling the procedure steps
+            // (otherwise cancelling the steps will cause them to try and update the procedure status)
+            SetStatus(RequestedProcedureStatus.CA);
+
+            // discontinue all procedure steps (they should all be in the SC status)
+            foreach (ProcedureStep ps in _procedureSteps)
             {
-                return CollectionUtils.TrueForAll<ProcedureStep>(this.ModalitySteps,
-                    delegate(ProcedureStep ps)
-                    {
-                        return (ps.State == ActivityStatus.DC || ps.State == ActivityStatus.CM);
-                    });
+                ps.Discontinue();
             }
         }
 
@@ -168,5 +151,90 @@ namespace ClearCanvas.Healthcare {
 		
 		#endregion
 
-	}
+        #region Helper methods
+
+        /// <summary>
+        /// Called by a child procedure step to complete this procedure.
+        /// </summary>
+        internal void Complete()
+        {
+            if (_status != RequestedProcedureStatus.IP)
+                throw new WorkflowException("Only procedures in the IP status can be completed");
+
+            SetStatus(RequestedProcedureStatus.CM);
+        }
+
+        /// <summary>
+        /// Called by child procedure steps to tell this procedure to update its scheduling information.
+        /// </summary>
+        internal void UpdateScheduling()
+        {
+            // compute the earliest procedure step scheduled start time
+            _scheduledStartTime = CollectionUtils.Min<DateTime?>(
+                CollectionUtils.Select<DateTime?>(
+                    CollectionUtils.Map<ProcedureStep, DateTime?>(this.ProcedureSteps,
+                        delegate(ProcedureStep step) { return step.Scheduling.StartTime; }),
+                            delegate(DateTime? startTime) { return startTime != null; }), null);
+
+            _order.UpdateScheduling();
+        }
+
+        /// <summary>
+        /// Called by a child procedure step to tell the procedure to update its status.  Only
+        /// certain status updates can be inferred deterministically from child statuses.  If no
+        /// status can be inferred, the status does not change.
+        /// </summary>
+        internal void UpdateStatus()
+        {
+            // check if the procedure should be auto-discontinued
+            if (_status == RequestedProcedureStatus.SC || _status == RequestedProcedureStatus.IP)
+            {
+                // if all steps are discontinued, this procedure is automatically discontinued
+                if (CollectionUtils.TrueForAll<ProcedureStep>(_procedureSteps,
+                    delegate(ProcedureStep step) { return step.State == ActivityStatus.DC; }))
+                {
+                    SetStatus(RequestedProcedureStatus.DC);
+                }
+            }
+
+            // check if the procedure should be auto-started
+            if (_status == RequestedProcedureStatus.SC)
+            {
+                // the condition for auto-starting the procedure is that it has a procedure step that has
+                // moved out of the scheduled status but not into the discontinued status
+                bool anyStepStartedNotDiscontinued = CollectionUtils.Contains<ProcedureStep>(_procedureSteps,
+                    delegate(ProcedureStep step)
+                    {
+                        return !step.IsInitial && step.State != ActivityStatus.DC;
+                    });
+
+                if (anyStepStartedNotDiscontinued)
+                {
+                    SetStatus(RequestedProcedureStatus.IP);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Helper method to change the status and also notify the parent order to change its status
+        /// if necessary.
+        /// </summary>
+        /// <param name="status"></param>
+        private void SetStatus(RequestedProcedureStatus status)
+        {
+            _status = status;
+
+            _order.UpdateStatus();
+        }
+
+        /// <summary>
+        /// This method is called from the constructor.  Use this method to implement any custom
+        /// object initialization.
+        /// </summary>
+        private void CustomInitialize()
+        {
+        }
+
+        #endregion
+    }
 }

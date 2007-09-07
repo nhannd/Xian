@@ -13,5 +13,9 @@
       <key column="RequestedProcedureOID_"/>
       <one-to-many class="ProcedureStep"/>
     </set>
+    
+    <property name="ScheduledStartTime" column="ScheduledStartTime_" type="DateTime" not-null="false"/>
+    <property name="Status" column="Status_" type="ClearCanvas.Healthcare.Hibernate.RequestedProcedureStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>
+
   </class>
 </hibernate-mapping>

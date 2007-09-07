@@ -179,6 +179,7 @@
     <EmbeddedResource Include="Mappings\StaffTypeEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\ReportStatusEnum.hbm.xml" />
     <EmbeddedResource Include="Mappings\ReportPartStatusEnum.hbm.xml" />
+    <EmbeddedResource Include="Mappings\RequestedProcedureStatusEnum.hbm.xml" />
     <Content Include="Mappings\WorklistQueryBase.hrq.xml" />
     <EmbeddedResource Include="Mappings\NoteCategory.hbm.xml" />
     <EmbeddedResource Include="Mappings\NoteSeverityEnum.hbm.xml" />
