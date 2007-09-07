@@ -81,6 +81,8 @@ copy $(ProjectDir)..\..\Dicom\$(OutDir)ClearCanvas.Dicom.dll $(TargetDir)common
 copy $(ProjectDir)..\..\Dicom\DataStore\$(OutDir)ClearCanvas.Dicom.DataStore.dll $(TargetDir)common
 copy $(ProjectDir)..\..\Dicom\DataStore\NHibernateDriver\$(OutDir)ClearCanvas.Dicom.DataStore.NHibernateDriver.dll $(TargetDir)common
 copy $(ProjectDir)..\ServiceModelEx\$(Outdir)ServiceModelEx.dll $(TargetDir)common
+copy $(ProjectDir)..\..\Dicom\DataStore\AuxiliaryFiles\sqlce*.dll $(TargetDir)common
+copy $(ProjectDir)..\..\Dicom\DataStore\AuxiliaryFiles\System.Data.SqlServerCe.dll $(TargetDir)common
 
 rem copy referenced assemblies
 copy $(ProjectDir)..\..\ReferencedAssemblies\Iesi.Collections.dll $(TargetDir)common
