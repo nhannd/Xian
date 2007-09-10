@@ -38,12 +38,16 @@ namespace ClearCanvas.Common.Scripting
         {
             try
             {
+                // add a variable for the output stream to the context
+                context["__out__"] = output;
+
+                // create executable script if not created
                 if (_script == null)
                 {
-                    _script = ScriptEngineFactory.CreateEngine("jscript").CreateScript(_inversion);
+                    string[] variables = CollectionUtils.Map<string, string>(context.Keys, delegate(string s) { return s; }).ToArray();
+                    _script = ScriptEngineFactory.CreateEngine("jscript").CreateScript(_inversion, variables);
                 }
 
-                context["__out__"] = output;
                 _script.Run(context);
 
             }

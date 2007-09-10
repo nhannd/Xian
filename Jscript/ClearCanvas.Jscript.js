@@ -11,12 +11,13 @@ package ClearCanvas.Jscript
     /// This class provides an implementation of ClearCanvas.Common.Scripting.ScriptEngineExtensionPoint
     /// for JScript
     ///
-    /// The context IDictionary is accessible to the script as "this".  For example, if
-    /// the dictionary contains "Name" => "JoJo", then from the script,
+    /// The values in the context IDictionary are accessible to the script as 
+    /// both globals (actually locals in the context of the script function) and as properties of "this".
+    /// For example, if the dictionary contains "name" => "JoJo", then from the script,
     ///
-    ///     this['Name'] => "JoJo"
+    ///     name => "JoJo"          (entries are accessible as "global" variables)
     ///     or
-    ///     this.Name => "JoJo"     (the entries are directly accessible as properties of this)
+    ///     this.name => "JoJo"     (the entries are directly accessible as properties of this)
     ///
     /// The script must use the "return" keyword to return an object to the caller. This is because
     /// the Run(...) method packages the script into its own function before executing it.
@@ -27,13 +28,32 @@ package ClearCanvas.Jscript
     {
 	    function Run(script: String, context: IDictionary)
 	    {
-	        return CreateScript(script).Run(context);
+			var variableNames = new String[context.Count];
+
+			var i = 0;
+ 	        for(var entry in context)
+	        {
+	            variableNames[i++] = entry.Key;
+	        }
+	        var es = CreateScriptPrivate(script, variableNames);
+	        return es.Run(context);
 	    }
 	    
-        function CreateScript(script: String) : IExecutableScript
+        function CreateScript(script: String, variableNames: String[]) : IExecutableScript
         {
- 	        var ctx = new Object();
-	        ctx.__scriptFunction__ = new Function(script);
+			return CreateScriptPrivate(script, variableNames);
+        }
+        
+        private function CreateScriptPrivate(script, variableNames) : ExecutableScript
+        {
+			var header = "";
+			
+			for(var i=0; i < variableNames.length; i++)
+			{
+				header += "var " + variableNames[i] + " = this." + variableNames[i] + ";";
+			}
+ 	        var ctx = {};
+	        ctx.__scriptFunction__ = new Function(header + script);
 	        return new ExecutableScript(ctx);
         }
     }

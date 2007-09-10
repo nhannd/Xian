@@ -12,7 +12,6 @@ namespace ClearCanvas.Common.Specifications
         [ThreadStatic]
         private static IScriptEngine _scriptEngine;
         private static readonly string AUTOMATIC_VARIABLE_TOKEN = "$";
-        private static readonly string AUTOMATIC_VARIABLE_IMPLEMENTATION = "__root__";
 
 
         private string _text;
@@ -45,7 +44,7 @@ namespace ClearCanvas.Common.Specifications
 
                 // evaluate the test expression
                 Dictionary<string, object> context = new Dictionary<string, object>();
-                context.Add(AUTOMATIC_VARIABLE_IMPLEMENTATION, arg);
+                context.Add(AUTOMATIC_VARIABLE_TOKEN, arg);
                 return _script.Run(context);
             }
             catch (Exception e)
@@ -68,11 +67,7 @@ namespace ClearCanvas.Common.Specifications
 
         private static IExecutableScript CreateScript(string expression)
         {
-            StringBuilder script = new StringBuilder();
-            script.Append("return ");
-            script.Append(expression.Replace(AUTOMATIC_VARIABLE_TOKEN, string.Format("this.{0}", AUTOMATIC_VARIABLE_IMPLEMENTATION)));
-
-            return ScriptEngine.CreateScript(script.ToString());
+            return ScriptEngine.CreateScript("return " + expression, new string[] { AUTOMATIC_VARIABLE_TOKEN });
         }
 
         private static IScriptEngine ScriptEngine
