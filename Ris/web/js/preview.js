@@ -179,6 +179,7 @@ function groupDataToOrders(listData)
 
         var listRequestedProcedureName = thisOrder.values.map(function(item) { return item.RequestedProcedureName; });
         
+        thisOrder.AccessionNumber = firstData.AccessionNumber;
         thisOrder.CombineRequestedProcedureName = String.combine(listRequestedProcedureName, "/");
         thisOrder.EarliestScheduledMPSDateTime = firstData.EarliestScheduledMPSDateTime;
         thisOrder.OrderStatus = firstData.OrderStatus;

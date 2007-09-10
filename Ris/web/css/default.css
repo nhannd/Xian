@@ -49,6 +49,9 @@ tr.row0  {
 tr.row1  {
 	background-color: #FFFFFF;
 }
+tr.highlight  {
+	background-color: #cc00cc;
+}
 
 div.alert ul{
    border: 0;

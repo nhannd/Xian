@@ -102,7 +102,16 @@
                         else
                         {
                             var activeOrdersTable = createOrdersTable($("activeOrdersTable"));
-	                        activeOrdersTable.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+                            
+                            // add a renderRow handler to highlight the correct row
+                            var currentAccession = Ris.getWorklistItem().AccessionNumber;
+                            
+                            activeOrdersTable.renderRow = function(sender, args)
+                            {
+                                if(args.item.AccessionNumber == currentAccession)
+                                    args.htmlRow.className = "highlight";
+                            };
+                            
                             activeOrdersTable.bindItems(activeOrders);
     	                }
     	                

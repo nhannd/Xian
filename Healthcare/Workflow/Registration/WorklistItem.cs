@@ -46,6 +46,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         private Sex _sex;
         private PatientClassEnum _patientClass;
         private OrderPriority _orderPriority;
+        private string _accessionNumber;
 
         // Order data
         private DateTime? _scheduledStartTime;
@@ -85,6 +86,7 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
             _sex = profile.Sex;
             _orderPriority = order.Priority;
             _patientClass = order.Visit.PatientClass;
+            _accessionNumber = order.AccessionNumber;
 
             _scheduledStartTime = order.ScheduledStartTime;
         }
@@ -134,6 +136,11 @@ namespace ClearCanvas.Healthcare.Workflow.Registration
         public OrderPriority OrderPriority
         {
             get { return _orderPriority; }
+        }
+
+        public string AccessionNumber
+        {
+            get { return _accessionNumber; }
         }
 
         public PatientClassEnum PatientClass
