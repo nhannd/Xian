@@ -185,8 +185,9 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             foreach (TreeNode node in nodeCollection)
             {
-                //  Bug #
-                //  See BindingTreeNode.UpdateDisplay():  the Nodes property may contain a "dummy" TreeNode, so ensure each iterated TreeNode is actually a BindingTreeNode
+                //  Bug #871
+                //  See BindingTreeNode.UpdateDisplay():  
+                //  the Nodes property may contain a "dummy" TreeNode, so ensure each iterated TreeNode is actually a BindingTreeNode
                 BindingTreeNode bindingTreeNode = node as BindingTreeNode;
 
                 if (bindingTreeNode != null && criteria(bindingTreeNode))
