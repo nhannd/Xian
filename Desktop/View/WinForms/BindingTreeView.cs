@@ -183,11 +183,15 @@ namespace ClearCanvas.Desktop.View.WinForms
         /// <returns></returns>
         private BindingTreeNode FindNodeRecursive(TreeNodeCollection nodeCollection, Predicate<BindingTreeNode> criteria)
         {
-            foreach (BindingTreeNode node in nodeCollection)
+            foreach (TreeNode node in nodeCollection)
             {
-                if (criteria(node))
+                //  Bug #
+                //  See BindingTreeNode.UpdateDisplay():  the Nodes property may contain a "dummy" TreeNode, so ensure each iterated TreeNode is actually a BindingTreeNode
+                BindingTreeNode bindingTreeNode = node as BindingTreeNode;
+
+                if (bindingTreeNode != null && criteria(bindingTreeNode))
                 {
-                    return node;
+                    return bindingTreeNode;
                 }
                 else
                 {
