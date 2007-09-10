@@ -55,18 +55,15 @@ namespace ClearCanvas.Ris.Client.Adt
             BiographyDemographicComponent demographicComponent = new BiographyDemographicComponent(_profileRef, _patientProfile);
 
             // Create tab and tab groups
-            TabComponentContainer tabContainer1 = new TabComponentContainer();
-            tabContainer1.Pages.Add(new TabPage(SR.TitleOrders, orderHistoryComponent));
-
-            TabComponentContainer tabContainer2 = new TabComponentContainer();
-            tabContainer2.Pages.Add(new TabPage(SR.TitleDemographic, demographicComponent));
-            tabContainer2.Pages.Add(new TabPage(SR.TitleDocuments, documentComponent));
-            tabContainer2.Pages.Add(new TabPage(SR.TitleNotes, noteComponent));
-            tabContainer2.Pages.Add(new TabPage(SR.TitlePatientFeedbacks, feedbackComponent));
+            TabComponentContainer tabContainer = new TabComponentContainer();
+            tabContainer.Pages.Add(new TabPage(SR.TitleOrders, orderHistoryComponent));
+            tabContainer.Pages.Add(new TabPage(SR.TitleDemographic, demographicComponent));
+            tabContainer.Pages.Add(new TabPage(SR.TitleDocuments, documentComponent));
+            tabContainer.Pages.Add(new TabPage(SR.TitleNotes, noteComponent));
+            tabContainer.Pages.Add(new TabPage(SR.TitlePatientFeedbacks, feedbackComponent));
 
             TabGroupComponentContainer tabGroupContainer = new TabGroupComponentContainer(LayoutDirection.Horizontal);
-            tabGroupContainer.AddTabGroup(new TabGroup(tabContainer1, 0.5f));
-            tabGroupContainer.AddTabGroup(new TabGroup(tabContainer2, 0.5f));
+            tabGroupContainer.AddTabGroup(new TabGroup(tabContainer, 1.0f));
 
             // Construct the Patient Biography page
             return new SplitComponentContainer(
