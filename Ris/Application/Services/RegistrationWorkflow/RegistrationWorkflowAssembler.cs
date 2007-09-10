@@ -140,7 +140,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 EnumUtils.GetEnumValueInfo(domainItem.Sex, context),
                 domainItem.ScheduledStartTime,
                 EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
-                domainItem.PatientClass.Value);
+                EnumUtils.GetDisplayValue(domainItem.PatientClass));
         }
 
         private string GetRequestedProcedureStatus(Order order, IPersistenceContext context)
