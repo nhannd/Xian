@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -14,19 +12,18 @@ namespace ClearCanvas.Ris.Client.Adt
         public RegistrationWorklistTable()
         {
             TableColumn<RegistrationWorklistItem, IconSet> priorityColumn = new TableColumn<RegistrationWorklistItem, IconSet>(
-                SR.ColumnPriority, delegate(RegistrationWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority); }, 0.5f);
+                SR.ColumnPriority, delegate(RegistrationWorklistItem item) { return GetOrderPriorityIcon(item.OrderPriority.Code); }, 0.5f);
 
-            priorityColumn.Comparison = new Comparison<RegistrationWorklistItem>(
-                delegate(RegistrationWorklistItem item1, RegistrationWorklistItem item2)
-                {
-                    return GetOrderPriorityIndex(item1.OrderPriority) - GetOrderPriorityIndex(item2.OrderPriority);
-                });
+            priorityColumn.Comparison = delegate(RegistrationWorklistItem item1, RegistrationWorklistItem item2)
+                                            {
+                                                return GetOrderPriorityIndex(item1.OrderPriority.Code) - GetOrderPriorityIndex(item2.OrderPriority.Code);
+                                            };
 
             priorityColumn.ResourceResolver = new ResourceResolver(this.GetType().Assembly);
 
             this.Columns.Add(priorityColumn);
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnPatientClass,
-                delegate(RegistrationWorklistItem item) { return GetPatientClassAbbreviation(item.PatientClass); }, 0.5f));
+                delegate(RegistrationWorklistItem item) { return item.PatientClass; }, 0.5f));
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnSite,
                 delegate(RegistrationWorklistItem item) { return item.Mrn.AssigningAuthority; }, 0.5f));
             this.Columns.Add(new TableColumn<RegistrationWorklistItem, string>(SR.ColumnMRN,
@@ -49,43 +46,32 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Sort(new TableSortParams(this.Columns[sortColumnIndex], true));
         }
 
-        private string GetPatientClassAbbreviation(string patientClass)
+        private static int GetOrderPriorityIndex(string orderPriorityCode)
         {
-            switch (patientClass)
-            {
-                case "Emergency": return "EP";
-                case "Inpatient": return "IP";
-                case "Outpatient": return "OP";
-                case "Preadmit":
-                case "Recurring":
-                case "Obstetrics":
-                case "Not applicable":
-                case "Unknown":
-                default:
-                    return "SP";
-            }
-        }
-
-        private int GetOrderPriorityIndex(string orderPriority)
-        {
-            if (String.IsNullOrEmpty(orderPriority))
+            if (String.IsNullOrEmpty(orderPriorityCode))
                 return 0;
 
-            switch (orderPriority)
+            switch (orderPriorityCode)
             {
-                case "Stat": return 2;
-                case "Urgent": return 1;
-                default: return 0;
+                case "S": // Stats
+                    return 2;
+                case "A": // Urgent
+                    return 1;
+                default: // Routine
+                    return 0;
             }
         }
 
-        private IconSet GetOrderPriorityIcon(string orderPriority)
+        private static IconSet GetOrderPriorityIcon(string orderPriorityCode)
         {
-            switch (orderPriority)
+            switch (orderPriorityCode)
             {
-                case "Stat": return new IconSet("DoubleExclamation.png");
-                case "Urgent": return new IconSet("SingleExclamation.png");
-                default: return null;
+                case "S": // Stats
+                    return new IconSet("DoubleExclamation.png");
+                case "A": // Urgent
+                    return new IconSet("SingleExclamation.png");
+                default: 
+                    return null;
             }
         }
    }

@@ -1,19 +1,12 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Registration;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Ris.Application.Services.Admin;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Common;
-using ClearCanvas.Workflow;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -146,8 +139,8 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 domainItem.DateOfBirth,
                 EnumUtils.GetEnumValueInfo(domainItem.Sex, context),
                 domainItem.ScheduledStartTime,
-                EnumUtils.GetValue(domainItem.OrderPriority, context),
-                EnumUtils.GetValue(domainItem.OrderPriority, context));
+                EnumUtils.GetEnumValueInfo(domainItem.OrderPriority, context),
+                domainItem.PatientClass.Value);
         }
 
         private string GetRequestedProcedureStatus(Order order, IPersistenceContext context)

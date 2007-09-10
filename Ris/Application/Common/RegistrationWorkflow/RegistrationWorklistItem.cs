@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -18,7 +16,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
             DateTime? dateOfBirth,
             EnumValueInfo sex,
             DateTime? earliestScheduledTime,
-            string orderPriority,
+            EnumValueInfo orderPriority,
             string patientClass)
         {
             this.PatientProfileRef = profileRef;
@@ -58,7 +56,7 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         public DateTime? EarliestScheduledTime;
 
         [DataMember]
-        public string OrderPriority;
+        public EnumValueInfo OrderPriority;
 
         [DataMember]
         public string PatientClass;
