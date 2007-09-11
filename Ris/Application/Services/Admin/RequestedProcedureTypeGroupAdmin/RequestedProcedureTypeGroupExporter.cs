@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.RequestedProcedureTypeGroup
         {
             writer.WriteStartElement(tagRequestedProcedureTypeGroup);
             writer.WriteAttributeString(attrName, group.Name);
-            writer.WriteAttributeString(attrCategory, EnumUtils.GetValue<RequestedProcedureTypeGroupCategory>(group.Category, context));
+            writer.WriteAttributeString(attrCategory, group.Category.ToString());
             writer.WriteAttributeString(attrDescription, group.Description);
 
             CollectionUtils.ForEach<RequestedProcedureType>(group.RequestedProcedureTypes,

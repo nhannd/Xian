@@ -116,7 +116,20 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                 if (reader.IsStartElement(tagRequestedProcedureTypeGroup))
                 {
                     RequestedProcedureTypeGroupSearchCriteria criteria = new RequestedProcedureTypeGroupSearchCriteria();
-                    criteria.Name.EqualTo(reader.GetAttribute(attrName));
+                    criteria.Name.EqualTo(reader.GetAttribute(attrGroupName));
+                    try
+                    {
+                        RequestedProcedureTypeGroupCategory category =
+                            (RequestedProcedureTypeGroupCategory)
+                            Enum.Parse(typeof (RequestedProcedureTypeGroupCategory),
+                                       reader.GetAttribute(attrGroupCategory));
+
+                        criteria.Category.EqualTo(category);
+                    }
+                    catch(Exception)
+                    {
+                        // Ignore category
+                    }
 
                     IRequestedProcedureTypeGroupBroker broker = _context.GetBroker<IRequestedProcedureTypeGroupBroker>();
                     RequestedProcedureTypeGroup group = CollectionUtils.FirstElement<RequestedProcedureTypeGroup>(broker.Find(criteria));

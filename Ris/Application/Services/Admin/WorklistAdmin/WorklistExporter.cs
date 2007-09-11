@@ -103,7 +103,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         {
             writer.WriteStartElement(tagRequestedProcedureTypeGroup);
             writer.WriteAttributeString(attrRptName, group.Name);
-            writer.WriteAttributeString(attrRptCategory, EnumUtils.GetValue<RequestedProcedureTypeGroupCategory>(group.Category, _context));
+            writer.WriteAttributeString(attrRptCategory, group.Category.ToString());
             writer.WriteEndElement();
         }
 

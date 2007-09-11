@@ -17,13 +17,13 @@ namespace ClearCanvas.Healthcare {
         /// <summary> 
         /// Relevence
         /// </summary>
-        [EnumValue("Relevence")]
-        RELEVENCE,
+        [EnumValue("Relevance")]
+        RELEVANCE,
 
         /// <summary> 
         /// Scheduled
         /// </summary>
-        [EnumValue("Scheduled")]
-        SCHEDULED
+        [EnumValue("Modality")]
+        MODALITY
     }
 }
