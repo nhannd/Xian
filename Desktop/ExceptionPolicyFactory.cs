@@ -82,11 +82,7 @@ namespace ClearCanvas.Desktop
         {
             IExceptionPolicy policy;
 
-            try
-            {
-                policy = Policies[exceptionType];
-            }
-            catch (KeyNotFoundException)
+            if(Policies.TryGetValue(exceptionType, out policy) == false)
             {
                 policy = Policies[_defaultExceptionPolicyKey];
             }

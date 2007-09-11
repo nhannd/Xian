@@ -63,14 +63,14 @@ namespace ClearCanvas.Ris.Client
 
         public Type GetWorklistType(string type)
         {
-            try
+            Type worklistType;
+
+            if(_worklistTypeMapping.TryGetValue(type, out worklistType) == false)
             {
-                return _worklistTypeMapping[type];
+                worklistType = null;
             }
-            catch (KeyNotFoundException)
-            {
-                return null;
-            }
+
+            return worklistType;
         }
     }
 }

@@ -116,12 +116,13 @@ namespace ClearCanvas.Ris.Client
 
         protected void AddFolder(WorkflowFolder<TItem> folder)
         {
-            try
+            IContainerFolder container;
+            // Find any containers that exist for this folder type
+            if (_containers.TryGetValue(folder.GetType(), out container))
             {
-                // Find any containers that exist for this folder type
-                _folderExplorer.AddFolder(folder, _containers[folder.GetType()]);
+                _folderExplorer.AddFolder(folder, container);
             }
-            catch (KeyNotFoundException)
+            else
             {
                 // No container, so add to root
                 _folderExplorer.AddFolder(folder);
