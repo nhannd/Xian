@@ -23,11 +23,18 @@ namespace ClearCanvas.Common
         ExtensionInfo[] ListExtensions();
 
         /// <summary>
-        /// Lists the available extensions, that also match the specified <see cref="ExtensionFilter" />.
+        /// Lists the available extensions, that also match the specified <see cref="ExtensionFilter"/>.
         /// </summary>
         /// <returns>An array of <see cref="ExtensionInfo" /> objects describing the available extensions.</returns>
         ExtensionInfo[] ListExtensions(ExtensionFilter filter);
 
+        /// <summary>
+        /// Lists the available extensions that match the specified filter.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        ExtensionInfo[] ListExtensions(Predicate<ExtensionInfo> filter);
+ 
         /// <summary>
         /// Instantiates one extension.
         /// </summary>
@@ -53,6 +60,13 @@ namespace ClearCanvas.Common
         object CreateExtension(ExtensionFilter filter);
 
         /// <summary>
+        /// Instantiates an extension that matches the specified filter.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        object CreateExtension(Predicate<ExtensionInfo> filter);
+        
+        /// <summary>
         /// Instantiates each available extension.
         /// </summary>
         /// <remarks>
@@ -73,5 +87,12 @@ namespace ClearCanvas.Common
         /// <returns>An array of references to the created extensions.  If no extensions were created
         /// the array will be empty.</returns>
         object[] CreateExtensions(ExtensionFilter filter);
+
+        /// <summary>
+        /// Instantiates each available extension that matches the specified filter.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        object[] CreateExtensions(Predicate<ExtensionInfo> filter);
     }
 }

@@ -24,39 +24,10 @@ namespace ClearCanvas.Common
     /// </remarks>
     public abstract class ExtensionPoint<TInterface> : ExtensionPointBase
     {
- /*  This stuff won't compile correctly under MONO.
-            Better to leave it out for now, can re-introduce it when MONO compiler matures
-        public new TInterface CreateExtension()
-        {
-            return (TInterface)base.CreateExtension();
-        }
-
-        public new TInterface CreateExtension(ExtensionFilter filter)
-        {
-            return (TInterface)base.CreateExtension(filter);
-        }
-
-        public new TInterface[] CreateExtensions()
-        {
-            object[] objs = base.CreateExtensions();
-            TInterface[] extensions = new TInterface[objs.Length];
-            Array.Copy(objs, extensions, objs.Length);
-            return extensions;
-        }
-
-        public new TInterface[] CreateExtensions(ExtensionFilter filter)
-        {
-            object[] objs = base.CreateExtensions(filter);
-            TInterface[] extensions = new TInterface[objs.Length];
-            Array.Copy(objs, extensions, objs.Length);
-            return extensions;
-        }
- */
         protected override Type InterfaceType
         {
             get { return typeof(TInterface); }
         }
-
     }
 
     public abstract class ExtensionPointBase : IExtensionPoint
@@ -76,45 +47,98 @@ namespace ClearCanvas.Common
             }
         }
 
+        #region IExtensionPoint methods
 
+        /// <summary>
+        /// Lists meta-data for all extensions of this point.
+        /// </summary>
+        /// <returns></returns>
         public ExtensionInfo[] ListExtensions()
         {
             return ListExtensions(this.GetType(), null).ToArray();
         }
 
+        /// <summary>
+        /// List meta-data for extensions of this point that match the supplied filter.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         public ExtensionInfo[] ListExtensions(ExtensionFilter filter)
         {
             return ListExtensions(this.GetType(), filter).ToArray();
         }
 
+        /// <summary>
+        /// List meta-data for extensions of this point that match the supplied filter.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         public ExtensionInfo[] ListExtensions(Predicate<ExtensionInfo> filter)
         {
             return ListExtensions(new PredicateExtensionFilter(filter));
         }
 
+        /// <summary>
+        /// Instantiates one extension of this point.
+        /// </summary>
+        /// <returns></returns>
         public object CreateExtension()
         {
             return AtLeastOne(CreateExtensionsHelper(this.GetType(), null, true), this.GetType());
         }
 
+        /// <summary>
+        /// Instantiates one extension of this point that matches the specified filter.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         public object CreateExtension(ExtensionFilter filter)
         {
             return AtLeastOne(CreateExtensionsHelper(this.GetType(), filter, true), this.GetType());
         }
 
+        /// <summary>
+        /// Instantiates one extension of this point that matches the specified filter.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         public object CreateExtension(Predicate<ExtensionInfo> filter)
         {
             return CreateExtension(new PredicateExtensionFilter(filter));
         }
 
+        /// <summary>
+        /// Instantiates all extensions of this point.
+        /// </summary>
+        /// <returns></returns>
         public object[] CreateExtensions()
         {
             return CreateExtensionsHelper(this.GetType(), null, false);
         }
+
+        /// <summary>
+        /// Instantiates all extensions of this point that match the supplied filter.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         public object[] CreateExtensions(ExtensionFilter filter)
         {
-            return CreateExtensionsHelper(this.GetType(), null, false);
+            return CreateExtensionsHelper(this.GetType(), filter, false);
         }
+
+        /// <summary>
+        /// Instantiates all extensions of this point that match the supplied filter.
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
+        public object[] CreateExtensions(Predicate<ExtensionInfo> filter)
+        {
+            return CreateExtensionsHelper(this.GetType(), new PredicateExtensionFilter(filter), false);
+        }
+
+        #endregion
+
+        #region Protected methods
 
         protected abstract Type InterfaceType { get; }
 
@@ -195,6 +219,8 @@ namespace ClearCanvas.Common
         {
             return !type.IsAbstract && type.IsClass;
         }
+
+        #endregion
     }
 
 }

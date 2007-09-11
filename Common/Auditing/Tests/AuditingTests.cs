@@ -96,6 +96,11 @@ namespace ClearCanvas.Common.Auditing.Tests
 			throw new Exception("The method or operation is not implemented.");
 		}
 
+        public ExtensionInfo[] ListExtensions(Predicate<ExtensionInfo> filter)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
 		public object CreateExtension()
 		{
 			throw new Exception("The method or operation is not implemented.");
@@ -105,12 +110,20 @@ namespace ClearCanvas.Common.Auditing.Tests
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
+        public object CreateExtension(Predicate<ExtensionInfo> filter)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
 		public object[] CreateExtensions(ExtensionFilter filter)
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}
-		#endregion
+        public object[] CreateExtensions(Predicate<ExtensionInfo> filter)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+        #endregion
 	}
 
 	public class FakeAuditManager : AuditManager
@@ -160,36 +173,49 @@ namespace ClearCanvas.Common.Auditing.Tests
 
 		#region Not Implemented
 
-		public IExtensionPoint[] GetExtensions()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public IExtensionPoint[] GetExtensions()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
-		public ExtensionInfo[] ListExtensions()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public ExtensionInfo[] ListExtensions()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
-		public ExtensionInfo[] ListExtensions(ExtensionFilter filter)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public ExtensionInfo[] ListExtensions(ExtensionFilter filter)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
-		public object CreateExtension()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public ExtensionInfo[] ListExtensions(Predicate<ExtensionInfo> filter)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
-		public object CreateExtension(ExtensionFilter filter)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public object CreateExtension()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
-		public object[] CreateExtensions(ExtensionFilter filter)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
-		#endregion
+        public object CreateExtension(ExtensionFilter filter)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+        public object CreateExtension(Predicate<ExtensionInfo> filter)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        public object[] CreateExtensions(ExtensionFilter filter)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+        public object[] CreateExtensions(Predicate<ExtensionInfo> filter)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+        #endregion
 	}
 	
 	public class MockAuditManager : AuditManager
@@ -224,30 +250,48 @@ namespace ClearCanvas.Common.Auditing.Tests
 
 		#region Not Implemented
 
-		public ExtensionInfo[] ListExtensions()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public IExtensionPoint[] GetExtensions()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
-		public ExtensionInfo[] ListExtensions(ExtensionFilter filter)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public ExtensionInfo[] ListExtensions()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
-		public object CreateExtension()
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public ExtensionInfo[] ListExtensions(ExtensionFilter filter)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
-		public object CreateExtension(ExtensionFilter filter)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public ExtensionInfo[] ListExtensions(Predicate<ExtensionInfo> filter)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
-		public object[] CreateExtensions(ExtensionFilter filter)
-		{
-			throw new Exception("The method or operation is not implemented.");
-		}
+        public object CreateExtension()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        public object CreateExtension(ExtensionFilter filter)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+        public object CreateExtension(Predicate<ExtensionInfo> filter)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        public object[] CreateExtensions(ExtensionFilter filter)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+        public object[] CreateExtensions(Predicate<ExtensionInfo> filter)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
 
 		#endregion
 	}
