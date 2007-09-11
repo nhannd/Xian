@@ -1,13 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-using System.IO;
-using ClearCanvas.Common.Scripting;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
@@ -24,6 +16,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         {
             InitializeComponent();
             _component = component;
+
+#if DEBUG
+            _webBrowser.IsWebBrowserContextMenuEnabled = true;
+#else
+            _webBrowser.IsWebBrowserContextMenuEnabled = false;
+#endif
 
             _component.AllPropertiesChanged += AllPropertiesChangedEventHandler;
             this.Disposed += new EventHandler(DisposedEventHandler);
