@@ -212,6 +212,8 @@
     <Compile Include="Admin\WorklistAdmin\GetWorklistEditFormDataRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\GetWorklistEditFormDataResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\IWorklistAdminService.cs" />
+    <Compile Include="Admin\WorklistAdmin\ListRequestedProcedureTypeGroupsForWorklistCategoryRequest.cs" />
+    <Compile Include="Admin\WorklistAdmin\ListRequestedProcedureTypeGroupsForWorklistCategoryResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\ListWorklistsRequest.cs" />
     <Compile Include="Admin\WorklistAdmin\ListWorklistsResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\LoadWorklistForEditRequest.cs" />

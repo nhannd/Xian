@@ -17,6 +17,14 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
         GetWorklistEditFormDataResponse GetWorklistEditFormData(GetWorklistEditFormDataRequest request);
 
         /// <summary>
+        /// Returns a list of RequestedProcedureTypeGroups appropriate for a specific worklist type
+        /// </summary>
+        /// <param name="request"><see cref="ListRequestedProcedureTypeGroupsForWorklistCategoryRequest"/></param>
+        /// <returns><see cref="ListRequestedProcedureTypeGroupsForWorklistCategoryResponse"/></returns>
+        [OperationContract]
+        ListRequestedProcedureTypeGroupsForWorklistCategoryResponse ListRequestedProcedureTypeGroupsForWorklistCategory(ListRequestedProcedureTypeGroupsForWorklistCategoryRequest request);
+
+        /// <summary>
         /// Returns a list of all persistent worklists
         /// </summary>
         /// <param name="request"><see cref="ListWorklistsRequest"/></param>

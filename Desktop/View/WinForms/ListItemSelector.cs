@@ -59,6 +59,12 @@ namespace ClearCanvas.Desktop.View.WinForms
             }
         }
 
+        public void OnAvailableItemsChanged(object sender, EventArgs args)
+        {
+            if(_availableItemsTable.IsFiltered) _availableItemsTable.Filter();
+            _availableItems.Table = _availableItemsTable;
+        }
+
         #endregion
 
         #region Public Events

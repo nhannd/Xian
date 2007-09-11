@@ -9,9 +9,6 @@ namespace ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin
     public class GetWorklistEditFormDataResponse : DataContractBase
     {
         [DataMember]
-        public List<RequestedProcedureTypeGroupSummary> RequestedProcedureTypeGroups;
-
-        [DataMember]
         public List<UserSummary> Users;
 
         // TODO: Strongly typed

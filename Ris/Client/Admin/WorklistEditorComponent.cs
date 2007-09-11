@@ -7,6 +7,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.AuthenticationAdmin;
 using ClearCanvas.Ris.Application.Common.Admin.WorklistAdmin;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client.Admin
 {
@@ -34,6 +35,7 @@ namespace ClearCanvas.Ris.Client.Admin
 
         private RequestedProcedureTypeGroupSummaryTable _availableRequestedProcedureTypeGroups;
         private RequestedProcedureTypeGroupSummaryTable _selectedRequestedProcedureTypeGroups;
+        private event EventHandler _availableItemsChanged;
 
         private UserTable _availableUsers;
         private UserTable _selectedUsers;
@@ -63,13 +65,13 @@ namespace ClearCanvas.Ris.Client.Admin
             Platform.GetService<IWorklistAdminService>(
                 delegate(IWorklistAdminService service)
                 {
-                    GetWorklistEditFormDataResponse formDataResponse =
-                        service.GetWorklistEditFormData(new GetWorklistEditFormDataRequest());
+                    GetWorklistEditFormDataRequest formDataRequest = new GetWorklistEditFormDataRequest();
+                    GetWorklistEditFormDataResponse formDataResponse = service.GetWorklistEditFormData(formDataRequest);
+
                     _typeChoices = formDataResponse.WorklistTypes;
-                    _availableRequestedProcedureTypeGroups.Items.AddRange(formDataResponse.RequestedProcedureTypeGroups);
                     _availableUsers.Items.AddRange(formDataResponse.Users);
 
-                    if(_isNew)
+                    if (_isNew)
                     {
                         _editedItemDetail = new WorklistAdminDetail();
                         _editedItemDetail.WorklistType = _typeChoices[0];
@@ -80,9 +82,14 @@ namespace ClearCanvas.Ris.Client.Admin
                             service.LoadWorklistForEdit(new LoadWorklistForEditRequest(_editedItemEntityRef));
 
                         _editedItemDetail = response.Detail;
+
                         _selectedRequestedProcedureTypeGroups.Items.AddRange(_editedItemDetail.RequestedProcedureTypeGroups);
                         _selectedUsers.Items.AddRange(_editedItemDetail.Users);
                     }
+
+                    ListRequestedProcedureTypeGroupsForWorklistCategoryRequest groupsRequest = new ListRequestedProcedureTypeGroupsForWorklistCategoryRequest(_editedItemDetail.WorklistType);
+                    ListRequestedProcedureTypeGroupsForWorklistCategoryResponse groupsResponse = service.ListRequestedProcedureTypeGroupsForWorklistCategory(groupsRequest);
+                    _availableRequestedProcedureTypeGroups.Items.AddRange(groupsResponse.RequestedProcedureTypeGroups);
 
                     foreach (RequestedProcedureTypeGroupSummary selectedSummary in _selectedRequestedProcedureTypeGroups.Items)
                     {
@@ -137,8 +144,12 @@ namespace ClearCanvas.Ris.Client.Admin
             get { return _editedItemDetail.WorklistType; }
             set
             {
-                _editedItemDetail.WorklistType = value;
-                this.Modified = true;
+                if (_editedItemDetail.WorklistType != value)
+                {
+                    _editedItemDetail.WorklistType = value;
+                    OnWorklistTypeChanged();
+                    this.Modified = true;
+                }
             }
         }
 
@@ -161,6 +172,12 @@ namespace ClearCanvas.Ris.Client.Admin
         public ITable SelectedRequestedProcedureTypeGroups
         {
             get { return _selectedRequestedProcedureTypeGroups; }
+        }
+
+        public event EventHandler AvailableItemsChanged
+        {
+            add { _availableItemsChanged += value; }
+            remove { _availableItemsChanged -= value; }
         }
 
         public ITable AvailableUsers
@@ -233,6 +250,35 @@ namespace ClearCanvas.Ris.Client.Admin
         public void ItemsAddedOrRemoved()
         {
             this.Modified = true;
+        }
+
+        public void OnWorklistTypeChanged()
+        {
+            try
+            {
+                // Update AvailableRequestedProcedureTypeGroups
+                Platform.GetService<IWorklistAdminService>(
+                    delegate(IWorklistAdminService service)
+                        {
+                            ListRequestedProcedureTypeGroupsForWorklistCategoryRequest request = new ListRequestedProcedureTypeGroupsForWorklistCategoryRequest(_editedItemDetail.WorklistType);
+                            ListRequestedProcedureTypeGroupsForWorklistCategoryResponse response =
+                                service.ListRequestedProcedureTypeGroupsForWorklistCategory(request);
+
+                            _availableRequestedProcedureTypeGroups.Items.Clear();
+                            _availableRequestedProcedureTypeGroups.Items.AddRange(response.RequestedProcedureTypeGroups);
+
+                            foreach(RequestedProcedureTypeGroupSummary selectedItem in _selectedRequestedProcedureTypeGroups.Items)
+                            {
+                                _availableRequestedProcedureTypeGroups.Items.Remove(selectedItem);
+                            }
+
+                            EventsHelper.Fire(_availableItemsChanged, this, EventArgs.Empty);
+                        });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
     }
 }

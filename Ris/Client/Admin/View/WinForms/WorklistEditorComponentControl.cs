@@ -32,6 +32,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             _requestedProcedureTypeGroupsSelector.SelectedItemsTable = _component.SelectedRequestedProcedureTypeGroups;
             _requestedProcedureTypeGroupsSelector.ItemAdded += OnItemsAddedOrRemoved;
             _requestedProcedureTypeGroupsSelector.ItemRemoved += OnItemsAddedOrRemoved;
+            _component.AvailableItemsChanged += _requestedProcedureTypeGroupsSelector.OnAvailableItemsChanged;
 
             _usersSelector.AvailableItemsTable = _component.AvailableUsers;
             _usersSelector.SelectedItemsTable = _component.SelectedUsers;

@@ -1,6 +1,5 @@
 using System.Collections.Generic;
 using System.Security.Permissions;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Authentication;
@@ -29,14 +28,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         {
             GetWorklistEditFormDataResponse response = new GetWorklistEditFormDataResponse();
 
-            RequestedProcedureTypeGroupAssembler assembler = new RequestedProcedureTypeGroupAssembler();
-            response.RequestedProcedureTypeGroups = CollectionUtils.Map<RequestedProcedureTypeGroup, RequestedProcedureTypeGroupSummary, List<RequestedProcedureTypeGroupSummary>>(
-                this.PersistenceContext.GetBroker<IRequestedProcedureTypeGroupBroker>().FindAll(),
-                delegate(RequestedProcedureTypeGroup rptGroup)
-                {
-                    return assembler.GetRequestedProcedureTypeGroupSummary(rptGroup, this.PersistenceContext);
-                });
-
             UserAssembler userAssembler = new UserAssembler();
             response.Users = CollectionUtils.Map<User, UserSummary, List<UserSummary>>(
                 this.PersistenceContext.GetBroker<IUserBroker>().FindAll(),
@@ -45,8 +36,31 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
                     return userAssembler.GetUserSummary(user);
                 });
 
+            // TODO: Need stronger typed representation of worklist type options.  See bug #886
             response.WorklistTypes = new List<string>();
             response.WorklistTypes.AddRange(WorklistFactory.Instance.WorklistTypes);
+
+            return response;
+        }
+
+        [ReadOperation]
+        [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.WorklistAdmin)]
+        public ListRequestedProcedureTypeGroupsForWorklistCategoryResponse ListRequestedProcedureTypeGroupsForWorklistCategory(ListRequestedProcedureTypeGroupsForWorklistCategoryRequest request)
+        {
+            ListRequestedProcedureTypeGroupsForWorklistCategoryResponse response = 
+                new ListRequestedProcedureTypeGroupsForWorklistCategoryResponse();
+
+            RequestedProcedureTypeGroupAssembler assembler = new RequestedProcedureTypeGroupAssembler();
+            RequestedProcedureTypeGroupSearchCriteria criteria = new RequestedProcedureTypeGroupSearchCriteria();
+            criteria.Category.EqualTo(GetGroupCategoryFromWorklistType(request.WorklistType));
+
+            response.RequestedProcedureTypeGroups =
+                CollectionUtils.Map<RequestedProcedureTypeGroup, RequestedProcedureTypeGroupSummary>(
+                    this.PersistenceContext.GetBroker<IRequestedProcedureTypeGroupBroker>().Find(criteria),
+                    delegate(RequestedProcedureTypeGroup group)
+                    {
+                        return assembler.GetRequestedProcedureTypeGroupSummary(group, this.PersistenceContext);
+                    });
 
             return response;
         }
@@ -122,6 +136,19 @@ namespace ClearCanvas.Ris.Application.Services.Admin.WorklistAdmin
         }
 
         #endregion
+
+        private RequestedProcedureTypeGroupCategory GetGroupCategoryFromWorklistType(string type)
+        {
+            // TODO: Hard-coding needs to be removed. See bug #886
+            if(string.Compare(type, "ReportingToBeReportedWorklist") == 0)
+            {
+                return RequestedProcedureTypeGroupCategory.READING;
+            }
+            else
+            {
+                return RequestedProcedureTypeGroupCategory.MODALITY;
+            }
+        }
 
         private bool WorklistExists(string name, string type)
         {
