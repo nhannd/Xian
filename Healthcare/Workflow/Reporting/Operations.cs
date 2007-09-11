@@ -18,6 +18,33 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
             public abstract bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff);
         }
 
+        public class SaveReport : ReportingOperation
+        {
+            public void Execute(ReportingProcedureStep step, string reportContent, IPersistenceContext context)
+            {
+                if (step.ReportPart != null)
+                {
+                    step.ReportPart.Content = reportContent;
+                }
+                else
+                {
+                    Report report = new Report();
+                    report.Procedure = step.RequestedProcedure;
+                    step.ReportPart = report.AddPart(reportContent);
+
+                    context.Lock(report, DirtyState.New);
+                }
+            }
+
+            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+            {
+                if (step.ReportPart == null || String.IsNullOrEmpty(step.ReportPart.Content))
+                    return false;
+
+                return true;
+            }
+        }
+
         public class ClaimInterpretation : ReportingOperation
         {
             public void Execute(InterpretationStep step, Staff currentUserStaff, IWorkflow workflow)

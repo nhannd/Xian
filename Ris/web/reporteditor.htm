@@ -15,7 +15,10 @@
             {
                 var report = { Finding:    Field.getValue($("finding")),
                                Impression: Field.getValue($("impression")) };
-                var reportJsml = JSML.create(report, "Report");
+
+				var reportJsml = "";
+				if (report.Finding || report.Impression)
+					reportJsml = JSML.create(report, "Report");
 
                 Ris.setData("Report", reportJsml);
             }

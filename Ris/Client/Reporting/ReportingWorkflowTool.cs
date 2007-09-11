@@ -132,8 +132,9 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 get
                 {
-                    if (this.Context.GetWorkflowOperationEnablement("StartInterpretation") ||
-                        this.Context.GetWorkflowOperationEnablement("StartVerification"))
+                    if (this.Context.GetWorkflowOperationEnablement("SaveReport") &&
+                        (this.Context.GetWorkflowOperationEnablement("StartInterpretation") ||
+                        this.Context.GetWorkflowOperationEnablement("StartVerification")))
                         return SR.TitleEditReport;
                     else
                         return SR.TitleCreateReport;

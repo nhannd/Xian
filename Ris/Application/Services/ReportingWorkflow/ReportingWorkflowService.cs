@@ -112,7 +112,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             if (String.IsNullOrEmpty(request.ReportContent) == false)
             {
-                SaveReportHelper(interpretation, request.ReportContent);
+                Operations.SaveReport saveReportOp = new Operations.SaveReport();
+                saveReportOp.Execute(interpretation, request.ReportContent, this.PersistenceContext);
             }
 
             Operations.CompleteInterpretationForTranscription op = new Operations.CompleteInterpretationForTranscription();
@@ -133,7 +134,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             if (String.IsNullOrEmpty(request.ReportContent) == false)
             {
-                SaveReportHelper(interpretation, request.ReportContent);
+                Operations.SaveReport saveReportOp = new Operations.SaveReport();
+                saveReportOp.Execute(interpretation, request.ReportContent, this.PersistenceContext);
             }
 
             Operations.CompleteInterpretationForVerification op = new Operations.CompleteInterpretationForVerification();
@@ -154,7 +156,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             if (String.IsNullOrEmpty(request.ReportContent) == false)
             {
-                SaveReportHelper(interpretation, request.ReportContent);
+                Operations.SaveReport saveReportOp = new Operations.SaveReport();
+                saveReportOp.Execute(interpretation, request.ReportContent, this.PersistenceContext);
             }
 
             if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.Content))
@@ -253,30 +256,16 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         }
 
         [UpdateOperation]
+        [OperationEnablement("CanSaveReport")]
         public SaveReportResponse SaveReport(SaveReportRequest request)
         {
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
 
-            SaveReportHelper(step, request.ReportContent);
+            Operations.SaveReport op = new Operations.SaveReport();
+            op.Execute(step, request.ReportContent, this.PersistenceContext);
 
             PersistenceContext.SynchState();
             return new SaveReportResponse(step.GetRef());
-        }
-
-        private void SaveReportHelper(ReportingProcedureStep step, string reportContent)
-        {
-            if (step.ReportPart != null)
-            {
-                step.ReportPart.Content = reportContent;
-            }
-            else
-            {
-                Report report = new Report();
-                report.Procedure = step.RequestedProcedure;
-                step.ReportPart = report.AddPart(reportContent);
-
-                PersistenceContext.Lock(report, DirtyState.New);
-            }
         }
 
         [ReadOperation]
@@ -343,6 +332,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public bool CanCreateAddendum(IWorklistItemKey itemKey)
         {
             return CanExecuteOperation(new Operations.CreateAddendum(), itemKey);
+        }
+
+        public bool CanSaveReport(IWorklistItemKey itemKey)
+        {
+            return CanExecuteOperation(new Operations.SaveReport(), itemKey);
         }
 
         private bool CanExecuteOperation(Operations.ReportingOperation op, IWorklistItemKey itemKey)
