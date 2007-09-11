@@ -11,6 +11,7 @@ using log4net.Config;
 using ClearCanvas.Common.Auditing;
 using System.Collections.Generic;
 using ClearCanvas.Common.Utilities;
+using System.Diagnostics;
 
 // Configure log4net using the .log4net file
 [assembly: log4net.Config.XmlConfigurator(ConfigFile = "Logging.config", Watch = true)]
@@ -91,6 +92,21 @@ namespace ClearCanvas.Common
 		private static AuditManager _auditManager;
         private static ITimeProvider _timeProvider;
         private static IServiceProvider[] _serviceProviders;
+
+#if UNIT_TESTS
+        /// <summary>
+        /// Sets the extension factory that is used to instantiate extensions.
+        /// </summary>
+        /// <remarks>
+        /// This purpose of this method is to facilitate unit testing by allowing the creation of extensions
+        /// to be controlled by the testing code.
+        /// </remarks>
+        /// <param name="factory"></param>
+        public static void SetExtensionFactory(IExtensionFactory factory)
+        {
+            ExtensionPoint.SetExtensionFactory(factory);
+        }
+#endif
 
 		/// <summary>
 		/// Gets the one and only <see cref="PluginManager"/>.

@@ -110,10 +110,12 @@
     <Compile Include="Configuration\SettingsClassMetaDataReader.cs" />
     <Compile Include="Configuration\SettingsGroupDescriptor.cs" />
     <Compile Include="Configuration\SettingsPropertyDescriptor.cs" />
+    <Compile Include="DefaultExtensionFactory.cs" />
     <Compile Include="ExtensionPoint.cs" />
     <Compile Include="ExtensionSettings.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="IExtensionFactory.cs" />
     <Compile Include="IExtensionPoint.cs" />
     <Compile Include="IMessageBox.cs" />
     <Compile Include="Auditing\Auditor.cs" />
@@ -236,6 +238,7 @@
     <Compile Include="Utilities\ResourceResolver.cs" />
     <Compile Include="Utilities\Scope.cs" />
     <Compile Include="Utilities\AttributeUtils.cs" />
+    <Compile Include="Utilities\NullExtensionFactory.cs" />
     <Compile Include="Utilities\Win32PerformanceCounter.cs" />
   </ItemGroup>
   <ItemGroup>

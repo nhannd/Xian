@@ -5,33 +5,12 @@ using System.Text;
 namespace ClearCanvas.Common
 {
     /// <summary>
-    /// Base class for all extension points.
+    /// Abstract base class for the generic ExtensionPoint class.
     /// </summary>
-    /// <typeparam name="TInterface">The interface that extensions are expected to implement.</typeparam>
-    /// <remarks>
-    /// <para>
-    /// To define an extension point, create a dedicated subclass of this class, specifying the interface
-    /// that extensions are expected to implement.  The name of the subclass should be chosen
-    /// with care, as the name effectively acts as a unique identifier which all extensions
-    /// will reference.  Once chosen, the name should not be changed, as doing so will break all
-    /// existing extensions to this extension point.  There is no need to add any methods to the subclass,
-    /// and it is recommended that the class be left empty, such that it serves as a dedicated
-    /// factory for creating extensions of this extension point.
-    /// </para>
-    /// <para>The subclass must also be marked with the <see cref="ExtensionPointAttribute" /> in order
-    /// for the framework to discover it at runtime.
-    /// </para>
-    /// </remarks>
-    public abstract class ExtensionPoint<TInterface> : ExtensionPointBase
+    public abstract class ExtensionPoint : IExtensionPoint
     {
-        protected override Type InterfaceType
-        {
-            get { return typeof(TInterface); }
-        }
-    }
+        #region PredicateExtensionFilter
 
-    public abstract class ExtensionPointBase : IExtensionPoint
-    {
         class PredicateExtensionFilter : ExtensionFilter
         {
             private Predicate<ExtensionInfo> _predicate;
@@ -47,7 +26,33 @@ namespace ClearCanvas.Common
             }
         }
 
+        #endregion
+
+        #region Static members
+
+        // initialize with the default extension factory
+        private static IExtensionFactory _extensionFactory = new DefaultExtensionFactory();
+
+
+        /// <summary>
+        /// Sets the <see cref="IExtensionFactory"/> that is used to create extensions.
+        /// </summary>
+        /// <param name="extensionFactory"></param>
+        internal static void SetExtensionFactory(IExtensionFactory extensionFactory)
+        {
+            Platform.CheckForNullReference(extensionFactory, "extensionFactory");
+
+            _extensionFactory = extensionFactory;
+        }
+
+        #endregion
+
         #region IExtensionPoint methods
+
+        /// <summary>
+        /// Gets the interface on which the extension is defined.
+        /// </summary>
+        public abstract Type InterfaceType { get; }
 
         /// <summary>
         /// Lists meta-data for all extensions of this point.
@@ -55,7 +60,7 @@ namespace ClearCanvas.Common
         /// <returns></returns>
         public ExtensionInfo[] ListExtensions()
         {
-            return ListExtensions(this.GetType(), null).ToArray();
+            return ListExtensionsHelper(null);
         }
 
         /// <summary>
@@ -65,7 +70,7 @@ namespace ClearCanvas.Common
         /// <returns></returns>
         public ExtensionInfo[] ListExtensions(ExtensionFilter filter)
         {
-            return ListExtensions(this.GetType(), filter).ToArray();
+            return ListExtensionsHelper(filter);
         }
 
         /// <summary>
@@ -75,7 +80,7 @@ namespace ClearCanvas.Common
         /// <returns></returns>
         public ExtensionInfo[] ListExtensions(Predicate<ExtensionInfo> filter)
         {
-            return ListExtensions(new PredicateExtensionFilter(filter));
+            return ListExtensionsHelper(new PredicateExtensionFilter(filter));
         }
 
         /// <summary>
@@ -84,7 +89,7 @@ namespace ClearCanvas.Common
         /// <returns></returns>
         public object CreateExtension()
         {
-            return AtLeastOne(CreateExtensionsHelper(this.GetType(), null, true), this.GetType());
+            return AtLeastOne(CreateExtensionsHelper(null, true), this.GetType());
         }
 
         /// <summary>
@@ -94,7 +99,7 @@ namespace ClearCanvas.Common
         /// <returns></returns>
         public object CreateExtension(ExtensionFilter filter)
         {
-            return AtLeastOne(CreateExtensionsHelper(this.GetType(), filter, true), this.GetType());
+            return AtLeastOne(CreateExtensionsHelper(filter, true), this.GetType());
         }
 
         /// <summary>
@@ -113,7 +118,7 @@ namespace ClearCanvas.Common
         /// <returns></returns>
         public object[] CreateExtensions()
         {
-            return CreateExtensionsHelper(this.GetType(), null, false);
+            return CreateExtensionsHelper(null, false);
         }
 
         /// <summary>
@@ -123,7 +128,7 @@ namespace ClearCanvas.Common
         /// <returns></returns>
         public object[] CreateExtensions(ExtensionFilter filter)
         {
-            return CreateExtensionsHelper(this.GetType(), filter, false);
+            return CreateExtensionsHelper(filter, false);
         }
 
         /// <summary>
@@ -133,73 +138,25 @@ namespace ClearCanvas.Common
         /// <returns></returns>
         public object[] CreateExtensions(Predicate<ExtensionInfo> filter)
         {
-            return CreateExtensionsHelper(this.GetType(), new PredicateExtensionFilter(filter), false);
+            return CreateExtensions(new PredicateExtensionFilter(filter));
         }
 
         #endregion
 
         #region Protected methods
 
-        protected abstract Type InterfaceType { get; }
-
-        protected object[] CreateExtensionsHelper(Type extensionPointClass, ExtensionFilter filter, bool justOne)
+        protected object[] CreateExtensionsHelper(ExtensionFilter filter, bool justOne)
         {
-            // get subset of applicable extensions
-            List<ExtensionInfo> extensions = ListExtensions(extensionPointClass, filter);
-
-            // attempt to instantiate the extension classes
-            List<object> createdObjects = new List<object>();
-            foreach (ExtensionInfo extension in extensions)
-            {
-                if (justOne && createdObjects.Count > 0)
-                    break;
-
-                // is the extension a concrete class?
-                if (!IsConcreteClass(extension.ExtensionClass))
-                {
-                    Platform.Log(LogLevel.Warn, SR.ExceptionExtensionMustBeConcreteClass,
-                        extension.ExtensionClass.FullName);
-                    continue;
-                }
-
-                // does the extension implement the required interface?
-                if (!InterfaceType.IsAssignableFrom(extension.ExtensionClass))
-                {
-                    Platform.Log(LogLevel.Warn, SR.ExceptionExtensionDoesNotImplementRequiredInterface,
-                        extension.ExtensionClass.FullName,
-                        InterfaceType);
-
-                    continue;
-                }
-
-                try
-                {
-                    // instantiate
-                    object o = Activator.CreateInstance(extension.ExtensionClass);
-                    createdObjects.Add(o);
-                }
-                catch (Exception e)
-                {
-                    // instantiation failed
-					Platform.Log(LogLevel.Error, e);
-				}
-            }
-
-            return createdObjects.ToArray();
+            // we assume that the factory itself is thread-safe, and therefore we don't need to lock
+            // (don't want to incur the cost of locking if not necessary)
+            return _extensionFactory.CreateExtensions(this, filter, justOne);
         }
 
-        protected List<ExtensionInfo> ListExtensions(Type extensionPointClass, ExtensionFilter filter)
+        protected ExtensionInfo[] ListExtensionsHelper(ExtensionFilter filter)
         {
-            List<ExtensionInfo> extensions = new List<ExtensionInfo>();
-            foreach (ExtensionInfo extension in Platform.PluginManager.Extensions)
-            {
-                if (extension.PointExtended == extensionPointClass
-                    && (filter == null || filter.Test(extension)))
-                {
-                    extensions.Add(extension);
-                }
-            }
-            return extensions;
+            // we assume that the factory itself is thread-safe, and therefore we don't need to lock
+            // (don't want to incur the cost of locking if not necessary)
+            return _extensionFactory.ListExtensions(this, filter);
         }
 
         protected object AtLeastOne(object[] objs, Type extensionPointType)
@@ -215,12 +172,37 @@ namespace ClearCanvas.Common
             }
         }
 
-        protected bool IsConcreteClass(Type type)
-        {
-            return !type.IsAbstract && type.IsClass;
-        }
-
         #endregion
+    }
+
+
+    /// <summary>
+    /// Base class for all extension points.
+    /// </summary>
+    /// <typeparam name="TInterface">The interface that extensions are expected to implement.</typeparam>
+    /// <remarks>
+    /// <para>
+    /// To define an extension point, create a dedicated subclass of this class, specifying the interface
+    /// that extensions are expected to implement.  The name of the subclass should be chosen
+    /// with care, as the name effectively acts as a unique identifier which all extensions
+    /// will reference.  Once chosen, the name should not be changed, as doing so will break all
+    /// existing extensions to this extension point.  There is no need to add any methods to the subclass,
+    /// and it is recommended that the class be left empty, such that it serves as a dedicated
+    /// factory for creating extensions of this extension point.
+    /// </para>
+    /// <para>The subclass must also be marked with the <see cref="ExtensionPointAttribute" /> in order
+    /// for the framework to discover it at runtime.
+    /// </para>
+    /// </remarks>
+    public abstract class ExtensionPoint<TInterface> : ExtensionPoint
+    {
+        /// <summary>
+        /// Gets the interface that the extension point is defined on.
+        /// </summary>
+        public override Type InterfaceType
+        {
+            get { return typeof(TInterface); }
+        }
     }
 
 }

@@ -21,7 +21,7 @@ namespace ClearCanvas.Common
         /// <summary>
         /// Internal constructor.
         /// </summary>
-        internal ExtensionInfo(Type extensionClass, Type pointExtended, string name, string description)
+        public ExtensionInfo(Type extensionClass, Type pointExtended, string name, string description)
         {
             _extensionClass = extensionClass;
             _pointExtended = pointExtended;
