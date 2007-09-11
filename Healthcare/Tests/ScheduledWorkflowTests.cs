@@ -19,18 +19,9 @@ namespace ClearCanvas.Healthcare.Tests
         public ScheduledWorkflowTests()
         {
             _defaultCancelReason = new OrderCancelReasonEnum("x", "x", "x");
-        }
 
-        [SetUp]
-        public void Setup()
-        {
-            Platform.PluginManager.UnitTestMode = true;
-        }
-
-        [TearDown]
-        public void Teardown()
-        {
-            Platform.PluginManager.UnitTestMode = false;
+            // set the extension factory to null so we don't try to instantiate extensions from plugins
+            Platform.SetExtensionFactory(new NullExtensionFactory());
         }
 
         /// <summary>
