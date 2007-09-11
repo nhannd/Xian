@@ -50,7 +50,8 @@ tr.row1  {
 	background-color: #FFFFFF;
 }
 tr.highlight  {
-	background-color: #cc00cc;
+       background-color: #316ac5;
+       color: #FFFFFF;
 }
 
 div.alert ul{

@@ -4,7 +4,7 @@
 
 function getAlertHtml(alertItem, patientName)
 {
-	return "<img width='50' src='" + getAlertIcon(alertItem) + "' alt='" + getAlertTooltip(alertItem, patientName) + "' align='right'/>";
+	return "<img width='64' src='" + getAlertIcon(alertItem) + "' alt='" + getAlertTooltip(alertItem, patientName) + "'/>";
 }
 
 function getAlertIcon(alertItem)
