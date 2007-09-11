@@ -1,16 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -218,16 +214,24 @@ namespace ClearCanvas.Ris.Client.Reporting
                                 selectedFolder.RefreshCount();
                         };                       
                         doc.Open();
-
-                        IViewerIntegration viewerIntegration = (IViewerIntegration)(new ViewerIntegrationExtensionPoint()).CreateExtension();
-                        if (viewerIntegration != null)
-                            viewerIntegration.OpenStudy(item.AccessionNumber);
                     }
                     catch (Exception e)
                     {
                         ExceptionHandler.Report(e, desktopWindow);
                         return false;
                     }
+
+                    try
+                    {
+                        IViewerIntegration viewerIntegration = (IViewerIntegration)(new ViewerIntegrationExtensionPoint()).CreateExtension();
+                        if (viewerIntegration != null)
+                            viewerIntegration.OpenStudy(item.AccessionNumber);
+                    }
+                    catch (NotSupportedException)
+                    {
+                        Platform.Log(LogLevel.Info, "No viewer integration extension found");
+                    }
+
                 }
 
                 return true;
