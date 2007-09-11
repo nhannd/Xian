@@ -4,7 +4,7 @@ using System;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public abstract class AlgorithmCalculatedVoiLutLinear : CalculatedVoiLutLinear, IVoiLutLinear
+	public abstract class AlgorithmCalculatedVoiLutLinear : CalculatedVoiLutLinear
 	{
 		private readonly IndexedPixelData _pixelData;
 		private readonly IModalityLut _modalityLut;

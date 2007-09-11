@@ -1,6 +1,6 @@
 namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
-	partial class EditPresetVoiLutLinearComponentControl
+	partial class LinearPresetVoiLutApplicatorComponentControl
 	{
 		/// <summary> 
 		/// Required designer variable.
@@ -29,12 +29,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 		private void InitializeComponent()
 		{
 			this._nameField = new ClearCanvas.Controls.WinForms.TextField();
-			this._windowWidth = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
 			this._windowCenter = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			((System.ComponentModel.ISupportInitialize)(this._windowWidth)).BeginInit();
+			this._windowWidth = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
 			((System.ComponentModel.ISupportInitialize)(this._windowCenter)).BeginInit();
+			((System.ComponentModel.ISupportInitialize)(this._windowWidth)).BeginInit();
 			this.SuspendLayout();
 			// 
 			// _nameField
@@ -47,33 +47,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this._nameField.Size = new System.Drawing.Size(235, 41);
 			this._nameField.TabIndex = 0;
 			this._nameField.Value = null;
-			// 
-			// _windowWidth
-			// 
-			this._windowWidth.Increment = new decimal(new int[] {
-            10,
-            0,
-            0,
-            0});
-			this._windowWidth.Location = new System.Drawing.Point(141, 48);
-			this._windowWidth.Maximum = new decimal(new int[] {
-            65536,
-            0,
-            0,
-            0});
-			this._windowWidth.Minimum = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
-			this._windowWidth.Name = "_windowWidth";
-			this._windowWidth.Size = new System.Drawing.Size(96, 20);
-			this._windowWidth.TabIndex = 1;
-			this._windowWidth.Value = new decimal(new int[] {
-            1,
-            0,
-            0,
-            0});
 			// 
 			// _windowCenter
 			// 
@@ -96,6 +69,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this._windowCenter.Name = "_windowCenter";
 			this._windowCenter.Size = new System.Drawing.Size(96, 20);
 			this._windowCenter.TabIndex = 2;
+			this._windowCenter.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
 			// 
 			// label1
 			// 
@@ -115,7 +89,36 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this.label2.TabIndex = 4;
 			this.label2.Text = "Window Center";
 			// 
-			// EditPresetVoiLutLinearComponentControl
+			// _windowWidth
+			// 
+			this._windowWidth.CausesValidation = false;
+			this._windowWidth.Increment = new decimal(new int[] {
+            10,
+            0,
+            0,
+            0});
+			this._windowWidth.Location = new System.Drawing.Point(141, 48);
+			this._windowWidth.Maximum = new decimal(new int[] {
+            65536,
+            0,
+            0,
+            0});
+			this._windowWidth.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this._windowWidth.Name = "_windowWidth";
+			this._windowWidth.Size = new System.Drawing.Size(96, 20);
+			this._windowWidth.TabIndex = 1;
+			this._windowWidth.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
+			this._windowWidth.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			// 
+			// LinearPresetVoiLutApplicatorComponentControl
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -124,10 +127,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this.Controls.Add(this._windowCenter);
 			this.Controls.Add(this._windowWidth);
 			this.Controls.Add(this._nameField);
-			this.Name = "EditPresetVoiLutLinearComponentControl";
+			this.Name = "LinearPresetVoiLutApplicatorComponentControl";
 			this.Size = new System.Drawing.Size(240, 107);
-			((System.ComponentModel.ISupportInitialize)(this._windowWidth)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this._windowCenter)).EndInit();
+			((System.ComponentModel.ISupportInitialize)(this._windowWidth)).EndInit();
 			this.ResumeLayout(false);
 			this.PerformLayout();
 
@@ -136,9 +139,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 		#endregion
 
 		private ClearCanvas.Controls.WinForms.TextField _nameField;
-		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _windowWidth;
 		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _windowCenter;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
+		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _windowWidth;
 	}
 }

@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop.Configuration;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.Configuration;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
 	[ExtensionOf(typeof(ConfigurationPageProviderExtensionPoint))]
 	public class PresetVoiLutConfigurationPageProvider : IConfigurationPageProvider

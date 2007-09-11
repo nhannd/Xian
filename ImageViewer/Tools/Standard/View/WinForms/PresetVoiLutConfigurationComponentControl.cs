@@ -1,5 +1,6 @@
 using System.Windows.Forms;
 using System;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
@@ -32,6 +33,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			_comboModality.DataSource = _component.Modalities;
         	_comboModality.DataBindings.Add("Value", source, "SelectedModality", true, DataSourceUpdateMode.OnPropertyChanged);
 
+        	_comboAddPreset.DataSource = _component.AvailableAddFactories;
+        	_comboAddPreset.DisplayMember = "Description";
+			_comboAddPreset.DataBindings.Add("Visible", source, "HasMultipleFactories", true, DataSourceUpdateMode.Never);
+			_comboAddPreset.DataBindings.Add("Value", source, "SelectedAddFactory", true, DataSourceUpdateMode.OnPropertyChanged);
+
+			_addPresetButton.DataBindings.Add("Visible", source, "HasMultipleFactories", true, DataSourceUpdateMode.Never);
+			_addPresetButton.DataBindings.Add("Enabled", source, "AddEnabled", true, DataSourceUpdateMode.Never);
+
+        	_addPresetButton.Click += delegate { _component.OnAdd(); };
 			_presetVoiLuts.ItemDoubleClicked += delegate { _component.OnEditSelected(); };
         }
     }

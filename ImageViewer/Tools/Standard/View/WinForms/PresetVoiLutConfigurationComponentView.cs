@@ -1,6 +1,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {

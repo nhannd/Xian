@@ -9,7 +9,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	// LUT flyweight factory
 	internal sealed class LutFactory : IReferenceCountable, IDisposable
 	{
-		private class PresentationLutProxy : Lut, IPresentationLut
+		private class PresentationLutProxy : Lut, IPresentationLut, IEquatable<PresentationLutProxy>
 		{
 			private readonly string _factoryName;
 			private bool _invert;
@@ -138,11 +138,33 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			#endregion
 
+			public override bool Equals(object obj)
+			{
+				if (this == obj)
+					return true;
+				
+				if (obj is IPresentationLut)
+					return this.Equals((IPresentationLut) obj);
+
+				return false;
+			}
 			#region IEquatable<IPresentationLut> Members
 
 			public bool Equals(IPresentationLut other)
 			{
+				if (other is PresentationLutProxy)
+					return this.Equals((PresentationLutProxy)other);
+
 				return false;
+			}
+
+			#endregion
+
+			#region IEquatable<PresentationLutProxy> Members
+
+			public bool Equals(PresentationLutProxy other)
+			{
+				return _factoryName == other._factoryName && _invert == other._invert;
 			}
 
 			#endregion

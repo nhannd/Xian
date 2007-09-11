@@ -4,35 +4,38 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
-	internal sealed class PresetVoiLutCollectionSortByKeyStroke : IComparer<PresetVoiLut>
-	{
-		#region IComparer<PresetVoiLutCollection> Members
-
-		public int Compare(PresetVoiLut x, PresetVoiLut y)
-		{
-			return x.KeyStroke.CompareTo(y.KeyStroke);
-		}
-
-		#endregion
-	}
-
 	internal sealed class PresetVoiLutCollectionSortByKeyStrokeSortByName : IComparer<PresetVoiLut>
 	{
 		#region IComparer<PresetVoiLutCollection> Members
 
 		public int Compare(PresetVoiLut x, PresetVoiLut y)
 		{
-			if (x.KeyStroke != XKeys.None)
+			if (x.KeyStroke == XKeys.None)
 			{
-				return x.Applicator.Name.CompareTo(y.Applicator.Name);
+				if (y.KeyStroke == XKeys.None)
+					return 0;
+
+				return 1;
 			}
-			else
+			else if (y.KeyStroke == XKeys.None)
 			{
-				if (x.KeyStroke == y.KeyStroke)
-					return x.Applicator.Name.CompareTo(y.Applicator.Name);
-				
-				return x.KeyStroke.CompareTo(y.KeyStroke);
+				return -1; 
 			}
+
+			if (x.KeyStroke < y.KeyStroke)
+			{
+				return -1;
+			}
+			else if (x.KeyStroke == y.KeyStroke)
+			{
+				int nameCompare = x.Applicator.Name.CompareTo(y.Applicator.Name);
+				if (nameCompare < 0)
+					return -1;
+				else if (nameCompare == 0)
+					return 0;
+			}
+
+			return 1; ;
 		}
 
 		#endregion

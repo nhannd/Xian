@@ -102,7 +102,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 							if (provider == null)
 								return;
 
-							InstallLinearLut(provider.VoiLutManager);
+							IVoiLutLinear linearLut = provider.VoiLutManager.GetLut() as IVoiLutLinear;
+							IBasicVoiLutLinear standardLut = linearLut as IBasicVoiLutLinear;
+							if (standardLut == null)
+							{
+								BasicVoiLutLinear installLut = new BasicVoiLutLinear(selectedLut.WindowWidth, selectedLut.WindowCenter);
+								provider.VoiLutManager.InstallLut(installLut);
+							}
+
 
 							IBasicVoiLutLinear lut = provider.VoiLutManager.GetLut() as IBasicVoiLutLinear;
 							lut.WindowWidth = selectedLut.WindowWidth;
@@ -157,22 +164,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			CodeClock counter = new CodeClock();
 			counter.Start();
 
-			InstallLinearLut(this.SelectedVoiLutProvider.VoiLutManager);
-			IBasicVoiLutLinear standardLut = this.SelectedVoiLutProvider.VoiLutManager.GetLut() as IBasicVoiLutLinear; 
-			standardLut.WindowWidth += windowIncrement;
-			standardLut.WindowCenter += levelIncrement;
-			this.SelectedVoiLutProvider.Draw();
-
-			counter.Stop();
-
-			string str = String.Format("WindowLevel: {0}\n", counter.ToString());
-			Trace.Write(str);
-		}
-
-		private void InstallLinearLut(IVoiLutManager manager)
-		{
-			if (manager == null)
-				return;
+			IVoiLutManager manager = this.SelectedVoiLutProvider.VoiLutManager;
 
 			IVoiLutLinear linearLut = manager.GetLut() as IVoiLutLinear;
 			IBasicVoiLutLinear standardLut = linearLut as IBasicVoiLutLinear;
@@ -181,6 +173,16 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				BasicVoiLutLinear installLut = new BasicVoiLutLinear(linearLut.WindowWidth, linearLut.WindowCenter);
 				manager.InstallLut(installLut);
 			}
+
+			standardLut = manager.GetLut() as IBasicVoiLutLinear; 
+			standardLut.WindowWidth += windowIncrement;
+			standardLut.WindowCenter += levelIncrement;
+			this.SelectedVoiLutProvider.Draw();
+
+			counter.Stop();
+
+			string str = String.Format("WindowLevel: {0}\n", counter.ToString());
+			Trace.Write(str);
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)

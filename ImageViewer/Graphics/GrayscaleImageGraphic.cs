@@ -362,7 +362,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 			else
 			{
-				this.LutComposer.LutCollection[2] = installLut;
+				if (!installLut.Equals(this.PresentationLut))
+					this.LutComposer.LutCollection[2] = installLut;
 			}
 		}
 

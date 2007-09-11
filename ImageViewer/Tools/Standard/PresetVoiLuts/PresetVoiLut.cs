@@ -1,24 +1,31 @@
 using System;
 using ClearCanvas.Desktop;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
 	internal sealed class PresetVoiLut : IEquatable<PresetVoiLut>
 	{
-		private XKeys _keyStroke;
+		private KeyStrokeDescriptor _keyStrokeDescriptor;
 		private readonly IPresetVoiLutApplicator _applicator;
 
 		public PresetVoiLut(IPresetVoiLutApplicator applicator)
 		{
 			Platform.CheckForNullReference(applicator, "applicator");
 			this._applicator = applicator;
+			_keyStrokeDescriptor = XKeys.None;
+		}
+
+		public KeyStrokeDescriptor KeyStrokeDescriptor
+		{
+			get { return _keyStrokeDescriptor; }	
 		}
 
 		public XKeys KeyStroke
 		{
-			get { return _keyStroke; }
-			set { _keyStroke = value; }
+			get { return _keyStrokeDescriptor.KeyStroke; }
+			set { _keyStrokeDescriptor = value; }
 		}
 
 		public IPresetVoiLutApplicator Applicator

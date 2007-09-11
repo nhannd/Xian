@@ -5,14 +5,14 @@ using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 {
 	public interface IAutoVoiLutLinear : IVoiLutLinear
 	{
 		void ApplyNext();
 	}
 
-	public sealed class AutoVoiLutLinear : CalculatedVoiLutLinear, IAutoVoiLutLinear
+	internal sealed class AutoVoiLutLinear : CalculatedVoiLutLinear, IAutoVoiLutLinear
 	{
 		private class AutoVoiLutLinearMemento : IMemento, IEquatable<AutoVoiLutLinearMemento>
 		{

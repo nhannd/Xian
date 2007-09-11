@@ -24,10 +24,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public void InstallLut(ILut lut)
 		{
 			ILut existingLut = GetLut();
-			if (existingLut is IDataLut)
+			if (existingLut is IGeneratedDataLut)
 			{
 				//Clear the data in the data lut so it's not hanging around using up memory.
-				((IDataLut)existingLut).Clear();
+				((IGeneratedDataLut)existingLut).Clear();
 			}
 			
 			_grayscaleImageGraphic.InstallVoiLut(lut);

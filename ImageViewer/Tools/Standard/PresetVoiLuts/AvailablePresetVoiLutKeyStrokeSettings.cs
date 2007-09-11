@@ -7,9 +7,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
 	[SettingsGroupDescription("Stores the available keystrokes for Lut Presets")]
 	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
-	internal sealed partial class AvailableLutKeyStrokeSettings
+	internal sealed partial class AvailablePresetVoiLutKeyStrokeSettings
 	{
-		public AvailableLutKeyStrokeSettings()
+		public AvailablePresetVoiLutKeyStrokeSettings()
 		{
 		}
 

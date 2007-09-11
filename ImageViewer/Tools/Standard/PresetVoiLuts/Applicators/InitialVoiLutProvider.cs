@@ -1,7 +1,7 @@
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 {
 	[ExtensionOf(typeof(InitialVoiLutProviderExtensionPoint))]
 	public sealed class InitialVoiLutProvider : IInitialVoiLutProvider
@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			// However, right now we don't want to add new functionality to 1.0, so the 'Initial Lut Provider' and the
 			// 'Auto Lut Applicator' do basically the same thing.
 
-			return AutoVoiLutApplicator.GetInitialLut(presentationImage);
+			return AutoPresetVoiLutApplicatorHelper.GetInitialLut(presentationImage);
 		}
 
 		#endregion

@@ -3,7 +3,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 {
-    partial class EditPresetVoiLutComponentContainerControl
+    partial class PresetVoiLutApplicatorComponentContainerControl
     {
         /// <summary> 
         /// Required designer variable.

@@ -70,20 +70,38 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Automatically applies window/level.
+        /// </summary>
+        internal static string AutoPresetVoiLutApplicatorDescription {
+            get {
+                return ResourceManager.GetString("AutoPresetVoiLutApplicatorDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto.
+        /// </summary>
+        internal static string AutoPresetVoiLutApplicatorFactoryDescription {
+            get {
+                return ResourceManager.GetString("AutoPresetVoiLutApplicatorFactoryDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Auto.
+        /// </summary>
+        internal static string AutoPresetVoiLutApplicatorName {
+            get {
+                return ResourceManager.GetString("AutoPresetVoiLutApplicatorName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Colour Maps.
         /// </summary>
         internal static string ColourMaps {
             get {
                 return ResourceManager.GetString("ColourMaps", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Auto Voi Lut Application.
-        /// </summary>
-        internal static string CommandAutoVoiLutApplication {
-            get {
-                return ResourceManager.GetString("CommandAutoVoiLutApplication", resourceCulture);
             }
         }
         
@@ -387,6 +405,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Linear Window/Level Preset.
+        /// </summary>
+        internal static string LinearPresetVoiLutApplicatorFactoryDescription {
+            get {
+                return ResourceManager.GetString("LinearPresetVoiLutApplicatorFactoryDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Flip &amp;Horizontal.
         /// </summary>
         internal static string MenuFlipHorizontal {
@@ -536,6 +563,33 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string MenuZoom4X {
             get {
                 return ResourceManager.GetString("MenuZoom4X", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Calculates Window/Level from the minimum and maximum pixel values.
+        /// </summary>
+        internal static string MinMaxAlgorithmPresetVoiLutApplicatorComponentDescription {
+            get {
+                return ResourceManager.GetString("MinMaxAlgorithmPresetVoiLutApplicatorComponentDescription", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Min/Max Algorithm.
+        /// </summary>
+        internal static string MinMaxAlgorithmPresetVoiLutApplicatorComponentName {
+            get {
+                return ResourceManager.GetString("MinMaxAlgorithmPresetVoiLutApplicatorComponentName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Min/Max Algorithm.
+        /// </summary>
+        internal static string MinMaxAlgorithmPresetVoiLutApplicatorFactoryDescription {
+            get {
+                return ResourceManager.GetString("MinMaxAlgorithmPresetVoiLutApplicatorFactoryDescription", resourceCulture);
             }
         }
         

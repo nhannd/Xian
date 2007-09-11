@@ -1,16 +1,15 @@
+using System;
 using System.Collections.Generic;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tables;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts;
 using ClearCanvas.Desktop.Configuration;
-using System;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
 	/// <summary>
 	/// Extension point for views onto <see cref="PresetVoiLutConfigurationComponent"/>
@@ -26,6 +25,63 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[AssociateView(typeof(PresetVoiLutConfigurationComponentViewExtensionPoint))]
 	public sealed class PresetVoiLutConfigurationComponent : ConfigurationApplicationComponent
 	{
+		public sealed class PresetFactoryDescriptor : IEquatable<PresetFactoryDescriptor>, IComparable<PresetFactoryDescriptor>
+		{
+			internal readonly IPresetVoiLutApplicatorFactory Factory;
+
+			internal PresetFactoryDescriptor(IPresetVoiLutApplicatorFactory factory)
+			{
+				Factory = factory;
+			}
+
+			public string Name
+			{
+				get { return Factory.Name; }
+			}
+
+			public string Description
+			{
+				get { return Factory.Description; }
+			}
+
+			public override bool Equals(object obj)
+			{
+				if (obj == this)
+					return true;
+
+				if (obj is PresetFactoryDescriptor)
+					return this.Equals((PresetFactoryDescriptor) obj);
+
+				return false;
+			}
+
+			public override string ToString()
+			{
+				return this.Factory.Description;
+			}
+
+			#region IEquatable<PresetFactoryDescriptor> Members
+
+			public bool Equals(PresetFactoryDescriptor other)
+			{
+				return this.Factory == other.Factory;
+			}
+
+			#endregion
+
+			#region IComparable<PresetFactoryDescriptor> Members
+
+			public int CompareTo(PresetFactoryDescriptor other)
+			{
+				return this.Factory.Description.CompareTo(other.Factory.Description);
+			}
+
+			#endregion
+		}
+
+		private List<PresetFactoryDescriptor> _availableAddFactories;
+		private PresetFactoryDescriptor _selectedAddFactory;
+
 		private List<string> _availableModalities;
 		private PresetVoiLutGroupCollection _presetVoiLutGroups;
 		private PresetVoiLutGroup _selectedPresetVoiLutGroup;
@@ -41,6 +97,30 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		/// </summary>
 		public PresetVoiLutConfigurationComponent()
 		{
+		}
+
+		public IList<PresetFactoryDescriptor> AvailableAddFactories
+		{
+			get 
+			{
+				return _availableAddFactories;
+			}	
+		}
+
+		public PresetFactoryDescriptor SelectedAddFactory
+		{
+			get { return _selectedAddFactory; }	
+			set
+			{
+				Platform.CheckForNullReference(value, "value");
+
+				if (value.Equals(_selectedAddFactory))
+					return;
+
+				_selectedAddFactory = value;
+				UpdateButtonStates();
+				NotifyPropertyChanged("SelectedAddFactory");
+			}
 		}
 
 		public IList<string> Modalities
@@ -78,12 +158,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			get { return _selection; }
 			set
 			{
-				 _selection = value;
-				NotifyPropertyChanged("SelectedVoiLutPreset");
+				_selection = value;
+				NotifyPropertyChanged("Selection");
 
-				bool editDeleteEnabled = _selection != null && _selection.Item != null;
-				EditEnabled = editDeleteEnabled;
-				DeleteEnabled = editDeleteEnabled;
+				UpdateButtonStates();
 			}
 		}
 
@@ -103,13 +181,36 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 		}
 
-		private bool EditEnabled
+		public bool HasMultipleFactories
+		{
+			get
+			{
+				return _availableAddFactories.Count > 1;
+			}
+		}
+
+		public bool AddEnabled
+		{
+			get
+			{
+				return _toolbarModel["add"].Enabled;
+			}
+			private set
+			{
+				_toolbarModel["add"].Enabled = value;
+				_contextMenuModel["add"].Enabled = value;
+				NotifyPropertyChanged("AddEnabled");
+			}
+		}
+
+		public bool EditEnabled
 		{
 			get { return _toolbarModel["edit"].Enabled; }
-			set
+			private set
 			{
 				_toolbarModel["edit"].Enabled = value;
 				_contextMenuModel["edit"].Enabled = value;
+				NotifyPropertyChanged("EditEnabled");
 			}
 		}
 
@@ -118,8 +219,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			get { return _toolbarModel["delete"].Enabled; }
 			set
 			{
-				 _toolbarModel["delete"].Enabled = value;
-				 _contextMenuModel["delete"].Enabled = value;
+				_toolbarModel["delete"].Enabled = value;
+				_contextMenuModel["delete"].Enabled = value;
+				NotifyPropertyChanged("DeleteEnabled");
 			}
 		}
 
@@ -145,17 +247,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 		}
 
-		private IPresetVoiLutApplicatorFactory CurrentAddPresetApplicatorFactory
-		{
-			get
-			{
-				//TODO: later, we will add support for adding from different factories, but right now it is disabled.
-				return PresetVoiLutApplicatorFactories.GetFactory(PresetVoiLutLinearApplicatorFactory.FactoryName);
-			}
-		}
-
 		public override void Start()
 		{
+			InitializeAddFactories();
+			_selectedAddFactory = new PresetFactoryDescriptor(PresetVoiLutApplicatorFactories.GetFactory(LinearPresetVoiLutApplicatorFactory.FactoryName));
+
 			_voiLutPresets = new Table<PresetVoiLut>();
 
 			_availableModalities = new List<string>(StandardModalities.Modalities);
@@ -185,8 +281,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void OnAdd()
 		{
-			IEditPresetVoiLutApplicationComponent addComponent = CurrentAddPresetApplicatorFactory.GetEditComponent(null);
-			EditPresetVoiLutComponentContainer container = new EditPresetVoiLutComponentContainer(GetUnusedKeyStrokes(null), addComponent);
+			if (!AddEnabled)
+				return;
+
+			IPresetVoiLutApplicatorComponent addComponent = SelectedAddFactory.Factory.GetEditComponent(null);
+			addComponent.EditContext = EditContext.Add;
+			PresetVoiLutApplicatorComponentContainer container = new PresetVoiLutApplicatorComponentContainer(GetUnusedKeyStrokes(null), addComponent);
 
 			if (ApplicationComponentExitCode.Normal != ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, "Add Preset"))
 				return;
@@ -198,7 +298,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 
 			List<PresetVoiLut> conflictingItems = CollectionUtils.Select<PresetVoiLut>(_selectedPresetVoiLutGroup.Presets,
-								   delegate(PresetVoiLut test) { return preset.Equals(test); });
+			                                                                           delegate(PresetVoiLut test) { return preset.Equals(test); });
 
 			if (conflictingItems.Count == 0)
 			{
@@ -216,6 +316,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void OnEditSelected()
 		{
+			if (!EditEnabled)
+				return;
+
 			if (this.SelectedPresetVoiLut == null)
 			{
 				this.Host.DesktopWindow.ShowMessageBox("Please Select an item to edit.", MessageBoxActions.Ok);
@@ -223,8 +326,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 
 			PresetVoiLutConfiguration configuration = this.SelectedPresetApplicator.GetConfiguration();
-			IEditPresetVoiLutApplicationComponent editComponent = this.SelectedPresetApplicator.SourceFactory.GetEditComponent(configuration);
-			EditPresetVoiLutComponentContainer container = new EditPresetVoiLutComponentContainer(GetUnusedKeyStrokes(this.SelectedPresetVoiLut), editComponent);
+			IPresetVoiLutApplicatorComponent editComponent = this.SelectedPresetApplicator.SourceFactory.GetEditComponent(configuration);
+			editComponent.EditContext = EditContext.Edit;
+			PresetVoiLutApplicatorComponentContainer container = new PresetVoiLutApplicatorComponentContainer(GetUnusedKeyStrokes(this.SelectedPresetVoiLut), editComponent);
 			container.SelectedKeyStroke = this.SelectedPresetVoiLut.KeyStroke;
 
 			if (ApplicationComponentExitCode.Normal != ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, "Edit Preset"))
@@ -237,7 +341,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			}
 
 			List<PresetVoiLut> conflictingItems = CollectionUtils.Select<PresetVoiLut>(_selectedPresetVoiLutGroup.Presets,
-								   delegate(PresetVoiLut test) { return preset.Equals(test); });
+			                                                                           delegate(PresetVoiLut test) { return preset.Equals(test); });
 
 			if (conflictingItems.Count == 0 || (conflictingItems.Count == 1 && conflictingItems[0].Equals(this.SelectedPresetVoiLut)))
 			{
@@ -266,12 +370,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		public void OnDeleteSelected()
 		{
-			PresetVoiLut selected = this.SelectedPresetVoiLut;
-			if (selected == null)	
+			if (!DeleteEnabled)
 				return;
 
-			_selectedPresetVoiLutGroup.Presets.Remove(selected);
-			_voiLutPresets.Items.Remove(selected);
+			if (this.SelectedPresetVoiLut == null)
+			{
+				this.Host.DesktopWindow.ShowMessageBox("Please Select an item to delete.", MessageBoxActions.Ok);
+				return;
+			}
+
+			_selectedPresetVoiLutGroup.Presets.Remove(this.SelectedPresetVoiLut);
+			_voiLutPresets.Items.Remove(this.SelectedPresetVoiLut);
 			this.Selection = null;
 
 			this.Modified = true;
@@ -302,13 +411,18 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			_contextMenuModel.AddAction("add", "Add", "AddToolSmall.png", OnAdd);
 			_contextMenuModel.AddAction("edit", "Edit", "EditToolSmall.png", OnEditSelected);
 			_contextMenuModel.AddAction("delete", "Delete", "DeleteToolSmall.png", OnDeleteSelected);
+
+			_toolbarModel["add"].Visible = !HasMultipleFactories;
+			_contextMenuModel["add"].Visible = !HasMultipleFactories;
+
+			UpdateButtonStates();
 		}
 
 		private void InitializeTable()
 		{
 			TableColumn<PresetVoiLut, string> column;
 
-			column = new TableColumn<PresetVoiLut, string>("Key",delegate(PresetVoiLut item) { return item.KeyStroke.ToString(); }, 0.2f);
+			column = new TableColumn<PresetVoiLut, string>("Key", delegate(PresetVoiLut item) { return item.KeyStrokeDescriptor.ToString(); }, 0.2f);
 			_voiLutPresets.Columns.Add(column);
 	
 			column = new TableColumn<PresetVoiLut, string>("Name", delegate(PresetVoiLut item) { return item.Applicator.Name; }, 0.2f);
@@ -330,7 +444,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 		
 		private List<XKeys> GetUnusedKeyStrokes(PresetVoiLut include)
 		{
-			List<XKeys> keyStrokes = new List<XKeys>(AvailableLutKeyStrokeSettings.Default.GetAvailableKeyStrokes());
+			List<XKeys> keyStrokes = new List<XKeys>(AvailablePresetVoiLutKeyStrokeSettings.Default.GetAvailableKeyStrokes());
 
 			foreach (PresetVoiLut presetVoiLut in this._selectedPresetVoiLutGroup.Presets)
 			{
@@ -347,6 +461,42 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			keyStrokes.Sort();
 
 			return keyStrokes;
+		}
+
+		private void InitializeAddFactories()
+		{
+			if (_availableAddFactories == null)
+				_availableAddFactories = new List<PresetFactoryDescriptor>();
+
+			foreach (IPresetVoiLutApplicatorFactory factory in PresetVoiLutApplicatorFactories.Factories)
+			{
+				_availableAddFactories.Add(new PresetFactoryDescriptor(factory));
+			}
+
+			_availableAddFactories.Sort();
+		}
+
+		private void UpdateButtonStates()
+		{
+			bool editDeleteEnabled = this.Selection != null && this.Selection.Item != null;
+			//update the edit & delete toolbar and context menu buttons.
+			EditEnabled = editDeleteEnabled;
+			DeleteEnabled = editDeleteEnabled;
+
+			bool addEnabled = true;
+			if (!_selectedAddFactory.Factory.CanCreateMultiple)
+			{
+				foreach (PresetVoiLut preset in _selectedPresetVoiLutGroup.Presets)
+				{
+					if (preset.Applicator.SourceFactory == _selectedAddFactory.Factory)
+					{
+						addEnabled = false;
+						break;
+					}
+				}
+			}
+
+			AddEnabled = addEnabled;
 		}
 	}
 }

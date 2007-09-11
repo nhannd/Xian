@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DefaultLutConfiguration.xml")]
+        [global::System.Configuration.DefaultSettingValueAttribute("DefaultPresetVoiLutConfiguration.xml")]
         public string SettingsXml {
             get {
                 return ((string)(this["SettingsXml"]));

@@ -5,8 +5,8 @@ using System.Xml;
 using System.ComponentModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Configuration;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		public void SetPresetGroups(PresetVoiLutGroupCollection groups)
 		{
 			XmlDocument document = new XmlDocument();
-			XmlElement rootElement = document.CreateElement("voi-lut-presets");
+			XmlElement rootElement = document.CreateElement("preset-voi-luts");
 			document.AppendChild(rootElement);
 
 			foreach (PresetVoiLutGroup group in groups)
@@ -143,19 +143,17 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 				}	
 			}
 
+			_presetGroups = null;
 			string currentSettings = this.SettingsXml;
 
 			try
 			{
 				this.SettingsXml = document.OuterXml;
 				this.Save();
-				_presetGroups = groups;
 			}
-			catch
+			catch (Exception e)
 			{
-				this.SettingsXml = currentSettings;
-				this.Save();
-				_presetGroups = null;
+				Platform.Log(LogLevel.Error, e);
 			}
 		}
 	}

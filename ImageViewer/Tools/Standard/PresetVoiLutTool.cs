@@ -7,8 +7,9 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.BaseTools;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
@@ -82,7 +83,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			List<PresetVoiLut> presets = new List<PresetVoiLut>();
 
-			PresetVoiLut autoPreset = new PresetVoiLut(new AutoPresetVoiLutApplicator());
+			//Only temporary until we enable the full functionality in the presets.
+			PresetVoiLut autoPreset = new PresetVoiLut(new AutoPresetVoiLutApplicatorComponent());
 			autoPreset.KeyStroke = XKeys.F2;
 			presets.Add(autoPreset);
 			

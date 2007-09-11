@@ -13,11 +13,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts {
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class AvailableLutKeyStrokeSettings : global::System.Configuration.ApplicationSettingsBase {
+    internal sealed partial class AvailablePresetVoiLutKeyStrokeSettings : global::System.Configuration.ApplicationSettingsBase {
         
-        private static AvailableLutKeyStrokeSettings defaultInstance = ((AvailableLutKeyStrokeSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new AvailableLutKeyStrokeSettings())));
+        private static AvailablePresetVoiLutKeyStrokeSettings defaultInstance = ((AvailablePresetVoiLutKeyStrokeSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new AvailablePresetVoiLutKeyStrokeSettings())));
         
-        public static AvailableLutKeyStrokeSettings Default {
+        public static AvailablePresetVoiLutKeyStrokeSettings Default {
             get {
                 return defaultInstance;
             }

@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Implements the DICOM concept of a Modality LUT.
 	/// </summary>
-	internal sealed class ModalityLutLinear : DataLut, IModalityLut, IEquatable<ModalityLutLinear>
+	internal sealed class ModalityLutLinear : GeneratedDataLut, IModalityLut, IEquatable<ModalityLutLinear>
 	{
 		private int _bitsStored;
 		private bool _isSigned;

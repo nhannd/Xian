@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// ARGB values that are used by the <see cref="IRenderer"/>
 	/// to display the image.
 	/// </remarks>
-	public abstract class PresentationLut : DataLut, IPresentationLut
+	public abstract class PresentationLut : GeneratedDataLut, IPresentationLut
 	{
 		private int _minPlusMax;
 		private bool _invert = false;
@@ -28,31 +28,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_invert = false;
 		}
 
-		public sealed override int MinInputValue
-		{
-			get
-			{
-				return base.MinInputValue;
-			}
-			set
-			{
-				base.MinInputValue = value;
-				_minPlusMax = this.MinInputValue + this.MaxInputValue;
-			}
-		}
-
-		public sealed override int MaxInputValue
-		{
-			get
-			{
-				return base.MaxInputValue;
-			}
-			set
-			{
-				base.MaxInputValue = value;
-				_minPlusMax = this.MinInputValue + this.MaxInputValue;
-			}
-		}
 		/// <summary>
 		/// Not applicable.
 		/// </summary>
@@ -62,7 +37,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 				throw new InvalidOperationException("A Presentation LUT cannot have a minimum output value. ");
 			}
-			protected set { base.MinOutputValue = value;  }
+			protected set
+			{
+				throw new InvalidOperationException("A Presentation LUT cannot have a minimum output value. ");
+			}
 		}
 
 		/// <summary>
@@ -74,7 +52,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 				throw new InvalidOperationException("A Presentation LUT cannot have a maximum output value. ");
 			}
-			protected set { base.MaxOutputValue = value; }
+			protected set
+			{
+				throw new InvalidOperationException("A Presentation LUT cannot have a maximum output value. ");
+			}
 		}
 
 		/// <summary>
@@ -111,6 +92,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 			{
 				base[index] = value;
 			}
+		}
+
+		protected sealed override void OnLutChanged()
+		{
+			base.OnLutChanged();
+			_minPlusMax = this.MinInputValue + this.MaxInputValue;
 		}
 
 		public sealed override string GetKey()

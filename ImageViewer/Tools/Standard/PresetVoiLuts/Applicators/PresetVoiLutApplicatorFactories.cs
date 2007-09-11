@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 {
 	internal static class PresetVoiLutApplicatorFactories
 	{
@@ -29,8 +29,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 					PresetVoiLutApplicatorFactoryExtensionPoint xp = new PresetVoiLutApplicatorFactoryExtensionPoint();
 					
 					//TODO: Later, when we actually want to support presets other than the standard linear presets, we just switch to the commented out line.
-					object[] factories = new object[] { xp.CreateExtension(delegate(ExtensionInfo info) { return info.ExtensionClass == typeof(PresetVoiLutLinearApplicatorFactory); }) };
-					//object[] factories = xp.CreateExtensions();
+					//object[] factories = new object[] { xp.CreateExtension(delegate(ExtensionInfo info) { return info.ExtensionClass == typeof(LinearPresetVoiLutApplicatorFactory); }) };
+					object[] factories = xp.CreateExtensions();
 
 					foreach (object factory in factories)
 					{

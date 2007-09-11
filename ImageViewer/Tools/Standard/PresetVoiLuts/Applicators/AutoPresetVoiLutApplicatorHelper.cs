@@ -1,34 +1,34 @@
-
 using System;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 {
-	internal static class AutoVoiLutApplicator
+	internal static class AutoPresetVoiLutApplicatorHelper
 	{
-		public static bool AppliesTo(IPresentationImage image)
+		public static bool AppliesTo(IPresentationImage presentationImage)
 		{
-			if (!(image is IVoiLutProvider))
+			if (!(presentationImage is IVoiLutProvider))
 				return false;
 
-			IImageSopProvider sopProvider = image as IImageSopProvider;
+			IImageSopProvider sopProvider = presentationImage as IImageSopProvider;
 			if (sopProvider != null && sopProvider.ImageSop.WindowCenterAndWidth.Length > 0)
 				return true;
 
-			IIndexedPixelDataProvider pixelDataProvider = image as IIndexedPixelDataProvider;
+			IIndexedPixelDataProvider pixelDataProvider = presentationImage as IIndexedPixelDataProvider;
 			return pixelDataProvider != null;
 		}
 
-		public static void AutoApplyLut(IPresentationImage image)
+		public static void AutoApplyLut(IPresentationImage presentationImage)
 		{
-			if (!AppliesTo(image))
+			if (!AppliesTo(presentationImage))
 				throw new InvalidOperationException("The input presentation image is not supported");
 
-			IVoiLutManager manager = ((IVoiLutProvider)image).VoiLutManager;
+			IVoiLutManager manager = ((IVoiLutProvider)presentationImage).VoiLutManager;
 			ILut currentLut = manager.GetLut();
 
-			IImageSopProvider sopProvider = image as IImageSopProvider;
+			IImageSopProvider sopProvider = presentationImage as IImageSopProvider;
 			if (sopProvider != null)
 			{
 				if (sopProvider.ImageSop.WindowCenterAndWidth.Length > 0)
@@ -45,10 +45,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			if (currentLut is MinMaxPixelCalculatedLinearLut)
 				return;
 
-			IIndexedPixelDataProvider pixelDataProvider = image as IIndexedPixelDataProvider;
+			IIndexedPixelDataProvider pixelDataProvider = presentationImage as IIndexedPixelDataProvider;
 			if (pixelDataProvider != null)
 			{
-				IModalityLutProvider modalityLutProvider = image as IModalityLutProvider;
+				IModalityLutProvider modalityLutProvider = presentationImage as IModalityLutProvider;
 				if (modalityLutProvider != null)
 					manager.InstallLut(new MinMaxPixelCalculatedLinearLut(pixelDataProvider.PixelData, modalityLutProvider.ModalityLut));
 				else

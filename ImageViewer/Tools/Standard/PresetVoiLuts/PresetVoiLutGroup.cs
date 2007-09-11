@@ -1,6 +1,6 @@
 using System;
-using ClearCanvas.ImageViewer.StudyManagement;
 using System.Collections.Generic;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {

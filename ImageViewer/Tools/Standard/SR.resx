@@ -165,9 +165,6 @@
   <data name="CommandPan" xml:space="preserve">
     <value>Pan</value>
   </data>
-  <data name="CommandFlipHorizontal" xml:space="preserve">
-    <value>Flip Horizontal</value>
-  </data>
   <data name="CommandFlipVertical" xml:space="preserve">
     <value>Flip Vertical</value>
   </data>
@@ -316,9 +313,6 @@
     <value>The preset cannot be {0} because its {1} conflicts with one or more existing presets.
 Please ensure that the name/keystroke combination is unique.</value>
   </data>
-  <data name="Added" xml:space="preserve">
-    <value>added</value>
-  </data>
   <data name="Edited" xml:space="preserve">
     <value>edited</value>
   </data>
@@ -341,9 +335,6 @@ Please ensure that the name/keystroke combination is unique.</value>
   <data name="TitleEditWindowLevelPreset" xml:space="preserve">
     <value>Edit Window/Level Preset</value>
   </data>
-  <data name="CommandAutoVoiLutApplication" xml:space="preserve">
-    <value>Auto Voi Lut Application</value>
-  </data>
   <data name="CommandWindowLevelPreset" xml:space="preserve">
     <value>Window/Level Preset</value>
   </data>
@@ -352,5 +343,32 @@ Please ensure that the name/keystroke combination is unique.</value>
   </data>
   <data name="PresetVoiLuts" xml:space="preserve">
     <value>Window Level Presets</value>
+  </data>
+  <data name="Added" xml:space="preserve">
+    <value>added</value>
+  </data>
+  <data name="AutoPresetVoiLutApplicatorDescription" xml:space="preserve">
+    <value>Automatically applies window/level</value>
+  </data>
+  <data name="AutoPresetVoiLutApplicatorFactoryDescription" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="AutoPresetVoiLutApplicatorName" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="CommandFlipHorizontal" xml:space="preserve">
+    <value>Flip Horizontal</value>
+  </data>
+  <data name="LinearPresetVoiLutApplicatorFactoryDescription" xml:space="preserve">
+    <value>Linear Window/Level Preset</value>
+  </data>
+  <data name="MinMaxAlgorithmPresetVoiLutApplicatorComponentDescription" xml:space="preserve">
+    <value>Calculates Window/Level from the minimum and maximum pixel values</value>
+  </data>
+  <data name="MinMaxAlgorithmPresetVoiLutApplicatorComponentName" xml:space="preserve">
+    <value>Min/Max Algorithm</value>
+  </data>
+  <data name="MinMaxAlgorithmPresetVoiLutApplicatorFactoryDescription" xml:space="preserve">
+    <value>Min/Max Algorithm</value>
   </data>
 </root>

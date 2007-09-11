@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
+using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {

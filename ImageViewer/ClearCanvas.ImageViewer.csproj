@@ -147,6 +147,8 @@
     <Compile Include="Graphics\GrayscaleImageGraphic.cs" />
     <Compile Include="Graphics\IColorImageGraphicProvider.cs" />
     <Compile Include="Graphics\IGrayscaleImageGraphicProvider.cs" />
+    <Compile Include="Imaging\GeneratedDataLut.cs" />
+    <Compile Include="Imaging\IDataLut.cs" />
     <Compile Include="Imaging\IInitialVoiLutProvider.cs" />
     <Compile Include="Imaging\IColorPixelDataProvider.cs" />
     <Compile Include="Imaging\IIndexedPixelDataProvider.cs" />
@@ -162,7 +164,7 @@
     <Compile Include="Imaging\PresentationLutFactoryBase.cs" />
     <Compile Include="Imaging\PresentationLutFactoryExtensionPoint.cs" />
     <Compile Include="Imaging\MinMaxPixelCalculatedLinearLut.cs" />
-    <Compile Include="Imaging\IDataLut.cs" />
+    <Compile Include="Imaging\IGeneratedDataLut.cs" />
     <Compile Include="Imaging\ILutMemento.cs" />
     <Compile Include="Imaging\IModalityLut.cs" />
     <Compile Include="Imaging\IPresentationLut.cs" />
@@ -174,7 +176,6 @@
     <Compile Include="Graphics\IndexedImageGraphic.cs" />
     <Compile Include="Graphics\StandardPaletteColorImageGraphic.cs" />
     <Compile Include="GrayscalePresentationImage.cs" />
-    <Compile Include="Imaging\DataLut.cs" />
     <Compile Include="Imaging\GrayscalePresentationLut.cs" />
     <Compile Include="Imaging\PresentationLutManager.cs" />
     <Compile Include="Imaging\IPresentationLutProvider.cs" />

@@ -5,7 +5,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public abstract class DataLut : Lut, IDataLut
+	public abstract class GeneratedDataLut : Lut, IGeneratedDataLut
 	{
 		private int _minimumInputValue;
 		private int _maximimInputValue;
@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private int[] _data;
 
-		public DataLut()
+		protected GeneratedDataLut()
 		{
 			_minimumInputValue = int.MinValue;
 			_maximimInputValue = int.MaxValue;
@@ -27,6 +27,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{ 
 			get
 			{
+				if (_minimumInputValue == int.MinValue || _maximimInputValue == int.MaxValue)
+					throw new InvalidOperationException("The minimum and maximum input values have not been set.");
+
 				if (_data == null)
 					_data = new int[this.Length];
 
@@ -77,7 +80,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#endregion
 
 
-		public override int MinInputValue
+		public sealed override int MinInputValue
 		{
 			get { return _minimumInputValue; }
 			set
@@ -86,11 +89,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 					return;
 
 				_minimumInputValue = value;
+				Clear();
 				OnLutChanged();
 			}
 		}
 
-		public override int MaxInputValue
+		public sealed override int MaxInputValue
 		{
 			get { return _maximimInputValue; }
 			set
@@ -99,6 +103,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 					return;
 
 				_maximimInputValue = value;
+				Clear();
 				OnLutChanged();
 			}
 		}

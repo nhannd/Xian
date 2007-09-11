@@ -3,9 +3,9 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Imaging;
 
-namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
+namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 {
-	public sealed class PresetVoiLutLinear : CalculatedVoiLutLinear
+	internal sealed class PresetVoiLutLinear : CalculatedVoiLutLinear
 	{
 		public sealed class PresetVoiLutLinearParameters : IMemento, IEquatable<PresetVoiLutLinearParameters>
 		{

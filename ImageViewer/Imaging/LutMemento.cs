@@ -35,13 +35,21 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#endregion
 
+		public override bool Equals(object obj)
+		{
+			if (obj == this)
+				return true;
+
+			if (obj is ILutMemento)
+				return this.Equals((ILutMemento) obj);
+
+			return false;
+		}
+
 		#region IEquatable<ILutMemento> Members
 
 		public bool Equals(ILutMemento other)
 		{
-			if (other == this)
-				return true;
-
 			if (other is LutMemento)
 				return this.Equals((LutMemento)other);
 
