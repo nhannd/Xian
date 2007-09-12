@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		public void CopyTo(PresetVoiLut[] array, int arrayIndex)
 		{
-			throw new Exception("The method or operation is not implemented.");
+			throw new NotImplementedException("The method or operation is not implemented.");
 		}
 
 		public int Count

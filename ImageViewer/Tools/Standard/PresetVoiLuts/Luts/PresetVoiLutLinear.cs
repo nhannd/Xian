@@ -22,11 +22,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 				Platform.CheckForEmptyString(name, "name");
 
 				if (double.IsNaN(windowWidth) || windowWidth < 1)
-					throw new InvalidOperationException(String.Format("The value '{0}' is invalid for Window Width", windowWidth));
+					throw new ArgumentException(String.Format("The value '{0}' is invalid for Window Width", windowWidth));
 				if (double.IsNaN(windowCenter))
-					throw new InvalidOperationException(String.Format("The value '{0}' is invalid for Window Center", windowCenter));
+					throw new ArgumentException(String.Format("The value '{0}' is invalid for Window Center", windowCenter));
 				if (String.IsNullOrEmpty(name))
-					throw new InvalidOperationException("The Preset Name cannot be empty");
+					throw new ArgumentException("The Preset Name cannot be empty");
 
 				this.Name = name;
 				this.WindowWidth = windowWidth;

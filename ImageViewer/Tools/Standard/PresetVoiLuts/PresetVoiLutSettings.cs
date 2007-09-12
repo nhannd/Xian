@@ -96,58 +96,58 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		public void SetPresetGroups(PresetVoiLutGroupCollection groups)
 		{
-			XmlDocument document = new XmlDocument();
-			XmlElement rootElement = document.CreateElement("preset-voi-luts");
-			document.AppendChild(rootElement);
-
-			foreach (PresetVoiLutGroup group in groups)
-			{
-				if (group.Presets.Count == 0)
-					continue;
-
-				XmlElement groupNode = document.CreateElement("group");
-				if (!String.IsNullOrEmpty(group.Modality))
-					groupNode.SetAttribute("modality", group.Modality);
-
-				rootElement.AppendChild(groupNode);
-
-				XmlElement presetsElement = document.CreateElement("presets");
-				groupNode.AppendChild(presetsElement);
-
-				foreach (PresetVoiLut preset in group.Presets)
-				{
-					XmlElement presetElement = document.CreateElement("preset");
-					presetsElement.AppendChild(presetElement);
-
-					if (preset.KeyStroke != XKeys.None)
-						presetElement.SetAttribute("keystroke", preset.KeyStroke.ToString());
-
-					PresetVoiLutConfiguration configuration = preset.Applicator.GetConfiguration();
-
-					presetElement.SetAttribute("factory", configuration.FactoryName);
-
-					XmlElement configurationElement = document.CreateElement("configuration");
-					presetElement.AppendChild(configurationElement);
-					
-					foreach (KeyValuePair<string, string> configurationItem in configuration)
-					{
-						if (String.IsNullOrEmpty(configurationItem.Key) || String.IsNullOrEmpty(configurationItem.Value))
-							continue;
-
-						XmlElement configurationItemElement = document.CreateElement("item");
-						configurationItemElement.SetAttribute("key", configurationItem.Key);
-						configurationItemElement.SetAttribute("value", configurationItem.Value);
-
-						configurationElement.AppendChild(configurationItemElement);
-					}
-				}	
-			}
-
-			_presetGroups = null;
-			string currentSettings = this.SettingsXml;
-
 			try
 			{
+				XmlDocument document = new XmlDocument();
+				XmlElement rootElement = document.CreateElement("preset-voi-luts");
+				document.AppendChild(rootElement);
+
+				foreach (PresetVoiLutGroup group in groups)
+				{
+					if (group.Presets.Count == 0)
+						continue;
+
+					XmlElement groupNode = document.CreateElement("group");
+					if (!String.IsNullOrEmpty(group.Modality))
+						groupNode.SetAttribute("modality", group.Modality);
+
+					rootElement.AppendChild(groupNode);
+
+					XmlElement presetsElement = document.CreateElement("presets");
+					groupNode.AppendChild(presetsElement);
+
+					foreach (PresetVoiLut preset in group.Presets)
+					{
+						XmlElement presetElement = document.CreateElement("preset");
+						presetsElement.AppendChild(presetElement);
+
+						if (preset.KeyStroke != XKeys.None)
+							presetElement.SetAttribute("keystroke", preset.KeyStroke.ToString());
+
+						PresetVoiLutConfiguration configuration = preset.Applicator.GetConfiguration();
+
+						presetElement.SetAttribute("factory", configuration.FactoryName);
+
+						XmlElement configurationElement = document.CreateElement("configuration");
+						presetElement.AppendChild(configurationElement);
+						
+						foreach (KeyValuePair<string, string> configurationItem in configuration)
+						{
+							if (String.IsNullOrEmpty(configurationItem.Key) || String.IsNullOrEmpty(configurationItem.Value))
+								continue;
+
+							XmlElement configurationItemElement = document.CreateElement("item");
+							configurationItemElement.SetAttribute("key", configurationItem.Key);
+							configurationItemElement.SetAttribute("value", configurationItem.Value);
+
+							configurationElement.AppendChild(configurationItemElement);
+						}
+					}	
+				}
+
+				_presetGroups = null;
+				string currentSettings = this.SettingsXml;
+
 				this.SettingsXml = document.OuterXml;
 				this.Save();
 			}

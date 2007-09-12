@@ -3,9 +3,19 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using System;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 {
+	[Serializable]
+	public class PresetVoiLutApplicatorValidationException : Exception
+	{
+		public PresetVoiLutApplicatorValidationException(string message)
+			: base(message)
+		{
+		}
+	}
+
 	public abstract class PresetVoiLutApplicatorComponent : ApplicationComponent, IPresetVoiLutApplicator, IPresetVoiLutApplicatorComponent
 	{
 		private IPresetVoiLutApplicatorFactory _sourceFactory;

@@ -87,7 +87,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 		public override void Apply(IPresentationImage presentationImage)
 		{
 			if (!AppliesTo(presentationImage))
-				throw new ArgumentException(String.Format("The input presentation image must implement {0}", typeof(IVoiLutProvider).Name));
+				throw new InvalidOperationException(String.Format("The input presentation image must implement {0}", typeof(IVoiLutProvider).Name));
 
 			IVoiLutManager manager = ((IVoiLutProvider)presentationImage).VoiLutManager;
 
@@ -117,11 +117,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 		public override void Validate()
 		{
 			if (String.IsNullOrEmpty(this.Name))
-				throw new InvalidOperationException("The Preset Name cannot be empty");
+				throw new PresetVoiLutApplicatorValidationException("The Preset Name cannot be empty");
 			if (double.IsNaN(this.WindowWidth) || this.WindowWidth < 1)
-				throw new InvalidOperationException(String.Format("The value '{0}' is invalid for Window Width", this.WindowWidth));
+				throw new PresetVoiLutApplicatorValidationException(String.Format("The value '{0}' is invalid for Window Width", this.WindowWidth));
 			if (double.IsNaN(this.WindowCenter))
-				throw new InvalidOperationException(String.Format("The value '{0}' is invalid for Window Center", this.WindowCenter));
+				throw new PresetVoiLutApplicatorValidationException(String.Format("The value '{0}' is invalid for Window Center", this.WindowCenter));
 		}
 
 		protected override void UpdateValid()

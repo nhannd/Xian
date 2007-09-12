@@ -284,33 +284,44 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			if (!AddEnabled)
 				return;
 
-			IPresetVoiLutApplicatorComponent addComponent = SelectedAddFactory.Factory.GetEditComponent(null);
-			addComponent.EditContext = EditContext.Add;
-			PresetVoiLutApplicatorComponentContainer container = new PresetVoiLutApplicatorComponentContainer(GetUnusedKeyStrokes(null), addComponent);
-
-			if (ApplicationComponentExitCode.Normal != ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, "Add Preset"))
-				return;
-
-			PresetVoiLut preset = container.GetPresetVoiLut();
-			if (preset == null)
+			try
 			{
-				this.Host.DesktopWindow.ShowMessageBox("An error has occurred while adding the preset.", MessageBoxActions.Ok);
+				IPresetVoiLutApplicatorComponent addComponent = SelectedAddFactory.Factory.GetEditComponent(null);
+				addComponent.EditContext = EditContext.Add;
+				PresetVoiLutApplicatorComponentContainer container =
+					new PresetVoiLutApplicatorComponentContainer(GetUnusedKeyStrokes(null), addComponent);
+
+				if (ApplicationComponentExitCode.Normal !=
+				    ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, "Add Preset"))
+					return;
+
+				PresetVoiLut preset = container.GetPresetVoiLut();
+				if (preset == null)
+				{
+					this.Host.DesktopWindow.ShowMessageBox("An error has occurred while adding the preset.", MessageBoxActions.Ok);
+				}
+
+				List<PresetVoiLut> conflictingItems = CollectionUtils.Select<PresetVoiLut>(_selectedPresetVoiLutGroup.Presets,
+				                                                                           delegate(PresetVoiLut test)
+				                                                                           	{ return preset.Equals(test); });
+
+				if (conflictingItems.Count == 0)
+				{
+					_selectedPresetVoiLutGroup.Presets.Add(preset);
+					_voiLutPresets.Items.Add(preset);
+					Selection = null;
+
+					this.Modified = true;
+				}
+				else
+				{
+					this.Host.DesktopWindow.ShowMessageBox(
+						"The name and/or keystroke entered conflicts with at least one other existing preset.", MessageBoxActions.Ok);
+				}
 			}
-
-			List<PresetVoiLut> conflictingItems = CollectionUtils.Select<PresetVoiLut>(_selectedPresetVoiLutGroup.Presets,
-			                                                                           delegate(PresetVoiLut test) { return preset.Equals(test); });
-
-			if (conflictingItems.Count == 0)
+			catch(Exception e)
 			{
-				_selectedPresetVoiLutGroup.Presets.Add(preset);
-				_voiLutPresets.Items.Add(preset);
-				Selection = null;
-
-				this.Modified = true;
-			}
-			else
-			{
-				this.Host.DesktopWindow.ShowMessageBox("The name and/or keystroke entered conflicts with at least one other existing preset.", MessageBoxActions.Ok);
+				ExceptionHandler.Report(e, "Failed to add the specified preset.", this.Host.DesktopWindow);
 			}
 		}
 
@@ -325,46 +336,59 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 				return;
 			}
 
-			PresetVoiLutConfiguration configuration = this.SelectedPresetApplicator.GetConfiguration();
-			IPresetVoiLutApplicatorComponent editComponent = this.SelectedPresetApplicator.SourceFactory.GetEditComponent(configuration);
-			editComponent.EditContext = EditContext.Edit;
-			PresetVoiLutApplicatorComponentContainer container = new PresetVoiLutApplicatorComponentContainer(GetUnusedKeyStrokes(this.SelectedPresetVoiLut), editComponent);
-			container.SelectedKeyStroke = this.SelectedPresetVoiLut.KeyStroke;
-
-			if (ApplicationComponentExitCode.Normal != ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, "Edit Preset"))
-				return;
-
-			PresetVoiLut preset = container.GetPresetVoiLut();
-			if (preset == null)
+			try
 			{
-				this.Host.DesktopWindow.ShowMessageBox("An error has occurred while editing the preset.", MessageBoxActions.Ok);
-			}
+				PresetVoiLutConfiguration configuration = this.SelectedPresetApplicator.GetConfiguration();
+				IPresetVoiLutApplicatorComponent editComponent =
+					this.SelectedPresetApplicator.SourceFactory.GetEditComponent(configuration);
+				editComponent.EditContext = EditContext.Edit;
+				PresetVoiLutApplicatorComponentContainer container =
+					new PresetVoiLutApplicatorComponentContainer(GetUnusedKeyStrokes(this.SelectedPresetVoiLut), editComponent);
+				container.SelectedKeyStroke = this.SelectedPresetVoiLut.KeyStroke;
 
-			List<PresetVoiLut> conflictingItems = CollectionUtils.Select<PresetVoiLut>(_selectedPresetVoiLutGroup.Presets,
-			                                                                           delegate(PresetVoiLut test) { return preset.Equals(test); });
+				if (ApplicationComponentExitCode.Normal !=
+				    ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, "Edit Preset"))
+					return;
 
-			if (conflictingItems.Count == 0 || (conflictingItems.Count == 1 && conflictingItems[0].Equals(this.SelectedPresetVoiLut)))
-			{
-				PresetVoiLut selected = this.SelectedPresetVoiLut;
+				PresetVoiLut preset = container.GetPresetVoiLut();
+				if (preset == null)
+				{
+					this.Host.DesktopWindow.ShowMessageBox("An error has occurred while editing the preset.", MessageBoxActions.Ok);
+				}
 
-				_selectedPresetVoiLutGroup.Presets.Remove(selected);
-				_selectedPresetVoiLutGroup.Presets.Add(preset);
+				List<PresetVoiLut> conflictingItems = CollectionUtils.Select<PresetVoiLut>(_selectedPresetVoiLutGroup.Presets,
+				                                                                           delegate(PresetVoiLut test)
+				                                                                           	{ return preset.Equals(test); });
 
-				int index = _voiLutPresets.Items.IndexOf(selected);
-				_voiLutPresets.Items.Remove(selected);
-				
-				if (index < _voiLutPresets.Items.Count)
-					_voiLutPresets.Items.Insert(index, preset);
+				if (conflictingItems.Count == 0 ||
+				    (conflictingItems.Count == 1 && conflictingItems[0].Equals(this.SelectedPresetVoiLut)))
+				{
+					PresetVoiLut selected = this.SelectedPresetVoiLut;
+
+					_selectedPresetVoiLutGroup.Presets.Remove(selected);
+					_selectedPresetVoiLutGroup.Presets.Add(preset);
+
+					int index = _voiLutPresets.Items.IndexOf(selected);
+					_voiLutPresets.Items.Remove(selected);
+
+					if (index < _voiLutPresets.Items.Count)
+						_voiLutPresets.Items.Insert(index, preset);
+					else
+						_voiLutPresets.Items.Add(preset);
+
+					Selection = null;
+
+					this.Modified = true;
+				}
 				else
-					_voiLutPresets.Items.Add(preset);
-
-				Selection = null;
-
-				this.Modified = true;
+				{
+					this.Host.DesktopWindow.ShowMessageBox(
+						"The name and/or keystroke entered conflicts with at least one other existing preset.", MessageBoxActions.Ok);
+				}
 			}
-			else
+			catch(Exception	e)
 			{
-				this.Host.DesktopWindow.ShowMessageBox("The name and/or keystroke entered conflicts with at least one other existing preset.", MessageBoxActions.Ok);
+				ExceptionHandler.Report(e, "Failed to edit the specified preset.", this.Host.DesktopWindow);
 			}
 		}
 
