@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
-
-using ClearCanvas.Common;
+using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
@@ -14,10 +11,6 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
     [DataContract]
     public class PatientOrderData : DataContractBase
     {
-        public PatientOrderData()
-        {
-        }
-
         #region Patient Profile
 
         [DataMember]
@@ -140,7 +133,7 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
         public string OrderStatus;
 
         [DataMember]
-        public DateTime? EarliestScheduledMPSDateTime;
+        public DateTime? OrderScheduledStartTime;
 
         #endregion
 

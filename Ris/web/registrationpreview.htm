@@ -79,19 +79,19 @@
 		                var pastOrders = orders.select(
 		                    function(item) 
 		                    { 
-		                        return item.EarliestScheduledMPSDateTime && Date.compare(item.EarliestScheduledMPSDateTime, today) < 0;
+		                        return item.OrderScheduledStartTime && Date.compare(item.OrderScheduledStartTime, today) < 0;
 		                    }).sort(orderDataComparison);
 
 		                var activeOrders = orders.select(
 		                    function(item) 
 		                    { 
-		                        return item.EarliestScheduledMPSDateTime && Date.compare(item.EarliestScheduledMPSDateTime, today) >= 0;
+		                        return item.OrderScheduledStartTime && Date.compare(item.OrderScheduledStartTime, today) >= 0;
 		                    }).sort(orderDataComparison);
 
 			            var notScheduledOrders = orders.select(
 			                function(item) 
 			                { 
-			                    return item.EarliestScheduledMPSDateTime == null;
+			                    return item.OrderScheduledStartTime == null;
 			                });
 			            activeOrders = activeOrders.concat(notScheduledOrders);
 

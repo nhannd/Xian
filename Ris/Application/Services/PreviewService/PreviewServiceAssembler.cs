@@ -1,16 +1,8 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common.PreviewService;
-using ClearCanvas.Workflow;
 using ClearCanvas.Ris.Application.Services.ReportingWorkflow;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 
 namespace ClearCanvas.Ris.Application.Services.PreviewService
 {
@@ -126,7 +118,7 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
             data.OrderPriority = EnumUtils.GetValue(order.Priority, context);
             data.CancelReason = EnumUtils.GetDisplayValue(order.CancelReason);
             data.OrderStatus = EnumUtils.GetValue(order.Status, context);
-            data.EarliestScheduledMPSDateTime = order.ScheduledStartTime;
+            data.OrderScheduledStartTime = order.ScheduledStartTime;
         }
 
         private void UpdatePatientOrderData(PatientOrderData data, RequestedProcedure rp, IPersistenceContext context)
