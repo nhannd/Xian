@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageServer.Model
 
         #region Private Members
         private ServerEntityKey _serverPartitionKey;
-        private ServerEntityKey _sopClassKey;
+        private ServerEntityKey _serverSopClassKey;
         private String _sopClassUid;
         private String _description;
         private bool _nonImage;
@@ -31,10 +31,10 @@ namespace ClearCanvas.ImageServer.Model
             get { return _serverPartitionKey; }
             set { _serverPartitionKey = value; }
         }
-        public ServerEntityKey SopClassKey
+        public ServerEntityKey ServerSopClassKey
         {
-            get { return _sopClassKey; }
-            set { _sopClassKey = value; }
+            get { return _serverSopClassKey; }
+            set { _serverSopClassKey = value; }
         }
         public String SopClassUid
         {

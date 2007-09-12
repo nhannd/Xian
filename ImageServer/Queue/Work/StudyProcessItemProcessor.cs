@@ -147,8 +147,8 @@ namespace ClearCanvas.ImageServer.Queue.Work
             parms.StatusEnum = StatusEnum.GetEnum("Pending");
             parms.WorkQueueKey = item.GetKey();
             parms.StudyStorageKey = item.StudyStorageKey;
-            parms.ScheduledTime = DateTime.Now.AddSeconds(15.0);
-            parms.ExpirationTime = DateTime.Now.AddMinutes(5.0);
+            parms.ScheduledTime = Platform.Time.AddSeconds(15.0);
+            parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
 
             if (false == update.Execute(parms))
             {
@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageServer.Queue.Work
                 IUpdateWorkQueue update = _readContext.GetBroker<IUpdateWorkQueue>();
                 WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
 
-                if (item.ExpirationTime < DateTime.Now)
+                if (item.ExpirationTime < Platform.Time)
                 {
                     parms.StatusEnum = StatusEnum.GetEnum("Completed");
                     parms.WorkQueueKey = item.GetKey();
@@ -186,7 +186,7 @@ namespace ClearCanvas.ImageServer.Queue.Work
                     parms.StatusEnum = StatusEnum.GetEnum("Pending");
                     parms.WorkQueueKey = item.GetKey();
                     parms.StudyStorageKey = item.StudyStorageKey;
-                    parms.ScheduledTime = DateTime.Now.AddSeconds(60.0); // 30 second delay to recheck
+                    parms.ScheduledTime = Platform.Time.AddSeconds(60.0); // 30 second delay to recheck
                     parms.ExpirationTime = item.ExpirationTime; // Keep the same
                 }
 

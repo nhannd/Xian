@@ -6,7 +6,7 @@ using ClearCanvas.ImageServer.Database;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.ImageServer.Model
+namespace ClearCanvas.ImageServer.Model.Parameters
 {
     public class ServerPartitionInsertParameters : ProcedureParameters
     {

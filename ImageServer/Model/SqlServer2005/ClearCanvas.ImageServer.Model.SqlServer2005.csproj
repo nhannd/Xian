@@ -38,11 +38,13 @@
     <Compile Include="Brokers\GetFilesystemTiers.cs" />
     <Compile Include="Brokers\GetServerPartitions.cs" />
     <Compile Include="Brokers\GetSopClasses.cs" />
+    <Compile Include="Brokers\InsertDevice.cs" />
     <Compile Include="Brokers\InsertInstance.cs" />
     <Compile Include="Brokers\InsertRequestAttributes.cs" />
     <Compile Include="Brokers\InsertServerPartition.cs" />
     <Compile Include="Brokers\InsertStudyStorage.cs" />
     <Compile Include="Brokers\InsertWorkQueueStudyProcess.cs" />
+    <Compile Include="Brokers\SelectDevice.cs" />
     <Compile Include="Brokers\SelectPatient.cs" />
     <Compile Include="Brokers\SelectModalitiesInStudy.cs" />
     <Compile Include="Brokers\SelectPartitionSopClasses.cs" />

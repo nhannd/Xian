@@ -8,11 +8,11 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.ImageServer.Model
 {
-    public class SopClass : ServerEntity
+    public class ServerSopClass : ServerEntity
     {
         #region Constructors
-        public SopClass()
-            : base("SopClass")
+        public ServerSopClass()
+            : base("ServerSopClass")
         {
         }
         #endregion

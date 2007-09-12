@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Network;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.DicomServices;
 using ClearCanvas.DicomServices.ImageServer;
@@ -10,6 +11,7 @@ using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Brokers;
 using ClearCanvas.ImageServer.Database;
+using ClearCanvas.ImageServer.Model.Parameters;
 
 
 namespace ClearCanvas.ImageServer.Shreds.DicomServer
@@ -53,6 +55,7 @@ namespace ClearCanvas.ImageServer.Shreds.DicomServer
         }
         #endregion
 
+        
         #region Public Methods
         /// <summary>
         /// Method called when starting the DICOM SCP.
@@ -82,7 +85,7 @@ namespace ClearCanvas.ImageServer.Shreds.DicomServer
                 {
                     DicomScpParameters parms = new DicomScpParameters(part, monitor);
 
-                    DicomScp scp = new DicomScp(parms);
+                    DicomScp scp = new DicomScp(parms,AssociationVerifier.Verify);
 
                     scp.ListenPort = part.Port;
                     scp.AeTitle = part.AeTitle;

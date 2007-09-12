@@ -11,7 +11,7 @@ using ClearCanvas.ImageServer.Database.SqlServer2005;
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class GetSopClasses : ProcedureReadBroker<SopClass>, IGetSopClasses
+    public class GetSopClasses : ProcedureReadBroker<ServerSopClass>, IGetSopClasses
     {
         public GetSopClasses()
             : base("ReadSopClasses")

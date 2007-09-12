@@ -47,7 +47,7 @@ namespace ClearCanvas.ImageServer.Shreds.WorkQueueServer
         {
             if (_theProcessor == null)
             {
-                _theProcessor = new WorkQueueProcessor("WorkQueue Processor",5); // 5 threads for processor
+                _theProcessor = new WorkQueueProcessor("WorkQueue Processor", ImageServerShredSettings.Default.WorkQueueThreadCount); // 5 threads for processor
                 _theProcessor.Start();
             }
         }

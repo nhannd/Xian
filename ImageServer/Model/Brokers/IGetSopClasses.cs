@@ -6,7 +6,7 @@ using ClearCanvas.ImageServer.Database;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public interface IGetSopClasses : IProcedureReadBroker<SopClass>
+    public interface IGetSopClasses : IProcedureReadBroker<ServerSopClass>
     {
     }
 }

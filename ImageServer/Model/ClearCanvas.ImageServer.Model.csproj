@@ -39,12 +39,14 @@
     <Compile Include="Brokers\IGetFilesystems.cs" />
     <Compile Include="Brokers\IGetFilesystemTiers.cs" />
     <Compile Include="Brokers\IGetServerPartitions.cs" />
+    <Compile Include="Brokers\IInsertDevice.cs" />
     <Compile Include="Brokers\IInsertInstance.cs" />
     <Compile Include="Brokers\IInsertRequestAttributes.cs" />
     <Compile Include="Brokers\IInsertServerPartition.cs" />
     <Compile Include="Brokers\IInsertStudyStorage.cs" />
     <Compile Include="Brokers\IGetSopClasses.cs" />
     <Compile Include="Brokers\IInsertWorkQueueStudyProcess.cs" />
+    <Compile Include="Brokers\ISelectDevice.cs" />
     <Compile Include="Brokers\ISelectModalitiesInStudy.cs" />
     <Compile Include="Brokers\ISelectPatient.cs" />
     <Compile Include="Brokers\ISelectRequestAttributes.cs" />
@@ -57,10 +59,13 @@
     <Compile Include="Brokers\ITypeEnum.cs" />
     <Compile Include="Brokers\IUpdateWorkQueue.cs" />
     <Compile Include="Criteria\PatientSelectCriteria.cs" />
+    <Compile Include="Device.cs" />
     <Compile Include="Filesystem.cs" />
     <Compile Include="FilesystemTier.cs" />
     <Compile Include="Brokers\ISelectWorkQueue.cs" />
     <Compile Include="InstanceKeys.cs" />
+    <Compile Include="Parameters\DeviceInsertParameters.cs" />
+    <Compile Include="Parameters\DeviceSelectParameters.cs" />
     <Compile Include="Parameters\InstanceInsertParameters.cs" />
     <Compile Include="Parameters\ModalitiesInStudySelectParameters.cs" />
     <Compile Include="Parameters\RequestAttributesInsertParameters.cs" />
@@ -73,7 +78,7 @@
     <Compile Include="RequestAttributes.cs" />
     <Compile Include="Series.cs" />
     <Compile Include="Parameters\ServerPartitionInsertParameters.cs" />
-    <Compile Include="SopClass.cs" />
+    <Compile Include="ServerSopClass.cs" />
     <Compile Include="StatusEnum.cs" />
     <Compile Include="Study.cs" />
     <Compile Include="Parameters\StudyStorageInsertParameters.cs" />
