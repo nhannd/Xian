@@ -4,6 +4,9 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// A basic grayscale Presentation Image.
+	/// </summary>
 	public class GrayscalePresentationImage 
 		: BasicPresentationImage, 
 		IIndexedPixelDataProvider,
@@ -11,11 +14,35 @@ namespace ClearCanvas.ImageViewer
 		IVoiLutProvider, 
 		IPresentationLutProvider
 	{
+		/// <summary>
+		/// Simple constructor, which will automatically create grayscale pixel data with the specified
+		/// number of rows and columns.
+		/// </summary>
+		/// <param name="rows">the number of rows</param>
+		/// <param name="columns">the number of columns</param>
 		public GrayscalePresentationImage(int rows, int columns)
 			: base(new GrayscaleImageGraphic(rows, columns))
 		{
 		}
 
+		/// <summary>
+		/// Constructor.  Allows more flexible construction of the image, allowing for the pixel data
+		/// to be retrieved from and external source via a <see cref="PixelDataGetter"/>.
+		/// </summary>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="bitsAllocated"></param>
+		/// <param name="bitsStored"></param>
+		/// <param name="highBit"></param>
+		/// <param name="isSigned"></param>
+		/// <param name="inverted"></param>
+		/// <param name="rescaleSlope"></param>
+		/// <param name="rescaleIntercept"></param>
+		/// <param name="pixelSpacingX"></param>
+		/// <param name="pixelSpacingY"></param>
+		/// <param name="pixelAspectRatioX"></param>
+		/// <param name="pixelAspectRatioY"></param>
+		/// <param name="pixelDataGetter"></param>
 		public GrayscalePresentationImage(
 			int rows,
 			int columns,

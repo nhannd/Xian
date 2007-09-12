@@ -9,11 +9,18 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// A Dicom Grayscale Presentation image.
+	/// </summary>
 	public class DicomGrayscalePresentationImage 
 		: GrayscalePresentationImage, IImageSopProvider
 	{
-		private ImageSop _imageSop;
+		private readonly ImageSop _imageSop;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="imageSop">The <see cref="ImageSop"/> from which to construct the image</param>
 		public DicomGrayscalePresentationImage(ImageSop imageSop)
 			: base(imageSop.Rows,
 			       imageSop.Columns,
@@ -49,6 +56,10 @@ namespace ClearCanvas.ImageViewer
 			get { return _imageSop; }
 		}
 
+		/// <summary>
+		/// Returns the Instance Number as a string.
+		/// </summary>
+		/// <returns>The Instance Number as a string.</returns>
 		public override string ToString()
 		{
 			return _imageSop.InstanceNumber.ToString();

@@ -3,14 +3,34 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// A color Presentation Image.
+	/// </summary>
 	public class ColorPresentationImage : BasicPresentationImage, IColorPixelDataProvider
 	{
+		/// <summary>
+		/// Simple constructor, which will automatically create RGB pixel data with the specified
+		/// number of rows and columns.
+		/// </summary>
+		/// <param name="rows">the number of rows</param>
+		/// <param name="columns">the number of columns</param>
 		public ColorPresentationImage(int rows, int columns) 
 			: base(new ColorImageGraphic(rows, columns))
 		{
 
 		}
 
+		/// <summary>
+		/// Constructor.  Allows more flexible construction of the image, allowing for the pixel data
+		/// to be retrieved from and external source via a <see cref="PixelDataGetter"/>.
+		/// </summary>
+		/// <param name="rows"></param>
+		/// <param name="columns"></param>
+		/// <param name="pixelSpacingX"></param>
+		/// <param name="pixelSpacingY"></param>
+		/// <param name="pixelAspectRatioX"></param>
+		/// <param name="pixelAspectRatioY"></param>
+		/// <param name="pixelDataGetter"></param>
 		public ColorPresentationImage(
 			int rows,
 			int columns,

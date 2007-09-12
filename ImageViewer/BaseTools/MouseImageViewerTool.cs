@@ -9,7 +9,7 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer.BaseTools
 {
     /// <summary>
-    /// Extends the <see cref="Tool"/> class to provide functionality that is common to mouse tools.
+	/// Extends the <see cref="ImageViewerTool"/> class to provide functionality that is common to mouse tools.
     /// </summary>
     /// <remarks>
     /// A mouse tool is a tool that, when activated, is assigned to a specific mouse button 

@@ -174,9 +174,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// The output of the LUT pipeline.
 		/// </summary>
 		/// <remarks>
-		/// Each entry in the <see cref="OutputLUT"/> array is 32-bit ARGB value.
+		/// Each entry in the <see cref="OutputLut"/> array is 32-bit ARGB value.
 		/// When an <see cref="IRenderer"/> renders an <see cref="IndexedImageGraphic"/>, it should
-		/// use <see cref="OutputLUT"/> to determine the ARGB value to display for a given pixel value.
+		/// use <see cref="OutputLut"/> to determine the ARGB value to display for a given pixel value.
 		/// </remarks>
 		public abstract int[] OutputLut { get; }
 

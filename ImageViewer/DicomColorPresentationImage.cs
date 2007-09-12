@@ -7,11 +7,18 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// A Dicom color presentation image.
+	/// </summary>
 	public class DicomColorPresentationImage
 		: ColorPresentationImage, IImageSopProvider
 	{
-		private ImageSop _imageSop;
+		private readonly ImageSop _imageSop;
 
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="imageSop">The <see cref="ImageSop"/> from which to construct the image</param>
 		public DicomColorPresentationImage(ImageSop imageSop)
 			: base(imageSop.Rows,
 			       imageSop.Columns,
@@ -42,6 +49,10 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Returns the Instance Number as a string.
+		/// </summary>
+		/// <returns>The Instance Number as a string.</returns>
 		public override string ToString()
 		{
 			return _imageSop.InstanceNumber.ToString();

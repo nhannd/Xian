@@ -46,7 +46,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public IMemento CreateMemento()
 		{
-			return new LutMemento(_grayscaleImageGraphic.PresentationLut, _grayscaleImageGraphic.PresentationLut.CreateMemento());
+			return new LutMemento(_grayscaleImageGraphic.PresentationLut);
 		}
 
 		public void SetMemento(IMemento memento)

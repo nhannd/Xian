@@ -5,6 +5,14 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// Abstract class providing the base implementation for Data Luts that are purely generated, 
+	/// usually based on an equation or algorithm.
+	/// </summary>
+	/// <remarks>
+	/// Often, Linear Luts are created by deriving from this class to improve performance so that
+	/// the calculation is only performed once.  For an example, see <see cref="ModalityLutLinear"/>.
+	/// </remarks>
 	public abstract class GeneratedDataLut : Lut, IGeneratedDataLut
 	{
 		private int _minimumInputValue;
@@ -14,6 +22,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private int[] _data;
 
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
 		protected GeneratedDataLut()
 		{
 			_minimumInputValue = int.MinValue;
@@ -23,6 +34,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_maximumOutputValue = int.MaxValue;
 		}
 
+		/// <summary>
+		/// Gets the Lut data, lazily created.
+		/// </summary>
 		protected int[] Data
 		{ 
 			get
@@ -37,6 +51,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Looks up and returns a value at a particular index in the Lut.
+		/// </summary>
+		/// <param name="index">the index</param>
+		/// <returns>the value at the given index</returns>
 		public override int this[int index]
 		{
 			get
@@ -65,13 +84,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IDataLut Members
 
-		public uint Length
-		{
-			get { return (uint)(this.MaxInputValue - this.MinInputValue + 1); }
-		}
-
+		/// <summary>
+		/// Inheritors must implement this method and create the Lut using their particular algorithm.
+		/// </summary>
 		public abstract void Create();
 
+		/// <summary>
+		/// Clears the data in the Lut.  The Lut can be recreated at will by calling <see cref="Create"/>.
+		/// </summary>
 		public void Clear()
 		{
 			_data = null;
@@ -79,7 +99,17 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#endregion
 
+		/// <summary>
+		/// Returns the length of the Lut.
+		/// </summary>
+		public uint Length
+		{
+			get { return (uint)(this.MaxInputValue - this.MinInputValue + 1); }
+		}
 
+		/// <summary>
+		/// Gets or sets the minimum input value.  This value will be set internally by the framework.
+		/// </summary>
 		public sealed override int MinInputValue
 		{
 			get { return _minimumInputValue; }
@@ -94,6 +124,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Gets the maximum input value.  This value will be set internally by the framework.
+		/// </summary>
 		public sealed override int MaxInputValue
 		{
 			get { return _maximimInputValue; }
@@ -108,6 +141,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Gets the minimum output value.
+		/// </summary>
 		public override int MinOutputValue
 		{
 			get { return _minimumOutputValue; }
@@ -121,6 +157,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Gets the maximum output value.
+		/// </summary>
 		public override int MaxOutputValue
 		{
 			get { return _maximumOutputValue; }

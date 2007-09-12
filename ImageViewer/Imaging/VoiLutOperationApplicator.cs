@@ -3,6 +3,11 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// An <see cref="ImageOperationApplicator"/> for Voi Luts.  The Originator 
+	/// for this class (returned by <see cref="GetOriginator"/> is the <see cref="IPresentationImage"/>'s 
+	/// <see cref="IVoiLutManager"/>, if applicable.
+	/// </summary>
 	public class VoiLutOperationApplicator : ImageOperationApplicator
 	{
 		/// <summary>
@@ -18,6 +23,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the <see cref="IVoiLutManager"/> which should be the originator for <b>all</b> Voi Lut undoable operations.
 		/// </summary>
+		/// <remarks>
+		/// The <see cref="IPresentationImage"/> must implement <see cref="IVoiLutProvider"/> or an exception is thrown.
+		/// </remarks>
 		/// <param name="image">The image the memento is associated with</param>
 		/// <returns>the <see cref="IVoiLutManager"/> which should be the originator for <b>all</b> Voi Lut undoable operation.</returns>
 		protected override IMemorable GetOriginator(IPresentationImage image)

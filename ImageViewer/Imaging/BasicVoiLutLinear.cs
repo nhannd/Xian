@@ -4,6 +4,10 @@ using System;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// The most basic of Linear Luts.  The <see cref="WindowWidth"/> and <see cref="WindowCenter"/> can be
+	/// directly set/manipulated.
+	/// </summary>
 	public sealed class BasicVoiLutLinear : VoiLutLinearBase, IBasicVoiLutLinear
 	{
 		private class WindowLevelMemento : IMemento, IEquatable<WindowLevelMemento>
@@ -41,6 +45,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private double _windowWidth;
 		private double _windowCenter;
 
+		/// <summary>
+		/// Constructor.  
+		/// </summary>
+		/// <remarks>
+		/// Allows the initial Window Width and Window Center to be set.
+		/// </remarks>
+		/// <param name="windowWidth">the initial Window Width</param>
+		/// <param name="windowCenter">the initial Window Center</param>
 		public BasicVoiLutLinear(double windowWidth, double windowCenter)
 			: base()
 		{
@@ -48,23 +60,35 @@ namespace ClearCanvas.ImageViewer.Imaging
 			this.WindowCenter = windowCenter;
 		}
 
+		/// <summary>
+		/// Default Constructor.
+		/// </summary>
+		/// <remarks>
+		/// The initial Window Width and Window Center are 1 and 0, respectively.
+		/// </remarks>
 		public BasicVoiLutLinear()
 			: this(1, 0)
 		{
 		}
 
+		/// <summary>
+		/// Gets the Window Width.
+		/// </summary>
 		protected override double GetWindowWidth()
 		{
 			return this.WindowWidth;
 		}
 
+		/// <summary>
+		/// Gets the Window Center.
+		/// </summary>
 		protected override double GetWindowCenter()
 		{
 			return this.WindowCenter;
 		}
 
 		/// <summary>
-		/// Gets or sets the window width.
+		/// Gets or sets the Window Width.
 		/// </summary>
 		public double WindowWidth
 		{
@@ -83,7 +107,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Gets or sets the window center.
+		/// Gets or sets the Window Center.
 		/// </summary>
 		public double WindowCenter
 		{
@@ -98,16 +122,29 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Gets an abbreviated description of the Lut.
+		/// </summary>
+		/// <returns>a string briefly describing the Lut</returns>
 		public override string GetDescription()
 		{
 			return String.Format("W:{0} L:{1}", WindowWidth, WindowCenter);
 		}
 
+		/// <summary>
+		/// Creates a memento, through which the Lut's state can be restored.
+		/// </summary>
+		/// <returns>an <see cref="IMemento"/></returns>
 		public override IMemento CreateMemento()
 		{
 			return new WindowLevelMemento(this.WindowWidth, this.WindowCenter);
 		}
 
+		/// <summary>
+		/// Sets the Lut's state from the input <see cref="IMemento"/>.
+		/// </summary>
+		/// <exception cref="InvalidCastException">thrown when the memento is unrecognized.  This should never happen.</exception>
+		/// <param name="memento">The memento to use to restore a previous state.</param>
 		public override void SetMemento(IMemento memento)
 		{
 			WindowLevelMemento windowLevelMemento = memento as WindowLevelMemento;

@@ -144,19 +144,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 			Initialize(inverted, rescaleSlope, rescaleIntercept);
 		}
 
-		private void Initialize(bool inverted, double rescaleSlope, double rescaleIntercept)
-		{
-			_inverted = inverted;
-			_rescaleSlope = rescaleSlope <= double.Epsilon ? 1 : rescaleSlope;
-			_rescaleIntercept = rescaleIntercept;
-		}
-
 		#endregion
 
 		#region Public properties
 
 		#region IVoiLutProvider Members
 
+		/// <summary>
+		/// Retrieves this image's <see cref="IVoiLutManager"/>.
+		/// </summary>
 		public IVoiLutManager VoiLutManager
 		{
 			get 
@@ -172,6 +168,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region IPresentationLutProvider Members
 
+		/// <summary>
+		/// Retrieves this image's <see cref="IPresentationLutManager"/>.
+		/// </summary>
 		public IPresentationLutManager PresentationLutManager
 		{
 			get
@@ -184,9 +183,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		#endregion
-		
+
 		/// <summary>
-		/// Gets the modality LUT.
+		/// Retrieves this image's <see cref="IModalityLut"/>
 		/// </summary>
 		public IModalityLut ModalityLut
 		{
@@ -198,7 +197,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets the VOI LUT.
+		/// Retrieves this image's Voi Lut.
 		/// </summary>
 		public ILut VoiLut
 		{
@@ -210,7 +209,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Gets the presentation LUT.
+		/// Retrieves this image's <see cref="IPresentationLut"/>.
 		/// </summary>
 		public IPresentationLut PresentationLut
 		{
@@ -242,9 +241,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Private properties
 
-		/// <summary>
-		/// Gets the <see cref="LutComposer"/>.
-		/// </summary>
 		private LutComposer LutComposer
 		{
 			get
@@ -286,6 +282,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		#endregion
 
 		#region Private methods
+
+		private void Initialize(bool inverted, double rescaleSlope, double rescaleIntercept)
+		{
+			_inverted = inverted;
+			_rescaleSlope = rescaleSlope <= double.Epsilon ? 1 : rescaleSlope;
+			_rescaleIntercept = rescaleIntercept;
+		}
 
 		private void InitializeNecessaryLuts(Luts luts)
 		{
@@ -348,10 +351,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			InstallPresentationLut(lut);
 		}
 
-		/// <summary>
-		/// Only to be used directly (outside of this class) for restoring Luts from mementos.
-		/// </summary>
-		/// <param name="installLut"></param>
+		///Note: This method should only be used directly (e.g. outside of this class) for restoring Luts from mementos.
 		internal void InstallPresentationLut(IPresentationLut installLut)
 		{
 			InitializeNecessaryLuts(Luts.Voi);

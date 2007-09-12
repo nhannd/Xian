@@ -68,6 +68,10 @@ namespace ClearCanvas.ImageViewer
 	/// </remarks>
 	public abstract class ImageOperationApplicator : IMemorable
 	{
+		/// <summary>
+		/// Delegate used by <see cref="ImageOperationApplicator"/> to apply an operation to presentation images (<see cref="IPresentationImage"/>).
+		/// </summary>
+		/// <param name="image"></param>
 		public delegate void Apply(IPresentationImage image);
 
 		private IPresentationImage _presentationImage;

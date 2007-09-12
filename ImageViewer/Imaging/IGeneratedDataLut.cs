@@ -1,6 +1,9 @@
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// An <see cref="IDataLut"/> that is purely generated, usually by an equation or algorithm.
+	/// </summary>
 	public interface IGeneratedDataLut : IDataLut
 	{
 		/// <summary>

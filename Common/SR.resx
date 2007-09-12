@@ -261,4 +261,16 @@
   <data name="ExceptionThreadPoolMustBeStopped" xml:space="preserve">
     <value>The thread pool must be stopped before setting the {0} parameter.</value>
   </data>
+  <data name="ExceptionFormatCannotConvertFromStringToType" xml:space="preserve">
+    <value>Unable to convert from String to {0}</value>
+  </data>
+  <data name="ExceptionFormatCannotConvertFromTypeToString" xml:space="preserve">
+    <value>Unable to convert from {0} to String</value>
+  </data>
+  <data name="ExceptionFormatDeserializationFailedForType" xml:space="preserve">
+    <value>Deserialization failed for object type '{0}'</value>
+  </data>
+  <data name="ExceptionFormatSerializationFailedForType" xml:space="preserve">
+    <value>Serialization failed for object type '{0}'</value>
+  </data>
 </root>

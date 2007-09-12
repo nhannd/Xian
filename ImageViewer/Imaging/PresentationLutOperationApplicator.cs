@@ -1,8 +1,14 @@
 using System;
 using ClearCanvas.Desktop;
+using ClearCanvas.ImageViewer;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// An <see cref="ImageOperationApplicator"/> for <see cref="IPresentationLut"/>s.  The Originator 
+	/// for this class (returned by <see cref="GetOriginator"/> is the <see cref="IPresentationImage"/>'s 
+	/// <see cref="IPresentationLutManager"/>, if applicable.
+	/// </summary>
 	public sealed class PresentationLutOperationApplicator : ImageOperationApplicator
 	{
 		/// <summary>
@@ -18,6 +24,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the <see cref="IPresentationLutManager"/> which should be the originator for <b>all</b> Presentation Lut undoable operations.
 		/// </summary>
+		/// <remarks>
+		/// The <see cref="IPresentationImage"/> must implement <see cref="IPresentationLutProvider"/> or an exception is thrown.
+		/// </remarks>
 		/// <param name="image">The image the memento is associated with</param>
 		/// <returns>the <see cref="IPresentationLutManager"/> which should be the originator for <b>all</b> Presentation Lut undoable operation.</returns>
 		protected override IMemorable GetOriginator(IPresentationImage image)

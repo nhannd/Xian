@@ -8,8 +8,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// </summary>
 	internal sealed class ModalityLutLinear : GeneratedDataLut, IModalityLut, IEquatable<ModalityLutLinear>
 	{
-		private int _bitsStored;
-		private bool _isSigned;
+		private readonly int _bitsStored;
+		private readonly bool _isSigned;
 		private double _rescaleSlope;
 		private double _rescaleIntercept;
 
@@ -58,23 +58,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 			base.MaxOutputValue = (int)Math.Max(minMax1, minMax2);
 		}
 
-		internal int BitsStored
+		private int BitsStored
 		{
 			get { return _bitsStored; }
 		}
 
-		internal bool IsSigned
+		private bool IsSigned
 		{
 			get { return _isSigned; }
 		}
 
-		/// <summary>
-		/// Gets the rescale slope.
-		/// </summary>
-		internal double RescaleSlope
+		private double RescaleSlope
 		{
 			get { return _rescaleSlope; }
-			private set
+			set
 			{
 				if (value <= double.Epsilon || double.IsNaN(value))
 					_rescaleSlope = 1;
@@ -83,13 +80,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		/// <summary>
-		/// Gets the rescale intercept.
-		/// </summary>
-		internal double RescaleIntercept
+		private double RescaleIntercept
 		{
 			get { return _rescaleIntercept; }
-			private set
+			set
 			{
 				if (double.IsNaN(value))
 					_rescaleIntercept = 0;

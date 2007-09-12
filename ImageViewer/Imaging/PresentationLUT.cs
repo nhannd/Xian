@@ -35,11 +35,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				throw new InvalidOperationException("A Presentation LUT cannot have a minimum output value. ");
+				throw new MemberAccessException("A Presentation LUT cannot have a minimum output value. ");
 			}
 			protected set
 			{
-				throw new InvalidOperationException("A Presentation LUT cannot have a minimum output value. ");
+				throw new MemberAccessException("A Presentation LUT cannot have a minimum output value. ");
 			}
 		}
 
@@ -50,11 +50,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		{
 			get
 			{
-				throw new InvalidOperationException("A Presentation LUT cannot have a maximum output value. ");
+				throw new MemberAccessException("A Presentation LUT cannot have a maximum output value. ");
 			}
 			protected set
 			{
-				throw new InvalidOperationException("A Presentation LUT cannot have a maximum output value. ");
+				throw new MemberAccessException("A Presentation LUT cannot have a maximum output value. ");
 			}
 		}
 
@@ -94,12 +94,25 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// Should be called by implementors when the Lut has changed.
+		/// </summary>
 		protected sealed override void OnLutChanged()
 		{
 			base.OnLutChanged();
 			_minPlusMax = this.MinInputValue + this.MaxInputValue;
 		}
 
+		/// <summary>
+		/// Gets a string key that identifies this particular LUT's characteristics, so that 
+		/// an image's <see cref="OutputLut"/> can be more efficiently determined.
+		/// </summary>
+		/// <remarks>
+		/// This method is not to be confused with *equality*, since some Luts can be
+		/// dependent upon the actual image to which it belongs.  The method should simply 
+		/// be used to determine if a lut in the <see cref="OutputLutPool"/> is the same 
+		/// as an existing one.
+		/// </remarks>
 		public sealed override string GetKey()
 		{
 			return String.Format("{0}_{1}_{2}_{3}",

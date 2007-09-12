@@ -7,7 +7,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Allows <see cref="ILUT"/> objects
+	/// Allows <see cref="ILut"/> objects
 	/// be composed together in a pipeline.
 	/// </summary>
 	internal class LutComposer : IDisposable
@@ -24,7 +24,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		private string _key = String.Empty;
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="LUTComposer"/>.
+		/// Initializes a new instance of <see cref="LutComposer"/>.
 		/// </summary>
 		public LutComposer()
 		{
@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// A collection of <see cref="ILUT"/> objects.
+		/// A collection of <see cref="ILut"/> objects.
 		/// </summary>
 		public LutCollection LutCollection
 		{

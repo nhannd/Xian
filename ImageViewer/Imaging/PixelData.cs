@@ -1,10 +1,14 @@
 using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	///<summary>
+	/// Used by the <see cref="PixelData"/> class to (lazily) retrieve pixel data from an external source.
+	///</summary>
 	public delegate byte[] PixelDataGetter();
 
 	/// <summary>
@@ -207,7 +211,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Used in conjunction with <see cref="ForEachpixel"/> for pixel processing.
+		/// Used in conjunction with <see cref="PixelData.ForEachPixel(int,int,int,int,PixelProcessor)"/> for pixel processing.
 		/// </summary>
 		/// <param name="i">The ith pixel processed so far.  This is a zero based index.
 		/// If iterating over the entire image, <paramref name="i"/>

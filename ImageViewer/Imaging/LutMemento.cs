@@ -4,30 +4,44 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// An implementation of <see cref="ILutMemento"/> used by the framework (typically implementors of 
+	/// <see cref="IVoiLutManager"/> and <see cref="IPresentationLutManager"/>) to handle undo/redo 
+	/// operations on Luts.
+	/// </summary>
+	/// <remarks>
+	/// The <see cref="OriginatingLut"/> member stores the Lut that was installed at the time this memento
+	/// was created.  The <see cref="InnerMemento"/> stores the memento (if applicable) created by the Lut itself.
+	/// </remarks>
 	public class LutMemento : ILutMemento, IEquatable<LutMemento>
 	{
-		private ILut _originatingLut;
-		private IMemento _innerMemento;
+		private readonly ILut _originatingLut;
+		private readonly IMemento _innerMemento;
 
-		public LutMemento(ILut originatingLut, IMemento innerMemento)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		/// <param name="originatingLut">The currently installed lut.</param>
+		public LutMemento(ILut originatingLut)
 		{
 			Platform.CheckForNullReference(originatingLut, "originatingLut");
 			_originatingLut = originatingLut;
-			_innerMemento = innerMemento;
-		}
-
-		public LutMemento(ILut originatingLut)
-			: this(originatingLut, null)
-		{
+			_innerMemento = originatingLut.CreateMemento();
 		}
 
 		#region ILutMemento Members
 
+		/// <summary>
+		/// The <see cref="ILut"/> that was installed at the time this <see cref="LutMemento"/> was created.
+		/// </summary>
 		public ILut OriginatingLut
 		{
 			get { return _originatingLut; }
 		}
 
+		/// <summary>
+		/// The <see cref="IMemento"/> that was created by the <see cref="OriginatingLut"/> at the time this <see cref="LutMemento"/> was created.
+		/// </summary>
 		public IMemento InnerMemento
 		{
 			get { return _innerMemento; }	

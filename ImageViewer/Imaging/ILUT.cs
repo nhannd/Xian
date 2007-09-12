@@ -31,12 +31,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the output value of the lut at a given input index.
 		/// </summary>
-		/// <param name="index"></param>
-		/// <returns></returns>
+		/// <param name="index">the index into the Lut</param>
+		/// <returns>the value at the given index</returns>
 		int this[int index] { get; }
 
 		/// <summary>
-		/// Occurs when the LUT has changed.
+		/// Fired when the LUT has changed in some way.
 		/// </summary>
 		event EventHandler LutChanged;
 		
@@ -45,7 +45,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// an image's <see cref="OutputLut"/> can be more efficiently determined.
 		/// </summary>
 		/// <remarks>
-		/// This method is not to be confused with <B>equality</B>, since some Luts can be
+		/// This method is not to be confused with *equality*, since some Luts can be
 		/// dependent upon the actual image to which it belongs.  The method should simply 
 		/// be used to determine if a lut in the <see cref="OutputLutPool"/> is the same 
 		/// as an existing one.
