@@ -1,0 +1,54 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Font Name="Tahoma" Size="8.25" />
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.ILut" Collapsed="true">
+    <Position X="3.5" Y="1" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Imaging\ILut.cs</FileName>
+      <HashCode>IEAAAAAQAAAAAAAAKAAAAAQAAAAAAAAAAAQAAAAAABA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.IPresentationLut">
+    <Position X="6.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Imaging\IPresentationLut.cs</FileName>
+      <HashCode>AAAAAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.IVoiLutLinear">
+    <Position X="2.75" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Imaging\IVoiLutLinear.cs</FileName>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.IBasicVoiLutLinear">
+    <Position X="2.5" Y="4.75" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Imaging\IBasicVoiLutLinear.cs</FileName>
+      <HashCode>AAAAgAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+    <InheritanceLine Type="ClearCanvas.ImageViewer.Imaging.IVoiLutLinear" ManuallyRouted="true" FixedToPoint="true">
+      <Path>
+        <Point X="3.5" Y="4.058" />
+        <Point X="3.5" Y="4.626" />
+        <Point X="3.5" Y="4.626" />
+        <Point X="3.5" Y="4.75" />
+      </Path>
+    </InheritanceLine>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.IDataLut">
+    <Position X="4.5" Y="2.75" Width="1.5" />
+    <TypeIdentifier>
+      <FileName>Imaging\IDataLut.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ClearCanvas.ImageViewer.Imaging.IModalityLut" Collapsed="true">
+    <Position X="0.5" Y="2.75" Width="1.75" />
+    <TypeIdentifier>
+      <FileName>Imaging\IModalityLut.cs</FileName>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+    </TypeIdentifier>
+  </Interface>
+</ClassDiagram>
