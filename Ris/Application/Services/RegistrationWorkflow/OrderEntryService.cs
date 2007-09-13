@@ -1,20 +1,17 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Healthcare.Workflow.Modality;
+using ClearCanvas.Healthcare.Workflow.Registration;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Services.Admin;
-using ClearCanvas.Ris.Application.Common;
-using System.Collections;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -25,12 +22,19 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         [ReadOperation]
         public ListActiveVisitsForPatientResponse ListActiveVisitsForPatient(ListActiveVisitsForPatientRequest request)
         {
-            IPatientProfileBroker patientProfileBroker = PersistenceContext.GetBroker<IPatientProfileBroker>();
-            PatientProfile profile = patientProfileBroker.Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
-
             VisitSearchCriteria criteria = new VisitSearchCriteria();
-            criteria.Patient.EqualTo(profile.Patient);
             criteria.VisitStatus.NotEqualTo(VisitStatus.DC);
+
+            if (request.PatientRef != null)
+            {
+                Patient patient = PersistenceContext.GetBroker<IPatientBroker>().Load(request.PatientRef, EntityLoadFlags.Proxy);
+                criteria.Patient.EqualTo(patient);
+            }
+            else if (request.PatientProfileRef != null)
+            {
+                PatientProfile profile = PersistenceContext.GetBroker<IPatientProfileBroker>().Load(request.PatientProfileRef, EntityLoadFlags.Proxy);
+                criteria.Patient.EqualTo(profile.Patient);
+            }
 
             VisitAssembler assembler = new VisitAssembler();
             return new ListActiveVisitsForPatientResponse(
@@ -83,13 +87,13 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         return pracAssembler.CreateExternalPractitionerSummary(p, PersistenceContext);
                     }),
                 EnumUtils.GetEnumValueList<OrderPriorityEnum>(PersistenceContext),
+                EnumUtils.GetEnumValueList<OrderCancelReasonEnum>(PersistenceContext),
                 CollectionUtils.Map<DiagnosticServiceTreeNode, DiagnosticServiceTreeItem, List<DiagnosticServiceTreeItem>>(
                     topLevelDiagnosticServiceTreeNodes,
                     delegate(DiagnosticServiceTreeNode n)
                     {
                         return orderEntryAssembler.CreateDiagnosticServiceTreeItem(n);
                     })
-
                 );
         }
 
@@ -142,7 +146,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             Visit visit = PersistenceContext.GetBroker<IVisitBroker>().Load(request.Visit, EntityLoadFlags.Proxy);
             ExternalPractitioner orderingPhysician = PersistenceContext.GetBroker<IExternalPractitionerBroker>().Load(request.OrderingPhysician, EntityLoadFlags.Proxy);
             Facility orderingFacility = PersistenceContext.GetBroker<IFacilityBroker>().Load(request.OrderingFacility, EntityLoadFlags.Proxy);
-            OrderPriority orderingPriority = EnumUtils.GetEnumValue<OrderPriority>(request.OrderPriority);
             DiagnosticService diagnosticService = PersistenceContext.GetBroker<IDiagnosticServiceBroker>().Load(request.DiagnosticService);
 
             IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
@@ -169,6 +172,48 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             return new PlaceOrderResponse(order.GetRef());
         }
 
+        [UpdateOperation]
+        public ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request)
+        {
+            Patient patient = PersistenceContext.GetBroker<IPatientBroker>().Load(request.Patient, EntityLoadFlags.Proxy);
+            Visit visit = PersistenceContext.GetBroker<IVisitBroker>().Load(request.Visit, EntityLoadFlags.Proxy);
+            ExternalPractitioner orderingPhysician = PersistenceContext.GetBroker<IExternalPractitionerBroker>().Load(request.OrderingPhysician, EntityLoadFlags.Proxy);
+            Facility orderingFacility = PersistenceContext.GetBroker<IFacilityBroker>().Load(request.OrderingFacility, EntityLoadFlags.Proxy);
+            DiagnosticService diagnosticService = PersistenceContext.GetBroker<IDiagnosticServiceBroker>().Load(request.DiagnosticService);
+
+            IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
+            string accNum = broker.GetNextAccessionNumber();
+
+            // TODO: add validation and throw RequestValidationException if necessary
+
+            Order order = Order.NewOrder(
+                    accNum,
+                    patient,
+                    visit,
+                    diagnosticService,
+                    request.SchedulingRequestTime,
+                    orderingPhysician,
+                    orderingFacility,
+                    EnumUtils.GetEnumValue<OrderPriority>(request.OrderPriority),
+                    request.ScheduleOrder);
+
+
+            // cancel order here    
+            Order cancelOrder = PersistenceContext.GetBroker<IOrderBroker>().Load(request.CancelOrderRef, EntityLoadFlags.CheckVersion);
+            OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.ReOrderReason, PersistenceContext);
+            if (cancelOrder.Status == OrderStatus.SC)
+                cancelOrder.Cancel(reason);
+            else if (cancelOrder.Status == OrderStatus.IP)
+                cancelOrder.Discontinue(reason);
+
+            PersistenceContext.Lock(order, DirtyState.New);
+
+            // ensure the new order is assigned an OID before using it in the return value
+            PersistenceContext.SynchState();
+
+            return new ReplaceOrderResponse(order.GetRef());
+        }
+
         [ReadOperation]
         public ListOrdersForPatientResponse ListOrdersForPatient(ListOrdersForPatientRequest request)
         {
@@ -192,7 +237,17 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         {
             OrderEntryAssembler assembler = new OrderEntryAssembler();
 
-            Order order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
+            Order order = null;
+            if (request.OrderRef != null)
+            {
+                order = PersistenceContext.GetBroker<IOrderBroker>().Load(request.OrderRef);
+            }
+            else if (String.IsNullOrEmpty(request.AccessionNumber) == false)
+            {
+                OrderSearchCriteria criteria = new OrderSearchCriteria();
+                criteria.AccessionNumber.EqualTo(request.AccessionNumber);
+                order = PersistenceContext.GetBroker<IOrderBroker>().FindOne(criteria);
+            }
 
             return new LoadOrderDetailResponse(assembler.CreateOrderDetail(order, this.PersistenceContext));
         }

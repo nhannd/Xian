@@ -230,6 +230,8 @@
     <Compile Include="Jsml\InvokeOperationResponse.cs" />
     <Compile Include="Jsml\JsmlBlob.cs" />
     <Compile Include="Jsml\JsmlSerializer.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\ReplaceOrderRequest.cs" />
+    <Compile Include="RegistrationWorkflow\OrderEntry\ReplaceOrderResponse.cs" />
     <Compile Include="ReportingWorkflow\ListWorklistsRequest.cs" />
     <Compile Include="ReportingWorkflow\ListWorklistsResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminSummary.cs" />

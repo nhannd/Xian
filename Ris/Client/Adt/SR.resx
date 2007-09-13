@@ -354,6 +354,9 @@
   <data name="MessagePatientNotFound" xml:space="preserve">
     <value>Patient not found</value>
   </data>
+  <data name="MessageReplaceOrder" xml:space="preserve">
+    <value>This will cancel/discontinue the current order.  Are you sure you want to continue?</value>
+  </data>
   <data name="TextAny" xml:space="preserve">
     <value>(Any)</value>
   </data>

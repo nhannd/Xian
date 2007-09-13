@@ -29,9 +29,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection4 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection5 = new ClearCanvas.Desktop.Selection();
             ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
-            ClearCanvas.Desktop.Selection selection3 = new ClearCanvas.Desktop.Selection();
             this._visitTable = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -47,6 +47,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._selectedDiagnosticService = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this._reorderReason = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -58,7 +59,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._visitTable.MultiSelect = false;
             this._visitTable.Name = "_visitTable";
             this._visitTable.ReadOnly = false;
-            this._visitTable.Selection = selection1;
+            this._visitTable.Selection = selection4;
             this._visitTable.Size = new System.Drawing.Size(416, 127);
             this._visitTable.TabIndex = 0;
             this._visitTable.Table = null;
@@ -81,7 +82,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.label2.Location = new System.Drawing.Point(3, 6);
             this.label2.Margin = new System.Windows.Forms.Padding(2, 0, 2, 0);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(153, 13);
+            this.label2.Size = new System.Drawing.Size(168, 13);
             this.label2.TabIndex = 4;
             this.label2.Text = "Diagnostic Service Breakdown";
             // 
@@ -135,7 +136,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._diagnosticServiceBreakdown.Margin = new System.Windows.Forms.Padding(2);
             this._diagnosticServiceBreakdown.MenuModel = null;
             this._diagnosticServiceBreakdown.Name = "_diagnosticServiceBreakdown";
-            this._diagnosticServiceBreakdown.Selection = selection2;
+            this._diagnosticServiceBreakdown.Selection = selection5;
             this._diagnosticServiceBreakdown.ShowToolbar = false;
             this._diagnosticServiceBreakdown.Size = new System.Drawing.Size(412, 122);
             this._diagnosticServiceBreakdown.TabIndex = 8;
@@ -197,7 +198,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._diagnosticServiceTree.Margin = new System.Windows.Forms.Padding(2);
             this._diagnosticServiceTree.MenuModel = null;
             this._diagnosticServiceTree.Name = "_diagnosticServiceTree";
-            this._diagnosticServiceTree.Selection = selection3;
+            this._diagnosticServiceTree.Selection = selection2;
             this._diagnosticServiceTree.ShowToolbar = false;
             this._diagnosticServiceTree.Size = new System.Drawing.Size(385, 351);
             this._diagnosticServiceTree.TabIndex = 13;
@@ -234,10 +235,24 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.panel1.Size = new System.Drawing.Size(416, 145);
             this.panel1.TabIndex = 16;
             // 
+            // _reorderReason
+            // 
+            this._reorderReason.DataSource = null;
+            this._reorderReason.DisplayMember = "";
+            this._reorderReason.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this._reorderReason.LabelText = "Re-order Reason";
+            this._reorderReason.Location = new System.Drawing.Point(854, 270);
+            this._reorderReason.Margin = new System.Windows.Forms.Padding(2);
+            this._reorderReason.Name = "_reorderReason";
+            this._reorderReason.Size = new System.Drawing.Size(150, 41);
+            this._reorderReason.TabIndex = 17;
+            this._reorderReason.Value = null;
+            // 
             // OrderEntryComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this._reorderReason);
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this._scheduleOrder);
@@ -278,5 +293,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.TextBox _selectedDiagnosticService;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Panel panel1;
+        private ClearCanvas.Controls.WinForms.ComboBoxField _reorderReason;
     }
 }

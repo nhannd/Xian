@@ -1,8 +1,6 @@
-using System;
-
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using ClearCanvas.Desktop;
+using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -19,19 +17,19 @@ namespace ClearCanvas.Ris.Client.Adt
         private ModalityWorklistTable(uint cellRowCount)
             : base(cellRowCount)
         {
-            this.Columns.Add(new TableColumn<ModalityWorklistItem, string>("MRN",
-                delegate(ModalityWorklistItem item) { return string.Format("{0} {1}", item.MrnID, item.MrnAssigningAuthority); }, 
+            this.Columns.Add(new TableColumn<ModalityWorklistItem, string>(SR.ColumnMRN,
+                delegate(ModalityWorklistItem item) { return MrnFormat.Format(item.Mrn); }, 
                 0.5f));
 
-            this.Columns.Add(new TableColumn<ModalityWorklistItem, string>("Name",
-                delegate(ModalityWorklistItem item) { return string.Format("{0}, {1}", item.PersonNameDetail.FamilyName, item.PersonNameDetail.GivenName); },
+            this.Columns.Add(new TableColumn<ModalityWorklistItem, string>(SR.ColumnName,
+                delegate(ModalityWorklistItem item) { return PersonNameFormat.Format(item.PersonNameDetail); },
                 1.5f));
 
-            this.Columns.Add(new TableColumn<ModalityWorklistItem, string>("Accession",
+            this.Columns.Add(new TableColumn<ModalityWorklistItem, string>(SR.ColumnAccessionNumber,
                 delegate(ModalityWorklistItem item) { return item.AccessionNumber; },
                 0.5f));
 
-            TableColumn<ModalityWorklistItem, string> priorityColumn = new TableColumn<ModalityWorklistItem, string>("Priority",
+            TableColumn<ModalityWorklistItem, string> priorityColumn = new TableColumn<ModalityWorklistItem, string>(SR.ColumnPriority,
                 delegate(ModalityWorklistItem item) { return item.Priority.Value; },
                 0.5f);
             priorityColumn.Visible = false;

@@ -53,6 +53,7 @@
     <Compile Include="BiographyFeedbackTable.cs" />
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
+    <Compile Include="ReplaceOrderTool.cs" />
     <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\RegistrationContainerFolders.cs" />
     <Compile Include="Folders\TechnologistContainerFolders.cs" />

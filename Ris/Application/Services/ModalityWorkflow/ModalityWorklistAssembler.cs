@@ -25,9 +25,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 
             PersonNameAssembler assembler = new PersonNameAssembler();
             item.PersonNameDetail = assembler.CreatePersonNameDetail(domainItem.PatientName);
-            item.MrnID = domainItem.Mrn.Id;
-            item.MrnAssigningAuthority = domainItem.Mrn.AssigningAuthority;
-
+            item.Mrn = new MrnDetail(domainItem.Mrn.Id, domainItem.Mrn.AssigningAuthority);
             item.AccessionNumber = domainItem.AccessionNumber;
             item.ModalityProcedureStepName = domainItem.ModalityProcedureStepType.Name;
             item.RequestedProcedureStepName = domainItem.RequestedProcedureType.Name;

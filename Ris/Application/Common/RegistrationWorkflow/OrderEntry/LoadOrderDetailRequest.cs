@@ -14,7 +14,15 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
             this.OrderRef = orderRef;
         }
 
+        public LoadOrderDetailRequest(string accessionNumber)
+        {
+            this.AccessionNumber = accessionNumber;
+        }
+
         [DataMember]
         public EntityRef OrderRef;
+
+        [DataMember]
+        public string AccessionNumber;
     }
 }

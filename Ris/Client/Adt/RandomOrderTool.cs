@@ -1,19 +1,15 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
-using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
-using System.Collections;
 using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -30,17 +26,12 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         private bool _enabled;
         private event EventHandler _enabledChanged;
-        private Random _randomizer;
+        private readonly Random _randomizer;
 
         public RandomOrderTool()
         {
             _enabled = true;
             _randomizer = new Random(Platform.Time.Millisecond);
-        }
-
-        public override void Initialize()
-        {
-            base.Initialize();
         }
 
         public bool Enabled
@@ -87,7 +78,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     });
             }
                
-            return ChooseRandom<RegistrationWorklistItem>(worklistItems);
+            return ChooseRandom(worklistItems);
         }
 
         public void RandomOrder()
@@ -103,16 +94,19 @@ namespace ClearCanvas.Ris.Client.Adt
                 Platform.GetService<IOrderEntryService>(
                     delegate(IOrderEntryService service)
                     {
-                        ListActiveVisitsForPatientResponse visitResponse = service.ListActiveVisitsForPatient(new ListActiveVisitsForPatientRequest(item.PatientProfileRef));
+                        ListActiveVisitsForPatientRequest request = new ListActiveVisitsForPatientRequest();
+                        request.PatientProfileRef = item.PatientProfileRef;
+
+                        ListActiveVisitsForPatientResponse visitResponse = service.ListActiveVisitsForPatient(request);
                         GetOrderEntryFormDataResponse formChoicesResponse = service.GetOrderEntryFormData(new GetOrderEntryFormDataRequest());
 
-                        VisitSummary randomVisit = ChooseRandom<VisitSummary>(visitResponse.Visits);
-                        DiagnosticServiceSummary randomDS = ChooseRandom<DiagnosticServiceSummary>(formChoicesResponse.DiagnosticServiceChoices);
-                        FacilitySummary randomFacility = ChooseRandom<FacilitySummary>(formChoicesResponse.OrderingFacilityChoices);
-                        ExternalPractitionerSummary randomPhysician = ChooseRandom<ExternalPractitionerSummary>(formChoicesResponse.OrderingPhysicianChoices);
-                        EnumValueInfo randomPriority = ChooseRandom<EnumValueInfo>(formChoicesResponse.OrderPriorityChoices);
+                        VisitSummary randomVisit = ChooseRandom(visitResponse.Visits);
+                        DiagnosticServiceSummary randomDS = ChooseRandom(formChoicesResponse.DiagnosticServiceChoices);
+                        FacilitySummary randomFacility = ChooseRandom(formChoicesResponse.OrderingFacilityChoices);
+                        ExternalPractitionerSummary randomPhysician = ChooseRandom(formChoicesResponse.OrderingPhysicianChoices);
+                        EnumValueInfo randomPriority = ChooseRandom(formChoicesResponse.OrderPriorityChoices);
 
-                        PlaceOrderResponse response = service.PlaceOrder(new PlaceOrderRequest(
+                        service.PlaceOrder(new PlaceOrderRequest(
                             randomVisit.Patient,
                             randomVisit.entityRef,
                             randomDS.DiagnosticServiceRef,
@@ -120,7 +114,8 @@ namespace ClearCanvas.Ris.Client.Adt
                             randomPhysician.PractitionerRef,
                             randomFacility.FacilityRef,
                             true,
-                            Platform.Time));
+                            Platform.Time,
+                            null, null));
                     });
 
                 // Refresh the schedule folder is a new folder is placed

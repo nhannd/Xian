@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -10,8 +7,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     public class ModalityWorklistItem : DataContractBase
     {
         public ModalityWorklistItem(EntityRef procedureStepRef,
-            string mrnAssigningAuthority,
-            string mrnID,
+            MrnDetail mrn,
             PersonNameDetail personNameDetail,
             string accessionNumber,
             string modalityProcedureStepName,
@@ -19,8 +15,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
             EnumValueInfo priority)
         {
             this.ProcedureStepRef = procedureStepRef;
-            this.MrnAssigningAuthority = mrnAssigningAuthority;
-            this.MrnID = mrnID;
+            this.Mrn = mrn;
             this.PersonNameDetail = personNameDetail;
             this.AccessionNumber = accessionNumber;
             this.ModalityProcedureStepName = modalityProcedureStepName;
@@ -36,10 +31,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
         public EntityRef ProcedureStepRef;
 
         [DataMember]
-        public string MrnAssigningAuthority;
-
-        [DataMember]
-        public string MrnID;
+        public MrnDetail Mrn;
 
         [DataMember]
         public PersonNameDetail PersonNameDetail;

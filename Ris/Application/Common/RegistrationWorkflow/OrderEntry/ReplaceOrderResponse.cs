@@ -6,12 +6,14 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
 {
     [DataContract]
-    public class ListActiveVisitsForPatientRequest : DataContractBase
+    public class ReplaceOrderResponse : DataContractBase
     {
-        [DataMember]
-        public EntityRef PatientRef;
+        public ReplaceOrderResponse(EntityRef orderRef)
+        {
+            this.OrderRef = orderRef;
+        }
 
         [DataMember]
-        public EntityRef PatientProfileRef;
+        public EntityRef OrderRef;
     }
 }

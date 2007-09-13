@@ -51,6 +51,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _scheduleOrder.DataBindings.Add("Checked", _component, "ScheduleOrder", true, DataSourceUpdateMode.OnPropertyChanged);
             _schedulingRequestDateTime.DataBindings.Add("Value", _component, "SchedulingRequestDateTime", true, DataSourceUpdateMode.OnPropertyChanged);
+
+            _reorderReason.DataSource = _component.CancelReasonChoices;
+            _reorderReason.DataBindings.Add("Value", _component, "SelectedCancelReason", true, DataSourceUpdateMode.OnPropertyChanged);
+            _reorderReason.Visible = _component.IsReOrdering;
+
         }
 
         private void DiagnosticServiceChangedEventHandler(object sender, EventArgs e)

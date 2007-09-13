@@ -47,6 +47,15 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
         PlaceOrderResponse PlaceOrder(PlaceOrderRequest request);
 
         /// <summary>
+        /// Place a new order and cancel the old one
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request);
+
+        /// <summary>
         /// List all the orders based on the Assigning Authority for the <see cref="OrderListComponent"/>
         /// </summary>
         /// <param name="request"></param>

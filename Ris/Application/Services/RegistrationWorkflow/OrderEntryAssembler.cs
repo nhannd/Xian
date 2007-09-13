@@ -1,19 +1,10 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Application.Common.Admin.PatientAdmin;
-using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Services.Admin;
-using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -27,6 +18,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             ExternalPractitionerAssembler pracAssembler = new ExternalPractitionerAssembler();
             FacilityAssembler facilityAssembler = new FacilityAssembler();
 
+            detail.OrderRef = order.GetRef();
             detail.PatientRef = order.Patient.GetRef();
             detail.Visit = visitAssembler.CreateVisitDetail(order.Visit, context);
             detail.PlacerNumber = order.PlacerNumber;
