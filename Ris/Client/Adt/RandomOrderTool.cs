@@ -114,8 +114,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             randomPhysician.PractitionerRef,
                             randomFacility.FacilityRef,
                             true,
-                            Platform.Time,
-                            null, null));
+                            Platform.Time));
                     });
 
                 // Refresh the schedule folder is a new folder is placed
