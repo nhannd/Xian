@@ -218,7 +218,6 @@
       <LastGenOutput>IncompleteDemographicDataAlertSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="app.config" />
-    <None Include="Workflow\ClassDiagram1.cd" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Alert\IncompleteDemographicDataAlert.val.xml" />
