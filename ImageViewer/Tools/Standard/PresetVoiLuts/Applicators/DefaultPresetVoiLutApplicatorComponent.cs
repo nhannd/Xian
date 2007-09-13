@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 			}
 			protected set
 			{
-				throw new InvalidOperationException("The property cannot be modified.");
+				throw new InvalidOperationException(SR.ExceptionThePropertyCannotBeModified);
 			}
 		}
 

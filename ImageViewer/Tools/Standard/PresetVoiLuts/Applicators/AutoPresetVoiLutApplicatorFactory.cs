@@ -2,6 +2,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 {
+	//TODO: Later, we can uncomment this and allow 'Auto' to be an extension.
 	//[ExtensionOf(typeof(PresetVoiLutApplicatorFactoryExtensionPoint))]
 	public sealed class AutoPresetVoiLutApplicatorFactory : PresetVoiLutApplicatorFactory<AutoPresetVoiLutApplicatorComponent>
 	{

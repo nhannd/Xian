@@ -165,7 +165,6 @@
     <Compile Include="Imaging\PresentationLutFactoryExtensionPoint.cs" />
     <Compile Include="Imaging\MinMaxPixelCalculatedLinearLut.cs" />
     <Compile Include="Imaging\IGeneratedDataLut.cs" />
-    <Compile Include="Imaging\ILutMemento.cs" />
     <Compile Include="Imaging\IModalityLut.cs" />
     <Compile Include="Imaging\IPresentationLut.cs" />
     <Compile Include="Imaging\IPresentationLutManager.cs" />

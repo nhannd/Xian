@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		public void Insert(int index, PresetVoiLut item)
 		{
 			if (_presets.Contains(item))
-				throw new InvalidOperationException("An equivalent preset already exists.");
+				throw new InvalidOperationException(SR.ExceptionAnEquivalentPresetAlreadyExists);
 
 			_presets.Insert(index, item);
 		}
@@ -79,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			set
 			{
 				if (_presets.Contains(value))
-					throw new InvalidOperationException("An equivalent preset already exists.");
+					throw new InvalidOperationException(SR.ExceptionAnEquivalentPresetAlreadyExists);
 
 				_presets[index] = value;
 			}
@@ -92,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		public void Add(PresetVoiLut item)
 		{
 			if (_presets.Contains(item))
-				throw new InvalidOperationException("An equivalent preset already exists.");
+				throw new InvalidOperationException(SR.ExceptionAnEquivalentPresetAlreadyExists);
 
 			_presets.Add(item);
 		}
@@ -160,6 +160,5 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 			return clone;
 		}
-
 	}
 }

@@ -3,7 +3,7 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
-	public class KeyStrokeDescriptor : IEquatable<KeyStrokeDescriptor>, IEquatable<XKeys>
+	public sealed class KeyStrokeDescriptor : IEquatable<KeyStrokeDescriptor>, IEquatable<XKeys>
 	{
 		private readonly XKeys _keyStroke;
 
@@ -14,10 +14,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		public XKeys KeyStroke
 		{
-			get
-			{
-				return _keyStroke;
-			}
+			get { return _keyStroke; }
 		}
 
 		public override string ToString()

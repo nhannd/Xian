@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// An extension point for <see cref="IPresentationLutFactory"/>s.
 	/// </summary>
-	public class PresentationLutFactoryExtensionPoint : ExtensionPoint<IPresentationLutFactory>
+	public sealed class PresentationLutFactoryExtensionPoint : ExtensionPoint<IPresentationLutFactory>
 	{
 	}
 }

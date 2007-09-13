@@ -53,7 +53,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		#endregion
 
-		internal PresetVoiLut Clone()
+		public PresetVoiLut Clone()
 		{
 			PresetVoiLut clone = new PresetVoiLut(_applicator);
 			clone.KeyStroke = this.KeyStroke;

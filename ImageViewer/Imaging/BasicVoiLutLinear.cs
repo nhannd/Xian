@@ -128,7 +128,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <returns>a string briefly describing the Lut</returns>
 		public override string GetDescription()
 		{
-			return String.Format("W:{0} L:{1}", WindowWidth, WindowCenter);
+			return String.Format(SR.FormatDescriptionBasicLinearLut, WindowWidth, WindowCenter);
 		}
 
 		/// <summary>

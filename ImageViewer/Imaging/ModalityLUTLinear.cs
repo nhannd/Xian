@@ -111,7 +111,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public override string GetDescription()
 		{
-			return String.Format("Slope: {0:F2} Int.: {1:F2}", _rescaleSlope, _rescaleIntercept);
+			return String.Format(SR.FormatDescriptionModalityLutLinear, _rescaleSlope, _rescaleIntercept);
 		}
 
 		#region IEquatable<IModalityLut> Members

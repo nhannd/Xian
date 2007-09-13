@@ -138,8 +138,23 @@
   <data name="CommandMoveGraphic" xml:space="preserve">
     <value>Move graphic</value>
   </data>
+  <data name="DescriptionBluePresentationLut" xml:space="preserve">
+    <value>Blue</value>
+  </data>
+  <data name="DescriptionGrayscalePresentationLut" xml:space="preserve">
+    <value>Grayscale</value>
+  </data>
+  <data name="DescriptionGreenPresentationLut" xml:space="preserve">
+    <value>Green</value>
+  </data>
+  <data name="DescriptionRedPresentationLut" xml:space="preserve">
+    <value>Red</value>
+  </data>
   <data name="ExceptionAdditionalMouseToolAssignmentsMustBeModified" xml:space="preserve">
     <value>Additional mouse tool assignments must be modified ({0}).</value>
+  </data>
+  <data name="ExceptionFormatNoPresentationLutFactoryExistWithName" xml:space="preserve">
+    <value>No Presentation Lut factory extension exists with the name {0}.</value>
   </data>
   <data name="ExceptionImageBufferWin32NotSupported" xml:space="preserve">
     <value>ImageBufferWin32 is not supported on non-Win32 platforms.</value>
@@ -177,6 +192,9 @@
   <data name="ExceptionKeyStrokeAssignmentInUse" xml:space="preserve">
     <value>The specified keystroke is already in use.  The assignment has been ignored.</value>
   </data>
+  <data name="ExceptionLastLutMustBePresentation" xml:space="preserve">
+    <value>Last LUT in pipeline must be an IPresentationLUT.</value>
+  </data>
   <data name="ExceptionLayoutIsNotRectangular" xml:space="preserve">
     <value>The layout of the physical workspace is either non-rectangular or has not been set.</value>
   </data>
@@ -201,6 +219,15 @@
   <data name="ExceptionLUTNotAdded" xml:space="preserve">
     <value>Cannot generate composite LUT because no LUTs have been added yet.</value>
   </data>
+  <data name="ExceptionMaximumOutputValueIsNotSettable" xml:space="preserve">
+    <value>The maximum output value is not settable.</value>
+  </data>
+  <data name="ExceptionMinimumOutputValueIsNotSettable" xml:space="preserve">
+    <value>The minimum output value is not settable.</value>
+  </data>
+  <data name="ExceptionMinMaxInputValuesNotSet" xml:space="preserve">
+    <value>The minimum and maximum input values have not been set.</value>
+  </data>
   <data name="ExceptionMouseToolAssignmentInUse" xml:space="preserve">
     <value>Another mouse tool is already using the specified assignment ({0}).  The assignment has been ignored.</value>
   </data>
@@ -219,6 +246,9 @@
   <data name="ExceptionMouseWheelAssignmentInUse" xml:space="preserve">
     <value>The specified mouse wheel assignment is in use ({0}:{1}).</value>
   </data>
+  <data name="ExceptionMustOverrideSetMemento" xml:space="preserve">
+    <value>You must override SetMemento in order to restore state from a previous call to CreateMemento.</value>
+  </data>
   <data name="ExceptionNoDisplaySetAssociatedWithImageBoxTile" xml:space="preserve">
     <value>Is the ImageBox to which this Tile belongs supposed to be empty?</value>
   </data>
@@ -231,11 +261,29 @@
   <data name="ExceptionObjectMustBeSingleType" xml:space="preserve">
     <value>Object must be of Type Single.</value>
   </data>
+  <data name="ExceptionPresentationLutCannotHaveMaximumOutputValue" xml:space="preserve">
+    <value>A Presentation LUT cannot have a maximum output value.</value>
+  </data>
+  <data name="ExceptionPresentationLutCannotHaveMinimumOutputValue" xml:space="preserve">
+    <value>A Presentation LUT cannot have a minimum output value.</value>
+  </data>
+  <data name="ExceptionPresentationLutDataCannotBeAltered" xml:space="preserve">
+    <value>The Presentation LUT data cannot be altered.</value>
+  </data>
   <data name="ExceptionSopInstanceValidationFailed" xml:space="preserve">
     <value>Sop Instance validation failed.</value>
   </data>
   <data name="ExceptionStatefulGraphicMustBeIMemorable" xml:space="preserve">
     <value>For undo support, your StatefulGraphic subclass must implement IMemorable.</value>
+  </data>
+  <data name="FormatDescriptionBasicLinearLut" xml:space="preserve">
+    <value>W:{0} L:{1}</value>
+  </data>
+  <data name="FormatDescriptionMinMaxCalculatedLinearLut" xml:space="preserve">
+    <value>W:{0} L:{1} (Min/Max)</value>
+  </data>
+  <data name="FormatDescriptionModalityLutLinear" xml:space="preserve">
+    <value>Slope: {0:F2} Int.: {1:F2}</value>
   </data>
   <data name="FormatMouseButtonShortcutDescription" xml:space="preserve">
     <value>{0} : {1}</value>

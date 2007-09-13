@@ -22,7 +22,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		public void Insert(int index, PresetVoiLutGroup item)
 		{
 			if (_groups.Contains(item))
-				throw new InvalidOperationException("An equivalent group already exists.");
+				throw new InvalidOperationException(SR.ExceptionAnEquivalentPresetGroupAlreadyExists);
 
 			_groups.Insert(index, item);
 		}
@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			set
 			{
 				if (_groups.Contains(value))
-					throw new InvalidOperationException("An equivalent group already exists.");
+					throw new InvalidOperationException(SR.ExceptionAnEquivalentPresetGroupAlreadyExists);
 
 				_groups[index] = value;
 			}
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		public void Add(PresetVoiLutGroup item)
 		{
 			if (_groups.Contains(item))
-				throw new InvalidOperationException("An equivalent group already exists.");
+				throw new InvalidOperationException(SR.ExceptionAnEquivalentPresetGroupAlreadyExists);
 
 			_groups.Add(item);
 		}
@@ -109,9 +109,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 		#endregion
 
-		public void Sort(IComparer<PresetVoiLutGroup> comparer)
+		public void Sort()
 		{
-			_groups.Sort(comparer);
+			_groups.Sort();
 		}
 
 		public PresetVoiLutGroupCollection Clone()

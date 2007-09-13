@@ -1,40 +1,18 @@
 using System;
-using System.Collections.Generic;
+using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
-	internal sealed class PresetVoiLutGroupSortByModality : IComparer<PresetVoiLutGroup>
-	{
-		#region IComparer<string> Members
-
-		public int Compare(PresetVoiLutGroup x, PresetVoiLutGroup y)
-		{
-			//put "" (default modality) to the end.
-			if (String.IsNullOrEmpty(x.Modality))
-			{
-				if (String.IsNullOrEmpty(y.Modality))
-					return 0;
-
-				return 1;
-			}
-			else if (String.IsNullOrEmpty(y.Modality))
-				return -1;
-
-			return String.Compare(x.Modality, y.Modality);
-		}
-
-		#endregion
-	}
-
-	internal sealed class PresetVoiLutGroup : IEquatable<PresetVoiLutGroup>
+	internal sealed class PresetVoiLutGroup : IEquatable<PresetVoiLutGroup>, IComparable<PresetVoiLutGroup>
 	{
 		private readonly string _modality;
 		private readonly PresetVoiLutCollection _presets;
 	
 		public PresetVoiLutGroup(string modality)
 		{
-			_modality = modality ?? "";
+			Platform.CheckForEmptyString(modality, "modality");
+			_modality = modality;
 			_presets = new PresetVoiLutCollection();
 		}
 
@@ -69,6 +47,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		public bool Equals(PresetVoiLutGroup other)
 		{
 			return this._modality == other._modality;
+		}
+
+		#endregion
+
+		#region IComparable<PresetVoiLutGroup> Members
+
+		public int CompareTo(PresetVoiLutGroup other)
+		{
+			return this.Modality.CompareTo(other.Modality);
 		}
 
 		#endregion

@@ -22,11 +22,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 				Platform.CheckForEmptyString(name, "name");
 
 				if (double.IsNaN(windowWidth) || windowWidth < 1)
-					throw new ArgumentException(String.Format("The value '{0}' is invalid for Window Width", windowWidth));
+					throw new ArgumentException(String.Format(SR.ExceptionFormatWindowWidthInvalid, windowWidth));
 				if (double.IsNaN(windowCenter))
-					throw new ArgumentException(String.Format("The value '{0}' is invalid for Window Center", windowCenter));
+					throw new ArgumentException(SR.ExceptionWindowCenterInvalid);
 				if (String.IsNullOrEmpty(name))
-					throw new ArgumentException("The Preset Name cannot be empty");
+					throw new ArgumentException(SR.ExceptionPresetNameCannotBeEmpty);
 
 				this.Name = name;
 				this.WindowWidth = windowWidth;
@@ -61,6 +61,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			_parameters = parameters;
 		}
 
+		#region Public Properties
+
 		public PresetVoiLutLinearParameters Parameters
 		{
 			get { return _parameters; }
@@ -91,9 +93,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			get { return _parameters.WindowCenter; }
 		}
 
+		#endregion
+
+		#region Public Methods
+
 		public override string GetDescription()
 		{
-			return String.Format("W:{0} L:{1} ({2})", WindowWidth, WindowCenter, this.Name);
+			return String.Format(SR.FormatDescriptionPresetLinearLut, WindowWidth, WindowCenter, this.Name);
 		}
 
 		public override IMemento CreateMemento()
@@ -107,5 +113,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			Platform.CheckForInvalidCast(parameters, "memento", typeof (PresetVoiLutLinearParameters).Name);
 			this.Parameters = parameters;
 		}
+
+		#endregion
 	}
 }

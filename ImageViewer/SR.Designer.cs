@@ -124,11 +124,56 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Blue.
+        /// </summary>
+        public static string DescriptionBluePresentationLut {
+            get {
+                return ResourceManager.GetString("DescriptionBluePresentationLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Grayscale.
+        /// </summary>
+        public static string DescriptionGrayscalePresentationLut {
+            get {
+                return ResourceManager.GetString("DescriptionGrayscalePresentationLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Green.
+        /// </summary>
+        public static string DescriptionGreenPresentationLut {
+            get {
+                return ResourceManager.GetString("DescriptionGreenPresentationLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Red.
+        /// </summary>
+        public static string DescriptionRedPresentationLut {
+            get {
+                return ResourceManager.GetString("DescriptionRedPresentationLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Additional mouse tool assignments must be modified ({0})..
         /// </summary>
         public static string ExceptionAdditionalMouseToolAssignmentsMustBeModified {
             get {
                 return ResourceManager.GetString("ExceptionAdditionalMouseToolAssignmentsMustBeModified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Presentation Lut factory extension exists with the name {0}..
+        /// </summary>
+        public static string ExceptionFormatNoPresentationLutFactoryExistWithName {
+            get {
+                return ResourceManager.GetString("ExceptionFormatNoPresentationLutFactoryExistWithName", resourceCulture);
             }
         }
         
@@ -241,6 +286,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Last LUT in pipeline must be an IPresentationLUT..
+        /// </summary>
+        public static string ExceptionLastLutMustBePresentation {
+            get {
+                return ResourceManager.GetString("ExceptionLastLutMustBePresentation", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The layout of the physical workspace is either non-rectangular or has not been set..
         /// </summary>
         public static string ExceptionLayoutIsNotRectangular {
@@ -313,6 +367,33 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The maximum output value is not settable..
+        /// </summary>
+        public static string ExceptionMaximumOutputValueIsNotSettable {
+            get {
+                return ResourceManager.GetString("ExceptionMaximumOutputValueIsNotSettable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The minimum output value is not settable..
+        /// </summary>
+        public static string ExceptionMinimumOutputValueIsNotSettable {
+            get {
+                return ResourceManager.GetString("ExceptionMinimumOutputValueIsNotSettable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The minimum and maximum input values have not been set..
+        /// </summary>
+        public static string ExceptionMinMaxInputValuesNotSet {
+            get {
+                return ResourceManager.GetString("ExceptionMinMaxInputValuesNotSet", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Another mouse tool is already using the specified assignment ({0}).  The assignment has been ignored..
         /// </summary>
         public static string ExceptionMouseToolAssignmentInUse {
@@ -367,6 +448,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You must override SetMemento in order to restore state from a previous call to CreateMemento..
+        /// </summary>
+        public static string ExceptionMustOverrideSetMemento {
+            get {
+                return ResourceManager.GetString("ExceptionMustOverrideSetMemento", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Is the ImageBox to which this Tile belongs supposed to be empty?.
         /// </summary>
         public static string ExceptionNoDisplaySetAssociatedWithImageBoxTile {
@@ -403,6 +493,33 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to A Presentation LUT cannot have a maximum output value..
+        /// </summary>
+        public static string ExceptionPresentationLutCannotHaveMaximumOutputValue {
+            get {
+                return ResourceManager.GetString("ExceptionPresentationLutCannotHaveMaximumOutputValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A Presentation LUT cannot have a minimum output value..
+        /// </summary>
+        public static string ExceptionPresentationLutCannotHaveMinimumOutputValue {
+            get {
+                return ResourceManager.GetString("ExceptionPresentationLutCannotHaveMinimumOutputValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Presentation LUT data cannot be altered..
+        /// </summary>
+        public static string ExceptionPresentationLutDataCannotBeAltered {
+            get {
+                return ResourceManager.GetString("ExceptionPresentationLutDataCannotBeAltered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Sop Instance validation failed..
         /// </summary>
         public static string ExceptionSopInstanceValidationFailed {
@@ -417,6 +534,33 @@ namespace ClearCanvas.ImageViewer {
         public static string ExceptionStatefulGraphicMustBeIMemorable {
             get {
                 return ResourceManager.GetString("ExceptionStatefulGraphicMustBeIMemorable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W:{0} L:{1}.
+        /// </summary>
+        public static string FormatDescriptionBasicLinearLut {
+            get {
+                return ResourceManager.GetString("FormatDescriptionBasicLinearLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W:{0} L:{1} (Min/Max).
+        /// </summary>
+        public static string FormatDescriptionMinMaxCalculatedLinearLut {
+            get {
+                return ResourceManager.GetString("FormatDescriptionMinMaxCalculatedLinearLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Slope: {0:F2} Int.: {1:F2}.
+        /// </summary>
+        public static string FormatDescriptionModalityLutLinear {
+            get {
+                return ResourceManager.GetString("FormatDescriptionModalityLutLinear", resourceCulture);
             }
         }
         

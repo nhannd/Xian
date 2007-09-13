@@ -11,17 +11,11 @@ using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 {
-	/// <summary>
-	/// Extension point for views onto <see cref="PresetVoiLutConfigurationComponent"/>
-	/// </summary>
 	[ExtensionPoint]
-	public class PresetVoiLutConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class PresetVoiLutConfigurationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
-	/// <summary>
-	/// VoiLutConfigurationComponent class
-	/// </summary>
 	[AssociateView(typeof(PresetVoiLutConfigurationComponentViewExtensionPoint))]
 	public sealed class PresetVoiLutConfigurationComponent : ConfigurationApplicationComponent
 	{
@@ -31,6 +25,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 			internal PresetFactoryDescriptor(IPresetVoiLutApplicatorFactory factory)
 			{
+				Platform.CheckForNullReference(factory, "factory");
 				Factory = factory;
 			}
 
@@ -92,19 +87,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		private SimpleActionModel _toolbarModel;
 		private SimpleActionModel _contextMenuModel;
 
-		/// <summary>
-		/// Constructor
-		/// </summary>
 		public PresetVoiLutConfigurationComponent()
 		{
 		}
 
 		public IList<PresetFactoryDescriptor> AvailableAddFactories
 		{
-			get 
-			{
-				return _availableAddFactories;
-			}	
+			get { return _availableAddFactories; }	
 		}
 
 		public PresetFactoryDescriptor SelectedAddFactory
@@ -133,10 +122,14 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			get { return _selectedPresetVoiLutGroup.Modality; }
 			set
 			{
+				if (_selectedPresetVoiLutGroup.Modality == value)
+					return;
+
 				foreach(PresetVoiLutGroup group in _presetVoiLutGroups)
 				{
 					if (group.Modality == value)
 					{
+						SynchronizeCurrentSelectedGroup();
 						_selectedPresetVoiLutGroup = group;
 						PopulateTable();
 						base.NotifyPropertyChanged("SelectedModality");
@@ -144,7 +137,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 					}
 				}
 
-				throw new ArgumentException("The input value does not match an existing Modality.");
+				throw new ArgumentException(SR.ExceptionInputValueDoesntMatchExistingModality);
 			}
 		}
 
@@ -255,8 +248,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			_voiLutPresets = new Table<PresetVoiLut>();
 
 			_availableModalities = new List<string>(StandardModalities.Modalities);
-			if (!_availableModalities.Contains(""))
-				_availableModalities.Add("");
+			_availableModalities.Sort();
 
 			_presetVoiLutGroups = PresetVoiLutSettings.Default.GetPresetGroups().Clone();
 
@@ -266,7 +258,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 					_presetVoiLutGroups.Add(new PresetVoiLutGroup(modality));
 			}
 
-			_presetVoiLutGroups.Sort(new PresetVoiLutGroupSortByModality());
+			_presetVoiLutGroups.Sort();
 
 			_selectedPresetVoiLutGroup = _presetVoiLutGroups[0];
 
@@ -288,26 +280,21 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			{
 				IPresetVoiLutApplicatorComponent addComponent = SelectedAddFactory.Factory.GetEditComponent(null);
 				addComponent.EditContext = EditContext.Add;
-				PresetVoiLutApplicatorComponentContainer container =
+
+				PresetVoiLutApplicatorComponentContainer container = 
 					new PresetVoiLutApplicatorComponentContainer(GetUnusedKeyStrokes(null), addComponent);
 
-				if (ApplicationComponentExitCode.Normal !=
-				    ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, "Add Preset"))
+				if (ApplicationComponentExitCode.Normal != ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, SR.TitleAddPreset))
 					return;
 
 				PresetVoiLut preset = container.GetPresetVoiLut();
-				if (preset == null)
-				{
-					this.Host.DesktopWindow.ShowMessageBox("An error has occurred while adding the preset.", MessageBoxActions.Ok);
-				}
+				Platform.CheckForNullReference(preset, "preset");
 
-				List<PresetVoiLut> conflictingItems = CollectionUtils.Select<PresetVoiLut>(_selectedPresetVoiLutGroup.Presets,
-				                                                                           delegate(PresetVoiLut test)
-				                                                                           	{ return preset.Equals(test); });
+				List<PresetVoiLut> conflictingItems = CollectionUtils.Select<PresetVoiLut>(_voiLutPresets.Items,
+				                                                                           delegate(PresetVoiLut test){ return preset.Equals(test); });
 
 				if (conflictingItems.Count == 0)
 				{
-					_selectedPresetVoiLutGroup.Presets.Add(preset);
 					_voiLutPresets.Items.Add(preset);
 					Selection = null;
 
@@ -315,13 +302,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 				}
 				else
 				{
-					this.Host.DesktopWindow.ShowMessageBox(
-						"The name and/or keystroke entered conflicts with at least one other existing preset.", MessageBoxActions.Ok);
+					this.Host.DesktopWindow.ShowMessageBox(SR.MessageNameOrKeystrokeConflictsWithExistingPreset, MessageBoxActions.Ok);
 				}
 			}
 			catch(Exception e)
 			{
-				ExceptionHandler.Report(e, "Failed to add the specified preset.", this.Host.DesktopWindow);
+				ExceptionHandler.Report(e, SR.MessageFailedToAddPreset, this.Host.DesktopWindow);
 			}
 		}
 
@@ -332,41 +318,31 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 			if (this.SelectedPresetVoiLut == null)
 			{
-				this.Host.DesktopWindow.ShowMessageBox("Please Select an item to edit.", MessageBoxActions.Ok);
+				this.Host.DesktopWindow.ShowMessageBox(SR.MessagePleaseSelectAnItemToEdit, MessageBoxActions.Ok);
 				return;
 			}
 
 			try
 			{
 				PresetVoiLutConfiguration configuration = this.SelectedPresetApplicator.GetConfiguration();
-				IPresetVoiLutApplicatorComponent editComponent =
-					this.SelectedPresetApplicator.SourceFactory.GetEditComponent(configuration);
+				IPresetVoiLutApplicatorComponent editComponent = this.SelectedPresetApplicator.SourceFactory.GetEditComponent(configuration);
 				editComponent.EditContext = EditContext.Edit;
-				PresetVoiLutApplicatorComponentContainer container =
-					new PresetVoiLutApplicatorComponentContainer(GetUnusedKeyStrokes(this.SelectedPresetVoiLut), editComponent);
+				PresetVoiLutApplicatorComponentContainer container = new PresetVoiLutApplicatorComponentContainer(GetUnusedKeyStrokes(this.SelectedPresetVoiLut), editComponent);
 				container.SelectedKeyStroke = this.SelectedPresetVoiLut.KeyStroke;
 
-				if (ApplicationComponentExitCode.Normal !=
-				    ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, "Edit Preset"))
+				if (ApplicationComponentExitCode.Normal != ApplicationComponent.LaunchAsDialog(this.Host.DesktopWindow, container, SR.TitleEditPreset))
 					return;
 
 				PresetVoiLut preset = container.GetPresetVoiLut();
-				if (preset == null)
-				{
-					this.Host.DesktopWindow.ShowMessageBox("An error has occurred while editing the preset.", MessageBoxActions.Ok);
-				}
+				Platform.CheckForNullReference(preset, "preset");
 
-				List<PresetVoiLut> conflictingItems = CollectionUtils.Select<PresetVoiLut>(_selectedPresetVoiLutGroup.Presets,
-				                                                                           delegate(PresetVoiLut test)
-				                                                                           	{ return preset.Equals(test); });
+				List<PresetVoiLut> conflictingItems = CollectionUtils.Select<PresetVoiLut>(_voiLutPresets.Items,
+				                                                                           delegate(PresetVoiLut test){ return preset.Equals(test); });
 
 				if (conflictingItems.Count == 0 ||
 				    (conflictingItems.Count == 1 && conflictingItems[0].Equals(this.SelectedPresetVoiLut)))
 				{
 					PresetVoiLut selected = this.SelectedPresetVoiLut;
-
-					_selectedPresetVoiLutGroup.Presets.Remove(selected);
-					_selectedPresetVoiLutGroup.Presets.Add(preset);
 
 					int index = _voiLutPresets.Items.IndexOf(selected);
 					_voiLutPresets.Items.Remove(selected);
@@ -382,13 +358,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 				}
 				else
 				{
-					this.Host.DesktopWindow.ShowMessageBox(
-						"The name and/or keystroke entered conflicts with at least one other existing preset.", MessageBoxActions.Ok);
+					this.Host.DesktopWindow.ShowMessageBox(SR.MessageNameOrKeystrokeConflictsWithExistingPreset, MessageBoxActions.Ok);
 				}
 			}
 			catch(Exception	e)
 			{
-				ExceptionHandler.Report(e, "Failed to edit the specified preset.", this.Host.DesktopWindow);
+				ExceptionHandler.Report(e, SR.MessageFailedToEditPreset, this.Host.DesktopWindow);
 			}
 		}
 
@@ -399,11 +374,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 
 			if (this.SelectedPresetVoiLut == null)
 			{
-				this.Host.DesktopWindow.ShowMessageBox("Please Select an item to delete.", MessageBoxActions.Ok);
+				this.Host.DesktopWindow.ShowMessageBox(SR.MessagePleaseSelectAnItemToDelete, MessageBoxActions.Ok);
 				return;
 			}
 
-			_selectedPresetVoiLutGroup.Presets.Remove(this.SelectedPresetVoiLut);
 			_voiLutPresets.Items.Remove(this.SelectedPresetVoiLut);
 			this.Selection = null;
 
@@ -414,11 +388,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		{
 			try
 			{
+				SynchronizeCurrentSelectedGroup();
 				PresetVoiLutSettings.Default.SetPresetGroups(_presetVoiLutGroups);
 			}
 			catch (Exception e)
 			{
-				ExceptionHandler.Report(e, "Failed to save Window/Level Preset changes.", this.Host.DesktopWindow);
+				ExceptionHandler.Report(e, SR.MessageFailedToSaveWindowLevelPresetChanges, this.Host.DesktopWindow);
 			}
 		}
 
@@ -470,7 +445,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		{
 			List<XKeys> keyStrokes = new List<XKeys>(AvailablePresetVoiLutKeyStrokeSettings.Default.GetAvailableKeyStrokes());
 
-			foreach (PresetVoiLut presetVoiLut in this._selectedPresetVoiLutGroup.Presets)
+			foreach (PresetVoiLut presetVoiLut in _voiLutPresets.Items)
 			{
 				if (include != null && include.KeyStroke == presetVoiLut.KeyStroke)
 					continue;
@@ -493,9 +468,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 				_availableAddFactories = new List<PresetFactoryDescriptor>();
 
 			foreach (IPresetVoiLutApplicatorFactory factory in PresetVoiLutApplicatorFactories.Factories)
-			{
 				_availableAddFactories.Add(new PresetFactoryDescriptor(factory));
-			}
 
 			_availableAddFactories.Sort();
 		}
@@ -510,7 +483,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			bool addEnabled = true;
 			if (!_selectedAddFactory.Factory.CanCreateMultiple)
 			{
-				foreach (PresetVoiLut preset in _selectedPresetVoiLutGroup.Presets)
+				foreach (PresetVoiLut preset in _voiLutPresets.Items)
 				{
 					if (preset.Applicator.SourceFactory == _selectedAddFactory.Factory)
 					{
@@ -521,6 +494,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 			}
 
 			AddEnabled = addEnabled;
+		}
+
+		private void SynchronizeCurrentSelectedGroup()
+		{
+			_selectedPresetVoiLutGroup.Presets.Clear();
+			foreach (PresetVoiLut preset in _voiLutPresets.Items)
+			{
+				_selectedPresetVoiLutGroup.Presets.Add(preset);
+			}
 		}
 	}
 }

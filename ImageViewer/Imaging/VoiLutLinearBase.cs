@@ -112,7 +112,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public sealed override int MinOutputValue
 		{
 			get { return _minInputValue; }
-			protected set {throw new InvalidOperationException("The minimum output value is not settable.");}
+			protected set { throw new InvalidOperationException(SR.ExceptionMinimumOutputValueIsNotSettable); }
 		}
 
 		/// <summary>
@@ -121,7 +121,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public sealed override int MaxOutputValue
 		{
 			get { return _maxInputValue; }
-			protected set { throw new InvalidOperationException("The maximum output value is not settable."); }
+			protected set { throw new InvalidOperationException(SR.ExceptionMaximumOutputValueIsNotSettable); }
 		}
 
 		/// <summary>

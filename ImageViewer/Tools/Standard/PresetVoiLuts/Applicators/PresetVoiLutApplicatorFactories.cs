@@ -6,17 +6,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 {
 	internal static class PresetVoiLutApplicatorFactories
 	{
-		private static 	List<IPresetVoiLutApplicatorFactory> _applicatorFactories;
-
-		public static IPresetVoiLutApplicatorFactory GetFactory(string factoryName)
-		{
-			return InternalFactories.Find(delegate(IPresetVoiLutApplicatorFactory factory) { return factory.Name == factoryName; });
-		}
-			
-		public static IEnumerable<IPresetVoiLutApplicatorFactory> Factories
-		{
-			get { return InternalFactories; }	
-		}
+		private static List<IPresetVoiLutApplicatorFactory> _applicatorFactories;
 
 		private static List<IPresetVoiLutApplicatorFactory> InternalFactories
 		{
@@ -28,10 +18,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 
 					PresetVoiLutApplicatorFactoryExtensionPoint xp = new PresetVoiLutApplicatorFactoryExtensionPoint();
 					
-					//TODO: Later, when we actually want to support presets other than the standard linear presets, we just switch to the commented out line.
-					//object[] factories = new object[] { xp.CreateExtension(delegate(ExtensionInfo info) { return info.ExtensionClass == typeof(LinearPresetVoiLutApplicatorFactory); }) };
 					object[] factories = xp.CreateExtensions();
-
 					foreach (object factory in factories)
 					{
 						if (factory is IPresetVoiLutApplicatorFactory)
@@ -40,15 +27,25 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 							if (!String.IsNullOrEmpty(newFactory.Name))
 								_applicatorFactories.Add(newFactory);
 							else
-								Platform.Log(LogLevel.Warn, "The factory object {0} does not specify a name", factory.GetType().FullName);
+								Platform.Log(LogLevel.Warn, SR.MessageFormatFactoryHasNoName, factory.GetType().FullName);
 						}
 						else
-							Platform.Log(LogLevel.Warn, "The factory object {0} does not implement interface '{1}'", factory.GetType().FullName, typeof(IPresetVoiLutApplicatorFactory).Name);
+							Platform.Log(LogLevel.Warn, SR.MessageFormatFactoryDoesNotImplementRequiredInterface, factory.GetType().FullName, typeof(IPresetVoiLutApplicatorFactory).Name);
 					}
 				}
 
 				return _applicatorFactories;
 			}
+		}
+
+		public static IEnumerable<IPresetVoiLutApplicatorFactory> Factories
+		{
+			get { return InternalFactories; }
+		}
+
+		public static IPresetVoiLutApplicatorFactory GetFactory(string factoryName)
+		{
+			return InternalFactories.Find(delegate(IPresetVoiLutApplicatorFactory factory) { return factory.Name == factoryName; });
 		}
 	}
 }

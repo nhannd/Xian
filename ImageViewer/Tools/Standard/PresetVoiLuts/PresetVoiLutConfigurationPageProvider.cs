@@ -18,7 +18,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		{
 			List<IConfigurationPage> listPages = new List<IConfigurationPage>();
 
-			listPages.Add(new ConfigurationPage<PresetVoiLutConfigurationComponent>("Window & Level"));
+			listPages.Add(new ConfigurationPage<PresetVoiLutConfigurationComponent>(SR.TitleWindowAndLevel));
 
 			return listPages.AsReadOnly();
 		}

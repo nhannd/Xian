@@ -79,13 +79,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// Returns null.
 		/// </summary>
 		/// <remarks>
-		/// <para>
-		/// This class assumes the use of the <see cref="ILutMemento"/>, which does not require
-		/// the Lut itself to return an <see cref="IMemento"/> unless one is required to capture its current state.
-		/// </para>
-		/// <para>
 		/// Override this member only when necessary.  If this method is overridden, <see cref="SetMemento"/> must also be overridden.
-		/// </para>
 		///  </remarks>
 		/// <returns>null, unless overridden.</returns>
 		public virtual IMemento CreateMemento()
@@ -106,7 +100,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public virtual void SetMemento(IMemento memento)
 		{
 			if (memento != null)
-				throw new InvalidOperationException("You must override SetMemento in order to restore state from a previous call to CreateMemento.");
+				throw new InvalidOperationException(SR.ExceptionMustOverrideSetMemento);
 		}
 
 		#endregion

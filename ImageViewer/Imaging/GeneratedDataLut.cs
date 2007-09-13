@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get
 			{
 				if (_minimumInputValue == int.MinValue || _maximimInputValue == int.MaxValue)
-					throw new InvalidOperationException("The minimum and maximum input values have not been set.");
+					throw new InvalidOperationException(SR.ExceptionMinMaxInputValuesNotSet);
 
 				if (_data == null)
 					_data = new int[this.Length];

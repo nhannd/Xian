@@ -79,14 +79,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			public override int MinOutputValue
 			{
-				get { throw new InvalidOperationException("A Presentation LUT cannot have a minimum output value. "); }
-				protected set { throw new InvalidOperationException("A Presentation LUT cannot have a minimum output value. "); }
+				get { throw new InvalidOperationException(SR.ExceptionPresentationLutCannotHaveMinimumOutputValue); }
+				protected set { throw new InvalidOperationException(SR.ExceptionPresentationLutCannotHaveMinimumOutputValue); }
 			}
 
 			public override int MaxOutputValue
 			{
-				get { throw new InvalidOperationException("A Presentation LUT cannot have a maximum output value. "); }
-				protected set { throw new InvalidOperationException("A Presentation LUT cannot have a maximum output value. "); }
+				get { throw new InvalidOperationException(SR.ExceptionPresentationLutCannotHaveMaximumOutputValue); }
+				protected set { throw new InvalidOperationException(SR.ExceptionPresentationLutCannotHaveMaximumOutputValue); }
 			}
 
 			public override int this[int index]
@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				}
 				protected set
 				{
-					throw new InvalidOperationException("A Presentation LUT data cannot be altered. ");
+					throw new InvalidOperationException(SR.ExceptionPresentationLutDataCannotBeAltered);
 				}
 			}
 
@@ -264,7 +264,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		internal IPresentationLut GetPresentationLut(string name)
 		{
 			if (this.PresentationLutFactories.Find(delegate(IPresentationLutFactory factory) { return factory.Name == name; }) == null)
-				throw new ArgumentException(String.Format("No Presentation Lut factory extension exists with the name {0}", name));
+				throw new ArgumentException(String.Format(SR.ExceptionFormatNoPresentationLutFactoryExistWithName, name));
 
 			return new PresentationLutProxy(name);
 		}
@@ -279,8 +279,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			presentationLut.MaxInputValue = maxInputValue;
 			presentationLut.Invert = invert;
 
-			IPresentationLut existingLut = this.PresentationLuts.Find(delegate(IPresentationLut lut)
-			                                                          	{ return lut.Equals(presentationLut); });
+			IPresentationLut existingLut = this.PresentationLuts.Find(delegate(IPresentationLut lut){ return lut.Equals(presentationLut); });
 
 			if (existingLut == null)
 				this.PresentationLuts.Add(existingLut = presentationLut);

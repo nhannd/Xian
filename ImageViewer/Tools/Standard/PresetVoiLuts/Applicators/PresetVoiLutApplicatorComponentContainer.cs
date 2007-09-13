@@ -5,27 +5,22 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 {
-	/// <summary>
-	/// Extension point for views onto <see cref="PresetVoiLutComponent"/>
-	/// </summary>
 	[ExtensionPoint]
-	public class PresetVoiLutApplicatorComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+	public sealed class PresetVoiLutApplicatorComponentContainerViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
-	/// <summary>
-	/// EditPresetVoiLutComponent class
-	/// </summary>
 	[AssociateView(typeof(PresetVoiLutApplicatorComponentContainerViewExtensionPoint))]
-	public class PresetVoiLutApplicatorComponentContainer : ApplicationComponentContainer
+	public sealed class PresetVoiLutApplicatorComponentContainer : ApplicationComponentContainer
 	{
-		public class PresetVoiLutApplicatorComponentHost : ApplicationComponentHost
+		public sealed class PresetVoiLutApplicatorComponentHost : ApplicationComponentHost
 		{
 			private readonly PresetVoiLutApplicatorComponentContainer _owner;
 
 			internal PresetVoiLutApplicatorComponentHost(PresetVoiLutApplicatorComponentContainer owner, IPresetVoiLutApplicatorComponent hostedComponent)
 				:base(hostedComponent)
 			{
+				Platform.CheckForNullReference(owner, "owner"); 
 				Platform.CheckForNullReference(hostedComponent, "hostedComponent");
 				_owner = owner;
 				hostedComponent.SetHost(this);
@@ -82,7 +77,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 			set 
 			{ 
 				if (!_availableKeyStrokes.Contains(value))
-					throw new ArgumentException("The selected keystroke must be one of the available keystrokes.");
+					throw new ArgumentException(SR.ExceptionSelectedKeystrokeMustBeOneOfAvailable);
 
 				if (_selectedKeyStroke.Equals(value))
 					return;

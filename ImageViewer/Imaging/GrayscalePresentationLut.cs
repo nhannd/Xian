@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string Description
 		{
-			get { return "Grayscale"; }
+			get { return SR.DescriptionGrayscalePresentationLut; }
 		}
 	}
 
@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string GetDescription()
 		{
-			return "Grayscale";
+			return SR.DescriptionGrayscalePresentationLut;
 		}
 	}
 
@@ -120,7 +120,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string Description
 		{
-			get { return "Red"; }
+			get { return SR.DescriptionRedPresentationLut; }
 		}
 	}
 
@@ -166,7 +166,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string GetDescription()
 		{
-			return "Red";
+			return SR.DescriptionRedPresentationLut;
 		}
 	}
 
@@ -205,7 +205,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string Description
 		{
-			get { return "Green"; }
+			get { return SR.DescriptionGreenPresentationLut; }
 		}
 	}
 	
@@ -249,7 +249,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <returns></returns>
 		public override string GetDescription()
 		{
-			return "Green";
+			return SR.DescriptionGreenPresentationLut;
 		}
 	}
 
@@ -288,7 +288,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string Description
 		{
-			get { return "Blue"; }
+			get { return SR.DescriptionBluePresentationLut; }
 		}
 	}
 
@@ -331,7 +331,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string GetDescription()
 		{
-			return "Blue";
+			return SR.DescriptionBluePresentationLut;
 		}
 	}
 

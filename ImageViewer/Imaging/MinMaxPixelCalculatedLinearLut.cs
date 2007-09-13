@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string GetDescription()
 		{
-			return String.Format("W:{0} L:{1} (Min/Max)", WindowWidth, WindowCenter);
+			return String.Format(SR.FormatDescriptionMinMaxCalculatedLinearLut, WindowWidth, WindowCenter);
 		}
 	}
 }

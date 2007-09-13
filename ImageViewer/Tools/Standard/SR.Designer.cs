@@ -205,11 +205,74 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to An equivalent preset already exists..
+        /// </summary>
+        internal static string ExceptionAnEquivalentPresetAlreadyExists {
+            get {
+                return ResourceManager.GetString("ExceptionAnEquivalentPresetAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An equivalent preset group already exists..
+        /// </summary>
+        internal static string ExceptionAnEquivalentPresetGroupAlreadyExists {
+            get {
+                return ResourceManager.GetString("ExceptionAnEquivalentPresetGroupAlreadyExists", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The input configuration&apos;s factory name (&apos;{0}&apos;) does not match this factory&apos;s name (&apos;{1}&apos;)..
+        /// </summary>
+        internal static string ExceptionFormatFactoryNamesDoNotMatch {
+            get {
+                return ResourceManager.GetString("ExceptionFormatFactoryNamesDoNotMatch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The input presentation image must implement {0}..
+        /// </summary>
+        internal static string ExceptionFormatInputPresentationImageMustImplement {
+            get {
+                return ResourceManager.GetString("ExceptionFormatInputPresentationImageMustImplement", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The value &apos;{0}&apos; is invalid for Window Width..
+        /// </summary>
+        internal static string ExceptionFormatWindowWidthInvalid {
+            get {
+                return ResourceManager.GetString("ExceptionFormatWindowWidthInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to [{0}] is an invalid index.  Index must be between {1} and {2}..
         /// </summary>
         internal static string ExceptionIndexOutOfRange {
             get {
                 return ResourceManager.GetString("ExceptionIndexOutOfRange", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The input presentation image is not supported..
+        /// </summary>
+        internal static string ExceptionInputPresentationImageNotSupported {
+            get {
+                return ResourceManager.GetString("ExceptionInputPresentationImageNotSupported", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The input value does not match an existing Modality..
+        /// </summary>
+        internal static string ExceptionInputValueDoesntMatchExistingModality {
+            get {
+                return ResourceManager.GetString("ExceptionInputValueDoesntMatchExistingModality", resourceCulture);
             }
         }
         
@@ -295,6 +358,42 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The Preset Name cannot be empty..
+        /// </summary>
+        internal static string ExceptionPresetNameCannotBeEmpty {
+            get {
+                return ResourceManager.GetString("ExceptionPresetNameCannotBeEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The selected keystroke must be one of the available keystrokes..
+        /// </summary>
+        internal static string ExceptionSelectedKeystrokeMustBeOneOfAvailable {
+            get {
+                return ResourceManager.GetString("ExceptionSelectedKeystrokeMustBeOneOfAvailable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The property cannot be modified..
+        /// </summary>
+        internal static string ExceptionThePropertyCannotBeModified {
+            get {
+                return ResourceManager.GetString("ExceptionThePropertyCannotBeModified", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Window Center value is invalid..
+        /// </summary>
+        internal static string ExceptionWindowCenterInvalid {
+            get {
+                return ResourceManager.GetString("ExceptionWindowCenterInvalid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to The preset cannot be {0} because both its name and keystroke conflict with one or more existing presets.
         ///Please ensure that the name/keystroke combination is unique..
         /// </summary>
@@ -311,6 +410,33 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         internal static string ExceptionWindowLevelPresetSingleConflict {
             get {
                 return ResourceManager.GetString("ExceptionWindowLevelPresetSingleConflict", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W:{0} L:{1} (Auto).
+        /// </summary>
+        internal static string FormatDescriptionAutoLinearLut {
+            get {
+                return ResourceManager.GetString("FormatDescriptionAutoLinearLut", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W = {0}, L = {1}.
+        /// </summary>
+        internal static string FormatDescriptionLinearPreset {
+            get {
+                return ResourceManager.GetString("FormatDescriptionLinearPreset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to W:{0} L:{1} ({2}).
+        /// </summary>
+        internal static string FormatDescriptionPresetLinearLut {
+            get {
+                return ResourceManager.GetString("FormatDescriptionPresetLinearLut", resourceCulture);
             }
         }
         
@@ -567,6 +693,78 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Failed to add the specified preset..
+        /// </summary>
+        internal static string MessageFailedToAddPreset {
+            get {
+                return ResourceManager.GetString("MessageFailedToAddPreset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to edit the specified preset..
+        /// </summary>
+        internal static string MessageFailedToEditPreset {
+            get {
+                return ResourceManager.GetString("MessageFailedToEditPreset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to save Window/Level Preset changes..
+        /// </summary>
+        internal static string MessageFailedToSaveWindowLevelPresetChanges {
+            get {
+                return ResourceManager.GetString("MessageFailedToSaveWindowLevelPresetChanges", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The factory object ({0}) does not implement interface &apos;{1}&apos;..
+        /// </summary>
+        internal static string MessageFormatFactoryDoesNotImplementRequiredInterface {
+            get {
+                return ResourceManager.GetString("MessageFormatFactoryDoesNotImplementRequiredInterface", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The factory object ({0}) does not specify a name..
+        /// </summary>
+        internal static string MessageFormatFactoryHasNoName {
+            get {
+                return ResourceManager.GetString("MessageFormatFactoryHasNoName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The name and/or keystroke entered conflicts with at least one other existing preset..
+        /// </summary>
+        internal static string MessageNameOrKeystrokeConflictsWithExistingPreset {
+            get {
+                return ResourceManager.GetString("MessageNameOrKeystrokeConflictsWithExistingPreset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please Select an item to delete..
+        /// </summary>
+        internal static string MessagePleaseSelectAnItemToDelete {
+            get {
+                return ResourceManager.GetString("MessagePleaseSelectAnItemToDelete", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Please Select an item to edit..
+        /// </summary>
+        internal static string MessagePleaseSelectAnItemToEdit {
+            get {
+                return ResourceManager.GetString("MessagePleaseSelectAnItemToEdit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Calculates Window/Level from the minimum and maximum pixel values.
         /// </summary>
         internal static string MinMaxAlgorithmPresetVoiLutApplicatorComponentDescription {
@@ -612,6 +810,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Add Preset.
+        /// </summary>
+        internal static string TitleAddPreset {
+            get {
+                return ResourceManager.GetString("TitleAddPreset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Add Window/Level Preset.
         /// </summary>
         internal static string TitleAddWindowLevelPreset {
@@ -621,11 +828,29 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Edit Preset.
+        /// </summary>
+        internal static string TitleEditPreset {
+            get {
+                return ResourceManager.GetString("TitleEditPreset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Edit Window/Level Preset.
         /// </summary>
         internal static string TitleEditWindowLevelPreset {
             get {
                 return ResourceManager.GetString("TitleEditWindowLevelPreset", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Window &amp; Level.
+        /// </summary>
+        internal static string TitleWindowAndLevel {
+            get {
+                return ResourceManager.GetString("TitleWindowAndLevel", resourceCulture);
             }
         }
         

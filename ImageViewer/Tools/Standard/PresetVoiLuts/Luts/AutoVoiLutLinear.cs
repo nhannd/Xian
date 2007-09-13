@@ -47,28 +47,30 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 		private readonly ImageSop _imageSop;
 		private uint _index;
 
-		public AutoVoiLutLinear(ImageSop imageSop, uint index)
-		{
-		}
-
 		public AutoVoiLutLinear(ImageSop imageSop)
 		{
 			_imageSop = imageSop;
 			_index = 0;
 		}
-		
+
+		#region Private Properties/Methods
+
 		private Window[] WindowCenterAndWidth
 		{
 			get { return _imageSop.WindowCenterAndWidth; }
 		}
 
-		#region IAutoVoiLut Members
-
-		public void ApplyNext()
+		private void SetIndex(uint newIndex)
 		{
-			SetIndex(_index + 1);
+			uint lastIndex = _index;
+			_index = newIndex;
+			if (_index >= this.WindowCenterAndWidth.Length)
+				_index = 0;
+
+			if (lastIndex != _index)
+				base.OnLutChanged();
 		}
-		
+
 		#endregion
 
 		#region IVoiLutLinear Members
@@ -85,9 +87,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 
 		#endregion
 
+		#region Public Methods
+
+		#region IAutoVoiLut Members
+
+		public void ApplyNext()
+		{
+			SetIndex(_index + 1);
+		}
+
+		#endregion
+
 		public override string GetDescription()
 		{
-			return String.Format("W:{0} L:{1} (Auto)", WindowWidth, WindowCenter);
+			return String.Format(SR.FormatDescriptionAutoLinearLut, WindowWidth, WindowCenter);
 		}
 
 		public override IMemento CreateMemento()
@@ -102,15 +115,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts
 			this.SetIndex(autoMemento.Index);
 		}
 
-		private void SetIndex(uint newIndex)
-		{
-			uint lastIndex = _index;
-			_index = newIndex;
-			if (_index >= this.WindowCenterAndWidth.Length)
-				_index = 0;
-
-			if (lastIndex != _index)
-				base.OnLutChanged();
-		}
+		#endregion
 	}
 }

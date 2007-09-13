@@ -23,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 		public static void AutoApplyLut(IPresentationImage presentationImage)
 		{
 			if (!AppliesTo(presentationImage))
-				throw new InvalidOperationException("The input presentation image is not supported");
+				throw new InvalidOperationException(SR.ExceptionInputPresentationImageNotSupported);
 
 			IVoiLutManager manager = ((IVoiLutProvider)presentationImage).VoiLutManager;
 			ILut currentLut = manager.GetLut();

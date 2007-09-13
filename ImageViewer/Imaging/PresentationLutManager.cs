@@ -51,8 +51,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public void SetMemento(IMemento memento)
 		{
-			ILutMemento lutMemento = memento as ILutMemento;
-			Platform.CheckForInvalidCast(lutMemento, "memento", typeof(ILutMemento).Name);
+			LutMemento lutMemento = memento as LutMemento;
+			Platform.CheckForInvalidCast(lutMemento, "memento", typeof(LutMemento).Name);
 
 			if (_grayscaleImageGraphic.PresentationLut != lutMemento.OriginatingLut)
 				_grayscaleImageGraphic.InstallPresentationLut(lutMemento.OriginatingLut as IPresentationLut);

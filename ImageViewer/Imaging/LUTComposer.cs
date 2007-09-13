@@ -165,7 +165,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			int lastLUT = this.LutCollection.Count - 1;
 
 			if (!(this.LutCollection[lastLUT] is IPresentationLut))
-			    throw new InvalidOperationException("Last LUT in pipeline must be an IPresentationLUT");
+				throw new InvalidOperationException(SR.ExceptionLastLutMustBePresentation);
 		}
 
 		private IEnumerable<string> GetKeys()

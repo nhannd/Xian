@@ -8,9 +8,9 @@ using System;
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 {
 	[Serializable]
-	public class PresetVoiLutApplicatorValidationException : Exception
+	public sealed class PresetVoiLutApplicatorValidationException : Exception
 	{
-		public PresetVoiLutApplicatorValidationException(string message)
+		internal PresetVoiLutApplicatorValidationException(string message)
 			: base(message)
 		{
 		}
@@ -19,8 +19,8 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 	public abstract class PresetVoiLutApplicatorComponent : ApplicationComponent, IPresetVoiLutApplicator, IPresetVoiLutApplicatorComponent
 	{
 		private IPresetVoiLutApplicatorFactory _sourceFactory;
-		private bool _valid;
 		private EditContext _editContext;
+		private bool _valid;
 
 		protected PresetVoiLutApplicatorComponent()
 		{
@@ -111,6 +111,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 			UpdateValid();
 			base.Modified = true;
 			NotifyPropertyChanged(propertyName);
+		}
+
+		protected static PresetVoiLutApplicatorValidationException CreateValidationException(string message)
+		{
+			return new PresetVoiLutApplicatorValidationException(message);
 		}
 	}
 }

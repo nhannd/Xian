@@ -5,8 +5,8 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 {
-	public abstract class PresetVoiLutApplicatorFactory<EditPresetVoiLutComponentBaseType> : IPresetVoiLutApplicatorFactory
-		where EditPresetVoiLutComponentBaseType : PresetVoiLutApplicatorComponent, new()
+	public abstract class PresetVoiLutApplicatorFactory<PresetVoiLutApplicatorComponentType> : IPresetVoiLutApplicatorFactory
+		where PresetVoiLutApplicatorComponentType : PresetVoiLutApplicatorComponent, new()
 	{
 		#region IPresetVoiLutApplicatorFactory Members
 
@@ -15,7 +15,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 
 		public bool CanCreateMultiple
 		{
-			get { return typeof (EditPresetVoiLutComponentBaseType).IsDefined(typeof(AllowMultiplePresetVoiLutApplicatorsAttribute), false); }
+			get { return typeof (PresetVoiLutApplicatorComponentType).IsDefined(typeof(AllowMultiplePresetVoiLutApplicatorsAttribute), false); }
 		}
 
 		public IPresetVoiLutApplicator Create(PresetVoiLutConfiguration configuration)
@@ -27,7 +27,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 			Dictionary<string, string> dictionary = new Dictionary<string, string>();
 			configuration.CopyTo(dictionary);
 
-			EditPresetVoiLutComponentBaseType component = new EditPresetVoiLutComponentBaseType();
+			PresetVoiLutApplicatorComponentType component = new PresetVoiLutApplicatorComponentType();
 			component.SourceFactory = this;
 			SimpleSerializer.Serialize(component, dictionary);
 			component.Validate();
@@ -36,7 +36,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 
 		public IPresetVoiLutApplicatorComponent GetEditComponent(PresetVoiLutConfiguration configuration)
 		{
-			EditPresetVoiLutComponentBaseType component = new EditPresetVoiLutComponentBaseType();
+			PresetVoiLutApplicatorComponentType component = new PresetVoiLutApplicatorComponentType();
 			component.SourceFactory = this;
 
 			if (configuration != null)
@@ -57,8 +57,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 			if (configuration.FactoryName != this.Name)
 			{
 				throw new ArgumentException(
-					String.Format("The input configuration's factory name ('{0}') does not match this factory's name ('{1}')",
-					              configuration.FactoryName, this.Name));
+					String.Format(SR.ExceptionFormatFactoryNamesDoNotMatch, configuration.FactoryName, this.Name));
 			}
 		}
 	}
