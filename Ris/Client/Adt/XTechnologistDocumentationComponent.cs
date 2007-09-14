@@ -16,18 +16,18 @@ using ClearCanvas.Ris.Application.Common;
 namespace ClearCanvas.Ris.Client.Adt
 {
     /// <summary>
-    /// Extension point for views onto <see cref="TechnologistDocumentationComponent"/>
+    /// Extension point for views onto <see cref="XTechnologistDocumentationComponent"/>
     /// </summary>
     [ExtensionPoint]
-    public class TechnologistDocumentationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
+    public class XTechnologistDocumentationComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
     {
     }
 
     /// <summary>
-    /// TechnologistDocumentationComponent class
+    /// XTechnologistDocumentationComponent class
     /// </summary>
-    [AssociateView(typeof(TechnologistDocumentationComponentViewExtensionPoint))]
-    public class TechnologistDocumentationComponent : ApplicationComponent
+    [AssociateView(typeof(XTechnologistDocumentationComponentViewExtensionPoint))]
+    public class XTechnologistDocumentationComponent : ApplicationComponent
     {
         /// <summary>
         /// The script callback is an object that is made available to the web browser so that
@@ -36,9 +36,9 @@ namespace ClearCanvas.Ris.Client.Adt
         [ComVisible(true)]
         public class ScriptCallback
         {
-            private readonly TechnologistDocumentationComponent _component;
+            private readonly XTechnologistDocumentationComponent _component;
 
-            public ScriptCallback(TechnologistDocumentationComponent component)
+            public ScriptCallback(XTechnologistDocumentationComponent component)
             {
                 _component = component;
             }
@@ -107,7 +107,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private readonly ScriptCallback _scriptCallback;
         private List<ProcedureStepDetail> _procedureSteps;
-        private readonly TechnologistDocumentationTable _documentationTable;
+        private readonly XTechnologistDocumentationTable _documentationTable;
 
         private readonly ModalityWorklistItem _workListItem;
 
@@ -140,9 +140,9 @@ namespace ClearCanvas.Ris.Client.Adt
         /// <summary>
         /// Constructor
         /// </summary>
-        public TechnologistDocumentationComponent(ModalityWorklistItem workListItem)
+        public XTechnologistDocumentationComponent(ModalityWorklistItem workListItem)
         {
-            _documentationTable = new TechnologistDocumentationTable();
+            _documentationTable = new XTechnologistDocumentationTable();
 
             _scriptCallback = new ScriptCallback(this);
 
@@ -151,7 +151,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _workListItem = workListItem;
         }
 
-        public TechnologistDocumentationComponent()
+        public XTechnologistDocumentationComponent()
             : this(null)
         {
         }
@@ -254,7 +254,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             foreach (ProcedureStepDetail step in _procedureSteps)
             {
-                _documentationTable.Items.Add(new TechnologistDocumentationTableItem(step));
+                _documentationTable.Items.Add(new XTechnologistDocumentationTableItem(step));
             }
         }
 
@@ -344,23 +344,23 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #endregion
 
-        #region TechnologistDocumentationTable Event Handlers
+        #region XTechnologistDocumentationTable Event Handlers
 
         private void OnItemSelectionRejected(object sender, EventArgs e)
         {
-            TechnologistDocumentationTableItem item = ((TechnologistDocumentationTable.ItemCheckedEventArgs) e).Item;
+            XTechnologistDocumentationTableItem item = ((XTechnologistDocumentationTable.ItemCheckedEventArgs) e).Item;
             // just refresh the UI, since it still thinks the item was selected
             _documentationTable.Items.NotifyItemUpdated(item);
         }
 
         private void OnItemDeselected(object sender, EventArgs e)
         {
-            OnItemDeselected(((TechnologistDocumentationTable.ItemCheckedEventArgs)e).Item);
+            OnItemDeselected(((XTechnologistDocumentationTable.ItemCheckedEventArgs)e).Item);
         }
 
-        private void OnItemDeselected(TechnologistDocumentationTableItem checkedItem)
+        private void OnItemDeselected(XTechnologistDocumentationTableItem checkedItem)
         {
-            IList<TechnologistDocumentationTableItem> toBeUpdated = CheckedItems();
+            IList<XTechnologistDocumentationTableItem> toBeUpdated = CheckedItems();
             toBeUpdated.Add(checkedItem);
             SaveDocumentation(toBeUpdated);
 
@@ -373,10 +373,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private void OnItemSelected(object sender, EventArgs e)
         {
-            OnItemSelected(((TechnologistDocumentationTable.ItemCheckedEventArgs) e).Item);
+            OnItemSelected(((XTechnologistDocumentationTable.ItemCheckedEventArgs) e).Item);
         }
 
-        private void OnItemSelected(TechnologistDocumentationTableItem checkedItem)
+        private void OnItemSelected(XTechnologistDocumentationTableItem checkedItem)
         {
             ExtendItemSelection(checkedItem, true);
             RefreshTableItemCheckStatuses(checkedItem);
@@ -384,7 +384,7 @@ namespace ClearCanvas.Ris.Client.Adt
             LoadDocumentationPage(checkedItem);
         }
 
-        private void LoadDocumentationPage(TechnologistDocumentationTableItem checkedItem)
+        private void LoadDocumentationPage(XTechnologistDocumentationTableItem checkedItem)
         {
             if (checkedItem.ProcedureStep.Status.Value == "Scheduled") return;
 
@@ -405,9 +405,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private bool AnyItemsSelected()
         {
-            return CollectionUtils.Contains<TechnologistDocumentationTableItem>(
+            return CollectionUtils.Contains<XTechnologistDocumentationTableItem>(
                 _documentationTable.Items,
-                delegate(TechnologistDocumentationTableItem item) { return item.Selected; });
+                delegate(XTechnologistDocumentationTableItem item) { return item.Selected; });
         }
 
         /// <summary>
@@ -415,20 +415,20 @@ namespace ClearCanvas.Ris.Client.Adt
         /// </summary>
         /// <param name="checkedItem">The selected item</param>
         /// <param name="selectionState">true to select, false to deselect</param>
-        private void ExtendItemSelection(TechnologistDocumentationTableItem checkedItem, bool selectionState)
+        private void ExtendItemSelection(XTechnologistDocumentationTableItem checkedItem, bool selectionState)
         {
-            foreach (TechnologistDocumentationTableItem item in CoDocumentedItems(checkedItem))
+            foreach (XTechnologistDocumentationTableItem item in CoDocumentedItems(checkedItem))
             {
                 item.Selected = selectionState;
                 _documentationTable.Items.NotifyItemUpdated(item);
             }
         }
 
-        private void RefreshTableItemCheckStatuses(TechnologistDocumentationTableItem checkedItem)
+        private void RefreshTableItemCheckStatuses(XTechnologistDocumentationTableItem checkedItem)
         {
             if (checkedItem == null) return;
 
-            foreach (TechnologistDocumentationTableItem item in _documentationTable.Items)
+            foreach (XTechnologistDocumentationTableItem item in _documentationTable.Items)
             {
                 item.CanSelect = item.ProcedureStep.CanDocumentWith(checkedItem.ProcedureStep);
                 _documentationTable.Items.NotifyItemUpdated(item);
@@ -436,10 +436,10 @@ namespace ClearCanvas.Ris.Client.Adt
 
         }
 
-        private void SaveDocumentation(IEnumerable<TechnologistDocumentationTableItem> items)
+        private void SaveDocumentation(IEnumerable<XTechnologistDocumentationTableItem> items)
         {
             EventsHelper.Fire(_beforeDocumentationSaved, this, EventArgs.Empty);
-            foreach (TechnologistDocumentationTableItem item in items)
+            foreach (XTechnologistDocumentationTableItem item in items)
             {
                 if (item.ProcedureStep.PerformedProcedureStep != null)
                 {
@@ -452,7 +452,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private void ResetPage()
         {
             // make all items selectable and update display
-            foreach (TechnologistDocumentationTableItem item in _documentationTable.Items)
+            foreach (XTechnologistDocumentationTableItem item in _documentationTable.Items)
             {
                 if (item.CanSelect == false)
                 {
@@ -474,7 +474,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private void CompleteCheckedProcedures(DateTime time)
         {
             //UpdateSelectedStatuses("Completed");
-            foreach (TechnologistDocumentationTableItem item in CheckedItems())
+            foreach (XTechnologistDocumentationTableItem item in CheckedItems())
             {
                 item.ProcedureStep.Status = new EnumValueInfo("CM", "Completed");
                 item.ProcedureStep.Dirty = true;
@@ -491,7 +491,7 @@ namespace ClearCanvas.Ris.Client.Adt
             PerformedProcedureStepDetail pps = new PerformedProcedureStepDetail();
             pps.StartTime = time;
 
-            foreach (TechnologistDocumentationTableItem item in CheckedItems())
+            foreach (XTechnologistDocumentationTableItem item in CheckedItems())
             {
                 item.ProcedureStep.Status = new EnumValueInfo("IP", "In Progress");
                 item.ProcedureStep.Dirty = true;
@@ -499,34 +499,34 @@ namespace ClearCanvas.Ris.Client.Adt
                 _documentationTable.Items.NotifyItemUpdated(item);
             }
 
-            TechnologistDocumentationTableItem checkedItem =
-                CollectionUtils.SelectFirst<TechnologistDocumentationTableItem>(
+            XTechnologistDocumentationTableItem checkedItem =
+                CollectionUtils.SelectFirst<XTechnologistDocumentationTableItem>(
                     _documentationTable.Items,
-                    delegate(TechnologistDocumentationTableItem d) { return d.Selected; });
+                    delegate(XTechnologistDocumentationTableItem d) { return d.Selected; });
 
             RefreshTableItemCheckStatuses(checkedItem);
             LoadDocumentationPage(checkedItem);
             UpdateActionEnablement("In Progress");
         }
 
-        private IList<TechnologistDocumentationTableItem> CheckedItems()
+        private IList<XTechnologistDocumentationTableItem> CheckedItems()
         {
-            return CollectionUtils.Select<TechnologistDocumentationTableItem, List<TechnologistDocumentationTableItem>>(
+            return CollectionUtils.Select<XTechnologistDocumentationTableItem, List<XTechnologistDocumentationTableItem>>(
                 _documentationTable.Items,
-                delegate(TechnologistDocumentationTableItem d) { return d.Selected; }
+                delegate(XTechnologistDocumentationTableItem d) { return d.Selected; }
                 );            
         }
 
-        private IList<TechnologistDocumentationTableItem> CoDocumentedItems(TechnologistDocumentationTableItem documentedItem)
+        private IList<XTechnologistDocumentationTableItem> CoDocumentedItems(XTechnologistDocumentationTableItem documentedItem)
         {
             if (documentedItem.ProcedureStep.PerformedProcedureStep == null)
             {
-                return new List<TechnologistDocumentationTableItem>();
+                return new List<XTechnologistDocumentationTableItem>();
             }
 
-            return CollectionUtils.Select<TechnologistDocumentationTableItem, List<TechnologistDocumentationTableItem>>(
+            return CollectionUtils.Select<XTechnologistDocumentationTableItem, List<XTechnologistDocumentationTableItem>>(
                 _documentationTable.Items,
-                delegate(TechnologistDocumentationTableItem item)
+                delegate(XTechnologistDocumentationTableItem item)
                 {
                     return item != documentedItem
                         && Equals(item.ProcedureStep.PerformedProcedureStep, documentedItem.ProcedureStep.PerformedProcedureStep);

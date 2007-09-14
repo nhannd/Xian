@@ -9,7 +9,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [MenuAction("apply", "global-menus/MenuTools/Technologist Documentation")]
     [ClickHandler("apply", "Apply")]
     [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-    public class TechnologistDocumentationTestTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
+    public class XTechnologistDocumentationTestTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
     {
         private IWorkspace _workspace;
 
@@ -21,7 +21,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     _workspace = ApplicationComponent.LaunchAsWorkspace(
                         this.Context.DesktopWindow,
-                        new TechnologistDocumentationComponent(),
+                        new XTechnologistDocumentationComponent(),
                         "Technologist Documentation",
                         delegate(IApplicationComponent c) { _workspace = null;  });
                 }

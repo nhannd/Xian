@@ -1,6 +1,6 @@
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
-    partial class TechnologistDocumentationComponentControl
+    partial class XTechnologistDocumentationComponentControl
     {
         /// <summary> 
         /// Required designer variable.
@@ -197,7 +197,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._browser.Size = new System.Drawing.Size(851, 339);
             this._browser.TabIndex = 0;
             // 
-            // TechnologistDocumentationComponentControl
+            // XTechnologistDocumentationComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;

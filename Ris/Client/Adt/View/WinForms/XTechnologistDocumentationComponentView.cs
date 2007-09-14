@@ -5,24 +5,25 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.Adt;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms view onto <see cref="TechnologistDocumentationComponent"/>
+    /// Provides a Windows Forms view onto <see cref="XTechnologistDocumentationComponent"/>
     /// </summary>
-    [ExtensionOf(typeof(TechnologistDocumentationComponentViewExtensionPoint))]
-    public class TechnologistDocumentationComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(XTechnologistDocumentationComponentViewExtensionPoint))]
+    public class XTechnologistDocumentationComponentView : WinFormsView, IApplicationComponentView
     {
-        private TechnologistDocumentationComponent _component;
-        private TechnologistDocumentationComponentControl _control;
+        private XTechnologistDocumentationComponent _component;
+        private XTechnologistDocumentationComponentControl _control;
 
 
         #region IApplicationComponentView Members
 
         public void SetComponent(IApplicationComponent component)
         {
-            _component = (TechnologistDocumentationComponent)component;
+            _component = (XTechnologistDocumentationComponent)component;
         }
 
         #endregion
@@ -33,7 +34,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             {
                 if (_control == null)
                 {
-                    _control = new TechnologistDocumentationComponentControl(_component);
+                    _control = new XTechnologistDocumentationComponentControl(_component);
                 }
                 return _control;
             }

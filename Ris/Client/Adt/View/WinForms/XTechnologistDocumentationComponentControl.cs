@@ -2,21 +2,22 @@ using System;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Validation;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.Adt;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
     /// <summary>
-    /// Provides a Windows Forms user-interface for <see cref="TechnologistDocumentationComponent"/>
+    /// Provides a Windows Forms user-interface for <see cref="XTechnologistDocumentationComponent"/>
     /// </summary>
-    public partial class TechnologistDocumentationComponentControl : ApplicationComponentUserControl
+    public partial class XTechnologistDocumentationComponentControl : ApplicationComponentUserControl
     {
-        private readonly TechnologistDocumentationComponent _component;
+        private readonly XTechnologistDocumentationComponent _component;
 
         private class CustomValidationRule : IValidationRule
         {
-            private readonly TechnologistDocumentationComponentControl _owner;
+            private readonly XTechnologistDocumentationComponentControl _owner;
 
-            public CustomValidationRule(TechnologistDocumentationComponentControl owner)
+            public CustomValidationRule(XTechnologistDocumentationComponentControl owner)
             {
                 _owner = owner;
             }
@@ -44,7 +45,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// <summary>
         /// Constructor
         /// </summary>
-        public TechnologistDocumentationComponentControl(TechnologistDocumentationComponent component)
+        public XTechnologistDocumentationComponentControl(XTechnologistDocumentationComponent component)
             : base(component)
         {
             InitializeComponent();

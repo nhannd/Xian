@@ -13,7 +13,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [IconSet("apply", IconScheme.Colour, "StartToolSmall.png", "StartToolMedium.png", "StartToolLarge.png")]
     [ClickHandler("apply", "Apply")]
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-    public class TechnologistDocumentationTool : Tool<ITechnologistWorkflowItemToolContext>
+    public class XTechnologistDocumentationTool : Tool<ITechnologistWorkflowItemToolContext>
     {
         private IWorkspace _workspace;
 
@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
                     _workspace = ApplicationComponent.LaunchAsWorkspace(
                         this.Context.DesktopWindow,
-                        new TechnologistDocumentationComponent(item),
+                        new XTechnologistDocumentationComponent(item),
                         "Technologist Documentation",
                         delegate(IApplicationComponent c) { _workspace = null;  });
                 }

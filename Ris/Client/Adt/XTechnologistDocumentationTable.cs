@@ -4,19 +4,19 @@ using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    public class TechnologistDocumentationTable : DecoratedTable<TechnologistDocumentationTableItem>
+    public class XTechnologistDocumentationTable : DecoratedTable<XTechnologistDocumentationTableItem>
     {
 
         public class ItemCheckedEventArgs : EventArgs
         {
-            private readonly TechnologistDocumentationTableItem _item;
+            private readonly XTechnologistDocumentationTableItem _item;
 
-            public ItemCheckedEventArgs(TechnologistDocumentationTableItem _item)
+            public ItemCheckedEventArgs(XTechnologistDocumentationTableItem _item)
             {
                 this._item = _item;
             }
 
-            public TechnologistDocumentationTableItem Item
+            public XTechnologistDocumentationTableItem Item
             {
                 get { return _item; }
             }
@@ -26,13 +26,13 @@ namespace ClearCanvas.Ris.Client.Adt
         private event EventHandler _itemDeselected;
         private event EventHandler _itemSelectionRejected;
 
-        public TechnologistDocumentationTable()
+        public XTechnologistDocumentationTable()
             : base(1)
         {
-            this.Columns.Add(new TableColumn<TechnologistDocumentationTableItem, bool>(
+            this.Columns.Add(new TableColumn<XTechnologistDocumentationTableItem, bool>(
                 "Active?",
-                delegate(TechnologistDocumentationTableItem d) { return d.Selected; },
-                delegate(TechnologistDocumentationTableItem d, bool value)
+                delegate(XTechnologistDocumentationTableItem d) { return d.Selected; },
+                delegate(XTechnologistDocumentationTableItem d, bool value)
                    {
                        if (d.CanSelect)
                        {
@@ -49,22 +49,22 @@ namespace ClearCanvas.Ris.Client.Adt
                    },
                0.5f));
 
-            this.Columns.Add(new TableColumn<TechnologistDocumentationTableItem, string>(
+            this.Columns.Add(new TableColumn<XTechnologistDocumentationTableItem, string>(
                 "Name",
-                delegate(TechnologistDocumentationTableItem d) { return d.ProcedureStep.Name; },
+                delegate(XTechnologistDocumentationTableItem d) { return d.ProcedureStep.Name; },
                 7.0f));
 
-            TableColumn<TechnologistDocumentationTableItem, string> statusColumn = 
-                new TableColumn<TechnologistDocumentationTableItem, string>(
+            TableColumn<XTechnologistDocumentationTableItem, string> statusColumn = 
+                new TableColumn<XTechnologistDocumentationTableItem, string>(
                     "Status",
-                    delegate(TechnologistDocumentationTableItem d) { return d.ProcedureStep.Status.Value; },
+                    delegate(XTechnologistDocumentationTableItem d) { return d.ProcedureStep.Status.Value; },
                     1.0f);
             this.Columns.Add(statusColumn);
 
-            TableColumn<TechnologistDocumentationTableItem, DateTime> startTimeColumn = 
-                new TableColumn<TechnologistDocumentationTableItem, DateTime>(
+            TableColumn<XTechnologistDocumentationTableItem, DateTime> startTimeColumn = 
+                new TableColumn<XTechnologistDocumentationTableItem, DateTime>(
                     "Start Time",
-                    delegate(TechnologistDocumentationTableItem d) 
+                    delegate(XTechnologistDocumentationTableItem d) 
                     {
                         if (d.ProcedureStep.PerformedProcedureStep == null) return DateTime.MinValue;
                         return d.ProcedureStep.PerformedProcedureStep.StartTime;  
@@ -72,10 +72,10 @@ namespace ClearCanvas.Ris.Client.Adt
                     1.0f);
             this.Columns.Add(startTimeColumn);
 
-            TableColumn<TechnologistDocumentationTableItem, DateTime> endTimeColumn = 
-                new TableColumn<TechnologistDocumentationTableItem, DateTime>(
+            TableColumn<XTechnologistDocumentationTableItem, DateTime> endTimeColumn = 
+                new TableColumn<XTechnologistDocumentationTableItem, DateTime>(
                     "End Time",
-                    delegate(TechnologistDocumentationTableItem d)
+                    delegate(XTechnologistDocumentationTableItem d)
                     {
                         if (d.ProcedureStep.PerformedProcedureStep == null) return DateTime.MinValue;
                         return d.ProcedureStep.PerformedProcedureStep.EndTime ?? DateTime.MinValue;
@@ -86,10 +86,10 @@ namespace ClearCanvas.Ris.Client.Adt
             this.Sort(new TableSortParams(endTimeColumn, true));
 
             this.BackgroundColorSelector = 
-                delegate(object o) { return (((TechnologistDocumentationTableItem)o).CanSelect) ? "Empty" : "LightCyan"; };
+                delegate(object o) { return (((XTechnologistDocumentationTableItem)o).CanSelect) ? "Empty" : "LightCyan"; };
             
             this.OutlineColorSelector =
-                delegate(object o) { return (((TechnologistDocumentationTableItem)o).CanSelect) ? "Empty" : "Red"; };
+                delegate(object o) { return (((XTechnologistDocumentationTableItem)o).CanSelect) ? "Empty" : "Red"; };
         }
 
         public event EventHandler ItemSelected

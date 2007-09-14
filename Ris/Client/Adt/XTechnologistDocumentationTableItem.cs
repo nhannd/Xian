@@ -5,18 +5,18 @@ namespace ClearCanvas.Ris.Client.Adt
     /// <summary>
     /// Wraps a domain object for presentation and selection in a table
     /// </summary>
-    public class TechnologistDocumentationTableItem
+    public class XTechnologistDocumentationTableItem
     {
         private bool _selected = false;
         private bool _canSelect = true;
         private readonly ProcedureStepDetail _procedureStep;
 
-        public TechnologistDocumentationTableItem()
+        public XTechnologistDocumentationTableItem()
             :this(new ProcedureStepDetail())
         {                  
         }
 
-        public TechnologistDocumentationTableItem (ProcedureStepDetail procedureStepDocumentationItem)
+        public XTechnologistDocumentationTableItem (ProcedureStepDetail procedureStepDocumentationItem)
         {
             _procedureStep = procedureStepDocumentationItem ?? new ProcedureStepDetail();
         }
