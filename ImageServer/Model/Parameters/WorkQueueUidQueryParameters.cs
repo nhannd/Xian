@@ -8,10 +8,10 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueUidSelectParameters : ProcedureParameters
+    public class WorkQueueUidQueryParameters : ProcedureParameters
     {
-        public WorkQueueUidSelectParameters()
-            : base("SelectWorkQueueUids")
+        public WorkQueueUidQueryParameters()
+            : base("QueryWorkQueueUids")
         { }
 
         public ServerEntityKey WorkQueueKey

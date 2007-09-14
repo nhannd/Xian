@@ -9,7 +9,7 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public interface ISelectWorkQueueUids : IProcedureSelectBroker<WorkQueueUidSelectParameters, WorkQueueUid>
+    public interface IQueryRequestAttributes : IProcedureQueryBroker<RequestAttributesQueryParameters,RequestAttributes>
     {
     }
 }

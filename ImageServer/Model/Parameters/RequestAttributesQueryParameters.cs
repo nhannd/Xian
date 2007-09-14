@@ -8,10 +8,10 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class RequestAttributesSelectParameters : ProcedureParameters
+    public class RequestAttributesQueryParameters : ProcedureParameters
     {
-        public RequestAttributesSelectParameters()
-            : base("SelectRequestAttributes")
+        public RequestAttributesQueryParameters()
+            : base("QueryRequestAttributes")
         {
         }
 

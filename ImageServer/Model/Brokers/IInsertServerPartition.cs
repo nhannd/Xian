@@ -9,7 +9,7 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public interface IInsertServerPartition : IProcedureSelectBroker<ServerPartitionInsertParameters, ServerPartition>
+    public interface IInsertServerPartition : IProcedureQueryBroker<ServerPartitionInsertParameters, ServerPartition>
     {
     }
 }

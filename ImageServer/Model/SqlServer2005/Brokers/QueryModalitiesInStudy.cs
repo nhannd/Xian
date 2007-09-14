@@ -9,13 +9,13 @@ using ClearCanvas.ImageServer.Model.Parameters;
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
     /// <summary>
-    /// Broker implementation for <see cref="ISelectModalitiesInStudy"/>
+    /// Broker implementation for <see cref="IQueryModalitiesInStudy"/>
     /// </summary>
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class SelectModalitiesInStudy : ProcedureSelectBroker<ModalitiesInStudySelectParameters, Series>, ISelectModalitiesInStudy
+    public class QueryModalitiesInStudy : ProcedureQueryBroker<ModalitiesInStudyQueryParameters, Series>, IQueryModalitiesInStudy
     {
-        public SelectModalitiesInStudy()
-            : base("SelectModalitiesInStudy")
+        public QueryModalitiesInStudy()
+            : base("QueryModalitiesInStudy")
         {
         }
     }

@@ -9,7 +9,7 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public interface IInsertInstance : IProcedureSelectBroker<InstanceInsertParameters,InstanceKeys>
+    public interface IInsertInstance : IProcedureQueryBroker<InstanceInsertParameters,InstanceKeys>
     {
     }
 }

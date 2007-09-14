@@ -5,10 +5,10 @@ using ClearCanvas.ImageServer.Database;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class ModalitiesInStudySelectParameters: ProcedureParameters
+    public class ModalitiesInStudyQueryParameters: ProcedureParameters
     {
-        public ModalitiesInStudySelectParameters()
-            : base("SelectModalitiesInStudy")
+        public ModalitiesInStudyQueryParameters()
+            : base("QueryModalitiesInStudy")
         {
         }
 

@@ -12,7 +12,7 @@ using ClearCanvas.ImageServer.Database.SqlServer2005;
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class InsertInstance : ProcedureSelectBroker<InstanceInsertParameters,InstanceKeys>,IInsertInstance
+    public class InsertInstance : ProcedureQueryBroker<InstanceInsertParameters,InstanceKeys>,IInsertInstance
     {
         public InsertInstance()
             : base("InsertInstance")

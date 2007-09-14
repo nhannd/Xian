@@ -6,14 +6,14 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Database
 {
-    public delegate void ProcedureSelectCallback<T>(T row);
+    public delegate void ProcedureQueryCallback<T>(T row);
 
     /// <summary>
     /// Interface used to define stored procedures that that input parameters and return resultant rows.
     /// </summary>
     /// <typeparam name="TInput">Input parameters</typeparam>
     /// <typeparam name="TOutput">The return type</typeparam>
-    public interface IProcedureSelectBroker<TInput, TOutput> : IPersistenceBroker
+    public interface IProcedureQueryBroker<TInput, TOutput> : IPersistenceBroker
         where TInput : ProcedureParameters
         where TOutput : ServerEntity, new()
     {

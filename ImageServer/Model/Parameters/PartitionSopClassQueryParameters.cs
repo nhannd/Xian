@@ -1,24 +1,23 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+
 using ClearCanvas.ImageServer.Database;
+using ClearCanvas.ImageServer.Model;
+using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class DeviceSelectParameters: ProcedureParameters
+    public class PartitionSopClassQueryParameters : ProcedureParameters
     {
-        public DeviceSelectParameters()
-            : base("SelectDevice")
+        public PartitionSopClassQueryParameters()
+            : base("QueryServerPartitionSopClasses")
         {
         }
 
         public ServerEntityKey ServerPartitionKey
         {
             set { this.SubCriteria["ServerPartitionKey"] = new ProcedureParameter<ServerEntityKey>("ServerPartitionKey", value); }
-        }
-        public String AeTitle
-        {
-            set { this.SubCriteria["AeTitle"] = new ProcedureParameter<String>("AeTitle", value); }
         }
     }
 }

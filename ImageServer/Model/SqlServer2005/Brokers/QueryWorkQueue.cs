@@ -11,10 +11,10 @@ using ClearCanvas.ImageServer.Model.Parameters;
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class SelectWorkQueueUids : ProcedureSelectBroker<WorkQueueUidSelectParameters, WorkQueueUid>, ISelectWorkQueueUids
+    public class QueryWorkQueue : ProcedureQueryBroker<WorkQueueQueryParameters, WorkQueue>, IQueryWorkQueue
     {
-        public SelectWorkQueueUids()
-            : base("SelectWorkQueueUids")
+        public QueryWorkQueue()
+            : base("QueryWorkQueue")
         {
         }
     }

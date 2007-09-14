@@ -110,8 +110,8 @@ namespace ClearCanvas.ImageServer.Queue
                 if (_threadPool.QueueCount < _threadPool.Concurrency)
                 {
                     IReadContext read = _store.OpenReadContext();
-                    ISelectWorkQueue select = read.GetBroker<ISelectWorkQueue>();
-                    WorkQueueSelectParameters parms = new WorkQueueSelectParameters();
+                    IQueryWorkQueue select = read.GetBroker<IQueryWorkQueue>();
+                    WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
                     IList<WorkQueue> list = select.Execute(parms);
                     read.Dispose();
 

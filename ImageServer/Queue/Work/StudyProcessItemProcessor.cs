@@ -33,9 +33,9 @@ namespace ClearCanvas.ImageServer.Queue.Work
         /// <param name="item">The item to load the location for.</param>
         private void LoadStorageLocation(WorkQueue item)
         {
-            ISelectStudyStorageLocation select = _readContext.GetBroker<ISelectStudyStorageLocation>();
+            IQueryStudyStorageLocation select = _readContext.GetBroker<IQueryStudyStorageLocation>();
 
-            StudyStorageLocationSelectParameters parms = new StudyStorageLocationSelectParameters();
+            StudyStorageLocationQueryParameters parms = new StudyStorageLocationQueryParameters();
             parms.StudyStorageKey = item.StudyStorageKey;
 
             IList<StudyStorageLocation> list = select.Execute(parms);
@@ -55,9 +55,9 @@ namespace ClearCanvas.ImageServer.Queue.Work
         /// <param name="item">The WorkQueue item.</param>
         private void LoadUids(WorkQueue item)
         {
-            ISelectWorkQueueUids select = _readContext.GetBroker<ISelectWorkQueueUids>();
+            IQueryWorkQueueUids select = _readContext.GetBroker<IQueryWorkQueueUids>();
 
-            WorkQueueUidSelectParameters parms = new WorkQueueUidSelectParameters();
+            WorkQueueUidQueryParameters parms = new WorkQueueUidQueryParameters();
 
             parms.WorkQueueKey = item.GetKey();
 

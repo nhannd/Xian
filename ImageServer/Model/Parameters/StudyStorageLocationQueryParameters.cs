@@ -8,10 +8,10 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class StudyStorageLocationSelectParameters : ProcedureParameters
+    public class StudyStorageLocationQueryParameters : ProcedureParameters
     {
-        public StudyStorageLocationSelectParameters()
-            : base("SelectStudyStorageLocation")
+        public StudyStorageLocationQueryParameters()
+            : base("QueryStudyStorageLocation")
         {
         }
 

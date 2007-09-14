@@ -9,7 +9,7 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Model.Brokers
 {
-    public interface ISelectServerPartitionSopClasses : IProcedureSelectBroker<PartitionSopClassSelectParameters, PartitionSopClass>
+    public interface IQueryServerPartitionSopClasses : IProcedureQueryBroker<PartitionSopClassQueryParameters, PartitionSopClass>
     {
     }
 }

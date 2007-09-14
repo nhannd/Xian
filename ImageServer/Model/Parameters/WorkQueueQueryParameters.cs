@@ -8,10 +8,10 @@ using ClearCanvas.Enterprise.Core;
 
 namespace ClearCanvas.ImageServer.Model.Parameters
 {
-    public class WorkQueueSelectParameters : ProcedureParameters
+    public class WorkQueueQueryParameters : ProcedureParameters
     {
-        public WorkQueueSelectParameters()
-            : base("SelectWorkQueue")
+        public WorkQueueQueryParameters()
+            : base("QueryWorkQueue")
         { }
 
         public TypeEnum TypeEnum

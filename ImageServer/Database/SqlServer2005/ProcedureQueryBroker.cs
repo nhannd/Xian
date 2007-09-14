@@ -16,22 +16,22 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.ImageServer.Database.SqlServer2005
 {
     /// <summary>
-    /// Provides base implementation of <see cref="IProcedureSelectBroker{TInput,TOutput}"/>
+    /// Provides base implementation of <see cref="IProcedureQueryBroker{TInput,TOutput}"/>
     /// </summary>
     /// <typeparam name="TInput"></typeparam>
     /// <typeparam name="TOutput"></typeparam>
-    public abstract class ProcedureSelectBroker<TInput,TOutput> : Broker,IProcedureSelectBroker<TInput,TOutput>
+    public abstract class ProcedureQueryBroker<TInput,TOutput> : Broker,IProcedureQueryBroker<TInput,TOutput>
         where TInput : ProcedureParameters
         where TOutput : ServerEntity, new()
     {
         private String _procedureName;
 
-        protected ProcedureSelectBroker(String procedureName)
+        protected ProcedureQueryBroker(String procedureName)
         {
             _procedureName = procedureName;
         }
 
-        #region IProcedureSelectBroker<TInput,TOutput> Members
+        #region IProcedureQueryBroker<TInput,TOutput> Members
 
         public IList<TOutput> Execute(TInput criteria)
         {

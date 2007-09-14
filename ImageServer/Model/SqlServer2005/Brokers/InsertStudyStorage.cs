@@ -12,7 +12,7 @@ using ClearCanvas.ImageServer.Database.SqlServer2005;
 namespace ClearCanvas.ImageServer.Model.SqlServer2005.Brokers
 {
     [ExtensionOf(typeof(BrokerExtensionPoint))]
-    public class InsertStudyStorage : ProcedureSelectBroker<StudyStorageInsertParameters,StudyStorageLocation>, IInsertStudyStorage
+    public class InsertStudyStorage : ProcedureQueryBroker<StudyStorageInsertParameters,StudyStorageLocation>, IInsertStudyStorage
     {
         public InsertStudyStorage()
             : base("InsertStudyStorage")
