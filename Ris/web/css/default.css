@@ -8,8 +8,16 @@ p  {
    margin-bottom: 2px;
 }
 
-table {border-collapse:collapse}
-table td {padding: 1px 0px 1px 1.5em;}
+table {
+   border-collapse:collapse;
+   margin-left:10px;
+}
+table td {
+   padding-top: 1px;
+   padding-bottom: 1px;
+   padding-left: 0px;
+   padding-right: 15px;
+}
 
 .tableheading {
    vertical-align: top;
