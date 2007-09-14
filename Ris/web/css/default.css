@@ -8,7 +8,11 @@ p  {
    margin-bottom: 2px;
 }
 
+table {border-collapse:collapse}
+table td {padding: 1px 0px 1px 1.5em;}
+
 .tableheading {
+   vertical-align: top;
 	font-weight: bold;
 	background-color: #FFFFFF;
 	color: #000000;
@@ -22,6 +26,7 @@ p  {
 	border-bottom-style: none;
 	border-left-style: none;
 }
+
 .sectionheading {
 	font-size: 18px;
 	font-weight: bold;
