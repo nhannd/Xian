@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -7,19 +6,12 @@ using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    public class SearchRequestedEventArgs : EventArgs
+    /// <summary>
+    /// Defines an interface for handling the Search Data
+    /// </summary>
+    public interface ISearchDataHandler
     {
-        private readonly SearchData _criteria;
-
-        public SearchRequestedEventArgs(SearchData criteria)
-	    {
-            _criteria = criteria;
-	    }
-
-        public SearchData SearchCriteria
-        {
-            get { return _criteria; }
-        }
+        SearchData SearchData { set; }
     }
 
     [ExtensionPoint]
@@ -30,8 +22,6 @@ namespace ClearCanvas.Ris.Client
     [AssociateView(typeof(SearchComponentViewExtensionPoint))]
     public class SearchComponent : ApplicationComponent
     {
-        private event EventHandler<SearchRequestedEventArgs> _searchRequested;
-
         private string _mrn;
         private string _healthcard;
         private string _familyName;
@@ -90,15 +80,9 @@ namespace ClearCanvas.Ris.Client
             }
         }
 
-        public event EventHandler<SearchRequestedEventArgs> SearchRequested
-        {
-            add { _searchRequested += value; }
-            remove { _searchRequested -= value; }
-        }
-
         #region Public Member
 
-        public SearchData SearchCriteria
+        public SearchData SearchData
         {
             get { return BuildSearchData(); }
         }
@@ -195,7 +179,11 @@ namespace ClearCanvas.Ris.Client
         {
             if (!this.HasValidationErrors)
             {
-                EventsHelper.Fire(_searchRequested, this, new SearchRequestedEventArgs(BuildSearchData()));
+                // Pass the SearchData to the component hosted inthe current active workspace, 
+                // if the component implements the ISearchDataHandler interface
+                Workspace activeWorkspace = _searchComponentShelf.DesktopWindow.ActiveWorkspace;
+                if (activeWorkspace != null && activeWorkspace.Component is ISearchDataHandler)
+                    ((ISearchDataHandler) (activeWorkspace.Component)).SearchData = this.SearchData;
 
                 // always turn the validation errors off after a successful search
                 this.ShowValidation(false);

@@ -1,8 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -10,6 +7,7 @@ using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -28,6 +26,8 @@ namespace ClearCanvas.Ris.Client
 
         void AddItemActions(IActionSet actions);
         void AddFolderActions(IActionSet actions);
+
+        event EventHandler SearchDataChanged;
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client
     /// WorklistExplorerComponent class
     /// </summary>
     [AssociateView(typeof(FolderExplorerComponentViewExtensionPoint))]
-    public class FolderExplorerComponent : ApplicationComponent
+    public class FolderExplorerComponent : ApplicationComponent, ISearchDataHandler
     {
         #region IFolderExplorerToolContext implementation
 
@@ -116,11 +116,52 @@ namespace ClearCanvas.Ris.Client
                 _component._folderActions = _component._folderActions.Union(actions);
             }
 
+            public event EventHandler SearchDataChanged
+            {
+                add { _component.SearchDataChanged += value; }
+                remove { _component.SearchDataChanged -= value; }
+            }
+
             #endregion
         }
 
         #endregion
 
+        #region Search related
+
+        public class SearchEventArgs : EventArgs
+        {
+            private readonly SearchData _data;
+
+            public SearchEventArgs(SearchData data)
+            {
+                _data = data;
+            }
+
+            public SearchData SearchData
+            {
+                get { return _data; }
+            }
+        }
+
+        private event EventHandler _searchDataChanged;
+
+        public event EventHandler SearchDataChanged
+        {
+            add { _searchDataChanged += value; }
+            remove { _searchDataChanged -= value; }
+        }
+
+        public SearchData SearchData
+        {
+            set
+            {
+                EventsHelper.Fire(_searchDataChanged, this, new SearchEventArgs(value));
+            }
+        }
+
+        #endregion
+           
         private IExtensionPoint _folderExplorerToolExtensionPoint;
         private Tree<IFolder> _folderTree;
         private IDictionary<IFolder, ITree> _containers;

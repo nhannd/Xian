@@ -9,6 +9,7 @@ using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Client;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -57,10 +58,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                 previewComponent.WorklistItem = item;
             };
 
-            return new SplitComponentContainer(
-                new SplitPane("Folders", folderComponent, 1.0f),
-                new SplitPane("Preview", previewComponent, 1.0f),
-                SplitOrientation.Vertical);
+            return new HomePageContainer(folderComponent, previewComponent);
         }
     }
 }

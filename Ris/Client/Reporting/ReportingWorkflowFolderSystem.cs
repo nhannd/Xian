@@ -163,12 +163,13 @@ namespace ClearCanvas.Ris.Client.Reporting
             folderExplorer.AddItemActions(_itemToolSet.Actions);
             folderExplorer.AddFolderActions(_folderToolSet.Actions);
 
-            SearchComponent.Instance.SearchRequested += SearchComponent_SearchRequested;
+            folderExplorer.SearchDataChanged += folderExplorer_SearchDataChanged;
         }
 
-        void SearchComponent_SearchRequested(object sender, SearchRequestedEventArgs e)
+        void folderExplorer_SearchDataChanged(object sender, EventArgs e)
         {
-            _searchFolder.SearchData = e.SearchCriteria;
+            FolderExplorerComponent.SearchEventArgs arg = (FolderExplorerComponent.SearchEventArgs)e;
+            _searchFolder.SearchData = arg.SearchData;
             SelectedFolder = _searchFolder;
         }
 
@@ -229,7 +230,6 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 if(_itemToolSet != null) _itemToolSet.Dispose();
                 if (_folderToolSet != null) _folderToolSet.Dispose();
-                SearchComponent.Instance.SearchRequested -= SearchComponent_SearchRequested;
             }
         }
 
