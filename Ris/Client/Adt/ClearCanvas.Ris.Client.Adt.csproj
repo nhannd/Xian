@@ -106,7 +106,6 @@
     <Compile Include="ReconciliationComponent.cs" />
     <Compile Include="PatientReconcileTool.cs" />
     <Compile Include="HomeTool.cs" />
-    <Compile Include="PatientSearchComponent.cs" />
     <Compile Include="RegistrationPreviewComponent.cs" />
     <Compile Include="RegistrationPreviewComponentSettings.cs" />
     <Compile Include="RegistrationPreviewComponentSettings.Designer.cs">
@@ -120,6 +119,7 @@
     <Compile Include="RegistrationWorkflowTool.cs" />
     <Compile Include="RegistrationWorklistTable.cs" />
     <Compile Include="RICTable.cs" />
+    <Compile Include="SearchTool.cs" />
     <Compile Include="XTechnologistDocumentationComponent.cs" />
     <Compile Include="XTechnologistDocumentationTable.cs" />
     <Compile Include="XTechnologistDocumentationTableItem.cs" />
@@ -150,7 +150,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ReconciliationCandidateTable.cs" />
     <Compile Include="ReconciliationCandidateTableEntry.cs" />
-    <Compile Include="PatientSearchTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -191,6 +190,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
+    <EmbeddedResource Include="Icons\SearchToolLarge.png" />
+    <EmbeddedResource Include="Icons\SearchToolMedium.png" />
+    <EmbeddedResource Include="Icons\SearchToolSmall.png" />
     <EmbeddedResource Include="Icons\DoubleExclamation.png" />
     <EmbeddedResource Include="Icons\SingleExclamation.png" />
     <EmbeddedResource Include="Icons\RefreshToolLarge.png" />
@@ -222,9 +224,6 @@
     <EmbeddedResource Include="Icons\SuspendToolMedium.png" />
     <EmbeddedResource Include="Icons\DeleteToolLarge.png" />
     <EmbeddedResource Include="Icons\DeleteToolMedium.png" />
-    <EmbeddedResource Include="Icons\SearchPatientToolLarge.png" />
-    <EmbeddedResource Include="Icons\SearchPatientToolMedium.png" />
-    <EmbeddedResource Include="Icons\SearchPatientToolSmall.png" />
     <EmbeddedResource Include="Icons\PatientDetailsToolLarge.png" />
     <EmbeddedResource Include="Icons\PatientDetailsToolMedium.png" />
     <EmbeddedResource Include="Icons\PatientDetailsToolSmall.png" />

@@ -61,21 +61,23 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private RegistrationWorklistItem GetRandomPatient()
         {
+            int retryCount = 0;
             List<RegistrationWorklistItem> worklistItems = new List<RegistrationWorklistItem>();
-
-            while (worklistItems.Count == 0)
+            while (worklistItems.Count == 0 && retryCount < 10)
             {
                 char ch = Convert.ToChar(Convert.ToInt32(Math.Floor(26 * _randomizer.NextDouble() + 65)));
 
-                PatientProfileSearchData searchData = new PatientProfileSearchData();
+                SearchData searchData = new SearchData();
                 searchData.GivenName = ch.ToString();
 
                 Platform.GetService<IRegistrationWorkflowService>(
                     delegate(IRegistrationWorkflowService service)
                     {
-                        SearchPatientResponse response = service.SearchPatient(new SearchPatientRequest(searchData));
+                        SearchResponse response = service.Search(new SearchRequest(searchData));
                         worklistItems = response.WorklistItems;
                     });
+
+                retryCount++;
             }
                
             return ChooseRandom(worklistItems);

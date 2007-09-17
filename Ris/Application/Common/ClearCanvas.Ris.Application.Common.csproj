@@ -230,8 +230,12 @@
     <Compile Include="Jsml\InvokeOperationResponse.cs" />
     <Compile Include="Jsml\JsmlBlob.cs" />
     <Compile Include="Jsml\JsmlSerializer.cs" />
+    <Compile Include="ModalityWorkflow\SearchRequest.cs" />
+    <Compile Include="ModalityWorkflow\SearchResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ReplaceOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ReplaceOrderResponse.cs" />
+    <Compile Include="RegistrationWorkflow\SearchRequest.cs" />
+    <Compile Include="RegistrationWorkflow\SearchResponse.cs" />
     <Compile Include="ReportingWorkflow\ListWorklistsRequest.cs" />
     <Compile Include="ReportingWorkflow\ListWorklistsResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminSummary.cs" />
@@ -362,7 +366,6 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\ListOrdersForPatientResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ListActiveVisitsForPatientRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\ListActiveVisitsForPatientResponse.cs" />
-    <Compile Include="RegistrationWorkflow\PatientProfileSearchData.cs" />
     <Compile Include="RegistrationWorkflow\RegistrationWorklistItem.cs" />
     <Compile Include="RegistrationWorkflow\RegistrationWorklistPreview.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrderEntryFormDataRequest.cs" />
@@ -374,11 +377,7 @@
     <Compile Include="RegistrationWorkflow\OrderEntry\PlaceOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrdersWorkListRequest.cs" />
     <Compile Include="RegistrationWorkflow\OrderEntry\GetOrdersWorkListResponse.cs" />
-    <Compile Include="RegistrationWorkflow\LoadPatientSearchComponentFormDataRequest.cs" />
-    <Compile Include="RegistrationWorkflow\LoadPatientSearchComponentFormDataResponse.cs" />
     <Compile Include="RegistrationWorkflow\RICSummary.cs" />
-    <Compile Include="RegistrationWorkflow\SearchPatientRequest.cs" />
-    <Compile Include="RegistrationWorkflow\SearchPatientResponse.cs" />
     <Compile Include="ReportingWorkflow\CancelReportingStepRequest.cs" />
     <Compile Include="ReportingWorkflow\ClaimInterpretationRequest.cs" />
     <Compile Include="ReportingWorkflow\CompleteInterpretationAndVerifyRequest.cs" />
@@ -403,6 +402,8 @@
     <Compile Include="ReportingWorkflow\ReportSummary.cs" />
     <Compile Include="ReportingWorkflow\SaveReportRequest.cs" />
     <Compile Include="ReportingWorkflow\SaveReportResponse.cs" />
+    <Compile Include="ReportingWorkflow\SearchRequest.cs" />
+    <Compile Include="ReportingWorkflow\SearchResponse.cs" />
     <Compile Include="ReportingWorkflow\StartVerificationResponse.cs" />
     <Compile Include="ReportingWorkflow\StartInterpretationResponse.cs" />
     <Compile Include="ReportingWorkflow\GetOperationEnablementRequest.cs" />
@@ -420,6 +421,7 @@
     <Compile Include="RequestedProcedureSummary.cs" />
     <Compile Include="RequestedProcedureTypeDetail.cs" />
     <Compile Include="RequestValidationException.cs" />
+    <Compile Include="SearchData.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

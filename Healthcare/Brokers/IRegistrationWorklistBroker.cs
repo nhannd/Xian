@@ -36,5 +36,14 @@ namespace ClearCanvas.Healthcare.Brokers
         int GetOrdersForCancelCount(Patient patient);
 
         IList<Order> GetOrdersForPatientPreview(Patient patient);
+
+        IList<WorklistItem> Search(
+            string mrnID,
+            string mrnAssigningAuthority,
+            string healthcardID,
+            string familyName,
+            string givenName,
+            string accessionNumber,
+            bool showActiveOnly);
     }
 }

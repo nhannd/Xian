@@ -31,5 +31,14 @@ namespace ClearCanvas.Healthcare.Brokers
         int GetCompletedWorklistCount(TechnologistCompletedWorklist worklist);
         int GetCancelledWorklistCount();
         int GetCancelledWorklistCount(TechnologistCancelledWorklist worklist);
+
+        IList<WorklistItem> Search(
+            string mrnID,
+            string mrnAssigningAuthority,
+            string healthcardID,
+            string familyName,
+            string givenName,
+            string accessionNumber,
+            bool showActiveOnly);
     }
 }

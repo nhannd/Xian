@@ -1,4 +1,3 @@
-using System;
 using System.ServiceModel;
 
 namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
@@ -13,10 +12,10 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         /// <summary>
         /// Search for patients
         /// </summary>
-        /// <param name="request"><see cref="SearchPatientRequest"/></param>
-        /// <returns><see cref="SearchPatientResponse"/></returns>
+        /// <param name="request"><see cref="SearchRequest"/></param>
+        /// <returns><see cref="SearchResponse"/></returns>
         [OperationContract]
-        SearchPatientResponse SearchPatient(SearchPatientRequest request);
+        SearchResponse Search(SearchRequest request);
 
         [OperationContract]
         ListWorklistsResponse ListWorklists(ListWorklistsRequest request);
@@ -69,14 +68,6 @@ namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
         [OperationContract]
         [FaultContract(typeof(ConcurrentModificationException))]
         CheckInProcedureResponse CheckInProcedure(CheckInProcedureRequest request);
-
-        /// <summary>
-        /// Loads all form data needed to search for a patient
-        /// </summary>
-        /// <param name="request"><see cref="LoadPatientSearchComponentFormDataRequest"/></param>
-        /// <returns><see cref="LoadPatientSearchComponentFormDataResponse"/></returns>
-        [OperationContract]
-        LoadPatientSearchComponentFormDataResponse LoadPatientSearchComponentFormData(LoadPatientSearchComponentFormDataRequest request);
 
         /// <summary>
         /// Get orders that can be cancelled for a patient

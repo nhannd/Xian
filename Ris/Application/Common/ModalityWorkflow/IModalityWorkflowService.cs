@@ -6,6 +6,9 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow
     public interface IModalityWorkflowService
     {
         [OperationContract]
+        SearchResponse Search(SearchRequest request);
+
+        [OperationContract]
         ListWorklistsResponse ListWorklists(ListWorklistsRequest request);
 
         [OperationContract]

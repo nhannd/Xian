@@ -36,8 +36,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
     public interface ITechnologistWorkflowFolderToolContext : IToolContext
     {
-        //something here
-
         IEnumerable Folders { get; }
         IFolder SelectedFolder { get; }
 
@@ -101,7 +99,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 _owner = owner;
             }
 
-            #region ITechnologistWorkflowItemToolContext Members
+            #region ITechnologistWorkflowFolderToolContext Members
 
             public event EventHandler SelectedFolderChanged
             {
@@ -130,7 +128,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private ToolSet _itemToolSet;
         private ToolSet _folderToolSet;
         private IDictionary<string, bool> _workflowEnablement;
-        //private Folders.SearchFolder _searchFolder;
+        private Folders.TechnologistSearchFolder _searchFolder;
 
         public TechnologistWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
             : base(folderExplorer, new TechnologistContainerFolderExtensionPoint())
@@ -156,12 +154,21 @@ namespace ClearCanvas.Ris.Client.Adt
             this.AddFolder(new Folders.SuspendedTechnologistWorkflowFolder(this));
             this.AddFolder(new Folders.CancelledTechnologistWorkflowFolder(this));
             this.AddFolder(new Folders.CompletedTechnologistWorkflowFolder(this));
+            this.AddFolder(_searchFolder = new Folders.TechnologistSearchFolder(this));
 
             _itemToolSet = new ToolSet(new TechnologistWorkflowItemToolExtensionPoint(), new TechnologistWorkflowItemToolContext(this));
             _folderToolSet = new ToolSet(new TechnologistWorkflowFolderToolExtensionPoint(), new TechnologistWorkflowFolderToolContext(this));
 
             folderExplorer.AddItemActions(_itemToolSet.Actions);
             folderExplorer.AddFolderActions(_folderToolSet.Actions);
+
+            SearchComponent.Instance.SearchRequested += SearchComponent_SearchRequested;
+        }
+
+        void SearchComponent_SearchRequested(object sender, SearchRequestedEventArgs e)
+        {
+            _searchFolder.SearchData = e.SearchCriteria;
+            SelectedFolder = _searchFolder;
         }
 
         public bool GetOperationEnablement(string operationName)
@@ -210,6 +217,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 if (_itemToolSet != null) _itemToolSet.Dispose();
                 if (_folderToolSet != null) _folderToolSet.Dispose();
+                SearchComponent.Instance.SearchRequested -= SearchComponent_SearchRequested;
             }
         }
     }

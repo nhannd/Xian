@@ -6,6 +6,14 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     public interface IReportingWorkflowService
     {
         /// <summary>
+        /// Search for active or past reporting step for a patient or order
+        /// </summary>
+        /// <param name="request"><see cref="SearchRequest"/></param>
+        /// <returns><see cref="SearchResponse"/></returns>
+        [OperationContract]
+        SearchResponse Search(SearchRequest request);
+
+        /// <summary>
         /// Get a list of all reporting worklists
         /// </summary>
         /// <param name="request"><see cref="ListWorklistsRequest"/></param>

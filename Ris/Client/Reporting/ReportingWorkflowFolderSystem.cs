@@ -128,6 +128,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         private ToolSet _itemToolSet;
         private ToolSet _folderToolSet;
         private IDictionary<string, bool> _workflowEnablement;
+        private Folders.SearchFolder _searchFolder;
 
         public ReportingWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
             : base(folderExplorer, new ReportingContainerFolderExtensionPoint())
@@ -154,12 +155,21 @@ namespace ClearCanvas.Ris.Client.Reporting
             this.AddFolder(new Folders.InTranscriptionFolder(this));
             this.AddFolder(new Folders.ToBeVerifiedFolder(this));
             this.AddFolder(new Folders.VerifiedFolder(this));
+            this.AddFolder(_searchFolder = new Folders.SearchFolder(this));
 
             _itemToolSet = new ToolSet(new ReportingWorkflowItemToolExtensionPoint(), new ReportingWorkflowItemToolContext(this));
             _folderToolSet = new ToolSet(new ReportingWorkflowFolderToolExtensionPoint(), new ReportingWorkflowFolderToolContext(this));
 
             folderExplorer.AddItemActions(_itemToolSet.Actions);
             folderExplorer.AddFolderActions(_folderToolSet.Actions);
+
+            SearchComponent.Instance.SearchRequested += SearchComponent_SearchRequested;
+        }
+
+        void SearchComponent_SearchRequested(object sender, SearchRequestedEventArgs e)
+        {
+            _searchFolder.SearchData = e.SearchCriteria;
+            SelectedFolder = _searchFolder;
         }
 
         public bool GetOperationEnablement(string operationName)
@@ -219,6 +229,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             {
                 if(_itemToolSet != null) _itemToolSet.Dispose();
                 if (_folderToolSet != null) _folderToolSet.Dispose();
+                SearchComponent.Instance.SearchRequested -= SearchComponent_SearchRequested;
             }
         }
 

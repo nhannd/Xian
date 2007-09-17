@@ -20,21 +20,29 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
     {
         public RegistrationWorkflowService()
         {
-            _worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Registration.RegistrationWorklistExtensionPoint();
+            _worklistExtPoint = new RegistrationWorklistExtensionPoint();
         }
 
         #region IRegistrationWorkflowService Members
 
         [ReadOperation]
-        public SearchPatientResponse SearchPatient(SearchPatientRequest request)
+        public SearchResponse Search(SearchRequest request)
         {
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
-            return new SearchPatientResponse(
-                CollectionUtils.Map<PatientProfile, RegistrationWorklistItem, List<RegistrationWorklistItem>>(
-                PersistenceContext.GetBroker<IPatientProfileBroker>().Find(assembler.CreatePatientProfileSearchCriteria(request.SearchCriteria)),
-                delegate(PatientProfile profile)
+
+            IList<WorklistItem> result = PersistenceContext.GetBroker<IRegistrationWorklistBroker>().Search(
+                request.SearchData.MrnID,
+                request.SearchData.MrnAssigningAuthority,
+                request.SearchData.HealthcardID,
+                request.SearchData.FamilyName,
+                request.SearchData.GivenName,
+                request.SearchData.AccessionNumber,
+                request.SearchData.ShowActiveOnly);
+
+            return new SearchResponse(CollectionUtils.Map<WorklistItem, RegistrationWorklistItem, List<RegistrationWorklistItem>>(result,
+                delegate(WorklistItem item)
                 {
-                    return assembler.CreateRegistrationWorklistItem(new WorklistItem(profile), this.PersistenceContext);
+                    return assembler.CreateRegistrationWorklistItem(item, this.PersistenceContext);
                 }));
         }
 
@@ -114,7 +122,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                     {
                         CheckInTableItem item = new CheckInTableItem();
                         item.OrderRef = o.GetRef();
-                        item.RequestedProcedureNames = StringUtilities.Combine<string>(
+                        item.RequestedProcedureNames = StringUtilities.Combine(
                             CollectionUtils.Map<RequestedProcedure, string>(o.RequestedProcedures, 
                                 delegate(RequestedProcedure rp) 
                                 { 
@@ -126,12 +134,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
                         return item;
                     }));
-        }
-
-        [ReadOperation]
-        public LoadPatientSearchComponentFormDataResponse LoadPatientSearchComponentFormData(LoadPatientSearchComponentFormDataRequest request)
-        {
-            return new LoadPatientSearchComponentFormDataResponse(EnumUtils.GetEnumValueList<SexEnum>(PersistenceContext));
         }
 
         [ReadOperation]
@@ -150,7 +152,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         item.AccessionNumber = o.AccessionNumber;
                         item.SchedulingRequestDate = o.SchedulingRequestDateTime;
                         item.Priority = EnumUtils.GetEnumValueInfo(o.Priority, PersistenceContext);
-                        item.RequestedProcedureNames = StringUtilities.Combine<string>(
+                        item.RequestedProcedureNames = StringUtilities.Combine(
                             CollectionUtils.Map<RequestedProcedure, string>(o.RequestedProcedures,
                                 delegate(RequestedProcedure rp)
                                 {
@@ -222,7 +224,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         /// <param name="subject"></param>
         /// <param name="context"></param>
         /// <returns>a list of alert notification detail if each alert test succeeds</returns>
-        private List<AlertNotificationDetail> GetAlertNotifications(Entity subject, IPersistenceContext context)
+        private static List<AlertNotificationDetail> GetAlertNotifications(Entity subject, IPersistenceContext context)
         {
             AlertAssembler assembler = new AlertAssembler();
             List<AlertNotificationDetail> results = new List<AlertNotificationDetail>();

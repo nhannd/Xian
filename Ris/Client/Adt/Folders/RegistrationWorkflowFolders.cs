@@ -194,11 +194,11 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
-    public class SearchFolder : RegistrationWorkflowFolder
+    public class RegistrationSearchFolder : RegistrationWorkflowFolder
     {
-        private PatientProfileSearchData _searchCriteria;
+        private SearchData _searchData;
 
-        public SearchFolder(RegistrationWorkflowFolderSystem folderSystem)
+        public RegistrationSearchFolder(RegistrationWorkflowFolderSystem folderSystem)
             : base(folderSystem, "Search")
         {
 			this.OpenIconSet = new IconSet(IconScheme.Colour, "SearchFolderOpenSmall.png", "SearchFolderOpenMedium.png", "SearchFolderOpenLarge.png");
@@ -212,19 +212,19 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             //this.WorklistClassName = "ClearCanvas.Healthcare.Workflow.Registration.Worklists+Search";
         }
 
-        public PatientProfileSearchData SearchCriteria
+        public SearchData SearchData
         {
-            get { return _searchCriteria; }
+            get { return _searchData; }
             set
             {
-                _searchCriteria = value;
+                _searchData = value;
                 this.Refresh();
             }
         }
 
         protected override bool CanQuery()
         {
-            if (this.SearchCriteria != null)
+            if (this.SearchData != null)
                 return true;
 
             return false;
@@ -236,7 +236,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
                 {
-                    SearchPatientResponse response = service.SearchPatient(new SearchPatientRequest(this.SearchCriteria));
+                    SearchResponse response = service.Search(new SearchRequest(this.SearchData));
                     worklistItems = response.WorklistItems;
                 });
 

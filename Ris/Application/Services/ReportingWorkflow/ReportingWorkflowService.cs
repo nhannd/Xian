@@ -18,10 +18,31 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
     {
         public ReportingWorkflowService()
         {
-            _worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Reporting.ReportingWorklistExtensionPoint();
+            _worklistExtPoint = new ReportingWorklistExtensionPoint();
         }
 
         #region IReportingWorkflowService Members
+
+        [ReadOperation]
+        public SearchResponse Search(SearchRequest request)
+        {
+            ReportingWorkflowAssembler assembler = new ReportingWorkflowAssembler();
+            
+            IList<WorklistItem> result = PersistenceContext.GetBroker<IReportingWorklistBroker>().Search(
+                request.SearchData.MrnID,
+                request.SearchData.MrnAssigningAuthority,
+                request.SearchData.HealthcardID,
+                request.SearchData.FamilyName,
+                request.SearchData.GivenName,
+                request.SearchData.AccessionNumber,
+                request.SearchData.ShowActiveOnly);
+
+            return new SearchResponse(CollectionUtils.Map<WorklistItem, ReportingWorklistItem, List<ReportingWorklistItem>>(result,
+                delegate(WorklistItem item)
+                {
+                    return assembler.CreateReportingWorklistItem(item, this.PersistenceContext);
+                }));
+        }
 
         [ReadOperation]
         public ListWorklistsResponse ListWorklists(ListWorklistsRequest request)

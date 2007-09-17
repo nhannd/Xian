@@ -57,9 +57,9 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                         summary.OrderingFacility = o.OrderingFacility.Name;
                         summary.OrderingPractitioner = nameAssembler.CreatePersonNameDetail(o.OrderingPractitioner.Name);
                         summary.Insurance = "";
-                        summary.Status = GetRequestedProcedureStatus(o, context);
+                        summary.Status = GetRICStatus(o, context);
 
-                        summary.RequestedProcedureName = StringUtilities.Combine<string>(
+                        summary.RequestedProcedureName = StringUtilities.Combine(
                             CollectionUtils.Map<RequestedProcedure, string>(o.RequestedProcedures, 
                                 delegate(RequestedProcedure rp) 
                                 { 
@@ -86,44 +86,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             return preview;
         }
 
-        public PatientProfileSearchCriteria CreatePatientProfileSearchCriteria(PatientProfileSearchData criteria)
-        {
-            if (criteria == null)
-                return null;
-
-            if (criteria.PatientProfile != null)
-                return new PatientProfileSearchCriteria(criteria.PatientProfile);
-
-            PatientProfileSearchCriteria profileCriteria = new PatientProfileSearchCriteria();
-
-            if (criteria.MrnID != null)
-                profileCriteria.Mrn.Id.StartsWith(criteria.MrnID);
-
-            if (criteria.MrnAssigningAuthority != null)
-                profileCriteria.Mrn.AssigningAuthority.StartsWith(criteria.MrnAssigningAuthority);
-
-            if (criteria.HealthcardID != null)
-                profileCriteria.Healthcard.Id.StartsWith(criteria.HealthcardID);
-
-            if (criteria.FamilyName != null)
-                profileCriteria.Name.FamilyName.StartsWith(criteria.FamilyName);
-
-            if (criteria.GivenName != null)
-                profileCriteria.Name.GivenName.StartsWith(criteria.GivenName);
-
-            if (criteria.Sex != null)
-                profileCriteria.Sex.EqualTo(EnumUtils.GetEnumValue<Sex>(criteria.Sex));
-
-            if (criteria.DateOfBirth != null)
-            {
-                DateTime start = ((DateTime)criteria.DateOfBirth).Date;
-                DateTime end = start + new TimeSpan(23, 59, 59);
-                profileCriteria.DateOfBirth.Between(start, end);
-            }
-
-            return profileCriteria;
-        }
-
         public RegistrationWorklistItem CreateRegistrationWorklistItem(WorklistItem domainItem, IPersistenceContext context)
         {
             PersonNameAssembler nameAssembler = new PersonNameAssembler();
@@ -144,8 +106,10 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 domainItem.AccessionNumber);
         }
 
-        private string GetRequestedProcedureStatus(Order order, IPersistenceContext context)
+        private string GetRICStatus(Order order, IPersistenceContext context)
         {
+            // Todo: need to return order status, and someway to recognized an order is 'checked-in'
+
             return "WTF";
             /*
             try

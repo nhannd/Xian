@@ -19,7 +19,28 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
     {
         public ModalityWorkflowService()
         {
-            _worklistExtPoint = new ClearCanvas.Healthcare.Workflow.Modality.ModalityWorklistExtensionPoint();
+            _worklistExtPoint = new ModalityWorklistExtensionPoint();
+        }
+
+        [ReadOperation]
+        public SearchResponse Search(SearchRequest request)
+        {
+            ModalityWorklistAssembler assembler = new ModalityWorklistAssembler();
+
+            IList<WorklistItem> result = PersistenceContext.GetBroker<IModalityWorklistBroker>().Search(
+                request.SearchData.MrnID,
+                request.SearchData.MrnAssigningAuthority,
+                request.SearchData.HealthcardID,
+                request.SearchData.FamilyName,
+                request.SearchData.GivenName,
+                request.SearchData.AccessionNumber,
+                request.SearchData.ShowActiveOnly);
+
+            return new SearchResponse(CollectionUtils.Map<WorklistItem, ModalityWorklistItem, List<ModalityWorklistItem>>(result,
+                delegate(WorklistItem item)
+                {
+                    return assembler.CreateModalityWorklistItem(item, this.PersistenceContext);
+                }));
         }
 
         [ReadOperation]

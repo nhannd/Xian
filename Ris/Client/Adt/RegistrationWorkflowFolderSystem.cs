@@ -36,8 +36,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
     public interface IRegistrationWorkflowFolderToolContext : IToolContext
     {
-        PatientProfileSearchData SearchCriteria { set; }
-
         IEnumerable Folders { get; }
         IFolder SelectedFolder { get; }
 
@@ -101,12 +99,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 _owner = owner;
             }
 
-            #region IRegistrationWorkflowItemToolContext Members
-
-            public PatientProfileSearchData SearchCriteria
-            {
-                set { _owner.SearchCriteria = value as PatientProfileSearchData; }
-            }
+            #region IRegistrationWorkflowFolderToolContext Members
 
             public event EventHandler SelectedFolderChanged
             {
@@ -135,17 +128,7 @@ namespace ClearCanvas.Ris.Client.Adt
         private ToolSet _itemToolSet;
         private ToolSet _folderToolSet;
         private IDictionary<string, bool> _workflowEnablment;
-        private Folders.SearchFolder _searchFolder;
-
-        public PatientProfileSearchData SearchCriteria
-        {
-            get { return (_searchFolder == null ? null : _searchFolder.SearchCriteria); }
-            set 
-            {
-                _searchFolder.SearchCriteria = value;
-                SelectedFolder = _searchFolder;
-            }
-        }
+        private Folders.RegistrationSearchFolder _searchFolder;
 
         public RegistrationWorkflowFolderSystem(IFolderExplorerToolContext folderExplorer)
             : base(folderExplorer, new RegistrationContainerFolderExtensionPoint())
@@ -172,13 +155,21 @@ namespace ClearCanvas.Ris.Client.Adt
             this.AddFolder(new Folders.InProgressFolder(this));
             this.AddFolder(new Folders.CompletedFolder(this));
             this.AddFolder(new Folders.CancelledFolder(this));
-            this.AddFolder(_searchFolder = new Folders.SearchFolder(this));
+            this.AddFolder(_searchFolder = new Folders.RegistrationSearchFolder(this));
 
             _itemToolSet = new ToolSet(new RegistrationWorkflowItemToolExtensionPoint(), new RegistrationWorkflowItemToolContext(this));
             _folderToolSet = new ToolSet(new RegistrationWorkflowFolderToolExtensionPoint(), new RegistrationWorkflowFolderToolContext(this));
 
             folderExplorer.AddItemActions(_itemToolSet.Actions);
             folderExplorer.AddFolderActions(_folderToolSet.Actions);
+
+            SearchComponent.Instance.SearchRequested += SearchComponent_SearchRequested;
+        }
+
+        void SearchComponent_SearchRequested(object sender, SearchRequestedEventArgs e)
+        {
+            _searchFolder.SearchData = e.SearchCriteria;
+            SelectedFolder = _searchFolder;
         }
 
         public bool GetOperationEnablement(string operationName)
@@ -198,8 +189,8 @@ namespace ClearCanvas.Ris.Client.Adt
             try
             {
                 BlockingOperation.Run(
-                    delegate()
-                    {
+                    delegate
+                        {
                         Platform.GetService<IRegistrationWorkflowService>(
                             delegate(IRegistrationWorkflowService service)
                             {
@@ -230,6 +221,7 @@ namespace ClearCanvas.Ris.Client.Adt
             {
                 if(_itemToolSet != null) _itemToolSet.Dispose();
                 if (_folderToolSet != null) _folderToolSet.Dispose();
+                SearchComponent.Instance.SearchRequested -= SearchComponent_SearchRequested;
             }
         }
 

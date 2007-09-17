@@ -366,6 +366,9 @@
   <data name="TitlePrevious" xml:space="preserve">
     <value>Previous Page</value>
   </data>
+  <data name="TitleSearch" xml:space="preserve">
+    <value>Search</value>
+  </data>
   <data name="TitleStaff" xml:space="preserve">
     <value>Staff</value>
   </data>

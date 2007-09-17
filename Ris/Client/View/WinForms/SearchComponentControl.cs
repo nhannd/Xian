@@ -1,20 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Controls.WinForms;
 
-namespace ClearCanvas.Ris.Client.Adt.View.WinForms
+namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    public partial class PatientSearchComponentControl : CustomUserControl
+    public partial class SearchComponentControl : CustomUserControl
     {
-        private PatientSearchComponent _component;
+        private readonly SearchComponent _component;
 
-        public PatientSearchComponentControl(PatientSearchComponent component)
+        public SearchComponentControl(SearchComponent component)
         {
             InitializeComponent();
             _component = component;
@@ -23,14 +18,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _healthcard.DataBindings.Add("Value", _component, "Healthcard", true, DataSourceUpdateMode.OnPropertyChanged);
             _familyName.DataBindings.Add("Value", _component, "FamilyName", true, DataSourceUpdateMode.OnPropertyChanged);
             _givenName.DataBindings.Add("Value", _component, "GivenName", true, DataSourceUpdateMode.OnPropertyChanged);
-            
-            _sex.DataSource = _component.SexChoices;
-            _sex.DataBindings.Add("Value", _component, "Sex", true, DataSourceUpdateMode.OnPropertyChanged);
-
-            _dateOfBirth.DataBindings.Add("Value", _component, "DateOfBirth", true, DataSourceUpdateMode.OnPropertyChanged);
-
-            _searchButton.DataBindings.Add("Enabled", _component, "SearchEnabled");
+            _accessionNumber.DataBindings.Add("Value", _component, "AccessionNumber", true, DataSourceUpdateMode.OnPropertyChanged);
+            _showActive.DataBindings.Add("Checked", _component, "ShowActive", true, DataSourceUpdateMode.OnPropertyChanged);
             _keepOpen.DataBindings.Add("Checked", _component, "KeepOpen", true, DataSourceUpdateMode.OnPropertyChanged);
+            _searchButton.DataBindings.Add("Enabled", _component, "SearchEnabled");
         }
 
         private void _searchButton_Click(object sender, EventArgs e)
@@ -41,7 +32,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             }
         }
 
-        private void PatientSearchComponentControl_Load(object sender, EventArgs e)
+        private void SearchComponentControl_Load(object sender, EventArgs e)
         {
             _healthcard.Mask = _component.HealthcardMask;
         }

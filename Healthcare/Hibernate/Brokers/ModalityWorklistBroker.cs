@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Hibernate;
 using ClearCanvas.Healthcare.Brokers;
@@ -224,6 +225,89 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
         }
 
         #endregion
+
+        public IList<WorklistItem> Search(
+            string mrnID,
+            string mrnAssigningAuthority,
+            string healthcardID,
+            string familyName,
+            string givenName,
+            string accessionNumber,
+            bool showActiveOnly)
+        {
+            StringBuilder hqlQuery = new StringBuilder();
+            List<QueryParameter> parameters = new List<QueryParameter>();
+
+            hqlQuery.Append("select mps, pp.Mrn, pp.Name, o.AccessionNumber, o.Priority, rpt, spst, m");
+            hqlQuery.Append(" from ModalityProcedureStep mps");
+            hqlQuery.Append(" join mps.Type spst" +
+                            " join mps.Modality m" +
+                            " join mps.RequestedProcedure rp" +
+                            " join rp.Type rpt" +
+                            " join rp.Order o" +
+                            " join o.DiagnosticService ds" +
+                            " join o.Visit v" +
+                            " join o.Patient p" +
+                            " join p.Profiles pp");
+
+            string conditionPrefix = " where"; 
+            if (showActiveOnly)
+            {
+                hqlQuery.Append(conditionPrefix);
+                hqlQuery.Append(" rp in (select rp from CheckInProcedureStep cps join cps.RequestedProcedure rp where (cps.State != :cpsState1 and cps.State != :cpsState2))");
+                parameters.Add(new QueryParameter("cpsState1", "CM"));
+                parameters.Add(new QueryParameter("cpsState2", "DC"));
+                conditionPrefix = " and";
+            }
+
+            if (!String.IsNullOrEmpty(accessionNumber))
+            {
+                hqlQuery.Append(conditionPrefix);
+                hqlQuery.Append(" o.AccessionNumber = :accessionNumber");
+                parameters.Add(new QueryParameter("accessionNumber", accessionNumber));
+                conditionPrefix = " and";
+            }
+
+            if (!String.IsNullOrEmpty(mrnID))
+            {
+                hqlQuery.Append(conditionPrefix);
+                hqlQuery.Append(" pp.Mrn.Id = :mrnID");
+                parameters.Add(new QueryParameter("mrnID", mrnID));
+                conditionPrefix = " and";
+            }
+
+            if (!String.IsNullOrEmpty(mrnAssigningAuthority))
+            {
+                hqlQuery.Append(conditionPrefix);
+                hqlQuery.Append(" pp.Mrn.AssigningAuthority = :mrnAssigningAuthority");
+                parameters.Add(new QueryParameter("mrnAssigningAuthority", mrnAssigningAuthority));
+                conditionPrefix = " and";
+            }
+
+            if (!String.IsNullOrEmpty(healthcardID))
+            {
+                hqlQuery.Append(conditionPrefix);
+                hqlQuery.Append(" pp.Healthcard.Id = :healthcardID");
+                parameters.Add(new QueryParameter("healthcardID", healthcardID));
+                conditionPrefix = " and";
+            }
+
+            if (!String.IsNullOrEmpty(familyName))
+            {
+                hqlQuery.Append(conditionPrefix);
+                hqlQuery.Append(" pp.Name.FamilyName like :familyName");
+                parameters.Add(new QueryParameter("familyName", familyName + "%"));
+            }
+
+            if (!String.IsNullOrEmpty(givenName))
+            {
+                hqlQuery.Append(conditionPrefix);
+                hqlQuery.Append(" pp.Name.GivenName like :givenName");
+                parameters.Add(new QueryParameter("givenName", givenName + "%"));
+            }
+
+            return GetWorklist(hqlQuery.ToString(), parameters);
+        }
 
         #endregion
 

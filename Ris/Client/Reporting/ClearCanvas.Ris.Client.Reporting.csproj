@@ -65,6 +65,7 @@
     <Compile Include="ReportingFolderSystemTool.cs" />
     <Compile Include="ReportingWorkflowFolder.cs" />
     <Compile Include="ReportingWorklistTable.cs" />
+    <Compile Include="SearchTool.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -159,6 +160,19 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ReportingPreviewComponentSettings.Designer.cs</LastGenOutput>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SearchToolLarge.png" />
+    <EmbeddedResource Include="Icons\SearchToolMedium.png" />
+    <EmbeddedResource Include="Icons\SearchToolSmall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Icons\SearchFolderClosedLarge.png" />
+    <EmbeddedResource Include="Icons\SearchFolderClosedMedium.png" />
+    <EmbeddedResource Include="Icons\SearchFolderClosedSmall.png" />
+    <EmbeddedResource Include="Icons\SearchFolderOpenLarge.png" />
+    <EmbeddedResource Include="Icons\SearchFolderOpenMedium.png" />
+    <EmbeddedResource Include="Icons\SearchFolderOpenSmall.png" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

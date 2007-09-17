@@ -21,5 +21,14 @@ namespace ClearCanvas.Healthcare.Brokers
         int GetVerifiedWorklistCount(Staff performingStaff);
 
         IList<Report> GetPriorReport(Patient patient);
+
+        IList<WorklistItem> Search(
+            string mrnID,
+            string mrnAssigningAuthority,
+            string healthcardID,
+            string familyName,
+            string givenName,
+            string accessionNumber,
+            bool showActiveOnly);
     }
 }

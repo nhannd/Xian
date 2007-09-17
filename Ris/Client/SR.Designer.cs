@@ -808,6 +808,15 @@ namespace ClearCanvas.Ris.Client {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Search.
+        /// </summary>
+        internal static string TitleSearch {
+            get {
+                return ResourceManager.GetString("TitleSearch", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Staff.
         /// </summary>
         internal static string TitleStaff {

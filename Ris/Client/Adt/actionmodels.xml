@@ -22,6 +22,6 @@
     <action id="ClearCanvas.Ris.Client.Adt.PatientReconcileFromWorklistTool:apply" path="global-toolbars/Patient/Reconcile" />
   </action-model>
   <action-model id="ClearCanvas.Ris.Client.Adt.FoldersComponent:folders-toolbar">
-    <action id="ClearCanvas.Ris.Client.Adt.PatientSearchTool:search" path="folders-toolbar/Search" />
+    <action id="ClearCanvas.Ris.Client.Adt.SearchTool:search" path="folders-toolbar/Search" />
   </action-model>
 </action-models>
