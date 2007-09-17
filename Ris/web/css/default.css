@@ -25,9 +25,11 @@ table td {
 	background-color: #FFFFFF;
 	color: #000000;
 }
+
 .propertyname {
 	font-weight: bold;
 }
+
 .tabledefault {
 	border-top-style: none;
 	border-right-style: none;
@@ -41,10 +43,12 @@ table td {
 	color: #FFFFFF;
 	background-color: #A8D8F4;
 }
+
 .pageheading {
 	font-size: 24px;
 	font-weight: bold;
 }
+
 .pageheading2 {
 
 	font-size: 18px;
@@ -100,5 +104,8 @@ div.alert{
    font-size: 12px;
 }
 
-
+img.alert{
+   text-align: right;
+   width: 50px;
+}
 

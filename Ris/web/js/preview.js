@@ -4,7 +4,8 @@
 
 function getAlertHtml(alertItem, patientName)
 {
-	return "<img width='64' src='" + getAlertIcon(alertItem) + "' alt='" + getAlertTooltip(alertItem, patientName) + "'/>";
+	//return "<img width='50' src='" + getAlertIcon(alertItem) + "' alt='" + getAlertTooltip(alertItem, patientName) + "' align='right'/>";
+   return "<img class='alert' src='" + getAlertIcon(alertItem) + "' alt='" + getAlertTooltip(alertItem, patientName) + "'/>";
 }
 
 function getAlertIcon(alertItem)
@@ -88,7 +89,7 @@ function createOrdersTable(htmlTable)
 			},
 			{   label: "Scheduled For",
 				cellType: "text",
-				getValue: function(item) { return getDescriptiveTime(item.OrderScheduledStartTime); }
+				getValue: function(item) { return getDescriptiveTime(item.EarliestScheduledMPSDateTime); }
 			},
 			{   label: "Order Status",
 				cellType: "text",
@@ -147,7 +148,7 @@ function createDiagnosticServiceBreakdownTable(htmlTable)
 
 function orderDataComparison(data1, data2)
 {
-	return Date.compareMoreRecent(data1.OrderScheduledStartTime, data2.OrderScheduledStartTime);
+	return Date.compareMoreRecent(data1.EarliestScheduledMPSDateTime, data2.EarliestScheduledMPSDateTime);
 }
 
 // group patientOrderData by AccessionNumber
@@ -181,7 +182,7 @@ function groupDataToOrders(listData)
         
         thisOrder.AccessionNumber = firstData.AccessionNumber;
         thisOrder.CombineRequestedProcedureName = String.combine(listRequestedProcedureName, "/");
-        thisOrder.OrderScheduledStartTime = firstData.OrderScheduledStartTime;
+        thisOrder.EarliestScheduledMPSDateTime = firstData.EarliestScheduledMPSDateTime;
         thisOrder.OrderStatus = firstData.OrderStatus;
         thisOrder.Insurance = "";
         thisOrder.OrderingFacilityName = firstData.OrderingFacilityName;
