@@ -13,7 +13,7 @@
     <component name="LocationUri" class="DicomUri">
       <property name="InternalUri" column="LocationUri_" type="string" length="1024" />
     </component>
-    <many-to-one name="Series" class="ClearCanvas.Dicom.DataStore.Series, ClearCanvas.Dicom.DataStore" column="SeriesOid_" />
+    <many-to-one name="Series" class="ClearCanvas.Dicom.DataStore.Series, ClearCanvas.Dicom.DataStore" column="SeriesOid_" not-null="true" />
     <joined-subclass name="ImageSopInstance" table="ImageSopInstance_" proxy="ImageSopInstance">
       <key column="Oid_" />
       <property name="SamplesPerPixel" column="SamplesPerPixel_" type="Int16" />

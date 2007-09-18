@@ -4,98 +4,14 @@ using System.Text;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common;
 using System.Runtime.InteropServices;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom.DataStore
 {
     public abstract class DicomImageStoreBase
     {
-		protected IStudy GetStudy(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset, Type dataAccessLayerType)
-        {
-            // determine whether we're going to use a SingleSessionDataAccessLayer or a regular DataAccessLayer
-            IDataStoreReader dataStoreReader = null;
-            if (dataAccessLayerType == typeof(SingleSessionDataAccessLayer))
-            {
-                dataStoreReader = SingleSessionDataAccessLayer.GetIDataStoreReader();
-            }
-            else if (dataAccessLayerType == typeof(DataAccessLayer))
-            {
-                dataStoreReader = DataAccessLayer.GetIDataStoreReader();
-            }
-            else
-            {
-                // TODO: throw a meaningful exception
-                throw new System.ArgumentException();
-            }
-
-			DicomAttribute attribute = sopInstanceDataset[DicomTags.StudyInstanceUID];
-			string studyInstanceUid = attribute.ToString();
-			if (String.IsNullOrEmpty(studyInstanceUid))
-				return null;
-
-            Study study = null;
-            if (this.StudyCache.ContainsKey(studyInstanceUid))
-                study = this.StudyCache[studyInstanceUid];
-
-            if (null == study)
-            {
-                // we haven't come across this study yet, so let's see if it already exists in the DataStore
-                study = dataStoreReader.GetStudy(new Uid(studyInstanceUid)) as Study;
-                if (null == study)
-                {
-                    // the study doesn't exist in the data store either
-                    study = CreateNewStudy(metaInfo, sopInstanceDataset);
-                    this.StudyCache.Add(studyInstanceUid, study);
-                    return study;
-                }
-                else
-                {
-                    // the study was found in the data store
-                    this.StudyCache.Add(studyInstanceUid, study);
-
-                    // since Study-Series is not lazy initialized, all the series
-                    // should be loaded. Let's add them to the cache
-                    foreach (ISeries series in study.Series)
-                    {
-                        this.SeriesCache.Add(series.GetSeriesInstanceUid().ToString(), series as Series);
-                    }
-
-                    return study;
-                }
-            }
-            else
-            {
-                // the study was found in the cache
-                return study;
-            }
-        }
-
-		protected ISeries GetSeries(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
-        {
-			DicomAttribute attribute = sopInstanceDataset[DicomTags.SeriesInstanceUID];
-			string seriesInstanceUid = attribute.ToString();
-			if (String.IsNullOrEmpty(seriesInstanceUid))
-				return null;
-
-			Series series = null;
-            if (this.SeriesCache.ContainsKey(seriesInstanceUid))
-                series = this.SeriesCache[seriesInstanceUid];
-
-            if (null == series)
-            {
-                // if the series was in the datastore, it would also exist
-                // in the cache at this point, because the study would have
-                // been loaded, and Series is not lazy-initialized.
-                // Therefore, this series is not in the datastore either.
-                series = CreateNewSeries(metaInfo, sopInstanceDataset);
-                this.SeriesCache.Add(seriesInstanceUid, series);
-                return series;
-            }
-            else
-            {
-                // the series was found in the cache
-                return series;
-            }
-        }
+    	protected abstract IDataStoreReader GetIDataStoreReader();
+    	protected abstract IDataStoreWriter GetIDataStoreWriter();
 
 		protected Study CreateNewStudy(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
         {
@@ -171,11 +87,6 @@ namespace ClearCanvas.Dicom.DataStore
 			series.SpecificCharacterSet = attribute.ToString();
 
             return series;
-        }
-
-		protected ISopInstance GetSopInstance(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset, string fileName)
-        {
-            return CreateNewSopInstance(metaInfo, sopInstanceDataset, fileName);
         }
 
 		protected void AssignSopInstanceUri(SopInstance sopInstance, string fileName)
@@ -299,20 +210,143 @@ namespace ClearCanvas.Dicom.DataStore
             return image;
         }
 
-        protected Dictionary<string, Study> StudyCache
+		protected void AddStudyToCache(Study study)
+		{
+			if (this.ExistingStudyCache.ContainsKey(study.StudyInstanceUid))
+				return;
+
+			if (this.NewStudyCache.ContainsKey(study.StudyInstanceUid))
+				return;
+
+			IDataStoreReader reader = GetIDataStoreReader();
+			IStudy existingStudy = reader.GetStudy(new Uid(study.GetStudyInstanceUid()));
+			if (existingStudy != null)
+			{
+				this.ExistingStudyCache[existingStudy.GetStudyInstanceUid()] = existingStudy;
+				foreach(ISeries series in existingStudy.GetSeries())
+					this.ExistingSeriesCache[series.GetSeriesInstanceUid()] = series;
+			}
+			else
+			{
+				this.NewStudyCache[study.GetStudyInstanceUid()] = study;
+			}
+		}
+
+    	protected void AddSeriesToCache(Series series, string parentStudyUid)
+		{
+			if (this.ExistingSeriesCache.ContainsKey(series.SeriesInstanceUid))
+				return;
+
+			if (this.NewSeriesCache.ContainsKey(series.SeriesInstanceUid))
+				return;
+
+			IStudy study = GetStudyFromCache(parentStudyUid);
+			if (study == null)
+				throw new ArgumentException("The parent study must be added to the cache first.");
+
+			this.NewSeriesCache[series.GetSeriesInstanceUid()] = series;
+			series.SetParentStudy(study);
+		}
+
+		protected void AddSopInstanceToCache(SopInstance sop, string parentSeriesUid)
+		{
+			if (this.ExistingSeriesCache.ContainsKey(parentSeriesUid))
+			{
+				ISeries series = this.ExistingSeriesCache[parentSeriesUid];
+				ISopInstance existingSop = SingleSessionDataAccessLayer.GetIDataStoreReader().GetSopInstance(new Uid(sop.SopInstanceUid));
+
+				if (existingSop != null)
+				{
+				}
+
+				NewSopInstancesBelongingToExistingSeries[sop.SopInstanceUid] = sop;
+				sop.SetParentSeries(series);
+			}
+			else if (this.NewSeriesCache.ContainsKey(parentSeriesUid))
+			{
+				ISeries series = this.NewSeriesCache[parentSeriesUid];
+				series.AddSopInstance(sop);
+			}
+			else
+				throw new ArgumentException("The parent series must be added to the cache first.");
+		}
+
+		protected virtual void Flush()
+		{
+			try
+			{
+				IDataStoreWriter writer = GetIDataStoreWriter();
+				foreach (KeyValuePair<string, IStudy> pair in this.NewStudyCache)
+				{
+					writer.StoreStudy(pair.Value);
+				}
+
+				foreach (KeyValuePair<string, ISeries> pair in this.NewSeriesCache)
+				{
+					writer.StoreSeries(pair.Value);
+				}
+
+				writer.StoreSopInstances(this.NewSopInstancesBelongingToExistingSeries.Values);
+			}
+			finally
+			{
+				ClearCache();
+			}
+		}
+
+		private IStudy GetStudyFromCache(string studyInstanceUid)
+		{
+			if (this.ExistingStudyCache.ContainsKey(studyInstanceUid))
+				return this.ExistingStudyCache[studyInstanceUid];
+			if (this.NewStudyCache.ContainsKey(studyInstanceUid))
+				return this.NewStudyCache[studyInstanceUid];
+
+			return null;
+		}
+		
+		private Dictionary<string, IStudy> ExistingStudyCache
         {
-            get { return _studyCache; }
+            get { return _existingStudyCache; }
         }
 
-		protected Dictionary<string, Series> SeriesCache
+		private Dictionary<string, ISeries> ExistingSeriesCache
         {
-            get { return _seriesCache; }
+            get { return _existingSeriesCache; }
         }
 
+		private Dictionary<string, ISopInstance> NewSopInstancesBelongingToExistingSeries
+    	{
+			get { return _newSopInstancesBelongingToExistingSeries; }
+    	}
 
-        #region Private Members
-        private Dictionary<string, Study> _studyCache = new Dictionary<string, Study>();
-        private Dictionary<string, Series> _seriesCache = new Dictionary<string, Series>();
-        #endregion
-    }
+		private Dictionary<string, IStudy> NewStudyCache
+    	{
+			get { return _newStudyCache; }
+    	}
+
+		private Dictionary<string, ISeries> NewSeriesCache
+		{
+			get { return _newSeriesCache; }
+		}
+		
+		#region Private Members
+        private Dictionary<string, IStudy> _existingStudyCache = new Dictionary<string, IStudy>();
+        private Dictionary<string, ISeries> _existingSeriesCache = new Dictionary<string, ISeries>();
+
+		private Dictionary<string, ISopInstance> _newSopInstancesBelongingToExistingSeries  = new Dictionary<string, ISopInstance>();
+
+		private Dictionary<string, IStudy> _newStudyCache = new Dictionary<string, IStudy>();
+		private Dictionary<string, ISeries> _newSeriesCache = new Dictionary<string, ISeries>();
+		#endregion
+
+		protected void ClearCache()
+		{
+			this.ExistingStudyCache.Clear();
+			this.ExistingSeriesCache.Clear();
+
+			this.NewSopInstancesBelongingToExistingSeries.Clear();
+			this.NewStudyCache.Clear();
+			this.NewSeriesCache.Clear();
+		}
+	}
 }

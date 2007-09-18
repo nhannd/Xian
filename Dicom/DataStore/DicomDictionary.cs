@@ -53,9 +53,9 @@ namespace ClearCanvas.Dicom.DataStore
 					.SetFetchMode("DictionaryEntries_", FetchMode.Eager)
 					.List();
 			}
-			catch (Exception ex)
+			catch
 			{
-				throw ex;
+				throw;
 			}
 			finally
 			{

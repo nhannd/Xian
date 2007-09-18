@@ -5,7 +5,7 @@ using NHibernate;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public class DataStoreWriter : IDataStoreWriter, IDataStoreCleaner
+    internal class DataStoreWriter : IDataStoreWriter, IDataStoreCleaner
     {
         #region Handcoded Members
 
@@ -44,12 +44,12 @@ namespace ClearCanvas.Dicom.DataStore
                 session.SaveOrUpdate(sop);
                 transaction.Commit();
             }
-            catch (Exception ex)
+            catch
             {
                 if (null != transaction)
                     transaction.Rollback();
 
-                throw ex;
+                throw;
             }
             finally
             {
@@ -69,12 +69,12 @@ namespace ClearCanvas.Dicom.DataStore
                 session.SaveOrUpdate(seriesToStore);
                 transaction.Commit();
             }
-            catch (Exception ex)
+            catch
             {
                 if (null != transaction)
                     transaction.Rollback();
 
-                throw ex;
+                throw;
             }
             finally
             {
@@ -89,19 +89,17 @@ namespace ClearCanvas.Dicom.DataStore
             ITransaction transaction = null;
             try
             {
-                FileRemover.DeleteFilesInSeries(seriesToRemove);
-
                 session = this.SessionFactory.OpenSession();
                 transaction = session.BeginTransaction();
                 session.Delete(seriesToRemove);
                 transaction.Commit();
             }
-            catch (Exception ex)
+            catch
             {
                 if (null != transaction)
                     transaction.Rollback();
 
-                throw ex;
+                throw;
             }
             finally
             {
@@ -110,32 +108,55 @@ namespace ClearCanvas.Dicom.DataStore
             }
         }
 
-        public void RemoveSopInstance(ISopInstance sopToRemove)
+		public void RemoveSopInstances(IEnumerable<ISopInstance> sops)
+		{
+			ISession session = null;
+			ITransaction transaction = null;
+			try
+			{
+				session = this.SessionFactory.OpenSession();
+				transaction = session.BeginTransaction();
+
+				foreach (ISopInstance sop in sops)
+				{
+					session.Delete(sop);
+				}
+
+				transaction.Commit();
+			}
+			catch
+			{
+				if (null != transaction)
+					transaction.Rollback();
+
+				throw;
+			}
+			finally
+			{
+				if (null != session)
+					session.Close();
+			}
+		}
+		
+		public void RemoveSopInstance(ISopInstance sopToRemove)
         {
             ISession session = null;
             ITransaction transaction = null;
             try
             {
-                FileRemover.DeleteFileForSopInstance(sopToRemove);
-
                 session = this.SessionFactory.OpenSession();
                 transaction = session.BeginTransaction();
-
-                // remove the child sop instance from the parent series' collection
-                ISeries series = sopToRemove.GetParentSeries();
-                if (null != series)
-                    series.RemoveSopInstance(sopToRemove);
 
                 session.Delete(sopToRemove);
 
                 transaction.Commit();
             }
-            catch (Exception ex)
+            catch
             {
                 if (null != transaction)
                     transaction.Rollback();
 
-                throw ex;
+                throw;
             }
             finally
             {
@@ -155,11 +176,11 @@ namespace ClearCanvas.Dicom.DataStore
                 session.SaveOrUpdate(study);
                 transaction.Commit();
             }
-            catch (Exception ex)
+            catch
             {
                 if (null != transaction)
                     transaction.Rollback();
-                throw ex;
+                throw;
             }
             finally
             {
@@ -174,19 +195,17 @@ namespace ClearCanvas.Dicom.DataStore
             ISession session = null;
             try
             {
-                FileRemover.DeleteFilesInStudy(studyToRemove);
-
                 session = this.SessionFactory.OpenSession();
                 transaction = session.BeginTransaction();
                 session.Delete(studyToRemove);
                 transaction.Commit();
             }
-            catch (Exception ex)
+            catch
             {
                 if (null != transaction)
                     transaction.Rollback();
 
-                throw ex;
+                throw;
             }
             finally
             {
@@ -195,32 +214,35 @@ namespace ClearCanvas.Dicom.DataStore
             }
         }
 
-        public void StoreDictionary(DicomDictionaryContainer container)
-        {
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-                session.SaveOrUpdate(container);
-                transaction.Commit();
-            }
-            catch (Exception ex)
-            {
-                if (null != transaction)
-                    transaction.Rollback();
+ 		public void StoreSopInstances(IEnumerable<ISopInstance> sops)
+		{
+			ISession session = null;
+			ITransaction transaction = null;
+			try
+			{
+				session = this.SessionFactory.OpenSession();
+				transaction = session.BeginTransaction();
+				
+				foreach (ISopInstance sop in sops)
+					session.SaveOrUpdate(sop);
 
-                throw ex;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-        }
+				transaction.Commit();
+			}
+			catch
+			{
+				if (null != transaction)
+					transaction.Rollback();
 
-        #endregion
+				throw;
+			}
+			finally
+			{
+				if (null != session)
+					session.Close();
+			}
+		}
+
+    	#endregion
 
 		#region IDataStoreCleaner Members
 

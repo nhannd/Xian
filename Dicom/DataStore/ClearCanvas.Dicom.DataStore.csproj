@@ -63,7 +63,6 @@
     <Compile Include="DataStoreWriter.cs" />
     <Compile Include="DicomDictionary.cs" />
     <Compile Include="DicomDictionaryContainer.cs" />
-    <Compile Include="DicomImageStore.cs" />
     <Compile Include="DicomImageStoreBase.cs" />
     <Compile Include="DicomUri.cs" />
     <Compile Include="DictionaryEntry.cs" />

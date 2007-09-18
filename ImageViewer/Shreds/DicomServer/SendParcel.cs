@@ -231,8 +231,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
                 else // series was found
                 {
                     ISeries series = this.DataStoreReader.GetSeries(referencedUid);
-                    IEnumerable<ISopInstance> sops = series.GetSopInstances();
-                    foreach (ISopInstance sop in sops)
+					foreach (ISopInstance sop in series.GetSopInstances())
                     {
                         AddSopInstanceIntoParcel(sop);
                     }
@@ -241,8 +240,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             else // study was found
             {
                 IStudy study = this.DataStoreReader.GetStudy(referencedUid);
-                IEnumerable<ISopInstance> sops = study.GetSopInstances();
-                foreach (ISopInstance sop in sops)
+                foreach (ISopInstance sop in study.GetSopInstances())
                 {
                     AddSopInstanceIntoParcel(sop);
                 }

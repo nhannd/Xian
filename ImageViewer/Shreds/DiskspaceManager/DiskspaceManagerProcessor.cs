@@ -183,9 +183,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 				try
 				{
 					long expectedFreeSpace = 0;
-					ReadOnlyCollection<ISopInstance> sopInstances = study.GetSopInstances();
-					
-					foreach (ISopInstance sopInstance in sopInstances)
+					foreach (ISopInstance sopInstance in study.GetSopInstances())
 					{
 						System.IO.FileInfo info;
 						try

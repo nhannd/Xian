@@ -67,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				_thread = null;
 			}
 
-			private void GetStatistics(ICollection<ISopInstance> sopInstances, out int numberExist, out long totalSpaceUsed)
+			private void GetStatistics(IEnumerable<ISopInstance> sopInstances, out int numberExist, out long totalSpaceUsed)
 			{
 				numberExist = 0;
 				totalSpaceUsed = 0;
@@ -176,14 +176,13 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							continue;
 						}
 
-						ReadOnlyCollection<ISopInstance> sopInstances = study.GetSopInstances();
-
-						numberRelatedSopInstancesToDelete = sopInstances.Count;
-						GetStatistics(sopInstances, out numberRelatedSopInstancesExistBefore, out totalUsedSpaceBefore);
+						numberRelatedSopInstancesToDelete = study.GetNumberOfSopInstances();
+						GetStatistics(study.GetSopInstances(), out numberRelatedSopInstancesExistBefore, out totalUsedSpaceBefore);
 						expectedFreedSpace = totalUsedSpaceBefore;
 
 						try
 						{
+							FileRemover.DeleteFilesInStudy(study);
 							DataAccessLayer.GetIDataStoreWriter().RemoveStudy(study);
 						}
 						catch (Exception e)
@@ -192,7 +191,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							errorMessage = String.Format(SR.ExceptionFailedToDeleteStudy, instanceUid);
 						}
 
-						GetStatistics(sopInstances, out numberRelatedSopInstancesExistAfter, out totalUsedSpaceAfter);
+						GetStatistics(study.GetSopInstances(), out numberRelatedSopInstancesExistAfter, out totalUsedSpaceAfter);
 						actualFreedSpace = totalUsedSpaceBefore - totalUsedSpaceAfter;
 
 						Platform.Log(LogLevel.Info, String.Format("Study Deletion Info - StudyInstanceUid: {0}, Space Freed (bytes): {1}, Number of Related Sop Instances Deleted: {2}",

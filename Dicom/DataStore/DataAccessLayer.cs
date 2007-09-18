@@ -129,17 +129,12 @@ namespace ClearCanvas.Dicom.DataStore
 			return (IDataStoreCleaner)GetIDataStoreWriter();
 		}
 
-        public static IDicomPersistentStore GetIDicomPersistentStore()
-        {
-            return new DicomImageStore();
-        }
-
-		public static IDicomDictionary GetIDicomDictionary()
+		internal static IDicomDictionary GetIDicomDictionary()
 		{
 			return GetIDicomDictionary(DicomDictionary.DefaultDictionaryName);
 		}
 
-		public static IDicomDictionary GetIDicomDictionary(string dictionaryName)
+		internal static IDicomDictionary GetIDicomDictionary(string dictionaryName)
 		{
 			if (!_dicomDictionaries.ContainsKey(dictionaryName))
 				_dicomDictionaries[dictionaryName] = new DicomDictionary(DataAccessLayer.CurrentFactory.OpenSession(), dictionaryName);

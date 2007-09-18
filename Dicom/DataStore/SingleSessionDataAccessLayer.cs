@@ -180,23 +180,18 @@ namespace ClearCanvas.Dicom.DataStore
             }
         }
 
-		public static IDicomDictionary GetIDicomDictionary()
+		internal static IDicomDictionary GetIDicomDictionary()
 		{
 			return GetIDicomDictionary(DicomDictionary.DefaultDictionaryName);
 		}
 
-		public static IDicomDictionary GetIDicomDictionary(string dictionaryName)
+		internal static IDicomDictionary GetIDicomDictionary(string dictionaryName)
 		{
 			if (!_dicomDictionaries.ContainsKey(dictionaryName))
 				_dicomDictionaries[dictionaryName] = new DicomDictionary(SingleSessionDataAccessLayer.CurrentFactory.OpenSession(), dictionaryName);
 
 			return _dicomDictionaries[dictionaryName];
 		}
-		
-		public static IDicomPersistentStore GetIDicomPersistentStore()
-        {
-            return new SingleSessionDicomImageStore();
-        }
 
         #endregion
     }

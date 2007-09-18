@@ -6,14 +6,14 @@ namespace ClearCanvas.Dicom.DataStore
 {
     public interface IDataStoreWriter
     {
-        ISopInstance NewImageSopInstance();
-        void StoreSopInstance(ISopInstance sop);
+		void StoreSopInstances(IEnumerable<ISopInstance> sop);
+		void StoreSopInstance(ISopInstance sop);
         void StoreSeries(ISeries series);
-        void RemoveSeries(ISeries series);
-        void RemoveSopInstance(ISopInstance sop);
-        void StoreStudy(IStudy study);
-        void RemoveStudy(IStudy study);
+		void StoreStudy(IStudy study);
 
-        void StoreDictionary(DicomDictionaryContainer container);
+		void RemoveSopInstances(IEnumerable<ISopInstance> sop);
+		void RemoveSopInstance(ISopInstance sop);
+		void RemoveSeries(ISeries series);
+        void RemoveStudy(IStudy study);
     }
 }

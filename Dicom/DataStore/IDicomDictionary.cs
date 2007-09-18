@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public interface IDicomDictionary
+    internal interface IDicomDictionary
     {
         bool Contains(TagName tagName);
         bool Contains(DicomTagPath path);

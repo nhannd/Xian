@@ -7,10 +7,13 @@ namespace ClearCanvas.Dicom.DataStore
     public interface ISeries
     {
         Uid GetSeriesInstanceUid();
-        IEnumerable<ISopInstance> GetSopInstances();
+
+		void SetParentStudy(IStudy study);
+		IStudy GetParentStudy();
+
+    	int GetNumberOfSopInstances();
+		IEnumerable<ISopInstance> GetSopInstances();
         void AddSopInstance(ISopInstance sop);
         void RemoveSopInstance(ISopInstance sop);
-        void SetParentStudy(IStudy study);
-        IStudy GetParentStudy();
     }
 }

@@ -11,7 +11,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public class DataStoreReader : IDataStoreReader
+    internal class DataStoreReader : IDataStoreReader
     {
         #region Handcoded Members
         public DataStoreReader(ISessionFactory sessionFactory)
@@ -58,11 +58,11 @@ namespace ClearCanvas.Dicom.DataStore
                     count = number;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 if (null!=transaction)
                     transaction.Rollback();
-                throw ex;
+                throw;
             }
             finally
             {
@@ -92,11 +92,11 @@ namespace ClearCanvas.Dicom.DataStore
                     count = number;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 if (null!=transaction)
                     transaction.Rollback();
-                throw ex;
+                throw;
             }
             finally
             {
@@ -127,11 +127,11 @@ namespace ClearCanvas.Dicom.DataStore
                     count = number;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 if (null!=transaction)
                     transaction.Rollback();
-                throw ex;
+                throw;
             }
             finally
             {
@@ -163,11 +163,11 @@ namespace ClearCanvas.Dicom.DataStore
                 if (null != listOfSops && listOfSops.Count > 0)
                     sop = listOfSops[0] as ISopInstance;
             }
-            catch (Exception ex)
+            catch
             {
                 if (null!=transaction)
                     transaction.Rollback();
-                throw ex;
+                throw;
             }
             finally
             {
@@ -202,11 +202,11 @@ namespace ClearCanvas.Dicom.DataStore
                     series = listOfSeries[0] as ISeries;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 if (null!=transaction)
                     transaction.Rollback();
-                throw ex;
+                throw;
             }
             finally
             {
@@ -237,11 +237,11 @@ namespace ClearCanvas.Dicom.DataStore
                 session.Lock(primaryObject, LockMode.Read);
                 NHibernateUtil.Initialize(associatedCollection);
             }
-            catch (Exception ex)
+            catch
             {
                 if (null != transaction)
                     transaction.Rollback();
-                throw ex;
+                throw;
             }
             finally
             {
@@ -279,11 +279,11 @@ namespace ClearCanvas.Dicom.DataStore
                     studyFound = listOfStudies[0] as IStudy;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 if (null!=transaction)
                     transaction.Rollback();
-                throw ex;
+                throw;
             }
             finally
             {
@@ -294,10 +294,8 @@ namespace ClearCanvas.Dicom.DataStore
             return studyFound;
         }
 
-		public IList<IStudy> GetStudies()
+		public IEnumerable<IStudy> GetStudies()
 		{
-			IList<IStudy> studiesList = new List<IStudy>();
-
 			//
 			// prepare the HQL query string
 			//
@@ -318,11 +316,11 @@ namespace ClearCanvas.Dicom.DataStore
 				IQuery query = session.CreateQuery(selectCommandString.ToString());
 				studiesFound = query.List();
 			}
-			catch (Exception ex)
+			catch
 			{
 				if (null != transaction)
 					transaction.Rollback();
-				throw ex;
+				throw;
 			}
 			finally
 			{
@@ -330,13 +328,10 @@ namespace ClearCanvas.Dicom.DataStore
 					session.Close();
 			}
 
-			foreach (object element in studiesFound)
+			foreach (IStudy study in studiesFound)
 			{
-				Study study = element as Study;
-				studiesList.Add(study);
+				yield return study;
 			}
-
-			return studiesList;
 		}
 		
 		public ReadOnlyQueryResultCollection StudyQuery(QueryKey queryKey)
@@ -408,11 +403,11 @@ namespace ClearCanvas.Dicom.DataStore
 				IQuery query = session.CreateQuery(selectCommandString.ToString());
                 studiesFound = query.List();
             }
-            catch (Exception ex)
+            catch
             {
                 if (null!=transaction)
                     transaction.Rollback();
-                throw ex;
+                throw;
             }
             finally
             {

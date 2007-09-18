@@ -11,7 +11,7 @@
     <property name="Laterality" column="Laterality_" type="string" length="16" />
     <property name="SeriesDescription" column="SeriesDescription_" type="string" length="64" />
     <property name="SpecificCharacterSet" column="SpecificCharacterSet_" type="string" length="64" />
-    <many-to-one name="Study" class="ClearCanvas.Dicom.DataStore.Study, ClearCanvas.Dicom.DataStore" column="StudyOid_" />
+    <many-to-one name="Study" class="ClearCanvas.Dicom.DataStore.Study, ClearCanvas.Dicom.DataStore" column="StudyOid_" not-null="true" />
     <set name="InternalSopInstances" table="SopInstance_" lazy="true" inverse="true" cascade="all-delete-orphan" access="nosetter.camelcase-underscore">
       <key column="SeriesOid_" />
       <one-to-many class="SopInstance" />

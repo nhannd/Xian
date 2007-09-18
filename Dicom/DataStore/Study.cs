@@ -190,17 +190,15 @@ namespace ClearCanvas.Dicom.DataStore
 
 		#region IStudy Members
 
-        public ReadOnlyCollection<ISopInstance> GetSopInstances()
+        public IEnumerable<ISopInstance> GetSopInstances()
         {
-            List<ISopInstance> sopList = new List<ISopInstance>();
             foreach (ISeries series in this.Series)
             {
                 foreach (ISopInstance sopInstance in series.GetSopInstances())
                 {
-                    sopList.Add(sopInstance);
+                	yield return sopInstance;
                 }
             }
-            return sopList.AsReadOnly();
         }
 
         public Uid GetStudyInstanceUid()
@@ -219,17 +217,29 @@ namespace ClearCanvas.Dicom.DataStore
             this.Series.Remove(series);
         }
 
-        public ReadOnlyCollection<ISeries> GetSeries()
+        public IEnumerable<ISeries> GetSeries()
         {
-            List<ISeries> seriesList = new List<ISeries>();
             foreach (ISeries series in this.Series)
             {
-                seriesList.Add(series);
+                yield return series;
             }
-
-            return seriesList.AsReadOnly();
         }
 
-        #endregion
+		public int GetNumberOfSeries()
+		{
+			return this.Series.Count;
+		}
+
+		public int GetNumberOfSopInstances()
+		{
+			int returnValue = 0;
+
+			foreach (ISeries series in this.Series)
+				returnValue += series.GetNumberOfSopInstances();
+
+			return returnValue;
+		}
+		
+		#endregion
     }
 }

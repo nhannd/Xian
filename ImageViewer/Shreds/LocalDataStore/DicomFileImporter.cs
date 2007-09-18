@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
 	internal sealed partial class LocalDataStoreService
 	{
-		public sealed class DicomFileImporter : DicomImageStoreBase
+		public sealed class DicomFileImporter : SingleSessionDicomImageStore
 		{
 			public enum DedicatedImportQueue
 			{
@@ -608,9 +608,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 										System.IO.File.Delete(storedFile);
 
 									System.IO.File.Move(fileImportInformation.SourceFile, storedFile);
-								}
 							}
 						}
+					}
 					}
 					finally
 					{
@@ -700,79 +700,19 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				try
 				{
-					IDataStoreReader dataStoreReader = SingleSessionDataAccessLayer.GetIDataStoreReader();
-					Dictionary<string, List<ImportJobInformation>> jobsByStudyUid = new Dictionary<string, List<ImportJobInformation>>();
+					foreach (ImportJobInformation item in items)
+					{
+						AddStudyToCache(item.FileImportInformation.Study);
+						AddSeriesToCache(item.FileImportInformation.Series, item.FileImportInformation.StudyInstanceUid);
+						AddSopInstanceToCache(item.FileImportInformation.SopInstance, item.FileImportInformation.SeriesInstanceUid);
+					}
+
+					base.Flush();
 
 					foreach (ImportJobInformation item in items)
 					{
-						if (!jobsByStudyUid.ContainsKey(item.FileImportInformation.StudyInstanceUid))
-							jobsByStudyUid.Add(item.FileImportInformation.StudyInstanceUid, new List<ImportJobInformation>());
-
-						jobsByStudyUid[item.FileImportInformation.StudyInstanceUid].Add(item);
-
-						Study study = null;
-						if (this.StudyCache.ContainsKey(item.FileImportInformation.StudyInstanceUid))
-							study = this.StudyCache[item.FileImportInformation.StudyInstanceUid];
-
-						if (null == study)
-						{
-							study = dataStoreReader.GetStudy(new Uid(item.FileImportInformation.StudyInstanceUid)) as Study;
-							if (null == study)
-							{
-								study = item.FileImportInformation.Study;
-								this.StudyCache.Add(item.FileImportInformation.StudyInstanceUid, study);
-							}
-							else
-							{
-								// the study was found in the data store
-								this.StudyCache.Add(item.FileImportInformation.StudyInstanceUid, study);
-
-								// since Study-Series is not lazy initialized, all the series
-								// should be loaded. Let's add them to the cache
-								foreach (ISeries existingSeries in study.GetSeries())
-								{
-									this.SeriesCache.Add(existingSeries.GetSeriesInstanceUid().ToString(), existingSeries as Series);
-								}
-							}
-						}
-
-						Series series = null;
-						if (this.SeriesCache.ContainsKey(item.FileImportInformation.SeriesInstanceUid))
-							series = this.SeriesCache[item.FileImportInformation.SeriesInstanceUid];
-
-						if (null == series)
-						{
-							series = item.FileImportInformation.Series;
-							this.SeriesCache.Add(item.FileImportInformation.SeriesInstanceUid, series);
-						}
-
-						series.AddSopInstance(item.FileImportInformation.SopInstance);
-						study.AddSeries(series);
-					}
-
-					foreach (KeyValuePair<string, Study> pair in this.StudyCache)
-					{
-						List<ImportJobInformation> relevantJobs = jobsByStudyUid[pair.Key];
-
-						try
-						{
-							SingleSessionDataAccessLayer.GetIDataStoreWriter().StoreStudy(pair.Value);
-							foreach (ImportJobInformation item in relevantJobs)
-							{
-								((IFileImportInformation)item.FileImportInformation).CompletedStage = ImportStage.CommittedToDataStore;
-								item.FileImportJobStatusReportDelegate(item.FileImportInformation);
-							}
-
-						}
-						catch(Exception e)
-						{
-							foreach (ImportJobInformation item in relevantJobs)
-							{
-								string error = String.Format(SR.FormatFailedToCommitToDatastore, item.FileImportInformation.StoredFile);
-								((IFileImportInformation)item.FileImportInformation).Error = new Exception(error, e);
-								item.FileImportJobStatusReportDelegate(item.FileImportInformation);
-							}
-						}
+						((IFileImportInformation)item.FileImportInformation).CompletedStage = ImportStage.CommittedToDataStore;
+						item.FileImportJobStatusReportDelegate(item.FileImportInformation);
 					}
 				}
 				catch (Exception e)
@@ -785,13 +725,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					}
 				}
 
-				this.SeriesCache.Clear();
-				this.StudyCache.Clear();
-
-				SingleSessionDataAccessLayer.SqliteWorkaround();
-
 				clock.Stop();
-				Trace.WriteLine(String.Format("Update took {0} seconds", clock.Seconds));
+				Console.WriteLine(String.Format("Update took {0} seconds", clock.Seconds));
 			}
 
 			private void DatabaseUpdateThread()

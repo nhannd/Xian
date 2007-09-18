@@ -126,14 +126,17 @@ namespace ClearCanvas.Dicom.DataStore
 
 		#region ISeries Members
 
-        public IEnumerable<ISopInstance> GetSopInstances()
+		public int GetNumberOfSopInstances()
+		{
+			return this.SopInstances.Count;
+		}
+
+    	public IEnumerable<ISopInstance> GetSopInstances()
         {
-            List<ISopInstance> sops = new List<ISopInstance>();
             foreach (ImageSopInstance sop in this.SopInstances)
             {
-                sops.Add(sop);
+            	yield return sop;
             }
-            return sops.AsReadOnly();
         }
 
         public void AddSopInstance(ISopInstance sop)
@@ -144,7 +147,7 @@ namespace ClearCanvas.Dicom.DataStore
         
         public void RemoveSopInstance(ISopInstance sop)
         {
-            this.SopInstances.Remove(sop);
+			this.SopInstances.Remove(sop);
         }
 
         public Uid GetSeriesInstanceUid()

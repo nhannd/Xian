@@ -23,7 +23,7 @@ namespace ClearCanvas.Dicom.DataStore.Tests
         [Test]
         public void CreateNewImage()
         {
-            ImageSopInstance sop = DataAccessLayer.GetIDataStoreWriter().NewImageSopInstance() as ImageSopInstance;
+            ImageSopInstance sop = new ImageSopInstance();
 
             sop.BitsAllocated = 16;
             sop.BitsStored = 12;
