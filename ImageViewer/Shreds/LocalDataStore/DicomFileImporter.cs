@@ -474,7 +474,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					try
 					{
-						dicomFile.Load(DicomReadOptions.Default);
+						dicomFile.Load(DicomTags.PixelData, DicomReadOptions.Default);
 
 						processable = ConfirmProcessableFile(dicomFile.MetaInfo, dicomFile.DataSet);
 

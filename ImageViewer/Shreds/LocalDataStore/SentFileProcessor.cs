@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				DicomFile dicomFile = new DicomFile(sopInstanceFilename);
 				try
 				{
-					dicomFile.Load(DicomReadOptions.Default);
+					dicomFile.Load(DicomTags.PixelData, DicomReadOptions.Default);
 				}
 				catch (Exception e)
 				{
