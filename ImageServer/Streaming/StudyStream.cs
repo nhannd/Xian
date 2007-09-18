@@ -110,6 +110,8 @@ namespace ClearCanvas.ImageServer.Streaming
         {
             XmlDocument theDocument = new XmlDocument();
 
+            XmlElement clearCanvas = theDocument.CreateElement("ClearCanvasStream");
+
             XmlElement study = theDocument.CreateElement("Study");
 
             XmlAttribute studyInstanceUid = theDocument.CreateAttribute("UID");
@@ -124,7 +126,8 @@ namespace ClearCanvas.ImageServer.Streaming
 				study.AppendChild(seriesElement);
 			}
 
-			theDocument.AppendChild(study);
+            clearCanvas.AppendChild(study);
+            theDocument.AppendChild(clearCanvas);
 
 			return theDocument;
         }
@@ -134,18 +137,26 @@ namespace ClearCanvas.ImageServer.Streaming
             if (!theDocument.HasChildNodes)
                 return;
 
-            XmlNode childNode = theDocument.FirstChild;
+            // There should be one root node.
+            XmlNode rootNode = theDocument.FirstChild;
+            while (rootNode != null && !rootNode.Name.Equals("ClearCanvasStream"))
+                rootNode = rootNode.NextSibling;
 
-            while (childNode != null)
+            if (rootNode == null)
+                return;
+
+            XmlNode studyNode = rootNode.FirstChild;
+
+            while (studyNode != null)
             {
                 // Just search for the first study node, parse it, then break
-                if (childNode.Name.Equals("Study"))
+                if (studyNode.Name.Equals("Study"))
                 {
-                    _studyInstanceUid = childNode.Attributes["UID"].Value;
+                    _studyInstanceUid = studyNode.Attributes["UID"].Value;
 
-                    if (childNode.HasChildNodes)
+                    if (studyNode.HasChildNodes)
                     {
-                        XmlNode seriesNode = childNode.FirstChild;
+                        XmlNode seriesNode = studyNode.FirstChild;
 
                         while (seriesNode != null)
                         {
@@ -162,11 +173,8 @@ namespace ClearCanvas.ImageServer.Streaming
                         }
                     }
                 }
-
-                childNode = childNode.NextSibling;
+                studyNode = studyNode.NextSibling;
             }
-
-
         }
 
         #endregion

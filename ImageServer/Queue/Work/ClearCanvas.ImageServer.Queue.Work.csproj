@@ -33,6 +33,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="InsertInstanceCommand.cs" />
+    <Compile Include="InsertStreamCommand.cs" />
     <Compile Include="StudyProcessFactoryExtension.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="StudyProcessItemProcessor.cs" />

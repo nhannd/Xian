@@ -2,14 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
-
+using System.Xml;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common;
+using ClearCanvas.Dicom.Network;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Queue;
 using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Model.Parameters;
 using ClearCanvas.ImageServer.Model.Brokers;
+using ClearCanvas.ImageServer.Streaming;
 
 namespace ClearCanvas.ImageServer.Queue.Work
 {
@@ -79,56 +82,85 @@ namespace ClearCanvas.ImageServer.Queue.Work
             delete.Execute(parms);
         }
 
-        private void ProcessFile(WorkQueue item, string path)
+        private StudyStream LoadStudyStream(string streamFile)
         {
-            DicomFile file = new DicomFile(path);
+            StudyStream theStream = new StudyStream();
 
-            file.Load();
-
-            // Get the Patients Name for processing purposes.
-            String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
-
-            // Setup the insert parameters
-            InstanceInsertParameters parms = new InstanceInsertParameters();
-            file.DataSet.LoadDicomFields(parms);
-            parms.ServerPartitionKey = _storageLocation.ServerPartitionKey;
-            parms.StatusEnum = StatusEnum.GetEnum("Online");
-
-            // Get the Insert Instance broker and do the insert
-            IInsertInstance insert = _readContext.GetBroker<IInsertInstance>();
-            IList<InstanceKeys> keys = insert.Execute(parms);
-
-            // If the Request Attributes Sequence is in the dataset, do an insert.
-            if (file.DataSet.Contains(DicomTags.RequestAttributesSequence))
+            if (File.Exists(streamFile))
             {
-                DicomAttributeSQ attribute = file.DataSet[DicomTags.RequestAttributesSequence] as DicomAttributeSQ;
-                if (!attribute.IsEmpty)
-                {
-                    foreach (DicomSequenceItem sequenceItem in (DicomSequenceItem[])attribute.Values)
-                    {
-                        RequestAttributesInsertParameters requestParms = new RequestAttributesInsertParameters();
-                        sequenceItem.LoadDicomFields(requestParms);
-                        requestParms.SeriesKey = keys[0].SeriesKey;
+                Stream fileStream = new FileStream(streamFile, FileMode.Open);
 
-                        IInsertRequestAttributes insertRequest = _readContext.GetBroker<IInsertRequestAttributes>();
-                        insertRequest.Execute(requestParms);
-                    }
-                }
+                XmlDocument theDoc = new XmlDocument();
+
+                StreamingIo.Read(theDoc, fileStream);
+
+                fileStream.Close();
+
+                theStream.SetMemento(theDoc);
             }
 
-            Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
+            return theStream;
+        }
+
+        private void WriteStudyStream(string streamFile, StudyStream theStream)
+        {
+
+            XmlDocument doc = theStream.GetMomento();
+
+            if (File.Exists(streamFile))
+                File.Delete(streamFile);
+
+            Stream fileStream = new FileStream(streamFile, FileMode.CreateNew);
+
+            StreamingIo.Write(doc, fileStream);
+
+            fileStream.Close();
+        }
+
+        private void ProcessFile(WorkQueue item, string path, StudyStream stream)
+        {
+            // Use the command processor for rollback capabilities.
+            ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue DICOM File");
+            try
+            {
+                DicomFile file = new DicomFile(path);
+
+                file.Load();
+
+                // Get the Patients Name for processing purposes.
+                String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
+
+                // Insert into the database
+                processor.ExecuteCommand(new InsertInstanceCommand(_readContext,file,_storageLocation));
+
+                // Update the StudyStream object
+                processor.ExecuteCommand(new InsertStreamCommand(file,stream));
+
+                Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.", processor.Description);
+                processor.Rollback();
+            }
         }
 
         private void ProcessUidList(WorkQueue item)
         {
-            string path = "";
+            
+
+            string studyStreamPath =
+                Path.Combine(_storageLocation.GetStudyPath(), _storageLocation.StudyInstanceUid + ".xml");
+
+            StudyStream stream = LoadStudyStream(studyStreamPath);
+
             foreach (WorkQueueUid sop in _uidList)
             {
-                path = Path.Combine(_storageLocation.GetStudyPath(), sop.SeriesInstanceUid);
+                string path = Path.Combine(_storageLocation.GetStudyPath(), sop.SeriesInstanceUid);
                 path = Path.Combine(path, sop.SopInstanceUid + ".dcm");
                 try
                 {
-                    ProcessFile(item, path);
+                    ProcessFile(item, path,stream);
                 }
                 catch (Exception e)
                 {
@@ -139,6 +171,9 @@ namespace ClearCanvas.ImageServer.Queue.Work
                 // Delete it out of the queue
                 DeleteWorkQueueUid(sop);                
             }
+
+            // Write it back out.
+            WriteStudyStream(studyStreamPath, stream);
 
             // Update the WorkQueue item status and times.
             IUpdateWorkQueue update = _readContext.GetBroker<IUpdateWorkQueue>();

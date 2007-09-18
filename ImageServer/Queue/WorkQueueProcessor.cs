@@ -87,6 +87,8 @@ namespace ClearCanvas.ImageServer.Queue
             parms.StatusEnum = StatusEnum.GetEnum("Failed");
             parms.WorkQueueKey = item.GetKey();
             parms.StudyStorageKey = item.StudyStorageKey;
+            parms.ScheduledTime = Platform.Time;
+            parms.ExpirationTime = Platform.Time.AddDays(1);
             
             if (false == update.Execute(parms))
             {
