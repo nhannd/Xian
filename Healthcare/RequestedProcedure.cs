@@ -156,7 +156,7 @@ namespace ClearCanvas.Healthcare {
         /// <summary>
         /// Called by a child procedure step to complete this procedure.
         /// </summary>
-        internal void Complete()
+        protected internal virtual void Complete()
         {
             if (_status != RequestedProcedureStatus.IP)
                 throw new WorkflowException("Only procedures in the IP status can be completed");
@@ -167,7 +167,7 @@ namespace ClearCanvas.Healthcare {
         /// <summary>
         /// Called by child procedure steps to tell this procedure to update its scheduling information.
         /// </summary>
-        internal void UpdateScheduling()
+        protected internal virtual void UpdateScheduling()
         {
             // compute the earliest procedure step scheduled start time
             _scheduledStartTime = CollectionUtils.Min<DateTime?>(
@@ -184,7 +184,7 @@ namespace ClearCanvas.Healthcare {
         /// certain status updates can be inferred deterministically from child statuses.  If no
         /// status can be inferred, the status does not change.
         /// </summary>
-        internal void UpdateStatus()
+        protected internal virtual void UpdateStatus()
         {
             // check if the procedure should be auto-discontinued
             if (_status == RequestedProcedureStatus.SC || _status == RequestedProcedureStatus.IP)

@@ -170,7 +170,7 @@ namespace ClearCanvas.Healthcare {
         /// <summary>
         /// Called by a child requested procedure to tell the order to update its scheduling information.
         /// </summary>
-        internal void UpdateScheduling()
+        protected internal virtual void UpdateScheduling()
         {
             // set the scheduled start time to the earliest non-null scheduled start time of any child procedure
             _scheduledStartTime = CollectionUtils.Min<DateTime?>(
@@ -185,7 +185,7 @@ namespace ClearCanvas.Healthcare {
         /// certain status updates can be inferred deterministically from child statuses.  If no
         /// status can be inferred, the status does not change.
         /// </summary>
-        internal void UpdateStatus()
+        protected internal virtual void UpdateStatus()
         {
             // if the order has not yet terminated, it may need to be auto-terminated
             if (!IsTerminated)

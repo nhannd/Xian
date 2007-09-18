@@ -113,9 +113,10 @@ namespace ClearCanvas.Healthcare.Tests
 
             // scheduled the check-in step
             RequestedProcedure rp = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
-            rp.CheckInProcedureStep.Schedule(scheduleTime);
+            ProcedureStep step = CollectionUtils.FirstElement<ProcedureStep>(rp.ProcedureSteps);
+            step.Schedule(scheduleTime);
 
-            Assert.AreEqual(scheduleTime, rp.CheckInProcedureStep.Scheduling.StartTime);
+            Assert.AreEqual(scheduleTime, step.Scheduling.StartTime);
 
             // verify order and rp scheduled time are updated to reflect earliest time
             Assert.AreEqual(scheduleTime, rp.ScheduledStartTime);
@@ -160,9 +161,10 @@ namespace ClearCanvas.Healthcare.Tests
             DateTime newTime = originalTime - TimeSpan.FromDays(1);
 
             RequestedProcedure rp = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
-            rp.CheckInProcedureStep.Schedule(newTime);
+            ProcedureStep step = CollectionUtils.FirstElement<ProcedureStep>(rp.ProcedureSteps);
+            step.Schedule(newTime);
 
-            Assert.AreEqual(newTime, rp.CheckInProcedureStep.Scheduling.StartTime);
+            Assert.AreEqual(newTime, step.Scheduling.StartTime);
 
             // verify order and rp scheduled time are updated to reflect earliest time
             Assert.AreEqual(newTime, rp.ScheduledStartTime);
@@ -170,7 +172,7 @@ namespace ClearCanvas.Healthcare.Tests
         }
 
         /// <summary>
-        /// Verify that when a procedure is rescheduled later, the order and procedure
+        /// Verify that when a procedure step is rescheduled later, the order and procedure
         /// scheduling information still reflects the earliest start time.
         /// </summary>
         [Test]
@@ -182,11 +184,12 @@ namespace ClearCanvas.Healthcare.Tests
             DateTime newTime = originalTime + TimeSpan.FromDays(1);
 
             RequestedProcedure rp = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
-            rp.ModalityProcedureSteps[0].Schedule(newTime);
+            ProcedureStep step = CollectionUtils.FirstElement<ProcedureStep>(rp.ProcedureSteps);
+            step.Schedule(newTime);
 
-            Assert.AreEqual(newTime, rp.ModalityProcedureSteps[0].Scheduling.StartTime);
+            Assert.AreEqual(newTime, step.Scheduling.StartTime);
 
-            // verify order and rp scheduled time are updated to reflect earliest time
+            // verify order and rp scheduled time still reflect earliest time
             Assert.AreEqual(originalTime, rp.ScheduledStartTime);
             Assert.AreEqual(originalTime, order.ScheduledStartTime);
         }
@@ -222,7 +225,8 @@ namespace ClearCanvas.Healthcare.Tests
 
             // put the order in progress
             RequestedProcedure rp = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
-            rp.CheckInProcedureStep.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
+            ProcedureStep step = CollectionUtils.FirstElement<ProcedureStep>(rp.ProcedureSteps);
+            step.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
 
             try
             {
@@ -318,7 +322,8 @@ namespace ClearCanvas.Healthcare.Tests
 
             // put the order in progress
             RequestedProcedure rp = CollectionUtils.FirstElement<RequestedProcedure>(order.RequestedProcedures);
-            rp.CheckInProcedureStep.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
+            ProcedureStep step = CollectionUtils.FirstElement<ProcedureStep>(rp.ProcedureSteps);
+            step.Start(TestStaffFactory.CreateStaff(StaffType.STEC));
 
             // requested procedure is in progress
             CheckStatus(RequestedProcedureStatus.IP, rp);
