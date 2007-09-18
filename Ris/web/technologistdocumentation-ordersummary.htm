@@ -1,0 +1,120 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>Technologist Preview</title>
+      <link href="css/compact.css" rel="stylesheet" type="text/css" />
+      <script type="text/javascript" src="js/jsx.js"></script>
+      <script type="text/javascript" src="js/jsml.js"></script>
+      <script type="text/javascript" src="js/ui.js"></script>
+      <script type="text/javascript" src="js/ris.js"></script>
+      <script type="text/javascript" src="js/preview.js"></script>
+      <script type="text/javascript" >
+		    var data = {};
+
+		    function onBodyLoad()
+		    {		        
+		        if(!Ris)
+		            return;
+		        
+	            try
+	            {
+   					var worklistItem = Ris.getWorklistItem();
+   					if (worklistItem == null)
+   					{
+                     Field.setValue($("myForm"), "");
+                     return;
+   					}
+
+                  var request = {
+                     ProcedureStepRef: worklistItem.ProcedureStepRef,
+                     GetModalityProcedureStepRequest: { GetDiagnosticServiceBreakdown: true },
+                     GetPatientProfileRequest:        {},
+                     GetPatientAlertsRequest:         {}
+                  };
+
+                  var service = Ris.getService("ClearCanvas.Ris.Application.Common.PreviewService.IPreviewService, ClearCanvas.Ris.Application.Common");
+                  data = service.getData(request);
+
+                  if (data == null || data.length == 0)
+                  {
+                     Field.setValue($("myForm"), "");
+                     return;
+                  }
+
+                  var orderData = data.GetModalityProcedureStepResponse.PatientOrderData;
+                  
+                  Field.setValue($("accessionNumber"), orderData.AccessionNumber);
+                  var patientName = Ris.formatPersonName(orderData.PatientName);
+                  Field.setValue($("name"), patientName);
+                  Field.setValue($("mrn"), Ris.formatMrn(worklistItem.Mrn));
+                  Field.setValue($("OrderPriority"), orderData.OrderPriority);
+                  Field.setValue($("dateOfBirth"), Ris.formatDate(orderData.DateOfBirth));
+                  Field.setValue($("sex"), orderData.Sex);
+                  Field.setValue($("OrderingPhysician"), Ris.formatPersonName(orderData.OrderingPractitionerName));
+                  Field.setValue($("healthcard"), orderData.HealthcardId);
+                  
+                  // update patient alerts
+		            if (data.GetPatientAlertsResponse && data.GetPatientAlertsResponse.AlertNotifications && data.GetPatientAlertsResponse.AlertNotifications.length > 0)
+		            {
+    	               var alertNotifications = data.GetPatientAlertsResponse.AlertNotifications;
+                     var alertHtml = "";
+                     
+	                  alertNotifications.each(function(item) { alertHtml += getAlertHtml(item, patientName); });
+
+                     $("alerts").innerHTML = alertHtml;
+		            }
+
+	            }
+	            catch(e)
+	            {
+	               var message = "Failed to load preview page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+		            Field.setValue($("myForm"), message);
+	            }
+		    }
+      </script>
+   </head>
+   <body onload="javascript: onBodyLoad()">
+   		<form id="myForm">
+            <table>
+               <tr>
+                  <td class="pageheading"><div id="name"/></td>
+               </tr>
+               <tr>
+                  <td class="pageheading2"><div id="mrn"/></td>
+               </tr>
+               <tr>
+                  <td><div id="alerts"/></td>
+               </tr>
+            </table>
+
+            <p>&nbsp;</p>
+            <table>
+               <tr>
+                  <td class="propertyname">Date of Birth</td>
+                  <td><div id="dateOfBirth"/></td>
+               </tr>
+               <tr>
+                  <td class="propertyname">Sex</td>
+                  <td><div id="sex"/></td>
+               </tr>
+               <tr>
+                  <td class="propertyname">Healthcard # </td>
+                  <td><div id="healthcard"/></td>
+               </tr>
+               <tr>
+                  <td class="propertyname">Accession Number</td>
+                  <td><div id="AccessionNumber"/></td>
+               </tr>
+               <tr>
+                  <td class="propertyname">Priority</td>
+                  <td><div id="OrderPriority"/></td>
+               </tr>
+               <tr>
+                  <td class="propertyname">Ordering Physician</td>
+                  <td><div id="OrderingPhysician"/></td>
+               </tr>
+            </table>
+         </form>         
+   </body>
+</html>
+       
