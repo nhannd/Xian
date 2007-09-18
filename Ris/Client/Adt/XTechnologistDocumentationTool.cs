@@ -8,10 +8,9 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("apply", "folderexplorer-items-contextmenu/Document")]
-    [ButtonAction("apply", "folderexplorer-items-toolbar/Document")]
+    [MenuAction("apply", "folderexplorer-items-contextmenu/XDocument", "Apply")]
+    [ButtonAction("apply", "folderexplorer-items-toolbar/XDocument", "Apply")]
     [IconSet("apply", IconScheme.Colour, "StartToolSmall.png", "StartToolMedium.png", "StartToolLarge.png")]
-    [ClickHandler("apply", "Apply")]
     [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
     public class XTechnologistDocumentationTool : Tool<ITechnologistWorkflowItemToolContext>
     {
@@ -28,7 +27,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     _workspace = ApplicationComponent.LaunchAsWorkspace(
                         this.Context.DesktopWindow,
                         new XTechnologistDocumentationComponent(item),
-                        "Technologist Documentation",
+                        "Technologist Documentation (OLD)",
                         delegate(IApplicationComponent c) { _workspace = null;  });
                 }
                 else

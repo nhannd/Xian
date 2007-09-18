@@ -120,6 +120,15 @@
     <Compile Include="RegistrationWorklistTable.cs" />
     <Compile Include="RICTable.cs" />
     <Compile Include="SearchTool.cs" />
+    <Compile Include="TechnologistDocumentationComponent.cs" />
+    <Compile Include="TechnologistDocumentationComponentSettings.cs" />
+    <Compile Include="TechnologistDocumentationComponentSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>TechnologistDocumentationComponentSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="TechnologistDocumentationDocument.cs" />
+    <Compile Include="TechnologistDocumentationTool.cs" />
     <Compile Include="XTechnologistDocumentationComponent.cs" />
     <Compile Include="XTechnologistDocumentationTable.cs" />
     <Compile Include="XTechnologistDocumentationTableItem.cs" />
@@ -288,6 +297,10 @@
     <None Include="RegistrationPreviewComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>RegistrationPreviewComponentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="TechnologistDocumentationComponentSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>TechnologistDocumentationComponentSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="TechnologistPreviewComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
