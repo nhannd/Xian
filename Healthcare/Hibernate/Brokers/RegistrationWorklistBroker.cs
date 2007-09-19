@@ -437,7 +437,7 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                             showActiveOnly);
 
             // Some patient may not have an order, search for patient profile
-            if (searchResults.Count > 0)
+            if (searchResults.Count == 0)
                 searchResults = PatientSearch(mrnID, mrnAssigningAuthority, healthcardID, familyName, givenName);
 
             return searchResults;
