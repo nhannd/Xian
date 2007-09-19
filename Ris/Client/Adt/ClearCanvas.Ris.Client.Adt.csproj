@@ -127,6 +127,7 @@
       <DependentUpon>TechnologistDocumentationComponentSettings.settings</DependentUpon>
     </Compile>
     <Compile Include="TechnologistDocumentationDocument.cs" />
+    <Compile Include="TechnologistDocumentationMppsSummaryTable.cs" />
     <Compile Include="TechnologistDocumentationTool.cs" />
     <Compile Include="XTechnologistDocumentationComponent.cs" />
     <Compile Include="XTechnologistDocumentationTable.cs" />

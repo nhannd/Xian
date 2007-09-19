@@ -22,6 +22,14 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             browserOrderOverview.Url = new Uri(_component.OrderSummaryUrl);
             browserOrderOverview.ObjectForScripting = _component.ScriptObject;
+
+            treeProcedurePlan.Tree = _component.ProcedurePlanTree;
+            treeProcedurePlan.MenuModel = _component.ProcedurePlanTreeActionModel;
+            treeProcedurePlan.ToolbarModel = _component.ProcedurePlanTreeActionModel;
+
+            tableViewDocumentationDetails.Table = _component.MppsTable;
+            tableViewDocumentationDetails.MenuModel = _component.MppsTableActionModel;
+            tableViewDocumentationDetails.ToolbarModel = _component.MppsTableActionModel;
         }
     }
 }

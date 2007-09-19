@@ -1,10 +1,15 @@
 using System;
 using System.Runtime.InteropServices;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Jsml;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -90,6 +95,16 @@ namespace ClearCanvas.Ris.Client.Adt
         private readonly ScriptCallback _scriptCallback;
         private readonly ModalityWorklistItem _worklistItem;
 
+        private Tree<RequestedProcedureDetail> _procedurePlanTree;
+        private SimpleActionModel _procedurePlanActionHandler;
+        private readonly string _startModalityProcedureStepKey = "StartModalityProcedureStep";
+        private readonly string _discontinueRequestedProcedureOrModalityProcedureStepKey = "DiscontinueRequestedProcedureOrModalityProcedureStepKey";
+
+        private TechnologistDocumentationMppsSummaryTable _mppsTable;
+        private SimpleActionModel _mppsActionHandler;
+        private readonly string _stopPerformedProcedureStepKey = "StopPerformedProcedureStepKey";
+        private readonly string _discontinuePerformedProcedureStepKey = "DiscontinuePerformedProcedureStepKey";
+
         #endregion
 
         public TechnologistDocumentationComponent(ModalityWorklistItem item)
@@ -97,13 +112,51 @@ namespace ClearCanvas.Ris.Client.Adt
             _scriptCallback = new ScriptCallback(this);
 
             _worklistItem = item;
+            _mppsTable = new TechnologistDocumentationMppsSummaryTable();
         }
 
         #region ApplicationComponent overrides
 
         public override void Start()
         {
-            // TODO prepare the component for its live phase
+            ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
+
+            _procedurePlanActionHandler = new SimpleActionModel(resolver);
+            _procedurePlanActionHandler.AddAction(_startModalityProcedureStepKey, "START", "Icons.StartToolSmall.png", "START", StartModalityProcedureStep);
+            _procedurePlanActionHandler.AddAction(_discontinueRequestedProcedureOrModalityProcedureStepKey, "DISCONTINUE", "Icons.DeleteToolSmall.png", "START", DiscontinueRequestedProcedureOrModalityProcedureStep);
+            _procedurePlanActionHandler[_startModalityProcedureStepKey].Enabled = false;
+            _procedurePlanActionHandler[_discontinueRequestedProcedureOrModalityProcedureStepKey].Enabled = false;
+
+            _mppsActionHandler = new SimpleActionModel(resolver);
+            _mppsActionHandler.AddAction(_stopPerformedProcedureStepKey, "STOP", "Icons.CompleteToolSmall.png", "STOP", StopPerformedProcedureStep);
+            _mppsActionHandler.AddAction(_discontinuePerformedProcedureStepKey, "DISCONTINUE", "Icons.DeleteToolSmall.png", "START", DiscontinuePerformedProcedureStep);
+            _mppsActionHandler[_stopPerformedProcedureStepKey].Enabled = false;
+            _mppsActionHandler[_discontinuePerformedProcedureStepKey].Enabled = false;
+
+            Platform.GetService<ITechnologistDocumentationService>(
+                delegate(ITechnologistDocumentationService service)
+                {
+                    GetProcedurePlanForWorklistItemRequest procedurePlanRequest = new GetProcedurePlanForWorklistItemRequest(_worklistItem.ProcedureStepRef);
+                    GetProcedurePlanForWorklistItemResponse procedurePlanResponse = service.GetProcedurePlanForWorklistItem(procedurePlanRequest);
+
+                    _procedurePlanTree = new Tree<RequestedProcedureDetail>(
+                        new TreeItemBinding<RequestedProcedureDetail>(
+                            delegate(RequestedProcedureDetail rp) { return rp.Name; },
+                            delegate(RequestedProcedureDetail rp)
+                                {
+                                    TreeItemBinding<ModalityProcedureStepDetail> binding = new TreeItemBinding<ModalityProcedureStepDetail>(
+                                        delegate(ModalityProcedureStepDetail mps) { return mps.Name; });
+                                    binding.CanHaveSubTreeHandler = delegate { return false; };
+                                    binding.IconSetProvider = delegate { return null; };
+                                    return new Tree<ModalityProcedureStepDetail>(binding, rp.ModalityProcedureSteps);
+                                }), procedurePlanResponse.RequestedProcedures);
+
+                    ListPerformedProcedureStepsRequest mppsRequest = new ListPerformedProcedureStepsRequest(_worklistItem.ProcedureStepRef);
+                    ListPerformedProcedureStepsResponse mppsResponse = service.ListPerformedProcedureSteps(mppsRequest);
+
+                    _mppsTable.Items.AddRange(mppsResponse.PerformedProcedureSteps);
+                });
+
             base.Start();
         }
 
@@ -116,10 +169,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #endregion
 
-        public string OrderSummaryUrl
-        {
-            get { return TechnologistDocumentationComponentSettings.Default.OrderSummaryUrl; }
-        }
+        #region Scripting Callbacks
 
         public ScriptCallback ScriptObject
         {
@@ -135,5 +185,56 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             return _worklistItem;
         }
+
+        #endregion
+
+        #region Presentation Layer Methods
+
+        public string OrderSummaryUrl
+        {
+            get { return TechnologistDocumentationComponentSettings.Default.OrderSummaryUrl; }
+        }
+
+        public ITree ProcedurePlanTree
+        {
+            get { return _procedurePlanTree; }
+        }
+
+        public ActionModelNode ProcedurePlanTreeActionModel
+        {
+            get { return _procedurePlanActionHandler; }
+        }
+
+        public ITable MppsTable
+        {
+            get { return _mppsTable; }
+        }
+
+        public ActionModelNode MppsTableActionModel
+        {
+            get { return _mppsActionHandler; }
+        }
+
+        #endregion
+
+        #region Action Handler Methods
+
+        private void StartModalityProcedureStep()
+        {
+        }
+
+        private void DiscontinueRequestedProcedureOrModalityProcedureStep()
+        {
+        }
+
+        private void StopPerformedProcedureStep()
+        {
+        }
+
+        private void DiscontinuePerformedProcedureStep()
+        {
+        }
+
+        #endregion
     }
 }

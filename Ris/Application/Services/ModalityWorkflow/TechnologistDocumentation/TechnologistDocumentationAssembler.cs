@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-
+using System.Text;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
@@ -114,6 +114,50 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
                 pps = new ModalityPerformedProcedureStep();                
             }
             return pps;
+        }
+
+        internal RequestedProcedureDetail CreateRequestedProcedureDetail(RequestedProcedure rp, IPersistenceContext context)
+        {
+            RequestedProcedureDetail detail = new RequestedProcedureDetail();
+
+            detail.RequestedProcedureRef = rp.GetRef();
+            detail.Name = rp.Type.Name;
+            detail.Status = EnumUtils.GetEnumValueInfo(rp.Status, context);
+            detail.ModalityProcedureSteps = CollectionUtils.Map<ModalityProcedureStep, ModalityProcedureStepDetail>(
+                rp.ModalityProcedureSteps,
+                delegate(ModalityProcedureStep mp) { return CreateModalityProcedureStepDetail(mp, context); });
+            
+            return detail;
+        }
+
+        private ModalityProcedureStepDetail CreateModalityProcedureStepDetail(ModalityProcedureStep mp, IPersistenceContext context)
+        {
+            ModalityProcedureStepDetail detail = new ModalityProcedureStepDetail();
+            detail.Name = mp.Name;
+            detail.ModalityProcedureStepRef = mp.GetRef();
+            detail.StartDateTime = mp.StartTime;
+            detail.EndDateTime = mp.EndTime;
+            detail.Status = EnumUtils.GetEnumValueInfo(mp.State, context);
+            return detail;
+        }
+
+        internal ModalityPerformedProcedureStepSummary CreateModalityPerformedProcedureStepSummary(ModalityPerformedProcedureStep mpps, IPersistenceContext context)
+        {
+            StringBuilder nameBuilder = new StringBuilder();
+            int mpsCount = mpps.Activities.Count;
+            foreach(ModalityProcedureStep mps in mpps.Activities)
+            {
+                nameBuilder.Append(mps.Name);
+                if(1 < mpsCount--) nameBuilder.Append(" / ");
+            }
+
+            return new ModalityPerformedProcedureStepSummary(
+                mpps.GetRef(),
+                nameBuilder.ToString(),
+                EnumUtils.GetEnumValueInfo(mpps.State, context),
+                mpps.StartTime, 
+                mpps.EndTime, 
+                "Dummy Performer");
         }
     }
 }

@@ -11,5 +11,11 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         DocumentProceduresResponse DocumentProcedures(DocumentProceduresRequest request);
+
+        [OperationContract]
+        GetProcedurePlanForWorklistItemResponse GetProcedurePlanForWorklistItem(GetProcedurePlanForWorklistItemRequest request);
+
+        [OperationContract]
+        ListPerformedProcedureStepsResponse ListPerformedProcedureSteps(ListPerformedProcedureStepsRequest request);
     }
 }

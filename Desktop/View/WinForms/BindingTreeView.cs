@@ -142,6 +142,13 @@ namespace ClearCanvas.Desktop.View.WinForms
             set { _treeCtrl.ShowRootLines = value;}
         }
 
+        [DefaultValue(false)]
+        public bool CheckBoxes
+        {
+            get { return _treeCtrl.CheckBoxes; }
+            set { _treeCtrl.CheckBoxes = value; }
+        }
+
         public ImageList ImageList
         {
             get { return _treeCtrl.ImageList; }

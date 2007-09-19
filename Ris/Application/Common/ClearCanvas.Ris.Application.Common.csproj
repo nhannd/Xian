@@ -234,6 +234,13 @@
     <Compile Include="ModalityWorkflow\ReplaceOrderResponse.cs" />
     <Compile Include="ModalityWorkflow\SearchRequest.cs" />
     <Compile Include="ModalityWorkflow\SearchResponse.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\GetProcedurePlanForWorklistItemRequest.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\GetProcedurePlanForWorklistItemResponse.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\ListPerformedProcedureStepsRequest.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\ListPerformedProcedureStepsResponse.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\ModalityPerformedProcedureStepSummary.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\ModalityProcedureStepDetail.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\RequestedProcedureDetail.cs" />
     <Compile Include="RegistrationWorkflow\ReplaceOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\ReplaceOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\SearchRequest.cs" />

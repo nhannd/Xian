@@ -28,7 +28,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
             this.tableLayoutPanelRoot = new System.Windows.Forms.TableLayoutPanel();
@@ -219,7 +218,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.treeProcedurePlan.AllowDrop = true;
             this.treeProcedurePlan.AutoSize = true;
             this.treeProcedurePlan.AutoSizeMode = System.Windows.Forms.AutoSizeMode.GrowAndShrink;
+            this.treeProcedurePlan.CheckBoxes = true;
             this.treeProcedurePlan.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.treeProcedurePlan.ImageList = null;
             this.treeProcedurePlan.Location = new System.Drawing.Point(3, 3);
             this.treeProcedurePlan.Margin = new System.Windows.Forms.Padding(2);
             this.treeProcedurePlan.MenuModel = null;

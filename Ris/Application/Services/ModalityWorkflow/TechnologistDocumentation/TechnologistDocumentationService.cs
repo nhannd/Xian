@@ -55,5 +55,36 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 
             return new DocumentProceduresResponse();
         }
+
+        [ReadOperation]
+        public GetProcedurePlanForWorklistItemResponse GetProcedurePlanForWorklistItem(GetProcedurePlanForWorklistItemRequest request)
+        {
+            ModalityProcedureStep mps = this.PersistenceContext.Load<ModalityProcedureStep>(request.ProcedureStepRef);
+
+            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+
+            GetProcedurePlanForWorklistItemResponse response = new GetProcedurePlanForWorklistItemResponse();
+            Order order = mps.RequestedProcedure.Order;
+            response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
+                order.RequestedProcedures,
+                delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext);});
+
+            return response;
+        }
+
+        [ReadOperation]
+        public ListPerformedProcedureStepsResponse ListPerformedProcedureSteps(ListPerformedProcedureStepsRequest request)
+        {
+            ModalityProcedureStep mps = this.PersistenceContext.Load<ModalityProcedureStep>(request.ProcedureStepRef);
+
+            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+
+            ListPerformedProcedureStepsResponse response = new ListPerformedProcedureStepsResponse();
+            response.PerformedProcedureSteps = CollectionUtils.Map<ModalityPerformedProcedureStep, ModalityPerformedProcedureStepSummary>(
+                mps.PerformedSteps,
+                delegate (ModalityPerformedProcedureStep mpps) { return assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);}); 
+
+            return response;
+        }
     }
 }
