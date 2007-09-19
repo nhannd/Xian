@@ -432,6 +432,26 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             string accessionNumber,
             bool showActiveOnly)
         {
+            IList<WorklistItem> searchResults =
+                OrderSearch(mrnID, mrnAssigningAuthority, healthcardID, familyName, givenName, accessionNumber,
+                            showActiveOnly);
+
+            // Some patient may not have an order, search for patient profile
+            if (searchResults.Count > 0)
+                searchResults = PatientSearch(mrnID, mrnAssigningAuthority, healthcardID, familyName, givenName);
+
+            return searchResults;
+        }
+
+        private IList<WorklistItem> OrderSearch(
+            string mrnID,
+            string mrnAssigningAuthority,
+            string healthcardID,
+            string familyName,
+            string givenName,
+            string accessionNumber,
+            bool showActiveOnly)
+        {
             StringBuilder hqlQuery = new StringBuilder();
             List<QueryParameter> parameters = new List<QueryParameter>();
 
@@ -458,6 +478,63 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
                 conditionPrefix = " and";
             }
 
+            if (!String.IsNullOrEmpty(mrnID))
+            {
+                hqlQuery.Append(conditionPrefix);
+                hqlQuery.Append(" pp.Mrn.Id = :mrnID");
+                parameters.Add(new QueryParameter("mrnID", mrnID));
+                conditionPrefix = " and";
+            }
+
+            if (!String.IsNullOrEmpty(mrnAssigningAuthority))
+            {
+                hqlQuery.Append(conditionPrefix);
+                hqlQuery.Append(" pp.Mrn.AssigningAuthority = :mrnAssigningAuthority");
+                parameters.Add(new QueryParameter("mrnAssigningAuthority", mrnAssigningAuthority));
+                conditionPrefix = " and";
+            }
+
+            if (!String.IsNullOrEmpty(healthcardID))
+            {
+                hqlQuery.Append(conditionPrefix);
+                hqlQuery.Append(" pp.Healthcard.Id = :healthcardID");
+                parameters.Add(new QueryParameter("healthcardID", healthcardID));
+                conditionPrefix = " and";
+            }
+
+            if (!String.IsNullOrEmpty(familyName))
+            {
+                hqlQuery.Append(conditionPrefix);
+                hqlQuery.Append(" pp.Name.FamilyName like :familyName");
+                parameters.Add(new QueryParameter("familyName", familyName + "%"));
+                conditionPrefix = " and";
+            }
+
+            if (!String.IsNullOrEmpty(givenName))
+            {
+                hqlQuery.Append(conditionPrefix);
+                hqlQuery.Append(" pp.Name.GivenName like :givenName");
+                parameters.Add(new QueryParameter("givenName", givenName + "%"));
+                conditionPrefix = " and";
+            }
+
+            return GetWorklist(hqlQuery.ToString(), parameters);
+        }
+
+        private IList<WorklistItem> PatientSearch(
+            string mrnID,
+            string mrnAssigningAuthority,
+            string healthcardID,
+            string familyName,
+            string givenName)
+        {
+            StringBuilder hqlQuery = new StringBuilder();
+            List<QueryParameter> parameters = new List<QueryParameter>();
+
+            hqlQuery.Append("select distinct pp");
+            hqlQuery.Append(" from PatientProfile pp");
+
+            string conditionPrefix = " where";
             if (!String.IsNullOrEmpty(mrnID))
             {
                 hqlQuery.Append(conditionPrefix);
