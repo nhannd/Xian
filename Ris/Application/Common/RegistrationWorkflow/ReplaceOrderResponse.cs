@@ -1,9 +1,7 @@
-using System;
 using System.Runtime.Serialization;
-
 using ClearCanvas.Enterprise.Common;
 
-namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry
+namespace ClearCanvas.Ris.Application.Common.RegistrationWorkflow
 {
     [DataContract]
     public class ReplaceOrderResponse : DataContractBase

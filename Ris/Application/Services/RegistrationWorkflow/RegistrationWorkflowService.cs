@@ -11,6 +11,7 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 
 namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 {
@@ -196,6 +197,15 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             }
 
             return new CancelOrderResponse();
+        }
+
+        [UpdateOperation]
+        [OperationEnablement("CanCancelOrder")]
+        public ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request)
+        {
+            PlaceOrderResponse placeOrderResponse = Platform.GetService<IOrderEntryService>().PlaceOrder(request.PlaceOrderRequest);
+            CancelOrderResponse cancelOrderResponse = CancelOrder(request.CancelOrderRequest);
+            return new ReplaceOrderResponse(placeOrderResponse.OrderRef);
         }
 
         #endregion

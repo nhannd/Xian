@@ -6,7 +6,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Healthcare.Brokers;
-using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
@@ -170,48 +169,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
             PersistenceContext.SynchState();
 
             return new PlaceOrderResponse(order.GetRef());
-        }
-
-        [UpdateOperation]
-        public ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request)
-        {
-            Patient patient = PersistenceContext.GetBroker<IPatientBroker>().Load(request.Patient, EntityLoadFlags.Proxy);
-            Visit visit = PersistenceContext.GetBroker<IVisitBroker>().Load(request.Visit, EntityLoadFlags.Proxy);
-            ExternalPractitioner orderingPhysician = PersistenceContext.GetBroker<IExternalPractitionerBroker>().Load(request.OrderingPhysician, EntityLoadFlags.Proxy);
-            Facility orderingFacility = PersistenceContext.GetBroker<IFacilityBroker>().Load(request.OrderingFacility, EntityLoadFlags.Proxy);
-            DiagnosticService diagnosticService = PersistenceContext.GetBroker<IDiagnosticServiceBroker>().Load(request.DiagnosticService);
-
-            IAccessionNumberBroker broker = PersistenceContext.GetBroker<IAccessionNumberBroker>();
-            string accNum = broker.GetNextAccessionNumber();
-
-            // TODO: add validation and throw RequestValidationException if necessary
-
-            Order order = Order.NewOrder(
-                    accNum,
-                    patient,
-                    visit,
-                    diagnosticService,
-                    request.SchedulingRequestTime,
-                    orderingPhysician,
-                    orderingFacility,
-                    EnumUtils.GetEnumValue<OrderPriority>(request.OrderPriority),
-                    request.ScheduleOrder);
-
-
-            // cancel order here    
-            Order cancelOrder = PersistenceContext.GetBroker<IOrderBroker>().Load(request.CancelOrderRef, EntityLoadFlags.CheckVersion);
-            OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.ReOrderReason, PersistenceContext);
-            if (cancelOrder.Status == OrderStatus.SC)
-                cancelOrder.Cancel(reason);
-            else if (cancelOrder.Status == OrderStatus.IP)
-                cancelOrder.Discontinue(reason);
-
-            PersistenceContext.Lock(order, DirtyState.New);
-
-            // ensure the new order is assigned an OID before using it in the return value
-            PersistenceContext.SynchState();
-
-            return new ReplaceOrderResponse(order.GetRef());
         }
 
         [ReadOperation]

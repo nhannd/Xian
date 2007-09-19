@@ -601,6 +601,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Unable to place order.
+        /// </summary>
+        internal static string ExceptionCannotReplaceOrder {
+            get {
+                return ResourceManager.GetString("ExceptionCannotReplaceOrder", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Unable to retrieve diagnostic service breakdown.
         /// </summary>
         internal static string ExceptionCannotUpdateDiagnosticServiceBreakdown {
@@ -678,6 +687,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string ExceptionTechnologistWorkflowCompleteTool {
             get {
                 return ResourceManager.GetString("ExceptionTechnologistWorkflowCompleteTool", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot replace order.
+        /// </summary>
+        internal static string ExceptionTechnologistWorkflowReplaceOrderTool {
+            get {
+                return ResourceManager.GetString("ExceptionTechnologistWorkflowReplaceOrderTool", resourceCulture);
             }
         }
         
@@ -858,6 +876,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string TitleAddVisit {
             get {
                 return ResourceManager.GetString("TitleAddVisit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cancel Order for {0}.
+        /// </summary>
+        internal static string TitleCancelOrder {
+            get {
+                return ResourceManager.GetString("TitleCancelOrder", resourceCulture);
             }
         }
         

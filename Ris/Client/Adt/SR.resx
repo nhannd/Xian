@@ -297,6 +297,9 @@
   <data name="ExceptionCannotPlaceOrder" xml:space="preserve">
     <value>Unable to place order</value>
   </data>
+  <data name="ExceptionCannotReplaceOrder" xml:space="preserve">
+    <value>Unable to place order</value>
+  </data>
   <data name="ExceptionCannotUpdateDiagnosticServiceBreakdown" xml:space="preserve">
     <value>Unable to retrieve diagnostic service breakdown</value>
   </data>
@@ -323,6 +326,9 @@
   </data>
   <data name="ExceptionTechnologistWorkflowCompleteTool" xml:space="preserve">
     <value>Cannot complete procedure</value>
+  </data>
+  <data name="ExceptionTechnologistWorkflowReplaceOrderTool" xml:space="preserve">
+    <value>Cannot replace order</value>
   </data>
   <data name="ExceptionTechnologistWorkflowResumeTool" xml:space="preserve">
     <value>Cannot resume procedure</value>
@@ -383,6 +389,9 @@
   </data>
   <data name="TitleAddVisit" xml:space="preserve">
     <value>Add Visit...</value>
+  </data>
+  <data name="TitleCancelOrder" xml:space="preserve">
+    <value>Cancel Order for {0}</value>
   </data>
   <data name="TitleConfirmReconciliation" xml:space="preserve">
     <value>Confirm Reconciliation</value>

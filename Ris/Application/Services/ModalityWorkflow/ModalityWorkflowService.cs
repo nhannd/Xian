@@ -10,6 +10,7 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Modality;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
 {
@@ -138,6 +139,28 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
             return new CancelProcedureResponse();
         }
 
+        [UpdateOperation]
+        [OperationEnablement("CanReplaceOrder")]
+        public ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request)
+        {
+            PlaceOrderResponse placeOrderResponse = Platform.GetService<IOrderEntryService>().PlaceOrder(request.PlaceOrderRequest);
+
+            // cancel order here    
+            IOrderBroker broker = PersistenceContext.GetBroker<IOrderBroker>();
+            OrderCancelReasonEnum reason = EnumUtils.GetEnumValue<OrderCancelReasonEnum>(request.CancelOrderRequest.CancelReason, PersistenceContext);
+
+            foreach (EntityRef orderRef in request.CancelOrderRequest.CancelledOrders)
+            {
+                Order order = broker.Load(orderRef, EntityLoadFlags.CheckVersion);
+                if (order.Status == OrderStatus.SC)
+                    order.Cancel(reason);
+                else if (order.Status == OrderStatus.IP)
+                    order.Discontinue(reason);
+            }
+
+            return new ReplaceOrderResponse(placeOrderResponse.OrderRef);
+        }
+
         public bool CanStartProcedure(IWorklistItemKey itemKey)
         {
             return CanExecuteOperation(new StartModalityProcedureStepOperation(this.CurrentUserStaff), itemKey);
@@ -151,6 +174,14 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow
         public bool CanCancelProcedure(IWorklistItemKey itemKey)
         {
             return CanExecuteOperation(new CancelModalityProcedureStepOperation(false), itemKey);
+        }
+
+        public bool CanReplaceOrder(IWorklistItemKey itemKey)
+        {
+            IModalityProcedureStepBroker broker = PersistenceContext.GetBroker<IModalityProcedureStepBroker>();
+            ModalityProcedureStep mps = broker.Load(((WorklistItemKey)itemKey).ModalityProcedureStep);
+            Order order = mps.RequestedProcedure.Order;
+            return order.Status == OrderStatus.SC || order.Status == OrderStatus.IP;
         }
 
         private void ExecuteOperation(ModalityOperation op, EntityRef modalityProcedureStepRef)

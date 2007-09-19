@@ -1,14 +1,14 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
+using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
@@ -152,7 +152,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     ApplicationComponentExitCode exitCode = ApplicationComponent.LaunchAsDialog(
                         desktopWindow,
                         cancelOrderComponent, 
-                        String.Format("Cancel Order for {0}", PersonNameFormat.Format(item.Name)));
+                        String.Format(SR.TitleCancelOrder, PersonNameFormat.Format(item.Name)));
 
                     if (exitCode == ApplicationComponentExitCode.Normal)
                     {
@@ -180,7 +180,75 @@ namespace ClearCanvas.Ris.Client.Adt
                 }
             }
         }
-    
+
+        [MenuAction("apply", "folderexplorer-items-contextmenu/Replace Order")]
+        [ButtonAction("apply", "folderexplorer-items-toolbar/Replace Order")]
+        [ClickHandler("apply", "Apply")]
+        [IconSet("apply", IconScheme.Colour, "AddToolSmall.png", "AddToolMedium.png", "AddToolLarge.png")]
+        [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
+        [ExtensionOf(typeof(RegistrationWorkflowItemToolExtensionPoint))]
+        public class RegistrationReplaceOrderTool : WorkflowItemTool
+        {
+            public RegistrationReplaceOrderTool()
+                : base("ReplaceOrder")
+            {
+            }
+
+            protected override bool Execute(RegistrationWorklistItem item, IDesktopWindow desktopWindow, IEnumerable folders)
+            {
+                OrderDetail existingOrder = null;
+
+                try
+                {
+                    Platform.GetService<IOrderEntryService>(
+                        delegate(IOrderEntryService service)
+                            {
+                                LoadOrderDetailResponse response = service.LoadOrderDetail(new LoadOrderDetailRequest(item.AccessionNumber));
+                                existingOrder = response.OrderDetail;
+                            });
+                }
+                catch (Exception e)
+                {
+                    ExceptionHandler.Report(e, desktopWindow);
+                    return false;
+                }
+
+                if (desktopWindow.ShowMessageBox(SR.MessageReplaceOrder, MessageBoxActions.OkCancel) == DialogBoxAction.Ok)
+                {
+                    ApplicationComponent.LaunchAsWorkspace(
+                        desktopWindow,
+                        new OrderEntryComponent(existingOrder),
+                        string.Format(SR.TitleNewOrder, PersonNameFormat.Format(item.Name), MrnFormat.Format(item.Mrn)),
+                        delegate(IApplicationComponent c)
+                        {
+                            if (c.ExitCode == ApplicationComponentExitCode.Normal)
+                            {
+                                try
+                                {
+                                    OrderEntryComponent component = (OrderEntryComponent)c;
+
+                                    Platform.GetService<IRegistrationWorkflowService>(
+                                        delegate(IRegistrationWorkflowService service)
+                                        {
+                                            service.ReplaceOrder(new ReplaceOrderRequest(component.PlaceOrderRequest, component.CancelOrderRequest));
+                                        });
+
+                                    IFolder cancelledFolder = CollectionUtils.SelectFirst<IFolder>(folders,
+                                       delegate(IFolder f) { return f is Folders.CancelledFolder; });
+
+                                    cancelledFolder.RefreshCount();
+                                }
+                                catch (Exception e)
+                                {
+                                    ExceptionHandler.Report(e, SR.ExceptionCannotReplaceOrder, this.Context.DesktopWindow);
+                                }
+                            }
+                        });
+                }
+
+                return true;
+            }
+        }
     }
 }
 

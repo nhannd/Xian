@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             if (this.ContextBase is IRegistrationWorkflowItemToolContext)
             {
-                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate(object sender, EventArgs args)
+                ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItemsChanged += delegate
                 {
                     this.Enabled = (((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems != null
                         && ((IRegistrationWorkflowItemToolContext)this.ContextBase).SelectedItems.Count == 1);
@@ -76,7 +76,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private void NewOrder(RegistrationWorklistItem worklistItem, IRegistrationWorkflowItemToolContext context)
+        private static void NewOrder(RegistrationWorklistItem worklistItem, IRegistrationWorkflowItemToolContext context)
         {
             try
             {
@@ -88,6 +88,14 @@ namespace ClearCanvas.Ris.Client.Adt
                     {
                         if (c.ExitCode == ApplicationComponentExitCode.Normal)
                         {
+                            OrderEntryComponent component = (OrderEntryComponent) c;
+
+                            Platform.GetService<IOrderEntryService>(
+                                delegate(IOrderEntryService service)
+                                {
+                                    service.PlaceOrder(component.PlaceOrderRequest);
+                                });
+
                             // Refresh the schedule folder is a new folder is placed
                             IFolder scheduledFolder = CollectionUtils.SelectFirst<IFolder>(context.Folders,
                                 delegate(IFolder f) { return f is Folders.ScheduledFolder; });
@@ -101,7 +109,7 @@ namespace ClearCanvas.Ris.Client.Adt
             }
             catch (Exception e)
             {
-                ExceptionHandler.Report(e, context.DesktopWindow);
+                ExceptionHandler.Report(e, SR.ExceptionCannotPlaceOrder, context.DesktopWindow);
             }
         }
     }
@@ -435,6 +443,32 @@ namespace ClearCanvas.Ris.Client.Adt
             set { _scheduleOrder = value; }
         }
 
+        public PlaceOrderRequest PlaceOrderRequest
+        {
+            get
+            {
+                return new PlaceOrderRequest(
+                                _selectedVisit.Patient,
+                                _selectedVisit.entityRef,
+                                //_selectedDiagnosticService.DiagnosticServiceRef,
+                                _selectedDiagnosticServiceTreeItem.DiagnosticService.DiagnosticServiceRef,
+                                _selectedPriority,
+                                _selectedOrderingPhysician.PractitionerRef,
+                                _selectedFacility.FacilityRef,
+                                _scheduleOrder,
+                                _schedulingRequestDateTime);
+            }
+        }
+
+        public CancelOrderRequest CancelOrderRequest
+        {
+            get
+            {
+
+                return new CancelOrderRequest(_reOrderDetail.OrderRef, _selectedCancelReason);
+            }
+        }
+
         public void PlaceOrder()
         {
             if (this.HasValidationErrors)
@@ -443,54 +477,8 @@ namespace ClearCanvas.Ris.Client.Adt
                 return;
             }
 
-            try
-            {
-                Platform.GetService<IOrderEntryService>(
-                    delegate(IOrderEntryService service)
-                    {
-                        if (_reOrderDetail == null)
-                        {
-                            service.PlaceOrder(
-                                new PlaceOrderRequest(
-                                    _selectedVisit.Patient,
-                                    _selectedVisit.entityRef,
-                                    //_selectedDiagnosticService.DiagnosticServiceRef,
-                                    _selectedDiagnosticServiceTreeItem.DiagnosticService.DiagnosticServiceRef,
-                                    _selectedPriority,
-                                    _selectedOrderingPhysician.PractitionerRef,
-                                    _selectedFacility.FacilityRef,
-                                    _scheduleOrder,
-                                    _schedulingRequestDateTime));
-                        }
-                        else
-                        {
-                            service.ReplaceOrder(
-                                new ReplaceOrderRequest(
-                                    _selectedVisit.Patient,
-                                    _selectedVisit.entityRef,
-                                    //_selectedDiagnosticService.DiagnosticServiceRef,
-                                    _selectedDiagnosticServiceTreeItem.DiagnosticService.DiagnosticServiceRef,
-                                    _selectedPriority,
-                                    _selectedOrderingPhysician.PractitionerRef,
-                                    _selectedFacility.FacilityRef,
-                                    _scheduleOrder,
-                                    _schedulingRequestDateTime,
-                                    _reOrderDetail.OrderRef,
-                                    _selectedCancelReason));
-                        }
-                    });
-
-                this.Host.Exit();
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, SR.ExceptionCannotPlaceOrder, this.Host.DesktopWindow, 
-                    delegate
-                    {
-                        this.ExitCode = ApplicationComponentExitCode.Error;
-                        this.Host.Exit();
-                    });
-            }
+            this.ExitCode = ApplicationComponentExitCode.Normal;
+            this.Host.Exit();
         }
 
         public void Cancel()
