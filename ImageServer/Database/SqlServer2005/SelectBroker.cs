@@ -200,7 +200,7 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
                     // We could pass the entity down all the way, but decided to do it
                     // this way instead.
                     string subQualifier;
-                    if (subCriteria is SubSelect<SelectCriteria>)
+                    if (subCriteria is RelatedEntityCondition<SelectCriteria>)
                         subQualifier = qualifier;
                     else
                         subQualifier = string.Format("{0}.{1}", qualifier, subCriteria.GetKey());

@@ -27,7 +27,7 @@ namespace ClearCanvas.Enterprise.Core
     }
 
     /// <summary>
-    /// Type-independent base class for the <see cref="SearchCondition{T}"/> and <see cref="SubSelect{T}"/> classes.
+    /// Type-independent base class for the <see cref="SearchCondition{T}"/> and <see cref="RelatedEntityCondition{T}"/> classes.
     /// </summary>
     public class SearchConditionBase : SearchCriteria
     {

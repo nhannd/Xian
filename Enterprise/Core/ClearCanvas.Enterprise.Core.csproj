@@ -80,7 +80,7 @@
     <Compile Include="IReadContext.cs" />
     <Compile Include="ISearchCondition.cs" />
     <Compile Include="IServiceFactory.cs" />
-    <Compile Include="ISubSelect.cs" />
+    <Compile Include="IRelatedEntityCondition.cs" />
     <Compile Include="ITimeBroker.cs" />
     <Compile Include="ITransactionNotifier.cs" />
     <Compile Include="ITransactionRecorder.cs" />
@@ -107,7 +107,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
     </Compile>
-    <Compile Include="SubSelect.cs" />
+    <Compile Include="RelatedEntityCondition.cs" />
     <Compile Include="TimeService.cs" />
     <Compile Include="TransactionMonitorAdvice.cs" />
     <Compile Include="TransactionNotifier.cs">

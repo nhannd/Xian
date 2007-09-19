@@ -8,7 +8,7 @@ namespace ClearCanvas.Enterprise.Core
     /// Defines the public inteface for a Sub-Select condition.  
     /// </summary>
     /// <typeparam name="T">A class derived from <see cref="SearchCriteria"/></typeparam>
-    public interface ISubSelect<T>
+    public interface IRelatedEntityCondition<T>
         where T : SearchCriteria
     {
         /// <summary>

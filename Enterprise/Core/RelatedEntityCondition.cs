@@ -5,23 +5,23 @@ using System.Text;
 namespace ClearCanvas.Enterprise.Core
 {
     /// <summary>
-    /// Provides a basic implementation of <see cref="ISubSelect{T}"/>.  See <see cref="SearchCriteria"/> for 
+    /// Provides a basic implementation of <see cref="IRelatedEntityCondition{T}"/>.  See <see cref="SearchCriteria"/> for 
     /// usage of this class.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SubSelect<T> : SearchConditionBase, ISubSelect<T>
+    public class RelatedEntityCondition<T> : SearchConditionBase, IRelatedEntityCondition<T>
         where T: SearchCriteria
     {
-        public SubSelect()
+        public RelatedEntityCondition()
         {
         }
 
-        public SubSelect(string name)
+        public RelatedEntityCondition(string name)
             : base(name)
         {
         }
 
-        #region ISubSelect<T> Members
+        #region IRelatedEntityCondition<T> Members
 
         public void Exists(T val)
         {

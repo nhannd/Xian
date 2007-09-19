@@ -192,15 +192,15 @@ namespace ClearCanvas.ImageServer.Model.Criteria
         /// and <see cref="Series"/> tables is automatically added into the <see cref="SeriesSelectCriteria"/>
         /// instance by the broker.
         /// </remarks>
-        public ISubSelect<SelectCriteria> SeriesSubSelect
+        public IRelatedEntityCondition<SelectCriteria> SeriesRelatedEntityCondition
         {
             get
             {
-                if (!this.SubCriteria.ContainsKey("SeriesSubSelect"))
+                if (!this.SubCriteria.ContainsKey("SeriesRelatedEntityCondition"))
                 {
-                    this.SubCriteria["SeriesSubSelect"] = new SubSelect<SelectCriteria>("SeriesSubSelect");
+                    this.SubCriteria["SeriesRelatedEntityCondition"] = new RelatedEntityCondition<SelectCriteria>("SeriesRelatedEntityCondition");
                 }
-                return (ISubSelect<SelectCriteria>)this.SubCriteria["SeriesSubSelect"];
+                return (IRelatedEntityCondition<SelectCriteria>)this.SubCriteria["SeriesRelatedEntityCondition"];
             }
         }
     }
