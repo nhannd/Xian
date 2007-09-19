@@ -239,3 +239,78 @@ function formatReport(report)
 	
     return formattedReport;
 }
+
+/*
+// Useful test code for calculating patient age
+function testPatientAge()
+{
+	var threeYearsAgoToday = new Date();
+	var testDate = new Date(threeYearsAgoToday);
+	threeYearsAgoToday.setYear(threeYearsAgoToday.getFullYear() - 3);
+
+	var testString = "";
+	
+	while (testDate >= threeYearsAgoToday)
+	{
+		testString += testDate.getFullYear() + "-" + eval(testDate.getMonth()+1) + "-" + testDate.getDate() + " is " + getPatientAge(testDate, false, false);
+		testDate.setDate(testDate.getDate() - 1);
+	}
+	
+	return testString;
+}
+*/
+
+function getPatientAge(dateOfBirth, deathIndicator, timeOfDeath)
+{
+	var endDate = (deathIndicator == true ? timeOfDeath : new Date());
+
+	//Define a variable to hold the anniversary of theBirthdate in the endDate year
+	var theBirthdateThisYear = new Date(endDate);
+	theBirthdateThisYear.setDate(dateOfBirth.getDate());
+	theBirthdateThisYear.setMonth(dateOfBirth.getMonth());
+
+	// calculate the age at endDate
+	var age = endDate.getFullYear() - dateOfBirth.getFullYear();
+	if (endDate < theBirthdateThisYear) 
+		age--;
+
+	var ageString = age;
+	if (age >= 2)
+		ageString = age;
+	else
+	{
+		// display number of month if less than 2 years old
+		// of number of days if less than or equal to 31 days
+		var days = Math.floor((endDate - dateOfBirth)/(1000*60*60*24));
+		if (days < 0)
+			return "undefined";
+		else if (days < 1)
+			ageString = "0";
+		else if (days <= 31)
+			ageString = days + " days";
+		else
+		{
+			// Calculate the number of month
+			var yearDiff = endDate.getFullYear() - dateOfBirth.getFullYear();
+			var month = endDate.getMonth() - dateOfBirth.getMonth();
+			if (endDate.getDate() < dateOfBirth.getDate())
+				month -= 1;
+
+			// no month should be negative
+			month += (month < 0 ? 12 : 0);
+			
+			// add 12 month if already 1 year old
+			month += (age == 1 ? 12 : 0);
+
+			// special case for exactly 12 month 
+			month += (month == 0 && yearDiff == 0 ? 12 : 0);
+
+			ageString = month + " months";	
+		}
+	}
+
+	if (deathIndicator == true)
+		ageString += " (deceased)";
+		
+	return ageString;
+}
