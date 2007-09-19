@@ -9,8 +9,8 @@ class CollectionFieldDef < FieldDef
     super(model, fieldNode)
     @dataType = DATATYPE_MAPPINGS[fieldNode.name]
     @isLazy = (fieldNode.attributes['lazy'] == 'true')
-    elementNode = fieldNode.elements['composite-element'] || fieldNode.elements['one-to-many'] || fieldNode.elements['many-to-many']
-    @elementType = TypeNameUtils.getQualifiedName(elementNode.attributes['class'], defaultNamespace) if elementNode
+    @elementNode = fieldNode.elements['composite-element'] || fieldNode.elements['one-to-many'] || fieldNode.elements['many-to-many']
+    @elementType = TypeNameUtils.getQualifiedName(@elementNode.attributes['class'], defaultNamespace) if @elementNode
   end
   
   def kind
@@ -56,6 +56,17 @@ class CollectionFieldDef < FieldDef
   def isSearchable
     false
   end
+ 
+# JR: commenting this out for now since we dont' really need - if we need it in future, just add it back in 
+#  def attributes
+#    attrs = super
+#    case
+#      when @elementNode.name == 'composite-element' : attrs << "ValueCollection(typeof(#{elementType}))"
+#      when @elementNode.name == 'one-to-many' : attrs << "OneToMany(typeof(#{elementType}))"
+#      when @elementNode.name == 'many-to-many' : attrs << "ManyToMany(typeof(#{elementType}))"
+#    end
+#    attrs
+#  end
   
 protected
   def collectionElementClassDef

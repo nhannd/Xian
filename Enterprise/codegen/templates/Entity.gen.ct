@@ -6,9 +6,11 @@ using System.Text;
 using Iesi.Collections;
 using ClearCanvas.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Modelling;
 
 
-namespace <%= namespace %> {
+namespace <%= namespace %>
+{
 
 
     /// <summary>
@@ -59,6 +61,8 @@ namespace <%= namespace %> {
 	  	
 	  	<% fields.each do |f| %>
 		<% if(f.hasGetter || f.hasSetter) %>
+		<% f.attributes.each do |attr| %>
+		[<%= attr %>]<% end %>
 	  	public virtual <%= f.dataType %> <%= f.accessorName %>
 	  	{
 			<% if(f.hasGetter) %>

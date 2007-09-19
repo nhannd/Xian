@@ -11,7 +11,7 @@ class FieldDef < ElementDef
                :hasSetter,            # true if a setter should be generated
 	           :setterAccess,    	  # access level of the setter, returns nil by default (eg no access modifier), or protected, internal, private
                :nullable              # true if the field is nullable
-  
+   
   def initialize(model, fieldNode)
     @model = model
     
@@ -29,6 +29,12 @@ class FieldDef < ElementDef
     
     #if 'not-null' attribute is omitted, the default value is false (eg. the column is nullable)
     @nullable = (fieldNode.attributes['not-null'] == nil || fieldNode.attributes['not-null'] == 'false')
+    
+    # length of the field if specified, or nil otherwise
+    @length = fieldNode.attributes['length']
+    
+    # true if the field has a unique constraint, false otherwise
+    @unique = (fieldNode.attributes['unique'] == 'true')
   end
   
   def namespace
@@ -77,6 +83,15 @@ class FieldDef < ElementDef
   # (this is necessary because the return type is potentially an interface)
   def searchCriteriaReturnType
     "ISearchCondition<#{dataType}>"
+  end
+  
+  def attributes
+    attrs = []
+    attrs << "PersistentProperty"
+    attrs << "Required" if isMandatory
+    attrs << "MaxLength(#{@length})" if @length
+    attrs << "UniqueKey" if @unique
+    attrs
   end
   
 
