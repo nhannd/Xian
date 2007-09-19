@@ -58,7 +58,7 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.Text = _parentTree.Binding.GetNodeText(_item);
             this.ToolTipText = _parentTree.Binding.GetTooltipText(_item);
 
-            if (this.TreeView != null)
+            if (this.TreeView != null && this.TreeView.ImageList != null)
             {
                 IResourceResolver resolver = _parentTree.Binding.GetResourceResolver(_item);
                 IconSet iconSet = _parentTree.Binding.GetIconSet(_item);

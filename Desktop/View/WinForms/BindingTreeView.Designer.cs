@@ -33,7 +33,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._toolStrip = new System.Windows.Forms.ToolStrip();
             this._treeCtrl = new System.Windows.Forms.TreeView();
             this._contextMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this._iconImageList = new System.Windows.Forms.ImageList(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -67,12 +66,9 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._treeCtrl.ContextMenuStrip = this._contextMenu;
             this._treeCtrl.Dock = System.Windows.Forms.DockStyle.Fill;
             this._treeCtrl.HideSelection = false;
-            this._treeCtrl.ImageIndex = 0;
-            this._treeCtrl.ImageList = this._iconImageList;
             this._treeCtrl.Location = new System.Drawing.Point(2, 27);
             this._treeCtrl.Margin = new System.Windows.Forms.Padding(2);
             this._treeCtrl.Name = "_treeCtrl";
-            this._treeCtrl.SelectedImageIndex = 0;
             this._treeCtrl.ShowNodeToolTips = true;
             this._treeCtrl.Size = new System.Drawing.Size(360, 273);
             this._treeCtrl.TabIndex = 1;
@@ -87,12 +83,6 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._contextMenu.Closed += new System.Windows.Forms.ToolStripDropDownClosedEventHandler(this._contextMenu_Closed);
             this._contextMenu.Opening += new System.ComponentModel.CancelEventHandler(this._contextMenu_Opening);
             this._contextMenu.Closing += new System.Windows.Forms.ToolStripDropDownClosingEventHandler(this._contextMenu_Closing);
-            // 
-            // _iconImageList
-            // 
-            this._iconImageList.ColorDepth = System.Windows.Forms.ColorDepth.Depth32Bit;
-            this._iconImageList.ImageSize = new System.Drawing.Size(16, 16);
-            this._iconImageList.TransparentColor = System.Drawing.Color.Transparent;
             // 
             // BindingTreeView
             // 
@@ -115,7 +105,6 @@ namespace ClearCanvas.Desktop.View.WinForms
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.ToolStrip _toolStrip;
         private System.Windows.Forms.TreeView _treeCtrl;
-        private System.Windows.Forms.ImageList _iconImageList;
         private System.Windows.Forms.ContextMenuStrip _contextMenu;
     }
 }
