@@ -22,11 +22,13 @@ namespace ClearCanvas.Enterprise.Core
             ServiceOperationAttribute a = GetServiceOperationAttribute(invocation.Method);
             if (a.Auditable)
             {
-                // only install a TransactionRecorder if the current context does not already have one
-                if (PersistenceScope.Current != null && PersistenceScope.Current.TransactionRecorder == null)
+                IUpdateContext uctx = PersistenceScope.Current as IUpdateContext;
+
+                // only install a TransactionRecorder if the current context is an update context, and does not already have one
+                if (uctx != null && uctx.TransactionRecorder == null)
                 {
                     string transactionName = string.Format("{0}.{1}", invocation.This.GetType().FullName, invocation.Method.Name);
-                    PersistenceScope.Current.TransactionRecorder = new DefaultTransactionRecorder(transactionName);
+                    uctx.TransactionRecorder = new DefaultTransactionRecorder(transactionName);
                 }
             }
             return invocation.Proceed();

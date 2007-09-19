@@ -14,23 +14,6 @@ namespace ClearCanvas.Enterprise.Core
     }
 
     /// <summary>
-    /// Possible actions that will be taken on a persistence context when the <see cref="PersistenceScope"/>
-    /// terminates.
-    /// </summary>
-    public enum PersistenceScopeDisposeAction
-    {
-        /// <summary>
-        /// Closes the context and disposes it
-        /// </summary>
-        Close,
-
-        /// <summary>
-        /// Suspends the context
-        /// </summary>
-        Suspend
-    }
-
-    /// <summary>
     /// Controls whether the scope will attempt to inherit an existing persistence context, or create a new one
     /// </summary>
     public enum PersistenceScopeOption
@@ -71,8 +54,6 @@ namespace ClearCanvas.Enterprise.Core
         private PersistenceScope _parent;
         private Vote _vote;
 
-        private PersistenceScopeDisposeAction _disposeAction;
-
         [ThreadStatic]
         private static PersistenceScope _head;
 
@@ -82,20 +63,13 @@ namespace ClearCanvas.Enterprise.Core
         /// </summary>
         /// <param name="context"></param>
         public PersistenceScope(IPersistenceContext context)
-            :this(context, PersistenceScopeDisposeAction.Close)
         {
+            _context = context;
+
+            _parent = _head;
+            _head = this;
         }
 
-        /// <summary>
-        /// Creates a new persistence scope for the specified update context.  The scope assumes ownership of the context
-        /// and the specified action will be taken on the context when the scope terminates.
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="disposeAction"></param>
-        public PersistenceScope(IUpdateContext context, PersistenceScopeDisposeAction disposeAction)
-            :this((IPersistenceContext)context, disposeAction)
-        {
-        }
 
         /// <summary>
         /// Creates a new persistence scope for the specified context type, inheriting an existing context if possible.
@@ -110,7 +84,7 @@ namespace ClearCanvas.Enterprise.Core
         /// </remarks>
         /// <param name="contextType"></param>
         public PersistenceScope(PersistenceContextType contextType)
-            :this(InheritOrCreateContext(contextType, PersistenceScopeOption.Required), PersistenceScopeDisposeAction.Close)
+            :this(InheritOrCreateContext(contextType, PersistenceScopeOption.Required))
         {
         }
 
@@ -130,23 +104,8 @@ namespace ClearCanvas.Enterprise.Core
         /// <param name="contextType"></param>
         /// <param name="scopeOption"></param>
         public PersistenceScope(PersistenceContextType contextType, PersistenceScopeOption scopeOption)
-            : this(InheritOrCreateContext(contextType, scopeOption), PersistenceScopeDisposeAction.Close)
+            : this(InheritOrCreateContext(contextType, scopeOption))
         {
-        }
-
-
-        /// <summary>
-        /// Private constructor, used by public constructors
-        /// </summary>
-        /// <param name="context"></param>
-        /// <param name="disposeAction"></param>
-        private PersistenceScope(IPersistenceContext context, PersistenceScopeDisposeAction disposeAction)
-        {
-            _context = context;
-            _disposeAction = disposeAction;
-
-            _parent = _head;
-            _head = this;
         }
 
         private static IPersistenceContext InheritOrCreateContext(PersistenceContextType contextType, PersistenceScopeOption scopeOption)
@@ -219,10 +178,7 @@ namespace ClearCanvas.Enterprise.Core
 
                 if(OwnsContext)
                 {
-                    if (_disposeAction == PersistenceScopeDisposeAction.Close)
-                        CloseContext();
-                    else
-                        SuspendContext();
+                    CloseContext();
                 }
                 else
                 {
@@ -245,17 +201,6 @@ namespace ClearCanvas.Enterprise.Core
         private bool OwnsContext
         {
             get { return _parent == null || _parent._context != this._context; }
-        }
-
-        private void SuspendContext()
-        {
-            System.Diagnostics.Debug.Assert(this.OwnsContext && _context is IUpdateContext);
-
-            IUpdateContext uctx = _context as IUpdateContext;
-            if (null != uctx)
-            {
-                uctx.Suspend();
-            }
         }
 
         private void CloseContext()

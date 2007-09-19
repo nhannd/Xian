@@ -55,6 +55,7 @@
   <ItemGroup>
     <Compile Include="AuditAdvice.cs" />
     <Compile Include="CoreServiceExtensionPoint.cs" />
+    <Compile Include="DefaultEntityValidator.cs" />
     <Compile Include="EntityVersionException.cs" />
     <Compile Include="CoreServiceLayer.cs" />
     <Compile Include="DefaultTransactionRecorder.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="EnumValueNotFoundException.cs" />
     <Compile Include="IAuthenticationService.cs" />
     <Compile Include="IEntityBroker.cs" />
+    <Compile Include="IValidator.cs" />
     <Compile Include="IEnumBroker.cs" />
     <Compile Include="IMetadataBroker.cs" />
     <Compile Include="InProcessCoreServiceProvider.cs" />
@@ -85,6 +87,10 @@
     <Compile Include="ITransactionNotifier.cs" />
     <Compile Include="ITransactionRecorder.cs" />
     <Compile Include="IUpdateContext.cs" />
+    <Compile Include="Modelling\MaxLengthAttribute.cs" />
+    <Compile Include="Modelling\PersistentPropertyAttribute.cs" />
+    <Compile Include="Modelling\RequiredAttribute.cs" />
+    <Compile Include="Modelling\UniqueKeyAttribute.cs" />
     <Compile Include="PersistenceContextAdvice.cs" />
     <Compile Include="PersistenceException.cs" />
     <Compile Include="PersistenceScope.cs" />

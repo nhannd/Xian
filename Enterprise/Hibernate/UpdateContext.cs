@@ -12,6 +12,9 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// </summary>
     public class UpdateContext : PersistenceContext, IUpdateContext
     {
+        private UpdateContextInterceptor _interceptor;
+        private ITransactionRecorder _transactionRecorder;
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -19,17 +22,60 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="transactionNotifier"></param>
         /// <param name="mode"></param>
         internal UpdateContext(PersistentStore pstore, UpdateContextSyncMode mode)
-            : base(pstore, false)
+            : base(pstore)
         {
-            this.Session.FlushMode = mode == UpdateContextSyncMode.Flush ? FlushMode.Auto : FlushMode.Never;
+            if (mode == UpdateContextSyncMode.Hold)
+                throw new NotSupportedException("UpdateContextSyncMode.Hold is not supported");
         }
 
-        public override void Lock(Entity entity)
+        #region IUpdateContext members
+
+        /// <summary>
+        /// Gets or sets the transaction recorder for auditing.
+        /// </summary>
+        public ITransactionRecorder TransactionRecorder
         {
-            Lock(entity, DirtyState.Clean);
+            get { return _transactionRecorder; }
+            set { _transactionRecorder = value; }
         }
 
-        public override void Lock(Entity entity, DirtyState dirtyState)
+        public void Commit()
+        {
+            try
+            {
+                // sync state prior to commit, this ensures that all entities are validated and changes
+                // recorded by the interceptor
+                SynchStateCore();
+
+                // do audit
+                AuditTransaction();
+
+                // do final commit
+                CommitTransaction();
+
+                /* Transaction notification is non-existent right now
+                if (this.PersistentStore.TransactionNotifier != null)
+                {
+                    this.PersistentStore.TransactionNotifier.Queue(this.Interceptor.EntityChangeSet);
+                }
+                */
+            }
+            catch (Exception e)
+            {
+                HandleHibernateException(e, SR.ExceptionCommitFailure);
+            }
+        }
+
+        #endregion
+
+        #region Protected overrides
+
+        protected override ISession CreateSession()
+        {
+            return this.PersistentStore.SessionFactory.OpenSession(_interceptor = new UpdateContextInterceptor());
+        }
+
+        protected override void LockCore(Entity entity, DirtyState dirtyState)
         {
             switch (dirtyState)
             {
@@ -45,65 +91,34 @@ namespace ClearCanvas.Enterprise.Hibernate
             }
         }
 
-        #region IUpdateContext members
-
-        public void Commit()
+        internal override bool ReadOnly
         {
-            try
-            {
-                if (!this.InTransaction)
-                    throw new InvalidOperationException(SR.ExceptionNoCurrentTransaction);
-
-                CommitTransaction();
-  
-                if (this.PersistentStore.TransactionNotifier != null)
-                {
-                    this.PersistentStore.TransactionNotifier.Queue(this.Interceptor.EntityChangeSet);
-                }
-            }
-            catch (Exception e)
-            {
-                WrapAndRethrow(e, SR.ExceptionCommitFailure);
-            }
+            get { return false; }
         }
 
-        public void Resume(UpdateContextSyncMode mode)
+        protected override void SynchStateCore()
         {
-            base.Resume();
+            this.Session.Flush();
 
-            this.Session.FlushMode = mode == UpdateContextSyncMode.Flush ? FlushMode.Auto : FlushMode.Never;
-
-            // clear the previous change set
-            // (this is only necessary if the context was previously opened in Flush mode, which is not a typical usage)
-            this.Interceptor.ClearChangeSet();
-        }
-
-        #endregion
-
-        public override void Resume()
-        {
-            Resume(UpdateContextSyncMode.Flush);
+            // check validation results
+            CheckValidation();
         }
 
         protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
-                if (this.InTransaction)
+                try
                 {
-                    try
-                    {
-                        // assume the transaction failed and rollback
-                        RollbackTransaction();
-                    }
-                    catch (Exception e)
-                    {
-                        WrapAndRethrow(e, SR.ExceptionCloseContext);
-                    }
+                    // assume the transaction failed and rollback
+                    RollbackTransaction();
+                }
+                catch (Exception e)
+                {
+                    HandleHibernateException(e, SR.ExceptionCloseContext);
                 }
             }
 
-            // important to call base class to close the session, etc.
             base.Dispose(disposing);
         }
 
@@ -115,5 +130,41 @@ namespace ClearCanvas.Enterprise.Hibernate
         {
             get { return EntityLoadFlags.CheckVersion; }
         }
+
+        #endregion
+
+
+        #region Helpers
+
+        /// <summary>
+        /// Creates and saves a <see cref="TransactionRecord"/> for the current transaction, assuming the
+        /// <see cref="TransactionRecorder"/> property is set.
+        /// </summary>
+        private void AuditTransaction()
+        {
+            if (_transactionRecorder != null)
+            {
+
+                TransactionRecord txRecord = _transactionRecorder.CreateTransactionRecord(_interceptor.EntityChangeSet);
+
+                /* NB. Does not work with NHibernate 1.0.3
+                // obtain an audit session, based on the same ADO connection and same DB transaction
+                using (ISession session = _sessionFactory.OpenSession(this.Session.Connection))
+                {
+                   session.Save(record);
+                   session.Flush();
+                }
+                */
+
+                // for now, use the same session
+                this.Session.Save(txRecord);
+            }
+        }
+
+        private void CheckValidation()
+        {
+        }
+
+        #endregion
     }
 }

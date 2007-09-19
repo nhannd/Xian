@@ -11,7 +11,7 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// <summary>
     /// Implementation of NHibernate IInterceptor, used to record entity change-set for a transaction.
     /// </summary>
-    internal class DefaultInterceptor : IInterceptor
+    internal class UpdateContextInterceptor : EmptyInterceptor
     {
         class ChangeRecord
         {
@@ -35,6 +35,10 @@ namespace ClearCanvas.Enterprise.Hibernate
             }
         }
 
+        class ValidationRecord
+        {
+        }
+
 
         private List<ChangeRecord> _changeRecords = new List<ChangeRecord>();
         private EntityChange[] _changeSet;
@@ -53,12 +57,6 @@ namespace ClearCanvas.Enterprise.Hibernate
             }
         }
 
-        public void ClearChangeSet()
-        {
-            _changeRecords.Clear();
-            _changeSet = null;
-        }
-
         #region IInterceptor Members
 
         /// <summary>
@@ -69,13 +67,9 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="state"></param>
         /// <param name="propertyNames"></param>
         /// <param name="types"></param>
-        public void OnDelete(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
+        public override void OnDelete(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
         {
-            // ignore changes to enum values
-            if (entity is EnumValue)
-                return;
-
-            _changeRecords.Add(new ChangeRecord(entity, EntityChangeType.Delete));
+            RecordChange(entity, EntityChangeType.Delete);
         }
 
         /// <summary>
@@ -88,13 +82,10 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="propertyNames"></param>
         /// <param name="types"></param>
         /// <returns></returns>
-        public bool OnFlushDirty(object entity, object id, object[] currentState, object[] previousState, string[] propertyNames, NHibernate.Type.IType[] types)
+        public override bool OnFlushDirty(object entity, object id, object[] currentState, object[] previousState, string[] propertyNames, NHibernate.Type.IType[] types)
         {
-            // ignore changes to enum values
-            if (entity is EnumValue)
-                return false;
-
-            _changeRecords.Add(new ChangeRecord(entity, EntityChangeType.Update));
+            Validate(entity);
+            RecordChange(entity, EntityChangeType.Update);
             return false;
         }
 
@@ -107,37 +98,19 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <param name="propertyNames"></param>
         /// <param name="types"></param>
         /// <returns></returns>
-        public bool OnSave(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
+        public override bool OnSave(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
         {
             // HACK: ignore the addition of auditing records
             if (NHibernateUtil.GetClass(entity).Equals(typeof(TransactionRecord)))
                 return false;
 
-            // ignore changes to enum values
-            if (entity is EnumValue)
-                return false;
-
-            _changeRecords.Add(new ChangeRecord(entity, EntityChangeType.Create));
+            Validate(entity);
+            RecordChange(entity, EntityChangeType.Create);
             return false;
 
         }
 
-        public int[] FindDirty(object entity, object id, object[] currentState, object[] previousState, string[] propertyNames, NHibernate.Type.IType[] types)
-        {
-            return null;
-        }
-
-        public object Instantiate(Type type, object id)
-        {
-            return null;
-        }
-
-        public object IsUnsaved(object entity)
-        {
-            return null;
-        }
-
-        public void PostFlush(System.Collections.ICollection entities)
+        public override void PostFlush(System.Collections.ICollection entities)
         {
             // from the individual change records, construct a change set that contains each entity only once
             Dictionary<object, EntityChange> changes = new Dictionary<object, EntityChange>();
@@ -163,16 +136,20 @@ namespace ClearCanvas.Enterprise.Hibernate
             _changeSet = (new List<EntityChange>(changes.Values)).ToArray();
         }
 
-        public void PreFlush(System.Collections.ICollection entities)
-        {
-        }
-
-        public bool OnLoad(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
-        {
-            return false;
-
-        }
-
         #endregion
+
+        private void RecordChange(object obj, EntityChangeType changeType)
+        {
+            // ignore changes to enum values for now
+            // TODO: we should really not ignore these
+            if (obj is EnumValue)
+                return;
+
+            _changeRecords.Add(new ChangeRecord(obj, changeType));
+        }
+
+        private void Validate(object obj)
+        {
+        }
     }
 }

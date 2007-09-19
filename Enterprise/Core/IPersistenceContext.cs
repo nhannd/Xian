@@ -54,25 +54,7 @@ namespace ClearCanvas.Enterprise.Core
         TEntity Load<TEntity>(EntityRef entityRef, EntityLoadFlags flags)
             where TEntity : Entity;
 
-        bool IsProxyLoaded(Entity entity);
-
-        bool IsCollectionLoaded(IEnumerable collection);
-
-
-        /// <summary>
-        /// Suspends this context.  Releases all connections and resources, but maintains the state
-        /// of all persistent objects.
-        /// </summary>
-        void Suspend();
-
-        /// <summary>
-        /// Resumes a suspended context.
-        /// </summary>
-        void Resume();
-
         void SynchState();
-
-        ITransactionRecorder TransactionRecorder { get; set; }
 
     }
 }

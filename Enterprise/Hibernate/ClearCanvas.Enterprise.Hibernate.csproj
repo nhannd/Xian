@@ -54,9 +54,9 @@
     <Compile Include="Ddl\ScriptWriter.cs" />
     <Compile Include="Ddl\EnumValueInsertGenerator.cs" />
     <Compile Include="Ddl\TableSchemaGenerator.cs" />
+    <Compile Include="EmptyInterceptor.cs" />
     <Compile Include="EntityBroker.cs" />
     <Compile Include="EnumBroker.cs" />
-    <Compile Include="DefaultInterceptor.cs" />
     <Compile Include="Hql\HqlAnd.cs" />
     <Compile Include="Hql\HqlException.cs" />
     <Compile Include="Hql\HqlJunction.cs" />
@@ -82,6 +82,7 @@
     </Compile>
     <Compile Include="TimeBroker.cs" />
     <Compile Include="UpdateContext.cs" />
+    <Compile Include="UpdateContextInterceptor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">

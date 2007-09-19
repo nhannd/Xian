@@ -11,12 +11,12 @@ namespace ClearCanvas.Enterprise.Core
     public interface IUpdateContext : IPersistenceContext
     {
         /// <summary>
-        /// Resumes this context, assuming it has been suspended.  Typically specify <see cref="UpdateContextSyncMode.Flush"/>
-        /// only if this is the final step in the application transaction.
+        /// Gets or sets the entity validator that validates domain objects prior to persistence.
         /// </summary>
-        /// <param name="syncMode"></param>
-        void Resume(UpdateContextSyncMode syncMode);
+        //IValidator Validator { get; set; }
 
+
+        ITransactionRecorder TransactionRecorder { get; set; }
 
         /// <summary>
         /// Attempts to flush and commit all changes made within this update context to the persistent store.

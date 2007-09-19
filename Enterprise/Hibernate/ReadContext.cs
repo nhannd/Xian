@@ -17,10 +17,29 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// </summary>
         /// <param name="sessionFactory"></param>
         internal ReadContext(PersistentStore pstore)
-            : base(pstore, true)
+            : base(pstore)
         {
+        }
+
+        #region Protected overrides
+
+        protected override ISession CreateSession()
+        {
+            ISession session = this.PersistentStore.SessionFactory.OpenSession();
+
             // never write changes to the database from a read context
-            this.Session.FlushMode = FlushMode.Never;
+            session.FlushMode = FlushMode.Never;
+            return session;
+        }
+
+        protected override void SynchStateCore()
+        {
+            // do nothing
+        }
+
+        internal override bool ReadOnly
+        {
+            get { return true; }
         }
 
         /// <summary>
@@ -33,16 +52,15 @@ namespace ClearCanvas.Enterprise.Hibernate
             {
                 try
                 {
-                    // end the transaction
+                    // commit the transaction - nothing will be flushed to the DB
                     CommitTransaction();
                 }
                 catch (Exception e)
                 {
-                    WrapAndRethrow(e, SR.ExceptionCloseContext);
+                    HandleHibernateException(e, SR.ExceptionCloseContext);
                 }
             }
 
-            // important to call base class to close the session, etc.
             base.Dispose(disposing);
         }
 
@@ -51,18 +69,14 @@ namespace ClearCanvas.Enterprise.Hibernate
             get { return EntityLoadFlags.None; }
         }
 
-        public override void Lock(Entity entity)
+        protected override void LockCore(Entity entity, DirtyState dirtyState)
         {
+            if (dirtyState != DirtyState.Clean)
+                throw new InvalidOperationException();
+
             this.Session.Lock(entity, LockMode.None);
         }
 
-        public override void Lock(Entity entity, DirtyState dirtyState)
-        {
-            if (dirtyState == DirtyState.Dirty)
-                throw new InvalidOperationException();
-
-            Lock(entity);
-        }
-
+        #endregion
     }
 }
