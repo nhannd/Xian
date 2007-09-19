@@ -87,6 +87,48 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Shr
 		Release.AspNetCompiler.Debug = "False"
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Common", "..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj", "{B5EBFFD7-6641-4932-91C9-4C4322B41868}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Enterprise.Core", "..\Enterprise\Core\ClearCanvas.Enterprise.Core.csproj", "{431E9444-9915-4D49-B92D-9B7EC086622A}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Database", "Database\ClearCanvas.ImageServer.Database.csproj", "{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Streaming", "Streaming\ClearCanvas.ImageServer.Streaming.csproj", "{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Common", "Common\ClearCanvas.ImageServer.Common.csproj", "{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.ImageServer.Streaming.XmlGenerator", "Streaming\XmlGenerator\ClearCanvas.ImageServer.Streaming.XmlGenerator.csproj", "{95FEA63F-7E51-4829-923E-8CD02C8DEAE2}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClearCanvas.Common", "..\Common\ClearCanvas.Common.csproj", "{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}"
+	ProjectSection(WebsiteProperties) = preProject
+		Debug.AspNetCompiler.Debug = "True"
+		Release.AspNetCompiler.Debug = "False"
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -145,6 +187,34 @@ Global
 		{6EABFD8A-B727-4B9C-800D-ADCBDE339639}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6EABFD8A-B727-4B9C-800D-ADCBDE339639}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6EABFD8A-B727-4B9C-800D-ADCBDE339639}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5EBFFD7-6641-4932-91C9-4C4322B41868}.Release|Any CPU.Build.0 = Release|Any CPU
+		{431E9444-9915-4D49-B92D-9B7EC086622A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{431E9444-9915-4D49-B92D-9B7EC086622A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{431E9444-9915-4D49-B92D-9B7EC086622A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{431E9444-9915-4D49-B92D-9B7EC086622A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86CA6EDB-DE59-45E9-8BD8-832FBB3F8009}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF8F531F-5AE4-4AC1-A086-B50FB799EEF1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDFB1D25-75AE-43A6-A7A5-33D173EFFD04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95FEA63F-7E51-4829-923E-8CD02C8DEAE2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95FEA63F-7E51-4829-923E-8CD02C8DEAE2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95FEA63F-7E51-4829-923E-8CD02C8DEAE2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95FEA63F-7E51-4829-923E-8CD02C8DEAE2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
