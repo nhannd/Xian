@@ -144,8 +144,8 @@ namespace ClearCanvas.ImageServer.Queue
                                 catch (Exception e)
                                 {
                                     Platform.Log(LogLevel.Error, e,
-                                        "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item.",
-                                        queueItem.TypeEnum.Description);
+                                        "Unexpected exception when processing WorkQueue item of type {0}.  Failing Queue item. (GUID: {1})",
+                                        queueItem.TypeEnum.Description,queueItem.GetKey());
 
                                     FailQueueItem(queueItem);
                                 }

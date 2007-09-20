@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security;
 using System.Text;
 using System.Xml;
 using System.Globalization;
@@ -56,15 +57,19 @@ namespace ClearCanvas.ImageServer.Streaming
             {
                 if (attributeNode.Name.Equals("Attribute"))
                 {
-                    String vr = attributeNode.Attributes["VR"].Value;
+                    DicomVr xmlVr = DicomVr.GetVR(attributeNode.Attributes["VR"].Value);
                     String tag = attributeNode.Attributes["Tag"].Value;
 
                     uint tagValue = uint.Parse(tag,NumberStyles.HexNumber);
 
                     DicomTag theTag = DicomTagDictionary.GetDicomTag(tagValue);
                     if (theTag == null)
-                        theTag = new DicomTag(tagValue,"Unknown tag",DicomVr.GetVR(vr),false,1,uint.MaxValue,false);
+                        theTag = new DicomTag(tagValue,"Unknown tag",xmlVr,false,1,uint.MaxValue,false);
 
+                    if (!theTag.VR.Equals(xmlVr))
+                    {
+                        theTag = new DicomTag(tagValue, theTag.Name, xmlVr, theTag.MultiVR, theTag.VMLow, theTag.VMHigh, theTag.Retired);
+                    }
                     DicomAttribute attribute = theCollection[theTag];
 
                     if (attribute is DicomAttributeSQ)
@@ -90,7 +95,15 @@ namespace ClearCanvas.ImageServer.Streaming
                     }
                     else
                     {
-                        attribute.SetStringValue(attributeNode.InnerText);
+                        // Cleanup the common XML character replacements
+                        string tempString = attributeNode.InnerText;
+                        tempString = tempString.Replace("&lt;", "<").
+                            Replace("&gt;", ">").
+                            Replace("&quot;", "\"").
+                            Replace("&apos;", "'").
+                            Replace("&amp;", "&");
+
+                        attribute.SetStringValue(tempString);
                     }
                 }
                 attributeNode = attributeNode.NextSibling;
@@ -174,10 +187,39 @@ namespace ClearCanvas.ImageServer.Streaming
 						instanceElement.AppendChild(itemElement);
 					}
 				}
-				else
-				{
-					instanceElement.InnerText = attribute;
-				}
+                else if (attribute is DicomAttributeOW)
+                {
+                    ushort[] val = (ushort[])attribute.Values;
+
+                    StringBuilder str = null;
+                    foreach (ushort i in val)
+                    {
+                        if (str == null)
+                            str = new StringBuilder(i.ToString());
+                        else
+                            str.AppendFormat("\\{0}", i.ToString());
+                    }
+                    if (str!= null)
+                        instanceElement.InnerText = str.ToString();
+                }
+                else if (attribute is DicomAttributeOF)
+                {
+                    float[] val = (float[])attribute.Values;
+                    StringBuilder str = null;
+                    foreach (float i in val)
+                    {
+                        if (str == null)
+                            str = new StringBuilder(i.ToString());
+                        else
+                            str.AppendFormat("\\{0}", i.ToString());
+                    }
+                    if (str != null)
+                        instanceElement.InnerText = str.ToString();
+                }
+                else
+                {
+                    instanceElement.InnerText = SecurityElement.Escape(attribute);
+                }
 
 				instance.AppendChild(instanceElement);
 			}

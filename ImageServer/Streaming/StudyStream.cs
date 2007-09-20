@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Text;
 using System.Xml;
-
+using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Streaming
@@ -70,6 +70,35 @@ namespace ClearCanvas.ImageServer.Streaming
             }
         }
 
+        public bool RemoveFile(DicomFile theFile)
+        {
+            // Create a copy of the collection without pixel data
+            DicomAttributeCollection data = theFile.DataSet;
+
+            String studyInstanceUid = data[DicomTags.StudyInstanceUID];
+
+            if (!_studyInstanceUid.Equals(studyInstanceUid))
+                return false;
+            
+            String seriesInstanceUid = data[DicomTags.SeriesInstanceUID];
+
+            SeriesStream series = this[seriesInstanceUid];
+
+            if (series == null)
+                return false;
+
+            String sopInstanceUid = data[DicomTags.SOPInstanceUID];
+
+            InstanceStream instance = series[sopInstanceUid];
+            if (instance == null)
+                return false;
+
+            // Setting the indexer to null removes the sop instance from the stream
+            series[sopInstanceUid] = null;
+
+            return true;
+        }
+
         public bool AddFile(DicomFile theFile)
         {
             // Create a copy of the collection without pixel data
@@ -80,8 +109,11 @@ namespace ClearCanvas.ImageServer.Streaming
             if (_studyInstanceUid == null)
                 _studyInstanceUid = studyInstanceUid;
             else if (!_studyInstanceUid.Equals(studyInstanceUid))
+            {
+                Platform.Log(LogLevel.Error,
+                             "Attempting to add an instance to the stream where the study instance UIDs don't match for SOP: {0}", theFile.MediaStorageSopInstanceUid);
                 return false;
-
+            }
             String seriesInstanceUid = data[DicomTags.SeriesInstanceUID];
 
             SeriesStream series = this[seriesInstanceUid];
@@ -97,6 +129,7 @@ namespace ClearCanvas.ImageServer.Streaming
             InstanceStream instance = series[sopInstanceUid];
             if (instance != null)
             {
+                Platform.Log(LogLevel.Warn,"Attempting to add a duplicate SOP instance to the stream: {0}",theFile.MediaStorageSopInstanceUid);
                 return false;
             }
 

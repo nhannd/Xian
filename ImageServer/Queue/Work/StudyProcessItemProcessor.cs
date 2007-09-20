@@ -1,11 +1,9 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 using System.Xml;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom.Network;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Common;
 using ClearCanvas.ImageServer.Queue;
@@ -102,22 +100,9 @@ namespace ClearCanvas.ImageServer.Queue.Work
             return theStream;
         }
 
-        private void WriteStudyStream(string streamFile, StudyStream theStream)
-        {
 
-            XmlDocument doc = theStream.GetMomento();
 
-            if (File.Exists(streamFile))
-                File.Delete(streamFile);
-
-            Stream fileStream = new FileStream(streamFile, FileMode.CreateNew);
-
-            StreamingIo.Write(doc, fileStream);
-
-            fileStream.Close();
-        }
-
-        private void ProcessFile(WorkQueue item, string path, StudyStream stream)
+        private void ProcessFile(WorkQueue item, string path, StudyStream stream, string studyStreamFile)
         {
             // Use the command processor for rollback capabilities.
             ServerCommandProcessor processor = new ServerCommandProcessor("Processing WorkQueue DICOM File");
@@ -130,11 +115,11 @@ namespace ClearCanvas.ImageServer.Queue.Work
                 // Get the Patients Name for processing purposes.
                 String patientsName = file.DataSet[DicomTags.PatientsName].GetString(0, "");
 
+                // Update the StudyStream object
+                processor.ExecuteCommand(new InsertStreamCommand(file, stream, studyStreamFile));
+
                 // Insert into the database
                 processor.ExecuteCommand(new InsertInstanceCommand(_readContext,file,_storageLocation));
-
-                // Update the StudyStream object
-                processor.ExecuteCommand(new InsertStreamCommand(file,stream));
 
                 Platform.Log(LogLevel.Info, "Processed SOP: {0} for Patient {1}", file.MediaStorageSopInstanceUid, patientsName);
             }
@@ -142,17 +127,29 @@ namespace ClearCanvas.ImageServer.Queue.Work
             {
                 Platform.Log(LogLevel.Error, e, "Unexpected exception when {0}.  Rolling back operation.", processor.Description);
                 processor.Rollback();
+                throw new ApplicationException("Unexpected exception when processing file.",e);
             }
         }
 
         private void ProcessUidList(WorkQueue item)
         {
-            
-
             string studyStreamPath =
                 Path.Combine(_storageLocation.GetStudyPath(), _storageLocation.StudyInstanceUid + ".xml");
+            
+            StudyStream stream;
 
-            StudyStream stream = LoadStudyStream(studyStreamPath);
+            try
+            {
+                stream = LoadStudyStream(studyStreamPath);
+            }
+            catch (Exception e)
+            {
+                Platform.Log(LogLevel.Error, e,
+                             "Unexpected exception when loading study stream to process StudyProcess WorkQueue item for Study Instance UID: {0} File: {1}", _storageLocation.StudyInstanceUid, studyStreamPath);
+                throw new ApplicationException("Unexpected exception when loading study stream", e);
+            }
+
+            int successfulProcessCount = 0;
 
             foreach (WorkQueueUid sop in _uidList)
             {
@@ -160,7 +157,7 @@ namespace ClearCanvas.ImageServer.Queue.Work
                 path = Path.Combine(path, sop.SopInstanceUid + ".dcm");
                 try
                 {
-                    ProcessFile(item, path,stream);
+                    ProcessFile(item, path,stream, studyStreamPath);
                 }
                 catch (Exception e)
                 {
@@ -168,18 +165,20 @@ namespace ClearCanvas.ImageServer.Queue.Work
                     continue;
                 }
 
+                successfulProcessCount++;
+
                 // Delete it out of the queue
                 DeleteWorkQueueUid(sop);                
             }
-
-            // Write it back out.
-            WriteStudyStream(studyStreamPath, stream);
 
             // Update the WorkQueue item status and times.
             IUpdateWorkQueue update = _readContext.GetBroker<IUpdateWorkQueue>();
             
             WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
-            parms.StatusEnum = StatusEnum.GetEnum("Pending");
+            if (successfulProcessCount == 0)
+                parms.StatusEnum = StatusEnum.GetEnum("Failed");
+            else
+                parms.StatusEnum = StatusEnum.GetEnum("Pending");
             parms.WorkQueueKey = item.GetKey();
             parms.StudyStorageKey = item.StudyStorageKey;
             parms.ScheduledTime = Platform.Time.AddSeconds(15.0);

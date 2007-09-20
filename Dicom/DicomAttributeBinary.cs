@@ -68,51 +68,87 @@ namespace ClearCanvas.Dicom
         #region private Methods
         private object ParseNumber(string val)
         {
-            try
+            if (typeof (T) == typeof (byte))
             {
-                if (typeof(T) == typeof(byte))
-                {
-                    return byte.Parse(val, NumberStyle);
-                }
-                if (typeof(T) == typeof(sbyte))
-                {
-                    return sbyte.Parse(val, NumberStyle);
-                }
-                if (typeof(T) == typeof(short))
-                {
-                    return short.Parse(val, NumberStyle);
-                }
-                if (typeof(T) == typeof(ushort))
-                {
-                    return ushort.Parse(val, NumberStyle);
-                }
-                if (typeof(T) == typeof(int))
-                {
-                    return int.Parse(val, NumberStyle);
-                }
-                if (typeof(T) == typeof(uint))
-                {
-                    return uint.Parse(val, NumberStyle);
-                }
-                if (typeof(T) == typeof(long))
-                {
-                    return long.Parse(val, NumberStyle);
-                }
-                if (typeof(T) == typeof(ulong))
-                {
-                    return ulong.Parse(val, NumberStyle);
-                }
-                if (typeof(T) == typeof(float))
-                {
-                    return float.Parse(val, NumberStyle);
-                }
-                if (typeof(T) == typeof(double))
-                {
-                    return double.Parse(val, NumberStyle);
-                }
-
+                byte parseVal;
+                if (false == byte.TryParse(val, NumberStyle, null, out parseVal))
+                    throw new DicomDataException(
+                        String.Format("Invalid byte format value for tag {0}: {1}", Tag.ToString(), val));
+                return parseVal;
             }
-            catch { }
+            if (typeof (T) == typeof (sbyte))
+            {
+                sbyte parseVal;
+                if (false == sbyte.TryParse(val, NumberStyle, null, out parseVal))
+                    throw new DicomDataException(
+                        String.Format("Invalid sbyte format value for tag {0}: {1}", Tag.ToString(), val));
+                return parseVal;
+            }
+            if (typeof (T) == typeof (short))
+            {
+                short parseVal;
+                if (false == short.TryParse(val, NumberStyle, null, out parseVal))
+                    throw new DicomDataException(
+                        String.Format("Invalid short format value for tag {0}: {1}", Tag.ToString(), val));
+                return parseVal;
+            }
+            if (typeof (T) == typeof (ushort))
+            {
+                ushort parseVal;
+                if (false == ushort.TryParse(val, NumberStyle, null, out parseVal))
+                    throw new DicomDataException(
+                        String.Format("Invalid ushort format value for tag {0}: {1}", Tag.ToString(), val));
+                return parseVal;
+            }
+            if (typeof (T) == typeof (int))
+            {
+                int parseVal;
+                if (false == int.TryParse(val, NumberStyle, null, out parseVal))
+                    throw new DicomDataException(
+                        String.Format("Invalid int format value for tag {0}: {1}", Tag.ToString(), val));
+                return parseVal;
+            }
+            if (typeof (T) == typeof (uint))
+            {
+                uint parseVal;
+                if (false == uint.TryParse(val, NumberStyle, null, out parseVal))
+                    throw new DicomDataException(
+                        String.Format("Invalid uint format value for tag {0}: {1}", Tag.ToString(), val));
+                return parseVal;
+            }
+            if (typeof (T) == typeof (long))
+            {
+                long parseVal;
+                if (false == long.TryParse(val, NumberStyle, null, out parseVal))
+                    throw new DicomDataException(
+                        String.Format("Invalid long format value for tag {0}: {1}", Tag.ToString(), val));
+                return parseVal;
+            }
+            if (typeof (T) == typeof (ulong))
+            {
+                ulong parseVal;
+                if (false == ulong.TryParse(val, NumberStyle, null, out parseVal))
+                    throw new DicomDataException(
+                        String.Format("Invalid ulong format value for tag {0}: {1}", Tag.ToString(), val));
+                return parseVal;
+            }
+            if (typeof (T) == typeof (float))
+            {
+                float parseVal;
+                if (false == float.TryParse(val, NumberStyle, null, out parseVal))
+                    throw new DicomDataException(
+                        String.Format("Invalid float format value for tag {0}: {1}", Tag.ToString(), val));
+                return parseVal;
+            }
+            if (typeof (T) == typeof (double))
+            {
+                double parseVal;
+                if (false == double.TryParse(val, NumberStyle, null, out parseVal))
+                    throw new DicomDataException(
+                        String.Format("Invalid double format value for tag {0}: {1}", Tag.ToString(), val));
+                return parseVal;
+            }
+
             return null;
         }
 
