@@ -18,5 +18,10 @@ namespace ClearCanvas.Enterprise.Core.Modelling
         {
             _required = required;
         }
+
+        public bool IsRequired
+        {
+            get { return _required; }
+        }
     }
 }

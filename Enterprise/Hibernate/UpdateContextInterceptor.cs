@@ -5,6 +5,8 @@ using System.Text;
 using NHibernate;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Modelling;
+using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -100,7 +102,7 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <returns></returns>
         public override bool OnSave(object entity, object id, object[] state, string[] propertyNames, NHibernate.Type.IType[] types)
         {
-            // HACK: ignore the addition of auditing records
+            // ignore the addition of auditing records
             if (NHibernateUtil.GetClass(entity).Equals(typeof(TransactionRecord)))
                 return false;
 
@@ -150,6 +152,10 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         private void Validate(object obj)
         {
+            ValidationRuleSet rules = Validation.GetInvariantRules(obj);
+            TestResult result = rules.Test(obj);
+            if (result.Fail)
+                throw new EntityValidationException(result.Reasons);
         }
     }
 }

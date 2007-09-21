@@ -15,7 +15,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;UNIT_TESTS</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -31,6 +31,10 @@
     <Reference Include="Iesi.Collections, Version=1.0.0.1, Culture=neutral, PublicKeyToken=154fdcb44c4484fc">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\ReferencedAssemblies\Iesi.Collections.dll</HintPath>
+    </Reference>
+    <Reference Include="nunit.framework, Version=2.2.7.0, Culture=neutral, PublicKeyToken=96d09a1eb7f44a77, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\ReferencedAssemblies\nunit.framework.dll</HintPath>
     </Reference>
     <Reference Include="Spring.Aop, Version=2.1.0.2, Culture=neutral, PublicKeyToken=65e474d141e25e07, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -56,6 +60,7 @@
     <Compile Include="AuditAdvice.cs" />
     <Compile Include="CoreServiceExtensionPoint.cs" />
     <Compile Include="DefaultEntityValidator.cs" />
+    <Compile Include="EntityValidationException.cs" />
     <Compile Include="EntityVersionException.cs" />
     <Compile Include="CoreServiceLayer.cs" />
     <Compile Include="DefaultTransactionRecorder.cs" />
@@ -72,6 +77,7 @@
     <Compile Include="EnumValueNotFoundException.cs" />
     <Compile Include="IAuthenticationService.cs" />
     <Compile Include="IEntityBroker.cs" />
+    <Compile Include="IPropertyBoundRule.cs" />
     <Compile Include="IValidator.cs" />
     <Compile Include="IEnumBroker.cs" />
     <Compile Include="IMetadataBroker.cs" />
@@ -87,10 +93,24 @@
     <Compile Include="ITransactionNotifier.cs" />
     <Compile Include="ITransactionRecorder.cs" />
     <Compile Include="IUpdateContext.cs" />
-    <Compile Include="Modelling\MaxLengthAttribute.cs" />
+    <Compile Include="Modelling\EmbeddedValueAttribute.cs" />
+    <Compile Include="Modelling\IPropertyBoundRule.cs" />
+    <Compile Include="Modelling\IUniqueConstraintValidationBroker.cs" />
+    <Compile Include="Modelling\LengthAttribute.cs" />
+    <Compile Include="Modelling\LengthSpecification.cs" />
+    <Compile Include="Modelling\ModellingException.cs" />
     <Compile Include="Modelling\PersistentPropertyAttribute.cs" />
     <Compile Include="Modelling\RequiredAttribute.cs" />
+    <Compile Include="Modelling\RequiredSpecification.cs" />
+    <Compile Include="Modelling\SimpleInvariantSpecification.cs" />
+    <Compile Include="Modelling\Tests\ValidationBuilderTests.cs" />
+    <Compile Include="Modelling\UniqueAttribute.cs" />
     <Compile Include="Modelling\UniqueKeyAttribute.cs" />
+    <Compile Include="Modelling\UniqueKeySpecification.cs" />
+    <Compile Include="Modelling\UniqueSpecification.cs" />
+    <Compile Include="Modelling\Validation.cs" />
+    <Compile Include="Modelling\ValidationBuilder.cs" />
+    <Compile Include="Modelling\ValidationRuleSet.cs" />
     <Compile Include="PersistenceContextAdvice.cs" />
     <Compile Include="PersistenceException.cs" />
     <Compile Include="PersistenceScope.cs" />
@@ -145,6 +165,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="persistence.cd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Modelling\Tests\XMLFile1.xml" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

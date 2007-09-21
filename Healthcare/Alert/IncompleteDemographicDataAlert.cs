@@ -50,7 +50,7 @@ namespace ClearCanvas.Healthcare.Alert
                 if (result.Success == false)
                 {
                     List<string> failureMessages = new List<string>();
-                    ExtractFailureMessage(result.Reason, failureMessages);
+                    ExtractFailureMessage(result.Reasons, failureMessages);
                     alertNotification.Reasons.AddRange(failureMessages);
                 }
             }
@@ -63,15 +63,15 @@ namespace ClearCanvas.Healthcare.Alert
 
         #region Private Helpers
 
-        private void ExtractFailureMessage(TestResultReason reason, List<string> failureMessages)
+        private void ExtractFailureMessage(TestResultReason[] reasons, List<string> failureMessages)
         {
-            if (reason == null)
-                return;
+            foreach (TestResultReason reason in reasons)
+            {
+                if (!string.IsNullOrEmpty(reason.Message))
+                    failureMessages.Add(reason.Message);
 
-            if (reason.Message != null && reason.Message.Length > 0)
-                failureMessages.Add(reason.Message);
-
-            ExtractFailureMessage(reason.Reason, failureMessages);
+                ExtractFailureMessage(reason.Reasons, failureMessages);
+            }
         }
 
         #endregion

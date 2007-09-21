@@ -5,13 +5,7 @@ using System.Text;
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
-    public class MaxLengthAttribute : Attribute
+    public class EmbeddedValueAttribute : Attribute
     {
-        private int _length;
-
-        public MaxLengthAttribute(int length)
-        {
-            _length = length;
-        }
     }
 }
