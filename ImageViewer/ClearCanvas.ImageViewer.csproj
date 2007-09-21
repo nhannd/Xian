@@ -451,8 +451,9 @@
     <None Include="ClassDiagrams\ImageGraphics.cd" />
     <None Include="ClassDiagrams\ImageViewerComponent.cd" />
     <None Include="ClassDiagrams\InputManagement.cd" />
-    <None Include="ClassDiagrams\LUT.cd" />
-    <None Include="ClassDiagrams\LUTManagement.cd" />
+    <None Include="ClassDiagrams\LutImplementations.cd" />
+    <None Include="ClassDiagrams\LutInterfaces.cd" />
+    <None Include="ClassDiagrams\LutProviders.cd" />
     <None Include="ClassDiagrams\PresentationImage.cd" />
     <None Include="ClassDiagrams\ImageViewerTools.cd" />
     <None Include="ClassDiagrams\PresentationImageHierarchy.cd" />
