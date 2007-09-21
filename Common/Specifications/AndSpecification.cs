@@ -22,7 +22,7 @@ namespace ClearCanvas.Common.Specifications
             {
                 TestResult r = subSpec.Test(exp);
                 if (r.Fail)
-                    return new TestResult(false, new TestResultReason(this.FailureMessage, r.Reason));
+                    return new TestResult(false, new TestResultReason(this.FailureMessage, r.Reasons));
             }
             return new TestResult(true);
         }

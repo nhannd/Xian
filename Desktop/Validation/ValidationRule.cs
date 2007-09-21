@@ -80,15 +80,16 @@ namespace ClearCanvas.Desktop.Validation
             public ValidationResult Evaluate(IApplicationComponent component)
             {
                 TestResult result = _specification.Test(component);
-                return new ValidationResult(result.Success, result.Success ? null : GetTopLevelMessage(result.Reason));
+                return new ValidationResult(result.Success, result.Success ? null : GetTopLevelMessage(result.Reasons));
             }
 
-            private static string GetTopLevelMessage(TestResultReason reason)
+            private static string GetTopLevelMessage(TestResultReason[] reasons)
             {
-                if (reason == null)
+                if (reasons.Length == 0)
                     return null;
-                else
-                    return (reason.Message != null) ? reason.Message : GetTopLevelMessage(reason.Reason);
+
+                string message = reasons[0].Message;
+                return (!string.IsNullOrEmpty(message)) ? message : GetTopLevelMessage(reasons[0].Reasons);
             }
         }
 

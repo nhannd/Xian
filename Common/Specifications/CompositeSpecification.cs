@@ -24,9 +24,19 @@ namespace ClearCanvas.Common.Specifications
             _childSpecs.Add(spec);
         }
 
+        public void AddRange(IEnumerable<ISpecification> specs)
+        {
+            _childSpecs.AddRange(specs);
+        }
+
         public override IEnumerable<ISpecification> SubSpecs
         {
             get { return _childSpecs; }
+        }
+
+        public bool IsEmpty
+        {
+            get { return _childSpecs.Count == 0; }
         }
     }
 }

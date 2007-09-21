@@ -28,7 +28,7 @@ namespace ClearCanvas.Common.Specifications
             }
             else
             {
-                return new TestResult(false, new TestResultReason(this.FailureMessage, r.Reason));
+                return new TestResult(false, new TestResultReason(this.FailureMessage, r.Reasons));
             }
         }
 

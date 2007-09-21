@@ -7,17 +7,22 @@ namespace ClearCanvas.Common.Specifications
     public class TestResultReason
     {
         private string _message;
-        private TestResultReason _reason;
+        private TestResultReason[] _reasons;
 
         public TestResultReason(string message)
-            :this(message, null)
+            : this(message, new TestResultReason[] {})
         {
         }
 
         public TestResultReason(string message, TestResultReason reason)
+            : this(message, new TestResultReason[] { reason })
+        {
+        }
+
+        public TestResultReason(string message, TestResultReason[] reasons)
         {
             _message = message;
-            _reason = reason;
+            _reasons = reasons;
         }
 
         public string Message
@@ -25,9 +30,9 @@ namespace ClearCanvas.Common.Specifications
             get { return _message; }
         }
 
-        public TestResultReason Reason
+        public TestResultReason[] Reasons
         {
-            get { return _reason; }
+            get { return _reasons; }
         }
     }
 }

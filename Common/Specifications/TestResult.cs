@@ -7,17 +7,22 @@ namespace ClearCanvas.Common.Specifications
     public class TestResult
     {
         private bool _success;
-        private TestResultReason _reason;
+        private TestResultReason[] _reasons;
 
         public TestResult(bool success)
-            : this(success, null)
+            : this(success, new TestResultReason[] {})
         {
         }
 
         public TestResult(bool success, TestResultReason reason)
+            :this(success, new TestResultReason[] { reason })
+        {
+        }
+
+        public TestResult(bool success, TestResultReason[] reasons)
         {
             _success = success;
-            _reason = reason;
+            _reasons = reasons;
         }
 
         public bool Success
@@ -30,9 +35,9 @@ namespace ClearCanvas.Common.Specifications
             get { return !_success; }
         }
 
-        public TestResultReason Reason
+        public TestResultReason[] Reasons
         {
-            get { return _reason; }
+            get { return _reasons; }
         }
     }
 }

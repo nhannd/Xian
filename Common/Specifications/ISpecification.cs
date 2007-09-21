@@ -7,6 +7,5 @@ namespace ClearCanvas.Common.Specifications
     public interface ISpecification
     {
         TestResult Test(object obj);
-        IEnumerable<ISpecification> SubSpecs { get; }
     }
 }
