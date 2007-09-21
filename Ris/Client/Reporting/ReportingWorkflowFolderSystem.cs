@@ -43,7 +43,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         IDesktopWindow DesktopWindow { get; }
     }
 
-    public class ReportingWorkflowFolderSystem : WorkflowFolderSystem<ReportingWorklistItem>
+    public class ReportingWorkflowFolderSystem : WorkflowFolderSystem<ReportingWorklistItem>, ISearchDataHandler
     {
         class ReportingWorkflowItemToolContext : ToolContext, IReportingWorkflowItemToolContext
         {
@@ -163,14 +163,28 @@ namespace ClearCanvas.Ris.Client.Reporting
             folderExplorer.AddItemActions(_itemToolSet.Actions);
             folderExplorer.AddFolderActions(_folderToolSet.Actions);
 
-            folderExplorer.SearchDataChanged += folderExplorer_SearchDataChanged;
+            folderExplorer.RegisterSearchDataHandler(this);
         }
 
-        void folderExplorer_SearchDataChanged(object sender, EventArgs e)
+        public SearchData SearchData
         {
-            FolderExplorerComponent.SearchEventArgs arg = (FolderExplorerComponent.SearchEventArgs)e;
-            _searchFolder.SearchData = arg.SearchData;
-            SelectedFolder = _searchFolder;
+            set
+            {
+                _searchFolder.SearchData = value;
+                SelectedFolder = _searchFolder;
+            }
+        }
+
+        public SearchField SearchFields
+        {
+            get
+            {
+                return SearchField.Mrn |
+                       SearchField.Healthcard |
+                       SearchField.FamilyName |
+                       SearchField.GivenName |
+                       SearchField.AccessionNumber;
+            }
         }
 
         public bool GetOperationEnablement(string operationName)

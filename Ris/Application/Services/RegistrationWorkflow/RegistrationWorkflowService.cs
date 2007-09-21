@@ -36,9 +36,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 request.SearchData.MrnAssigningAuthority,
                 request.SearchData.HealthcardID,
                 request.SearchData.FamilyName,
-                request.SearchData.GivenName,
-                request.SearchData.AccessionNumber,
-                request.SearchData.ShowActiveOnly);
+                request.SearchData.GivenName);
 
             return new SearchResponse(CollectionUtils.Map<WorklistItem, RegistrationWorklistItem, List<RegistrationWorklistItem>>(result,
                 delegate(WorklistItem item)

@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Client
         void AddItemActions(IActionSet actions);
         void AddFolderActions(IActionSet actions);
 
-        event EventHandler SearchDataChanged;
+        void RegisterSearchDataHandler(ISearchDataHandler handler);
     }
 
     /// <summary>
@@ -116,10 +116,9 @@ namespace ClearCanvas.Ris.Client
                 _component._folderActions = _component._folderActions.Union(actions);
             }
 
-            public event EventHandler SearchDataChanged
+            public void RegisterSearchDataHandler(ISearchDataHandler handler)
             {
-                add { _component.SearchDataChanged += value; }
-                remove { _component.SearchDataChanged -= value; }
+                _component.RegisterSearchDataHandler(handler);
             }
 
             #endregion
@@ -129,35 +128,25 @@ namespace ClearCanvas.Ris.Client
 
         #region Search related
 
-        public class SearchEventArgs : EventArgs
+        private ISearchDataHandler _searchDataHandler;
+
+        public void RegisterSearchDataHandler(ISearchDataHandler handler)
         {
-            private readonly SearchData _data;
-
-            public SearchEventArgs(SearchData data)
-            {
-                _data = data;
-            }
-
-            public SearchData SearchData
-            {
-                get { return _data; }
-            }
-        }
-
-        private event EventHandler _searchDataChanged;
-
-        public event EventHandler SearchDataChanged
-        {
-            add { _searchDataChanged += value; }
-            remove { _searchDataChanged -= value; }
+            _searchDataHandler = handler;
         }
 
         public SearchData SearchData
         {
             set
             {
-                EventsHelper.Fire(_searchDataChanged, this, new SearchEventArgs(value));
+                if (_searchDataHandler != null)
+                    _searchDataHandler.SearchData = value;
             }
+        }
+
+        public SearchField SearchFields
+        {
+            get { return _searchDataHandler != null ? _searchDataHandler.SearchFields : SearchField.None; }
         }
 
         #endregion
@@ -513,6 +502,5 @@ namespace ClearCanvas.Ris.Client
         }
 
         #endregion
-
     }
 }

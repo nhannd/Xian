@@ -35,9 +35,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._familyName = new ClearCanvas.Controls.WinForms.TextField();
             this._givenName = new ClearCanvas.Controls.WinForms.TextField();
             this._searchButton = new System.Windows.Forms.Button();
-            this._keepOpen = new System.Windows.Forms.CheckBox();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._showActive = new System.Windows.Forms.CheckBox();
+            this._keepOpen = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
+            this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -51,21 +53,20 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this._familyName, 0, 2);
             this.tableLayoutPanel1.Controls.Add(this._givenName, 0, 3);
             this.tableLayoutPanel1.Controls.Add(this._searchButton, 1, 5);
-            this.tableLayoutPanel1.Controls.Add(this._keepOpen, 0, 6);
-            this.tableLayoutPanel1.Controls.Add(this._showActive, 0, 5);
+            this.tableLayoutPanel1.Controls.Add(this.flowLayoutPanel1, 0, 5);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Margin = new System.Windows.Forms.Padding(2);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.Padding = new System.Windows.Forms.Padding(0, 0, 15, 0);
-            this.tableLayoutPanel1.RowCount = 7;
+            this.tableLayoutPanel1.RowCount = 6;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(219, 293);
             this.tableLayoutPanel1.TabIndex = 7;
             // 
@@ -143,35 +144,44 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._searchButton.Location = new System.Drawing.Point(142, 227);
             this._searchButton.Margin = new System.Windows.Forms.Padding(2);
             this._searchButton.Name = "_searchButton";
-            this.tableLayoutPanel1.SetRowSpan(this._searchButton, 2);
             this._searchButton.Size = new System.Drawing.Size(60, 27);
             this._searchButton.TabIndex = 7;
             this._searchButton.Text = "Search";
             this._searchButton.UseVisualStyleBackColor = true;
             this._searchButton.Click += new System.EventHandler(this._searchButton_Click);
             // 
-            // _keepOpen
+            // flowLayoutPanel1
             // 
-            this._keepOpen.AutoSize = true;
-            this._keepOpen.Location = new System.Drawing.Point(2, 250);
-            this._keepOpen.Margin = new System.Windows.Forms.Padding(2);
-            this._keepOpen.Name = "_keepOpen";
-            this._keepOpen.Size = new System.Drawing.Size(80, 17);
-            this._keepOpen.TabIndex = 6;
-            this._keepOpen.Text = "Keep Open";
-            this._keepOpen.UseVisualStyleBackColor = true;
+            this.flowLayoutPanel1.Controls.Add(this._showActive);
+            this.flowLayoutPanel1.Controls.Add(this._keepOpen);
+            this.flowLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 228);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(96, 62);
+            this.flowLayoutPanel1.TabIndex = 9;
             // 
             // _showActive
             // 
             this._showActive.AutoSize = true;
             this._showActive.Checked = true;
             this._showActive.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._showActive.Location = new System.Drawing.Point(3, 228);
+            this._showActive.Location = new System.Drawing.Point(3, 3);
             this._showActive.Name = "_showActive";
             this._showActive.Size = new System.Drawing.Size(80, 17);
-            this._showActive.TabIndex = 9;
+            this._showActive.TabIndex = 10;
             this._showActive.Text = "Active Only";
             this._showActive.UseVisualStyleBackColor = true;
+            // 
+            // _keepOpen
+            // 
+            this._keepOpen.AutoSize = true;
+            this._keepOpen.Location = new System.Drawing.Point(2, 25);
+            this._keepOpen.Margin = new System.Windows.Forms.Padding(2);
+            this._keepOpen.Name = "_keepOpen";
+            this._keepOpen.Size = new System.Drawing.Size(80, 17);
+            this._keepOpen.TabIndex = 11;
+            this._keepOpen.Text = "Keep Open";
+            this._keepOpen.UseVisualStyleBackColor = true;
             // 
             // SearchComponentControl
             // 
@@ -184,7 +194,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.Size = new System.Drawing.Size(219, 293);
             this.Load += new System.EventHandler(this.SearchComponentControl_Load);
             this.tableLayoutPanel1.ResumeLayout(false);
-            this.tableLayoutPanel1.PerformLayout();
+            this.flowLayoutPanel1.ResumeLayout(false);
+            this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -197,8 +208,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private ClearCanvas.Controls.WinForms.TextField _healthcard;
         private ClearCanvas.Controls.WinForms.TextField _mrn;
         private System.Windows.Forms.Button _searchButton;
-        private System.Windows.Forms.CheckBox _keepOpen;
         private ClearCanvas.Controls.WinForms.TextField _accessionNumber;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.CheckBox _showActive;
+        private System.Windows.Forms.CheckBox _keepOpen;
     }
 }

@@ -42,8 +42,6 @@ namespace ClearCanvas.Healthcare.Brokers
             string mrnAssigningAuthority,
             string healthcardID,
             string familyName,
-            string givenName,
-            string accessionNumber,
-            bool showActiveOnly);
+            string givenName);
     }
 }
