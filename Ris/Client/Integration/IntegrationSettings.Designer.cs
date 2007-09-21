@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Ris.Integration {
+namespace ClearCanvas.Ris.Client.Integration {
     
     
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]

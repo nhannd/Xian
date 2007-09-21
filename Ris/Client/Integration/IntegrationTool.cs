@@ -25,7 +25,7 @@ using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 
-namespace ClearCanvas.Ris.Integration
+namespace ClearCanvas.Ris.Client.Integration
 {
     [MenuAction("apply", "global-menus/Tools/Integration")]
     [ButtonAction("apply", "global-toolbars/Tools/Integration")]

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ClearCanvas.Ris.Integration {
+namespace ClearCanvas.Ris.Client.Integration {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace ClearCanvas.Ris.Integration {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Ris.Integration.SR", typeof(SR).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ClearCanvas.Ris.Client.Integration.SR", typeof(SR).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

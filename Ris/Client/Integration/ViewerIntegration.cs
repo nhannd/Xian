@@ -10,7 +10,7 @@ using ClearCanvas.ImageViewer.StudyFinders.LocalDataStore;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Ris.Client;
 
-namespace ClearCanvas.Ris.Integration
+namespace ClearCanvas.Ris.Client.Integration
 {
     [ExtensionOf(typeof(ViewerIntegrationExtensionPoint))]
     public class ViewerIntegration : IViewerIntegration

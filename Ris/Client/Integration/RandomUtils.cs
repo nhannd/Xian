@@ -5,7 +5,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
-namespace ClearCanvas.Ris.Integration
+namespace ClearCanvas.Ris.Client.Integration
 {
     public static class RandomUtils
     {

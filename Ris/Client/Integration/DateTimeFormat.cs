@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace ClearCanvas.Ris.Integration
+namespace ClearCanvas.Ris.Client.Integration
 {
     public static class DateTimeFormat
     {

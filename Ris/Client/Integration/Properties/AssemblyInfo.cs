@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyVersion("1.0.2623.13258")]
 [assembly: AssemblyFileVersion("1.0.2623.13258")]
 [assembly: ClearCanvas.Common.Plugin]
-[assembly: AssemblyTitle("ClearCanvas.Ris.Integration")]
+[assembly: AssemblyTitle("ClearCanvas.Ris.Client.Integration")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]

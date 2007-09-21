@@ -7,8 +7,8 @@
     <ProjectGuid>{59B67540-9638-4724-B5B6-50CF6848B43B}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>ClearCanvas.Ris.Integration</RootNamespace>
-    <AssemblyName>ClearCanvas.Ris.Integration</AssemblyName>
+    <RootNamespace>ClearCanvas.Ris.Client.Integration</RootNamespace>
+    <AssemblyName>ClearCanvas.Ris.Client.Integration</AssemblyName>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -67,43 +67,43 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">
+    <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Desktop\ClearCanvas.Desktop.csproj">
+    <ProjectReference Include="..\..\..\Desktop\ClearCanvas.Desktop.csproj">
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Dicom\ClearCanvas.Dicom.csproj">
+    <ProjectReference Include="..\..\..\Dicom\ClearCanvas.Dicom.csproj">
       <Project>{AD9ECE2B-8268-4115-8DC8-860FBD011FFF}</Project>
       <Name>ClearCanvas.Dicom</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Dicom\DataStore\ClearCanvas.Dicom.DataStore.csproj">
+    <ProjectReference Include="..\..\..\Dicom\DataStore\ClearCanvas.Dicom.DataStore.csproj">
       <Project>{3930FE1D-74C7-49E0-8E0D-05C0FEE194A8}</Project>
       <Name>ClearCanvas.Dicom.DataStore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
+    <ProjectReference Include="..\..\..\Enterprise\Common\ClearCanvas.Enterprise.Common.csproj">
       <Project>{B5EBFFD7-6641-4932-91C9-4C4322B41868}</Project>
       <Name>ClearCanvas.Enterprise.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ImageViewer\ClearCanvas.ImageViewer.csproj">
+    <ProjectReference Include="..\..\..\ImageViewer\ClearCanvas.ImageViewer.csproj">
       <Project>{85100D3E-471C-47C9-9687-ABF25F617ED7}</Project>
       <Name>ClearCanvas.ImageViewer</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ImageViewer\Services\ClearCanvas.ImageViewer.Services.csproj">
+    <ProjectReference Include="..\..\..\ImageViewer\Services\ClearCanvas.ImageViewer.Services.csproj">
       <Project>{2F464B93-3631-4886-96A0-D3F493536997}</Project>
       <Name>ClearCanvas.ImageViewer.Services</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\ImageViewer\StudyFinders\LocalDataStore\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.csproj">
+    <ProjectReference Include="..\..\..\ImageViewer\StudyFinders\LocalDataStore\ClearCanvas.ImageViewer.StudyFinders.LocalDataStore.csproj">
       <Project>{A3FD975D-F9A7-4435-B4E2-BB7FAEB92B44}</Project>
       <Name>ClearCanvas.ImageViewer.StudyFinders.LocalDataStore</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Application\Common\ClearCanvas.Ris.Application.Common.csproj">
+    <ProjectReference Include="..\..\Application\Common\ClearCanvas.Ris.Application.Common.csproj">
       <Project>{09F49217-CD98-4773-8CFB-594F189EEE3B}</Project>
       <Name>ClearCanvas.Ris.Application.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\Client\ClearCanvas.Ris.Client.csproj">
+    <ProjectReference Include="..\ClearCanvas.Ris.Client.csproj">
       <Project>{F8E75C01-AB14-4DDE-ABEA-3EECC4957A1F}</Project>
       <Name>ClearCanvas.Ris.Client</Name>
     </ProjectReference>
