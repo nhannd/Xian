@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer
 {
-	public class ActiveImageViewerChangedEventArgs : EventArgs
+	public sealed class ActiveImageViewerChangedEventArgs : EventArgs
 	{
 		private IImageViewer _deactivatedImageViewer;
 		private IImageViewer _activatedImageViewer;

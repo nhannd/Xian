@@ -28,11 +28,18 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		public DisplaySet() : this("","")
+		{
+			
+		}
+
 		/// <summary>
 		/// Initializes a new instance of <see cref="DisplaySet"/>.
 		/// </summary>
-		public DisplaySet()
+		public DisplaySet(string name, string uid)
 		{
+			_name = name ?? "";
+			_uid = uid ?? "";
 			this.PresentationImages.ItemAdded += new EventHandler<PresentationImageEventArgs>(OnPresentationImageAdded);
 			this.PresentationImages.ItemRemoved += new EventHandler<PresentationImageEventArgs>(OnPresentationImageRemoved);
 		}
@@ -53,6 +60,8 @@ namespace ClearCanvas.ImageViewer
 				return _presentationImages; 
 			}
 		}
+
+		// TODO: Consider returning IEnumerable
 
 		/// <summary>
 		/// Gets a collection of linked <see cref="IPresentationImage"/> objects.
@@ -112,7 +121,6 @@ namespace ClearCanvas.ImageViewer
 		public string Name
 		{
 			get { return _name; }
-			set { _name = value; }
 		}
 
 		/// <summary>
@@ -182,7 +190,6 @@ namespace ClearCanvas.ImageViewer
 		public string Uid
 		{
 			get { return _uid; }
-			set { _uid = value; }
 		}
 
 		#endregion
@@ -236,10 +243,7 @@ namespace ClearCanvas.ImageViewer
 		/// <returns>The cloned <see cref="DisplaySet"/>.</returns>
 		public IDisplaySet Clone()
 		{
-			DisplaySet displaySet = new DisplaySet();
-
-			displaySet.Name = this.Name;
-			displaySet.Uid = this.Uid;
+			DisplaySet displaySet = new DisplaySet(this.Name, this.Uid);
 			displaySet.ParentImageSet = this.ParentImageSet;
 
 			foreach (IPresentationImage image in this.PresentationImages)

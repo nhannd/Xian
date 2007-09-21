@@ -42,7 +42,7 @@ namespace ClearCanvas.ImageViewer
 		/// <remarks>
 		/// Use <see cref="ImageSop"/> to access DICOM tags.
 		/// </remarks>
-		public virtual ImageSop ImageSop
+		public ImageSop ImageSop
 		{
 			get { return _imageSop; }
 		}

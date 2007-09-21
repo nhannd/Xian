@@ -5,6 +5,7 @@ using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer
 {
+	// TODO: Get rid of this class
 	public class ClientArea 
 	{
 		// Private attributes

@@ -6,6 +6,10 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer
 {
+	// TODO: Consider removing this class, since you can
+	// just create the ILayoutManager extension yourself and 
+	// pass it into the ImageViewerComponent
+
 	/// <summary>
 	/// Defines an extension point for image layout management.
 	/// </summary>

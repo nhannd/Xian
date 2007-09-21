@@ -48,6 +48,7 @@ namespace ClearCanvas.ImageViewer
 
 		}
 
+		// TODO: Rename this method
 		public override IPresentationImage Clone()
 		{
 			// TODO:

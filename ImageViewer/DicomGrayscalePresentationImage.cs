@@ -40,6 +40,8 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckForNullReference(imageSop, "imageSop");
 
 			_imageSop = imageSop;
+
+			// TODO: Consider making this a singleton
 			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
 		}
 
@@ -51,7 +53,7 @@ namespace ClearCanvas.ImageViewer
 		/// <remarks>
 		/// Use <see cref="ImageSop"/> to access DICOM tags.
 		/// </remarks>
-		public virtual ImageSop ImageSop
+		public ImageSop ImageSop
 		{
 			get { return _imageSop; }
 		}

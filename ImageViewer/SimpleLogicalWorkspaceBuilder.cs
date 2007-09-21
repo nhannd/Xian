@@ -168,9 +168,8 @@ namespace ClearCanvas.ImageViewer
 
 		private static IDisplaySet AddDisplaySet(IImageSet imageSet, Series series)
 		{
-			DisplaySet displaySet = new DisplaySet();
-			displaySet.Name = String.Format("{0}: {1}", series.SeriesNumber, series.SeriesDescription);
-			displaySet.Uid = series.SeriesInstanceUID;
+			string name = String.Format("{0}: {1}", series.SeriesNumber, series.SeriesDescription);
+			DisplaySet displaySet = new DisplaySet(name, series.SeriesInstanceUID);
 
 			imageSet.DisplaySets.Add(displaySet);
 
