@@ -14,6 +14,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 		private ImageBuffer _finalBuffer;
 		private IntPtr _windowID;
 		private IntPtr _contextID;
+		private Rectangle _clientRectangle;
+		private Rectangle _clipRectangle;
 
 		public GdiRenderingSurface(IntPtr windowID, int width, int height)
 		{
@@ -43,6 +45,32 @@ namespace ClearCanvas.ImageViewer.Rendering
 			get { return _contextID; }
 			set { _contextID = value; }
 		}
+
+		/// <summary>
+		/// Gets or sets the rectangle to which the image will be rendered.
+		/// </summary>
+		/// <remarks>
+		/// This is typically the rectangle of the view onto the <see cref="ITile"/>.
+		/// </remarks>
+		public Rectangle ClientRectangle
+		{
+			get { return _clientRectangle; }
+			set { _clientRectangle = value; }
+		}
+
+		/// <summary>
+		/// Gets or sets the rectangle that requires repainting.
+		/// </summary>
+		/// <remarks>
+		/// The implementer of <see cref="IRenderer"/> should use this rectangle
+		/// to intelligently perform the <see cref="DrawMode.Refresh"/> operation.
+		/// </remarks>
+		public Rectangle ClipRectangle
+		{
+			get { return _clipRectangle; }
+			set { _clipRectangle = value; }
+		}
+
 
 		#endregion
 

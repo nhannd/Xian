@@ -405,11 +405,7 @@ namespace ClearCanvas.ImageViewer
 			if (_presentationImage == null)
 				return;
 
-			_clientRectangle = drawArgs.ClientRectangle;
-
-			drawArgs.Tile = this;
-			drawArgs.ImageBox = this.ParentImageBox;
-
+			_clientRectangle = drawArgs.RenderingSurface.ClientRectangle;
 			_presentationImage.OnDraw(drawArgs);
 		}
 

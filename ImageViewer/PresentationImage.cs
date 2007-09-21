@@ -377,9 +377,8 @@ namespace ClearCanvas.ImageViewer
 		{
 			drawArgs.SceneGraph = this.SceneGraph;
 			drawArgs.PresentationImage = this;
-			drawArgs.DisplaySet = this.ParentDisplaySet;
 
-			(this.SceneGraph as SceneGraph).ClientRectangle = drawArgs.ClientRectangle;
+			(this.SceneGraph as SceneGraph).ClientRectangle = drawArgs.RenderingSurface.ClientRectangle;
 
 			OnDrawing();
 

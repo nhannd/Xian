@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
@@ -46,5 +47,31 @@ namespace ClearCanvas.ImageViewer.Rendering
 			get;
 			set;
 		}
+
+		/// <summary>
+		/// Gets or sets the rectangle to which the image will be rendered.
+		/// </summary>
+		/// <remarks>
+		/// This is typically the rectangle of the view onto the <see cref="ITile"/>.
+		/// </remarks>
+		Rectangle ClientRectangle
+		{
+			get;
+			set;
+		}
+
+		/// <summary>
+		/// Gets or sets the rectangle that requires repainting.
+		/// </summary>
+		/// <remarks>
+		/// The implementer of <see cref="IRenderer"/> should use this rectangle
+		/// to intelligently perform the <see cref="DrawMode.Refresh"/> operation.
+		/// </remarks>
+		Rectangle ClipRectangle
+		{ 
+			get; 
+			set;
+		}
+
 	}
 }

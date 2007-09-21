@@ -13,7 +13,7 @@ using ClearCanvas.ImageViewer.Annotations;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
-	public class StandardPresentationImageRenderer : IRenderer, IDisposable
+	public class StandardPresentationImageRenderer : IRenderer
 	{
 		#region Private Fields
 
@@ -73,16 +73,16 @@ namespace ClearCanvas.ImageViewer.Rendering
 		{
 			Platform.CheckForNullReference(drawArgs, "drawArgs");
 
-			if (drawArgs.ClientRectangle.Width == 0 ||
-				drawArgs.ClientRectangle.Height == 0)
-				return;
-
 			if (drawArgs.RenderingSurface == null)
 				return;
 
 			_surface = drawArgs.RenderingSurface as GdiRenderingSurface;
 
 			if (_surface == null)
+				return;
+
+			if (_surface.ClientRectangle.Width == 0 ||
+				_surface.ClientRectangle.Height == 0)
 				return;
 
 			if (drawArgs.DrawMode == DrawMode.Render)
@@ -103,11 +103,12 @@ namespace ClearCanvas.ImageViewer.Rendering
 			_firstImage = true;
 
 			DrawSceneGraph(
-				drawArgs.SceneGraph, 
-				drawArgs.ClientRectangle, 
+				drawArgs.SceneGraph,
+				_surface.ClientRectangle, 
 				true);
 
-			DrawTextOverlay(drawArgs.PresentationImage, drawArgs.ClientRectangle);
+			IPresentationImage presentationImage = drawArgs.SceneGraph.ParentPresentationImage;
+			DrawTextOverlay(presentationImage, _surface.ClientRectangle);
 
 			clock.Stop();
 			string str = String.Format("Render: {0}\n", clock.ToString());
@@ -121,10 +122,10 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			if (_surface.FinalBuffer != null)
 			{
-				if (drawArgs.ClipRectangle.Width != 0 && drawArgs.ClipRectangle.Height != 0)
+				if (_surface.ClipRectangle.Width != 0 && _surface.ClipRectangle.Height != 0)
                 {
 					System.Drawing.Graphics graphics = System.Drawing.Graphics.FromHdc(_surface.ContextID);
-					_surface.FinalBuffer.RenderTo(graphics, drawArgs.ClipRectangle);
+					_surface.FinalBuffer.RenderTo(graphics, _surface.ClipRectangle);
 					graphics.Dispose();
                 }
 			}

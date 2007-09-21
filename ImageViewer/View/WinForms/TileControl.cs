@@ -118,10 +118,14 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			CodeClock clock = new CodeClock();
 			clock.Start();
 
+			if (this.Surface != null)
+			{
+				this.Surface.ClientRectangle = this.ClientRectangle;
+				this.Surface.ClipRectangle = this.ClientRectangle;
+			}
+
 			DrawArgs args = new DrawArgs(
 				this.Surface, 
-				this.ClientRectangle, 
-				this.ClientRectangle, 
 				ClearCanvas.ImageViewer.Rendering.DrawMode.Render);
 			_tile.OnDraw(args);
 			Invalidate();
@@ -156,11 +160,11 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			else
 			{
 				this.Surface.ContextID = e.Graphics.GetHdc();
+				this.Surface.ClientRectangle = this.ClientRectangle;
+				this.Surface.ClipRectangle = e.ClipRectangle;
 
 				DrawArgs args = new DrawArgs(
 					this.Surface, 
-					this.ClientRectangle, 
-					e.ClipRectangle, 
 					ClearCanvas.ImageViewer.Rendering.DrawMode.Refresh);
 				
 				_tile.OnDraw(args);
