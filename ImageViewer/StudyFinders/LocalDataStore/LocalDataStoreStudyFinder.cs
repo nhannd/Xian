@@ -29,15 +29,15 @@ namespace ClearCanvas.ImageViewer.StudyFinders.LocalDataStore
 			Platform.CheckForNullReference(queryParams, "queryParams");
 
             QueryKey queryKey = new QueryKey();
-            queryKey.Add(DicomTags.PatientID, queryParams["PatientId"]);
+            queryKey.Add(DicomTags.PatientId, queryParams["PatientId"]);
             queryKey.Add(DicomTags.AccessionNumber, queryParams["AccessionNumber"]);
             queryKey.Add(DicomTags.PatientsName, queryParams["PatientsName"]);
             queryKey.Add(DicomTags.StudyDate, queryParams["StudyDate"]);
             queryKey.Add(DicomTags.StudyDescription, queryParams["StudyDescription"]);
             queryKey.Add(DicomTags.PatientsBirthDate, "");
-            queryKey.Add(DicomTags.ModalitiesinStudy, queryParams["ModalitiesInStudy"]);
+            queryKey.Add(DicomTags.ModalitiesInStudy, queryParams["ModalitiesInStudy"]);
             queryKey.Add(DicomTags.SpecificCharacterSet, "");
-			queryKey.Add(DicomTags.StudyInstanceUID, queryParams["StudyInstanceUid"]);
+			queryKey.Add(DicomTags.StudyInstanceUid, queryParams["StudyInstanceUid"]);
 
             ReadOnlyQueryResultCollection results = Query(queryKey);
             if (null == results)

@@ -39,7 +39,7 @@ namespace ClearCanvas.ImageServer.Model.Criteria
             }
         }
 
-        [DicomField(DicomTags.SeriesInstanceUID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         public ISearchCondition<string> SeriesInstanceUid
         {
             get

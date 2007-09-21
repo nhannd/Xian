@@ -117,12 +117,12 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
                 dump.EditTag(DicomTags.StudyDescription, String.Empty, applyToAll);
             if (dump.TagExists(DicomTags.InstitutionalDepartmentName)) 
                 dump.EditTag(DicomTags.InstitutionalDepartmentName, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.PhysiciansofRecord)) 
-                dump.EditTag(DicomTags.PhysiciansofRecord, String.Empty, applyToAll);           
+            if (dump.TagExists(DicomTags.PhysiciansOfRecord)) 
+                dump.EditTag(DicomTags.PhysiciansOfRecord, String.Empty, applyToAll);           
             if (dump.TagExists(DicomTags.PerformingPhysiciansName)) 
                 dump.EditTag(DicomTags.PerformingPhysiciansName, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.NameofPhysiciansReadingStudy)) 
-                dump.EditTag(DicomTags.NameofPhysiciansReadingStudy, String.Empty, applyToAll);
+            if (dump.TagExists(DicomTags.NameOfPhysiciansReadingStudy)) 
+                dump.EditTag(DicomTags.NameOfPhysiciansReadingStudy, String.Empty, applyToAll);
             if (dump.TagExists(DicomTags.OperatorsName)) 
                 dump.EditTag(DicomTags.OperatorsName, String.Empty, applyToAll);
             if (dump.TagExists(DicomTags.AdmittingDiagnosesDescription)) 
@@ -133,16 +133,16 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
                 dump.EditTag(DicomTags.SeriesDescription, String.Empty, applyToAll);
             if (dump.TagExists(DicomTags.PatientsName)) 
                 dump.EditTag(DicomTags.PatientsName, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.PatientID)) 
-                dump.EditTag(DicomTags.PatientID, "PatientID", applyToAll);
+            if (dump.TagExists(DicomTags.PatientId)) 
+                dump.EditTag(DicomTags.PatientId, "PatientID", applyToAll);
             if (dump.TagExists(DicomTags.PatientsBirthDate)) 
                 dump.EditTag(DicomTags.PatientsBirthDate, String.Empty, applyToAll);
             if (dump.TagExists(DicomTags.PatientsBirthTime)) 
                 dump.EditTag(DicomTags.PatientsBirthTime, String.Empty, applyToAll);
             if (dump.TagExists(DicomTags.PatientsSex)) 
                 dump.EditTag(DicomTags.PatientsSex, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.OtherPatientIDs)) 
-                dump.EditTag(DicomTags.OtherPatientIDs, String.Empty, applyToAll);
+            if (dump.TagExists(DicomTags.OtherPatientIds)) 
+                dump.EditTag(DicomTags.OtherPatientIds, String.Empty, applyToAll);
             if (dump.TagExists(DicomTags.OtherPatientNames)) 
                 dump.EditTag(DicomTags.OtherPatientNames, String.Empty, applyToAll);
             if (dump.TagExists(DicomTags.PatientsAge)) 
@@ -163,8 +163,8 @@ namespace ClearCanvas.Utilities.DicomEditor.Tools
                 dump.EditTag(DicomTags.DeviceSerialNumber, String.Empty, applyToAll);
             if (dump.TagExists(DicomTags.ProtocolName)) 
                 dump.EditTag(DicomTags.ProtocolName, String.Empty, applyToAll);
-            if (dump.TagExists(DicomTags.StudyID)) 
-                dump.EditTag(DicomTags.StudyID, String.Empty, applyToAll);
+            if (dump.TagExists(DicomTags.StudyId)) 
+                dump.EditTag(DicomTags.StudyId, String.Empty, applyToAll);
             if (dump.TagExists(DicomTags.ImageComments)) 
                 dump.EditTag(DicomTags.ImageComments, String.Empty, applyToAll);
         }

@@ -48,133 +48,133 @@ namespace ClearCanvas.Dicom.Samples
         #region Private Methods
         private static void AddPresentationContexts(ServerAssociationParameters assoc)
         {
-            byte pcid = assoc.AddPresentationContext(SopClass.VerificationSOPClass);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            byte pcid = assoc.AddPresentationContext(SopClass.VerificationSopClass);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.MRImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            pcid = assoc.AddPresentationContext(SopClass.MrImageStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.CTImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            pcid = assoc.AddPresentationContext(SopClass.CtImageStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.SecondaryCaptureImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.UltrasoundImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.UltrasoundImageStorageRetired);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.UltrasoundMultiframeImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            pcid = assoc.AddPresentationContext(SopClass.UltrasoundMultiFrameImageStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.UltrasoundMultiframeImageStorageRetired);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            pcid = assoc.AddPresentationContext(SopClass.UltrasoundMultiFrameImageStorageRetired);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.NuclearMedicineImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.DigitalIntraoralXRayImageStorageForPresentation);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            pcid = assoc.AddPresentationContext(SopClass.DigitalIntraOralXRayImageStorageForPresentation);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.DigitalIntraoralXRayImageStorageForProcessing);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            pcid = assoc.AddPresentationContext(SopClass.DigitalIntraOralXRayImageStorageForProcessing);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.DigitalMammographyXRayImageStorageForPresentation);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.DigitalMammographyXRayImageStorageForProcessing);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.DigitalXRayImageStorageForPresentation);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.DigitalXRayImageStorageForProcessing);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.ComputedRadiographyImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.GrayscaleSoftcopyPresentationStateStorageSOPClass);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            pcid = assoc.AddPresentationContext(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClass);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.KeyObjectSelectionDocument);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.OphthalmicPhotography16BitImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.OphthalmicPhotography8BitImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.VideoEndoscopicImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.VideoMicroscopicImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.VideoPhotographicImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.VLEndoscopicImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            pcid = assoc.AddPresentationContext(SopClass.VlEndoscopicImageStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.VLMicroscopicImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            pcid = assoc.AddPresentationContext(SopClass.VlMicroscopicImageStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.VLPhotographicImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            pcid = assoc.AddPresentationContext(SopClass.VlPhotographicImageStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.VLSlideCoordinatesMicroscopicImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            pcid = assoc.AddPresentationContext(SopClass.VlSlideCoordinatesMicroscopicImageStorage);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.XRayAngiographicBiPlaneImageStorageRetired);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.XRayAngiographicImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
             pcid = assoc.AddPresentationContext(SopClass.XRayRadiofluoroscopicImageStorage);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.XRayRadiationDoseSR);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            pcid = assoc.AddPresentationContext(SopClass.XRayRadiationDoseSr);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
 
-            pcid = assoc.AddPresentationContext(SopClass.ChestCADSR);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+            pcid = assoc.AddPresentationContext(SopClass.ChestCadSr);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+            assoc.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
         }
         #endregion
 
@@ -227,9 +227,9 @@ namespace ClearCanvas.Dicom.Samples
             String seriesInstanceUid = null;
             DicomUid sopInstanceUid = null;
             
-            bool ok = message.DataSet[DicomTags.SOPInstanceUID].TryGetUid(0, out sopInstanceUid);
-            if (ok) ok = message.DataSet[DicomTags.SeriesInstanceUID].TryGetString(0, out seriesInstanceUid);
-            if (ok) ok = message.DataSet[DicomTags.StudyInstanceUID].TryGetString(0, out studyInstanceUid);
+            bool ok = message.DataSet[DicomTags.SopInstanceUid].TryGetUid(0, out sopInstanceUid);
+            if (ok) ok = message.DataSet[DicomTags.SeriesInstanceUid].TryGetString(0, out seriesInstanceUid);
+            if (ok) ok = message.DataSet[DicomTags.StudyInstanceUid].TryGetString(0, out studyInstanceUid);
 
             if (!ok)
             {
@@ -253,7 +253,7 @@ namespace ClearCanvas.Dicom.Samples
 
             DicomFile dicomFile = new DicomFile(message, path.ToString());
 
-            dicomFile.TransferSyntaxUid = TransferSyntax.ExplicitVRLittleEndianUid;
+            dicomFile.TransferSyntaxUid = TransferSyntax.ExplicitVrLittleEndianUid;
             dicomFile.MediaStorageSopInstanceUid = sopInstanceUid.UID;
             dicomFile.ImplementationClassUid = DicomImplementation.ClassUID.UID;
             dicomFile.ImplementationVersionName = DicomImplementation.Version;

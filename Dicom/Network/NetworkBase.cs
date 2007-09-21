@@ -116,6 +116,8 @@ namespace ClearCanvas.Dicom.Network
         private bool _stop;
         private int _dimseTimeout;
         private DicomAssociationState _state = DicomAssociationState.Sta1_Idle;
+
+        internal Queue<RawPDU> _pduQueue = new Queue<RawPDU>();
         #endregion
 
         #region Public Constructors
@@ -132,11 +134,6 @@ namespace ClearCanvas.Dicom.Network
         {
             get { return _dimseTimeout; }
             set { _dimseTimeout = value; }
-        }
-
-        protected Stream InternalStream
-        {
-            get { return _network; }
         }
         #endregion
 
@@ -164,6 +161,23 @@ namespace ClearCanvas.Dicom.Network
                     _thread.Join();
                     _thread = null;
                 }
+            }
+        }
+
+        internal void EnqueuePDU(RawPDU pdu)
+        {
+            lock (_pduQueue)
+            {
+                SendRawPDU(pdu);
+                //_pduQueue.Enqueue(pdu);
+            }
+        }
+        internal RawPDU DequeuePDU()
+        {
+            lock (_pduQueue)
+            {
+                return null;
+                //return _pduQueue.Dequeue();
             }
         }
 
@@ -334,7 +348,8 @@ namespace ClearCanvas.Dicom.Network
         {
             _assoc = associate;
             AAssociateRQ pdu = new AAssociateRQ(_assoc);
-            SendRawPDU(pdu.Write());
+
+            EnqueuePDU(pdu.Write());
         }
 
         /// <summary>
@@ -347,7 +362,8 @@ namespace ClearCanvas.Dicom.Network
             if (_state != DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
             {
                 AAbort pdu = new AAbort(source, reason);
-                SendRawPDU(pdu.Write());
+                
+                EnqueuePDU(pdu.Write());
                 _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
             }
             else
@@ -370,7 +386,8 @@ namespace ClearCanvas.Dicom.Network
                 throw new NetworkException("Attempting to send association accept at invalid time in association, aborting");
             }
             AAssociateAC pdu = new AAssociateAC(_assoc);
-            SendRawPDU(pdu.Write());
+            
+            EnqueuePDU(pdu.Write());
 
             _state = DicomAssociationState.Sta6_AssociationEstablished;
         }
@@ -390,7 +407,8 @@ namespace ClearCanvas.Dicom.Network
                 throw new NetworkException("Attempting to send association reject at invalid time in association, aborting");
             }
             AAssociateRJ pdu = new AAssociateRJ(result, source, reason);
-            SendRawPDU(pdu.Write());
+            
+            EnqueuePDU(pdu.Write());
 
             _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
         }
@@ -407,7 +425,8 @@ namespace ClearCanvas.Dicom.Network
             }
 
             AReleaseRQ pdu = new AReleaseRQ();
-            SendRawPDU(pdu.Write());
+            
+            EnqueuePDU(pdu.Write());
 
             _state = DicomAssociationState.Sta7_AwaitingAReleaseRP;
         }
@@ -422,7 +441,8 @@ namespace ClearCanvas.Dicom.Network
             }
 
             AReleaseRP pdu = new AReleaseRP();
-            SendRawPDU(pdu.Write());
+            
+            EnqueuePDU(pdu.Write());
             _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
         }
 
@@ -489,7 +509,7 @@ namespace ClearCanvas.Dicom.Network
             message.Priority = priority;
 
             String sopInstanceUid;
-            bool ok = message.DataSet[DicomTags.SOPInstanceUID].TryGetString(0, out sopInstanceUid);
+            bool ok = message.DataSet[DicomTags.SopInstanceUid].TryGetString(0, out sopInstanceUid);
             if (!ok)
                 throw new DicomException("SOP Instance UID unexpectedly not set in CStore Message being sent.");
 
@@ -611,9 +631,9 @@ namespace ClearCanvas.Dicom.Network
         private DicomAttributeCollection CreateRequest(ushort messageID, DicomCommandField commandField, DicomUid affectedClass, bool hasDataset)
         {
             DicomAttributeCollection command = new DicomAttributeCollection(0x00000000,0x0000FFFF);
-            command[DicomTags.MessageID].Values = messageID;
+            command[DicomTags.MessageId].Values = messageID;
             command[DicomTags.CommandField].Values = (ushort)commandField;
-            command[DicomTags.AffectedSOPClassUID].Values = affectedClass.UID;
+            command[DicomTags.AffectedSopClassUid].Values = affectedClass.UID;
             command[DicomTags.DataSetType].Values = hasDataset ? (ushort)0x0202 : (ushort)0x0101;
             return command;
         }
@@ -649,6 +669,10 @@ namespace ClearCanvas.Dicom.Network
                             DicomLogger.LogError("Unexpected error processing PDU.  Aborting Association from {0} to {1}", _assoc.CallingAE, _assoc.CalledAE);
                             SendAssociateAbort(DicomAbortSource.ServiceProvider, DicomAbortReason.InvalidPDUParameter);
                         }
+                    }
+                    else if (_pduQueue.Count > 0)
+                    {
+                        //SendRawPDU(DequeuePDU());
                     }
                     else if (DateTime.Now > timeout)
                     {
@@ -813,7 +837,7 @@ namespace ClearCanvas.Dicom.Network
                         if (_dimse.CommandReader == null)
                         {
                             _dimse.CommandReader = new DicomStreamReader(_dimse.CommandData);
-                            _dimse.CommandReader.TransferSyntax = TransferSyntax.ImplicitVRLittleEndian;
+                            _dimse.CommandReader.TransferSyntax = TransferSyntax.ImplicitVrLittleEndian;
                             _dimse.CommandReader.Dataset = _dimse.Command;
                         }
 
@@ -952,12 +976,12 @@ namespace ClearCanvas.Dicom.Network
             {
                 TransferSyntax ts = _assoc.GetAcceptedTransferSyntax(pcid);
 
-                int total = (int)command.CalculateWriteLength(TransferSyntax.ImplicitVRLittleEndian, DicomWriteOptions.Default | DicomWriteOptions.CalculateGroupLengths);
+                int total = (int)command.CalculateWriteLength(TransferSyntax.ImplicitVrLittleEndian, DicomWriteOptions.Default | DicomWriteOptions.CalculateGroupLengths);
 
                 if (dataset != null)
                     total += (int)dataset.CalculateWriteLength(ts, DicomWriteOptions.Default);
 
-                PDataTFStream pdustream = new PDataTFStream(_network, pcid, (int)_assoc.MaximumPduLength, total);
+                PDataTFStream pdustream = new PDataTFStream(this, pcid, (int)_assoc.MaximumPduLength, total);
                 pdustream.OnTick += delegate(TransferMonitor stats)
                 {
                     OnSendDimseProgress(pcid, command, dataset, stats);
@@ -966,7 +990,7 @@ namespace ClearCanvas.Dicom.Network
                 OnSendDimseBegin(pcid, command, dataset, pdustream.Stats);
 
                 DicomStreamWriter dsw = new DicomStreamWriter(pdustream);
-                dsw.Write(TransferSyntax.ImplicitVRLittleEndian,
+                dsw.Write(TransferSyntax.ImplicitVrLittleEndian,
                     command, DicomWriteOptions.Default | DicomWriteOptions.CalculateGroupLengths);
 
                 if ((dataset != null) && !dataset.IsEmpty())

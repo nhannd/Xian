@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageServer.Streaming
         public InstanceStream(DicomAttributeCollection collection)
         {
             
-            _sopInstanceUid = collection[DicomTags.SOPInstanceUID];
+            _sopInstanceUid = collection[DicomTags.SopInstanceUid];
 
             _collection = collection;
         }

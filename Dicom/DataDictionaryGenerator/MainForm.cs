@@ -34,24 +34,6 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             openFileDialog1.ShowDialog();
         }
 
-        private void CreateNames(ref Tag thisTag)
-        {
-                // Now create the variable name
-                char[] charSeparators = new char[] { '(', ')', ',', ' ', '\'', '’', '–', '-', '/', '&' };
-
-                String[] nodes = thisTag.name.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries);
-
-                thisTag.varName = "";
-                foreach (String node in nodes)
-                    thisTag.varName += node;
-
-                // Handling leading digits in names
-                if (thisTag.varName.Length > 0 && char.IsDigit(thisTag.varName[0]))
-                    thisTag.varName = "Tag" + thisTag.varName;
-
-                if (thisTag.retired != null && thisTag.retired.Equals("RET"))
-                    thisTag.varName += "Retired";
-        }
 
         private void AddGroupZeroTags(SortedList<uint, Tag> tags)
         {
@@ -62,7 +44,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00000002;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -72,7 +54,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00000003;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -82,7 +64,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00000100;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag.name = "Message ID";
@@ -91,7 +73,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00000110;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -101,7 +83,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00000120;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -111,7 +93,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00000600;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -121,7 +103,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00000700;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -131,7 +113,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00000800;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -141,7 +123,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00000900;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -151,7 +133,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1-n";
             thisTag.retired = "";
             thisTag.nTag = 0x00000901;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -161,7 +143,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00000902;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -171,7 +153,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00000903;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -181,7 +163,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00001000;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -191,7 +173,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00001001;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -201,7 +183,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x000001002;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -211,7 +193,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1-n";
             thisTag.retired = "";
             thisTag.nTag = 0x000001005;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -221,7 +203,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x000001008;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -231,7 +213,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00001020;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -241,7 +223,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00001021;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -251,7 +233,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00001022;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -261,7 +243,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00001023;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -271,7 +253,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00001030;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -281,7 +263,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00001031;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
 
             thisTag = new Tag();
@@ -291,7 +273,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             thisTag.vm = "1";
             thisTag.retired = "";
             thisTag.nTag = 0x00020000;
-            CreateNames(ref thisTag);
+            Parser.CreateNames(ref thisTag);
             tags.Add(thisTag.nTag, thisTag);
             
         }

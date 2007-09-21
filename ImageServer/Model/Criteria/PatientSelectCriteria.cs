@@ -41,7 +41,7 @@ namespace ClearCanvas.ImageServer.Model.Criteria
             }
         }
 
-        [DicomField(DicomTags.PatientID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
         public ISearchCondition<string> PatientId
         {
             get
@@ -54,7 +54,7 @@ namespace ClearCanvas.ImageServer.Model.Criteria
             }
         }
 
-        [DicomField(DicomTags.IssuerofPatientID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.IssuerOfPatientId, DefaultValue = DicomFieldDefault.Null)]
         public ISearchCondition<string> IssuerOfPatientId
         {
             get

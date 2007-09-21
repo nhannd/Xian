@@ -28,7 +28,7 @@ namespace ClearCanvas.Dicom.IO
         public DicomStreamWriter(Stream stream)
         {
             _stream = stream;
-            TransferSyntax = TransferSyntax.ExplicitVRLittleEndian;
+            TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
         }
         #endregion
 

@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string transferSyntaxInstanceUID;
-				GetTag(DicomTags.TransferSyntaxUID, out transferSyntaxInstanceUID, out tagExists);
+				GetTag(DicomTags.TransferSyntaxUid, out transferSyntaxInstanceUID, out tagExists);
 				return transferSyntaxInstanceUID ?? "";
 			}
 		}
@@ -90,7 +90,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string sopInstanceUID;
-				GetTag(DicomTags.SOPInstanceUID, out sopInstanceUID, out tagExists);
+				GetTag(DicomTags.SopInstanceUid, out sopInstanceUID, out tagExists);
 				return sopInstanceUID ?? "";
 			}
 		}
@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string sopClassUID;
-				GetTag(DicomTags.SOPClassUID, out sopClassUID, out tagExists);
+				GetTag(DicomTags.SopClassUid, out sopClassUID, out tagExists);
 				return sopClassUID ?? "";
 			}
 		}
@@ -174,7 +174,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string patientId;
-				GetTag(DicomTags.PatientID, out patientId, out tagExists);
+				GetTag(DicomTags.PatientId, out patientId, out tagExists);
 				return patientId ?? "";
 			}
 		}
@@ -220,7 +220,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string studyInstanceUID;
-				GetTag(DicomTags.StudyInstanceUID, out studyInstanceUID, out tagExists);
+				GetTag(DicomTags.StudyInstanceUid, out studyInstanceUID, out tagExists);
 				return studyInstanceUID ?? "";
 			}
 		}
@@ -304,7 +304,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string nameOfPhysiciansReadingStudy;
-				GetTagArray(DicomTags.NameofPhysiciansReadingStudy, out nameOfPhysiciansReadingStudy, out tagExists);
+				GetTagArray(DicomTags.NameOfPhysiciansReadingStudy, out nameOfPhysiciansReadingStudy, out tagExists);
 				return DicomStringHelper.GetPersonNameArray(nameOfPhysiciansReadingStudy);
 			}
 		}
@@ -456,7 +456,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string seriesInstanceUID;
-				GetTag(DicomTags.SeriesInstanceUID, out seriesInstanceUID, out tagExists);
+				GetTag(DicomTags.SeriesInstanceUid, out seriesInstanceUID, out tagExists);
 				return seriesInstanceUID ?? "";
 			}
 		}

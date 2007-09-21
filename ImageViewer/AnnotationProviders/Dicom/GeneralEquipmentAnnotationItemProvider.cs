@@ -33,7 +33,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							(
 								"Dicom.GeneralEquipment.DateOfLastCalibration",
 								this,
-								new DicomTagAsStringRetriever(DicomTags.DateofLastCalibration).GetTagValue,
+								new DicomTagAsStringRetriever(DicomTags.DateOfLastCalibration).GetTagValue,
 								DicomBasicResultFormatter.DateFormat
 							)
 						);
@@ -44,7 +44,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 							(
 								"Dicom.GeneralEquipment.TimeOfLastCalibration",
 								this,
-								new DicomTagAsStringRetriever(DicomTags.TimeofLastCalibration).GetTagValue,
+								new DicomTagAsStringRetriever(DicomTags.TimeOfLastCalibration).GetTagValue,
 								DicomBasicResultFormatter.TimeFormat
 							)
 						);

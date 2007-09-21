@@ -104,7 +104,7 @@ namespace ClearCanvas.Dicom
             {
                 if (ParentCollection.SpecificCharacterSet != null)
                 {
-                    return (uint)GetByteBuffer(TransferSyntax.ExplicitVRBigEndian, ParentCollection.SpecificCharacterSet).Length;
+                    return (uint)GetByteBuffer(TransferSyntax.ExplicitVrBigEndian, ParentCollection.SpecificCharacterSet).Length;
                 }
                 return base.StreamLength;
             }

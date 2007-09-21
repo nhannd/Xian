@@ -35,13 +35,13 @@ namespace ClearCanvas.Dicom.DataStore
 			attribute = sopInstanceDataset[DicomTags.StudyDescription];
 			study.StudyDescription = attribute.ToString();
 
-			attribute = sopInstanceDataset[DicomTags.StudyID];
+			attribute = sopInstanceDataset[DicomTags.StudyId];
 			study.StudyId = attribute.ToString();
 
-			attribute = sopInstanceDataset[DicomTags.StudyInstanceUID];
+			attribute = sopInstanceDataset[DicomTags.StudyInstanceUid];
 			study.StudyInstanceUid = attribute.ToString();
 
-			attribute = sopInstanceDataset[DicomTags.PatientID];
+			attribute = sopInstanceDataset[DicomTags.PatientId];
 			study.PatientId = new PatientId(attribute.ToString() ?? "");
 
 			attribute = sopInstanceDataset[DicomTags.PatientsSex];
@@ -75,7 +75,7 @@ namespace ClearCanvas.Dicom.DataStore
 			attribute = sopInstanceDataset[DicomTags.SeriesDescription];
 			series.SeriesDescription = attribute.ToString();
 
-			attribute = sopInstanceDataset[DicomTags.SeriesInstanceUID];
+			attribute = sopInstanceDataset[DicomTags.SeriesInstanceUid];
 			series.SeriesInstanceUid = attribute.ToString();
 
 			attribute = sopInstanceDataset[DicomTags.SeriesNumber];
@@ -176,17 +176,17 @@ namespace ClearCanvas.Dicom.DataStore
 			if (attribute.TryGetUInt16(0, out uintValue))
 				image.Columns = (int)uintValue;
 
-			attribute = sopInstanceDataset[DicomTags.SamplesperPixel];
+			attribute = sopInstanceDataset[DicomTags.SamplesPerPixel];
 			if (attribute.TryGetUInt16(0, out uintValue))
 				image.SamplesPerPixel = (int)uintValue;
 
-			attribute = sopInstanceDataset[DicomTags.SOPClassUID];
+			attribute = sopInstanceDataset[DicomTags.SopClassUid];
 			image.SopClassUid = attribute.ToString();
 
-			attribute = sopInstanceDataset[DicomTags.SOPInstanceUID];
+			attribute = sopInstanceDataset[DicomTags.SopInstanceUid];
 			image.SopInstanceUid = attribute.ToString();
 
-			attribute = metaInfo[DicomTags.TransferSyntaxUID];
+			attribute = metaInfo[DicomTags.TransferSyntaxUid];
 			image.TransferSyntaxUid = attribute.ToString();
 
 			attribute = sopInstanceDataset[DicomTags.WindowWidth];

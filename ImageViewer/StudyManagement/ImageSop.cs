@@ -118,7 +118,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				int imagesInAcquisition;
-				GetTag(DicomTags.ImagesinAcquisition, out imagesInAcquisition, out tagExists);
+				GetTag(DicomTags.ImagesInAcquisition, out imagesInAcquisition, out tagExists);
 				return imagesInAcquisition;
 			}
 		}
@@ -180,7 +180,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				string presentationLUTShape;
-				GetTag(DicomTags.PresentationLUTShape, out presentationLUTShape, out tagExists);
+				GetTag(DicomTags.PresentationLutShape, out presentationLUTShape, out tagExists);
 				return presentationLUTShape ?? "";
 			}
 		}
@@ -304,7 +304,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			{
 				bool tagExists;
 				ushort samplesPerPixel;
-				GetTag(DicomTags.SamplesperPixel, out samplesPerPixel, out tagExists);
+				GetTag(DicomTags.SamplesPerPixel, out samplesPerPixel, out tagExists);
 				return (int)samplesPerPixel;
 			}
 		}

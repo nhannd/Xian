@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { this.SubCriteria["StatusEnum"] = new ProcedureParameter<ServerEnum>("StatusEnum", value); }
         }
 
-        [DicomField(DicomTags.PatientID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
         public string PatientId
         {
             set { this.SubCriteria["PatientId"] = new ProcedureParameter<string>("PatientId", value); }
@@ -38,13 +38,13 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { this.SubCriteria["PatientName"] = new ProcedureParameter<string>("PatientName", value); }
         }
 
-        [DicomField(DicomTags.IssuerofPatientID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.IssuerOfPatientId, DefaultValue = DicomFieldDefault.Null)]
         public string IssuerOfPatientId
         {
             set { this.SubCriteria["IssuerOfPatientId"] = new ProcedureParameter<string>("IssuerOfPatientId", value); }
         }
 
-        [DicomField(DicomTags.StudyInstanceUID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.StudyInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         public string StudyInstanceUid
         {
             set { this.SubCriteria["StudyInstanceUid"] = new ProcedureParameter<string>("StudyInstanceUid", value); }
@@ -80,7 +80,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { this.SubCriteria["AccessionNumber"] = new ProcedureParameter<string>("AccessionNumber", value); }
         }
 
-        [DicomField(DicomTags.StudyID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.StudyId, DefaultValue = DicomFieldDefault.Null)]
         public string StudyId
         {
             set { this.SubCriteria["StudyId"] = new ProcedureParameter<string>("StudyId", value); }
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { this.SubCriteria["ReferringPhysiciansName"] = new ProcedureParameter<string>("ReferringPhysiciansName", value); }
         }
 
-        [DicomField(DicomTags.SeriesInstanceUID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         public string SeriesInstanceUid
         {
             set { this.SubCriteria["SeriesInstanceUid"] = new ProcedureParameter<string>("SeriesInstanceUid", value); }

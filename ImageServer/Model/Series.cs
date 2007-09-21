@@ -43,7 +43,7 @@ namespace ClearCanvas.ImageServer.Model
             set { _studyKey = value; }
         }
 
-        [DicomField(DicomTags.SeriesInstanceUID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         public string SeriesInstanceUid
         {
             get { return _seriesInstanceUid; }
@@ -71,7 +71,7 @@ namespace ClearCanvas.ImageServer.Model
             set { _seriesDescription = value; }
         }
 
-        [DicomField(DicomTags.NumberofSeriesRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.NumberOfSeriesRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
         public int NumberOfSeriesRelatedInstances
         {
             get { return _numberOfSeriesRelatedInstances; }

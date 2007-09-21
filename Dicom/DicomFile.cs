@@ -105,7 +105,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                String sopClassUid = base.MetaInfo[DicomTags.MediaStorageSOPClassUID].GetString(0,"");
+                String sopClassUid = base.MetaInfo[DicomTags.MediaStorageSopClassUid].GetString(0,"");
 
                 SopClass sop = SopClass.GetSopClass(sopClassUid);
 
@@ -127,13 +127,13 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                String transferSyntaxUid = base._metaInfo[DicomTags.TransferSyntaxUID];
+                String transferSyntaxUid = base._metaInfo[DicomTags.TransferSyntaxUid];
 
                 return TransferSyntax.GetTransferSyntax(transferSyntaxUid);
             }
             set
             {
-                base._metaInfo[DicomTags.TransferSyntaxUID].SetStringValue(value.UidString);
+                base._metaInfo[DicomTags.TransferSyntaxUid].SetStringValue(value.UidString);
             }
         }
 
@@ -146,16 +146,16 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string MediaStorageSopClassUid
         {
-            get { return _metaInfo[DicomTags.MediaStorageSOPClassUID].GetString(0,""); }
-            set { _metaInfo[DicomTags.MediaStorageSOPClassUID].Values = value; }
+            get { return _metaInfo[DicomTags.MediaStorageSopClassUid].GetString(0,""); }
+            set { _metaInfo[DicomTags.MediaStorageSopClassUid].Values = value; }
         }
         /// <summary>
         /// Uniquiely identifies the SOP Instance associated with the Data Set placed in the file and following the File Meta Information.
         /// </summary>
         public string MediaStorageSopInstanceUid
         {
-            get { return _metaInfo[DicomTags.MediaStorageSOPInstanceUID].GetString(0,""); }
-            set { _metaInfo[DicomTags.MediaStorageSOPInstanceUID].Values = value; }
+            get { return _metaInfo[DicomTags.MediaStorageSopInstanceUid].GetString(0,""); }
+            set { _metaInfo[DicomTags.MediaStorageSopInstanceUid].Values = value; }
         }
         /// <summary>
         /// Uniquely identifies the implementation which wrote this file and its content.  It provides an 
@@ -165,8 +165,8 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string ImplementationClassUid
         {
-            get { return _metaInfo[DicomTags.ImplementationClassUID].GetString(0,""); }
-            set { _metaInfo[DicomTags.ImplementationClassUID].Values = value; }
+            get { return _metaInfo[DicomTags.ImplementationClassUid].GetString(0,""); }
+            set { _metaInfo[DicomTags.ImplementationClassUid].Values = value; }
         }
         /// <summary>
         /// Identifies a version for an Implementation Class UID (002,0012) using up to 
@@ -184,8 +184,8 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string TransferSyntaxUid
         {
-            get { return _metaInfo[DicomTags.TransferSyntaxUID].GetString(0,""); }
-            set { _metaInfo[DicomTags.TransferSyntaxUID].Values = value; }
+            get { return _metaInfo[DicomTags.TransferSyntaxUid].GetString(0,""); }
+            set { _metaInfo[DicomTags.TransferSyntaxUid].Values = value; }
         }
         /// <summary>
         /// The DICOM Application Entity (AE) Title of the AE which wrote this file's 
@@ -205,8 +205,8 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string PrivateInformationCreatorUid
         {
-            get { return _metaInfo[DicomTags.PrivateInformationCreatorUID].GetString(0,""); }
-            set { _metaInfo[DicomTags.PrivateInformationCreatorUID].Values = value; }
+            get { return _metaInfo[DicomTags.PrivateInformationCreatorUid].GetString(0,""); }
+            set { _metaInfo[DicomTags.PrivateInformationCreatorUid].Values = value; }
         }
         #endregion
 
@@ -284,7 +284,7 @@ namespace ClearCanvas.Dicom
 
                     fs.Seek(0, SeekOrigin.Begin);
                     dsr = new DicomStreamReader(fs);
-                    dsr.TransferSyntax = TransferSyntax.ImplicitVRLittleEndian;
+                    dsr.TransferSyntax = TransferSyntax.ImplicitVrLittleEndian;
                     dsr.Dataset = base._dataSet;
                     DicomReadStatus stat = dsr.Read(stopTag, options);
                     if (stat != DicomReadStatus.Success)
@@ -293,16 +293,16 @@ namespace ClearCanvas.Dicom
                         throw new DicomException("Unexpected read error with file: " + Filename);
                     }
 
-                    TransferSyntax = TransferSyntax.ImplicitVRLittleEndian;
-                    if (DataSet.Contains(DicomTags.SOPClassUID))
-                        MediaStorageSopClassUid = DataSet[DicomTags.SOPClassUID].ToString();
-                    if (DataSet.Contains(DicomTags.SOPInstanceUID))
-                        MediaStorageSopInstanceUid = DataSet[DicomTags.SOPInstanceUID].ToString();
+                    TransferSyntax = TransferSyntax.ImplicitVrLittleEndian;
+                    if (DataSet.Contains(DicomTags.SopClassUid))
+                        MediaStorageSopClassUid = DataSet[DicomTags.SopClassUid].ToString();
+                    if (DataSet.Contains(DicomTags.SopInstanceUid))
+                        MediaStorageSopInstanceUid = DataSet[DicomTags.SopInstanceUid].ToString();
                 }
                 else
                 {
                     dsr = new DicomStreamReader(fs);
-                    dsr.TransferSyntax = TransferSyntax.ExplicitVRLittleEndian;
+                    dsr.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
 
                     dsr.Dataset = base._metaInfo;
                     DicomReadStatus stat = dsr.Read(new DicomTag(0x0002FFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false), options);
@@ -361,7 +361,7 @@ namespace ClearCanvas.Dicom
                 fs.WriteByte((byte)'M');
 
                 DicomStreamWriter dsw = new DicomStreamWriter(fs);
-                dsw.Write(TransferSyntax.ExplicitVRLittleEndian,
+                dsw.Write(TransferSyntax.ExplicitVrLittleEndian,
                     base._metaInfo, options | DicomWriteOptions.CalculateGroupLengths);
                 
                 dsw.Write(this.TransferSyntax,base._dataSet, options);

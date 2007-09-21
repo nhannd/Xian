@@ -120,8 +120,8 @@ namespace ClearCanvas.Dicom.Samples
                 {
                     pcid = _assocParams.AddPresentationContext(sendStruct.sopClass);
 
-                    _assocParams.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-                    _assocParams.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+                    _assocParams.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+                    _assocParams.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
                 }
             }
         }

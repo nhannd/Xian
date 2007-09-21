@@ -394,15 +394,15 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.PatientId, out value);
 			if (cond.good())
-				queryKey.Add(DicomTags.PatientID, value);
+				queryKey.Add(DicomTags.PatientId, value);
 
 			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyID, out value);
 			if (cond.good())
-				queryKey.Add(DicomTags.StudyID, value);
+				queryKey.Add(DicomTags.StudyId, value);
 
 			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.StudyInstanceUID, out value);
 			if (cond.good())
-				queryKey.Add(DicomTags.StudyInstanceUID, value);
+				queryKey.Add(DicomTags.StudyInstanceUid, value);
 
 			#endregion
 
@@ -414,7 +414,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.ModalitiesInStudy, out value);
 			if (cond.good())
-				queryKey.Add(DicomTags.ModalitiesinStudy, value);
+				queryKey.Add(DicomTags.ModalitiesInStudy, value);
 
 			cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.PatientsBirthDate, out value);
 			if (cond.good())
@@ -516,10 +516,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				OffisDicomHelper.PutAndInsertRawStringIntoItem(responseIdentifiers, new DcmTag(Dcm.PatientsName), encodedString);
 			}
 
-			if (key.ContainsTag(DicomTags.PatientID))
+			if (key.ContainsTag(DicomTags.PatientId))
 				responseIdentifiers.putAndInsertString(new DcmTag(Dcm.PatientId), result.PatientId);
 
-			if (key.ContainsTag(DicomTags.StudyID))
+			if (key.ContainsTag(DicomTags.StudyId))
 			{
 				specificCharacterSetRequired = true;
 				byte[] encodedString = encodedString = DicomImplementation.CharacterParser.Encode(result.StudyID, result.SpecificCharacterSet);
@@ -537,7 +537,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 				OffisDicomHelper.PutAndInsertRawStringIntoItem(responseIdentifiers, new DcmTag(Dcm.StudyDescription), encodedString);
 			}
 
-			if (key.ContainsTag(DicomTags.ModalitiesinStudy))
+			if (key.ContainsTag(DicomTags.ModalitiesInStudy))
 				responseIdentifiers.putAndInsertString(new DcmTag(Dcm.ModalitiesInStudy), result.ModalitiesInStudy);
 
 			if (key.ContainsTag(DicomTags.PatientsBirthDate))

@@ -8,10 +8,10 @@ namespace ClearCanvas.ImageViewer.Shreds
 {
 	public class StudyInformationFieldExchanger
 	{
-		[DicomField(DicomTags.StudyInstanceUID)]
+		[DicomField(DicomTags.StudyInstanceUid)]
 		public string StudyInstanceUid;
 
-		[DicomField(DicomTags.PatientID)]
+		[DicomField(DicomTags.PatientId)]
 		public string PatientId;
 
 		[DicomField(DicomTags.PatientsName)]

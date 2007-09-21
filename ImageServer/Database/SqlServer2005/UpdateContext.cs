@@ -38,12 +38,6 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
 
         #region IUpdateContext Members
 
-        void IUpdateContext.Resume(UpdateContextSyncMode syncMode)
-        {
-            _mode = syncMode;
-            throw new Exception("The method or operation is not implemented.");
-        }
-
         void IUpdateContext.Commit()
         {
             _transaction.Commit();

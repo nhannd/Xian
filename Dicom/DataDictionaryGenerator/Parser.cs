@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security;
 using System.Text;
 using System.Xml;
 using System.IO;
@@ -39,16 +40,53 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         {
         }
 
-        private void CreateNames(ref Tag thisTag)
+        /// <summary>
+        /// Formats to pascal.
+        /// </summary>
+        /// <param name="value">The value.</param>
+        /// <returns></returns>
+        public static string FormatToPascal(string value)
+        {
+            if (value == null)
+                return null;
+
+            StringBuilder sb = new StringBuilder();
+            bool lastCharWasSpace = false;
+            foreach (char c in value)
+            {
+                if (c.ToString() == " ")
+                    lastCharWasSpace = true;
+                else if (lastCharWasSpace || sb.Length == 0)
+                    sb.Append(c.ToString().ToUpperInvariant());
+                else
+                    sb.Append(c.ToString().ToLowerInvariant());
+            }
+            return sb.ToString();
+        }
+
+        public static string CreateVariableName(string input)
         {
             // Now create the variable name
-            char[] charSeparators = new char[] { '(', ')', ',', ' ', '\'', '’', '–', '-', '/', '&' };
+            char[] charSeparators = new char[] {'(', ')', ',', ' ', '\'', '’', '–', '-', '/', '&', '[', ']', '@'};
 
-            String[] nodes = thisTag.name.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries);
+            // just remove apostrophes so casing is correct
+            string tempString = input.Replace("’", "");
+            tempString = tempString.Replace("'", "");
+            tempString = tempString.Replace("(", "");
+            tempString = tempString.Replace(")", "");
 
-            thisTag.varName = "";
+            String[] nodes = tempString.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries);
+
+            string output = "";
             foreach (String node in nodes)
-                thisTag.varName += node;
+                output += FormatToPascal(node);
+
+            return output;
+        }
+
+        public static void CreateNames(ref Tag thisTag)
+        {
+            thisTag.varName = CreateVariableName(thisTag.name);
 
             // Handling leading digits in names
             if (thisTag.varName.Length > 0 && char.IsDigit(thisTag.varName[0]))
@@ -56,6 +94,8 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
 
             if (thisTag.retired != null && thisTag.retired.Equals("RET"))
                 thisTag.varName += "Retired";
+
+            thisTag.name = SecurityElement.Escape(thisTag.name);
         }
 
         public void ParseFile(String filename)
@@ -164,14 +204,10 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                                                 thisUid.name = columnArray[1];
                                                 thisUid.type = columnArray[2];
 
-                                                char[] charSeparators = new char[] { '(', ')', ',', ' ', '\'', '’', '–', '-', '/', '&', '@', '[', ']' };
+                                                thisUid.varName = CreateVariableName(thisUid.name);
 
-                                                String[] nodes = thisUid.name.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries);
-
-                                                thisUid.varName = "";
-                                                foreach (String node in nodes)
-                                                    thisUid.varName += node;
-
+                                                // Take out the invalid chars in the name, and replace with escape characters.
+                                                thisUid.name = SecurityElement.Escape(thisUid.name);
 
                                                 if (thisUid.type == "SOP Class")
                                                 {

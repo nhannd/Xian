@@ -75,6 +75,7 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             // openFileDialog_TransferSyntax
             // 
             this.openFileDialog_TransferSyntax.FileName = "TransferSyntax.xml";
+            this.openFileDialog_TransferSyntax.Filter = "XML files|*.xml";
             this.openFileDialog_TransferSyntax.Title = "Select XML Transfer Syntax File";
             // 
             // MainForm

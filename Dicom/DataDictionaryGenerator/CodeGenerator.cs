@@ -420,8 +420,8 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
             {
                 SopClass tSyntax = (SopClass)((DictionaryEntry)iter.Current).Value;
 
-                writer.WriteLine("            _transferSyntaxes.Add(TransferSyntax." + tSyntax.varName + "Uid,");
-                writer.WriteLine("                                  TransferSyntax." + tSyntax.varName + ");");
+                writer.WriteLine("                _transferSyntaxes.Add(TransferSyntax." + tSyntax.varName + "Uid,");
+                writer.WriteLine("                                      TransferSyntax." + tSyntax.varName + ");");
                 writer.WriteLine("");
             }
 

@@ -30,13 +30,13 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			_selectedServer = (ApplicationEntity)targetServer;
 
 			QueryKey queryKey = new QueryKey();
-            queryKey.Add(DicomTags.PatientID, queryParams["PatientId"]);
+            queryKey.Add(DicomTags.PatientId, queryParams["PatientId"]);
             queryKey.Add(DicomTags.AccessionNumber, queryParams["AccessionNumber"]);
             queryKey.Add(DicomTags.PatientsName, queryParams["PatientsName"]);
             queryKey.Add(DicomTags.StudyDate, queryParams["StudyDate"]);
             queryKey.Add(DicomTags.StudyDescription, queryParams["StudyDescription"]);
             queryKey.Add(DicomTags.PatientsBirthDate, "");
-            queryKey.Add(DicomTags.ModalitiesinStudy, queryParams["ModalitiesInStudy"]);
+            queryKey.Add(DicomTags.ModalitiesInStudy, queryParams["ModalitiesInStudy"]);
             queryKey.Add(DicomTags.SpecificCharacterSet, "");
 
             ReadOnlyQueryResultCollection results = Query(_selectedServer, queryKey);
@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
                 item.Server = _selectedServer;
                 item.StudyInstanceUID = result.StudyInstanceUid.ToString();
 
-                if (result.ContainsTag(DicomTags.NumberofStudyRelatedInstances))
+                if (result.ContainsTag(DicomTags.NumberOfStudyRelatedInstances))
                     item.NumberOfStudyRelatedInstances = result.NumberOfStudyRelatedInstances;
                 else
                     item.NumberOfStudyRelatedInstances = 0;
@@ -84,9 +84,9 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			//ModalitiesInStudy query item.
 
 			List<string> modalityFilters = new List<string>();
-			if (queryKey.ContainsTag(DicomTags.ModalitiesinStudy))
+			if (queryKey.ContainsTag(DicomTags.ModalitiesInStudy))
 			{
-				string modalityFilterString = queryKey[DicomTags.ModalitiesinStudy].ToString();
+				string modalityFilterString = queryKey[DicomTags.ModalitiesInStudy].ToString();
 				if (!String.IsNullOrEmpty(modalityFilterString))
 					modalityFilters.AddRange(modalityFilterString.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries));
 
@@ -96,13 +96,13 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 
 			SortedList<string, QueryResult> resultsByStudy = new SortedList<string, QueryResult>();
 
-			string combinedFilter = queryKey[DicomTags.ModalitiesinStudy];
+			string combinedFilter = queryKey[DicomTags.ModalitiesInStudy];
 
 			try
 			{
 				foreach (string modalityFilter in modalityFilters)
 				{
-					queryKey[DicomTags.ModalitiesinStudy] = modalityFilter;
+					queryKey[DicomTags.ModalitiesInStudy] = modalityFilter;
 
 					using (DicomClient client = new DicomClient(me))
 					{
@@ -125,7 +125,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 			finally
 			{
 				//for consistencies sake, put the original filter back.
-				queryKey[DicomTags.ModalitiesinStudy] = combinedFilter;
+				queryKey[DicomTags.ModalitiesInStudy] = combinedFilter;
 			}
 
         }
@@ -148,7 +148,7 @@ namespace ClearCanvas.ImageViewer.StudyFinders.Remote
 				if (!everythingMatches)
 				{
 					//the server does not support this optional tag at all.
-					if (!result.ContainsTag(DicomTags.ModalitiesinStudy))
+					if (!result.ContainsTag(DicomTags.ModalitiesInStudy))
 					{
 						everythingMatches = true;
 					}

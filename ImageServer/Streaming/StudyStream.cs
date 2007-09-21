@@ -75,19 +75,19 @@ namespace ClearCanvas.ImageServer.Streaming
             // Create a copy of the collection without pixel data
             DicomAttributeCollection data = theFile.DataSet;
 
-            String studyInstanceUid = data[DicomTags.StudyInstanceUID];
+            String studyInstanceUid = data[DicomTags.StudyInstanceUid];
 
             if (!_studyInstanceUid.Equals(studyInstanceUid))
                 return false;
             
-            String seriesInstanceUid = data[DicomTags.SeriesInstanceUID];
+            String seriesInstanceUid = data[DicomTags.SeriesInstanceUid];
 
             SeriesStream series = this[seriesInstanceUid];
 
             if (series == null)
                 return false;
 
-            String sopInstanceUid = data[DicomTags.SOPInstanceUID];
+            String sopInstanceUid = data[DicomTags.SopInstanceUid];
 
             InstanceStream instance = series[sopInstanceUid];
             if (instance == null)
@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageServer.Streaming
             // Create a copy of the collection without pixel data
             DicomAttributeCollection data = theFile.DataSet.Copy(false);
 
-            String studyInstanceUid = data[DicomTags.StudyInstanceUID];
+            String studyInstanceUid = data[DicomTags.StudyInstanceUid];
 
             if (_studyInstanceUid == null)
                 _studyInstanceUid = studyInstanceUid;
@@ -114,7 +114,7 @@ namespace ClearCanvas.ImageServer.Streaming
                              "Attempting to add an instance to the stream where the study instance UIDs don't match for SOP: {0}", theFile.MediaStorageSopInstanceUid);
                 return false;
             }
-            String seriesInstanceUid = data[DicomTags.SeriesInstanceUID];
+            String seriesInstanceUid = data[DicomTags.SeriesInstanceUid];
 
             SeriesStream series = this[seriesInstanceUid];
 
@@ -124,7 +124,7 @@ namespace ClearCanvas.ImageServer.Streaming
                 this[seriesInstanceUid] = series;
             }
 
-            String sopInstanceUid = data[DicomTags.SOPInstanceUID];
+            String sopInstanceUid = data[DicomTags.SopInstanceUid];
 
             InstanceStream instance = series[sopInstanceUid];
             if (instance != null)

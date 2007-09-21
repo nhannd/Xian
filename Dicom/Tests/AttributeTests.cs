@@ -29,7 +29,7 @@ namespace ClearCanvas.Dicom.Tests
             testResult = true;
             try
             {
-                DicomAttributeAE attrib = new DicomAttributeAE(DicomTagDictionary.GetDicomTag(DicomTags.RetrieveAETitle));
+                DicomAttributeAE attrib = new DicomAttributeAE(DicomTagDictionary.GetDicomTag(DicomTags.RetrieveAeTitle));
                 testResult = true;
             }
             catch (DicomException)

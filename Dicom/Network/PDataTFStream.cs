@@ -12,7 +12,6 @@ namespace ClearCanvas.Dicom.Network
         public delegate void TickDelegate(TransferMonitor stats);
 
         #region Private Members
-        private Stream _network;
         private bool _command;
         private int _max;
         private byte _pcid;
@@ -21,12 +20,12 @@ namespace ClearCanvas.Dicom.Network
         private byte[] _bytes;
         private int _total;
         private MemoryStream _buffer;
+        private NetworkBase _networkBase;
         #endregion
 
         #region Public Constructors
-        public PDataTFStream(Stream network, byte pcid, int max, int total)
+        public PDataTFStream(NetworkBase networkBase, byte pcid, int max, int total)
         {
-            _network = network;
             _command = true;
             _pcid = pcid;
             _max = max;
@@ -34,6 +33,7 @@ namespace ClearCanvas.Dicom.Network
             _pdu = new PDataTF();
             _buffer = new MemoryStream(total + 1024);
             _total = total;
+            _networkBase = networkBase;
         }
         #endregion
 
@@ -61,7 +61,7 @@ namespace ClearCanvas.Dicom.Network
         public void Flush(bool last)
         {
             WritePDU(last);
-            _network.Flush();
+            //_network.Flush();
         }
         #endregion
 
@@ -101,8 +101,8 @@ namespace ClearCanvas.Dicom.Network
                     _pdu.PDVs[_pdu.PDVs.Count - 1].IsLastFragment = true;
                 }
                 RawPDU raw = _pdu.Write();
-                //DicomLogger.LogInfo("PDU Length {0}", (uint)raw.Length);
-                raw.WritePDU(_network);
+
+                _networkBase.EnqueuePDU(raw);
                 Stats.Tick((int)_pdu.GetLengthOfPDVs() - (6 * _pdu.PDVs.Count), _total);
                 if (OnTick != null)
                     OnTick(Stats);

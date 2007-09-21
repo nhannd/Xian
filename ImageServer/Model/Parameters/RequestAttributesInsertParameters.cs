@@ -21,13 +21,13 @@ namespace ClearCanvas.ImageServer.Model.Parameters
             set { this.SubCriteria["SeriesKey"] = new ProcedureParameter<ServerEntityKey>("SeriesKey", value); }
         }
 
-        [DicomField(DicomTags.RequestedProcedureID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.RequestedProcedureId, DefaultValue = DicomFieldDefault.Null)]
         public string RequestedProcedureId
         {
             set { this.SubCriteria["RequestedProcedureId"] = new ProcedureParameter<string>("RequestedProcedureId", value); }
         }
 
-        [DicomField(DicomTags.ScheduledProcedureStepID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.ScheduledProcedureStepId, DefaultValue = DicomFieldDefault.Null)]
         public string ScheduledProcedureStepId
         {
             set { this.SubCriteria["ScheduledProcedureStepId"] = new ProcedureParameter<string>("ScheduledProcedureStepId", value); }

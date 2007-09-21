@@ -30,14 +30,14 @@ namespace ClearCanvas.ImageServer.Model
             set { _seriesKey = value; }
         }
 
-        [DicomField(DicomTags.RequestedProcedureID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.RequestedProcedureId, DefaultValue = DicomFieldDefault.Null)]
         public string RequestedProcedureId
         {
             get { return _requestedProcedureId; }
             set { _requestedProcedureId = value; }
         }
 
-        [DicomField(DicomTags.ScheduledProcedureStepID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.ScheduledProcedureStepId, DefaultValue = DicomFieldDefault.Null)]
         public string ScheduledProcedureStepId
         {
             get { return _scheduledProcedureStepId; }

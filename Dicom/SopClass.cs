@@ -13,150 +13,150 @@ namespace ClearCanvas.Dicom
         /// <para>12-lead ECG Waveform Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.9.1.1</para>
         /// </summary>
-        public static readonly String Sop12leadECGWaveformStorageUid = "1.2.840.10008.5.1.4.1.1.9.1.1";
+        public static readonly String Sop12LeadEcgWaveformStorageUid = "1.2.840.10008.5.1.4.1.1.9.1.1";
 
         /// <summary>SopClass for
         /// <para>12-lead ECG Waveform Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.9.1.1</para>
         /// </summary>
-        public static readonly SopClass Sop12leadECGWaveformStorage =
+        public static readonly SopClass Sop12LeadEcgWaveformStorage =
                              new SopClass("12-lead ECG Waveform Storage", 
-                                          SopClass.Sop12leadECGWaveformStorageUid, 
+                                          SopClass.Sop12LeadEcgWaveformStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>Ambulatory ECG Waveform Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.9.1.3</para>
         /// </summary>
-        public static readonly String AmbulatoryECGWaveformStorageUid = "1.2.840.10008.5.1.4.1.1.9.1.3";
+        public static readonly String AmbulatoryEcgWaveformStorageUid = "1.2.840.10008.5.1.4.1.1.9.1.3";
 
         /// <summary>SopClass for
         /// <para>Ambulatory ECG Waveform Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.9.1.3</para>
         /// </summary>
-        public static readonly SopClass AmbulatoryECGWaveformStorage =
+        public static readonly SopClass AmbulatoryEcgWaveformStorage =
                              new SopClass("Ambulatory ECG Waveform Storage", 
-                                          SopClass.AmbulatoryECGWaveformStorageUid, 
+                                          SopClass.AmbulatoryEcgWaveformStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>Basic Annotation Box SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.15</para>
         /// </summary>
-        public static readonly String BasicAnnotationBoxSOPClassUid = "1.2.840.10008.5.1.1.15";
+        public static readonly String BasicAnnotationBoxSopClassUid = "1.2.840.10008.5.1.1.15";
 
         /// <summary>SopClass for
         /// <para>Basic Annotation Box SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.15</para>
         /// </summary>
-        public static readonly SopClass BasicAnnotationBoxSOPClass =
+        public static readonly SopClass BasicAnnotationBoxSopClass =
                              new SopClass("Basic Annotation Box SOP Class", 
-                                          SopClass.BasicAnnotationBoxSOPClassUid, 
+                                          SopClass.BasicAnnotationBoxSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Basic Color Image Box SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.4.1</para>
         /// </summary>
-        public static readonly String BasicColorImageBoxSOPClassUid = "1.2.840.10008.5.1.1.4.1";
+        public static readonly String BasicColorImageBoxSopClassUid = "1.2.840.10008.5.1.1.4.1";
 
         /// <summary>SopClass for
         /// <para>Basic Color Image Box SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.4.1</para>
         /// </summary>
-        public static readonly SopClass BasicColorImageBoxSOPClass =
+        public static readonly SopClass BasicColorImageBoxSopClass =
                              new SopClass("Basic Color Image Box SOP Class", 
-                                          SopClass.BasicColorImageBoxSOPClassUid, 
+                                          SopClass.BasicColorImageBoxSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Basic Film Box SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.2</para>
         /// </summary>
-        public static readonly String BasicFilmBoxSOPClassUid = "1.2.840.10008.5.1.1.2";
+        public static readonly String BasicFilmBoxSopClassUid = "1.2.840.10008.5.1.1.2";
 
         /// <summary>SopClass for
         /// <para>Basic Film Box SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.2</para>
         /// </summary>
-        public static readonly SopClass BasicFilmBoxSOPClass =
+        public static readonly SopClass BasicFilmBoxSopClass =
                              new SopClass("Basic Film Box SOP Class", 
-                                          SopClass.BasicFilmBoxSOPClassUid, 
+                                          SopClass.BasicFilmBoxSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Basic Film Session SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.1</para>
         /// </summary>
-        public static readonly String BasicFilmSessionSOPClassUid = "1.2.840.10008.5.1.1.1";
+        public static readonly String BasicFilmSessionSopClassUid = "1.2.840.10008.5.1.1.1";
 
         /// <summary>SopClass for
         /// <para>Basic Film Session SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.1</para>
         /// </summary>
-        public static readonly SopClass BasicFilmSessionSOPClass =
+        public static readonly SopClass BasicFilmSessionSopClass =
                              new SopClass("Basic Film Session SOP Class", 
-                                          SopClass.BasicFilmSessionSOPClassUid, 
+                                          SopClass.BasicFilmSessionSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Basic Grayscale Image Box SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.4</para>
         /// </summary>
-        public static readonly String BasicGrayscaleImageBoxSOPClassUid = "1.2.840.10008.5.1.1.4";
+        public static readonly String BasicGrayscaleImageBoxSopClassUid = "1.2.840.10008.5.1.1.4";
 
         /// <summary>SopClass for
         /// <para>Basic Grayscale Image Box SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.4</para>
         /// </summary>
-        public static readonly SopClass BasicGrayscaleImageBoxSOPClass =
+        public static readonly SopClass BasicGrayscaleImageBoxSopClass =
                              new SopClass("Basic Grayscale Image Box SOP Class", 
-                                          SopClass.BasicGrayscaleImageBoxSOPClassUid, 
+                                          SopClass.BasicGrayscaleImageBoxSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Basic Print Image Overlay Box SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.24.1</para>
         /// </summary>
-        public static readonly String BasicPrintImageOverlayBoxSOPClassRetiredUid = "1.2.840.10008.5.1.1.24.1";
+        public static readonly String BasicPrintImageOverlayBoxSopClassRetiredUid = "1.2.840.10008.5.1.1.24.1";
 
         /// <summary>SopClass for
         /// <para>Basic Print Image Overlay Box SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.24.1</para>
         /// </summary>
-        public static readonly SopClass BasicPrintImageOverlayBoxSOPClassRetired =
+        public static readonly SopClass BasicPrintImageOverlayBoxSopClassRetired =
                              new SopClass("Basic Print Image Overlay Box SOP Class (Retired)", 
-                                          SopClass.BasicPrintImageOverlayBoxSOPClassRetiredUid, 
+                                          SopClass.BasicPrintImageOverlayBoxSopClassRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Basic Study Content Notification SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.9</para>
         /// </summary>
-        public static readonly String BasicStudyContentNotificationSOPClassRetiredUid = "1.2.840.10008.1.9";
+        public static readonly String BasicStudyContentNotificationSopClassRetiredUid = "1.2.840.10008.1.9";
 
         /// <summary>SopClass for
         /// <para>Basic Study Content Notification SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.9</para>
         /// </summary>
-        public static readonly SopClass BasicStudyContentNotificationSOPClassRetired =
+        public static readonly SopClass BasicStudyContentNotificationSopClassRetired =
                              new SopClass("Basic Study Content Notification SOP Class (Retired)", 
-                                          SopClass.BasicStudyContentNotificationSOPClassRetiredUid, 
+                                          SopClass.BasicStudyContentNotificationSopClassRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Basic Text SR</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.11</para>
         /// </summary>
-        public static readonly String BasicTextSRUid = "1.2.840.10008.5.1.4.1.1.88.11";
+        public static readonly String BasicTextSrUid = "1.2.840.10008.5.1.4.1.1.88.11";
 
         /// <summary>SopClass for
         /// <para>Basic Text SR</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.11</para>
         /// </summary>
-        public static readonly SopClass BasicTextSR =
+        public static readonly SopClass BasicTextSr =
                              new SopClass("Basic Text SR", 
-                                          SopClass.BasicTextSRUid, 
+                                          SopClass.BasicTextSrUid, 
                                           false);
 
         /// <summary>
@@ -178,15 +178,15 @@ namespace ClearCanvas.Dicom
         /// <para>Blending Softcopy Presentation State Storage SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.11.4</para>
         /// </summary>
-        public static readonly String BlendingSoftcopyPresentationStateStorageSOPClassUid = "1.2.840.10008.5.1.4.1.1.11.4";
+        public static readonly String BlendingSoftcopyPresentationStateStorageSopClassUid = "1.2.840.10008.5.1.4.1.1.11.4";
 
         /// <summary>SopClass for
         /// <para>Blending Softcopy Presentation State Storage SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.11.4</para>
         /// </summary>
-        public static readonly SopClass BlendingSoftcopyPresentationStateStorageSOPClass =
+        public static readonly SopClass BlendingSoftcopyPresentationStateStorageSopClass =
                              new SopClass("Blending Softcopy Presentation State Storage SOP Class", 
-                                          SopClass.BlendingSoftcopyPresentationStateStorageSOPClassUid, 
+                                          SopClass.BlendingSoftcopyPresentationStateStorageSopClassUid, 
                                           false);
 
         /// <summary>
@@ -238,45 +238,45 @@ namespace ClearCanvas.Dicom
         /// <para>Chest CAD SR</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.65</para>
         /// </summary>
-        public static readonly String ChestCADSRUid = "1.2.840.10008.5.1.4.1.1.88.65";
+        public static readonly String ChestCadSrUid = "1.2.840.10008.5.1.4.1.1.88.65";
 
         /// <summary>SopClass for
         /// <para>Chest CAD SR</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.65</para>
         /// </summary>
-        public static readonly SopClass ChestCADSR =
+        public static readonly SopClass ChestCadSr =
                              new SopClass("Chest CAD SR", 
-                                          SopClass.ChestCADSRUid, 
+                                          SopClass.ChestCadSrUid, 
                                           false);
 
         /// <summary>
         /// <para>Color Softcopy Presentation State Storage SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.11.2</para>
         /// </summary>
-        public static readonly String ColorSoftcopyPresentationStateStorageSOPClassUid = "1.2.840.10008.5.1.4.1.1.11.2";
+        public static readonly String ColorSoftcopyPresentationStateStorageSopClassUid = "1.2.840.10008.5.1.4.1.1.11.2";
 
         /// <summary>SopClass for
         /// <para>Color Softcopy Presentation State Storage SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.11.2</para>
         /// </summary>
-        public static readonly SopClass ColorSoftcopyPresentationStateStorageSOPClass =
+        public static readonly SopClass ColorSoftcopyPresentationStateStorageSopClass =
                              new SopClass("Color Softcopy Presentation State Storage SOP Class", 
-                                          SopClass.ColorSoftcopyPresentationStateStorageSOPClassUid, 
+                                          SopClass.ColorSoftcopyPresentationStateStorageSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Comprehensive SR</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.33</para>
         /// </summary>
-        public static readonly String ComprehensiveSRUid = "1.2.840.10008.5.1.4.1.1.88.33";
+        public static readonly String ComprehensiveSrUid = "1.2.840.10008.5.1.4.1.1.88.33";
 
         /// <summary>SopClass for
         /// <para>Comprehensive SR</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.33</para>
         /// </summary>
-        public static readonly SopClass ComprehensiveSR =
+        public static readonly SopClass ComprehensiveSr =
                              new SopClass("Comprehensive SR", 
-                                          SopClass.ComprehensiveSRUid, 
+                                          SopClass.ComprehensiveSrUid, 
                                           false);
 
         /// <summary>
@@ -298,15 +298,15 @@ namespace ClearCanvas.Dicom
         /// <para>CT Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.2</para>
         /// </summary>
-        public static readonly String CTImageStorageUid = "1.2.840.10008.5.1.4.1.1.2";
+        public static readonly String CtImageStorageUid = "1.2.840.10008.5.1.4.1.1.2";
 
         /// <summary>SopClass for
         /// <para>CT Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.2</para>
         /// </summary>
-        public static readonly SopClass CTImageStorage =
+        public static readonly SopClass CtImageStorage =
                              new SopClass("CT Image Storage", 
-                                          SopClass.CTImageStorageUid, 
+                                          SopClass.CtImageStorageUid, 
                                           false);
 
         /// <summary>
@@ -328,105 +328,105 @@ namespace ClearCanvas.Dicom
         /// <para>Detached Interpretation Management SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.6.1</para>
         /// </summary>
-        public static readonly String DetachedInterpretationManagementSOPClassRetiredUid = "1.2.840.10008.3.1.2.6.1";
+        public static readonly String DetachedInterpretationManagementSopClassRetiredUid = "1.2.840.10008.3.1.2.6.1";
 
         /// <summary>SopClass for
         /// <para>Detached Interpretation Management SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.6.1</para>
         /// </summary>
-        public static readonly SopClass DetachedInterpretationManagementSOPClassRetired =
+        public static readonly SopClass DetachedInterpretationManagementSopClassRetired =
                              new SopClass("Detached Interpretation Management SOP Class (Retired)", 
-                                          SopClass.DetachedInterpretationManagementSOPClassRetiredUid, 
+                                          SopClass.DetachedInterpretationManagementSopClassRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Detached Patient Management SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.1.1</para>
         /// </summary>
-        public static readonly String DetachedPatientManagementSOPClassRetiredUid = "1.2.840.10008.3.1.2.1.1";
+        public static readonly String DetachedPatientManagementSopClassRetiredUid = "1.2.840.10008.3.1.2.1.1";
 
         /// <summary>SopClass for
         /// <para>Detached Patient Management SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.1.1</para>
         /// </summary>
-        public static readonly SopClass DetachedPatientManagementSOPClassRetired =
+        public static readonly SopClass DetachedPatientManagementSopClassRetired =
                              new SopClass("Detached Patient Management SOP Class (Retired)", 
-                                          SopClass.DetachedPatientManagementSOPClassRetiredUid, 
+                                          SopClass.DetachedPatientManagementSopClassRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Detached Results Management SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.5.1</para>
         /// </summary>
-        public static readonly String DetachedResultsManagementSOPClassRetiredUid = "1.2.840.10008.3.1.2.5.1";
+        public static readonly String DetachedResultsManagementSopClassRetiredUid = "1.2.840.10008.3.1.2.5.1";
 
         /// <summary>SopClass for
         /// <para>Detached Results Management SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.5.1</para>
         /// </summary>
-        public static readonly SopClass DetachedResultsManagementSOPClassRetired =
+        public static readonly SopClass DetachedResultsManagementSopClassRetired =
                              new SopClass("Detached Results Management SOP Class (Retired)", 
-                                          SopClass.DetachedResultsManagementSOPClassRetiredUid, 
+                                          SopClass.DetachedResultsManagementSopClassRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Detached Study Management SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.3.1</para>
         /// </summary>
-        public static readonly String DetachedStudyManagementSOPClassRetiredUid = "1.2.840.10008.3.1.2.3.1";
+        public static readonly String DetachedStudyManagementSopClassRetiredUid = "1.2.840.10008.3.1.2.3.1";
 
         /// <summary>SopClass for
         /// <para>Detached Study Management SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.3.1</para>
         /// </summary>
-        public static readonly SopClass DetachedStudyManagementSOPClassRetired =
+        public static readonly SopClass DetachedStudyManagementSopClassRetired =
                              new SopClass("Detached Study Management SOP Class (Retired)", 
-                                          SopClass.DetachedStudyManagementSOPClassRetiredUid, 
+                                          SopClass.DetachedStudyManagementSopClassRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Detached Visit Management SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.2.1</para>
         /// </summary>
-        public static readonly String DetachedVisitManagementSOPClassRetiredUid = "1.2.840.10008.3.1.2.2.1";
+        public static readonly String DetachedVisitManagementSopClassRetiredUid = "1.2.840.10008.3.1.2.2.1";
 
         /// <summary>SopClass for
         /// <para>Detached Visit Management SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.2.1</para>
         /// </summary>
-        public static readonly SopClass DetachedVisitManagementSOPClassRetired =
+        public static readonly SopClass DetachedVisitManagementSopClassRetired =
                              new SopClass("Detached Visit Management SOP Class (Retired)", 
-                                          SopClass.DetachedVisitManagementSOPClassRetiredUid, 
+                                          SopClass.DetachedVisitManagementSopClassRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Digital Intra-oral X-Ray Image Storage – For Presentation</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.3</para>
         /// </summary>
-        public static readonly String DigitalIntraoralXRayImageStorageForPresentationUid = "1.2.840.10008.5.1.4.1.1.1.3";
+        public static readonly String DigitalIntraOralXRayImageStorageForPresentationUid = "1.2.840.10008.5.1.4.1.1.1.3";
 
         /// <summary>SopClass for
         /// <para>Digital Intra-oral X-Ray Image Storage – For Presentation</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.3</para>
         /// </summary>
-        public static readonly SopClass DigitalIntraoralXRayImageStorageForPresentation =
+        public static readonly SopClass DigitalIntraOralXRayImageStorageForPresentation =
                              new SopClass("Digital Intra-oral X-Ray Image Storage – For Presentation", 
-                                          SopClass.DigitalIntraoralXRayImageStorageForPresentationUid, 
+                                          SopClass.DigitalIntraOralXRayImageStorageForPresentationUid, 
                                           false);
 
         /// <summary>
         /// <para>Digital Intra-oral X-Ray Image Storage – For Processing</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.3.1</para>
         /// </summary>
-        public static readonly String DigitalIntraoralXRayImageStorageForProcessingUid = "1.2.840.10008.5.1.4.1.1.1.3.1";
+        public static readonly String DigitalIntraOralXRayImageStorageForProcessingUid = "1.2.840.10008.5.1.4.1.1.1.3.1";
 
         /// <summary>SopClass for
         /// <para>Digital Intra-oral X-Ray Image Storage – For Processing</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.1.3.1</para>
         /// </summary>
-        public static readonly SopClass DigitalIntraoralXRayImageStorageForProcessing =
+        public static readonly SopClass DigitalIntraOralXRayImageStorageForProcessing =
                              new SopClass("Digital Intra-oral X-Ray Image Storage – For Processing", 
-                                          SopClass.DigitalIntraoralXRayImageStorageForProcessingUid, 
+                                          SopClass.DigitalIntraOralXRayImageStorageForProcessingUid, 
                                           false);
 
         /// <summary>
@@ -493,150 +493,150 @@ namespace ClearCanvas.Dicom
         /// <para>Encapsulated PDF Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.104.1</para>
         /// </summary>
-        public static readonly String EncapsulatedPDFStorageUid = "1.2.840.10008.5.1.4.1.1.104.1";
+        public static readonly String EncapsulatedPdfStorageUid = "1.2.840.10008.5.1.4.1.1.104.1";
 
         /// <summary>SopClass for
         /// <para>Encapsulated PDF Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.104.1</para>
         /// </summary>
-        public static readonly SopClass EncapsulatedPDFStorage =
+        public static readonly SopClass EncapsulatedPdfStorage =
                              new SopClass("Encapsulated PDF Storage", 
-                                          SopClass.EncapsulatedPDFStorageUid, 
+                                          SopClass.EncapsulatedPdfStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>Enhanced CT Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.2.1</para>
         /// </summary>
-        public static readonly String EnhancedCTImageStorageUid = "1.2.840.10008.5.1.4.1.1.2.1";
+        public static readonly String EnhancedCtImageStorageUid = "1.2.840.10008.5.1.4.1.1.2.1";
 
         /// <summary>SopClass for
         /// <para>Enhanced CT Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.2.1</para>
         /// </summary>
-        public static readonly SopClass EnhancedCTImageStorage =
+        public static readonly SopClass EnhancedCtImageStorage =
                              new SopClass("Enhanced CT Image Storage", 
-                                          SopClass.EnhancedCTImageStorageUid, 
+                                          SopClass.EnhancedCtImageStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>Enhanced MR Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.4.1</para>
         /// </summary>
-        public static readonly String EnhancedMRImageStorageUid = "1.2.840.10008.5.1.4.1.1.4.1";
+        public static readonly String EnhancedMrImageStorageUid = "1.2.840.10008.5.1.4.1.1.4.1";
 
         /// <summary>SopClass for
         /// <para>Enhanced MR Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.4.1</para>
         /// </summary>
-        public static readonly SopClass EnhancedMRImageStorage =
+        public static readonly SopClass EnhancedMrImageStorage =
                              new SopClass("Enhanced MR Image Storage", 
-                                          SopClass.EnhancedMRImageStorageUid, 
+                                          SopClass.EnhancedMrImageStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>Enhanced SR</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.22</para>
         /// </summary>
-        public static readonly String EnhancedSRUid = "1.2.840.10008.5.1.4.1.1.88.22";
+        public static readonly String EnhancedSrUid = "1.2.840.10008.5.1.4.1.1.88.22";
 
         /// <summary>SopClass for
         /// <para>Enhanced SR</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.22</para>
         /// </summary>
-        public static readonly SopClass EnhancedSR =
+        public static readonly SopClass EnhancedSr =
                              new SopClass("Enhanced SR", 
-                                          SopClass.EnhancedSRUid, 
+                                          SopClass.EnhancedSrUid, 
                                           false);
 
         /// <summary>
         /// <para>Enhanced XA Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.12.1.1</para>
         /// </summary>
-        public static readonly String EnhancedXAImageStorageUid = "1.2.840.10008.5.1.4.1.1.12.1.1";
+        public static readonly String EnhancedXaImageStorageUid = "1.2.840.10008.5.1.4.1.1.12.1.1";
 
         /// <summary>SopClass for
         /// <para>Enhanced XA Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.12.1.1</para>
         /// </summary>
-        public static readonly SopClass EnhancedXAImageStorage =
+        public static readonly SopClass EnhancedXaImageStorage =
                              new SopClass("Enhanced XA Image Storage", 
-                                          SopClass.EnhancedXAImageStorageUid, 
+                                          SopClass.EnhancedXaImageStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>Enhanced XRF Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.12.2.1</para>
         /// </summary>
-        public static readonly String EnhancedXRFImageStorageUid = "1.2.840.10008.5.1.4.1.1.12.2.1";
+        public static readonly String EnhancedXrfImageStorageUid = "1.2.840.10008.5.1.4.1.1.12.2.1";
 
         /// <summary>SopClass for
         /// <para>Enhanced XRF Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.12.2.1</para>
         /// </summary>
-        public static readonly SopClass EnhancedXRFImageStorage =
+        public static readonly SopClass EnhancedXrfImageStorage =
                              new SopClass("Enhanced XRF Image Storage", 
-                                          SopClass.EnhancedXRFImageStorageUid, 
+                                          SopClass.EnhancedXrfImageStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>General ECG Waveform Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.9.1.2</para>
         /// </summary>
-        public static readonly String GeneralECGWaveformStorageUid = "1.2.840.10008.5.1.4.1.1.9.1.2";
+        public static readonly String GeneralEcgWaveformStorageUid = "1.2.840.10008.5.1.4.1.1.9.1.2";
 
         /// <summary>SopClass for
         /// <para>General ECG Waveform Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.9.1.2</para>
         /// </summary>
-        public static readonly SopClass GeneralECGWaveformStorage =
+        public static readonly SopClass GeneralEcgWaveformStorage =
                              new SopClass("General ECG Waveform Storage", 
-                                          SopClass.GeneralECGWaveformStorageUid, 
+                                          SopClass.GeneralEcgWaveformStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>General Purpose Performed Procedure Step SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.32.3</para>
         /// </summary>
-        public static readonly String GeneralPurposePerformedProcedureStepSOPClassUid = "1.2.840.10008.5.1.4.32.3";
+        public static readonly String GeneralPurposePerformedProcedureStepSopClassUid = "1.2.840.10008.5.1.4.32.3";
 
         /// <summary>SopClass for
         /// <para>General Purpose Performed Procedure Step SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.32.3</para>
         /// </summary>
-        public static readonly SopClass GeneralPurposePerformedProcedureStepSOPClass =
+        public static readonly SopClass GeneralPurposePerformedProcedureStepSopClass =
                              new SopClass("General Purpose Performed Procedure Step SOP Class", 
-                                          SopClass.GeneralPurposePerformedProcedureStepSOPClassUid, 
+                                          SopClass.GeneralPurposePerformedProcedureStepSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>General Purpose Scheduled Procedure Step SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.32.2</para>
         /// </summary>
-        public static readonly String GeneralPurposeScheduledProcedureStepSOPClassUid = "1.2.840.10008.5.1.4.32.2";
+        public static readonly String GeneralPurposeScheduledProcedureStepSopClassUid = "1.2.840.10008.5.1.4.32.2";
 
         /// <summary>SopClass for
         /// <para>General Purpose Scheduled Procedure Step SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.32.2</para>
         /// </summary>
-        public static readonly SopClass GeneralPurposeScheduledProcedureStepSOPClass =
+        public static readonly SopClass GeneralPurposeScheduledProcedureStepSopClass =
                              new SopClass("General Purpose Scheduled Procedure Step SOP Class", 
-                                          SopClass.GeneralPurposeScheduledProcedureStepSOPClassUid, 
+                                          SopClass.GeneralPurposeScheduledProcedureStepSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>General Purpose Worklist Information Model – FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.32.1</para>
         /// </summary>
-        public static readonly String GeneralPurposeWorklistInformationModelFINDUid = "1.2.840.10008.5.1.4.32.1";
+        public static readonly String GeneralPurposeWorklistInformationModelFindUid = "1.2.840.10008.5.1.4.32.1";
 
         /// <summary>SopClass for
         /// <para>General Purpose Worklist Information Model – FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.32.1</para>
         /// </summary>
-        public static readonly SopClass GeneralPurposeWorklistInformationModelFIND =
+        public static readonly SopClass GeneralPurposeWorklistInformationModelFind =
                              new SopClass("General Purpose Worklist Information Model – FIND", 
-                                          SopClass.GeneralPurposeWorklistInformationModelFINDUid, 
+                                          SopClass.GeneralPurposeWorklistInformationModelFindUid, 
                                           false);
 
         /// <summary>
@@ -658,45 +658,45 @@ namespace ClearCanvas.Dicom
         /// <para>Grayscale Softcopy Presentation State Storage SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.11.1</para>
         /// </summary>
-        public static readonly String GrayscaleSoftcopyPresentationStateStorageSOPClassUid = "1.2.840.10008.5.1.4.1.1.11.1";
+        public static readonly String GrayscaleSoftcopyPresentationStateStorageSopClassUid = "1.2.840.10008.5.1.4.1.1.11.1";
 
         /// <summary>SopClass for
         /// <para>Grayscale Softcopy Presentation State Storage SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.11.1</para>
         /// </summary>
-        public static readonly SopClass GrayscaleSoftcopyPresentationStateStorageSOPClass =
+        public static readonly SopClass GrayscaleSoftcopyPresentationStateStorageSopClass =
                              new SopClass("Grayscale Softcopy Presentation State Storage SOP Class", 
-                                          SopClass.GrayscaleSoftcopyPresentationStateStorageSOPClassUid, 
+                                          SopClass.GrayscaleSoftcopyPresentationStateStorageSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Hanging Protocol Information Model – FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.38.2</para>
         /// </summary>
-        public static readonly String HangingProtocolInformationModelFINDUid = "1.2.840.10008.5.1.4.38.2";
+        public static readonly String HangingProtocolInformationModelFindUid = "1.2.840.10008.5.1.4.38.2";
 
         /// <summary>SopClass for
         /// <para>Hanging Protocol Information Model – FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.38.2</para>
         /// </summary>
-        public static readonly SopClass HangingProtocolInformationModelFIND =
+        public static readonly SopClass HangingProtocolInformationModelFind =
                              new SopClass("Hanging Protocol Information Model – FIND", 
-                                          SopClass.HangingProtocolInformationModelFINDUid, 
+                                          SopClass.HangingProtocolInformationModelFindUid, 
                                           false);
 
         /// <summary>
         /// <para>Hanging Protocol Information Model – MOVE</para>
         /// <para>UID: 1.2.840.10008.5.1.4.38.3</para>
         /// </summary>
-        public static readonly String HangingProtocolInformationModelMOVEUid = "1.2.840.10008.5.1.4.38.3";
+        public static readonly String HangingProtocolInformationModelMoveUid = "1.2.840.10008.5.1.4.38.3";
 
         /// <summary>SopClass for
         /// <para>Hanging Protocol Information Model – MOVE</para>
         /// <para>UID: 1.2.840.10008.5.1.4.38.3</para>
         /// </summary>
-        public static readonly SopClass HangingProtocolInformationModelMOVE =
+        public static readonly SopClass HangingProtocolInformationModelMove =
                              new SopClass("Hanging Protocol Information Model – MOVE", 
-                                          SopClass.HangingProtocolInformationModelMOVEUid, 
+                                          SopClass.HangingProtocolInformationModelMoveUid, 
                                           false);
 
         /// <summary>
@@ -718,30 +718,30 @@ namespace ClearCanvas.Dicom
         /// <para>Hardcopy  Grayscale Image Storage SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.29</para>
         /// </summary>
-        public static readonly String HardcopyGrayscaleImageStorageSOPClassRetiredUid = "1.2.840.10008.5.1.1.29";
+        public static readonly String HardcopyGrayscaleImageStorageSopClassRetiredUid = "1.2.840.10008.5.1.1.29";
 
         /// <summary>SopClass for
         /// <para>Hardcopy  Grayscale Image Storage SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.29</para>
         /// </summary>
-        public static readonly SopClass HardcopyGrayscaleImageStorageSOPClassRetired =
+        public static readonly SopClass HardcopyGrayscaleImageStorageSopClassRetired =
                              new SopClass("Hardcopy  Grayscale Image Storage SOP Class (Retired)", 
-                                          SopClass.HardcopyGrayscaleImageStorageSOPClassRetiredUid, 
+                                          SopClass.HardcopyGrayscaleImageStorageSopClassRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Hardcopy Color Image Storage SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.30</para>
         /// </summary>
-        public static readonly String HardcopyColorImageStorageSOPClassRetiredUid = "1.2.840.10008.5.1.1.30";
+        public static readonly String HardcopyColorImageStorageSopClassRetiredUid = "1.2.840.10008.5.1.1.30";
 
         /// <summary>SopClass for
         /// <para>Hardcopy Color Image Storage SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.30</para>
         /// </summary>
-        public static readonly SopClass HardcopyColorImageStorageSOPClassRetired =
+        public static readonly SopClass HardcopyColorImageStorageSopClassRetired =
                              new SopClass("Hardcopy Color Image Storage SOP Class (Retired)", 
-                                          SopClass.HardcopyColorImageStorageSOPClassRetiredUid, 
+                                          SopClass.HardcopyColorImageStorageSopClassRetiredUid, 
                                           false);
 
         /// <summary>
@@ -763,30 +763,30 @@ namespace ClearCanvas.Dicom
         /// <para>Image Overlay Box SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.24</para>
         /// </summary>
-        public static readonly String ImageOverlayBoxSOPClassRetiredUid = "1.2.840.10008.5.1.1.24";
+        public static readonly String ImageOverlayBoxSopClassRetiredUid = "1.2.840.10008.5.1.1.24";
 
         /// <summary>SopClass for
         /// <para>Image Overlay Box SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.24</para>
         /// </summary>
-        public static readonly SopClass ImageOverlayBoxSOPClassRetired =
+        public static readonly SopClass ImageOverlayBoxSopClassRetired =
                              new SopClass("Image Overlay Box SOP Class (Retired)", 
-                                          SopClass.ImageOverlayBoxSOPClassRetiredUid, 
+                                          SopClass.ImageOverlayBoxSopClassRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Instance Availability Notification SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.33</para>
         /// </summary>
-        public static readonly String InstanceAvailabilityNotificationSOPClassUid = "1.2.840.10008.5.1.4.33";
+        public static readonly String InstanceAvailabilityNotificationSopClassUid = "1.2.840.10008.5.1.4.33";
 
         /// <summary>SopClass for
         /// <para>Instance Availability Notification SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.33</para>
         /// </summary>
-        public static readonly SopClass InstanceAvailabilityNotificationSOPClass =
+        public static readonly SopClass InstanceAvailabilityNotificationSopClass =
                              new SopClass("Instance Availability Notification SOP Class", 
-                                          SopClass.InstanceAvailabilityNotificationSOPClassUid, 
+                                          SopClass.InstanceAvailabilityNotificationSopClassUid, 
                                           false);
 
         /// <summary>
@@ -808,30 +808,30 @@ namespace ClearCanvas.Dicom
         /// <para>Mammography CAD SR</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.50</para>
         /// </summary>
-        public static readonly String MammographyCADSRUid = "1.2.840.10008.5.1.4.1.1.88.50";
+        public static readonly String MammographyCadSrUid = "1.2.840.10008.5.1.4.1.1.88.50";
 
         /// <summary>SopClass for
         /// <para>Mammography CAD SR</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.50</para>
         /// </summary>
-        public static readonly SopClass MammographyCADSR =
+        public static readonly SopClass MammographyCadSr =
                              new SopClass("Mammography CAD SR", 
-                                          SopClass.MammographyCADSRUid, 
+                                          SopClass.MammographyCadSrUid, 
                                           false);
 
         /// <summary>
         /// <para>Media Creation Management SOP Class UID</para>
         /// <para>UID: 1.2.840.10008.5.1.1.33</para>
         /// </summary>
-        public static readonly String MediaCreationManagementSOPClassUIDUid = "1.2.840.10008.5.1.1.33";
+        public static readonly String MediaCreationManagementSopClassUidUid = "1.2.840.10008.5.1.1.33";
 
         /// <summary>SopClass for
         /// <para>Media Creation Management SOP Class UID</para>
         /// <para>UID: 1.2.840.10008.5.1.1.33</para>
         /// </summary>
-        public static readonly SopClass MediaCreationManagementSOPClassUID =
+        public static readonly SopClass MediaCreationManagementSopClassUid =
                              new SopClass("Media Creation Management SOP Class UID", 
-                                          SopClass.MediaCreationManagementSOPClassUIDUid, 
+                                          SopClass.MediaCreationManagementSopClassUidUid, 
                                           false);
 
         /// <summary>
@@ -853,150 +853,150 @@ namespace ClearCanvas.Dicom
         /// <para>Modality Performed Procedure Step Notification SOP Class</para>
         /// <para>UID: 1.2.840.10008.3.1.2.3.5</para>
         /// </summary>
-        public static readonly String ModalityPerformedProcedureStepNotificationSOPClassUid = "1.2.840.10008.3.1.2.3.5";
+        public static readonly String ModalityPerformedProcedureStepNotificationSopClassUid = "1.2.840.10008.3.1.2.3.5";
 
         /// <summary>SopClass for
         /// <para>Modality Performed Procedure Step Notification SOP Class</para>
         /// <para>UID: 1.2.840.10008.3.1.2.3.5</para>
         /// </summary>
-        public static readonly SopClass ModalityPerformedProcedureStepNotificationSOPClass =
+        public static readonly SopClass ModalityPerformedProcedureStepNotificationSopClass =
                              new SopClass("Modality Performed Procedure Step Notification SOP Class", 
-                                          SopClass.ModalityPerformedProcedureStepNotificationSOPClassUid, 
+                                          SopClass.ModalityPerformedProcedureStepNotificationSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Modality Performed Procedure Step Retrieve SOP Class</para>
         /// <para>UID: 1.2.840.10008.3.1.2.3.4</para>
         /// </summary>
-        public static readonly String ModalityPerformedProcedureStepRetrieveSOPClassUid = "1.2.840.10008.3.1.2.3.4";
+        public static readonly String ModalityPerformedProcedureStepRetrieveSopClassUid = "1.2.840.10008.3.1.2.3.4";
 
         /// <summary>SopClass for
         /// <para>Modality Performed Procedure Step Retrieve SOP Class</para>
         /// <para>UID: 1.2.840.10008.3.1.2.3.4</para>
         /// </summary>
-        public static readonly SopClass ModalityPerformedProcedureStepRetrieveSOPClass =
+        public static readonly SopClass ModalityPerformedProcedureStepRetrieveSopClass =
                              new SopClass("Modality Performed Procedure Step Retrieve SOP Class", 
-                                          SopClass.ModalityPerformedProcedureStepRetrieveSOPClassUid, 
+                                          SopClass.ModalityPerformedProcedureStepRetrieveSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Modality Performed Procedure Step SOP Class</para>
         /// <para>UID: 1.2.840.10008.3.1.2.3.3</para>
         /// </summary>
-        public static readonly String ModalityPerformedProcedureStepSOPClassUid = "1.2.840.10008.3.1.2.3.3";
+        public static readonly String ModalityPerformedProcedureStepSopClassUid = "1.2.840.10008.3.1.2.3.3";
 
         /// <summary>SopClass for
         /// <para>Modality Performed Procedure Step SOP Class</para>
         /// <para>UID: 1.2.840.10008.3.1.2.3.3</para>
         /// </summary>
-        public static readonly SopClass ModalityPerformedProcedureStepSOPClass =
+        public static readonly SopClass ModalityPerformedProcedureStepSopClass =
                              new SopClass("Modality Performed Procedure Step SOP Class", 
-                                          SopClass.ModalityPerformedProcedureStepSOPClassUid, 
+                                          SopClass.ModalityPerformedProcedureStepSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Modality Worklist Information Model – FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.31</para>
         /// </summary>
-        public static readonly String ModalityWorklistInformationModelFINDUid = "1.2.840.10008.5.1.4.31";
+        public static readonly String ModalityWorklistInformationModelFindUid = "1.2.840.10008.5.1.4.31";
 
         /// <summary>SopClass for
         /// <para>Modality Worklist Information Model – FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.31</para>
         /// </summary>
-        public static readonly SopClass ModalityWorklistInformationModelFIND =
+        public static readonly SopClass ModalityWorklistInformationModelFind =
                              new SopClass("Modality Worklist Information Model – FIND", 
-                                          SopClass.ModalityWorklistInformationModelFINDUid, 
+                                          SopClass.ModalityWorklistInformationModelFindUid, 
                                           false);
 
         /// <summary>
         /// <para>MR Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.4</para>
         /// </summary>
-        public static readonly String MRImageStorageUid = "1.2.840.10008.5.1.4.1.1.4";
+        public static readonly String MrImageStorageUid = "1.2.840.10008.5.1.4.1.1.4";
 
         /// <summary>SopClass for
         /// <para>MR Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.4</para>
         /// </summary>
-        public static readonly SopClass MRImageStorage =
+        public static readonly SopClass MrImageStorage =
                              new SopClass("MR Image Storage", 
-                                          SopClass.MRImageStorageUid, 
+                                          SopClass.MrImageStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>MR Spectroscopy Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.4.2</para>
         /// </summary>
-        public static readonly String MRSpectroscopyStorageUid = "1.2.840.10008.5.1.4.1.1.4.2";
+        public static readonly String MrSpectroscopyStorageUid = "1.2.840.10008.5.1.4.1.1.4.2";
 
         /// <summary>SopClass for
         /// <para>MR Spectroscopy Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.4.2</para>
         /// </summary>
-        public static readonly SopClass MRSpectroscopyStorage =
+        public static readonly SopClass MrSpectroscopyStorage =
                              new SopClass("MR Spectroscopy Storage", 
-                                          SopClass.MRSpectroscopyStorageUid, 
+                                          SopClass.MrSpectroscopyStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>Multi-frame Grayscale Byte Secondary Capture Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.7.2</para>
         /// </summary>
-        public static readonly String MultiframeGrayscaleByteSecondaryCaptureImageStorageUid = "1.2.840.10008.5.1.4.1.1.7.2";
+        public static readonly String MultiFrameGrayscaleByteSecondaryCaptureImageStorageUid = "1.2.840.10008.5.1.4.1.1.7.2";
 
         /// <summary>SopClass for
         /// <para>Multi-frame Grayscale Byte Secondary Capture Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.7.2</para>
         /// </summary>
-        public static readonly SopClass MultiframeGrayscaleByteSecondaryCaptureImageStorage =
+        public static readonly SopClass MultiFrameGrayscaleByteSecondaryCaptureImageStorage =
                              new SopClass("Multi-frame Grayscale Byte Secondary Capture Image Storage", 
-                                          SopClass.MultiframeGrayscaleByteSecondaryCaptureImageStorageUid, 
+                                          SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>Multi-frame Grayscale Word Secondary Capture Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.7.3</para>
         /// </summary>
-        public static readonly String MultiframeGrayscaleWordSecondaryCaptureImageStorageUid = "1.2.840.10008.5.1.4.1.1.7.3";
+        public static readonly String MultiFrameGrayscaleWordSecondaryCaptureImageStorageUid = "1.2.840.10008.5.1.4.1.1.7.3";
 
         /// <summary>SopClass for
         /// <para>Multi-frame Grayscale Word Secondary Capture Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.7.3</para>
         /// </summary>
-        public static readonly SopClass MultiframeGrayscaleWordSecondaryCaptureImageStorage =
+        public static readonly SopClass MultiFrameGrayscaleWordSecondaryCaptureImageStorage =
                              new SopClass("Multi-frame Grayscale Word Secondary Capture Image Storage", 
-                                          SopClass.MultiframeGrayscaleWordSecondaryCaptureImageStorageUid, 
+                                          SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>Multi-frame Single Bit Secondary Capture Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.7.1</para>
         /// </summary>
-        public static readonly String MultiframeSingleBitSecondaryCaptureImageStorageUid = "1.2.840.10008.5.1.4.1.1.7.1";
+        public static readonly String MultiFrameSingleBitSecondaryCaptureImageStorageUid = "1.2.840.10008.5.1.4.1.1.7.1";
 
         /// <summary>SopClass for
         /// <para>Multi-frame Single Bit Secondary Capture Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.7.1</para>
         /// </summary>
-        public static readonly SopClass MultiframeSingleBitSecondaryCaptureImageStorage =
+        public static readonly SopClass MultiFrameSingleBitSecondaryCaptureImageStorage =
                              new SopClass("Multi-frame Single Bit Secondary Capture Image Storage", 
-                                          SopClass.MultiframeSingleBitSecondaryCaptureImageStorageUid, 
+                                          SopClass.MultiFrameSingleBitSecondaryCaptureImageStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>Multi-frame True Color Secondary Capture Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.7.4</para>
         /// </summary>
-        public static readonly String MultiframeTrueColorSecondaryCaptureImageStorageUid = "1.2.840.10008.5.1.4.1.1.7.4";
+        public static readonly String MultiFrameTrueColorSecondaryCaptureImageStorageUid = "1.2.840.10008.5.1.4.1.1.7.4";
 
         /// <summary>SopClass for
         /// <para>Multi-frame True Color Secondary Capture Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.7.4</para>
         /// </summary>
-        public static readonly SopClass MultiframeTrueColorSecondaryCaptureImageStorage =
+        public static readonly SopClass MultiFrameTrueColorSecondaryCaptureImageStorage =
                              new SopClass("Multi-frame True Color Secondary Capture Image Storage", 
-                                          SopClass.MultiframeTrueColorSecondaryCaptureImageStorageUid, 
+                                          SopClass.MultiFrameTrueColorSecondaryCaptureImageStorageUid, 
                                           false);
 
         /// <summary>
@@ -1063,90 +1063,90 @@ namespace ClearCanvas.Dicom
         /// <para>Patient Root Query/Retrieve Information Model – FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.1.1</para>
         /// </summary>
-        public static readonly String PatientRootQueryRetrieveInformationModelFINDUid = "1.2.840.10008.5.1.4.1.2.1.1";
+        public static readonly String PatientRootQueryRetrieveInformationModelFindUid = "1.2.840.10008.5.1.4.1.2.1.1";
 
         /// <summary>SopClass for
         /// <para>Patient Root Query/Retrieve Information Model – FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.1.1</para>
         /// </summary>
-        public static readonly SopClass PatientRootQueryRetrieveInformationModelFIND =
+        public static readonly SopClass PatientRootQueryRetrieveInformationModelFind =
                              new SopClass("Patient Root Query/Retrieve Information Model – FIND", 
-                                          SopClass.PatientRootQueryRetrieveInformationModelFINDUid, 
+                                          SopClass.PatientRootQueryRetrieveInformationModelFindUid, 
                                           false);
 
         /// <summary>
         /// <para>Patient Root Query/Retrieve Information Model – GET</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.1.3</para>
         /// </summary>
-        public static readonly String PatientRootQueryRetrieveInformationModelGETUid = "1.2.840.10008.5.1.4.1.2.1.3";
+        public static readonly String PatientRootQueryRetrieveInformationModelGetUid = "1.2.840.10008.5.1.4.1.2.1.3";
 
         /// <summary>SopClass for
         /// <para>Patient Root Query/Retrieve Information Model – GET</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.1.3</para>
         /// </summary>
-        public static readonly SopClass PatientRootQueryRetrieveInformationModelGET =
+        public static readonly SopClass PatientRootQueryRetrieveInformationModelGet =
                              new SopClass("Patient Root Query/Retrieve Information Model – GET", 
-                                          SopClass.PatientRootQueryRetrieveInformationModelGETUid, 
+                                          SopClass.PatientRootQueryRetrieveInformationModelGetUid, 
                                           false);
 
         /// <summary>
         /// <para>Patient Root Query/Retrieve Information Model – MOVE</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.1.2</para>
         /// </summary>
-        public static readonly String PatientRootQueryRetrieveInformationModelMOVEUid = "1.2.840.10008.5.1.4.1.2.1.2";
+        public static readonly String PatientRootQueryRetrieveInformationModelMoveUid = "1.2.840.10008.5.1.4.1.2.1.2";
 
         /// <summary>SopClass for
         /// <para>Patient Root Query/Retrieve Information Model – MOVE</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.1.2</para>
         /// </summary>
-        public static readonly SopClass PatientRootQueryRetrieveInformationModelMOVE =
+        public static readonly SopClass PatientRootQueryRetrieveInformationModelMove =
                              new SopClass("Patient Root Query/Retrieve Information Model – MOVE", 
-                                          SopClass.PatientRootQueryRetrieveInformationModelMOVEUid, 
+                                          SopClass.PatientRootQueryRetrieveInformationModelMoveUid, 
                                           false);
 
         /// <summary>
         /// <para>Patient/Study Only Query/Retrieve Information Model  - FIND (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.3.1</para>
         /// </summary>
-        public static readonly String PatientStudyOnlyQueryRetrieveInformationModelFINDRetiredUid = "1.2.840.10008.5.1.4.1.2.3.1";
+        public static readonly String PatientStudyOnlyQueryRetrieveInformationModelFindRetiredUid = "1.2.840.10008.5.1.4.1.2.3.1";
 
         /// <summary>SopClass for
         /// <para>Patient/Study Only Query/Retrieve Information Model  - FIND (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.3.1</para>
         /// </summary>
-        public static readonly SopClass PatientStudyOnlyQueryRetrieveInformationModelFINDRetired =
+        public static readonly SopClass PatientStudyOnlyQueryRetrieveInformationModelFindRetired =
                              new SopClass("Patient/Study Only Query/Retrieve Information Model  - FIND (Retired)", 
-                                          SopClass.PatientStudyOnlyQueryRetrieveInformationModelFINDRetiredUid, 
+                                          SopClass.PatientStudyOnlyQueryRetrieveInformationModelFindRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Patient/Study Only Query/Retrieve Information Model  - GET (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.3.3</para>
         /// </summary>
-        public static readonly String PatientStudyOnlyQueryRetrieveInformationModelGETRetiredUid = "1.2.840.10008.5.1.4.1.2.3.3";
+        public static readonly String PatientStudyOnlyQueryRetrieveInformationModelGetRetiredUid = "1.2.840.10008.5.1.4.1.2.3.3";
 
         /// <summary>SopClass for
         /// <para>Patient/Study Only Query/Retrieve Information Model  - GET (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.3.3</para>
         /// </summary>
-        public static readonly SopClass PatientStudyOnlyQueryRetrieveInformationModelGETRetired =
+        public static readonly SopClass PatientStudyOnlyQueryRetrieveInformationModelGetRetired =
                              new SopClass("Patient/Study Only Query/Retrieve Information Model  - GET (Retired)", 
-                                          SopClass.PatientStudyOnlyQueryRetrieveInformationModelGETRetiredUid, 
+                                          SopClass.PatientStudyOnlyQueryRetrieveInformationModelGetRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Patient/Study Only Query/Retrieve Information Model  - MOVE (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.3.2</para>
         /// </summary>
-        public static readonly String PatientStudyOnlyQueryRetrieveInformationModelMOVERetiredUid = "1.2.840.10008.5.1.4.1.2.3.2";
+        public static readonly String PatientStudyOnlyQueryRetrieveInformationModelMoveRetiredUid = "1.2.840.10008.5.1.4.1.2.3.2";
 
         /// <summary>SopClass for
         /// <para>Patient/Study Only Query/Retrieve Information Model  - MOVE (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.3.2</para>
         /// </summary>
-        public static readonly SopClass PatientStudyOnlyQueryRetrieveInformationModelMOVERetired =
+        public static readonly SopClass PatientStudyOnlyQueryRetrieveInformationModelMoveRetired =
                              new SopClass("Patient/Study Only Query/Retrieve Information Model  - MOVE (Retired)", 
-                                          SopClass.PatientStudyOnlyQueryRetrieveInformationModelMOVERetiredUid, 
+                                          SopClass.PatientStudyOnlyQueryRetrieveInformationModelMoveRetiredUid, 
                                           false);
 
         /// <summary>
@@ -1168,90 +1168,90 @@ namespace ClearCanvas.Dicom
         /// <para>Presentation LUT SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.23</para>
         /// </summary>
-        public static readonly String PresentationLUTSOPClassUid = "1.2.840.10008.5.1.1.23";
+        public static readonly String PresentationLutSopClassUid = "1.2.840.10008.5.1.1.23";
 
         /// <summary>SopClass for
         /// <para>Presentation LUT SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.23</para>
         /// </summary>
-        public static readonly SopClass PresentationLUTSOPClass =
+        public static readonly SopClass PresentationLutSopClass =
                              new SopClass("Presentation LUT SOP Class", 
-                                          SopClass.PresentationLUTSOPClassUid, 
+                                          SopClass.PresentationLutSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Print Job SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.14</para>
         /// </summary>
-        public static readonly String PrintJobSOPClassUid = "1.2.840.10008.5.1.1.14";
+        public static readonly String PrintJobSopClassUid = "1.2.840.10008.5.1.1.14";
 
         /// <summary>SopClass for
         /// <para>Print Job SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.14</para>
         /// </summary>
-        public static readonly SopClass PrintJobSOPClass =
+        public static readonly SopClass PrintJobSopClass =
                              new SopClass("Print Job SOP Class", 
-                                          SopClass.PrintJobSOPClassUid, 
+                                          SopClass.PrintJobSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Print Queue Management SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.26</para>
         /// </summary>
-        public static readonly String PrintQueueManagementSOPClassRetiredUid = "1.2.840.10008.5.1.1.26";
+        public static readonly String PrintQueueManagementSopClassRetiredUid = "1.2.840.10008.5.1.1.26";
 
         /// <summary>SopClass for
         /// <para>Print Queue Management SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.26</para>
         /// </summary>
-        public static readonly SopClass PrintQueueManagementSOPClassRetired =
+        public static readonly SopClass PrintQueueManagementSopClassRetired =
                              new SopClass("Print Queue Management SOP Class (Retired)", 
-                                          SopClass.PrintQueueManagementSOPClassRetiredUid, 
+                                          SopClass.PrintQueueManagementSopClassRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Printer Configuration Retrieval SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.16.376</para>
         /// </summary>
-        public static readonly String PrinterConfigurationRetrievalSOPClassUid = "1.2.840.10008.5.1.1.16.376";
+        public static readonly String PrinterConfigurationRetrievalSopClassUid = "1.2.840.10008.5.1.1.16.376";
 
         /// <summary>SopClass for
         /// <para>Printer Configuration Retrieval SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.16.376</para>
         /// </summary>
-        public static readonly SopClass PrinterConfigurationRetrievalSOPClass =
+        public static readonly SopClass PrinterConfigurationRetrievalSopClass =
                              new SopClass("Printer Configuration Retrieval SOP Class", 
-                                          SopClass.PrinterConfigurationRetrievalSOPClassUid, 
+                                          SopClass.PrinterConfigurationRetrievalSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Printer SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.16</para>
         /// </summary>
-        public static readonly String PrinterSOPClassUid = "1.2.840.10008.5.1.1.16";
+        public static readonly String PrinterSopClassUid = "1.2.840.10008.5.1.1.16";
 
         /// <summary>SopClass for
         /// <para>Printer SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.16</para>
         /// </summary>
-        public static readonly SopClass PrinterSOPClass =
+        public static readonly SopClass PrinterSopClass =
                              new SopClass("Printer SOP Class", 
-                                          SopClass.PrinterSOPClassUid, 
+                                          SopClass.PrinterSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Procedural Event Logging SOP Class</para>
         /// <para>UID: 1.2.840.10008.1.40</para>
         /// </summary>
-        public static readonly String ProceduralEventLoggingSOPClassUid = "1.2.840.10008.1.40";
+        public static readonly String ProceduralEventLoggingSopClassUid = "1.2.840.10008.1.40";
 
         /// <summary>SopClass for
         /// <para>Procedural Event Logging SOP Class</para>
         /// <para>UID: 1.2.840.10008.1.40</para>
         /// </summary>
-        public static readonly SopClass ProceduralEventLoggingSOPClass =
+        public static readonly SopClass ProceduralEventLoggingSopClass =
                              new SopClass("Procedural Event Logging SOP Class", 
-                                          SopClass.ProceduralEventLoggingSOPClassUid, 
+                                          SopClass.ProceduralEventLoggingSopClassUid, 
                                           false);
 
         /// <summary>
@@ -1273,30 +1273,30 @@ namespace ClearCanvas.Dicom
         /// <para>Pseudo-Color Softcopy Presentation State Storage SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.11.3</para>
         /// </summary>
-        public static readonly String PseudoColorSoftcopyPresentationStateStorageSOPClassUid = "1.2.840.10008.5.1.4.1.1.11.3";
+        public static readonly String PseudoColorSoftcopyPresentationStateStorageSopClassUid = "1.2.840.10008.5.1.4.1.1.11.3";
 
         /// <summary>SopClass for
         /// <para>Pseudo-Color Softcopy Presentation State Storage SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.11.3</para>
         /// </summary>
-        public static readonly SopClass PseudoColorSoftcopyPresentationStateStorageSOPClass =
+        public static readonly SopClass PseudoColorSoftcopyPresentationStateStorageSopClass =
                              new SopClass("Pseudo-Color Softcopy Presentation State Storage SOP Class", 
-                                          SopClass.PseudoColorSoftcopyPresentationStateStorageSOPClassUid, 
+                                          SopClass.PseudoColorSoftcopyPresentationStateStorageSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Pull Print Request SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.31</para>
         /// </summary>
-        public static readonly String PullPrintRequestSOPClassRetiredUid = "1.2.840.10008.5.1.1.31";
+        public static readonly String PullPrintRequestSopClassRetiredUid = "1.2.840.10008.5.1.1.31";
 
         /// <summary>SopClass for
         /// <para>Pull Print Request SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.31</para>
         /// </summary>
-        public static readonly SopClass PullPrintRequestSOPClassRetired =
+        public static readonly SopClass PullPrintRequestSopClassRetired =
                              new SopClass("Pull Print Request SOP Class (Retired)", 
-                                          SopClass.PullPrintRequestSOPClassRetiredUid, 
+                                          SopClass.PullPrintRequestSopClassRetiredUid, 
                                           false);
 
         /// <summary>
@@ -1333,150 +1333,150 @@ namespace ClearCanvas.Dicom
         /// <para>Referenced Image Box SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.4.2</para>
         /// </summary>
-        public static readonly String ReferencedImageBoxSOPClassRetiredUid = "1.2.840.10008.5.1.1.4.2";
+        public static readonly String ReferencedImageBoxSopClassRetiredUid = "1.2.840.10008.5.1.1.4.2";
 
         /// <summary>SopClass for
         /// <para>Referenced Image Box SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.4.2</para>
         /// </summary>
-        public static readonly SopClass ReferencedImageBoxSOPClassRetired =
+        public static readonly SopClass ReferencedImageBoxSopClassRetired =
                              new SopClass("Referenced Image Box SOP Class (Retired)", 
-                                          SopClass.ReferencedImageBoxSOPClassRetiredUid, 
+                                          SopClass.ReferencedImageBoxSopClassRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>RT Beams Treatment Record Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.4</para>
         /// </summary>
-        public static readonly String RTBeamsTreatmentRecordStorageUid = "1.2.840.10008.5.1.4.1.1.481.4";
+        public static readonly String RtBeamsTreatmentRecordStorageUid = "1.2.840.10008.5.1.4.1.1.481.4";
 
         /// <summary>SopClass for
         /// <para>RT Beams Treatment Record Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.4</para>
         /// </summary>
-        public static readonly SopClass RTBeamsTreatmentRecordStorage =
+        public static readonly SopClass RtBeamsTreatmentRecordStorage =
                              new SopClass("RT Beams Treatment Record Storage", 
-                                          SopClass.RTBeamsTreatmentRecordStorageUid, 
+                                          SopClass.RtBeamsTreatmentRecordStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>RT Brachy Treatment Record Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.6</para>
         /// </summary>
-        public static readonly String RTBrachyTreatmentRecordStorageUid = "1.2.840.10008.5.1.4.1.1.481.6";
+        public static readonly String RtBrachyTreatmentRecordStorageUid = "1.2.840.10008.5.1.4.1.1.481.6";
 
         /// <summary>SopClass for
         /// <para>RT Brachy Treatment Record Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.6</para>
         /// </summary>
-        public static readonly SopClass RTBrachyTreatmentRecordStorage =
+        public static readonly SopClass RtBrachyTreatmentRecordStorage =
                              new SopClass("RT Brachy Treatment Record Storage", 
-                                          SopClass.RTBrachyTreatmentRecordStorageUid, 
+                                          SopClass.RtBrachyTreatmentRecordStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>RT Dose Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.2</para>
         /// </summary>
-        public static readonly String RTDoseStorageUid = "1.2.840.10008.5.1.4.1.1.481.2";
+        public static readonly String RtDoseStorageUid = "1.2.840.10008.5.1.4.1.1.481.2";
 
         /// <summary>SopClass for
         /// <para>RT Dose Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.2</para>
         /// </summary>
-        public static readonly SopClass RTDoseStorage =
+        public static readonly SopClass RtDoseStorage =
                              new SopClass("RT Dose Storage", 
-                                          SopClass.RTDoseStorageUid, 
+                                          SopClass.RtDoseStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>RT Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.1</para>
         /// </summary>
-        public static readonly String RTImageStorageUid = "1.2.840.10008.5.1.4.1.1.481.1";
+        public static readonly String RtImageStorageUid = "1.2.840.10008.5.1.4.1.1.481.1";
 
         /// <summary>SopClass for
         /// <para>RT Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.1</para>
         /// </summary>
-        public static readonly SopClass RTImageStorage =
+        public static readonly SopClass RtImageStorage =
                              new SopClass("RT Image Storage", 
-                                          SopClass.RTImageStorageUid, 
+                                          SopClass.RtImageStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>RT Ion Beams Treatment Record Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.9</para>
         /// </summary>
-        public static readonly String RTIonBeamsTreatmentRecordStorageUid = "1.2.840.10008.5.1.4.1.1.481.9";
+        public static readonly String RtIonBeamsTreatmentRecordStorageUid = "1.2.840.10008.5.1.4.1.1.481.9";
 
         /// <summary>SopClass for
         /// <para>RT Ion Beams Treatment Record Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.9</para>
         /// </summary>
-        public static readonly SopClass RTIonBeamsTreatmentRecordStorage =
+        public static readonly SopClass RtIonBeamsTreatmentRecordStorage =
                              new SopClass("RT Ion Beams Treatment Record Storage", 
-                                          SopClass.RTIonBeamsTreatmentRecordStorageUid, 
+                                          SopClass.RtIonBeamsTreatmentRecordStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>RT Ion Plan Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.8</para>
         /// </summary>
-        public static readonly String RTIonPlanStorageUid = "1.2.840.10008.5.1.4.1.1.481.8";
+        public static readonly String RtIonPlanStorageUid = "1.2.840.10008.5.1.4.1.1.481.8";
 
         /// <summary>SopClass for
         /// <para>RT Ion Plan Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.8</para>
         /// </summary>
-        public static readonly SopClass RTIonPlanStorage =
+        public static readonly SopClass RtIonPlanStorage =
                              new SopClass("RT Ion Plan Storage", 
-                                          SopClass.RTIonPlanStorageUid, 
+                                          SopClass.RtIonPlanStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>RT Plan Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.5</para>
         /// </summary>
-        public static readonly String RTPlanStorageUid = "1.2.840.10008.5.1.4.1.1.481.5";
+        public static readonly String RtPlanStorageUid = "1.2.840.10008.5.1.4.1.1.481.5";
 
         /// <summary>SopClass for
         /// <para>RT Plan Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.5</para>
         /// </summary>
-        public static readonly SopClass RTPlanStorage =
+        public static readonly SopClass RtPlanStorage =
                              new SopClass("RT Plan Storage", 
-                                          SopClass.RTPlanStorageUid, 
+                                          SopClass.RtPlanStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>RT Structure Set Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.3</para>
         /// </summary>
-        public static readonly String RTStructureSetStorageUid = "1.2.840.10008.5.1.4.1.1.481.3";
+        public static readonly String RtStructureSetStorageUid = "1.2.840.10008.5.1.4.1.1.481.3";
 
         /// <summary>SopClass for
         /// <para>RT Structure Set Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.3</para>
         /// </summary>
-        public static readonly SopClass RTStructureSetStorage =
+        public static readonly SopClass RtStructureSetStorage =
                              new SopClass("RT Structure Set Storage", 
-                                          SopClass.RTStructureSetStorageUid, 
+                                          SopClass.RtStructureSetStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>RT Treatment Summary Record Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.7</para>
         /// </summary>
-        public static readonly String RTTreatmentSummaryRecordStorageUid = "1.2.840.10008.5.1.4.1.1.481.7";
+        public static readonly String RtTreatmentSummaryRecordStorageUid = "1.2.840.10008.5.1.4.1.1.481.7";
 
         /// <summary>SopClass for
         /// <para>RT Treatment Summary Record Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.481.7</para>
         /// </summary>
-        public static readonly SopClass RTTreatmentSummaryRecordStorage =
+        public static readonly SopClass RtTreatmentSummaryRecordStorage =
                              new SopClass("RT Treatment Summary Record Storage", 
-                                          SopClass.RTTreatmentSummaryRecordStorageUid, 
+                                          SopClass.RtTreatmentSummaryRecordStorageUid, 
                                           false);
 
         /// <summary>
@@ -1558,15 +1558,15 @@ namespace ClearCanvas.Dicom
         /// <para>Standalone Modality LUT Storage (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.10</para>
         /// </summary>
-        public static readonly String StandaloneModalityLUTStorageRetiredUid = "1.2.840.10008.5.1.4.1.1.10";
+        public static readonly String StandaloneModalityLutStorageRetiredUid = "1.2.840.10008.5.1.4.1.1.10";
 
         /// <summary>SopClass for
         /// <para>Standalone Modality LUT Storage (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.10</para>
         /// </summary>
-        public static readonly SopClass StandaloneModalityLUTStorageRetired =
+        public static readonly SopClass StandaloneModalityLutStorageRetired =
                              new SopClass("Standalone Modality LUT Storage (Retired)", 
-                                          SopClass.StandaloneModalityLUTStorageRetiredUid, 
+                                          SopClass.StandaloneModalityLutStorageRetiredUid, 
                                           false);
 
         /// <summary>
@@ -1588,30 +1588,30 @@ namespace ClearCanvas.Dicom
         /// <para>Standalone PET Curve Storage (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.129</para>
         /// </summary>
-        public static readonly String StandalonePETCurveStorageRetiredUid = "1.2.840.10008.5.1.4.1.1.129";
+        public static readonly String StandalonePetCurveStorageRetiredUid = "1.2.840.10008.5.1.4.1.1.129";
 
         /// <summary>SopClass for
         /// <para>Standalone PET Curve Storage (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.129</para>
         /// </summary>
-        public static readonly SopClass StandalonePETCurveStorageRetired =
+        public static readonly SopClass StandalonePetCurveStorageRetired =
                              new SopClass("Standalone PET Curve Storage (Retired)", 
-                                          SopClass.StandalonePETCurveStorageRetiredUid, 
+                                          SopClass.StandalonePetCurveStorageRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Standalone VOI LUT Storage (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.11</para>
         /// </summary>
-        public static readonly String StandaloneVOILUTStorageRetiredUid = "1.2.840.10008.5.1.4.1.1.11";
+        public static readonly String StandaloneVoiLutStorageRetiredUid = "1.2.840.10008.5.1.4.1.1.11";
 
         /// <summary>SopClass for
         /// <para>Standalone VOI LUT Storage (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.11</para>
         /// </summary>
-        public static readonly SopClass StandaloneVOILUTStorageRetired =
+        public static readonly SopClass StandaloneVoiLutStorageRetired =
                              new SopClass("Standalone VOI LUT Storage (Retired)", 
-                                          SopClass.StandaloneVOILUTStorageRetiredUid, 
+                                          SopClass.StandaloneVoiLutStorageRetiredUid, 
                                           false);
 
         /// <summary>
@@ -1633,105 +1633,105 @@ namespace ClearCanvas.Dicom
         /// <para>Storage Commitment Pull Model SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.20.2</para>
         /// </summary>
-        public static readonly String StorageCommitmentPullModelSOPClassRetiredUid = "1.2.840.10008.1.20.2";
+        public static readonly String StorageCommitmentPullModelSopClassRetiredUid = "1.2.840.10008.1.20.2";
 
         /// <summary>SopClass for
         /// <para>Storage Commitment Pull Model SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.20.2</para>
         /// </summary>
-        public static readonly SopClass StorageCommitmentPullModelSOPClassRetired =
+        public static readonly SopClass StorageCommitmentPullModelSopClassRetired =
                              new SopClass("Storage Commitment Pull Model SOP Class (Retired)", 
-                                          SopClass.StorageCommitmentPullModelSOPClassRetiredUid, 
+                                          SopClass.StorageCommitmentPullModelSopClassRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Storage Commitment Push Model SOP Class</para>
         /// <para>UID: 1.2.840.10008.1.20.1</para>
         /// </summary>
-        public static readonly String StorageCommitmentPushModelSOPClassUid = "1.2.840.10008.1.20.1";
+        public static readonly String StorageCommitmentPushModelSopClassUid = "1.2.840.10008.1.20.1";
 
         /// <summary>SopClass for
         /// <para>Storage Commitment Push Model SOP Class</para>
         /// <para>UID: 1.2.840.10008.1.20.1</para>
         /// </summary>
-        public static readonly SopClass StorageCommitmentPushModelSOPClass =
+        public static readonly SopClass StorageCommitmentPushModelSopClass =
                              new SopClass("Storage Commitment Push Model SOP Class", 
-                                          SopClass.StorageCommitmentPushModelSOPClassUid, 
+                                          SopClass.StorageCommitmentPushModelSopClassUid, 
                                           false);
 
         /// <summary>
         /// <para>Stored Print Storage SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.27</para>
         /// </summary>
-        public static readonly String StoredPrintStorageSOPClassRetiredUid = "1.2.840.10008.5.1.1.27";
+        public static readonly String StoredPrintStorageSopClassRetiredUid = "1.2.840.10008.5.1.1.27";
 
         /// <summary>SopClass for
         /// <para>Stored Print Storage SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.27</para>
         /// </summary>
-        public static readonly SopClass StoredPrintStorageSOPClassRetired =
+        public static readonly SopClass StoredPrintStorageSopClassRetired =
                              new SopClass("Stored Print Storage SOP Class (Retired)", 
-                                          SopClass.StoredPrintStorageSOPClassRetiredUid, 
+                                          SopClass.StoredPrintStorageSopClassRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Study Component Management SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.3.2</para>
         /// </summary>
-        public static readonly String StudyComponentManagementSOPClassRetiredUid = "1.2.840.10008.3.1.2.3.2";
+        public static readonly String StudyComponentManagementSopClassRetiredUid = "1.2.840.10008.3.1.2.3.2";
 
         /// <summary>SopClass for
         /// <para>Study Component Management SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.3.2</para>
         /// </summary>
-        public static readonly SopClass StudyComponentManagementSOPClassRetired =
+        public static readonly SopClass StudyComponentManagementSopClassRetired =
                              new SopClass("Study Component Management SOP Class (Retired)", 
-                                          SopClass.StudyComponentManagementSOPClassRetiredUid, 
+                                          SopClass.StudyComponentManagementSopClassRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Study Root Query/Retrieve Information Model – FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.2.1</para>
         /// </summary>
-        public static readonly String StudyRootQueryRetrieveInformationModelFINDUid = "1.2.840.10008.5.1.4.1.2.2.1";
+        public static readonly String StudyRootQueryRetrieveInformationModelFindUid = "1.2.840.10008.5.1.4.1.2.2.1";
 
         /// <summary>SopClass for
         /// <para>Study Root Query/Retrieve Information Model – FIND</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.2.1</para>
         /// </summary>
-        public static readonly SopClass StudyRootQueryRetrieveInformationModelFIND =
+        public static readonly SopClass StudyRootQueryRetrieveInformationModelFind =
                              new SopClass("Study Root Query/Retrieve Information Model – FIND", 
-                                          SopClass.StudyRootQueryRetrieveInformationModelFINDUid, 
+                                          SopClass.StudyRootQueryRetrieveInformationModelFindUid, 
                                           false);
 
         /// <summary>
         /// <para>Study Root Query/Retrieve Information Model – GET</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.2.3</para>
         /// </summary>
-        public static readonly String StudyRootQueryRetrieveInformationModelGETUid = "1.2.840.10008.5.1.4.1.2.2.3";
+        public static readonly String StudyRootQueryRetrieveInformationModelGetUid = "1.2.840.10008.5.1.4.1.2.2.3";
 
         /// <summary>SopClass for
         /// <para>Study Root Query/Retrieve Information Model – GET</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.2.3</para>
         /// </summary>
-        public static readonly SopClass StudyRootQueryRetrieveInformationModelGET =
+        public static readonly SopClass StudyRootQueryRetrieveInformationModelGet =
                              new SopClass("Study Root Query/Retrieve Information Model – GET", 
-                                          SopClass.StudyRootQueryRetrieveInformationModelGETUid, 
+                                          SopClass.StudyRootQueryRetrieveInformationModelGetUid, 
                                           false);
 
         /// <summary>
         /// <para>Study Root Query/Retrieve Information Model – MOVE</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.2.2</para>
         /// </summary>
-        public static readonly String StudyRootQueryRetrieveInformationModelMOVEUid = "1.2.840.10008.5.1.4.1.2.2.2";
+        public static readonly String StudyRootQueryRetrieveInformationModelMoveUid = "1.2.840.10008.5.1.4.1.2.2.2";
 
         /// <summary>SopClass for
         /// <para>Study Root Query/Retrieve Information Model – MOVE</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.2.2.2</para>
         /// </summary>
-        public static readonly SopClass StudyRootQueryRetrieveInformationModelMOVE =
+        public static readonly SopClass StudyRootQueryRetrieveInformationModelMove =
                              new SopClass("Study Root Query/Retrieve Information Model – MOVE", 
-                                          SopClass.StudyRootQueryRetrieveInformationModelMOVEUid, 
+                                          SopClass.StudyRootQueryRetrieveInformationModelMoveUid, 
                                           false);
 
         /// <summary>
@@ -1768,45 +1768,45 @@ namespace ClearCanvas.Dicom
         /// <para>Ultrasound Multi-frame Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.3.1</para>
         /// </summary>
-        public static readonly String UltrasoundMultiframeImageStorageUid = "1.2.840.10008.5.1.4.1.1.3.1";
+        public static readonly String UltrasoundMultiFrameImageStorageUid = "1.2.840.10008.5.1.4.1.1.3.1";
 
         /// <summary>SopClass for
         /// <para>Ultrasound Multi-frame Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.3.1</para>
         /// </summary>
-        public static readonly SopClass UltrasoundMultiframeImageStorage =
+        public static readonly SopClass UltrasoundMultiFrameImageStorage =
                              new SopClass("Ultrasound Multi-frame Image Storage", 
-                                          SopClass.UltrasoundMultiframeImageStorageUid, 
+                                          SopClass.UltrasoundMultiFrameImageStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>Ultrasound Multi-frame Image Storage (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.3</para>
         /// </summary>
-        public static readonly String UltrasoundMultiframeImageStorageRetiredUid = "1.2.840.10008.5.1.4.1.1.3";
+        public static readonly String UltrasoundMultiFrameImageStorageRetiredUid = "1.2.840.10008.5.1.4.1.1.3";
 
         /// <summary>SopClass for
         /// <para>Ultrasound Multi-frame Image Storage (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.3</para>
         /// </summary>
-        public static readonly SopClass UltrasoundMultiframeImageStorageRetired =
+        public static readonly SopClass UltrasoundMultiFrameImageStorageRetired =
                              new SopClass("Ultrasound Multi-frame Image Storage (Retired)", 
-                                          SopClass.UltrasoundMultiframeImageStorageRetiredUid, 
+                                          SopClass.UltrasoundMultiFrameImageStorageRetiredUid, 
                                           false);
 
         /// <summary>
         /// <para>Verification SOP Class</para>
         /// <para>UID: 1.2.840.10008.1.1</para>
         /// </summary>
-        public static readonly String VerificationSOPClassUid = "1.2.840.10008.1.1";
+        public static readonly String VerificationSopClassUid = "1.2.840.10008.1.1";
 
         /// <summary>SopClass for
         /// <para>Verification SOP Class</para>
         /// <para>UID: 1.2.840.10008.1.1</para>
         /// </summary>
-        public static readonly SopClass VerificationSOPClass =
+        public static readonly SopClass VerificationSopClass =
                              new SopClass("Verification SOP Class", 
-                                          SopClass.VerificationSOPClassUid, 
+                                          SopClass.VerificationSopClassUid, 
                                           false);
 
         /// <summary>
@@ -1858,75 +1858,75 @@ namespace ClearCanvas.Dicom
         /// <para>VL Endoscopic Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.77.1.1</para>
         /// </summary>
-        public static readonly String VLEndoscopicImageStorageUid = "1.2.840.10008.5.1.4.1.1.77.1.1";
+        public static readonly String VlEndoscopicImageStorageUid = "1.2.840.10008.5.1.4.1.1.77.1.1";
 
         /// <summary>SopClass for
         /// <para>VL Endoscopic Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.77.1.1</para>
         /// </summary>
-        public static readonly SopClass VLEndoscopicImageStorage =
+        public static readonly SopClass VlEndoscopicImageStorage =
                              new SopClass("VL Endoscopic Image Storage", 
-                                          SopClass.VLEndoscopicImageStorageUid, 
+                                          SopClass.VlEndoscopicImageStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>VL Microscopic Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.77.1.2</para>
         /// </summary>
-        public static readonly String VLMicroscopicImageStorageUid = "1.2.840.10008.5.1.4.1.1.77.1.2";
+        public static readonly String VlMicroscopicImageStorageUid = "1.2.840.10008.5.1.4.1.1.77.1.2";
 
         /// <summary>SopClass for
         /// <para>VL Microscopic Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.77.1.2</para>
         /// </summary>
-        public static readonly SopClass VLMicroscopicImageStorage =
+        public static readonly SopClass VlMicroscopicImageStorage =
                              new SopClass("VL Microscopic Image Storage", 
-                                          SopClass.VLMicroscopicImageStorageUid, 
+                                          SopClass.VlMicroscopicImageStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>VL Photographic Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.77.1.4</para>
         /// </summary>
-        public static readonly String VLPhotographicImageStorageUid = "1.2.840.10008.5.1.4.1.1.77.1.4";
+        public static readonly String VlPhotographicImageStorageUid = "1.2.840.10008.5.1.4.1.1.77.1.4";
 
         /// <summary>SopClass for
         /// <para>VL Photographic Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.77.1.4</para>
         /// </summary>
-        public static readonly SopClass VLPhotographicImageStorage =
+        public static readonly SopClass VlPhotographicImageStorage =
                              new SopClass("VL Photographic Image Storage", 
-                                          SopClass.VLPhotographicImageStorageUid, 
+                                          SopClass.VlPhotographicImageStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>VL Slide-Coordinates Microscopic Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.77.1.3</para>
         /// </summary>
-        public static readonly String VLSlideCoordinatesMicroscopicImageStorageUid = "1.2.840.10008.5.1.4.1.1.77.1.3";
+        public static readonly String VlSlideCoordinatesMicroscopicImageStorageUid = "1.2.840.10008.5.1.4.1.1.77.1.3";
 
         /// <summary>SopClass for
         /// <para>VL Slide-Coordinates Microscopic Image Storage</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.77.1.3</para>
         /// </summary>
-        public static readonly SopClass VLSlideCoordinatesMicroscopicImageStorage =
+        public static readonly SopClass VlSlideCoordinatesMicroscopicImageStorage =
                              new SopClass("VL Slide-Coordinates Microscopic Image Storage", 
-                                          SopClass.VLSlideCoordinatesMicroscopicImageStorageUid, 
+                                          SopClass.VlSlideCoordinatesMicroscopicImageStorageUid, 
                                           false);
 
         /// <summary>
         /// <para>VOI LUT Box SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.22</para>
         /// </summary>
-        public static readonly String VOILUTBoxSOPClassUid = "1.2.840.10008.5.1.1.22";
+        public static readonly String VoiLutBoxSopClassUid = "1.2.840.10008.5.1.1.22";
 
         /// <summary>SopClass for
         /// <para>VOI LUT Box SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.22</para>
         /// </summary>
-        public static readonly SopClass VOILUTBoxSOPClass =
+        public static readonly SopClass VoiLutBoxSopClass =
                              new SopClass("VOI LUT Box SOP Class", 
-                                          SopClass.VOILUTBoxSOPClassUid, 
+                                          SopClass.VoiLutBoxSopClassUid, 
                                           false);
 
         /// <summary>
@@ -1963,15 +1963,15 @@ namespace ClearCanvas.Dicom
         /// <para>X-Ray Radiation Dose SR</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.67</para>
         /// </summary>
-        public static readonly String XRayRadiationDoseSRUid = "1.2.840.10008.5.1.4.1.1.88.67";
+        public static readonly String XRayRadiationDoseSrUid = "1.2.840.10008.5.1.4.1.1.88.67";
 
         /// <summary>SopClass for
         /// <para>X-Ray Radiation Dose SR</para>
         /// <para>UID: 1.2.840.10008.5.1.4.1.1.88.67</para>
         /// </summary>
-        public static readonly SopClass XRayRadiationDoseSR =
+        public static readonly SopClass XRayRadiationDoseSr =
                              new SopClass("X-Ray Radiation Dose SR", 
-                                          SopClass.XRayRadiationDoseSRUid, 
+                                          SopClass.XRayRadiationDoseSrUid, 
                                           false);
 
         /// <summary>
@@ -1993,127 +1993,127 @@ namespace ClearCanvas.Dicom
         /// <para>Basic Color Print Management Meta SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.18</para>
         /// </summary>
-        public static readonly String BasicColorPrintManagementMetaSOPClassUid = "1.2.840.10008.5.1.1.18";
+        public static readonly String BasicColorPrintManagementMetaSopClassUid = "1.2.840.10008.5.1.1.18";
 
         /// <summary>SopClass for
         /// <para>Basic Color Print Management Meta SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.18</para>
         /// </summary>
-        public static readonly SopClass BasicColorPrintManagementMetaSOPClass =
+        public static readonly SopClass BasicColorPrintManagementMetaSopClass =
                              new SopClass("Basic Color Print Management Meta SOP Class", 
-                                          SopClass.BasicColorPrintManagementMetaSOPClassUid, 
+                                          SopClass.BasicColorPrintManagementMetaSopClassUid, 
                                           true);
         /// <summary>String UID for
         /// <para>Basic Grayscale Print Management Meta SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.9</para>
         /// </summary>
-        public static readonly String BasicGrayscalePrintManagementMetaSOPClassUid = "1.2.840.10008.5.1.1.9";
+        public static readonly String BasicGrayscalePrintManagementMetaSopClassUid = "1.2.840.10008.5.1.1.9";
 
         /// <summary>SopClass for
         /// <para>Basic Grayscale Print Management Meta SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.1.9</para>
         /// </summary>
-        public static readonly SopClass BasicGrayscalePrintManagementMetaSOPClass =
+        public static readonly SopClass BasicGrayscalePrintManagementMetaSopClass =
                              new SopClass("Basic Grayscale Print Management Meta SOP Class", 
-                                          SopClass.BasicGrayscalePrintManagementMetaSOPClassUid, 
+                                          SopClass.BasicGrayscalePrintManagementMetaSopClassUid, 
                                           true);
         /// <summary>String UID for
         /// <para>Detached Patient Management Meta SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.1.4</para>
         /// </summary>
-        public static readonly String DetachedPatientManagementMetaSOPClassRetiredUid = "1.2.840.10008.3.1.2.1.4";
+        public static readonly String DetachedPatientManagementMetaSopClassRetiredUid = "1.2.840.10008.3.1.2.1.4";
 
         /// <summary>SopClass for
         /// <para>Detached Patient Management Meta SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.1.4</para>
         /// </summary>
-        public static readonly SopClass DetachedPatientManagementMetaSOPClassRetired =
+        public static readonly SopClass DetachedPatientManagementMetaSopClassRetired =
                              new SopClass("Detached Patient Management Meta SOP Class (Retired)", 
-                                          SopClass.DetachedPatientManagementMetaSOPClassRetiredUid, 
+                                          SopClass.DetachedPatientManagementMetaSopClassRetiredUid, 
                                           true);
         /// <summary>String UID for
         /// <para>Detached Results Management Meta SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.5.4</para>
         /// </summary>
-        public static readonly String DetachedResultsManagementMetaSOPClassRetiredUid = "1.2.840.10008.3.1.2.5.4";
+        public static readonly String DetachedResultsManagementMetaSopClassRetiredUid = "1.2.840.10008.3.1.2.5.4";
 
         /// <summary>SopClass for
         /// <para>Detached Results Management Meta SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.5.4</para>
         /// </summary>
-        public static readonly SopClass DetachedResultsManagementMetaSOPClassRetired =
+        public static readonly SopClass DetachedResultsManagementMetaSopClassRetired =
                              new SopClass("Detached Results Management Meta SOP Class (Retired)", 
-                                          SopClass.DetachedResultsManagementMetaSOPClassRetiredUid, 
+                                          SopClass.DetachedResultsManagementMetaSopClassRetiredUid, 
                                           true);
         /// <summary>String UID for
         /// <para>Detached Study Management Meta SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.5.5</para>
         /// </summary>
-        public static readonly String DetachedStudyManagementMetaSOPClassRetiredUid = "1.2.840.10008.3.1.2.5.5";
+        public static readonly String DetachedStudyManagementMetaSopClassRetiredUid = "1.2.840.10008.3.1.2.5.5";
 
         /// <summary>SopClass for
         /// <para>Detached Study Management Meta SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.3.1.2.5.5</para>
         /// </summary>
-        public static readonly SopClass DetachedStudyManagementMetaSOPClassRetired =
+        public static readonly SopClass DetachedStudyManagementMetaSopClassRetired =
                              new SopClass("Detached Study Management Meta SOP Class (Retired)", 
-                                          SopClass.DetachedStudyManagementMetaSOPClassRetiredUid, 
+                                          SopClass.DetachedStudyManagementMetaSopClassRetiredUid, 
                                           true);
         /// <summary>String UID for
         /// <para>General Purpose Worklist Management Meta SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.32</para>
         /// </summary>
-        public static readonly String GeneralPurposeWorklistManagementMetaSOPClassUid = "1.2.840.10008.5.1.4.32";
+        public static readonly String GeneralPurposeWorklistManagementMetaSopClassUid = "1.2.840.10008.5.1.4.32";
 
         /// <summary>SopClass for
         /// <para>General Purpose Worklist Management Meta SOP Class</para>
         /// <para>UID: 1.2.840.10008.5.1.4.32</para>
         /// </summary>
-        public static readonly SopClass GeneralPurposeWorklistManagementMetaSOPClass =
+        public static readonly SopClass GeneralPurposeWorklistManagementMetaSopClass =
                              new SopClass("General Purpose Worklist Management Meta SOP Class", 
-                                          SopClass.GeneralPurposeWorklistManagementMetaSOPClassUid, 
+                                          SopClass.GeneralPurposeWorklistManagementMetaSopClassUid, 
                                           true);
         /// <summary>String UID for
         /// <para>Pull Stored Print Management Meta SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.32</para>
         /// </summary>
-        public static readonly String PullStoredPrintManagementMetaSOPClassRetiredUid = "1.2.840.10008.5.1.1.32";
+        public static readonly String PullStoredPrintManagementMetaSopClassRetiredUid = "1.2.840.10008.5.1.1.32";
 
         /// <summary>SopClass for
         /// <para>Pull Stored Print Management Meta SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.32</para>
         /// </summary>
-        public static readonly SopClass PullStoredPrintManagementMetaSOPClassRetired =
+        public static readonly SopClass PullStoredPrintManagementMetaSopClassRetired =
                              new SopClass("Pull Stored Print Management Meta SOP Class (Retired)", 
-                                          SopClass.PullStoredPrintManagementMetaSOPClassRetiredUid, 
+                                          SopClass.PullStoredPrintManagementMetaSopClassRetiredUid, 
                                           true);
         /// <summary>String UID for
         /// <para>Referenced Color Print Management Meta SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.18.1</para>
         /// </summary>
-        public static readonly String ReferencedColorPrintManagementMetaSOPClassRetiredUid = "1.2.840.10008.5.1.1.18.1";
+        public static readonly String ReferencedColorPrintManagementMetaSopClassRetiredUid = "1.2.840.10008.5.1.1.18.1";
 
         /// <summary>SopClass for
         /// <para>Referenced Color Print Management Meta SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.18.1</para>
         /// </summary>
-        public static readonly SopClass ReferencedColorPrintManagementMetaSOPClassRetired =
+        public static readonly SopClass ReferencedColorPrintManagementMetaSopClassRetired =
                              new SopClass("Referenced Color Print Management Meta SOP Class (Retired)", 
-                                          SopClass.ReferencedColorPrintManagementMetaSOPClassRetiredUid, 
+                                          SopClass.ReferencedColorPrintManagementMetaSopClassRetiredUid, 
                                           true);
         /// <summary>String UID for
         /// <para>Referenced Grayscale Print Management Meta SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.9.1</para>
         /// </summary>
-        public static readonly String ReferencedGrayscalePrintManagementMetaSOPClassRetiredUid = "1.2.840.10008.5.1.1.9.1";
+        public static readonly String ReferencedGrayscalePrintManagementMetaSopClassRetiredUid = "1.2.840.10008.5.1.1.9.1";
 
         /// <summary>SopClass for
         /// <para>Referenced Grayscale Print Management Meta SOP Class (Retired)</para>
         /// <para>UID: 1.2.840.10008.5.1.1.9.1</para>
         /// </summary>
-        public static readonly SopClass ReferencedGrayscalePrintManagementMetaSOPClassRetired =
+        public static readonly SopClass ReferencedGrayscalePrintManagementMetaSopClassRetired =
                              new SopClass("Referenced Grayscale Print Management Meta SOP Class (Retired)", 
-                                          SopClass.ReferencedGrayscalePrintManagementMetaSOPClassRetiredUid, 
+                                          SopClass.ReferencedGrayscalePrintManagementMetaSopClassRetiredUid, 
                                           true);
 
         private String _sopName;
@@ -2153,7 +2153,7 @@ namespace ClearCanvas.Dicom
         private static Dictionary<String,SopClass> _sopList = new Dictionary<String,SopClass>();
         private static bool _bIsFirst = true;
 
-        /// <summary>Override that displays the name of the SOP Class.</summary>");
+        /// <summary>Override that displays the name of the SOP Class.</summary>
         public override string ToString()
         {
             return this.Name;
@@ -2165,41 +2165,41 @@ namespace ClearCanvas.Dicom
             if (_bIsFirst)
             {
                 _bIsFirst = false;
-                _sopList.Add(SopClass.Sop12leadECGWaveformStorageUid, 
-                             SopClass.Sop12leadECGWaveformStorage);
+                _sopList.Add(SopClass.Sop12LeadEcgWaveformStorageUid, 
+                             SopClass.Sop12LeadEcgWaveformStorage);
 
-                _sopList.Add(SopClass.AmbulatoryECGWaveformStorageUid, 
-                             SopClass.AmbulatoryECGWaveformStorage);
+                _sopList.Add(SopClass.AmbulatoryEcgWaveformStorageUid, 
+                             SopClass.AmbulatoryEcgWaveformStorage);
 
-                _sopList.Add(SopClass.BasicAnnotationBoxSOPClassUid, 
-                             SopClass.BasicAnnotationBoxSOPClass);
+                _sopList.Add(SopClass.BasicAnnotationBoxSopClassUid, 
+                             SopClass.BasicAnnotationBoxSopClass);
 
-                _sopList.Add(SopClass.BasicColorImageBoxSOPClassUid, 
-                             SopClass.BasicColorImageBoxSOPClass);
+                _sopList.Add(SopClass.BasicColorImageBoxSopClassUid, 
+                             SopClass.BasicColorImageBoxSopClass);
 
-                _sopList.Add(SopClass.BasicFilmBoxSOPClassUid, 
-                             SopClass.BasicFilmBoxSOPClass);
+                _sopList.Add(SopClass.BasicFilmBoxSopClassUid, 
+                             SopClass.BasicFilmBoxSopClass);
 
-                _sopList.Add(SopClass.BasicFilmSessionSOPClassUid, 
-                             SopClass.BasicFilmSessionSOPClass);
+                _sopList.Add(SopClass.BasicFilmSessionSopClassUid, 
+                             SopClass.BasicFilmSessionSopClass);
 
-                _sopList.Add(SopClass.BasicGrayscaleImageBoxSOPClassUid, 
-                             SopClass.BasicGrayscaleImageBoxSOPClass);
+                _sopList.Add(SopClass.BasicGrayscaleImageBoxSopClassUid, 
+                             SopClass.BasicGrayscaleImageBoxSopClass);
 
-                _sopList.Add(SopClass.BasicPrintImageOverlayBoxSOPClassRetiredUid, 
-                             SopClass.BasicPrintImageOverlayBoxSOPClassRetired);
+                _sopList.Add(SopClass.BasicPrintImageOverlayBoxSopClassRetiredUid, 
+                             SopClass.BasicPrintImageOverlayBoxSopClassRetired);
 
-                _sopList.Add(SopClass.BasicStudyContentNotificationSOPClassRetiredUid, 
-                             SopClass.BasicStudyContentNotificationSOPClassRetired);
+                _sopList.Add(SopClass.BasicStudyContentNotificationSopClassRetiredUid, 
+                             SopClass.BasicStudyContentNotificationSopClassRetired);
 
-                _sopList.Add(SopClass.BasicTextSRUid, 
-                             SopClass.BasicTextSR);
+                _sopList.Add(SopClass.BasicTextSrUid, 
+                             SopClass.BasicTextSr);
 
                 _sopList.Add(SopClass.BasicVoiceAudioWaveformStorageUid, 
                              SopClass.BasicVoiceAudioWaveformStorage);
 
-                _sopList.Add(SopClass.BlendingSoftcopyPresentationStateStorageSOPClassUid, 
-                             SopClass.BlendingSoftcopyPresentationStateStorageSOPClass);
+                _sopList.Add(SopClass.BlendingSoftcopyPresentationStateStorageSopClassUid, 
+                             SopClass.BlendingSoftcopyPresentationStateStorageSopClass);
 
                 _sopList.Add(SopClass.BreastImagingRelevantPatientInformationQueryUid, 
                              SopClass.BreastImagingRelevantPatientInformationQuery);
@@ -2210,44 +2210,44 @@ namespace ClearCanvas.Dicom
                 _sopList.Add(SopClass.CardiacRelevantPatientInformationQueryUid, 
                              SopClass.CardiacRelevantPatientInformationQuery);
 
-                _sopList.Add(SopClass.ChestCADSRUid, 
-                             SopClass.ChestCADSR);
+                _sopList.Add(SopClass.ChestCadSrUid, 
+                             SopClass.ChestCadSr);
 
-                _sopList.Add(SopClass.ColorSoftcopyPresentationStateStorageSOPClassUid, 
-                             SopClass.ColorSoftcopyPresentationStateStorageSOPClass);
+                _sopList.Add(SopClass.ColorSoftcopyPresentationStateStorageSopClassUid, 
+                             SopClass.ColorSoftcopyPresentationStateStorageSopClass);
 
-                _sopList.Add(SopClass.ComprehensiveSRUid, 
-                             SopClass.ComprehensiveSR);
+                _sopList.Add(SopClass.ComprehensiveSrUid, 
+                             SopClass.ComprehensiveSr);
 
                 _sopList.Add(SopClass.ComputedRadiographyImageStorageUid, 
                              SopClass.ComputedRadiographyImageStorage);
 
-                _sopList.Add(SopClass.CTImageStorageUid, 
-                             SopClass.CTImageStorage);
+                _sopList.Add(SopClass.CtImageStorageUid, 
+                             SopClass.CtImageStorage);
 
                 _sopList.Add(SopClass.DeformableSpatialRegistrationStorageUid, 
                              SopClass.DeformableSpatialRegistrationStorage);
 
-                _sopList.Add(SopClass.DetachedInterpretationManagementSOPClassRetiredUid, 
-                             SopClass.DetachedInterpretationManagementSOPClassRetired);
+                _sopList.Add(SopClass.DetachedInterpretationManagementSopClassRetiredUid, 
+                             SopClass.DetachedInterpretationManagementSopClassRetired);
 
-                _sopList.Add(SopClass.DetachedPatientManagementSOPClassRetiredUid, 
-                             SopClass.DetachedPatientManagementSOPClassRetired);
+                _sopList.Add(SopClass.DetachedPatientManagementSopClassRetiredUid, 
+                             SopClass.DetachedPatientManagementSopClassRetired);
 
-                _sopList.Add(SopClass.DetachedResultsManagementSOPClassRetiredUid, 
-                             SopClass.DetachedResultsManagementSOPClassRetired);
+                _sopList.Add(SopClass.DetachedResultsManagementSopClassRetiredUid, 
+                             SopClass.DetachedResultsManagementSopClassRetired);
 
-                _sopList.Add(SopClass.DetachedStudyManagementSOPClassRetiredUid, 
-                             SopClass.DetachedStudyManagementSOPClassRetired);
+                _sopList.Add(SopClass.DetachedStudyManagementSopClassRetiredUid, 
+                             SopClass.DetachedStudyManagementSopClassRetired);
 
-                _sopList.Add(SopClass.DetachedVisitManagementSOPClassRetiredUid, 
-                             SopClass.DetachedVisitManagementSOPClassRetired);
+                _sopList.Add(SopClass.DetachedVisitManagementSopClassRetiredUid, 
+                             SopClass.DetachedVisitManagementSopClassRetired);
 
-                _sopList.Add(SopClass.DigitalIntraoralXRayImageStorageForPresentationUid, 
-                             SopClass.DigitalIntraoralXRayImageStorageForPresentation);
+                _sopList.Add(SopClass.DigitalIntraOralXRayImageStorageForPresentationUid, 
+                             SopClass.DigitalIntraOralXRayImageStorageForPresentation);
 
-                _sopList.Add(SopClass.DigitalIntraoralXRayImageStorageForProcessingUid, 
-                             SopClass.DigitalIntraoralXRayImageStorageForProcessing);
+                _sopList.Add(SopClass.DigitalIntraOralXRayImageStorageForProcessingUid, 
+                             SopClass.DigitalIntraOralXRayImageStorageForProcessing);
 
                 _sopList.Add(SopClass.DigitalMammographyXRayImageStorageForPresentationUid, 
                              SopClass.DigitalMammographyXRayImageStorageForPresentation);
@@ -2261,107 +2261,107 @@ namespace ClearCanvas.Dicom
                 _sopList.Add(SopClass.DigitalXRayImageStorageForProcessingUid, 
                              SopClass.DigitalXRayImageStorageForProcessing);
 
-                _sopList.Add(SopClass.EncapsulatedPDFStorageUid, 
-                             SopClass.EncapsulatedPDFStorage);
+                _sopList.Add(SopClass.EncapsulatedPdfStorageUid, 
+                             SopClass.EncapsulatedPdfStorage);
 
-                _sopList.Add(SopClass.EnhancedCTImageStorageUid, 
-                             SopClass.EnhancedCTImageStorage);
+                _sopList.Add(SopClass.EnhancedCtImageStorageUid, 
+                             SopClass.EnhancedCtImageStorage);
 
-                _sopList.Add(SopClass.EnhancedMRImageStorageUid, 
-                             SopClass.EnhancedMRImageStorage);
+                _sopList.Add(SopClass.EnhancedMrImageStorageUid, 
+                             SopClass.EnhancedMrImageStorage);
 
-                _sopList.Add(SopClass.EnhancedSRUid, 
-                             SopClass.EnhancedSR);
+                _sopList.Add(SopClass.EnhancedSrUid, 
+                             SopClass.EnhancedSr);
 
-                _sopList.Add(SopClass.EnhancedXAImageStorageUid, 
-                             SopClass.EnhancedXAImageStorage);
+                _sopList.Add(SopClass.EnhancedXaImageStorageUid, 
+                             SopClass.EnhancedXaImageStorage);
 
-                _sopList.Add(SopClass.EnhancedXRFImageStorageUid, 
-                             SopClass.EnhancedXRFImageStorage);
+                _sopList.Add(SopClass.EnhancedXrfImageStorageUid, 
+                             SopClass.EnhancedXrfImageStorage);
 
-                _sopList.Add(SopClass.GeneralECGWaveformStorageUid, 
-                             SopClass.GeneralECGWaveformStorage);
+                _sopList.Add(SopClass.GeneralEcgWaveformStorageUid, 
+                             SopClass.GeneralEcgWaveformStorage);
 
-                _sopList.Add(SopClass.GeneralPurposePerformedProcedureStepSOPClassUid, 
-                             SopClass.GeneralPurposePerformedProcedureStepSOPClass);
+                _sopList.Add(SopClass.GeneralPurposePerformedProcedureStepSopClassUid, 
+                             SopClass.GeneralPurposePerformedProcedureStepSopClass);
 
-                _sopList.Add(SopClass.GeneralPurposeScheduledProcedureStepSOPClassUid, 
-                             SopClass.GeneralPurposeScheduledProcedureStepSOPClass);
+                _sopList.Add(SopClass.GeneralPurposeScheduledProcedureStepSopClassUid, 
+                             SopClass.GeneralPurposeScheduledProcedureStepSopClass);
 
-                _sopList.Add(SopClass.GeneralPurposeWorklistInformationModelFINDUid, 
-                             SopClass.GeneralPurposeWorklistInformationModelFIND);
+                _sopList.Add(SopClass.GeneralPurposeWorklistInformationModelFindUid, 
+                             SopClass.GeneralPurposeWorklistInformationModelFind);
 
                 _sopList.Add(SopClass.GeneralRelevantPatientInformationQueryUid, 
                              SopClass.GeneralRelevantPatientInformationQuery);
 
-                _sopList.Add(SopClass.GrayscaleSoftcopyPresentationStateStorageSOPClassUid, 
-                             SopClass.GrayscaleSoftcopyPresentationStateStorageSOPClass);
+                _sopList.Add(SopClass.GrayscaleSoftcopyPresentationStateStorageSopClassUid, 
+                             SopClass.GrayscaleSoftcopyPresentationStateStorageSopClass);
 
-                _sopList.Add(SopClass.HangingProtocolInformationModelFINDUid, 
-                             SopClass.HangingProtocolInformationModelFIND);
+                _sopList.Add(SopClass.HangingProtocolInformationModelFindUid, 
+                             SopClass.HangingProtocolInformationModelFind);
 
-                _sopList.Add(SopClass.HangingProtocolInformationModelMOVEUid, 
-                             SopClass.HangingProtocolInformationModelMOVE);
+                _sopList.Add(SopClass.HangingProtocolInformationModelMoveUid, 
+                             SopClass.HangingProtocolInformationModelMove);
 
                 _sopList.Add(SopClass.HangingProtocolStorageUid, 
                              SopClass.HangingProtocolStorage);
 
-                _sopList.Add(SopClass.HardcopyGrayscaleImageStorageSOPClassRetiredUid, 
-                             SopClass.HardcopyGrayscaleImageStorageSOPClassRetired);
+                _sopList.Add(SopClass.HardcopyGrayscaleImageStorageSopClassRetiredUid, 
+                             SopClass.HardcopyGrayscaleImageStorageSopClassRetired);
 
-                _sopList.Add(SopClass.HardcopyColorImageStorageSOPClassRetiredUid, 
-                             SopClass.HardcopyColorImageStorageSOPClassRetired);
+                _sopList.Add(SopClass.HardcopyColorImageStorageSopClassRetiredUid, 
+                             SopClass.HardcopyColorImageStorageSopClassRetired);
 
                 _sopList.Add(SopClass.HemodynamicWaveformStorageUid, 
                              SopClass.HemodynamicWaveformStorage);
 
-                _sopList.Add(SopClass.ImageOverlayBoxSOPClassRetiredUid, 
-                             SopClass.ImageOverlayBoxSOPClassRetired);
+                _sopList.Add(SopClass.ImageOverlayBoxSopClassRetiredUid, 
+                             SopClass.ImageOverlayBoxSopClassRetired);
 
-                _sopList.Add(SopClass.InstanceAvailabilityNotificationSOPClassUid, 
-                             SopClass.InstanceAvailabilityNotificationSOPClass);
+                _sopList.Add(SopClass.InstanceAvailabilityNotificationSopClassUid, 
+                             SopClass.InstanceAvailabilityNotificationSopClass);
 
                 _sopList.Add(SopClass.KeyObjectSelectionDocumentUid, 
                              SopClass.KeyObjectSelectionDocument);
 
-                _sopList.Add(SopClass.MammographyCADSRUid, 
-                             SopClass.MammographyCADSR);
+                _sopList.Add(SopClass.MammographyCadSrUid, 
+                             SopClass.MammographyCadSr);
 
-                _sopList.Add(SopClass.MediaCreationManagementSOPClassUIDUid, 
-                             SopClass.MediaCreationManagementSOPClassUID);
+                _sopList.Add(SopClass.MediaCreationManagementSopClassUidUid, 
+                             SopClass.MediaCreationManagementSopClassUid);
 
                 _sopList.Add(SopClass.MediaStorageDirectoryStorageUid, 
                              SopClass.MediaStorageDirectoryStorage);
 
-                _sopList.Add(SopClass.ModalityPerformedProcedureStepNotificationSOPClassUid, 
-                             SopClass.ModalityPerformedProcedureStepNotificationSOPClass);
+                _sopList.Add(SopClass.ModalityPerformedProcedureStepNotificationSopClassUid, 
+                             SopClass.ModalityPerformedProcedureStepNotificationSopClass);
 
-                _sopList.Add(SopClass.ModalityPerformedProcedureStepRetrieveSOPClassUid, 
-                             SopClass.ModalityPerformedProcedureStepRetrieveSOPClass);
+                _sopList.Add(SopClass.ModalityPerformedProcedureStepRetrieveSopClassUid, 
+                             SopClass.ModalityPerformedProcedureStepRetrieveSopClass);
 
-                _sopList.Add(SopClass.ModalityPerformedProcedureStepSOPClassUid, 
-                             SopClass.ModalityPerformedProcedureStepSOPClass);
+                _sopList.Add(SopClass.ModalityPerformedProcedureStepSopClassUid, 
+                             SopClass.ModalityPerformedProcedureStepSopClass);
 
-                _sopList.Add(SopClass.ModalityWorklistInformationModelFINDUid, 
-                             SopClass.ModalityWorklistInformationModelFIND);
+                _sopList.Add(SopClass.ModalityWorklistInformationModelFindUid, 
+                             SopClass.ModalityWorklistInformationModelFind);
 
-                _sopList.Add(SopClass.MRImageStorageUid, 
-                             SopClass.MRImageStorage);
+                _sopList.Add(SopClass.MrImageStorageUid, 
+                             SopClass.MrImageStorage);
 
-                _sopList.Add(SopClass.MRSpectroscopyStorageUid, 
-                             SopClass.MRSpectroscopyStorage);
+                _sopList.Add(SopClass.MrSpectroscopyStorageUid, 
+                             SopClass.MrSpectroscopyStorage);
 
-                _sopList.Add(SopClass.MultiframeGrayscaleByteSecondaryCaptureImageStorageUid, 
-                             SopClass.MultiframeGrayscaleByteSecondaryCaptureImageStorage);
+                _sopList.Add(SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorageUid, 
+                             SopClass.MultiFrameGrayscaleByteSecondaryCaptureImageStorage);
 
-                _sopList.Add(SopClass.MultiframeGrayscaleWordSecondaryCaptureImageStorageUid, 
-                             SopClass.MultiframeGrayscaleWordSecondaryCaptureImageStorage);
+                _sopList.Add(SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorageUid, 
+                             SopClass.MultiFrameGrayscaleWordSecondaryCaptureImageStorage);
 
-                _sopList.Add(SopClass.MultiframeSingleBitSecondaryCaptureImageStorageUid, 
-                             SopClass.MultiframeSingleBitSecondaryCaptureImageStorage);
+                _sopList.Add(SopClass.MultiFrameSingleBitSecondaryCaptureImageStorageUid, 
+                             SopClass.MultiFrameSingleBitSecondaryCaptureImageStorage);
 
-                _sopList.Add(SopClass.MultiframeTrueColorSecondaryCaptureImageStorageUid, 
-                             SopClass.MultiframeTrueColorSecondaryCaptureImageStorage);
+                _sopList.Add(SopClass.MultiFrameTrueColorSecondaryCaptureImageStorageUid, 
+                             SopClass.MultiFrameTrueColorSecondaryCaptureImageStorage);
 
                 _sopList.Add(SopClass.NuclearMedicineImageStorageRetiredUid, 
                              SopClass.NuclearMedicineImageStorageRetired);
@@ -2375,53 +2375,53 @@ namespace ClearCanvas.Dicom
                 _sopList.Add(SopClass.OphthalmicPhotography8BitImageStorageUid, 
                              SopClass.OphthalmicPhotography8BitImageStorage);
 
-                _sopList.Add(SopClass.PatientRootQueryRetrieveInformationModelFINDUid, 
-                             SopClass.PatientRootQueryRetrieveInformationModelFIND);
+                _sopList.Add(SopClass.PatientRootQueryRetrieveInformationModelFindUid, 
+                             SopClass.PatientRootQueryRetrieveInformationModelFind);
 
-                _sopList.Add(SopClass.PatientRootQueryRetrieveInformationModelGETUid, 
-                             SopClass.PatientRootQueryRetrieveInformationModelGET);
+                _sopList.Add(SopClass.PatientRootQueryRetrieveInformationModelGetUid, 
+                             SopClass.PatientRootQueryRetrieveInformationModelGet);
 
-                _sopList.Add(SopClass.PatientRootQueryRetrieveInformationModelMOVEUid, 
-                             SopClass.PatientRootQueryRetrieveInformationModelMOVE);
+                _sopList.Add(SopClass.PatientRootQueryRetrieveInformationModelMoveUid, 
+                             SopClass.PatientRootQueryRetrieveInformationModelMove);
 
-                _sopList.Add(SopClass.PatientStudyOnlyQueryRetrieveInformationModelFINDRetiredUid, 
-                             SopClass.PatientStudyOnlyQueryRetrieveInformationModelFINDRetired);
+                _sopList.Add(SopClass.PatientStudyOnlyQueryRetrieveInformationModelFindRetiredUid, 
+                             SopClass.PatientStudyOnlyQueryRetrieveInformationModelFindRetired);
 
-                _sopList.Add(SopClass.PatientStudyOnlyQueryRetrieveInformationModelGETRetiredUid, 
-                             SopClass.PatientStudyOnlyQueryRetrieveInformationModelGETRetired);
+                _sopList.Add(SopClass.PatientStudyOnlyQueryRetrieveInformationModelGetRetiredUid, 
+                             SopClass.PatientStudyOnlyQueryRetrieveInformationModelGetRetired);
 
-                _sopList.Add(SopClass.PatientStudyOnlyQueryRetrieveInformationModelMOVERetiredUid, 
-                             SopClass.PatientStudyOnlyQueryRetrieveInformationModelMOVERetired);
+                _sopList.Add(SopClass.PatientStudyOnlyQueryRetrieveInformationModelMoveRetiredUid, 
+                             SopClass.PatientStudyOnlyQueryRetrieveInformationModelMoveRetired);
 
                 _sopList.Add(SopClass.PositronEmissionTomographyImageStorageUid, 
                              SopClass.PositronEmissionTomographyImageStorage);
 
-                _sopList.Add(SopClass.PresentationLUTSOPClassUid, 
-                             SopClass.PresentationLUTSOPClass);
+                _sopList.Add(SopClass.PresentationLutSopClassUid, 
+                             SopClass.PresentationLutSopClass);
 
-                _sopList.Add(SopClass.PrintJobSOPClassUid, 
-                             SopClass.PrintJobSOPClass);
+                _sopList.Add(SopClass.PrintJobSopClassUid, 
+                             SopClass.PrintJobSopClass);
 
-                _sopList.Add(SopClass.PrintQueueManagementSOPClassRetiredUid, 
-                             SopClass.PrintQueueManagementSOPClassRetired);
+                _sopList.Add(SopClass.PrintQueueManagementSopClassRetiredUid, 
+                             SopClass.PrintQueueManagementSopClassRetired);
 
-                _sopList.Add(SopClass.PrinterConfigurationRetrievalSOPClassUid, 
-                             SopClass.PrinterConfigurationRetrievalSOPClass);
+                _sopList.Add(SopClass.PrinterConfigurationRetrievalSopClassUid, 
+                             SopClass.PrinterConfigurationRetrievalSopClass);
 
-                _sopList.Add(SopClass.PrinterSOPClassUid, 
-                             SopClass.PrinterSOPClass);
+                _sopList.Add(SopClass.PrinterSopClassUid, 
+                             SopClass.PrinterSopClass);
 
-                _sopList.Add(SopClass.ProceduralEventLoggingSOPClassUid, 
-                             SopClass.ProceduralEventLoggingSOPClass);
+                _sopList.Add(SopClass.ProceduralEventLoggingSopClassUid, 
+                             SopClass.ProceduralEventLoggingSopClass);
 
                 _sopList.Add(SopClass.ProcedureLogStorageUid, 
                              SopClass.ProcedureLogStorage);
 
-                _sopList.Add(SopClass.PseudoColorSoftcopyPresentationStateStorageSOPClassUid, 
-                             SopClass.PseudoColorSoftcopyPresentationStateStorageSOPClass);
+                _sopList.Add(SopClass.PseudoColorSoftcopyPresentationStateStorageSopClassUid, 
+                             SopClass.PseudoColorSoftcopyPresentationStateStorageSopClass);
 
-                _sopList.Add(SopClass.PullPrintRequestSOPClassRetiredUid, 
-                             SopClass.PullPrintRequestSOPClassRetired);
+                _sopList.Add(SopClass.PullPrintRequestSopClassRetiredUid, 
+                             SopClass.PullPrintRequestSopClassRetired);
 
                 _sopList.Add(SopClass.RawDataStorageUid, 
                              SopClass.RawDataStorage);
@@ -2429,35 +2429,35 @@ namespace ClearCanvas.Dicom
                 _sopList.Add(SopClass.RealWorldValueMappingStorageUid, 
                              SopClass.RealWorldValueMappingStorage);
 
-                _sopList.Add(SopClass.ReferencedImageBoxSOPClassRetiredUid, 
-                             SopClass.ReferencedImageBoxSOPClassRetired);
+                _sopList.Add(SopClass.ReferencedImageBoxSopClassRetiredUid, 
+                             SopClass.ReferencedImageBoxSopClassRetired);
 
-                _sopList.Add(SopClass.RTBeamsTreatmentRecordStorageUid, 
-                             SopClass.RTBeamsTreatmentRecordStorage);
+                _sopList.Add(SopClass.RtBeamsTreatmentRecordStorageUid, 
+                             SopClass.RtBeamsTreatmentRecordStorage);
 
-                _sopList.Add(SopClass.RTBrachyTreatmentRecordStorageUid, 
-                             SopClass.RTBrachyTreatmentRecordStorage);
+                _sopList.Add(SopClass.RtBrachyTreatmentRecordStorageUid, 
+                             SopClass.RtBrachyTreatmentRecordStorage);
 
-                _sopList.Add(SopClass.RTDoseStorageUid, 
-                             SopClass.RTDoseStorage);
+                _sopList.Add(SopClass.RtDoseStorageUid, 
+                             SopClass.RtDoseStorage);
 
-                _sopList.Add(SopClass.RTImageStorageUid, 
-                             SopClass.RTImageStorage);
+                _sopList.Add(SopClass.RtImageStorageUid, 
+                             SopClass.RtImageStorage);
 
-                _sopList.Add(SopClass.RTIonBeamsTreatmentRecordStorageUid, 
-                             SopClass.RTIonBeamsTreatmentRecordStorage);
+                _sopList.Add(SopClass.RtIonBeamsTreatmentRecordStorageUid, 
+                             SopClass.RtIonBeamsTreatmentRecordStorage);
 
-                _sopList.Add(SopClass.RTIonPlanStorageUid, 
-                             SopClass.RTIonPlanStorage);
+                _sopList.Add(SopClass.RtIonPlanStorageUid, 
+                             SopClass.RtIonPlanStorage);
 
-                _sopList.Add(SopClass.RTPlanStorageUid, 
-                             SopClass.RTPlanStorage);
+                _sopList.Add(SopClass.RtPlanStorageUid, 
+                             SopClass.RtPlanStorage);
 
-                _sopList.Add(SopClass.RTStructureSetStorageUid, 
-                             SopClass.RTStructureSetStorage);
+                _sopList.Add(SopClass.RtStructureSetStorageUid, 
+                             SopClass.RtStructureSetStorage);
 
-                _sopList.Add(SopClass.RTTreatmentSummaryRecordStorageUid, 
-                             SopClass.RTTreatmentSummaryRecordStorage);
+                _sopList.Add(SopClass.RtTreatmentSummaryRecordStorageUid, 
+                             SopClass.RtTreatmentSummaryRecordStorage);
 
                 _sopList.Add(SopClass.SecondaryCaptureImageStorageUid, 
                              SopClass.SecondaryCaptureImageStorage);
@@ -2474,41 +2474,41 @@ namespace ClearCanvas.Dicom
                 _sopList.Add(SopClass.StandaloneCurveStorageRetiredUid, 
                              SopClass.StandaloneCurveStorageRetired);
 
-                _sopList.Add(SopClass.StandaloneModalityLUTStorageRetiredUid, 
-                             SopClass.StandaloneModalityLUTStorageRetired);
+                _sopList.Add(SopClass.StandaloneModalityLutStorageRetiredUid, 
+                             SopClass.StandaloneModalityLutStorageRetired);
 
                 _sopList.Add(SopClass.StandaloneOverlayStorageRetiredUid, 
                              SopClass.StandaloneOverlayStorageRetired);
 
-                _sopList.Add(SopClass.StandalonePETCurveStorageRetiredUid, 
-                             SopClass.StandalonePETCurveStorageRetired);
+                _sopList.Add(SopClass.StandalonePetCurveStorageRetiredUid, 
+                             SopClass.StandalonePetCurveStorageRetired);
 
-                _sopList.Add(SopClass.StandaloneVOILUTStorageRetiredUid, 
-                             SopClass.StandaloneVOILUTStorageRetired);
+                _sopList.Add(SopClass.StandaloneVoiLutStorageRetiredUid, 
+                             SopClass.StandaloneVoiLutStorageRetired);
 
                 _sopList.Add(SopClass.StereometricRelationshipStorageUid, 
                              SopClass.StereometricRelationshipStorage);
 
-                _sopList.Add(SopClass.StorageCommitmentPullModelSOPClassRetiredUid, 
-                             SopClass.StorageCommitmentPullModelSOPClassRetired);
+                _sopList.Add(SopClass.StorageCommitmentPullModelSopClassRetiredUid, 
+                             SopClass.StorageCommitmentPullModelSopClassRetired);
 
-                _sopList.Add(SopClass.StorageCommitmentPushModelSOPClassUid, 
-                             SopClass.StorageCommitmentPushModelSOPClass);
+                _sopList.Add(SopClass.StorageCommitmentPushModelSopClassUid, 
+                             SopClass.StorageCommitmentPushModelSopClass);
 
-                _sopList.Add(SopClass.StoredPrintStorageSOPClassRetiredUid, 
-                             SopClass.StoredPrintStorageSOPClassRetired);
+                _sopList.Add(SopClass.StoredPrintStorageSopClassRetiredUid, 
+                             SopClass.StoredPrintStorageSopClassRetired);
 
-                _sopList.Add(SopClass.StudyComponentManagementSOPClassRetiredUid, 
-                             SopClass.StudyComponentManagementSOPClassRetired);
+                _sopList.Add(SopClass.StudyComponentManagementSopClassRetiredUid, 
+                             SopClass.StudyComponentManagementSopClassRetired);
 
-                _sopList.Add(SopClass.StudyRootQueryRetrieveInformationModelFINDUid, 
-                             SopClass.StudyRootQueryRetrieveInformationModelFIND);
+                _sopList.Add(SopClass.StudyRootQueryRetrieveInformationModelFindUid, 
+                             SopClass.StudyRootQueryRetrieveInformationModelFind);
 
-                _sopList.Add(SopClass.StudyRootQueryRetrieveInformationModelGETUid, 
-                             SopClass.StudyRootQueryRetrieveInformationModelGET);
+                _sopList.Add(SopClass.StudyRootQueryRetrieveInformationModelGetUid, 
+                             SopClass.StudyRootQueryRetrieveInformationModelGet);
 
-                _sopList.Add(SopClass.StudyRootQueryRetrieveInformationModelMOVEUid, 
-                             SopClass.StudyRootQueryRetrieveInformationModelMOVE);
+                _sopList.Add(SopClass.StudyRootQueryRetrieveInformationModelMoveUid, 
+                             SopClass.StudyRootQueryRetrieveInformationModelMove);
 
                 _sopList.Add(SopClass.UltrasoundImageStorageUid, 
                              SopClass.UltrasoundImageStorage);
@@ -2516,14 +2516,14 @@ namespace ClearCanvas.Dicom
                 _sopList.Add(SopClass.UltrasoundImageStorageRetiredUid, 
                              SopClass.UltrasoundImageStorageRetired);
 
-                _sopList.Add(SopClass.UltrasoundMultiframeImageStorageUid, 
-                             SopClass.UltrasoundMultiframeImageStorage);
+                _sopList.Add(SopClass.UltrasoundMultiFrameImageStorageUid, 
+                             SopClass.UltrasoundMultiFrameImageStorage);
 
-                _sopList.Add(SopClass.UltrasoundMultiframeImageStorageRetiredUid, 
-                             SopClass.UltrasoundMultiframeImageStorageRetired);
+                _sopList.Add(SopClass.UltrasoundMultiFrameImageStorageRetiredUid, 
+                             SopClass.UltrasoundMultiFrameImageStorageRetired);
 
-                _sopList.Add(SopClass.VerificationSOPClassUid, 
-                             SopClass.VerificationSOPClass);
+                _sopList.Add(SopClass.VerificationSopClassUid, 
+                             SopClass.VerificationSopClass);
 
                 _sopList.Add(SopClass.VideoEndoscopicImageStorageUid, 
                              SopClass.VideoEndoscopicImageStorage);
@@ -2534,20 +2534,20 @@ namespace ClearCanvas.Dicom
                 _sopList.Add(SopClass.VideoPhotographicImageStorageUid, 
                              SopClass.VideoPhotographicImageStorage);
 
-                _sopList.Add(SopClass.VLEndoscopicImageStorageUid, 
-                             SopClass.VLEndoscopicImageStorage);
+                _sopList.Add(SopClass.VlEndoscopicImageStorageUid, 
+                             SopClass.VlEndoscopicImageStorage);
 
-                _sopList.Add(SopClass.VLMicroscopicImageStorageUid, 
-                             SopClass.VLMicroscopicImageStorage);
+                _sopList.Add(SopClass.VlMicroscopicImageStorageUid, 
+                             SopClass.VlMicroscopicImageStorage);
 
-                _sopList.Add(SopClass.VLPhotographicImageStorageUid, 
-                             SopClass.VLPhotographicImageStorage);
+                _sopList.Add(SopClass.VlPhotographicImageStorageUid, 
+                             SopClass.VlPhotographicImageStorage);
 
-                _sopList.Add(SopClass.VLSlideCoordinatesMicroscopicImageStorageUid, 
-                             SopClass.VLSlideCoordinatesMicroscopicImageStorage);
+                _sopList.Add(SopClass.VlSlideCoordinatesMicroscopicImageStorageUid, 
+                             SopClass.VlSlideCoordinatesMicroscopicImageStorage);
 
-                _sopList.Add(SopClass.VOILUTBoxSOPClassUid, 
-                             SopClass.VOILUTBoxSOPClass);
+                _sopList.Add(SopClass.VoiLutBoxSopClassUid, 
+                             SopClass.VoiLutBoxSopClass);
 
                 _sopList.Add(SopClass.XRayAngiographicBiPlaneImageStorageRetiredUid, 
                              SopClass.XRayAngiographicBiPlaneImageStorageRetired);
@@ -2555,38 +2555,38 @@ namespace ClearCanvas.Dicom
                 _sopList.Add(SopClass.XRayAngiographicImageStorageUid, 
                              SopClass.XRayAngiographicImageStorage);
 
-                _sopList.Add(SopClass.XRayRadiationDoseSRUid, 
-                             SopClass.XRayRadiationDoseSR);
+                _sopList.Add(SopClass.XRayRadiationDoseSrUid, 
+                             SopClass.XRayRadiationDoseSr);
 
                 _sopList.Add(SopClass.XRayRadiofluoroscopicImageStorageUid, 
                              SopClass.XRayRadiofluoroscopicImageStorage);
 
-                _sopList.Add(SopClass.BasicColorPrintManagementMetaSOPClassUid, 
-                             SopClass.BasicColorPrintManagementMetaSOPClass);
+                _sopList.Add(SopClass.BasicColorPrintManagementMetaSopClassUid, 
+                             SopClass.BasicColorPrintManagementMetaSopClass);
 
-                _sopList.Add(SopClass.BasicGrayscalePrintManagementMetaSOPClassUid, 
-                             SopClass.BasicGrayscalePrintManagementMetaSOPClass);
+                _sopList.Add(SopClass.BasicGrayscalePrintManagementMetaSopClassUid, 
+                             SopClass.BasicGrayscalePrintManagementMetaSopClass);
 
-                _sopList.Add(SopClass.DetachedPatientManagementMetaSOPClassRetiredUid, 
-                             SopClass.DetachedPatientManagementMetaSOPClassRetired);
+                _sopList.Add(SopClass.DetachedPatientManagementMetaSopClassRetiredUid, 
+                             SopClass.DetachedPatientManagementMetaSopClassRetired);
 
-                _sopList.Add(SopClass.DetachedResultsManagementMetaSOPClassRetiredUid, 
-                             SopClass.DetachedResultsManagementMetaSOPClassRetired);
+                _sopList.Add(SopClass.DetachedResultsManagementMetaSopClassRetiredUid, 
+                             SopClass.DetachedResultsManagementMetaSopClassRetired);
 
-                _sopList.Add(SopClass.DetachedStudyManagementMetaSOPClassRetiredUid, 
-                             SopClass.DetachedStudyManagementMetaSOPClassRetired);
+                _sopList.Add(SopClass.DetachedStudyManagementMetaSopClassRetiredUid, 
+                             SopClass.DetachedStudyManagementMetaSopClassRetired);
 
-                _sopList.Add(SopClass.GeneralPurposeWorklistManagementMetaSOPClassUid, 
-                             SopClass.GeneralPurposeWorklistManagementMetaSOPClass);
+                _sopList.Add(SopClass.GeneralPurposeWorklistManagementMetaSopClassUid, 
+                             SopClass.GeneralPurposeWorklistManagementMetaSopClass);
 
-                _sopList.Add(SopClass.PullStoredPrintManagementMetaSOPClassRetiredUid, 
-                             SopClass.PullStoredPrintManagementMetaSOPClassRetired);
+                _sopList.Add(SopClass.PullStoredPrintManagementMetaSopClassRetiredUid, 
+                             SopClass.PullStoredPrintManagementMetaSopClassRetired);
 
-                _sopList.Add(SopClass.ReferencedColorPrintManagementMetaSOPClassRetiredUid, 
-                             SopClass.ReferencedColorPrintManagementMetaSOPClassRetired);
+                _sopList.Add(SopClass.ReferencedColorPrintManagementMetaSopClassRetiredUid, 
+                             SopClass.ReferencedColorPrintManagementMetaSopClassRetired);
 
-                _sopList.Add(SopClass.ReferencedGrayscalePrintManagementMetaSOPClassRetiredUid, 
-                             SopClass.ReferencedGrayscalePrintManagementMetaSOPClassRetired);
+                _sopList.Add(SopClass.ReferencedGrayscalePrintManagementMetaSopClassRetiredUid, 
+                             SopClass.ReferencedGrayscalePrintManagementMetaSopClassRetired);
 
             }
 

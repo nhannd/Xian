@@ -26,8 +26,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-				if (this.ContainsTag(DicomTags.StudyInstanceUID))
-					return new Uid(this[DicomTags.StudyInstanceUID]);
+				if (this.ContainsTag(DicomTags.StudyInstanceUid))
+					return new Uid(this[DicomTags.StudyInstanceUid]);
                 else
                     return new Uid();
             }
@@ -40,8 +40,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTags.PatientID))
-					return new PatientId(this[DicomTags.PatientID]);
+                if (this.ContainsTag(DicomTags.PatientId))
+					return new PatientId(this[DicomTags.PatientId]);
 				else
                     return new PatientId();
             }
@@ -96,8 +96,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTags.ModalitiesinStudy))
-					return this[DicomTags.ModalitiesinStudy];
+                if (this.ContainsTag(DicomTags.ModalitiesInStudy))
+					return this[DicomTags.ModalitiesInStudy];
 				else
                     return "";
             }
@@ -124,8 +124,8 @@ namespace ClearCanvas.Dicom
 		{
 			get
 			{
-				if (this.ContainsTag(DicomTags.StudyID))
-					return this[DicomTags.StudyID];
+				if (this.ContainsTag(DicomTags.StudyId))
+					return this[DicomTags.StudyId];
 				else
 					return "";
 			}
@@ -194,8 +194,8 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTags.SeriesInstanceUID))
-					return new Uid(this[DicomTags.SeriesInstanceUID]);
+                if (this.ContainsTag(DicomTags.SeriesInstanceUid))
+					return new Uid(this[DicomTags.SeriesInstanceUid]);
 				else
                     return new Uid();
             }
@@ -236,9 +236,9 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTags.NumberofStudyRelatedInstances))
+                if (this.ContainsTag(DicomTags.NumberOfStudyRelatedInstances))
 				{
-					String temp = this[DicomTags.NumberofStudyRelatedInstances];
+					String temp = this[DicomTags.NumberOfStudyRelatedInstances];
                     uint output;
                     if (uint.TryParse(temp, out output))
                         return output;
@@ -255,9 +255,9 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                if (this.ContainsTag(DicomTags.NumberofSeriesRelatedInstances))
+                if (this.ContainsTag(DicomTags.NumberOfSeriesRelatedInstances))
 				{
-					String temp = this[DicomTags.NumberofSeriesRelatedInstances];
+					String temp = this[DicomTags.NumberOfSeriesRelatedInstances];
                     uint output;
                     if (uint.TryParse(temp, out output))
                         return output;

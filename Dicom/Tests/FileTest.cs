@@ -27,11 +27,11 @@ namespace ClearCanvas.Dicom.Tests
         {
             DicomAttributeCollection theSet = theFile.MetaInfo;
 
-            theSet[DicomTags.MediaStorageSOPClassUID].SetStringValue(theFile.DataSet[DicomTags.SOPClassUID].GetString(0,""));
-            theSet[DicomTags.MediaStorageSOPInstanceUID].SetStringValue(theFile.DataSet[DicomTags.SOPInstanceUID].GetString(0, ""));
-            theFile.TransferSyntax = TransferSyntax.ExplicitVRLittleEndian; 
+            theSet[DicomTags.MediaStorageSopClassUid].SetStringValue(theFile.DataSet[DicomTags.SopClassUid].GetString(0,""));
+            theSet[DicomTags.MediaStorageSopInstanceUid].SetStringValue(theFile.DataSet[DicomTags.SopInstanceUid].GetString(0, ""));
+            theFile.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian; 
 
-            theSet[DicomTags.ImplementationClassUID].SetStringValue("1.1.1.1.1.11.1");
+            theSet[DicomTags.ImplementationClassUid].SetStringValue("1.1.1.1.1.11.1");
             theSet[DicomTags.ImplementationVersionName].SetStringValue("CC ImageServer 1.0");
         }
 

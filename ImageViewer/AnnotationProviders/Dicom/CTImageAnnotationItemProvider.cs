@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								{
 									double val = double.NaN;
 									bool tagExists;
-									imageSop.GetTag(DicomTags.KVP, out val, out tagExists);
+									imageSop.GetTag(DicomTags.Kvp, out val, out tagExists);
 									string str = String.Format("{0} kV", val);
 									return str;
 								},
@@ -55,7 +55,7 @@ namespace ClearCanvas.ImageViewer.AnnotationProviders.Dicom
 								{
 									int val;
 									bool tagExists;
-									imageSop.GetTag(DicomTags.XrayTubeCurrent, out val, out tagExists);
+									imageSop.GetTag(DicomTags.XRayTubeCurrent, out val, out tagExists);
 									string str = String.Format("{0} mA", val);
 									return str;
 								},

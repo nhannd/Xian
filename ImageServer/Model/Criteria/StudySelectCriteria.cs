@@ -40,7 +40,7 @@ namespace ClearCanvas.ImageServer.Model.Criteria
             }
         }
 
-        [DicomField(DicomTags.StudyInstanceUID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.StudyInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         public ISearchCondition<string> StudyInstanceUid
         {
             get
@@ -66,7 +66,7 @@ namespace ClearCanvas.ImageServer.Model.Criteria
             }
         }
 
-        [DicomField(DicomTags.PatientID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
         public ISearchCondition<string> PatientId
         {
             get
@@ -144,7 +144,7 @@ namespace ClearCanvas.ImageServer.Model.Criteria
             }
         }
 
-        [DicomField(DicomTags.StudyID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.StudyId, DefaultValue = DicomFieldDefault.Null)]
         public ISearchCondition<string> StudyId
         {
             get

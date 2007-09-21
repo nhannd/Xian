@@ -15,10 +15,10 @@ namespace ClearCanvas.Dicom.Tests
     {
         public class TestFields
         {
-            [DicomField(DicomTags.SOPClassUID, DefaultValue = DicomFieldDefault.Default)]
-            public DicomUid SOPClassUID = null;
+            [DicomField(DicomTags.SopClassUid, DefaultValue = DicomFieldDefault.Default)]
+            public DicomUid SopClassUid = null;
 
-            [DicomField(DicomTags.SOPInstanceUID, DefaultValue = DicomFieldDefault.Default)]
+            [DicomField(DicomTags.SopInstanceUid, DefaultValue = DicomFieldDefault.Default)]
             public DicomUid SOPInstanceUID = null;
 
             [DicomField(DicomTags.StudyDate, DefaultValue = DicomFieldDefault.Default)]
@@ -33,19 +33,19 @@ namespace ClearCanvas.Dicom.Tests
             [DicomField(DicomTags.StudyDescription, DefaultValue = DicomFieldDefault.Default)]
             public string StudyDescription = null;
 
-            [DicomField(DicomTags.StudyInstanceUID, DefaultValue = DicomFieldDefault.Default)]
+            [DicomField(DicomTags.StudyInstanceUid, DefaultValue = DicomFieldDefault.Default)]
             public DicomUid StudyInstanceUID = null;
 
-            [DicomField(DicomTags.SeriesInstanceUID, DefaultValue = DicomFieldDefault.Default)]
+            [DicomField(DicomTags.SeriesInstanceUid, DefaultValue = DicomFieldDefault.Default)]
             public DicomUid SeriesInstanceUID = null;
 
-            [DicomField(DicomTags.StudyID, DefaultValue = DicomFieldDefault.Default)]
+            [DicomField(DicomTags.StudyId, DefaultValue = DicomFieldDefault.Default)]
             public string StudyID = null;
 
             [DicomField(DicomTags.PatientsName, DefaultValue = DicomFieldDefault.Default)]
             public string PatientsName = null;
 
-            [DicomField(DicomTags.PatientID, DefaultValue = DicomFieldDefault.Default)]
+            [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Default)]
             public string PatientID = null;
 
             [DicomField(DicomTags.PatientsBirthDate, DefaultValue = DicomFieldDefault.Default)]
@@ -85,16 +85,16 @@ namespace ClearCanvas.Dicom.Tests
             theSet.LoadDicomFields(theFields);
 
             Assert.IsTrue(theFields.AccessionNumber.Equals(theSet[DicomTags.AccessionNumber].GetString(0,"")), "Accession Numbers did not match!");
-            Assert.IsTrue(theFields.SOPClassUID.UID.Equals(theSet[DicomTags.SOPClassUID].GetString(0, "")), "SOP Class UIDs did not match!");
-            Assert.IsTrue(theFields.SOPInstanceUID.UID.Equals(theSet[DicomTags.SOPInstanceUID].GetString(0, "")), "SOP Class UIDs did not match!");
+            Assert.IsTrue(theFields.SopClassUid.UID.Equals(theSet[DicomTags.SopClassUid].GetString(0, "")), "SOP Class UIDs did not match!");
+            Assert.IsTrue(theFields.SOPInstanceUID.UID.Equals(theSet[DicomTags.SopInstanceUid].GetString(0, "")), "SOP Class UIDs did not match!");
             Assert.IsTrue(theFields.StudyDate.ToString("yyyyMMdd", CultureInfo.CurrentCulture).Equals(theSet[DicomTags.StudyDate].GetString(0, "")));
             Assert.IsTrue(theFields.Modality.Equals(theSet[DicomTags.Modality].GetString(0, "")), "Modality did not match!");
             Assert.IsTrue(theFields.StudyDescription.Equals(theSet[DicomTags.StudyDescription].GetString(0, "")), "Study Description did not match!");
-            Assert.IsTrue(theFields.StudyInstanceUID.UID.Equals(theSet[DicomTags.StudyInstanceUID].GetString(0, "")), "Study Instance UIDs did not match!");
-            Assert.IsTrue(theFields.SeriesInstanceUID.UID.Equals(theSet[DicomTags.SeriesInstanceUID].GetString(0, "")), "Series Instance UIDs did not match!");
-            Assert.IsTrue(theFields.StudyID.Equals(theSet[DicomTags.StudyID].GetString(0, "")), "StudyID did not match!");
+            Assert.IsTrue(theFields.StudyInstanceUID.UID.Equals(theSet[DicomTags.StudyInstanceUid].GetString(0, "")), "Study Instance UIDs did not match!");
+            Assert.IsTrue(theFields.SeriesInstanceUID.UID.Equals(theSet[DicomTags.SeriesInstanceUid].GetString(0, "")), "Series Instance UIDs did not match!");
+            Assert.IsTrue(theFields.StudyID.Equals(theSet[DicomTags.StudyId].GetString(0, "")), "StudyID did not match!");
             Assert.IsTrue(theFields.PatientsName.Equals(theSet[DicomTags.PatientsName].GetString(0, "")), "PatientsName did not match!");
-            Assert.IsTrue(theFields.PatientID.Equals(theSet[DicomTags.PatientID].GetString(0, "")), "PatientID did not match!");
+            Assert.IsTrue(theFields.PatientID.Equals(theSet[DicomTags.PatientId].GetString(0, "")), "PatientID did not match!");
             Assert.IsTrue(theFields.PatientsBirthDate.ToString("yyyyMMdd", CultureInfo.CurrentCulture).Equals(theSet[DicomTags.PatientsBirthDate].GetString(0, "")));
             Assert.IsTrue(theFields.PatientsSex.Equals(theSet[DicomTags.PatientsSex].GetString(0, "")), "PatientsSex did not match!");
             Assert.IsTrue(theFields.Rows == theSet[DicomTags.Rows].GetUInt16(0,0));

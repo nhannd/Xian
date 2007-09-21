@@ -257,10 +257,10 @@ namespace ClearCanvas.Dicom.DataStore
 						continue;
 
 					StringBuilder nextCriteria = new StringBuilder();
-					if (path.Equals(DicomTags.ModalitiesinStudy))
+					if (path.Equals(DicomTags.ModalitiesInStudy))
 					{
 						//special case for modalities in study since it's not actually in the study table.
-						AppendModalitiesInStudyQuery(queryKey[DicomTags.ModalitiesinStudy], nextCriteria);
+						AppendModalitiesInStudyQuery(queryKey[DicomTags.ModalitiesInStudy], nextCriteria);
 					}
 					else
 					{
@@ -340,7 +340,7 @@ namespace ClearCanvas.Dicom.DataStore
 					setModalities[series.Modality] = series.Modality;
 
 				string modalities = DicomStringHelper.GetDicomStringArray<string>(setModalities.Keys);
-				result.Add(DicomTags.ModalitiesinStudy, modalities);
+				result.Add(DicomTags.ModalitiesInStudy, modalities);
 
 				results.Add(result);
 			}

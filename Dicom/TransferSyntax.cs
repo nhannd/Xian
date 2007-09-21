@@ -22,15 +22,15 @@ namespace ClearCanvas.Dicom
         /// <para>Deflated Explicit VR Little Endian</para>
         /// <para>UID: 1.2.840.10008.1.2.1.99</para>
         /// </summary>
-        public static readonly String DeflatedExplicitVRLittleEndianUid = "1.2.840.10008.1.2.1.99";
+        public static readonly String DeflatedExplicitVrLittleEndianUid = "1.2.840.10008.1.2.1.99";
 
         /// <summary>TransferSyntax object representing
         /// <para>Deflated Explicit VR Little Endian</para>
         /// <para>UID: 1.2.840.10008.1.2.1.99</para>
         /// </summary>
-        public static readonly TransferSyntax DeflatedExplicitVRLittleEndian =
+        public static readonly TransferSyntax DeflatedExplicitVrLittleEndian =
                     new TransferSyntax("Deflated Explicit VR Little Endian",
-                                 TransferSyntax.DeflatedExplicitVRLittleEndianUid,
+                                 TransferSyntax.DeflatedExplicitVrLittleEndianUid,
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
@@ -41,15 +41,15 @@ namespace ClearCanvas.Dicom
         /// <para>Explicit VR Big Endian</para>
         /// <para>UID: 1.2.840.10008.1.2.2</para>
         /// </summary>
-        public static readonly String ExplicitVRBigEndianUid = "1.2.840.10008.1.2.2";
+        public static readonly String ExplicitVrBigEndianUid = "1.2.840.10008.1.2.2";
 
         /// <summary>TransferSyntax object representing
         /// <para>Explicit VR Big Endian</para>
         /// <para>UID: 1.2.840.10008.1.2.2</para>
         /// </summary>
-        public static readonly TransferSyntax ExplicitVRBigEndian =
+        public static readonly TransferSyntax ExplicitVrBigEndian =
                     new TransferSyntax("Explicit VR Big Endian",
-                                 TransferSyntax.ExplicitVRBigEndianUid,
+                                 TransferSyntax.ExplicitVrBigEndianUid,
                                  false, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
@@ -60,15 +60,15 @@ namespace ClearCanvas.Dicom
         /// <para>Explicit VR Little Endian</para>
         /// <para>UID: 1.2.840.10008.1.2.1</para>
         /// </summary>
-        public static readonly String ExplicitVRLittleEndianUid = "1.2.840.10008.1.2.1";
+        public static readonly String ExplicitVrLittleEndianUid = "1.2.840.10008.1.2.1";
 
         /// <summary>TransferSyntax object representing
         /// <para>Explicit VR Little Endian</para>
         /// <para>UID: 1.2.840.10008.1.2.1</para>
         /// </summary>
-        public static readonly TransferSyntax ExplicitVRLittleEndian =
+        public static readonly TransferSyntax ExplicitVrLittleEndian =
                     new TransferSyntax("Explicit VR Little Endian",
-                                 TransferSyntax.ExplicitVRLittleEndianUid,
+                                 TransferSyntax.ExplicitVrLittleEndianUid,
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
@@ -79,15 +79,15 @@ namespace ClearCanvas.Dicom
         /// <para>Implicit VR Little Endian: Default Transfer Syntax for DICOM</para>
         /// <para>UID: 1.2.840.10008.1.2</para>
         /// </summary>
-        public static readonly String ImplicitVRLittleEndianUid = "1.2.840.10008.1.2";
+        public static readonly String ImplicitVrLittleEndianUid = "1.2.840.10008.1.2";
 
         /// <summary>TransferSyntax object representing
         /// <para>Implicit VR Little Endian: Default Transfer Syntax for DICOM</para>
         /// <para>UID: 1.2.840.10008.1.2</para>
         /// </summary>
-        public static readonly TransferSyntax ImplicitVRLittleEndian =
+        public static readonly TransferSyntax ImplicitVrLittleEndian =
                     new TransferSyntax("Implicit VR Little Endian: Default Transfer Syntax for DICOM",
-                                 TransferSyntax.ImplicitVRLittleEndianUid,
+                                 TransferSyntax.ImplicitVrLittleEndianUid,
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  false, // Explicit VR?
@@ -98,15 +98,15 @@ namespace ClearCanvas.Dicom
         /// <para>JPEG 2000 Image Compression</para>
         /// <para>UID: 1.2.840.10008.1.2.4.91</para>
         /// </summary>
-        public static readonly String JPEG2000ImageCompressionUid = "1.2.840.10008.1.2.4.91";
+        public static readonly String Jpeg2000ImageCompressionUid = "1.2.840.10008.1.2.4.91";
 
         /// <summary>TransferSyntax object representing
         /// <para>JPEG 2000 Image Compression</para>
         /// <para>UID: 1.2.840.10008.1.2.4.91</para>
         /// </summary>
-        public static readonly TransferSyntax JPEG2000ImageCompression =
+        public static readonly TransferSyntax Jpeg2000ImageCompression =
                     new TransferSyntax("JPEG 2000 Image Compression",
-                                 TransferSyntax.JPEG2000ImageCompressionUid,
+                                 TransferSyntax.Jpeg2000ImageCompressionUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -117,15 +117,15 @@ namespace ClearCanvas.Dicom
         /// <para>JPEG 2000 Image Compression (Lossless Only)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.90</para>
         /// </summary>
-        public static readonly String JPEG2000ImageCompressionLosslessOnlyUid = "1.2.840.10008.1.2.4.90";
+        public static readonly String Jpeg2000ImageCompressionLosslessOnlyUid = "1.2.840.10008.1.2.4.90";
 
         /// <summary>TransferSyntax object representing
         /// <para>JPEG 2000 Image Compression (Lossless Only)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.90</para>
         /// </summary>
-        public static readonly TransferSyntax JPEG2000ImageCompressionLosslessOnly =
+        public static readonly TransferSyntax Jpeg2000ImageCompressionLosslessOnly =
                     new TransferSyntax("JPEG 2000 Image Compression (Lossless Only)",
-                                 TransferSyntax.JPEG2000ImageCompressionLosslessOnlyUid,
+                                 TransferSyntax.Jpeg2000ImageCompressionLosslessOnlyUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -136,15 +136,15 @@ namespace ClearCanvas.Dicom
         /// <para>JPEG 2000 Part 2 Multi-component  Image Compression</para>
         /// <para>UID: 1.2.840.10008.1.2.4.93</para>
         /// </summary>
-        public static readonly String JPEG2000Part2MulticomponentImageCompressionUid = "1.2.840.10008.1.2.4.93";
+        public static readonly String Jpeg2000Part2MultiComponentImageCompressionUid = "1.2.840.10008.1.2.4.93";
 
         /// <summary>TransferSyntax object representing
         /// <para>JPEG 2000 Part 2 Multi-component  Image Compression</para>
         /// <para>UID: 1.2.840.10008.1.2.4.93</para>
         /// </summary>
-        public static readonly TransferSyntax JPEG2000Part2MulticomponentImageCompression =
+        public static readonly TransferSyntax Jpeg2000Part2MultiComponentImageCompression =
                     new TransferSyntax("JPEG 2000 Part 2 Multi-component  Image Compression",
-                                 TransferSyntax.JPEG2000Part2MulticomponentImageCompressionUid,
+                                 TransferSyntax.Jpeg2000Part2MultiComponentImageCompressionUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -155,15 +155,15 @@ namespace ClearCanvas.Dicom
         /// <para>JPEG 2000 Part 2 Multi-component  Image Compression (Lossless Only)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.92</para>
         /// </summary>
-        public static readonly String JPEG2000Part2MulticomponentImageCompressionLosslessOnlyUid = "1.2.840.10008.1.2.4.92";
+        public static readonly String Jpeg2000Part2MultiComponentImageCompressionLosslessOnlyUid = "1.2.840.10008.1.2.4.92";
 
         /// <summary>TransferSyntax object representing
         /// <para>JPEG 2000 Part 2 Multi-component  Image Compression (Lossless Only)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.92</para>
         /// </summary>
-        public static readonly TransferSyntax JPEG2000Part2MulticomponentImageCompressionLosslessOnly =
+        public static readonly TransferSyntax Jpeg2000Part2MultiComponentImageCompressionLosslessOnly =
                     new TransferSyntax("JPEG 2000 Part 2 Multi-component  Image Compression (Lossless Only)",
-                                 TransferSyntax.JPEG2000Part2MulticomponentImageCompressionLosslessOnlyUid,
+                                 TransferSyntax.Jpeg2000Part2MultiComponentImageCompressionLosslessOnlyUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -174,15 +174,15 @@ namespace ClearCanvas.Dicom
         /// <para>JPEG Baseline (Process 1): Default Transfer Syntax for Lossy JPEG 8 Bit Image Compression</para>
         /// <para>UID: 1.2.840.10008.1.2.4.50</para>
         /// </summary>
-        public static readonly String JPEGBaselineProcess1Uid = "1.2.840.10008.1.2.4.50";
+        public static readonly String JpegBaselineProcess1Uid = "1.2.840.10008.1.2.4.50";
 
         /// <summary>TransferSyntax object representing
         /// <para>JPEG Baseline (Process 1): Default Transfer Syntax for Lossy JPEG 8 Bit Image Compression</para>
         /// <para>UID: 1.2.840.10008.1.2.4.50</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGBaselineProcess1 =
+        public static readonly TransferSyntax JpegBaselineProcess1 =
                     new TransferSyntax("JPEG Baseline (Process 1): Default Transfer Syntax for Lossy JPEG 8 Bit Image Compression",
-                                 TransferSyntax.JPEGBaselineProcess1Uid,
+                                 TransferSyntax.JpegBaselineProcess1Uid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -190,18 +190,18 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
-        /// <para>JPEG Extended (Process 2 & 4): Default Transfer Syntax for Lossy JPEG 12 Bit Image Compression (Process 4 only)</para>
+        /// <para>JPEG Extended (Process 2 &amp; 4): Default Transfer Syntax for Lossy JPEG 12 Bit Image Compression (Process 4 only)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.51</para>
         /// </summary>
-        public static readonly String JPEGExtendedProcess24Uid = "1.2.840.10008.1.2.4.51";
+        public static readonly String JpegExtendedProcess24Uid = "1.2.840.10008.1.2.4.51";
 
         /// <summary>TransferSyntax object representing
-        /// <para>JPEG Extended (Process 2 & 4): Default Transfer Syntax for Lossy JPEG 12 Bit Image Compression (Process 4 only)</para>
+        /// <para>JPEG Extended (Process 2 &amp; 4): Default Transfer Syntax for Lossy JPEG 12 Bit Image Compression (Process 4 only)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.51</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGExtendedProcess24 =
-                    new TransferSyntax("JPEG Extended (Process 2 & 4): Default Transfer Syntax for Lossy JPEG 12 Bit Image Compression (Process 4 only)",
-                                 TransferSyntax.JPEGExtendedProcess24Uid,
+        public static readonly TransferSyntax JpegExtendedProcess24 =
+                    new TransferSyntax("JPEG Extended (Process 2 &amp; 4): Default Transfer Syntax for Lossy JPEG 12 Bit Image Compression (Process 4 only)",
+                                 TransferSyntax.JpegExtendedProcess24Uid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -209,18 +209,18 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
-        /// <para>JPEG Extended (Process 3 & 5) (Retired)</para>
+        /// <para>JPEG Extended (Process 3 &amp; 5) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.52</para>
         /// </summary>
-        public static readonly String JPEGExtendedProcess35RetiredUid = "1.2.840.10008.1.2.4.52";
+        public static readonly String JpegExtendedProcess35RetiredUid = "1.2.840.10008.1.2.4.52";
 
         /// <summary>TransferSyntax object representing
-        /// <para>JPEG Extended (Process 3 & 5) (Retired)</para>
+        /// <para>JPEG Extended (Process 3 &amp; 5) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.52</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGExtendedProcess35Retired =
-                    new TransferSyntax("JPEG Extended (Process 3 & 5) (Retired)",
-                                 TransferSyntax.JPEGExtendedProcess35RetiredUid,
+        public static readonly TransferSyntax JpegExtendedProcess35Retired =
+                    new TransferSyntax("JPEG Extended (Process 3 &amp; 5) (Retired)",
+                                 TransferSyntax.JpegExtendedProcess35RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -228,18 +228,18 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
-        /// <para>JPEG Extended, Hierarchical (Process 16 & 18) (Retired)</para>
+        /// <para>JPEG Extended, Hierarchical (Process 16 &amp; 18) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.59</para>
         /// </summary>
-        public static readonly String JPEGExtendedHierarchicalProcess1618RetiredUid = "1.2.840.10008.1.2.4.59";
+        public static readonly String JpegExtendedHierarchicalProcess1618RetiredUid = "1.2.840.10008.1.2.4.59";
 
         /// <summary>TransferSyntax object representing
-        /// <para>JPEG Extended, Hierarchical (Process 16 & 18) (Retired)</para>
+        /// <para>JPEG Extended, Hierarchical (Process 16 &amp; 18) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.59</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGExtendedHierarchicalProcess1618Retired =
-                    new TransferSyntax("JPEG Extended, Hierarchical (Process 16 & 18) (Retired)",
-                                 TransferSyntax.JPEGExtendedHierarchicalProcess1618RetiredUid,
+        public static readonly TransferSyntax JpegExtendedHierarchicalProcess1618Retired =
+                    new TransferSyntax("JPEG Extended, Hierarchical (Process 16 &amp; 18) (Retired)",
+                                 TransferSyntax.JpegExtendedHierarchicalProcess1618RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -247,18 +247,18 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
-        /// <para>JPEG Extended, Hierarchical (Process 17 & 19) (Retired)</para>
+        /// <para>JPEG Extended, Hierarchical (Process 17 &amp; 19) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.60</para>
         /// </summary>
-        public static readonly String JPEGExtendedHierarchicalProcess1719RetiredUid = "1.2.840.10008.1.2.4.60";
+        public static readonly String JpegExtendedHierarchicalProcess1719RetiredUid = "1.2.840.10008.1.2.4.60";
 
         /// <summary>TransferSyntax object representing
-        /// <para>JPEG Extended, Hierarchical (Process 17 & 19) (Retired)</para>
+        /// <para>JPEG Extended, Hierarchical (Process 17 &amp; 19) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.60</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGExtendedHierarchicalProcess1719Retired =
-                    new TransferSyntax("JPEG Extended, Hierarchical (Process 17 & 19) (Retired)",
-                                 TransferSyntax.JPEGExtendedHierarchicalProcess1719RetiredUid,
+        public static readonly TransferSyntax JpegExtendedHierarchicalProcess1719Retired =
+                    new TransferSyntax("JPEG Extended, Hierarchical (Process 17 &amp; 19) (Retired)",
+                                 TransferSyntax.JpegExtendedHierarchicalProcess1719RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -266,18 +266,18 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
-        /// <para>JPEG Full Progression, Hierarchical (Process 24 & 26) (Retired)</para>
+        /// <para>JPEG Full Progression, Hierarchical (Process 24 &amp; 26) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.63</para>
         /// </summary>
-        public static readonly String JPEGFullProgressionHierarchicalProcess2426RetiredUid = "1.2.840.10008.1.2.4.63";
+        public static readonly String JpegFullProgressionHierarchicalProcess2426RetiredUid = "1.2.840.10008.1.2.4.63";
 
         /// <summary>TransferSyntax object representing
-        /// <para>JPEG Full Progression, Hierarchical (Process 24 & 26) (Retired)</para>
+        /// <para>JPEG Full Progression, Hierarchical (Process 24 &amp; 26) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.63</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGFullProgressionHierarchicalProcess2426Retired =
-                    new TransferSyntax("JPEG Full Progression, Hierarchical (Process 24 & 26) (Retired)",
-                                 TransferSyntax.JPEGFullProgressionHierarchicalProcess2426RetiredUid,
+        public static readonly TransferSyntax JpegFullProgressionHierarchicalProcess2426Retired =
+                    new TransferSyntax("JPEG Full Progression, Hierarchical (Process 24 &amp; 26) (Retired)",
+                                 TransferSyntax.JpegFullProgressionHierarchicalProcess2426RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -285,18 +285,18 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
-        /// <para>JPEG Full Progression, Hierarchical (Process 25 & 27) (Retired)</para>
+        /// <para>JPEG Full Progression, Hierarchical (Process 25 &amp; 27) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.64</para>
         /// </summary>
-        public static readonly String JPEGFullProgressionHierarchicalProcess2527RetiredUid = "1.2.840.10008.1.2.4.64";
+        public static readonly String JpegFullProgressionHierarchicalProcess2527RetiredUid = "1.2.840.10008.1.2.4.64";
 
         /// <summary>TransferSyntax object representing
-        /// <para>JPEG Full Progression, Hierarchical (Process 25 & 27) (Retired)</para>
+        /// <para>JPEG Full Progression, Hierarchical (Process 25 &amp; 27) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.64</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGFullProgressionHierarchicalProcess2527Retired =
-                    new TransferSyntax("JPEG Full Progression, Hierarchical (Process 25 & 27) (Retired)",
-                                 TransferSyntax.JPEGFullProgressionHierarchicalProcess2527RetiredUid,
+        public static readonly TransferSyntax JpegFullProgressionHierarchicalProcess2527Retired =
+                    new TransferSyntax("JPEG Full Progression, Hierarchical (Process 25 &amp; 27) (Retired)",
+                                 TransferSyntax.JpegFullProgressionHierarchicalProcess2527RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -304,18 +304,18 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
-        /// <para>JPEG Full Progression, Non-Hierarchical (Process 10 & 12) (Retired)</para>
+        /// <para>JPEG Full Progression, Non-Hierarchical (Process 10 &amp; 12) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.55</para>
         /// </summary>
-        public static readonly String JPEGFullProgressionNonHierarchicalProcess1012RetiredUid = "1.2.840.10008.1.2.4.55";
+        public static readonly String JpegFullProgressionNonHierarchicalProcess1012RetiredUid = "1.2.840.10008.1.2.4.55";
 
         /// <summary>TransferSyntax object representing
-        /// <para>JPEG Full Progression, Non-Hierarchical (Process 10 & 12) (Retired)</para>
+        /// <para>JPEG Full Progression, Non-Hierarchical (Process 10 &amp; 12) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.55</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGFullProgressionNonHierarchicalProcess1012Retired =
-                    new TransferSyntax("JPEG Full Progression, Non-Hierarchical (Process 10 & 12) (Retired)",
-                                 TransferSyntax.JPEGFullProgressionNonHierarchicalProcess1012RetiredUid,
+        public static readonly TransferSyntax JpegFullProgressionNonHierarchicalProcess1012Retired =
+                    new TransferSyntax("JPEG Full Progression, Non-Hierarchical (Process 10 &amp; 12) (Retired)",
+                                 TransferSyntax.JpegFullProgressionNonHierarchicalProcess1012RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -323,18 +323,18 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
-        /// <para>JPEG Full Progression, Non-Hierarchical (Process 11 & 13) (Retired)</para>
+        /// <para>JPEG Full Progression, Non-Hierarchical (Process 11 &amp; 13) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.56</para>
         /// </summary>
-        public static readonly String JPEGFullProgressionNonHierarchicalProcess1113RetiredUid = "1.2.840.10008.1.2.4.56";
+        public static readonly String JpegFullProgressionNonHierarchicalProcess1113RetiredUid = "1.2.840.10008.1.2.4.56";
 
         /// <summary>TransferSyntax object representing
-        /// <para>JPEG Full Progression, Non-Hierarchical (Process 11 & 13) (Retired)</para>
+        /// <para>JPEG Full Progression, Non-Hierarchical (Process 11 &amp; 13) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.56</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGFullProgressionNonHierarchicalProcess1113Retired =
-                    new TransferSyntax("JPEG Full Progression, Non-Hierarchical (Process 11 & 13) (Retired)",
-                                 TransferSyntax.JPEGFullProgressionNonHierarchicalProcess1113RetiredUid,
+        public static readonly TransferSyntax JpegFullProgressionNonHierarchicalProcess1113Retired =
+                    new TransferSyntax("JPEG Full Progression, Non-Hierarchical (Process 11 &amp; 13) (Retired)",
+                                 TransferSyntax.JpegFullProgressionNonHierarchicalProcess1113RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -345,15 +345,15 @@ namespace ClearCanvas.Dicom
         /// <para>JPEG Lossless, Hierarchical (Process 28) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.65</para>
         /// </summary>
-        public static readonly String JPEGLosslessHierarchicalProcess28RetiredUid = "1.2.840.10008.1.2.4.65";
+        public static readonly String JpegLosslessHierarchicalProcess28RetiredUid = "1.2.840.10008.1.2.4.65";
 
         /// <summary>TransferSyntax object representing
         /// <para>JPEG Lossless, Hierarchical (Process 28) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.65</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGLosslessHierarchicalProcess28Retired =
+        public static readonly TransferSyntax JpegLosslessHierarchicalProcess28Retired =
                     new TransferSyntax("JPEG Lossless, Hierarchical (Process 28) (Retired)",
-                                 TransferSyntax.JPEGLosslessHierarchicalProcess28RetiredUid,
+                                 TransferSyntax.JpegLosslessHierarchicalProcess28RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -364,15 +364,15 @@ namespace ClearCanvas.Dicom
         /// <para>JPEG Lossless, Hierarchical (Process 29) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.66</para>
         /// </summary>
-        public static readonly String JPEGLosslessHierarchicalProcess29RetiredUid = "1.2.840.10008.1.2.4.66";
+        public static readonly String JpegLosslessHierarchicalProcess29RetiredUid = "1.2.840.10008.1.2.4.66";
 
         /// <summary>TransferSyntax object representing
         /// <para>JPEG Lossless, Hierarchical (Process 29) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.66</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGLosslessHierarchicalProcess29Retired =
+        public static readonly TransferSyntax JpegLosslessHierarchicalProcess29Retired =
                     new TransferSyntax("JPEG Lossless, Hierarchical (Process 29) (Retired)",
-                                 TransferSyntax.JPEGLosslessHierarchicalProcess29RetiredUid,
+                                 TransferSyntax.JpegLosslessHierarchicalProcess29RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -383,15 +383,15 @@ namespace ClearCanvas.Dicom
         /// <para>JPEG Lossless, Non-Hierarchical (Process 14)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.57</para>
         /// </summary>
-        public static readonly String JPEGLosslessNonHierarchicalProcess14Uid = "1.2.840.10008.1.2.4.57";
+        public static readonly String JpegLosslessNonHierarchicalProcess14Uid = "1.2.840.10008.1.2.4.57";
 
         /// <summary>TransferSyntax object representing
         /// <para>JPEG Lossless, Non-Hierarchical (Process 14)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.57</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGLosslessNonHierarchicalProcess14 =
+        public static readonly TransferSyntax JpegLosslessNonHierarchicalProcess14 =
                     new TransferSyntax("JPEG Lossless, Non-Hierarchical (Process 14)",
-                                 TransferSyntax.JPEGLosslessNonHierarchicalProcess14Uid,
+                                 TransferSyntax.JpegLosslessNonHierarchicalProcess14Uid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -402,15 +402,15 @@ namespace ClearCanvas.Dicom
         /// <para>JPEG Lossless, Non-Hierarchical (Process 15) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.58</para>
         /// </summary>
-        public static readonly String JPEGLosslessNonHierarchicalProcess15RetiredUid = "1.2.840.10008.1.2.4.58";
+        public static readonly String JpegLosslessNonHierarchicalProcess15RetiredUid = "1.2.840.10008.1.2.4.58";
 
         /// <summary>TransferSyntax object representing
         /// <para>JPEG Lossless, Non-Hierarchical (Process 15) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.58</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGLosslessNonHierarchicalProcess15Retired =
+        public static readonly TransferSyntax JpegLosslessNonHierarchicalProcess15Retired =
                     new TransferSyntax("JPEG Lossless, Non-Hierarchical (Process 15) (Retired)",
-                                 TransferSyntax.JPEGLosslessNonHierarchicalProcess15RetiredUid,
+                                 TransferSyntax.JpegLosslessNonHierarchicalProcess15RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -421,15 +421,15 @@ namespace ClearCanvas.Dicom
         /// <para>JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1]): Default Transfer Syntax for Lossless JPEG Image Compression</para>
         /// <para>UID: 1.2.840.10008.1.2.4.70</para>
         /// </summary>
-        public static readonly String JPEGLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1Uid = "1.2.840.10008.1.2.4.70";
+        public static readonly String JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1Uid = "1.2.840.10008.1.2.4.70";
 
         /// <summary>TransferSyntax object representing
         /// <para>JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1]): Default Transfer Syntax for Lossless JPEG Image Compression</para>
         /// <para>UID: 1.2.840.10008.1.2.4.70</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1 =
+        public static readonly TransferSyntax JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1 =
                     new TransferSyntax("JPEG Lossless, Non-Hierarchical, First-Order Prediction (Process 14 [Selection Value 1]): Default Transfer Syntax for Lossless JPEG Image Compression",
-                                 TransferSyntax.JPEGLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1Uid,
+                                 TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1Uid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -437,18 +437,18 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
-        /// <para>JPEG Spectral Selection, Hierarchical (Process 20 & 22) (Retired)</para>
+        /// <para>JPEG Spectral Selection, Hierarchical (Process 20 &amp; 22) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.61</para>
         /// </summary>
-        public static readonly String JPEGSpectralSelectionHierarchicalProcess2022RetiredUid = "1.2.840.10008.1.2.4.61";
+        public static readonly String JpegSpectralSelectionHierarchicalProcess2022RetiredUid = "1.2.840.10008.1.2.4.61";
 
         /// <summary>TransferSyntax object representing
-        /// <para>JPEG Spectral Selection, Hierarchical (Process 20 & 22) (Retired)</para>
+        /// <para>JPEG Spectral Selection, Hierarchical (Process 20 &amp; 22) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.61</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGSpectralSelectionHierarchicalProcess2022Retired =
-                    new TransferSyntax("JPEG Spectral Selection, Hierarchical (Process 20 & 22) (Retired)",
-                                 TransferSyntax.JPEGSpectralSelectionHierarchicalProcess2022RetiredUid,
+        public static readonly TransferSyntax JpegSpectralSelectionHierarchicalProcess2022Retired =
+                    new TransferSyntax("JPEG Spectral Selection, Hierarchical (Process 20 &amp; 22) (Retired)",
+                                 TransferSyntax.JpegSpectralSelectionHierarchicalProcess2022RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -456,18 +456,18 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
-        /// <para>JPEG Spectral Selection, Hierarchical (Process 21 & 23) (Retired)</para>
+        /// <para>JPEG Spectral Selection, Hierarchical (Process 21 &amp; 23) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.62</para>
         /// </summary>
-        public static readonly String JPEGSpectralSelectionHierarchicalProcess2123RetiredUid = "1.2.840.10008.1.2.4.62";
+        public static readonly String JpegSpectralSelectionHierarchicalProcess2123RetiredUid = "1.2.840.10008.1.2.4.62";
 
         /// <summary>TransferSyntax object representing
-        /// <para>JPEG Spectral Selection, Hierarchical (Process 21 & 23) (Retired)</para>
+        /// <para>JPEG Spectral Selection, Hierarchical (Process 21 &amp; 23) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.62</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGSpectralSelectionHierarchicalProcess2123Retired =
-                    new TransferSyntax("JPEG Spectral Selection, Hierarchical (Process 21 & 23) (Retired)",
-                                 TransferSyntax.JPEGSpectralSelectionHierarchicalProcess2123RetiredUid,
+        public static readonly TransferSyntax JpegSpectralSelectionHierarchicalProcess2123Retired =
+                    new TransferSyntax("JPEG Spectral Selection, Hierarchical (Process 21 &amp; 23) (Retired)",
+                                 TransferSyntax.JpegSpectralSelectionHierarchicalProcess2123RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -475,18 +475,18 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
-        /// <para>JPEG Spectral Selection, Non-Hierarchical (Process 6 & 8) (Retired)</para>
+        /// <para>JPEG Spectral Selection, Non-Hierarchical (Process 6 &amp; 8) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.53</para>
         /// </summary>
-        public static readonly String JPEGSpectralSelectionNonHierarchicalProcess68RetiredUid = "1.2.840.10008.1.2.4.53";
+        public static readonly String JpegSpectralSelectionNonHierarchicalProcess68RetiredUid = "1.2.840.10008.1.2.4.53";
 
         /// <summary>TransferSyntax object representing
-        /// <para>JPEG Spectral Selection, Non-Hierarchical (Process 6 & 8) (Retired)</para>
+        /// <para>JPEG Spectral Selection, Non-Hierarchical (Process 6 &amp; 8) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.53</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGSpectralSelectionNonHierarchicalProcess68Retired =
-                    new TransferSyntax("JPEG Spectral Selection, Non-Hierarchical (Process 6 & 8) (Retired)",
-                                 TransferSyntax.JPEGSpectralSelectionNonHierarchicalProcess68RetiredUid,
+        public static readonly TransferSyntax JpegSpectralSelectionNonHierarchicalProcess68Retired =
+                    new TransferSyntax("JPEG Spectral Selection, Non-Hierarchical (Process 6 &amp; 8) (Retired)",
+                                 TransferSyntax.JpegSpectralSelectionNonHierarchicalProcess68RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -494,18 +494,18 @@ namespace ClearCanvas.Dicom
                                  );
 
         /// <summary>String representing
-        /// <para>JPEG Spectral Selection, Non-Hierarchical (Process 7 & 9) (Retired)</para>
+        /// <para>JPEG Spectral Selection, Non-Hierarchical (Process 7 &amp; 9) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.54</para>
         /// </summary>
-        public static readonly String JPEGSpectralSelectionNonHierarchicalProcess79RetiredUid = "1.2.840.10008.1.2.4.54";
+        public static readonly String JpegSpectralSelectionNonHierarchicalProcess79RetiredUid = "1.2.840.10008.1.2.4.54";
 
         /// <summary>TransferSyntax object representing
-        /// <para>JPEG Spectral Selection, Non-Hierarchical (Process 7 & 9) (Retired)</para>
+        /// <para>JPEG Spectral Selection, Non-Hierarchical (Process 7 &amp; 9) (Retired)</para>
         /// <para>UID: 1.2.840.10008.1.2.4.54</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGSpectralSelectionNonHierarchicalProcess79Retired =
-                    new TransferSyntax("JPEG Spectral Selection, Non-Hierarchical (Process 7 & 9) (Retired)",
-                                 TransferSyntax.JPEGSpectralSelectionNonHierarchicalProcess79RetiredUid,
+        public static readonly TransferSyntax JpegSpectralSelectionNonHierarchicalProcess79Retired =
+                    new TransferSyntax("JPEG Spectral Selection, Non-Hierarchical (Process 7 &amp; 9) (Retired)",
+                                 TransferSyntax.JpegSpectralSelectionNonHierarchicalProcess79RetiredUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -516,15 +516,15 @@ namespace ClearCanvas.Dicom
         /// <para>JPEG-LS Lossless Image Compression</para>
         /// <para>UID: 1.2.840.10008.1.2.4.80</para>
         /// </summary>
-        public static readonly String JPEGLSLosslessImageCompressionUid = "1.2.840.10008.1.2.4.80";
+        public static readonly String JpegLsLosslessImageCompressionUid = "1.2.840.10008.1.2.4.80";
 
         /// <summary>TransferSyntax object representing
         /// <para>JPEG-LS Lossless Image Compression</para>
         /// <para>UID: 1.2.840.10008.1.2.4.80</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGLSLosslessImageCompression =
+        public static readonly TransferSyntax JpegLsLosslessImageCompression =
                     new TransferSyntax("JPEG-LS Lossless Image Compression",
-                                 TransferSyntax.JPEGLSLosslessImageCompressionUid,
+                                 TransferSyntax.JpegLsLosslessImageCompressionUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -535,15 +535,15 @@ namespace ClearCanvas.Dicom
         /// <para>JPEG-LS Lossy (Near-Lossless) Image Compression</para>
         /// <para>UID: 1.2.840.10008.1.2.4.81</para>
         /// </summary>
-        public static readonly String JPEGLSLossyNearLosslessImageCompressionUid = "1.2.840.10008.1.2.4.81";
+        public static readonly String JpegLsLossyNearLosslessImageCompressionUid = "1.2.840.10008.1.2.4.81";
 
         /// <summary>TransferSyntax object representing
         /// <para>JPEG-LS Lossy (Near-Lossless) Image Compression</para>
         /// <para>UID: 1.2.840.10008.1.2.4.81</para>
         /// </summary>
-        public static readonly TransferSyntax JPEGLSLossyNearLosslessImageCompression =
+        public static readonly TransferSyntax JpegLsLossyNearLosslessImageCompression =
                     new TransferSyntax("JPEG-LS Lossy (Near-Lossless) Image Compression",
-                                 TransferSyntax.JPEGLSLossyNearLosslessImageCompressionUid,
+                                 TransferSyntax.JpegLsLossyNearLosslessImageCompressionUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -554,15 +554,15 @@ namespace ClearCanvas.Dicom
         /// <para>JPIP Referenced</para>
         /// <para>UID: 1.2.840.10008.1.2.4.94</para>
         /// </summary>
-        public static readonly String JPIPReferencedUid = "1.2.840.10008.1.2.4.94";
+        public static readonly String JpipReferencedUid = "1.2.840.10008.1.2.4.94";
 
         /// <summary>TransferSyntax object representing
         /// <para>JPIP Referenced</para>
         /// <para>UID: 1.2.840.10008.1.2.4.94</para>
         /// </summary>
-        public static readonly TransferSyntax JPIPReferenced =
+        public static readonly TransferSyntax JpipReferenced =
                     new TransferSyntax("JPIP Referenced",
-                                 TransferSyntax.JPIPReferencedUid,
+                                 TransferSyntax.JpipReferencedUid,
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
@@ -573,15 +573,15 @@ namespace ClearCanvas.Dicom
         /// <para>JPIP Referenced Deflate</para>
         /// <para>UID: 1.2.840.10008.1.2.4.95</para>
         /// </summary>
-        public static readonly String JPIPReferencedDeflateUid = "1.2.840.10008.1.2.4.95";
+        public static readonly String JpipReferencedDeflateUid = "1.2.840.10008.1.2.4.95";
 
         /// <summary>TransferSyntax object representing
         /// <para>JPIP Referenced Deflate</para>
         /// <para>UID: 1.2.840.10008.1.2.4.95</para>
         /// </summary>
-        public static readonly TransferSyntax JPIPReferencedDeflate =
+        public static readonly TransferSyntax JpipReferencedDeflate =
                     new TransferSyntax("JPIP Referenced Deflate",
-                                 TransferSyntax.JPIPReferencedDeflateUid,
+                                 TransferSyntax.JpipReferencedDeflateUid,
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
@@ -592,15 +592,15 @@ namespace ClearCanvas.Dicom
         /// <para>MPEG2 Main Profile @ Main Level</para>
         /// <para>UID: 1.2.840.10008.1.2.4.100</para>
         /// </summary>
-        public static readonly String MPEG2MainProfileMainLevelUid = "1.2.840.10008.1.2.4.100";
+        public static readonly String Mpeg2MainProfileMainLevelUid = "1.2.840.10008.1.2.4.100";
 
         /// <summary>TransferSyntax object representing
         /// <para>MPEG2 Main Profile @ Main Level</para>
         /// <para>UID: 1.2.840.10008.1.2.4.100</para>
         /// </summary>
-        public static readonly TransferSyntax MPEG2MainProfileMainLevel =
+        public static readonly TransferSyntax Mpeg2MainProfileMainLevel =
                     new TransferSyntax("MPEG2 Main Profile @ Main Level",
-                                 TransferSyntax.MPEG2MainProfileMainLevelUid,
+                                 TransferSyntax.Mpeg2MainProfileMainLevelUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -611,15 +611,15 @@ namespace ClearCanvas.Dicom
         /// <para>RFC 2557 MIME encapsulation</para>
         /// <para>UID: 1.2.840.10008.1.2.6.1</para>
         /// </summary>
-        public static readonly String RFC2557MIMEencapsulationUid = "1.2.840.10008.1.2.6.1";
+        public static readonly String Rfc2557MimeEncapsulationUid = "1.2.840.10008.1.2.6.1";
 
         /// <summary>TransferSyntax object representing
         /// <para>RFC 2557 MIME encapsulation</para>
         /// <para>UID: 1.2.840.10008.1.2.6.1</para>
         /// </summary>
-        public static readonly TransferSyntax RFC2557MIMEencapsulation =
+        public static readonly TransferSyntax Rfc2557MimeEncapsulation =
                     new TransferSyntax("RFC 2557 MIME encapsulation",
-                                 TransferSyntax.RFC2557MIMEencapsulationUid,
+                                 TransferSyntax.Rfc2557MimeEncapsulationUid,
                                  true, // Little Endian?
                                  false, // Encapsulated?
                                  true, // Explicit VR?
@@ -630,15 +630,15 @@ namespace ClearCanvas.Dicom
         /// <para>RLE Lossless</para>
         /// <para>UID: 1.2.840.10008.1.2.5</para>
         /// </summary>
-        public static readonly String RLELosslessUid = "1.2.840.10008.1.2.5";
+        public static readonly String RleLosslessUid = "1.2.840.10008.1.2.5";
 
         /// <summary>TransferSyntax object representing
         /// <para>RLE Lossless</para>
         /// <para>UID: 1.2.840.10008.1.2.5</para>
         /// </summary>
-        public static readonly TransferSyntax RLELossless =
+        public static readonly TransferSyntax RleLossless =
                     new TransferSyntax("RLE Lossless",
-                                 TransferSyntax.RLELosslessUid,
+                                 TransferSyntax.RleLosslessUid,
                                  true, // Little Endian?
                                  true, // Encapsulated?
                                  true, // Explicit VR?
@@ -646,7 +646,7 @@ namespace ClearCanvas.Dicom
                                  );
 
         // Internal members
-        private static Dictionary<String, TransferSyntax> _transferSyntaxes = new Dictionary<String, TransferSyntax>();
+        private static Dictionary<String,TransferSyntax> _transferSyntaxes = new Dictionary<String,TransferSyntax>();
         private static bool _listInit = false;
         private bool _littleEndian;
         private bool _encapsulated;
@@ -702,7 +702,7 @@ namespace ClearCanvas.Dicom
         }
 
         ///<summary>Property representing the Endian enumerated value for the transfer syntax.</summary>
-        public Endian Endian
+          public Endian Endian
         {
             get
             {
@@ -740,104 +740,104 @@ namespace ClearCanvas.Dicom
             {
                 _listInit = true;
 
-                _transferSyntaxes.Add(TransferSyntax.DeflatedExplicitVRLittleEndianUid,
-                                      TransferSyntax.DeflatedExplicitVRLittleEndian);
+                _transferSyntaxes.Add(TransferSyntax.DeflatedExplicitVrLittleEndianUid,
+                                      TransferSyntax.DeflatedExplicitVrLittleEndian);
 
-                _transferSyntaxes.Add(TransferSyntax.ExplicitVRBigEndianUid,
-                                      TransferSyntax.ExplicitVRBigEndian);
+                _transferSyntaxes.Add(TransferSyntax.ExplicitVrBigEndianUid,
+                                      TransferSyntax.ExplicitVrBigEndian);
 
-                _transferSyntaxes.Add(TransferSyntax.ExplicitVRLittleEndianUid,
-                                      TransferSyntax.ExplicitVRLittleEndian);
+                _transferSyntaxes.Add(TransferSyntax.ExplicitVrLittleEndianUid,
+                                      TransferSyntax.ExplicitVrLittleEndian);
 
-                _transferSyntaxes.Add(TransferSyntax.ImplicitVRLittleEndianUid,
-                                      TransferSyntax.ImplicitVRLittleEndian);
+                _transferSyntaxes.Add(TransferSyntax.ImplicitVrLittleEndianUid,
+                                      TransferSyntax.ImplicitVrLittleEndian);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEG2000ImageCompressionUid,
-                                      TransferSyntax.JPEG2000ImageCompression);
+                _transferSyntaxes.Add(TransferSyntax.Jpeg2000ImageCompressionUid,
+                                      TransferSyntax.Jpeg2000ImageCompression);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEG2000ImageCompressionLosslessOnlyUid,
-                                      TransferSyntax.JPEG2000ImageCompressionLosslessOnly);
+                _transferSyntaxes.Add(TransferSyntax.Jpeg2000ImageCompressionLosslessOnlyUid,
+                                      TransferSyntax.Jpeg2000ImageCompressionLosslessOnly);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEG2000Part2MulticomponentImageCompressionUid,
-                                      TransferSyntax.JPEG2000Part2MulticomponentImageCompression);
+                _transferSyntaxes.Add(TransferSyntax.Jpeg2000Part2MultiComponentImageCompressionUid,
+                                      TransferSyntax.Jpeg2000Part2MultiComponentImageCompression);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEG2000Part2MulticomponentImageCompressionLosslessOnlyUid,
-                                      TransferSyntax.JPEG2000Part2MulticomponentImageCompressionLosslessOnly);
+                _transferSyntaxes.Add(TransferSyntax.Jpeg2000Part2MultiComponentImageCompressionLosslessOnlyUid,
+                                      TransferSyntax.Jpeg2000Part2MultiComponentImageCompressionLosslessOnly);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGBaselineProcess1Uid,
-                                      TransferSyntax.JPEGBaselineProcess1);
+                _transferSyntaxes.Add(TransferSyntax.JpegBaselineProcess1Uid,
+                                      TransferSyntax.JpegBaselineProcess1);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGExtendedProcess24Uid,
-                                      TransferSyntax.JPEGExtendedProcess24);
+                _transferSyntaxes.Add(TransferSyntax.JpegExtendedProcess24Uid,
+                                      TransferSyntax.JpegExtendedProcess24);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGExtendedProcess35RetiredUid,
-                                      TransferSyntax.JPEGExtendedProcess35Retired);
+                _transferSyntaxes.Add(TransferSyntax.JpegExtendedProcess35RetiredUid,
+                                      TransferSyntax.JpegExtendedProcess35Retired);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGExtendedHierarchicalProcess1618RetiredUid,
-                                      TransferSyntax.JPEGExtendedHierarchicalProcess1618Retired);
+                _transferSyntaxes.Add(TransferSyntax.JpegExtendedHierarchicalProcess1618RetiredUid,
+                                      TransferSyntax.JpegExtendedHierarchicalProcess1618Retired);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGExtendedHierarchicalProcess1719RetiredUid,
-                                      TransferSyntax.JPEGExtendedHierarchicalProcess1719Retired);
+                _transferSyntaxes.Add(TransferSyntax.JpegExtendedHierarchicalProcess1719RetiredUid,
+                                      TransferSyntax.JpegExtendedHierarchicalProcess1719Retired);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGFullProgressionHierarchicalProcess2426RetiredUid,
-                                      TransferSyntax.JPEGFullProgressionHierarchicalProcess2426Retired);
+                _transferSyntaxes.Add(TransferSyntax.JpegFullProgressionHierarchicalProcess2426RetiredUid,
+                                      TransferSyntax.JpegFullProgressionHierarchicalProcess2426Retired);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGFullProgressionHierarchicalProcess2527RetiredUid,
-                                      TransferSyntax.JPEGFullProgressionHierarchicalProcess2527Retired);
+                _transferSyntaxes.Add(TransferSyntax.JpegFullProgressionHierarchicalProcess2527RetiredUid,
+                                      TransferSyntax.JpegFullProgressionHierarchicalProcess2527Retired);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGFullProgressionNonHierarchicalProcess1012RetiredUid,
-                                      TransferSyntax.JPEGFullProgressionNonHierarchicalProcess1012Retired);
+                _transferSyntaxes.Add(TransferSyntax.JpegFullProgressionNonHierarchicalProcess1012RetiredUid,
+                                      TransferSyntax.JpegFullProgressionNonHierarchicalProcess1012Retired);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGFullProgressionNonHierarchicalProcess1113RetiredUid,
-                                      TransferSyntax.JPEGFullProgressionNonHierarchicalProcess1113Retired);
+                _transferSyntaxes.Add(TransferSyntax.JpegFullProgressionNonHierarchicalProcess1113RetiredUid,
+                                      TransferSyntax.JpegFullProgressionNonHierarchicalProcess1113Retired);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGLosslessHierarchicalProcess28RetiredUid,
-                                      TransferSyntax.JPEGLosslessHierarchicalProcess28Retired);
+                _transferSyntaxes.Add(TransferSyntax.JpegLosslessHierarchicalProcess28RetiredUid,
+                                      TransferSyntax.JpegLosslessHierarchicalProcess28Retired);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGLosslessHierarchicalProcess29RetiredUid,
-                                      TransferSyntax.JPEGLosslessHierarchicalProcess29Retired);
+                _transferSyntaxes.Add(TransferSyntax.JpegLosslessHierarchicalProcess29RetiredUid,
+                                      TransferSyntax.JpegLosslessHierarchicalProcess29Retired);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGLosslessNonHierarchicalProcess14Uid,
-                                      TransferSyntax.JPEGLosslessNonHierarchicalProcess14);
+                _transferSyntaxes.Add(TransferSyntax.JpegLosslessNonHierarchicalProcess14Uid,
+                                      TransferSyntax.JpegLosslessNonHierarchicalProcess14);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGLosslessNonHierarchicalProcess15RetiredUid,
-                                      TransferSyntax.JPEGLosslessNonHierarchicalProcess15Retired);
+                _transferSyntaxes.Add(TransferSyntax.JpegLosslessNonHierarchicalProcess15RetiredUid,
+                                      TransferSyntax.JpegLosslessNonHierarchicalProcess15Retired);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1Uid,
-                                      TransferSyntax.JPEGLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1);
+                _transferSyntaxes.Add(TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1Uid,
+                                      TransferSyntax.JpegLosslessNonHierarchicalFirstOrderPredictionProcess14SelectionValue1);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGSpectralSelectionHierarchicalProcess2022RetiredUid,
-                                      TransferSyntax.JPEGSpectralSelectionHierarchicalProcess2022Retired);
+                _transferSyntaxes.Add(TransferSyntax.JpegSpectralSelectionHierarchicalProcess2022RetiredUid,
+                                      TransferSyntax.JpegSpectralSelectionHierarchicalProcess2022Retired);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGSpectralSelectionHierarchicalProcess2123RetiredUid,
-                                      TransferSyntax.JPEGSpectralSelectionHierarchicalProcess2123Retired);
+                _transferSyntaxes.Add(TransferSyntax.JpegSpectralSelectionHierarchicalProcess2123RetiredUid,
+                                      TransferSyntax.JpegSpectralSelectionHierarchicalProcess2123Retired);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGSpectralSelectionNonHierarchicalProcess68RetiredUid,
-                                      TransferSyntax.JPEGSpectralSelectionNonHierarchicalProcess68Retired);
+                _transferSyntaxes.Add(TransferSyntax.JpegSpectralSelectionNonHierarchicalProcess68RetiredUid,
+                                      TransferSyntax.JpegSpectralSelectionNonHierarchicalProcess68Retired);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGSpectralSelectionNonHierarchicalProcess79RetiredUid,
-                                      TransferSyntax.JPEGSpectralSelectionNonHierarchicalProcess79Retired);
+                _transferSyntaxes.Add(TransferSyntax.JpegSpectralSelectionNonHierarchicalProcess79RetiredUid,
+                                      TransferSyntax.JpegSpectralSelectionNonHierarchicalProcess79Retired);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGLSLosslessImageCompressionUid,
-                                      TransferSyntax.JPEGLSLosslessImageCompression);
+                _transferSyntaxes.Add(TransferSyntax.JpegLsLosslessImageCompressionUid,
+                                      TransferSyntax.JpegLsLosslessImageCompression);
 
-                _transferSyntaxes.Add(TransferSyntax.JPEGLSLossyNearLosslessImageCompressionUid,
-                                      TransferSyntax.JPEGLSLossyNearLosslessImageCompression);
+                _transferSyntaxes.Add(TransferSyntax.JpegLsLossyNearLosslessImageCompressionUid,
+                                      TransferSyntax.JpegLsLossyNearLosslessImageCompression);
 
-                _transferSyntaxes.Add(TransferSyntax.JPIPReferencedUid,
-                                      TransferSyntax.JPIPReferenced);
+                _transferSyntaxes.Add(TransferSyntax.JpipReferencedUid,
+                                      TransferSyntax.JpipReferenced);
 
-                _transferSyntaxes.Add(TransferSyntax.JPIPReferencedDeflateUid,
-                                      TransferSyntax.JPIPReferencedDeflate);
+                _transferSyntaxes.Add(TransferSyntax.JpipReferencedDeflateUid,
+                                      TransferSyntax.JpipReferencedDeflate);
 
-                _transferSyntaxes.Add(TransferSyntax.MPEG2MainProfileMainLevelUid,
-                                      TransferSyntax.MPEG2MainProfileMainLevel);
+                _transferSyntaxes.Add(TransferSyntax.Mpeg2MainProfileMainLevelUid,
+                                      TransferSyntax.Mpeg2MainProfileMainLevel);
 
-                _transferSyntaxes.Add(TransferSyntax.RFC2557MIMEencapsulationUid,
-                                      TransferSyntax.RFC2557MIMEencapsulation);
+                _transferSyntaxes.Add(TransferSyntax.Rfc2557MimeEncapsulationUid,
+                                      TransferSyntax.Rfc2557MimeEncapsulation);
 
-                _transferSyntaxes.Add(TransferSyntax.RLELosslessUid,
-                                      TransferSyntax.RLELossless);
+                _transferSyntaxes.Add(TransferSyntax.RleLosslessUid,
+                                      TransferSyntax.RleLossless);
 
             }
 

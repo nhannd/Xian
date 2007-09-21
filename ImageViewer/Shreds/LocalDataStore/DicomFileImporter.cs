@@ -449,7 +449,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			private bool ConfirmProcessableFile(DicomAttributeCollection metaInfo, DicomAttributeCollection dataset)
 			{
-				DicomAttribute attribute = metaInfo[DicomTags.MediaStorageSOPClassUID];
+				DicomAttribute attribute = metaInfo[DicomTags.MediaStorageSopClassUid];
 				// we want to skip Media Storage Directory Storage (DICOMDIR directories)
 				if ("1.2.840.10008.1.3.10" == attribute.ToString())
 					return false;

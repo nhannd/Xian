@@ -64,7 +64,7 @@ namespace ClearCanvas.Dicom.IO
         public DicomStreamReader(Stream stream)
         {
             _stream = stream;
-            TransferSyntax = TransferSyntax.ExplicitVRLittleEndian;
+            TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
         }
         #endregion
 

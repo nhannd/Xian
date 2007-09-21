@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageServer.Model
             set { _patientKey = value; }
         }
 
-        [DicomField(DicomTags.StudyInstanceUID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.StudyInstanceUid, DefaultValue = DicomFieldDefault.Null)]
         public String StudyInstanceUid
         {
             get { return _studyInstanceUid; }
@@ -62,7 +62,7 @@ namespace ClearCanvas.ImageServer.Model
             set { _patientName = value; }
         }
 
-        [DicomField(DicomTags.PatientID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.PatientId, DefaultValue = DicomFieldDefault.Null)]
         public String PatientId
         {
             get { return _patientId; }
@@ -104,7 +104,7 @@ namespace ClearCanvas.ImageServer.Model
             set { _accessionNumber = value; }
         }
 
-        [DicomField(DicomTags.StudyID, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.StudyId, DefaultValue = DicomFieldDefault.Null)]
         public String StudyId
         {
             get { return _studyId; }
@@ -125,14 +125,14 @@ namespace ClearCanvas.ImageServer.Model
             set { _referringPhysiciansName = value; }
         }
 
-        [DicomField(DicomTags.NumberofStudyRelatedSeries, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.NumberOfStudyRelatedSeries, DefaultValue = DicomFieldDefault.Null)]
         public int NumberOfStudyRelatedSeries
         {
             get { return _numberOfStudyRelatedSeries; }
             set { _numberOfStudyRelatedSeries = value; }
         }
 
-        [DicomField(DicomTags.NumberofStudyRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
+        [DicomField(DicomTags.NumberOfStudyRelatedInstances, DefaultValue = DicomFieldDefault.Null)]
         public int NumberOfStudyRelatedInstances
         {
             get { return _numberOfStudyRelatedInstances; }

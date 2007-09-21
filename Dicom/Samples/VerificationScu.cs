@@ -41,13 +41,13 @@ namespace ClearCanvas.Dicom.Samples
         /// </summary>
         private void SetPresentationContexts()
         {
-            byte pcid = _assocParams.FindAbstractSyntax(SopClass.VerificationSOPClass);
+            byte pcid = _assocParams.FindAbstractSyntax(SopClass.VerificationSopClass);
             if (pcid == 0)
             {
-                pcid = _assocParams.AddPresentationContext(SopClass.VerificationSOPClass);
+                pcid = _assocParams.AddPresentationContext(SopClass.VerificationSopClass);
 
-                _assocParams.AddTransferSyntax(pcid, TransferSyntax.ExplicitVRLittleEndian);
-                _assocParams.AddTransferSyntax(pcid, TransferSyntax.ImplicitVRLittleEndian);
+                _assocParams.AddTransferSyntax(pcid, TransferSyntax.ExplicitVrLittleEndian);
+                _assocParams.AddTransferSyntax(pcid, TransferSyntax.ImplicitVrLittleEndian);
             }
         }
 
@@ -145,7 +145,7 @@ namespace ClearCanvas.Dicom.Samples
         private void SendVerificationRequest(DicomClient client, ClientAssociationParameters association)
         {
 
-            byte pcid = association.FindAbstractSyntax(SopClass.VerificationSOPClass);
+            byte pcid = association.FindAbstractSyntax(SopClass.VerificationSopClass);
 
             client.SendCEchoRequest(pcid, client.NextMessageID());
         }
