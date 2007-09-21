@@ -23,7 +23,7 @@ namespace ClearCanvas.Dicom
     {
         #region Member Variables
         private SortedDictionary<uint, DicomAttribute> _attributeList = new SortedDictionary<uint, DicomAttribute>();
-        private String _specificCharacterSet = "";
+        private String _specificCharacterSet = String.Empty;
         private uint _startTag = 0x00000000;
         private uint _stopTag = 0xFFFFFFFF;       
         #endregion
@@ -201,7 +201,7 @@ namespace ClearCanvas.Dicom
                 else
                 {
                     if ((tag < _startTag) || (tag > _stopTag))
-                        throw new DicomException("Tag is out of range for collection: " + tag.ToString());
+                        throw new DicomException("Tag is out of range for collection: " + tag);
 
                     if (value.Tag.TagValue != tag)
                         throw new DicomException("Tag being set does not match tag in DicomAttribute");
@@ -263,7 +263,7 @@ namespace ClearCanvas.Dicom
                         throw new DicomException("Tag being set does not match tag in DicomAttribute");
 
                     if ((tag.TagValue < _startTag) || (tag.TagValue > _stopTag))
-                        throw new DicomException("Tag is out of range for collection: " + tag.ToString());
+                        throw new DicomException("Tag is out of range for collection: " + tag);
 
                     _attributeList[tag.TagValue] = value;
                     value.ParentCollection = this;
@@ -462,7 +462,7 @@ namespace ClearCanvas.Dicom
         /// <param name="vtype"></param>
         /// <param name="deflt"></param>
         /// <returns></returns>
-        private object GetDefaultValue(Type vtype, DicomFieldDefault deflt)
+        private static object GetDefaultValue(Type vtype, DicomFieldDefault deflt)
         {
             try
             {
@@ -666,7 +666,7 @@ namespace ClearCanvas.Dicom
                     try
                     {
                         DicomFieldAttribute dfa = (DicomFieldAttribute)field.GetCustomAttributes(typeof(DicomFieldAttribute), true)[0];
-                        if (this.Contains(dfa.Tag))
+                        if (Contains(dfa.Tag))
                         {
                             DicomAttribute elem = this[dfa.Tag];
                             if ((elem.StreamLength == 0 && dfa.UseDefaultForZeroLength) && dfa.DefaultValue == DicomFieldDefault.None)
@@ -694,7 +694,7 @@ namespace ClearCanvas.Dicom
                     try
                     {
                         DicomFieldAttribute dfa = (DicomFieldAttribute)property.GetCustomAttributes(typeof(DicomFieldAttribute), true)[0];
-                        if (this.Contains(dfa.Tag))
+                        if (Contains(dfa.Tag))
                         {
                             DicomAttribute elem = this[dfa.Tag];
                             if ((elem.StreamLength == 0 && dfa.UseDefaultForZeroLength) && dfa.DefaultValue == DicomFieldDefault.None)
@@ -735,7 +735,7 @@ namespace ClearCanvas.Dicom
 //                        if (elem.GetValueType() == typeof(DateTime))
   //                          (elem as AbstractAttribute).SetDateTimes((DateTime[])value);
     //                    else
-                            elem.Values = (object[])value;
+                            elem.Values = value;
                     }
                     else
                     {
@@ -778,7 +778,8 @@ namespace ClearCanvas.Dicom
                 }
                 else if (createEmpty)
                 {
-                    DicomAttribute elem = this[tag];
+                    // force the element creation
+                    DicomAttribute attr = this[tag];
                 }
             }
         }
@@ -818,16 +819,6 @@ namespace ClearCanvas.Dicom
 
         #region Dump
         /// <summary>
-        /// Method to dump the contents of the collection to the console.
-        /// </summary>
-        public void Dump()
-        {
-            StringBuilder sb = new StringBuilder();
-            Dump(sb, "", DicomDumpOptions.Default);
-            Console.WriteLine(sb.ToString());
-        }
-
-        /// <summary>
         /// Method to dump the contents of the collection to a <see>StringBuilder</see> instance.
         /// </summary>
         /// <param name="sb"></param>
@@ -835,11 +826,44 @@ namespace ClearCanvas.Dicom
         /// <param name="options"></param>
         public void Dump(StringBuilder sb, String prefix, DicomDumpOptions options)
         {
+            if (sb == null) throw new ArgumentNullException("sb");
             foreach (DicomAttribute item in this)
             {
                 item.Dump(sb, prefix, options);
                 sb.AppendLine();
             }
+        }
+
+        /// <summary>
+        /// Method to dump the contents of a collection to a string.
+        /// </summary>
+        /// <param name="prefix"></param>
+        /// <param name="options"></param>
+        /// <returns></returns>
+        public string Dump(string prefix, DicomDumpOptions options)
+        {
+            StringBuilder sb = new StringBuilder();
+            Dump(sb, prefix, options);
+            return sb.ToString();
+        }
+
+        /// <summary>
+        /// Method to dump the contents of a collection to a string.
+        /// </summary>
+        /// <param name="prefix"></param>
+        /// <returns></returns>
+        public string Dump(string prefix)
+        {
+            return Dump(prefix, DicomDumpOptions.Default);
+        }
+
+        /// <summary>
+        /// Method to dump the contents of a collection to a string.
+        /// </summary>
+        /// <returns></returns>
+        public string Dump()
+        {
+            return Dump(String.Empty, DicomDumpOptions.Default);
         }
         #endregion
     }

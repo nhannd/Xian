@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using System.IO;
 
@@ -33,8 +32,8 @@ namespace ClearCanvas.Dicom
         /// <param name="dataSet">A <see cref="DicomAttributeCollection"/> for the DataSet.</param>
         public DicomFile(String filename, DicomAttributeCollection metaInfo, DicomAttributeCollection dataSet)
         {
-            base._metaInfo = metaInfo;
-            base._dataSet = dataSet;
+            _metaInfo = metaInfo;
+            _dataSet = dataSet;
             _filename = filename;
         }
 
@@ -44,10 +43,21 @@ namespace ClearCanvas.Dicom
         /// <param name="filename"></param>
         public DicomFile(String filename)
         {
-            base._metaInfo = new DicomAttributeCollection(0x00020000, 0x0002FFFF);
-            base._dataSet = new DicomAttributeCollection(0x00040000, 0xFFFFFFFF);
+            _metaInfo = new DicomAttributeCollection(0x00020000, 0x0002FFFF);
+            _dataSet = new DicomAttributeCollection(0x00040000, 0xFFFFFFFF);
 
             _filename = filename;
+        }
+
+        /// <summary>
+        /// Create a new empty DICOM Part 10 format file.
+        /// </summary>
+        public DicomFile()
+        {
+            _metaInfo = new DicomAttributeCollection(0x00020000, 0x0002FFFF);
+            _dataSet = new DicomAttributeCollection(0x00040000, 0xFFFFFFFF);
+
+            _filename = String.Empty;
         }
 
         /// <summary>
@@ -68,8 +78,8 @@ namespace ClearCanvas.Dicom
         /// <param name="filename"></param>
         public DicomFile(DicomMessage msg, String filename)
         {
-            base._metaInfo = new DicomAttributeCollection(0x00020000,0x0002FFFF);
-            base._dataSet = msg.DataSet;
+            _metaInfo = new DicomAttributeCollection(0x00020000,0x0002FFFF);
+            _dataSet = msg.DataSet;
 
             MediaStorageSopInstanceUid = msg.AffectedSopInstanceUid;
             MediaStorageSopClassUid = msg.AffectedSopClassUid;
@@ -105,7 +115,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                String sopClassUid = base.MetaInfo[DicomTags.MediaStorageSopClassUid].GetString(0,"");
+                String sopClassUid = MetaInfo[DicomTags.MediaStorageSopClassUid].GetString(0,String.Empty);
 
                 SopClass sop = SopClass.GetSopClass(sopClassUid);
 
@@ -127,13 +137,13 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                String transferSyntaxUid = base._metaInfo[DicomTags.TransferSyntaxUid];
+                String transferSyntaxUid = _metaInfo[DicomTags.TransferSyntaxUid];
 
                 return TransferSyntax.GetTransferSyntax(transferSyntaxUid);
             }
             set
             {
-                base._metaInfo[DicomTags.TransferSyntaxUid].SetStringValue(value.UidString);
+                _metaInfo[DicomTags.TransferSyntaxUid].SetStringValue(value.UidString);
             }
         }
 
@@ -146,7 +156,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string MediaStorageSopClassUid
         {
-            get { return _metaInfo[DicomTags.MediaStorageSopClassUid].GetString(0,""); }
+            get { return _metaInfo[DicomTags.MediaStorageSopClassUid].GetString(0,String.Empty); }
             set { _metaInfo[DicomTags.MediaStorageSopClassUid].Values = value; }
         }
         /// <summary>
@@ -154,7 +164,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string MediaStorageSopInstanceUid
         {
-            get { return _metaInfo[DicomTags.MediaStorageSopInstanceUid].GetString(0,""); }
+            get { return _metaInfo[DicomTags.MediaStorageSopInstanceUid].GetString(0,String.Empty); }
             set { _metaInfo[DicomTags.MediaStorageSopInstanceUid].Values = value; }
         }
         /// <summary>
@@ -165,7 +175,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string ImplementationClassUid
         {
-            get { return _metaInfo[DicomTags.ImplementationClassUid].GetString(0,""); }
+            get { return _metaInfo[DicomTags.ImplementationClassUid].GetString(0,String.Empty); }
             set { _metaInfo[DicomTags.ImplementationClassUid].Values = value; }
         }
         /// <summary>
@@ -175,7 +185,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string ImplementationVersionName
         {
-            get { return _metaInfo[DicomTags.ImplementationVersionName].GetString(0,""); }
+            get { return _metaInfo[DicomTags.ImplementationVersionName].GetString(0,String.Empty); }
             set { _metaInfo[DicomTags.ImplementationVersionName].Values = value; }
         }
         /// <summary>
@@ -184,7 +194,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string TransferSyntaxUid
         {
-            get { return _metaInfo[DicomTags.TransferSyntaxUid].GetString(0,""); }
+            get { return _metaInfo[DicomTags.TransferSyntaxUid].GetString(0,String.Empty); }
             set { _metaInfo[DicomTags.TransferSyntaxUid].Values = value; }
         }
         /// <summary>
@@ -195,7 +205,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string SourceApplicationEntityTitle
         {
-            get { return _metaInfo[DicomTags.SourceApplicationEntityTitle].GetString(0,""); }
+            get { return _metaInfo[DicomTags.SourceApplicationEntityTitle].GetString(0,String.Empty); }
             set { _metaInfo[DicomTags.SourceApplicationEntityTitle].Values = value; }
         }
         /// <summary>
@@ -205,14 +215,33 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string PrivateInformationCreatorUid
         {
-            get { return _metaInfo[DicomTags.PrivateInformationCreatorUid].GetString(0,""); }
+            get { return _metaInfo[DicomTags.PrivateInformationCreatorUid].GetString(0,String.Empty); }
             set { _metaInfo[DicomTags.PrivateInformationCreatorUid].Values = value; }
         }
         #endregion
 
         #region Public Methods
+
         /// <summary>
         /// Load a DICOM file with the default <see cref="DicomReadOptions"/> set.
+        /// </summary>
+        /// <remarks>
+        /// Note:  If the file does not contain DICM encoded in it, the routine will assume
+        /// the file is not a Part 10 format file, and is instead encoded as just a DataSet
+        /// with the transfer syntax set to Implicit VR Little Endian.
+        /// </remarks>
+        /// <param name="file">The path of the file to load.</param>
+        public void Load(string file)
+        {
+            if (file == null) throw new ArgumentNullException("file");
+            Filename = file;
+            Load(DicomReadOptions.Default);
+        }
+
+        /// <summary>
+        /// Load a DICOM file (as set by the <see cref="Filename"/> property) with the 
+        /// default <see cref="DicomReadOptions"/> set.
+        /// the file name to 
         /// </summary>
         /// <remarks>
         /// Note:  If the file does not contain DICM encoded in it, the routine will assume
@@ -233,12 +262,48 @@ namespace ClearCanvas.Dicom
         /// with the transfer syntax set to Implicit VR Little Endian.
         /// </remarks>
         /// <param name="options">The options to use when reading the file.</param>
+        /// <param name="file">The path of the file to load.</param>
+        public void Load(DicomReadOptions options, string file)
+        {
+            if (file == null) throw new ArgumentNullException("file");
+            Filename = file;
+            Load(null, options);
+        }
+
+        /// <summary>
+        /// Load a DICOM file (as set by the <see cref="Filename"/> property).
+        /// </summary>
+        /// <remarks>
+        /// Note:  If the file does not contain DICM encoded in it, the routine will assume
+        /// the file is not a Part 10 format file, and is instead encoded as just a DataSet
+        /// with the transfer syntax set to Implicit VR Little Endian.
+        /// </remarks>
+        /// <param name="options">The options to use when reading the file.</param>
         public void Load(DicomReadOptions options)
         {
             Load(null, options);
         }
+
         /// <summary>
         /// Load a DICOM file.
+        /// </summary>
+        /// <remarks>
+        /// Note:  If the file does not contain DICM encoded in it, the routine will assume
+        /// the file is not a Part 10 format file, and is instead encoded as just a DataSet
+        /// with the transfer syntax set to Implicit VR Little Endian.
+        /// </remarks>
+        /// <param name="stopTag">A tag to stop at when reading the file.  See the constants in <see cref="DicomTags"/>.</param>
+        /// <param name="options">The options to use when reading the file.</param>
+        /// <param name="file">The path of the file to load.</param>
+        public void Load(uint stopTag, DicomReadOptions options, string file)
+        {
+            if (file == null) throw new ArgumentNullException("file");
+            Filename = file;
+            Load(stopTag, options);
+        }
+
+        /// <summary>
+        /// Load a DICOM file (as set by the <see cref="Filename"/> property).
         /// </summary>
         /// <remarks>
         /// Note:  If the file does not contain DICM encoded in it, the routine will assume
@@ -256,7 +321,25 @@ namespace ClearCanvas.Dicom
         }
 
         /// <summary>
-        /// Load a DICOM file.
+        /// Load a DICOM file (as set by the <see cref="Filename"/> property).
+        /// </summary>
+        /// <remarks>
+        /// Note:  If the file does not contain DICM encoded in it, the routine will assume
+        /// the file is not a Part 10 format file, and is instead encoded as just a DataSet
+        /// with the transfer syntax set to Implicit VR Little Endian.
+        /// </remarks>
+        /// <param name="stopTag"></param>
+        /// <param name="options">The options to use when reading the file.</param>
+        /// <param name="file">The path of the file to load.</param>
+        public void Load(DicomTag stopTag, DicomReadOptions options, string file)
+        {
+            if (file == null) throw new ArgumentNullException("file");
+            Filename = file;
+            Load(stopTag, options);
+        }
+
+        /// <summary>
+        /// Load a DICOM file (as set by the <see cref="Filename"/> property).
         /// </summary>
         /// <remarks>
         /// Note:  If the file does not contain DICM encoded in it, the routine will assume
@@ -285,7 +368,7 @@ namespace ClearCanvas.Dicom
                     fs.Seek(0, SeekOrigin.Begin);
                     dsr = new DicomStreamReader(fs);
                     dsr.TransferSyntax = TransferSyntax.ImplicitVrLittleEndian;
-                    dsr.Dataset = base._dataSet;
+                    dsr.Dataset = _dataSet;
                     DicomReadStatus stat = dsr.Read(stopTag, options);
                     if (stat != DicomReadStatus.Success)
                     {
@@ -304,14 +387,14 @@ namespace ClearCanvas.Dicom
                     dsr = new DicomStreamReader(fs);
                     dsr.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
 
-                    dsr.Dataset = base._metaInfo;
+                    dsr.Dataset = _metaInfo;
                     DicomReadStatus stat = dsr.Read(new DicomTag(0x0002FFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false), options);
                     if (stat != DicomReadStatus.Success)
                     {
                         DicomLogger.LogError("Unexpected error when reading file Meta info for file: {0}", Filename);
                         throw new DicomException("Unexpected failure reading file Meta info for file: " + Filename);
                     }
-                    dsr.Dataset = base._dataSet;
+                    dsr.Dataset = _dataSet;
                     dsr.TransferSyntax = TransferSyntax;
                     stat = dsr.Read(stopTag, options);
                     if (stat != DicomReadStatus.Success)
@@ -337,7 +420,8 @@ namespace ClearCanvas.Dicom
         }
 
         /// <summary>
-        /// Save the file as a DICOM Part 10 format file with the default <see cref="DicomWriteOptions"/>.
+        /// Save the file as a DICOM Part 10 format file (as set by the <see cref="Filename"/> property) with 
+        /// the default <see cref="DicomWriteOptions"/>.
         /// </summary>
         /// <returns>true on success, false on failure.</returns>
         public bool Save()
@@ -346,7 +430,7 @@ namespace ClearCanvas.Dicom
         }
 
         /// <summary>
-        /// Save the file as a DICOM Part 10 format file.
+        /// Save the file as a DICOM Part 10 format file (as set by the <see cref="Filename"/> property).
         /// </summary>
         /// <param name="options">The options to use when saving the file.</param>
         /// <returns></returns>
@@ -362,23 +446,71 @@ namespace ClearCanvas.Dicom
 
                 DicomStreamWriter dsw = new DicomStreamWriter(fs);
                 dsw.Write(TransferSyntax.ExplicitVrLittleEndian,
-                    base._metaInfo, options | DicomWriteOptions.CalculateGroupLengths);
+                    _metaInfo, options | DicomWriteOptions.CalculateGroupLengths);
                 
-                dsw.Write(this.TransferSyntax,base._dataSet, options);
+                dsw.Write(TransferSyntax,_dataSet, options);
             }
 
             return true;
         }
+        /// <summary>
+        /// Save the file as a DICOM Part 10 format file with the default <see cref="DicomWriteOptions"/>.
+        /// </summary>
+        /// <returns>true on success, false on failure.</returns>
+        public bool Save(string file)
+        {
+            if (file == null) throw new ArgumentNullException("file");
+            Filename = file;
+            return Save(DicomWriteOptions.Default);
+        }
+
+        /// <summary>
+        /// Save the file as a DICOM Part 10 format file.
+        /// </summary>
+        /// <param name="options">The options to use when saving the file.</param>
+        /// <param name="file">The path of the file to save to.</param>
+        /// <returns></returns>
+        public bool Save(string file, DicomWriteOptions options)
+        {
+            if (file == null) throw new ArgumentNullException("file");
+
+            Filename = file;
+
+            using (FileStream fs = File.Create(Filename))
+            {
+                fs.Seek(128, SeekOrigin.Begin);
+                fs.WriteByte((byte)'D');
+                fs.WriteByte((byte)'I');
+                fs.WriteByte((byte)'C');
+                fs.WriteByte((byte)'M');
+
+                DicomStreamWriter dsw = new DicomStreamWriter(fs);
+                dsw.Write(TransferSyntax.ExplicitVrLittleEndian,
+                    _metaInfo, options | DicomWriteOptions.CalculateGroupLengths);
+
+                dsw.Write(TransferSyntax, _dataSet, options);
+            }
+
+            return true;
+        }
+
         #endregion
 
         #region Dump
-        public void Dump(StringBuilder sb, string prefix, DicomDumpOptions options)
+        /// <summary>
+        /// Method to dump the contents of a file to a StringBuilder object.
+        /// </summary>
+        /// <param name="sb"></param>
+        /// <param name="prefix"></param>
+        /// <param name="options">The dump options.</param>
+        public override void Dump(StringBuilder sb, string prefix, DicomDumpOptions options)
         {
+            if (sb == null) throw new NullReferenceException("sb");
             sb.Append(prefix).AppendLine("File: " + Filename).AppendLine();
             sb.Append(prefix).Append("MetaInfo:").AppendLine();
-            base._metaInfo.Dump(sb, prefix, options);
+            _metaInfo.Dump(sb, prefix, options);
             sb.AppendLine().Append(prefix).Append("DataSet:").AppendLine();
-            base._dataSet.Dump(sb, prefix, options);
+            _dataSet.Dump(sb, prefix, options);
             sb.AppendLine();
         }
         #endregion

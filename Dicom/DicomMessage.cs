@@ -19,7 +19,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string AffectedSopClassUid
         {
-            get { return _metaInfo[DicomTags.AffectedSopClassUid].GetString(0,""); }
+            get { return _metaInfo[DicomTags.AffectedSopClassUid].GetString(0,String.Empty); }
             set { _metaInfo[DicomTags.AffectedSopClassUid].Values = value; }
         }
         /// <summary>
@@ -27,7 +27,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string RequestedSopClassUid
         {
-            get { return _metaInfo[DicomTags.RequestedSopClassUid].GetString(0,""); }
+            get { return _metaInfo[DicomTags.RequestedSopClassUid].GetString(0,String.Empty); }
             set { _metaInfo[DicomTags.RequestedSopClassUid].Values = value; }
         }
         /// <summary>
@@ -66,12 +66,12 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string MoveDestination
         {
-            get { return _metaInfo[DicomTags.MoveDestination].GetString(0,""); }
+            get { return _metaInfo[DicomTags.MoveDestination].GetString(0,String.Empty); }
             set { _metaInfo[DicomTags.MoveDestination].Values = value; }
         }
         /// <summary>
         /// The priority shall be set to one of the following values: 
-        /// <para> LOW = 0002H</para>
+        /// <para>LOW = 0002H</para>
         /// <para>MEDIUM = 0000H</para>
         /// <para>HIGH = 0001H</para>
         /// </summary>
@@ -124,7 +124,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string ErrorComment
         {
-            get { return _metaInfo[DicomTags.ErrorComment].GetString(0,""); }
+            get { return _metaInfo[DicomTags.ErrorComment].GetString(0,String.Empty); }
             set { _metaInfo[DicomTags.ErrorComment].Values = value; }
         }
         /// <summary>
@@ -140,7 +140,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string AffectedSopInstanceUid
         {
-            get { return _metaInfo[DicomTags.AffectedSopInstanceUid].GetString(0,""); }
+            get { return _metaInfo[DicomTags.AffectedSopInstanceUid].GetString(0,String.Empty); }
             set { _metaInfo[DicomTags.AffectedSopInstanceUid].Values = value; }
         }
         /// <summary>
@@ -148,7 +148,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string RequestedSopInstanceUid
         {
-            get { return _metaInfo[DicomTags.RequestedSopInstanceUid].GetString(0,""); }
+            get { return _metaInfo[DicomTags.RequestedSopInstanceUid].GetString(0,String.Empty); }
             set { _metaInfo[DicomTags.RequestedSopInstanceUid].Values = value; }
         }
         /// <summary>
@@ -217,7 +217,7 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public string MoveOriginatorApplicationEntityTitle
         {
-            get { return _metaInfo[DicomTags.MoveOriginatorApplicationEntityTitle].GetString(0,""); }
+            get { return _metaInfo[DicomTags.MoveOriginatorApplicationEntityTitle].GetString(0,String.Empty); }
             set { _metaInfo[DicomTags.MoveOriginatorApplicationEntityTitle].Values = value; }
         }
         /// <summary>
@@ -250,7 +250,7 @@ namespace ClearCanvas.Dicom
         {
             get
             {
-                String sopClassUid = base.DataSet[DicomTags.SopClassUid].GetString(0,"");
+                String sopClassUid = base.DataSet[DicomTags.SopClassUid].GetString(0, String.Empty);
 
                 SopClass sop = SopClass.GetSopClass(sopClassUid);
 
@@ -271,14 +271,14 @@ namespace ClearCanvas.Dicom
         public DicomMessage(DicomAttributeCollection command, DicomAttributeCollection data) : base()
         {
             if (command == null)
-                base._metaInfo = new DicomAttributeCollection(0x00000000,0x0000FFFF);
+                _metaInfo = new DicomAttributeCollection(0x00000000,0x0000FFFF);
             else
-                base._metaInfo = command;
+                _metaInfo = command;
 
             if (data == null)
-                base._dataSet = new DicomAttributeCollection(0x00080000,0xFFFFFFFF);
+                _dataSet = new DicomAttributeCollection(0x00080000,0xFFFFFFFF);
             else
-                base._dataSet = data;
+                _dataSet = data;
         }
 
         /// <summary>
@@ -290,8 +290,8 @@ namespace ClearCanvas.Dicom
         /// <param name="file">The <see cref="DicomFile"/> to change into a DicomMessage.</param>
         public DicomMessage(DicomFile file)
         {
-            base._metaInfo = new DicomAttributeCollection(0x00000000,0x0000FFFF);
-            base._dataSet = file.DataSet;
+            _metaInfo = new DicomAttributeCollection(0x00000000,0x0000FFFF);
+            _dataSet = file.DataSet;
         }
 
         /// <summary>
@@ -299,10 +299,27 @@ namespace ClearCanvas.Dicom
         /// </summary>
         public DicomMessage()
         {
-            base._metaInfo = new DicomAttributeCollection(0x00000000, 0x0000FFFF);
-            base._dataSet = new DicomAttributeCollection(0x00080000, 0xFFFFFFFF);
+            _metaInfo = new DicomAttributeCollection(0x00000000, 0x0000FFFF);
+            _dataSet = new DicomAttributeCollection(0x00080000, 0xFFFFFFFF);
         }
         #endregion
 
+        #region Dump
+        /// <summary>
+        /// Dump the contents of the message to a StringBuilder.
+        /// </summary>
+        /// <param name="sb"></param>
+        /// <param name="prefix"></param>
+        /// <param name="options"></param>
+        public override void Dump(StringBuilder sb, string prefix, DicomDumpOptions options)
+        {
+            if (sb == null) throw new NullReferenceException("sb");
+            sb.Append(prefix).Append("Command Elements:").AppendLine();
+            _metaInfo.Dump(sb, prefix, options);
+            sb.AppendLine().Append(prefix).Append("Data Set:").AppendLine();
+            _dataSet.Dump(sb, prefix, options);
+            sb.AppendLine();
+        }
+        #endregion
     }
 }
