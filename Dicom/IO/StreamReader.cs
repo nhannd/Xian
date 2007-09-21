@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.IO;
 
 namespace ClearCanvas.Dicom.IO
@@ -127,7 +126,7 @@ namespace ClearCanvas.Dicom.IO
 
                 while (_remain > 0)
                 {
-                    uint tagValue = 0;
+                    uint tagValue;
                     if (_tag == null)
                     {
                         if (_remain >= 4)
@@ -153,17 +152,17 @@ namespace ClearCanvas.Dicom.IO
                                 }
                                 _tag = DicomTagDictionary.GetDicomTag(g, e);
                                 if (_tag == null)
-                                    _tag = new DicomTag((uint)g << 16 | (uint)e, "Private Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
+                                    _tag = new DicomTag((uint)g << 16 | e, "Private Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
                             }
                             else
                             {
                                 if (e == 0x0000)
-                                    _tag = new DicomTag((uint)g << 16 | (uint)e, "Group Length", DicomVr.ULvr, false, 1, 1, false);
+                                    _tag = new DicomTag((uint)g << 16 | e, "Group Length", DicomVr.ULvr, false, 1, 1, false);
                                 else
                                     _tag = DicomTagDictionary.GetDicomTag(g, e);
 
                                 if (_tag == null)
-                                    _tag = new DicomTag((uint)g << 16 | (uint)e, "Private Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
+                                    _tag = new DicomTag((uint)g << 16 | e, "Private Tag", DicomVr.UNvr, false, 1, uint.MaxValue, false);
                             }
                             _remain -= 4;
                             _bytes += 4;
@@ -224,8 +223,16 @@ namespace ClearCanvas.Dicom.IO
                             {
                                 if (_tag.Element <= 0x00ff)
                                 {
+                                    // Reset the tag with the right VR and a more descriptive name.
+                                    _tag = new DicomTag(_tag.TagValue, "Private Creator Code", DicomVr.LOvr, false, 1, uint.MaxValue, false);
+
                                     // private creator id
-                                    _vr = DicomVr.LOvr;
+                                    // Only set the VR to LO for Implicit VR, if we do it for
+                                    // Explicit VR syntaxes, we would incorrectly read the tag 
+                                    // length below.
+                                    if (!_syntax.ExplicitVr)
+                                        _vr = DicomVr.LOvr;
+                                    
                                 }
                                 else if (_stream.CanSeek && Flags.IsSet(options, DicomReadOptions.AllowSeekingForContext))
                                 {
@@ -243,7 +250,7 @@ namespace ClearCanvas.Dicom.IO
                                         }
                                     }
 
-                                    uint l = 0;
+                                    uint l;
                                     if (_remain >= 4)
                                     {
                                         l = _reader.ReadUInt32();
@@ -284,6 +291,7 @@ namespace ClearCanvas.Dicom.IO
                         }
                     }
 
+                    // Read the value length
                     if (_len == UndefinedLength)
                     {
                         if (_syntax.ExplicitVr)
@@ -310,7 +318,7 @@ namespace ClearCanvas.Dicom.IO
                                 {
                                     if (_remain >= 2)
                                     {
-                                        _len = (uint)_reader.ReadUInt16();
+                                        _len = _reader.ReadUInt16();
                                         _remain -= 2;
                                         _bytes += 2;
                                         _read += 2;
@@ -360,6 +368,14 @@ namespace ClearCanvas.Dicom.IO
                         }
                     }
 
+                    // If we have a private creator code, set the VR to LO, because
+                    // that is what it is.  We must do this after we read the length
+                    // so that the 32 bit length is read properly.
+                    if ((_vr == DicomVr.UNvr)
+                      && (_tag.IsPrivate)
+                      && (_tag.Element <= 0x00ff))
+                        _vr = DicomVr.LOvr;                    
+
                     if (_fragment != null)
                     {
                         // In the middle of parsing pixels
@@ -390,7 +406,7 @@ namespace ClearCanvas.Dicom.IO
                         }
                         else
                         {
-                            DicomLogger.LogError("Encountered unexpected tag in stream: " + _tag.ToString());
+                            DicomLogger.LogError("Encountered unexpected tag in stream: {0}", _tag.ToString());
                             // unexpected tag
                             return DicomReadStatus.UnknownError;
                         }
@@ -444,7 +460,7 @@ namespace ClearCanvas.Dicom.IO
 
                                 DicomStreamReader idsr = new DicomStreamReader(data.Stream);
                                 idsr.Dataset = ds;
-                                idsr._syntax = this._syntax;
+                                idsr._syntax = _syntax;
                                 DicomReadStatus stat = idsr.Read(null, options);
                                 if (stat == DicomReadStatus.UnknownError)
                                 {
@@ -626,7 +642,7 @@ namespace ClearCanvas.Dicom.IO
             catch (EndOfStreamException e)
             {
                 // should never happen
-                DicomLogger.LogError("Unexpected exception when reading file: " + e.ToString());
+                DicomLogger.LogError("Unexpected exception when reading file: {0}", e.ToString());
                 return DicomReadStatus.UnknownError;
             }
         }
