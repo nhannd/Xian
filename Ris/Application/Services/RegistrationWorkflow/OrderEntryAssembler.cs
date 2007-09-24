@@ -34,7 +34,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             foreach (RequestedProcedure rp in order.RequestedProcedures)
             {
-                detail.RequestedProcedures.Add(this.CreateRequestedProcedureDetail(rp, context));
+                detail.RequestedProcedures.Add(this.CreateRequestedProcedureSummary(rp, context));
             }
 
             return detail;
@@ -88,7 +88,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
                 node.DiagnosticService == null ? null : CreateDiagnosticServiceSummary(node.DiagnosticService));
         }
 
-        public RequestedProcedureSummary CreateRequestedProcedureDetail(RequestedProcedure rp, IPersistenceContext context)
+        public RequestedProcedureSummary CreateRequestedProcedureSummary(RequestedProcedure rp, IPersistenceContext context)
         {
             RequestedProcedureSummary detail = new RequestedProcedureSummary();
 

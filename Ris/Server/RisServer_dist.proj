@@ -15,7 +15,9 @@
 		<HL7Directory>$(SolutionDir)..\..\HL7</HL7Directory>
 		<ReferencedAssembliesDirectory>$(SolutionDir)..\..\ReferencedAssemblies</ReferencedAssembliesDirectory>
 		<RisApplicationDirectory>$(SolutionDir)..\Application</RisApplicationDirectory>
-	</PropertyGroup>
+    <UhnModelDirectory>$(SolutionDir)..\..\Healthcare\Uhn</UhnModelDirectory>
+    <UhnApplicationDirectory>$(SolutionDir)..\Application\Uhn</UhnApplicationDirectory>
+  </PropertyGroup>
 	
 	<ItemGroup>
 		<ConfigFiles Include="$(SolutionDir)\..\Client\Adt\actionmodels.xml" />
@@ -59,13 +61,17 @@
 		<ModelFiles Include="$(HL7Directory)\Hibernate\bin\$(Configuration)\ClearCanvas.HL7.Hibernate.dll" />
 		<ModelFiles Include="$(HL7Directory)\NHapi\bin\$(Configuration)\ClearCanvas.HL7.Hapi.dll" />
 		<ModelFiles Include="$(ReferencedAssembliesDirectory)\NHapi.*" />
-	</ItemGroup>
+    <ModelFiles Include="$(UhnModelDirectory)\bin\$(Configuration)\ClearCanvas.Healthcare.Uhn.dll" />
+    <ModelFiles Include="$(UhnModelDirectory)\Hibernate\bin\$(Configuration)\ClearCanvas.Healthcare.Uhn.Hibernate.dll" />
+  </ItemGroup>
 	
 	<ItemGroup>
 		<RisFiles Include="$(RisApplicationDirectory)\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Common.dll" />
 		<RisFiles Include="$(RisApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Services.dll" />
 		<RisFiles Include="$(SolutionDir)bin\$(Configuration)\ClearCanvas.Ris.Server.dll" />
-	</ItemGroup>
+    <RisFiles Include="$(UhnApplicationDirectory)\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Uhn.Common.dll" />
+    <RisFiles Include="$(UhnApplicationDirectory)\Services\bin\$(Configuration)\ClearCanvas.Ris.Application.Uhn.Services.dll" />
+  </ItemGroup>
 	
 	<Target Name="CopyServerFiles">
 		<!-- Copy Server Distribution files -->
