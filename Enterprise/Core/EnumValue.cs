@@ -1,11 +1,17 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Enterprise.Core.Modelling;
 
 namespace ClearCanvas.Enterprise.Core
 {
     public class EnumValue : DomainObject
     {
+        // these are the values we have been using in the Hibernate mapping files
+        public const int CodeLength = 255;  // default SQL server varchar
+        public const int ValueLength = 50;
+        public const int DescriptionLength = 200;
+
         private string _code;
         private string _value;
         private string _description;
@@ -29,6 +35,9 @@ namespace ClearCanvas.Enterprise.Core
 
         /// <summary>
         /// </summary>
+        [Required]
+        [Unique]
+        [Length(CodeLength)]
         public virtual string Code
         {
             get { return _code; }
@@ -37,6 +46,9 @@ namespace ClearCanvas.Enterprise.Core
 
         /// <summary>
         /// </summary>
+        [Required]
+        [Unique]
+        [Length(ValueLength)]
         public virtual string Value
         {
             get { return _value; }
@@ -45,6 +57,7 @@ namespace ClearCanvas.Enterprise.Core
 
         /// <summary>
         /// </summary>
+        [Length(DescriptionLength)]
         public virtual string Description
         {
             get { return _description; }

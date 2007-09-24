@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Common.Specifications;
 using System.Reflection;
 using ClearCanvas.Common.Utilities;
+using System.Collections;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
@@ -13,11 +14,13 @@ namespace ClearCanvas.Enterprise.Core.Modelling
         {
             private ValidationRuleSet _innerRules;
             private PropertyInfo _property;
+            private bool _collection;
 
-            public EmbeddedValueSpecification(PropertyInfo property, ValidationRuleSet innerRules)
+            public EmbeddedValueSpecification(PropertyInfo property, ValidationRuleSet innerRules, bool collection)
             {
                 _property = property;
                 _innerRules = innerRules;
+                _collection = collection;
             }
 
             #region ISpecification Members
@@ -32,9 +35,25 @@ namespace ClearCanvas.Enterprise.Core.Modelling
                 if (propertyValue == null)
                     return new TestResult(true);
 
-                TestResult result = _innerRules.Test(propertyValue);
-                return result.Success ?
-                    result : new TestResult(false, new TestResultReason(_property.Name + " is invalid.", result.Reasons));
+                if (_collection)
+                {
+                    // apply to items rather than to the collection
+                    foreach (object item in (propertyValue as IEnumerable))
+                    {
+                        TestResult result = _innerRules.Test(item);
+                        // if any item fails, don't bother testing the rest of the items
+                        if (result.Fail)
+                            return new TestResult(false,
+                                new TestResultReason("One or more " + _property.Name + " items are invalid.", result.Reasons));
+                    }
+                    return new TestResult(true);
+                }
+                else
+                {
+                    TestResult result = _innerRules.Test(propertyValue);
+                    return result.Success ?
+                        result : new TestResult(false, new TestResultReason(_property.Name + " is invalid.", result.Reasons));
+                }
             }
 
             #endregion
@@ -65,7 +84,15 @@ namespace ClearCanvas.Enterprise.Core.Modelling
                 ProcessEntityAttribute(entityClass, attr, rules);
             }
 
-            return new ValidationRuleSet(rules);
+            ValidationRuleSet ruleSet = new ValidationRuleSet(rules);
+
+            // add base class rules if necessary
+            if (entityClass.BaseType != typeof(object))
+            {
+                ruleSet = ruleSet.Combine(Validation.GetInvariantRules(entityClass.BaseType));
+            }
+
+            return ruleSet;
         }
 
         private void ProcessEntityAttribute(Type entityClass, Attribute attr, List<ISpecification> rules)
@@ -108,6 +135,9 @@ namespace ClearCanvas.Enterprise.Core.Modelling
             if (attr is EmbeddedValueAttribute)
                 ProcessEmbeddedValueAttribute(property, attr, rules);
 
+            if (attr is EmbeddedValueCollectionAttribute)
+                ProcessEmbeddedValueCollectionAttribute(property, attr, rules);
+
             if (attr is UniqueAttribute)
                 ProcessUniqueAttribute(property, attr, rules);
         }
@@ -136,12 +166,23 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
         private void ProcessEmbeddedValueAttribute(PropertyInfo property, Attribute attr, List<ISpecification> rules)
         {
-
             List<ISpecification> innerRules = new List<ISpecification>();
             ProcessClassProperties(property.PropertyType, innerRules);
             if (innerRules.Count > 0)
             {
-                rules.Add(new EmbeddedValueSpecification(property, new ValidationRuleSet(innerRules)));
+                rules.Add(new EmbeddedValueSpecification(property, new ValidationRuleSet(innerRules), false));
+            }
+        }
+
+        private void ProcessEmbeddedValueCollectionAttribute(PropertyInfo property, Attribute attr, List<ISpecification> rules)
+        {
+            EmbeddedValueCollectionAttribute ca = (EmbeddedValueCollectionAttribute)attr;
+
+            List<ISpecification> innerRules = new List<ISpecification>();
+            ProcessClassProperties(ca.ElementType, innerRules);
+            if (innerRules.Count > 0)
+            {
+                rules.Add(new EmbeddedValueSpecification(property, new ValidationRuleSet(innerRules), true));
             }
         }
 

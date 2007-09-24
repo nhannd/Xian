@@ -7,6 +7,8 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Common.Specifications;
+using System.Collections;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -15,48 +17,15 @@ namespace ClearCanvas.Enterprise.Hibernate
     /// </summary>
     internal class UpdateContextInterceptor : EmptyInterceptor
     {
-        class ChangeRecord
-        {
-            private Entity _entity;
-            private EntityChangeType _changeType;
-
-            public ChangeRecord(object entity, EntityChangeType changeType)
-            {
-                _entity = (Entity)entity;
-                _changeType = changeType;
-            }
-
-            public Entity Entity
-            {
-                get { return _entity; }
-            }
-
-            public EntityChangeType ChangeType
-            {
-                get { return _changeType; }
-            }
-        }
-
-        class ValidationRecord
-        {
-        }
-
-
-        private List<ChangeRecord> _changeRecords = new List<ChangeRecord>();
-        private EntityChange[] _changeSet;
+        private Dictionary<object, EntityChange> _changeSet = new Dictionary<object, EntityChange>();
+        private Queue<DomainObject> _pendingValidations = new Queue<DomainObject>();
 
         /// <summary>
-        /// Returns the set of <see cref="EntityChange"/> reflecting the changes that were made during the session
+        /// Returns the set of <see cref="EntityChange"/> capturing the changes made.
         /// </summary>
         public EntityChange[] EntityChangeSet
         {
-            get
-            {
-                if (_changeSet == null)
-                    throw new InvalidOperationException(SR.ExceptionAttemptToAccessChangeSetBeforeFlush);
-
-                return _changeSet;
-            }
+            get { return new List<EntityChange>(_changeSet.Values).ToArray(); }
         }
 
         #region IInterceptor Members
@@ -86,7 +55,22 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// <returns></returns>
         public override bool OnFlushDirty(object entity, object id, object[] currentState, object[] previousState, string[] propertyNames, NHibernate.Type.IType[] types)
         {
-            Validate(entity);
+            List<string> dirtyProperties = new List<string>();
+
+            int propertyCount = propertyNames.Length;
+            for (int i = 0; i < propertyCount; i++)
+            {
+                // check if the property is dirty
+                // note: if the property is a collection, don't bother checking, just assume it may be dirty
+                // the reason is that the cost of checking if the collection is dirty may be equal to or even greater than
+                // the cost of re-validating it
+                if (types[i] is NHibernate.Collection.PersistentCollection || !object.Equals(currentState[i], previousState[i]))
+                {
+                    dirtyProperties.Add(propertyNames[i]);
+                }
+            }
+
+            Validate(entity, dirtyProperties);
             RecordChange(entity, EntityChangeType.Update);
             return false;
         }
@@ -106,36 +90,29 @@ namespace ClearCanvas.Enterprise.Hibernate
             if (NHibernateUtil.GetClass(entity).Equals(typeof(TransactionRecord)))
                 return false;
 
-            Validate(entity);
+            // don't validate the entity here, because further changes to it may be made before the flush
+            // instead, put it in a queue to be validated at flush time
+            _pendingValidations.Enqueue((DomainObject)entity);
+
             RecordChange(entity, EntityChangeType.Create);
             return false;
 
         }
 
-        public override void PostFlush(System.Collections.ICollection entities)
+        public override void PreFlush(ICollection entities)
         {
-            // from the individual change records, construct a change set that contains each entity only once
-            Dictionary<object, EntityChange> changes = new Dictionary<object, EntityChange>();
-            foreach (ChangeRecord cr in _changeRecords)
+            while (_pendingValidations.Count > 0)
             {
-                EntityChange change = new EntityChange(new EntityRef(cr.Entity.GetClass(), cr.Entity.OID, cr.Entity.Version), cr.ChangeType);
-
-                if (changes.ContainsKey(cr.Entity.OID))
-                {
-                    // this entity is already in the change set, so see if this change supercedes the previous one
-                    EntityChange previousChange = changes[cr.Entity.OID];
-                    if (change.Supercedes(previousChange))
-                        changes[cr.Entity.OID] = change;
-                }
-                else
-                {
-                    // this entity is not yet in the change set, so add it
-                    changes[cr.Entity.OID] = change;
-                }
+                DomainObject obj = _pendingValidations.Dequeue();
+                Validate(obj);
             }
 
-            // convert to array
-            _changeSet = (new List<EntityChange>(changes.Values)).ToArray();
+            base.PreFlush(entities);
+        }
+
+        public override void PostFlush(ICollection entities)
+        {
+            base.PostFlush(entities);
         }
 
         #endregion
@@ -147,15 +124,38 @@ namespace ClearCanvas.Enterprise.Hibernate
             if (obj is EnumValue)
                 return;
 
-            _changeRecords.Add(new ChangeRecord(obj, changeType));
+            Entity entity = (Entity)obj;
+
+            EntityChange change = new EntityChange(new EntityRef(entity.GetClass(), entity.OID, entity.Version), changeType);
+            if (_changeSet.ContainsKey(entity.OID))
+            {
+                // if this entity was already marked as changed, but the new change supercedes the previous
+                // change, then overwrite with the new change
+                if (change.Supercedes(_changeSet[entity.OID]))
+                    _changeSet[entity.OID] = change;
+            }
+            else
+            {
+                // record this change in the change set
+                _changeSet[entity.OID] = change;
+            }
+        }
+
+        private void Validate(object obj, List<string> dirtyProperties)
+        {
+            ValidationRuleSet rules = Validation.GetInvariantRules((DomainObject)obj);
+
+            TestResult result = rules.Test(obj, dirtyProperties);
+            if (result.Fail)
+            {
+                string message = string.Format("Invalid {0}.", obj.GetType().Name);
+                throw new EntityValidationException(message, result.Reasons);
+            }
         }
 
         private void Validate(object obj)
         {
-            ValidationRuleSet rules = Validation.GetInvariantRules(obj);
-            TestResult result = rules.Test(obj);
-            if (result.Fail)
-                throw new EntityValidationException(result.Reasons);
+            Validate(obj, null);
         }
     }
 }

@@ -174,22 +174,29 @@ namespace ClearCanvas.Enterprise.Core
                 if (this != _head)
                     throw new InvalidOperationException("Disposed out of order.");
 
-                _head = _parent;
-
-                if(OwnsContext)
+                try
                 {
-                    CloseContext();
-                }
-                else
-                {
-                    // if the vote is still "undecided", treat it as an abort
-                    if (_vote == Vote.Undecided)
+                    if (OwnsContext)
                     {
-                        _vote = Vote.Abort;
-
-                        // we have an inherited context, so we need to propagate "aborts" up to the parent
-                        _parent._vote = Vote.Abort;
+                        CloseContext();
                     }
+                    else
+                    {
+                        // if the vote is still "undecided", treat it as an abort
+                        if (_vote == Vote.Undecided)
+                        {
+                            _vote = Vote.Abort;
+
+                            // we have an inherited context, so we need to propagate "aborts" up to the parent
+                            _parent._vote = Vote.Abort;
+                        }
+                    }
+                }
+                finally
+                {
+                    // if CloseContext fails, we are still disposing of this scope, so we set the head
+                    // to point to the parent
+                    _head = _parent;
                 }
             }
         }

@@ -90,7 +90,7 @@ class FieldDef < ElementDef
     attrs << "PersistentProperty"
     attrs << "Required" if isMandatory
     attrs << "Length(#{@length})" if @length
-    #attrs << "UniqueKey" if @unique
+    attrs << "Unique" if @unique
     attrs
   end
   

@@ -10,19 +10,15 @@ namespace ClearCanvas.Enterprise.Core
     {
         private TestResultReason[] _reasons;
 
-        public EntityValidationException(TestResultReason[] reasons)
+        public EntityValidationException(string message, TestResultReason[] reasons)
+            :base(message)
         {
             _reasons = reasons;
         }
 
-        public override string Message
+        public TestResultReason[] Reasons
         {
-            get
-            {
-                // return the first reaons
-                // TODO: should we concatenate all top-level reasons???
-                return _reasons.Length > 0 ? _reasons[0].Message : "Unknown reason";
-            }
+            get { return _reasons; }
         }
     }
 }

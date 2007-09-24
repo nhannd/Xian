@@ -120,9 +120,16 @@ namespace ClearCanvas.Enterprise.Hibernate
         /// </summary>
         public void SynchState()
         {
-            if (_session != null)
+            try
             {
-                SynchStateCore();
+                if (_session != null)
+                {
+                    SynchStateCore();
+                }
+            }
+            catch (Exception e)
+            {
+                HandleHibernateException(e, SR.ExceptionSynchState);
             }
         }
 
@@ -276,6 +283,11 @@ namespace ClearCanvas.Enterprise.Hibernate
             else if (e is ObjectNotFoundException)
             {
                 throw new EntityNotFoundException(e);
+            }
+            else if (e is EntityValidationException)
+            {
+                // don't wrap EntityValidationException, which we throw from the interceptor
+                throw e;
             }
             ///TODO any other specific kinds of exceptions we need to consider?
             else

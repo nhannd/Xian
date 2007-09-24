@@ -8,23 +8,27 @@ namespace ClearCanvas.Enterprise.Core.Modelling
     {
         private static Dictionary<Type, ValidationRuleSet> _invariantRuleSets = new Dictionary<Type, ValidationRuleSet>();
 
-        public static ValidationRuleSet GetInvariantRules(object obj)
+        public static ValidationRuleSet GetInvariantRules(Type entityClass)
         {
-            Type type = obj.GetType();
             lock (_invariantRuleSets)
             {
-                if (_invariantRuleSets.ContainsKey(type))
+                if (_invariantRuleSets.ContainsKey(entityClass))
                 {
-                    return _invariantRuleSets[type];
+                    return _invariantRuleSets[entityClass];
                 }
                 else
                 {
                     ValidationBuilder builder = new ValidationBuilder();
-                    ValidationRuleSet rules = builder.BuildRuleSet(type);
-                    _invariantRuleSets[type] = rules;
+                    ValidationRuleSet rules = builder.BuildRuleSet(entityClass);
+                    _invariantRuleSets[entityClass] = rules;
                     return rules;
                 }
             }
+        }
+
+        public static ValidationRuleSet GetInvariantRules(DomainObject obj)
+        {
+            return GetInvariantRules(obj.GetType());
         }
     }
 }

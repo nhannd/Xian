@@ -57,16 +57,15 @@ class CollectionFieldDef < FieldDef
     false
   end
  
-# JR: commenting this out for now since we dont' really need - if we need it in future, just add it back in 
-#  def attributes
-#    attrs = super
-#    case
-#      when @elementNode.name == 'composite-element' : attrs << "ValueCollection(typeof(#{elementType}))"
-#      when @elementNode.name == 'one-to-many' : attrs << "OneToMany(typeof(#{elementType}))"
-#      when @elementNode.name == 'many-to-many' : attrs << "ManyToMany(typeof(#{elementType}))"
-#    end
-#    attrs
-#  end
+  def attributes
+    attrs = super
+    case
+      when @elementNode.name == 'composite-element' : attrs << "EmbeddedValueCollection(typeof(#{elementType}))"
+      #when @elementNode.name == 'one-to-many' : attrs << "OneToMany(typeof(#{elementType}))"
+      #when @elementNode.name == 'many-to-many' : attrs << "ManyToMany(typeof(#{elementType}))"
+    end
+    attrs
+  end
   
 protected
   def collectionElementClassDef

@@ -41,6 +41,11 @@ class ComponentFieldDef < FieldDef
   def searchCriteriaReturnType
     componentDef.searchCriteriaQualifiedClassName
   end
+  
+  def attributes
+    super + ["EmbeddedValue"]
+  end
+
 
 protected
   def componentDef

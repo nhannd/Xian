@@ -66,7 +66,10 @@ namespace ClearCanvas.Enterprise.Hibernate
             foreach (string propertyExpression in uniqueConstraintMembers)
             {
                 object value = EvaluatePropertyExpression(obj, propertyExpression);
-                query.Conditions.Add(new HqlCondition(string.Format("x.{0} = ?", propertyExpression), new object[] { value }));
+                if (value == null)
+                    query.Conditions.Add(new HqlCondition(string.Format("x.{0} is null", propertyExpression), new object[] { }));
+                else
+                    query.Conditions.Add(new HqlCondition(string.Format("x.{0} = ?", propertyExpression), new object[] { value }));
             }
 
             return query;

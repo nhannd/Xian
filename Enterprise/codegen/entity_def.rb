@@ -9,7 +9,10 @@ class EntityDef < ClassDef
     @superClassName = superClassName
     @isSubClass = (superClassName != "Entity")
     classNode.each_element do |fieldNode|
-      processField(fieldNode) if(NHIBERNATE_FIELD_TYPES.include?(fieldNode.name))
+	if(NHIBERNATE_FIELD_TYPES.include?(fieldNode.name))
+		processField(fieldNode) 
+		processUniqueKeys(fieldNode)
+	end
     end
   end
   
@@ -27,5 +30,11 @@ class EntityDef < ClassDef
   
   def searchCriteriaClassName
     className + "SearchCriteria"
+  end
+  
+protected
+
+  def processUniqueKeys(fieldNode)
+	  #not yet implemented
   end
 end

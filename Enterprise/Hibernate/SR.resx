@@ -135,4 +135,7 @@
   <data name="ExceptionResumeContext" xml:space="preserve">
     <value>Error resuming context</value>
   </data>
+  <data name="ExceptionSynchState" xml:space="preserve">
+    <value>Attempt to synchronize state failed</value>
+  </data>
 </root>
