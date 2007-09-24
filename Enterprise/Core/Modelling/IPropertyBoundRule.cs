@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Reflection;
 
-namespace ClearCanvas.Enterprise.Core
+namespace ClearCanvas.Enterprise.Core.Modelling
 {
-    interface IPropertyBoundRule
+    public interface IPropertyBoundRule
     {
+        PropertyInfo[] Properties { get; }
     }
 }

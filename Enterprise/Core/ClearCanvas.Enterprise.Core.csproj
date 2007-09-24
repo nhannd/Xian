@@ -77,7 +77,6 @@
     <Compile Include="EnumValueNotFoundException.cs" />
     <Compile Include="IAuthenticationService.cs" />
     <Compile Include="IEntityBroker.cs" />
-    <Compile Include="IPropertyBoundRule.cs" />
     <Compile Include="IValidator.cs" />
     <Compile Include="IEnumBroker.cs" />
     <Compile Include="IMetadataBroker.cs" />
