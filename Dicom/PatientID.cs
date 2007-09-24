@@ -1,48 +1,37 @@
+using System;
+
 namespace ClearCanvas.Dicom
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-
     /// <summary>
     /// Encapsulates the DICOM Patient ID.
     /// </summary>
-    public class PatientId
+    public class PatientId : IEquatable<PatientId>
     {
+		private string _patientId;
+
         /// <summary>
-        /// Mandatory NHibernate constructor.
+        /// Constructor for NHibernate.
         /// </summary>
         public PatientId()
         {
         }
 
-
-        public virtual string InternalPatientId
+		/// <summary>
+		/// Mandatory constructor.
+		/// </summary>
+		/// <param name="patientId">A string representation of the Patient ID.</param>
+		public PatientId(string patientId)
+		{
+			SetPatientId(patientId);
+		}
+		
+		/// <summary>
+		/// NHibernate Property
+		/// </summary>
+		public virtual string InternalPatientId
         {
             get { return _patientId; }
-            set { _patientId = value; }
-        }
-
-        /// <summary>
-        /// Mandatory constructor.
-        /// </summary>
-        /// <param name="patientId">A string representation of the Patient ID.</param>
-        public PatientId(string patientId)
-        {
-            // validate the input
-            if (null == patientId)
-				throw new System.ArgumentNullException("patientId", SR.ExceptionGeneralPatientIdNull);
-
-            _patientId = patientId;
-        }
-
-        /// <summary>
-        /// Gets a string representation of the Patient ID.
-        /// </summary>
-        /// <returns>String representation of Patient ID.</returns>
-        public override string ToString()
-        {
-            return _patientId;
+			set { SetPatientId(value); }
         }
 
         /// <summary>
@@ -55,6 +44,38 @@ namespace ClearCanvas.Dicom
             return pid.ToString();
         }
 
-        private string _patientId;
+		/// <summary>
+		/// Gets a string representation of the Patient ID.
+		/// </summary>
+		/// <returns>String representation of Patient ID.</returns>
+		public override string ToString()
+		{
+			return _patientId;
+		}
+
+		public override bool Equals(object obj)
+		{
+			if (obj == this)
+				return true;
+
+			if (obj is PatientId)
+				return this.Equals((PatientId) obj);
+
+			return false;
+		}
+
+		#region IEquatable<PatientId> Members
+
+		public bool Equals(PatientId other)
+		{
+			return InternalPatientId == other.InternalPatientId;
+		}
+
+		#endregion
+
+		private void SetPatientId(string patientId)
+		{
+			_patientId = patientId ?? "";
+		}
     }
 }

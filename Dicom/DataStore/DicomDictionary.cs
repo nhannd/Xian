@@ -5,122 +5,120 @@ using System.Text;
 using NHibernate;
 using Iesi.Collections;
 using ClearCanvas.Common;
+using NHibernate.Expression;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    internal class DicomDictionary : IDicomDictionary
-    {
-		internal static readonly string DefaultDictionaryName = "default-unicode";
-		internal static readonly string DefaultQueryDictionaryName = "study-query-unicode";
-		internal static readonly string DefaultResultsDictionaryName = "study-query-results-unicode";
-
-        #region Handcoded Members
-
-		internal DicomDictionary(ISession session)
-			: this(session, DefaultDictionaryName)
-		{ 
-		}
-
-		public DicomDictionary(ISession session, string dictionaryName)
-        {
-			Platform.CheckForEmptyString(dictionaryName, "dictionaryName");
-
-			_dictionaryName = dictionaryName;
-			_pathToColumnDictionary = new Dictionary<string, DictionaryEntry>();
-            _tagNameToColumnDictionary = new Dictionary<string, DictionaryEntry>();
-
-            // load the dictionary entries from the database
-            Load(session);
-        }
-
-		public string DictionaryName
+	public sealed partial class DataAccessLayer
+	{
+		internal class DicomDictionary : IDicomDictionary
 		{
-			get { return _dictionaryName; }
-		}
-	
-        #region Private Members
+			public static readonly string DefaultDictionaryName = "default-unicode";
+			public static readonly string DefaultQueryDictionaryName = "study-query-unicode";
+			public static readonly string DefaultResultsDictionaryName = "study-query-results-unicode";
 
-		private DicomDictionary()
-        {
-        }
+			private readonly string _dictionaryName;
+			private readonly Dictionary<string, DictionaryEntry> _tagNameToColumnDictionary;
+			private readonly Dictionary<string, DictionaryEntry> _pathToColumnDictionary;
 
-        private void Load(ISession session)
-        {
-            IList containers = null;
-			try
+			private DicomDictionary(string dictionaryName)
 			{
-				containers = session.CreateCriteria(typeof(DicomDictionaryContainer))
-					.SetFetchMode("DictionaryEntries_", FetchMode.Eager)
-					.List();
+				_dictionaryName = dictionaryName;
+				_pathToColumnDictionary = new Dictionary<string, DictionaryEntry>();
+				_tagNameToColumnDictionary = new Dictionary<string, DictionaryEntry>();
 			}
-			catch
+
+			public string DictionaryName
 			{
-				throw;
+				get { return _dictionaryName; }
 			}
-			finally
-			{
-				session.Clear();
-				session.Close();
-			}	
 
-            if (null == containers || containers.Count < 1)
-            {
-				throw new Exception(SR.ExceptionDicomDictionaryFailedToLoad);
-            }
-
-			foreach (DicomDictionaryContainer container in containers)
+			public static DicomDictionary Load(ISessionManager sessionManager)
 			{
-				if (container.DictionaryName == _dictionaryName)
+				return Load(sessionManager, DefaultDictionaryName);
+			}
+
+			public static DicomDictionary Load(ISessionManager sessionManager, string dictionaryName)
+			{
+				try
 				{
-					for (int i = 0; i < container.DictionaryEntries.Count; ++i)
-					{
-						DictionaryEntry entry = container.DictionaryEntries[i] as DictionaryEntry;
-						_tagNameToColumnDictionary.Add(entry.TagName, entry);
-						_pathToColumnDictionary.Add(entry.Path, entry);
-					}
+					Platform.CheckForNullReference(sessionManager, "sessionManager");
+					Platform.CheckForEmptyString(dictionaryName, "dictionaryName");
 
-					return;
+					DicomDictionary dictionary = new DicomDictionary(dictionaryName);
+
+					dictionary.LoadInternal(sessionManager);
+					return dictionary;
+				}
+				finally
+				{
+					sessionManager.Dispose();
 				}
 			}
 
-			throw new Exception(String.Format(SR.FormatDicomDictionaryFailedToLoad, _dictionaryName));
-        }
+			private void LoadInternal(ISessionManager sessionManager)
+			{
+				IList containers = null;
 
-		private string _dictionaryName;
-		private Dictionary<string, DictionaryEntry> _tagNameToColumnDictionary = null;
-        private Dictionary<string, DictionaryEntry> _pathToColumnDictionary = null;
+				using (sessionManager.GetReadTransaction())
+				{
+					try
+					{
+						containers = sessionManager.Session.CreateCriteria(typeof(DicomDictionaryContainer))
+							.Add(Expression.Eq("DictionaryName", _dictionaryName))
+							.SetFetchMode("DictionaryEntries_", FetchMode.Eager)
+							.List();
+					}
+					catch (Exception e)
+					{
+						throw new DataStoreException(String.Format(SR.FormatDicomDictionaryFailedToLoad, _dictionaryName));
+					}
+				}
 
-		#endregion
-        #endregion
+				if (null == containers || containers.Count < 1)
+				{
+					throw new DataStoreException(String.Format(SR.FormatDicomDictionaryFailedToLoad, _dictionaryName));
+				}
 
-        #region IDicomDictionary Members
+				DicomDictionaryContainer container = (DicomDictionaryContainer) containers[0];
 
-        public bool Contains(TagName tagName)
-        {
-            return _tagNameToColumnDictionary.ContainsKey(tagName);
-        }
+				for (int i = 0; i < container.DictionaryEntries.Count; ++i)
+				{
+					DictionaryEntry entry = (DictionaryEntry)container.DictionaryEntries[i];
+					_tagNameToColumnDictionary[entry.TagName] = entry;
+					_pathToColumnDictionary[entry.Path] = entry;
+				}
+			}
 
-		public bool Contains(DicomTagPath path)
-        {
-            return _pathToColumnDictionary.ContainsKey(path);
-        }
+			#region IDicomDictionary Members
 
-        public DictionaryEntry GetColumn(TagName tagName)
-        {
-            if (_tagNameToColumnDictionary.ContainsKey(tagName))
-                return _tagNameToColumnDictionary[tagName];
-            else
-                throw new Exception(String.Format(SR.FormatSpecifiedColumnDoesNotExistForTag, tagName.ToString()));
-        }
+			public bool Contains(TagName tagName)
+			{
+				return _tagNameToColumnDictionary.ContainsKey(tagName);
+			}
 
-		public DictionaryEntry GetColumn(DicomTagPath path)
-        {
-            if (_pathToColumnDictionary.ContainsKey(path))
-                return _pathToColumnDictionary[path];
-            else
-				throw new Exception(String.Format(SR.FormatSpecifiedColumnDoesNotExistForPath, path.ToString()));
-        }
+			public bool Contains(DicomTagPath path)
+			{
+				return _pathToColumnDictionary.ContainsKey(path);
+			}
 
-		#endregion
+			public DictionaryEntry GetColumn(TagName tagName)
+			{
+				if (_tagNameToColumnDictionary.ContainsKey(tagName))
+					return _tagNameToColumnDictionary[tagName];
+				else
+					throw new Exception(String.Format(SR.FormatSpecifiedColumnDoesNotExistForTag, tagName.ToString()));
+			}
+
+			public DictionaryEntry GetColumn(DicomTagPath path)
+			{
+				if (_pathToColumnDictionary.ContainsKey(path))
+					return _pathToColumnDictionary[path];
+				else
+					throw new Exception(String.Format(SR.FormatSpecifiedColumnDoesNotExistForPath, path.ToString()));
+			}
+
+			#endregion
+		}
 	}
 }

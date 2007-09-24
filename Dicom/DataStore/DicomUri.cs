@@ -1,49 +1,67 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public class DicomUri
+    public class DicomUri : IEquatable<DicomUri>
     {
-        #region NHibernate-specific members
-        public DicomUri()
+		private Uri _internalUriObject;
+
+		/// <summary>
+		/// Constructor for NHibernate.
+		/// </summary>
+        private DicomUri()
         {
         }
 
-        public virtual string InternalUri
+        /// <summary>
+        /// Constructor.
+        /// </summary>
+		public DicomUri(string uri)
         {
-            get 
-            {
-                if (null != this.InternalUriObject)
-                    return this.InternalUriObject.AbsoluteUri;
-                else
-                    return null;
-            }
-            set 
-            {
-                this.InternalUriObject = new Uri(value); 
-            }
+        	SetInternalUri(uri);
         }
-        #endregion
 
-        public DicomUri(string uri)
-        {
-            // validate the input
-            if (null == uri)
+		/// <summary>
+		/// Constructor.
+		/// </summary>
+		public DicomUri(Uri newUri)
+		{
+			Platform.CheckForNullReference(newUri, "newUri");
+			this.InternalUriObject = newUri;
+		}
+
+		private void SetInternalUri(string uri)
+		{
+			if (String.IsNullOrEmpty(uri))
 				throw new System.ArgumentNullException("uri", SR.ExceptionUriCannotBeNullOrEmpty);
 
-            if (0 == uri.Length)
-				throw new System.ArgumentOutOfRangeException("uri", SR.ExceptionUriCannotBeNullOrEmpty);
+			this.InternalUriObject = new Uri(uri);
+		}
 
-            this.InternalUriObject = new Uri(uri);
-        }
+		private Uri InternalUriObject
+		{
+			get { return _internalUriObject; }
+			set { _internalUriObject = value; }
+		}
 
-        public DicomUri(Uri newUri)
-        {
-            this.InternalUriObject = newUri;
-        }
-
+		/// <summary>
+		/// NHibernate Property.
+		/// </summary>
+		protected virtual string InternalUri
+		{
+			get
+			{
+				return this.InternalUriObject.AbsoluteUri;
+			}
+			set
+			{
+				SetInternalUri(value);
+			}
+		}
+		
         public bool IsFile
         {
             get 
@@ -77,17 +95,22 @@ namespace ClearCanvas.Dicom.DataStore
             }
         }
 
-        public override bool Equals(object obj)
+    	#region IEquatable<DicomUri> Members
+
+    	public bool Equals(DicomUri other)
+    	{
+			return InternalUriObject.Equals(other.InternalUriObject);
+    	}
+
+    	#endregion
+
+    	public override bool Equals(object obj)
         {
             if (this == obj)
                 return true;
 
-            DicomUri uri = obj as DicomUri;
-            if (null == uri)
-                return false; // null or not a sop
-
-            if (this.InternalUri == uri.InternalUri)
-                return true;
+			if (obj is DicomUri)
+				return this.Equals((DicomUri) obj);
 
             return false;
         }
@@ -104,13 +127,5 @@ namespace ClearCanvas.Dicom.DataStore
         {
             return uri.ToString();
         }
-
-        private Uri InternalUriObject
-        {
-            get { return _internalUriObject; }
-            set { _internalUriObject = value; }
-        }
-
-        private Uri _internalUriObject;
     }
 }

@@ -8,7 +8,11 @@ namespace ClearCanvas.Dicom.DataStore
 {
     public class DicomDictionaryContainer
     {
-        public DicomDictionaryContainer()
+		private readonly IList _dictionaryEntries;
+		private string _dictionaryName;
+		private Guid _entryOid;
+		
+		public DicomDictionaryContainer()
         {
             _dictionaryEntries = new ArrayList();
         }
@@ -29,9 +33,5 @@ namespace ClearCanvas.Dicom.DataStore
         {
             get { return _dictionaryEntries; }
         }
-
-        private IList _dictionaryEntries;
-		private string _dictionaryName;
-        private Guid _entryOid;
     }
 }

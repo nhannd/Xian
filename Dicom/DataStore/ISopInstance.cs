@@ -14,7 +14,6 @@ namespace ClearCanvas.Dicom.DataStore
 		ISeries GetParentSeries();
 		void SetParentSeries(ISeries series);
 		
-		bool IsIdenticalTo(ISopInstance sop);
 		DicomUri GetLocationUri();
     }
 }

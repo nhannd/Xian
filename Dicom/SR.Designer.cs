@@ -259,24 +259,6 @@ namespace ClearCanvas.Dicom {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Patient&apos;s Id cannot be null.
-        /// </summary>
-        public static string ExceptionGeneralPatientIdNull {
-            get {
-                return ResourceManager.GetString("ExceptionGeneralPatientIdNull", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Patient&apos;s Name cannot be null.
-        /// </summary>
-        public static string ExceptionGeneralPersonsNameNull {
-            get {
-                return ResourceManager.GetString("ExceptionGeneralPersonsNameNull", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to The argument to CompareTo for the type Uid is not itself of type Uid.
         /// </summary>
         public static string ExceptionGeneralUidCompareToTypeIncorrect {

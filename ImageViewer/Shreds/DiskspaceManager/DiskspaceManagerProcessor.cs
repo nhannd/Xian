@@ -171,8 +171,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 		{
 			Platform.Log(LogLevel.Info, SR.MessageBeginDeleting);
 
-			IDataStoreReader reader = SingleSessionDataAccessLayer.GetIDataStoreReader();
-			List<IStudy> studies = new List<IStudy>(reader.GetStudies());
+			List<IStudy> studies = new List<IStudy>();
+			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+			{
+				studies.AddRange(reader.GetStudies());
+			}
+
 			studies.Sort(new StudySortComparer());
 
 			long totalExpectedFreeSpace = 0;
@@ -212,7 +216,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 			}
 
 			studies = null; //let this get gc'ed.
-			SingleSessionDataAccessLayer.SqliteWorkaround();
 
 			if (deleteStudyUids.Count == 0)
 			{

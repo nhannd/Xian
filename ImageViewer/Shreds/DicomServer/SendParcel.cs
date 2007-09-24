@@ -46,11 +46,6 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
         {
         }
 
-        public virtual IDataStoreReader DataStoreReader
-        {
-            get { return DataAccessLayer.GetIDataStoreReader(); }
-        }
-
         public IList<string> TransferSyntaxes
         {
             get { return new List<string>(_setTransferSyntaxes.Keys).AsReadOnly(); }
@@ -155,10 +150,10 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             ISopInstance foundSop = _sopInstances.Find(
                     delegate(ISopInstance iteratedSop)
                     {
-                        if (null != iteratedSop)
-                            return sop.IsIdenticalTo(iteratedSop);
-                        else
-                            return false;
+						if (null != iteratedSop)
+							return sop.GetSopInstanceUid() == iteratedSop.GetSopInstanceUid();
+						else
+							return false;
                     }
                 );
 
@@ -209,44 +204,46 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
             // store current count of objects
 			int currentObjectCount = _sopInstances.Count;
 
-            // search for study that matches Uid
-            if (!this.DataStoreReader.StudyExists(referencedUid))
-            {
+			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+			{
+				// search for study that matches Uid
+				if (!reader.StudyExists(referencedUid))
+				{
+					// search for series that matches Uid
+					if (!reader.SeriesExists(referencedUid))
+					{
+						// search for SOP instance that matches Uid
+						if (!reader.SopInstanceExists(referencedUid))
+						{
+							return 0;
+						}
+						else
+						{
+							// get the SopInstance object
+							ISopInstance sop = reader.GetSopInstance(referencedUid);
+							AddSopInstanceIntoParcel(sop);
+						}
+					}
+					else // series was found
+					{
+						ISeries series = reader.GetSeries(referencedUid);
+						foreach (ISopInstance sop in series.GetSopInstances())
+						{
+							AddSopInstanceIntoParcel(sop);
+						}
+					}
+				}
+				else // study was found
+				{
+					IStudy study = reader.GetStudy(referencedUid);
+					foreach (ISopInstance sop in study.GetSopInstances())
+					{
+						AddSopInstanceIntoParcel(sop);
+					}
+				}
+			}
 
-                // search for series that matches Uid
-                if (!this.DataStoreReader.SeriesExists(referencedUid))
-                {
-                    // search for SOP instance that matches Uid
-                    if (!this.DataStoreReader.SopInstanceExists(referencedUid))
-                    {
-                        return 0;
-                    }
-                    else
-                    {
-                        // get the SopInstance object
-                        ISopInstance sop = this.DataStoreReader.GetSopInstance(referencedUid);
-                        AddSopInstanceIntoParcel(sop);
-                    }
-                }
-                else // series was found
-                {
-                    ISeries series = this.DataStoreReader.GetSeries(referencedUid);
-					foreach (ISopInstance sop in series.GetSopInstances())
-                    {
-                        AddSopInstanceIntoParcel(sop);
-                    }
-                }
-            }
-            else // study was found
-            {
-                IStudy study = this.DataStoreReader.GetStudy(referencedUid);
-                foreach (ISopInstance sop in study.GetSopInstances())
-                {
-                    AddSopInstanceIntoParcel(sop);
-                }
-            }
-
-            int afterIncludeObjectCount = _sopInstances.Count;
+        	int afterIncludeObjectCount = _sopInstances.Count;
             return afterIncludeObjectCount - currentObjectCount;
         }
 

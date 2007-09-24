@@ -4,10 +4,13 @@ using System.Text;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public interface IDicomPersistentStore
+    public interface IDicomPersistentStore : IDisposable
     {
-		void InsertSopInstance(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset, string fileName);
-        int GetCachedStudiesCount();
-        void Flush();
+		void ClearAllStudies();
+    	void RemoveStudies(IEnumerable<IStudy> studies);
+		void RemoveStudy(IStudy studies);
+
+    	void InsertSopInstance(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset, string fileName);
+    	void Commit();
     }
 }

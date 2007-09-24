@@ -2,276 +2,146 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using NHibernate;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    internal class DataStoreWriter : IDataStoreWriter, IDataStoreCleaner
-    {
-        #region Handcoded Members
-
-        public DataStoreWriter(ISessionFactory sessionFactory)
-        {
-            this.SessionFactory = sessionFactory;
-        }
-        #region Private Members
-        private DataStoreWriter() { }
-        private ISessionFactory _sessionFactory;
-
-        private ISessionFactory SessionFactory
-        {
-            get { return _sessionFactory; }
-            set { _sessionFactory = value; }
-        }
-	
-        #endregion
-        #endregion
-
-        #region IDataStoreWriter Members
-
-        public ISopInstance NewImageSopInstance()
-        {
-            return new ImageSopInstance();
-        }
-
-        public void StoreSopInstance(ISopInstance sop)
-        {
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-                session.SaveOrUpdate(sop);
-                transaction.Commit();
-            }
-            catch
-            {
-                if (null != transaction)
-                    transaction.Rollback();
-
-                throw;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-        }
-
-        public void StoreSeries(ISeries seriesToStore)
-        {
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-                session.SaveOrUpdate(seriesToStore);
-                transaction.Commit();
-            }
-            catch
-            {
-                if (null != transaction)
-                    transaction.Rollback();
-
-                throw;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-        }
-
-        public void RemoveSeries(ISeries seriesToRemove)
-        {
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-                session.Delete(seriesToRemove);
-                transaction.Commit();
-            }
-            catch
-            {
-                if (null != transaction)
-                    transaction.Rollback();
-
-                throw;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-        }
-
-		public void RemoveSopInstances(IEnumerable<ISopInstance> sops)
+	public sealed partial class DataAccessLayer
+	{
+		private class DataStoreWriter : SessionConsumer, IDataStoreWriter
 		{
-			ISession session = null;
-			ITransaction transaction = null;
-			try
+			public DataStoreWriter(ISessionManager sessionManager)
+				: base(sessionManager)
 			{
-				session = this.SessionFactory.OpenSession();
-				transaction = session.BeginTransaction();
+			}
 
-				foreach (ISopInstance sop in sops)
+			#region IDataStoreWriter Members
+
+			public void StoreSopInstances(IEnumerable<SopInstance> sops)
+			{
+				try
 				{
-					session.Delete(sop);
+					using (IWriteTransaction transaction = SessionManager.GetWriteTransaction())
+					{
+						foreach (SopInstance sop in sops)
+							Session.SaveOrUpdate(sop);
+
+						transaction.Commit();
+					}
 				}
+				catch (Exception e)
+				{
+					throw new DataStoreException("Failed to save Sop Instance(s) to the data store", e);
+				}
+			}
 
-				transaction.Commit();
-			}
-			catch
+			public void StoreSeries(IEnumerable<Series> series)
 			{
-				if (null != transaction)
-					transaction.Rollback();
+				try
+				{
+					using (IWriteTransaction transaction = SessionManager.GetWriteTransaction())
+					{
+						foreach (Series saveSeries in series)
+							Session.SaveOrUpdate(saveSeries);
 
-				throw;
+						transaction.Commit();
+					}
+				}
+				catch (Exception e)
+				{
+					throw new DataStoreException("Failed to save Series to the data store", e);
+				}
 			}
-			finally
+
+			public void StoreStudies(IEnumerable<Study> studies)
 			{
-				if (null != session)
-					session.Close();
+				try
+				{
+					using (IWriteTransaction transaction = SessionManager.GetWriteTransaction())
+					{
+						foreach (Study study in studies)
+							Session.SaveOrUpdate(study);
+
+						transaction.Commit();
+					}
+				}
+				catch (Exception e)
+				{
+					throw new DataStoreException("Failed to save Study(s) to the data store.", e);
+				}
 			}
+
+			public void ClearAllStudies()
+			{
+				try
+				{
+					using (IWriteTransaction transaction = SessionManager.GetWriteTransaction())
+					{
+						Session.Delete("from Study");
+						transaction.Commit();
+					}
+				}
+				catch (Exception e)
+				{
+					throw new DataStoreException("Failed to clear all studies from the data store.", e);
+				}
+			}
+
+			public void RemoveSopInstances(IEnumerable<ISopInstance> sops)
+			{
+				try
+				{
+					using (IWriteTransaction transaction = SessionManager.GetWriteTransaction())
+					{
+						foreach (ISopInstance sop in sops)
+							Session.Delete("from SopInstance where SopInstanceUid_ = ?", sop.GetSopInstanceUid().ToString(), NHibernateUtil.String);
+
+						transaction.Commit();
+					}
+				}
+				catch (Exception e)
+				{
+					throw new DataStoreException("Failed to clear the specified sop instance(s) from the data store.", e);
+				}
+			}
+
+			public void RemoveSeries(IEnumerable<ISeries> series)
+			{
+				try
+				{
+					using (IWriteTransaction transaction = SessionManager.GetWriteTransaction())
+					{
+						foreach (ISeries deleteSeries in series)
+							Session.Delete("from Series where SeriesInstanceUid_ = ?", deleteSeries.GetSeriesInstanceUid().ToString(), NHibernateUtil.String);
+
+						transaction.Commit();
+					}
+				}
+				catch (Exception e)
+				{
+					throw new DataStoreException("Failed to clear the specified series from the data store.", e);
+				}
+			}
+
+			public void RemoveStudies(IEnumerable<IStudy> studies)
+			{
+				try
+				{
+					using (IWriteTransaction transaction = SessionManager.GetWriteTransaction())
+					{
+						foreach (IStudy study in studies)
+							Session.Delete("from Study where StudyInstanceUid_ = ?", study.GetStudyInstanceUid().ToString(), NHibernateUtil.String);
+
+						transaction.Commit();
+					}
+				}
+				catch (Exception e)
+				{
+					throw new DataStoreException("Failed to clear the specified study(s) from the data store.", e);
+				}
+			}
+
+			#endregion
 		}
-		
-		public void RemoveSopInstance(ISopInstance sopToRemove)
-        {
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-
-                session.Delete(sopToRemove);
-
-                transaction.Commit();
-            }
-            catch
-            {
-                if (null != transaction)
-                    transaction.Rollback();
-
-                throw;
-            }
-            finally
-            {
-                if (null!=session)
-                    session.Close();
-            }
-        }
-
-        public void StoreStudy(IStudy study)
-        {
-            ITransaction transaction = null;
-            ISession session = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-                session.SaveOrUpdate(study);
-                transaction.Commit();
-            }
-            catch
-            {
-                if (null != transaction)
-                    transaction.Rollback();
-                throw;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-        }
-
-        public void RemoveStudy(IStudy studyToRemove)
-        {
-            ITransaction transaction = null;
-            ISession session = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-                session.Delete(studyToRemove);
-                transaction.Commit();
-            }
-            catch
-            {
-                if (null != transaction)
-                    transaction.Rollback();
-
-                throw;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-        }
-
- 		public void StoreSopInstances(IEnumerable<ISopInstance> sops)
-		{
-			ISession session = null;
-			ITransaction transaction = null;
-			try
-			{
-				session = this.SessionFactory.OpenSession();
-				transaction = session.BeginTransaction();
-				
-				foreach (ISopInstance sop in sops)
-					session.SaveOrUpdate(sop);
-
-				transaction.Commit();
-			}
-			catch
-			{
-				if (null != transaction)
-					transaction.Rollback();
-
-				throw;
-			}
-			finally
-			{
-				if (null != session)
-					session.Close();
-			}
-		}
-
-    	#endregion
-
-		#region IDataStoreCleaner Members
-
-		public void ClearAllStudies()
-		{
-			ITransaction transaction = null;
-			ISession session = null;
-
-			try
-			{
-				session = this.SessionFactory.OpenSession();
-				transaction = session.BeginTransaction();
-				session.Delete("from Study");
-				transaction.Commit();
-			}
-			catch
-			{
-				if (transaction != null)
-					transaction.Rollback();
-
-				throw;
-			}
-			finally
-			{
-				if (session != null)
-					session.Close();
-			}
-		}
-
-		#endregion
 	}
 }

@@ -5,7 +5,7 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public interface IDataStoreReader
+    public interface IDataStoreReader : IDisposable
     {
 		bool StudyExists(Uid referencedUid);
         bool SeriesExists(Uid referencedUid);
@@ -16,6 +16,7 @@ namespace ClearCanvas.Dicom.DataStore
 		ISopInstance GetSopInstance(Uid referencedUid);
 
         IEnumerable<IStudy> GetStudies();
+
 		ReadOnlyQueryResultCollection StudyQuery(QueryKey queryKey);
     }
 }

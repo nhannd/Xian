@@ -228,7 +228,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							}
 						}
 
-						DataAccessLayer.GetIDataStoreCleaner().ClearAllStudies();
+						using (IDicomPersistentStore store = DataAccessLayer.GetIDicomPersistentStore())
+						{
+							store.ClearAllStudies();
+						}
 					}
 					catch (Exception e)
 					{

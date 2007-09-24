@@ -8,13 +8,20 @@ namespace ClearCanvas.Dicom
     /// <summary>
     /// Encapsulates the DICOM Person's Name.
     /// </summary>
-    public class PersonName
+    public class PersonName : IEquatable<PersonName>
     {
-        /// <summary>
+		private string _personsName;
+		private string _formattedName;
+
+		private readonly ComponentGroup[] _componentGroups = { ComponentGroup.GetEmptyComponentGroup(), 
+                                                        ComponentGroup.GetEmptyComponentGroup(),
+                                                        ComponentGroup.GetEmptyComponentGroup() };
+		/// <summary>
         /// Constructor for NHibernate.
         /// </summary>
         public PersonName()
         {
+			SetInternalPersonName("");
         }
 
         /// <summary>
@@ -23,40 +30,37 @@ namespace ClearCanvas.Dicom
         /// <param name="personsName">The Person's Name as a string.</param>
         public PersonName(string personsName)
         {
-            // validate the input
-            if (null == personsName)
-                throw new System.ArgumentNullException("personsName", SR.ExceptionGeneralPersonsNameNull);
-
-			this.InternalPersonName = personsName;
+			SetInternalPersonName(personsName);
         }
 
+		/// <summary>
+		/// NHibernate Property.
+		/// </summary>
         protected virtual string InternalPersonName
         {
             get { return _personsName; }
             set
             {
-                _personsName = value;
-                BreakApartIntoComponentGroups();
-				SetFormattedName();
+				SetInternalPersonName(value);
             }
         }
 
-        public virtual String LastName
+        public String LastName
         {
             get { return this.SingleByte.FamilyName; }
         }
 
-        public virtual String FirstName
+        public String FirstName
         {
             get { return this.SingleByte.GivenName; }
         }
 
-		public virtual String FormattedName
+		public String FormattedName
 		{
 			get { return _formattedName; }
 		}
 
-        public virtual ComponentGroup SingleByte
+        public ComponentGroup SingleByte
         {
             get 
             {
@@ -64,7 +68,7 @@ namespace ClearCanvas.Dicom
             }
         }
 
-        public virtual ComponentGroup Ideographic
+        public ComponentGroup Ideographic
         {
             get
             {
@@ -72,7 +76,7 @@ namespace ClearCanvas.Dicom
             }
         }
 
-        public virtual ComponentGroup Phonetic
+        public ComponentGroup Phonetic
         {
             get
             {
@@ -80,16 +84,36 @@ namespace ClearCanvas.Dicom
             }
         }
 
-        /// <summary>
-        /// Gets the Person's Name as a string.
-        /// </summary>
-        /// <returns>A string representation of the Person's Name.</returns>
-        public override string ToString()
-        {
-            return _personsName;
-        }
+		/// <summary>
+		/// Gets the Person's Name as a string.
+		/// </summary>
+		/// <returns>A string representation of the Person's Name.</returns>
+		public override string ToString()
+		{
+			return _personsName;
+		}
 
-        /// <summary>
+		public override bool Equals(object obj)
+		{
+			if (obj == this)
+				return true;
+
+			if (obj is PersonName)
+				return this.Equals((PersonName)obj);
+
+			return false;
+		}
+
+		#region IEquatable<PersonName> Members
+
+		public bool Equals(PersonName other)
+		{
+			return InternalPersonName == other.InternalPersonName;
+		}
+
+		#endregion
+		
+		/// <summary>
         /// Implicit cast to a String object, for ease of use.
         /// </summary>
         public static implicit operator String(PersonName pn)
@@ -97,10 +121,17 @@ namespace ClearCanvas.Dicom
             return pn.ToString();
         }
 
-        protected void BreakApartIntoComponentGroups()
+		private void SetInternalPersonName(string personsName)
+		{
+			_personsName = personsName ?? "";
+			BreakApartIntoComponentGroups();
+			SetFormattedName();
+		}
+
+    	private void BreakApartIntoComponentGroups()
         {
             // if there's no name, don't do anything
-            if (null == this.InternalPersonName || "" == this.InternalPersonName)
+            if (String.IsNullOrEmpty(this.InternalPersonName))
                 return;
 
             string[] componentGroupsStrings = this.InternalPersonName.Split('=');
@@ -114,20 +145,11 @@ namespace ClearCanvas.Dicom
             if (componentGroupsStrings.GetUpperBound(0) > 1 && componentGroupsStrings[2] != string.Empty)
                 _componentGroups[2] = new ComponentGroup(componentGroupsStrings[2]);
 		}
-
+		
 		private void SetFormattedName()
 		{
 			//by default, the formatted name is LastName, FirstName
 			_formattedName = StringUtilities.Combine<string>(new string[] { this.LastName, this.FirstName }, ", ");
 		}
-		
-		#region Private fields
-        private string _personsName;
-		private string _formattedName;
-
-        private ComponentGroup[] _componentGroups = { ComponentGroup.GetEmptyComponentGroup(), 
-                                                        ComponentGroup.GetEmptyComponentGroup(),
-                                                        ComponentGroup.GetEmptyComponentGroup() };
-		#endregion
 	}
 }

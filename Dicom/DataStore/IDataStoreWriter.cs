@@ -4,16 +4,16 @@ using System.Text;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public interface IDataStoreWriter
+    internal interface IDataStoreWriter : IDisposable
     {
-		void StoreSopInstances(IEnumerable<ISopInstance> sop);
-		void StoreSopInstance(ISopInstance sop);
-        void StoreSeries(ISeries series);
-		void StoreStudy(IStudy study);
+		void StoreSopInstances(IEnumerable<SopInstance> sops);
+        void StoreSeries(IEnumerable<Series> series);
+		void StoreStudies(IEnumerable<Study> studies);
+    	
+		void ClearAllStudies();
 
-		void RemoveSopInstances(IEnumerable<ISopInstance> sop);
-		void RemoveSopInstance(ISopInstance sop);
-		void RemoveSeries(ISeries series);
-        void RemoveStudy(IStudy study);
-    }
+		void RemoveSopInstances(IEnumerable<ISopInstance> sops);
+		void RemoveSeries(IEnumerable<ISeries> series);
+		void RemoveStudies(IEnumerable<IStudy> studies);
+	}
 }

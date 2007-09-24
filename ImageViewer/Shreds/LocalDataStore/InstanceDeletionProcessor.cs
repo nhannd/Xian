@@ -167,35 +167,46 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					try
 					{
-						IStudy study = DataAccessLayer.GetIDataStoreReader().GetStudy(new Uid(instanceUid));
-						if (study == null)
+						IStudy study = null;
+						using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 						{
-							errorMessage = String.Format(SR.ExceptionCannotDeleteStudyDoesNotExist, instanceUid);
-							Platform.Log(LogLevel.Error, new Exception(errorMessage));
-							publish();
-							continue;
-						}
+							study = reader.GetStudy(new Uid(instanceUid));
 
-						numberRelatedSopInstancesToDelete = study.GetNumberOfSopInstances();
-						GetStatistics(study.GetSopInstances(), out numberRelatedSopInstancesExistBefore, out totalUsedSpaceBefore);
-						expectedFreedSpace = totalUsedSpaceBefore;
+							if (study == null)
+							{
+								errorMessage = String.Format(SR.ExceptionCannotDeleteStudyDoesNotExist, instanceUid);
+								Platform.Log(LogLevel.Error, new Exception(errorMessage));
+								publish();
+								continue;
+							}
 
-						try
-						{
-							FileRemover.DeleteFilesInStudy(study);
-							DataAccessLayer.GetIDataStoreWriter().RemoveStudy(study);
-						}
-						catch (Exception e)
-						{
-							Platform.Log(LogLevel.Error, e);
-							errorMessage = String.Format(SR.ExceptionFailedToDeleteStudy, instanceUid);
-						}
+							numberRelatedSopInstancesToDelete = study.GetNumberOfSopInstances();
+							GetStatistics(study.GetSopInstances(), out numberRelatedSopInstancesExistBefore, out totalUsedSpaceBefore);
+							expectedFreedSpace = totalUsedSpaceBefore;
 
+							try
+							{
+								FileRemover.DeleteFilesInStudy(study);
+								using (IDicomPersistentStore store = DataAccessLayer.GetIDicomPersistentStore())
+								{
+									store.RemoveStudy(study);
+								}
+							}
+							catch (Exception e)
+							{
+								Platform.Log(LogLevel.Error, e);
+								errorMessage = String.Format(SR.ExceptionFailedToDeleteStudy, instanceUid);
+							}
+						}
+						
 						GetStatistics(study.GetSopInstances(), out numberRelatedSopInstancesExistAfter, out totalUsedSpaceAfter);
 						actualFreedSpace = totalUsedSpaceBefore - totalUsedSpaceAfter;
 
-						Platform.Log(LogLevel.Info, String.Format("Study Deletion Info - StudyInstanceUid: {0}, Space Freed (bytes): {1}, Number of Related Sop Instances Deleted: {2}",
-							instanceUid, actualFreedSpace, numberRelatedSopInstancesExistBefore - numberRelatedSopInstancesExistAfter));
+						Platform.Log(LogLevel.Info,
+						             String.Format(
+						             	"Study Deletion Info - StudyInstanceUid: {0}, Space Freed (bytes): {1}, Number of Related Sop Instances Deleted: {2}",
+						             	instanceUid, actualFreedSpace,
+						             	numberRelatedSopInstancesExistBefore - numberRelatedSopInstancesExistAfter));
 
 						publish();
 					}

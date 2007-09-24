@@ -1,72 +1,97 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common;
 using Iesi.Collections;
+using NHibernate;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public abstract class SopInstance : ISopInstance
+    public abstract class SopInstance : PersistentDicomObject, ISopInstance, IEquatable<SopInstance>
     {
-        #region Handcoded Members
+    	private Guid _oid;
+		private string _sopInstanceUid;
+		private string _sopClassUid;
+    	private string _transferSyntaxUid;
+    	private int _instanceNumber;
+    	private string _specificCharacterSet;
+    	private DicomUri _locationUri;
+    	private Series _parentSeries;
 
-        public virtual Guid Oid
+    	protected SopInstance()
+		{
+		}
+
+		#region NHibernate Persistent Properties
+
+		protected virtual Guid Oid
         {
             get { return _oid; }
-            set { _oid = value; }
+			set { _oid = value; }
         }
 
         public virtual string SopInstanceUid
         {
             get { return _sopInstanceUid; }
-            set { _sopInstanceUid = value; }
+			set { SetClassMember(ref _sopInstanceUid, value); }
         }
 
         public virtual string SopClassUid
         {
             get { return _sopClassUid; }
-            set { _sopClassUid = value; }
+			set { SetClassMember(ref _sopClassUid, value); }
         }
 
-        public virtual DicomUri LocationUri
-        {
-            get { return _locationUri; }
-            set { _locationUri = value; }
-        }
+    	public virtual string TransferSyntaxUid
+    	{
+    		get { return _transferSyntaxUid; }
+			set { SetClassMember(ref _transferSyntaxUid, value); }
+    	}
 
-        public virtual string TransferSyntaxUid
-        {
-            get { return _transferSyntaxUid; }
-            set { _transferSyntaxUid = value; }
-        }
-
-        public virtual int InstanceNumber
+    	public virtual int InstanceNumber
         {
             get { return _instanceNumber; }
-            set { _instanceNumber = value; }
-        }
-
-        public virtual Series Series
-        {
-            get { return _parentSeries; }
-            set { _parentSeries = value; }
+			set { SetValueTypeMember(ref _instanceNumber, value); }
         }
 
         public virtual string SpecificCharacterSet
         {
             get { return _specificCharacterSet; }
-            set { _specificCharacterSet = value; }
+			set { SetClassMember(ref _specificCharacterSet, value); }
         }
+
+    	public virtual DicomUri LocationUri
+    	{
+    		get { return _locationUri; }
+			set { SetClassMember(ref _locationUri, value); }
+    	}
+
+    	public virtual Series Series
+		{
+			get { return _parentSeries; }
+			set { SetClassMember(ref _parentSeries, value); }
+		}
+
+		#endregion
+
+		#region IEquatable<SopInstance> Members
+
+		public bool Equals(SopInstance other)
+		{
+			return (this.SopInstanceUid == other.SopInstanceUid);
+		}
+
+		#endregion
 
 		public override bool Equals(object obj)
 		{
 			if (this == obj)
 				return true;
 
-			SopInstance other = obj as SopInstance;
-			if (null == other)
-				return false; // null or not a sop
+			if (obj is SopInstance)
+				return this.Equals((SopInstance) obj);
 
-			return (this.SopInstanceUid == other.SopInstanceUid);
+			return false; // null or not a sop
 		}
 
 		public override int GetHashCode()
@@ -82,57 +107,71 @@ namespace ClearCanvas.Dicom.DataStore
 			return accumulator;
 		}
 		
-		#region Private members
-
-        Guid _oid;
-        string _sopInstanceUid;
-        string _sopClassUid;
-        DicomUri _locationUri;
-        string _transferSyntaxUid;
-        int _instanceNumber;
-        string _specificCharacterSet;
-        Series _parentSeries;
-        
-		#endregion //Private Members
-        #endregion //Handcoded Members
-
         #region ISopInstance Members
 
-        public Uid GetTransferSyntaxUid()
+    	public Uid GetSopInstanceUid()
+    	{
+    		return new Uid(this.SopInstanceUid);
+    	}
+
+    	public Uid GetSopClassUid()
+    	{
+    		return new Uid(this.SopClassUid);
+    	}
+
+    	public Uid GetTransferSyntaxUid()
         {
             return new Uid(this.TransferSyntaxUid);
         }
 
-        public Uid GetSopClassUid()
-        {
-            return new Uid(this.SopClassUid);
-        }
+    	public ISeries GetParentSeries()
+    	{
+    		return this.Series;
+    	}
 
-        public bool IsIdenticalTo(ISopInstance sop)
-        {
-            return this.SopInstanceUid == sop.GetSopInstanceUid();
-        }
-
-        public Uid GetSopInstanceUid()
-        {
-            return new Uid(this.SopInstanceUid);
-        }
-
-        public void SetParentSeries(ISeries series)
+    	public void SetParentSeries(ISeries series)
         {
             this.Series = series as Series;
         }
 
-        public ISeries GetParentSeries()
-        {
-            return this.Series;
-        }
- 
-        public DicomUri GetLocationUri()
+    	public DicomUri GetLocationUri()
         {
             return this.LocationUri;
         }
 
 		#endregion
+
+		#region Helper Methods
+
+		public virtual void Update(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
+		{
+			DicomAttribute attribute = sopInstanceDataset[DicomTags.SopInstanceUid];
+			if (!String.IsNullOrEmpty(SopInstanceUid) && SopInstanceUid != attribute.ToString())
+			{
+				throw new InvalidOperationException("Can only update an existing sop from a Dicom data set with the same SopInstanceUid.");
+			}
+			else
+			{
+				this.SopInstanceUid = attribute.ToString();
+			}
+
+			Platform.CheckForEmptyString(SopInstanceUid, "SopInstanceUid");
+
+			attribute = sopInstanceDataset[DicomTags.SopClassUid];
+			SopClassUid = attribute.ToString();
+
+			attribute = metaInfo[DicomTags.TransferSyntaxUid];
+			TransferSyntaxUid = attribute.ToString();
+
+			int intValue;
+			attribute = sopInstanceDataset[DicomTags.InstanceNumber];
+			attribute.TryGetInt32(0, out intValue);
+			InstanceNumber = intValue;
+			
+			attribute = sopInstanceDataset[DicomTags.SpecificCharacterSet];
+			SpecificCharacterSet = attribute.ToString();
+		}
+
+    	#endregion
 	}
 }

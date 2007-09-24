@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
 	internal sealed partial class LocalDataStoreService
 	{
-		public sealed class DicomFileImporter : SingleSessionDicomImageStore
+		public sealed class DicomFileImporter
 		{
 			public enum DedicatedImportQueue
 			{
@@ -37,17 +37,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				bool BadFile { set; }
 				string StoredFile { set; }
 
-				string PatientId { set; }
-				string PatientsName { set; }
-				string StudyDate { set; }
-				string StudyDescription { set; }
-				string StudyInstanceUid { set; }
-				string SeriesInstanceUid { set; }
-				string SopInstanceUid { set; }
-
-				Study Study { get; set; }
-				Series Series { get; set; }
-				SopInstance SopInstance { get; set; }
+				DicomAttributeCollection MetaInfo { get; set; }
+				DicomAttributeCollection DataSet { get; set; }
 			}
 
 			public class FileImportInformation : IFileImportInformation
@@ -56,9 +47,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				#region Client Input
 
-				private string _sourceFile;
-				private FileImportBehaviour _importBehaviour;
-				private BadFileBehaviour _badFileBehaviour;
+				private readonly string _sourceFile;
+				private readonly FileImportBehaviour _importBehaviour;
+				private readonly BadFileBehaviour _badFileBehaviour;
 
 				#endregion
 
@@ -73,22 +64,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				#region Parsed File Information
 
-				private string _patientId;
-				private string _patientsName;
-				private string _studyDescription;
-				private string _studyDate;
-
-				private string _studyInstanceUid;
-				private string _seriesInstanceUid;
-				private string _sopInstanceUid;
-
-				#endregion
-
-				#region Importer Specific Information
-
-				private Study _study;
-				private Series _series;
-				private SopInstance _sopInstance;
+				private DicomAttributeCollection _metaInfo;
+				private DicomAttributeCollection _dataSet;
 
 				#endregion
 
@@ -152,37 +129,80 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				public string PatientId
 				{
-					get { return _patientId; }
+					get
+					{
+						if (_dataSet == null)
+							return "";
+						
+						return _dataSet[DicomTags.PatientId] ?? "";
+					}
 				}
 
 				public string PatientsName
 				{
-					get { return _patientsName; }
+					get
+					{
+						if (_dataSet == null)
+							return "";
+
+						return _dataSet[DicomTags.PatientsName] ?? "";
+					}
 				}
 
 				public string StudyDate
 				{
-					get { return _studyDate; }
+					get
+					{
+						if (_dataSet == null)
+							return "";
+
+						return _dataSet[DicomTags.StudyDate] ?? "";
+					}
 				}
 
 				public string StudyDescription
 				{
-					get { return _studyDescription; }
+					get
+					{
+						if (_dataSet == null)
+							return "";
+
+						return _dataSet[DicomTags.StudyDescription] ?? "";
+					}
 				}
 
 				public string StudyInstanceUid
 				{
-					get { return _studyInstanceUid; }
+					get
+					{
+						if (_dataSet == null)
+							return "";
+
+						return _dataSet[DicomTags.StudyInstanceUid] ?? "";
+					}
+
 				}
 
 				public string SeriesInstanceUid
 				{
-					get { return _seriesInstanceUid; }
+					get
+					{
+						if (_dataSet == null)
+							return "";
+
+						return _dataSet[DicomTags.SeriesInstanceUid] ?? "";
+					}
 				}
 
 				public string SopInstanceUid
 				{
-					get { return _sopInstanceUid; }
+					get
+					{
+						if (_dataSet == null)
+							return "";
+
+						return _dataSet[DicomTags.SopInstanceUid] ?? "";
+					}
 				}
 
 				#region IDicomFileImporterInformation Members
@@ -205,59 +225,18 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				string IFileImportInformation.StoredFile
 				{
 					set { _storedFile = value; }
+				}	
+
+				DicomAttributeCollection IFileImportInformation.MetaInfo
+				{
+					get { return _metaInfo; }
+					set { _metaInfo = value; }
 				}
 
-				string IFileImportInformation.PatientId
+				DicomAttributeCollection IFileImportInformation.DataSet
 				{
-					set { _patientId = value; }
-				}
-
-				string IFileImportInformation.PatientsName
-				{
-					set { _patientsName = value; }
-				}
-
-				string IFileImportInformation.StudyDate
-				{
-					set { _studyDate = value; }
-				}
-
-				string IFileImportInformation.StudyDescription
-				{
-					set { _studyDescription = value; }
-				}
-
-				string IFileImportInformation.StudyInstanceUid
-				{
-					set { _studyInstanceUid = value; }
-				}
-
-				string IFileImportInformation.SeriesInstanceUid
-				{
-					set { _seriesInstanceUid = value; }
-				}
-
-				string IFileImportInformation.SopInstanceUid
-				{
-					set { _sopInstanceUid = value; }
-				}
-
-				public Study Study
-				{
-					get { return _study; }
-					set { _study = value; }
-				}
-
-				public Series Series
-				{
-					get { return _series; }
-					set { _series = value; }
-				}
-
-				public SopInstance SopInstance
-				{
-					get { return _sopInstance; }
-					set { _sopInstance = value; }
+					get { return _dataSet; }
+					set { _dataSet = value; }
 				}
 
 				#endregion
@@ -269,9 +248,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			private class ImportJobInformation
 			{
-				private FileImportInformation _fileImportInformation;
-				private FileImportJobStatusReportDelegate _fileImportJobStatusReportDelegate;
-				private DedicatedImportQueue _destinationImportQueue;
+				private readonly FileImportInformation _fileImportInformation;
+				private readonly FileImportJobStatusReportDelegate _fileImportJobStatusReportDelegate;
+				private readonly DedicatedImportQueue _destinationImportQueue;
 
 				public ImportJobInformation
 					(
@@ -305,7 +284,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			private class ParseFileThreadPool : BlockingThreadPool<ImportJobInformation>
 			{
-				DicomFileImporter _parent;
+				readonly DicomFileImporter _parent;
 
 				public ParseFileThreadPool(DicomFileImporter parent)
 					: base((int)LocalDataStoreService.Instance.SendReceiveImportConcurrency, true)
@@ -324,7 +303,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			private class ImportFileThreadPool : BlockingThreadPool<ImportJobInformation>
 			{
-				DicomFileImporter _parent;
+				readonly DicomFileImporter _parent;
 
 				public ImportFileThreadPool(DicomFileImporter parent)
 					: base((int)LocalDataStoreService.Instance.SendReceiveImportConcurrency, true)
@@ -351,7 +330,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			/// </summary>
 			private class UriLock
 			{
-				private Uri _uri;
+				private readonly Uri _uri;
 				private int _lockCount;
 
 				public UriLock(Uri uri)
@@ -368,23 +347,23 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			private LocalDataStoreService _parent;
 
-			private object _databaseThreadLock = new object();
+			private readonly object _databaseThreadLock = new object();
 			private bool _stopDatabaseThread = false;
 			private Thread _databaseUpdateThread;
 
-			private object _databaseUpdateItemsLock = new object();
-			private List<ImportJobInformation> _databaseUpdateItems;
+			private readonly object _databaseUpdateItemsLock = new object();
+			private readonly List<ImportJobInformation> _databaseUpdateItems;
 			
-			private ParseFileThreadPool _parseFileThreadPool;
+			private readonly ParseFileThreadPool _parseFileThreadPool;
 
 			private DedicatedImportQueue _activeImportThreadPool;
-			private Dictionary<DedicatedImportQueue, ImportFileThreadPool> _importThreadPools;
+			private readonly Dictionary<DedicatedImportQueue, ImportFileThreadPool> _importThreadPools;
 
-			private object _importThreadPoolSwitchSyncLock = new object();
+			private readonly object _importThreadPoolSwitchSyncLock = new object();
 			private event EventHandler<ItemEventArgs<DedicatedImportQueue>> _importThreadPoolSwitched;
 
-			private object _uriLocksSync = new object();
-			private List<UriLock> _uriLocks;
+			private readonly object _uriLocksSync = new object();
+			private readonly List<UriLock> _uriLocks;
 
 			public DicomFileImporter(LocalDataStoreService parent)
 				: base()
@@ -481,13 +460,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						if (processable)
 						{
 							//parse the file and create study, series and sop objects for (potential) insertion into the datastore.
-							setImportInformation.Study = CreateNewStudy(dicomFile.MetaInfo, dicomFile.DataSet);
-							setImportInformation.Series = CreateNewSeries(dicomFile.MetaInfo, dicomFile.DataSet);
-							setImportInformation.SopInstance = CreateNewSopInstance(dicomFile.MetaInfo, dicomFile.DataSet);
-
-							ValidateStudy(setImportInformation.Study);
-							ValidateSeries(setImportInformation.Series);
-							ValidateSopInstance(setImportInformation.SopInstance);
+							setImportInformation.MetaInfo = dicomFile.MetaInfo;
+							setImportInformation.DataSet = dicomFile.DataSet;
+							ValidateDicomData(dicomFile.MetaInfo, dicomFile.DataSet);
 						}
 					}
 					catch (Exception e)
@@ -528,14 +503,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						return;
 					}
 
-					setImportInformation.StudyInstanceUid = setImportInformation.Study.StudyInstanceUid;
-					setImportInformation.SeriesInstanceUid = setImportInformation.Series.SeriesInstanceUid;
-					setImportInformation.SopInstanceUid = setImportInformation.SopInstance.SopInstanceUid;
-					setImportInformation.StudyDate = fileImportInformation.Study.StudyDateRaw;
-					setImportInformation.PatientId = fileImportInformation.Study.PatientId;
-					setImportInformation.PatientsName = fileImportInformation.Study.PatientsName ?? "";
-					setImportInformation.StudyDescription = fileImportInformation.Study.StudyDescription;
-
 					//report the progress.
 					setImportInformation.CompletedStage = ImportStage.FileParsed;
 					fileImportJobStatusReportDelegate(fileImportInformation);
@@ -547,23 +514,15 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 			}
 
-			private void ValidateStudy(Study study)
+			private void ValidateDicomData(DicomAttributeCollection metaInfo, DicomAttributeCollection dataSet)
 			{
-				Platform.CheckForNullReference(study, "study");
-				DicomValidator.ValidateStudyInstanceUID(study.StudyInstanceUid);
-			}
+				Platform.CheckForNullReference(metaInfo, "metaInfo");
+				Platform.CheckForNullReference(dataSet, "dataSet");
 
-			private void ValidateSeries(Series series)
-			{
-				Platform.CheckForNullReference(series, "series");
-				DicomValidator.ValidateSeriesInstanceUID(series.SeriesInstanceUid);
-			}
-
-			private void ValidateSopInstance(SopInstance sopInstance)
-			{
-				Platform.CheckForNullReference(sopInstance, "sopInstance");
-				DicomValidator.ValidateSOPInstanceUID(sopInstance.SopInstanceUid);
-				DicomValidator.ValidateTransferSyntaxUID(sopInstance.TransferSyntaxUid);
+				DicomValidator.ValidateStudyInstanceUID(dataSet[DicomTags.StudyInstanceUid]);
+				DicomValidator.ValidateSeriesInstanceUID(dataSet[DicomTags.SeriesInstanceUid]);
+				DicomValidator.ValidateSOPInstanceUID(dataSet[DicomTags.SopInstanceUid]);
+				DicomValidator.ValidateTransferSyntaxUID(metaInfo[DicomTags.TransferSyntaxUid]);
 			}
 
 			private void MoveFile(ImportJobInformation jobInformation)
@@ -616,8 +575,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					{
 						ReleaseLockUri(storedUri);
 					}
-
-					AssignSopInstanceUri(fileImportInformation.SopInstance, storedFile);
 
 					importerInformation.StoredFile = storedFile;
 					importerInformation.CompletedStage = ImportStage.FileMoved;
@@ -695,19 +652,22 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				if (items.Count == 0)
 					return;
 
+#if DEBUG
 				CodeClock clock = new CodeClock();
 				clock.Start();
-
+#endif
 				try
 				{
-					foreach (ImportJobInformation item in items)
+					using (IDicomPersistentStore store = DataAccessLayer.GetIDicomPersistentStore())
 					{
-						AddStudyToCache(item.FileImportInformation.Study);
-						AddSeriesToCache(item.FileImportInformation.Series, item.FileImportInformation.StudyInstanceUid);
-						AddSopInstanceToCache(item.FileImportInformation.SopInstance, item.FileImportInformation.SeriesInstanceUid);
-					}
+						foreach (ImportJobInformation item in items)
+						{
+							IFileImportInformation info = (IFileImportInformation)item.FileImportInformation;
+							store.InsertSopInstance(info.MetaInfo, info.DataSet, item.FileImportInformation.StoredFile);
+						}
 
-					base.Flush();
+						store.Commit();
+					}
 
 					foreach (ImportJobInformation item in items)
 					{
@@ -724,9 +684,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						item.FileImportJobStatusReportDelegate(item.FileImportInformation);
 					}
 				}
-
+#if DEBUG
 				clock.Stop();
 				Console.WriteLine(String.Format("Update took {0} seconds", clock.Seconds));
+#endif
 			}
 
 			private void DatabaseUpdateThread()

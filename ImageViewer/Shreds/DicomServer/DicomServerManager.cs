@@ -443,14 +443,17 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				// Query DB for results
 				QueryKey key = BuildQueryKey(requestIdentifiers);
-				ReadOnlyQueryResultCollection queryResults = DataAccessLayer.GetIDataStoreReader().StudyQuery(key);
-				if (queryResults.Count == 0)
-					return OffisDcm.STATUS_Success;
-
-				// Remember the query results for this session.  The DicomServer will call back to get query results
-				lock (_querySessionLock)
+				using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 				{
-					_querySessionDictionary[operationIdentifier] = new DicomQuerySession(key, queryResults);
+					ReadOnlyQueryResultCollection queryResults = reader.StudyQuery(key);
+					if (queryResults.Count == 0)
+						return OffisDcm.STATUS_Success;
+
+					// Remember the query results for this session.  The DicomServer will call back to get query results
+					lock (_querySessionLock)
+					{
+						_querySessionDictionary[operationIdentifier] = new DicomQuerySession(key, queryResults);
+					}
 				}
 			}
 			catch (Exception exception)

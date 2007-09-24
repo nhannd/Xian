@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ClearCanvas.Dicom
 {
-	public class PixelAspectRatio
+	public class PixelAspectRatio : IEquatable<PixelAspectRatio>
 	{
 		#region Private Members
 		
@@ -13,16 +13,24 @@ namespace ClearCanvas.Dicom
 		
 		#endregion
 
-		public PixelAspectRatio(double row, double column)
-        {
-            this.Row = row;
-            this.Column = column;
-        }
-
-		private PixelAspectRatio()
+		/// <summary>
+		/// Constructor for NHibernate.
+		/// </summary>
+		public PixelAspectRatio()
 		{
 		}
-		
+
+		/// <summary>
+		/// Mandatory Constructor.
+		/// </summary>
+		public PixelAspectRatio(double row, double column)
+		{
+			_row = row;
+			_column = column;
+		}
+
+		#region NHibernate Persistent Properties
+
 		public virtual double Row
         {
             get { return _row; }
@@ -33,6 +41,28 @@ namespace ClearCanvas.Dicom
         {
             get { return _column; }
             set { _column = value; }
-        }
+		}
+
+		#endregion
+
+		public override bool Equals(object obj)
+		{
+			if (obj == this)
+				return true;
+
+			if (obj is PixelAspectRatio)
+				return this.Equals((PixelAspectRatio) obj);
+
+			return false;
+		}
+
+		#region IEquatable<PixelAspectRatio> Members
+
+		public bool Equals(PixelAspectRatio other)
+		{
+			return Row == other.Row && Column == other.Column;
+		}
+
+		#endregion
 	}
 }

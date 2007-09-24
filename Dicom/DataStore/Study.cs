@@ -6,129 +6,155 @@ using NHibernate;
 using NHibernate.Collection;
 using Iesi.Collections;
 using System.Collections.ObjectModel;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public class Study : IStudy
+	public class Study : PersistentDicomObject, IStudy, IEquatable<Study>
     {
-        #region Handcoded Members
-
         public delegate void InitializeAssociatedCollectionCallback(object domainObject, PersistentCollection associatedCollection);
         public InitializeAssociatedCollectionCallback InitializeAssociatedCollection;
 
+		#region Private Fields
+
+		private Guid _studyOid;
+    	private string _studyInstanceUid;
+    	private PatientId _patientId;
+    	private PersonName _patientsName;
+    	private string _patientsNameRaw;
+    	private string _patientsSex;
+    	private string _patientsBirthDateRaw;
+    	private string _studyId;
+    	private string _accessionNumber;
+    	private string _studyDescription;
+    	private DateTime? _studyDate;
+		private string _studyDateRaw;
+    	private string _studyTimeRaw;
+    	private string _specificCharacterSet;
+    	private string _procedureCodeSequenceCodeValue;
+    	private string _procedureCodeSequenceCodingSchemeDesignator;
+    	private DateTime? _storeTime;
+    	private readonly ISet _internalSeries;
+
+		#endregion //Private Fields
+		
         public Study()
         {
-            _internalSeries = new HybridSet();
+        	_internalSeries = new HybridSet();
         }
 
-        protected virtual Guid StudyOid
+		#region NHibernate Persistent Properties
+
+		protected virtual Guid StudyOid
         {
             get { return _studyOid; }
-            set { _studyOid = value; }
-        }
-
-        public virtual string ProcedureCodeSequenceCodingSchemeDesignator
-        {
-            get { return _procedureCodeSequenceCodingSchemeDesignator; }
-            set { _procedureCodeSequenceCodingSchemeDesignator = value; }
-        }
-
-        public virtual string StudyId
-        {
-            get { return _studyId; }
-            set { _studyId = value; }
-        }
-
-		public virtual string StudyTimeRaw
-        {
-            get { return _studyTimeRaw; }
-            set { _studyTimeRaw = value; }
-        }
-
-		public virtual DateTime? StudyDate
-		{
-			get { return _studyDate; }
-			set { _studyDate = value; }
+			set { _studyOid = value; }
 		}
 
-        public virtual string StudyDateRaw
+    	public virtual string StudyInstanceUid
+    	{
+    		get { return _studyInstanceUid; }
+			set { SetClassMember(ref _studyInstanceUid, value); }
+		}
+
+    	public virtual PatientId PatientId
+    	{
+    		get { return _patientId; }
+			set { SetClassMember(ref _patientId, value); }
+    	}
+
+    	public virtual PersonName PatientsName
+    	{
+    		get { return _patientsName; }
+			set { SetClassMember(ref _patientsName, value); }
+    	}
+
+    	public virtual string PatientsNameRaw
+    	{
+    		get { return _patientsNameRaw; }
+			set { SetClassMember(ref _patientsNameRaw, value); }
+    	}
+
+    	public virtual string PatientsSex
+    	{
+    		get { return _patientsSex; }
+			set { SetClassMember(ref _patientsSex, value); }
+    	}
+
+    	public virtual string PatientsBirthDateRaw
+    	{
+    		get { return _patientsBirthDateRaw; }
+			set { SetClassMember(ref _patientsBirthDateRaw, value); }
+    	}
+
+    	public virtual string StudyId
         {
-            get { return _studyDateRaw; }
-            set { _studyDateRaw = value; }
+            get { return _studyId; }
+			set { SetClassMember(ref _studyId, value); }
         }
 
-        public virtual string AccessionNumber
-        {
-            get { return _accessionNumber; }
-            set { _accessionNumber = value; }
-        }
+    	public virtual string AccessionNumber
+    	{
+    		get { return _accessionNumber; }
+			set { SetClassMember(ref _accessionNumber, value); }
+    	}
 
-        public virtual string StudyInstanceUid
-        {
-            get { return _studyInstanceUid; }
-            set { _studyInstanceUid = value; }
-        }
+    	public virtual string StudyDescription
+    	{
+    		get { return _studyDescription; }
+			set { SetClassMember(ref _studyDescription, value); }
+    	}
 
-        public virtual string StudyDescription
-        {
-            get { return _studyDescription; }
-            set { _studyDescription = value; }
-        }
+    	public virtual DateTime? StudyDate
+    	{
+    		get { return _studyDate; }
+			set { SetNullableTypeMember(ref _studyDate, value); }
+    	}
 
-        public virtual string ProcedureCodeSequenceCodeValue
+    	public virtual string StudyDateRaw
+    	{
+    		get { return _studyDateRaw; }
+			set { SetClassMember(ref _studyDateRaw, value); }
+    	}
+
+    	public virtual string StudyTimeRaw
+        {
+            get { return _studyTimeRaw; }
+			set { SetClassMember(ref _studyTimeRaw, value); }
+		}
+
+    	public virtual string SpecificCharacterSet
+    	{
+    		get { return _specificCharacterSet; }
+			set { SetClassMember(ref _specificCharacterSet, value); }
+    	}
+
+    	public virtual string ProcedureCodeSequenceCodeValue
         {
             get { return _procedureCodeSequenceCodeValue; }
-            set { _procedureCodeSequenceCodeValue = value; }
-        }
+			set { SetClassMember(ref _procedureCodeSequenceCodeValue, value); }
+		}
 
-        public virtual PatientId PatientId
-        {
-            get { return _patientId; }
-            set { _patientId = value; }
-        }
+    	public virtual string ProcedureCodeSequenceCodingSchemeDesignator
+    	{
+    		get { return _procedureCodeSequenceCodingSchemeDesignator; }
+			set { SetClassMember(ref _procedureCodeSequenceCodingSchemeDesignator, value); }
+    	}
 
-        public virtual PersonName PatientsName
-        {
-            get { return _patientsName; }
-            set { _patientsName = value; }
-        }
-
-        public virtual string PatientsNameRaw
-        {
-            get { return _patientsNameRaw; }
-            set { _patientsNameRaw = value; }
-        }
-
-        public virtual string PatientsSex
-        {
-            get { return _patientsSex; }
-            set { _patientsSex = value; }
-        }
-
-        public virtual string PatientsBirthDateRaw
-        {
-            get { return _patientsBirthDateRaw; }
-            set { _patientsBirthDateRaw = value; }
-        }
-
-        public virtual string SpecificCharacterSet
-        {
-            get { return _specificCharacterSet; }
-            set { _specificCharacterSet = value; }
-        }
-
-        public virtual DateTime StoreTime
+    	public virtual DateTime? StoreTime
         {
             get { return _storeTime; }
-            set { _storeTime = value; }
+			set { SetNullableTypeMember(ref _storeTime, value); }
         }
 
         protected virtual ISet InternalSeries
         {
             get { return _internalSeries; }
-        }
+		}
 
-        public virtual ISet Series
+		#endregion
+
+		public virtual ISet Series
         {
             get
             {
@@ -139,16 +165,24 @@ namespace ClearCanvas.Dicom.DataStore
             }
         }
 
-		public override bool Equals(object obj)
+    	#region IEquatable<Study> Members
+
+    	public bool Equals(Study other)
+    	{
+			return (this.StudyInstanceUid == other.StudyInstanceUid);
+    	}
+
+    	#endregion
+
+    	public override bool Equals(object obj)
         {
             if (this == obj)
                 return true;
 
-            Study other = obj as Study;
-			if (null == other)
-                return false; // null or not a study
+			if (obj is Study)
+				return this.Equals((Study) obj);
 
-			return (this.StudyInstanceUid == other.StudyInstanceUid);
+			return false;
         }
 		
         public override int GetHashCode()
@@ -163,30 +197,6 @@ namespace ClearCanvas.Dicom.DataStore
             }
             return accumulator;
         }
-
-        #region Private fields
-
-		Guid _studyOid;
-        string _procedureCodeSequenceCodingSchemeDesignator;
-        string _studyId;
-		string _studyTimeRaw;
-		DateTime? _studyDate;
-		string _studyDateRaw;
-        string _accessionNumber;
-        string _studyInstanceUid;
-        string _studyDescription;
-        string _specificCharacterSet;
-        DateTime _storeTime;
-        string _procedureCodeSequenceCodeValue;
-        PatientId _patientId;
-        PersonName _patientsName;
-        string _patientsNameRaw;
-        string _patientsSex;
-		string _patientsBirthDateRaw;
-        ISet _internalSeries;
-
-		#endregion //Private Fields
-        #endregion //Handcoded Members
 
 		#region IStudy Members
 
@@ -241,5 +251,61 @@ namespace ClearCanvas.Dicom.DataStore
 		}
 		
 		#endregion
-    }
+
+		#region Helper Methods
+
+		public void Update(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
+		{
+			DicomAttribute attribute = sopInstanceDataset[DicomTags.StudyInstanceUid];
+			if (!String.IsNullOrEmpty(StudyInstanceUid) && StudyInstanceUid != attribute.ToString())
+			{
+				throw new InvalidOperationException("Can only update an existing study from a Dicom data set with the same StudyInstanceUid.");
+			}
+			else
+			{
+				this.StudyInstanceUid = attribute.ToString();
+			}
+
+			Platform.CheckForEmptyString(StudyInstanceUid, "StudyInstanceUid");
+
+			attribute = sopInstanceDataset[DicomTags.PatientId];
+			PatientId = new PatientId(attribute.ToString() ?? "");
+
+			attribute = sopInstanceDataset[DicomTags.PatientsName];
+			PatientsName = new PersonName(attribute.ToString() ?? "");
+			PatientsNameRaw = DicomImplementation.CharacterParser.EncodeAsIsomorphicString(PatientsName, sopInstanceDataset.SpecificCharacterSet);
+
+			attribute = sopInstanceDataset[DicomTags.PatientsSex];
+			PatientsSex = attribute.ToString();
+
+			attribute = sopInstanceDataset[DicomTags.PatientsBirthDate];
+			PatientsBirthDateRaw = attribute.ToString();
+
+			//
+			// TODO: can't access sequences yet. We will have to get
+			// ProcedureCodeSequence.CodeValue and ProcedureCodeSequence.SchemeDesignator
+			//
+
+			attribute = sopInstanceDataset[DicomTags.StudyId];
+			StudyId = attribute.ToString();
+
+			attribute = sopInstanceDataset[DicomTags.AccessionNumber];
+			AccessionNumber = attribute.ToString();
+
+			attribute = sopInstanceDataset[DicomTags.StudyDescription];
+			StudyDescription = attribute.ToString();
+
+			attribute = sopInstanceDataset[DicomTags.StudyDate];
+			StudyDateRaw = attribute.ToString();
+			StudyDate = DateParser.Parse(StudyDateRaw);
+
+			attribute = sopInstanceDataset[DicomTags.StudyTime];
+			StudyTimeRaw = attribute.ToString();
+
+			attribute = sopInstanceDataset[DicomTags.SpecificCharacterSet];
+			SpecificCharacterSet = attribute.ToString();
+		}
+
+    	#endregion
+	}
 }

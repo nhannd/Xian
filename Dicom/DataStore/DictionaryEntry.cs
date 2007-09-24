@@ -6,8 +6,12 @@ namespace ClearCanvas.Dicom.DataStore
 {
     public class DictionaryEntry
     {
-        #region Handcoded Members
-        public DictionaryEntry()
+        private TagName _tagName;
+        private Path _path;
+        private bool _isComputed;
+		private string _valueRepresentation;
+
+		public DictionaryEntry()
         {
         }
 
@@ -34,11 +38,5 @@ namespace ClearCanvas.Dicom.DataStore
 			get { return _valueRepresentation; }
 			set { _valueRepresentation = value; }
 		}
-
-        private TagName _tagName;
-        private Path _path;
-        private bool _isComputed;
-		private string _valueRepresentation;
-        #endregion
     }
 }

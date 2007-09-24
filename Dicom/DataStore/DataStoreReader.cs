@@ -6,601 +6,489 @@ using System.Reflection;
 using NHibernate;
 using NHibernate.Collection;
 using NHibernate.Expression;
-using Iesi.Collections;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    internal class DataStoreReader : IDataStoreReader
-    {
-        #region Handcoded Members
-        public DataStoreReader(ISessionFactory sessionFactory)
-        {
-            this.SessionFactory = sessionFactory;
-        }
-
-        #region Private Members
-        private DataStoreReader()
-        {
-        }
-
-        private ISessionFactory _sessionFactory;
-
-        private ISessionFactory SessionFactory
-        {
-            get { return _sessionFactory; }
-            set { _sessionFactory = value; }
-        }
-	
-        #endregion
-
-        #endregion
-
-        #region IDataStore Members
-
-        public bool StudyExists(Uid referencedUid)
-        {
-            int count = 0;
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-
-                IEnumerable results = session.Enumerable("select count(study) from Study study " +
-                    "where study.StudyInstanceUid = ?",
-                    referencedUid.ToString(),
-                    NHibernateUtil.String);
-
-                foreach (int number in results)
-                {
-                    count = number;
-                }
-            }
-            catch
-            {
-                if (null!=transaction)
-                    transaction.Rollback();
-                throw;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-
-            return count > 0;
-        }
-
-        public bool SeriesExists(Uid referencedUid)
-        {
-            int count = 0;
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-                IEnumerable results = session.Enumerable("select count(series) from Series series " +
-                    "where series.SeriesInstanceUid = ?",
-                    referencedUid.ToString(),
-                    NHibernateUtil.String);
-
-                foreach (int number in results)
-                {
-                    count = number;
-                }
-            }
-            catch
-            {
-                if (null!=transaction)
-                    transaction.Rollback();
-                throw;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-
-            return count > 0;
-        }
-
-        public bool SopInstanceExists(Uid referencedUid)
-        {
-            int count = 0;
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-
-                IEnumerable results = session.Enumerable("select count(sop) from SopInstance sop " +
-                    "where sop.SopInstanceUid = ?",
-                    referencedUid.ToString(),
-                    NHibernateUtil.String);
-
-                foreach (int number in results)
-                {
-                    count = number;
-                }
-            }
-            catch
-            {
-                if (null!=transaction)
-                    transaction.Rollback();
-                throw;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-
-            return count > 0;
-        }
-
-        public ISopInstance GetSopInstance(Uid referencedUid)
-        {
-            if (!SopInstanceExists(referencedUid))
-                return null;
-
-            ISopInstance sop = null;
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-
-                IList listOfSops = session.CreateCriteria(typeof(SopInstance))
-                     .Add(Expression.Eq("SopInstanceUid", referencedUid.ToString()))
-                     .SetFetchMode("WindowValues_", FetchMode.Eager)
-                     .List();
-
-                if (null != listOfSops && listOfSops.Count > 0)
-                    sop = listOfSops[0] as ISopInstance;
-            }
-            catch
-            {
-                if (null!=transaction)
-                    transaction.Rollback();
-                throw;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-
-            return sop;
-        }
-
-        public ISeries GetSeries(Uid referenceUid)
-        {
-            if (!SeriesExists(referenceUid))
-                return null;
-
-            ISeries series = null;
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-
-                IList listOfSeries = session.CreateCriteria(typeof(Series))
-                    .Add(Expression.Eq("SeriesInstanceUid", referenceUid.ToString()))
-                    .SetFetchMode("SopInstances", FetchMode.Lazy)
-                    .List();
-
-                if (null != listOfSeries && listOfSeries.Count > 0)
-                {
-                    (listOfSeries[0] as Series).InitializeAssociatedCollection += InitializeAssociatedObject;
-                    series = listOfSeries[0] as ISeries;
-                }
-            }
-            catch
-            {
-                if (null!=transaction)
-                    transaction.Rollback();
-                throw;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-
-            return series;
-        }
-
-        public void InitializeAssociatedObject(object primaryObject, object associatedObject)
-        {
-            // TODO: specific cases of check for whether the child object
-            // has already been initialized, and skipping if it has. If 
-            // we are using v1.2 of NHibernate or later, there should be
-            // a WasInitialized property that can be checked
-            PersistentCollection associatedCollection = associatedObject as PersistentCollection;
-            if (null == associatedCollection || associatedCollection.WasInitialized)
-                return;
-
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-
-                session.Lock(primaryObject, LockMode.Read);
-                NHibernateUtil.Initialize(associatedCollection);
-            }
-            catch
-            {
-                if (null != transaction)
-                    transaction.Rollback();
-                throw;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-        }
-
-        public IStudy GetStudy(Uid referenceUid)
-        {
-            if (!StudyExists(referenceUid))
-                return null;
-
-            IStudy studyFound = null;
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-
-                IList listOfStudies = session.CreateCriteria(typeof(Study))
-                    .Add(Expression.Eq("StudyInstanceUid", referenceUid.ToString()))
-                    .SetFetchMode("Series", FetchMode.Eager)
-                    .List();
-
-                if (null != listOfStudies && listOfStudies.Count > 0)
-                {
-                    (listOfStudies[0] as Study).InitializeAssociatedCollection += InitializeAssociatedObject;
-                    foreach (Series series in (listOfStudies[0] as Study).Series)
-                    {
-                        series.InitializeAssociatedCollection += InitializeAssociatedObject;
-                    }
-
-                    studyFound = listOfStudies[0] as IStudy;
-                }
-            }
-            catch
-            {
-                if (null!=transaction)
-                    transaction.Rollback();
-                throw;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-
-            return studyFound;
-        }
-
-		public IEnumerable<IStudy> GetStudies()
+	public sealed partial class DataAccessLayer
+	{
+		private class DataStoreReader : SessionConsumer, IDataStoreReader
 		{
-			//
-			// prepare the HQL query string
-			//
-			StringBuilder selectCommandString = new StringBuilder(1024);
-			selectCommandString.AppendFormat("FROM Study ORDER BY StoreTime_ ");
-
-			//
-			// submit the HQL query
-			//
-			IList studiesFound = null;
-			ISession session = null;
-			ITransaction transaction = null;
-			try
+			public DataStoreReader(ISessionManager sessionManager)
+				: base(sessionManager)
 			{
-				session = this.SessionFactory.OpenSession();
-				transaction = session.BeginTransaction();
-
-				IQuery query = session.CreateQuery(selectCommandString.ToString());
-				studiesFound = query.List();
-			}
-			catch
-			{
-				if (null != transaction)
-					transaction.Rollback();
-				throw;
-			}
-			finally
-			{
-				if (null != session)
-					session.Close();
 			}
 
-			foreach (IStudy study in studiesFound)
+			private static bool StudyExists(ISession session, Uid referenceUid)
 			{
-				yield return study;
+				string queryString = "select count(study) from Study study where study.StudyInstanceUid = ?";
+				IEnumerable results = session.Enumerable(queryString, referenceUid.ToString(), NHibernateUtil.String);
+
+				foreach (int number in results)
+					return number > 0;
+
+				return false;
 			}
-		}
-		
-		public ReadOnlyQueryResultCollection StudyQuery(QueryKey queryKey)
-        {
-            if (null == queryKey)
-				throw new System.ArgumentNullException("queryKey", SR.ExceptionStudyQueryNullKey);
 
-            // prepare the HQL query string
-            //
-            StringBuilder selectCommandString = new StringBuilder(1024);
-			selectCommandString.AppendFormat(" FROM Study as study ");
-
-			bool whereClauseAdded = false;
-
-			IDicomDictionary queryDictionary = DataAccessLayer.GetIDicomDictionary(DicomDictionary.DefaultQueryDictionaryName);
-
-			foreach (DicomTagPath path in queryKey.DicomTagPathCollection)
-            {
-                if (queryKey[path].Length > 0)
-                {
-					//Unsupported query keys are just ignored.
-					if (!queryDictionary.Contains(path))
-						continue;
-
-					DictionaryEntry column = queryDictionary.GetColumn(path);
-
-					if (column.IsComputed)
-						continue;
-
-					StringBuilder nextCriteria = new StringBuilder();
-                    if (path.Equals(DicomTags.ModalitiesInStudy))
-					{
-						//special case for modalities in study since it's not actually in the study table.
-						AppendModalitiesInStudyQuery(queryKey[DicomTags.ModalitiesInStudy], nextCriteria);
-					}
-					else
-					{
-						AppendQuery(queryKey[path], column, nextCriteria);
-					}
-
-					if (nextCriteria.Length == 0)
-						continue;
-
-					if (whereClauseAdded)
-					{
-						selectCommandString.AppendFormat(" AND ");
-					}
-					else
-					{
-						selectCommandString.AppendFormat("WHERE ");
-						whereClauseAdded = true;
-					}
-
-					selectCommandString.Append(nextCriteria.ToString());
-				}
-            }
-
-            //
-            // submit the HQL query
-            //
-            IList studiesFound = null;
-            ISession session = null;
-            ITransaction transaction = null;
-            try
-            {
-                session = this.SessionFactory.OpenSession();
-                transaction = session.BeginTransaction();
-
-				IQuery query = session.CreateQuery(selectCommandString.ToString());
-                studiesFound = query.List();
-            }
-            catch
-            {
-                if (null!=transaction)
-                    transaction.Rollback();
-                throw;
-            }
-            finally
-            {
-                if (null != session)
-                    session.Close();
-            }
-
-			return CompileResults(queryKey, studiesFound);
-		}
-
-        private ReadOnlyQueryResultCollection CompileResults(QueryKey queryKey, IList studiesFound)
-		{
-			// 
-			// compile the query results
-			//
-			QueryResultList results = new QueryResultList();
-
-			foreach (object element in studiesFound)
+			private static bool SeriesExists(ISession session, Uid referenceUid)
 			{
-				Study study = element as Study;
-				QueryResult result = new QueryResult();
+				string queryString = "select count(series) from Series series where series.SeriesInstanceUid = ?";
+				IEnumerable results = session.Enumerable(queryString, referenceUid.ToString(), NHibernateUtil.String);
 
-				IDicomDictionary resultsDictionary = DataAccessLayer.GetIDicomDictionary(DicomDictionary.DefaultResultsDictionaryName);
+				foreach (int number in results)
+					return number > 0;
 
-				foreach (PropertyInfo pi in study.GetType().GetProperties())
+				return false;
+			}
+
+			private static bool SopInstanceExists(ISession session, Uid referenceUid)
+			{
+				string queryString = "select count(sop) from SopInstance sop where sop.SopInstanceUid = ?";
+				IEnumerable results = session.Enumerable(queryString, referenceUid.ToString(), NHibernateUtil.String);
+
+				foreach (int number in results)
+					return number > 0;
+
+				return false;
+			}
+
+			#region IDataStore Members
+
+			public bool StudyExists(Uid referenceUid)
+			{
+				try
 				{
-					string fieldName = pi.Name;
-					if (resultsDictionary.Contains(new TagName(fieldName)))
+					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
 					{
-						// ensure that property actually has a value
-						object fieldValue = pi.GetValue(study, null);
-						if (null == fieldValue)
+						return StudyExists(Session, referenceUid);
+					}
+				}
+				catch (Exception e)
+				{
+					string message = String.Format("An error occurred while attempting to determine whether or not the study {0} exists in the datastore.", referenceUid);
+					throw new DataStoreException(message, e);
+				}
+			}
+
+			public bool SeriesExists(Uid referenceUid)
+			{
+				try
+				{
+					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
+					{
+						return SeriesExists(Session, referenceUid);
+					}
+				}
+				catch (Exception e)
+				{
+					string message = String.Format("An error occurred while attempting to determine whether or not the series {0} exists in the datastore.", referenceUid);
+					throw new DataStoreException(message, e);
+				}
+			}
+
+			public bool SopInstanceExists(Uid referenceUid)
+			{
+				try
+				{
+					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
+					{
+						return SopInstanceExists(Session, referenceUid);
+					}
+				}
+				catch (Exception e)
+				{
+					string message = String.Format("An error occurred while attempting to determine whether or not the sop {0} exists in the datastore.", referenceUid);
+					throw new DataStoreException(message, e);
+				}
+			}
+
+			public IStudy GetStudy(Uid referenceUid)
+			{
+				try
+				{
+					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
+					{
+						if (!StudyExists(Session, referenceUid))
+							return null;
+
+						IList listOfStudies = Session.CreateCriteria(typeof(Study))
+							.Add(Expression.Eq("StudyInstanceUid", referenceUid.ToString()))
+							.SetFetchMode("Series", FetchMode.Eager)
+							.List();
+
+						if (null != listOfStudies && listOfStudies.Count > 0)
+						{
+							Study study = (Study)listOfStudies[0];
+							study.InitializeAssociatedCollection += InitializeAssociatedObject;
+
+							foreach (Series series in study.Series)
+								series.InitializeAssociatedCollection += InitializeAssociatedObject;
+
+							return study;
+						}
+
+						return null;
+					}
+				}
+				catch (Exception e)
+				{
+					string message = String.Format("An error occurred while attempting to retrieve the study '{0}' from the datastore.", referenceUid);
+					throw new DataStoreException(message, e);
+				}
+			}
+
+			public ISeries GetSeries(Uid referenceUid)
+			{
+				try
+				{
+					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
+					{
+						if (!SeriesExists(Session, referenceUid))
+							return null;
+
+						IList listOfSeries = Session.CreateCriteria(typeof(Series))
+							.Add(Expression.Eq("SeriesInstanceUid", referenceUid.ToString()))
+							.SetFetchMode("SopInstances", FetchMode.Lazy)
+							.List();
+
+						if (null != listOfSeries && listOfSeries.Count > 0)
+						{
+							Series series = (Series)listOfSeries[0];
+							series.InitializeAssociatedCollection += InitializeAssociatedObject;
+							return series;
+						}
+
+						return null;
+					}
+				}
+				catch (Exception e)
+				{
+					string message = String.Format("An error occurred while attempting to retrieve the series '{0}' from the datastore.", referenceUid);
+					throw new DataStoreException(message, e);
+				}
+			}
+
+			public ISopInstance GetSopInstance(Uid referenceUid)
+			{
+				try
+				{
+					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
+					{
+						if (!SopInstanceExists(Session, referenceUid))
+							return null;
+
+						IList listOfSops = Session.CreateCriteria(typeof(SopInstance))
+							.Add(Expression.Eq("SopInstanceUid", referenceUid.ToString()))
+							.SetFetchMode("WindowValues_", FetchMode.Eager)
+							.List();
+
+						if (null != listOfSops && listOfSops.Count > 0)
+							return (SopInstance)listOfSops[0];
+
+						return null;
+					}
+				}
+				catch (Exception e)
+				{
+					string message = String.Format("An error occurred while attempting to retrieve the sop '{0}' from the datastore.", referenceUid);
+					throw new DataStoreException(message, e);
+				}
+			}
+
+			public IEnumerable<IStudy> GetStudies()
+			{
+				StringBuilder selectCommandString = new StringBuilder(1024);
+				selectCommandString.AppendFormat("FROM Study ORDER BY StoreTime_ ");
+
+				IList studiesFound = null;
+
+				try
+				{
+					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
+					{
+						IQuery query = Session.CreateQuery(selectCommandString.ToString());
+						studiesFound = query.List();
+					}
+				}
+				catch (Exception e)
+				{
+					string message = "An error occurred while attempting to retrieve all studies from the datastore.";
+					throw new DataStoreException(message, e);
+				}
+
+				if (studiesFound == null)
+				{
+					yield break;
+				}
+				else
+				{
+					foreach (Study study in studiesFound)
+					{
+						study.InitializeAssociatedCollection += InitializeAssociatedObject;
+						foreach (Series series in study.Series)
+							series.InitializeAssociatedCollection += InitializeAssociatedObject;
+
+						yield return study;
+					}
+				}
+			}
+
+			public ReadOnlyQueryResultCollection StudyQuery(QueryKey queryKey)
+			{
+				if (null == queryKey)
+					throw new System.ArgumentNullException("queryKey", SR.ExceptionStudyQueryNullKey);
+
+				StringBuilder selectCommandString = new StringBuilder(1024);
+				selectCommandString.AppendFormat(" FROM Study as study ");
+
+				bool whereClauseAdded = false;
+
+				IDicomDictionary queryDictionary = DataAccessLayer.GetIDicomDictionary(DicomDictionary.DefaultQueryDictionaryName);
+
+				foreach (DicomTagPath path in queryKey.DicomTagPathCollection)
+				{
+					if (queryKey[path].Length > 0)
+					{
+						//Unsupported query keys are just ignored.
+						if (!queryDictionary.Contains(path))
 							continue;
 
-						DictionaryEntry col = resultsDictionary.GetColumn(new TagName(fieldName));
-						result.Add(col.Path, fieldValue.ToString());
+						DictionaryEntry column = queryDictionary.GetColumn(path);
+
+						if (column.IsComputed)
+							continue;
+
+						StringBuilder nextCriteria = new StringBuilder();
+						if (path.Equals(DicomTags.ModalitiesInStudy))
+						{
+							//special case for modalities in study since it's not actually in the study table.
+							AppendModalitiesInStudyQuery(queryKey[DicomTags.ModalitiesInStudy], nextCriteria);
+						}
+						else
+						{
+							AppendQuery(queryKey[path], column, nextCriteria);
+						}
+
+						if (nextCriteria.Length == 0)
+							continue;
+
+						if (whereClauseAdded)
+						{
+							selectCommandString.AppendFormat(" AND ");
+						}
+						else
+						{
+							selectCommandString.AppendFormat("WHERE ");
+							whereClauseAdded = true;
+						}
+
+						selectCommandString.Append(nextCriteria.ToString());
 					}
 				}
 
-				Dictionary<string, string> setModalities = new Dictionary<string, string>();
-				foreach (Series series in study.Series)
-					setModalities[series.Modality] = series.Modality;
-
-				string modalities = DicomStringHelper.GetDicomStringArray<string>(setModalities.Keys);
-				result.Add(DicomTags.ModalitiesInStudy, modalities);
-
-				results.Add(result);
-			}
-
-            return new ReadOnlyQueryResultCollection(results); 
-        }
-
-		private void AppendQuery(string queryKeyString, DictionaryEntry column, StringBuilder returnBuilder)
-		{ 
-			string newQueryKeyString = StandardizeQueryKey(queryKeyString);
-
-			if (column.ValueRepresentation == "UI")
-			{
-				AppendListOfUidQuery(newQueryKeyString, column.TagName.ToString(), returnBuilder);
-			}
-			else if (column.ValueRepresentation == "DA")
-			{
-				AppendDateQuery(newQueryKeyString, column.TagName.ToString(), returnBuilder);
-			}
-			else if (column.ValueRepresentation == "TM")
-			{
-				// Unsupported at this time.
-				//AppendTimeQuery(...)
-			}
-			else if (column.ValueRepresentation == "DT")
-			{
-				// Unsupported at this time.
-				//AppendDateTimeQuery(...)
-			}
-			else if (IsWildCardQuery(newQueryKeyString, column))
-			{
-				AppendWildCardQuery(newQueryKeyString, column.TagName.ToString(), returnBuilder);
-			}
-			else
-			{
-				AppendSingleValueQuery(newQueryKeyString, column.TagName.ToString(), returnBuilder);
-			}
-		}
-
-		private void AppendModalitiesInStudyQuery(string modalitiesInStudyQuery, StringBuilder returnBuilder)
-		{
-			if (String.IsNullOrEmpty(modalitiesInStudyQuery))
-				return;
-
-			if (ContainsWildCards(modalitiesInStudyQuery))
-			{
-				returnBuilder.AppendFormat("exists(from study.InternalSeries as series where series.Modality like '{0}')", modalitiesInStudyQuery);
-			}
-			else
-			{
-				List<string> modalities = new List<string>(DicomStringHelper.GetStringArray(modalitiesInStudyQuery));
-				string modalitiesList = StringUtilities.Combine<string>(modalities, ", ", delegate(string value) { return String.Format("'{0}'", value); });
-				returnBuilder.AppendFormat("exists(from study.InternalSeries as series where series.Modality in ( {0} ))", modalitiesList);
-			}
-		}
-
-		private void AppendListOfUidQuery(string listOfUidQueryString, string columnName, StringBuilder returnBuilder)
-		{
-			if (String.IsNullOrEmpty(listOfUidQueryString))
-				return;
-
-			List<string> uids = new List<string>(DicomStringHelper.GetStringArray(listOfUidQueryString));
-			string uidList = StringUtilities.Combine<string>(uids, ", ", delegate(string value) { return String.Format("'{0}'", value); });
-			returnBuilder.AppendFormat("{0} in ( {1} )", columnName + "_", uidList);
-		}
-
-		private void AppendDateQuery(string dateQueryString, string columnName, StringBuilder returnBuilder)
-		{
-			string fromDate, toDate;
-			bool isRange;
-
-			try
-			{
-				DateRangeHelper.Parse(dateQueryString, out fromDate, out toDate, out isRange);
-			}
-			catch (Exception e)
-			{
-				throw;
-			}
-
-			StringBuilder dateRangeQueryBuilder = new StringBuilder();
-
-			if (fromDate != "")
-			{
-				//When a dicom date is specified with no '-', it is to be taken as an exact date.
-				if (!isRange)
+				//
+				// submit the HQL query
+				//
+				IList studiesFound = null;
+				try
 				{
-					dateRangeQueryBuilder.AppendFormat("( {0} = '{1}' )", columnName + "_", fromDate.ToString());
+					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
+					{
+						IQuery query = Session.CreateQuery(selectCommandString.ToString());
+						studiesFound = query.List();
+					}
+				}
+				catch (Exception e)
+				{
+					string message = "An error occurred while attempting to perform a study query.";
+					throw new DataStoreException(message, e);
+				}
+
+				return CompileResults(queryKey, studiesFound);
+			}
+
+			private ReadOnlyQueryResultCollection CompileResults(QueryKey queryKey, IList studiesFound)
+			{
+				QueryResultList results = new QueryResultList();
+
+				foreach (object element in studiesFound)
+				{
+					Study study = (Study)element;
+					QueryResult result = new QueryResult();
+
+					IDicomDictionary resultsDictionary = DataAccessLayer.GetIDicomDictionary(DicomDictionary.DefaultResultsDictionaryName);
+
+					foreach (PropertyInfo pi in study.GetType().GetProperties())
+					{
+						string fieldName = pi.Name;
+						if (resultsDictionary.Contains(new TagName(fieldName)))
+						{
+							// ensure that property actually has a value
+							object fieldValue = pi.GetValue(study, null);
+							if (null == fieldValue)
+								continue;
+
+							DictionaryEntry col = resultsDictionary.GetColumn(new TagName(fieldName));
+							result.Add(col.Path, fieldValue.ToString());
+						}
+					}
+
+					Dictionary<string, string> setModalities = new Dictionary<string, string>();
+					foreach (Series series in study.Series)
+						setModalities[series.Modality] = series.Modality;
+
+					string modalities = DicomStringHelper.GetDicomStringArray<string>(setModalities.Keys);
+					result.Add(DicomTags.ModalitiesInStudy, modalities);
+
+					results.Add(result);
+				}
+
+				return new ReadOnlyQueryResultCollection(results);
+			}
+
+			private void AppendQuery(string queryKeyString, DictionaryEntry column, StringBuilder returnBuilder)
+			{
+				string newQueryKeyString = StandardizeQueryKey(queryKeyString);
+
+				if (column.ValueRepresentation == "UI")
+				{
+					AppendListOfUidQuery(newQueryKeyString, column.TagName.ToString(), returnBuilder);
+				}
+				else if (column.ValueRepresentation == "DA")
+				{
+					AppendDateQuery(newQueryKeyString, column.TagName.ToString(), returnBuilder);
+				}
+				else if (column.ValueRepresentation == "TM")
+				{
+					// Unsupported at this time.
+					//AppendTimeQuery(...)
+				}
+				else if (column.ValueRepresentation == "DT")
+				{
+					// Unsupported at this time.
+					//AppendDateTimeQuery(...)
+				}
+				else if (IsWildCardQuery(newQueryKeyString, column))
+				{
+					AppendWildCardQuery(newQueryKeyString, column.TagName.ToString(), returnBuilder);
 				}
 				else
 				{
-					dateRangeQueryBuilder.AppendFormat("( {0} IS NOT NULL AND {0} >= '{1}' )", columnName + "_", fromDate);
+					AppendSingleValueQuery(newQueryKeyString, column.TagName.ToString(), returnBuilder);
 				}
 			}
 
-			if (toDate != "")
+			private void AppendModalitiesInStudyQuery(string modalitiesInStudyQuery, StringBuilder returnBuilder)
 			{
-				if (fromDate == "")
-					dateRangeQueryBuilder.AppendFormat("( {0} IS NULL OR ", columnName + "_");
-				else
-					dateRangeQueryBuilder.AppendFormat(" AND (");
+				if (String.IsNullOrEmpty(modalitiesInStudyQuery))
+					return;
 
-				dateRangeQueryBuilder.AppendFormat("{0} <= '{1}' )", columnName + "_", toDate);
+				if (ContainsWildCards(modalitiesInStudyQuery))
+				{
+					returnBuilder.AppendFormat("exists(from study.InternalSeries as series where series.Modality like '{0}')", modalitiesInStudyQuery);
+				}
+				else
+				{
+					List<string> modalities = new List<string>(DicomStringHelper.GetStringArray(modalitiesInStudyQuery));
+					string modalitiesList = StringUtilities.Combine<string>(modalities, ", ", delegate(string value) { return String.Format("'{0}'", value); });
+					returnBuilder.AppendFormat("exists(from study.InternalSeries as series where series.Modality in ( {0} ))", modalitiesList);
+				}
 			}
 
-			returnBuilder.AppendFormat("({0})", dateRangeQueryBuilder.ToString());
-		}
-
-		private void AppendWildCardQuery(string wildCardQuery, string columnName, StringBuilder returnBuilder)
-		{
-			string newWildCardQuery = wildCardQuery.Replace("*", "%");
-
-			// don't forget to append the trailing underscore for column names
-			returnBuilder.AppendFormat("{0} LIKE '{1}'", columnName + "_", newWildCardQuery);
-		}
-
-		private void AppendSingleValueQuery(string exactQueryString, string columnName, StringBuilder returnBuilder)
-		{
-			returnBuilder.AppendFormat("{0} = '{1}'", columnName + "_", exactQueryString);
-		}
-
-		private bool IsWildCardQuery(string queryStringCandidate, DictionaryEntry column)
-		{
-			string[] excludeVRs = { "DA", "TM", "DT", "SL", "SS", "US", "UL", "FL", "FD", "OB", "OW", "UN", "AT", "DS", "IS", "AS", "UI" };
-			foreach (string excludeVR in excludeVRs)
+			private void AppendListOfUidQuery(string listOfUidQueryString, string columnName, StringBuilder returnBuilder)
 			{
-				if (0 == String.Compare(excludeVR, column.ValueRepresentation, true))
+				if (String.IsNullOrEmpty(listOfUidQueryString))
+					return;
+
+				List<string> uids = new List<string>(DicomStringHelper.GetStringArray(listOfUidQueryString));
+				string uidList = StringUtilities.Combine<string>(uids, ", ", delegate(string value) { return String.Format("'{0}'", value); });
+				returnBuilder.AppendFormat("{0} in ( {1} )", columnName + "_", uidList);
+			}
+
+			private void AppendDateQuery(string dateQueryString, string columnName, StringBuilder returnBuilder)
+			{
+				string fromDate, toDate;
+				bool isRange;
+
+				try
+				{
+					DateRangeHelper.Parse(dateQueryString, out fromDate, out toDate, out isRange);
+				}
+				catch (Exception e)
+				{
+					throw;
+				}
+
+				StringBuilder dateRangeQueryBuilder = new StringBuilder();
+
+				if (fromDate != "")
+				{
+					//When a dicom date is specified with no '-', it is to be taken as an exact date.
+					if (!isRange)
+					{
+						dateRangeQueryBuilder.AppendFormat("( {0} = '{1}' )", columnName + "_", fromDate.ToString());
+					}
+					else
+					{
+						dateRangeQueryBuilder.AppendFormat("( {0} IS NOT NULL AND {0} >= '{1}' )", columnName + "_", fromDate);
+					}
+				}
+
+				if (toDate != "")
+				{
+					if (fromDate == "")
+						dateRangeQueryBuilder.AppendFormat("( {0} IS NULL OR ", columnName + "_");
+					else
+						dateRangeQueryBuilder.AppendFormat(" AND (");
+
+					dateRangeQueryBuilder.AppendFormat("{0} <= '{1}' )", columnName + "_", toDate);
+				}
+
+				returnBuilder.AppendFormat("({0})", dateRangeQueryBuilder.ToString());
+			}
+
+			private void AppendWildCardQuery(string wildCardQuery, string columnName, StringBuilder returnBuilder)
+			{
+				string newWildCardQuery = wildCardQuery.Replace("*", "%");
+
+				// don't forget to append the trailing underscore for column names
+				returnBuilder.AppendFormat("{0} LIKE '{1}'", columnName + "_", newWildCardQuery);
+			}
+
+			private void AppendSingleValueQuery(string exactQueryString, string columnName, StringBuilder returnBuilder)
+			{
+				returnBuilder.AppendFormat("{0} = '{1}'", columnName + "_", exactQueryString);
+			}
+
+			private bool IsWildCardQuery(string queryStringCandidate, DictionaryEntry column)
+			{
+				string[] excludeVRs = { "DA", "TM", "DT", "SL", "SS", "US", "UL", "FL", "FD", "OB", "OW", "UN", "AT", "DS", "IS", "AS", "UI" };
+				foreach (string excludeVR in excludeVRs)
+				{
+					if (0 == String.Compare(excludeVR, column.ValueRepresentation, true))
+						return false;
+				}
+
+				return ContainsWildCards(queryStringCandidate);
+			}
+
+			private bool ContainsWildCards(string queryString)
+			{
+				string wildcardChars = "?*";
+
+				if (queryString.IndexOfAny(wildcardChars.ToCharArray()) < 0)
 					return false;
+
+				return true;
 			}
 
-			return ContainsWildCards(queryStringCandidate);
+			private string StandardizeQueryKey(string inputQueryKeyString)
+			{
+				return inputQueryKeyString.Replace("'", "''");
+			}
+
+			#endregion
 		}
-
-		private bool ContainsWildCards(string queryString)
-		{
-			string wildcardChars = "?*";
-
-			if (queryString.IndexOfAny(wildcardChars.ToCharArray()) < 0)
-				return false;
-
-			return true;
-		}
-
-        private string StandardizeQueryKey(string inputQueryKeyString)
-        {
-			return inputQueryKeyString.Replace("'", "''");
-        }
-
-        #endregion
-    }
+	}
 }

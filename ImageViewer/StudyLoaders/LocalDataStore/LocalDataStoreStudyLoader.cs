@@ -31,11 +31,14 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 
 		public int Start(string studyInstanceUID)
 		{
-			IStudy study = DataAccessLayer.GetIDataStoreReader().GetStudy(new Uid(studyInstanceUID));
-			_sops = new List<ISopInstance>(study.GetSopInstances()).GetEnumerator();
-			_sops.Reset();
+			using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+			{
+				IStudy study = reader.GetStudy(new Uid(studyInstanceUID));
+				_sops = new List<ISopInstance>(study.GetSopInstances()).GetEnumerator();
+				_sops.Reset();
 
-			return study.GetNumberOfSopInstances();
+				return study.GetNumberOfSopInstances();
+			}
 		}
 
 		public ImageSop LoadNextImage()

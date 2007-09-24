@@ -2,78 +2,95 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Common;
 using Iesi.Collections;
 using NHibernate;
 using NHibernate.Collection;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public class Series : ISeries
+	public class Series : PersistentDicomObject, ISeries, IEquatable<Series>
     {
-        #region Handcoded Members
-        
 		public delegate void InitializeAssociatedCollectionCallback(object domainObject, PersistentCollection associatedCollection);
         public InitializeAssociatedCollectionCallback InitializeAssociatedCollection;
 
-        public Series()
+		#region Private Fields
+
+    	private Guid _seriesOid;
+    	private string _seriesInstanceUid;
+    	private string _modality;
+    	private string _laterality;
+    	private int _seriesNumber;
+    	private string _seriesDescription;
+		private string _specificCharacterSet;
+		private Study _parentStudy;
+		private readonly ISet _internalSopInstances;
+		
+		#endregion
+
+		public Series()
         {
             _internalSopInstances = new HybridSet();
         }
 
-        protected virtual Guid SeriesOid
+		#region NHibernate Persistent Properties
+
+		protected virtual Guid SeriesOid
         {
             get { return _seriesOid; }
-            set { _seriesOid = value; }
+			set { _seriesOid = value; }
         }
 
         public virtual string SeriesInstanceUid
         {
             get { return _seriesInstanceUid; }
-            set { _seriesInstanceUid = value; }
+			set { SetClassMember(ref _seriesInstanceUid, value); }
         }
 
         public virtual string Modality
         {
             get { return _modality; }
-            set { _modality = value; }
+			set { SetClassMember(ref _modality, value); }
         }
 
-        public virtual int SeriesNumber
+    	public virtual string Laterality
+    	{
+    		get { return _laterality; }
+			set { SetClassMember(ref _laterality, value); }
+    	}
+
+    	public virtual int SeriesNumber
         {
             get { return _seriesNumber; }
-            set { _seriesNumber = value; }
+			set { SetValueTypeMember(ref _seriesNumber, value); }
         }
 
-        public virtual string Laterality
-        {
-            get { return _laterality; }
-            set { _laterality = value; }
-        }
-
-        public virtual string SeriesDescription
+    	public virtual string SeriesDescription
         {
             get { return _seriesDescription; }
-            set { _seriesDescription = value; }
+			set { SetClassMember(ref _seriesDescription, value); }
         }
 
         public virtual string SpecificCharacterSet
         {
             get { return _specificCharacterSet; }
-            set { _specificCharacterSet = value; }
+			set { SetClassMember(ref _specificCharacterSet, value); }
         }
 
         public virtual Study Study
         {
             get { return _parentStudy; }
-            set { _parentStudy = value; }
-        }
+			set { SetClassMember(ref _parentStudy, value); }
+		}
 
         protected virtual ISet InternalSopInstances
         {
             get { return _internalSopInstances; }
-        }
+		}
 
-        public virtual ISet SopInstances
+		#endregion
+
+		public virtual ISet SopInstances
         {
             get
             {
@@ -84,16 +101,24 @@ namespace ClearCanvas.Dicom.DataStore
             }
         }
 
-        public override bool Equals(object obj)
+    	#region IEquatable<Series> Members
+
+    	public bool Equals(Series other)
+    	{
+			return (this.SeriesInstanceUid == other.SeriesInstanceUid);
+    	}
+
+    	#endregion
+
+    	public override bool Equals(object obj)
         {
             if (this == obj)
                 return true;
 
-			Series other = obj as Series;
-            if (null == other)
-                return false; // null or not a series
+			if (obj is Series)
+				return this.Equals((Series) obj);
 
-			return (this.SeriesInstanceUid == other.SeriesInstanceUid);
+			return false;
         }
 
         public override int GetHashCode()
@@ -108,21 +133,6 @@ namespace ClearCanvas.Dicom.DataStore
             }
             return accumulator;
         }
-
-        #region Private Members
-
-        Guid _seriesOid;
-        string _seriesInstanceUid;
-        string _modality;
-        int _seriesNumber;
-        string _laterality;
-        string _seriesDescription;
-        string _specificCharacterSet;
-        ISet _internalSopInstances;
-        Study _parentStudy;
-
-		#endregion //Private Members
-		#endregion //Handcoded Members
 
 		#region ISeries Members
 
@@ -166,5 +176,41 @@ namespace ClearCanvas.Dicom.DataStore
         }
 
         #endregion
-    }
+
+		#region Helper Methods
+
+		public void Update(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset)
+		{
+			DicomAttribute attribute = sopInstanceDataset[DicomTags.SeriesInstanceUid];
+			if (!String.IsNullOrEmpty(SeriesInstanceUid) && SeriesInstanceUid != attribute.ToString())
+			{
+				throw new InvalidOperationException("Can only update an existing series from a Dicom data set with the same SeriesInstanceUid.");
+			}
+			else
+			{
+				this.SeriesInstanceUid = attribute.ToString();
+			}
+
+			Platform.CheckForEmptyString(SeriesInstanceUid, "SeriesInstanceUid");
+
+			attribute = sopInstanceDataset[DicomTags.Modality];
+			Modality = attribute.ToString();
+
+			attribute = sopInstanceDataset[DicomTags.Laterality];
+			Laterality = attribute.ToString();
+
+			attribute = sopInstanceDataset[DicomTags.SeriesNumber];
+			int intValue;
+			attribute.TryGetInt32(0, out intValue);
+			SeriesNumber = intValue;
+
+			attribute = sopInstanceDataset[DicomTags.SeriesDescription];
+			SeriesDescription = attribute.ToString();
+
+			attribute = sopInstanceDataset[DicomTags.SpecificCharacterSet];
+			SpecificCharacterSet = attribute.ToString();
+		}
+
+    	#endregion
+	}
 }

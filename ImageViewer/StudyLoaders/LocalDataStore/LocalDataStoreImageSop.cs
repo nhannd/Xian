@@ -289,7 +289,10 @@ namespace ClearCanvas.ImageViewer.StudyLoaders.LocalDataStore
 				List<Window> windowCentersAndWidths = new List<Window>();
 				
 				foreach(object existingWindow in this.DataStoreImageSopInstance.WindowValues)
-					windowCentersAndWidths.Add(new Window((Window)existingWindow));
+				{
+					Window window = (Window) existingWindow;
+					windowCentersAndWidths.Add(new Window(window.Width, window.Center));
+				}
 				
 				return windowCentersAndWidths.ToArray();
             }
