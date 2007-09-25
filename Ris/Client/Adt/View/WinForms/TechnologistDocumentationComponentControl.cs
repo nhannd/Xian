@@ -31,5 +31,11 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             tableViewDocumentationDetails.MenuModel = _component.MppsTableActionModel;
             tableViewDocumentationDetails.ToolbarModel = _component.MppsTableActionModel;
         }
+
+        private void TechnologistDocumentationComponentControl_Load(object sender, EventArgs e)
+        {
+            treeProcedurePlan.ExpandAll();
+            tabControlDetails.SelectTab(tabPageDocumentationDetails);
+        }
     }
 }

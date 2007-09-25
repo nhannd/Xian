@@ -44,8 +44,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tabPageAdditionalDetails = new System.Windows.Forms.TabPage();
             this.panelAdditionalDetails = new System.Windows.Forms.Panel();
             this.browserAdditionalDetails = new System.Windows.Forms.WebBrowser();
-            this.tabControl2 = new System.Windows.Forms.TabControl();
-            this.tabPage3 = new System.Windows.Forms.TabPage();
+            this.tabControlDetails = new System.Windows.Forms.TabControl();
+            this.tabPageDocumentationDetails = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelDocumentationDetails = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this.buttonCompleteDocumentationDetails = new System.Windows.Forms.Button();
@@ -73,8 +73,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tabPageProcedurePlan.SuspendLayout();
             this.tabPageAdditionalDetails.SuspendLayout();
             this.panelAdditionalDetails.SuspendLayout();
-            this.tabControl2.SuspendLayout();
-            this.tabPage3.SuspendLayout();
+            this.tabControlDetails.SuspendLayout();
+            this.tabPageDocumentationDetails.SuspendLayout();
             this.tableLayoutPanelDocumentationDetails.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
             this.splitContainerDocumentationDetails.Panel1.SuspendLayout();
@@ -137,7 +137,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             // 
             // splitContainerRoot.Panel2
             // 
-            this.splitContainerRoot.Panel2.Controls.Add(this.tabControl2);
+            this.splitContainerRoot.Panel2.Controls.Add(this.tabControlDetails);
             this.splitContainerRoot.Size = new System.Drawing.Size(1027, 609);
             this.splitContainerRoot.SplitterDistance = 269;
             this.splitContainerRoot.TabIndex = 1;
@@ -263,28 +263,28 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.browserAdditionalDetails.Size = new System.Drawing.Size(245, 250);
             this.browserAdditionalDetails.TabIndex = 0;
             // 
-            // tabControl2
+            // tabControlDetails
             // 
-            this.tabControl2.Controls.Add(this.tabPage3);
-            this.tabControl2.Controls.Add(this.tabPagePreExam);
-            this.tabControl2.Controls.Add(this.tabPagePostExam);
-            this.tabControl2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tabControl2.Location = new System.Drawing.Point(0, 0);
-            this.tabControl2.Name = "tabControl2";
-            this.tabControl2.SelectedIndex = 0;
-            this.tabControl2.Size = new System.Drawing.Size(754, 609);
-            this.tabControl2.TabIndex = 0;
+            this.tabControlDetails.Controls.Add(this.tabPagePreExam);
+            this.tabControlDetails.Controls.Add(this.tabPageDocumentationDetails);
+            this.tabControlDetails.Controls.Add(this.tabPagePostExam);
+            this.tabControlDetails.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tabControlDetails.Location = new System.Drawing.Point(0, 0);
+            this.tabControlDetails.Name = "tabControlDetails";
+            this.tabControlDetails.SelectedIndex = 0;
+            this.tabControlDetails.Size = new System.Drawing.Size(754, 609);
+            this.tabControlDetails.TabIndex = 0;
             // 
-            // tabPage3
+            // tabPageDocumentationDetails
             // 
-            this.tabPage3.Controls.Add(this.tableLayoutPanelDocumentationDetails);
-            this.tabPage3.Location = new System.Drawing.Point(4, 22);
-            this.tabPage3.Name = "tabPage3";
-            this.tabPage3.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage3.Size = new System.Drawing.Size(746, 583);
-            this.tabPage3.TabIndex = 0;
-            this.tabPage3.Text = "Documentation Details";
-            this.tabPage3.UseVisualStyleBackColor = true;
+            this.tabPageDocumentationDetails.Controls.Add(this.tableLayoutPanelDocumentationDetails);
+            this.tabPageDocumentationDetails.Location = new System.Drawing.Point(4, 22);
+            this.tabPageDocumentationDetails.Name = "tabPageDocumentationDetails";
+            this.tabPageDocumentationDetails.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPageDocumentationDetails.Size = new System.Drawing.Size(746, 583);
+            this.tabPageDocumentationDetails.TabIndex = 0;
+            this.tabPageDocumentationDetails.Text = "Documentation Details";
+            this.tabPageDocumentationDetails.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanelDocumentationDetails
             // 
@@ -352,6 +352,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableViewDocumentationDetails.Name = "tableViewDocumentationDetails";
             this.tableViewDocumentationDetails.ReadOnly = false;
             this.tableViewDocumentationDetails.Selection = selection2;
+            this.tableViewDocumentationDetails.ShowToolbar = false;
             this.tableViewDocumentationDetails.Size = new System.Drawing.Size(734, 183);
             this.tableViewDocumentationDetails.TabIndex = 0;
             this.tableViewDocumentationDetails.Table = null;
@@ -447,6 +448,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.Controls.Add(this.tableLayoutPanelRoot);
             this.Name = "TechnologistDocumentationComponentControl";
             this.Size = new System.Drawing.Size(1033, 650);
+            this.Load += new System.EventHandler(this.TechnologistDocumentationComponentControl_Load);
             this.tableLayoutPanelRoot.ResumeLayout(false);
             this.tableLayoutPanelRoot.PerformLayout();
             this.flowLayoutPanel1.ResumeLayout(false);
@@ -463,9 +465,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tabPageProcedurePlan.PerformLayout();
             this.tabPageAdditionalDetails.ResumeLayout(false);
             this.panelAdditionalDetails.ResumeLayout(false);
-            this.tabControl2.ResumeLayout(false);
-            this.tabPage3.ResumeLayout(false);
-            this.tabPage3.PerformLayout();
+            this.tabControlDetails.ResumeLayout(false);
+            this.tabPageDocumentationDetails.ResumeLayout(false);
+            this.tabPageDocumentationDetails.PerformLayout();
             this.tableLayoutPanelDocumentationDetails.ResumeLayout(false);
             this.tableLayoutPanelDocumentationDetails.PerformLayout();
             this.flowLayoutPanel2.ResumeLayout(false);
@@ -493,8 +495,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tabPageProcedurePlan;
         private System.Windows.Forms.TabPage tabPageAdditionalDetails;
-        private System.Windows.Forms.TabControl tabControl2;
-        private System.Windows.Forms.TabPage tabPage3;
+        private System.Windows.Forms.TabControl tabControlDetails;
+        private System.Windows.Forms.TabPage tabPageDocumentationDetails;
         private System.Windows.Forms.TabPage tabPagePreExam;
         private System.Windows.Forms.TabPage tabPagePostExam;
         private System.Windows.Forms.Panel panel1;
