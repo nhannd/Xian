@@ -8,13 +8,17 @@ using System.IO;
 namespace ClearCanvas.Common.Utilities
 {
     /// <summary>
-    /// Default implementation of <see cref="IResourceResolver"/>.  Resolves resources by searching the set of
-    /// assemblies (specified in the constructor) in order for a matching resource.
+    /// Default implementation of <see cref="IResourceResolver"/>.
     /// </summary>
+    /// <remarks>
+    /// Resolves resources by searching the set of assemblies (specified in the constructor)
+    /// in order for a matching resource.  This class is thread-safe.
+    /// </remarks>
     public class ResourceResolver : IResourceResolver
     {
         /// <summary>
-        /// Cache of string resource managers for each assembly
+        /// Cache of string resource managers for each assembly.  This field is accessed in only one method,
+        /// GetStringResourceManagers().  This is important from a thread-sync point of view.
         /// </summary>
         private static Dictionary<Assembly, List<ResourceManager>> _mapStringResourceManagers = new Dictionary<Assembly, List<ResourceManager>>();
 
@@ -116,13 +120,15 @@ namespace ClearCanvas.Common.Utilities
 			{
 				foreach (string match in GetResourcesEndingWith(asm, exactMatch))
 				{
+                    // Assembly type is thread-safe, so this call is ok
 					return asm.GetManifestResourceStream(match);
 				}
 
 				//next we'll just try to find the first match ending with the resource name.
 				foreach (string match in GetResourcesEndingWith(asm, resourceName))
 				{
-					return asm.GetManifestResourceStream(match);
+                    // Assembly type is thread-safe, so this call is ok
+                    return asm.GetManifestResourceStream(match);
 				}
 			}
 
@@ -141,6 +147,7 @@ namespace ClearCanvas.Common.Utilities
         {
             foreach (ResourceManager resourceManager in GetStringResourceManagers(asm))
             {
+                // resource managers are thread-safe (according to MSDN)
                 string resolved = resourceManager.GetString(stringTableKey);
                 if (resolved != null)
                     return resolved;
@@ -156,16 +163,22 @@ namespace ClearCanvas.Common.Utilities
         /// <returns></returns>
         private static List<ResourceManager> GetStringResourceManagers(Assembly asm)
         {
-            if (!_mapStringResourceManagers.ContainsKey(asm))
+            // I'm not sure if there is a more efficient implementation than locking this entire code-block
+            // but this seems to be the safest thing to do right now - we don't want one thread reading from
+            // the map while another is updating it
+            lock (_mapStringResourceManagers)
             {
-                List<ResourceManager> resourceManagers = new List<ResourceManager>();
-                foreach(string stringResource in GetResourcesEndingWith(asm, "SR.resources"))
+                if (!_mapStringResourceManagers.ContainsKey(asm))
                 {
-                    resourceManagers.Add(new ResourceManager(stringResource.Replace(".resources", ""), asm));
+                    List<ResourceManager> resourceManagers = new List<ResourceManager>();
+                    foreach (string stringResource in GetResourcesEndingWith(asm, "SR.resources"))
+                    {
+                        resourceManagers.Add(new ResourceManager(stringResource.Replace(".resources", ""), asm));
+                    }
+                    _mapStringResourceManagers[asm] = resourceManagers;
                 }
-                _mapStringResourceManagers.Add(asm, resourceManagers);
+                return _mapStringResourceManagers[asm];
             }
-            return _mapStringResourceManagers[asm];
         }
 
         /// <summary>
@@ -177,6 +190,8 @@ namespace ClearCanvas.Common.Utilities
         private static string[] GetResourcesEndingWith(Assembly asm, string endingWith)
         {
             List<string> stringResources = new List<string>();
+
+            // Assembly type is thread-safe, so this call is ok
             foreach (string resName in asm.GetManifestResourceNames())
             {
                 if (resName.EndsWith(endingWith))
