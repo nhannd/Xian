@@ -12,9 +12,6 @@ namespace ClearCanvas.Dicom.DataStore
 		int GetNumberOfSeries();
 		IEnumerable<ISeries> GetSeries();
 
-		void AddSeries(ISeries series);
-		void RemoveSeries(ISeries series);
-
 		int GetNumberOfSopInstances(); 
 		IEnumerable<ISopInstance> GetSopInstances();
     }

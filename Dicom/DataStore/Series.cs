@@ -136,6 +136,16 @@ namespace ClearCanvas.Dicom.DataStore
 
 		#region ISeries Members
 
+		public Uid GetSeriesInstanceUid()
+		{
+			return new Uid(this.SeriesInstanceUid);
+		}
+
+		public IStudy GetParentStudy()
+		{
+			return this.Study;
+		}
+
 		public int GetNumberOfSopInstances()
 		{
 			return this.SopInstances.Count;
@@ -149,32 +159,6 @@ namespace ClearCanvas.Dicom.DataStore
             }
         }
 
-        public void AddSopInstance(ISopInstance sop)
-        {
-            sop.SetParentSeries(this);
-            this.SopInstances.Add(sop);
-        }
-        
-        public void RemoveSopInstance(ISopInstance sop)
-        {
-			this.SopInstances.Remove(sop);
-        }
-
-        public Uid GetSeriesInstanceUid()
-        {
-            return new Uid(this.SeriesInstanceUid);
-        }
-
-        public void SetParentStudy(IStudy study)
-        {
-            this.Study = study as Study;
-        }
-
-        public IStudy GetParentStudy()
-        {
-            return this.Study;
-        }
-
         #endregion
 
 		#region Helper Methods
@@ -184,7 +168,7 @@ namespace ClearCanvas.Dicom.DataStore
 			DicomAttribute attribute = sopInstanceDataset[DicomTags.SeriesInstanceUid];
 			if (!String.IsNullOrEmpty(SeriesInstanceUid) && SeriesInstanceUid != attribute.ToString())
 			{
-				throw new InvalidOperationException("Can only update an existing series from a Dicom data set with the same SeriesInstanceUid.");
+				throw new InvalidOperationException(SR.ExceptionCanOnlyUpdateExistingSeriesWithSameSeriesUid);
 			}
 			else
 			{

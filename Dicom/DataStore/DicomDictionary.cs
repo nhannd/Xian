@@ -21,39 +21,28 @@ namespace ClearCanvas.Dicom.DataStore
 			private readonly Dictionary<string, DictionaryEntry> _tagNameToColumnDictionary;
 			private readonly Dictionary<string, DictionaryEntry> _pathToColumnDictionary;
 
-			private DicomDictionary(string dictionaryName)
-			{
-				_dictionaryName = dictionaryName;
-				_pathToColumnDictionary = new Dictionary<string, DictionaryEntry>();
-				_tagNameToColumnDictionary = new Dictionary<string, DictionaryEntry>();
-			}
-
-			public string DictionaryName
-			{
-				get { return _dictionaryName; }
-			}
-
-			public static DicomDictionary Load(ISessionManager sessionManager)
-			{
-				return Load(sessionManager, DefaultDictionaryName);
-			}
-
-			public static DicomDictionary Load(ISessionManager sessionManager, string dictionaryName)
+			public DicomDictionary(ISessionManager sessionManager, string dictionaryName)
 			{
 				try
 				{
 					Platform.CheckForNullReference(sessionManager, "sessionManager");
 					Platform.CheckForEmptyString(dictionaryName, "dictionaryName");
 
-					DicomDictionary dictionary = new DicomDictionary(dictionaryName);
+					_dictionaryName = dictionaryName;
+					_pathToColumnDictionary = new Dictionary<string, DictionaryEntry>();
+					_tagNameToColumnDictionary = new Dictionary<string, DictionaryEntry>();
 
-					dictionary.LoadInternal(sessionManager);
-					return dictionary;
+					LoadInternal(sessionManager);
 				}
 				finally
 				{
 					sessionManager.Dispose();
 				}
+			}
+
+			public string DictionaryName
+			{
+				get { return _dictionaryName; }
 			}
 
 			private void LoadInternal(ISessionManager sessionManager)

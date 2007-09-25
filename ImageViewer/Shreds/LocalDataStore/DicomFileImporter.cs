@@ -663,7 +663,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						foreach (ImportJobInformation item in items)
 						{
 							IFileImportInformation info = (IFileImportInformation)item.FileImportInformation;
-							store.InsertSopInstance(info.MetaInfo, info.DataSet, item.FileImportInformation.StoredFile);
+							store.UpdateSopInstance(info.MetaInfo, info.DataSet, item.FileImportInformation.StoredFile);
 						}
 
 						store.Commit();

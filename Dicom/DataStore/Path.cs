@@ -8,10 +8,9 @@ namespace ClearCanvas.Dicom.DataStore
 	{
 		#region NHibernate-specific members
 		/// <summary>
-		/// Mandatory constructor for NHibernate.
+		/// Constructor for NHibernate.
 		/// </summary>
-		public Path()
-			: base()
+		private Path()
 		{
 		}
 

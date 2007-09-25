@@ -123,28 +123,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 			#region IDicomPersistentStore Members
 
-			public void ClearAllStudies()
-			{
-				using (IDataStoreWriter writer = DataAccessLayer.GetIDataStoreWriter())
-				{
-					writer.ClearAllStudies();
-				}
-			}
-
-			public void RemoveStudies(IEnumerable<IStudy> studies)
-			{
-				using (IDataStoreWriter writer = DataAccessLayer.GetIDataStoreWriter())
-				{
-					writer.RemoveStudies(studies);
-				}
-			}
-
-			public void RemoveStudy(IStudy study)
-			{
-				RemoveStudies(new IStudy[] { study });
-			}
-
-			public void InsertSopInstance(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset, string fileName)
+			public void UpdateSopInstance(DicomAttributeCollection metaInfo, DicomAttributeCollection sopInstanceDataset, string fileName)
 			{
 				string studyInstanceUid = sopInstanceDataset[DicomTags.StudyInstanceUid];
 				string seriesInstanceUid = sopInstanceDataset[DicomTags.SeriesInstanceUid];
@@ -179,9 +158,7 @@ namespace ClearCanvas.Dicom.DataStore
 				{
 					if (series.Study != study)
 					{
-						string message =
-							String.Format("The SeriesInstanceUid '{0}' already belongs to a different existing study ('{1}').",
-										  series.SeriesInstanceUid, study.StudyInstanceUid);
+						string message = String.Format(SR.ExceptionFormatSeriesAlreadyBelongsToExistingStudy, series.SeriesInstanceUid, study.StudyInstanceUid);
 						throw new InvalidOperationException(message);
 					}
 				}
@@ -196,9 +173,7 @@ namespace ClearCanvas.Dicom.DataStore
 				{
 					if (image.Series != series)
 					{
-						string message =
-							String.Format("The SopInstanceUid '{0}' already belongs to a different existing series ('{1}').",
-										  series.SeriesInstanceUid, image.SopInstanceUid);
+						string message = String.Format(SR.ExceptionFormatSopAlreadyBelongsToExistingSeries, series.SeriesInstanceUid, image.SopInstanceUid);
 						throw new InvalidOperationException(message);
 					}
 				}
@@ -265,7 +240,7 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 				catch (Exception e)
 				{
-					throw new DataStoreException("Failed to commit images to the data store.", e);
+					throw new DataStoreException(SR.ExceptionFailedToCommitImagesToDatastore, e);
 				}
 				finally
 				{

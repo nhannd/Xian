@@ -105,11 +105,6 @@ namespace ClearCanvas.Dicom.DataStore
 				_thread = Thread.CurrentThread;
 				_referenceCount = 0;
 				_resetOnNextRead = false;
-
-				lock (_syncLock)
-				{
-					_sessionManagers.Add(this);
-				}
 			}
 
 			private Thread Thread
@@ -153,11 +148,12 @@ namespace ClearCanvas.Dicom.DataStore
 				{
 					 manager = _sessionManagers.Find(
 						delegate(SessionManager test) { return test.Thread.Equals(Thread.CurrentThread); });
-				}
 
-				if (manager == null)
-				{
-					manager = new SessionManager();
+					if (manager == null)
+					{
+						manager = new SessionManager();
+						_sessionManagers.Add(manager);
+					}
 				}
 
 				manager.IncrementReferenceCount();
@@ -170,12 +166,12 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				get
 				{
-					if (!_thread.Equals(Thread.CurrentThread))
-						throw new DataStoreException("Sessions may only be used on a single thread.");
+					if (!Thread.Equals(Thread.CurrentThread))
+						throw new DataStoreException(SR.ExceptionSessionsCanOnlyBeUsedOnOneThread);
 
 					if (_session == null)
 					{
-						_session = DataAccessLayer.Instance.SessionFactory.OpenSession();
+						_session = Instance.SessionFactory.OpenSession();
 						_session.FlushMode = FlushMode.Commit;
 					}
 
@@ -240,6 +236,7 @@ namespace ClearCanvas.Dicom.DataStore
 			HibernateConfiguration.Configure(assemblyName + ".cfg.xml");
 			HibernateConfiguration.AddAssembly(assemblyName);
 			_sessionFactory = HibernateConfiguration.BuildSessionFactory();
+
 			_dicomDictionaries = new Dictionary<string, IDicomDictionary>();
 		}
 
@@ -285,11 +282,16 @@ namespace ClearCanvas.Dicom.DataStore
 			return new DicomPersistentStore();
 		}
 
+		public static IDataStoreStudyRemover GetIDataStoreStudyRemover()
+		{
+			return new DataStoreWriter(SessionManager.Get());
+		}
+
 		internal static IDataStoreWriter GetIDataStoreWriter()
         {
 			return new DataStoreWriter(SessionManager.Get());
         }
-
+		
 		internal static IDicomDictionary GetIDicomDictionary()
 		{
 			return GetIDicomDictionary(DicomDictionary.DefaultDictionaryName);
@@ -302,7 +304,7 @@ namespace ClearCanvas.Dicom.DataStore
 				if (Instance.DicomDictionaries.ContainsKey(dictionaryName))
 					return Instance.DicomDictionaries[dictionaryName];
 
-				DicomDictionary newDictionary = DicomDictionary.Load(SessionManager.Get(), dictionaryName);
+				DicomDictionary newDictionary = new DicomDictionary(SessionManager.Get(), dictionaryName);
 				Instance.DicomDictionaries[dictionaryName] = newDictionary;
 				return newDictionary;
 			}
@@ -320,7 +322,7 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (IReadTransaction transaction = sessionManager.GetReadTransaction())
+					using (sessionManager.GetReadTransaction())
 					{
 						sessionManager.Session.Lock(primaryObject, LockMode.Read);
 						NHibernateUtil.Initialize(associatedCollection);
@@ -328,9 +330,7 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 				catch (Exception e)
 				{
-					string message =
-						String.Format("Failed to Initialize associated collection (Type {0}) for Type {1}", associatedObject.GetType(),
-						              primaryObject.GetType());
+					string message = String.Format(SR.ExceptionFormatFailedToInitializeAssociatedCollection, associatedObject.GetType(), primaryObject.GetType());
 					throw new DataStoreException(message, e);
 				}
 			}

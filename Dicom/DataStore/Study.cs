@@ -123,25 +123,25 @@ namespace ClearCanvas.Dicom.DataStore
 			set { SetClassMember(ref _studyTimeRaw, value); }
 		}
 
-    	public virtual string SpecificCharacterSet
+		public virtual string ProcedureCodeSequenceCodeValue
+		{
+			get { return _procedureCodeSequenceCodeValue; }
+			set { SetClassMember(ref _procedureCodeSequenceCodeValue, value); }
+		}
+
+		public virtual string ProcedureCodeSequenceCodingSchemeDesignator
+		{
+			get { return _procedureCodeSequenceCodingSchemeDesignator; }
+			set { SetClassMember(ref _procedureCodeSequenceCodingSchemeDesignator, value); }
+		}
+
+		public virtual string SpecificCharacterSet
     	{
     		get { return _specificCharacterSet; }
 			set { SetClassMember(ref _specificCharacterSet, value); }
     	}
 
-    	public virtual string ProcedureCodeSequenceCodeValue
-        {
-            get { return _procedureCodeSequenceCodeValue; }
-			set { SetClassMember(ref _procedureCodeSequenceCodeValue, value); }
-		}
-
-    	public virtual string ProcedureCodeSequenceCodingSchemeDesignator
-    	{
-    		get { return _procedureCodeSequenceCodingSchemeDesignator; }
-			set { SetClassMember(ref _procedureCodeSequenceCodingSchemeDesignator, value); }
-    	}
-
-    	public virtual DateTime? StoreTime
+		public virtual DateTime? StoreTime
         {
             get { return _storeTime; }
 			set { SetNullableTypeMember(ref _storeTime, value); }
@@ -216,17 +216,6 @@ namespace ClearCanvas.Dicom.DataStore
             return new Uid(this.StudyInstanceUid);
         }
 
-        public void AddSeries(ISeries series)
-        {
-            series.SetParentStudy(this);
-            this.Series.Add(series);
-        }
-
-        public void RemoveSeries(ISeries series)
-        {
-            this.Series.Remove(series);
-        }
-
         public IEnumerable<ISeries> GetSeries()
         {
             foreach (ISeries series in this.Series)
@@ -259,7 +248,7 @@ namespace ClearCanvas.Dicom.DataStore
 			DicomAttribute attribute = sopInstanceDataset[DicomTags.StudyInstanceUid];
 			if (!String.IsNullOrEmpty(StudyInstanceUid) && StudyInstanceUid != attribute.ToString())
 			{
-				throw new InvalidOperationException("Can only update an existing study from a Dicom data set with the same StudyInstanceUid.");
+				throw new InvalidOperationException(SR.ExceptionCanOnlyUpdateExistingStudyWithSameStudyUid);
 			}
 			else
 			{
@@ -269,10 +258,10 @@ namespace ClearCanvas.Dicom.DataStore
 			Platform.CheckForEmptyString(StudyInstanceUid, "StudyInstanceUid");
 
 			attribute = sopInstanceDataset[DicomTags.PatientId];
-			PatientId = new PatientId(attribute.ToString() ?? "");
+			PatientId = new PatientId(attribute.ToString());
 
 			attribute = sopInstanceDataset[DicomTags.PatientsName];
-			PatientsName = new PersonName(attribute.ToString() ?? "");
+			PatientsName = new PersonName(attribute.ToString());
 			PatientsNameRaw = DicomImplementation.CharacterParser.EncodeAsIsomorphicString(PatientsName, sopInstanceDataset.SpecificCharacterSet);
 
 			attribute = sopInstanceDataset[DicomTags.PatientsSex];
@@ -280,11 +269,6 @@ namespace ClearCanvas.Dicom.DataStore
 
 			attribute = sopInstanceDataset[DicomTags.PatientsBirthDate];
 			PatientsBirthDateRaw = attribute.ToString();
-
-			//
-			// TODO: can't access sequences yet. We will have to get
-			// ProcedureCodeSequence.CodeValue and ProcedureCodeSequence.SchemeDesignator
-			//
 
 			attribute = sopInstanceDataset[DicomTags.StudyId];
 			StudyId = attribute.ToString();
@@ -301,6 +285,10 @@ namespace ClearCanvas.Dicom.DataStore
 
 			attribute = sopInstanceDataset[DicomTags.StudyTime];
 			StudyTimeRaw = attribute.ToString();
+
+			//
+			// TODO: get ProcedureCodeSequence.CodeValue and ProcedureCodeSequence.SchemeDesignator
+			//
 
 			attribute = sopInstanceDataset[DicomTags.SpecificCharacterSet];
 			SpecificCharacterSet = attribute.ToString();

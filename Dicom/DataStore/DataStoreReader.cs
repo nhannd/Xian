@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Text;
 using System.Reflection;
 using NHibernate;
-using NHibernate.Collection;
 using NHibernate.Expression;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
@@ -59,14 +58,14 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
+					using (SessionManager.GetReadTransaction())
 					{
 						return StudyExists(Session, referenceUid);
 					}
 				}
 				catch (Exception e)
 				{
-					string message = String.Format("An error occurred while attempting to determine whether or not the study {0} exists in the datastore.", referenceUid);
+					string message = String.Format(SR.ExceptionFormatStudyExistsFailed, referenceUid);
 					throw new DataStoreException(message, e);
 				}
 			}
@@ -75,14 +74,14 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
+					using (SessionManager.GetReadTransaction())
 					{
 						return SeriesExists(Session, referenceUid);
 					}
 				}
 				catch (Exception e)
 				{
-					string message = String.Format("An error occurred while attempting to determine whether or not the series {0} exists in the datastore.", referenceUid);
+					string message = String.Format(SR.ExceptionFormatSeriesExistsFailed, referenceUid);
 					throw new DataStoreException(message, e);
 				}
 			}
@@ -91,14 +90,14 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
+					using (SessionManager.GetReadTransaction())
 					{
 						return SopInstanceExists(Session, referenceUid);
 					}
 				}
 				catch (Exception e)
 				{
-					string message = String.Format("An error occurred while attempting to determine whether or not the sop {0} exists in the datastore.", referenceUid);
+					string message = String.Format(SR.ExceptionFormatSopExistsFailed, referenceUid);
 					throw new DataStoreException(message, e);
 				}
 			}
@@ -107,7 +106,7 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
+					using (SessionManager.GetReadTransaction())
 					{
 						if (!StudyExists(Session, referenceUid))
 							return null;
@@ -133,7 +132,7 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 				catch (Exception e)
 				{
-					string message = String.Format("An error occurred while attempting to retrieve the study '{0}' from the datastore.", referenceUid);
+					string message = String.Format(SR.ExceptionFormatFailedToRetrieveStudy, referenceUid);
 					throw new DataStoreException(message, e);
 				}
 			}
@@ -142,7 +141,7 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
+					using (SessionManager.GetReadTransaction())
 					{
 						if (!SeriesExists(Session, referenceUid))
 							return null;
@@ -164,7 +163,7 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 				catch (Exception e)
 				{
-					string message = String.Format("An error occurred while attempting to retrieve the series '{0}' from the datastore.", referenceUid);
+					string message = String.Format(SR.ExceptionFormatFailedToRetrieveSeries, referenceUid);
 					throw new DataStoreException(message, e);
 				}
 			}
@@ -173,7 +172,7 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				try
 				{
-					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
+					using (SessionManager.GetReadTransaction())
 					{
 						if (!SopInstanceExists(Session, referenceUid))
 							return null;
@@ -184,14 +183,14 @@ namespace ClearCanvas.Dicom.DataStore
 							.List();
 
 						if (null != listOfSops && listOfSops.Count > 0)
-							return (SopInstance)listOfSops[0];
+							return (ISopInstance)listOfSops[0];
 
 						return null;
 					}
 				}
 				catch (Exception e)
 				{
-					string message = String.Format("An error occurred while attempting to retrieve the sop '{0}' from the datastore.", referenceUid);
+					string message = String.Format(SR.ExceptionFormatFailedToRetrieveSop, referenceUid);
 					throw new DataStoreException(message, e);
 				}
 			}
@@ -205,7 +204,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 				try
 				{
-					using (IReadTransaction transaction = SessionManager.GetReadTransaction())
+					using (SessionManager.GetReadTransaction())
 					{
 						IQuery query = Session.CreateQuery(selectCommandString.ToString());
 						studiesFound = query.List();
@@ -213,8 +212,7 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 				catch (Exception e)
 				{
-					string message = "An error occurred while attempting to retrieve all studies from the datastore.";
-					throw new DataStoreException(message, e);
+					throw new DataStoreException(SR.ExceptionFailedToRetrieveAllStudies, e);
 				}
 
 				if (studiesFound == null)
@@ -236,8 +234,7 @@ namespace ClearCanvas.Dicom.DataStore
 
 			public ReadOnlyQueryResultCollection StudyQuery(QueryKey queryKey)
 			{
-				if (null == queryKey)
-					throw new System.ArgumentNullException("queryKey", SR.ExceptionStudyQueryNullKey);
+				Platform.CheckForNullReference(queryKey, "queryKey");
 
 				StringBuilder selectCommandString = new StringBuilder(1024);
 				selectCommandString.AppendFormat(" FROM Study as study ");
@@ -301,8 +298,7 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 				catch (Exception e)
 				{
-					string message = "An error occurred while attempting to perform a study query.";
-					throw new DataStoreException(message, e);
+					throw new DataStoreException(SR.ExceptionFailedToPerformStudyQuery, e);
 				}
 
 				return CompileResults(queryKey, studiesFound);

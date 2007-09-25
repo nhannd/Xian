@@ -61,11 +61,200 @@ namespace ClearCanvas.Dicom.DataStore {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to DicomDictionary could not be loaded..
+        ///   Looks up a localized string similar to Can only update an existing series from a Dicom data set with the same SeriesInstanceUid..
         /// </summary>
-        internal static string ExceptionDicomDictionaryFailedToLoad {
+        internal static string ExceptionCanOnlyUpdateExistingSeriesWithSameSeriesUid {
             get {
-                return ResourceManager.GetString("ExceptionDicomDictionaryFailedToLoad", resourceCulture);
+                return ResourceManager.GetString("ExceptionCanOnlyUpdateExistingSeriesWithSameSeriesUid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can only update an existing sop instance from a Dicom data set with the same SopInstanceUid..
+        /// </summary>
+        internal static string ExceptionCanOnlyUpdateExistingSopWithSameSopInstanceUid {
+            get {
+                return ResourceManager.GetString("ExceptionCanOnlyUpdateExistingSopWithSameSopInstanceUid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Can only update an existing study from a Dicom data set with the same StudyInstanceUid..
+        /// </summary>
+        internal static string ExceptionCanOnlyUpdateExistingStudyWithSameStudyUid {
+            get {
+                return ResourceManager.GetString("ExceptionCanOnlyUpdateExistingStudyWithSameStudyUid", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to clear all studies from the data store..
+        /// </summary>
+        internal static string ExceptionFailedToClearAllStudies {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToClearAllStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to clear the specified series from the data store..
+        /// </summary>
+        internal static string ExceptionFailedToClearSeries {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToClearSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to clear the specified sop instance(s) from the data store..
+        /// </summary>
+        internal static string ExceptionFailedToClearSopInstances {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToClearSopInstances", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to clear the specified study(s) from the data store..
+        /// </summary>
+        internal static string ExceptionFailedToClearStudies {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToClearStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to commit images to the data store..
+        /// </summary>
+        internal static string ExceptionFailedToCommitImagesToDatastore {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToCommitImagesToDatastore", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while attempting to perform a study query..
+        /// </summary>
+        internal static string ExceptionFailedToPerformStudyQuery {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToPerformStudyQuery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while attempting to retrieve all studies from the datastore..
+        /// </summary>
+        internal static string ExceptionFailedToRetrieveAllStudies {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToRetrieveAllStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to save series to the data store..
+        /// </summary>
+        internal static string ExceptionFailedToStoreSeries {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToStoreSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to save sop instance(s) to the data store..
+        /// </summary>
+        internal static string ExceptionFailedToStoreSopInstances {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToStoreSopInstances", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to save study(s) to the data store..
+        /// </summary>
+        internal static string ExceptionFailedToStoreStudies {
+            get {
+                return ResourceManager.GetString("ExceptionFailedToStoreStudies", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Failed to initialize associated collection (Type {0}) for Type {1}..
+        /// </summary>
+        internal static string ExceptionFormatFailedToInitializeAssociatedCollection {
+            get {
+                return ResourceManager.GetString("ExceptionFormatFailedToInitializeAssociatedCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while attempting to retrieve the series &apos;{0}&apos; from the datastore..
+        /// </summary>
+        internal static string ExceptionFormatFailedToRetrieveSeries {
+            get {
+                return ResourceManager.GetString("ExceptionFormatFailedToRetrieveSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while attempting to retrieve the sop instance &apos;{0}&apos; from the datastore..
+        /// </summary>
+        internal static string ExceptionFormatFailedToRetrieveSop {
+            get {
+                return ResourceManager.GetString("ExceptionFormatFailedToRetrieveSop", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while attempting to retrieve the study &apos;{0}&apos; from the datastore..
+        /// </summary>
+        internal static string ExceptionFormatFailedToRetrieveStudy {
+            get {
+                return ResourceManager.GetString("ExceptionFormatFailedToRetrieveStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The SeriesInstanceUid &apos;{0}&apos; already belongs to a different existing study (&apos;{1}&apos;)..
+        /// </summary>
+        internal static string ExceptionFormatSeriesAlreadyBelongsToExistingStudy {
+            get {
+                return ResourceManager.GetString("ExceptionFormatSeriesAlreadyBelongsToExistingStudy", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while attempting to determine whether or not the series &apos;{0}&apos; exists in the datastore..
+        /// </summary>
+        internal static string ExceptionFormatSeriesExistsFailed {
+            get {
+                return ResourceManager.GetString("ExceptionFormatSeriesExistsFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The SopInstanceUid &apos;{0}&apos; already belongs to a different existing series (&apos;{1}&apos;)..
+        /// </summary>
+        internal static string ExceptionFormatSopAlreadyBelongsToExistingSeries {
+            get {
+                return ResourceManager.GetString("ExceptionFormatSopAlreadyBelongsToExistingSeries", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while attempting to determine whether or not the sop instance &apos;{0}&apos; exists in the datastore..
+        /// </summary>
+        internal static string ExceptionFormatSopExistsFailed {
+            get {
+                return ResourceManager.GetString("ExceptionFormatSopExistsFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to An error occurred while attempting to determine whether or not the study &apos;{0}&apos; exists in the datastore..
+        /// </summary>
+        internal static string ExceptionFormatStudyExistsFailed {
+            get {
+                return ResourceManager.GetString("ExceptionFormatStudyExistsFailed", resourceCulture);
             }
         }
         
@@ -79,11 +268,11 @@ namespace ClearCanvas.Dicom.DataStore {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The study query key cannot be null..
+        ///   Looks up a localized string similar to Sessions may only be used on a single thread..
         /// </summary>
-        internal static string ExceptionStudyQueryNullKey {
+        internal static string ExceptionSessionsCanOnlyBeUsedOnOneThread {
             get {
-                return ResourceManager.GetString("ExceptionStudyQueryNullKey", resourceCulture);
+                return ResourceManager.GetString("ExceptionSessionsCanOnlyBeUsedOnOneThread", resourceCulture);
             }
         }
         

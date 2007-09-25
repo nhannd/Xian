@@ -213,9 +213,7 @@ namespace ClearCanvas.Dicom.DataStore
 			{
 				WindowValues.Clear();
 				foreach (Window window in windowValues)
-				{
 					WindowValues.Add(window);
-				}
 
 				OnChanged();
 			}
@@ -225,12 +223,12 @@ namespace ClearCanvas.Dicom.DataStore
 				foreach (Window window in WindowValues)
 				{
 					Window newValue = windowValues[i++];
-					if (window.Equals(newValue))
-						continue;
-
-					window.Width = newValue.Width;
-					window.Center = newValue.Center;
-					OnChanged();
+					if (!window.Equals(newValue))
+					{
+						window.Width = newValue.Width;
+						window.Center = newValue.Center;
+						OnChanged();
+					}
 				}
 			}
 		}

@@ -117,14 +117,77 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ExceptionDicomDictionaryFailedToLoad" xml:space="preserve">
-    <value>DicomDictionary could not be loaded.</value>
+  <data name="ExceptionCanOnlyUpdateExistingSeriesWithSameSeriesUid" xml:space="preserve">
+    <value>Can only update an existing series from a Dicom data set with the same SeriesInstanceUid.</value>
+  </data>
+  <data name="ExceptionCanOnlyUpdateExistingSopWithSameSopInstanceUid" xml:space="preserve">
+    <value>Can only update an existing sop instance from a Dicom data set with the same SopInstanceUid.</value>
+  </data>
+  <data name="ExceptionCanOnlyUpdateExistingStudyWithSameStudyUid" xml:space="preserve">
+    <value>Can only update an existing study from a Dicom data set with the same StudyInstanceUid.</value>
+  </data>
+  <data name="ExceptionFailedToClearAllStudies" xml:space="preserve">
+    <value>Failed to clear all studies from the data store.</value>
+  </data>
+  <data name="ExceptionFailedToClearSeries" xml:space="preserve">
+    <value>Failed to clear the specified series from the data store.</value>
+  </data>
+  <data name="ExceptionFailedToClearSopInstances" xml:space="preserve">
+    <value>Failed to clear the specified sop instance(s) from the data store.</value>
+  </data>
+  <data name="ExceptionFailedToClearStudies" xml:space="preserve">
+    <value>Failed to clear the specified study(s) from the data store.</value>
+  </data>
+  <data name="ExceptionFailedToCommitImagesToDatastore" xml:space="preserve">
+    <value>Failed to commit images to the data store.</value>
+  </data>
+  <data name="ExceptionFailedToPerformStudyQuery" xml:space="preserve">
+    <value>An error occurred while attempting to perform a study query.</value>
+  </data>
+  <data name="ExceptionFailedToRetrieveAllStudies" xml:space="preserve">
+    <value>An error occurred while attempting to retrieve all studies from the datastore.</value>
+  </data>
+  <data name="ExceptionFailedToStoreSeries" xml:space="preserve">
+    <value>Failed to save series to the data store.</value>
+  </data>
+  <data name="ExceptionFailedToStoreSopInstances" xml:space="preserve">
+    <value>Failed to save sop instance(s) to the data store.</value>
+  </data>
+  <data name="ExceptionFailedToStoreStudies" xml:space="preserve">
+    <value>Failed to save study(s) to the data store.</value>
+  </data>
+  <data name="ExceptionFormatFailedToInitializeAssociatedCollection" xml:space="preserve">
+    <value>Failed to initialize associated collection (Type {0}) for Type {1}.</value>
+  </data>
+  <data name="ExceptionFormatFailedToRetrieveSeries" xml:space="preserve">
+    <value>An error occurred while attempting to retrieve the series '{0}' from the datastore.</value>
+  </data>
+  <data name="ExceptionFormatFailedToRetrieveSop" xml:space="preserve">
+    <value>An error occurred while attempting to retrieve the sop instance '{0}' from the datastore.</value>
+  </data>
+  <data name="ExceptionFormatFailedToRetrieveStudy" xml:space="preserve">
+    <value>An error occurred while attempting to retrieve the study '{0}' from the datastore.</value>
+  </data>
+  <data name="ExceptionFormatSeriesAlreadyBelongsToExistingStudy" xml:space="preserve">
+    <value>The SeriesInstanceUid '{0}' already belongs to a different existing study ('{1}').</value>
+  </data>
+  <data name="ExceptionFormatSeriesExistsFailed" xml:space="preserve">
+    <value>An error occurred while attempting to determine whether or not the series '{0}' exists in the datastore.</value>
+  </data>
+  <data name="ExceptionFormatSopAlreadyBelongsToExistingSeries" xml:space="preserve">
+    <value>The SopInstanceUid '{0}' already belongs to a different existing series ('{1}').</value>
+  </data>
+  <data name="ExceptionFormatSopExistsFailed" xml:space="preserve">
+    <value>An error occurred while attempting to determine whether or not the sop instance '{0}' exists in the datastore.</value>
+  </data>
+  <data name="ExceptionFormatStudyExistsFailed" xml:space="preserve">
+    <value>An error occurred while attempting to determine whether or not the study '{0}' exists in the datastore.</value>
   </data>
   <data name="ExceptionModalitiesInStudyWildcardsNotSupported" xml:space="preserve">
     <value>The ModalitiesInStudy Key Attribute cannot contain wildcards.</value>
   </data>
-  <data name="ExceptionStudyQueryNullKey" xml:space="preserve">
-    <value>The study query key cannot be null.</value>
+  <data name="ExceptionSessionsCanOnlyBeUsedOnOneThread" xml:space="preserve">
+    <value>Sessions may only be used on a single thread.</value>
   </data>
   <data name="ExceptionTagNameCannotBeNullOrEmpty" xml:space="preserve">
     <value>The tag name cannot be null or empty.</value>

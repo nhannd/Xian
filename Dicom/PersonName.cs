@@ -19,9 +19,8 @@ namespace ClearCanvas.Dicom
 		/// <summary>
         /// Constructor for NHibernate.
         /// </summary>
-        public PersonName()
+        private PersonName()
         {
-			SetInternalPersonName("");
         }
 
         /// <summary>
@@ -39,10 +38,7 @@ namespace ClearCanvas.Dicom
         protected virtual string InternalPersonName
         {
             get { return _personsName; }
-            set
-            {
-				SetInternalPersonName(value);
-            }
+            set { SetInternalPersonName(value); }
         }
 
         public String LastName

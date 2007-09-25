@@ -129,11 +129,6 @@ namespace ClearCanvas.Dicom.DataStore
     		return this.Series;
     	}
 
-    	public void SetParentSeries(ISeries series)
-        {
-            this.Series = series as Series;
-        }
-
     	public DicomUri GetLocationUri()
         {
             return this.LocationUri;
@@ -148,7 +143,7 @@ namespace ClearCanvas.Dicom.DataStore
 			DicomAttribute attribute = sopInstanceDataset[DicomTags.SopInstanceUid];
 			if (!String.IsNullOrEmpty(SopInstanceUid) && SopInstanceUid != attribute.ToString())
 			{
-				throw new InvalidOperationException("Can only update an existing sop from a Dicom data set with the same SopInstanceUid.");
+				throw new InvalidOperationException(SR.ExceptionCanOnlyUpdateExistingSopWithSameSopInstanceUid);
 			}
 			else
 			{

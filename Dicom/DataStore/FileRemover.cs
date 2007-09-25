@@ -5,7 +5,7 @@ using System.IO;
 
 namespace ClearCanvas.Dicom.DataStore
 {
-    public class FileRemover
+    public sealed class FileRemover
     {
         public static void DeleteFilesInStudy(IStudy studyToRemove)
         {

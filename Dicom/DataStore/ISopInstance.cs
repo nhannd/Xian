@@ -12,8 +12,7 @@ namespace ClearCanvas.Dicom.DataStore
 		Uid GetTransferSyntaxUid();
 
 		ISeries GetParentSeries();
-		void SetParentSeries(ISeries series);
-		
+
 		DicomUri GetLocationUri();
     }
 }

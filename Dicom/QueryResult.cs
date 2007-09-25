@@ -43,7 +43,7 @@ namespace ClearCanvas.Dicom
                 if (this.ContainsTag(DicomTags.PatientId))
 					return new PatientId(this[DicomTags.PatientId]);
 				else
-                    return new PatientId();
+                    return new PatientId("");
             }
         }
 
@@ -57,7 +57,7 @@ namespace ClearCanvas.Dicom
                 if (this.ContainsTag(DicomTags.PatientsName))
 					return new PersonName(this[DicomTags.PatientsName]);
 				else
-                    return new PersonName();
+                    return new PersonName("");
             }
         }
 

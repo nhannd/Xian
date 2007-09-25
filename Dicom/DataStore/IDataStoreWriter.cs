@@ -9,11 +9,5 @@ namespace ClearCanvas.Dicom.DataStore
 		void StoreSopInstances(IEnumerable<SopInstance> sops);
         void StoreSeries(IEnumerable<Series> series);
 		void StoreStudies(IEnumerable<Study> studies);
-    	
-		void ClearAllStudies();
-
-		void RemoveSopInstances(IEnumerable<ISopInstance> sops);
-		void RemoveSeries(IEnumerable<ISeries> series);
-		void RemoveStudies(IEnumerable<IStudy> studies);
 	}
 }

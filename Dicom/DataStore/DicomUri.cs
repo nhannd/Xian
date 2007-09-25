@@ -33,6 +33,15 @@ namespace ClearCanvas.Dicom.DataStore
 			this.InternalUriObject = newUri;
 		}
 
+		/// <summary>
+		/// NHibernate Property.
+		/// </summary>
+		protected virtual string InternalUri
+		{
+			get { return this.InternalUriObject.AbsoluteUri; }
+			set { SetInternalUri(value); }
+		}
+
 		private void SetInternalUri(string uri)
 		{
 			if (String.IsNullOrEmpty(uri))
@@ -46,22 +55,7 @@ namespace ClearCanvas.Dicom.DataStore
 			get { return _internalUriObject; }
 			set { _internalUriObject = value; }
 		}
-
-		/// <summary>
-		/// NHibernate Property.
-		/// </summary>
-		protected virtual string InternalUri
-		{
-			get
-			{
-				return this.InternalUriObject.AbsoluteUri;
-			}
-			set
-			{
-				SetInternalUri(value);
-			}
-		}
-		
+	
         public bool IsFile
         {
             get 

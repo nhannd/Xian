@@ -6,31 +6,30 @@ namespace ClearCanvas.Dicom.DataStore
 {
     public class TagName
     {
-        #region NHibernate-specific members
-        public TagName()
+		private string _tagName;
+		
+		/// <summary>
+        /// Constructor for NHibernate.
+        /// </summary>
+        private TagName()
         {
         }
-
-        protected virtual string InternalTagName
-        {
-            get { return _tagName; }
-            set { _tagName = value; }
-        }
-        #endregion
 
         public TagName(string tagName)
         {
-            // validate the input
-            if (null == tagName)
-				throw new System.ArgumentNullException("tagName", SR.ExceptionTagNameCannotBeNullOrEmpty);
-
-            if (0 == tagName.Length)
-				throw new System.ArgumentOutOfRangeException("tagName", SR.ExceptionTagNameCannotBeNullOrEmpty);
-
-            _tagName = tagName;
+			SetTagName(tagName);
         }
 
-        public override string ToString()
+		/// <summary>
+		/// Property for NHibernate.
+		/// </summary>
+		protected virtual string InternalTagName
+		{
+			get { return _tagName; }
+			set { SetTagName(value); }
+		}
+		
+		public override string ToString()
         {
             return _tagName;
         }
@@ -43,6 +42,13 @@ namespace ClearCanvas.Dicom.DataStore
             return tagName.ToString();
         }
 
-        private string _tagName;
-    }
+		private void SetTagName(string tagName)
+		{
+			// validate the input
+			if (String.IsNullOrEmpty(tagName))
+				throw new System.ArgumentNullException("tagName", SR.ExceptionTagNameCannotBeNullOrEmpty);
+
+			_tagName = tagName;
+		}
+	}
 }

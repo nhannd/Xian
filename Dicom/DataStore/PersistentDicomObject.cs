@@ -11,10 +11,15 @@ namespace ClearCanvas.Dicom.DataStore
 		{
 		}
 
-		public event EventHandler Changed
+		internal event EventHandler Changed
 		{
 			add { _changed += value; }
 			remove { _changed -= value; }
+		}
+
+		protected void OnChanged()
+		{
+			EventsHelper.Fire(_changed, this, EventArgs.Empty);
 		}
 
 		protected void SetValueTypeMember<T>(ref T member, T newValue)
@@ -26,12 +31,7 @@ namespace ClearCanvas.Dicom.DataStore
 			member = newValue;
 			OnChanged();
 		}
-
-		protected void OnChanged()
-		{
-			EventsHelper.Fire(_changed, this, EventArgs.Empty);
-		}
-
+		
 		protected void SetClassMember<T>(ref T member, T newValue)
 			where T : class
 		{

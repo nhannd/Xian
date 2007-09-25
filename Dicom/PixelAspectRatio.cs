@@ -16,7 +16,7 @@ namespace ClearCanvas.Dicom
 		/// <summary>
 		/// Constructor for NHibernate.
 		/// </summary>
-		public PixelAspectRatio()
+		private PixelAspectRatio()
 		{
 		}
 
@@ -34,13 +34,13 @@ namespace ClearCanvas.Dicom
 		public virtual double Row
         {
             get { return _row; }
-            set { _row = value; }
+            protected set { _row = value; }
         }
 
         public virtual double Column
         {
             get { return _column; }
-            set { _column = value; }
+			protected set { _column = value; }
 		}
 
 		#endregion

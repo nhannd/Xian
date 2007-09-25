@@ -187,9 +187,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							try
 							{
 								FileRemover.DeleteFilesInStudy(study);
-								using (IDicomPersistentStore store = DataAccessLayer.GetIDicomPersistentStore())
+								using (IDataStoreStudyRemover studyRemover = DataAccessLayer.GetIDataStoreStudyRemover())
 								{
-									store.RemoveStudy(study);
+									studyRemover.RemoveStudy(study.GetStudyInstanceUid());
 								}
 							}
 							catch (Exception e)

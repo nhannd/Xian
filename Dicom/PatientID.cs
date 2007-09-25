@@ -12,7 +12,7 @@ namespace ClearCanvas.Dicom
         /// <summary>
         /// Constructor for NHibernate.
         /// </summary>
-        public PatientId()
+        private PatientId()
         {
         }
 
@@ -26,9 +26,9 @@ namespace ClearCanvas.Dicom
 		}
 		
 		/// <summary>
-		/// NHibernate Property
+		/// NHibernate Property.
 		/// </summary>
-		public virtual string InternalPatientId
+		protected virtual string InternalPatientId
         {
             get { return _patientId; }
 			set { SetPatientId(value); }

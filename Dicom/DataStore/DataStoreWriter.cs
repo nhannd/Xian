@@ -8,7 +8,7 @@ namespace ClearCanvas.Dicom.DataStore
 {
 	public sealed partial class DataAccessLayer
 	{
-		private class DataStoreWriter : SessionConsumer, IDataStoreWriter
+		private class DataStoreWriter : SessionConsumer, IDataStoreWriter, IDataStoreStudyRemover
 		{
 			public DataStoreWriter(ISessionManager sessionManager)
 				: base(sessionManager)
@@ -31,7 +31,7 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 				catch (Exception e)
 				{
-					throw new DataStoreException("Failed to save Sop Instance(s) to the data store", e);
+					throw new DataStoreException(SR.ExceptionFailedToStoreSopInstances, e);
 				}
 			}
 
@@ -49,7 +49,7 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 				catch (Exception e)
 				{
-					throw new DataStoreException("Failed to save Series to the data store", e);
+					throw new DataStoreException(SR.ExceptionFailedToStoreSeries, e);
 				}
 			}
 
@@ -67,9 +67,13 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 				catch (Exception e)
 				{
-					throw new DataStoreException("Failed to save Study(s) to the data store.", e);
+					throw new DataStoreException(SR.ExceptionFailedToStoreStudies, e);
 				}
 			}
+
+			#endregion
+
+			#region IDataStoreStudyRemover Members
 
 			public void ClearAllStudies()
 			{
@@ -83,61 +87,30 @@ namespace ClearCanvas.Dicom.DataStore
 				}
 				catch (Exception e)
 				{
-					throw new DataStoreException("Failed to clear all studies from the data store.", e);
+					throw new DataStoreException(SR.ExceptionFailedToClearAllStudies, e);
 				}
 			}
 
-			public void RemoveSopInstances(IEnumerable<ISopInstance> sops)
+			public void RemoveStudy(Uid studyUid)
+			{
+				RemoveStudies(new Uid[] { studyUid });
+			}
+
+			public void RemoveStudies(IEnumerable<Uid> studyUids)
 			{
 				try
 				{
 					using (IWriteTransaction transaction = SessionManager.GetWriteTransaction())
 					{
-						foreach (ISopInstance sop in sops)
-							Session.Delete("from SopInstance where SopInstanceUid_ = ?", sop.GetSopInstanceUid().ToString(), NHibernateUtil.String);
+						foreach (Uid uid in studyUids)
+							Session.Delete("from Study where StudyInstanceUid_ = ?", uid.ToString(), NHibernateUtil.String);
 
 						transaction.Commit();
 					}
 				}
 				catch (Exception e)
 				{
-					throw new DataStoreException("Failed to clear the specified sop instance(s) from the data store.", e);
-				}
-			}
-
-			public void RemoveSeries(IEnumerable<ISeries> series)
-			{
-				try
-				{
-					using (IWriteTransaction transaction = SessionManager.GetWriteTransaction())
-					{
-						foreach (ISeries deleteSeries in series)
-							Session.Delete("from Series where SeriesInstanceUid_ = ?", deleteSeries.GetSeriesInstanceUid().ToString(), NHibernateUtil.String);
-
-						transaction.Commit();
-					}
-				}
-				catch (Exception e)
-				{
-					throw new DataStoreException("Failed to clear the specified series from the data store.", e);
-				}
-			}
-
-			public void RemoveStudies(IEnumerable<IStudy> studies)
-			{
-				try
-				{
-					using (IWriteTransaction transaction = SessionManager.GetWriteTransaction())
-					{
-						foreach (IStudy study in studies)
-							Session.Delete("from Study where StudyInstanceUid_ = ?", study.GetStudyInstanceUid().ToString(), NHibernateUtil.String);
-
-						transaction.Commit();
-					}
-				}
-				catch (Exception e)
-				{
-					throw new DataStoreException("Failed to clear the specified study(s) from the data store.", e);
+					throw new DataStoreException(SR.ExceptionFailedToClearStudies, e);
 				}
 			}
 
