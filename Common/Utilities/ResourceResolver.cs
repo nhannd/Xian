@@ -163,21 +163,30 @@ namespace ClearCanvas.Common.Utilities
         /// <returns></returns>
         private static List<ResourceManager> GetStringResourceManagers(Assembly asm)
         {
-            // I'm not sure if there is a more efficient implementation than locking this entire code-block
-            // but this seems to be the safest thing to do right now - we don't want one thread reading from
-            // the map while another is updating it
+            List<ResourceManager> resourceManagers;
+
+            // look for a cached copy
             lock (_mapStringResourceManagers)
             {
-                if (!_mapStringResourceManagers.ContainsKey(asm))
-                {
-                    List<ResourceManager> resourceManagers = new List<ResourceManager>();
-                    foreach (string stringResource in GetResourcesEndingWith(asm, "SR.resources"))
-                    {
-                        resourceManagers.Add(new ResourceManager(stringResource.Replace(".resources", ""), asm));
-                    }
-                    _mapStringResourceManagers[asm] = resourceManagers;
-                }
-                return _mapStringResourceManagers[asm];
+                //List<ResourceManager> resourceManagers;
+                if (_mapStringResourceManagers.TryGetValue(asm, out resourceManagers))
+                    return resourceManagers;
+            }
+
+            // no cached copy, so create
+            resourceManagers = new List<ResourceManager>();
+            foreach (string stringResource in GetResourcesEndingWith(asm, "SR.resources"))
+            {
+                resourceManagers.Add(new ResourceManager(stringResource.Replace(".resources", ""), asm));
+            }
+
+            // update the cache
+            lock (_mapStringResourceManagers)
+            {
+                // note: another thread may have written to the cache in the interim, but it really doesn't matter
+                // we can just overwrite it
+                _mapStringResourceManagers[asm] = resourceManagers;
+                return resourceManagers;
             }
         }
 
