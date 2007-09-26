@@ -93,8 +93,10 @@
     <Compile Include="ITransactionRecorder.cs" />
     <Compile Include="IUpdateContext.cs" />
     <Compile Include="Modelling\EmbeddedValueAttribute.cs" />
+    <Compile Include="Modelling\EmbeddeValueRuleSet.cs" />
     <Compile Include="Modelling\IPropertyBoundRule.cs" />
     <Compile Include="Modelling\IUniqueConstraintValidationBroker.cs" />
+    <Compile Include="Modelling\IValidationRuleSet.cs" />
     <Compile Include="Modelling\LengthAttribute.cs" />
     <Compile Include="Modelling\LengthSpecification.cs" />
     <Compile Include="Modelling\ModellingException.cs" />
@@ -102,6 +104,7 @@
     <Compile Include="Modelling\RequiredAttribute.cs" />
     <Compile Include="Modelling\RequiredSpecification.cs" />
     <Compile Include="Modelling\SimpleInvariantSpecification.cs" />
+    <Compile Include="Modelling\TerminologyTranslator.cs" />
     <Compile Include="Modelling\Tests\ValidationBuilderTests.cs" />
     <Compile Include="Modelling\UniqueAttribute.cs" />
     <Compile Include="Modelling\UniqueKeyAttribute.cs" />

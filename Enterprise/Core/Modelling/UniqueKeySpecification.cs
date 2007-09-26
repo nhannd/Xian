@@ -20,17 +20,18 @@ namespace ClearCanvas.Enterprise.Core.Modelling
         {
             IPersistenceContext context = PersistenceScope.Current;
             if (context == null)
-                throw new SpecificationException("PersistenceContext required.");
+                throw new SpecificationException(SR.ExceptionPersistenceContextRequired);
 
             IUniqueConstraintValidationBroker broker = context.GetBroker<IUniqueConstraintValidationBroker>();
             bool valid = broker.IsUnique((DomainObject)obj, _uniqueKeyMembers);
 
-            return valid ? new TestResult(true) : new TestResult(false, new TestResultReason(GetMessage()));
+            return valid ? new TestResult(true) : new TestResult(false, new TestResultReason(GetMessage(obj)));
         }
 
-        private string GetMessage()
+        protected virtual string GetMessage(object obj)
         {
-            return string.Format("{0} must be unique.", _logicalKeyName);
+            return string.Format(SR.RuleUniqueKey, TerminologyTranslator.Translate(obj.GetType(), _logicalKeyName),
+                TerminologyTranslator.Translate(obj.GetType()));
         }
     }
 }

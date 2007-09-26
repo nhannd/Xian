@@ -9,6 +9,7 @@ using ClearCanvas.Enterprise.Core.Modelling;
 using ClearCanvas.Common.Specifications;
 using System.Collections;
 using ClearCanvas.Common.Utilities;
+using System.Reflection;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -143,19 +144,41 @@ namespace ClearCanvas.Enterprise.Hibernate
 
         private void Validate(object obj, List<string> dirtyProperties)
         {
-            ValidationRuleSet rules = Validation.GetInvariantRules((DomainObject)obj);
-
-            TestResult result = rules.Test(obj, dirtyProperties);
-            if (result.Fail)
-            {
-                string message = string.Format("Invalid {0}.", obj.GetType().Name);
-                throw new EntityValidationException(message, result.Reasons);
-            }
+            Validation.Validate((DomainObject)obj,
+                delegate(ISpecification rule)
+                {
+                    // see if the rule needs to be check (i.e if relevant properties are dirty)
+                    return ShouldCheckRule(rule, (DomainObject)obj, dirtyProperties);
+                });
         }
 
         private void Validate(object obj)
         {
-            Validate(obj, null);
+            Validation.Validate((DomainObject)obj);
+        }
+
+        private bool ShouldCheckRule(ISpecification rule, DomainObject obj, List<string> dirtyProperties)
+        {
+            // if the rule is not bound to specific properties, then it should be checked
+            if (!(rule is IPropertyBoundRule))
+                return true;
+
+            IPropertyBoundRule pbRule = rule as IPropertyBoundRule;
+
+            // if the rule is bound to a property of an embedded value rather than the entity itself, then it should be checked
+            if(CollectionUtils.Contains<PropertyInfo>(pbRule.Properties,
+                delegate(PropertyInfo p) { return typeof(ValueObject).IsAssignableFrom(p.DeclaringType); }))
+                return true;
+
+            // otherwise, we assume the rule is bound to a property of the entity
+
+            // if no properties are dirty, we don't need to check it
+            if (dirtyProperties.Count == 0)
+                return false;
+
+            // check the rule if it is bound to any properties that are dirty
+            return CollectionUtils.Contains<PropertyInfo>((rule as IPropertyBoundRule).Properties,
+                        delegate(PropertyInfo prop) { return dirtyProperties.Contains(prop.Name); });
         }
     }
 }

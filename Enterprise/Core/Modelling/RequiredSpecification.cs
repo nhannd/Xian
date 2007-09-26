@@ -25,7 +25,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
         private string GetMessage()
         {
-            return string.Format("{0} is required.", this.Property.Name);
+            return string.Format(SR.RuleRequired, TerminologyTranslator.Translate(this.Property));
         }
     }
 }

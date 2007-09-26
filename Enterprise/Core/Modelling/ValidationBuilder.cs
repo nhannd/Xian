@@ -10,63 +10,6 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 {
     public class ValidationBuilder
     {
-        class EmbeddedValueSpecification : ISpecification, IPropertyBoundRule
-        {
-            private ValidationRuleSet _innerRules;
-            private PropertyInfo _property;
-            private bool _collection;
-
-            public EmbeddedValueSpecification(PropertyInfo property, ValidationRuleSet innerRules, bool collection)
-            {
-                _property = property;
-                _innerRules = innerRules;
-                _collection = collection;
-            }
-
-            #region ISpecification Members
-
-            public TestResult Test(object obj)
-            {
-                object propertyValue = _property.GetGetMethod().Invoke(obj, null);
-
-                // if the propertyValue is null, return true
-                // this seems counter-intuitive, but what we are effectively saying is that the rules
-                // are bound to the propertyValue being tested - if there is no propertyValue, there are no rules to test
-                if (propertyValue == null)
-                    return new TestResult(true);
-
-                if (_collection)
-                {
-                    // apply to items rather than to the collection
-                    foreach (object item in (propertyValue as IEnumerable))
-                    {
-                        TestResult result = _innerRules.Test(item);
-                        // if any item fails, don't bother testing the rest of the items
-                        if (result.Fail)
-                            return new TestResult(false,
-                                new TestResultReason("One or more " + _property.Name + " items are invalid.", result.Reasons));
-                    }
-                    return new TestResult(true);
-                }
-                else
-                {
-                    TestResult result = _innerRules.Test(propertyValue);
-                    return result.Success ?
-                        result : new TestResult(false, new TestResultReason(_property.Name + " is invalid.", result.Reasons));
-                }
-            }
-
-            #endregion
-
-            #region IPropertyBoundRule Members
-
-            public PropertyInfo[] Properties
-            {
-                get { return new PropertyInfo[] { _property }; }
-            }
-
-            #endregion
-        }
 
 
         public ValidationBuilder()
@@ -170,7 +113,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
             ProcessClassProperties(property.PropertyType, innerRules);
             if (innerRules.Count > 0)
             {
-                rules.Add(new EmbeddedValueSpecification(property, new ValidationRuleSet(innerRules), false));
+                rules.Add(new EmbeddedValueRuleSet(property, new ValidationRuleSet(innerRules), false));
             }
         }
 
@@ -182,7 +125,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
             ProcessClassProperties(ca.ElementType, innerRules);
             if (innerRules.Count > 0)
             {
-                rules.Add(new EmbeddedValueSpecification(property, new ValidationRuleSet(innerRules), true));
+                rules.Add(new EmbeddedValueRuleSet(property, new ValidationRuleSet(innerRules), true));
             }
         }
 

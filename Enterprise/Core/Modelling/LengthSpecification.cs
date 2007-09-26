@@ -36,14 +36,14 @@ namespace ClearCanvas.Enterprise.Core.Modelling
             }
             catch (InvalidCastException e)
             {
-                throw new SpecificationException("Expected string value", e);
+                throw new SpecificationException(SR.ExceptionExpectedStringValue, e);
             }
         }
 
         private string GetMessage()
         {
-            return string.Format("{0} must be between {1} and {2} characters.",
-                this.Property.Name, _min, _max);
+            return string.Format(SR.RuleLength,
+                TerminologyTranslator.Translate(this.Property), _min, _max);
         }
     }
 }

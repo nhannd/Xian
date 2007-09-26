@@ -31,19 +31,22 @@ namespace ClearCanvas.Enterprise.Hibernate
             // on the originating session, and we don't want to modify the state of that session
             // ideally the new session should share the connection and transaction of the main session,
             // but this isn't possible with NHibernate 1.0.3
-            ISession auxSession =
-                this.Context.PersistentStore.SessionFactory.OpenSession();
-            auxSession.FlushMode = FlushMode.Never;
-            IQuery query = auxSession.CreateQuery(hqlQuery.Hql);
-            for(int i = 0; i < hqlQuery.Conditions.Count; i++)
+            using (ISession auxSession = this.Context.PersistentStore.SessionFactory.OpenSession())
             {
-                query.SetParameter(i, hqlQuery.Conditions[i].Parameters[0]);
+                auxSession.FlushMode = FlushMode.Never;
+                IQuery query = auxSession.CreateQuery(hqlQuery.Hql);
+                int i = 0;
+                foreach (HqlCondition condition in hqlQuery.Conditions)
+                {
+                    foreach(object paramVal in condition.Parameters)
+                        query.SetParameter(i++, paramVal);
+                }
+
+                int count = (int)query.UniqueResult();
+
+                // if count == 0, there are no other objects with this particular set of values
+                return count == 0;
             }
-
-            int count = (int)query.UniqueResult();
-
-            // if count == 0, there are no other objects with this particular set of values
-            return count == 0;
         }
 
         #endregion

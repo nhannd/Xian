@@ -4,6 +4,8 @@ using System.Text;
 
 using NHibernate;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Enterprise.Core.Modelling;
+using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Enterprise.Hibernate
 {
@@ -83,12 +85,25 @@ namespace ClearCanvas.Enterprise.Hibernate
                     this.Session.Update(entity);
                     break;
                 case DirtyState.New:
+                    PreValidate(entity);
                     this.Session.Save(entity);
                     break;
                 case DirtyState.Clean:
                     this.Session.Lock(entity, LockMode.None);
                     break;
             }
+        }
+
+        private void PreValidate(Entity entity)
+        {
+            // This is really a HACK
+            // we need to test the required field rules before NHibernate gets a chance to complain about them
+            // in order to provide more descriptive error message (the NHibernate error messages suck)
+            Validation.Validate(entity, 
+                delegate(ISpecification rule)
+                {
+                    return rule is RequiredSpecification;
+                });
         }
 
         internal override bool ReadOnly

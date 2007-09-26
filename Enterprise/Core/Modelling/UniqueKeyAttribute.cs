@@ -10,8 +10,9 @@ namespace ClearCanvas.Enterprise.Core.Modelling
         private string[] _memberProperties;
         private string _logicalName;
 
-        public UniqueKeyAttribute(string[] memberProperties)
+        public UniqueKeyAttribute(string logicalName, string[] memberProperties)
         {
+            _logicalName = logicalName;
             _memberProperties = memberProperties;
         }
 
@@ -23,7 +24,6 @@ namespace ClearCanvas.Enterprise.Core.Modelling
         public string LogicalName
         {
             get { return _logicalName; }
-            set { _logicalName = value; }
         }
     }
 }

@@ -61,7 +61,7 @@ namespace ClearCanvas.Enterprise.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The entity was not found.
+        ///   Looks up a localized string similar to The entity was not found..
         /// </summary>
         internal static string ExceptionEntityNotFound {
             get {
@@ -70,7 +70,7 @@ namespace ClearCanvas.Enterprise.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Entity version does not match the version in the database (OID: {0}).
+        ///   Looks up a localized string similar to Entity version does not match the version in the database (OID: {0})..
         /// </summary>
         internal static string ExceptionEntityVersion {
             get {
@@ -79,7 +79,7 @@ namespace ClearCanvas.Enterprise.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to The enumeration value {0} was not found for class {1}.
+        ///   Looks up a localized string similar to The enumeration value {0} was not found for class {1}..
         /// </summary>
         internal static string ExceptionEnumValueNotFound {
             get {
@@ -88,11 +88,83 @@ namespace ClearCanvas.Enterprise.Core {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cannot inherit read-context as an update-context.
+        ///   Looks up a localized string similar to Expected string value..
+        /// </summary>
+        internal static string ExceptionExpectedStringValue {
+            get {
+                return ResourceManager.GetString("ExceptionExpectedStringValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Cannot inherit read-context as an update-context..
         /// </summary>
         internal static string ExceptionIncompatiblePersistenceContext {
             get {
                 return ResourceManager.GetString("ExceptionIncompatiblePersistenceContext", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Invalid {0}..
+        /// </summary>
+        internal static string ExceptionInvalidEntity {
+            get {
+                return ResourceManager.GetString("ExceptionInvalidEntity", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Persistence context required..
+        /// </summary>
+        internal static string ExceptionPersistenceContextRequired {
+            get {
+                return ResourceManager.GetString("ExceptionPersistenceContextRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is invalid..
+        /// </summary>
+        internal static string RuleEmbeddeValue {
+            get {
+                return ResourceManager.GetString("RuleEmbeddeValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to One or more {0} are invalid..
+        /// </summary>
+        internal static string RuleEmbeddeValueCollection {
+            get {
+                return ResourceManager.GetString("RuleEmbeddeValueCollection", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} must be between {1} and {2} characters..
+        /// </summary>
+        internal static string RuleLength {
+            get {
+                return ResourceManager.GetString("RuleLength", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} is required..
+        /// </summary>
+        internal static string RuleRequired {
+            get {
+                return ResourceManager.GetString("RuleRequired", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to {0} conflicts with an existing {1}..
+        /// </summary>
+        internal static string RuleUniqueKey {
+            get {
+                return ResourceManager.GetString("RuleUniqueKey", resourceCulture);
             }
         }
     }

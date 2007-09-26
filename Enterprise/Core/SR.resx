@@ -118,15 +118,39 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="ExceptionEntityNotFound" xml:space="preserve">
-    <value>The entity was not found</value>
+    <value>The entity was not found.</value>
   </data>
   <data name="ExceptionEntityVersion" xml:space="preserve">
-    <value>Entity version does not match the version in the database (OID: {0})</value>
+    <value>Entity version does not match the version in the database (OID: {0}).</value>
   </data>
   <data name="ExceptionEnumValueNotFound" xml:space="preserve">
-    <value>The enumeration value {0} was not found for class {1}</value>
+    <value>The enumeration value {0} was not found for class {1}.</value>
+  </data>
+  <data name="ExceptionExpectedStringValue" xml:space="preserve">
+    <value>Expected string value.</value>
   </data>
   <data name="ExceptionIncompatiblePersistenceContext" xml:space="preserve">
-    <value>Cannot inherit read-context as an update-context</value>
+    <value>Cannot inherit read-context as an update-context.</value>
+  </data>
+  <data name="ExceptionInvalidEntity" xml:space="preserve">
+    <value>Invalid {0}.</value>
+  </data>
+  <data name="ExceptionPersistenceContextRequired" xml:space="preserve">
+    <value>Persistence context required.</value>
+  </data>
+  <data name="RuleEmbeddeValue" xml:space="preserve">
+    <value>{0} is invalid.</value>
+  </data>
+  <data name="RuleEmbeddeValueCollection" xml:space="preserve">
+    <value>One or more {0} are invalid.</value>
+  </data>
+  <data name="RuleLength" xml:space="preserve">
+    <value>{0} must be between {1} and {2} characters.</value>
+  </data>
+  <data name="RuleRequired" xml:space="preserve">
+    <value>{0} is required.</value>
+  </data>
+  <data name="RuleUniqueKey" xml:space="preserve">
+    <value>{0} conflicts with an existing {1}.</value>
   </data>
 </root>

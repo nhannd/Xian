@@ -5,13 +5,14 @@ using ClearCanvas.Common.Specifications;
 using ClearCanvas.Common;
 using System.Collections.ObjectModel;
 using ClearCanvas.Common.Utilities;
+using System.Reflection;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
     /// <summary>
     /// Note: immutable
     /// </summary>
-    public class ValidationRuleSet : ISpecification
+    public class ValidationRuleSet : IValidationRuleSet
     {
         private List<ISpecification> _rules;
 
@@ -49,12 +50,21 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
         public TestResult Test(object obj)
         {
-            return Test(obj, null);
+            return TestCore(obj, null);
         }
 
         #endregion
 
-        public TestResult Test(object obj, List<string> dirtyProperties)
+        #region IValidationRuleSet Members
+
+        public TestResult Test(object obj, Predicate<ISpecification> filter)
+        {
+            return TestCore(obj, filter);
+        }
+
+        #endregion
+
+        public TestResult TestCore(object obj, Predicate<ISpecification> filter)
         {
             Platform.CheckForNullReference(obj, "obj");
 
@@ -62,9 +72,11 @@ namespace ClearCanvas.Enterprise.Core.Modelling
             List<TestResultReason> failureReasons = new List<TestResultReason>();
             foreach (ISpecification rule in _rules)
             {
-                if (dirtyProperties == null || ShouldCheckRule(rule, dirtyProperties))
+                // if there is no filter, or the fitler accepts the rule, test it
+                if (filter == null || filter(rule))
                 {
-                    TestResult result = rule.Test(obj);
+                    // if the rule is itself a ruleset, then apply the filter recursively
+                    TestResult result = (rule is IValidationRuleSet) ? (rule as IValidationRuleSet).Test(obj, filter) : rule.Test(obj);
                     if (result.Fail)
                     {
                         failureReasons.AddRange(result.Reasons);
@@ -73,21 +85,6 @@ namespace ClearCanvas.Enterprise.Core.Modelling
             }
 
             return new TestResult(failureReasons.Count == 0, failureReasons.ToArray());
-        }
-
-        private bool ShouldCheckRule(ISpecification rule, List<string> dirtyProperties)
-        {
-            // if the rule is not bound to specific properties, then it should be checked
-            if (!(rule is IPropertyBoundRule))
-                return true;
-
-            // if the rule is property-bound, but no properties are dirty, don't check it
-            if (dirtyProperties.Count == 0)
-                return false;
-
-            // return true if the rule is bound to any properties that are dirty
-            return CollectionUtils.Contains<string>((rule as IPropertyBoundRule).Properties,
-                        delegate(string prop) { return dirtyProperties.Contains(prop); });
         }
     }
 }
