@@ -7,6 +7,11 @@ using System.Collections;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
+    /// <summary>
+    /// Similar to a <see cref="ValidationRuleSet"/>, this class encapsulates an instance of a <see cref="ValidationRuleSet"/>
+    /// that is applied to an embedded value or embedded value collection of a parent object.  The child rule-set is
+    /// evaluated only if the embedded value is non-null.
+    /// </summary>
     internal class EmbeddedValueRuleSet : IValidationRuleSet, IPropertyBoundRule
     {
         private ValidationRuleSet _innerRules;

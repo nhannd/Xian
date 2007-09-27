@@ -4,19 +4,15 @@ using System.Text;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
+    /// <summary>
+    /// When applied to a property of a domain class, indicates that the property value is unique
+    /// within the set of all of persistent instances of the class.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = false)]
     public class UniqueAttribute : Attribute
     {
-        private bool _unique;
-
         public UniqueAttribute()
         {
-            _unique = true;
-        }
-
-        public UniqueAttribute(bool unique)
-        {
-            _unique = unique;
         }
     }
 }

@@ -10,17 +10,25 @@ using System.Reflection;
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
     /// <summary>
+    /// Encapsulates a set of 
     /// Note: immutable
     /// </summary>
     public class ValidationRuleSet : IValidationRuleSet
     {
         private List<ISpecification> _rules;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
         public ValidationRuleSet()
         {
             _rules = new List<ISpecification>();
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="rules"></param>
         public ValidationRuleSet(IEnumerable<ISpecification> rules)
         {
             _rules = new List<ISpecification>(rules);
@@ -41,6 +49,9 @@ namespace ClearCanvas.Enterprise.Core.Modelling
             return new ValidationRuleSet(combined);
         }
 
+        /// <summary>
+        /// Provides read-only access to the list of rules contained in this rule set.
+        /// </summary>
         public IList<ISpecification> Rules
         {
             get { return _rules.AsReadOnly(); }
@@ -48,6 +59,11 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
         #region ISpecification Members
 
+        /// <summary>
+        /// Tests all rules against the specified object.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <returns></returns>
         public TestResult Test(object obj)
         {
             return TestCore(obj, null);
@@ -57,6 +73,12 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
         #region IValidationRuleSet Members
 
+        /// <summary>
+        /// Tests the subset of rules (those that are selected by the filter) against the specified object.
+        /// </summary>
+        /// <param name="obj"></param>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         public TestResult Test(object obj, Predicate<ISpecification> filter)
         {
             return TestCore(obj, filter);

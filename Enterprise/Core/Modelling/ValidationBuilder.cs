@@ -8,10 +8,8 @@ using System.Collections;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
-    public class ValidationBuilder
+    internal class ValidationBuilder
     {
-
-
         public ValidationBuilder()
         {
         }
@@ -49,7 +47,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
         private void ProcessUniqueKeyAttribute(Type entityClass, Attribute attr, List<ISpecification> rules)
         {
             UniqueKeyAttribute uka = (UniqueKeyAttribute)attr;
-            rules.Add(new UniqueKeySpecification(uka.MemberProperties, uka.LogicalName));
+            rules.Add(new UniqueKeySpecification(uka.LogicalName, uka.MemberProperties));
         }
 
         private void ProcessClassProperties(Type domainClass, List<ISpecification> rules)
@@ -92,11 +90,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
 
         private void ProcessRequiredAttribute(PropertyInfo property, Attribute attr, List<ISpecification> rules)
         {
-            RequiredAttribute ra = (RequiredAttribute)attr;
-            if (ra.IsRequired)
-            {
-                rules.Add(new RequiredSpecification(property));
-            }
+            rules.Add(new RequiredSpecification(property));
         }
 
         private void ProcessLengthAttribute(PropertyInfo property, Attribute attr, List<ISpecification> rules)

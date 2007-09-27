@@ -6,6 +6,9 @@ using ClearCanvas.Common.Specifications;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
+    /// <summary>
+    /// Specifies minimum and maximum allowable length of the value of a given string-typed property of an object.
+    /// </summary>
     public class LengthSpecification : SimpleInvariantSpecification
     {
         private int _min;

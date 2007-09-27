@@ -7,6 +7,9 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Enterprise.Core.Modelling
 {
+    /// <summary>
+    /// Base class for rules that represent simple invariant constraints on a property of an object.
+    /// </summary>
     public abstract class SimpleInvariantSpecification : ISpecification, IPropertyBoundRule
     {
         private PropertyInfo[] _properties;
