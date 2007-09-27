@@ -1,14 +1,12 @@
 #pragma warning disable 1591,0419,1574,1587
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
-	internal class GdiRenderingSurface : IRenderingSurface
+	internal sealed class GdiRenderingSurface : IRenderingSurface
 	{
 		private ImageBuffer _imageBuffer;
 		private ImageBuffer _finalBuffer;

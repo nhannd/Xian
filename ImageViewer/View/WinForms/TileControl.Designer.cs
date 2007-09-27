@@ -18,6 +18,8 @@ namespace ClearCanvas.ImageViewer.View.WinForms
         {
             if (disposing)
             {
+				DisposeSurface();
+
 				if (components != null)
 					components.Dispose();
 

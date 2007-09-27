@@ -1,16 +1,11 @@
 #pragma warning disable 1591,0419,1574,1587
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Diagnostics;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Drawing.Drawing2D;
-using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Mathematics;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
@@ -25,6 +20,9 @@ namespace ClearCanvas.ImageViewer.Rendering
 		{
 			if (clientRectangle.Width <= 0 || clientRectangle.Height <= 0)
 				return;
+
+			CodeClock clock = new CodeClock();
+			clock.Start();
 
 			RectangleF srcViewableRectangle;
 			RectangleF dstViewableRectangle;
@@ -48,8 +46,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			{
 				fixed (int* pLutData = lutData)
 				{
-					if (imageGraphic.InterpolationMode == 
-						ClearCanvas.ImageViewer.Graphics.InterpolationMode.Bilinear)
+					if (imageGraphic.InterpolationMode == InterpolationMode.Bilinear)
 					{
 						if (grayscaleImage != null)
 						{
@@ -97,6 +94,9 @@ namespace ClearCanvas.ImageViewer.Rendering
 					}
 				}
 			}
+
+			clock.Stop();
+			RenderPerformanceReportBroker.PublishPerformanceReport("ImageRenderer.Render", clock.Seconds);
 		}
 
 		private static bool IsRotated(ImageGraphic imageGraphic)

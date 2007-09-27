@@ -29,8 +29,6 @@ namespace ClearCanvas.ImageViewer
 		private bool _linked = true;
 		private string _uid;
 		
-		private IRenderer _imageRenderer;
-
 		private SceneGraph _sceneGraph;
 		private ISelectableGraphic _selectedGraphic;
 		private IFocussableGraphic _focussedGraphic;
@@ -278,11 +276,7 @@ namespace ClearCanvas.ImageViewer
 		/// Framework property and should not be used.
 		/// </para>
 		/// </remarks>
-		public virtual IRenderer ImageRenderer 
-		{
-			get { return _imageRenderer; }
-			protected set { _imageRenderer = value; }
-		}
+		public abstract IRenderer ImageRenderer { get; }
 
 		#endregion
 
@@ -315,7 +309,6 @@ namespace ClearCanvas.ImageViewer
 			if (disposing)
 			{
 				DisposeSceneGraph();
-				DisposeRenderer();
 			}
 		}
 
@@ -326,15 +319,6 @@ namespace ClearCanvas.ImageViewer
 
 			this.SceneGraph.Dispose();
 			_sceneGraph = null;
-		}
-
-		private void DisposeRenderer()
-		{
-			if (this.ImageRenderer == null)
-				return;
-
-			this.ImageRenderer.Dispose();
-			_imageRenderer = null;
 		}
 
 		#endregion
@@ -377,7 +361,7 @@ namespace ClearCanvas.ImageViewer
 		{
 			drawArgs.SceneGraph = this.SceneGraph;
 
-			(this.SceneGraph as SceneGraph).ClientRectangle = drawArgs.RenderingSurface.ClientRectangle;
+			((SceneGraph)SceneGraph).ClientRectangle = drawArgs.RenderingSurface.ClientRectangle;
 
 			OnDrawing();
 

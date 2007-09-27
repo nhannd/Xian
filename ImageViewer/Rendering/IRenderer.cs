@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.ImageViewer;
 
 namespace ClearCanvas.ImageViewer.Rendering
@@ -14,7 +12,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 	/// should only ever have to be called by the Framework, and thus
 	/// should be treated as internal.
 	/// </remarks>
-	public interface IRenderer : IDisposable
+	public interface IRenderer
 	{
 		/// <summary>
 		/// Gets an <see cref="IRenderingSurface"/>.
@@ -43,8 +41,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// This method is called by the <see cref="PresentationImage"/> whenever
 		/// <see cref="IPresentationImage.Draw"/> is called.  If you are implementing
 		/// your own renderer, <see cref="DrawArgs"/> contains all you need to 
-		/// know to perform the rendering, such as the <see cref="IRenderingSurface"/>, the
-		/// <see cref="IPresentationImage"/>, etc.  
+		/// know to perform the rendering, such as the <see cref="IRenderingSurface"/>, etc.  
 		/// </remarks>
 		void Draw(DrawArgs args);
 	}

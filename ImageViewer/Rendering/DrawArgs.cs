@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Rendering
@@ -29,16 +25,9 @@ namespace ClearCanvas.ImageViewer.Rendering
 	{
 		#region Private Fields
 
+		private readonly DrawMode _drawMode;
+		private readonly IRenderingSurface _renderingSurface;
 		private CompositeGraphic _sceneGraph;
-		private IPresentationImage _presentationImage;
-		//private ITile _tile;
-		//private IDisplaySet _displaySet;
-		//private IImageBox _imageBox;
-
-		private IRenderingSurface _renderingSurface;
-		//private Rectangle _clientRectangle;
-		//private Rectangle _clipRectangle;
-		private DrawMode _drawMode;
 
 		private object _tag;
 

@@ -81,7 +81,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 					if (this.Tile.PresentationImage == null)
 						return null;
 
-					IRenderer renderer = (this.Tile.PresentationImage as PresentationImage).ImageRenderer;
+					IRenderer renderer = ((PresentationImage)Tile.PresentationImage).ImageRenderer;
 
 					// PresntationImage should *always* have a renderer
 					if (renderer == null)
@@ -136,14 +136,27 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			Trace.Write(str);
 		}
 
-		private void OnDrawing(object sender, EventArgs e)
+		private void DisposeSurface()
+		{
+			try
+			{
+				if (_surface != null)
+					_surface.Dispose();
+			}
+			finally
+			{
+				_surface = null;
+			}
+		}
+
+    	private void OnDrawing(object sender, EventArgs e)
 		{
 			Draw();
 		}
 
 		private void OnRendererChanged(object sender, EventArgs e)
 		{
-			_surface = null;
+			DisposeSurface();
 		}
 
 		protected override void OnPaint(PaintEventArgs e)
@@ -151,7 +164,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 			// Make sure tile gets blacked out if there's
 			// no presentation image in it
 			if (_tile.PresentationImage == null)
-				_surface = null;
+				DisposeSurface();
 
 			if (this.Surface == null)
 			{
@@ -196,7 +209,7 @@ namespace ClearCanvas.ImageViewer.View.WinForms
 
 			// Set the surface to null so when it's accessed, a new surface
 			// will be created.
-			_surface = null;
+			DisposeSurface();
 			Draw();
 		}
 

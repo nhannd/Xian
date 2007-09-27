@@ -1,3 +1,4 @@
+using System;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
@@ -6,6 +7,19 @@ using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// The <see cref="BasicPresentationImage"/> uses this ExtensionPoint to load a single <see cref="IRenderer"/>
+	/// object that is used for all <see cref="BasicPresentationImage"/>s.  Implementations of <IRenderer> that 
+	/// extend this <see cref="ExtensionPoint"/> should be thread-safe to account for the possibility that 
+	/// <see cref="BasicPresentationImage"/>s could be rendered on multiple UI threads.
+	/// </summary>
+	public sealed class BasicPresentationImageRenderExtensionPoint : ExtensionPoint<IRenderer>
+	{
+		public BasicPresentationImageRenderExtensionPoint()
+		{
+		}
+	}
+
 	/// <summary>
 	/// A <see cref="PresentationImage"/> that encapsulates a DICOM image.
 	/// </summary>
@@ -18,6 +32,9 @@ namespace ClearCanvas.ImageViewer
 		IAnnotationLayoutProvider
 	{
 		#region Private fields
+
+		private static readonly object _rendererSyncLock = new object();
+		private static volatile IRenderer _renderer;
 
 		private CompositeGraphic _compositeImageGraphic;
 		private ImageGraphic _imageGraphic;
@@ -140,7 +157,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Gets a <see cref="StandardPresentationImageRenderer"/>.
+		/// Gets a <see cref="IRenderer"/>.
 		/// </summary>
 		/// <remarks>
 		/// In general, <see cref="ImageRenderer"/> should be considered an internal
@@ -150,10 +167,29 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				if (base.ImageRenderer == null)
-					base.ImageRenderer = new StandardPresentationImageRenderer();
+				if (_renderer == null)
+				{
+					lock (_rendererSyncLock)
+					{
+						if (_renderer == null)
+						{
+							try
+							{
+								_renderer = new BasicPresentationImageRenderExtensionPoint().CreateExtension() as IRenderer;
+							}
+							catch (Exception e)
+							{
+								//this isn't an error, just log it as information.
+								Platform.Log(LogLevel.Info, e);
+							}
 
-				return base.ImageRenderer;
+							if (_renderer == null)
+								_renderer = new GDIRenderer();
+						}
+					}
+				}
+
+				return _renderer;
 			}
 		}
 
