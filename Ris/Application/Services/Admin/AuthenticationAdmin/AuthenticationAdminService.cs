@@ -105,11 +105,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         [PrincipalPermission(SecurityAction.Demand, Role = ClearCanvas.Ris.Application.Common.AuthorityTokens.UserAdmin)]
         public AddUserResponse AddUser(AddUserRequest request)
         {
-            if (UserIdExists(request.UserDetail.UserId))
-            {
-                throw new RequestValidationException(string.Format(SR.ExceptionUserIDAlreadyExists, request.UserDetail.UserId));
-            }
-
             User user = new User();
             UserAssembler assembler = new UserAssembler();
             assembler.UpdateUser(user, request.UserDetail, PersistenceContext);
@@ -134,12 +129,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         public UpdateUserResponse UpdateUser(UpdateUserRequest request)
         {
             User user = PersistenceContext.Load<User>(request.UserRef);
-
-            if (user.UserName != request.UserDetail.UserId
-                && UserIdExists(request.UserDetail.UserId))
-            {
-                throw new RequestValidationException(string.Format(SR.ExceptionUserIDAlreadyExists, request.UserDetail.UserId));
-            }
 
             UserAssembler assembler = new UserAssembler();
             assembler.UpdateUser(user, request.UserDetail, PersistenceContext);
@@ -193,14 +182,5 @@ namespace ClearCanvas.Ris.Application.Services.Admin.AuthenticationAdmin
         }
 
         #endregion
-
-        private bool UserIdExists(string userId)
-        {
-            UserSearchCriteria criteria = new UserSearchCriteria();
-            criteria.UserName.EqualTo(userId);
-
-            IUserBroker broker = PersistenceContext.GetBroker<IUserBroker>();
-            return broker.Count(criteria) > 0;
-        }
     }
 }

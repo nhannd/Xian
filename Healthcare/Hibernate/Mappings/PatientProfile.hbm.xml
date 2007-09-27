@@ -6,8 +6,12 @@
     </id>
     <version name="Version" column="Version_"/>
     <component name="Mrn" class="CompositeIdentifier">
-      <property name="Id" column="MrnId_" type="String" length="30" not-null="true" unique="true"/>
-      <property name="AssigningAuthority" column="MrnAssigningAuthority_" type="String" length="100" not-null="true"/>
+      <property name="Id" type="String">
+        <column name="MrnId_" unique-key="Mrn" not-null="true"/>
+      </property>
+      <property name="AssigningAuthority" type="String">
+        <column name="MrnAssigningAuthority_" unique-key="Mrn" not-null="true"/>
+      </property>
     </component>
     <component name="Healthcard" class="HealthcardNumber">
       <property name="Id" column="HealthcardId_" type="String" length="30" not-null="true"/>

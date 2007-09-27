@@ -8,8 +8,12 @@
     <many-to-one name="Patient" class="Patient" column="PatientOID_" not-null="true" fetch="join"/>
 
     <component name="VisitNumber" class="CompositeIdentifier">
-      <property name="Id" column="VisitNumberId_" type="String" length="30" not-null="true" unique="true"/>
-      <property name="AssigningAuthority" column="VisitNumberAssigningAuthority_" type="String" length="100" not-null="true"/>
+      <property name="Id" type="String">
+        <column name="VisitNumberId_" unique-key="VisitNumber" not-null="true"/>
+      </property>
+      <property name="AssigningAuthority" type="String">
+        <column name="VisitNumberAssigningAuthority_" unique-key="VisitNumber" not-null="true"/>
+      </property>
     </component>
 
     <property name="VisitStatus" column="VisitStatus" type="ClearCanvas.Healthcare.Hibernate.VisitStatusEnumHbm, ClearCanvas.Healthcare.Hibernate" not-null="true"/>

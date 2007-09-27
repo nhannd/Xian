@@ -5,6 +5,7 @@ using System.Text;
 using Iesi.Collections;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core.Modelling;
 
 
 namespace ClearCanvas.Healthcare {
@@ -13,6 +14,7 @@ namespace ClearCanvas.Healthcare {
     /// <summary>
     /// PatientProfile entity
     /// </summary>
+    [UniqueKey("Mrn", new string[] { "Mrn.Id", "Mrn.AssigningAuthority" })]
 	public partial class PatientProfile : Entity
 	{
         private void CustomInitialize()

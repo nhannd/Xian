@@ -86,10 +86,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
             StaffAssembler assembler = new StaffAssembler();
             assembler.UpdateStaff(request.StaffDetail, staff);
 
-            CheckForDuplicateStaff(request.StaffDetail.Name.FamilyName,
-                request.StaffDetail.Name.GivenName,
-                staff);
-
             PersistenceContext.Lock(staff, DirtyState.New);
 
             // ensure the new staff is assigned an OID before using it in the return value
@@ -107,40 +103,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.StaffAdmin
             StaffAssembler assembler = new StaffAssembler();
             assembler.UpdateStaff(request.StaffDetail, staff);
 
-            CheckForDuplicateStaff(request.StaffDetail.Name.FamilyName,
-                request.StaffDetail.Name.GivenName,
-                staff);
-
             return new UpdateStaffResponse(assembler.CreateStaffSummary(staff, PersistenceContext));
         }
 
         #endregion
-
-        /// <summary>
-        /// Helper method to check that the staff with the same name does not already exist
-        /// </summary>
-        /// <param name="familiyName"></param>
-        /// <param name="givenName"></param>
-        /// <param name="subject"></param>
-        private void CheckForDuplicateStaff(string familiyName, string givenName, Staff subject)
-        {
-            try
-            {
-                StaffSearchCriteria where = new StaffSearchCriteria();
-                where.Name.FamilyName.EqualTo(familiyName);
-                where.Name.GivenName.EqualTo(givenName);
-
-                IList<Staff> duplicateList = PersistenceContext.GetBroker<IStaffBroker>().Find(where, new SearchResultPage(0, 2));
-                foreach (Staff duplicate in duplicateList)
-                {
-                    if (duplicate != subject)
-                        throw new RequestValidationException(string.Format(SR.ExceptionStaffAlreadyExist, familiyName, givenName));
-                }
-            }
-            catch (EntityNotFoundException)
-            {
-                // no duplicates
-            }
-        }
     }
 }

@@ -82,11 +82,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.RequestedProcedureTypeGroup
                 throw new RequestValidationException(SR.ExceptionRequestedProcedureTypeGroupNameRequired);
             }
 
-            if (GroupExists(request.Detail.Name))
-            {
-                throw new RequestValidationException(string.Format(SR.ExceptionRequestedProcedureTypeGroupNameAlreadyExists, request.Detail.Name));
-            }
-
             RequestedProcedureTypeGroup group = new RequestedProcedureTypeGroup();
             RequestedProcedureTypeGroupAssembler assembler = new RequestedProcedureTypeGroupAssembler();
             assembler.UpdateRequestedProcedureTypeGroup(group, request.Detail, this.PersistenceContext);
@@ -112,12 +107,5 @@ namespace ClearCanvas.Ris.Application.Services.Admin.RequestedProcedureTypeGroup
         }
 
         #endregion
-
-        private bool GroupExists(string name)
-        {
-            RequestedProcedureTypeGroupSearchCriteria criteria = new RequestedProcedureTypeGroupSearchCriteria();
-            criteria.Name.EqualTo(name);
-            return PersistenceContext.GetBroker<IRequestedProcedureTypeGroupBroker>().Find(criteria).Count != 0;
-        }
     }
 }

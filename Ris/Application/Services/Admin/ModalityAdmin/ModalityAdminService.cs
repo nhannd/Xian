@@ -56,8 +56,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
             ModalityAssembler assembler = new ModalityAssembler();
             assembler.UpdateModality(request.ModalityDetail, modality);
 
-            CheckForDuplicateModality(request.ModalityDetail.Id, modality);
-
             PersistenceContext.Lock(modality, DirtyState.New);
 
             // ensure the new modality is assigned an OID before using it in the return value
@@ -75,36 +73,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ModalityAdmin
             ModalityAssembler assembler = new ModalityAssembler();
             assembler.UpdateModality(request.ModalityDetail, modality);
 
-            CheckForDuplicateModality(request.ModalityDetail.Id, modality);
-
             return new UpdateModalityResponse(assembler.CreateModalitySummary(modality));
         }
 
         #endregion
 
-        /// <summary>
-        /// Helper method to check that the modality with the same ID does not already exist
-        /// </summary>
-        /// <param name="modalityID"></param>
-        /// <param name="subject"></param>
-        private void CheckForDuplicateModality(string modalityID, Modality subject)
-        {
-            try
-            {
-                ModalitySearchCriteria where = new ModalitySearchCriteria();
-                where.Id.EqualTo(modalityID);
-
-                IList<Modality> duplicateList = PersistenceContext.GetBroker<IModalityBroker>().Find(where, new SearchResultPage(0, 2));
-                foreach (Modality duplicate in duplicateList)
-                {
-                    if (duplicate != subject)
-                        throw new RequestValidationException(string.Format(SR.ExceptionModalityAlreadyExist, modalityID));
-                }
-            }
-            catch (EntityNotFoundException)
-            {
-                // no duplicates
-            }
-        }
     }
 }

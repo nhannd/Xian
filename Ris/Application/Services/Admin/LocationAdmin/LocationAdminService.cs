@@ -78,8 +78,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
             LocationAssembler assembler = new LocationAssembler();
             assembler.UpdateLocation(request.LocationDetail, location, PersistenceContext);
 
-            CheckForDuplicateLocation(location);
-
             PersistenceContext.Lock(location, DirtyState.New);
 
             // ensure the new location is assigned an OID before using it in the return value
@@ -102,40 +100,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.LocationAdmin
             LocationAssembler assembler = new LocationAssembler();
             assembler.UpdateLocation(request.LocationDetail, location, PersistenceContext);
 
-            CheckForDuplicateLocation(location);
-
             return new UpdateLocationResponse(assembler.CreateLocationSummary(location));
         }
 
         #endregion
-
-        /// <summary>
-        /// Helper method to check that the location with the exact same content does not already exist
-        /// </summary>
-        /// <param name="subject"></param>
-        private void CheckForDuplicateLocation(Location subject)
-        {
-            try
-            {
-                LocationSearchCriteria where = new LocationSearchCriteria();
-                where.Facility.EqualTo(subject.Facility);
-                where.Building.EqualTo(subject.Building);
-                where.Floor.EqualTo(subject.Floor);
-                where.PointOfCare.EqualTo(subject.PointOfCare);
-                where.Room.EqualTo(subject.Room);
-                where.Bed.EqualTo(subject.Bed);
-
-                IList<Location> duplicateList = PersistenceContext.GetBroker<ILocationBroker>().Find(where, new SearchResultPage(0, 2));
-                foreach (Location duplicate in duplicateList)
-                {
-                    if (duplicate != subject)
-                        throw new RequestValidationException(string.Format(SR.ExceptionLocationAlreadyExist));
-                }            
-            }
-            catch (EntityNotFoundException)
-            {
-                // no duplicates
-            }
-        }
     }
 }

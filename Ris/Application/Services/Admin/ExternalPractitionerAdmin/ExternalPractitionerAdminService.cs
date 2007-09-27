@@ -83,11 +83,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
             ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
             assembler.UpdateExternalPractitioner(request.PractitionerDetail, prac);
 
-            CheckForDuplicateExternalPractitioner(
-                request.PractitionerDetail.Name.FamilyName,
-                request.PractitionerDetail.Name.GivenName,
-                prac);
-
             PersistenceContext.Lock(prac, DirtyState.New);
 
             // ensure the new prac is assigned an OID before using it in the return value
@@ -105,42 +100,9 @@ namespace ClearCanvas.Ris.Application.Services.Admin.ExternalPractitionerAdmin
             ExternalPractitionerAssembler assembler = new ExternalPractitionerAssembler();
             assembler.UpdateExternalPractitioner(request.PractitionerDetail, prac);
 
-            CheckForDuplicateExternalPractitioner(
-                request.PractitionerDetail.Name.FamilyName,
-                request.PractitionerDetail.Name.GivenName,
-                prac);
-
             return new UpdateExternalPractitionerResponse(assembler.CreateExternalPractitionerSummary(prac, PersistenceContext));
         }
 
         #endregion
-
-        /// <summary>
-        /// Helper method to check that the prac with the same name does not already exist
-        /// </summary>
-        /// <param name="familiyName"></param>
-        /// <param name="givenName"></param>
-        /// <param name="subject"></param>
-        private void CheckForDuplicateExternalPractitioner(string familiyName, string givenName, ExternalPractitioner subject)
-        {
-            try
-            {
-                ExternalPractitionerSearchCriteria where = new ExternalPractitionerSearchCriteria();
-                where.Name.FamilyName.EqualTo(familiyName);
-                where.Name.GivenName.EqualTo(givenName);
-
-                IList<ExternalPractitioner> duplicateList = PersistenceContext.GetBroker<IExternalPractitionerBroker>().Find(where, new SearchResultPage(0, 2));
-                foreach (ExternalPractitioner duplicate in duplicateList)
-                {
-                    if (duplicate != subject)
-                        throw new RequestValidationException(string.Format(SR.ExceptionExternalPractitionerAlreadyExist, familiyName, givenName));
-                }
-            }
-            catch (EntityNotFoundException)
-            {
-                // no duplicates
-            }
-        }
-
     }
 }

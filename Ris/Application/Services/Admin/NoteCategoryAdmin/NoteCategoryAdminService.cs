@@ -73,8 +73,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
             NoteCategoryAssembler assembler = new NoteCategoryAssembler();
             assembler.UpdateNoteCategory(request.NoteCategoryDetail, noteCategory);
 
-            CheckForDuplicateNoteCategory(request.NoteCategoryDetail.Category, noteCategory);
-
             PersistenceContext.Lock(noteCategory, DirtyState.New);
 
             // ensure the new NoteCategory is assigned an OID before using it in the return value
@@ -97,36 +95,10 @@ namespace ClearCanvas.Ris.Application.Services.Admin.NoteCategoryAdmin
             NoteCategoryAssembler assembler = new NoteCategoryAssembler();
             assembler.UpdateNoteCategory(request.NoteCategoryDetail, noteCategory);
 
-            CheckForDuplicateNoteCategory(request.NoteCategoryDetail.Category, noteCategory);
-
             return new UpdateNoteCategoryResponse(assembler.CreateNoteCategorySummary(noteCategory, this.PersistenceContext));
         }
 
         #endregion
 
-        /// <summary>
-        /// Helper method to check that the note category with the same name does not already exist
-        /// </summary>
-        /// <param name="categoryName"></param>
-        /// <param name="subject"></param>
-        private void CheckForDuplicateNoteCategory(string categoryName, NoteCategory subject)
-        {
-            try
-            {
-                NoteCategorySearchCriteria where = new NoteCategorySearchCriteria();
-                where.Name.EqualTo(categoryName);
-
-                IList<NoteCategory> duplicateList = PersistenceContext.GetBroker<INoteCategoryBroker>().Find(where, new SearchResultPage(0, 2));
-                foreach (NoteCategory duplicate in duplicateList)
-                {
-                    if (duplicate != subject)
-                        throw new RequestValidationException(string.Format(SR.ExceptionNoteCategoryAlreadyExist, categoryName));
-                }
-            }
-            catch (EntityNotFoundException)
-            {
-                // no duplicates
-            }
-        }
     }
 }

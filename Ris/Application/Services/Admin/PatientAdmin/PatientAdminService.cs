@@ -95,8 +95,6 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
         {
             PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.PatientProfileRef, EntityLoadFlags.CheckVersion);
 
-            CheckForDuplicateMrn(request.PatientDetail.Mrn.Id, request.PatientDetail.Mrn.AssigningAuthority, profile);
-
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             assembler.UpdatePatientProfile(profile, request.PatientDetail, PersistenceContext);
 
@@ -111,46 +109,16 @@ namespace ClearCanvas.Ris.Application.Services.Admin.PatientAdmin
             Patient patient = new Patient();
             patient.AddProfile(profile);
 
-            CheckForDuplicateMrn(request.PatientDetail.Mrn.Id, request.PatientDetail.Mrn.AssigningAuthority, profile);
-
             PatientProfileAssembler assembler = new PatientProfileAssembler();
             assembler.UpdatePatientProfile(profile, request.PatientDetail, PersistenceContext);
 
             PersistenceContext.Lock(patient, DirtyState.New);
-//            PersistenceContext.Lock(profile, DirtyState.New);
+
             PersistenceContext.SynchState();
 
             return new AdminAddPatientProfileResponse(patient.GetRef(), profile.GetRef());
         }
 
         #endregion
-
-        /// <summary>
-        /// Helper method to check validate that the MRN does not already exist
-        /// </summary>
-        /// <param name="mrnId"></param>
-        /// <param name="mrnAuthority"></param>
-        /// <param name="subject"></param>
-        private void CheckForDuplicateMrn(string mrnId, string mrnAuthority, PatientProfile subject)
-        {
-            try
-            {
-                PatientProfileSearchCriteria where = new PatientProfileSearchCriteria();
-                where.Mrn.Id.EqualTo(mrnId);
-                where.Mrn.AssigningAuthority.EqualTo(mrnAuthority);
-
-                IList<PatientProfile> duplicateList = PersistenceContext.GetBroker<IPatientProfileBroker>().Find(where, new SearchResultPage(0, 2));
-                foreach (PatientProfile duplicate in duplicateList)
-                {
-                    if (duplicate != subject)
-                        throw new RequestValidationException(string.Format(SR.ExceptionMrnAlreadyExists, mrnAuthority, mrnId));
-                }
-            }
-            catch (EntityNotFoundException)
-            {
-                // no duplicates
-            }
-        }
-
     }
 }
