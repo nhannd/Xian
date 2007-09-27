@@ -25,15 +25,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
                 ProcessEntityAttribute(entityClass, attr, rules);
             }
 
-            ValidationRuleSet ruleSet = new ValidationRuleSet(rules);
-
-            // add base class rules if necessary
-            if (entityClass.BaseType != typeof(object))
-            {
-                ruleSet = ruleSet.Combine(Validation.GetInvariantRules(entityClass.BaseType));
-            }
-
-            return ruleSet;
+            return new ValidationRuleSet(rules);
         }
 
         private void ProcessEntityAttribute(Type entityClass, Attribute attr, List<ISpecification> rules)
@@ -53,6 +45,8 @@ namespace ClearCanvas.Enterprise.Core.Modelling
         private void ProcessClassProperties(Type domainClass, List<ISpecification> rules)
         {
             ValidationRuleSet ruleSet = new ValidationRuleSet();
+
+            // note: this will return all properties, including those that are inherited from a base class
             PropertyInfo[] properties = domainClass.GetProperties(BindingFlags.Public|BindingFlags.NonPublic|BindingFlags.Instance);
             foreach(PropertyInfo property in properties)
             {
