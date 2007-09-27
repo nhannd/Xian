@@ -72,8 +72,10 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._treeCtrl.ShowNodeToolTips = true;
             this._treeCtrl.Size = new System.Drawing.Size(360, 273);
             this._treeCtrl.TabIndex = 1;
+            this._treeCtrl.AfterCheck += new System.Windows.Forms.TreeViewEventHandler(this._treeCtrl_AfterCheck);
             this._treeCtrl.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this._treeCtrl_BeforeExpand);
             this._treeCtrl.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this._treeCtrl_AfterSelect);
+            this._treeCtrl.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this._treeCtrl_BeforeSelect);
             // 
             // _contextMenu
             // 

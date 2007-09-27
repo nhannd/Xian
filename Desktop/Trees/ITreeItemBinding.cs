@@ -21,6 +21,15 @@ namespace ClearCanvas.Desktop.Trees
         string GetNodeText(object item);
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="item"></param>
+        /// <returns></returns>
+        bool GetIsChecked(object item);
+
+        void SetIsChecked(object item, bool value);
+
+        /// <summary>
         /// Gets the tooltip to display for the specified item
         /// </summary>
         /// <param name="item"></param>

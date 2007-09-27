@@ -15,6 +15,16 @@ namespace ClearCanvas.Desktop.Trees
 
         public abstract string GetNodeText(object item);
 
+        public virtual bool GetIsChecked(object item)
+        {
+            return false;
+        }
+
+        public virtual void SetIsChecked(object item, bool value)
+        {
+            return;
+        }
+
         public virtual string GetTooltipText(object item)
         {
             return null;

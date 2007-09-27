@@ -7,6 +7,8 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.Desktop.Trees
 {
     public delegate string TextProviderDelegate<T>(T item);
+    public delegate bool IsCheckedGetterDelegate<T>(T item);
+    public delegate void IsCheckedSetterDelegate<T>(T item, bool value);
     public delegate IconSet IconSetProviderDelegate<T>(T item);
     public delegate IResourceResolver ResourceResolverProviderDelegate<T>(T item);
     public delegate bool CanHaveSubTreeDelegate<T>(T item);
@@ -21,6 +23,8 @@ namespace ClearCanvas.Desktop.Trees
     public class TreeItemBinding<TItem> : TreeItemBindingBase
     {
         private TextProviderDelegate<TItem> _nodeTextProvider;
+        private IsCheckedGetterDelegate<TItem> _isCheckedGetter;
+        private IsCheckedSetterDelegate<TItem> _isCheckedSetter;
         private TextProviderDelegate<TItem> _tooltipTextProvider;
         private IconSetProviderDelegate<TItem> _iconSetIndexProvider;
         private ResourceResolverProviderDelegate<TItem> _resourceResolverProvider;
@@ -65,6 +69,21 @@ namespace ClearCanvas.Desktop.Trees
         {
             get { return _nodeTextProvider; }
             set { _nodeTextProvider = value; }
+        }
+
+        /// <summary>
+        /// Gets or sets the node checked status provider for this binding
+        /// </summary>
+        public IsCheckedGetterDelegate<TItem> IsCheckedGetter
+        {
+            get { return _isCheckedGetter; }
+            set { _isCheckedGetter = value; }
+        }
+
+        public IsCheckedSetterDelegate<TItem> IsCheckedSetter
+        {
+            get { return _isCheckedSetter; }
+            set { _isCheckedSetter = value; }
         }
 
         /// <summary>
@@ -127,6 +146,19 @@ namespace ClearCanvas.Desktop.Trees
         public override string GetNodeText(object item)
         {
             return _nodeTextProvider((TItem)item);
+        }
+
+        public override bool GetIsChecked(object item)
+        {
+            return _isCheckedGetter == null ? base.GetIsChecked(((TItem) item)) : _isCheckedGetter((TItem) item);
+        }
+
+        public override void SetIsChecked(object item, bool value)
+        {
+            if(_isCheckedSetter != null)
+            {
+                _isCheckedSetter((TItem) item, value);
+            }
         }
 
         public override bool CanHaveSubTree(object item)

@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
@@ -6,12 +5,17 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation
 {
     [DataContract]
-    public class GetProcedurePlanForWorklistItemResponse : DataContractBase
+    public class StartModalityProcedureStepResponse : DataContractBase
     {
+        public StartModalityProcedureStepResponse()
+        {
+            RequestedProcedures = new List<RequestedProcedureDetail>();
+        }
+
         [DataMember]
         public List<RequestedProcedureDetail> RequestedProcedures;
 
         [DataMember]
-        public EntityRef OrderRef;
+        public ModalityPerformedProcedureStepSummary ModalityPerformedProcedureStep;
     }
 }

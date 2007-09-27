@@ -1,4 +1,5 @@
 using System;
+using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
@@ -26,16 +27,34 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             treeProcedurePlan.Tree = _component.ProcedurePlanTree;
             treeProcedurePlan.MenuModel = _component.ProcedurePlanTreeActionModel;
             treeProcedurePlan.ToolbarModel = _component.ProcedurePlanTreeActionModel;
+            _component.ProcedurePlanTreeChanged += OnProcedurePlanChanged;
 
             tableViewDocumentationDetails.Table = _component.MppsTable;
+            tableViewDocumentationDetails.DataBindings.Add("Selection", _component, "SelectedMpps", true, DataSourceUpdateMode.OnPropertyChanged);
             tableViewDocumentationDetails.MenuModel = _component.MppsTableActionModel;
             tableViewDocumentationDetails.ToolbarModel = _component.MppsTableActionModel;
+        }
+
+        ~TechnologistDocumentationComponentControl()
+        {
+            _component.ProcedurePlanTreeChanged -= OnProcedurePlanChanged;
         }
 
         private void TechnologistDocumentationComponentControl_Load(object sender, EventArgs e)
         {
             treeProcedurePlan.ExpandAll();
             tabControlDetails.SelectTab(tabPageDocumentationDetails);
+        }
+
+        private void OnProcedurePlanChanged(object sender, EventArgs e)
+        {
+            treeProcedurePlan.Tree = _component.ProcedurePlanTree;
+            treeProcedurePlan.ExpandAll();
+        }
+
+        private void buttonCompleteDocumentationDetails_Click(object sender, EventArgs e)
+        {
+            _component.OnComplete();
         }
     }
 }

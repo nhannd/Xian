@@ -45,6 +45,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.panelAdditionalDetails = new System.Windows.Forms.Panel();
             this.browserAdditionalDetails = new System.Windows.Forms.WebBrowser();
             this.tabControlDetails = new System.Windows.Forms.TabControl();
+            this.tabPagePreExam = new System.Windows.Forms.TabPage();
+            this.panelPreExam = new System.Windows.Forms.Panel();
+            this.webBrowserPreExam = new System.Windows.Forms.WebBrowser();
             this.tabPageDocumentationDetails = new System.Windows.Forms.TabPage();
             this.tableLayoutPanelDocumentationDetails = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
@@ -53,9 +56,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableViewDocumentationDetails = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.panel5 = new System.Windows.Forms.Panel();
             this.browserDocumentationDetails = new System.Windows.Forms.WebBrowser();
-            this.tabPagePreExam = new System.Windows.Forms.TabPage();
-            this.panelPreExam = new System.Windows.Forms.Panel();
-            this.webBrowserPreExam = new System.Windows.Forms.WebBrowser();
             this.tabPagePostExam = new System.Windows.Forms.TabPage();
             this.panelPostExam = new System.Windows.Forms.Panel();
             this.browserPostExam = new System.Windows.Forms.WebBrowser();
@@ -74,6 +74,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tabPageAdditionalDetails.SuspendLayout();
             this.panelAdditionalDetails.SuspendLayout();
             this.tabControlDetails.SuspendLayout();
+            this.tabPagePreExam.SuspendLayout();
+            this.panelPreExam.SuspendLayout();
             this.tabPageDocumentationDetails.SuspendLayout();
             this.tableLayoutPanelDocumentationDetails.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
@@ -81,8 +83,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.splitContainerDocumentationDetails.Panel2.SuspendLayout();
             this.splitContainerDocumentationDetails.SuspendLayout();
             this.panel5.SuspendLayout();
-            this.tabPagePreExam.SuspendLayout();
-            this.panelPreExam.SuspendLayout();
             this.tabPagePostExam.SuspendLayout();
             this.panelPostExam.SuspendLayout();
             this.SuspendLayout();
@@ -226,6 +226,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.treeProcedurePlan.MenuModel = null;
             this.treeProcedurePlan.Name = "treeProcedurePlan";
             this.treeProcedurePlan.Selection = selection1;
+            this.treeProcedurePlan.SelectionDisabled = true;
             this.treeProcedurePlan.Size = new System.Drawing.Size(249, 254);
             this.treeProcedurePlan.TabIndex = 0;
             this.treeProcedurePlan.ToolbarModel = null;
@@ -275,6 +276,36 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tabControlDetails.Size = new System.Drawing.Size(754, 609);
             this.tabControlDetails.TabIndex = 0;
             // 
+            // tabPagePreExam
+            // 
+            this.tabPagePreExam.Controls.Add(this.panelPreExam);
+            this.tabPagePreExam.Location = new System.Drawing.Point(4, 22);
+            this.tabPagePreExam.Name = "tabPagePreExam";
+            this.tabPagePreExam.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPagePreExam.Size = new System.Drawing.Size(746, 583);
+            this.tabPagePreExam.TabIndex = 1;
+            this.tabPagePreExam.Text = "Pre-Exam";
+            this.tabPagePreExam.UseVisualStyleBackColor = true;
+            // 
+            // panelPreExam
+            // 
+            this.panelPreExam.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
+            this.panelPreExam.Controls.Add(this.webBrowserPreExam);
+            this.panelPreExam.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panelPreExam.Location = new System.Drawing.Point(3, 3);
+            this.panelPreExam.Name = "panelPreExam";
+            this.panelPreExam.Size = new System.Drawing.Size(740, 577);
+            this.panelPreExam.TabIndex = 0;
+            // 
+            // webBrowserPreExam
+            // 
+            this.webBrowserPreExam.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.webBrowserPreExam.Location = new System.Drawing.Point(0, 0);
+            this.webBrowserPreExam.MinimumSize = new System.Drawing.Size(20, 20);
+            this.webBrowserPreExam.Name = "webBrowserPreExam";
+            this.webBrowserPreExam.Size = new System.Drawing.Size(736, 573);
+            this.webBrowserPreExam.TabIndex = 0;
+            // 
             // tabPageDocumentationDetails
             // 
             this.tabPageDocumentationDetails.Controls.Add(this.tableLayoutPanelDocumentationDetails);
@@ -323,6 +354,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.buttonCompleteDocumentationDetails.TabIndex = 0;
             this.buttonCompleteDocumentationDetails.Text = "Complete";
             this.buttonCompleteDocumentationDetails.UseVisualStyleBackColor = true;
+            this.buttonCompleteDocumentationDetails.Click += new System.EventHandler(this.buttonCompleteDocumentationDetails_Click);
             // 
             // splitContainerDocumentationDetails
             // 
@@ -352,7 +384,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableViewDocumentationDetails.Name = "tableViewDocumentationDetails";
             this.tableViewDocumentationDetails.ReadOnly = false;
             this.tableViewDocumentationDetails.Selection = selection2;
-            this.tableViewDocumentationDetails.ShowToolbar = false;
             this.tableViewDocumentationDetails.Size = new System.Drawing.Size(734, 183);
             this.tableViewDocumentationDetails.TabIndex = 0;
             this.tableViewDocumentationDetails.Table = null;
@@ -379,36 +410,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.browserDocumentationDetails.Size = new System.Drawing.Size(730, 345);
             this.browserDocumentationDetails.TabIndex = 0;
             this.browserDocumentationDetails.Url = new System.Uri("file:///C:/foo.html", System.UriKind.Absolute);
-            // 
-            // tabPagePreExam
-            // 
-            this.tabPagePreExam.Controls.Add(this.panelPreExam);
-            this.tabPagePreExam.Location = new System.Drawing.Point(4, 22);
-            this.tabPagePreExam.Name = "tabPagePreExam";
-            this.tabPagePreExam.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPagePreExam.Size = new System.Drawing.Size(746, 583);
-            this.tabPagePreExam.TabIndex = 1;
-            this.tabPagePreExam.Text = "Pre-Exam";
-            this.tabPagePreExam.UseVisualStyleBackColor = true;
-            // 
-            // panelPreExam
-            // 
-            this.panelPreExam.BorderStyle = System.Windows.Forms.BorderStyle.Fixed3D;
-            this.panelPreExam.Controls.Add(this.webBrowserPreExam);
-            this.panelPreExam.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panelPreExam.Location = new System.Drawing.Point(3, 3);
-            this.panelPreExam.Name = "panelPreExam";
-            this.panelPreExam.Size = new System.Drawing.Size(740, 577);
-            this.panelPreExam.TabIndex = 0;
-            // 
-            // webBrowserPreExam
-            // 
-            this.webBrowserPreExam.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.webBrowserPreExam.Location = new System.Drawing.Point(0, 0);
-            this.webBrowserPreExam.MinimumSize = new System.Drawing.Size(20, 20);
-            this.webBrowserPreExam.Name = "webBrowserPreExam";
-            this.webBrowserPreExam.Size = new System.Drawing.Size(736, 573);
-            this.webBrowserPreExam.TabIndex = 0;
             // 
             // tabPagePostExam
             // 
@@ -466,6 +467,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tabPageAdditionalDetails.ResumeLayout(false);
             this.panelAdditionalDetails.ResumeLayout(false);
             this.tabControlDetails.ResumeLayout(false);
+            this.tabPagePreExam.ResumeLayout(false);
+            this.panelPreExam.ResumeLayout(false);
             this.tabPageDocumentationDetails.ResumeLayout(false);
             this.tabPageDocumentationDetails.PerformLayout();
             this.tableLayoutPanelDocumentationDetails.ResumeLayout(false);
@@ -476,8 +479,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.splitContainerDocumentationDetails.Panel2.ResumeLayout(false);
             this.splitContainerDocumentationDetails.ResumeLayout(false);
             this.panel5.ResumeLayout(false);
-            this.tabPagePreExam.ResumeLayout(false);
-            this.panelPreExam.ResumeLayout(false);
             this.tabPagePostExam.ResumeLayout(false);
             this.panelPostExam.ResumeLayout(false);
             this.ResumeLayout(false);

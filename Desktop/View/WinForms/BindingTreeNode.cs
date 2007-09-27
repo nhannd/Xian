@@ -58,6 +58,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             this.Text = _parentTree.Binding.GetNodeText(_item);
             this.ToolTipText = _parentTree.Binding.GetTooltipText(_item);
 
+            this.Checked = _parentTree.Binding.GetIsChecked(_item);
+
             if (this.TreeView != null && this.TreeView.ImageList != null)
             {
                 IResourceResolver resolver = _parentTree.Binding.GetResourceResolver(_item);
@@ -159,6 +161,11 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 _subtreeManager = new BindingTreeLevelManager(subTree, this.Nodes);
             }
+        }
+
+        public void OnChecked()
+        {
+            _parentTree.Binding.SetIsChecked(_item, this.Checked);
         }
     }
 }

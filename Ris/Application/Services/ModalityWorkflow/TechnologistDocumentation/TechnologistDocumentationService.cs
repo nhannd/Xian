@@ -5,6 +5,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
+using Iesi.Collections;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocumentation
 {
@@ -12,6 +13,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
     [ServiceImplementsContract(typeof(ITechnologistDocumentationService))]
     class TechnologistDocumentationService : ApplicationServiceBase, ITechnologistDocumentationService
     {
+        #region Old Tech Documentation page services
+
         [ReadOperation]
         public GetProcedureStepsForWorklistItemResponse GetProcedureStepsForWorklistItem(
             GetProcedureStepsForWorklistItemRequest request)
@@ -23,17 +26,17 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
                 CollectionUtils.Select<ProcedureStep, List<ProcedureStep>>(
                     mps.RequestedProcedure.ProcedureSteps,
                     delegate(ProcedureStep ps)
-                    {
-                        return ps.Is<ModalityProcedureStep>();
-                    });
+                        {
+                            return ps.Is<ModalityProcedureStep>();
+                        });
 
             return new GetProcedureStepsForWorklistItemResponse(
                 CollectionUtils.Map<ProcedureStep, ProcedureStepDetail, List<ProcedureStepDetail>>(
                     documentableProcedureSteps,
                     delegate (ProcedureStep ps)
-                    {
-                        return assembler.CreateProcedureStepDetail(ps, PersistenceContext);
-                    }));
+                        {
+                            return assembler.CreateProcedureStepDetail(ps, PersistenceContext);
+                        }));
         }
 
         [UpdateOperation]
@@ -56,6 +59,10 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             return new DocumentProceduresResponse();
         }
 
+        #endregion
+
+        #region ITechnologistDocumentationService Members
+
         [ReadOperation]
         public GetProcedurePlanForWorklistItemResponse GetProcedurePlanForWorklistItem(GetProcedurePlanForWorklistItemRequest request)
         {
@@ -64,7 +71,10 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
 
             GetProcedurePlanForWorklistItemResponse response = new GetProcedurePlanForWorklistItemResponse();
+
             Order order = mps.RequestedProcedure.Order;
+            response.OrderRef = order.GetRef();
+            
             response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
                 order.RequestedProcedures,
                 delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext);});
@@ -75,16 +85,166 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         [ReadOperation]
         public ListPerformedProcedureStepsResponse ListPerformedProcedureSteps(ListPerformedProcedureStepsRequest request)
         {
-            ModalityProcedureStep mps = this.PersistenceContext.Load<ModalityProcedureStep>(request.ProcedureStepRef);
+            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
 
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
 
+            ISet mppsSet = new HybridSet();
+            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            {
+                foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
+                {
+                    mppsSet.AddAll(mps.PerformedSteps);
+                }
+            }
+
             ListPerformedProcedureStepsResponse response = new ListPerformedProcedureStepsResponse();
             response.PerformedProcedureSteps = CollectionUtils.Map<ModalityPerformedProcedureStep, ModalityPerformedProcedureStepSummary>(
-                mps.PerformedSteps,
+                mppsSet,
                 delegate (ModalityPerformedProcedureStep mpps) { return assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);}); 
 
             return response;
         }
+
+        [UpdateOperation]
+        public StartModalityProcedureStepResponse StartModalityProcedureStep(StartModalityProcedureStepRequest request)
+        {
+            ModalityPerformedProcedureStep mpps = new ModalityPerformedProcedureStep();
+            this.PersistenceContext.Lock(mpps, DirtyState.New);
+
+            Order order = null;
+
+            foreach (ModalityProcedureStepDetail mpsDetail in request.ModalityProcedureSteps)
+            {
+                ModalityProcedureStep mps = this.PersistenceContext.Load<ModalityProcedureStep>(mpsDetail.ModalityProcedureStepRef);
+                mps.Start(this.CurrentUserStaff);
+                mps.AddPerformedStep(mpps);
+
+                if (order == null) order = mps.RequestedProcedure.Order;
+            }
+
+            this.PersistenceContext.SynchState();
+
+            StartModalityProcedureStepResponse response = new StartModalityProcedureStepResponse();
+            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+
+            response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
+                order.RequestedProcedures,
+                delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
+
+            response.ModalityPerformedProcedureStep = assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
+
+            return response;
+        }
+
+        [UpdateOperation]
+        public StopModalityPerformedProcedureStepResponse StopModalityPerformedProcedureStep(StopModalityPerformedProcedureStepRequest request)
+        {
+            ModalityPerformedProcedureStep mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(request.MppsRef);
+
+            mpps.Complete();
+
+            // Drill back to order so we can refresh procedure plan
+            ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ModalityProcedureStep>(mpps.Activities);
+            Order order = oneMps.RequestedProcedure.Order;
+            this.PersistenceContext.SynchState();
+
+            StopModalityPerformedProcedureStepResponse response = new StopModalityPerformedProcedureStepResponse();
+            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+
+            response.StoppedMpps = assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
+            response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
+                order.RequestedProcedures,
+                delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
+
+            return response;
+        }
+
+        [UpdateOperation]
+        public DiscontinueModalityPerformedProcedureStepResponse DiscontinueModalityPerformedProcedureStep(DiscontinueModalityPerformedProcedureStepRequest request)
+        {
+            ModalityPerformedProcedureStep mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(request.MppsRef);
+
+            mpps.Discontinue();
+
+            // Drill back to order so we can refresh procedure plan
+            ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ModalityProcedureStep>(mpps.Activities);
+            Order order = oneMps.RequestedProcedure.Order;
+            this.PersistenceContext.SynchState();
+
+            DiscontinueModalityPerformedProcedureStepResponse response = new DiscontinueModalityPerformedProcedureStepResponse();
+            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+
+            response.DiscontinuedMpps = assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
+            response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
+                order.RequestedProcedures,
+                delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
+
+            return response;
+        }
+
+        [UpdateOperation]
+        public CompleteModalityProcedureStepsResponse CompleteModalityProcedureSteps(CompleteModalityProcedureStepsRequest request)
+        {
+            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+
+            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            {
+                foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
+                {
+                    // TODO: "Completer" can be different?
+                    mps.TryCompleteFromPerformedProcedureSteps();
+                }
+            }
+
+            CompleteModalityProcedureStepsResponse response = new CompleteModalityProcedureStepsResponse();
+            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+
+            response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
+                order.RequestedProcedures,
+                delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
+
+            return response;
+        }
+
+        [UpdateOperation]
+        public DiscontinueRequestedProcedureOrModalityProcedureStepResponse DiscontinueRequestedProcedureOrModalityProcedureStep(DiscontinueRequestedProcedureOrModalityProcedureStepRequest request)
+        {
+            Order order = null;
+
+            foreach (ModalityProcedureStepDetail mpsDetail in request.ModalityProcedureSteps)
+            {
+                ModalityProcedureStep mps = this.PersistenceContext.Load<ModalityProcedureStep>(mpsDetail.ModalityProcedureStepRef);
+                mps.Discontinue();
+
+                if (order == null) order = mps.RequestedProcedure.Order;
+            }
+
+            foreach (RequestedProcedureDetail rpDetail in request.RequestedProcedures)
+            {
+                RequestedProcedure rp = this.PersistenceContext.Load<RequestedProcedure>(rpDetail.RequestedProcedureRef);
+                
+                //This logic should not be here -> need CancelOrDiscontinueOperation
+                if (rp.Status == RequestedProcedureStatus.SC) 
+                    rp.Cancel();
+                else 
+                    rp.Discontinue();
+
+                if (order == null) order = rp.Order;
+            }
+
+            this.PersistenceContext.SynchState();
+
+            DiscontinueRequestedProcedureOrModalityProcedureStepResponse response = new DiscontinueRequestedProcedureOrModalityProcedureStepResponse();
+            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+
+            response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
+                order.RequestedProcedures,
+                delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
+
+            return response;
+        }
+
+        #endregion
     }
 }

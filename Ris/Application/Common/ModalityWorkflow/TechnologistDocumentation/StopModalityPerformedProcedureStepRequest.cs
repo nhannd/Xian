@@ -4,14 +4,14 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation
 {
     [DataContract]
-    public class ListPerformedProcedureStepsRequest : DataContractBase
+    public class StopModalityPerformedProcedureStepRequest : DataContractBase
     {
-        public ListPerformedProcedureStepsRequest(EntityRef orderRef)
+        public StopModalityPerformedProcedureStepRequest(EntityRef mppsRef)
         {
-            OrderRef = orderRef;
+            MppsRef = mppsRef;
         }
 
         [DataMember]
-        public EntityRef OrderRef;
+        public EntityRef MppsRef;
     }
 }

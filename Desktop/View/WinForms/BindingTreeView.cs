@@ -28,6 +28,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ToolStripItemDisplayStyle _toolStripItemDisplayStyle = ToolStripItemDisplayStyle.Image;
         private ToolStripItemAlignment _toolStripItemAlignment = ToolStripItemAlignment.Right;
         private TextImageRelation _textImageRelation = TextImageRelation.ImageBeforeText;
+        private bool _selectionDisabled = false;
 
         private bool _isLoaded = false;
 
@@ -147,6 +148,16 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             get { return _treeCtrl.CheckBoxes; }
             set { _treeCtrl.CheckBoxes = value; }
+        }
+
+        [DefaultValue(false)]
+        public bool SelectionDisabled
+        {
+            get { return _selectionDisabled; }
+            set
+            {
+                _selectionDisabled = value;
+            }
         }
 
         public ImageList ImageList
@@ -535,6 +546,23 @@ namespace ClearCanvas.Desktop.View.WinForms
 
             InitializeToolStrip();
             _isLoaded = true;
+        }
+
+        private void _treeCtrl_AfterCheck(object sender, TreeViewEventArgs e)
+        {
+            BindingTreeNode node = e.Node as BindingTreeNode;
+            if (node != null)
+            {
+                node.OnChecked();
+            }
+        }
+
+        private void _treeCtrl_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+        {
+            if(_selectionDisabled)
+            {
+                e.Cancel = true;
+            }
         }
     }
 }
