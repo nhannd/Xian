@@ -16,8 +16,8 @@
     <!--MS SQL-->
     <property name="hibernate.dialect">NHibernate.Dialect.MsSql2000Dialect</property>
 	  <property name="connection.driver_class">NHibernate.Driver.SqlClientDriver</property>
-	  <property name="connection.connection_string">Data Source=172.16.10.167\SQLEXPRESS;Initial Catalog=Ris2;User Id=risuser;Password=rispass</property>
-	  <property name="hibernate.default_schema">Ris2.dbo</property>
+	  <property name="connection.connection_string">Data Source=172.16.10.167\SQLEXPRESS;Initial Catalog=Ris3;User Id=risuser;Password=rispass</property>
+	  <property name="hibernate.default_schema">Ris3.dbo</property>
 
     <!--SQLite-->
     <!--<property name="hibernate.dialect">NHibernate.Dialect.SQLiteDialect</property>
