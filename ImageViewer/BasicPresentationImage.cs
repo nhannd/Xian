@@ -13,9 +13,9 @@ namespace ClearCanvas.ImageViewer
 	/// extend this <see cref="ExtensionPoint"/> should be thread-safe to account for the possibility that 
 	/// <see cref="BasicPresentationImage"/>s could be rendered on multiple UI threads.
 	/// </summary>
-	public sealed class BasicPresentationImageRenderExtensionPoint : ExtensionPoint<IRenderer>
+	public sealed class BasicPresentationImageRendererExtensionPoint : ExtensionPoint<IRenderer>
 	{
-		public BasicPresentationImageRenderExtensionPoint()
+		public BasicPresentationImageRendererExtensionPoint()
 		{
 		}
 	}
@@ -175,7 +175,7 @@ namespace ClearCanvas.ImageViewer
 						{
 							try
 							{
-								_renderer = new BasicPresentationImageRenderExtensionPoint().CreateExtension() as IRenderer;
+								_renderer = new BasicPresentationImageRendererExtensionPoint().CreateExtension() as IRenderer;
 							}
 							catch (Exception e)
 							{
