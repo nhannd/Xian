@@ -33,6 +33,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ImageServerQueueWork.cs" />
+    <Compile Include="ImageServerQueueWorkSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ImageServerQueueWorkSettings.settings</DependentUpon>
+    </Compile>
+    <Compile Include="ImageServerQueueWorkSettings.cs" />
     <Compile Include="InsertInstanceCommand.cs" />
     <Compile Include="InsertStreamCommand.cs" />
     <Compile Include="StudyProcessFactoryExtension.cs" />
@@ -76,6 +83,13 @@
       <Project>{65B9B08C-EAE4-4EE2-B164-905B03134443}</Project>
       <Name>ClearCanvas.ImageServer.Queue</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="ImageServerQueueWorkSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ImageServerQueueWorkSettings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

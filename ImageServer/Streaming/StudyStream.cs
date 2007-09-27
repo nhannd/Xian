@@ -129,8 +129,7 @@ namespace ClearCanvas.ImageServer.Streaming
             InstanceStream instance = series[sopInstanceUid];
             if (instance != null)
             {
-                Platform.Log(LogLevel.Warn,"Attempting to add a duplicate SOP instance to the stream: {0}",theFile.MediaStorageSopInstanceUid);
-                return false;
+                Platform.Log(LogLevel.Warn,"Attempting to add a duplicate SOP instance to the stream.  Replacing value: {0}",theFile.MediaStorageSopInstanceUid);
             }
 
             instance = new InstanceStream(data);

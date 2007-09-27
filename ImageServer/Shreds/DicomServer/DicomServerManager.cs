@@ -75,6 +75,7 @@ namespace ClearCanvas.ImageServer.Shreds.DicomServer
             IGetServerPartitions broker = read.GetBroker<IGetServerPartitions>();
             IList<ServerPartition> partitions = broker.Execute();
             FilesystemMonitor monitor = new FilesystemMonitor();
+            
             monitor.Load();
 
             read.Dispose();
@@ -83,7 +84,7 @@ namespace ClearCanvas.ImageServer.Shreds.DicomServer
             {
                 if (part.Enabled)
                 {
-                    DicomScpParameters parms = new DicomScpParameters(part, monitor);
+                    DicomScpParameters parms = new DicomScpParameters(part, monitor, new FilesystemSelector(monitor));
 
                     DicomScp scp = new DicomScp(parms,AssociationVerifier.Verify);
 

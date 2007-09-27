@@ -21,12 +21,12 @@ namespace ClearCanvas.ImageServer.Model
         #endregion
 
         #region Public Properties
-        private String Description
+        public String Description
         {
             get { return _description; }
             set { _description = value; }
         }
-        private int TierId
+        public int TierId
         {
             get { return _tierId; }
             set { _tierId = value; }

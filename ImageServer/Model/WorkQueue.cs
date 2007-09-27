@@ -25,6 +25,7 @@ namespace ClearCanvas.ImageServer.Model
         private DateTime _expirationTime;
         private DateTime _scheduledTime;
         private DateTime _insertTime;
+        private int _failureCount;
         private XmlDocument _data;
         #endregion
 
@@ -58,6 +59,11 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _insertTime; }
             set { _insertTime = value; }
+        }
+        public int FailureCount
+        {
+            get { return _failureCount; }
+            set { _failureCount = value; }
         }
         public XmlDocument Data
         {

@@ -42,8 +42,8 @@ namespace ClearCanvas.ImageServer.Common
         #region Public Methods
         public void ExecuteCommand(ServerCommand command)
         {
-            command.Execute();
             _stack.Push(command);
+            command.Execute();
         }
 
         public void Rollback()

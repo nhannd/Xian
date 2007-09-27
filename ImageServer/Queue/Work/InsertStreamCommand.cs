@@ -55,16 +55,29 @@ namespace ClearCanvas.ImageServer.Queue.Work
 
         private static void WriteStudyStream(string streamFile, StudyStream theStream)
         {
-            XmlDocument doc = theStream.GetMomento();
+            Stream fileStream = null;
 
-            if (File.Exists(streamFile))
-                File.Delete(streamFile);
+            try
+            {
+                XmlDocument doc = theStream.GetMomento();
 
-            Stream fileStream = new FileStream(streamFile, FileMode.CreateNew);
+                if (File.Exists(streamFile))
+                    File.Delete(streamFile);
 
-            StreamingIo.Write(doc, fileStream);
+                fileStream = new FileStream(streamFile, FileMode.CreateNew);
 
-            fileStream.Close();
+                StreamingIo.Write(doc, fileStream);
+
+            }
+            finally
+            {
+                // We have to throw the exception here to cleanup 
+                if (fileStream != null)
+                {
+                    fileStream.Close();
+                    fileStream.Dispose();
+                }
+            }
         }
     }
 }

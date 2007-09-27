@@ -38,5 +38,10 @@ namespace ClearCanvas.ImageServer.Model.Parameters
         {
             set { this.SubCriteria["ScheduledTime"] = new ProcedureParameter<DateTime>("ScheduledTime", value); }
         }
+
+        public int FailureCount
+        {
+            set { this.SubCriteria["FailureCount"] = new ProcedureParameter<int>("FailureCount", value); }
+        }
     }
 }

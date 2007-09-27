@@ -35,10 +35,12 @@
   <ItemGroup>
     <Compile Include="CreateDirectoryCommand.cs" />
     <Compile Include="FileSystemMonitor.cs" />
+    <Compile Include="FilesystemSelector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SaveDicomFileCommand.cs" />
     <Compile Include="ServerCommand.cs" />
     <Compile Include="ServerCommandProcessor.cs" />
+    <Compile Include="ServerFilesystemInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Common\ClearCanvas.Common.csproj">

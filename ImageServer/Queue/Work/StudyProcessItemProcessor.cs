@@ -175,18 +175,39 @@ namespace ClearCanvas.ImageServer.Queue.Work
             IUpdateWorkQueue update = _readContext.GetBroker<IUpdateWorkQueue>();
             
             WorkQueueUpdateParameters parms = new WorkQueueUpdateParameters();
-            if (successfulProcessCount == 0)
-                parms.StatusEnum = StatusEnum.GetEnum("Failed");
-            else
-                parms.StatusEnum = StatusEnum.GetEnum("Pending");
             parms.WorkQueueKey = item.GetKey();
             parms.StudyStorageKey = item.StudyStorageKey;
-            parms.ScheduledTime = Platform.Time.AddSeconds(15.0);
-            parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
+
+            if (successfulProcessCount == 0)
+            {
+                parms.FailureCount = item.FailureCount + 1;
+                ImageServerQueueWorkSettings settings = ImageServerQueueWorkSettings.Default;
+                if ((item.FailureCount + 1) > settings.WorkQueueMaxFailureCount)
+                {
+                    Platform.Log(LogLevel.Error,"Failing StudyProcess WorkQueue entry ({0}), reached max retry count of {1}",item.GetKey(),item.FailureCount + 1);
+                    parms.StatusEnum = StatusEnum.GetEnum("Failed");
+                    parms.ScheduledTime = Platform.Time;
+                    parms.ExpirationTime = Platform.Time;
+                }
+                else
+                {
+                    Platform.Log(LogLevel.Error, "Resetting StudyProcess WorkQueue entry ({0}) to Pending, current retry count {1}", item.GetKey(), item.FailureCount + 1);
+                    parms.StatusEnum = StatusEnum.GetEnum("Pending");
+                    parms.ScheduledTime = Platform.Time.AddMinutes(settings.WorkQueueFailureDelayMinutes);
+                    parms.ExpirationTime = Platform.Time.AddMinutes(settings.WorkQueueMaxFailureCount * settings.WorkQueueFailureDelayMinutes);
+                }
+            }
+            else
+            {
+                parms.StatusEnum = StatusEnum.GetEnum("Pending");
+                parms.FailureCount = item.FailureCount;
+                parms.ScheduledTime = Platform.Time.AddSeconds(15.0);
+                parms.ExpirationTime = Platform.Time.AddMinutes(5.0);
+            }
 
             if (false == update.Execute(parms))
             {
-                Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID to Pending: {0}", item.GetKey().ToString()); 
+                Platform.Log(LogLevel.Error, "Unable to update StudyProcess WorkQueue GUID Status: {0}", item.GetKey().ToString()); 
             }
         }
 
@@ -214,14 +235,16 @@ namespace ClearCanvas.ImageServer.Queue.Work
                     parms.StatusEnum = StatusEnum.GetEnum("Completed");
                     parms.WorkQueueKey = item.GetKey();
                     parms.StudyStorageKey = item.StudyStorageKey;
+                    parms.FailureCount = item.FailureCount;
                 }
                 else
                 {
                     parms.StatusEnum = StatusEnum.GetEnum("Pending");
                     parms.WorkQueueKey = item.GetKey();
                     parms.StudyStorageKey = item.StudyStorageKey;
-                    parms.ScheduledTime = Platform.Time.AddSeconds(60.0); // 30 second delay to recheck
+                    parms.ScheduledTime = Platform.Time.AddSeconds(60.0); // 60 second delay to recheck
                     parms.ExpirationTime = item.ExpirationTime; // Keep the same
+                    parms.FailureCount = item.FailureCount;
                 }
 
                 if (false == update.Execute(parms))

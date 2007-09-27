@@ -89,6 +89,7 @@ namespace ClearCanvas.ImageServer.Queue
             parms.StudyStorageKey = item.StudyStorageKey;
             parms.ScheduledTime = Platform.Time;
             parms.ExpirationTime = Platform.Time.AddDays(1);
+            parms.FailureCount = item.FailureCount + 1;
             
             if (false == update.Execute(parms))
             {
