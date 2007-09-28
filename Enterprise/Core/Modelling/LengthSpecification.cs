@@ -33,7 +33,7 @@ namespace ClearCanvas.Enterprise.Core.Modelling
             {
                 string text = (string)value;
 
-                return text.Length > _min && text.Length < _max ? new TestResult(true) :
+                return text.Length >= _min && text.Length <= _max ? new TestResult(true) :
                     new TestResult(false, new TestResultReason(GetMessage()));
 
             }
