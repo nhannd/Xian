@@ -5,6 +5,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
+using ClearCanvas.Workflow;
 using Iesi.Collections;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocumentation
@@ -190,12 +191,27 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 
             foreach (RequestedProcedure rp in order.RequestedProcedures)
             {
+                bool allMpsComplete = true;
+
                 foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
                 {
                     // TODO: "Completer" can be different?
                     mps.TryCompleteFromPerformedProcedureSteps();
+                    allMpsComplete &= mps.State == ActivityStatus.CM;
+                }
+
+                bool hasInterpretationStep = CollectionUtils.Contains<ProcedureStep>(
+                    rp.ProcedureSteps,
+                    delegate(ProcedureStep ps) { return ps.Is<InterpretationStep>(); });
+
+                if(allMpsComplete && !hasInterpretationStep)
+                {
+                    InterpretationStep ip = new InterpretationStep(rp);
+                    this.PersistenceContext.Lock(ip, DirtyState.New);
                 }
             }
+
+            this.PersistenceContext.SynchState();
 
             CompleteModalityProcedureStepsResponse response = new CompleteModalityProcedureStepsResponse();
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();

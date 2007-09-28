@@ -53,6 +53,8 @@ namespace ClearCanvas.Healthcare {
 
         public void TryCompleteFromPerformedProcedureSteps()
         {
+            if (this.State == ActivityStatus.CM) return;
+
             bool canComplete = false;
 
             foreach (PerformedProcedureStep pps in this.PerformedSteps)
