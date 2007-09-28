@@ -21,5 +21,12 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
 
         [DataMember]
         public DateTime? EndDateTime;
+
+        [DataMember]
+        public string ModalityId;
+
+        [DataMember]
+        public string ModalityName;
+
     }
 }

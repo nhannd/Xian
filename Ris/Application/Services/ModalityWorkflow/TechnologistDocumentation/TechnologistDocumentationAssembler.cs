@@ -138,6 +138,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             detail.StartDateTime = mp.StartTime;
             detail.EndDateTime = mp.EndTime;
             detail.Status = EnumUtils.GetEnumValueInfo(mp.State, context);
+            detail.ModalityId = mp.Modality.Id;
+            detail.ModalityName = mp.Modality.Name;
             return detail;
         }
 
@@ -151,13 +153,19 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
                 if(1 < mpsCount--) nameBuilder.Append(" / ");
             }
 
+            // include the details of each MPS in the mpps summary
+            List<ModalityProcedureStepDetail> mpsDetails = CollectionUtils.Map<ModalityProcedureStep, ModalityProcedureStepDetail>(
+                mpps.Activities,
+                delegate(ModalityProcedureStep mps) { return CreateModalityProcedureStepDetail(mps, context); });
+
             return new ModalityPerformedProcedureStepSummary(
                 mpps.GetRef(),
                 nameBuilder.ToString(),
                 EnumUtils.GetEnumValueInfo(mpps.State, context),
                 mpps.StartTime, 
                 mpps.EndTime, 
-                "Dummy Performer");
+                "Dummy Performer",
+                mpsDetails);
         }
     }
 }

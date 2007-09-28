@@ -7,6 +7,7 @@ using ClearCanvas.Healthcare;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 using ClearCanvas.Workflow;
 using Iesi.Collections;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocumentation
 {
@@ -110,18 +111,32 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         [UpdateOperation]
         public StartModalityProcedureStepResponse StartModalityProcedureStep(StartModalityProcedureStepRequest request)
         {
+            // load the set of mps
+            List<ModalityProcedureStep> modalitySteps = CollectionUtils.Map<ModalityProcedureStepDetail, ModalityProcedureStep>(request.ModalityProcedureSteps,
+                delegate(ModalityProcedureStepDetail detail)
+                {
+                    return this.PersistenceContext.Load<ModalityProcedureStep>(detail.ModalityProcedureStepRef);
+                });
+
+            if (modalitySteps.Count == 0)
+                throw new RequestValidationException("At least one procedure step is required.");
+
+            // validate that each mps being started is being performed on the same modality
+            if (!CollectionUtils.TrueForAll<ModalityProcedureStep>(modalitySteps,
+                delegate(ModalityProcedureStep step) { return step.Modality.Equals(modalitySteps[0].Modality); }))
+            {
+                // TODO -better error message
+                throw new RequestValidationException("Procedure steps cannot be started together because they are not on the same modality.");
+            }
+
+            // create an mpps
             ModalityPerformedProcedureStep mpps = new ModalityPerformedProcedureStep();
             this.PersistenceContext.Lock(mpps, DirtyState.New);
 
-            Order order = null;
-
-            foreach (ModalityProcedureStepDetail mpsDetail in request.ModalityProcedureSteps)
+            foreach (ModalityProcedureStep mps in modalitySteps)
             {
-                ModalityProcedureStep mps = this.PersistenceContext.Load<ModalityProcedureStep>(mpsDetail.ModalityProcedureStepRef);
                 mps.Start(this.CurrentUserStaff);
                 mps.AddPerformedStep(mpps);
-
-                if (order == null) order = mps.RequestedProcedure.Order;
             }
 
             this.PersistenceContext.SynchState();
@@ -129,6 +144,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             StartModalityProcedureStepResponse response = new StartModalityProcedureStepResponse();
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
 
+            Order order = modalitySteps[0].RequestedProcedure.Order;
             response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
                 order.RequestedProcedures,
                 delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
