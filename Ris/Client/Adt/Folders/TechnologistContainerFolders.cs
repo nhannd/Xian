@@ -29,7 +29,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
             : base("In Progress", typeof(InProgressTechnologistWorkflowFolder)) { }
     }
 
-    [ExtensionOf(typeof(TechnologistContainerFolderExtensionPoint))]
+    //[ExtensionOf(typeof(TechnologistContainerFolderExtensionPoint))]
     public class TechnologistSuspendedContainerFolder : ContainerFolder
     {
         public TechnologistSuspendedContainerFolder()

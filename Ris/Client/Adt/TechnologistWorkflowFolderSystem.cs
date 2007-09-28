@@ -147,11 +147,10 @@ namespace ClearCanvas.Ris.Client.Adt
                     }
                 });
 
-            //this.AddFolder(_searchFolder = new Folders.SearchFolder(this));
             this.AddFolder(new Folders.ScheduledTechnologistWorkflowFolder(this));
             this.AddFolder(new Folders.CheckedInTechnologistWorkflowFolder(this));
             this.AddFolder(new Folders.InProgressTechnologistWorkflowFolder(this));
-            this.AddFolder(new Folders.SuspendedTechnologistWorkflowFolder(this));
+            //this.AddFolder(new Folders.SuspendedTechnologistWorkflowFolder(this));
             this.AddFolder(new Folders.CancelledTechnologistWorkflowFolder(this));
             this.AddFolder(new Folders.CompletedTechnologistWorkflowFolder(this));
             this.AddFolder(_searchFolder = new Folders.TechnologistSearchFolder(this));

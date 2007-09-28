@@ -94,8 +94,8 @@ namespace ClearCanvas.Ris.Client.Adt
 	[IconSet("apply", IconScheme.Colour, "StartToolSmall.png", "StartToolMedium.png", "StartToolLarge.png")]
     [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(Folders.InProgressTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
+    //[ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
+    //[ExtensionOf(typeof(Folders.InProgressTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
     public class StartTool : TechnologistWorkflowTool
     {
         public StartTool()
@@ -122,8 +122,8 @@ namespace ClearCanvas.Ris.Client.Adt
 	[IconSet("apply", IconScheme.Colour, "CompleteToolSmall.png", "CompleteToolMedium.png", "CompleteToolLarge.png")]
     [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(Folders.CompletedTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
+    //[ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
+    //[ExtensionOf(typeof(Folders.CompletedTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
     public class CompleteTool : TechnologistWorkflowTool
     {
         public CompleteTool()
@@ -150,8 +150,8 @@ namespace ClearCanvas.Ris.Client.Adt
 	[IconSet("apply", IconScheme.Colour, "DeleteToolSmall.png", "DeleteToolMedium.png", "DeleteToolLarge.png")]
     [ClickHandler("apply", "Apply")]
     [EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
-    [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
-    [ExtensionOf(typeof(Folders.CancelledTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
+    //[ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
+    //[ExtensionOf(typeof(Folders.CancelledTechnologistWorkflowFolder.DropHandlerExtensionPoint))]
     public class CancelTool : TechnologistWorkflowTool
     {
         public CancelTool()

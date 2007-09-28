@@ -11,7 +11,7 @@ namespace ClearCanvas.Ris.Client.Adt
     [MenuAction("apply", "folderexplorer-items-contextmenu/XDocument", "Apply")]
     [ButtonAction("apply", "folderexplorer-items-toolbar/XDocument", "Apply")]
     [IconSet("apply", IconScheme.Colour, "StartToolSmall.png", "StartToolMedium.png", "StartToolLarge.png")]
-    [ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
+    //[ExtensionOf(typeof(TechnologistWorkflowItemToolExtensionPoint))]
     public class XTechnologistDocumentationTool : Tool<ITechnologistWorkflowItemToolContext>
     {
         private IWorkspace _workspace;

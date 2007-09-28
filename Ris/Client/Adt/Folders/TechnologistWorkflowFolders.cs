@@ -106,7 +106,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders
         }
     }
 
-    [ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
+    //[ExtensionOf(typeof(WorkflowFolderExtensionPoint))]
     [FolderForWorklistType(WorklistTokens.TechnologistSuspendedWorklist)]
     public class SuspendedTechnologistWorkflowFolder : TechnologistWorkflowFolder
     {
