@@ -96,7 +96,15 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
         protected string[] ParseCsv(string line)
         {
-            return line.Split(',');
+            string[] fields = line.Split(',');
+
+            // replace empty strings with nulls
+            for (int i = 0; i < fields.Length; i++)
+            {
+                if (fields[i].Length == 0)
+                    fields[i] = null;
+            }
+            return fields;
         }
 
         protected string[] ParseCsv(string line, int expectedFieldCount)
