@@ -47,6 +47,9 @@ namespace ClearCanvas.Dicom.Network
 			get { return _socket; }
 		}
 
+        /// <summary>
+        /// Flag telling if the connection was closed on an error.
+        /// </summary>
 		public bool ClosedOnError {
 			get { return _closedOnError; }
 		}
@@ -64,23 +67,77 @@ namespace ClearCanvas.Dicom.Network
             _socket.NoDelay = false;
         }
 
+        private void Connect(IPEndPoint ep)
+        {
+            _socket = new Socket(ep.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+            SetSocketOptions(_assoc as ClientAssociationParameters);
+
+            _socket.Connect(ep);
+
+            _network = new NetworkStream(_socket);
+
+            InitializeNetwork(_network, "Client handler to: " + ep);
+
+            _closedEvent = new ManualResetEvent(false);
+
+            _remoteEndPoint = ep;
+
+            _assoc.RemoteEndPoint = ep;
+
+            OnClientConnected();
+        }
+
         private void Connect()
         {
             _closedOnError = false;
 
-            _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            if (_assoc.RemoteEndPoint != null)
+            {
+                Connect(_assoc.RemoteEndPoint);
+            }
+            else
+            {
+                IPHostEntry entry = Dns.GetHostEntry(_assoc.RemoteHostname);
+                IPAddress[] list = entry.AddressList;
+                foreach (IPAddress dnsAddr in list)
+                {
+                    if (dnsAddr.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        try
+                        {
+                            Connect(new IPEndPoint(dnsAddr, _assoc.RemotePort));
+                            return;
+                        }
+                        catch (Exception e)
+                        {
+                            DicomLogger.LogErrorException(e,
+                                                          "Unable to connection to remote host, attempting other addresses: {0}",
+                                                          dnsAddr.ToString());
+                        }
+                    }
+                }
+                foreach (IPAddress dnsAddr in list)
+                {
+                    if (dnsAddr.AddressFamily == AddressFamily.InterNetworkV6)
+                    {
+                        try
+                        {
+                            Connect(new IPEndPoint(dnsAddr, _assoc.RemotePort));
+                            return;
+                        }
+                        catch (Exception e)
+                        {
+                            DicomLogger.LogErrorException(e,
+                                                          "Unable to connection to remote host, attempting other addresses: {0}",
+                                                          dnsAddr.ToString());
+                        }
+                    }
+                }
+                String message = String.Format("Unable to connect to: {0}:{1}, no valid addresses to connect to",_assoc.RemoteHostname,_assoc.RemotePort);
 
-            SetSocketOptions(this._assoc as ClientAssociationParameters);
-
-            _socket.Connect(_remoteEndPoint);
-
-            _network = new NetworkStream(_socket);
-
-            InitializeNetwork(_network,"Client handler to: " + _remoteEndPoint.ToString());
-
-            _closedEvent = new ManualResetEvent(false);
-
-            OnClientConnected();
+                DicomLogger.LogError(message);
+                throw new DicomException(message);
+            }
         }
 
         private void ConnectTLS()
@@ -104,6 +161,12 @@ namespace ClearCanvas.Dicom.Network
         #endregion
 
         #region Public Members
+        /// <summary>
+        /// Connection to a remote DICOM application.
+        /// </summary>
+        /// <param name="assoc"></param>
+        /// <param name="handler"></param>
+        /// <returns></returns>
         public static DicomClient Connect(AssociationParameters assoc, IDicomClientHandler handler)
         {
             DicomClient client = new DicomClient(assoc, handler);
@@ -111,6 +174,12 @@ namespace ClearCanvas.Dicom.Network
             return client;
 		}
 
+        /// <summary>
+        /// Connection to a remote DICOM application via TLS.
+        /// </summary>
+        /// <param name="assoc"></param>
+        /// <param name="handler"></param>
+        /// <returns></returns>
         public static DicomClient ConnectTLS(AssociationParameters assoc, IDicomClientHandler handler)
         {
             DicomClient client = new DicomClient(assoc, handler);
@@ -118,6 +187,9 @@ namespace ClearCanvas.Dicom.Network
             return client;
 		}
 
+        /// <summary>
+        /// Close the DICOM connection.
+        /// </summary>
         public override void Close()
         {
             lock (this)

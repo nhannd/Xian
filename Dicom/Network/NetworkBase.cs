@@ -558,7 +558,6 @@ namespace ClearCanvas.Dicom.Network
         /// </summary>
         /// <param name="presentationID"></param>
         /// <param name="messageID"></param>
-        /// <param name="affectedInstance"></param>
         /// <param name="status"></param>
         /// <param name="msg"></param>
         public void SendCFindResponse(byte presentationID, ushort messageID, DicomMessage msg, DicomStatus status)
@@ -953,14 +952,20 @@ namespace ClearCanvas.Dicom.Network
 
         private void SendRawPDU(RawPDU pdu)
         {
-            try
-            {
+            // If the try/catch is reintroduced here, it must
+            // throw an exception, if the exception is just eaten, 
+            // you can get into a case where there's repetetive errors
+            // trying to send PDUs, until a whole message is sent.
+
+            //try
+            //{
                 pdu.WritePDU(_network);
-            }
-            catch (Exception e)
-            {
-                OnNetworkError(e);
-            }
+            //}
+            //catch (Exception e)
+            //{
+            //    OnNetworkError(e);
+            //    throw new DicomException("Unexpected exception when writing PDU",e);
+            //}
         }
 
         /// <summary>

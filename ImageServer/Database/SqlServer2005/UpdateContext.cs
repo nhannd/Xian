@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Data.SqlClient;
 
 using ClearCanvas.Common;
@@ -24,6 +22,7 @@ namespace ClearCanvas.ImageServer.Database.SqlServer2005
             : base (connection, transactionNotifier)
         {
             _transaction = connection.BeginTransaction();
+            _mode = mode;
         }
 
         #region PersistenceContext Overrides

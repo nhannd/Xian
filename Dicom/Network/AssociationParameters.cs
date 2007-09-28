@@ -167,6 +167,8 @@ namespace ClearCanvas.Dicom.Network
         private SortedList<byte, DicomPresContext> _presContexts;
         private IPEndPoint _localEndPoint;
         private IPEndPoint _remoteEndPoint;
+        private string _remoteHostname;
+        private int _remotePort;
 
         // Sizes that result in PDUs that are multiples of the MTU work better.
         // Setting these values to an even multiple of the TCP/IP maximum
@@ -345,6 +347,19 @@ namespace ClearCanvas.Dicom.Network
             get { return _localEndPoint; }
             internal set { _localEndPoint = value; }
         }
+
+        public string RemoteHostname
+        {
+            get { return _remoteHostname; }
+            internal set { _remoteHostname = value; }
+        }
+
+        public int RemotePort
+        {
+            get { return _remotePort; }
+            internal set { _remotePort = value; }
+        }
+
 		#endregion
 
         #region Internal Properties
@@ -546,7 +561,7 @@ namespace ClearCanvas.Dicom.Network
 		}
 
 		internal DicomPresContext GetPresentationContext(byte pcid) {
-			DicomPresContext ctx = null;
+			DicomPresContext ctx;
 			if (!_presContexts.TryGetValue(pcid, out ctx))
 				throw new NetworkException("Invalid Presentaion Context ID");
 			return ctx;
@@ -595,9 +610,25 @@ namespace ClearCanvas.Dicom.Network
     /// </summary>
     public class ClientAssociationParameters : AssociationParameters
     {
+        public ClientAssociationParameters(String callingAE, String calledAE, string hostname, int port)
+               : base(callingAE, calledAE, null, null)
+        {
+            IPAddress addr;
+
+            RemotePort = port;
+            RemoteHostname = hostname;
+
+            if (IPAddress.TryParse(hostname, out addr))
+            {
+                RemoteEndPoint = new IPEndPoint(addr, port);
+            }
+        }
+
         public ClientAssociationParameters(String callingAE, String calledAE, IPEndPoint remoteEndPoint)
             : base(callingAE,calledAE,null,remoteEndPoint)
         {
+            RemotePort = remoteEndPoint.Port;
+            RemoteHostname = remoteEndPoint.Address.ToString();
 		}
 
         private ClientAssociationParameters(ClientAssociationParameters parameters)

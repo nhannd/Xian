@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 
 using ClearCanvas.Common;
@@ -84,19 +85,45 @@ namespace ClearCanvas.ImageServer.Shreds.DicomServer
             {
                 if (part.Enabled)
                 {
-                    DicomScpParameters parms = new DicomScpParameters(part, monitor, new FilesystemSelector(monitor));
+                    DicomScpParameters parms =
+                            new DicomScpParameters(part, monitor, new FilesystemSelector(monitor));
 
-                    DicomScp scp = new DicomScp(parms,AssociationVerifier.Verify);
-
-                    scp.ListenPort = part.Port;
-                    scp.AeTitle = part.AeTitle;
-
-                    if (true == scp.Start())
-                        _listenerList.Add(scp);
-                    else
+                    if (ImageServerShredSettings.Default.ListenIPV4)
                     {
-                        Platform.Log(LogLevel.Error, "Unable to add SCP handler for server partition {0}", part.Description);
-                        Platform.Log(LogLevel.Error, "Partition {0} will not accept incoming DICOM associations.", part.Description);
+                        DicomScp ipV4Scp = new DicomScp(parms, AssociationVerifier.Verify);
+
+                        ipV4Scp.ListenPort = part.Port;
+                        ipV4Scp.AeTitle = part.AeTitle;
+
+                        if (ipV4Scp.Start(IPAddress.Any))
+                            _listenerList.Add(ipV4Scp);
+                        else
+                        {
+                            Platform.Log(LogLevel.Error, "Unable to add IPv4 SCP handler for server partition {0}",
+                                         part.Description);
+                            Platform.Log(LogLevel.Error,
+                                         "Partition {0} will not accept IPv4 incoming DICOM associations.",
+                                         part.Description);
+                        }
+                    }
+
+                    if (ImageServerShredSettings.Default.ListenIPV6)
+                    {
+                        DicomScp ipV6Scp = new DicomScp(parms, AssociationVerifier.Verify);
+
+                        ipV6Scp.ListenPort = part.Port;
+                        ipV6Scp.AeTitle = part.AeTitle;
+
+                        if (ipV6Scp.Start(IPAddress.IPv6Any))
+                            _listenerList.Add(ipV6Scp);
+                        else
+                        {
+                            Platform.Log(LogLevel.Error, "Unable to add IPv6 SCP handler for server partition {0}",
+                                         part.Description);
+                            Platform.Log(LogLevel.Error,
+                                         "Partition {0} will not accept IPv6 incoming DICOM associations.",
+                                         part.Description);
+                        }
                     }
                 }
             }

@@ -31,5 +31,23 @@ namespace ClearCanvas.ImageServer.Shreds {
                 return ((int)(this["WorkQueueThreadCount"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ListenIPV6 {
+            get {
+                return ((bool)(this["ListenIPV6"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("True")]
+        public bool ListenIPV4 {
+            get {
+                return ((bool)(this["ListenIPV4"]));
+            }
+        }
     }
 }

@@ -13,6 +13,10 @@ namespace ClearCanvas.Dicom
             : base(desc)
         {
         }
+        public DicomException(String desc, Exception e)
+            : base(desc,e)
+        {
+        }
         protected DicomException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
