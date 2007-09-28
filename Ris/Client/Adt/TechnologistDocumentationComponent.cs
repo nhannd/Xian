@@ -272,6 +272,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         CompleteModalityProcedureStepsResponse response = service.CompleteModalityProcedureSteps(request);
 
                         RefreshProcedurePlanTree(response.RequestedProcedures);
+                        _orderRef = response.OrderRef;
                     });
             }
             catch (Exception e)
@@ -300,6 +301,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             StartModalityProcedureStepResponse response = service.StartModalityProcedureStep(request);
 
                             RefreshProcedurePlanTree(response.RequestedProcedures);
+                            _orderRef = response.OrderRef;
 
                             _mppsTable.Items.Add(response.ModalityPerformedProcedureStep);
                             _mppsTable.Sort();
@@ -330,6 +332,7 @@ namespace ClearCanvas.Ris.Client.Adt
             //                DiscontinueRequestedProcedureOrModalityProcedureStepResponse response = service.DiscontinueRequestedProcedureOrModalityProcedureStep(request);
 
             //                RefreshProcedurePlanTree(response.RequestedProcedures);
+            //                _orderRef = response.OrderRef;
             //            });
             //    }
             //}
@@ -354,6 +357,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             StopModalityPerformedProcedureStepResponse response = service.StopModalityPerformedProcedureStep(request);
 
                             RefreshProcedurePlanTree(response.RequestedProcedures);
+                            _orderRef = response.OrderRef;
 
                             _mppsTable.Items.Replace(
                                 delegate(ModalityPerformedProcedureStepSummary mppsSummary)
@@ -386,6 +390,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             DiscontinueModalityPerformedProcedureStepResponse response = service.DiscontinueModalityPerformedProcedureStep(request);
 
                             RefreshProcedurePlanTree(response.RequestedProcedures);
+                            _orderRef = response.OrderRef;
 
                             _mppsTable.Items.Replace(
                                 delegate(ModalityPerformedProcedureStepSummary mppsSummary)

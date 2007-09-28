@@ -17,5 +17,8 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
 
         [DataMember]
         public ModalityPerformedProcedureStepSummary ModalityPerformedProcedureStep;
+
+        [DataMember]
+        public EntityRef OrderRef;
     }
 }

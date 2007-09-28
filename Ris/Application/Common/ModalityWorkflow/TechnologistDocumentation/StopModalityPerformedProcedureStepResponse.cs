@@ -10,6 +10,10 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
         [DataMember]
         public ModalityPerformedProcedureStepSummary StoppedMpps;
 
-        [DataMember] public List<RequestedProcedureDetail> RequestedProcedures;
+        [DataMember]
+        public List<RequestedProcedureDetail> RequestedProcedures;
+
+        [DataMember]
+        public EntityRef OrderRef;
     }
 }

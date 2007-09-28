@@ -150,6 +150,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
                 delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
 
             response.ModalityPerformedProcedureStep = assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
+            response.OrderRef = order.GetRef();
 
             return response;
         }
@@ -173,6 +174,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
                 order.RequestedProcedures,
                 delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
+            response.OrderRef = order.GetRef();
 
             return response;
         }
@@ -196,6 +198,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
                 order.RequestedProcedures,
                 delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
+            response.OrderRef = order.GetRef();
 
             return response;
         }
@@ -203,7 +206,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         [UpdateOperation]
         public CompleteModalityProcedureStepsResponse CompleteModalityProcedureSteps(CompleteModalityProcedureStepsRequest request)
         {
-            Order order = this.PersistenceContext.Load<Order>(request.OrderRef);
+            Order order = this.PersistenceContext.Load<Order>(request.OrderRef, EntityLoadFlags.None);
 
             foreach (RequestedProcedure rp in order.RequestedProcedures)
             {
@@ -235,6 +238,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
                 order.RequestedProcedures,
                 delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
+            response.OrderRef = order.GetRef();
 
             return response;
         }
@@ -273,6 +277,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
                 order.RequestedProcedures,
                 delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
+            response.OrderRef = order.GetRef();
 
             return response;
         }

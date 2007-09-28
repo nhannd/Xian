@@ -12,5 +12,8 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
 
         [DataMember]
         public List<RequestedProcedureDetail> RequestedProcedures;
+
+        [DataMember]
+        public EntityRef OrderRef;
     }
 }
