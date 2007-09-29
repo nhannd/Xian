@@ -126,36 +126,36 @@ namespace ClearCanvas.ImageViewer {
         /// <summary>
         ///   Looks up a localized string similar to Blue.
         /// </summary>
-        public static string DescriptionBluePresentationLut {
+        public static string DescriptionBlueColorMap {
             get {
-                return ResourceManager.GetString("DescriptionBluePresentationLut", resourceCulture);
+                return ResourceManager.GetString("DescriptionBlueColorMap", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Grayscale.
+        ///   Looks up a localized string similar to (None).
         /// </summary>
-        public static string DescriptionGrayscalePresentationLut {
+        public static string DescriptionGrayscaleColorMap {
             get {
-                return ResourceManager.GetString("DescriptionGrayscalePresentationLut", resourceCulture);
+                return ResourceManager.GetString("DescriptionGrayscaleColorMap", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Green.
         /// </summary>
-        public static string DescriptionGreenPresentationLut {
+        public static string DescriptionGreenColorMap {
             get {
-                return ResourceManager.GetString("DescriptionGreenPresentationLut", resourceCulture);
+                return ResourceManager.GetString("DescriptionGreenColorMap", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Looks up a localized string similar to Red.
         /// </summary>
-        public static string DescriptionRedPresentationLut {
+        public static string DescriptionRedColorMap {
             get {
-                return ResourceManager.GetString("DescriptionRedPresentationLut", resourceCulture);
+                return ResourceManager.GetString("DescriptionRedColorMap", resourceCulture);
             }
         }
         
@@ -169,11 +169,38 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to No Presentation Lut factory extension exists with the name {0}..
+        ///   Looks up a localized string similar to A Color Map cannot have a maximum output value..
         /// </summary>
-        public static string ExceptionFormatNoPresentationLutFactoryExistWithName {
+        public static string ExceptionColorMapCannotHaveMaximumOutputValue {
             get {
-                return ResourceManager.GetString("ExceptionFormatNoPresentationLutFactoryExistWithName", resourceCulture);
+                return ResourceManager.GetString("ExceptionColorMapCannotHaveMaximumOutputValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to A Color Map cannot have a minimum output value..
+        /// </summary>
+        public static string ExceptionColorMapCannotHaveMinimumOutputValue {
+            get {
+                return ResourceManager.GetString("ExceptionColorMapCannotHaveMinimumOutputValue", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to The Color Map data cannot be altered..
+        /// </summary>
+        public static string ExceptionColorMapDataCannotBeAltered {
+            get {
+                return ResourceManager.GetString("ExceptionColorMapDataCannotBeAltered", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No Color Map factory extension exists with the name {0}..
+        /// </summary>
+        public static string ExceptionFormatNoColorMapFactoryExistWithName {
+            get {
+                return ResourceManager.GetString("ExceptionFormatNoColorMapFactoryExistWithName", resourceCulture);
             }
         }
         
@@ -282,15 +309,6 @@ namespace ClearCanvas.ImageViewer {
         public static string ExceptionKeyStrokeAssignmentInUse {
             get {
                 return ResourceManager.GetString("ExceptionKeyStrokeAssignmentInUse", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to Last LUT in pipeline must be an IPresentationLUT..
-        /// </summary>
-        public static string ExceptionLastLutMustBePresentation {
-            get {
-                return ResourceManager.GetString("ExceptionLastLutMustBePresentation", resourceCulture);
             }
         }
         
@@ -489,33 +507,6 @@ namespace ClearCanvas.ImageViewer {
         public static string ExceptionObjectMustBeSingleType {
             get {
                 return ResourceManager.GetString("ExceptionObjectMustBeSingleType", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A Presentation LUT cannot have a maximum output value..
-        /// </summary>
-        public static string ExceptionPresentationLutCannotHaveMaximumOutputValue {
-            get {
-                return ResourceManager.GetString("ExceptionPresentationLutCannotHaveMaximumOutputValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to A Presentation LUT cannot have a minimum output value..
-        /// </summary>
-        public static string ExceptionPresentationLutCannotHaveMinimumOutputValue {
-            get {
-                return ResourceManager.GetString("ExceptionPresentationLutCannotHaveMinimumOutputValue", resourceCulture);
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to The Presentation LUT data cannot be altered..
-        /// </summary>
-        public static string ExceptionPresentationLutDataCannotBeAltered {
-            get {
-                return ResourceManager.GetString("ExceptionPresentationLutDataCannotBeAltered", resourceCulture);
             }
         }
         

@@ -14,6 +14,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private int _bitsStored;
 		private int _highBit;
 		private bool _isSigned;
+		private bool _invert;
 
 		#endregion
 
@@ -23,12 +24,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// Initializes a new instance of <see cref="IndexedImageGraphic"/>
 		/// with the specified image parameters.
 		/// </summary>
-		/// <param name="rows"></param>
-		/// <param name="columns"></param>
-		/// <param name="bitsAllocated">Can be either 8 or 16.</param>
-		/// <param name="bitsStored"></param>
-		/// <param name="highBit"></param>
-		/// <param name="isSigned"></param>
 		/// <remarks>
 		/// Creates an empty indexed image of a specific size and bit depth.
 		/// All all entries in the byte buffer are set to zero. Useful as
@@ -40,26 +35,20 @@ namespace ClearCanvas.ImageViewer.Graphics
 			int bitsAllocated,
 			int bitsStored,
 			int highBit,
-			bool isSigned)
+			bool isSigned,
+			bool invert)
 			: base(
 				rows,
 				columns,
 				bitsAllocated)
 		{
-			Initialize(bitsStored, highBit, isSigned);
+			Initialize(bitsStored, highBit, isSigned, invert);
 		}
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="IndexedImageGraphic"/>
 		/// with the specified image parameters.
 		/// </summary>
-		/// <param name="rows"></param>
-		/// <param name="columns"></param>
-		/// <param name="bitsAllocated">Can be either 8 or 16.</param>
-		/// <param name="bitsStored"></param>
-		/// <param name="highBit"></param>
-		/// <param name="isSigned"></param>
-		/// <param name="pixelData"></param>
 		/// <remarks>
 		/// Creates an indexed image using existing pixel data.
 		/// </remarks>
@@ -70,6 +59,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			int bitsStored,
 			int highBit,
 			bool isSigned,
+			bool invert,
 			byte[] pixelData)
 			: base(
 				rows,
@@ -77,7 +67,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				bitsAllocated,
 				pixelData)
 		{
-			Initialize(bitsStored, highBit, isSigned);
+			Initialize(bitsStored, highBit, isSigned, invert);
 		}
 
 		/// <summary>
@@ -104,6 +94,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			int bitsStored,
 			int highBit,
 			bool isSigned,
+			bool invert,
 			PixelDataGetter pixelDataGetter)
 			: base(
 				rows,
@@ -111,10 +102,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 				bitsAllocated,
 				pixelDataGetter)
 		{
-			Initialize(bitsStored, highBit, isSigned);
+			Initialize(bitsStored, highBit, isSigned, invert);
 		}
 
-		private void Initialize(int bitsStored, int highBit, bool isSigned)
+		private void Initialize(int bitsStored, int highBit, bool isSigned, bool invert)
 		{
 			DicomValidator.ValidateBitsStored(bitsStored);
 			DicomValidator.ValidateHighBit(highBit);
@@ -122,6 +113,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_bitsStored = bitsStored;
 			_highBit = highBit;
 			_isSigned = isSigned;
+			_invert = Invert;
 		}
 
 		#endregion
@@ -159,6 +151,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return _isSigned; }
 		}
 
+		public bool Invert
+		{
+			get { return _invert; }
+			set { _invert = value; }
+		}
+
 		/// <summary>
 		/// Gets an object that encapsulates the pixel data.
 		/// </summary>
@@ -173,12 +171,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// The output of the LUT pipeline.
 		/// </summary>
+		public abstract IComposedLut OutputLut { get; }
+
+		/// <summary>
+		/// The color map for the image, if applicable.
+		/// </summary>
 		/// <remarks>
-		/// Each entry in the <see cref="OutputLut"/> array is 32-bit ARGB value.
+		/// Each entry in the <see cref="ColorMap"/> array is 32-bit ARGB value.
 		/// When an <see cref="IRenderer"/> renders an <see cref="IndexedImageGraphic"/>, it should
-		/// use <see cref="OutputLut"/> to determine the ARGB value to display for a given pixel value.
+		/// use <see cref="ColorMap"/> to determine the ARGB value to display for a given pixel value.
 		/// </remarks>
-		public abstract int[] OutputLut { get; }
+		public abstract IColorMap ColorMap { get; }
 
 		#endregion
 

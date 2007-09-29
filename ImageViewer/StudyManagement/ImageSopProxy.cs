@@ -376,14 +376,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		public override string PresentationLUTShape
-		{
-			get
-			{
-				return _realImageSop.PresentationLUTShape;
-			}
-		}
-
 		public override PixelSpacing PixelSpacing
 		{
 			get

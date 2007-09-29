@@ -31,7 +31,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 				throw new InvalidOperationException(SR.ExceptionInputPresentationImageNotSupported);
 
 			IVoiLutManager manager = ((IVoiLutProvider)presentationImage).VoiLutManager;
-			ILut currentLut = manager.GetLut();
+			IComposableLut currentLut = manager.GetLut();
 
 			if (currentLut is MinMaxPixelCalculatedLinearLut)
 				return;

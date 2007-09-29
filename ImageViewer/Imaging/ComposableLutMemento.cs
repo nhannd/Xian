@@ -4,21 +4,19 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal sealed class LutMemento : IMemento, IEquatable<LutMemento>
+	internal sealed class ComposableLutMemento : IMemento, IEquatable<ComposableLutMemento>
 	{
-		private readonly ILut _originatingLut;
+		private readonly IComposableLut _originatingLut;
 		private readonly IMemento _innerMemento;
 
-		public LutMemento(ILut originatingLut)
+		public ComposableLutMemento(IComposableLut originatingLut)
 		{
 			Platform.CheckForNullReference(originatingLut, "originatingLut");
 			_originatingLut = originatingLut;
 			_innerMemento = originatingLut.CreateMemento();
 		}
 
-		#region LutMemento Members
-
-		public ILut OriginatingLut
+		public IComposableLut OriginatingLut
 		{
 			get { return _originatingLut; }
 		}
@@ -28,22 +26,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 			get { return _innerMemento; }	
 		}
 
-		#endregion
-
 		public override bool Equals(object obj)
 		{
 			if (obj == this)
 				return true;
 
-			if (obj is LutMemento)
-				return this.Equals((LutMemento) obj);
+			if (obj is ComposableLutMemento)
+				return this.Equals((ComposableLutMemento) obj);
 
 			return false;
 		}
 
 		#region IEquatable<LutMemento> Members
 
-		public bool Equals(LutMemento other)
+		public bool Equals(ComposableLutMemento other)
 		{
 			if (this._innerMemento != null)
 				return this._originatingLut.Equals(other._originatingLut) && this._innerMemento.Equals(other._innerMemento);

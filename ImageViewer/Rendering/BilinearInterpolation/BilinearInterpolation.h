@@ -11,6 +11,13 @@
 #define BILINEARINTERPOLATION_API __declspec(dllimport)
 #endif
 
+struct LUTDATA
+{
+	int *LutData;
+	int FirstMappedPixelData;
+	int Length;
+};
+
 extern "C"
 {
 	BILINEARINTERPOLATION_API BOOL InterpolateBilinear
@@ -41,6 +48,6 @@ extern "C"
             float dstRegionRectBottom,
 
 			BOOL swapXY,
-            int* pLutData
+			LUTDATA* pLutData
 	);
 }

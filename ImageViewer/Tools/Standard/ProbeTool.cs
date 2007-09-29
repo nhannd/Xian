@@ -1,21 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer;
-using ClearCanvas.ImageViewer.Imaging;
 using System.Drawing;
-using ClearCanvas.ImageViewer.Rendering;
-using ClearCanvas.ImageViewer.Mathematics;
-using System.Diagnostics;
-using ClearCanvas.ImageViewer.InputManagement;
-using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
@@ -49,25 +39,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			this.CursorToken = new CursorToken("ProbeCursor.png", this.GetType().Assembly);
 		}
 
-		public override string Tooltip
-		{
-			get { return base.Tooltip; }
-		}
-
 		public override event EventHandler TooltipChanged
 		{
 			add { base.TooltipChanged += value; }
 			remove { base.TooltipChanged -= value; }
 		}
-
-		/// <summary>
-		/// Called by the framework to initialize this tool.
-		/// </summary>
-		public override void Initialize()
-		{
-			base.Initialize();
-		}
-
 
 		public override bool Start(IMouseInformation mouseInformation)
 		{
@@ -143,7 +119,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			string pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, SR.LabelNotApplicable);
 			string modalityLutString = String.Format("{0}: {1}", SR.LabelModalityLut, SR.LabelNotApplicable);
 			string voiLutString = String.Format("{0}: {1}", SR.LabelVOILut, SR.LabelNotApplicable);
-			string presentationLutString = String.Format("{0}: {1}", SR.LabelPresentationLut, SR.LabelNotApplicable);
 
 			Rectangle imageRectangle = new Rectangle(0, 0, _selectedImageGraphic.Columns, _selectedImageGraphic.Rows);
 
@@ -160,23 +135,20 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 						int pixelValue = 0;
 						int modalityLutValue = 0;
 						int voiLutValue = 0;
-						int presentationLutValue = 0;
 
 						GetPixelValue(grayscaleImage, sourcePointRounded, ref pixelValue, ref pixelValueString);
 						GetModalityLutValue(grayscaleImage, pixelValue, ref modalityLutValue, ref modalityLutString);
 						GetVoiLutValue(grayscaleImage, modalityLutValue, ref voiLutValue, ref voiLutString);
-						GetPresentationLutValue(grayscaleImage, voiLutValue, ref presentationLutValue, ref presentationLutString);
 					}
 				}
 				else
 				{
 					showModalityValue = false;
 					showVoiValue = false;
-					showPresentationValue = false;
 
 					Color color = ((ColorImageGraphic)_selectedImageGraphic).PixelData.GetPixelAsColor(sourcePointRounded.X, sourcePointRounded.Y);
 					string rgbFormatted = String.Format("R={0}, G={1}, B={2})", color.R, color.G, color.B);
-					pixelValueString = String.Format("{0:F2}: {1:F2}", SR.LabelPixelValue, rgbFormatted);
+					pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, rgbFormatted);
 				}
 			}
 
@@ -188,8 +160,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 				probeString += "\n" + modalityLutString;
 			if (showVoiValue)
 				probeString += "\n" + voiLutString;
-			if (showPresentationValue)
-				probeString += "\n" + presentationLutString;
 
 			_selectedTile.InformationBox.Update(probeString, destinationPoint);
 		}
@@ -233,21 +203,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			{
 				voiLutValue = grayscaleImage.VoiLut[modalityLutValue];
 				voiLutString = String.Format("{0}: {1}", SR.LabelVOILut, voiLutValue);
-			}
-		}
-
-
-		private void GetPresentationLutValue(
-			GrayscaleImageGraphic grayscaleImage, 
-			int voiLutValue, 
-			ref int presentationLutValue,
-			ref string presentationLutString)
-		{
-			if (grayscaleImage.PresentationLut != null)
-			{
-				presentationLutValue = grayscaleImage.PresentationLut[voiLutValue];
-				Color color = Color.FromArgb(presentationLutValue);
-				presentationLutString = String.Format("{0}: R={1}, G={2}, B={3}", SR.LabelPresentationLut, color.R, color.G, color.B);
 			}
 		}
 	}

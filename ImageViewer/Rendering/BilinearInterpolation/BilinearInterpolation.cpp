@@ -147,7 +147,7 @@ void InterpolateBilinearUnsigned8(
 
 		float xRatio,
 		float yRatio,
-		int* pLutData,
+		LUTDATA* pLutData,
 
 		std::auto_ptr<int>& spxSrcPixels,
 		std::auto_ptr<int>& spdxFixedAtSrcPixelCoordinates)
@@ -200,9 +200,7 @@ void InterpolateBilinearUnsigned8(
 			yInterpolated2 = ((*pSrcPixel01) << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel11 - *pSrcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
 
 			finalInterpolated = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
-
-			value = *(pLutData + finalInterpolated);
-			*pRowDstPixelData = value;
+			*pRowDstPixelData = *(pLutData->LutData + finalInterpolated - pLutData->FirstMappedPixelData);
 
 			pRowDstPixelData += xDstIncrement;
 
@@ -231,7 +229,7 @@ void InterpolateBilinearSigned8(
 
 		float xRatio,
 		float yRatio,
-		int* pLutData,
+		LUTDATA* pLutData,
 
 		std::auto_ptr<int>& spxSrcPixels,
 		std::auto_ptr<int>& spdxFixedAtSrcPixelCoordinates)
@@ -260,7 +258,6 @@ void InterpolateBilinearSigned8(
 
 	// Used to turn a signed pixel value of arbitrary bit depth into a 8 bit signed equivalent
 	char signPadding = (char)(0xff << (srcBitsStored - 1));
-	int offset = 1 << srcBitsStored;
 
 	for (float y = 0; y < dstRegionHeight; ++y)  //so we're not constantly converting ints to floats.
 	{
@@ -313,12 +310,7 @@ void InterpolateBilinearSigned8(
 			yInterpolated2 = ((srcPixel01) << FIXEDPRECISION) + ((dyFixed * ((srcPixel11 - srcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
 
 			finalInterpolated = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
-
-			if (finalInterpolated < 0)
-				finalInterpolated += offset;
-
-			value = *(pLutData + finalInterpolated);
-			*pRowDstPixelData = value;
+			*pRowDstPixelData = *(pLutData->LutData + finalInterpolated - pLutData->FirstMappedPixelData);
 
 			pRowDstPixelData += xDstIncrement;
 
@@ -346,7 +338,7 @@ void InterpolateBilinearUnsigned16(
 
 		float xRatio,
 		float yRatio,
-		int* pLutData,
+		LUTDATA* pLutData,
 
 		std::auto_ptr<int>& spxSrcPixels,
 		std::auto_ptr<int>& spdxFixedAtSrcPixelCoordinates)
@@ -401,9 +393,7 @@ void InterpolateBilinearUnsigned16(
 			yInterpolated2 = ((*pSrcPixel01) << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel11 - *pSrcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
 
 			finalInterpolated = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
-
-			value = *(pLutData + finalInterpolated);
-			*pRowDstPixelData = value;
+			*pRowDstPixelData = *(pLutData->LutData + finalInterpolated - pLutData->FirstMappedPixelData);
 
 			pRowDstPixelData += xDstIncrement;
 
@@ -434,7 +424,8 @@ void InterpolateBilinearSigned16(
 
 		float xRatio,
 		float yRatio,
-		int* pLutData,
+		
+		LUTDATA* pLutData,
 
 		std::auto_ptr<int>& spxSrcPixels,
 		std::auto_ptr<int>& spdxFixedAtSrcPixelCoordinates)
@@ -487,10 +478,8 @@ void InterpolateBilinearSigned16(
 			yInterpolated2 = ((*pSrcPixel01) << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel11 - *pSrcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
 
 			finalInterpolated = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
-
-			value = *(pLutData + (unsigned short)finalInterpolated);
-			*pRowDstPixelData = value;
-
+			*pRowDstPixelData = *(pLutData->LutData + finalInterpolated - pLutData->FirstMappedPixelData);
+			
 			pRowDstPixelData += xDstIncrement;
 
 			++pxPixel;
@@ -521,8 +510,8 @@ void InterpolateBilinearSignedSub16(
 
 		float xRatio,
 		float yRatio,
-		int* pLutData,
-
+		LUTDATA* pLutData,
+		
 		std::auto_ptr<int>& spxSrcPixels,
 		std::auto_ptr<int>& spdxFixedAtSrcPixelCoordinates)
 {
@@ -605,14 +594,7 @@ void InterpolateBilinearSignedSub16(
 			yInterpolated2 = ((srcPixel01) << FIXEDPRECISION) + ((dyFixed * ((srcPixel11 - srcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
 
 			finalInterpolated = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
-
-			// If the interpolated value is negative, we add an offset equal to the
-			// size of the LUT so that it properly indexes the LUT
-			if (finalInterpolated < 0)
-				finalInterpolated += offset;
-
-			value = *(pLutData + finalInterpolated);
-			*pRowDstPixelData = value;
+			*pRowDstPixelData = *(pLutData->LutData + finalInterpolated - pLutData->FirstMappedPixelData);
 
 			pRowDstPixelData += xDstIncrement;
 
@@ -728,7 +710,7 @@ BOOL InterpolateBilinear
 	float dstRegionRectBottom,
 
 	BOOL swapXY,
-	int* pLutData
+	LUTDATA* pLutData
 )
 {
 	float dstRegionHeight, dstRegionWidth;

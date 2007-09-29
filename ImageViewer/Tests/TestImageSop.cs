@@ -366,14 +366,6 @@ namespace ClearCanvas.ImageViewer.Tests
 			}
 		}
 
-		public override string PresentationLUTShape
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
 		public override PixelSpacing PixelSpacing
 		{
 			get

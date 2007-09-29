@@ -26,7 +26,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 				throw new InvalidOperationException(SR.ExceptionInputPresentationImageNotSupported);
 
 			IVoiLutManager manager = ((IVoiLutProvider)presentationImage).VoiLutManager;
-			ILut currentLut = manager.GetLut();
+			IComposableLut currentLut = manager.GetLut();
 
 			IImageSopProvider sopProvider = presentationImage as IImageSopProvider;
 			if (sopProvider != null)
@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 			}
 		}
 
-		public static ILut GetInitialLut(IPresentationImage image)
+		public static IComposableLut GetInitialLut(IPresentationImage image)
 		{
 			if (AppliesTo(image))
 			{

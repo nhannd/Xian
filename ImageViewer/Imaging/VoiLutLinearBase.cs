@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// are provided that cover most, if not all, Linear Voi Lut use cases.  You should not need
 	/// to derive directly from this class.
 	/// </remarks>
-	public abstract class VoiLutLinearBase : Lut
+	public abstract class VoiLutLinearBase : ComposableLut
 	{
 		private int _minInputValue;
 		private int _maxInputValue;
@@ -131,7 +131,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This method is not to be confused with <B>equality</B>, since some Luts can be
 		/// dependent upon the actual image to which it belongs.  The method should simply 
-		/// be used to determine if a lut in the <see cref="OutputLutPool"/> is the same 
+		/// be used to determine if a lut in the <see cref="VoiOutputLutPool"/> is the same 
 		/// as an existing one.
 		/// </remarks>
 		public sealed override string GetKey()

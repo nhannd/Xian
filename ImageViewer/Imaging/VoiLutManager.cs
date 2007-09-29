@@ -16,14 +16,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IVoiLutManager Members
 
-		public ILut GetLut()
+		public IComposableLut GetLut()
 		{
 			return _grayscaleImageGraphic.VoiLut;
 		}
 
-		public void InstallLut(ILut lut)
+		public void InstallLut(IComposableLut lut)
 		{
-			ILut existingLut = GetLut();
+			IComposableLut existingLut = GetLut();
 			if (existingLut is IGeneratedDataLut)
 			{
 				//Clear the data in the data lut so it's not hanging around using up memory.
@@ -39,13 +39,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		public IMemento CreateMemento()
 		{
-			return new LutMemento(_grayscaleImageGraphic.VoiLut);
+			return new ComposableLutMemento(_grayscaleImageGraphic.VoiLut);
 		}
 
 		public void SetMemento(IMemento memento)
 		{
-			LutMemento lutMemento = memento as LutMemento;
-			Platform.CheckForInvalidCast(lutMemento, "memento", typeof(LutMemento).Name);
+			ComposableLutMemento lutMemento = memento as ComposableLutMemento;
+			Platform.CheckForInvalidCast(lutMemento, "memento", typeof(ComposableLutMemento).Name);
 
 			if (_grayscaleImageGraphic.VoiLut != lutMemento.OriginatingLut)
 				this.InstallLut(lutMemento.OriginatingLut);

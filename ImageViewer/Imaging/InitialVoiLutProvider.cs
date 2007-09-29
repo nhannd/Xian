@@ -35,9 +35,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region IInitialVoiLutProvider Members
 
-		public ILut GetLut(IPresentationImage presentationImage)
+		public IComposableLut GetLut(IPresentationImage presentationImage)
 		{
-			ILut lut = null;
+			IComposableLut lut = null;
 			if (_extensionProvider != null)
 				lut = _extensionProvider.GetLut(presentationImage);
 

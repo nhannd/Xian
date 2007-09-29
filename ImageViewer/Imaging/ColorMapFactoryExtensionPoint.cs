@@ -3,12 +3,12 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// A factory for <see cref="IPresentationLut"/>s.
+	/// A factory for <see cref="IColorMap"/>s.
 	/// </summary>
-	public interface IPresentationLutFactory
+	public interface IColorMapFactory
 	{
 		/// <summary>
-		/// Gets a name that should be unique when compared to other <see cref="IPresentationLutFactory"/>s.
+		/// Gets a name that should be unique when compared to other <see cref="IColorMapFactory"/>s.
 		/// </summary>
 		/// <remarks>
 		/// This name should not be a resource string, as it should be constant for all languages.
@@ -21,15 +21,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 		string Description { get; }
 
 		/// <summary>
-		/// Creates an <see cref="IPresentationLut"/>.
+		/// Creates an <see cref="IColorMap"/>.
 		/// </summary>
-		IPresentationLut Create();
+		IColorMap Create();
 	}
 
 	/// <summary>
-	/// An extension point for <see cref="IPresentationLutFactory"/>s.
+	/// An extension point for <see cref="IColorMapFactory"/>s.
 	/// </summary>
-	public sealed class PresentationLutFactoryExtensionPoint : ExtensionPoint<IPresentationLutFactory>
+	public sealed class ColorMapFactoryExtensionPoint : ExtensionPoint<IColorMapFactory>
 	{
 	}
 }

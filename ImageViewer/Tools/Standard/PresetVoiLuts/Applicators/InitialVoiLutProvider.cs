@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 
 		#region IInitialVoiLutProvider Members
 
-		public ILut GetLut(IPresentationImage presentationImage)
+		public IComposableLut GetLut(IPresentationImage presentationImage)
 		{
 			// TODO: Eventually, this should use the IPresetVoiLutApplicatorFactory extensions and simply
 			// try to apply each one that matches in order until one works.  The 'Auto' lut applicator would

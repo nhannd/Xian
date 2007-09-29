@@ -6,11 +6,58 @@ using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.Common.Utilities;
+using System.Runtime.InteropServices;
+using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
 	internal unsafe class ImageRenderer
 	{
+		public static int[] ConstructFinalLut(IComposedLut outputLut, IColorMap colorMap, bool invert)
+		{
+			CodeClock clock = new CodeClock();
+			clock.Start();
+
+			colorMap.MinInputValue = outputLut.MinOutputValue;
+			colorMap.MaxInputValue = outputLut.MaxOutputValue;
+
+			int[] outputLutData = outputLut.Data;
+			int[] colorMapData = colorMap.Data;
+			
+			int[] finalLutData = new int[outputLutData.Length];
+
+			int numberOfEntries = finalLutData.Length;
+
+			fixed (int* pOutputLutData = outputLutData)
+			{
+				fixed (int* pColorMapData = colorMapData)
+				{
+					fixed (int* pFinalLutData = finalLutData)
+					{
+						int* pFinalLut = pFinalLutData;
+
+						if (!invert)
+						{
+							int firstColorMappedPixelValue = colorMap.MinInputValue;
+							for (int i = 0; i < numberOfEntries; ++i)
+								*(pFinalLut++) = pColorMapData[*(pOutputLutData + i) - firstColorMappedPixelValue];
+						}
+						else
+						{
+							int lastColorMappedPixelValue = colorMap.MaxInputValue;
+							for (int i = 0; i < numberOfEntries; ++i)
+								*(pFinalLut++) = pColorMapData[lastColorMappedPixelValue - *(pOutputLutData + i)];
+						}
+					}
+				}
+			}
+
+			clock.Stop();
+			RenderPerformanceReportBroker.PublishPerformanceReport("ImageRenderer.ConstructFinalLut", clock.Seconds);
+
+			return finalLutData;
+		}
+
 		public static void Render(
 			ImageGraphic imageGraphic,
 			IntPtr pDstPixelData,
@@ -31,26 +78,27 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			byte[] srcPixelData = imageGraphic.PixelData.Raw;
 
-			int[] lutData = null;
-
 			IndexedImageGraphic grayscaleImage = imageGraphic as IndexedImageGraphic;
-
-			if (grayscaleImage != null)
-				lutData = grayscaleImage.OutputLut;
-
 			ColorImageGraphic colorImage = imageGraphic as ColorImageGraphic;
 
 			bool swapXY = ImageRenderer.IsRotated(imageGraphic);
 
 			fixed (byte* pSrcPixelData = srcPixelData)
 			{
-				fixed (int* pLutData = lutData)
+				if (imageGraphic.InterpolationMode == InterpolationMode.Bilinear)
 				{
-					if (imageGraphic.InterpolationMode == InterpolationMode.Bilinear)
+					if (grayscaleImage != null)
 					{
-						if (grayscaleImage != null)
+						int[] finalLutData = ConstructFinalLut(grayscaleImage.OutputLut, grayscaleImage.ColorMap, grayscaleImage.Invert);
+
+						fixed (int* pFinalLutData = finalLutData)
 						{
-							int srcBytesPerPixel = imageGraphic.BitsPerPixel / 8;
+							ImageInterpolatorBilinear.LUTDATA lutData = new ImageInterpolatorBilinear.LUTDATA();
+							lutData.LutData = pFinalLutData;
+							lutData.FirstMappedPixelData = grayscaleImage.OutputLut.MinInputValue;
+							lutData.Length = finalLutData.Length;
+
+							int srcBytesPerPixel = imageGraphic.BitsPerPixel/8;
 
 							ImageInterpolatorBilinear.Interpolate(
 								srcViewableRectangle,
@@ -60,37 +108,37 @@ namespace ClearCanvas.ImageViewer.Rendering
 								srcBytesPerPixel,
 								grayscaleImage.BitsStored,
 								dstViewableRectangle,
-								(byte*)pDstPixelData,
+								(byte*) pDstPixelData,
 								dstWidth,
 								dstBytesPerPixel,
 								swapXY,
-								pLutData,
+								&lutData, //ok because it's a local variable in an unsafe method, therefore it's already fixed.
 								false,
 								false,
 								grayscaleImage.IsSigned);
 						}
+					}
 
-						if (colorImage != null)
-						{
-							int srcBytesPerPixel = 4;
+					if (colorImage != null)
+					{
+						int srcBytesPerPixel = 4;
 
-							ImageInterpolatorBilinear.Interpolate(
-								srcViewableRectangle,
-								pSrcPixelData,
-								colorImage.Columns,
-								colorImage.Rows,
-								srcBytesPerPixel,
-								32,
-								dstViewableRectangle,
-								(byte*)pDstPixelData,
-								dstWidth,
-								dstBytesPerPixel,
-								swapXY,
-								pLutData,
-								true,
-								false,
-								false);
-						}
+						ImageInterpolatorBilinear.Interpolate(
+							srcViewableRectangle,
+							pSrcPixelData,
+							colorImage.Columns,
+							colorImage.Rows,
+							srcBytesPerPixel,
+							32,
+							dstViewableRectangle,
+							(byte*) pDstPixelData,
+							dstWidth,
+							dstBytesPerPixel,
+							swapXY,
+							null,
+							true,
+							false,
+							false);
 					}
 				}
 			}

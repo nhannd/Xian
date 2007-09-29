@@ -16,7 +16,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// be compared with those already stored and discarded if an equivalent one already exists.
 	/// </para>
 	/// </remarks>
-	public interface IModalityLut : ILut, IEquatable<IModalityLut>
+	public interface IModalityLut : IComposableLut, IEquatable<IModalityLut>
 	{
 	}
 }

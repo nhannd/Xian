@@ -13,7 +13,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// Often, Linear Luts are created by deriving from this class to improve performance so that
 	/// the calculation is only performed once.  For an example, see <see cref="ModalityLutLinear"/>.
 	/// </remarks>
-	public abstract class GeneratedDataLut : Lut, IGeneratedDataLut
+	public abstract class GeneratedDataLut : ComposableLut, IGeneratedDataLut
 	{
 		private int _minimumInputValue;
 		private int _maximimInputValue;
@@ -32,6 +32,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			_minimumOutputValue = int.MinValue;
 			_maximumOutputValue = int.MaxValue;
+		}
+
+		protected bool Created
+		{
+			get { return _data != null; }
 		}
 
 		/// <summary>

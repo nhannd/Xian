@@ -3,9 +3,9 @@ using ClearCanvas.Common;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Provides a description of an <see cref="IPresentationLut"/>.
+	/// Provides a description of an <see cref="IColorMap"/>.
 	/// </summary>
-	public sealed class PresentationLutDescriptor
+	public sealed class ColorMapDescriptor
 	{
 		private readonly string _name;
 		private readonly string _description;
@@ -15,7 +15,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		/// <param name="name">the name of the factory</param>
 		/// <param name="description">the factory description</param>
-		private PresentationLutDescriptor(string name, string description)
+		private ColorMapDescriptor(string name, string description)
 		{
 			_name = name;
 			_description = description;
@@ -38,13 +38,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Creates a <see cref="PresentationLutDescriptor"/> given an input <see cref="IPresentationLutFactory"/>.
+		/// Creates a <see cref="ColorMapDescriptor"/> given an input <see cref="IColorMapFactory"/>.
 		/// </summary>
 		/// <param name="factory">the factory</param>
-		public static PresentationLutDescriptor FromFactory(IPresentationLutFactory factory)
+		public static ColorMapDescriptor FromFactory(IColorMapFactory factory)
 		{
 			Platform.CheckForNullReference(factory, "factory");
-			return new PresentationLutDescriptor(factory.Name, factory.Description);
+			return new ColorMapDescriptor(factory.Name, factory.Description);
 		}
 	}
 }

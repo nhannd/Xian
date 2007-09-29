@@ -1,21 +1,19 @@
-using System;
+using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.Rendering;
-using System.Collections.Generic;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>
 	/// A grayscale <see cref="IndexedImageGraphic"/>.
 	/// </summary>
-	public class GrayscaleImageGraphic : IndexedImageGraphic, IModalityLutProvider, IVoiLutProvider, IPresentationLutProvider
+	public class GrayscaleImageGraphic : IndexedImageGraphic, IModalityLutProvider, IVoiLutProvider, IColorMapProvider
 	{
 		private enum Luts
 		{ 
 			Modality = 1,
 			Voi = 2,
-			Presentation = 3
 		}
 
 		#region Private fields
@@ -23,12 +21,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 		private LutComposer _lutComposer;
 		private LutFactory _lutFactory;
 
-		private bool _inverted;
 		private double _rescaleSlope;
 		private double _rescaleIntercept;
 
 		private IVoiLutManager _voiLutManager;
-		private IPresentationLutManager _presentationLutManager;
+
+		private IColorMapManager _colorMapManager;
+		private IColorMap _colorMap;
 
 		#endregion
 
@@ -58,6 +57,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				   16, /* bits allocated */
 				   16, /* bits stored */
 				   15, /* high bit */
+				   false,
 				   false) /* is signed */
 		{
 			Initialize(false, 1, 0);
@@ -96,6 +96,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				bitsStored,
 				highBit,
 				isSigned,
+				false,
 				pixelData)
 		{
 			Initialize(false, rescaleSlope, rescaleIntercept);
@@ -139,6 +140,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				bitsStored,
 				highBit,
 				isSigned,
+				inverted,
 				pixelDataGetter)
 		{
 			Initialize(inverted, rescaleSlope, rescaleIntercept);
@@ -166,19 +168,19 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#endregion
 
-		#region IPresentationLutProvider Members
+		#region IColorMapProvider Members
 
 		/// <summary>
-		/// Retrieves this image's <see cref="IPresentationLutManager"/>.
+		/// Retrieves this image's <see cref="IColorMapManager"/>.
 		/// </summary>
-		public IPresentationLutManager PresentationLutManager
+		public IColorMapManager ColorMapManager
 		{
 			get
 			{
-				if (_presentationLutManager == null)
-					_presentationLutManager = new PresentationLutManager(this);
+				if (_colorMapManager == null)
+					_colorMapManager = new ColorMapManager(this);
 
-				return _presentationLutManager;
+				return _colorMapManager;
 			}
 		}
 
@@ -199,7 +201,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Retrieves this image's Voi Lut.
 		/// </summary>
-		public ILut VoiLut
+		public IComposableLut VoiLut
 		{
 			get
 			{
@@ -209,31 +211,28 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 
 		/// <summary>
-		/// Retrieves this image's <see cref="IPresentationLut"/>.
+		/// The output lut composed of both the Modality and Voi Luts.
 		/// </summary>
-		public IPresentationLut PresentationLut
+		public sealed override IComposedLut OutputLut
 		{
-			get 
+			get
 			{
-				InitializeNecessaryLuts(Luts.Presentation);
-				return this.LutComposer.LutCollection[2] as IPresentationLut; 
+				InitializeNecessaryLuts(Luts.Voi);
+				return this.LutComposer;
 			}
 		}
 
 		/// <summary>
-		/// The output of the LUT pipeline.
+		/// Retrieves this image's <see cref="IColorMap"/>.
 		/// </summary>
-		/// <remarks>
-		/// Each entry in the <see cref="OutputLut"/> array is 32-bit ARGB value.
-		/// When an <see cref="IRenderer"/> renders an <see cref="IndexedImageGraphic"/>, it should
-		/// use <see cref="OutputLut"/> to determine the ARGB value to display for a given pixel value.
-		/// </remarks>
-		public override int[] OutputLut
+		public sealed override IColorMap ColorMap
 		{
-			get 
+			get
 			{
-				InitializeNecessaryLuts(Luts.Presentation); 
-				return this.LutComposer.OutputLut; 
+				if (_colorMap == null)
+					InstallColorMap(GrayscaleColorMapFactory.FactoryName);
+
+				return _colorMap;
 			}
 		}
 
@@ -285,7 +284,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		private void Initialize(bool inverted, double rescaleSlope, double rescaleIntercept)
 		{
-			_inverted = inverted;
 			_rescaleSlope = rescaleSlope <= double.Epsilon ? 1 : rescaleSlope;
 			_rescaleIntercept = rescaleIntercept;
 		}
@@ -302,17 +300,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			if (luts >= Luts.Voi && LutComposer.LutCollection.Count == 1)
 			{
-				ILut lut = InitialVoiLutProvider.Instance.GetLut(this.ParentPresentationImage);
+				IComposableLut lut = InitialVoiLutProvider.Instance.GetLut(this.ParentPresentationImage);
 				
 				if (lut == null)
 					lut = new MinMaxPixelCalculatedLinearLut(this.PixelData, this.ModalityLut);
 
 				InstallVoiLut(lut);
-			}
-
-			if (luts >= Luts.Presentation && LutComposer.LutCollection.Count == 2)
-			{
-				InstallPresentationLut(GrayscalePresentationLutFactory.FactoryName);
 			}
 		}
 
@@ -320,15 +313,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Internal Properties / Methods
 
-		internal IEnumerable<PresentationLutDescriptor> AvailablePresentationLuts
+		internal IEnumerable<ColorMapDescriptor> AvailableColorMaps
 		{
 			get
 			{
-				return this.LutFactory.AvailablePresentationLuts;
+				return this.LutFactory.AvailableColorMaps;
 			}
 		}
 
-		internal void InstallVoiLut(ILut voiLut)
+		internal void InstallVoiLut(IComposableLut voiLut)
 		{
 			Platform.CheckForNullReference(voiLut, "voiLut");
 
@@ -344,27 +337,17 @@ namespace ClearCanvas.ImageViewer.Graphics
 			}
 		}
 
-		internal void InstallPresentationLut(string name)
+		internal void InstallColorMap(string name)
 		{
-			IPresentationLut lut = this.LutFactory.GetPresentationLut(name);
-			lut.Invert = _inverted;
-			InstallPresentationLut(lut);
+			InstallColorMap(this.LutFactory.GetColorMap(name));
 		}
 
-		///Note: This method should only be used directly (e.g. outside of this class) for restoring Luts from mementos.
-		internal void InstallPresentationLut(IPresentationLut installLut)
+		internal void InstallColorMap(IColorMap colorMap)
 		{
-			InitializeNecessaryLuts(Luts.Voi);
+			if (_colorMap == colorMap)
+				return;
 
-			if (this.LutComposer.LutCollection.Count == 2)
-			{
-				this.LutComposer.LutCollection.Add(installLut);
-			}
-			else
-			{
-				if (!installLut.Equals(this.PresentationLut))
-					this.LutComposer.LutCollection[2] = installLut;
-			}
+			_colorMap = colorMap;
 		}
 
 		#endregion

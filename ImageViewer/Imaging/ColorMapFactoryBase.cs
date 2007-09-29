@@ -2,16 +2,16 @@
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// A base implementation for Presentation Lut factories.
+	/// A base implementation for Color Map factories.
 	/// </summary>
 	/// <typeparam name="T"></typeparam>
-	public abstract class PresentationLutFactoryBase<T> : IPresentationLutFactory
-		where T : PresentationLut, new()
+	public abstract class ColorMapFactoryBase<T> : IColorMapFactory
+		where T : ColorMap, new()
 	{
-		#region IPresentationLutFactory Members
+		#region IColorMapFactory Members
 
 		/// <summary>
-		/// Gets a name that should be unique when compared to other <see cref="IPresentationLutFactory"/>s.
+		/// Gets a name that should be unique when compared to other <see cref="IColorMapFactory"/>s.
 		/// </summary>
 		/// <remarks>
 		/// This name should not be a resource string, as it should be constant for all languages.
@@ -24,9 +24,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		public abstract string Description { get; }
 
 		/// <summary>
-		/// Creates an <see cref="IPresentationLut"/>.
+		/// Creates an <see cref="IColorMap"/>.
 		/// </summary>
-		public IPresentationLut Create()
+		public IColorMap Create()
 		{
 			return new T();
 		}

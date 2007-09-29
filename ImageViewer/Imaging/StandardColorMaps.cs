@@ -6,10 +6,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 	#region Grayscale
 
 	/// <summary>
-	/// An extension of <see cref="PresentationLutFactoryExtensionPoint"/>.
+	/// An extension of <see cref="ColorMapFactoryExtensionPoint"/>.
 	/// </summary>
-	[ExtensionOf(typeof(PresentationLutFactoryExtensionPoint))]
-	public sealed class GrayscalePresentationLutFactory : PresentationLutFactoryBase<GrayscalePresentationLut>
+	[ExtensionOf(typeof(ColorMapFactoryExtensionPoint))]
+	public sealed class GrayscaleColorMapFactory : ColorMapFactoryBase<GrayscaleColorMap>
 	{
 		/// <summary>
 		/// Returns the factory name.
@@ -19,7 +19,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Default Constructor.
 		/// </summary>
-		public GrayscalePresentationLutFactory()
+		public GrayscaleColorMapFactory()
 		{
 		}
 
@@ -36,25 +36,26 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string Description
 		{
-			get { return SR.DescriptionGrayscalePresentationLut; }
+			get { return SR.DescriptionGrayscaleColorMap; }
 		}
 	}
 
 	/// <summary>
-	/// A grayscale Presentation Lut.
+	/// A Grayscale Color Map.
 	/// </summary>
 	/// <remarks>
 	/// This class should not be instantiated directly, but through the corresponding factory.
 	/// </remarks>
-	public sealed class GrayscalePresentationLut : PresentationLut
+	public sealed class GrayscaleColorMap : ColorMap
 	{
 		/// <summary>
-		/// Default constructor.
+		/// Default Constructor.
 		/// </summary>
-		public GrayscalePresentationLut()
+		public GrayscaleColorMap()
+			: base()
 		{
 		}
-
+		
 		/// <summary>
 		/// Generates the Lut.
 		/// </summary>
@@ -77,11 +78,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Returns a brief description of the Lut.
+		/// Returns an abbreviated description of the Lut.
 		/// </summary>
 		public override string GetDescription()
 		{
-			return SR.DescriptionGrayscalePresentationLut;
+			return SR.DescriptionGrayscaleColorMap;
 		}
 	}
 
@@ -90,10 +91,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 	#region Red
 
 	/// <summary>
-	/// An extension of <see cref="PresentationLutFactoryExtensionPoint"/>.
+	/// An extension of <see cref="ColorMapFactoryExtensionPoint"/>.
 	/// </summary>
-	[ExtensionOf(typeof(PresentationLutFactoryExtensionPoint))]
-	public sealed class RedPresentationLutFactory : PresentationLutFactoryBase<RedPresentationLut>
+	[ExtensionOf(typeof(ColorMapFactoryExtensionPoint))]
+	public sealed class RedColorMapFactory : ColorMapFactoryBase<RedColorMap>
 	{
 		/// <summary>
 		/// Returns the factory name.
@@ -103,7 +104,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Default Constructor.
 		/// </summary>
-		public RedPresentationLutFactory()
+		public RedColorMapFactory()
 		{
 		}
 
@@ -120,22 +121,22 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string Description
 		{
-			get { return SR.DescriptionRedPresentationLut; }
+			get { return SR.DescriptionRedColorMap; }
 		}
 	}
 
 	/// <summary>
-	/// A red Presentation Lut.
+	/// A red Color Map.
 	/// </summary>
 	/// <remarks>
 	/// This class should not be instantiated directly, but through the corresponding factory.
 	/// </remarks>
-	public sealed class RedPresentationLut : PresentationLut
+	public sealed class RedColorMap : ColorMap
 	{
 		/// <summary>
 		/// Default Constructor.
 		/// </summary>
-		public RedPresentationLut()
+		public RedColorMap()
 			: base()
 		{
 		}
@@ -166,7 +167,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string GetDescription()
 		{
-			return SR.DescriptionRedPresentationLut;
+			return SR.DescriptionRedColorMap;
 		}
 	}
 
@@ -175,10 +176,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 	#region Green
 
 	/// <summary>
-	/// An extension of <see cref="PresentationLutFactoryExtensionPoint"/>.
+	/// An extension of <see cref="ColorMapFactoryExtensionPoint"/>.
 	/// </summary>
-	[ExtensionOf(typeof(PresentationLutFactoryExtensionPoint))]
-	public sealed class GreenPresentationLutFactory : PresentationLutFactoryBase<GreenPresentationLut>
+	[ExtensionOf(typeof(ColorMapFactoryExtensionPoint))]
+	public sealed class GreenColorMapFactory : ColorMapFactoryBase<GreenColorMap>
 	{
 		/// <summary>
 		/// Returns the factory name.
@@ -188,7 +189,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Default Constructor.
 		/// </summary>
-		public GreenPresentationLutFactory()
+		public GreenColorMapFactory()
 		{
 		}
 
@@ -205,19 +206,19 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string Description
 		{
-			get { return SR.DescriptionGreenPresentationLut; }
+			get { return SR.DescriptionGreenColorMap; }
 		}
 	}
 	
 	/// <summary>
-	/// A green Presentation Lut.
+	/// A green Color Map.
 	/// </summary>
-	public sealed class GreenPresentationLut : PresentationLut
+	public sealed class GreenColorMap : ColorMap
 	{
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public GreenPresentationLut()
+		public GreenColorMap()
 			: base()
 		{
 		}
@@ -249,7 +250,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <returns></returns>
 		public override string GetDescription()
 		{
-			return SR.DescriptionGreenPresentationLut;
+			return SR.DescriptionGreenColorMap;
 		}
 	}
 
@@ -258,10 +259,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 	#region Blue
 
 	/// <summary>
-	/// An extension of <see cref="PresentationLutFactoryExtensionPoint"/>.
+	/// An extension of <see cref="ColorMapFactoryExtensionPoint"/>.
 	/// </summary>
-	[ExtensionOf(typeof(PresentationLutFactoryExtensionPoint))]
-	public sealed class BluePresentationLutFactory : PresentationLutFactoryBase<BluePresentationLut>
+	[ExtensionOf(typeof(ColorMapFactoryExtensionPoint))]
+	public sealed class BlueColorMapFactory : ColorMapFactoryBase<BlueColorMap>
 	{
 		/// <summary>
 		/// Returns the factory name.
@@ -271,7 +272,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public BluePresentationLutFactory()
+		public BlueColorMapFactory()
 		{
 		}
 
@@ -288,19 +289,19 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string Description
 		{
-			get { return SR.DescriptionBluePresentationLut; }
+			get { return SR.DescriptionBlueColorMap; }
 		}
 	}
 
 	/// <summary>
-	/// A blue Presentation Lut.
+	/// A blue Color Map.
 	/// </summary>
-	public sealed class BluePresentationLut : PresentationLut
+	public sealed class BlueColorMap : ColorMap
 	{
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public BluePresentationLut()
+		public BlueColorMap()
 			: base()
 		{
 		}
@@ -331,7 +332,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// </summary>
 		public override string GetDescription()
 		{
-			return SR.DescriptionBluePresentationLut;
+			return SR.DescriptionBlueColorMap;
 		}
 	}
 

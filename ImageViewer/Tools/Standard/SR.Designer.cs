@@ -513,15 +513,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to PRE.
-        /// </summary>
-        internal static string LabelPresentationLut {
-            get {
-                return ResourceManager.GetString("LabelPresentationLut", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to VOI.
         /// </summary>
         internal static string LabelVOILut {

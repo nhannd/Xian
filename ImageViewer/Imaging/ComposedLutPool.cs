@@ -5,22 +5,22 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal sealed class OutputLutPool : IReferenceCountable, IDisposable
+	internal sealed class ComposedLutPool : IReferenceCountable, IDisposable
 	{
-		private static volatile OutputLutPool _instance;
+		private static volatile ComposedLutPool _instance;
 		private static object _syncRoot = new Object();
 
 		private ReferenceCountedObjectCache _lutCache;
-		private List<OutputLut> _pool;
+		private List<ComposedLut> _pool;
 		private int _lutPoolSize = 4;
 		private int _referenceCount = 0;
 
-		private OutputLutPool()
+		private ComposedLutPool()
 		{
 
 		}
 
-		public static OutputLutPool NewInstance
+		public static ComposedLutPool NewInstance
 		{
 			get
 			{
@@ -29,7 +29,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 					lock (_syncRoot)
 					{
 						if (_instance == null)
-							_instance = new OutputLutPool();
+							_instance = new ComposedLutPool();
 					}
 				}
 
@@ -50,29 +50,29 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private List<OutputLut> Pool
+		private List<ComposedLut> Pool
 		{
 			get
 			{
 				if (_pool == null)
-					_pool = new List<OutputLut>();
+					_pool = new List<ComposedLut>();
 
 				return _pool;
 			}
 		}
 
-		public OutputLut Retrieve(string key, int lutSize, out bool composeRequired)
+		public ComposedLut Retrieve(string key, int lutSize, out bool composeRequired)
 		{
 			composeRequired = false;
 
 			// See if we can find the desired LUT in the cache
-			OutputLut lut = this.LutCache[key] as OutputLut;
+			ComposedLut lut = this.LutCache[key] as ComposedLut;
 
 			// If not, we'll have to get one from the pool and
 			// add it to the cache
 			if (lut == null)
 			{
-				lut = RetrieveFromPool(key, lutSize);
+				lut = RetrieveFromPool(lutSize);
 				composeRequired = true;
 			}
 
@@ -86,7 +86,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			if (key == String.Empty)
 				return;
 
-			OutputLut lut = this.LutCache[key] as OutputLut;
+			ComposedLut lut = this.LutCache[key] as ComposedLut;
 
 			if (lut == null)
 				return;
@@ -98,32 +98,28 @@ namespace ClearCanvas.ImageViewer.Imaging
 			// into the pool so that it can be recycled.
 			if (lut.ReferenceCount == 0)
 			{
-				lut.Key = String.Empty;
-
 				if (this.Pool.Count <= _lutPoolSize)
 					this.Pool.Add(lut);
 			}
 		}
 
-		private OutputLut RetrieveFromPool(string key, int lutSize)
+		private ComposedLut RetrieveFromPool(int lutSize)
 		{
 			// Find a LUT in the pool that's the same size as what's
 			// being requested
-			foreach (OutputLut lut in this.Pool)
+			foreach (ComposedLut lut in this.Pool)
 			{
 				// If we've found one, take it out of the pool and return it
-				if (lut.Lut.Length == lutSize)
+				if (lut.Data.Length == lutSize)
 				{
 					this.Pool.Remove(lut);
-					lut.Key = key;
 					return lut;
 				}
 			}
 
 			// If we couldn't find one, create a new one and return it.  It'll
 			// be returned to the pool later when Return is called.
-			OutputLut newLut = new OutputLut(key, lutSize);
-			return newLut;
+			return new ComposedLut(lutSize);
 		}
 
 		#region IReferenceCountable Members

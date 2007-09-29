@@ -171,20 +171,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			}
 		}
 
-		/// <summary>
-		/// Gets the presentation LUT shape.
-		/// </summary>
-		public virtual string PresentationLUTShape
-		{
-			get
-			{
-				bool tagExists;
-				string presentationLUTShape;
-				GetTag(DicomTags.PresentationLutShape, out presentationLUTShape, out tagExists);
-				return presentationLUTShape ?? "";
-			}
-		}
-
 		#endregion
 
 		#region Image Plane Module

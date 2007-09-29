@@ -9,39 +9,21 @@ namespace ClearCanvas.ImageViewer.Imaging
 	// LUT flyweight factory
 	internal sealed class LutFactory : IReferenceCountable, IDisposable
 	{
-		private class PresentationLutProxy : Lut, IPresentationLut, IEquatable<PresentationLutProxy>
+		#region ColorMap Proxy Class
+
+		private class ColorMapProxy : ComposableLut, IColorMap, IEquatable<ColorMapProxy>
 		{
 			private readonly string _factoryName;
-			private bool _invert;
 			private int _minInputValue;
 			private int _maxInputValue;
 
-			private IPresentationLut _realLut;
+			private IColorMap _realLut;
 
-			public PresentationLutProxy(string factoryName)
+			public ColorMapProxy(string factoryName)
 			{
 				_factoryName = factoryName;
 				_realLut = null;
-				_invert = false;
 			}
-
-			#region IPresentationLut Members
-
-			public bool Invert
-			{
-				get { return _invert; }
-				set
-				{
-					if (value == _invert)
-						return;
-
-					_realLut = null;
-					_invert = value;
-					OnLutChanged();
-				}
-			}
-
-			#endregion
 
 			public override int MinInputValue
 			{
@@ -79,14 +61,14 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 			public override int MinOutputValue
 			{
-				get { throw new InvalidOperationException(SR.ExceptionPresentationLutCannotHaveMinimumOutputValue); }
-				protected set { throw new InvalidOperationException(SR.ExceptionPresentationLutCannotHaveMinimumOutputValue); }
+				get { throw new InvalidOperationException(SR.ExceptionColorMapCannotHaveMinimumOutputValue); }
+				protected set { throw new InvalidOperationException(SR.ExceptionColorMapCannotHaveMinimumOutputValue); }
 			}
 
 			public override int MaxOutputValue
 			{
-				get { throw new InvalidOperationException(SR.ExceptionPresentationLutCannotHaveMaximumOutputValue); }
-				protected set { throw new InvalidOperationException(SR.ExceptionPresentationLutCannotHaveMaximumOutputValue); }
+				get { throw new InvalidOperationException(SR.ExceptionColorMapCannotHaveMaximumOutputValue); }
+				protected set { throw new InvalidOperationException(SR.ExceptionColorMapCannotHaveMaximumOutputValue); }
 			}
 
 			public override int this[int index]
@@ -97,7 +79,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				}
 				protected set
 				{
-					throw new InvalidOperationException(SR.ExceptionPresentationLutDataCannotBeAltered);
+					throw new InvalidOperationException(SR.ExceptionColorMapDataCannotBeAltered);
 				}
 			}
 
@@ -112,14 +94,23 @@ namespace ClearCanvas.ImageViewer.Imaging
 				return this.RealLut.GetDescription();
 			}
 
-			private IPresentationLut RealLut
+			#region IColorMap Members
+
+			public int[] Data
+			{
+				get { return RealLut.Data; }
+			}
+
+			#endregion
+
+			private IColorMap RealLut
 			{
 				get
 				{
 					if (_realLut == null)
 					{
 						LutFactory factory = LutFactory.NewInstance;
-						_realLut = factory.GetRealPresentationLut(_factoryName, _minInputValue, _maxInputValue, _invert);
+						_realLut = factory.GetRealColorMap(_factoryName, _minInputValue, _maxInputValue);
 						factory.Dispose();
 					}
 
@@ -143,39 +134,41 @@ namespace ClearCanvas.ImageViewer.Imaging
 				if (this == obj)
 					return true;
 				
-				if (obj is IPresentationLut)
-					return this.Equals((IPresentationLut) obj);
+				if (obj is IColorMap)
+					return this.Equals((IColorMap) obj);
 
 				return false;
 			}
-			#region IEquatable<IPresentationLut> Members
+			#region IEquatable<IColorMap> Members
 
-			public bool Equals(IPresentationLut other)
+			public bool Equals(IColorMap other)
 			{
-				if (other is PresentationLutProxy)
-					return this.Equals((PresentationLutProxy)other);
+				if (other is ColorMapProxy)
+					return this.Equals((ColorMapProxy)other);
 
 				return false;
 			}
 
 			#endregion
 
-			#region IEquatable<PresentationLutProxy> Members
+			#region IEquatable<ColorMapProxy> Members
 
-			public bool Equals(PresentationLutProxy other)
+			public bool Equals(ColorMapProxy other)
 			{
-				return _factoryName == other._factoryName && _invert == other._invert;
+				return _factoryName == other._factoryName;
 			}
 
 			#endregion
 		}
 
+		#endregion
+
 		private static volatile LutFactory _instance;
 
 		private List<ModalityLutLinear> _modalityLUTs;
 
-		private List<IPresentationLutFactory> _presentationLutFactories;
-		private List<IPresentationLut> _presentationLUTs;
+		private List<IColorMapFactory> _colorMapFactories;
+		private List<IColorMap> _colorMaps;
 		
 		private int _referenceCount = 0;
 
@@ -207,44 +200,44 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		private List<IPresentationLutFactory> PresentationLutFactories
+		private List<IColorMapFactory> ColorMapFactories
 		{
 			get
 			{
-				if (_presentationLutFactories == null)
+				if (_colorMapFactories == null)
 				{
-					_presentationLutFactories = new List<IPresentationLutFactory>();
+					_colorMapFactories = new List<IColorMapFactory>();
 
-					object[] factories = new PresentationLutFactoryExtensionPoint().CreateExtensions();
+					object[] factories = new ColorMapFactoryExtensionPoint().CreateExtensions();
 					foreach (object obj in factories)
 					{
-						if (obj is IPresentationLutFactory)
-							_presentationLutFactories.Add(obj as IPresentationLutFactory);
+						if (obj is IColorMapFactory)
+							_colorMapFactories.Add(obj as IColorMapFactory);
 					}
 				}
 
-				return _presentationLutFactories;
+				return _colorMapFactories;
 			}
 		}
 
-		private List<IPresentationLut> PresentationLuts
+		private List<IColorMap> ColorMaps
 		{
 			get
 			{
-				if (_presentationLUTs == null)
-					_presentationLUTs = new List<IPresentationLut>();
+				if (_colorMaps == null)
+					_colorMaps = new List<IColorMap>();
 
-				return _presentationLUTs;
+				return _colorMaps;
 			}
 		}
 
-		internal IEnumerable<PresentationLutDescriptor> AvailablePresentationLuts
+		internal IEnumerable<ColorMapDescriptor> AvailableColorMaps
 		{
 			get
 			{
-				foreach (IPresentationLutFactory factory in this.PresentationLutFactories)
+				foreach (IColorMapFactory factory in this.ColorMapFactories)
 				{
-					yield return PresentationLutDescriptor.FromFactory(factory);
+					yield return ColorMapDescriptor.FromFactory(factory);
 				}
 			}
 		}
@@ -261,28 +254,27 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return existingLut;
 		}
 
-		internal IPresentationLut GetPresentationLut(string name)
+		internal IColorMap GetColorMap(string name)
 		{
-			if (this.PresentationLutFactories.Find(delegate(IPresentationLutFactory factory) { return factory.Name == name; }) == null)
-				throw new ArgumentException(String.Format(SR.ExceptionFormatNoPresentationLutFactoryExistWithName, name));
+			if (this.ColorMapFactories.Find(delegate(IColorMapFactory factory) { return factory.Name == name; }) == null)
+				throw new ArgumentException(String.Format(SR.ExceptionFormatNoColorMapFactoryExistWithName, name));
 
-			return new PresentationLutProxy(name);
+			return new ColorMapProxy(name);
 		}
 
-		private IPresentationLut GetRealPresentationLut(string factoryName, int minInputValue, int maxInputValue, bool invert)
+		private IColorMap GetRealColorMap(string factoryName, int minInputValue, int maxInputValue)
 		{
-			IPresentationLutFactory factory =
-				this.PresentationLutFactories.Find(delegate(IPresentationLutFactory testFactory) { return testFactory.Name == factoryName; });
+			IColorMapFactory factory =
+				this.ColorMapFactories.Find(delegate(IColorMapFactory testFactory) { return testFactory.Name == factoryName; });
 
-			IPresentationLut presentationLut = factory.Create();
-			presentationLut.MinInputValue = minInputValue;
-			presentationLut.MaxInputValue = maxInputValue;
-			presentationLut.Invert = invert;
+			IColorMap colorMap = factory.Create();
+			colorMap.MinInputValue = minInputValue;
+			colorMap.MaxInputValue = maxInputValue;
 
-			IPresentationLut existingLut = this.PresentationLuts.Find(delegate(IPresentationLut lut){ return lut.Equals(presentationLut); });
+			IColorMap existingLut = this.ColorMaps.Find(delegate(IColorMap lut){ return lut.Equals(colorMap); });
 
 			if (existingLut == null)
-				this.PresentationLuts.Add(existingLut = presentationLut);
+				this.ColorMaps.Add(existingLut = colorMap);
 
 			return existingLut;
 		}
@@ -351,10 +343,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 						_modalityLUTs = null;
 					}
 
-					if (_presentationLUTs != null)
+					if (_colorMaps != null)
 					{
-						_presentationLUTs.Clear();
-						_presentationLUTs = null;
+						_colorMaps.Clear();
+						_colorMaps = null;
 					}
 				}
 			}

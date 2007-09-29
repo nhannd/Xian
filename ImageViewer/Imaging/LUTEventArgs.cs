@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Provides data for the <see cref="LutCollection"/> events.
 	/// </summary>
-	public sealed class LutEventArgs : CollectionEventArgs<ILut>
+	public sealed class LutEventArgs : CollectionEventArgs<IComposableLut>
 	{
 		/// <summary>
 		/// Default constructor.
@@ -18,8 +18,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Constructor.
 		/// </summary>
-		/// <param name="lut">The <see cref="ILut"/> that is the subject of the raised event.</param>
-		public LutEventArgs(ILut lut)
+		/// <param name="lut">The <see cref="IComposableLut"/> that is the subject of the raised event.</param>
+		public LutEventArgs(IComposableLut lut)
 			: base()
 		{
 			Platform.CheckForNullReference(lut, "lut");
@@ -28,9 +28,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Gets or sets the <see cref="ILut"/> that is the subject of the raised event.
+		/// Gets or sets the <see cref="IComposableLut"/> that is the subject of the raised event.
 		/// </summary>
-		public ILut Lut 
+		public IComposableLut Lut 
 		{
 			get { return base.Item; }
 			set { base.Item = value; }

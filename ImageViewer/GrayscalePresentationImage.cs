@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer
 		IIndexedPixelDataProvider,
 		IModalityLutProvider,
 		IVoiLutProvider, 
-		IPresentationLutProvider
+		IColorMapProvider
 	{
 		/// <summary>
 		/// Simple constructor, which will automatically create grayscale pixel data with the specified
@@ -143,16 +143,16 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
-		#region IPresentationLutProvider Members
+		#region IColorMapProvider Members
 
 		/// <summary>
-		/// Gets this image's <see cref="IPresentationLutManager"/>.
+		/// Gets this image's <see cref="IColorMapManager"/>.
 		/// </summary>
-		public IPresentationLutManager PresentationLutManager
+		public IColorMapManager ColorMapManager
 		{
 			get
 			{
-				return this.ImageGraphic.PresentationLutManager;
+				return this.ImageGraphic.ColorMapManager;
 			}
 		}
 

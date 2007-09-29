@@ -7,7 +7,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Abstract class providing base implementation for a LUT that can be added to a <see cref="LutCollection"/>
 	/// </summary>
-	public abstract class Lut : ILut
+	public abstract class ComposableLut : ILut
 	{
 		private event EventHandler _lutChanged;
 
@@ -61,7 +61,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <remarks>
 		/// This method is not to be confused with *equality*, since some Luts can be
 		/// dependent upon the actual image to which it belongs.  The method should simply 
-		/// be used to determine if a lut in the <see cref="OutputLutPool"/> is the same 
+		/// be used to determine if a lut in the <see cref="ComposedLutPool"/> is the same 
 		/// as an existing one.
 		/// </remarks>
 		public abstract string GetKey();

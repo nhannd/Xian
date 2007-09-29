@@ -219,9 +219,6 @@
   <data name="ToolsPresets" xml:space="preserve">
     <value>W/L Presets</value>
   </data>
-  <data name="LabelPresentationLut" xml:space="preserve">
-    <value>PRE</value>
-  </data>
   <data name="MenuLocateOnDisk" xml:space="preserve">
     <value>Locate on Disk</value>
   </data>

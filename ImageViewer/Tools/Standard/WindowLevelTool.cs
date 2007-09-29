@@ -72,7 +72,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			if (provider == null || provider.VoiLutManager == null)
 				return false;
 
-			ILut voiLut = provider.VoiLutManager.GetLut();
+			IComposableLut voiLut = provider.VoiLutManager.GetLut();
 			return (voiLut is IVoiLutLinear);
 		}
 

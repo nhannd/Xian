@@ -1,28 +1,21 @@
+using System;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	internal class OutputLut : IReferenceCountable
+	internal class ComposedLut : IReferenceCountable
 	{
 		private int _referenceCount = 0;
-		private int[] _outputLut;
-		private string _key;
+		private readonly int[] _data;
 
-		public OutputLut(string key, int numEntries)
+		public ComposedLut(int numEntries)
 		{
-			_key = key;
-			_outputLut = new int[numEntries];
+			_data = new int[numEntries];
 		}
 
-		public string Key
+		public int[] Data
 		{
-			get { return _key; }
-			set { _key = value; }
-		}
-
-		public int[] Lut
-		{
-			get { return _outputLut; }
+			get { return _data; }	
 		}
 
 		#region IReferenceCountable Members

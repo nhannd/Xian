@@ -457,15 +457,6 @@ namespace ClearCanvas.ImageViewer.StudyManagement.Tests
 			}
 		}
 
-		public override string PresentationLUTShape
-		{
-			get
-			{
-				throw new Exception("The method or operation is not implemented.");
-			}
-		}
-
-
 		public override ImageOrientationPatient ImageOrientationPatient
 		{
 			get

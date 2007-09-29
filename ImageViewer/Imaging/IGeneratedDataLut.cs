@@ -7,14 +7,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 	public interface IGeneratedDataLut : IDataLut
 	{
 		/// <summary>
-		/// Called by the framework to lazily create the data in the lut.  This method can be called repeatedly by
-		/// the framework, along with <see cref="Clear"/>.
-		/// </summary>
-		void Create();
-		
-		/// <summary>
-		/// Called by the framework to release any data held by the lut.  <see cref="Create"/> will be called again
-		/// if and when the data is needed.
+		/// Called by the framework to release any data held by the lut.  The Lut should be capable
+		/// of recreating the data when it is needed.
 		/// </summary>
 		void Clear();
 	}

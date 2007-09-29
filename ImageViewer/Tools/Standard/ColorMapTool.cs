@@ -15,15 +15,15 @@ using ClearCanvas.ImageViewer.Imaging;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
-	public class PresentationLutTool : ImageViewerTool
+	public class ColorMapTool : ImageViewerTool
 	{
-		private class PresentationLutActionContainer
+		private class ColorMapActionContainer
 		{
-			private readonly PresentationLutTool _ownerTool;
+			private readonly ColorMapTool _ownerTool;
 			private readonly MenuAction _action;
-			private readonly PresentationLutDescriptor _descriptor;
+			private readonly ColorMapDescriptor _descriptor;
 
-			public PresentationLutActionContainer(PresentationLutTool ownerTool, PresentationLutDescriptor descriptor, int index)
+			public ColorMapActionContainer(ColorMapTool ownerTool, ColorMapDescriptor descriptor, int index)
 			{
 				_ownerTool = ownerTool;
 				_descriptor = descriptor;
@@ -43,15 +43,15 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 			private void Apply()
 			{
-				PresentationLutOperationApplicator applicator = new PresentationLutOperationApplicator(_ownerTool.SelectedPresentationImage);
+				ColorMapOperationApplicator applicator = new ColorMapOperationApplicator(_ownerTool.SelectedPresentationImage);
 				UndoableCommand command = new UndoableCommand(applicator);
 				command.BeginState = applicator.CreateMemento();
 
 				ImageOperationApplicator.Apply del =
 					delegate(IPresentationImage image)
 						{
-							if (image is IPresentationLutProvider)
-								((IPresentationLutProvider)image).PresentationLutManager.InstallLut(_descriptor);
+							if (image is IColorMapProvider)
+								((IColorMapProvider)image).ColorMapManager.InstallColorMap(_descriptor);
 						};
 
 				applicator.ApplyToAllImages(del);
@@ -64,7 +64,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private readonly ActionResourceResolver _resolver;
 
-		public PresentationLutTool()
+		public ColorMapTool()
 		{
 			_resolver = new ActionResourceResolver(this);
 		}
@@ -79,12 +79,12 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 
 		private IEnumerable<IAction> GetActions()
 		{
-			if (this.SelectedPresentationImage is IPresentationLutProvider)
+			if (this.SelectedPresentationImage is IColorMapProvider)
 			{
 				int i = 0;
-				foreach (PresentationLutDescriptor descriptor in ((IPresentationLutProvider)this.SelectedPresentationImage).PresentationLutManager.AvailablePresentationLuts)
+				foreach (ColorMapDescriptor descriptor in ((IColorMapProvider)this.SelectedPresentationImage).ColorMapManager.AvailableColorMaps)
 				{
-					PresentationLutActionContainer container = new PresentationLutActionContainer(this, descriptor, ++i);
+					ColorMapActionContainer container = new ColorMapActionContainer(this, descriptor, ++i);
 					yield return container.Action;
 				}
 			}

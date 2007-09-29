@@ -138,23 +138,32 @@
   <data name="CommandMoveGraphic" xml:space="preserve">
     <value>Move graphic</value>
   </data>
-  <data name="DescriptionBluePresentationLut" xml:space="preserve">
+  <data name="DescriptionBlueColorMap" xml:space="preserve">
     <value>Blue</value>
   </data>
-  <data name="DescriptionGrayscalePresentationLut" xml:space="preserve">
-    <value>Grayscale</value>
+  <data name="DescriptionGrayscaleColorMap" xml:space="preserve">
+    <value>(None)</value>
   </data>
-  <data name="DescriptionGreenPresentationLut" xml:space="preserve">
+  <data name="DescriptionGreenColorMap" xml:space="preserve">
     <value>Green</value>
   </data>
-  <data name="DescriptionRedPresentationLut" xml:space="preserve">
+  <data name="DescriptionRedColorMap" xml:space="preserve">
     <value>Red</value>
   </data>
   <data name="ExceptionAdditionalMouseToolAssignmentsMustBeModified" xml:space="preserve">
     <value>Additional mouse tool assignments must be modified ({0}).</value>
   </data>
-  <data name="ExceptionFormatNoPresentationLutFactoryExistWithName" xml:space="preserve">
-    <value>No Presentation Lut factory extension exists with the name {0}.</value>
+  <data name="ExceptionColorMapCannotHaveMaximumOutputValue" xml:space="preserve">
+    <value>A Color Map cannot have a maximum output value.</value>
+  </data>
+  <data name="ExceptionColorMapCannotHaveMinimumOutputValue" xml:space="preserve">
+    <value>A Color Map cannot have a minimum output value.</value>
+  </data>
+  <data name="ExceptionColorMapDataCannotBeAltered" xml:space="preserve">
+    <value>The Color Map data cannot be altered.</value>
+  </data>
+  <data name="ExceptionFormatNoColorMapFactoryExistWithName" xml:space="preserve">
+    <value>No Color Map factory extension exists with the name {0}.</value>
   </data>
   <data name="ExceptionImageBufferWin32NotSupported" xml:space="preserve">
     <value>ImageBufferWin32 is not supported on non-Win32 platforms.</value>
@@ -191,9 +200,6 @@
   </data>
   <data name="ExceptionKeyStrokeAssignmentInUse" xml:space="preserve">
     <value>The specified keystroke is already in use.  The assignment has been ignored.</value>
-  </data>
-  <data name="ExceptionLastLutMustBePresentation" xml:space="preserve">
-    <value>Last LUT in pipeline must be an IPresentationLUT.</value>
   </data>
   <data name="ExceptionLayoutIsNotRectangular" xml:space="preserve">
     <value>The layout of the physical workspace is either non-rectangular or has not been set.</value>
@@ -260,15 +266,6 @@
   </data>
   <data name="ExceptionObjectMustBeSingleType" xml:space="preserve">
     <value>Object must be of Type Single.</value>
-  </data>
-  <data name="ExceptionPresentationLutCannotHaveMaximumOutputValue" xml:space="preserve">
-    <value>A Presentation LUT cannot have a maximum output value.</value>
-  </data>
-  <data name="ExceptionPresentationLutCannotHaveMinimumOutputValue" xml:space="preserve">
-    <value>A Presentation LUT cannot have a minimum output value.</value>
-  </data>
-  <data name="ExceptionPresentationLutDataCannotBeAltered" xml:space="preserve">
-    <value>The Presentation LUT data cannot be altered.</value>
   </data>
   <data name="ExceptionSopInstanceValidationFailed" xml:space="preserve">
     <value>Sop Instance validation failed.</value>
