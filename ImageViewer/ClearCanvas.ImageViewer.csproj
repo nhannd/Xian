@@ -142,7 +142,6 @@
     <Compile Include="GarbageCollectionTool.cs" />
     <Compile Include="Graphics\ColorImageGraphic.cs" />
     <Compile Include="Imaging\AlgorithmCalculatedVoiLutLinear.cs" />
-    <Compile Include="Imaging\ColorMapMemento.cs" />
     <Compile Include="Imaging\ColorPixelData.cs" />
     <Compile Include="Graphics\GraphicSelectionChangedEventArgs.cs" />
     <Compile Include="Graphics\GrayscaleImageGraphic.cs" />
