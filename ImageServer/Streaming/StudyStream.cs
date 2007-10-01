@@ -50,14 +50,10 @@ namespace ClearCanvas.ImageServer.Streaming
         {
             get
             {
-                SeriesStream series = null;
-                try
-                {
-                    series = _seriesList[seriesInstanceUid];
-                }
-                catch (KeyNotFoundException) { }
+                if (_seriesList.ContainsKey(seriesInstanceUid))
+                    return _seriesList[seriesInstanceUid];
 
-                return series;
+                return null;
             }
             set
             {
@@ -132,7 +128,7 @@ namespace ClearCanvas.ImageServer.Streaming
                 Platform.Log(LogLevel.Warn,"Attempting to add a duplicate SOP instance to the stream.  Replacing value: {0}",theFile.MediaStorageSopInstanceUid);
             }
 
-            instance = new InstanceStream(data);
+            instance = new InstanceStream(data, theFile.SopClass, theFile.TransferSyntax);
             series[sopInstanceUid] = instance;
 
             return true;

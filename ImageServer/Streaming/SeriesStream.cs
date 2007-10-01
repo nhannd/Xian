@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.Text;
+using System.Collections.Generic;
 using System.Xml;
-
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Streaming
@@ -12,7 +10,7 @@ namespace ClearCanvas.ImageServer.Streaming
     {
         #region Private members
 
-        private Dictionary<String, InstanceStream> _instanceList = new Dictionary<string, InstanceStream>();
+        private Dictionary<string, InstanceStream> _instanceList = new Dictionary<string, InstanceStream>();
         private String _seriesInstanceUid = null;
         private InstanceStream _seriesTagsStream = null;
 
@@ -51,14 +49,10 @@ namespace ClearCanvas.ImageServer.Streaming
         {
             get
             {
-                InstanceStream instance = null;
-                try
-                {
-                    instance = _instanceList[sopInstanceUid];
-                }
-                catch (KeyNotFoundException) { }
+                if (_instanceList.ContainsKey(sopInstanceUid))
+                    return  _instanceList[sopInstanceUid];
 
-                return instance;
+                return null;
             }
             set
             {
@@ -80,6 +74,10 @@ namespace ClearCanvas.ImageServer.Streaming
             if (_instanceList.Count < 2)
                 return;
 
+            // Optimization:  a base collection has already been created, just return.
+            if (_seriesTagsStream != null)
+                return;
+
             IEnumerator<InstanceStream> iterator = GetEnumerator();
 
             if (false == iterator.MoveNext())
@@ -92,7 +90,7 @@ namespace ClearCanvas.ImageServer.Streaming
 
             DicomAttributeCollection collect2 = iterator.Current.Collection;
 
-            _seriesTagsStream = new InstanceStream(new DicomAttributeCollection());
+            _seriesTagsStream = new InstanceStream(new DicomAttributeCollection(),null,TransferSyntax.ExplicitVrLittleEndian);
 
             foreach (DicomAttribute attrib1 in collect1)
             {
@@ -175,7 +173,7 @@ namespace ClearCanvas.ImageServer.Streaming
                     // This assumes the BaseInstance is in the xml ahead of the actual instances, note, however,
                     // that if there is only 1 instance in the series, there will be no base instance value
                 
-                    InstanceStream instanceStream = null;
+                    InstanceStream instanceStream;
 
                     if (_seriesTagsStream == null)
                         instanceStream = new InstanceStream(childNode, null);

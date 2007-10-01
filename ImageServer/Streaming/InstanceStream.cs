@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
+using System.Globalization;
 using System.Security;
 using System.Text;
 using System.Xml;
-using System.Globalization;
-
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageServer.Streaming
@@ -15,6 +13,8 @@ namespace ClearCanvas.ImageServer.Streaming
 
         private DicomAttributeCollection _collection = null;
         private String _sopInstanceUid = null;
+        private SopClass _sopClass = null;
+        private TransferSyntax _transferSyntax = null;
         #endregion
 
         #region Public Properties
@@ -29,6 +29,16 @@ namespace ClearCanvas.ImageServer.Streaming
             }
         }
 
+        public SopClass SopClass
+        {
+            get { return _sopClass; }
+        }
+
+        public TransferSyntax TransferSyntax
+        {
+            get { return _transferSyntax; }
+        }
+
         public DicomAttributeCollection Collection
         {
             get { return _collection; }
@@ -38,12 +48,14 @@ namespace ClearCanvas.ImageServer.Streaming
 
         #region Constructors
 
-        public InstanceStream(DicomAttributeCollection collection)
+        public InstanceStream(DicomAttributeCollection collection, SopClass sopClass, TransferSyntax syntax)
         {
             
             _sopInstanceUid = collection[DicomTags.SopInstanceUid];
 
             _collection = collection;
+            _sopClass = sopClass;
+            _transferSyntax = syntax;
         }
 
         public InstanceStream()
@@ -125,7 +137,25 @@ namespace ClearCanvas.ImageServer.Streaming
                 _sopInstanceUid = instanceNode.Attributes["UID"].Value;
             }
 
+            if (instanceNode.Attributes["SopClassUID"] != null)
+            {
+                _sopClass = SopClass.GetSopClass(instanceNode.Attributes["SopClassUID"].Value);
+            }
+
+            if (instanceNode.Attributes["TransferSyntaxUID"] != null)
+            {
+                _transferSyntax = TransferSyntax.GetTransferSyntax(instanceNode.Attributes["TransferSyntaxUID"].Value);
+            }
+            else
+                _transferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+
             ParseCollection(_collection, instanceNode);
+
+            // This should never happen
+            if (_sopClass == null)
+            {
+                _sopClass = SopClass.GetSopClass(_collection[DicomTags.SopClassUid].GetString(0, String.Empty));
+            }
         }
 
         #endregion
@@ -134,7 +164,7 @@ namespace ClearCanvas.ImageServer.Streaming
 
         private XmlElement GetMomentoForCollection(XmlDocument theDocument, DicomAttributeCollection baseCollection, DicomAttributeCollection collection)
 		{
-			XmlElement instance = null;
+			XmlElement instance;
 
 			if (collection is DicomSequenceItem)
 			{
@@ -147,9 +177,23 @@ namespace ClearCanvas.ImageServer.Streaming
 				XmlAttribute sopInstanceUid = theDocument.CreateAttribute("UID");
 				sopInstanceUid.Value = _sopInstanceUid;
 				instance.Attributes.Append(sopInstanceUid);
+
+                if (_sopClass != null)
+                {
+                    XmlAttribute sopClassAttribute = theDocument.CreateAttribute("SopClassUID");
+                    sopClassAttribute.Value = _sopClass.Uid;
+                    instance.Attributes.Append(sopClassAttribute);
+                }
+
+                if (_transferSyntax != null)
+                {
+                    XmlAttribute transferSyntaxAttribute = theDocument.CreateAttribute("TransferSyntaxUID");
+                    transferSyntaxAttribute.Value = _transferSyntax.UidString;
+                    instance.Attributes.Append(transferSyntaxAttribute);
+                }
 			}
 
-			foreach (Dicom.DicomAttribute attribute in collection)
+			foreach (DicomAttribute attribute in collection)
 			{
                 if (baseCollection!=null)
                 {
@@ -228,12 +272,23 @@ namespace ClearCanvas.ImageServer.Streaming
 
 		}
 
+        private XmlElement _cachedElement = null;
+
 		internal XmlElement GetMomento(XmlDocument theDocument, InstanceStream theBaseStream)
 		{
-            if (theBaseStream != null)
-                return GetMomentoForCollection(theDocument, theBaseStream.Collection, _collection);
+            if (_cachedElement != null)
+            {
+         //       return _cachedElement;
+            }
 
-            return GetMomentoForCollection(theDocument, null, _collection);
+            if (theBaseStream != null)
+            {
+                _cachedElement = GetMomentoForCollection(theDocument, theBaseStream.Collection, _collection);
+                return _cachedElement;
+            }
+
+		    _cachedElement = GetMomentoForCollection(theDocument, null, _collection);
+		    return _cachedElement;
 		}
 
 		#endregion

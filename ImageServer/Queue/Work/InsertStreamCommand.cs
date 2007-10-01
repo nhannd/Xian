@@ -1,12 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageServer.Common;
-using ClearCanvas.ImageServer.Model;
 using ClearCanvas.ImageServer.Streaming;
 
 namespace ClearCanvas.ImageServer.Queue.Work
@@ -60,7 +57,6 @@ namespace ClearCanvas.ImageServer.Queue.Work
             try
             {
                 XmlDocument doc = theStream.GetMomento();
-
                 if (File.Exists(streamFile))
                     File.Delete(streamFile);
 

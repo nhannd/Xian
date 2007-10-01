@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Dicom.Network
 {
@@ -84,7 +82,7 @@ namespace ClearCanvas.Dicom.Network
                         theListener.StopThread();
                         theListener.Dispose();
                     }
-                    DicomLogger.LogInfo("Stopping listening wiith AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
+                    DicomLogger.LogInfo("Stopping listening with AE {0} on {1}", parameters.CalledAE, parameters.LocalEndPoint.ToString());
                 }
                 else
                 {
@@ -111,7 +109,7 @@ namespace ClearCanvas.Dicom.Network
             info.Parameters = parameters;
             info.StartDelegate = acceptor;
 
-            this._applications.Add(parameters.CalledAE, info);
+            _applications.Add(parameters.CalledAE, info);
 
             _ipEndPoint = parameters.LocalEndPoint;
         }
@@ -120,7 +118,7 @@ namespace ClearCanvas.Dicom.Network
         private void StartThread()
         {
             
-            _theThread = new Thread(new ThreadStart(Listen));
+            _theThread = new Thread(Listen);
             _theThread.Name = "Association Listener on port " + _ipEndPoint.Port;
 
             _theThread.Start();
