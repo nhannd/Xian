@@ -18,6 +18,7 @@
 	<ItemGroup>
 		<SharedLibraryFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
 		<SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Common.dll" />
+		<SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Uhn\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Uhn.Common.dll" />
 	</ItemGroup>	
 	
 	<ItemGroup>
@@ -29,6 +30,8 @@
 		<ClientModuleFiles Include="$(SolutionDir)\Adt\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" />
 		<ClientModuleFiles Include="$(SolutionDir)\Reporting\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.dll" />
 		<ClientModuleFiles Include="$(SolutionDir)\Reporting\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" />
+		<ClientModuleFiles Include="$(SolutionDir)\Uhn\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.dll" />
+		<ClientModuleFiles Include="$(SolutionDir)\Uhn\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Uhn.View.WinForms.dll" />
 	</ItemGroup>
 
   <ItemGroup>

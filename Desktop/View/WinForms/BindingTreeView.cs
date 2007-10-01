@@ -19,6 +19,7 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ITree _root;
         private BindingTreeLevelManager _rootLevelManager;
         private event EventHandler _selectionChanged;
+        private event EventHandler _nodeMouseDoubleClicked;
 
         private BindingTreeNode _dropTargetNode;
         private DragDropEffects _dropEffect;
@@ -96,6 +97,15 @@ namespace ClearCanvas.Desktop.View.WinForms
         {
             add { _selectionChanged += value; }
             remove { _selectionChanged -= value; }
+        }
+        
+        /// <summary>
+        /// Notifies that the selection is double clicked
+        /// </summary>
+        public event EventHandler NodeMouseDoubleClicked
+        {
+            add { _nodeMouseDoubleClicked += value; }
+            remove { _nodeMouseDoubleClicked -= value; }
         }
 
         /// <summary>
@@ -563,6 +573,11 @@ namespace ClearCanvas.Desktop.View.WinForms
             {
                 e.Cancel = true;
             }
+        }
+
+        private void _treeCtrl_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            EventsHelper.Fire(_nodeMouseDoubleClicked, this, e);
         }
     }
 }

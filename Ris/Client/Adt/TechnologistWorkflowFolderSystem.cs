@@ -12,7 +12,7 @@ using ClearCanvas.Ris.Client.Adt.Folders;
 namespace ClearCanvas.Ris.Client.Adt
 {
     [ExtensionPoint]
-    class TechnologistWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
+    public class TechnologistWorkflowItemToolExtensionPoint : ExtensionPoint<ITool>
     {
     }
 
