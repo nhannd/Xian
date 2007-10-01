@@ -10,31 +10,32 @@
 		<JscriptDirectory>$(ProjectDir)\..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
     <DatabaseDirectory>C:\dicom_datastore</DatabaseDirectory>
     <SourceEmptyDatabaseFile>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf</SourceEmptyDatabaseFile>
+    <RisClientDirectory>$(SolutionDir)\..\..\Client</RisClientDirectory>
   </PropertyGroup>
 
-	<ItemGroup>
-		<ConfigFiles Include="$(SolutionDir)\actionmodels.xml" />
+  <ItemGroup>
+    <ConfigFiles Include="$(SolutionDir)\actionmodels.xml" />
     <DatabaseFiles Include="$(SourceEmptyDatabaseFile)" />
   </ItemGroup>
-  
-	<ItemGroup>
-		<SharedLibraryFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
-		<SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Common.dll" />
-	</ItemGroup>	
-	
-	<ItemGroup>
-		<ClientModuleFiles Include="$(SolutionDir)\..\Client\bin\$(Configuration)\ClearCanvas.Ris.Client.dll" />
-		<ClientModuleFiles Include="$(SolutionDir)\..\Client\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.View.WinForms.dll" />
 
-    <ClientModuleFiles Include="$(SolutionDir)\..\Client\Admin\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.dll" />
-    <ClientModuleFiles Include="$(SolutionDir)\..\Client\Admin\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" />
-    <ClientModuleFiles Include="$(SolutionDir)\..\Client\Adt\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.dll" />
-    <ClientModuleFiles Include="$(SolutionDir)\..\Client\Adt\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" />
+  <ItemGroup>
+    <SharedLibraryFiles Include="$(TrunkDirectory)\Enterprise\Common\bin\$(Configuration)\ClearCanvas.Enterprise.Common.dll" />
+    <SharedLibraryFiles Include="$(TrunkDirectory)\Ris\Application\Common\bin\$(Configuration)\ClearCanvas.Ris.Application.Common.dll" />
+  </ItemGroup>
 
-    <ClientModuleFiles Include="$(SolutionDir)\..\Client\Reporting\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.dll" />
-		<ClientModuleFiles Include="$(SolutionDir)\..\Client\Reporting\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" />
-    <ClientModuleFiles Include="$(SolutionDir)\..\Client\Integration\bin\$(Configuration)\ClearCanvas.Ris.Client.Integration.dll" />
-    <ClientModuleFiles Include="$(SolutionDir)\..\Client\Integration\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Integration.View.WinForms.dll" />
+  <ItemGroup>
+    <ClientModuleFiles Include="$(RisClientDirectory)\bin\$(Configuration)\ClearCanvas.Ris.Client.dll" />
+    <ClientModuleFiles Include="$(RisClientDirectory)\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.View.WinForms.dll" />
+
+    <ClientModuleFiles Include="$(RisClientDirectory)\Admin\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.dll" />
+    <ClientModuleFiles Include="$(RisClientDirectory)\Admin\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Admin.View.WinForms.dll" />
+    <ClientModuleFiles Include="$(RisClientDirectory)\Adt\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.dll" />
+    <ClientModuleFiles Include="$(RisClientDirectory)\Adt\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Adt.View.WinForms.dll" />
+
+    <ClientModuleFiles Include="$(RisClientDirectory)\Reporting\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.dll" />
+    <ClientModuleFiles Include="$(RisClientDirectory)\Reporting\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Reporting.View.WinForms.dll" />
+    <ClientModuleFiles Include="$(RisClientDirectory)\Integration\bin\$(Configuration)\ClearCanvas.Ris.Client.Integration.dll" />
+    <ClientModuleFiles Include="$(RisClientDirectory)\Integration\View\WinForms\bin\$(Configuration)\ClearCanvas.Ris.Client.Integration.View.WinForms.dll" />
   </ItemGroup>
 
   <ItemGroup>
