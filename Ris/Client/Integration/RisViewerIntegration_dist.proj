@@ -5,7 +5,7 @@
 	
 	<PropertyGroup>
 		<DistributionDirectory>$(ProjectDir)\$(OutDir)</DistributionDirectory>		
-		<TrunkDirectory>$(SolutionDir)\..\..</TrunkDirectory>
+		<TrunkDirectory>$(SolutionDir)\..\..\..</TrunkDirectory>
 		<PluginsDirectory>$(DistributionDirectory)\plugins</PluginsDirectory>
 		<JscriptDirectory>$(ProjectDir)\..\..\Jscript\bin\$(Configuration)</JscriptDirectory>
     <DatabaseDirectory>C:\dicom_datastore</DatabaseDirectory>
