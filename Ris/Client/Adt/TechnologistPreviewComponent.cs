@@ -25,18 +25,6 @@ namespace ClearCanvas.Ris.Client.Adt
         IDesktopWindow DesktopWindow { get; }
     }
 
-    /// <summary>
-    /// Extension point for views onto <see cref="TechnologistPreviewComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class TechnologistPreviewComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
-
-    /// <summary>
-    /// TechnologistPreviewComponent class
-    /// </summary>
-    [AssociateView(typeof(TechnologistPreviewComponentViewExtensionPoint))]
     public class TechnologistPreviewComponent : DHtmlComponent
     {
         class TechnologistPreviewToolContext : ToolContext, ITechnologistPreviewToolContext
@@ -77,6 +65,8 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _toolSet = new ToolSet(new TechnologistPreviewToolExtensionPoint(), new TechnologistPreviewToolContext(this));
 
+            SetUrl(TechnologistPreviewComponentSettings.Default.DetailsPageUrl);
+
             base.Start();
         }
 
@@ -89,43 +79,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Public Properties
 
-        public override string GetJsmlData(string requestJsml)
-        {
-            string responseJsml = "";
-
-            try
-            {
-                if (_worklistItem != null && String.IsNullOrEmpty(requestJsml) == false)
-                {
-                    Platform.GetService<IPreviewService>(
-                        delegate(IPreviewService service)
-                        {
-                            GetDataRequest request = JsmlSerializer.Deserialize<GetDataRequest>(requestJsml);
-                            request.ProcedureStepRef = _worklistItem.ProcedureStepRef;
-
-                            GetDataResponse response = service.GetData(request);
-                            responseJsml = JsmlSerializer.Serialize(response, "response");
-                        });
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-
-            return responseJsml;
-        }
-
-        public override string DetailsPageUrl
-        {
-            get { return TechnologistPreviewComponentSettings.Default.DetailsPageUrl; }
-        }
-
-        public override ActionModelNode ActionModel
-        {
-            get { return ActionModelRoot.CreateModel(this.GetType().FullName, "TechnologistPreview-menu", _toolSet.Actions); }
-        }
-
         public ModalityWorklistItem WorklistItem
         {
             get { return _worklistItem; }
@@ -136,11 +89,17 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        public override object GetWorklistItem()
+
+        #endregion
+
+        protected override ActionModelNode GetActionModel()
+        {
+            return ActionModelRoot.CreateModel(this.GetType().FullName, "TechnologistPreview-menu", _toolSet.Actions);
+        }
+
+        protected override object GetWorklistItem()
         {
             return _worklistItem;
         }
-
-        #endregion
     }
 }

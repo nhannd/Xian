@@ -5,6 +5,7 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Ris.Client.View.WinForms;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
@@ -14,6 +15,12 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     [ExtensionOf(typeof(TechnologistDocumentationComponentViewExtensionPoint))]
     public class TechnologistDocumentationComponentView : WinFormsView, IApplicationComponentView
     {
+        //[ExtensionOf(typeof(TechnologistDocumentationComponent.OrderSummaryComponentViewExtensionPoint))]
+        class OrderSummaryComponentView : DHtmlComponentView
+        {
+        }
+
+
         private TechnologistDocumentationComponent _component;
         private TechnologistDocumentationComponentControl _control;
 

@@ -30,116 +30,76 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(TechnologistDocumentationComponentViewExtensionPoint))]
     public class TechnologistDocumentationComponent : ApplicationComponent
     {
-        [ComVisible(true)]
-        public class ScriptCallback
+        #region Application Component Host class
+
+        class ChildComponentHost : ApplicationComponentHost
         {
-            private readonly TechnologistDocumentationComponent _component;
+            private TechnologistDocumentationComponent _owner;
 
-            public ScriptCallback(TechnologistDocumentationComponent component)
+            public ChildComponentHost(TechnologistDocumentationComponent owner, IApplicationComponent hostedComponent)
+                :base(hostedComponent)
             {
-                this._component = component;
+                _owner = owner;
             }
 
-            //public string GetData(string tag)
-            //{
-            //    return _component.GetData(tag);
-            //}
-
-            public string FormatDate(string isoDateString)
+            public override DesktopWindow DesktopWindow
             {
-                DateTime? dt = JsmlSerializer.ParseIsoDateTime(isoDateString);
-                return dt == null ? "" : Format.Date(dt);
+                get { return _owner.Host.DesktopWindow; }
             }
 
-            public string FormatTime(string isoDateString)
+        }
+
+        #endregion
+
+        #region Order Summary Component class
+
+        //public class OrderSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> { }
+
+        //[AssociateView(typeof(OrderSummaryComponentViewExtensionPoint))]
+        class OrderSummaryComponent : DHtmlComponent
+        {
+            private TechnologistDocumentationComponent _owner;
+
+            public OrderSummaryComponent(TechnologistDocumentationComponent owner)
             {
-                DateTime? dt = JsmlSerializer.ParseIsoDateTime(isoDateString);
-                return dt == null ? "" : Format.Time(dt);
+                _owner = owner;
             }
 
-            public string FormatDateTime(string isoDateString)
+            public override void Start()
             {
-                DateTime? dt = JsmlSerializer.ParseIsoDateTime(isoDateString);
-                return dt == null ? "" : Format.DateTime(dt);
+                SetUrl(TechnologistDocumentationComponentSettings.Default.OrderSummaryUrl);
+                base.Start();
             }
 
-            public string FormatHealthcard(string jsml)
+            protected override object GetWorklistItem()
             {
-                HealthcardDetail detail = JsmlSerializer.Deserialize<HealthcardDetail>(jsml);
-                return detail == null ? "" : HealthcardFormat.Format(detail);
-            }
-
-            public string FormatMrn(string jsml)
-            {
-                MrnDetail detail = JsmlSerializer.Deserialize<MrnDetail>(jsml);
-                return detail == null ? "" : MrnFormat.Format(detail);
-            }
-
-            public string FormatPersonName(string jsml)
-            {
-                PersonNameDetail detail = JsmlSerializer.Deserialize<PersonNameDetail>(jsml);
-                return detail == null ? "" : PersonNameFormat.Format(detail);
-            }
-
-            public JsmlServiceProxy GetServiceProxy(string serviceContractName)
-            {
-                return new JsmlServiceProxy(serviceContractName);
-            }
-
-            public string GetWorklistItem()
-            {
-                return JsmlSerializer.Serialize(_component.GetWorklistItem(), "worklistItem");
+                return _owner._worklistItem;
             }
         }
 
-        public class Checkable<TItem>
-        {
-            private bool _isChecked;
-            private TItem _item;
+        #endregion
 
-            public Checkable(TItem item, bool isChecked)
-            {
-                _isChecked = isChecked;
-                _item = item;
-            }
-
-            public Checkable(TItem item)
-                : this(item, false)
-            {
-            }
-
-            public TItem Item
-            {
-                get { return _item; }
-                set { _item = value; }
-            }
-
-            public bool IsChecked
-            {
-                get { return _isChecked; }
-                set { _isChecked = value; }
-            }
-        }
 
         #region Private Members
 
-        private readonly ScriptCallback _scriptCallback;
         private readonly ModalityWorklistItem _worklistItem;
-
-        private readonly List<Checkable<ModalityProcedureStepDetail>> _allCheckableModalityProcedureSteps;
+        private EntityRef _orderRef;
 
         private Tree<RequestedProcedureDetail> _procedurePlanTree;
+        private readonly List<Checkable<ModalityProcedureStepDetail>> _allCheckableModalityProcedureSteps;
         private SimpleActionModel _procedurePlanActionHandler;
-        private readonly string _startModalityProcedureStepKey = "StartModalityProcedureStep";
-        private readonly string _discontinueRequestedProcedureOrModalityProcedureStepKey = "DiscontinueRequestedProcedureOrModalityProcedureStepKey";
+        private ClickAction _startAction;
+        private ClickAction _discontinueAction;
 
-        private readonly TechnologistDocumentationMppsSummaryTable _mppsTable;
-        private ModalityPerformedProcedureStepSummary _selectedMpps;
-        private SimpleActionModel _mppsActionHandler;
-        private readonly string _stopPerformedProcedureStepKey = "StopPerformedProcedureStepKey";
-        private readonly string _discontinuePerformedProcedureStepKey = "DiscontinuePerformedProcedureStepKey";
+        private ChildComponentHost _orderSummaryComponentHost;
+        private ChildComponentHost _documentationHost;
+        private TabComponentContainer _documentationTabContainer;
 
-        private EntityRef _orderRef;
+        private DHtmlComponent _preExamComponent;
+        private DHtmlComponent _postExamComponent;
+        private PerformedProcedureComponent _ppsComponent;
+        
+
 
         private event EventHandler _procedurePlanTreeChanged;
 
@@ -147,10 +107,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public TechnologistDocumentationComponent(ModalityWorklistItem item)
         {
-            _scriptCallback = new ScriptCallback(this);
-
             _worklistItem = item;
-            _mppsTable = new TechnologistDocumentationMppsSummaryTable();
             _allCheckableModalityProcedureSteps = new List<Checkable<ModalityProcedureStepDetail>>();
         }
 
@@ -158,20 +115,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
-
-            _procedurePlanActionHandler = new SimpleActionModel(resolver);
-            _procedurePlanActionHandler.AddAction(_startModalityProcedureStepKey, "START", "Icons.StartToolSmall.png", "START", StartModalityProcedureStep);
-            _procedurePlanActionHandler.AddAction(_discontinueRequestedProcedureOrModalityProcedureStepKey, "DISCONTINUE", "Icons.DeleteToolSmall.png", "START", DiscontinueRequestedProcedureOrModalityProcedureStep);
-            _procedurePlanActionHandler[_startModalityProcedureStepKey].Enabled = true;
-            _procedurePlanActionHandler[_discontinueRequestedProcedureOrModalityProcedureStepKey].Enabled = true;
-
-            _mppsActionHandler = new SimpleActionModel(resolver);
-            _mppsActionHandler.AddAction(_stopPerformedProcedureStepKey, "STOP", "Icons.CompleteToolSmall.png", "STOP", StopPerformedProcedureStep);
-            _mppsActionHandler.AddAction(_discontinuePerformedProcedureStepKey, "DISCONTINUE", "Icons.DeleteToolSmall.png", "START", DiscontinuePerformedProcedureStep);
-            _mppsActionHandler[_stopPerformedProcedureStepKey].Enabled = true;
-            _mppsActionHandler[_discontinuePerformedProcedureStepKey].Enabled = true;
-
             Platform.GetService<ITechnologistDocumentationService>(
                 delegate(ITechnologistDocumentationService service)
                 {
@@ -180,12 +123,28 @@ namespace ClearCanvas.Ris.Client.Adt
 
                     _orderRef = procedurePlanResponse.OrderRef;
                     RefreshProcedurePlanTree(procedurePlanResponse.RequestedProcedures);
-
-                    ListPerformedProcedureStepsRequest mppsRequest = new ListPerformedProcedureStepsRequest(procedurePlanResponse.OrderRef);
-                    ListPerformedProcedureStepsResponse mppsResponse = service.ListPerformedProcedureSteps(mppsRequest);
-
-                    _mppsTable.Items.AddRange(mppsResponse.PerformedProcedureSteps);
                 });
+
+            _orderSummaryComponentHost = new ChildComponentHost(this, new OrderSummaryComponent(this));
+            _orderSummaryComponentHost.StartComponent();
+
+            _documentationTabContainer = new TabComponentContainer();
+            _preExamComponent = new DHtmlComponent();
+            _documentationTabContainer.Pages.Add(new TabPage("Pre-exam", _preExamComponent));
+
+            _ppsComponent = new PerformedProcedureComponent(_orderRef);
+            _documentationTabContainer.Pages.Add(new TabPage("Exam", _ppsComponent));
+
+            _postExamComponent = new DHtmlComponent();
+            _documentationTabContainer.Pages.Add(new TabPage("Post-exam", _postExamComponent));
+
+            _documentationHost = new ChildComponentHost(this, _documentationTabContainer);
+            _documentationHost.StartComponent();
+
+            ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
+            _procedurePlanActionHandler = new SimpleActionModel(resolver);
+            _startAction = _procedurePlanActionHandler.AddAction("start", "START", "Icons.StartToolSmall.png", "START", StartModalityProcedureStep);
+            _discontinueAction = _procedurePlanActionHandler.AddAction("discontinue", "DISCONTINUE", "Icons.DeleteToolSmall.png", "START", DiscontinueRequestedProcedureOrModalityProcedureStep);
 
             base.Start();
         }
@@ -199,30 +158,16 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #endregion
 
-        #region Scripting Callbacks
-
-        public ScriptCallback ScriptObject
-        {
-            get { return _scriptCallback; }
-        }
-
-        //public string GetData(string tag)
-        //{
-        //    return _worklistItem.AccessionNumber;
-        //}
-
-        public object GetWorklistItem()
-        {
-            return _worklistItem;
-        }
-
-        #endregion
-
         #region Presentation Layer Methods
 
-        public string OrderSummaryUrl
+        public ApplicationComponentHost OrderSummaryComponentHost
         {
-            get { return TechnologistDocumentationComponentSettings.Default.OrderSummaryUrl; }
+            get { return _orderSummaryComponentHost; }
+        }
+
+        public ApplicationComponentHost DocumentationHost
+        {
+            get { return _documentationHost; }
         }
 
         public ITree ProcedurePlanTree
@@ -239,47 +184,6 @@ namespace ClearCanvas.Ris.Client.Adt
         public ActionModelNode ProcedurePlanTreeActionModel
         {
             get { return _procedurePlanActionHandler; }
-        }
-
-        public ITable MppsTable
-        {
-            get { return _mppsTable; }
-        }
-
-        public ISelection SelectedMpps
-        {
-            get { return _selectedMpps == null ? Selection.Empty : new Selection(_selectedMpps); }
-            set
-            {
-                _selectedMpps = (ModalityPerformedProcedureStepSummary) value.Item;
-                SelectedMppsChanged();
-            }
-        }
-
-        public ActionModelNode MppsTableActionModel
-        {
-            get { return _mppsActionHandler; }
-        }
-
-        public void OnComplete()
-        {
-            try
-            {
-                Platform.GetService<ITechnologistDocumentationService>(
-                    delegate(ITechnologistDocumentationService service)
-                    {
-                        CompleteModalityProcedureStepsRequest request = new CompleteModalityProcedureStepsRequest(_orderRef);
-                        CompleteModalityProcedureStepsResponse response = service.CompleteModalityProcedureSteps(request);
-
-                        RefreshProcedurePlanTree(response.RequestedProcedures);
-                        _orderRef = response.OrderRef;
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-
         }
 
         #endregion
@@ -303,8 +207,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             RefreshProcedurePlanTree(response.RequestedProcedures);
                             _orderRef = response.OrderRef;
 
-                            _mppsTable.Items.Add(response.ModalityPerformedProcedureStep);
-                            _mppsTable.Sort();
+                            _ppsComponent.AddPerformedProcedureStep(response.ModalityPerformedProcedureStep);
                         });
                 }
             }
@@ -340,72 +243,6 @@ namespace ClearCanvas.Ris.Client.Adt
             //{
             //    ExceptionHandler.Report(e, this.Host.DesktopWindow);
             //}
-        }
-
-        private void StopPerformedProcedureStep()
-        {
-            try
-            {
-                ModalityPerformedProcedureStepSummary selectedMpps = _selectedMpps;
-
-                if (selectedMpps != null)
-                {
-                    Platform.GetService<ITechnologistDocumentationService>(
-                        delegate(ITechnologistDocumentationService service)
-                        {
-                            StopModalityPerformedProcedureStepRequest request = new StopModalityPerformedProcedureStepRequest(selectedMpps.ModalityPerformendProcedureStepRef);
-                            StopModalityPerformedProcedureStepResponse response = service.StopModalityPerformedProcedureStep(request);
-
-                            RefreshProcedurePlanTree(response.RequestedProcedures);
-                            _orderRef = response.OrderRef;
-
-                            _mppsTable.Items.Replace(
-                                delegate(ModalityPerformedProcedureStepSummary mppsSummary)
-                                {
-                                    return mppsSummary.ModalityPerformendProcedureStepRef == selectedMpps.ModalityPerformendProcedureStepRef;
-                                }, 
-                                response.StoppedMpps);
-                            _mppsTable.Sort();
-                        });
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-        }
-
-        private void DiscontinuePerformedProcedureStep()
-        {
-            try
-            {
-                ModalityPerformedProcedureStepSummary selectedMpps = _selectedMpps;
-
-                if (selectedMpps != null)
-                {
-                    Platform.GetService<ITechnologistDocumentationService>(
-                        delegate(ITechnologistDocumentationService service)
-                        {
-                            DiscontinueModalityPerformedProcedureStepRequest request = new DiscontinueModalityPerformedProcedureStepRequest( selectedMpps.ModalityPerformendProcedureStepRef);
-                            DiscontinueModalityPerformedProcedureStepResponse response = service.DiscontinueModalityPerformedProcedureStep(request);
-
-                            RefreshProcedurePlanTree(response.RequestedProcedures);
-                            _orderRef = response.OrderRef;
-
-                            _mppsTable.Items.Replace(
-                                delegate(ModalityPerformedProcedureStepSummary mppsSummary)
-                                {
-                                    return mppsSummary.ModalityPerformendProcedureStepRef == selectedMpps.ModalityPerformendProcedureStepRef;
-                                },
-                                response.DiscontinuedMpps);
-                            _mppsTable.Sort();
-                        });
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
         }
 
         #endregion
@@ -456,11 +293,6 @@ namespace ClearCanvas.Ris.Client.Adt
             _procedurePlanTree = new Tree<RequestedProcedureDetail>(rpBinding, procedures);
 
             EventsHelper.Fire(_procedurePlanTreeChanged, this, EventArgs.Empty);
-        }
-
-        private void SelectedMppsChanged()
-        {
-            // trigger url change here?
         }
 
         #endregion

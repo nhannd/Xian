@@ -1,6 +1,9 @@
 using System;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Validation;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
@@ -24,26 +27,49 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 #endif
 
             _component.AllPropertiesChanged += AllPropertiesChangedEventHandler;
-            this.Disposed += new EventHandler(DisposedEventHandler);
 
-            _webBrowser.Url = new Uri(_component.DetailsPageUrl);
+            _webBrowser.DataBindings.Add("Url", _component, "HtmlPageUrl", true);
             _webBrowser.ObjectForScripting = _component.ScriptObject;
+            _webBrowser.Navigating += NavigatingEventHandler;
+
+            _component.Validation.Add(new ValidationRule("DUMMY_PROPERTY",
+                delegate(IApplicationComponent c)
+                {
+                    object result = _webBrowser.Document.InvokeScript("hasValidationErrors");
+
+                    // if result == null, the hasValidationErrors method is not implemented by the page
+                    // in this case, assume there are no errors
+                    bool hasErrors = (result == null) ? false : (bool)result;
+                    return new ValidationResult(!hasErrors, "");
+                }));
+
+            _component.ValidationVisibleChanged += new EventHandler(_component_ValidationVisibleChanged);
+            _component.DataSaving += new EventHandler(_component_DataSaving);
         }
 
-        public event WebBrowserNavigatingEventHandler Navigating
+        private void _component_DataSaving(object sender, EventArgs e)
         {
-            add { _webBrowser.Navigating += value; }
-            remove { _webBrowser.Navigating -= value; }
+            _webBrowser.Document.InvokeScript("saveData", new object[] { _component.ValidationVisible });
         }
 
-        private void DisposedEventHandler(object sender, EventArgs e)
+        private void _component_ValidationVisibleChanged(object sender, EventArgs e)
         {
-            _component.AllPropertiesChanged -= AllPropertiesChangedEventHandler;
+            _webBrowser.Document.InvokeScript("showValidation", new object[] { _component.ValidationVisible });
         }
 
         private void AllPropertiesChangedEventHandler(object sender, EventArgs e)
         {
             _webBrowser.Refresh();
+        }
+
+        private void NavigatingEventHandler(object sender, System.Windows.Forms.WebBrowserNavigatingEventArgs e)
+        {
+            if (e.Url.OriginalString.StartsWith("action:"))
+            {
+                e.Cancel = true;    // cancel the webbrowser navigation
+
+                _component.InvokeAction(e.Url.LocalPath);
+            }
         }
     }
 }

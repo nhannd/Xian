@@ -9,10 +9,12 @@ using ClearCanvas.Common.Scripting;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client.View.WinForms
 {
-    public abstract class DHtmlComponentView : WinFormsView, IApplicationComponentView
+    [ExtensionOf(typeof(DHtmlComponentViewExtensionPoint))]
+    public class DHtmlComponentView : WinFormsView, IApplicationComponentView
     {
         private DHtmlComponent _component;
         private DHtmlComponentControl _control;
@@ -33,48 +35,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
                 if (_control == null)
                 {
                     _control = new DHtmlComponentControl(_component);
-                    _control.Navigating += new System.Windows.Forms.WebBrowserNavigatingEventHandler(NavigatingEventHandler);
                 }
                 return _control;
             }
         }
 
-        public DHtmlComponent Component
-        {
-            get { return _component; }
-        }
-
-        protected virtual ActionModelNode GetEmbeddedActionModel()
-        {
-            return _component.ActionModel;
-        }
-
-        private void NavigatingEventHandler(object sender, System.Windows.Forms.WebBrowserNavigatingEventArgs e)
-        {
-            // default page - allow navigation to proceed
-            if (e.Url.OriginalString == "about:blank")
-                return;
-
-            if (e.Url.OriginalString.StartsWith("action:"))
-            {
-                e.Cancel = true;    // cancel the webbrowser navigation
-
-                ActionModelNode embeddedActionModel = GetEmbeddedActionModel();
-                if(embeddedActionModel != null)
-                {
-                    // need to find the action in the model that matches the uri path
-                    // TODO clean this up - this is a bit of hack right now
-                    ActionPath uriPath = new ActionPath(e.Url.LocalPath, null);
-                    foreach(ActionModelNode child in embeddedActionModel.ChildNodes)
-                    {
-                        if(child.Action.Path.LastSegment.ResourceKey == uriPath.LastSegment.ResourceKey)
-                        {
-                            ((IClickAction)child.Action).Click();
-                            break;
-                        }
-                    }
-                }
-            }
-        }
     }
 }

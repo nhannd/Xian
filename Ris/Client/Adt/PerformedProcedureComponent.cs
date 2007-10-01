@@ -10,32 +10,12 @@ using System.Runtime.InteropServices;
 using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
+using ClearCanvas.Desktop.Tables;
+using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
-    [MenuAction("apply", "global-menus/MenuTools/Perform Procedure")]
-    [ClickHandler("apply", "Apply")]
-
-    [ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-    public class PPTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
-    {
-        private PerformedProcedureComponent _component;
-
-        public PPTool()
-        {
-        }
-
-        public void Apply()
-        {
-            _component = new PerformedProcedureComponent();
-            ApplicationComponent.LaunchAsWorkspace(this.Context.DesktopWindow,
-                _component,
-                "Perform Procedure",
-                delegate(IApplicationComponent c) {  });
-        }
-    }
-
-
     /// <summary>
     /// Extension point for views onto <see cref="PerformedProcedureComponent"/>
     /// </summary>
@@ -50,98 +30,114 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(PerformedProcedureComponentViewExtensionPoint))]
     public class PerformedProcedureComponent : ApplicationComponent
     {
-        /// <summary>
-        /// The script callback is an object that is made available to the web browser so that
-        /// the javascript code can invoke methods on the host.  It must be COM-visible.
-        /// </summary>
-        [ComVisible(true)]
-        public class ScriptCallback
+        #region ChildComponentHost class
+
+        class ChildComponentHost : ApplicationComponentHost
         {
-            private PerformedProcedureComponent _component;
+            private PerformedProcedureComponent _owner;
 
-            public ScriptCallback(PerformedProcedureComponent component)
+            public ChildComponentHost(PerformedProcedureComponent owner, IApplicationComponent hostedComponent)
+                : base(hostedComponent)
             {
-                _component = component;
+                _owner = owner;
             }
 
-            public bool Confirm(string message, string type)
+            public override DesktopWindow DesktopWindow
             {
-                if (string.IsNullOrEmpty(type))
-                    type = "okcancel";
-                type = type.ToLower();
-
-                if (type == MessageBoxActions.OkCancel.ToString().ToLower())
-                {
-                    return _component.Host.ShowMessageBox(message, MessageBoxActions.OkCancel) == DialogBoxAction.Ok;
-                }
-                else if (type == MessageBoxActions.YesNo.ToString().ToLower())
-                {
-                    return _component.Host.ShowMessageBox(message, MessageBoxActions.YesNo) == DialogBoxAction.Yes;
-                }
-                else
-                {
-                    throw new NotSupportedException("Type must be YesNo or OkCancel");
-                }
-            }
-
-            public void Alert(string message)
-            {
-                _component.Host.ShowMessageBox(message, MessageBoxActions.Ok);
-            }
-
-            public string ResolveStaffName(string search)
-            {
-                StaffSummary staff = null;
-                if (StaffFinder.ResolveNameInteractive(search, _component.Host.DesktopWindow, out staff))
-                {
-                    return PersonNameFormat.Format(staff.Name);
-                }
-                return null;
-            }
-
-            public string DateFormat
-            {
-                get { return Format.DateFormat; }
-            }
-
-            public string TimeFormat
-            {
-                get { return Format.TimeFormat; }
-            }
-
-            public string DateTimeFormat
-            {
-                get { return Format.DateTimeFormat; }
-            }
-
-            public string GetData(string tag)
-            {
-                // TODO retrieve data associated with tag
-                return PerformedProcedureComponentSettings.Default.DetailsData;
-            }
-
-            public void SetData(string tag, string data)
-            {
-                // TODO set data associated with tag
-                PerformedProcedureComponentSettings.Default.DetailsData = data;
+                get { return _owner.Host.DesktopWindow; }
             }
 
         }
 
-        private ScriptCallback _scriptCallback;
-        private event EventHandler _beforeAccept;
+        #endregion
+
+        #region MPPS Details Component
+
+        class MppsDetailsComponent : DHtmlComponent
+        {
+            private static readonly HtmlFormSelector _detailsFormSelector =
+                new HtmlFormSelector(PerformedProcedureComponentSettings.Default.DetailsPageUrlSelectorScript, new string[] { "pps" });
+
+            private PerformedProcedureComponent _owner;
+
+            public MppsDetailsComponent(PerformedProcedureComponent owner)
+            {
+                _owner = owner;
+            }
+
+            protected override string GetTagData(string tag)
+            {
+                return null;
+            }
+
+            public void SelectedMppsChanged()
+            {
+                if (_owner._selectedMpps == null)
+                {
+                    SetUrl(null);
+                }
+                else
+                {
+                    SetUrl(_detailsFormSelector.SelectForm(_owner._selectedMpps));
+                }
+            }
+        }
+
+        #endregion
+
+
+        private readonly TechnologistDocumentationMppsSummaryTable _mppsTable = new TechnologistDocumentationMppsSummaryTable();
+        private ModalityPerformedProcedureStepSummary _selectedMpps;
+        private EntityRef _orderRef;
+
+        private SimpleActionModel _mppsActionHandler;
+        private ClickAction _stopAction;
+        private ClickAction _discontinueAction;
+
+
+        private ChildComponentHost _mppsDetailsComponentHost;
+        private MppsDetailsComponent _detailsComponent;
 
 
         /// <summary>
         /// Constructor
         /// </summary>
-        public PerformedProcedureComponent()
+        public PerformedProcedureComponent(EntityRef orderRef)
         {
-            _scriptCallback = new ScriptCallback(this);
+            _orderRef = orderRef;
         }
+
+        internal void AddPerformedProcedureStep(ModalityPerformedProcedureStepSummary mpps)
+        {
+            _mppsTable.Items.Add(mpps);
+            _mppsTable.Sort();
+        }
+
+        #region ApplicationComponent overrides
 
         public override void Start()
         {
+            _mppsDetailsComponentHost = new ChildComponentHost(this, _detailsComponent = new MppsDetailsComponent(this));
+            _mppsDetailsComponentHost.StartComponent();
+
+            ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
+
+            _mppsActionHandler = new SimpleActionModel(resolver);
+            _stopAction = _mppsActionHandler.AddAction("stop", "STOP", "Icons.CompleteToolSmall.png", "STOP", StopPerformedProcedureStep);
+            _discontinueAction = _mppsActionHandler.AddAction("discontinue", "DISCONTINUE", "Icons.DeleteToolSmall.png", "DISCONTINUE", DiscontinuePerformedProcedureStep);
+
+            if (_orderRef != null)
+            {
+                Platform.GetService<ITechnologistDocumentationService>(
+                    delegate(ITechnologistDocumentationService service)
+                    {
+                        ListPerformedProcedureStepsRequest mppsRequest = new ListPerformedProcedureStepsRequest(_orderRef);
+                        ListPerformedProcedureStepsResponse mppsResponse = service.ListPerformedProcedureSteps(mppsRequest);
+
+                        _mppsTable.Items.AddRange(mppsResponse.PerformedProcedureSteps);
+                    });
+            }
+
             base.Start();
         }
 
@@ -150,50 +146,132 @@ namespace ClearCanvas.Ris.Client.Adt
             base.Stop();
         }
 
-        #region Presentation Model
-
-        public event EventHandler BeforeAccept
-        {
-            add { _beforeAccept += value; }
-            remove { _beforeAccept -= value; }
-        }
-        public string DetailsPageUrl
-        {
-            get { return PerformedProcedureComponentSettings.Default.DetailsPageUrl; }
-        }
-
-        public ScriptCallback ScriptObject
-        {
-            get { return _scriptCallback; }
-        }
-
-        public void Validate()
-        {
-            this.ShowValidation(!this.ValidationVisible);
-        }
-
-        public void Accept()
-        {
-            if (this.HasValidationErrors)
-            {
-                this.ShowValidation(true);
-            }
-            else
-            {
-                EventsHelper.Fire(_beforeAccept, this, EventArgs.Empty);
-
-                this.ExitCode = ApplicationComponentExitCode.Normal;
-                this.Host.Exit();
-            }
-        }
-
-        public void Cancel()
-        {
-            this.ExitCode = ApplicationComponentExitCode.Cancelled;
-            this.Host.Exit();
-        }
-
         #endregion
 
+        #region Presentation Model
+
+        public ITable MppsTable
+        {
+            get { return _mppsTable; }
+        }
+
+        public ISelection SelectedMpps
+        {
+            get { return new Selection(_selectedMpps); }
+            set
+            {
+                _selectedMpps = (ModalityPerformedProcedureStepSummary)value.Item;
+                _detailsComponent.SelectedMppsChanged();
+            }
+        }
+
+        public ActionModelNode MppsTableActionModel
+        {
+            get { return _mppsActionHandler; }
+        }
+
+        public ApplicationComponentHost DetailsComponentHost
+        {
+            get { return _mppsDetailsComponentHost; }
+        }
+
+        public void OnComplete()
+        {
+            try
+            {
+                Platform.GetService<ITechnologistDocumentationService>(
+                    delegate(ITechnologistDocumentationService service)
+                    {
+                        CompleteModalityProcedureStepsRequest request = new CompleteModalityProcedureStepsRequest(_orderRef);
+                        CompleteModalityProcedureStepsResponse response = service.CompleteModalityProcedureSteps(request);
+
+                        RefreshProcedurePlanTree(response.RequestedProcedures);
+                    });
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+
+        }
+
+
+        private void RefreshProcedurePlanTree(List<RequestedProcedureDetail> list)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+        
+        #endregion
+
+        #region Private helpers
+
+        private void StopPerformedProcedureStep()
+        {
+            try
+            {
+                ModalityPerformedProcedureStepSummary selectedMpps = _selectedMpps;
+
+                if (selectedMpps != null)
+                {
+                    Platform.GetService<ITechnologistDocumentationService>(
+                        delegate(ITechnologistDocumentationService service)
+                        {
+                            StopModalityPerformedProcedureStepRequest request = new StopModalityPerformedProcedureStepRequest(selectedMpps.ModalityPerformendProcedureStepRef);
+                            StopModalityPerformedProcedureStepResponse response = service.StopModalityPerformedProcedureStep(request);
+
+                            RefreshProcedurePlanTree(response.RequestedProcedures);
+                            _orderRef = response.OrderRef;
+
+                            _mppsTable.Items.Replace(
+                                delegate(ModalityPerformedProcedureStepSummary mppsSummary)
+                                {
+                                    return mppsSummary.ModalityPerformendProcedureStepRef == selectedMpps.ModalityPerformendProcedureStepRef;
+                                },
+                                response.StoppedMpps);
+                            _mppsTable.Sort();
+                        });
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+        }
+
+        private void DiscontinuePerformedProcedureStep()
+        {
+            try
+            {
+                ModalityPerformedProcedureStepSummary selectedMpps = _selectedMpps;
+
+                if (selectedMpps != null)
+                {
+                    Platform.GetService<ITechnologistDocumentationService>(
+                        delegate(ITechnologistDocumentationService service)
+                        {
+                            DiscontinueModalityPerformedProcedureStepRequest request = new DiscontinueModalityPerformedProcedureStepRequest(selectedMpps.ModalityPerformendProcedureStepRef);
+                            DiscontinueModalityPerformedProcedureStepResponse response = service.DiscontinueModalityPerformedProcedureStep(request);
+
+                            RefreshProcedurePlanTree(response.RequestedProcedures);
+                            _orderRef = response.OrderRef;
+
+                            _mppsTable.Items.Replace(
+                                delegate(ModalityPerformedProcedureStepSummary mppsSummary)
+                                {
+                                    return mppsSummary.ModalityPerformendProcedureStepRef == selectedMpps.ModalityPerformendProcedureStepRef;
+                                },
+                                response.DiscontinuedMpps);
+                            _mppsTable.Sort();
+                        });
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+        }
+
+
+        #endregion
     }
 }

@@ -25,18 +25,6 @@ namespace ClearCanvas.Ris.Client.Adt
         IDesktopWindow DesktopWindow { get; }
     }
 
-    /// <summary>
-    /// Extension point for views onto <see cref="RegistrationPreviewComponent"/>
-    /// </summary>
-    [ExtensionPoint]
-    public class RegistrationPreviewComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
-    {
-    }
-
-    /// <summary>
-    /// RegistrationPreviewComponent class
-    /// </summary>
-    [AssociateView(typeof(RegistrationPreviewComponentViewExtensionPoint))]
     public class RegistrationPreviewComponent : DHtmlComponent
     {
         class RegistrationPreviewToolContext : ToolContext, IRegistrationPreviewToolContext
@@ -72,6 +60,8 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             _toolSet = new ToolSet(new RegistrationPreviewToolExtensionPoint(), new RegistrationPreviewToolContext(this));
 
+            SetUrl(RegistrationPreviewComponentSettings.Default.DetailsPageUrl);
+
             base.Start();
         }
 
@@ -84,46 +74,14 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Public Properties
 
-        public override string GetJsmlData(string requestJsml)
-        {
-            string responseJsml = "";
-
-            try
-            {
-                if (_worklistItem != null && String.IsNullOrEmpty(requestJsml) == false)
-                {
-                    Platform.GetService<IPreviewService>(
-                        delegate(IPreviewService service)
-                        {
-                            GetDataRequest request = JsmlSerializer.Deserialize<GetDataRequest>(requestJsml);
-                            request.PatientProfileRef = _worklistItem.PatientProfileRef;
-
-                            GetDataResponse response = service.GetData(request);
-                            responseJsml = JsmlSerializer.Serialize(response, "response");
-                        });
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-
-            return responseJsml;
-        }
-
-        public override string DetailsPageUrl
-        {
-            get { return RegistrationPreviewComponentSettings.Default.DetailsPageUrl; }
-        }
-
-        public override object GetWorklistItem()
+        protected override object GetWorklistItem()
         {
             return _worklistItem;
         }
 
-        public override ActionModelNode ActionModel
+        protected override ActionModelNode GetActionModel()
         {
-            get { return ActionModelRoot.CreateModel(this.GetType().FullName, "RegistrationPreview-menu", _toolSet.Actions); }
+            return ActionModelRoot.CreateModel(this.GetType().FullName, "RegistrationPreview-menu", _toolSet.Actions);
         }
 
         public RegistrationWorklistItem WorklistItem

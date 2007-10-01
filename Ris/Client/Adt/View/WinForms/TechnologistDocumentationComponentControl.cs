@@ -21,18 +21,18 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _component = component;
 
-            browserOrderOverview.Url = new Uri(_component.OrderSummaryUrl);
-            browserOrderOverview.ObjectForScripting = _component.ScriptObject;
+            Control orderSummary = (Control)_component.OrderSummaryComponentHost.ComponentView.GuiElement;
+            orderSummary.Dock = DockStyle.Fill;
+            _orderSummaryPanel.Controls.Add(orderSummary);
 
-            treeProcedurePlan.Tree = _component.ProcedurePlanTree;
-            treeProcedurePlan.MenuModel = _component.ProcedurePlanTreeActionModel;
-            treeProcedurePlan.ToolbarModel = _component.ProcedurePlanTreeActionModel;
+            Control documentationTabs = (Control)_component.DocumentationHost.ComponentView.GuiElement;
+            documentationTabs.Dock = DockStyle.Fill;
+            splitContainerRoot.Panel2.Controls.Add(documentationTabs);
+
+            _treeProcedurePlan.Tree = _component.ProcedurePlanTree;
+            _treeProcedurePlan.MenuModel = _component.ProcedurePlanTreeActionModel;
+            _treeProcedurePlan.ToolbarModel = _component.ProcedurePlanTreeActionModel;
             _component.ProcedurePlanTreeChanged += OnProcedurePlanChanged;
-
-            tableViewDocumentationDetails.Table = _component.MppsTable;
-            tableViewDocumentationDetails.DataBindings.Add("Selection", _component, "SelectedMpps", true, DataSourceUpdateMode.OnPropertyChanged);
-            tableViewDocumentationDetails.MenuModel = _component.MppsTableActionModel;
-            tableViewDocumentationDetails.ToolbarModel = _component.MppsTableActionModel;
         }
 
         ~TechnologistDocumentationComponentControl()
@@ -42,19 +42,14 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void TechnologistDocumentationComponentControl_Load(object sender, EventArgs e)
         {
-            treeProcedurePlan.ExpandAll();
-            tabControlDetails.SelectTab(tabPageDocumentationDetails);
+            _treeProcedurePlan.ExpandAll();
+            //tabControlDetails.SelectTab(tabPageDocumentationDetails);
         }
 
         private void OnProcedurePlanChanged(object sender, EventArgs e)
         {
-            treeProcedurePlan.Tree = _component.ProcedurePlanTree;
-            treeProcedurePlan.ExpandAll();
-        }
-
-        private void buttonCompleteDocumentationDetails_Click(object sender, EventArgs e)
-        {
-            _component.OnComplete();
+            _treeProcedurePlan.Tree = _component.ProcedurePlanTree;
+            _treeProcedurePlan.ExpandAll();
         }
     }
 }

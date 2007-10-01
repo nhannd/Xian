@@ -167,9 +167,6 @@
       <DependentUpon>FolderOptionComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Folders\FolderOptionComponentView.cs" />
-    <Compile Include="RegistrationPreviewComponentView.cs">
-      <SubType>Code</SubType>
-    </Compile>
     <Compile Include="TechnologistDocumentationComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -184,7 +181,6 @@
       <DependentUpon>XTechnologistDocumentationComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="XTechnologistDocumentationComponentView.cs" />
-    <Compile Include="TechnologistPreviewComponentView.cs" />
     <Compile Include="SR.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

@@ -20,35 +20,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
     {
         private PerformedProcedureComponent _component;
 
-        private class CustomValidationRule : IValidationRule
-        {
-            private PerformedProcedureComponentControl _owner;
-            
-            public CustomValidationRule(PerformedProcedureComponentControl owner)
-            {
-                _owner = owner;
-            }
-
-            #region IValidationRule Members
-
-            public string PropertyName
-            {
-                get { return "DUMMY_PROPERTY"; }
-            }
-
-            public ValidationResult GetResult(IApplicationComponent component)
-            {
-                object result = _owner._browser.Document.InvokeScript("hasValidationErrors");
-
-                // if result == null, the hasValidationErrors method is not implemented by the page
-                // in this case, assume there are no errors
-                bool hasErrors = (result == null) ? false : (bool)result;
-                return new ValidationResult(!hasErrors, "");
-            }
-
-            #endregion
-        }
-
         /// <summary>
         /// Constructor
         /// </summary>
@@ -59,53 +30,23 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             _component = component;
 
-            // add a validation rule that checks the browser for validation errors
-            _component.Validation.Add(new CustomValidationRule(this));
+            _mppsTableView.Table = _component.MppsTable;
+            _mppsTableView.DataBindings.Add("Selection", _component, "SelectedMpps", true, DataSourceUpdateMode.OnPropertyChanged);
+            _mppsTableView.MenuModel = _component.MppsTableActionModel;
+            _mppsTableView.ToolbarModel = _component.MppsTableActionModel;
 
-            _browser.ObjectForScripting = _component.ScriptObject;
-            _browser.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(_procedureReport_DocumentCompleted);
-
-            if (!string.IsNullOrEmpty(_component.DetailsPageUrl))
-            {
-                _browser.Url = new Uri(_component.DetailsPageUrl);
-            }
-
-            _component.ValidationVisibleChanged += new EventHandler(_component_ValidationVisibleChanged);
-            _component.BeforeAccept += new EventHandler(_component_BeforeAccept);
+            Control detailsPage = (Control)_component.DetailsComponentHost.ComponentView.GuiElement;
+            detailsPage.Dock = DockStyle.Fill;
+            _mppsDetailsPanel.Controls.Add(detailsPage);
 
         }
 
-        void _component_BeforeAccept(object sender, EventArgs e)
-        {
-            _browser.Document.InvokeScript("saveData", new object[] { _component.ValidationVisible });
-        }
-
-        void _component_ValidationVisibleChanged(object sender, EventArgs e)
-        {
-            _browser.Document.InvokeScript("showValidation", new object[] { _component.ValidationVisible });
-        }
-
-        void _procedureReport_DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
-        {
-            // _browser.Document.InvokeScript("setData", new object[] { _component.ReportData });
-        }
-
-        private void _saveButton_Click(object sender, EventArgs e)
+        private void _buttonCompleteDocumentationDetails_Click(object sender, EventArgs e)
         {
             using (new CursorManager(Cursors.WaitCursor))
             {
-                _component.Accept();
+                _component.OnComplete();
             }
-        }
-
-        private void _validationButton_Click(object sender, EventArgs e)
-        {
-            _component.Validate();
-        }
-
-        private void _cancelButton_Click(object sender, EventArgs e)
-        {
-            _component.Cancel();
         }
     }
 }

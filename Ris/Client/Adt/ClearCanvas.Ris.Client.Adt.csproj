@@ -57,6 +57,7 @@
     <Compile Include="Folders\RegistrationContainerFolders.cs" />
     <Compile Include="Folders\TechnologistContainerFolders.cs" />
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
+    <Compile Include="HtmlFormSelector.cs" />
     <Compile Include="OrderEntryComponentSettings.cs" />
     <Compile Include="OrderEntryComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -199,6 +200,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
+    <EmbeddedResource Include="PerformedProcedureStepDetailsPageUrlSelectorlScript.js" />
     <EmbeddedResource Include="Icons\SearchToolLarge.png" />
     <EmbeddedResource Include="Icons\SearchToolMedium.png" />
     <EmbeddedResource Include="Icons\SearchToolSmall.png" />

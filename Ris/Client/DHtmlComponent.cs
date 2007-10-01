@@ -14,47 +14,79 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.Ris.Client
 {
-    public abstract class DHtmlComponent : ApplicationComponent
+    [ExtensionPoint]
+    public class DHtmlComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> { }
+
+    [AssociateView(typeof(DHtmlComponentViewExtensionPoint))]
+    public class DHtmlComponent : ApplicationComponent
     {
+
+        #region DHTML script callback class
+
         /// <summary>
         /// The script callback is an object that is made available to the web browser so that
-        /// the javascript code can invoke methods on the host.  It must be COM-visible.
+        /// the javascript code can invoke methods on the host.
         /// </summary>
-        [ComVisible(true)]
-        public class ScriptCallback
+        [ComVisible(true)]  // must be COM-visible
+        public class DHtmlScriptCallback
         {
             protected DHtmlComponent _component;
             private ActionModelRenderer _renderer;
 
-            public ScriptCallback(DHtmlComponent component)
+            public DHtmlScriptCallback(DHtmlComponent component)
             {
                 _component = component;
                 _renderer = new ActionModelRenderer();
             }
 
-            public string GetData(string tag)
-            {
-                return _component.GetData(tag);
-            }
-        
-            public void SetData(string tag, string data)
-            {
-                _component.SetData(tag, data);
-            }
-		
-            public string GetJsmlData(string requestJsml)
-            {
-                return _component.GetJsmlData(requestJsml);
-            }
-
+            /// <summary>
+            /// Surrogate for the browser's window.alert method.
+            /// </summary>
+            /// <param name="message"></param>
             public void Alert(string message)
             {
                 _component.Host.ShowMessageBox(message, MessageBoxActions.Ok);
             }
 
-            public string GetActionHtml(string labelSearch, string actionLabel)
+            /// <summary>
+            /// Surrogate for the browser's window.confirm method.
+            /// </summary>
+            /// <param name="message"></param>
+            /// <param name="type"></param>
+            /// <returns></returns>
+            public bool Confirm(string message, string type)
             {
-                return _renderer.GetHTML(_component.ActionModel, labelSearch, actionLabel);
+                if (string.IsNullOrEmpty(type))
+                    type = "okcancel";
+                type = type.ToLower();
+
+                if (type == MessageBoxActions.OkCancel.ToString().ToLower())
+                {
+                    return _component.Host.ShowMessageBox(message, MessageBoxActions.OkCancel) == DialogBoxAction.Ok;
+                }
+                else if (type == MessageBoxActions.YesNo.ToString().ToLower())
+                {
+                    return _component.Host.ShowMessageBox(message, MessageBoxActions.YesNo) == DialogBoxAction.Yes;
+                }
+                else
+                {
+                    throw new NotSupportedException("Type must be YesNo or OkCancel");
+                }
+            }
+
+            public string DateFormat
+            {
+                get { return Format.DateFormat; }
+            }
+
+            public string TimeFormat
+            {
+                get { return Format.TimeFormat; }
+            }
+
+            public string DateTimeFormat
+            {
+                get { return Format.DateTimeFormat; }
             }
 
             public string FormatDate(string isoDateString)
@@ -110,20 +142,39 @@ namespace ClearCanvas.Ris.Client
                 return new JsmlServiceProxy(serviceContractName);
             }
 
+            public string GetActionHtml(string labelSearch, string actionLabel)
+            {
+                return _renderer.GetHTML(_component.GetActionModel(), labelSearch, actionLabel);
+            }
+
             public string GetWorklistItem()
             {
                 return JsmlSerializer.Serialize(_component.GetWorklistItem(), "worklistItem");
             }
+
+            public string GetData(string tag)
+            {
+                return _component.GetTagData(tag);
+            }
+
+            public void SetData(string tag, string data)
+            {
+                _component.SetTagData(tag, data);
+            }
         }
 
-        private ScriptCallback _scriptCallback;
+        #endregion
+
+
+        private DHtmlScriptCallback _scriptCallback;
+        private Uri _htmlPageUrl;
+        private event EventHandler _dataSaving;
 
         /// <summary>
         /// Constructor
         /// </summary>
         public DHtmlComponent()
         {
-            _scriptCallback = new ScriptCallback(this);
         }
 
         public override void Start()
@@ -136,40 +187,93 @@ namespace ClearCanvas.Ris.Client
             base.Stop();
         }
 
-        #region Public Properties
+        #region PresentationModel
 
-        public virtual string GetData(string tag)
+        public Uri HtmlPageUrl
         {
-            return null;
+            get { return _htmlPageUrl; }
+            protected set
+            {
+                if (!object.Equals(_htmlPageUrl, value))
+                {
+                    _htmlPageUrl = value;
+                    NotifyPropertyChanged("HtmlPageUrl");
+                }
+            }
         }
 
-        public virtual void SetData(string tag, string data)
+        public DHtmlScriptCallback ScriptObject
         {
+            get
+            {
+                if (_scriptCallback == null)
+                {
+                    _scriptCallback = CreateScriptCallback();
+                }
+                return _scriptCallback;
+            }
         }
 
-        public virtual string GetJsmlData(string requestJsml)
+        public void InvokeAction(string path)
         {
-            return null;
+            ActionModelNode embeddedActionModel = GetActionModel();
+            if (embeddedActionModel != null)
+            {
+                // need to find the action in the model that matches the uri path
+                // TODO clean this up - this is a bit of hack right now
+                ActionPath uriPath = new ActionPath(path, null);
+                foreach (ActionModelNode child in embeddedActionModel.ChildNodes)
+                {
+                    if (child.Action.Path.LastSegment.ResourceKey == uriPath.LastSegment.ResourceKey)
+                    {
+                        ((IClickAction)child.Action).Click();
+                        break;
+                    }
+                }
+            }
         }
 
-        public virtual object GetWorklistItem()
+        public event EventHandler DataSaving
         {
-            throw new NotImplementedException();
-        }
-
-        public abstract string DetailsPageUrl { get; }
-
-        public virtual ActionModelNode ActionModel
-        {
-            get { return null; }
-        }
-
-        public ScriptCallback ScriptObject
-        {
-            get { return _scriptCallback; }
-            set { _scriptCallback = value; }
+            add { _dataSaving += value; }
+            remove { _dataSaving -= value; }
         }
 
         #endregion
+
+        protected virtual ActionModelNode GetActionModel()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        protected virtual object GetWorklistItem()
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        protected virtual string GetTagData(string tag)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        protected virtual void SetTagData(string tag, string data)
+        {
+            throw new Exception("The method or operation is not implemented.");
+        }
+
+        /// <summary>
+        /// Factory method to create script callback.  Override to provide custom implementation.
+        /// </summary>
+        /// <returns></returns>
+        protected virtual DHtmlScriptCallback CreateScriptCallback()
+        {
+            return new DHtmlScriptCallback(this);
+        }
+
+        protected void SetUrl(string url)
+        {
+            this.HtmlPageUrl = url == null ? null : new Uri(url);
+        }
+
     }
 }

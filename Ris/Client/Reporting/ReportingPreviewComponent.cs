@@ -68,9 +68,21 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
         }
 
+        public ReportingWorklistItem WorklistItem
+        {
+            get { return _worklistItem; }
+            set
+            {
+                _worklistItem = value;
+                NotifyAllPropertiesChanged();
+            }
+        }
+
         public override void Start()
         {
             _toolSet = new ToolSet(new ReportingPreviewToolExtensionPoint(), new ReportingPreviewToolContext(this));
+
+            SetUrl(ReportingPreviewComponentSettings.Default.DetailsPageUrl);
 
             base.Start();
         }
@@ -84,54 +96,12 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         #region Presentation Model
 
-        public override string GetJsmlData(string requestJsml)
+        protected override ActionModelNode GetActionModel()
         {
-            string responseJsml = "";
-
-            try
-            {
-                if (_worklistItem != null && String.IsNullOrEmpty(requestJsml) == false)
-                {
-                    Platform.GetService<IPreviewService>(
-                        delegate(IPreviewService service)
-                        {
-                            GetDataRequest request = JsmlSerializer.Deserialize<GetDataRequest>(requestJsml);
-                            request.ProcedureStepRef = _worklistItem.ProcedureStepRef;
-
-                            GetDataResponse response = service.GetData(request);
-                            responseJsml = JsmlSerializer.Serialize(response, "response");
-                        });
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-
-            return responseJsml;
+            return ActionModelRoot.CreateModel(this.GetType().FullName, "ReportingPreview-menu", _toolSet.Actions);
         }
 
-        public override string DetailsPageUrl
-        {
-            get { return ReportingPreviewComponentSettings.Default.DetailsPageUrl; }
-        }
-
-        public override ActionModelNode ActionModel
-        {
-            get { return ActionModelRoot.CreateModel(this.GetType().FullName, "ReportingPreview-menu", _toolSet.Actions); }
-        }
-
-        public ReportingWorklistItem WorklistItem
-        {
-            get { return _worklistItem; }
-            set
-            {
-                _worklistItem = value;
-                NotifyAllPropertiesChanged();
-            }
-        }
-
-        public override object GetWorklistItem()
+        protected override object GetWorklistItem()
         {
             return _worklistItem;
         }
