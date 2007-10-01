@@ -24,6 +24,8 @@ using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
+using SearchRequest=ClearCanvas.Ris.Application.Common.RegistrationWorkflow.SearchRequest;
+using SearchResponse= ClearCanvas.Ris.Application.Common.RegistrationWorkflow.SearchResponse;
 
 namespace ClearCanvas.Ris.Client.Integration
 {
@@ -230,12 +232,12 @@ namespace ClearCanvas.Ris.Client.Integration
             Platform.GetService<IRegistrationWorkflowService>(
                 delegate(IRegistrationWorkflowService service)
                 {
-                    PatientProfileSearchData searchData = new PatientProfileSearchData();
+                    SearchData searchData = new SearchData();
                     while (item == null)
                     {
                         searchData.GivenName = RandomUtils.RandomAlphabet.ToString();
 
-                        SearchPatientResponse response = service.SearchPatient(new SearchPatientRequest(searchData));
+                        SearchResponse response = service.Search(new SearchRequest(searchData));
                         if (response.WorklistItems != null && response.WorklistItems.Count > 0)
                         {
                             item = RandomUtils.ChooseRandom<RegistrationWorklistItem>(response.WorklistItems);
@@ -394,11 +396,11 @@ namespace ClearCanvas.Ris.Client.Integration
                     // Change a new Dicom file
                     DicomFile dicomFile = new DicomFile(thisSop.LocationUri.LocalDiskPath);
                     dicomFile.Load(DicomReadOptions.Default);
-                    dicomFile.DataSet[DicomTags.StudyInstanceUID].SetStringValue(newStudyInstanceUid);
-                    dicomFile.DataSet[DicomTags.SeriesInstanceUID].SetStringValue(newSeriesInstanceUid);
-                    dicomFile.DataSet[DicomTags.SOPInstanceUID].SetStringValue(newSopInstanceUid);
+                    dicomFile.DataSet[DicomTags.StudyInstanceUid].SetStringValue(newStudyInstanceUid);
+                    dicomFile.DataSet[DicomTags.SeriesInstanceUid].SetStringValue(newSeriesInstanceUid);
+                    dicomFile.DataSet[DicomTags.SopInstanceUid].SetStringValue(newSopInstanceUid);
                     dicomFile.DataSet[DicomTags.PatientsName].SetStringValue(String.Format("{0}^{1}", profile.Name.FamilyName, profile.Name.GivenName));
-                    dicomFile.DataSet[DicomTags.PatientID].SetStringValue(String.Format("{0}{1}", profile.Mrn.AssigningAuthority, profile.Mrn.Id));
+                    dicomFile.DataSet[DicomTags.PatientId].SetStringValue(String.Format("{0}{1}", profile.Mrn.AssigningAuthority, profile.Mrn.Id));
                     dicomFile.DataSet[DicomTags.PatientsSex].SetStringValue(profile.Sex.Code);
                     dicomFile.DataSet[DicomTags.AccessionNumber].SetStringValue(order.AccessionNumber);
                     dicomFile.DataSet[DicomTags.PatientsBirthDate].SetStringValue(DateTimeFormat.Format(profile.DateOfBirth.Value, "YYYYMMDD"));
