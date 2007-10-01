@@ -7,7 +7,7 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Specifications
 {
-    public class SpecificationFactory
+    public class SpecificationFactory : ISpecificationProvider
     {
         class SingleDocumentSource : ISpecificationXmlSource
         {
@@ -55,7 +55,7 @@ namespace ClearCanvas.Common.Specifications
 
 
 
-        private Builder _builder;
+        private XmlSpecificationCompiler _builder;
         private ISpecificationXmlSource _xmlSource;
 
         private Dictionary<string, ISpecification> _cache;
@@ -73,7 +73,7 @@ namespace ClearCanvas.Common.Specifications
 
         public SpecificationFactory(ISpecificationXmlSource xmlSource)
         {
-            _builder = new Builder(this);
+            _builder = new XmlSpecificationCompiler(this);
             _cache = new Dictionary<string, ISpecification>();
             _xmlSource = xmlSource;
         }

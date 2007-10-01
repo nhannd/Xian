@@ -147,7 +147,6 @@
     <Compile Include="Scripting\ActiveTemplateException.cs" />
     <Compile Include="Specifications\AndSpecification.cs" />
     <Compile Include="Specifications\AnySpecification.cs" />
-    <Compile Include="Specifications\Builder.cs" />
     <Compile Include="Specifications\CompositeSpecification.cs" />
     <Compile Include="Specifications\CountSpecification.cs" />
     <Compile Include="Specifications\DefinedSpecification.cs" />
@@ -157,6 +156,7 @@
     <Compile Include="Specifications\FalseSpecification.cs" />
     <Compile Include="Specifications\IsNullSpecification.cs" />
     <Compile Include="Specifications\ISpecification.cs" />
+    <Compile Include="Specifications\ISpecificationProvider.cs" />
     <Compile Include="Specifications\ISpecificationXmlSource.cs" />
     <Compile Include="Specifications\OrSpecification.cs" />
     <Compile Include="Specifications\PrimitiveSpecification.cs" />
@@ -169,6 +169,8 @@
     <Compile Include="Specifications\TestResultReason.cs" />
     <Compile Include="Specifications\TrueSpecification.cs" />
     <Compile Include="Specifications\UndefinedSpecificationException.cs" />
+    <Compile Include="Specifications\XmlSpecificationCompiler.cs" />
+    <Compile Include="Specifications\XmlSpecificationCompilerException.cs" />
     <Compile Include="Tests\FileProcessorTest.cs" />
     <Compile Include="TypeExtensionFilter.cs" />
     <Compile Include="Platform.cs">

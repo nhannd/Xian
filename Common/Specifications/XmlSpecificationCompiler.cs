@@ -6,16 +6,16 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Common.Specifications
 {
-    internal class Builder
+    public class XmlSpecificationCompiler
     {
         delegate Specification CreationDelegate(XmlElement xmlNode);
 
         private Dictionary<string, CreationDelegate> _factoryMethodMap = new Dictionary<string, CreationDelegate>();
-        private SpecificationFactory _factory;
+        private ISpecificationProvider _resolver;
 
-        internal Builder(SpecificationFactory factory)
+        public XmlSpecificationCompiler(ISpecificationProvider resolver)
         {
-            _factory = factory;
+            _resolver = resolver;
 
             _factoryMethodMap.Add("true", CreateTrue);
             _factoryMethodMap.Add("false", CreateFalse);
@@ -28,6 +28,11 @@ namespace ClearCanvas.Common.Specifications
             _factoryMethodMap.Add("each", CreateEach);
             _factoryMethodMap.Add("any", CreateAny);
             _factoryMethodMap.Add("defined", CreateDefined);
+        }
+
+        public XmlSpecificationCompiler()
+            :this(null)
+        {
         }
 
         public Specification BuildSpecification(XmlElement specificationNode)
@@ -114,7 +119,11 @@ namespace ClearCanvas.Common.Specifications
 
         private Specification CreateDefined(XmlElement node)
         {
-            return new DefinedSpecification(_factory.GetSpecification(node.GetAttribute("spec")));
+            string id = node.GetAttribute("spec");
+            if (_resolver == null)
+                throw new XmlSpecificationCompilerException(string.Format("Cannot resolve reference {0} because no resolver was provided.", id));
+
+            return new DefinedSpecification(_resolver.GetSpecification(id));
         }
 
         private Specification CreateImplicitAnd(ICollection<XmlNode> nodes)
