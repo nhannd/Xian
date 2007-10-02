@@ -195,7 +195,7 @@ namespace ClearCanvas.ImageViewer
 							}
 
 							if (_rendererFactory == null)
-								_rendererFactory = new GDIRendererFactory();
+								_rendererFactory = new GdiRendererFactory();
 						}
 					}
 				}

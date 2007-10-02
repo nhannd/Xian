@@ -10,30 +10,30 @@ using ClearCanvas.ImageViewer.Graphics;
 namespace ClearCanvas.ImageViewer.Rendering
 {
 	/// <summary>
-	/// A factory for <see cref="GDIRenderer"/>s.
+	/// A factory for <see cref="GdiRenderer"/>s.
 	/// </summary>
-	public sealed class GDIRendererFactory : RendererFactoryBase
+	public sealed class GdiRendererFactory : RendererFactoryBase
 	{
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public GDIRendererFactory()
+		public GdiRendererFactory()
 		{
 		}
 
 		/// <summary>
-		/// Allocates a new <see cref="GDIRenderer"/>.
+		/// Allocates a new <see cref="GdiRenderer"/>.
 		/// </summary>
 		protected override RendererBase GetNewRenderer()
 		{
-			return new GDIRenderer();
+			return new GdiRenderer();
 		}
 	}
 
 	/// <summary>
 	/// A 2D Renderer that uses GDI.
 	/// </summary>
-	public class GDIRenderer : RendererBase
+	public class GdiRenderer : RendererBase
 	{
 #pragma warning disable 1591
 
@@ -48,7 +48,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// <summary>
 		/// Default constructor.
 		/// </summary>
-		public GDIRenderer()
+		public GdiRenderer()
 			: base()
 		{
 			_pen = new Pen(Color.White);
@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// <summary>
 		/// Finalizer.  This should never get called, it is a fail-safe.
 		/// </summary>
-		~GDIRenderer()
+		~GdiRenderer()
 		{
 			Dispose(false);
 		}
