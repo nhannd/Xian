@@ -278,7 +278,7 @@ namespace ClearCanvas.ImageServer.Streaming
 		{
             if (_cachedElement != null)
             {
-         //       return _cachedElement;
+                return _cachedElement;
             }
 
             if (theBaseStream != null)

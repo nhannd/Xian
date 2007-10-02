@@ -1,7 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Collections;
-using System.Text;
+using System.Collections.Generic;
 using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
@@ -12,13 +11,17 @@ namespace ClearCanvas.ImageServer.Streaming
     {
         #region Private members
 
-        private Dictionary<String, SeriesStream> _seriesList = new Dictionary<string, SeriesStream>();
+        private Dictionary<string, SeriesStream> _seriesList = new Dictionary<string, SeriesStream>();
         private String _studyInstanceUid = null;
+        private XmlDocument _doc = null;
 
         #endregion
 
         #region Public Properties
 
+        /// <summary>
+        /// Study Instance UID associated with this stream file.
+        /// </summary>
         public String StudyInstanceUid
         {
             get
@@ -46,6 +49,11 @@ namespace ClearCanvas.ImageServer.Streaming
 
         #region Public Methods
 
+        /// <summary>
+        /// Indexer to retrieve specific <see cref="SeriesStream"/> objects from the <see cref="StudyStream"/>.
+        /// </summary>
+        /// <param name="seriesInstanceUid"></param>
+        /// <returns></returns>
         public SeriesStream this[String seriesInstanceUid]
         {
             get
@@ -66,6 +74,11 @@ namespace ClearCanvas.ImageServer.Streaming
             }
         }
 
+        /// <summary>
+        /// Remove a specific file from the object.
+        /// </summary>
+        /// <param name="theFile"></param>
+        /// <returns></returns>
         public bool RemoveFile(DicomFile theFile)
         {
             // Create a copy of the collection without pixel data
@@ -95,6 +108,11 @@ namespace ClearCanvas.ImageServer.Streaming
             return true;
         }
 
+        /// <summary>
+        /// Add a <see cref="DicomFile"/> to the StudyStream.
+        /// </summary>
+        /// <param name="theFile"></param>
+        /// <returns></returns>
         public bool AddFile(DicomFile theFile)
         {
             // Create a copy of the collection without pixel data
@@ -134,32 +152,52 @@ namespace ClearCanvas.ImageServer.Streaming
             return true;
         }
 
+        /// <summary>
+        /// Get an XML document representing the <see cref="StudyStream"/>.
+        /// </summary>
+        /// <remarks>
+        /// This method can be called multiple times as DICOM SOP Instances are added
+        /// to the <see cref="StudyStream"/>.  Note that caching is done of the 
+        /// XmlDocument to improve performance.  If the collections in the InstanceStreams 
+        /// are modified, the caching mechanism may cause the updates not to be contained
+        /// in the generated XmlDocument.
+        /// </remarks>
+        /// <returns></returns>
         public XmlDocument GetMomento()
         {
-            XmlDocument theDocument = new XmlDocument();
+            if (_doc == null)
+                _doc = new XmlDocument();
+            else
+            {
+                _doc.RemoveAll();
+            }
 
-            XmlElement clearCanvas = theDocument.CreateElement("ClearCanvasStream");
+            XmlElement clearCanvas = _doc.CreateElement("ClearCanvasStream");
 
-            XmlElement study = theDocument.CreateElement("Study");
+            XmlElement study = _doc.CreateElement("Study");
 
-            XmlAttribute studyInstanceUid = theDocument.CreateAttribute("UID");
+            XmlAttribute studyInstanceUid = _doc.CreateAttribute("UID");
 			studyInstanceUid.Value = _studyInstanceUid;
 			study.Attributes.Append(studyInstanceUid);
 
 
 			foreach (SeriesStream series in this)
 			{
-				XmlElement seriesElement = series.GetMomento(theDocument);
+                XmlElement seriesElement = series.GetMomento(_doc);
 
 				study.AppendChild(seriesElement);
 			}
 
             clearCanvas.AppendChild(study);
-            theDocument.AppendChild(clearCanvas);
+            _doc.AppendChild(clearCanvas);
 
-			return theDocument;
+            return _doc;
         }
 
+        /// <summary>
+        /// Populate this <see cref="StudyStream"/> object based on the supplied XML document.
+        /// </summary>
+        /// <param name="theDocument"></param>
         public void SetMemento(XmlDocument theDocument)
         {
             if (!theDocument.HasChildNodes)
@@ -192,7 +230,7 @@ namespace ClearCanvas.ImageServer.Streaming
 
                             SeriesStream seriesStream = new SeriesStream(seriesInstanceUid);
 
-                            this._seriesList.Add(seriesInstanceUid, seriesStream);
+                            _seriesList.Add(seriesInstanceUid, seriesStream);
 
                             seriesStream.SetMemento(seriesNode);
 
