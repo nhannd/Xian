@@ -1,0 +1,481 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+   <head>
+      <title>Technologist Preview</title>
+      <link href="css/compact.css" rel="stylesheet" type="text/css" />
+      <script type="text/javascript" src="js/jsx.js"></script>
+      <script type="text/javascript" src="js/jsml.js"></script>
+      <script type="text/javascript" src="js/ui.js"></script>
+      <script type="text/javascript" src="js/ris.js"></script>
+      <script type="text/javascript" src="js/preview.js"></script>
+      <script type="text/javascript" >
+         var data = {};
+         var errorProvider = new ErrorProvider();
+
+         function onBodyLoad()
+         {		        
+            try
+            {
+               if(Ris)
+               {
+                  data = JSML.parse(Ris.getData("Documentation")) || {};
+                  //data = {};
+               }
+
+               data.oral = data.oral || [];
+               data.rectal = data.rectal || [];
+               data.anticholingericAgents = data.anticholingericAgents || [];
+               data.otherAgents = data.otherAgents || [];
+               data.ivAccess = data.ivAccess || [];
+               data.ivContrast = data.ivContrast || [];
+               
+               var oralTable = Table.createTable($("oralTable"), 
+                  {editInPlace: true, flow: true, checkBoxes: true },
+                  [
+		               {  label: "Type",
+		                  cellType: "text",
+		                  size: 50,
+		                  getValue: function(item) { return item.type; },
+		                  setValue: function(item, value) { item.type = value; },
+		                  getError: function(item) { return item.type ? null : "Type required"; }
+		               },
+		               {  label: "Amount",
+		                  cellType: "text",
+		                  size: 10,
+		                  getValue: function(item) { return item.amount; },
+		                  setValue: function(item, value) { item.amount = value; },
+		                  getError: function(item) { return item.amount ? null : "Amount required"; }
+		               },
+		               {  label: "Admin By",
+		                  cellType: "lookup",
+		                  lookup: function(query) { return Ris.resolveStaffName(query); },
+		                  getValue: function(item) { return item.staff; },
+		                  setValue: function(item, value) { item.staff = value; },
+		                  getError: function(item) { return item.staff ? null : "Staff required"; }
+		               }
+                  ]);
+                  
+               oralTable.errorProvider = errorProvider;
+               oralTable.bindItems(data.oral);
+
+               var rectalTable = Table.createTable($("rectalTable"), 
+                  {editInPlace: true, flow: true, checkBoxes: true },
+                  [
+		               {  label: "Type",
+		                  cellType: "text",
+		                  size: 50,
+		                  getValue: function(item) { return item.type; },
+		                  setValue: function(item, value) { item.type = value; },
+		                  getError: function(item) { return item.type ? null : "Type required"; }
+		               },
+		               {  label: "Amount",
+		                  cellType: "text",
+		                  size: 10,
+		                  getValue: function(item) { return item.amount; },
+		                  setValue: function(item, value) { item.amount = value; },
+		                  getError: function(item) { return item.amount ? null : "Amount required"; }
+		               },
+		               {  label: "Admin By",
+		                  cellType: "lookup",
+		                  lookup: function(query) { return Ris.resolveStaffName(query); },
+		                  getValue: function(item) { return item.staff; },
+		                  setValue: function(item, value) { item.staff = value; },
+		                  getError: function(item) { return item.staff ? null : "Staff required"; }
+		               }
+                  ]);
+               
+               rectalTable.errorProvider = errorProvider;
+               rectalTable.bindItems(data.rectal);
+               
+               var anticholingericAgentsTable = Table.createTable($("anticholingericAgentsTable"), 
+                  {editInPlace: true, flow: true, checkBoxes: true },
+                  [
+		               {  label: "Type",
+		                  cellType: "choice",
+		                  choices: ["Buscopan", "Glucagon", "Other"],
+		                  getValue: function(item) { return item.type; },
+		                  setValue: function(item, value) { item.type = value; },
+		                  getError: function(item) { return item.type ? null : "Type required"; }
+		               },
+		               {  label: "Amount",
+		                  cellType: "text",
+		                  size: 10,
+		                  getValue: function(item) { return item.amount; },
+		                  setValue: function(item, value) { item.amount = value; },
+		                  getError: function(item) { return item.amount ? null : "Amount required"; }
+		               },
+                     {  label: "Route",
+                        cellType: "choice",
+                        choices: ["IV", "IM"],
+                        getValue: function(item) { return item.route; },
+                        setValue: function(item, value) { item.route = value; },
+                        getError: function(item) { return item.route ? null : "Route required"; }
+                     
+                     },
+                     {  label: "Side",
+                        cellType: "choice",
+                        choices: ["Right", "Left"],
+                        getValue: function(item) { return item.side; },
+                        setValue: function(item, value) { item.side = value; },
+                        getError: function(item) { return item.side ? null : "Side required"; }
+                     },
+		               {  label: "Admin By",
+		                  cellType: "lookup",
+		                  lookup: function(query) { return Ris.resolveStaffName(query); },
+		                  getValue: function(item) { return item.staff; },
+		                  setValue: function(item, value) { item.staff = value; },
+		                  getError: function(item) { return item.staff ? null : "Staff required"; }
+		               }
+                  ]);
+               
+               anticholingericAgentsTable.errorProvider = errorProvider;
+               anticholingericAgentsTable.bindItems(data.anticholingericAgents);
+               
+               var otherAgentsTable = Table.createTable($("otherAgentsTable"), 
+                  {editInPlace: true, flow: true, checkBoxes: true },
+                  [
+		               {  label: "Type",
+		                  cellType: "text",
+		                  size: 50,
+		                  getValue: function(item) { return item.type; },
+		                  setValue: function(item, value) { item.type = value; },
+		                  getError: function(item) { return item.type ? null : "Type required"; }
+		               },
+		               {  label: "Admin By",
+		                  cellType: "lookup",
+		                  lookup: function(query) { return Ris.resolveStaffName(query); },
+		                  getValue: function(item) { return item.staff; },
+		                  setValue: function(item, value) { item.staff = value; },
+		                  getError: function(item) { return item.staff ? null : "Staff required"; }
+		               }
+                  ]);
+               
+               otherAgentsTable.errorProvider = errorProvider;
+               otherAgentsTable.bindItems(data.otherAgents);
+               
+               var ivAccessTable = Table.createTable($("ivAccessTable"), 
+                  {editInPlace: true, flow: true, checkBoxes: true },
+                  [
+                     {  label: "Type",
+		                  cellType: "choice",
+		                  choices: ["New", "Existing"],
+		                  getValue: function(item) { return item.type; },
+		                  setValue: function(item, value) { item.type = value; },
+		                  getError: function(item) { return item.type ? null : "Type required"; }
+                     },
+                     {  label: "Side",
+                        cellType: "choice",
+                        choices: ["Right", "Left"],
+                        getValue: function(item) { return item.side; },
+                        setValue: function(item, value) { item.side = value; },
+                        getError: function(item) { return item.side ? null : "Side required"; }
+                     },
+                     {  label: "Site",
+                        cellType: "choice",
+		                  choices: ["Antecubital Fossa", "Forearm", "Hand", "Wrist"],
+		                  getValue: function(item) { return item.bodySite; },
+		                  setValue: function(item, value) { item.bodySite = value; },
+		                  getError: function(item) { return item.bodySite ? null : "Site required"; }
+                     },
+		               {  label: "Admin By",
+		                  cellType: "lookup",
+		                  lookup: function(query) { return Ris.resolveStaffName(query); },
+		                  getValue: function(item) { return item.staff; },
+		                  setValue: function(item, value) { item.staff = value; },
+		                  getError: function(item) { return item.staff ? null : "Staff required"; }
+		               }
+                  ]);
+               
+               ivAccessTable.errorProvider = errorProvider;
+               ivAccessTable.bindItems(data.ivAccess);
+               
+               var ivContrastTable = Table.createTable($("ivContrastTable"), 
+                  {editInPlace: true, flow: true, checkBoxes: true },
+                  [
+		               {  label: "Type",
+		                  cellType: "text",
+		                  size: 50,
+		                  getValue: function(item) { return item.type; },
+		                  setValue: function(item, value) { item.type = value; },
+		                  getError: function(item) { return item.type ? null : "Type required"; }
+		               },
+		               {  label: "Lot #",
+		                  cellType: "text",
+		                  size: 50,
+		                  getValue: function(item) { return item.lot; },
+		                  setValue: function(item, value) { item.lot = value; },
+		                  getError: function(item) { return item.lot ? null : "Lot number required"; }
+		               },
+                     {  label: "Pump/Rate",
+                        cellType: "choice",
+                        choices: ["Yes", "No"],
+                        getValue: function(item) { return item.pumprate; },
+                        setValue: function(item, value) { item.pumprate = value; },
+                        getError: function(item) { return item.pumprate ? null : "Pump/Rate required"; }
+                     },
+		               {  label: "Admin By",
+		                  cellType: "lookup",
+		                  lookup: function(query) { return Ris.resolveStaffName(query); },
+		                  getValue: function(item) { return item.staff; },
+		                  setValue: function(item, value) { item.staff = value; },
+		                  getError: function(item) { return item.staff ? null : "Staff required"; }
+		               }
+                  ]);
+               
+               ivContrastTable.errorProvider = errorProvider;
+               ivContrastTable.bindItems(data.ivContrast);               
+            }
+            catch(e)
+            {
+               var message = "Failed to load details page.  An exception occurred in the script. Error name: " + e.name + ". Error message: " + e.message;
+               Field.setValue($("myForm"), message);
+            }
+         }
+         
+         function onAddOral()
+         {
+            data.oral.add( {} );
+         }
+
+         function onDeleteOral()
+         {
+			    var checkedItems = $("oralTable").getCheckedItems();
+			    if(checkedItems.length > 0)
+			    {
+			        if(confirm("Deleted selected ????"))
+			        {
+			            checkedItems.each(function(item) { data.oral.remove(item); });
+			            $("oralCheckAllNone").checked = false;
+			        }
+			    }
+			    else
+			    {
+			        alert("Nothing selected");
+			    }
+         }
+
+         function onOralCheckAllNone()
+         {
+			    data.oral.each(function(item) { $("oralTable").setItemCheckState(item, $("oralCheckAllNone").checked); });
+         }         
+
+         function onAddRectal()
+         {
+            data.rectal.add( {} );
+         }
+
+         function onDeleteRectal()
+         {
+			    var checkedItems = $("rectalTable").getCheckedItems();
+			    if(checkedItems.length > 0)
+			    {
+			        if(confirm("Deleted selected ????"))
+			        {
+			            checkedItems.each(function(item) { data.rectal.remove(item); });
+			            $("rectalCheckAllNone").checked = false;
+			        }
+			    }
+			    else
+			    {
+			        alert("Nothing selected");
+			    }
+         }
+
+         function onRectalCheckAllNone()
+         {
+			    data.rectal.each(function(item) { $("rectalTable").setItemCheckState(item, $("rectalCheckAllNone").checked); });
+         }         
+
+         function onAddAnticholingericAgents()
+         {
+            data.anticholingericAgents.add( {} );
+         }
+
+         function onDeleteAnticholingericAgents()
+         {
+			    var checkedItems = $("anticholingericAgentsTable").getCheckedItems();
+			    if(checkedItems.length > 0)
+			    {
+			        if(confirm("Deleted selected ????"))
+			        {
+			            checkedItems.each(function(item) { data.anticholingericAgents.remove(item); });
+			            $("anticholingericAgentsCheckAllNone").checked = false;
+			        }
+			    }
+			    else
+			    {
+			        alert("Nothing selected");
+			    }
+         }
+
+         function onAnticholingericAgentsCheckAllNone()
+         {
+			    data.anticholingericAgents.each(function(item) { $("anticholingericAgentsTable").setItemCheckState(item, $("anticholingericAgentsCheckAllNone").checked); });
+         }         
+
+         function onAddOtherAgents()
+         {
+            data.otherAgents.add( {} );
+         }
+
+         function onDeleteOtherAgents()
+         {
+			    var checkedItems = $("otherAgentsTable").getCheckedItems();
+			    if(checkedItems.length > 0)
+			    {
+			        if(confirm("Deleted selected ????"))
+			        {
+			            checkedItems.each(function(item) { data.otherAgents.remove(item); });
+			            $("otherAgentsCheckAllNone").checked = false;
+			        }
+			    }
+			    else
+			    {
+			        alert("Nothing selected");
+			    }
+         }
+
+         function onOtherAgentsCheckAllNone()
+         {
+			    data.otherAgents.each(function(item) { $("otherAgentsTable").setItemCheckState(item, $("otherAgentsCheckAllNone").checked); });
+         }         
+
+         function onAddIVAccess()
+         {
+            data.ivAccess.add( {} );
+         }
+
+         function onDeleteIVAccess()
+         {
+			    var checkedItems = $("ivAccessTable").getCheckedItems();
+			    if(checkedItems.length > 0)
+			    {
+			        if(confirm("Deleted selected ????"))
+			        {
+			            checkedItems.each(function(item) { data.ivAccess.remove(item); });
+			            $("ivAccessCheckAllNone").checked = false;
+			        }
+			    }
+			    else
+			    {
+			        alert("Nothing selected");
+			    }
+         }
+
+         function onIVAccessCheckAllNone()
+         {
+			    data.ivAccess.each(function(item) { $("ivAccessTable").setItemCheckState(item, $("ivAccessCheckAllNone").checked); });
+         }         
+
+         function onAddIVContrast()
+         {
+            data.ivContrast.add( {} );
+         }
+
+         function onDeleteIVContrast()
+         {
+			    var checkedItems = $("ivContrastTable").getCheckedItems();
+			    if(checkedItems.length > 0)
+			    {
+			        if(confirm("Deleted selected ????"))
+			        {
+			            checkedItems.each(function(item) { data.ivContrast.remove(item); });
+			            $("ivContrastCheckAllNone").checked = false;
+			        }
+			    }
+			    else
+			    {
+			        alert("Nothing selected");
+			    }
+         }
+
+         function onIVContrastCheckAllNone()
+         {
+			    data.ivContrast.each(function(item) { $("ivContrastTable").setItemCheckState(item, $("ivContrastCheckAllNone").checked); });
+         }         
+
+         //////////////////////////////////////////////////////////////////////////
+         // RIS integration API
+         function hasValidationErrors()
+         {
+            return errorProvider.hasErrors();
+         }
+
+         function showValidation(show)
+         {
+            errorProvider.setVisible(show);
+         }
+
+         function saveData()
+         {
+            return Ris.setData("Documentation", JSML.create(data, "data"));
+         }
+         //////////////////////////////////////////////////////////////////////////
+      </script>
+   </head>
+   <body onload="javascript: onBodyLoad()">
+      <form id="myForm">
+         <p class="sectionheading">Oral</p>
+         <p>
+             <input type="button" value="Add" onclick="javascript: onAddOral()" />
+             <input type="button" value="Delete" onclick="javascript: onDeleteOral()" />
+         </p>
+         <table id="oralTable" border="1" width="100%">
+            <tr>
+               <td colspan="2"><input id="oralCheckAllNone" type="checkbox" onclick="javascript:onOralCheckAllNone()">Select All/None</input></td>
+            </tr>
+         </table>
+         <p class="sectionheading">Rectal</p>
+         <p>
+             <input type="button" value="Add" onclick="javascript: onAddRectal()" />
+             <input type="button" value="Delete" onclick="javascript: onDeleteRectal()" />
+         </p>
+         <table id="rectalTable" border="1" width="100%">
+            <tr>
+               <td colspan="2"><input id="rectalCheckAllNone" type="checkbox" onclick="javascript:onRectalCheckAllNone()">Select All/None</input></td>
+            </tr>
+         </table>
+         <p class="sectionheading">Anticholingeric Agents</p>
+         <p>
+             <input type="button" value="Add" onclick="javascript: onAddAnticholingericAgents()" />
+             <input type="button" value="Delete" onclick="javascript: onDeleteAnticholingericAgents()" />
+         </p>
+         <table id="anticholingericAgentsTable" border="1" width="100%">
+            <tr>
+               <td colspan="2"><input id="anticholingericAgentsCheckAllNone" type="checkbox" onclick="javascript:onAnticholingericAgentsCheckAllNone()">Select All/None</input></td>
+            </tr>
+         </table>
+         <p class="sectionheading">Other Agents</p>
+         <p>
+             <input type="button" value="Add" onclick="javascript: onAddOtherAgents()" />
+             <input type="button" value="Delete" onclick="javascript: onDeleteOtherAgents()" />
+         </p>
+         <table id="otherAgentsTable" border="1" width="100%">
+            <tr>
+               <td colspan="2"><input id="otherAgentsCheckAllNone" type="checkbox" onclick="javascript:onOtherAgentsCheckAllNone()">Select All/None</input></td>
+            </tr>
+         </table>
+         <p class="sectionheading">IV - Access</p>
+         <p>
+             <input type="button" value="Add" onclick="javascript: onAddIVAccess()" />
+             <input type="button" value="Delete" onclick="javascript: onDeleteIVAccess()" />
+         </p>
+         <table id="ivAccessTable" border="1" width="100%">
+            <tr>
+               <td colspan="2"><input id="ivAccessCheckAllNone" type="checkbox" onclick="javascript:onIVAccessCheckAllNone()">Select All/None</input></td>
+            </tr>
+         </table>
+         <p class="sectionheading">IV - Contrast</p>
+         <p>
+             <input type="button" value="Add" onclick="javascript: onAddIVContrast()" />
+             <input type="button" value="Delete" onclick="javascript: onDeleteIVContrast()" />
+         </p>
+         <table id="ivContrastTable" border="1" width="100%">
+            <tr>
+               <td colspan="2"><input id="ivContrastCheckAllNone" type="checkbox" onclick="javascript:onIVContrastCheckAllNone()">Select All/None</input></td>
+            </tr>
+         </table>
+      </form>         
+   </body>
+</html>
+       
