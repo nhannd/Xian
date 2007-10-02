@@ -73,13 +73,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
 
             GetProcedurePlanForWorklistItemResponse response = new GetProcedurePlanForWorklistItemResponse();
-
-            Order order = mps.RequestedProcedure.Order;
-            response.OrderRef = order.GetRef();
-            
-            response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
-                order.RequestedProcedures,
-                delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext);});
+            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(mps.RequestedProcedure.Order, this.PersistenceContext);
 
             return response;
         }
@@ -144,13 +138,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             StartModalityProcedureStepResponse response = new StartModalityProcedureStepResponse();
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
 
-            Order order = modalitySteps[0].RequestedProcedure.Order;
-            response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
-                order.RequestedProcedures,
-                delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
-
-            response.ModalityPerformedProcedureStep = assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
-            response.OrderRef = order.GetRef();
+            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(modalitySteps[0].RequestedProcedure.Order, this.PersistenceContext);
+            response.StartedMpps = assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
 
             return response;
         }
@@ -164,17 +153,13 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 
             // Drill back to order so we can refresh procedure plan
             ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ModalityProcedureStep>(mpps.Activities);
-            Order order = oneMps.RequestedProcedure.Order;
             this.PersistenceContext.SynchState();
 
             StopModalityPerformedProcedureStepResponse response = new StopModalityPerformedProcedureStepResponse();
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
 
+            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(oneMps.RequestedProcedure.Order, this.PersistenceContext);
             response.StoppedMpps = assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
-            response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
-                order.RequestedProcedures,
-                delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
-            response.OrderRef = order.GetRef();
 
             return response;
         }
@@ -188,17 +173,13 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 
             // Drill back to order so we can refresh procedure plan
             ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ModalityProcedureStep>(mpps.Activities);
-            Order order = oneMps.RequestedProcedure.Order;
             this.PersistenceContext.SynchState();
 
             DiscontinueModalityPerformedProcedureStepResponse response = new DiscontinueModalityPerformedProcedureStepResponse();
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
 
+            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(oneMps.RequestedProcedure.Order, this.PersistenceContext);
             response.DiscontinuedMpps = assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
-            response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
-                order.RequestedProcedures,
-                delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
-            response.OrderRef = order.GetRef();
 
             return response;
         }
@@ -235,10 +216,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             CompleteModalityProcedureStepsResponse response = new CompleteModalityProcedureStepsResponse();
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
 
-            response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
-                order.RequestedProcedures,
-                delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
-            response.OrderRef = order.GetRef();
+            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
 
             return response;
         }
@@ -274,10 +252,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             DiscontinueRequestedProcedureOrModalityProcedureStepResponse response = new DiscontinueRequestedProcedureOrModalityProcedureStepResponse();
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
 
-            response.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
-                order.RequestedProcedures,
-                delegate(RequestedProcedure rp) { return assembler.CreateRequestedProcedureDetail(rp, this.PersistenceContext); });
-            response.OrderRef = order.GetRef();
+            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
 
             return response;
         }

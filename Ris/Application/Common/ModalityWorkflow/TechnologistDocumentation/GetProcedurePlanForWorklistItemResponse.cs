@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -8,10 +6,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
     [DataContract]
     public class GetProcedurePlanForWorklistItemResponse : DataContractBase
     {
-        [DataMember]
-        public List<RequestedProcedureDetail> RequestedProcedures;
-
-        [DataMember]
-        public EntityRef OrderRef;
+        [DataMember] 
+        public ProcedurePlanSummary ProcedurePlanSummary;
     }
 }

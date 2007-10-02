@@ -246,6 +246,7 @@
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\ListPerformedProcedureStepsResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\ModalityPerformedProcedureStepSummary.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\ModalityProcedureStepDetail.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\ProcedurePlanSummary.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\RequestedProcedureDetail.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\StartModalityProcedureStepRequest.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\StartModalityProcedureStepResponse.cs" />

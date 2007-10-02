@@ -121,8 +121,7 @@ namespace ClearCanvas.Ris.Client.Adt
                     GetProcedurePlanForWorklistItemRequest procedurePlanRequest = new GetProcedurePlanForWorklistItemRequest(_worklistItem.ProcedureStepRef);
                     GetProcedurePlanForWorklistItemResponse procedurePlanResponse = service.GetProcedurePlanForWorklistItem(procedurePlanRequest);
 
-                    _orderRef = procedurePlanResponse.OrderRef;
-                    RefreshProcedurePlanTree(procedurePlanResponse.RequestedProcedures);
+                    RefreshProcedurePlanTree(procedurePlanResponse.ProcedurePlanSummary);
                 });
 
             _orderSummaryComponentHost = new ChildComponentHost(this, new OrderSummaryComponent(this));
@@ -204,10 +203,9 @@ namespace ClearCanvas.Ris.Client.Adt
                             StartModalityProcedureStepRequest request = new StartModalityProcedureStepRequest(checkedMps);
                             StartModalityProcedureStepResponse response = service.StartModalityProcedureStep(request);
 
-                            RefreshProcedurePlanTree(response.RequestedProcedures);
-                            _orderRef = response.OrderRef;
+                            RefreshProcedurePlanTree(response.ProcedurePlanSummary);
 
-                            _ppsComponent.AddPerformedProcedureStep(response.ModalityPerformedProcedureStep);
+                            _ppsComponent.AddPerformedProcedureStep(response.StartedMpps);
                         });
                 }
             }
@@ -263,8 +261,10 @@ namespace ClearCanvas.Ris.Client.Adt
             return new List<RequestedProcedureDetail>();
         }
 
-        private void RefreshProcedurePlanTree(List<RequestedProcedureDetail> procedures)
+        private void RefreshProcedurePlanTree(ProcedurePlanSummary procedurePlanSummary)
         {
+            _orderRef = procedurePlanSummary.OrderRef;
+
             _allCheckableModalityProcedureSteps.Clear();
 
             TreeItemBinding<RequestedProcedureDetail> rpBinding = new TreeItemBinding<RequestedProcedureDetail>(delegate(RequestedProcedureDetail rp) { return rp.Name + " - " + rp.Status.Value; });
@@ -290,7 +290,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         return new Tree<Checkable<ModalityProcedureStepDetail>>(binding, checkableMpsList);
                     };
 
-            _procedurePlanTree = new Tree<RequestedProcedureDetail>(rpBinding, procedures);
+            _procedurePlanTree = new Tree<RequestedProcedureDetail>(rpBinding, procedurePlanSummary.RequestedProcedures);
 
             EventsHelper.Fire(_procedurePlanTreeChanged, this, EventArgs.Empty);
         }

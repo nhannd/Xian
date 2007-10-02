@@ -1,4 +1,3 @@
-using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -8,12 +7,9 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
     public class StopModalityPerformedProcedureStepResponse : DataContractBase
     {
         [DataMember]
+        public ProcedurePlanSummary ProcedurePlanSummary;
+
+        [DataMember]
         public ModalityPerformedProcedureStepSummary StoppedMpps;
-
-        [DataMember]
-        public List<RequestedProcedureDetail> RequestedProcedures;
-
-        [DataMember]
-        public EntityRef OrderRef;
     }
 }

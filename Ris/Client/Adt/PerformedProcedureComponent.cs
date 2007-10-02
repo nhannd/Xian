@@ -1,18 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tools;
-using System.Runtime.InteropServices;
-using ClearCanvas.Ris.Application.Common.Admin;
-using ClearCanvas.Ris.Client.Formatting;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -34,7 +27,8 @@ namespace ClearCanvas.Ris.Client.Adt
 
         class ChildComponentHost : ApplicationComponentHost
         {
-            private PerformedProcedureComponent _owner;
+            private readonly PerformedProcedureComponent _owner;
+            private string _title;
 
             public ChildComponentHost(PerformedProcedureComponent owner, IApplicationComponent hostedComponent)
                 : base(hostedComponent)
@@ -47,6 +41,11 @@ namespace ClearCanvas.Ris.Client.Adt
                 get { return _owner.Host.DesktopWindow; }
             }
 
+            public override string Title
+            {
+                get { return _title; }
+                set { _title = value; }
+            }
         }
 
         #endregion
@@ -58,7 +57,7 @@ namespace ClearCanvas.Ris.Client.Adt
             private static readonly HtmlFormSelector _detailsFormSelector =
                 new HtmlFormSelector(PerformedProcedureComponentSettings.Default.DetailsPageUrlSelectorScript, new string[] { "pps" });
 
-            private PerformedProcedureComponent _owner;
+            private readonly PerformedProcedureComponent _owner;
 
             public MppsDetailsComponent(PerformedProcedureComponent owner)
             {
@@ -118,6 +117,7 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Start()
         {
             _mppsDetailsComponentHost = new ChildComponentHost(this, _detailsComponent = new MppsDetailsComponent(this));
+            _mppsDetailsComponentHost.Title = "TODO";
             _mppsDetailsComponentHost.StartComponent();
 
             ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
@@ -185,7 +185,7 @@ namespace ClearCanvas.Ris.Client.Adt
                         CompleteModalityProcedureStepsRequest request = new CompleteModalityProcedureStepsRequest(_orderRef);
                         CompleteModalityProcedureStepsResponse response = service.CompleteModalityProcedureSteps(request);
 
-                        RefreshProcedurePlanTree(response.RequestedProcedures);
+                        RefreshProcedurePlanTree(response.ProcedurePlanSummary);
                     });
             }
             catch (Exception e)
@@ -196,8 +196,9 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
 
-        private void RefreshProcedurePlanTree(List<RequestedProcedureDetail> list)
+        private void RefreshProcedurePlanTree(ProcedurePlanSummary procedurePlanSummary)
         {
+            _orderRef = procedurePlanSummary.OrderRef;
             throw new Exception("The method or operation is not implemented.");
         }
         
@@ -219,8 +220,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             StopModalityPerformedProcedureStepRequest request = new StopModalityPerformedProcedureStepRequest(selectedMpps.ModalityPerformendProcedureStepRef);
                             StopModalityPerformedProcedureStepResponse response = service.StopModalityPerformedProcedureStep(request);
 
-                            RefreshProcedurePlanTree(response.RequestedProcedures);
-                            _orderRef = response.OrderRef;
+                            RefreshProcedurePlanTree(response.ProcedurePlanSummary);
 
                             _mppsTable.Items.Replace(
                                 delegate(ModalityPerformedProcedureStepSummary mppsSummary)
@@ -252,8 +252,7 @@ namespace ClearCanvas.Ris.Client.Adt
                             DiscontinueModalityPerformedProcedureStepRequest request = new DiscontinueModalityPerformedProcedureStepRequest(selectedMpps.ModalityPerformendProcedureStepRef);
                             DiscontinueModalityPerformedProcedureStepResponse response = service.DiscontinueModalityPerformedProcedureStep(request);
 
-                            RefreshProcedurePlanTree(response.RequestedProcedures);
-                            _orderRef = response.OrderRef;
+                            RefreshProcedurePlanTree(response.ProcedurePlanSummary);
 
                             _mppsTable.Items.Replace(
                                 delegate(ModalityPerformedProcedureStepSummary mppsSummary)

@@ -4,6 +4,7 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
 using ClearCanvas.Workflow;
 using Iesi.Collections;
@@ -111,7 +112,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             }
             else
             {
-                pps = new ModalityPerformedProcedureStep();                
+                pps = new ModalityPerformedProcedureStep();
             }
             return pps;
         }
@@ -166,6 +167,20 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
                 mpps.EndTime, 
                 "Dummy Performer",
                 mpsDetails);
+        }
+
+        public ProcedurePlanSummary CreateProcedurePlanSummary(Order order, IPersistenceContext context)
+        {
+            ProcedurePlanSummary summary = new ProcedurePlanSummary();
+
+            summary.OrderRef = order.GetRef();
+            summary.RequestedProcedures = CollectionUtils.Map<RequestedProcedure, RequestedProcedureDetail>(
+                order.RequestedProcedures,
+                delegate(RequestedProcedure rp) { return CreateRequestedProcedureDetail(rp, context); });
+            summary.DiagnosticServiceSummary = 
+                new DiagnosticServiceSummary(order.DiagnosticService.GetRef(), order.DiagnosticService.Id, order.DiagnosticService.Name);
+
+            return summary;
         }
     }
 }
