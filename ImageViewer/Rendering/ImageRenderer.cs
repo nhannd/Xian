@@ -94,7 +94,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 						fixed (int* pFinalLutData = finalLutBuffer)
 						{
-							ImageInterpolatorBilinear.LUTDATA lutData = new ImageInterpolatorBilinear.LUTDATA();
+							ImageInterpolatorBilinear.LUTDATA lutData;
 							lutData.LutData = pFinalLutData;
 							lutData.FirstMappedPixelData = grayscaleImage.OutputLut.MinInputValue;
 							lutData.Length = finalLutBuffer.Length;
