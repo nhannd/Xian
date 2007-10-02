@@ -83,5 +83,8 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         DiscontinueRequestedProcedureOrModalityProcedureStepResponse DiscontinueRequestedProcedureOrModalityProcedureStep(DiscontinueRequestedProcedureOrModalityProcedureStepRequest request);
+
+        [OperationContract]
+        SaveDataResponse SaveData(SaveDataRequest request);
     }
 }

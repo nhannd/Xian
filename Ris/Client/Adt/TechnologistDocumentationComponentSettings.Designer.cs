@@ -31,5 +31,23 @@ namespace ClearCanvas.Ris.Client.Adt {
                 return ((string)(this["OrderSummaryUrl"]));
             }
         }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("PreExamDetailsPageUrlSelectorScript.js")]
+        public string PreExamDetailsPageUrlSelectorScript {
+            get {
+                return ((string)(this["PreExamDetailsPageUrlSelectorScript"]));
+            }
+        }
+        
+        [global::System.Configuration.ApplicationScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("PostExamDetailsPageUrlSelectorScript.js")]
+        public string PostExamDetailsPageUrlSelectorScript {
+            get {
+                return ((string)(this["PostExamDetailsPageUrlSelectorScript"]));
+            }
+        }
     }
 }

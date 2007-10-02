@@ -53,9 +53,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Order Summary Component class
 
-        //public class OrderSummaryComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView> { }
-
-        //[AssociateView(typeof(OrderSummaryComponentViewExtensionPoint))]
         class OrderSummaryComponent : DHtmlComponent
         {
             private TechnologistDocumentationComponent _owner;
@@ -115,26 +112,33 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
+            ProcedurePlanSummary procedurePlanSummary = null;
+
             Platform.GetService<ITechnologistDocumentationService>(
                 delegate(ITechnologistDocumentationService service)
                 {
                     GetProcedurePlanForWorklistItemRequest procedurePlanRequest = new GetProcedurePlanForWorklistItemRequest(_worklistItem.ProcedureStepRef);
                     GetProcedurePlanForWorklistItemResponse procedurePlanResponse = service.GetProcedurePlanForWorklistItem(procedurePlanRequest);
-
-                    RefreshProcedurePlanTree(procedurePlanResponse.ProcedurePlanSummary);
+                    procedurePlanSummary = procedurePlanResponse.ProcedurePlanSummary;
                 });
+
+            RefreshProcedurePlanTree(procedurePlanSummary);
 
             _orderSummaryComponentHost = new ChildComponentHost(this, new OrderSummaryComponent(this));
             _orderSummaryComponentHost.StartComponent();
 
             _documentationTabContainer = new TabComponentContainer();
-            _preExamComponent = new DHtmlComponent();
+            _preExamComponent = new ExamDetailsComponent(
+                TechnologistDocumentationComponentSettings.Default.PreExamDetailsPageUrlSelectorScript,
+                procedurePlanSummary);
             _documentationTabContainer.Pages.Add(new TabPage("Pre-exam", _preExamComponent));
 
             _ppsComponent = new PerformedProcedureComponent(_orderRef);
             _documentationTabContainer.Pages.Add(new TabPage("Exam", _ppsComponent));
 
-            _postExamComponent = new DHtmlComponent();
+            _postExamComponent = new ExamDetailsComponent(
+                TechnologistDocumentationComponentSettings.Default.PostExamDetailsPageUrlSelectorScript,
+                procedurePlanSummary);
             _documentationTabContainer.Pages.Add(new TabPage("Post-exam", _postExamComponent));
 
             _documentationHost = new ChildComponentHost(this, _documentationTabContainer);

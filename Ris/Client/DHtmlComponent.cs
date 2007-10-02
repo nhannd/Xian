@@ -177,6 +177,11 @@ namespace ClearCanvas.Ris.Client
         {
         }
 
+        public DHtmlComponent(string url)
+        {
+            SetUrl(url);
+        }
+
         public override void Start()
         {
             base.Start();

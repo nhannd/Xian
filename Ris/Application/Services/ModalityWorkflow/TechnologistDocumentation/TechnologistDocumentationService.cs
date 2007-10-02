@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -255,6 +256,12 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
             response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
 
             return response;
+        }
+
+        [UpdateOperation]
+        public SaveDataResponse SaveData(SaveDataRequest request)
+        {
+            throw new NotImplementedException();
         }
 
         #endregion

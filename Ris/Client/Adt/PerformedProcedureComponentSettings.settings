@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="DetailsPageUrlSelectorScript" Type="System.String" Scope="Application">
-      <Value Profile="(Default)">PerformedProcedureStepDetailsPageUrlSelectorlScript.js</Value>
+      <Value Profile="(Default)">PerformedProcedureStepDetailsPageUrlSelectorScript.js</Value>
     </Setting>
   </Settings>
 </SettingsFile>

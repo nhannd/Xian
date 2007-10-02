@@ -53,6 +53,7 @@
     <Compile Include="BiographyFeedbackTable.cs" />
     <Compile Include="CheckInOrderComponent.cs" />
     <Compile Include="CheckInOrderTable.cs" />
+    <Compile Include="ExamDetailsComponent.cs" />
     <Compile Include="Folders\RefreshTool.cs" />
     <Compile Include="Folders\RegistrationContainerFolders.cs" />
     <Compile Include="Folders\TechnologistContainerFolders.cs" />
@@ -200,7 +201,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="actionmodels.xml" />
-    <EmbeddedResource Include="PerformedProcedureStepDetailsPageUrlSelectorlScript.js" />
+    <EmbeddedResource Include="PreExamDetailsPageUrlSelectorScript.js" />
+    <EmbeddedResource Include="PostExamDetailsPageUrlSelectorScript.js" />
+    <EmbeddedResource Include="PerformedProcedureStepDetailsPageUrlSelectorScript.js" />
     <EmbeddedResource Include="Icons\SearchToolLarge.png" />
     <EmbeddedResource Include="Icons\SearchToolMedium.png" />
     <EmbeddedResource Include="Icons\SearchToolSmall.png" />

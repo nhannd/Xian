@@ -25,7 +25,7 @@ namespace ClearCanvas.Ris.Client.Adt {
         
         [global::System.Configuration.ApplicationScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("PerformedProcedureStepDetailsPageUrlSelectorlScript.js")]
+        [global::System.Configuration.DefaultSettingValueAttribute("PerformedProcedureStepDetailsPageUrlSelectorScript.js")]
         public string DetailsPageUrlSelectorScript {
             get {
                 return ((string)(this["DetailsPageUrlSelectorScript"]));

@@ -55,7 +55,7 @@ namespace ClearCanvas.Ris.Client.Adt
         class MppsDetailsComponent : DHtmlComponent
         {
             private static readonly HtmlFormSelector _detailsFormSelector =
-                new HtmlFormSelector(PerformedProcedureComponentSettings.Default.DetailsPageUrlSelectorScript, new string[] { "pps" });
+                new HtmlFormSelector(PerformedProcedureComponentSettings.Default.DetailsPageUrlSelectorScript, new string[] { "performedProcedureStep" });
 
             private readonly PerformedProcedureComponent _owner;
 
