@@ -189,7 +189,11 @@
     <Compile Include="Imaging\VoiLutManager.cs" />
     <Compile Include="InputManagement\KeyboardButtonDownPreview.cs" />
     <Compile Include="PresentationImageFactory.cs" />
+    <Compile Include="Rendering\GDIRenderer.cs" />
+    <Compile Include="Rendering\IRendererFactory.cs" />
     <Compile Include="Rendering\RendererBase.cs" />
+    <Compile Include="Rendering\RendererFactoryBase.cs" />
+    <Compile Include="Rendering\RenderPerformanceReportBroker.cs" />
     <Compile Include="SimpleLogicalWorkspaceBuilder.cs" />
     <Compile Include="SimpleImageLayoutManager.cs" />
     <Compile Include="SimplePhysicalWorkspaceFiller.cs" />
@@ -293,7 +297,6 @@
     <Compile Include="Tests\SelectionTest.cs" />
     <Compile Include="Tests\ImageBoxAndDisplaySetInteractionTest.cs" />
     <Compile Include="Tests\TestTree.cs" />
-    <Compile Include="Rendering\GDIRenderer.cs" />
     <Compile Include="Imaging\Tests\LinearLutInstallationTests.cs" />
     <Compile Include="Imaging\Tests\DicomPresentationImageSortTests.cs" />
     <Compile Include="Mathematics\FloatComparer.cs" />

@@ -60,7 +60,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				   false,
 				   false) /* is signed */
 		{
-			Initialize(false, 1, 0);
+			Initialize(1, 0);
 		}
 
 		/// <summary>
@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				false,
 				pixelData)
 		{
-			Initialize(false, rescaleSlope, rescaleIntercept);
+			Initialize(rescaleSlope, rescaleIntercept);
 		}
 
 		/// <summary>
@@ -143,7 +143,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 				inverted,
 				pixelDataGetter)
 		{
-			Initialize(inverted, rescaleSlope, rescaleIntercept);
+			Initialize(rescaleSlope, rescaleIntercept);
 		}
 
 		#endregion
@@ -282,7 +282,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Private methods
 
-		private void Initialize(bool inverted, double rescaleSlope, double rescaleIntercept)
+		private void Initialize(double rescaleSlope, double rescaleIntercept)
 		{
 			_rescaleSlope = rescaleSlope <= double.Epsilon ? 1 : rescaleSlope;
 			_rescaleIntercept = rescaleIntercept;

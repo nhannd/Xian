@@ -8,7 +8,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <remarks>
 	/// <para>
 	/// Modality Luts are often the same for many images, so they are stored internally
-	/// by the framework and used by the <see cref="LutComposer"/> when creating the <see cref="OutputLut"/>
+	/// by the framework and used by the <see cref="LutComposer"/> when creating the <see cref="ComposedLut"/>
 	/// for a particular image.
 	/// </para>
 	/// <para>

@@ -223,6 +223,15 @@ namespace ClearCanvas.ImageViewer {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Images should not be rendered from multiple threads..
+        /// </summary>
+        public static string ExceptionImagesShouldNotBeRenderedFromMultipleThreads {
+            get {
+                return ResourceManager.GetString("ExceptionImagesShouldNotBeRenderedFromMultipleThreads", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Invalid Annotation Layout XML ({0})..
         /// </summary>
         public static string ExceptionInvalidAnnotationLayoutXml {

@@ -11,6 +11,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		private event EventHandler _lutChanged;
 
+		/// <summary>
+		/// Fires the <see cref="LutChanged"/> event.
+		/// </summary>
+		/// <remarks>
+		/// Inheritors should call this method when any property of the lut has changed.
+		/// </remarks>
 		protected virtual void OnLutChanged()
 		{
 			EventsHelper.Fire(_lutChanged, this, EventArgs.Empty);
@@ -56,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		/// <summary>
 		/// Gets a string key that identifies this particular LUT's characteristics, so that 
-		/// an image's <see cref="OutputLut"/> can be more efficiently determined.
+		/// an image's <see cref="ComposedLut"/> can be more efficiently determined.
 		/// </summary>
 		/// <remarks>
 		/// This method is not to be confused with *equality*, since some Luts can be

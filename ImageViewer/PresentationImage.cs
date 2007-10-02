@@ -33,6 +33,7 @@ namespace ClearCanvas.ImageViewer
 		private ISelectableGraphic _selectedGraphic;
 		private IFocussableGraphic _focussedGraphic;
 
+		private IRenderer _renderer;
 		private event EventHandler _drawing;
 
 		// TODO: Perhaps each layer should have its own ILayerRenderer?  
@@ -276,7 +277,11 @@ namespace ClearCanvas.ImageViewer
 		/// Framework property and should not be used.
 		/// </para>
 		/// </remarks>
-		public abstract IRenderer ImageRenderer { get; }
+		public virtual IRenderer ImageRenderer
+		{
+			get { return _renderer; }
+			protected set { _renderer = value; }
+		}
 
 		#endregion
 
@@ -302,23 +307,24 @@ namespace ClearCanvas.ImageViewer
 
 		/// <summary>
 		/// Implementation of the <see cref="IDisposable"/> pattern
-		/// </summary>
+		/// </sumary>
 		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
 		protected virtual void Dispose(bool disposing)
 		{
 			if (disposing)
 			{
-				DisposeSceneGraph();
+				if (_renderer != null)
+				{
+					_renderer.Dispose();
+					_renderer = null;
+				}
+
+				if (_sceneGraph != null)
+				{
+					_sceneGraph.Dispose();
+					_sceneGraph = null;
+				}
 			}
-		}
-
-		private void DisposeSceneGraph()
-		{
-			if (this.SceneGraph == null)
-				return;
-
-			this.SceneGraph.Dispose();
-			_sceneGraph = null;
 		}
 
 		#endregion

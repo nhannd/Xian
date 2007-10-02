@@ -1,18 +1,18 @@
 #pragma warning disable 1591,0419,1574,1587
 
 using System;
-using System.Diagnostics;
 using System.Drawing;
-using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.Common.Utilities;
-using System.Runtime.InteropServices;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {
 	internal unsafe class ImageRenderer
 	{
+		[ThreadStatic] private static int[] _finalLutBuffer;
+
 		public static int[] ConstructFinalLut(IComposedLut outputLut, IColorMap colorMap, bool invert)
 		{
 			CodeClock clock = new CodeClock();
@@ -23,16 +23,17 @@ namespace ClearCanvas.ImageViewer.Rendering
 
 			int[] outputLutData = outputLut.Data;
 			int[] colorMapData = colorMap.Data;
-			
-			int[] finalLutData = new int[outputLutData.Length];
 
-			int numberOfEntries = finalLutData.Length;
+			if (_finalLutBuffer == null || _finalLutBuffer.Length != outputLutData.Length)
+				_finalLutBuffer = new int[outputLutData.Length];
+
+			int numberOfEntries = _finalLutBuffer.Length;
 
 			fixed (int* pOutputLutData = outputLutData)
 			{
 				fixed (int* pColorMapData = colorMapData)
 				{
-					fixed (int* pFinalLutData = finalLutData)
+					fixed (int* pFinalLutData = _finalLutBuffer)
 					{
 						int* pFinalLut = pFinalLutData;
 
@@ -55,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			clock.Stop();
 			RenderPerformanceReportBroker.PublishPerformanceReport("ImageRenderer.ConstructFinalLut", clock.Seconds);
 
-			return finalLutData;
+			return _finalLutBuffer;
 		}
 
 		public static void Render(
@@ -89,14 +90,14 @@ namespace ClearCanvas.ImageViewer.Rendering
 				{
 					if (grayscaleImage != null)
 					{
-						int[] finalLutData = ConstructFinalLut(grayscaleImage.OutputLut, grayscaleImage.ColorMap, grayscaleImage.Invert);
+						int[] finalLutBuffer = ConstructFinalLut(grayscaleImage.OutputLut, grayscaleImage.ColorMap, grayscaleImage.Invert);
 
-						fixed (int* pFinalLutData = finalLutData)
+						fixed (int* pFinalLutData = finalLutBuffer)
 						{
 							ImageInterpolatorBilinear.LUTDATA lutData = new ImageInterpolatorBilinear.LUTDATA();
 							lutData.LutData = pFinalLutData;
 							lutData.FirstMappedPixelData = grayscaleImage.OutputLut.MinInputValue;
-							lutData.Length = finalLutData.Length;
+							lutData.Length = finalLutBuffer.Length;
 
 							int srcBytesPerPixel = imageGraphic.BitsPerPixel/8;
 

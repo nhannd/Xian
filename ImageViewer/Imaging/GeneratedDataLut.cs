@@ -34,6 +34,9 @@ namespace ClearCanvas.ImageViewer.Imaging
 			_maximumOutputValue = int.MaxValue;
 		}
 
+		/// <summary>
+		/// Gets whether or not the underlying <see cref="Data"/> has been allocated yet.
+		/// </summary>
 		protected bool Created
 		{
 			get { return _data != null; }

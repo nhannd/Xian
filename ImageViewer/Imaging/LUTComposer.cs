@@ -50,28 +50,31 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Private Methods
 
-		private void Compose()
+		private unsafe void Compose()
 		{
 
 #if DEBUG
 			CodeClock counter = new CodeClock();
 			counter.Start();
 #endif
-			int val;
-
-			for (int i = MinInputValue; i < MaxInputValue; i++)
+			fixed (int* composedLutData = _composedLut.Data)
 			{
-				val = i;
+				int* pLutData = composedLutData;
+				int min = MinInputValue;
+				int max = MaxInputValue + 1;
+				int lutCount = LutCollection.Count;
 
-				for (int j = 0; j < this.LutCollection.Count; j++)
+				for (int i = min; i < max; ++i)
 				{
-					IComposableLut lut = this.LutCollection[j];
-					val = lut[val];
+					int val = i;
+
+					for (int j = 0; j < lutCount; ++j)
+						val = this.LutCollection[j][val];
+
+					*pLutData = val;
+					++pLutData;
 				}
-
-				_composedLut.Data[i - MinInputValue] = val;
 			}
-
 #if DEBUG
 			counter.Stop();
 

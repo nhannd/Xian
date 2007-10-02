@@ -171,6 +171,9 @@
   <data name="ExceptionImageIsNotGrayscale" xml:space="preserve">
     <value>Image is not grayscale.</value>
   </data>
+  <data name="ExceptionImagesShouldNotBeRenderedFromMultipleThreads" xml:space="preserve">
+    <value>Images should not be rendered from multiple threads.</value>
+  </data>
   <data name="ExceptionInvalidAnnotationLayoutXml" xml:space="preserve">
     <value>Invalid Annotation Layout XML ({0}).</value>
   </data>

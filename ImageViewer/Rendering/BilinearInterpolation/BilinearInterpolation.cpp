@@ -167,7 +167,7 @@ void InterpolateBilinearUnsigned8(
 	BYTE* pRowSrcPixelData;
 	int *pxPixel, *pdxFixed;
 	BYTE *pSrcPixel00, *pSrcPixel01, *pSrcPixel10, *pSrcPixel11;
-	int yInterpolated1, yInterpolated2, finalInterpolated, value;
+	int yInterpolated1, yInterpolated2, finalInterpolated;
 
 	for (float y = 0; y < dstRegionHeight; ++y)  //so we're not constantly converting ints to floats.
 	{
@@ -200,7 +200,7 @@ void InterpolateBilinearUnsigned8(
 			yInterpolated2 = ((*pSrcPixel01) << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel11 - *pSrcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
 
 			finalInterpolated = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
-			*pRowDstPixelData = *(pLutData->LutData + finalInterpolated - pLutData->FirstMappedPixelData);
+			*pRowDstPixelData = *(pLutData->LutData + finalInterpolated - pLutData->FirstMappedPixelValue);
 
 			pRowDstPixelData += xDstIncrement;
 
@@ -250,7 +250,7 @@ void InterpolateBilinearSigned8(
 	int *pxPixel, *pdxFixed;
 	char *pSrcPixel00, *pSrcPixel01, *pSrcPixel10, *pSrcPixel11;
 	char srcPixel00, srcPixel01, srcPixel10, srcPixel11;
-	int yInterpolated1, yInterpolated2, finalInterpolated, value;
+	int yInterpolated1, yInterpolated2, finalInterpolated;
 
 	// Mask used to determine if a pixel value is signed or not.  Note that the
 	// sign bit is the high bit.  Thus, if the bits stored = 9, the sign bit is 8
@@ -310,7 +310,7 @@ void InterpolateBilinearSigned8(
 			yInterpolated2 = ((srcPixel01) << FIXEDPRECISION) + ((dyFixed * ((srcPixel11 - srcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
 
 			finalInterpolated = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
-			*pRowDstPixelData = *(pLutData->LutData + finalInterpolated - pLutData->FirstMappedPixelData);
+			*pRowDstPixelData = *(pLutData->LutData + finalInterpolated - pLutData->FirstMappedPixelValue);
 
 			pRowDstPixelData += xDstIncrement;
 
@@ -360,7 +360,7 @@ void InterpolateBilinearUnsigned16(
 	unsigned short* pRowSrcPixelData;
 	int *pxPixel, *pdxFixed;
 	unsigned short *pSrcPixel00, *pSrcPixel01, *pSrcPixel10, *pSrcPixel11;
-	int yInterpolated1, yInterpolated2, finalInterpolated, value;
+	int yInterpolated1, yInterpolated2, finalInterpolated;
 
 	for (float y = 0; y < dstRegionHeight; ++y)  //so we're not constantly converting ints to floats.
 	{
@@ -393,7 +393,7 @@ void InterpolateBilinearUnsigned16(
 			yInterpolated2 = ((*pSrcPixel01) << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel11 - *pSrcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
 
 			finalInterpolated = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
-			*pRowDstPixelData = *(pLutData->LutData + finalInterpolated - pLutData->FirstMappedPixelData);
+			*pRowDstPixelData = *(pLutData->LutData + finalInterpolated - pLutData->FirstMappedPixelValue);
 
 			pRowDstPixelData += xDstIncrement;
 
@@ -445,7 +445,7 @@ void InterpolateBilinearSigned16(
 	short* pRowSrcPixelData;
 	int *pxPixel, *pdxFixed;
 	short *pSrcPixel00, *pSrcPixel01, *pSrcPixel10, *pSrcPixel11;
-	int yInterpolated1, yInterpolated2, finalInterpolated, value;
+	int yInterpolated1, yInterpolated2, finalInterpolated;
 
 	for (float y = 0; y < dstRegionHeight; ++y)  //so we're not constantly converting ints to floats.
 	{
@@ -478,7 +478,7 @@ void InterpolateBilinearSigned16(
 			yInterpolated2 = ((*pSrcPixel01) << FIXEDPRECISION) + ((dyFixed * ((*pSrcPixel11 - *pSrcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
 
 			finalInterpolated = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
-			*pRowDstPixelData = *(pLutData->LutData + finalInterpolated - pLutData->FirstMappedPixelData);
+			*pRowDstPixelData = *(pLutData->LutData + finalInterpolated - pLutData->FirstMappedPixelValue);
 			
 			pRowDstPixelData += xDstIncrement;
 
@@ -531,7 +531,7 @@ void InterpolateBilinearSignedSub16(
 	int *pxPixel, *pdxFixed;
 	short *pSrcPixel00, *pSrcPixel01, *pSrcPixel10, *pSrcPixel11;
 	short srcPixel00, srcPixel01, srcPixel10, srcPixel11;
-	int yInterpolated1, yInterpolated2, finalInterpolated, value;
+	int yInterpolated1, yInterpolated2, finalInterpolated;
 
 	// Mask used to determine if a pixel value is signed or not.  Note that the
 	// sign bit is the high bit.  Thus, if the bits stored = 9, the sign bit is 8
@@ -594,7 +594,7 @@ void InterpolateBilinearSignedSub16(
 			yInterpolated2 = ((srcPixel01) << FIXEDPRECISION) + ((dyFixed * ((srcPixel11 - srcPixel01) << FIXEDPRECISION)) >> FIXEDPRECISION);
 
 			finalInterpolated = (yInterpolated1 + (((*pdxFixed) * (yInterpolated2 - yInterpolated1)) >> FIXEDPRECISION)) >> FIXEDPRECISION;
-			*pRowDstPixelData = *(pLutData->LutData + finalInterpolated - pLutData->FirstMappedPixelData);
+			*pRowDstPixelData = *(pLutData->LutData + finalInterpolated - pLutData->FirstMappedPixelValue);
 
 			pRowDstPixelData += xDstIncrement;
 

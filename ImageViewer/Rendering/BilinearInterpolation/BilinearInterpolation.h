@@ -14,7 +14,7 @@
 struct LUTDATA
 {
 	int *LutData;
-	int FirstMappedPixelData;
+	int FirstMappedPixelValue;
 	int Length;
 };
 

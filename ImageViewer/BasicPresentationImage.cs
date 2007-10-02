@@ -8,14 +8,16 @@ using ClearCanvas.ImageViewer.Imaging;
 namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
-	/// The <see cref="BasicPresentationImage"/> uses this ExtensionPoint to load a single <see cref="IRenderer"/>
-	/// object that is used for all <see cref="BasicPresentationImage"/>s.  Implementations of <IRenderer> that 
-	/// extend this <see cref="ExtensionPoint"/> should be thread-safe to account for the possibility that 
-	/// <see cref="BasicPresentationImage"/>s could be rendered on multiple UI threads.
+	/// The <see cref="BasicPresentationImage"/> creates a single factory object that is then used to create
+	/// an <see cref="IRenderer"/> for each <see cref="BasicPresentationImage"/>.  The returned <see cref="IRenderer"/>
+	/// need not be thread-safe as the <see cref="BasicPresentationImage"/> itself is not thread-safe.
 	/// </summary>
-	public sealed class BasicPresentationImageRendererExtensionPoint : ExtensionPoint<IRenderer>
+	public sealed class BasicPresentationImageRendererFactoryExtensionPoint : ExtensionPoint<IRendererFactory>
 	{
-		public BasicPresentationImageRendererExtensionPoint()
+		/// <summary>
+		/// Default constructor.
+		/// </summary>
+		public BasicPresentationImageRendererFactoryExtensionPoint()
 		{
 		}
 	}
@@ -33,8 +35,8 @@ namespace ClearCanvas.ImageViewer
 	{
 		#region Private fields
 
-		private static readonly object _rendererSyncLock = new object();
-		private static volatile IRenderer _renderer;
+		private static readonly object _rendererFactorySyncLock = new object();
+		private static volatile IRendererFactory _rendererFactory;
 
 		private CompositeGraphic _compositeImageGraphic;
 		private ImageGraphic _imageGraphic;
@@ -43,6 +45,9 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="BasicPresentationImage"/>.
+		/// </summary>
 		protected BasicPresentationImage(
 			ImageGraphic imageGraphic) 
 			: this(imageGraphic, 1.0, 1.0, 1.0, 1.0)
@@ -137,6 +142,9 @@ namespace ClearCanvas.ImageViewer
 
 		#region IAnnotationLayoutProvider Members
 
+		/// <summary>
+		/// Gets the <see cref="IAnnotationLayout"/> associated with this presentation image.
+		/// </summary>
 		public IAnnotationLayout AnnotationLayout
 		{
 			get
@@ -150,6 +158,9 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Gets the associated <see cref="IAnnotationLayoutProvider"/> for this image.
+		/// </summary>
 		protected IAnnotationLayoutProvider AnnotationLayoutProvider
 		{
 			get { return _annotationLayoutProvider; }			
@@ -167,15 +178,15 @@ namespace ClearCanvas.ImageViewer
 		{
 			get
 			{
-				if (_renderer == null)
+				if (_rendererFactory == null)
 				{
-					lock (_rendererSyncLock)
+					lock (_rendererFactorySyncLock)
 					{
-						if (_renderer == null)
+						if (_rendererFactory == null)
 						{
 							try
 							{
-								_renderer = new BasicPresentationImageRendererExtensionPoint().CreateExtension() as IRenderer;
+								_rendererFactory = (IRendererFactory)new BasicPresentationImageRendererFactoryExtensionPoint().CreateExtension();
 							}
 							catch (Exception e)
 							{
@@ -183,18 +194,24 @@ namespace ClearCanvas.ImageViewer
 								Platform.Log(LogLevel.Info, e);
 							}
 
-							if (_renderer == null)
-								_renderer = new GDIRenderer();
+							if (_rendererFactory == null)
+								_rendererFactory = new GDIRendererFactory();
 						}
 					}
 				}
 
-				return _renderer;
+				if (base.ImageRenderer == null)
+					base.ImageRenderer = _rendererFactory.GetRenderer();
+
+				return base.ImageRenderer;
 			}
 		}
 
 		#region Disposal
 
+		/// <summary>
+		/// Dispose method.  Inheritors should override this method to do any additional cleanup.
+		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)

@@ -113,7 +113,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_bitsStored = bitsStored;
 			_highBit = highBit;
 			_isSigned = isSigned;
-			_invert = Invert;
+			_invert = invert;
 		}
 
 		#endregion

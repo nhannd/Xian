@@ -126,12 +126,12 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		/// <summary>
 		/// Gets a string key that identifies this particular LUT's characteristics, so that 
-		/// an image's <see cref="OutputLut"/> can be more efficiently determined.
+		/// an image's <see cref="ComposedLut"/> can be more efficiently determined.
 		/// </summary>
 		/// <remarks>
 		/// This method is not to be confused with <B>equality</B>, since some Luts can be
 		/// dependent upon the actual image to which it belongs.  The method should simply 
-		/// be used to determine if a lut in the <see cref="VoiOutputLutPool"/> is the same 
+		/// be used to determine if a lut in the <see cref="ComposedLutPool"/> is the same 
 		/// as an existing one.
 		/// </remarks>
 		public sealed override string GetKey()

@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 	/// should only ever have to be called by the Framework, and thus
 	/// should be treated as internal.
 	/// </remarks>
-	public interface IRenderer
+	public interface IRenderer : IDisposable
 	{
 		/// <summary>
 		/// Gets an <see cref="IRenderingSurface"/>.
