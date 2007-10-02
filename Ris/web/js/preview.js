@@ -89,7 +89,7 @@ function createOrdersTable(htmlTable)
 			},
 			{   label: "Scheduled For",
 				cellType: "text",
-				getValue: function(item) { return getDescriptiveTime(item.EarliestScheduledMPSDateTime); }
+				getValue: function(item) { return getDescriptiveTime(item.OrderScheduledStartTime); }
 			},
 			{   label: "Order Status",
 				cellType: "text",
@@ -182,7 +182,7 @@ function groupDataToOrders(listData)
         
         thisOrder.AccessionNumber = firstData.AccessionNumber;
         thisOrder.CombineRequestedProcedureName = String.combine(listRequestedProcedureName, "/");
-        thisOrder.EarliestScheduledMPSDateTime = firstData.EarliestScheduledMPSDateTime;
+        thisOrder.OrderScheduledStartTime = firstData.OrderScheduledStartTime;
         thisOrder.OrderStatus = firstData.OrderStatus;
         thisOrder.Insurance = "";
         thisOrder.OrderingFacilityName = firstData.OrderingFacilityName;
