@@ -9,8 +9,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 	public sealed class MinMaxPixelCalculatedLinearLut : AlgorithmCalculatedVoiLutLinear
 	{
 		/// <summary>
-		/// Constructor.  The input <see cref="IModalityLut"/> object can be null.
+		/// Constructor.
 		/// </summary>
+		/// <remarks>
+		/// The input <see cref="IModalityLut"/> object can be null.
+		/// </remarks>
 		/// <param name="pixelData">The pixel data the algorithm will be run on</param>
 		/// <param name="modalityLut">The modality lut to use for calculating <see cref="AlgorithmCalculatedVoiLutLinear.WindowWidth"/> 
 		/// and <see cref="AlgorithmCalculatedVoiLutLinear.WindowCenter"/>, if applicable</param>
@@ -20,7 +23,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Constructor
+		/// Constructor.
 		/// </summary>
 		/// <param name="pixelData">The pixel data the algorithm will be run on</param>
 		public MinMaxPixelCalculatedLinearLut(IndexedPixelData pixelData)

@@ -37,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 	{
 #pragma warning disable 1591
 
-		protected static readonly ushort _minimumFontSizeInPixels = 4;
+		protected static readonly ushort MinimumFontSizeInPixels = 4;
 
 #pragma warning restore 1591
 
@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
-		/// Finalizer.  This method should never get called, it is a fail-safe.
+		/// Finalizer.  This should never get called, it is a fail-safe.
 		/// </summary>
 		~GDIRenderer()
 		{
@@ -101,7 +101,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
-		/// Traverses and draws the scene graph.  
+		/// Traverses and renders the scene graph.  
 		/// </summary>
 		protected override void Render()
 		{
@@ -138,7 +138,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
-		/// Draws an <see cref="ImageGraphic"/>.  Must be overridden and implemented.
+		/// Draws an <see cref="ImageGraphic"/>.
 		/// </summary>
 		protected override void DrawImageGraphic(ImageGraphic imageGraphic)
 		{
@@ -202,7 +202,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
-		/// Draws a <see cref="LinePrimitive"/>.  Must be overridden and implemented.
+		/// Draws a <see cref="LinePrimitive"/>.
 		/// </summary>
 		protected override void DrawLinePrimitive(LinePrimitive line)
 		{
@@ -245,7 +245,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
-		/// Draws a <see cref="RectanglePrimitive"/>.  Must be overridden and implemented.
+		/// Draws a <see cref="RectanglePrimitive"/>.
 		/// </summary>
 		protected override void DrawRectanglePrimitive(RectanglePrimitive rect)
 		{
@@ -289,7 +289,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
-		/// Draws a <see cref="PointPrimitive"/>.  Must be overridden and implemented.
+		/// Draws a <see cref="PointPrimitive"/>.
 		/// </summary>
 		protected override void DrawPointPrimitive(PointPrimitive pointPrimitive)
 		{
@@ -317,7 +317,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
-		/// Draws an <see cref="InvariantRectanglePrimitive"/>.  Must be overridden and implemented.
+		/// Draws an <see cref="InvariantRectanglePrimitive"/>.
 		/// </summary>
 		protected override void DrawInvariantRectanglePrimitive(InvariantRectanglePrimitive rect)
 		{
@@ -361,7 +361,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
-		/// Draws an <see cref="InvariantTextPrimitive"/>.  Must be overridden and implemented.
+		/// Draws an <see cref="InvariantTextPrimitive"/>.
 		/// </summary>
 		protected override void DrawTextPrimitive(InvariantTextPrimitive textPrimitive)
 		{
@@ -414,7 +414,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
-		/// Draws an <see cref="AnnotationBox"/>.  Must be overridden and implemented.
+		/// Draws an <see cref="AnnotationBox"/>.
 		/// </summary>
 		protected override void DrawAnnotationBox(string annotationText, AnnotationBox annotationBox)
 		{
@@ -430,7 +430,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 			int fontSize = (clientRectangle.Height / annotationBox.NumberOfLines) - 1;
 
 			//don't draw it if it's too small to read, anyway.
-			if (fontSize < _minimumFontSizeInPixels)
+			if (fontSize < MinimumFontSizeInPixels)
 				return;
 
 			StringFormat format = new StringFormat();
@@ -470,7 +470,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 				style |= FontStyle.Italic;
 
 			//don't draw it if it's too small to read, anyway.
-			if (fontSize < _minimumFontSizeInPixels)
+			if (fontSize < MinimumFontSizeInPixels)
 				return;
 
 			Font font;
@@ -491,7 +491,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 				fontSize = (int)(Math.Round(fontSize * clientRectangle.Width / (double)size.Width - 0.5));
 
 				//don't draw it if it's too small to read, anyway.
-				if (fontSize < _minimumFontSizeInPixels)
+				if (fontSize < MinimumFontSizeInPixels)
 					return;
 
 				try

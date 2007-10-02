@@ -1,6 +1,9 @@
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	/// <summary>
+	/// The basic definition of a Lut.
+	/// </summary>
 	public interface ILut
 	{
 		/// <summary>

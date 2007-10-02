@@ -34,12 +34,8 @@ namespace ClearCanvas.ImageViewer.Rendering
 		#endregion
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="DrawArgs"/> with
-		/// the specified rendering surface, client rectangle,
-		/// clip rectangle and drawing mode.
+		/// Initializes a new instance of <see cref="DrawArgs"/>.
 		/// </summary>
-		/// <param name="surface"></param>
-		/// <param name="drawMode"></param>
 		public DrawArgs(
 			IRenderingSurface surface, 
 			DrawMode drawMode)
@@ -66,7 +62,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		}
 
 		/// <summary>
-		/// Gets the <see cref="DrawMode"/>.
+		/// Gets the <see cref="ClearCanvas.ImageViewer.Rendering.DrawMode"/>.
 		/// </summary>
 		public DrawMode DrawMode
 		{

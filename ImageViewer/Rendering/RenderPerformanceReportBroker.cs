@@ -29,5 +29,4 @@ namespace ClearCanvas.ImageViewer.Rendering
 			EventsHelper.Fire(PerformanceReport, methodName, totalTime);
 		}
 	}
-
 }

@@ -5,7 +5,7 @@ using ClearCanvas.Desktop;
 namespace ClearCanvas.ImageViewer.Imaging
 {
 	/// <summary>
-	/// Abstract class providing base implementation for a LUT that can be added to a <see cref="LutCollection"/>
+	/// Abstract class providing base implementation for a Lut that can be added to a <see cref="LutCollection"/>
 	/// </summary>
 	public abstract class ComposableLut : ILut
 	{
@@ -47,8 +47,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Gets the output value of the lut at a given input index.
 		/// </summary>
-		/// <param name="index">the index into the Lut</param>
-		/// <returns>the value at the given index</returns>
 		public abstract int this[int index] { get; protected set; }
 
 		/// <summary>
@@ -61,11 +59,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 		}
 
 		/// <summary>
-		/// Gets a string key that identifies this particular LUT's characteristics, so that 
-		/// an image's <see cref="ComposedLut"/> can be more efficiently determined.
+		/// Gets a string key that identifies this particular Lut's characteristics, so that 
+		/// an image's <see cref="IComposedLut"/> can be more efficiently determined.
 		/// </summary>
 		/// <remarks>
-		/// This method is not to be confused with *equality*, since some Luts can be
+		/// This method is not to be confused with <b>equality</b>, since some Luts can be
 		/// dependent upon the actual image to which it belongs.  The method should simply 
 		/// be used to determine if a lut in the <see cref="ComposedLutPool"/> is the same 
 		/// as an existing one.

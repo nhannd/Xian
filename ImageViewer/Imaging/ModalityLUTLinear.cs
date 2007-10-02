@@ -6,6 +6,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Implements the DICOM concept of a Modality LUT.
 	/// </summary>
+	/// <remarks>
+	/// For efficiency's sake, <see cref="ModalityLutLinear"/> is implemented as a <see cref="GeneratedDataLut"/>
+	/// although it could also be a purely calculated Lut.  See the comments for <see cref="IModalityLut"/>
+	/// for more information.
+	/// </remarks>
 	internal sealed class ModalityLutLinear : GeneratedDataLut, IModalityLut, IEquatable<ModalityLutLinear>
 	{
 		private readonly int _bitsStored;
