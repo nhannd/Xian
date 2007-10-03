@@ -318,7 +318,6 @@ namespace ClearCanvas.Desktop.Configuration
 			if (modified)
 			{
 				configuration.Save(ConfigurationSaveMode.Minimal, true);
-				ApplicationSettingsRegister.Instance.SynchronizeExistingSettings(settingsClass, changedValues, values);
 			}
 		}
 

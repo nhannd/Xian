@@ -363,6 +363,10 @@ namespace ClearCanvas.Desktop.Configuration
                     // refresh the table so that properties are no longer marked dirty
                     FillSettingsPropertiesTable(values);
                     UpdateActionEnablement();
+
+                    // update any loaded instances
+                    ApplicationSettingsRegister.Instance.Synchronize(_selectedSettingsGroup);
+
                 }
 				catch (Exception e)
 				{
