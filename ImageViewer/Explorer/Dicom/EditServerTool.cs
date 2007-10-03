@@ -9,9 +9,8 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-    [ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarEdit")]
-    [MenuAction("activate", "dicomaenavigator-contextmenu/MenuEdit")]
-    [ClickHandler("activate", "EditServer")]
+	[ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarEdit", "EditServer")]
+	[MenuAction("activate", "dicomaenavigator-contextmenu/MenuEdit", "EditServer")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipEdit")]
     [IconSet("activate", IconScheme.Colour, "Icons.EditToolSmall.png", "Icons.EditToolMedium.png", "Icons.EditToolLarge.png")]

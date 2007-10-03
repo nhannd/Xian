@@ -16,27 +16,19 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 	[MouseToolButton(XMouseButtons.Right, true)]
 
-	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuWindowLevel", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuWindowLevel", "Select", Flags = ClickActionFlags.CheckAction)]
 	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardWindowLevel/Activate", KeyStroke = XKeys.W)]
-	[MenuAction("activate", "imageviewer-contextmenu/MenuWindowLevel", Flags = ClickActionFlags.CheckAction)]
-    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarWindowLevel", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "imageviewer-contextmenu/MenuWindowLevel", "Select", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarWindowLevel", "Select", Flags = ClickActionFlags.CheckAction)]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
-	[ClickHandler("activate", "Select")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.WindowLevelToolSmall.png", "Icons.WindowLevelToolMedium.png", "Icons.WindowLevelToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Lut.WindowLevel")]
 
-	[KeyboardAction("incrementwindowwidth", "imageviewer-keyboard/ToolsStandardWindowLevel/IncrementWindowWidth", KeyStroke = XKeys.Right)]
-	[ClickHandler("incrementwindowwidth", "IncrementWindowWidth")]
-
-	[KeyboardAction("decrementwindowwidth", "imageviewer-keyboard/ToolsStandardWindowLevel/DecrementWindowWidth", KeyStroke = XKeys.Left)]
-	[ClickHandler("decrementwindowwidth", "DecrementWindowWidth")]
-
-	[KeyboardAction("incrementwindowcenter", "imageviewer-keyboard/ToolsStandardWindowLevel/IncrementWindowCenter", KeyStroke = XKeys.Up)]
-	[ClickHandler("incrementwindowcenter", "IncrementWindowCenter")]
-
-	[KeyboardAction("decrementwindowcenter", "imageviewer-keyboard/ToolsStandardWindowLevel/DecrementWindowCenter", KeyStroke = XKeys.Down)]
-	[ClickHandler("decrementwindowcenter", "DecrementWindowCenter")]
+	[KeyboardAction("incrementwindowwidth", "imageviewer-keyboard/ToolsStandardWindowLevel/IncrementWindowWidth", "IncrementWindowWidth", KeyStroke = XKeys.Right)]
+	[KeyboardAction("decrementwindowwidth", "imageviewer-keyboard/ToolsStandardWindowLevel/DecrementWindowWidth", "DecrementWindowWidth", KeyStroke = XKeys.Left)]
+	[KeyboardAction("incrementwindowcenter", "imageviewer-keyboard/ToolsStandardWindowLevel/IncrementWindowCenter", "IncrementWindowCenter", KeyStroke = XKeys.Up)]
+	[KeyboardAction("decrementwindowcenter", "imageviewer-keyboard/ToolsStandardWindowLevel/DecrementWindowCenter", "DecrementWindowCenter", KeyStroke = XKeys.Down)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class WindowLevelTool : MouseImageViewerTool

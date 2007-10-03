@@ -1,18 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.Utilities.DicomEditor.Tools
 {
-    [ButtonAction("activate", "dicomeditor-toolbar/ToolbarDelete")]
-    [MenuAction("activate", "dicomeditor-contextmenu/MenuDelete")]
-    [ClickHandler("activate", "Delete")]
+	[ButtonAction("activate", "dicomeditor-toolbar/ToolbarDelete", "Delete")]
+	[MenuAction("activate", "dicomeditor-contextmenu/MenuDelete", "Delete")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [Tooltip("activate", "TooltipDelete")]
 	[IconSet("activate", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]

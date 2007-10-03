@@ -10,12 +10,11 @@ using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuStack", Flags = ClickActionFlags.CheckAction)]
-	[MenuAction("activate", "imageviewer-contextmenu/MenuStack", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarStack", Flags = ClickActionFlags.CheckAction)]
-	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardStack/Activate", KeyStroke = XKeys.S)]
+	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuStack", "Select", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "imageviewer-contextmenu/MenuStack", "Select", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarStack", "Select", Flags = ClickActionFlags.CheckAction)]
+	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardStack/Activate", "Select", KeyStroke = XKeys.S)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
-    [ClickHandler("activate", "Select")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.StackToolSmall.png", "Icons.StackToolMedium.png", "Icons.StackToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Stacking.Standard")]
@@ -23,17 +22,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 	[MouseWheelHandler(StopDelayMilliseconds = 500)]
 	[MouseToolButton(XMouseButtons.Left, true)]
 
-	[KeyboardAction("stackup", "imageviewer-keyboard/ToolsStandardStack/StackUp", KeyStroke = XKeys.PageUp)]
-	[ClickHandler("stackup", "StackUp")]
-
-	[KeyboardAction("stackdown", "imageviewer-keyboard/ToolsStandardStack/StackDown", KeyStroke = XKeys.PageDown)]
-	[ClickHandler("stackdown", "StackDown")]
-
-	[KeyboardAction("jumptobeginning", "imageviewer-keyboard/ToolsStandardStack/JumpToBeginning", KeyStroke = XKeys.Home)]
-	[ClickHandler("jumptobeginning", "JumpToBeginning")]
-
-	[KeyboardAction("jumptoend", "imageviewer-keyboard/ToolsStandardStack/JumpToEnd", KeyStroke = XKeys.End)]
-	[ClickHandler("jumptoend", "JumpToEnd")]
+	[KeyboardAction("stackup", "imageviewer-keyboard/ToolsStandardStack/StackUp", "StackUp", KeyStroke = XKeys.PageUp)]
+	[KeyboardAction("stackdown", "imageviewer-keyboard/ToolsStandardStack/StackDown", "StackDown", KeyStroke = XKeys.PageDown)]
+	[KeyboardAction("jumptobeginning", "imageviewer-keyboard/ToolsStandardStack/JumpToBeginning", "JumpToBeginning", KeyStroke = XKeys.Home)]
+	[KeyboardAction("jumptoend", "imageviewer-keyboard/ToolsStandardStack/JumpToEnd", "JumpToEnd", KeyStroke = XKeys.End)]
 
 	[ExtensionOf(typeof(ImageViewerToolExtensionPoint))]
 	public class StackTool : MouseImageViewerTool

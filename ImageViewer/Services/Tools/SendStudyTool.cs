@@ -15,9 +15,8 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
-    [ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarSendStudy")]
-    [MenuAction("activate", "dicomstudybrowser-contextmenu/MenuSendStudy")]
-    [ClickHandler("activate", "SendStudy")]
+	[ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarSendStudy", "SendStudy")]
+	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuSendStudy", "SendStudy")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [Tooltip("activate", "TooltipSendStudy")]
 	[IconSet("activate", IconScheme.Colour, "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png", "Icons.SendStudyToolSmall.png")]

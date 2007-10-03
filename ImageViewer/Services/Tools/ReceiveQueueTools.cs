@@ -11,17 +11,15 @@ using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
-	[ButtonAction("clearSelected", "receive-queue-toolbar/ClearSelected")]
-	[MenuAction("clearSelected", "receive-queue-contextmenu/Clear")]
+	[ButtonAction("clearSelected", "receive-queue-toolbar/ClearSelected", "ClearSelected")]
+	[MenuAction("clearSelected", "receive-queue-contextmenu/Clear", "ClearSelected")]
 	[Tooltip("clearSelected", "TooltipClearSelected")]
 	[IconSet("clearSelected", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
-	[ClickHandler("clearSelected", "ClearSelected")]
 	[EnabledStateObserver("clearSelected", "ClearSelectedEnabled", "ClearSelectedEnabledChanged")]
 
-	[ButtonAction("clearAll", "receive-queue-toolbar/ClearAll")]
+	[ButtonAction("clearAll", "receive-queue-toolbar/ClearAll", "ClearAll")]
 	[Tooltip("clearAll", "TooltipClearAll")]
 	[IconSet("clearAll", IconScheme.Colour, "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png", "Icons.DeleteAllToolSmall.png")]
-	[ClickHandler("clearAll", "ClearAll")]
 	[EnabledStateObserver("clearAll", "ClearAllEnabled", "ClearAllEnabledChanged")]
 
 	[ExtensionOf(typeof(ReceiveQueueApplicationComponentToolExtensionPoint))]

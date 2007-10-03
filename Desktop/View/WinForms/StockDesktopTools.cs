@@ -12,8 +12,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 {
     public class StockDesktopTools
     {
-		[MenuAction("exit", "global-menus/MenuFile/MenuExitApplication", KeyStroke = XKeys.Alt | XKeys.F4)]
-        [ClickHandler("exit", "ExitApp")]
+		[MenuAction("exit", "global-menus/MenuFile/MenuExitApplication", "ExitApp", KeyStroke = XKeys.Alt | XKeys.F4)]
 		[GroupHint("exit", "Application.Exit")]
 
 		[ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]
@@ -29,8 +28,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 			}
         }
 
-		[MenuAction("closeWorkspace", "global-menus/MenuFile/MenuCloseWorkspace", KeyStroke = XKeys.Control | XKeys.F4)]
-		[ClickHandler("closeWorkspace", "CloseWorkspace")]
+		[MenuAction("closeWorkspace", "global-menus/MenuFile/MenuCloseWorkspace", "CloseWorkspace", KeyStroke = XKeys.Control | XKeys.F4)]
         [EnabledStateObserver("closeWorkspace", "Enabled", "EnabledChanged")]
 		[GroupHint("closeWorkspace", "Application.Workspace.Close")]
         [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]

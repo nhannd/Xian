@@ -1,14 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.Annotations;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.Annotations;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.BaseTools
 {
@@ -196,6 +193,9 @@ namespace ClearCanvas.ImageViewer.BaseTools
 				this.Enabled = true;
 		}
 
+		/// <summary>
+		/// Gets or sets the <see cref="MouseWheelShortcut"/>.
+		/// </summary>
 		public MouseWheelShortcut MouseWheelShortcut
 		{
 			get { return _mouseWheelShortcut; }

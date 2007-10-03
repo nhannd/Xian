@@ -10,13 +10,12 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-	[MenuAction("activate", "imageviewer-contextmenu/MenuProbe", Flags = ClickActionFlags.CheckAction)]
-	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuProbe", Flags = ClickActionFlags.CheckAction)]
-	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarProbe", Flags = ClickActionFlags.CheckAction)]
-	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardProbe/Activate", KeyStroke = XKeys.B)]
+	[MenuAction("activate", "imageviewer-contextmenu/MenuProbe", "Select", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuProbe", "Select", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarProbe", "Select", Flags = ClickActionFlags.CheckAction)]
+	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardProbe/Activate", "Select", KeyStroke = XKeys.B)]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ProbeToolSmall.png", "Icons.ProbeToolMedium.png", "Icons.ProbeToolLarge.png")]
-	[ClickHandler("activate", "Select")]
 	[CheckedStateObserver("activate", "Active", "ActivationChanged")]
 	[GroupHint("activate", "Tools.Image.Interrogation.Probe")]
 

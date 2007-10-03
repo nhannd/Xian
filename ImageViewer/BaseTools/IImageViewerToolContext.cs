@@ -1,10 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.ImageViewer.BaseTools
 {

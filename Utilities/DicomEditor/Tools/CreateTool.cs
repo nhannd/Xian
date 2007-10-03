@@ -11,9 +11,8 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Utilities.DicomEditor.Tools
 {
-    [ButtonAction("activate", "dicomeditor-toolbar/ToolbarCreate")]
-    [MenuAction("activate", "dicomeditor-contextmenu/MenuCreate")]
-    [ClickHandler("activate", "Create")]
+	[ButtonAction("activate", "dicomeditor-toolbar/ToolbarCreate", "Create")]
+	[MenuAction("activate", "dicomeditor-contextmenu/MenuCreate", "Create")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [Tooltip("activate", "TooltipCreate")]
 	[IconSet("activate", IconScheme.Colour, "Icons.AddToolSmall.png", "Icons.AddToolSmall.png", "Icons.AddToolSmall.png")]

@@ -11,10 +11,9 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuFlipVertical")]
-	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardFlipVertical", KeyStroke = XKeys.V)]
-    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarFlipVertical")]
-	[ClickHandler("activate", "Activate")]
+	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuFlipVertical", "Activate")]
+	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardFlipVertical", "Activate", KeyStroke = XKeys.V)]
+	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarFlipVertical", "Activate")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipFlipVertical")]
 	[IconSet("activate", IconScheme.Colour, "Icons.FlipVerticalToolSmall.png", "Icons.FlipVerticalToolMedium.png", "Icons.FlipVerticalToolLarge.png")]

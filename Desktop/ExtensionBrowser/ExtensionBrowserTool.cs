@@ -9,8 +9,7 @@ using ClearCanvas.Desktop.ExtensionBrowser.ExtensionPointView;
 
 namespace ClearCanvas.Desktop.ExtensionBrowser
 {
-	[MenuAction("show", "global-menus/MenuTools/MenuUtilities/MenuExtensionBrowser", Flags = ClickActionFlags.CheckAction, KeyStroke = XKeys.Control | XKeys.E)]
-    [ClickHandler("show", "Show")]
+	[MenuAction("show", "global-menus/MenuTools/MenuUtilities/MenuExtensionBrowser", "Show", Flags = ClickActionFlags.CheckAction, KeyStroke = XKeys.Control | XKeys.E)]
 	[GroupHint("show", "Application.Browsing.Extensions")]
 
     [ClearCanvas.Common.ExtensionOf(typeof(DesktopToolExtensionPoint))]

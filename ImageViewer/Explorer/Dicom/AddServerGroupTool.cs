@@ -9,9 +9,8 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-    [ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarAddServerGroup")]
-    [MenuAction("activate", "dicomaenavigator-contextmenu/MenuAddServerGroup")]
-    [ClickHandler("activate", "AddNewServerGroup")]
+	[ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarAddServerGroup", "AddNewServerGroup")]
+	[MenuAction("activate", "dicomaenavigator-contextmenu/MenuAddServerGroup", "AddNewServerGroup")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipAddServerGroup")]
 	[IconSet("activate", IconScheme.Colour, "Icons.AddServerGroupToolSmall.png", "Icons.AddServerGroupToolMedium.png", "Icons.AddServerGroupToolLarge.png")]

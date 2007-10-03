@@ -16,9 +16,8 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
-	[ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarDeleteStudy")]
-	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuDeleteStudy")]
-	[ClickHandler("activate", "DeleteStudy")]
+	[ButtonAction("activate", "dicomstudybrowser-toolbar/ToolbarDeleteStudy", "DeleteStudy")]
+	[MenuAction("activate", "dicomstudybrowser-contextmenu/MenuDeleteStudy", "DeleteStudy")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipDeleteStudy")]
 	[IconSet("activate", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]

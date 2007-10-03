@@ -1,17 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-    [ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarAddServer")]
-    [MenuAction("activate", "dicomaenavigator-contextmenu/MenuAddServer")]
-    [ClickHandler("activate", "AddNewServer")]
+	[ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarAddServer", "AddNewServer")]
+	[MenuAction("activate", "dicomaenavigator-contextmenu/MenuAddServer", "AddNewServer")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipAddServer")]
 	[IconSet("activate", IconScheme.Colour, "Icons.AddServerToolSmall.png", "Icons.AddServerToolMedium.png", "Icons.AddServerToolLarge.png")]

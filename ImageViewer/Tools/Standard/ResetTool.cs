@@ -11,9 +11,8 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuReset")]
-    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarReset")]
-    [ClickHandler("activate", "Activate")]
+	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuReset", "Activate")]
+	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarReset", "Activate")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipReset")]
 	[IconSet("activate", IconScheme.Colour, "Icons.ResetToolSmall.png", "Icons.ResetToolMedium.png", "Icons.ResetToolLarge.png")]

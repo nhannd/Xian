@@ -12,10 +12,9 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuFlipHorizontal")]
-	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardFlipHorizontal", KeyStroke = XKeys.H)]
-    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarFlipHorizontal")]
-	[ClickHandler("activate", "Activate")]
+	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuFlipHorizontal", "Activate")]
+	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardFlipHorizontal", "Activate", KeyStroke = XKeys.H)]
+	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarFlipHorizontal", "Activate")]
 	[EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipFlipHorizontal")]
 	[IconSet("activate", IconScheme.Colour, "Icons.FlipHorizontalToolSmall.png", "Icons.FlipHorizontalToolMedium.png", "Icons.FlipHorizontalToolLarge.png")]

@@ -12,9 +12,8 @@ using System.ServiceModel;
 
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
-	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuLocalDataStoreReindex")]
+	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuLocalDataStoreReindex", "Activate")]
 	//[IconSet("activate", IconScheme.Colour, "", "Icons.LocalDataStoreReindexMedium.png", "Icons.LocalDataStoreReindexLarge.png")]
-	[ClickHandler("activate", "Activate")]
 
 	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
 	public class LocalDataStoreReindexTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>

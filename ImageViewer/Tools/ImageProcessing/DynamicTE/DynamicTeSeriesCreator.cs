@@ -14,8 +14,8 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 		public static void Create(IImageViewerToolContext viewerContext)
 		{
 			IDisplaySet selectedDisplaySet = viewerContext.Viewer.SelectedImageBox.DisplaySet;
-			IDisplaySet t2DisplaySet = new DisplaySet();
-			t2DisplaySet.Name = String.Format("{0} - Dynamic TE", selectedDisplaySet.Name);
+			string name = String.Format("{0} - Dynamic TE", selectedDisplaySet.Name);
+			IDisplaySet t2DisplaySet = new DisplaySet(name, "");
 
 			double currentSliceLocation = 0.0;
 
@@ -84,7 +84,7 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 
 		private static DicomFile FindMap(string studyUID, double sliceLocation, string suffix)
 		{
-			string directory = String.Format("C:\\dicom_datastore\\T2_MAPS\\{0}", studyUID);
+			string directory = String.Format(".\\T2_MAPS\\{0}", studyUID);
 			string[] files = Directory.GetFiles(directory);
 
 			foreach (string file in files)

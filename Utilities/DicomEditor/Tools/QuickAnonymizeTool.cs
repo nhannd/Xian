@@ -11,11 +11,10 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Utilities.DicomEditor.Tools
 {
-    [ButtonAction("activate", "dicomeditor-contextmenu/ToolbarQuickAnonymize")]
-	[MenuAction("activate", "dicomeditor-toolbar/MenuQuickAnonymize")]
+	[ButtonAction("activate", "dicomeditor-contextmenu/ToolbarQuickAnonymize", "Apply")]
+	[MenuAction("activate", "dicomeditor-toolbar/MenuQuickAnonymize", "Apply")]
 	[Tooltip("activate", "TooltipQuickAnonymize")]
 	[IconSet("activate", IconScheme.Colour, "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png", "Icons.AnonymizeToolSmall.png")]
-    [ClickHandler("activate", "Apply")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 
     [ExtensionOf(typeof(DicomEditorToolExtensionPoint))]

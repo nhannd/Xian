@@ -13,10 +13,9 @@ using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-    [MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuRectangularROI", Flags = ClickActionFlags.CheckAction)]
-    [ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarRectangularROI", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuRectangularROI", "Select", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarRectangularROI", "Select", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
-    [ClickHandler("activate", "Select")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.RectangularROIToolSmall.png", "Icons.RectangularROIToolMedium.png", "Icons.RectangularROIToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Measurement.ROI.Rectangular")]

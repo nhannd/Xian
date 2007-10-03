@@ -12,20 +12,17 @@ using ClearCanvas.ImageViewer.Services.LocalDataStore;
 namespace ClearCanvas.ImageViewer.Services.Tools
 {
 
-	[MenuAction("cancel", "dicom-file-import-contextmenu/Cancel")]
+	[MenuAction("cancel", "dicom-file-import-contextmenu/Cancel", "Cancel")]
 	[Tooltip("cancel", "Cancel")]
-	[ClickHandler("cancel", "Cancel")]
 	[EnabledStateObserver("cancel", "CancelEnabled", "CancelEnabledChanged")]
 
-	[MenuAction("clear", "dicom-file-import-contextmenu/Clear")]
+	[MenuAction("clear", "dicom-file-import-contextmenu/Clear", "Clear")]
 	[Tooltip("clear", "Clear")]
-	[ClickHandler("clear", "Clear")]
 	[EnabledStateObserver("clear", "ClearEnabled", "ClearEnabledChanged")]
 
-	[ButtonAction("clearInactive", "dicom-file-import-toolbar/ClearInactive")]
+	[ButtonAction("clearInactive", "dicom-file-import-toolbar/ClearInactive", "ClearInactive")]
 	[Tooltip("clearInactive", "TooltipClearInactive")]
 	[IconSet("clearInactive", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png", "Icons.DeleteToolSmall.png")]
-	[ClickHandler("clearInactive", "ClearInactive")]
 	[EnabledStateObserver("clearInactive", "ClearInactiveEnabled", "ClearInactiveEnabledChanged")]
 
 	[ExtensionOf(typeof(DicomFileImportComponentToolExtensionPoint))]

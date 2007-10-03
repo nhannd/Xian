@@ -7,20 +7,16 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.Help
 {
-    [MenuAction("showAbout", "global-menus/MenuHelp/MenuAbout")]
-	[ClickHandler("showAbout", "ShowAbout")]
+	[MenuAction("showAbout", "global-menus/MenuHelp/MenuAbout", "ShowAbout")]
 	[GroupHint("showAbout", "Application.Help.About")]
 
-    [MenuAction("showWebsite", "global-menus/MenuHelp/MenuWebsite")]
-    [ClickHandler("showWebsite", "ShowWebsite")]
+	[MenuAction("showWebsite", "global-menus/MenuHelp/MenuWebsite", "ShowWebsite")]
 	[GroupHint("showWebsite", "Application.Help.Website")]
 
-	[MenuAction("showUsersGuide", "global-menus/MenuHelp/MenuUsersGuide")]
-	[ClickHandler("showUsersGuide", "ShowUsersGuide")]
+	[MenuAction("showUsersGuide", "global-menus/MenuHelp/MenuUsersGuide", "ShowUsersGuide")]
 	[GroupHint("showUsersGuide", "Application.Help.UsersGuide")]
 
-	[MenuAction("showLicense", "global-menus/MenuHelp/MenuLicense")]
-	[ClickHandler("showLicense", "ShowLicense")]
+	[MenuAction("showLicense", "global-menus/MenuHelp/MenuLicense", "ShowLicense")]
 	[GroupHint("showLicense", "Application.Help.License")]
 
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]

@@ -16,10 +16,8 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.Utilities.DicomEditor
 {
-    [MenuAction("activate", "explorerlocal-contextmenu/MenuDumpFiles")]
-    [ClickHandler("activate", "Dump")]
-	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuDicomEditor")]
-    [ClickHandler("activate", "Dump")]
+	[MenuAction("activate", "explorerlocal-contextmenu/MenuDumpFiles", "Dump")]
+	[MenuAction("activate", "global-menus/MenuTools/MenuUtilities/MenuDicomEditor", "Dump")]
     [Tooltip("activate", "OpenDicomFilesVerbose")]
 	[IconSet("activate", IconScheme.Colour, "Icons.DicomEditorToolSmall.png", "Icons.DicomEditorToolMedium.png", "Icons.DicomEditorToolLarge.png")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]

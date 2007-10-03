@@ -12,27 +12,19 @@ using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
-	[MenuAction("activate", "imageviewer-contextmenu/MenuPan", Flags = ClickActionFlags.CheckAction)]
-	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuPan", Flags = ClickActionFlags.CheckAction)]
-    [ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarPan", Flags = ClickActionFlags.CheckAction)]
-	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardPan/Activate", KeyStroke = XKeys.P)]
+	[MenuAction("activate", "imageviewer-contextmenu/MenuPan", "Select", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "global-menus/MenuTools/MenuStandard/MenuPan", "Select", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("activate", "global-toolbars/ToolbarStandard/ToolbarPan", "Select", Flags = ClickActionFlags.CheckAction)]
+	[KeyboardAction("activate", "imageviewer-keyboard/ToolsStandardPan/Activate", "Select", KeyStroke = XKeys.P)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
-    [ClickHandler("activate", "Select")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.PanToolSmall.png", "Icons.PanToolMedium.png", "Icons.PanToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Manipulation.Pan")]
 
-	[KeyboardAction("panleft", "imageviewer-keyboard/ToolsStandardPan/PanLeft", KeyStroke = XKeys.Control | XKeys.Left)]
-	[ClickHandler("panleft", "PanLeft")]
-
-	[KeyboardAction("panright", "imageviewer-keyboard/ToolsStandardPan/PanRight", KeyStroke = XKeys.Control | XKeys.Right)]
-	[ClickHandler("panright", "PanRight")]
-
-	[KeyboardAction("panup", "imageviewer-keyboard/ToolsStandardPan/PanUp", KeyStroke = XKeys.Control | XKeys.Up)]
-	[ClickHandler("panup", "PanUp")]
-
-	[KeyboardAction("pandown", "imageviewer-keyboard/ToolsStandardPan/PanDown", KeyStroke = XKeys.Control | XKeys.Down)]
-	[ClickHandler("pandown", "PanDown")]
+	[KeyboardAction("panleft", "imageviewer-keyboard/ToolsStandardPan/PanLeft", "PanLeft", KeyStroke = XKeys.Control | XKeys.Left)]
+	[KeyboardAction("panright", "imageviewer-keyboard/ToolsStandardPan/PanRight", "PanRight", KeyStroke = XKeys.Control | XKeys.Right)]
+	[KeyboardAction("panup", "imageviewer-keyboard/ToolsStandardPan/PanUp", "PanUp", KeyStroke = XKeys.Control | XKeys.Up)]
+	[KeyboardAction("pandown", "imageviewer-keyboard/ToolsStandardPan/PanDown", "PanDown", KeyStroke = XKeys.Control | XKeys.Down)]
 
 	[ModifiedMouseToolButton(XMouseButtons.Left, ModifierFlags.Control)]
 	[MouseToolButton(XMouseButtons.Left, false)]

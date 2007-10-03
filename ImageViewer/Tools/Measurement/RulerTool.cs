@@ -15,11 +15,10 @@ using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Tools.Measurement
 {
-	[MenuAction("activate", "imageviewer-contextmenu/MenuRuler", Flags = ClickActionFlags.CheckAction)]
-	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuRuler", Flags = ClickActionFlags.CheckAction)]
-    [ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarRuler", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "imageviewer-contextmenu/MenuRuler", "Select", Flags = ClickActionFlags.CheckAction)]
+	[MenuAction("activate", "global-menus/MenuTools/MenuMeasurement/MenuRuler", "Select", Flags = ClickActionFlags.CheckAction)]
+	[ButtonAction("activate", "global-toolbars/ToolbarMeasurement/ToolbarRuler", "Select", Flags = ClickActionFlags.CheckAction)]
     [CheckedStateObserver("activate", "Active", "ActivationChanged")]
-    [ClickHandler("activate", "Select")]
 	[TooltipValueObserver("activate", "Tooltip", "TooltipChanged")]
 	[IconSet("activate", IconScheme.Colour, "Icons.RulerToolSmall.png", "Icons.RulerToolMedium.png", "Icons.RulerToolLarge.png")]
 	[GroupHint("activate", "Tools.Image.Measurement.ROI.Linear")]

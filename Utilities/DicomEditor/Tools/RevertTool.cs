@@ -10,9 +10,8 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Utilities.DicomEditor.Tools
 {
-    [ButtonAction("activate", "dicomeditor-toolbar/ToolbarRevert")]
-    [MenuAction("activate", "dicomeditor-contextmenu/MenuRevert")]
-    [ClickHandler("activate", "Revert")]
+	[ButtonAction("activate", "dicomeditor-toolbar/ToolbarRevert", "Revert")]
+	[MenuAction("activate", "dicomeditor-contextmenu/MenuRevert", "Revert")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [Tooltip("activate", "TooltipRevert")]
 	[IconSet("activate", IconScheme.Colour, "Icons.UndoToolSmall.png", "Icons.UndoToolSmall.png", "Icons.UndoToolSmall.png")]

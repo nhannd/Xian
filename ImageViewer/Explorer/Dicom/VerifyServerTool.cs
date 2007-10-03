@@ -1,20 +1,17 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Dicom;
 using ClearCanvas.Dicom.OffisNetwork;
-using ClearCanvas.ImageViewer.Services.ServerTree;
 using ClearCanvas.ImageViewer.Configuration;
+using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-    [ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarVerify")]
-    [MenuAction("activate", "dicomaenavigator-contextmenu/MenuVerify")]
-    [ClickHandler("activate", "VerifyServer")]
+    [ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarVerify", "VerifyServer")]
+    [MenuAction("activate", "dicomaenavigator-contextmenu/MenuVerify", "VerifyServer")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [Tooltip("activate", "TooltipVerify")]
 	[IconSet("activate", IconScheme.Colour, "Icons.VerifyServerToolSmall.png", "Icons.VerifyServerToolMedium.png", "Icons.VerifyServerToolLarge.png")]

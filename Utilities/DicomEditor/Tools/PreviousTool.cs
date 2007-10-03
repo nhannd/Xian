@@ -10,8 +10,7 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Utilities.DicomEditor.Tools
 {
-    [ButtonAction("activate", "dicomeditor-toolbar/ToolbarPrevious")]
-    [ClickHandler("activate", "Previous")]
+	[ButtonAction("activate", "dicomeditor-toolbar/ToolbarPrevious", "Previous")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [Tooltip("activate", "TooltipPrevious")]
 	[IconSet("activate", IconScheme.Colour, "Icons.PreviousToolSmall.png", "Icons.PreviousToolSmall.png", "Icons.PreviousToolSmall.png")]

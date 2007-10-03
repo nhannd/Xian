@@ -7,9 +7,8 @@ using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic
 {
-	[MenuAction("show", "global-menus/MenuTools/MenuStandard/MenuLayoutManager")]
-    [ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarLayoutManager")]
-    [ClickHandler("show", "Show")]
+	[MenuAction("show", "global-menus/MenuTools/MenuStandard/MenuLayoutManager", "Show")]
+	[ButtonAction("show", "global-toolbars/ToolbarStandard/ToolbarLayoutManager", "Show")]
 	[IconSet("show", IconScheme.Colour, "Icons.LayoutToolSmall.png", "Icons.LayoutToolMedium.png", "Icons.LayoutToolLarge.png")]
     [Tooltip("show", "Layout Manager")]
 	[GroupHint("show", "Application.Workspace.Layout.Basic")]

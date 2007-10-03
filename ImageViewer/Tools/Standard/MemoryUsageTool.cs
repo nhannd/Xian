@@ -11,8 +11,7 @@ using ClearCanvas.Desktop.Actions;
 namespace ClearCanvas.ImageViewer.Tools.Standard
 {
 #if DEBUG
-	[MenuAction("apply", "global-menus/MenuTools/MenuUtilities/MenuMemoryUsage")]
-	[ClickHandler("apply", "Apply")]
+	[MenuAction("apply", "global-menus/MenuTools/MenuUtilities/MenuMemoryUsage", "Apply")]
 	[EnabledStateObserver("apply", "Enabled", "EnabledChanged")]
 	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
 #endif

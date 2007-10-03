@@ -9,9 +9,8 @@ using ClearCanvas.ImageViewer.Services.ServerTree;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom
 {
-    [ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarDelete")]
-    [MenuAction("activate", "dicomaenavigator-contextmenu/MenuDelete")]
-    [ClickHandler("activate", "DeleteServerServerGroup")]
+	[ButtonAction("activate", "dicomaenavigator-toolbar/ToolbarDelete", "DeleteServerServerGroup")]
+	[MenuAction("activate", "dicomaenavigator-contextmenu/MenuDelete", "DeleteServerServerGroup")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
 	[Tooltip("activate", "TooltipDelete")]
     [IconSet("activate", IconScheme.Colour, "Icons.DeleteToolSmall.png", "Icons.DeleteToolMedium.png", "Icons.DeleteToolLarge.png")]

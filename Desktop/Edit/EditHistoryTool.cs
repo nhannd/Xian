@@ -9,17 +9,15 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Edit
 {
-    [MenuAction("undo", "global-menus/MenuEdit/MenuUndo", KeyStroke = XKeys.Control | XKeys.Z)]
-    [ButtonAction("undo", "global-toolbars/ToolbarStandard/ToolbarUndo")]
-    [ClickHandler("undo", "Undo")]
+	[MenuAction("undo", "global-menus/MenuEdit/MenuUndo", "Undo", KeyStroke = XKeys.Control | XKeys.Z)]
+	[ButtonAction("undo", "global-toolbars/ToolbarStandard/ToolbarUndo", "Undo")]
     [EnabledStateObserver("undo", "UndoEnabled", "UndoEnabledChanged")]
 	[IconSet("undo", IconScheme.Colour, "Icons.UndoToolSmall.png", "Icons.UndoToolMedium.png", "Icons.UndoToolLarge.png")]
     [Tooltip("undo", "TooltipUndo")]
 	[GroupHint("undo", "Application.Edit.Undo")]
 
-	[MenuAction("redo", "global-menus/MenuEdit/MenuRedo", KeyStroke = XKeys.Control | XKeys.Y)]
-    [ButtonAction("redo", "global-toolbars/ToolbarStandard/ToolbarRedo")]
-    [ClickHandler("redo", "Redo")]
+	[MenuAction("redo", "global-menus/MenuEdit/MenuRedo", "Redo", KeyStroke = XKeys.Control | XKeys.Y)]
+	[ButtonAction("redo", "global-toolbars/ToolbarStandard/ToolbarRedo", "Redo")]
     [EnabledStateObserver("redo", "RedoEnabled", "RedoEnabledChanged")]
 	[IconSet("redo", IconScheme.Colour, "Icons.RedoToolSmall.png", "Icons.RedoToolMedium.png", "Icons.RedoToolLarge.png")]
     [Tooltip("redo", "TooltipRedo")]

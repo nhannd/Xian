@@ -4,6 +4,7 @@ using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
 using System.Drawing;
+using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe
 {

@@ -10,9 +10,8 @@ using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Utilities.DicomEditor.Tools
 {
-    [ButtonAction("activate", "dicomeditor-toolbar/ToolbarReplicate")]
-    [MenuAction("activate", "dicomeditor-contextmenu/MenuReplicate")]
-    [ClickHandler("activate", "Replicate")]
+	[ButtonAction("activate", "dicomeditor-toolbar/ToolbarReplicate", "Replicate")]
+	[MenuAction("activate", "dicomeditor-contextmenu/MenuReplicate", "Replicate")]
     [EnabledStateObserver("activate", "Enabled", "EnabledChanged")]
     [Tooltip("activate", "TooltipReplicate")]
 	[IconSet("activate", IconScheme.Colour, "Icons.CopyToolSmall.png", "Icons.CopyToolSmall.png", "Icons.CopyToolSmall.png")]
