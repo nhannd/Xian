@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
 using ClearCanvas.ImageServer.Database;
+using ClearCanvas.ImageServer.Model.SelectBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
@@ -58,6 +55,17 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _fileSystemTierKey; }
             set { _fileSystemTierKey = value; }
+        }
+        #endregion
+
+        #region Static Methods
+        static public Filesystem Load(ServerEntityKey key)
+        {
+            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
+            ISelectFilesystem broker = read.GetBroker<ISelectFilesystem>();
+            Filesystem theFilesystem = broker.Load(key);
+            read.Dispose();
+            return theFilesystem;
         }
         #endregion
 

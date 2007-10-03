@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Database;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.ImageServer.Database;
+using ClearCanvas.ImageServer.Model.SelectBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
@@ -75,6 +73,17 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _numberOfPatientRelatedInstances; }
             set { _numberOfPatientRelatedInstances = value; }
+        }
+        #endregion
+
+        #region Static Methods
+        static public Patient Load(ServerEntityKey key)
+        {
+            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
+            ISelectPatient broker = read.GetBroker<ISelectPatient>();
+            Patient thePatient = broker.Load(key);
+            read.Dispose();
+            return thePatient;
         }
         #endregion
 

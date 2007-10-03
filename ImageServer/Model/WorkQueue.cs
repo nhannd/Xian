@@ -1,14 +1,14 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Xml;
-
-using ClearCanvas.ImageServer.Database;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.ImageServer.Database;
+using ClearCanvas.ImageServer.Model.SelectBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
+    /// <summary>
+    /// WorkQueue entry entity.
+    /// </summary>
     public class WorkQueue : ServerEntity
     {
         #region Constructors
@@ -69,6 +69,17 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _data; }
             set { _data = value; }
+        }
+        #endregion
+
+        #region Static Methods
+        static public WorkQueue Load(ServerEntityKey key)
+        {
+            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
+            ISelectWorkQueue broker = read.GetBroker<ISelectWorkQueue>();
+            WorkQueue theItem = broker.Load(key);
+            read.Dispose();
+            return theItem;
         }
         #endregion
     }

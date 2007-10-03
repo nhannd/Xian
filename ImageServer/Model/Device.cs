@@ -1,7 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Database;
+using ClearCanvas.ImageServer.Model.SelectBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
@@ -22,6 +22,7 @@ namespace ClearCanvas.ImageServer.Model
         private bool _active;
         private bool _dhcp;
         private int _port;
+        private ServerPartition _serverPartition;
         #endregion
 
         #region Public Properties
@@ -65,6 +66,27 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _port; }
             set { _port = value; }
+        }
+
+        public ServerPartition ServerPartition
+        {
+            get
+            {
+                if (_serverPartition == null)
+                    _serverPartition = ServerPartition.Load(_serverPartitionKey);
+                return _serverPartition;
+            }
+        }
+        #endregion
+
+        #region Static Methods
+        static public Device Load(ServerEntityKey key)
+        {
+            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
+            ISelectDevice broker = read.GetBroker<ISelectDevice>();
+            Device theDevice = broker.Load(key);
+            read.Dispose();
+            return theDevice;
         }
         #endregion
     }

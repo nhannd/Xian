@@ -28,6 +28,11 @@ namespace ClearCanvas.ImageServer.Queue.Work
             _readContext = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
         }
 
+        ~StudyProcessItemProcessor()
+        {
+            _readContext.Dispose();
+        }
+
         /// <summary>
         /// Load the storage location for the WorkQueue item.
         /// </summary>

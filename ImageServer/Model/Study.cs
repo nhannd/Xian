@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageServer.Database;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.ImageServer.Database;
+using ClearCanvas.ImageServer.Model.SelectBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
@@ -143,6 +141,17 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _statusEnum; }
             set { _statusEnum = value; }
+        }
+        #endregion
+
+        #region Static Methods
+        static public Study Load(ServerEntityKey key)
+        {
+            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
+            ISelectStudy broker = read.GetBroker<ISelectStudy>();
+            Study theStudy = broker.Load(key);
+            read.Dispose();
+            return theStudy;
         }
         #endregion
     }

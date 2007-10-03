@@ -1,9 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.ImageServer.Database;
 using ClearCanvas.Enterprise.Core;
+using ClearCanvas.ImageServer.Database;
+using ClearCanvas.ImageServer.Model.SelectBrokers;
 
 namespace ClearCanvas.ImageServer.Model
 {
@@ -55,6 +53,15 @@ namespace ClearCanvas.ImageServer.Model
         {
             get { return _serverPartitionKey; }
             set { _serverPartitionKey = value; }
+        }
+        #endregion
+
+        #region Static Methods
+        static public ServerPartition Load(ServerEntityKey key)
+        {
+            IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
+            ISelectServerPartition broker = read.GetBroker<ISelectServerPartition>();
+            return broker.Load(key);
         }
         #endregion
     }

@@ -47,12 +47,15 @@
     <Compile Include="Brokers\InsertStudyStorage.cs" />
     <Compile Include="Brokers\InsertWorkQueueStudyProcess.cs" />
     <Compile Include="Brokers\QueryDevice.cs" />
-    <Compile Include="Brokers\SelectPatient.cs" />
+    <Compile Include="SelectBrokers\SelectDevice.cs" />
+    <Compile Include="SelectBrokers\SelectFilesystem.cs" />
+    <Compile Include="SelectBrokers\SelectPatient.cs" />
     <Compile Include="Brokers\QueryModalitiesInStudy.cs" />
     <Compile Include="Brokers\QueryPartitionSopClasses.cs" />
     <Compile Include="Brokers\QueryRequestAttributes.cs" />
-    <Compile Include="Brokers\SelectSeries.cs" />
-    <Compile Include="Brokers\SelectStudy.cs" />
+    <Compile Include="SelectBrokers\SelectSeries.cs" />
+    <Compile Include="SelectBrokers\SelectServerPartition.cs" />
+    <Compile Include="SelectBrokers\SelectStudy.cs" />
     <Compile Include="Brokers\QueryStudyStorageLocation.cs" />
     <Compile Include="Brokers\QueryWorkQueue.cs" />
     <Compile Include="Brokers\QueryWorkQueueUids.cs" />
@@ -60,6 +63,7 @@
     <Compile Include="Brokers\TypeEnumBroker.cs" />
     <Compile Include="Brokers\UpdateWorkQueue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SelectBrokers\SelectWorkQueue.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Common\ClearCanvas.Common.csproj">
