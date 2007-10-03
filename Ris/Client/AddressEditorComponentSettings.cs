@@ -1,6 +1,7 @@
 using System;
 using System.Configuration;
 using System.Collections.Generic;
+using ClearCanvas.Common.Configuration;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
@@ -13,8 +14,9 @@ namespace ClearCanvas.Ris.Client
     internal sealed partial class AddressEditorComponentSettings
     {
 
-        public AddressEditorComponentSettings()
+        private AddressEditorComponentSettings()
         {
+            ApplicationSettingsRegister.Instance.RegisterInstance(this);
         }
 
         public ICollection<string> CountryChoices

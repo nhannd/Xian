@@ -1,5 +1,6 @@
 using System;
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -9,8 +10,9 @@ namespace ClearCanvas.Ris.Client
     internal sealed partial class FormatSettings
     {
 
-        public FormatSettings()
+        private FormatSettings()
         {
+            ApplicationSettingsRegister.Instance.RegisterInstance(this);
         }
     }
 }

@@ -14,10 +14,5 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             ApplicationSettingsRegister.Instance.RegisterInstance(this);
         }
-
-        ~ReportingPreviewComponentSettings()
-        {
-            ApplicationSettingsRegister.Instance.UnregisterInstance(this);
-        }
     }
 }

@@ -1,4 +1,5 @@
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -7,5 +8,9 @@ namespace ClearCanvas.Ris.Client.Adt
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class TechnologistDocumentationComponentSettings
     {
+        private TechnologistDocumentationComponentSettings()
+        {
+            ApplicationSettingsRegister.Instance.RegisterInstance(this);
+        }
     }
 }

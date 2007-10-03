@@ -14,10 +14,5 @@ namespace ClearCanvas.Ris.Client.Adt
         {
             ApplicationSettingsRegister.Instance.RegisterInstance(this);
         }
-
-        ~RegistrationPreviewComponentSettings()
-        {
-            ApplicationSettingsRegister.Instance.UnregisterInstance(this);
-        }
     }
 }

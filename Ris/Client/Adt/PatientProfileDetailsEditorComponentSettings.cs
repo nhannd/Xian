@@ -1,5 +1,6 @@
 using System;
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -10,8 +11,9 @@ namespace ClearCanvas.Ris.Client.Adt
     internal sealed partial class PatientProfileDetailsEditorComponentSettings
     {
 
-        public PatientProfileDetailsEditorComponentSettings()
+        private PatientProfileDetailsEditorComponentSettings()
         {
+            ApplicationSettingsRegister.Instance.RegisterInstance(this);
         }
     }
 }

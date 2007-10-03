@@ -1,5 +1,6 @@
 using System;
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -10,8 +11,9 @@ namespace ClearCanvas.Ris.Client
     internal sealed partial class EmailAddressEditorComponentSettings
     {
 
-        public EmailAddressEditorComponentSettings()
+        private EmailAddressEditorComponentSettings()
         {
+            ApplicationSettingsRegister.Instance.RegisterInstance(this);
         }
     }
 }

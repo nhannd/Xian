@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Configuration;
+using ClearCanvas.Common.Configuration;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -9,8 +10,9 @@ namespace ClearCanvas.Ris.Client
     [SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
     internal sealed partial class WebResourcesSettings
     {
-        public WebResourcesSettings()
+        private WebResourcesSettings()
         {
+            ApplicationSettingsRegister.Instance.RegisterInstance(this);
         }
     }
 }
