@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -51,8 +49,8 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public ImageBox()
 		{
-			this.Tiles.ItemAdded += new EventHandler<TileEventArgs>(OnTileAdded);
-			this.Tiles.ItemRemoved += new EventHandler<TileEventArgs>(OnTileRemoved);
+			this.Tiles.ItemAdded += OnTileAdded;
+			this.Tiles.ItemRemoved += OnTileRemoved;
 		}
 
 		#region Public properties
@@ -104,7 +102,7 @@ namespace ClearCanvas.ImageViewer
 		/// been added to the <see cref="IPhysicalWorkspace"/> yet.</value>
 		public IPhysicalWorkspace ParentPhysicalWorkspace
 		{
-			get { return _parentPhysicalWorkspace as IPhysicalWorkspace; }
+			get { return _parentPhysicalWorkspace; }
 			internal set { _parentPhysicalWorkspace = value as PhysicalWorkspace; }
 		}
 
@@ -143,7 +141,7 @@ namespace ClearCanvas.ImageViewer
 		/// </remarks>
 		public IDisplaySet DisplaySet
 		{
-			get { return _displaySet as IDisplaySet; }
+			get { return _displaySet; }
 			set
 			{
 				// Break association with the old display set (should we dispose too?)

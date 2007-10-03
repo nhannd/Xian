@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer
@@ -60,6 +58,9 @@ namespace ClearCanvas.ImageViewer
 			}
 		}
 
+		/// <summary>
+		/// Gets the <see cref="IImageViewerToolContext"/>.
+		/// </summary>
 		public IImageViewerToolContext ImageViewerToolContext
 		{
 			get { return _imageViewerToolContext; }

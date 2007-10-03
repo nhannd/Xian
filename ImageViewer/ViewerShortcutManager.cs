@@ -1,13 +1,11 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.ImageViewer.BaseTools;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer
 {

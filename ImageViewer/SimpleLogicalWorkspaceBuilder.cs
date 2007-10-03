@@ -1,5 +1,4 @@
 using System;
-using System.Collections.Generic;
 using ClearCanvas.Desktop;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Comparers;

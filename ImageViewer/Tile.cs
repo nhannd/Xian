@@ -1,14 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
-
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Rendering;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Annotations;
-using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -83,7 +78,7 @@ namespace ClearCanvas.ImageViewer
 		/// been added to the <see cref="IImageBox"/> yet.</value>
 		public IImageBox ParentImageBox
 		{
-			get { return _parentImageBox as IImageBox; }
+			get { return _parentImageBox; }
 			internal set 
 			{
 				Platform.CheckForNullReference(value, "Tile.ParentImageBox");
@@ -97,7 +92,7 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public IPresentationImage PresentationImage
 		{
-			get { return _presentationImage as IPresentationImage; }
+			get { return _presentationImage; }
 			internal set 
 			{
 				if (_presentationImage != value)
@@ -277,8 +272,10 @@ namespace ClearCanvas.ImageViewer
 		#region Public events
 
 		/// <summary>
-		/// Occurs when the <see cref="PresentationImage"/>'s 
-		/// <see cref="PresentationImage.ImageRenderer"/> has changed.
+		/// Occurs when the <see cref="IRenderer"/> of a new 
+		/// <see cref="PresentationImage"/> is different from that of 
+		/// the previous <see cref="PresentationImage"/> that occupied this
+		/// <see cref="Tile"/>.
 		/// </summary>
 		/// <remarks>
 		/// <para>
@@ -376,7 +373,7 @@ namespace ClearCanvas.ImageViewer
 				Platform.CheckMemberIsSet(this.ImageViewer, "Tile.ImageViewer");
 
 				this.Selected = true;
-				this.ImageViewer.EventBroker.OnTileSelected(new TileSelectedEventArgs(this as ITile));
+				this.ImageViewer.EventBroker.OnTileSelected(new TileSelectedEventArgs(this));
 				_parentImageBox.SelectedTile = this;
 
 				if (_presentationImage != null)

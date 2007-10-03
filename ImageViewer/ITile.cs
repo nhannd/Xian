@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer
 {

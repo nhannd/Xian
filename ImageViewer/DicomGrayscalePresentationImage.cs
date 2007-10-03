@@ -1,11 +1,7 @@
-using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Annotations.Dicom;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.Graphics;
-
 
 namespace ClearCanvas.ImageViewer
 {
@@ -18,9 +14,13 @@ namespace ClearCanvas.ImageViewer
 		private readonly ImageSop _imageSop;
 
 		/// <summary>
-		/// Constructor.
+		/// Initializes a new instance of <see cref="DicomGrayscalePresentationImage"/>.
 		/// </summary>
-		/// <param name="imageSop">The <see cref="ImageSop"/> from which to construct the image</param>
+		/// <param name="imageSop">The <see cref="ImageSop"/> from which to construct the image.</param>
+		/// <remarks>
+		/// This constructor provides a convenient means of associating an
+		/// <see cref="ImageSop"/> with a <see cref="GrayscalePresentationImage"/>.
+		/// </remarks>
 		public DicomGrayscalePresentationImage(ImageSop imageSop)
 			: base(imageSop.Rows,
 			       imageSop.Columns,
@@ -43,6 +43,11 @@ namespace ClearCanvas.ImageViewer
 
 			// TODO: Consider making this a singleton
 			this.AnnotationLayoutProvider = new DicomFilteredAnnotationLayoutProvider(this);
+		}
+
+		public override IPresentationImage Clone()
+		{
+			return new DicomGrayscalePresentationImage(_imageSop);
 		}
 
 		#region IImageSopProvider members

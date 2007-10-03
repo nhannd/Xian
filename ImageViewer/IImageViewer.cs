@@ -1,10 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -101,6 +98,6 @@ namespace ClearCanvas.ImageViewer
 		/// was cancelled.</param>
 		/// <exception cref="OpenStudyException">One or more images could not be opened.</exception>
 		/// <exception cref="ArgumentNullException">A parameter is <b>null</b>.</exception>
-		void LoadImages(string[] path, IDesktopWindow desktopWindow, out bool cancelled);
+		void LoadImages(string[] files, IDesktopWindow desktop, out bool cancelled);
     }
 }

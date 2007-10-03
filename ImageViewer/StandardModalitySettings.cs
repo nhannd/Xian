@@ -1,9 +1,7 @@
-using System;
-using System.Configuration;
 using System.Collections.Generic;
-using System.Collections;
-using ClearCanvas.Common.Utilities;
+using System.Configuration;
 using ClearCanvas.Common.Configuration;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {

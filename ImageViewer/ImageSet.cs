@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Collections.ObjectModel;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -30,8 +29,8 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		public ImageSet()
 		{
-			_displaySets.ItemAdded += new EventHandler<DisplaySetEventArgs>(OnDisplaySetAdded);
-			_displaySets.ItemRemoved += new EventHandler<DisplaySetEventArgs>(OnDisplaySetRemoved);
+			_displaySets.ItemAdded += OnDisplaySetAdded;
+			_displaySets.ItemRemoved += OnDisplaySetRemoved;
 		}
 
 		#region IImageSet Members
@@ -65,7 +64,7 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="ILogicalWorkspace"/> yet.</value>
 		public ILogicalWorkspace ParentLogicalWorkspace
 		{
-			get { return _parentLogicalWorkspace as ILogicalWorkspace; }
+			get { return _parentLogicalWorkspace; }
 			internal set { _parentLogicalWorkspace = value as LogicalWorkspace; }
 		}
 
@@ -179,8 +178,8 @@ namespace ClearCanvas.ImageViewer
 			foreach (DisplaySet displaySet in this.DisplaySets)
 				displaySet.Dispose();
 
-			_displaySets.ItemAdded -= new EventHandler<DisplaySetEventArgs>(OnDisplaySetAdded);
-			_displaySets.ItemRemoved -= new EventHandler<DisplaySetEventArgs>(OnDisplaySetRemoved);
+			_displaySets.ItemAdded -= OnDisplaySetAdded;
+			_displaySets.ItemRemoved -= OnDisplaySetRemoved;
 			_displaySets = null;
 		}
 

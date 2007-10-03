@@ -49,8 +49,8 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckForNullReference(imageViewer, "imageViewer");
 
             _imageViewer = imageViewer;
-			this.ImageBoxes.ItemAdded += new EventHandler<ImageBoxEventArgs>(OnImageBoxAdded);
-			this.ImageBoxes.ItemRemoved += new EventHandler<ImageBoxEventArgs>(OnImageBoxRemoved);
+			this.ImageBoxes.ItemAdded += OnImageBoxAdded;
+			this.ImageBoxes.ItemRemoved += OnImageBoxRemoved;
 		}
 
 		#region Public properties
@@ -145,7 +145,7 @@ namespace ClearCanvas.ImageViewer
 		/// no <see cref="IImageBox"/> is currently selected.</value>
 		public IImageBox SelectedImageBox
 		{
-			get { return _selectedImageBox as IImageBox; }
+			get { return _selectedImageBox; }
 			internal set
 			{
 				if (_selectedImageBox != null)

@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using System.Collections.ObjectModel;
 using ClearCanvas.Common.Utilities;
@@ -28,13 +27,17 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="DisplaySet"/>.
+		/// </summary>
 		public DisplaySet() : this("","")
 		{
 			
 		}
 
 		/// <summary>
-		/// Initializes a new instance of <see cref="DisplaySet"/>.
+		/// Initializes a new instance of <see cref="DisplaySet"/> with
+		/// the specified parameters.
 		/// </summary>
 		public DisplaySet(string name, string uid)
 		{
@@ -101,7 +104,7 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="ImageSet"/> yet.</value>
 		public IImageSet ParentImageSet
 		{
-			get { return _parentImageSet as IImageSet; }
+			get { return _parentImageSet; }
 			internal set { _parentImageSet = value as ImageSet; }
 		}
 
@@ -112,7 +115,7 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="DisplaySet"/> is not currently visible.</value>
 		public IImageBox ImageBox
 		{
-			get { return _imageBox as IImageBox; }
+			get { return _imageBox; }
 			internal set { _imageBox = value as ImageBox; }
 		}
 
@@ -250,7 +253,7 @@ namespace ClearCanvas.ImageViewer
 			foreach (IPresentationImage image in this.PresentationImages)
 				displaySet.PresentationImages.Add(image.Clone());
 
-			return displaySet as IDisplaySet;
+			return displaySet;
 		}
 
 		public override string ToString()

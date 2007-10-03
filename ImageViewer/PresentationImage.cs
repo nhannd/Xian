@@ -1,11 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Rendering;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -36,25 +33,6 @@ namespace ClearCanvas.ImageViewer
 		private IRenderer _renderer;
 		private event EventHandler _drawing;
 
-		// TODO: Perhaps each layer should have its own ILayerRenderer?  
-		// The idea is to delegate the actual rendering to the layers themselves, since
-		// they know best how to render themselves.  If the Layer.Renderer is null, then
-		// the basic image renderer will render it in the default way.  Otherwise, it will
-		// use the renderer associated with the layer. 
-		// Fine grained objects like primitives might use the flyweight pattern to 
-		// prevent too many renderers.
-		
-		// TODO: To make the renderer smarter, at the beginning of the draw method,
-		// analyze the RedrawRequired proper of the layers in the PresentationImage.
-		// e.g., in the case where every layer needs to be redrawn, draw the image
-		// first, followed by the graphics.  This would be done all to one buffer.
-		// In the case where a graphic is simply being moved over an image that is
-		// not changing, the image layer's redraw flag would be false, but the
-		// graphic layer's flag would be true.  In that situation, make a copy
-		// of the rendered image buffer, then just blt it as the graphic is moved.
-		// (Maybe we need to incorporate some notion of state into the renderer?)
-
-
 		#endregion
 
 		/// <summary>
@@ -74,7 +52,7 @@ namespace ClearCanvas.ImageViewer
 		/// logical workspace yet.</value>
 		public IImageViewer ImageViewer
 		{
-			get { return _imageViewer as IImageViewer; }
+			get { return _imageViewer; }
 			internal set 
 			{ 
 				_imageViewer = value as ImageViewerComponent;
@@ -90,7 +68,7 @@ namespace ClearCanvas.ImageViewer
 		/// been added to the <see cref="IDisplaySet"/> yet.</value>
 		public IDisplaySet ParentDisplaySet
 		{
-			get { return _parentDisplaySet as IDisplaySet; }
+			get { return _parentDisplaySet; }
 			internal set { _parentDisplaySet = value as DisplaySet; }
 		}
 
@@ -102,7 +80,7 @@ namespace ClearCanvas.ImageViewer
 		/// <see cref="PresentationImage"/> is not currently visible.</value>
 		public ITile Tile
 		{
-			get { return _tile as ITile; }
+			get { return _tile; }
 			internal set 
 			{
 				if (_tile != value)

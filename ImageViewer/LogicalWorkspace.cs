@@ -1,9 +1,4 @@
 using System;
-using System.Diagnostics;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -21,7 +16,7 @@ namespace ClearCanvas.ImageViewer
         internal LogicalWorkspace(IImageViewer imageViewer)
 		{
             _imageViewer = imageViewer;
-			_imageSets.ItemAdded += new EventHandler<ImageSetEventArgs>(OnImageSetAdded);
+			_imageSets.ItemAdded += OnImageSetAdded;
 		}
 
 		/// <summary>
@@ -81,7 +76,7 @@ namespace ClearCanvas.ImageViewer
 			foreach (ImageSet imageSet in this.ImageSets)
 				imageSet.Dispose();
 
-			_imageSets.ItemAdded -= new EventHandler<ImageSetEventArgs>(OnImageSetAdded);
+			_imageSets.ItemAdded -= OnImageSetAdded;
 			_imageSets = null;
 		}
 

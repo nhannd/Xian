@@ -11,12 +11,12 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
-	[ExtensionPoint()]
+	[ExtensionPoint]
 	public class ImageViewerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
-	[ExtensionPoint()]
+	[ExtensionPoint]
 	public class ImageViewerToolExtensionPoint : ExtensionPoint<ITool>
 	{
 	}

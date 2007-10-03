@@ -1,5 +1,3 @@
-using System;
-using System.Collections;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 

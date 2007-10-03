@@ -9,9 +9,12 @@ namespace ClearCanvas.ImageViewer
 {
 	/// <summary>
 	/// The <see cref="BasicPresentationImage"/> creates a single factory object that is then used to create
-	/// an <see cref="IRenderer"/> for each <see cref="BasicPresentationImage"/>.  The returned <see cref="IRenderer"/>
-	/// need not be thread-safe as the <see cref="BasicPresentationImage"/> itself is not thread-safe.
+	/// an <see cref="IRenderer"/> for each <see cref="BasicPresentationImage"/>.  
 	/// </summary>
+	/// <remarks>
+	/// The returned <see cref="IRenderer"/>
+	/// need not be thread-safe as the <see cref="BasicPresentationImage"/> itself is not thread-safe.
+	/// </remarks>
 	public sealed class BasicPresentationImageRendererFactoryExtensionPoint : ExtensionPoint<IRendererFactory>
 	{
 		/// <summary>
@@ -23,7 +26,8 @@ namespace ClearCanvas.ImageViewer
 	}
 
 	/// <summary>
-	/// A <see cref="PresentationImage"/> that encapsulates a DICOM image.
+	/// A <see cref="PresentationImage"/> that encapsulates basic
+	/// 2D image functionality.
 	/// </summary>
 	public abstract class BasicPresentationImage :
 		PresentationImage, 
@@ -95,8 +99,6 @@ namespace ClearCanvas.ImageViewer
 		/// Gets this presentation image's <see cref="ImageGraphic"/>.
 		/// </summary>
 		/// <remarks>
-		/// <see cref="ImageGraphic"/> is the graphical representation of 
-		/// the associated the DICOM image.
 		/// <see cref="ImageGraphic"/> is the first <see cref="IGraphic"/>
 		/// added to the <see cref="SceneGraph"/> and thus is rendered first.
 		/// </remarks>

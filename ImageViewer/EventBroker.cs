@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
@@ -28,6 +25,9 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="EventBroker"/>.
+		/// </summary>
 		public EventBroker()
 		{
 
