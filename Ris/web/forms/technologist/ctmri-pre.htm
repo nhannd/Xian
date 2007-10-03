@@ -1,0 +1,329 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <title>Breast Imaging</title>
+        <link href="../../css/default.css" rel="stylesheet" type="text/css" />
+        <link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="../../js/calendar/calendar.js"></script>
+        <script type="text/javascript" src="../../js/calendar/lang/calendar-en.js"></script>
+        <script type="text/javascript" src="../../js/jsx.js"></script>
+	    <script type="text/javascript" src="../../js/jsml.js"></script>
+	    <script type="text/javascript" src="../../js/ui.js"></script>
+	    <script type="text/javascript" src="../../js/ris.js"></script>
+	    <script type="text/javascript" >
+		    var data = {};
+		    var errorProvider = new ErrorProvider();
+	    
+		    function onBodyLoad()
+		    {
+		        if(Ris)
+		        {
+			        //data = JSML.parse(Ris.getData("ExamDetails")) || {};
+			    }
+			    
+			    data.vitals = data.vitals || {};
+			    data.allergies = data.allergies || {};
+			    data.creatinine = data.creatinine || {};
+			    data.renalDisease = data.renalDisease || {};
+			    data.pregnancy = data.pregnancy || {};
+			    data.sedation = data.sedation || {};
+			    data.consents = data.consents || {};
+			    data.translation = data.translation || {};
+			    
+			    initVitalsTable();
+			    initAllergiesTable();
+			    initCreatinineTable();
+			    initRenalDiseaseTable();
+			    initPregnancyTable();
+			    initSedationTable();
+			    initConsentsTable();
+			    initTranslationTable();
+		    }
+		    
+		    function initVitalsTable()
+		    {
+		        var table = Table.createTable($("vitalsTable"), { editInPlace: true, flow: true, checkBoxes: false },
+		             [
+		                {   label: "Weight",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.weightValue; },
+		                    setValue: function(item, value) { item.weightValue = parseFloat(value); },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "lbs/kg",
+		                    cellType: "choice",
+		                    choices: [ "kg", "lbs" ],
+		                    getValue: function(item) { return item.weightUnit; },
+		                    setValue: function(item, value) { item.weightUnit = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Height",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.heightValue; },
+		                    setValue: function(item, value) { item.heightValue = parseFloat(value); },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "cm/in",
+		                    cellType: "choice",
+		                    choices: [ "cm", "inches" ],
+		                    getValue: function(item) { return item.heightUnit; },
+		                    setValue: function(item, value) { item.heightUnit = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "BP",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.bloodPressure; },
+		                    setValue: function(item, value) { item.bloodPressure = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Heart Rate (bpm)",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.heartRate; },
+		                    setValue: function(item, value) { item.heartRate = parseInt(value); item.heartRateUnit = "bpm"; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Date of LMP",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.dateOfLMP; },
+		                    setValue: function(item, value) { item.dateOfLMP = value; },
+		                    getError: function(item) { return null; }
+		                }
+		             ]);
+		             
+		        table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        table.bindItems([data.vitals]);
+		    }
+		    
+		    function initAllergiesTable()
+		    {
+		        var table = Table.createTable($("allergiesTable"), { editInPlace: true, flow: true, checkBoxes: false },
+		             [
+		                {   label: "Allergies",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.allergies; },
+		                    setValue: function(item, value) { item.allergies = value; },
+		                    getError: function(item) { return null; }
+		                }
+		             ]);
+		             
+		        table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        table.bindItems([data.allergies]);
+		    }
+		    
+		    function initCreatinineTable()
+		    {
+		        var table = Table.createTable($("creatinineTable"), { editInPlace: true, flow: true, checkBoxes: false },
+		             [
+		                {   label: "Creatinine",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.level; },
+		                    setValue: function(item, value) { item.level = value; },
+		                    getError: function(item) { return null; }
+		                }
+		             ]);
+		             
+		        table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        table.bindItems([data.creatinine]);
+		    }
+		    
+		    function initRenalDiseaseTable()
+		    {
+		        var table = Table.createTable($("renalDiseaseTable"), { editInPlace: true, flow: true, checkBoxes: false },
+		             [
+		                {   label: "Renal Disease",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.disease; },
+		                    setValue: function(item, value) { item.disease = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Renal Dialysis",
+		                    cellType: "choice",
+		                    choices: [ "None", "Hemodialysis", "Peritoneal dialysis"],
+		                    getValue: function(item) { return item.dialysis; },
+		                    setValue: function(item, value) { item.dialysis = value; },
+		                    getError: function(item) { return null; }
+		                }
+		             ]);
+		             
+		        table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        table.bindItems([data.renalDisease]);
+		    }
+		    
+		    function initPregnancyTable()
+		    {
+		    }
+		    
+		    function initSedationTable()
+		    {
+		        var table = Table.createTable($("sedationTable"), { editInPlace: true, flow: true, checkBoxes: false },
+		             [
+		                {   label: "Patient self-administered per Rx",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.selfAdministered; },
+		                    setValue: function(item, value) { item.selfAdministered = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Type/Amount",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.typeAndAmount; },
+		                    setValue: function(item, value) { item.typeAndAmount = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Who is taking patient home",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.patientWillBeTakenHomeBy; },
+		                    setValue: function(item, value) { item.patientWillBeTakenHomeBy = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Prescribed By (Radiologist)",
+		                    cellType: "lookup",
+		                    lookup: function(query) { return Ris.resolveStaffName(query); },
+		                    getValue: function(item) { return item.prescribedBy; },
+		                    setValue: function(item, value) { item.prescribedBy = value; },
+		                    getError: function(item) { return null; }
+		                }
+		             ]);
+		             
+		        table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        table.bindItems([data.sedation]);
+		    }
+		    
+		    function initConsentsTable()
+		    {
+		        var table = Table.createTable($("consentsTable"), { editInPlace: true, flow: true, checkBoxes: false },
+		             [
+		                {   label: "Screening Form reviewed by",
+		                    cellType: "lookup",
+		                    lookup: function(query) { return Ris.resolveStaffName(query); },
+		                    getValue: function(item) { return item.screeningFormReviewedBy; },
+		                    setValue: function(item, value) { item.screeningFormReviewedBy = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Contrast consent obtained by",
+		                    cellType: "lookup",
+		                    lookup: function(query) { return Ris.resolveStaffName(query); },
+		                    getValue: function(item) { return item.contrastConsentObtainedBy; },
+		                    setValue: function(item, value) { item.contrastConsentObtainedBy = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Other consents obtained by",
+		                    cellType: "lookup",
+		                    lookup: function(query) { return Ris.resolveStaffName(query); },
+		                    getValue: function(item) { return item.otherConsentsObtainedBy; },
+		                    setValue: function(item, value) { item.otherConsentsObtainedBy = value; },
+		                    getError: function(item) { return null; }
+		                }
+		             ]);
+		             
+		        table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        table.bindItems([data.consents]);
+		    }
+		    
+		    function initTranslationTable()
+		    {
+		        var table = Table.createTable($("translationTable"), { editInPlace: true, flow: true, checkBoxes: false },
+		             [
+		                {   label: "Translation Required",
+		                    cellType: "bool",
+		                    getValue: function(item) { return item.translationRequired || false; },
+		                    setValue: function(item, value) { item.translationRequired = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Translator (relationship to patient)",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.translator; },
+		                    setValue: function(item, value) { item.translator = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Language",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.language; },
+		                    setValue: function(item, value) { item.language = value; },
+		                    getError: function(item) { return null; }
+		                }
+		             ]);
+		             
+		        table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        table.bindItems([data.translation]);
+		    }
+
+		    //////////////////////////////////////////////////////////////////////////
+		    // RIS integration API
+		    function showValidation(show)
+			{
+			    errorProvider.setVisible(show);
+			}
+			
+			function hasValidationErrors()
+			{
+			    return errorProvider.hasErrors();
+			}
+		    
+		    function saveData()
+		    {
+				Ris.setData("ExamDetails", JSML.create(data, "data"));
+		    }
+		    //////////////////////////////////////////////////////////////////////////
+			
+			function updateValidation()
+			{
+			    var myForm = $("myForm");
+			    errorProvider.setError(myForm.studyType, myForm.studyType.value ? "" : "Study type required");
+			    errorProvider.setError(myForm.filmsUsedCount, (parseInt(myForm.filmsUsedCount.value) > 0) ? "" : "Number of films used must be a positive integer");
+			}
+		</script>
+	</head>
+	<body onload="javascript: onBodyLoad()">
+	
+		<form id="myForm">
+		<p class="sectionheading">Vitals</p>
+		<table id="vitalsTable"  width="100%">
+		  <tr>
+			<td class="tableheading"></td>
+		  </tr>
+		</table>
+		<p class="sectionheading">Allergies</p>
+		<table id="allergiesTable" width="100%">
+		  <tr>
+			<td class="tableheading"></td>
+		  </tr>
+		</table>
+		<p class="sectionheading">Creatinine</p>
+		<table id="creatinineTable" width="100%">
+		  <tr>
+			<td class="tableheading"></td>
+		  </tr>
+		</table>
+		<p class="sectionheading">Renal</p>
+		<table id="renalDiseaseTable" width="100%">
+		  <tr>
+			<td class="tableheading"></td>
+		  </tr>
+		</table>
+		<p class="sectionheading">Pregnancy</p>
+		<table id="pregnancyTable" width="100%">
+		  <tr>
+			<td class="tableheading"></td>
+		  </tr>
+		</table>
+		<p class="sectionheading">Sedation</p>
+		<table id="sedationTable" width="100%">
+		  <tr>
+			<td class="tableheading"></td>
+		  </tr>
+		</table>
+		<p class="sectionheading">Consents</p>
+		<table id="consentsTable" width="100%">
+		  <tr>
+			<td class="tableheading"></td>
+		  </tr>
+		</table>
+		<p class="sectionheading">Translation</p>
+		<table id="translationTable" width="100%">
+		  <tr>
+			<td class="tableheading"></td>
+		  </tr>
+		</table>
+		</form>
+	</body>
+</html>

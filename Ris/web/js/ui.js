@@ -10,8 +10,9 @@ var _IE = document.all;
         that allow it to function as a dynamically generated table.  It binds the table to an array of items, such that additions
         or removals from the items array automatically update the table.
     
-        It is assumed that the HTML table initially contains exactly one header row and exactly one column (the leftmost column)
-        reserved for checkboxes, and the table must conform to this layout or the Table class will not function correctly.
+        It is assumed that the HTML table initially contains exactly one header row and, if "checkBoxes" option is specified (see options
+        below), then exactly one column (the leftmost column) reserved for checkboxes.
+        The table must conform to this layout or the Table class will not function correctly.
         The Table class does not modify the header row.
     
             htmlTable - the DOM TABLE element to augment.
@@ -219,7 +220,7 @@ var Table = {
 	            if(this._options.flow)
 	            {
                     // add one containerCell to the table, and flow each of the "columns" inside of it
-	                containerCell = containerCell || tr.insertCell(1);
+	                containerCell = containerCell || tr.insertCell((this._options.checkBoxes ? 1 : 0));
 	                
 	                // the cell is not technically a cell in this case, but rather a div
 	                cell = document.createElement("div");

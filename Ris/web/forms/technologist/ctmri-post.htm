@@ -1,0 +1,310 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+        <title>Breast Imaging</title>
+        <link href="../../css/default.css" rel="stylesheet" type="text/css" />
+        <link href="../../js/calendar/calendar-system.css" rel="stylesheet" type="text/css" />
+        <script type="text/javascript" src="../../js/calendar/calendar.js"></script>
+        <script type="text/javascript" src="../../js/calendar/lang/calendar-en.js"></script>
+        <script type="text/javascript" src="../../js/jsx.js"></script>
+	    <script type="text/javascript" src="../../js/jsml.js"></script>
+	    <script type="text/javascript" src="../../js/ui.js"></script>
+	    <script type="text/javascript" src="../../js/ris.js"></script>
+	    <script type="text/javascript" >
+		    var data = {};
+		    var errorProvider = new ErrorProvider();
+	    
+		    function onBodyLoad()
+		    {
+		        if(Ris)
+		        {
+			        //data = JSML.parse(Ris.getData("ExamDetails")) || {};
+			    }
+			    
+			    data.staff = data.staff || [];
+			    data.pacs = data.pacs || {};
+			    data.imageQuality = data.imageQuality || {};
+			    data.patientNotes = data.patientNotes || {};
+			    data.teachingCase = data.teachingCase || {};
+			    
+			    initStaffTable();
+			    initPacsTable();
+			    initPostProcessingTable();
+			    initImageQualityTable();
+			    initPatientNotesTable();
+			    initTeachingCaseTable();
+		    }
+		    
+		    function initStaffTable()
+		    {
+		        var table = Table.createTable($("staffTable"), { editInPlace: true, flow: true, checkBoxes: true },
+		             [
+		                {   label: "Role",
+		                    cellType: "choice",
+		                    choices: [ "Technologist", "Nurse", "Radiologist", "Resident/Fellow", "Student"],
+		                    getValue: function(item) { return item.role; },
+		                    setValue: function(item, value) { item.role = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Staff",
+		                    cellType: "lookup",
+		                    lookup: function(query) { return Ris.resolveStaffName(query); },
+		                    getValue: function(item) { return item.staffPerson; },
+		                    setValue: function(item, value) { item.staffPerson = value; },
+		                    getError: function(item) { return null; }
+		                }
+		             ]);
+		             
+		        table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        table.bindItems(data.staff);
+		    }
+		    
+		    function initPacsTable()
+		    {
+		        var table = Table.createTable($("pacsTable"), { editInPlace: true, flow: true, checkBoxes: false },
+		             [
+		                {   label: "# of Exams",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.numberOfExams; },
+		                    setValue: function(item, value) { item.numberOfExams = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "# of Series",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.numberOfSeries; },
+		                    setValue: function(item, value) { item.numberOfSeries = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Server Checked By",
+		                    cellType: "lookup",
+		                    lookup: function(query) { return Ris.resolveStaffName(query); },
+		                    getValue: function(item) { return item.serverCheckedBy; },
+		                    setValue: function(item, value) { item.serverCheckedBy = value; },
+		                    getError: function(item) { return null; }
+		                }
+		             ]);
+		             
+		        table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        table.bindItems([data.pacs]);
+		    }
+		    
+		    function initPostProcessingTable()
+		    {
+		    }
+		    
+		    function initImageQualityTable()
+		    {
+		        var table = Table.createTable($("imageQualityTable"), { editInPlace: true, flow: true, checkBoxes: false },
+		             [
+		                {   label: "Patient Moving",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.patientMotion; },
+		                    setValue: function(item, value) { item.patientMotion = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Artifacts",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.artifacts; },
+		                    setValue: function(item, value) { item.artifacts = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Scanner/Equipment Issues",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.equipmentIssues; },
+		                    setValue: function(item, value) { item.equipmentIssues = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Changes/Variation to Protocol",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.variationToProtocol; },
+		                    setValue: function(item, value) { item.variationToProtocol = value; },
+		                    getError: function(item) { return null; }
+		                }
+		             ]);
+		             
+		        table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        table.bindItems([data.imageQuality]);
+		    }
+		    
+		    function initPatientNotesTable()
+		    {
+		        var table = Table.createTable($("patientNotesTable"), { editInPlace: true, flow: true, checkBoxes: false },
+		             [
+		                {   label: "Chose not to wear ear-plugs",
+		                    cellType: "bool",
+		                    getValue: function(item) { return item.choseNotToWearEarplugs; },
+		                    setValue: function(item, value) { item.choseNotToWearEarplugs = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Had eyes covered",
+		                    cellType: "bool",
+		                    getValue: function(item) { return item.hadEyesCovered; },
+		                    setValue: function(item, value) { item.hadEyesCovered = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Requires pillow/blanket",
+		                    cellType: "bool",
+		                    getValue: function(item) { return item.requiresPillowBlanket; },
+		                    setValue: function(item, value) { item.requiresPillowBlanket = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Took sedation",
+		                    cellType: "bool",
+		                    getValue: function(item) { return item.tookSedation; },
+		                    setValue: function(item, value) { item.tookSedation = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Arrived by Ambulance/Wheeltrans",
+		                    cellType: "bool",
+		                    getValue: function(item) { return item.arrivedByAmbulance; },
+		                    setValue: function(item, value) { item.arrivedByAmbulance = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Is in wheelchair",
+		                    cellType: "bool",
+		                    getValue: function(item) { return item.wheelchair; },
+		                    setValue: function(item, value) { item.wheelchair = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Is paraplegic",
+		                    cellType: "bool",
+		                    getValue: function(item) { return item.paraplegic; },
+		                    setValue: function(item, value) { item.paraplegic = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Requires Hoyer lift",
+		                    cellType: "bool",
+		                    getValue: function(item) { return item.requiresHoyerLift; },
+		                    setValue: function(item, value) { item.requiresHoyerLift = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Difficulty with IV access",
+		                    cellType: "bool",
+		                    getValue: function(item) { return item.difficultyWithIVAccess; },
+		                    setValue: function(item, value) { item.difficultyWithIVAccess = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Other",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.other; },
+		                    setValue: function(item, value) { item.other = value; },
+		                    getError: function(item) { return null; }
+		                }
+		             ]);
+		             
+		        table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        table.bindItems([data.patientNotes]);
+		    }
+		    
+		    function initTeachingCaseTable()
+		    {
+		        var table = Table.createTable($("teachingCaseTable"), { editInPlace: true, flow: true, checkBoxes: false },
+		             [
+		                {   label: "Describe pathology",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.pathology; },
+		                    setValue: function(item, value) { item.pathology = value; },
+		                    getError: function(item) { return null; }
+		                }
+		             ]);
+		             
+		        table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        table.bindItems([data.teachingCase]);
+		    }
+
+			function onAddStaff()
+			{
+			    data.staff.add( {} );   // add an empty item
+			}
+			
+			function onDeleteStaff()
+			{
+			    var checkedItems = $("staffTable").getCheckedItems();
+			    if(checkedItems.length > 0)
+			    {
+			        if(confirm("Deleted selected staff?"))
+			        {
+			            checkedItems.each(function(item) { data.staff.remove(item); });
+			            $("staffCheckAllNone").checked = false;
+			        }
+			    }
+			    else
+			    {
+			        alert("Nothing selected");
+			    }
+			}
+			function onStaffCheckAllNone()
+			{
+			    data.staff.each(function(item) { $("staffTable").setItemCheckState(item, $("staffCheckAllNone").checked); });
+			}
+
+		    //////////////////////////////////////////////////////////////////////////
+		    // RIS integration API
+		    function showValidation(show)
+			{
+			    errorProvider.setVisible(show);
+			}
+			
+			function hasValidationErrors()
+			{
+			    return errorProvider.hasErrors();
+			}
+		    
+		    function saveData()
+		    {
+				Ris.setData("ExamDetails", JSML.create(data, "data"));
+		    }
+		    //////////////////////////////////////////////////////////////////////////
+			
+			function updateValidation()
+			{
+			}
+		</script>
+	</head>
+	<body onload="javascript: onBodyLoad()">
+	
+		<form id="myForm">
+		<p class="sectionheading">Staff</p>
+		<p>
+		    <input type="button" value="Add" onclick="javascript: onAddStaff()" />
+		    <input type="button" value="Delete" onclick="javascript: onDeleteStaff()" />
+		</p>
+		<table id="staffTable" border="1" width="100%">
+		  <tr>
+			<td><input id="staffCheckAllNone" type="checkbox" onclick="javascript: onStaffCheckAllNone()" /></td>
+			<td class="tableheading">Staff</td>
+		  </tr>
+		</table>
+		<p class="sectionheading">PACS</p>
+		<table id="pacsTable" width="100%">
+		  <tr>
+			<td class="tableheading">PACS</td>
+		  </tr>
+		</table>
+		<p class="sectionheading">Post-Processing</p>
+		<table id="postProcessingTable" width="100%">
+		  <tr>
+			<td class="tableheading">Post-Processing</td>
+		  </tr>
+		</table>
+		<p class="sectionheading">Image Quality</p>
+		<table id="imageQualityTable"  width="100%">
+		  <tr>
+			<td class="tableheading">Image Quality</td>
+		  </tr>
+		</table>
+		<p class="sectionheading">Patient Notes</p>
+		<table id="patientNotesTable" width="100%">
+		  <tr>
+			<td class="tableheading">Patient Notes</td>
+		  </tr>
+		</table>
+		<p class="sectionheading">Teaching Case</p>
+		<table id="teachingCaseTable" width="100%">
+		  <tr>
+			<td class="tableheading">Teaching Case</td>
+		  </tr>
+		</table>
+		</form>
+	</body>
+</html>
