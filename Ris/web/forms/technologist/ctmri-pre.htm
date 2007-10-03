@@ -83,7 +83,7 @@
 		                    getError: function(item) { return null; }
 		                },
 		                {   label: "Date of LMP",
-		                    cellType: "text",
+		                    cellType: "date",
 		                    getValue: function(item) { return item.dateOfLMP; },
 		                    setValue: function(item, value) { item.dateOfLMP = value; },
 		                    getError: function(item) { return null; }
@@ -119,6 +119,12 @@
 		                    getValue: function(item) { return item.level; },
 		                    setValue: function(item, value) { item.level = value; },
 		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Date of measurement",
+		                    cellType: "date",
+		                    getValue: function(item) { return item.dateOfMeasurement; },
+		                    setValue: function(item, value) { item.dateOfMeasurement = value; },
+		                    getError: function(item) { return null; }
 		                }
 		             ]);
 		             
@@ -151,19 +157,57 @@
 		    
 		    function initPregnancyTable()
 		    {
+		        var table = Table.createTable($("pregnancyTable"), { editInPlace: true, flow: true, checkBoxes: false },
+		             [
+		                {   label: "Patient Pregnant",
+		                    cellType: "choice",
+		                    choices: ["no", "yes - exam cancelled", "yes - consent obtained"],
+		                    getValue: function(item) { return item.pregnancyStatus; },
+		                    setValue: function(item, value) { item.pregnancyStatus = value; },
+		                    getError: function(item) { return item.pregnancyStatus ? null : "Value required"; }
+		                },
+		                {   label: "Consent obtained by (if consent obtained)",
+		                    cellType: "lookup",
+		                    lookup: function(query) { return Ris.resolveStaffName(query); },
+		                    getValue: function(item) { return item.consentObtainedBy; },
+		                    setValue: function(item, value) { item.consentObtainedBy = value; },
+		                    getError: function(item)
+		                    {
+		                        if(item.pregnancyStatus == "yes - consent obtained")
+		                        {
+		                            if(!item.consentObtainedBy) return "Value required";
+		                        }
+		                        else
+		                        {
+		                            if(item.consentObtainedBy) return "Not applicable";
+		                        }
+		                    }
+		                }
+		             ]);
+		             
+		        table.errorProvider = errorProvider;   // share errorProvider with the rest of the form
+		        table.bindItems([data.pregnancy]);
 		    }
 		    
 		    function initSedationTable()
 		    {
 		        var table = Table.createTable($("sedationTable"), { editInPlace: true, flow: true, checkBoxes: false },
 		             [
-		                {   label: "Patient self-administered per Rx",
-		                    cellType: "text",
-		                    getValue: function(item) { return item.selfAdministered; },
-		                    setValue: function(item, value) { item.selfAdministered = value; },
+		                {   label: "Sedation",
+		                    cellType: "choice",
+		                    choices: ["None", "Patient self-administered", "Radiologist prescribed"],
+		                    getValue: function(item) { return item.sedation; },
+		                    setValue: function(item, value) { item.sedation = value; },
 		                    getError: function(item) { return null; }
 		                },
-		                {   label: "Type/Amount",
+		                {   label: "Radiologist (if radiologist prescribed)",
+		                    cellType: "lookup",
+		                    lookup: function(query) { return Ris.resolveStaffName(query); },
+		                    getValue: function(item) { return item.radiologist; },
+		                    setValue: function(item, value) { item.radiologist = value; },
+		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Type/Amount (if radiologist prescribed)",
 		                    cellType: "text",
 		                    getValue: function(item) { return item.typeAndAmount; },
 		                    setValue: function(item, value) { item.typeAndAmount = value; },
@@ -173,13 +217,6 @@
 		                    cellType: "text",
 		                    getValue: function(item) { return item.patientWillBeTakenHomeBy; },
 		                    setValue: function(item, value) { item.patientWillBeTakenHomeBy = value; },
-		                    getError: function(item) { return null; }
-		                },
-		                {   label: "Prescribed By (Radiologist)",
-		                    cellType: "lookup",
-		                    lookup: function(query) { return Ris.resolveStaffName(query); },
-		                    getValue: function(item) { return item.prescribedBy; },
-		                    setValue: function(item, value) { item.prescribedBy = value; },
 		                    getError: function(item) { return null; }
 		                }
 		             ]);
@@ -265,12 +302,6 @@
 		    }
 		    //////////////////////////////////////////////////////////////////////////
 			
-			function updateValidation()
-			{
-			    var myForm = $("myForm");
-			    errorProvider.setError(myForm.studyType, myForm.studyType.value ? "" : "Study type required");
-			    errorProvider.setError(myForm.filmsUsedCount, (parseInt(myForm.filmsUsedCount.value) > 0) ? "" : "Number of films used must be a positive integer");
-			}
 		</script>
 	</head>
 	<body onload="javascript: onBodyLoad()">
@@ -306,7 +337,7 @@
 			<td class="tableheading"></td>
 		  </tr>
 		</table>
-		<p class="sectionheading">Sedation</p>
+		<p class="sectionheading">Sedation (MRI only)</p>
 		<table id="sedationTable" width="100%">
 		  <tr>
 			<td class="tableheading"></td>
