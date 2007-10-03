@@ -13,10 +13,5 @@ namespace ClearCanvas.Desktop.View.WinForms
 		{
 			ApplicationSettingsRegister.Instance.RegisterInstance(this);
 		}
-
-		~DesktopViewSettings()
-		{
-			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
-		}
 	}
 }

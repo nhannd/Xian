@@ -16,10 +16,5 @@ namespace ClearCanvas.Desktop
         {
 			ApplicationSettingsRegister.Instance.RegisterInstance(this);
         }
-
-		~FormatSettings()
-		{
-			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
-		}
     }
 }

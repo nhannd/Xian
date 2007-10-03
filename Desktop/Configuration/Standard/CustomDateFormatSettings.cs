@@ -17,11 +17,6 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 			ApplicationSettingsRegister.Instance.RegisterInstance(this);
 		}
 
-		~CustomDateFormatSettings()
-		{
-			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
-		}
-
 		public System.Collections.Specialized.StringCollection AvailableCustomFormats
 		{
 			get
