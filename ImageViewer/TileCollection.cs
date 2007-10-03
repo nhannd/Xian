@@ -14,22 +14,9 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Initializes a new instance of <see cref="TileCollection"/>.
 		/// </summary>
-		public TileCollection()
+		internal TileCollection()
 		{
 
-		}
-
-		/// <summary>
-		/// Creates a copy of the object.
-		/// </summary>
-		/// <param name="collection"></param>
-		/// <remarks>
-		/// Creates a <i>shallow</i> copy.  That is, only references to objects
-		/// in the collection are copied.
-		/// </remarks>
-		public TileCollection(ObservableList<ITile, TileEventArgs> collection) 
-			: base(collection)
-		{
 		}
 	}
 }

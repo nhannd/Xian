@@ -370,14 +370,16 @@ namespace ClearCanvas.ImageViewer
 
 		#region Public methods
 
+		// TODO: Should this method even be here, or in a separate class?
+
 		/// <summary>
 		/// Queries for studies matching a specified set of query parameters.
 		/// </summary>
 		/// <param name="queryParameters">The search criteria.</param>
 		/// <param name="targetServer">The server to query. Can be null
-		/// if the <paramref name="source"/> does not support the querying
+		/// if the <paramref name="studyFinderName"/> does not support the querying
 		/// of different servers.</param>
-		/// <param name="source">The name of the <see cref="IStudyFinder"/> to use, which is specified
+		/// <param name="studyFinderName">The name of the <see cref="IStudyFinder"/> to use, which is specified
 		/// by <see cref="IStudyFinder.Name"/>.</param>
 		/// <returns></returns>
 		public static StudyItemList FindStudy(

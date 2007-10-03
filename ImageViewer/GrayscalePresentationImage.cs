@@ -91,14 +91,14 @@ namespace ClearCanvas.ImageViewer
 		/// <returns></returns>
 		public override IPresentationImage Clone()
 		{
-
 			// TODO:
-			return null;
 
-			//IPresentationImage image = new BasicPresentationImage();
+			//IPresentationImage image = new GrayscalePresentationImage(;
 			//image.Uid = this.Uid;
 
 			//return image;
+
+			return null;
 		}
 
 		#region IIndexedPixelDataProvider Members

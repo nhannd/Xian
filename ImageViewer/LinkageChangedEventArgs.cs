@@ -5,7 +5,7 @@ namespace ClearCanvas.ImageViewer
 	/// <summary>
 	/// 
 	/// </summary>
-	public class LinkageChangedEventArgs : EventArgs
+	internal class LinkageChangedEventArgs : EventArgs
 	{
 		private bool _isLinked;
 

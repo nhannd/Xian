@@ -20,8 +20,8 @@ namespace ClearCanvas.ImageViewer
 	// the UI code itself is to get a timer to perform a GC a few times after
 	// the workspace has been closed.
 
-	[ExtensionOf(typeof(ClearCanvas.Desktop.DesktopToolExtensionPoint))]
-	public class GarbageCollectionTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
+	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
+	internal class GarbageCollectionTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
 	{
 		private System.Threading.Timer _timer;
 		private int _gcCycles;

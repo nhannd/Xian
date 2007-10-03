@@ -32,6 +32,8 @@ namespace ClearCanvas.ImageViewer
 		/// </summary>
 		DisplaySetCollection DisplaySets { get; }
 
+		// TODO: Change to IEnumerable
+
 		/// <summary>
 		/// Gets a collection of linked <see cref="IDisplaySet"/> objects.
 		/// </summary>

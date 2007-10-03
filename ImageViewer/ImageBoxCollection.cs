@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Initializes a new instance of <see cref="ImageBoxCollection"/>.
 		/// </summary>
-		public ImageBoxCollection()
+		internal ImageBoxCollection()
 		{
 
 		}

@@ -78,6 +78,8 @@ namespace ClearCanvas.ImageViewer
 			get { return _displaySets; }
 		}
 
+		// TODO: Use IEnumerable and yield
+
 		/// <summary>
 		/// Gets a collection of linked <see cref="IDisplaySet"/> objects.
 		/// </summary>

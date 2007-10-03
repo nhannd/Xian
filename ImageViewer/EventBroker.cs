@@ -13,6 +13,8 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class EventBroker
 	{
+		#region Private fields
+
 		private event EventHandler<ImageDrawingEventArgs> _imageDrawingEvent;
 
 		private event EventHandler<ImageBoxSelectedEventArgs> _imageBoxSelectedEvent;
@@ -23,6 +25,8 @@ namespace ClearCanvas.ImageViewer
 
 		private event EventHandler<StudyEventArgs> _studyLoadedEvent;
 		private event EventHandler<SopEventArgs> _imageLoadedEvent;
+
+		#endregion
 
 		public EventBroker()
 		{

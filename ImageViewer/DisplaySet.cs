@@ -62,6 +62,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		// TODO: Consider returning IEnumerable
+		// TODO: Also consider how to use yield instead of a whole collection
 
 		/// <summary>
 		/// Gets a collection of linked <see cref="IPresentationImage"/> objects.

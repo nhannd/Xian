@@ -14,7 +14,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Instantiates a new instance of <see cref="PresentationImageCollection"/>.
 		/// </summary>
-		public PresentationImageCollection()
+		internal PresentationImageCollection()
 		{
 
 		}
