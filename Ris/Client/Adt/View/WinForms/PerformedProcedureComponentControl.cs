@@ -1,15 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.Desktop.Validation;
-using ClearCanvas.Desktop;
-using ClearCanvas.Controls.WinForms;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
@@ -29,6 +19,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             InitializeComponent();
 
             _component = component;
+            _component = component;
 
             _mppsTableView.Table = _component.MppsTable;
             _mppsTableView.DataBindings.Add("Selection", _component, "SelectedMpps", true, DataSourceUpdateMode.OnPropertyChanged);
@@ -39,14 +30,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             detailsPage.Dock = DockStyle.Fill;
             _mppsDetailsPanel.Controls.Add(detailsPage);
 
-        }
-
-        private void _buttonCompleteDocumentationDetails_Click(object sender, EventArgs e)
-        {
-            using (new CursorManager(Cursors.WaitCursor))
-            {
-                _component.OnComplete();
-            }
         }
     }
 }

@@ -27,7 +27,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
             Control documentationTabs = (Control)_component.DocumentationHost.ComponentView.GuiElement;
             documentationTabs.Dock = DockStyle.Fill;
-            splitContainerRoot.Panel2.Controls.Add(documentationTabs);
+            _splitContainerRoot.Panel2.Controls.Add(documentationTabs);
 
             _treeProcedurePlan.Tree = _component.ProcedurePlanTree;
             _treeProcedurePlan.MenuModel = _component.ProcedurePlanTreeActionModel;

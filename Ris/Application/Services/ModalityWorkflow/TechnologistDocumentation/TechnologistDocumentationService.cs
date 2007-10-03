@@ -104,7 +104,7 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         }
 
         [UpdateOperation]
-        public StartModalityProcedureStepResponse StartModalityProcedureStep(StartModalityProcedureStepRequest request)
+        public StartModalityProcedureStepsResponse StartModalityProcedureSteps(StartModalityProcedureStepsRequest request)
         {
             // load the set of mps
             List<ModalityProcedureStep> modalitySteps = CollectionUtils.Map<ModalityProcedureStepDetail, ModalityProcedureStep>(request.ModalityProcedureSteps,
@@ -136,11 +136,47 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 
             this.PersistenceContext.SynchState();
 
-            StartModalityProcedureStepResponse response = new StartModalityProcedureStepResponse();
+            StartModalityProcedureStepsResponse response = new StartModalityProcedureStepsResponse();
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
 
             response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(modalitySteps[0].RequestedProcedure.Order, this.PersistenceContext);
             response.StartedMpps = assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
+
+            return response;
+        }
+
+        [UpdateOperation]
+        public DiscontinueModalityProcedureStepsResponse DiscontinueModalityProcedureSteps(DiscontinueModalityProcedureStepsRequest request)
+        {
+            Order order = null;
+
+            foreach (ModalityProcedureStepDetail mpsDetail in request.ModalityProcedureSteps)
+            {
+                ModalityProcedureStep mps = this.PersistenceContext.Load<ModalityProcedureStep>(mpsDetail.ModalityProcedureStepRef);
+                mps.Discontinue();
+
+                if (order == null) order = mps.RequestedProcedure.Order;
+            }
+
+            //foreach (RequestedProcedureDetail rpDetail in request.RequestedProcedures)
+            //{
+            //    RequestedProcedure rp = this.PersistenceContext.Load<RequestedProcedure>(rpDetail.RequestedProcedureRef);
+                
+            //    //This logic should not be here -> need CancelOrDiscontinueOperation
+            //    if (rp.Status == RequestedProcedureStatus.SC) 
+            //        rp.Cancel();
+            //    else 
+            //        rp.Discontinue();
+
+            //    if (order == null) order = rp.Order;
+            //}
+
+            this.PersistenceContext.SynchState();
+
+            DiscontinueModalityProcedureStepsResponse response = new DiscontinueModalityProcedureStepsResponse();
+            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
+
+            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
 
             return response;
         }
@@ -154,12 +190,36 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 
             // Drill back to order so we can refresh procedure plan
             ModalityProcedureStep oneMps = CollectionUtils.FirstElement<ModalityProcedureStep>(mpps.Activities);
+            Order order = oneMps.RequestedProcedure.Order;
+
+            foreach (RequestedProcedure rp in order.RequestedProcedures)
+            {
+                bool allMpsComplete = true;
+
+                foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
+                {
+                    // TODO: "Completer" can be different?
+                    mps.TryCompleteFromPerformedProcedureSteps();
+                    allMpsComplete &= mps.State == ActivityStatus.CM;
+                }
+
+                bool hasInterpretationStep = CollectionUtils.Contains<ProcedureStep>(
+                    rp.ProcedureSteps,
+                    delegate(ProcedureStep ps) { return ps.Is<InterpretationStep>(); });
+
+                if (allMpsComplete && !hasInterpretationStep)
+                {
+                    InterpretationStep ip = new InterpretationStep(rp);
+                    this.PersistenceContext.Lock(ip, DirtyState.New);
+                }
+            }
+
             this.PersistenceContext.SynchState();
 
             StopModalityPerformedProcedureStepResponse response = new StopModalityPerformedProcedureStepResponse();
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
 
-            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(oneMps.RequestedProcedure.Order, this.PersistenceContext);
+            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
             response.StoppedMpps = assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
 
             return response;
@@ -181,79 +241,6 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
 
             response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(oneMps.RequestedProcedure.Order, this.PersistenceContext);
             response.DiscontinuedMpps = assembler.CreateModalityPerformedProcedureStepSummary(mpps, this.PersistenceContext);
-
-            return response;
-        }
-
-        [UpdateOperation]
-        public CompleteModalityProcedureStepsResponse CompleteModalityProcedureSteps(CompleteModalityProcedureStepsRequest request)
-        {
-            Order order = this.PersistenceContext.Load<Order>(request.OrderRef, EntityLoadFlags.None);
-
-            foreach (RequestedProcedure rp in order.RequestedProcedures)
-            {
-                bool allMpsComplete = true;
-
-                foreach (ModalityProcedureStep mps in rp.ModalityProcedureSteps)
-                {
-                    // TODO: "Completer" can be different?
-                    mps.TryCompleteFromPerformedProcedureSteps();
-                    allMpsComplete &= mps.State == ActivityStatus.CM;
-                }
-
-                bool hasInterpretationStep = CollectionUtils.Contains<ProcedureStep>(
-                    rp.ProcedureSteps,
-                    delegate(ProcedureStep ps) { return ps.Is<InterpretationStep>(); });
-
-                if(allMpsComplete && !hasInterpretationStep)
-                {
-                    InterpretationStep ip = new InterpretationStep(rp);
-                    this.PersistenceContext.Lock(ip, DirtyState.New);
-                }
-            }
-
-            this.PersistenceContext.SynchState();
-
-            CompleteModalityProcedureStepsResponse response = new CompleteModalityProcedureStepsResponse();
-            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
-
-            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
-
-            return response;
-        }
-
-        [UpdateOperation]
-        public DiscontinueRequestedProcedureOrModalityProcedureStepResponse DiscontinueRequestedProcedureOrModalityProcedureStep(DiscontinueRequestedProcedureOrModalityProcedureStepRequest request)
-        {
-            Order order = null;
-
-            foreach (ModalityProcedureStepDetail mpsDetail in request.ModalityProcedureSteps)
-            {
-                ModalityProcedureStep mps = this.PersistenceContext.Load<ModalityProcedureStep>(mpsDetail.ModalityProcedureStepRef);
-                mps.Discontinue();
-
-                if (order == null) order = mps.RequestedProcedure.Order;
-            }
-
-            foreach (RequestedProcedureDetail rpDetail in request.RequestedProcedures)
-            {
-                RequestedProcedure rp = this.PersistenceContext.Load<RequestedProcedure>(rpDetail.RequestedProcedureRef);
-                
-                //This logic should not be here -> need CancelOrDiscontinueOperation
-                if (rp.Status == RequestedProcedureStatus.SC) 
-                    rp.Cancel();
-                else 
-                    rp.Discontinue();
-
-                if (order == null) order = rp.Order;
-            }
-
-            this.PersistenceContext.SynchState();
-
-            DiscontinueRequestedProcedureOrModalityProcedureStepResponse response = new DiscontinueRequestedProcedureOrModalityProcedureStepResponse();
-            TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
-
-            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
 
             return response;
         }

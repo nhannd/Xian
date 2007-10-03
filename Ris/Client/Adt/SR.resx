@@ -405,6 +405,9 @@
   <data name="TitleDetail" xml:space="preserve">
     <value>Detail</value>
   </data>
+  <data name="TitleDiscontinueMpps" xml:space="preserve">
+    <value>Discontinue</value>
+  </data>
   <data name="TitleDocuments" xml:space="preserve">
     <value>Documents</value>
   </data>
@@ -462,6 +465,9 @@
   <data name="TitlePatientVisits" xml:space="preserve">
     <value>Patient Visits</value>
   </data>
+  <data name="TitlePerformedProcedureComponent" xml:space="preserve">
+    <value>Performed Procedure Component</value>
+  </data>
   <data name="TitlePhoneNumbers" xml:space="preserve">
     <value>Phone Numbers</value>
   </data>
@@ -473,6 +479,9 @@
   </data>
   <data name="TitleResults" xml:space="preserve">
     <value>Results</value>
+  </data>
+  <data name="TitleStopMpps" xml:space="preserve">
+    <value>Stop</value>
   </data>
   <data name="TitleTechnologistHome" xml:space="preserve">
     <value>Technologist Home</value>

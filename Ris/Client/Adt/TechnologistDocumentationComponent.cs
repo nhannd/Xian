@@ -1,18 +1,14 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tables;
 using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common;
-using ClearCanvas.Ris.Application.Common.Jsml;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
-using ClearCanvas.Ris.Client.Formatting;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -34,7 +30,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         class OrderSummaryComponent : DHtmlComponent
         {
-            private TechnologistDocumentationComponent _owner;
+            private readonly TechnologistDocumentationComponent _owner;
 
             public OrderSummaryComponent(TechnologistDocumentationComponent owner)
             {
@@ -113,6 +109,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _documentationTabContainer.Pages.Add(new TabPage("Pre-exam", _preExamComponent));
 
             _ppsComponent = new PerformedProcedureComponent(_orderRef);
+            _ppsComponent.ProcedurePlanChanged += OnProcedurePlanChanged;
             _documentationTabContainer.Pages.Add(new TabPage("Exam", _ppsComponent));
 
             _postExamComponent = new ExamDetailsComponent(
@@ -125,8 +122,9 @@ namespace ClearCanvas.Ris.Client.Adt
 
             ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
             _procedurePlanActionHandler = new SimpleActionModel(resolver);
-            _startAction = _procedurePlanActionHandler.AddAction("start", "START", "Icons.StartToolSmall.png", "START", StartModalityProcedureStep);
-            _discontinueAction = _procedurePlanActionHandler.AddAction("discontinue", "DISCONTINUE", "Icons.DeleteToolSmall.png", "START", DiscontinueRequestedProcedureOrModalityProcedureStep);
+            _startAction = _procedurePlanActionHandler.AddAction("start", "START", "Icons.StartToolSmall.png", "START", StartModalityProcedureSteps);
+            _discontinueAction = _procedurePlanActionHandler.AddAction("discontinue", "DISCONTINUE", "Icons.DeleteToolSmall.png", "START", DiscontinueModalityProcedureSteps);
+            UpdateActionEnablement();
 
             base.Start();
         }
@@ -172,7 +170,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Action Handler Methods
 
-        private void StartModalityProcedureStep()
+        private void StartModalityProcedureSteps()
         {
             try
             {
@@ -183,8 +181,8 @@ namespace ClearCanvas.Ris.Client.Adt
                     Platform.GetService<ITechnologistDocumentationService>(
                         delegate(ITechnologistDocumentationService service)
                         {
-                            StartModalityProcedureStepRequest request = new StartModalityProcedureStepRequest(checkedMps);
-                            StartModalityProcedureStepResponse response = service.StartModalityProcedureStep(request);
+                            StartModalityProcedureStepsRequest request = new StartModalityProcedureStepsRequest(checkedMps);
+                            StartModalityProcedureStepsResponse response = service.StartModalityProcedureSteps(request);
 
                             RefreshProcedurePlanTree(response.ProcedurePlanSummary);
 
@@ -198,32 +196,28 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private void DiscontinueRequestedProcedureOrModalityProcedureStep()
+        private void DiscontinueModalityProcedureSteps()
         {
-            //try
-            //{
-            //    List<ModalityProcedureStepDetail> checkedMps = GetCheckedMps();
-            //    List<RequestedProcedureDetail> checkedRps = GetCheckedRps();
+            try
+            {
+                List<ModalityProcedureStepDetail> checkedMps = GetCheckedMps();
 
-            //    if (checkedMps.Count > 0)
-            //    {
-            //        Platform.GetService<ITechnologistDocumentationService>(
-            //            delegate(ITechnologistDocumentationService service)
-            //            {
-            //                DiscontinueRequestedProcedureOrModalityProcedureStepRequest request = new DiscontinueRequestedProcedureOrModalityProcedureStepRequest();
-            //                request.RequestedProcedures = checkedRps;
-            //                request.ModalityProcedureSteps = checkedMps;
-            //                DiscontinueRequestedProcedureOrModalityProcedureStepResponse response = service.DiscontinueRequestedProcedureOrModalityProcedureStep(request);
+                if (checkedMps.Count > 0)
+                {
+                    Platform.GetService<ITechnologistDocumentationService>(
+                        delegate(ITechnologistDocumentationService service)
+                        {
+                            DiscontinueModalityProcedureStepsRequest request = new DiscontinueModalityProcedureStepsRequest(checkedMps);
+                            DiscontinueModalityProcedureStepsResponse response = service.DiscontinueModalityProcedureSteps(request);
 
-            //                RefreshProcedurePlanTree(response.RequestedProcedures);
-            //                _orderRef = response.OrderRef;
-            //            });
-            //    }
-            //}
-            //catch (Exception e)
-            //{
-            //    ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            //}
+                            RefreshProcedurePlanTree(response.ProcedurePlanSummary);
+                        });
+                }
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         #endregion
@@ -239,9 +233,27 @@ namespace ClearCanvas.Ris.Client.Adt
                 delegate(Checkable<ModalityProcedureStepDetail> checkable) { return checkable.Item; });
         }
 
-        private List<RequestedProcedureDetail> GetCheckedRps()
+        private void UpdateActionEnablement()
         {
-            return new List<RequestedProcedureDetail>();
+            IList<ModalityProcedureStepDetail> checkedMps = GetCheckedMps();
+            if (checkedMps.Count == 0)
+            {
+                _startAction.Enabled = _discontinueAction.Enabled = false;
+            }
+            else
+            {
+                // TODO: defer enablement to server
+                _startAction.Enabled = CollectionUtils.TrueForAll<ModalityProcedureStepDetail>(checkedMps,
+                    delegate(ModalityProcedureStepDetail mps) { return mps.Status.Code == "SC"; });
+
+                _discontinueAction.Enabled = CollectionUtils.TrueForAll<ModalityProcedureStepDetail>(checkedMps,
+                    delegate(ModalityProcedureStepDetail mps) { return mps.Status.Code == "SC"; });
+            }
+        }
+
+        private void OnProcedurePlanChanged(object sender, ProcedurePlanChangedEventArgs e)
+        {
+            RefreshProcedurePlanTree(e.ProcedurePlanSummary);
         }
 
         private void RefreshProcedurePlanTree(ProcedurePlanSummary procedurePlanSummary)
@@ -258,7 +270,11 @@ namespace ClearCanvas.Ris.Client.Adt
                         binding.CanHaveSubTreeHandler = delegate { return false; };
                         binding.IconSetProvider = delegate { return null; };
                         binding.IsCheckedGetter = delegate(Checkable<ModalityProcedureStepDetail> mps) { return mps.IsChecked; };
-                        binding.IsCheckedSetter = delegate(Checkable<ModalityProcedureStepDetail> mps, bool isChecked) { mps.IsChecked = isChecked; };
+                        binding.IsCheckedSetter = delegate(Checkable<ModalityProcedureStepDetail> mps, bool isChecked)
+                              {
+                                  mps.IsChecked = isChecked;
+                                  UpdateActionEnablement();
+                              };
 
                         List<Checkable<ModalityProcedureStepDetail>> checkableMpsList =
                             CollectionUtils.Map<ModalityProcedureStepDetail, Checkable<ModalityProcedureStepDetail>>(

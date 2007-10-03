@@ -21,7 +21,7 @@ namespace ClearCanvas.Ris.Client.Adt
     /// PerformedProcedureComponent class
     /// </summary>
     [AssociateView(typeof(PerformedProcedureComponentViewExtensionPoint))]
-    public class PerformedProcedureComponent : ApplicationComponent
+    public class PerformedProcedureComponent : ApplicationComponent, IDocumentationPage
     {
         #region MPPS Details Component
 
@@ -39,7 +39,13 @@ namespace ClearCanvas.Ris.Client.Adt
 
             protected override string GetTagData(string tag)
             {
+                //return _owner._selectedMpps.Documentation;
                 return null;
+            }
+
+            protected override void SetTagData(string tag, string data)
+            {
+                //_owner._selectedMpps.Documtation = data;
             }
 
             public void SelectedMppsChanged()
@@ -57,7 +63,6 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #endregion
 
-
         private readonly TechnologistDocumentationMppsSummaryTable _mppsTable = new TechnologistDocumentationMppsSummaryTable();
         private ModalityPerformedProcedureStepSummary _selectedMpps;
         private EntityRef _orderRef;
@@ -66,10 +71,10 @@ namespace ClearCanvas.Ris.Client.Adt
         private ClickAction _stopAction;
         private ClickAction _discontinueAction;
 
-
         private ChildComponentHost _mppsDetailsComponentHost;
         private MppsDetailsComponent _detailsComponent;
 
+        private event EventHandler<ProcedurePlanChangedEventArgs> _procedurePlanChanged;
 
         /// <summary>
         /// Constructor
@@ -90,13 +95,16 @@ namespace ClearCanvas.Ris.Client.Adt
         public override void Start()
         {
             _mppsDetailsComponentHost = new ChildComponentHost(this.Host, _detailsComponent = new MppsDetailsComponent(this));
+            //_mppsDetailsComponentHost.Title = SR.TitlePerformedProcedureComponent;
             _mppsDetailsComponentHost.StartComponent();
 
             ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
 
             _mppsActionHandler = new SimpleActionModel(resolver);
-            _stopAction = _mppsActionHandler.AddAction("stop", "STOP", "Icons.CompleteToolSmall.png", "STOP", StopPerformedProcedureStep);
-            _discontinueAction = _mppsActionHandler.AddAction("discontinue", "DISCONTINUE", "Icons.DeleteToolSmall.png", "DISCONTINUE", DiscontinuePerformedProcedureStep);
+
+            _stopAction = _mppsActionHandler.AddAction("stop", SR.TitleStopMpps, "Icons.CompleteToolSmall.png", SR.TitleStopMpps, StopPerformedProcedureStep);
+            _discontinueAction = _mppsActionHandler.AddAction("discontinue", SR.TitleDiscontinueMpps, "Icons.DeleteToolSmall.png", SR.TitleDiscontinueMpps, DiscontinuePerformedProcedureStep);
+            UpdateActionEnablement();
 
             if (_orderRef != null)
             {
@@ -120,6 +128,26 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #endregion
 
+        #region IDocumentationPage Members
+
+        public void Save()
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Validate()
+        {
+            throw new NotImplementedException();
+        }
+
+        public event EventHandler<ProcedurePlanChangedEventArgs> ProcedurePlanChanged
+        {
+            add { _procedurePlanChanged += value; }
+            remove { _procedurePlanChanged -= value; }
+        }
+
+        #endregion
+
         #region Presentation Model
 
         public ITable MppsTable
@@ -133,6 +161,7 @@ namespace ClearCanvas.Ris.Client.Adt
             set
             {
                 _selectedMpps = (ModalityPerformedProcedureStepSummary)value.Item;
+                UpdateActionEnablement();
                 _detailsComponent.SelectedMppsChanged();
             }
         }
@@ -147,36 +176,15 @@ namespace ClearCanvas.Ris.Client.Adt
             get { return _mppsDetailsComponentHost; }
         }
 
-        public void OnComplete()
-        {
-            try
-            {
-                Platform.GetService<ITechnologistDocumentationService>(
-                    delegate(ITechnologistDocumentationService service)
-                    {
-                        CompleteModalityProcedureStepsRequest request = new CompleteModalityProcedureStepsRequest(_orderRef);
-                        CompleteModalityProcedureStepsResponse response = service.CompleteModalityProcedureSteps(request);
-
-                        RefreshProcedurePlanTree(response.ProcedurePlanSummary);
-                    });
-            }
-            catch (Exception e)
-            {
-                ExceptionHandler.Report(e, this.Host.DesktopWindow);
-            }
-
-        }
-
-
         private void RefreshProcedurePlanTree(ProcedurePlanSummary procedurePlanSummary)
         {
             _orderRef = procedurePlanSummary.OrderRef;
-            throw new Exception("The method or operation is not implemented.");
+            EventsHelper.Fire(_procedurePlanChanged, this, new ProcedurePlanChangedEventArgs(procedurePlanSummary));
         }
         
         #endregion
 
-        #region Private helpers
+        #region Tool Click Handlers
 
         private void StopPerformedProcedureStep()
         {
@@ -200,6 +208,10 @@ namespace ClearCanvas.Ris.Client.Adt
                                     return mppsSummary.ModalityPerformendProcedureStepRef == selectedMpps.ModalityPerformendProcedureStepRef;
                                 },
                                 response.StoppedMpps);
+
+                            // Refresh selection
+                            _selectedMpps = response.StoppedMpps;
+                            UpdateActionEnablement();
                             _mppsTable.Sort();
                         });
                 }
@@ -232,6 +244,9 @@ namespace ClearCanvas.Ris.Client.Adt
                                     return mppsSummary.ModalityPerformendProcedureStepRef == selectedMpps.ModalityPerformendProcedureStepRef;
                                 },
                                 response.DiscontinuedMpps);
+
+                            _selectedMpps = response.DiscontinuedMpps;
+                            UpdateActionEnablement();
                             _mppsTable.Sort();
                         });
                 }
@@ -242,6 +257,22 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
+        #endregion
+
+        #region Private Methods
+
+        private void UpdateActionEnablement()
+        {
+            if(_selectedMpps != null)
+            {
+                // TOOD:  replace with server side logic
+                _stopAction.Enabled = _discontinueAction.Enabled = _selectedMpps.State.Code == "IP";
+            }
+            else
+            {
+                _stopAction.Enabled = _discontinueAction.Enabled = false;
+            }
+        }
 
         #endregion
     }

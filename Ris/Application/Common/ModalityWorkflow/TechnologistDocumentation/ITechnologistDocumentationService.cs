@@ -41,11 +41,20 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
         /// <summary>
         /// Starts a specified set of modality procedure steps with a single modality performed procedure step
         /// </summary>
-        /// <param name="request"><see cref="StartModalityProcedureStepRequest"/></param>
-        /// <returns><see cref="StartModalityProcedureStepResponse"/></returns>
+        /// <param name="request"><see cref="StartModalityProcedureStepsRequest"/></param>
+        /// <returns><see cref="StartModalityProcedureStepsResponse"/></returns>
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
-        StartModalityProcedureStepResponse StartModalityProcedureStep(StartModalityProcedureStepRequest request);
+        StartModalityProcedureStepsResponse StartModalityProcedureSteps(StartModalityProcedureStepsRequest request);
+
+        /// <summary>
+        /// Discontinues a set of specified modality procedure steps
+        /// </summary>
+        /// <param name="request"><see cref="DiscontinueModalityProcedureStepsResponse"/></param>
+        /// <returns><see cref="DiscontinueModalityProcedureStepsRequest"/></returns>
+        [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
+        DiscontinueModalityProcedureStepsResponse DiscontinueModalityProcedureSteps(DiscontinueModalityProcedureStepsRequest request);
 
         /// <summary>
         /// Stops/completes a specified modality performed procedure step
@@ -64,25 +73,6 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
         [OperationContract]
         [FaultContract(typeof(RequestValidationException))]
         DiscontinueModalityPerformedProcedureStepResponse DiscontinueModalityPerformedProcedureStep(DiscontinueModalityPerformedProcedureStepRequest request);
-
-        /// <summary>
-        /// Attempts to complete any modality procedure steps for which all of its modality performed procedure steps are completed.
-        /// If successful, adds an interpretation step to the associated requested procedure
-        /// </summary>
-        /// <param name="request"><see cref="CompleteModalityProcedureStepsRequest"/></param>
-        /// <returns><see cref="CompleteModalityProcedureStepsResponse"/></returns>
-        [OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        CompleteModalityProcedureStepsResponse CompleteModalityProcedureSteps(CompleteModalityProcedureStepsRequest request);
-
-        /// <summary>
-        /// Discontinues a specified modality procedure step or a specified requested procedure and all of its modality procedure steps
-        /// </summary>
-        /// <param name="request"><see cref="DiscontinueRequestedProcedureOrModalityProcedureStepRequest"/></param>
-        /// <returns><see cref="DiscontinueRequestedProcedureOrModalityProcedureStepResponse"/></returns>
-        [OperationContract]
-        [FaultContract(typeof(RequestValidationException))]
-        DiscontinueRequestedProcedureOrModalityProcedureStepResponse DiscontinueRequestedProcedureOrModalityProcedureStep(DiscontinueRequestedProcedureOrModalityProcedureStepRequest request);
 
         [OperationContract]
         SaveDataResponse SaveData(SaveDataRequest request);

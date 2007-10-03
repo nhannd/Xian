@@ -5,10 +5,12 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation
 {
     [DataContract]
-    public class DiscontinueRequestedProcedureOrModalityProcedureStepRequest : DataContractBase
+    public class StartModalityProcedureStepsRequest : DataContractBase
     {
-        [DataMember]
-        public List<RequestedProcedureDetail> RequestedProcedures;
+        public StartModalityProcedureStepsRequest(List<ModalityProcedureStepDetail> modalityProcedureSteps)
+        {
+            ModalityProcedureSteps = modalityProcedureSteps;
+        }
 
         [DataMember]
         public List<ModalityProcedureStepDetail> ModalityProcedureSteps;

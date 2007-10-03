@@ -238,8 +238,8 @@
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\CompleteModalityProcedureStepsResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\DiscontinueModalityPerformedProcedureStepRequest.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\DiscontinueModalityPerformedProcedureStepResponse.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\DiscontinueRequestedProcedureOrModalityProcedureStepRequest.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\DiscontinueRequestedProcedureOrModalityProcedureStepResponse.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\DiscontinueModalityProcedureStepsRequest.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\DiscontinueModalityProcedureStepsResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\GetProcedurePlanForWorklistItemRequest.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\GetProcedurePlanForWorklistItemResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\ListPerformedProcedureStepsRequest.cs" />
@@ -248,10 +248,10 @@
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\ModalityProcedureStepDetail.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\ProcedurePlanSummary.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\RequestedProcedureDetail.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\StartModalityProcedureStepsRequest.cs" />
+    <Compile Include="ModalityWorkflow\TechnologistDocumentation\StartModalityProcedureStepsResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\SaveDataRequest.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\SaveDataResponse.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\StartModalityProcedureStepRequest.cs" />
-    <Compile Include="ModalityWorkflow\TechnologistDocumentation\StartModalityProcedureStepResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\StopModalityPerformedProcedureStepRequest.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\StopModalityPerformedProcedureStepResponse.cs" />
     <Compile Include="RegistrationWorkflow\ReplaceOrderRequest.cs" />

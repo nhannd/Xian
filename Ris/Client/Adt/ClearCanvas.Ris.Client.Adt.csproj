@@ -59,6 +59,7 @@
     <Compile Include="Folders\TechnologistContainerFolders.cs" />
     <Compile Include="Folders\TechnologistWorkflowFolders.cs" />
     <Compile Include="HtmlFormSelector.cs" />
+    <Compile Include="IDocumentationPage.cs" />
     <Compile Include="OrderEntryComponentSettings.cs" />
     <Compile Include="OrderEntryComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>

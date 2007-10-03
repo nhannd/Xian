@@ -925,6 +925,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Discontinue.
+        /// </summary>
+        internal static string TitleDiscontinueMpps {
+            get {
+                return ResourceManager.GetString("TitleDiscontinueMpps", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Documents.
         /// </summary>
         internal static string TitleDocuments {
@@ -1096,6 +1105,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Performed Procedure Component.
+        /// </summary>
+        internal static string TitlePerformedProcedureComponent {
+            get {
+                return ResourceManager.GetString("TitlePerformedProcedureComponent", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Phone Numbers.
         /// </summary>
         internal static string TitlePhoneNumbers {
@@ -1128,6 +1146,15 @@ namespace ClearCanvas.Ris.Client.Adt {
         internal static string TitleResults {
             get {
                 return ResourceManager.GetString("TitleResults", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Stop.
+        /// </summary>
+        internal static string TitleStopMpps {
+            get {
+                return ResourceManager.GetString("TitleStopMpps", resourceCulture);
             }
         }
         

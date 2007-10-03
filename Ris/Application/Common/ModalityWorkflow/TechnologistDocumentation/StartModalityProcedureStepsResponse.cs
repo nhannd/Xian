@@ -4,7 +4,7 @@ using ClearCanvas.Enterprise.Common;
 namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation
 {
     [DataContract]
-    public class StartModalityProcedureStepResponse : DataContractBase
+    public class StartModalityProcedureStepsResponse : DataContractBase
     {
         [DataMember]
         public ProcedurePlanSummary ProcedurePlanSummary;
