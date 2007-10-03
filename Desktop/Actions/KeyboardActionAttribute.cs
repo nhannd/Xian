@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.Actions
 {
@@ -13,7 +10,12 @@ namespace ClearCanvas.Desktop.Actions
 		{
 		}
 
-        public override void Apply(IActionBuildingContext builder)
+		public KeyboardActionAttribute(string actionID, string pathHint, string clickHandler)
+			: base(actionID, pathHint, clickHandler)
+		{
+		}
+		
+		public override void Apply(IActionBuildingContext builder)
 		{
             base.Apply(builder);
 
