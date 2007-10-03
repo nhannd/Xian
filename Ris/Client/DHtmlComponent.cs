@@ -7,6 +7,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
 using ClearCanvas.Ris.Application.Common.PreviewService;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common.Jsml;
@@ -160,6 +161,16 @@ namespace ClearCanvas.Ris.Client
             public void SetData(string tag, string data)
             {
                 _component.SetTagData(tag, data);
+            }
+
+            public string ResolveStaffName(string search)
+            {
+                StaffSummary staff = null;
+                if (StaffFinder.ResolveNameInteractive(search, _component.Host.DesktopWindow, out staff))
+                {
+                    return string.Format("{0} {1}", PersonNameFormat.Format(staff.Name), staff.StaffId);
+                }
+                return null;
             }
         }
 

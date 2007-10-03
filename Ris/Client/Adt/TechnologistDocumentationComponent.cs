@@ -30,27 +30,6 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(TechnologistDocumentationComponentViewExtensionPoint))]
     public class TechnologistDocumentationComponent : ApplicationComponent
     {
-        #region Application Component Host class
-
-        class ChildComponentHost : ApplicationComponentHost
-        {
-            private TechnologistDocumentationComponent _owner;
-
-            public ChildComponentHost(TechnologistDocumentationComponent owner, IApplicationComponent hostedComponent)
-                :base(hostedComponent)
-            {
-                _owner = owner;
-            }
-
-            public override DesktopWindow DesktopWindow
-            {
-                get { return _owner.Host.DesktopWindow; }
-            }
-
-        }
-
-        #endregion
-
         #region Order Summary Component class
 
         class OrderSummaryComponent : DHtmlComponent
@@ -124,7 +103,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
             RefreshProcedurePlanTree(procedurePlanSummary);
 
-            _orderSummaryComponentHost = new ChildComponentHost(this, new OrderSummaryComponent(this));
+            _orderSummaryComponentHost = new ChildComponentHost(this.Host, new OrderSummaryComponent(this));
             _orderSummaryComponentHost.StartComponent();
 
             _documentationTabContainer = new TabComponentContainer();
@@ -141,7 +120,7 @@ namespace ClearCanvas.Ris.Client.Adt
                 procedurePlanSummary);
             _documentationTabContainer.Pages.Add(new TabPage("Post-exam", _postExamComponent));
 
-            _documentationHost = new ChildComponentHost(this, _documentationTabContainer);
+            _documentationHost = new ChildComponentHost(this.Host, _documentationTabContainer);
             _documentationHost.StartComponent();
 
             ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);

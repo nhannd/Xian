@@ -1,9 +1,13 @@
 /// scripting language is JScript.NET
 /// variable name is "performedProcedureStep", of type ModalityPerformedProcedureStepSummary
 
-var modalityId = performedProcedureStep.ModalityProcedureSteps[0].ModalityId;
+var modalityName = performedProcedureStep.ModalityProcedureSteps[0].ModalityName;
 
-if(modalityId == "10001")
-    return "http://localhost/RIS/breastimaging.htm";
-else
-    return "http://localhost/RIS/nuclearmedicine.htm";
+if(modalityName == "CT")
+    return "http://localhost/RIS/forms/technologist/ct-mpps.htm";
+    
+if(modalityName == "MRI")
+    return "http://localhost/RIS/forms/technologist/mri-mpps.htm";
+    
+    
+return "about:blank";

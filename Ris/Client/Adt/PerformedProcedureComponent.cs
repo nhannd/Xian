@@ -23,33 +23,6 @@ namespace ClearCanvas.Ris.Client.Adt
     [AssociateView(typeof(PerformedProcedureComponentViewExtensionPoint))]
     public class PerformedProcedureComponent : ApplicationComponent
     {
-        #region ChildComponentHost class
-
-        class ChildComponentHost : ApplicationComponentHost
-        {
-            private readonly PerformedProcedureComponent _owner;
-            private string _title;
-
-            public ChildComponentHost(PerformedProcedureComponent owner, IApplicationComponent hostedComponent)
-                : base(hostedComponent)
-            {
-                _owner = owner;
-            }
-
-            public override DesktopWindow DesktopWindow
-            {
-                get { return _owner.Host.DesktopWindow; }
-            }
-
-            public override string Title
-            {
-                get { return _title; }
-                set { _title = value; }
-            }
-        }
-
-        #endregion
-
         #region MPPS Details Component
 
         class MppsDetailsComponent : DHtmlComponent
@@ -116,8 +89,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            _mppsDetailsComponentHost = new ChildComponentHost(this, _detailsComponent = new MppsDetailsComponent(this));
-            _mppsDetailsComponentHost.Title = "TODO";
+            _mppsDetailsComponentHost = new ChildComponentHost(this.Host, _detailsComponent = new MppsDetailsComponent(this));
             _mppsDetailsComponentHost.StartComponent();
 
             ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);

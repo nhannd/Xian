@@ -65,6 +65,7 @@
     <Compile Include="Actions\KeyboardActionAttribute.cs" />
     <Compile Include="Actions\LabelValueObserverAttribute.cs" />
     <Compile Include="Checkable.cs" />
+    <Compile Include="ChildComponentHost.cs" />
     <Compile Include="ClosedEventArgs.cs" />
     <Compile Include="CloseHelperComponent.cs" />
     <Compile Include="CloseHelperTool.cs" />
