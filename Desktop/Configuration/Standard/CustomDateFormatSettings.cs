@@ -17,17 +17,11 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 			ApplicationSettingsRegister.Instance.RegisterInstance(this);
 		}
 
-		public System.Collections.Specialized.StringCollection AvailableCustomFormats
+		public System.Collections.Specialized.StringCollection AvailableFormats
 		{
 			get
 			{
-				//we have to parse the xml each time this property is accessed because we don't want to cache the setting anywhere.
-				StringReader stringReader = new StringReader(this.AvailableCustomFormatsXml);
-				XmlTextReader reader = new XmlTextReader(stringReader);
-
-				XmlSerializer serializer = new XmlSerializer(typeof(System.Collections.Specialized.StringCollection));
-				System.Collections.Specialized.StringCollection collection = (System.Collections.Specialized.StringCollection)serializer.Deserialize(reader);
-				return collection;
+				return AvailableCustomFormats;
 			}
 		}
 	}

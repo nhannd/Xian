@@ -13,8 +13,6 @@ namespace ClearCanvas.ImageViewer.Annotations
 {
 	public sealed class AnnotationLayoutStore
 	{
-		internal const string DefaultSettingsFile = "AnnotationLayoutStoreDefaults.xml";
-
 		private static AnnotationLayoutStore _instance;
 
 		private XmlDocument _document;

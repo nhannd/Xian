@@ -54,7 +54,12 @@
     <Compile Include="Actions\ActionModelNode.cs" />
     <Compile Include="Actions\ActionModelNodeList.cs" />
     <Compile Include="Actions\ActionModelRoot.cs" />
-    <Compile Include="Actions\ActionModelStore.cs" />
+    <Compile Include="Actions\ActionModelSettings.cs" />
+    <Compile Include="Actions\ActionModelSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>ActionModelSettings.settings</DependentUpon>
+    </Compile>
     <Compile Include="Actions\ActionPath.cs" />
     <Compile Include="Actions\ActionPermissionAttribute.cs" />
     <Compile Include="Actions\ActionSet.cs" />
@@ -264,6 +269,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Actions\ActionModelSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>ActionModelSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="ClassDiagrams\Actions.cd" />
     <None Include="app.config" />
     <None Include="ClassDiagrams\ApplicationComponentContainers.cd" />

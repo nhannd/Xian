@@ -68,7 +68,7 @@ namespace ClearCanvas.Desktop.Actions
 
 		/// <summary>
 		/// Indicates whether or not the action is 'persistent'.  Actions created via the
-		/// Action Attributes are considered persistent and are committed to the actionmodels.xml,
+		/// Action Attributes are considered persistent and are committed to the <see cref="ActionModelSettings"/>,
 		/// otherwise they are considered generated and they are not committed.
 		/// </summary>
 		bool Persistent { get; }

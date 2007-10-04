@@ -12,8 +12,6 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
 	public sealed class DicomFilteredAnnotationLayoutStore
 	{
-		internal const string DefaultSettingsFile = "DicomFilteredAnnotationLayoutStoreDefaults.xml";
-
 		private static DicomFilteredAnnotationLayoutStore _instance;
 
 		private XmlDocument _document;

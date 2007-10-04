@@ -503,9 +503,6 @@
   <ItemGroup>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="actionmodels.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="InteractiveGraphics\Tests\" />
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

@@ -89,9 +89,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Standard\CustomDateFormatSettings.xml" />
-  </ItemGroup>
-  <ItemGroup>
     <EmbeddedResource Include="Icons\EditToolSmall.png" />
     <EmbeddedResource Include="Icons\SaveToolSmall.png" />
   </ItemGroup>

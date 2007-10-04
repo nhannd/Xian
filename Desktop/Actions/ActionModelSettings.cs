@@ -3,47 +3,22 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Diagnostics;
+using System.Configuration;
+using ClearCanvas.Common.Configuration;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.Actions
 {
-    /// <summary>
-    /// Provides services for storing an action model to an XML file, and
-	/// rebuilding that action model from the file.
+	/// <summary>
+    /// Provides services for storing an action model to an XML document, and rebuilding that action model from the document.
     /// </summary>
-    internal class ActionModelStore
+	[SettingsGroupDescription("Stores the action model settings for each user")]
+	[SettingsProvider(typeof(StandardSettingsProvider))]
+	internal sealed partial class ActionModelSettings
     {
-        private string _filename;
-        private XmlDocument _xmlDoc;
-        private XmlElement _xmlActionModelsNode;
-
-        /// <summary>
-        /// Constructs an object on the specified filename.
-        /// </summary>
-        /// <param name="filename">The file that acts as a store.</param>
-        internal ActionModelStore(string filename)
-        {
-            _filename = filename;
-            _xmlDoc = new XmlDocument();
-
-            try
-            {
-                _xmlDoc.Load(_filename);
-            }
-            catch (Exception)
-            {
-                // doesn't exist
-            }
-
-            // find or create the "action-models" node
-            if (_xmlDoc.GetElementsByTagName("action-models").Count == 0)
-            {
-                _xmlActionModelsNode = _xmlDoc.CreateElement("action-models");
-                _xmlDoc.AppendChild(_xmlActionModelsNode);
-            }
-            else
-            {
-                _xmlActionModelsNode = (XmlElement)_xmlDoc.GetElementsByTagName("action-models").Item(0);
-            }
+		private ActionModelSettings()
+		{
+			ApplicationSettingsRegister.Instance.RegisterInstance(this);
 		}
 
 		#region Public Methods
@@ -102,7 +77,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// <returns>An "action-model" element</returns>
 		private XmlElement CreateXmlActionModel(string id)
 		{
-			XmlElement xmlActionModel = _xmlDoc.CreateElement("action-model");
+			XmlElement xmlActionModel = this.GetXmlDocument().CreateElement("action-model");
 			xmlActionModel.SetAttribute("id", id);
 			return xmlActionModel;
 		}
@@ -114,7 +89,7 @@ namespace ClearCanvas.Desktop.Actions
 		/// <returns>an "action" element</returns>
 		private XmlElement CreateXmlAction(IAction action)
 		{
-			XmlElement xmlAction = _xmlDoc.CreateElement("action");
+			XmlElement xmlAction = this.GetXmlDocument().CreateElement("action");
 
 			xmlAction.SetAttribute("id", action.ActionID);
 			xmlAction.SetAttribute("path", action.Path.ToString());
@@ -130,7 +105,7 @@ namespace ClearCanvas.Desktop.Actions
 		///// <returns>An "action-model" element, or null if not found</returns>
 		private XmlElement FindXmlActionModel(string id)
 		{
-			return (XmlElement)_xmlActionModelsNode.SelectSingleNode(String.Format("/action-models/action-model[@id='{0}']", id));
+			return (XmlElement)this.GetActionModelsNode().SelectSingleNode(String.Format("/action-models/action-model[@id='{0}']", id));
 		}
 
 		/// <summary>
@@ -183,9 +158,9 @@ namespace ClearCanvas.Desktop.Actions
 			if (changed)
 			{
 				if (!modelExists)
-					_xmlActionModelsNode.AppendChild(xmlActionModel);
+					this.GetActionModelsNode().AppendChild(xmlActionModel);
 
-				_xmlDoc.Save(_filename);
+				this.Save();
 			}
 			
 			XmlElement xmlActionModelClone = (XmlElement)xmlActionModel.CloneNode(true);
@@ -308,6 +283,34 @@ namespace ClearCanvas.Desktop.Actions
 				xmlActionModel.AppendChild(newXmlAction);
 
 			return true;
+		}
+
+		private XmlDocument GetXmlDocument()
+		{
+			try
+			{
+				return this.ActionModelsXml;
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e);
+				this.Reset();
+				return this.ActionModelsXml;
+			}
+		}
+
+		private XmlElement GetActionModelsNode()
+		{
+			try
+			{
+				return (XmlElement)this.GetXmlDocument().GetElementsByTagName("action-models")[0];
+			}
+			catch (Exception e)
+			{
+				Platform.Log(LogLevel.Warn, e);
+				this.Reset();
+				return (XmlElement)this.GetXmlDocument().GetElementsByTagName("action-models")[0];
+			}
 		}
 
 		#endregion

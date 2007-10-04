@@ -1,8 +1,11 @@
+#if UNIT_TESTS
+
 using System;
 using System.Collections.Generic;
 using System.Text;
 using NUnit.Framework;
 using System.IO;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests
 {
@@ -14,13 +17,9 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests
 		}
 
 		[Test]
-		[Ignore("This test won't work unless the settings class is forced to use the LocalSettingsProvider")]
+		[Ignore("This test won't work unless the settings class is forced to use the LocalSettingsProvider (e.g. by commenting out the SettingsProvider attribute)")]
 		public void Test()
 		{
-			string filepath = String.Format(".\\{0}", DicomFilteredAnnotationLayoutStore.DefaultSettingsFile);
-			if (File.Exists(filepath))
-				File.Move(filepath, ".\\tmp.xml");
-
 			DicomFilteredAnnotationLayoutStore.Instance.Clear();
 
 			IList<DicomFilteredAnnotationLayout> layouts = DicomFilteredAnnotationLayoutStore.Instance.FilteredLayouts;
@@ -42,10 +41,12 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests
 			layouts = DicomFilteredAnnotationLayoutStore.Instance.FilteredLayouts;
 			Assert.AreEqual(layouts.Count, 4);
 
-			if (File.Exists(".\\tmp.xml"))
-				File.Move(".\\tmp.xml", filepath);
-
-			DicomFilteredAnnotationLayoutStore.Instance.Clear();
+			ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
+			using (Stream stream = resolver.OpenResource("DicomFilteredAnnotationLayoutStoreDefaults.xml"))
+			{
+				StreamReader reader = new StreamReader(stream);
+				DicomFilteredAnnotationLayoutStoreSettings.Default.FilteredLayoutSettingsXml = reader.ReadToEnd();
+			}
 
 			layouts = DicomFilteredAnnotationLayoutStore.Instance.FilteredLayouts;
 			Assert.AreEqual(layouts.Count, 8);
@@ -119,3 +120,5 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests
 
 	}
 }
+
+#endif

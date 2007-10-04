@@ -120,7 +120,7 @@ namespace ClearCanvas.Desktop.Configuration.Standard
 		{
 			base.Start();
 
-			foreach (string format in CustomDateFormatSettings.Default.AvailableCustomFormats)
+			foreach (string format in CustomDateFormatSettings.Default.AvailableFormats)
 			{
 				if (!String.IsNullOrEmpty(format))
 					_availableCustomFormats.Add(format);

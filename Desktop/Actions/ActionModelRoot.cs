@@ -9,7 +9,9 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
     public class ActionModelRoot : ActionModelNode
     {
-        /// <summary>
+		private string _site;
+		
+		/// <summary>
         /// Creates the action model with the specified namespace and site, using the specified
         /// set of actions as input.  If an action model specification for the namespace/site
         /// does not exist, it will be created.  If it does it exist, it will be used as guidance
@@ -21,12 +23,8 @@ namespace ClearCanvas.Desktop.Actions
         /// <returns>An action model tree</returns>
         public static ActionModelRoot CreateModel(string namespaze, string site, IActionSet actions)
         {
-            ActionModelStore store = new ActionModelStore("actionmodels.xml");
-            return store.BuildAndSynchronize(namespaze, site, actions.Select(delegate(IAction action) { return action.Path.Site == site; }));
+			return ActionModelSettings.Default.BuildAndSynchronize(namespaze, site, actions.Select(delegate(IAction action) { return action.Path.Site == site; }));
         }
-
-        private string _site;
-
 
         /// <summary>
         /// Constructor
@@ -37,7 +35,7 @@ namespace ClearCanvas.Desktop.Actions
         }
 
         /// <summary>
-        /// Protected constructor
+		/// Constructor
         /// </summary>
         /// <param name="site">The site to which this model corresponds</param>
         public ActionModelRoot(string site)

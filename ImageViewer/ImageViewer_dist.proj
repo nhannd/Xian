@@ -1,8 +1,9 @@
-<Project DefaultTargets="Copy Database Files;Copy Rest of Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-	<!-- ImageViewer specific postbuild step -->
+<Project DefaultTargets="Create App Config;Copy Database Files;Copy Rest of Files" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <!-- ImageViewer specific postbuild step -->
 	<PropertyGroup>
 		<DatabaseDirectory>C:\dicom_datastore</DatabaseDirectory>
     <SourceEmptyDatabaseFile>$(SolutionDir)\..\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf</SourceEmptyDatabaseFile>
+    <AppConfigCreatorSourceFiles>$(SolutionDir)..\Desktop\Executable\app.config $(SolutionDir)..\ImageViewer\ImageViewer_dist.config</AppConfigCreatorSourceFiles>
   </PropertyGroup>
 
   <ItemGroup>
@@ -63,10 +64,6 @@
 		<ImageViewerPluginFiles Include="$(SolutionDir)\..\Utilities\DicomEditor\View\WinForms\bin\$(Configuration)\ClearCanvas.Utilities.DicomEditor.View.WinForms.dll" />
 	</ItemGroup>
 
-	<ItemGroup>
-		<ConfigurationFiles Include="$(SolutionDir)\..\ImageViewer\actionmodels.xml" />
-	</ItemGroup>
-
 	<Target Name="Copy Database Files">
 		<!-- Copy database file -->
 		<MakeDir Condition="!Exists('$(DatabaseDirectory)')" Directories="$(DatabaseDirectory)" />
@@ -88,8 +85,11 @@
 		<!-- Copy ImageViewer plugins -->
 		<Copy SourceFiles="@(ImageViewerPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
 
-		<!-- Copy config files -->
-		<Copy SourceFiles="@(ConfigurationFiles)" DestinationFolder="$(DistributionDirectory)" />
 	</Target>
+  <Target Name="Create App Config">
+    <MSBuild Projects="$(SolutionDir)\..\Utilities\AppConfigCreator\AppConfigCreator.csproj" Properties="Configuration=$(Configuration);Platform=Any CPU;OutputPath=$(SolutionDir)\..\Utilities\AppConfigCreator\bin\$(Configuration)"/>
+    <Exec Command="$(SolutionDir)\..\Utilities\AppConfigCreator\bin\$(Configuration)\AppConfigCreator.exe $(AppConfigCreatorSourceFiles)" WorkingDirectory="$(SolutionDir)\..\Utilities\AppConfigCreator\bin\$(Configuration)"  />
+    <Copy SourceFiles="$(SolutionDir)\..\Utilities\AppConfigCreator\bin\$(Configuration)\app.config" DestinationFiles="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config" />
+  </Target>
 </Project>
 

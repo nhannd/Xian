@@ -1,3 +1,5 @@
+#if UNIT_TESTS
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -5,6 +7,8 @@ using NUnit.Framework;
 using System.IO;
 using System.Drawing;
 using System.Configuration;
+using System.Xml;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Annotations.Tests
 {
@@ -16,14 +20,10 @@ namespace ClearCanvas.ImageViewer.Annotations.Tests
 		}
 
 		[Test]
-		[Ignore("This test won't work unless the settings class is forced to use the LocalSettingsProvider")]
+		[Ignore("This test won't work unless the settings class is forced to use the LocalSettingsProvider (e.g. by commenting out the SettingsProvider attribute)")]
 		public void Test()
 		{
 			List<IAnnotationItem> annotationItems = new List<IAnnotationItem>();
-
-			string filepath = String.Format(".\\{0}", AnnotationLayoutStore.DefaultSettingsFile);
-			if (File.Exists(filepath))
-				File.Move(filepath, ".\\tmp.xml");
 
 			AnnotationLayoutStore.Instance.Clear();
 
@@ -45,11 +45,13 @@ namespace ClearCanvas.ImageViewer.Annotations.Tests
 
 			layouts = AnnotationLayoutStore.Instance.GetLayouts(annotationItems);
 			Assert.AreEqual(layouts.Count, 4);
-			
-			if (File.Exists(".\\tmp.xml"))
-				File.Move(".\\tmp.xml", filepath);
 
-			AnnotationLayoutStore.Instance.Clear();
+			ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
+			using (Stream stream = resolver.OpenResource("AnnotationLayoutStoreDefaults.xml"))
+			{
+				StreamReader reader = new StreamReader(stream);
+				AnnotationLayoutStoreSettings.Default.LayoutSettingsXml = reader.ReadToEnd();
+			}
 
 			layouts = AnnotationLayoutStore.Instance.GetLayouts(annotationItems);
 			Assert.AreEqual(layouts.Count, 8);
@@ -129,3 +131,5 @@ namespace ClearCanvas.ImageViewer.Annotations.Tests
 		}
 	}
 }
+
+#endif

@@ -1,3 +1,5 @@
+#if UNIT_TESTS
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,7 +12,6 @@ namespace ClearCanvas.Desktop.Actions.Tests
 	[TestFixture]
 	public class ActionModelStoreTests
 	{
-		private const string FILENAME = "test-actionmodels.xml";
 		private const string MENUNAME = "imageviewer-contextmenu";
 
 		private string[,] _actionSetup;
@@ -40,9 +41,6 @@ namespace ClearCanvas.Desktop.Actions.Tests
 
 		private void CreateDefaultXmlDocument()
 		{
-			if (File.Exists(FILENAME))
-				File.Delete(FILENAME); 
-			
 			XmlDocument document = new XmlDocument();
 
 			XmlElement actionModels = document.CreateElement("action-models");
@@ -65,15 +63,14 @@ namespace ClearCanvas.Desktop.Actions.Tests
 
 				actionModel.AppendChild(actionElement);
 			}
-			
-			document.Save(FILENAME);
+
+			ActionModelSettings.Default.ActionModelsXml = document;
+			ActionModelSettings.Default.Save();
 		}
 
 		private void VerifyXmlDocument()
 		{
-			XmlDocument document = new XmlDocument();
-			document.Load(FILENAME);
-
+			XmlDocument document = ActionModelSettings.Default.ActionModelsXml;
 			XmlElement actionModel = (XmlElement)document.SelectSingleNode("//action-model");
 
 			int i = 0;
@@ -152,6 +149,7 @@ namespace ClearCanvas.Desktop.Actions.Tests
 		}
 
 		[Test]
+		[Ignore("This test won't work unless the settings class is forced to use the LocalSettingsProvider (e.g. by commenting out the SettingsProvider attribute)")]
 		public void TestActionModelStore()
 		{
 			_actionSetup = new string[,]
@@ -183,10 +181,11 @@ namespace ClearCanvas.Desktop.Actions.Tests
 
 			ActionSet allActions = new ActionSet(_allActions);
 
-			ActionModelStore store = new ActionModelStore(FILENAME);
-			store.BuildAndSynchronize(this.GetType().FullName, MENUNAME, allActions);
+			ActionModelSettings.Default.BuildAndSynchronize(this.GetType().FullName, MENUNAME, allActions);
 
 			VerifyXmlDocument();
 		}
 	}
 }
+
+#endif
