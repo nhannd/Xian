@@ -4,9 +4,9 @@ using System.Text;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	public abstract class AnnotationLayoutProvider : IAnnotationLayoutProvider
+	internal abstract class AnnotationLayoutProvider : IAnnotationLayoutProvider
 	{
-		public AnnotationLayoutProvider()
+		protected AnnotationLayoutProvider()
 		{ 
 		}
 

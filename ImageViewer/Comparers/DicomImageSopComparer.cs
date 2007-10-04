@@ -1,17 +1,15 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Comparers
 {
-	public abstract class StandardPresentationImageComparer : PresentationImageComparer
+	public abstract class DicomImageSopComparer : PresentationImageComparer
 	{
-		public StandardPresentationImageComparer()
+		protected DicomImageSopComparer()
 		{
 		}
 
-		public StandardPresentationImageComparer(bool reverse)
+		protected DicomImageSopComparer(bool reverse)
 			: base(reverse)
 		{
 		}

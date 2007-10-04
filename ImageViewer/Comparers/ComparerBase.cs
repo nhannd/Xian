@@ -1,20 +1,15 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.StudyManagement;
-
 namespace ClearCanvas.ImageViewer
 {
 	public abstract class ComparerBase
 	{
 		private int _returnValue;
 
-		public ComparerBase()
+		protected ComparerBase()
 		{
 			Reverse = false;
 		}
 
-		public ComparerBase(bool reverse)
+		protected ComparerBase(bool reverse)
 		{
 			this.Reverse = reverse;
 		}

@@ -2,7 +2,7 @@
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Font Name="Tahoma" Size="8.25" />
   <Class Name="ClearCanvas.ImageViewer.Annotations.AnnotationBox" Collapsed="true">
-    <Position X="7.25" Y="2.75" Width="1.5" />
+    <Position X="3.25" Y="3" Width="1.5" />
     <TypeIdentifier>
       <FileName>Annotations\AnnotationBox.cs</FileName>
       <HashCode>QAwEAgAkCAAIACAAAAoAAAAACADAAAAJAAFEgAAGgBA=</HashCode>
@@ -11,36 +11,26 @@
       <Property Name="AnnotationItem" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="ClearCanvas.ImageViewer.Annotations.StoredAnnotationBoxGroup" Collapsed="true">
-    <Position X="6.75" Y="4" Width="2.25" />
+  <Class Name="ClearCanvas.ImageViewer.BasicPresentationImage" Collapsed="true">
+    <Position X="0.75" Y="1.25" Width="1.75" />
     <TypeIdentifier>
-      <FileName>Annotations\StoredAnnotationBoxGroup.cs</FileName>
-      <HashCode>AAAAAAACBAAAAAAABAAIgAAAAAAAAAAAAQAAQAAAAAA=</HashCode>
+      <FileName>BasicPresentationImage.cs</FileName>
+      <HashCode>CAQAAAAAICgAAAAQAIAAADFAAAgAACAAAAAAgAAAAAQ=</HashCode>
     </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="AnnotationBoxes" />
-    </ShowAsCollectionAssociation>
-  </Class>
-  <Class Name="ClearCanvas.ImageViewer.Annotations.AnnotationItemProviderManager" Collapsed="true">
-    <Position X="9.25" Y="0.5" Width="2.5" />
-    <TypeIdentifier>
-      <FileName>Annotations\AnnotationItemProviderManager.cs</FileName>
-      <HashCode>AAAFAAAAAAAEAQAAAAAAAEAAAAAAAAAAQAAEAAAAAIA=</HashCode>
-    </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="Providers" />
-      <Property Name="AnnotationItems" />
-    </ShowAsCollectionAssociation>
+    <ShowAsAssociation>
+      <Field Name="_annotationLayoutProvider" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
   </Class>
   <Interface Name="ClearCanvas.ImageViewer.Annotations.IAnnotationItem" Collapsed="true">
-    <Position X="10" Y="2.75" Width="1.5" />
+    <Position X="5.5" Y="3" Width="1.5" />
     <TypeIdentifier>
       <FileName>Annotations\IAnnotationItem.cs</FileName>
       <HashCode>AAAAAAAACAAAAAABAEAAAAAQAAAAAAAAAAAAAAAAAAA=</HashCode>
     </TypeIdentifier>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.Annotations.IAnnotationLayout" Collapsed="true">
-    <Position X="4.25" Y="2.75" Width="1.75" />
+    <Position X="0.5" Y="3" Width="1.75" />
     <TypeIdentifier>
       <FileName>Annotations\IAnnotationLayout.cs</FileName>
       <HashCode>AAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
@@ -50,7 +40,7 @@
     </ShowAsCollectionAssociation>
   </Interface>
   <Interface Name="ClearCanvas.ImageViewer.Annotations.IAnnotationLayoutProvider" Collapsed="true">
-    <Position X="0.5" Y="2.75" Width="2.25" />
+    <Position X="4.5" Y="1.25" Width="2.25" />
     <TypeIdentifier>
       <FileName>Annotations\IAnnotationLayoutProvider.cs</FileName>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
@@ -58,9 +48,17 @@
     <ShowAsAssociation>
       <Property Name="AnnotationLayout" />
     </ShowAsAssociation>
+    <AssociationLine Name="AnnotationLayout" Type="ClearCanvas.ImageViewer.Annotations.IAnnotationLayout" ManuallyRouted="true" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="5.625" Y="1.759" />
+        <Point X="5.625" Y="2.284" />
+        <Point X="1.125" Y="2.284" />
+        <Point X="1.125" Y="3" />
+      </Path>
+    </AssociationLine>
   </Interface>
-  <Interface Name="ClearCanvas.ImageViewer.Annotations.IAnnotationItemProvider" Collapsed="true">
-    <Position X="6" Y="0.5" Width="2" />
+  <Interface Name="ClearCanvas.ImageViewer.Annotations.IAnnotationItemProvider">
+    <Position X="12" Y="1" Width="2" />
     <TypeIdentifier>
       <FileName>Annotations\IAnnotationItemProvider.cs</FileName>
       <HashCode>AAAAAAAAAAAAAAABAEAAAEAAAAAAAAAAAAAAAAAAAAA=</HashCode>

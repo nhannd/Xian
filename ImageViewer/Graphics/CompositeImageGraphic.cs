@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.Imaging;
-
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>

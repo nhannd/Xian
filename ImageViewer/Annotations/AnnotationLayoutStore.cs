@@ -11,7 +11,7 @@ using System.ComponentModel;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	public sealed class AnnotationLayoutStore
+	internal sealed class AnnotationLayoutStore
 	{
 		private static AnnotationLayoutStore _instance;
 

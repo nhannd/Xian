@@ -129,11 +129,11 @@
     <Compile Include="BaseTools\MouseWheelHandlerAttribute.cs" />
     <Compile Include="ColorPresentationImage.cs" />
     <Compile Include="Comparers\ComparerBase.cs" />
-    <Compile Include="Comparers\StandardImageSetComparer.cs" />
+    <Compile Include="Comparers\DicomStudyComparer.cs" />
     <Compile Include="Comparers\ImageSetComparer.cs" />
-    <Compile Include="Comparers\StandardDisplaySetComparer.cs" />
+    <Compile Include="Comparers\DicomSeriesComparer.cs" />
     <Compile Include="Comparers\DisplaySetComparer.cs" />
-    <Compile Include="Comparers\StandardPresentationImageComparer.cs" />
+    <Compile Include="Comparers\DicomImageSopComparer.cs" />
     <Compile Include="Comparers\PresentationImageComparer.cs" />
     <Compile Include="Comparers\StudyDateComparer.cs" />
     <Compile Include="Comparers\SeriesNumberComparer.cs" />

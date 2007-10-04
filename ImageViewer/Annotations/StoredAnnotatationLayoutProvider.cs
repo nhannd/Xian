@@ -6,9 +6,9 @@ using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	public abstract class StoredAnnotatationLayoutProvider : AnnotationLayoutProvider
+	internal abstract class StoredAnnotatationLayoutProvider : AnnotationLayoutProvider
 	{
-		public StoredAnnotatationLayoutProvider()
+		protected StoredAnnotatationLayoutProvider()
 		{
 		}
 

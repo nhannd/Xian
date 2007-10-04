@@ -6,7 +6,7 @@ using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	public sealed class StoredAnnotationBoxGroup
+	internal sealed class StoredAnnotationBoxGroup
 	{
 		private string _identifier;
 		private AnnotationBox _defaultBoxSettings;

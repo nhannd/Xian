@@ -1,17 +1,14 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Comparers
 {
 	public abstract class DisplaySetComparer : ComparerBase, IComparer<IDisplaySet>
 	{
-		public DisplaySetComparer()
+		protected DisplaySetComparer()
 		{
 		}
 
-		public DisplaySetComparer(bool reverse)
+		protected DisplaySetComparer(bool reverse)
 			: base(reverse)
 		{
 		}

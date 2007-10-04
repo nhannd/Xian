@@ -10,7 +10,7 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
-	public sealed class DicomFilteredAnnotationLayoutStore
+	internal sealed class DicomFilteredAnnotationLayoutStore
 	{
 		private static DicomFilteredAnnotationLayoutStore _instance;
 

@@ -5,7 +5,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom
 {
-	public sealed class DicomFilteredAnnotationLayout
+	internal sealed class DicomFilteredAnnotationLayout
 	{
 		private string _identifier;
 		private string _matchingLayoutIdentifier;

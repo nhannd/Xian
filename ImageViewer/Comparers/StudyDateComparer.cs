@@ -1,12 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Comparers
 {
-	public class StudyDateComparer : StandardImageSetComparer
+	public class StudyDateComparer : DicomStudyComparer
 	{
 		public StudyDateComparer()
 		{

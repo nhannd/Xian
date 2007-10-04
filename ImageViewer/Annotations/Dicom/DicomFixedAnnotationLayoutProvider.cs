@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 	/// it simply serves as an example of how a hard-coded overlay can still be used 
 	/// in the new model.
 	/// </summary>
-	public class DicomFixedAnnotationLayoutProvider : AnnotationLayoutProvider
+	internal sealed class DicomFixedAnnotationLayoutProvider : AnnotationLayoutProvider
 	{
 		private string[] _AssignmentsTopLeft = 
 		{

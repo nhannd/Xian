@@ -11,7 +11,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 		private string _displayName;
 		private string _label;
 
-		public AnnotationItem(string identifier, string displayName, string label)
+		protected AnnotationItem(string identifier, string displayName, string label)
 		{
 			Platform.CheckForEmptyString(identifier, "identifier"); 
 			

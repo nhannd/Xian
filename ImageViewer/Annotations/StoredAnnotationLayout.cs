@@ -5,7 +5,7 @@ using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
-	public sealed class StoredAnnotationLayout : IAnnotationLayout
+	internal sealed class StoredAnnotationLayout : IAnnotationLayout
 	{
 		private string _identifier;
 		private List<StoredAnnotationBoxGroup> _annotationBoxGroups;

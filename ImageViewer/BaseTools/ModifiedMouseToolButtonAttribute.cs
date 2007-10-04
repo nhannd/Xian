@@ -7,7 +7,7 @@ using ClearCanvas.ImageViewer.InputManagement;
 namespace ClearCanvas.ImageViewer.BaseTools
 {
 	[AttributeUsage(AttributeTargets.Class, AllowMultiple = false)]
-	public class ModifiedMouseToolButtonAttribute : Attribute
+	public sealed class ModifiedMouseToolButtonAttribute : Attribute
 	{
 		private MouseButtonShortcut _shortcut;
 

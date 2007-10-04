@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Comparers
 {
-	public class InstanceNumberComparer : StandardPresentationImageComparer
+	public class InstanceNumberComparer : DicomImageSopComparer
 	{
 		public InstanceNumberComparer()
 		{

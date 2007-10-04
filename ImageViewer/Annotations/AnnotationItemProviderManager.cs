@@ -10,7 +10,8 @@ namespace ClearCanvas.ImageViewer.Annotations
 	{ 
 	}
 
-	public sealed class AnnotationItemProviderManager  : BasicExtensionPointManager<IAnnotationItemProvider>
+	// TODO: Remove this class
+	internal sealed class AnnotationItemProviderManager  : BasicExtensionPointManager<IAnnotationItemProvider>
 	{
 		private static AnnotationItemProviderManager _instance;
 		private bool _isLoaded = false;
