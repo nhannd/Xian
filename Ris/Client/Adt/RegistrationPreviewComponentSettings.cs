@@ -12,7 +12,7 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         private RegistrationPreviewComponentSettings()
         {
-            ApplicationSettingsRegister.Instance.RegisterInstance(this);
+            ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }
     }
 }

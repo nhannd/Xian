@@ -11,12 +11,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 	{
 		private AnnotationLayoutStoreSettings()
 		{
-			ApplicationSettingsRegister.Instance.RegisterInstance(this);
-		}
-
-		~AnnotationLayoutStoreSettings()
-		{
-			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 	}
 }

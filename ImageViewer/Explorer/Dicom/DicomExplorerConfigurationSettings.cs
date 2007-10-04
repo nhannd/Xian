@@ -12,12 +12,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 	{
 		private DicomExplorerConfigurationSettings()
 		{
-			ApplicationSettingsRegister.Instance.RegisterInstance(this);
-		}
-
-		~DicomExplorerConfigurationSettings()
-		{
-			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 	}
 }

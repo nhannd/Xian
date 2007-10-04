@@ -18,7 +18,7 @@ namespace ClearCanvas.Desktop.Actions
     {
 		private ActionModelSettings()
 		{
-			ApplicationSettingsRegister.Instance.RegisterInstance(this);
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 
 		#region Public Methods

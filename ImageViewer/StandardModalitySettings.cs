@@ -11,12 +11,7 @@ namespace ClearCanvas.ImageViewer
 	{
 		private StandardModalitySettings()
 		{
-			ApplicationSettingsRegister.Instance.RegisterInstance(this);
-		}
-
-		~StandardModalitySettings()
-		{
-			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 
 		public ICollection<string> ModalitiesAsArray

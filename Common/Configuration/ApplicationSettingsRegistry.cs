@@ -1,10 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Configuration;
-using ClearCanvas.Common;
-using System.ComponentModel;
-using System.Reflection;
 
 namespace ClearCanvas.Common.Configuration
 {
@@ -16,14 +12,14 @@ namespace ClearCanvas.Common.Configuration
 	/// to the values that were just changed.  If they do, then those values are changed to correspond
 	/// to the new values.  This class implements the Singleton design pattern.
 	/// </summary>
-	public class ApplicationSettingsRegister
+	public class ApplicationSettingsRegistry
 	{
-		private static ApplicationSettingsRegister _instance = new ApplicationSettingsRegister();
+		private static ApplicationSettingsRegistry _instance = new ApplicationSettingsRegistry();
 
 		private static object _syncLock = new object();
 		private List<ApplicationSettingsBase> _registeredSettingsInstances;
 
-		private ApplicationSettingsRegister()
+		private ApplicationSettingsRegistry()
 		{
 			_registeredSettingsInstances = new List<ApplicationSettingsBase>();
 		}
@@ -31,7 +27,7 @@ namespace ClearCanvas.Common.Configuration
 		/// <summary>
 		/// The single instance of this class that is publicly accessible.
 		/// </summary>
-		public static ApplicationSettingsRegister Instance
+		public static ApplicationSettingsRegistry Instance
 		{
 			get
 			{

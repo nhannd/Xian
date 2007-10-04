@@ -12,7 +12,7 @@ namespace ClearCanvas.Ris.Client.Reporting
     {
         private ReportEditorComponentSettings()
         {
-            ApplicationSettingsRegister.Instance.RegisterInstance(this);
+            ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }
     }
 }

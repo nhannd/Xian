@@ -11,12 +11,7 @@ namespace ClearCanvas.ImageServer.Queue.Work
     {
         private ImageServerQueueWorkSettings()
         {
-            //ApplicationSettingsRegister.Instance.RegisterInstance(this);
-        }
-
-        ~ImageServerQueueWorkSettings()
-        {
-            //ApplicationSettingsRegister.Instance.UnregisterInstance(this);
+            //ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }
     }
 }

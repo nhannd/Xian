@@ -13,7 +13,7 @@ namespace ClearCanvas.Ris.Client
 
         private ContactPersonEditorComponentSettings()
         {
-            ApplicationSettingsRegister.Instance.RegisterInstance(this);
+            ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }
     }
 }

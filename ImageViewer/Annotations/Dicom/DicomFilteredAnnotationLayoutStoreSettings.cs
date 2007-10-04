@@ -11,12 +11,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 	{
 		private DicomFilteredAnnotationLayoutStoreSettings()
 		{
-			ApplicationSettingsRegister.Instance.RegisterInstance(this);
-		}
-
-		~DicomFilteredAnnotationLayoutStoreSettings()
-		{
-			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 	}
 }

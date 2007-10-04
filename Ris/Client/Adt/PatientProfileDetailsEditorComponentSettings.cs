@@ -13,7 +13,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         private PatientProfileDetailsEditorComponentSettings()
         {
-            ApplicationSettingsRegister.Instance.RegisterInstance(this);
+            ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }
     }
 }

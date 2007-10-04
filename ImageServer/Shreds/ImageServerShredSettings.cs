@@ -11,12 +11,7 @@ namespace ClearCanvas.ImageServer.Shreds
     {
         private ImageServerShredSettings()
 		{
-			//ApplicationSettingsRegister.Instance.RegisterInstance(this);
-		}
-
-        ~ImageServerShredSettings()
-		{
-			//ApplicationSettingsRegister.Instance.UnregisterInstance(this);
+			//ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
     }
 }

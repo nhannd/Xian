@@ -12,12 +12,7 @@ namespace ClearCanvas.Ris.Client.Integration
     {
         private IntegrationSettings()
         {
-            ApplicationSettingsRegister.Instance.RegisterInstance(this);
-        }
-
-        ~IntegrationSettings()
-        {
-            ApplicationSettingsRegister.Instance.UnregisterInstance(this);
+            ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }
     }
 }

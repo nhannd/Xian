@@ -10,7 +10,7 @@ namespace ClearCanvas.Ris.Client.Adt
     {
         private TechnologistDocumentationComponentSettings()
         {
-            ApplicationSettingsRegister.Instance.RegisterInstance(this);
+            ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }
     }
 }

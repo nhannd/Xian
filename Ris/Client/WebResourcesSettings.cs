@@ -12,7 +12,7 @@ namespace ClearCanvas.Ris.Client
     {
         private WebResourcesSettings()
         {
-            ApplicationSettingsRegister.Instance.RegisterInstance(this);
+            ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }
     }
 }

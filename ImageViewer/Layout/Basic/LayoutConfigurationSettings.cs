@@ -25,12 +25,7 @@ namespace ClearCanvas.ImageViewer.Layout.Basic
 
 		private LayoutConfigurationSettings()
 		{
-			ApplicationSettingsRegister.Instance.RegisterInstance(this);
-		}
-
-		~LayoutConfigurationSettings()
-		{
-			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 
 		public StoredLayoutConfiguration DefaultConfiguration

@@ -16,7 +16,7 @@ namespace ClearCanvas.Ris.Client
 
         private AddressEditorComponentSettings()
         {
-            ApplicationSettingsRegister.Instance.RegisterInstance(this);
+            ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }
 
         public ICollection<string> CountryChoices

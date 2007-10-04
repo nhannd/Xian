@@ -57,12 +57,7 @@ namespace ClearCanvas.Desktop.Validation
 
 		protected ValidationRulesSettings()
 		{
-			ApplicationSettingsRegister.Instance.RegisterInstance(this);
-		}
-
-		~ValidationRulesSettings()
-		{
-			ApplicationSettingsRegister.Instance.UnregisterInstance(this);
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 
         public void GetRules()

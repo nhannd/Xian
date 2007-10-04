@@ -20,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts
 		private PresetVoiLutSettings()
 		{
 			_xkeysConverter = TypeDescriptor.GetConverter(typeof(XKeys));
-			ApplicationSettingsRegister.Instance.RegisterInstance(this);
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
         }
 
 		public PresetVoiLutGroupCollection GetPresetGroups()

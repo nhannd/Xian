@@ -104,7 +104,7 @@
     <Compile Include="ClassNameExtensionFilter.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Configuration\ApplicationSettingsRegister.cs">
+    <Compile Include="Configuration\ApplicationSettingsRegistry.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Configuration\ConfigurationStoreSettingsProvider.cs" />

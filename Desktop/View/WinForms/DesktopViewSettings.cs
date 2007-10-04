@@ -11,7 +11,7 @@ namespace ClearCanvas.Desktop.View.WinForms
 	{
 		private DesktopViewSettings()
 		{
-			ApplicationSettingsRegister.Instance.RegisterInstance(this);
+			ApplicationSettingsRegistry.Instance.RegisterInstance(this);
 		}
 	}
 }
