@@ -69,10 +69,6 @@ namespace ClearCanvas.ImageViewer.Rendering
 				_realRenderer.Draw(drawArgs);
 			}
 
-			#endregion
-
-			#region IRenderer Members
-
 			public IRenderingSurface GetRenderingSurface(IntPtr windowID, int width, int height)
 			{
 				return _realRenderer.GetRenderingSurface(windowID, width, height);
