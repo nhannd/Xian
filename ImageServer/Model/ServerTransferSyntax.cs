@@ -56,7 +56,7 @@ namespace ClearCanvas.ImageServer.Model
             set { _enabled = value; }
         }
 
-        public static ServerTransferSyntax GetServerTransferSyntax(ServerEntityKey lookup)
+        public static ServerTransferSyntax Load(ServerEntityKey lookup)
         {
             if (!_dict.ContainsKey(lookup))
                 throw new PersistenceException("Unknown ServerTransferSyntax: " + lookup, null);

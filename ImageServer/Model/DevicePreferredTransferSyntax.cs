@@ -40,12 +40,12 @@ namespace ClearCanvas.ImageServer.Model
 
         public ServerSopClass GetServerSopClass()
         {
-            return ServerSopClass.GetServerSopClass(_serverSopClassKey);
+            return ServerSopClass.Load(_serverSopClassKey);
         }
 
         public ServerTransferSyntax GetServerTransferSyntax()
         {
-            return ServerTransferSyntax.GetServerTransferSyntax(_serverTransferSyntaxKey);
+            return ServerTransferSyntax.Load(_serverTransferSyntaxKey);
         }
     }
 }

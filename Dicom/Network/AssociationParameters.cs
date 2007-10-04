@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Net;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.Dicom.Network
 {
@@ -230,11 +231,18 @@ namespace ClearCanvas.Dicom.Network
 		#endregion
 
 		#region Public Properties
+        /// <summary>
+        /// The Maximum operations invoked negotiated for the association.
+        /// </summary>
         public ushort MaxOperationsInvoked
         {
             get { return _maxOperationsInvoked; }
             set { _maxOperationsInvoked = value; }
         }
+
+        /// <summary>
+        /// The Maximum operations performed negotiated for the association.
+        /// </summary>
         public ushort MaxOperationsPerformed
         {
             get { return _maxOperationsPerformed; }
@@ -294,12 +302,18 @@ namespace ClearCanvas.Dicom.Network
             set { _artimTimeout = value; }
         }
 
+        /// <summary>
+        /// Called AE (association acceptor AE) for the association
+        /// </summary>
         public String CalledAE
         {
             get { return _calledAE; }
             set { _calledAE = value; }
         }
 
+        /// <summary>
+        /// Calling AE (association requestor AE) for the association
+        /// </summary>
         public String CallingAE
         {
             get { return _callingAE; }
@@ -309,6 +323,7 @@ namespace ClearCanvas.Dicom.Network
 		/// <summary>
 		/// Gets or sets the Application Context Name.
 		/// </summary>
+		/// <seealso cref="DicomUid"/>
 		public DicomUid ApplicationContextName {
 			get { return _appCtxNm; }
 			set { _appCtxNm = value; }
@@ -348,12 +363,18 @@ namespace ClearCanvas.Dicom.Network
             internal set { _localEndPoint = value; }
         }
 
+        /// <summary>
+        /// Remote hostname or IP addresses.
+        /// </summary>
         public string RemoteHostname
         {
             get { return _remoteHostname; }
             internal set { _remoteHostname = value; }
         }
 
+        /// <summary>
+        /// Remote port.
+        /// </summary>
         public int RemotePort
         {
             get { return _remotePort; }
@@ -381,11 +402,18 @@ namespace ClearCanvas.Dicom.Network
 		/// <summary>
 		/// Adds a Presentation Context to the DICOM Associate.
 		/// </summary>
+		/// <remarks>
+		/// <para>
+		/// Note, this method will create a new presentation context for the
+		/// <see cref="SopClass"/> even if one already exists for the 
+		/// <see cref="SopClass"/>. 
+		/// </para>
+		/// </remarks>
 		public byte AddPresentationContext(SopClass abstractSyntax) {
 			byte pcid = 1;
 			foreach (byte id in _presContexts.Keys) {
-				if (_presContexts[id].AbstractSyntax == abstractSyntax)
-					return id;
+				//if (_presContexts[id].AbstractSyntax == abstractSyntax)
+				//	return id;
 				if (id >= pcid)
 					pcid = (byte)(id + 2);
 			}
@@ -408,6 +436,17 @@ namespace ClearCanvas.Dicom.Network
 		public IList<byte> GetPresentationContextIDs() {
 			return _presContexts.Keys;
 		}
+
+        /// <summary>
+        /// Gets a list of the <see cref="TransferSyntax"/>es specified for a Presentation
+        /// Context.
+        /// </summary>
+        /// <param name="pcid">Presentation Context ID</param>
+        /// <returns>A list of <see cref="TransferSyntax"/>es.</returns>
+        public IList<TransferSyntax> GetPresentationContextTransferSyntaxes(byte pcid)
+        {
+            return GetPresentationContext(pcid).GetTransfers();
+        }
 
 		/// <summary>
 		/// Sets the result of the specified Presentation Context.
@@ -483,17 +522,6 @@ namespace ClearCanvas.Dicom.Network
 			return GetPresentationContext(pcid).AcceptedTransferSyntax;
 		}
 
-		public void SetAcceptedTransferSyntax(byte pcid, int index) {
-			TransferSyntax ts = GetPresentationContext(pcid).GetTransfers()[index];
-			GetPresentationContext(pcid).ClearTransfers();
-			GetPresentationContext(pcid).AddTransfer(ts);
-		}
-
-		public void SetAcceptedTransferSyntax(byte pcid, TransferSyntax ts) {
-			GetPresentationContext(pcid).ClearTransfers();
-			GetPresentationContext(pcid).AddTransfer(ts);
-		}
-
 		/// <summary>
 		/// Finds the Presentation Context with the specified Abstract Syntax.
 		/// </summary>
@@ -556,6 +584,20 @@ namespace ClearCanvas.Dicom.Network
 		#endregion
 
 		#region Internal Methods
+
+        internal void SetAcceptedTransferSyntax(byte pcid, int index)
+        {
+            TransferSyntax ts = GetPresentationContext(pcid).GetTransfers()[index];
+            GetPresentationContext(pcid).ClearTransfers();
+            GetPresentationContext(pcid).AddTransfer(ts);
+        }
+
+        internal void SetAcceptedTransferSyntax(byte pcid, TransferSyntax ts)
+        {
+            GetPresentationContext(pcid).ClearTransfers();
+            GetPresentationContext(pcid).AddTransfer(ts);
+        }
+
 		internal void AddPresentationContext(byte pcid, DicomUid abstractSyntax, TransferSyntax transferSyntax, DicomPresContextResult result) {
 			_presContexts.Add(pcid, new DicomPresContext(pcid, SopClass.GetSopClass(abstractSyntax.UID), transferSyntax, result));
 		}

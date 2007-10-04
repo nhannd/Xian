@@ -58,7 +58,7 @@ namespace ClearCanvas.ImageServer.Model
             set { _nonImage = value; }
         }
 
-        public static ServerSopClass GetServerSopClass(ServerEntityKey lookup)
+        public static ServerSopClass Load(ServerEntityKey lookup)
         {
             if (!_dict.ContainsKey(lookup))
                 throw new PersistenceException("Unknown ServerSopClass: " + lookup, null);
