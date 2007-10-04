@@ -117,7 +117,7 @@ var Table = {
         return htmlTable;
     },
     
-    // defines the methods that DHTML will mix-in to the DOM table object
+    // defines the methods that will mix-in to the DOM table object
     _tableMixIn : {
     	
     	
@@ -186,7 +186,7 @@ var Table = {
                 this.errorProvider.setError(this._checkBoxes[rowIndex], args.error);
             }
 	    },
-    	
+	    
 	    _addRow: function(obj)
 	    {
 		    var index = this.rows.length;
@@ -220,7 +220,7 @@ var Table = {
 	            if(this._options.flow)
 	            {
                     // add one containerCell to the table, and flow each of the "columns" inside of it
-	                containerCell = containerCell || tr.insertCell((this._options.checkBoxes ? 1 : 0));
+	                containerCell = containerCell || tr.insertCell(this._getBaseColumnIndex());
 	                
 	                // the cell is not technically a cell in this case, but rather a div
 	                cell = document.createElement("div");
@@ -232,7 +232,7 @@ var Table = {
 	            else
 	            {
 		            // add one cell for each column, offset by 1 if there is a checkbox column
-                    cell = tr.insertCell(i + (this._options.checkBoxes ? 1 : 0));
+                    cell = tr.insertCell(i + this._getBaseColumnIndex());
 	            }
 		        
 		        this._renderCell(index, i, cell, obj);
@@ -256,15 +256,39 @@ var Table = {
 	    {
 		    // by default, set cell content to the value of the specified property of the object
             var column = this._columns[col];
-            var value = this._getCellValue(column, obj);
+            var value = this._getColumnValue(column, obj);
 		    td.innerHTML = ((value || "")+"").escapeHTML();
     		
 		    // fire custom formatting event, which may itself set the innerHTML property to override default cell content
 		    if(this.renderCell)
 		        this.renderCell(this, { htmlCell: td, column: this._columns[col], item: obj, itemIndex: row-1, colIndex: col });
 	    },
+	    
+	    // returns the HTML DOM element that represents the "cell" of the table
+	    _getCell : function(rowIndex, colIndex)
+	    {
+            var tr = this.rows[rowIndex];
+            var cell;
+            if(this._options.flow)
+            {
+                // get the container cell, and navigate through the children to the correct element
+                var containerCell = tr.cells[this._getBaseColumnIndex()];
+                for(var i=0, cell = containerCell.firstChild; i < colIndex; i++, cell = cell.nextSibling);
+            }
+            else
+            {
+                cell = tr.cells[colIndex + this._getBaseColumnIndex()];
+            }
+            return cell;
+	    },
+	    
+	    // returns either 0, if this table does not have a check-box column, or 1 if it does have a check-box column
+	    _getBaseColumnIndex: function()
+	    {
+	        return this._options.checkBoxes ? 1 : 0;
+	    },
     	
-	    _getCellValue: function(column, obj)
+	    _getColumnValue: function(column, obj)
 	    {
 		    // if column is a string, treat it as an immediate property of the object
 		    // otherwise, assume column is a complex object, and look for a getValue function
@@ -296,7 +320,7 @@ var Table = {
 	    _renderCell: function(row, col, td, obj)
 	    {
 	        var column = this._columns[col];
-		    var value = this._getCellValue(column, obj);
+		    var value = this._getColumnValue(column, obj);
 		    var table = this;
 		    if(["text"].indexOf(column.cellType) > -1)
 		    {
@@ -306,8 +330,11 @@ var Table = {
 		        if(column.size) input.size = column.size;
 		        input.onkeyup = input.onchange = function() { column.setValue(obj, this.value); table._onCellUpdate(row, col); }
 		        
+		        //td._setCellValue = function(value) { input.value = (value || ""); }
+
 		        // allow the ultimate format to be determined by the column rather than the user
 		        input.onblur = function() { this.value = column.getValue(obj) || ""; }
+		        
 		    }
 		    else
 		    if(["date", "datetime"].indexOf(column.cellType) > -1)
@@ -442,6 +469,33 @@ var Table = {
 	    _onCellUpdate: function(row, col)
 	    {
 	        this._validateRow(row);
+	        this._updateCellVisibility(row);
+	    },
+	    
+	    _updateCellVisibility: function(rowIndex)
+	    {
+	        // validate each column
+	        var item = this.items[rowIndex-1];
+	        for(var c=0; c < this._columns.length; c++)
+		    {
+		        var column = this._columns[c];
+		        if(column.getVisible)
+		        {
+		            var cell = this._getCell(rowIndex, c);
+		            var visible = column.getVisible(item);
+		            cell.style.visibility = visible ? "visible" : "hidden";
+		            if(visible)
+		                cell.style.visibility = "visible";
+		            else
+		            {
+		                // when a cell is hidden, set its value to null
+		                // this is because we don't want any information to exist on the form
+		                // and be hidden from the user
+		                cell.style.visibility = "hidden";
+		                column.setValue(item, null);
+		            }
+		        }
+		    }
 	    }
     }
 };
