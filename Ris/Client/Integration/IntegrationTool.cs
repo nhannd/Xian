@@ -24,7 +24,8 @@ using ClearCanvas.Ris.Application.Common.Admin.VisitAdmin;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow;
 using ClearCanvas.Ris.Application.Common.RegistrationWorkflow.OrderEntry;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
-using SearchRequest=ClearCanvas.Ris.Application.Common.RegistrationWorkflow.SearchRequest;
+using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
+using SearchRequest = ClearCanvas.Ris.Application.Common.RegistrationWorkflow.SearchRequest;
 using SearchResponse= ClearCanvas.Ris.Application.Common.RegistrationWorkflow.SearchResponse;
 
 namespace ClearCanvas.Ris.Client.Integration
@@ -323,23 +324,31 @@ namespace ClearCanvas.Ris.Client.Integration
                     orderDetail = loadOrderResponse.OrderDetail;
                 });
 
-            // Completing the modality procedure step of the new order
+
+            // Look for the modality procedure steps of the new order
+            List<ModalityWorklistItem> listItem = null;
             Platform.GetService<IModalityWorkflowService>(
                 delegate(IModalityWorkflowService service)
+                    {
+                        ClearCanvas.Ris.Application.Common.ModalityWorkflow.GetWorklistResponse workflowResponse =
+                            service.GetWorklist(new ClearCanvas.Ris.Application.Common.ModalityWorkflow.GetWorklistRequest("ClearCanvas.Healthcare.Workflow.Modality.Worklists+Scheduled"));
+
+                        listItem = CollectionUtils.Select<ModalityWorklistItem, List<ModalityWorklistItem>>(
+                            workflowResponse.WorklistItems,
+                            delegate(ModalityWorklistItem item)
+                            {
+                                return item.AccessionNumber == orderDetail.AccessionNumber;
+                            });
+                    });
+
+            // Completing the modality procedure step of the new order
+            Platform.GetService<ITechnologistDocumentationService>(
+                delegate(ITechnologistDocumentationService service)
                 {
-                    ClearCanvas.Ris.Application.Common.ModalityWorkflow.GetWorklistResponse workflowResponse = 
-                        service.GetWorklist(new ClearCanvas.Ris.Application.Common.ModalityWorkflow.GetWorklistRequest("ClearCanvas.Healthcare.Workflow.Modality.Worklists+Scheduled"));
-
-                    List<ModalityWorklistItem> listItem = CollectionUtils.Select<ModalityWorklistItem, List<ModalityWorklistItem>>(
-                        workflowResponse.WorklistItems,
-                        delegate(ModalityWorklistItem item)
-                        {
-                            return item.AccessionNumber == orderDetail.AccessionNumber;
-                        });
-
                     CollectionUtils.ForEach<ModalityWorklistItem>(listItem,
                         new Action<ModalityWorklistItem>(delegate(ModalityWorklistItem item)
                         {
+                            service.StartModalityProcedureStep(new StartModalityProcedureStepRequest())();
                             service.CompleteProcedure(new CompleteProcedureRequest(item.ProcedureStepRef));
                         }));
                 });

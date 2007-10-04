@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 
@@ -100,5 +101,42 @@ namespace ClearCanvas.Common.Utilities
 
 			return builder.ToString();
 		}
-	}
+
+        /// <summary>
+        /// Splits any string using seperators string.  This is different from the
+        /// string.Split method as we ignore delimiters inside double quotes
+        /// </summary>
+        /// <param name="text">The string to split.</param>
+        /// <param name="delimiters">The characters to split on.</param>
+        /// <returns></returns>
+        public static string[] SplitQuoted(string text, string delimiters)
+        {
+            ArrayList res = new ArrayList();
+
+            StringBuilder tokenBuilder = new StringBuilder();
+            bool insideQuote = false;
+
+            foreach (char c in text.ToCharArray())
+            {
+                if (!insideQuote && delimiters.Contains(c.ToString()))
+                {
+                    res.Add(tokenBuilder.ToString());
+                    tokenBuilder.Length = 0;
+                }
+                else if (c.Equals('\"'))
+                {
+                    insideQuote = !insideQuote;
+                }
+                else
+                {
+                    tokenBuilder.Append(c);
+                }
+            }
+
+            // add the last token
+            res.Add(tokenBuilder.ToString());
+
+            return (string[])res.ToArray(typeof(string)); ;
+        }
+    }
 }

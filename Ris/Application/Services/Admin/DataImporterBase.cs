@@ -1,11 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Common;
-using ClearCanvas.Ris.Application.Common;
 using System.IO;
 using System.Xml;
+using System.Collections.Generic;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.Enterprise.Core;
+using ClearCanvas.Ris.Application.Common;
 
 namespace ClearCanvas.Ris.Application.Services.Admin
 {
@@ -96,7 +96,7 @@ namespace ClearCanvas.Ris.Application.Services.Admin
 
         protected string[] ParseCsv(string line)
         {
-            string[] fields = line.Split(',');
+            string[] fields = StringUtilities.SplitQuoted(line, ",");
 
             // replace empty strings with nulls
             for (int i = 0; i < fields.Length; i++)
