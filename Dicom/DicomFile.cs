@@ -19,7 +19,7 @@ namespace ClearCanvas.Dicom
     {
         #region Private Members
 
-        private String _filename = null;
+        private String _filename = String.Empty;
 
         #endregion
 
@@ -353,26 +353,67 @@ namespace ClearCanvas.Dicom
             if (!File.Exists(Filename))
                 throw new FileNotFoundException(Filename);
 
+              using (FileStream fs = File.OpenRead(Filename))
+              {
+                Load(fs, stopTag, options);
+              }
+        }
+
+        /// <summary>
+        /// Load a DICOM file from an input stream.
+        /// </summary>
+        /// <remarks>
+        /// Note:  If the file does not contain DICM encoded in it, and 
+        /// <see cref="Stream.CanSeek"/> is true for <paramref name="iStream"/>, 
+        /// the routine will assume the file is not a Part 10 format file, and is 
+        /// instead encoded as just a DataSet with the transfer syntax set to 
+        /// Implicit VR Little Endian.
+        /// </remarks>
+        /// <param name="iStream">The input stream to read from.</param>
+        public void Load(Stream iStream)
+        {
+            DicomReadOptions options = DicomReadOptions.Default;
+            Load(iStream, null, options);
+        }
+
+        /// <summary>
+        /// Load a DICOM file from an input stream.
+        /// </summary>
+        /// <remarks>
+        /// Note:  If the file does not contain DICM encoded in it, and 
+        /// <see cref="Stream.CanSeek"/> is true for <paramref name="iStream"/>, 
+        /// the routine will assume the file is not a Part 10 format file, and is 
+        /// instead encoded as just a DataSet with the transfer syntax set to 
+        /// Implicit VR Little Endian.
+        /// </remarks>
+        /// <param name="iStream">The input stream to read from.</param>
+        /// <param name="stopTag">The dicom tag to stop the reading at.</param>
+        /// <param name="options">The dicom read options to consider.</param>
+        public void Load(Stream iStream, DicomTag stopTag, DicomReadOptions options)
+        {
+            if (iStream == null) throw new ArgumentNullException("iStream");
+
             if (stopTag == null)
                 stopTag = new DicomTag(0xFFFFFFFF, "Bogus Tag", DicomVr.NONE, false, 1, 1, false);
 
-            using (FileStream fs = File.OpenRead(Filename))
-            {
-                fs.Seek(128, SeekOrigin.Begin);
-                DicomStreamReader dsr;
-                if (!FileHasPart10Header(fs))
-                {
-                    if (!Flags.IsSet(options,DicomReadOptions.ReadNonPart10Files))
-                        throw new DicomException(String.Format("File is not part 10 format file: {0}",Filename));
+            DicomStreamReader dsr;
 
-                    fs.Seek(0, SeekOrigin.Begin);
-                    dsr = new DicomStreamReader(fs);
+            if (iStream.CanSeek)
+            {
+                iStream.Seek(128, SeekOrigin.Begin);
+                if (!FileHasPart10Header(iStream))
+                {
+                    if (!Flags.IsSet(options, DicomReadOptions.ReadNonPart10Files))
+                        throw new DicomException(String.Format("File is not part 10 format file: {0}", Filename));
+
+                    iStream.Seek(0, SeekOrigin.Begin);
+                    dsr = new DicomStreamReader(iStream);
                     dsr.TransferSyntax = TransferSyntax.ImplicitVrLittleEndian;
                     dsr.Dataset = _dataSet;
                     DicomReadStatus stat = dsr.Read(stopTag, options);
                     if (stat != DicomReadStatus.Success)
                     {
-                        DicomLogger.LogError("Unexpected error when reading file: {0}",Filename);
+                        DicomLogger.LogError("Unexpected error when reading file: {0}", Filename);
                         throw new DicomException("Unexpected read error with file: " + Filename);
                     }
 
@@ -381,37 +422,49 @@ namespace ClearCanvas.Dicom
                         MediaStorageSopClassUid = DataSet[DicomTags.SopClassUid].ToString();
                     if (DataSet.Contains(DicomTags.SopInstanceUid))
                         MediaStorageSopInstanceUid = DataSet[DicomTags.SopInstanceUid].ToString();
-                }
-                else
-                {
-                    dsr = new DicomStreamReader(fs);
-                    dsr.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
-
-                    dsr.Dataset = _metaInfo;
-                    DicomReadStatus stat = dsr.Read(new DicomTag(0x0002FFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false), options);
-                    if (stat != DicomReadStatus.Success)
-                    {
-                        DicomLogger.LogError("Unexpected error when reading file Meta info for file: {0}", Filename);
-                        throw new DicomException("Unexpected failure reading file Meta info for file: " + Filename);
-                    }
-                    dsr.Dataset = _dataSet;
-                    dsr.TransferSyntax = TransferSyntax;
-                    stat = dsr.Read(stopTag, options);
-                    if (stat != DicomReadStatus.Success)
-                    {
-                        DicomLogger.LogError("Unexpected error when reading file: {0}", Filename);
-                        throw new DicomException("Unexpected failure reading file: " + Filename);
-                    }
+                    return;
                 }
             }
+            else
+            {
+                // Read the 128 byte header first, then check for DICM
+                iStream.Read(new byte[128], 0, 128);
+
+                if (!FileHasPart10Header(iStream))
+                {
+                    DicomLogger.LogError("Reading DICOM file from stream, file does not have part 10 format header.");
+                    throw new DicomException("File being read from stream is not a part 10 format file");
+                }
+            }
+
+            dsr = new DicomStreamReader(iStream);
+            dsr.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian;
+
+            dsr.Dataset = _metaInfo;
+            DicomReadStatus readStat =
+                dsr.Read(new DicomTag(0x0002FFFF, "Bogus Tag", DicomVr.UNvr, false, 1, 1, false), options);
+            if (readStat != DicomReadStatus.Success)
+            {
+                DicomLogger.LogError("Unexpected error when reading file Meta info for file: {0}", Filename);
+                throw new DicomException("Unexpected failure reading file Meta info for file: " + Filename);
+            }
+            dsr.Dataset = _dataSet;
+            dsr.TransferSyntax = TransferSyntax;
+            readStat = dsr.Read(stopTag, options);
+            if (readStat != DicomReadStatus.Success)
+            {
+                DicomLogger.LogError("Unexpected error when reading file: {0}", Filename);
+                throw new DicomException("Unexpected failure reading file: " + Filename);
+            }
         }
+    
 
         /// <summary>
         /// Internal routine to see if the file is encoded as a DICOM Part 10 format file.
         /// </summary>
         /// <param name="fs">The <see cref="FileStream"/> being used to read the file.</param>
         /// <returns>true if the file has a DICOM Part 10 format file header.</returns>
-        protected static bool FileHasPart10Header(FileStream fs)
+        protected static bool FileHasPart10Header(Stream fs)
         {
             return (!(fs.ReadByte() != (byte)'D' ||
                 fs.ReadByte() != (byte)'I' ||
@@ -438,20 +491,8 @@ namespace ClearCanvas.Dicom
         {
             using (FileStream fs = File.Create(Filename))
             {
-                fs.Seek(128, SeekOrigin.Begin);
-                fs.WriteByte((byte)'D');
-                fs.WriteByte((byte)'I');
-                fs.WriteByte((byte)'C');
-                fs.WriteByte((byte)'M');
-
-                DicomStreamWriter dsw = new DicomStreamWriter(fs);
-                dsw.Write(TransferSyntax.ExplicitVrLittleEndian,
-                    _metaInfo, options | DicomWriteOptions.CalculateGroupLengths);
-                
-                dsw.Write(TransferSyntax,_dataSet, options);
+                return Save(fs, options);
             }
-
-            return true;
         }
         /// <summary>
         /// Save the file as a DICOM Part 10 format file with the default <see cref="DicomWriteOptions"/>.
@@ -478,18 +519,36 @@ namespace ClearCanvas.Dicom
 
             using (FileStream fs = File.Create(Filename))
             {
-                fs.Seek(128, SeekOrigin.Begin);
-                fs.WriteByte((byte)'D');
-                fs.WriteByte((byte)'I');
-                fs.WriteByte((byte)'C');
-                fs.WriteByte((byte)'M');
-
-                DicomStreamWriter dsw = new DicomStreamWriter(fs);
-                dsw.Write(TransferSyntax.ExplicitVrLittleEndian,
-                    _metaInfo, options | DicomWriteOptions.CalculateGroupLengths);
-
-                dsw.Write(TransferSyntax, _dataSet, options);
+                return Save(fs, options);
             }
+        }
+
+        /// <summary>
+        /// Save the file as a DICOM Part 10 format file.
+        /// </summary>
+        /// <param name="options">The options to use when saving the file.</param>
+        /// <param name="iStream">The <see cref="Stream"/> to Save the DICOM file to.</param>
+        /// <returns></returns>
+        public bool Save(Stream iStream, DicomWriteOptions options)
+        {
+            if (iStream == null) throw new ArgumentNullException("iStream");
+
+            // Original code has seek() here, but there may be use cases where
+            // a user wants to add the file into a stream (that may contain other data)
+            // and the seek would cause the method to not support that.
+            byte[] prefix = new byte[128];
+            iStream.Write(prefix,0,128);
+
+            iStream.WriteByte((byte) 'D');
+            iStream.WriteByte((byte) 'I');
+            iStream.WriteByte((byte) 'C');
+            iStream.WriteByte((byte) 'M');
+
+            DicomStreamWriter dsw = new DicomStreamWriter(iStream);
+            dsw.Write(TransferSyntax.ExplicitVrLittleEndian,
+                      _metaInfo, options | DicomWriteOptions.CalculateGroupLengths);
+
+            dsw.Write(TransferSyntax, _dataSet, options);
 
             return true;
         }
