@@ -32,7 +32,10 @@ var _IE = document.all;
                     setValue: function(item, value) - a function that sets the value of the item from the cell value
                     getError: function(item) - a function that returns a validation error message to display in the cell,
                         or null if the item is valid
-                    cellType: a string indicating the type of cell (e.g. "text", "choice", "checkbox", "lookup", "datetime" and others...)
+                    getVisible: function(item) - a function that returns a boolean indicating whether the cell contents
+                        should be visible or not. This function is called whenever an update occurs in the row, allowing for
+                        visibility of adjacent cells to be controlled dynamically.
+                    cellType: a string indicating the type of cell (e.g. "text", "choice", "checkbox", "lookup", "datetime", "bool" and others...)
                         *note: this may also be populated with a custom value (e.g. "myCellType"), in which case you must handle
                          the renderCell event and do custom rendering.
                     choices: an array of strings - used only by the "choice" cell type. In addition to strings, the array
@@ -322,26 +325,32 @@ var Table = {
 	        var column = this._columns[col];
 		    var value = this._getColumnValue(column, obj);
 		    var table = this;
+		    if(["readonly"].indexOf(column.cellType) > -1)
+		    {
+		        var field = document.createElement("div");
+		        td.appendChild(field);
+		        td._setCellDisplayValue = function(value) { Field.setValue(field, value); }
+		    }
+		    else
 		    if(["text"].indexOf(column.cellType) > -1)
 		    {
 		        var input = document.createElement("input");
 		        td.appendChild(input);
-		        input.value = value || "";
+		        td._setCellDisplayValue = function(value) { input.value = (value || ""); }
 		        if(column.size) input.size = column.size;
+		        
+		        // respond to every keystroke
 		        input.onkeyup = input.onchange = function() { column.setValue(obj, this.value); table._onCellUpdate(row, col); }
 		        
-		        //td._setCellValue = function(value) { input.value = (value || ""); }
-
-		        // allow the ultimate format to be determined by the column rather than the user
-		        input.onblur = function() { this.value = column.getValue(obj) || ""; }
-		        
+		        // consider the edit complete when focus is lost
+		        input.onblur = function() { table._onEditComplete(row, col); }
 		    }
 		    else
 		    if(["date", "datetime"].indexOf(column.cellType) > -1)
 		    {
 		        var input = document.createElement("input");
 		        td.appendChild(input);
-		        input.value = value ? DateInput.format(value) : "";
+		        td._setCellDisplayValue = function(value) { input.value = value ? DateInput.format(value) : ""; };
 		        if(column.size) input.size = column.size;
 		        
 		        // if user types directly into field, use the DateInput object to try and parse the results
@@ -352,8 +361,8 @@ var Table = {
 		            table._onCellUpdate(row, col);
 		        }
 		        
-		        // allow the ultimate format to be determined by the column rather than the user
-		        input.onblur = function() { this.value = column.getValue(obj) ? DateInput.format(column.getValue(obj)) : ""; }
+		        // consider the edit complete when focus is lost
+		        input.onblur = function() { table._onEditComplete(row, col); }
 		        
 		        // launch calendar on click
                 var findButton = document.createElement("input");
@@ -365,9 +374,10 @@ var Table = {
                     DateInput.show(input, column.getValue(obj),   // pass the current value of the object
                         function(date, dateString)                              // pass a callback 
                         {
-                            input.value = dateString || "";
+                            //input.value = dateString || "";
                             column.setValue(obj, date);
                             table._onCellUpdate(row, col);
+                            table._onEditComplete(row, col);
                         });
 	            }
 		    }
@@ -399,18 +409,21 @@ var Table = {
 		    
 		        var input = document.createElement("select");
 		        td.appendChild(input);
+		        td._setCellDisplayValue = function(value) { input.value = (value || ""); }
 		        if(column.size) input.style.width = column.size + "pc"; // set width in chars
 		        
 		        // choices may be an array, or a function that returns an array
 		        var choices = (typeof(column.choices) == "function") ? column.choices(obj) : column.choices;
 		        addOptions(input, choices);
 		        
-		        input.value = value || "";
 		        input.onchange = function()
 		        {
 		            column.setValue(obj, (this.value && this.value.length)? this.value : null);
 		            table._onCellUpdate(row, col);
+		            // for a combo box, the edit is completed as soon as the selection changes
+		            table._onEditComplete(row, col); 
 		        }
+		        
 		    }
 		    else
 		    if(["check","checkbox","bool","boolean"].indexOf(column.cellType) > -1)
@@ -418,9 +431,16 @@ var Table = {
 		        var input = document.createElement("input");
 		        input.type = "checkbox";
 		        td.appendChild(input);
+		        td._setCellDisplayValue = function(value) { input.checked = value ? true : false; }
 		        if(column.size) input.size = column.size;
-		        input.checked = value ? true : false;
-		        input.onclick = input.onchange = function() { column.setValue(obj, this.checked ? true : false); table._onCellUpdate(row, col); }
+		        
+		        input.onclick = input.onchange = function()
+		        {
+		            column.setValue(obj, this.checked ? true : false);
+		            table._onCellUpdate(row, col);
+		            // for a check box, the edit is completed as soon as the click happens
+		            table._onEditComplete(row, col); 
+		        }
 		    }
 		    else
 		    if(column.cellType == "lookup")
@@ -432,15 +452,17 @@ var Table = {
                     if(result)
                     {
                         column.setValue(obj, result);
- 		                input.value = column.getValue(obj) || "";
+ 		                //input.value = column.getValue(obj) || "";
                         table._onCellUpdate(row, col);
+                        table._onEditComplete(row, col);
                     }
                 }
                 
                 var input = document.createElement("input");
                 td.appendChild(input);
+		        td._setCellDisplayValue = function(value) { input.value = (value || ""); }
 		        if(column.size) input.size = column.size;
-		        input.value = value || "";
+		        
                 input.onkeyup = function()
                 {
                     if(event.keyCode == 13) // pressing ENTER key executes lookup
@@ -458,32 +480,42 @@ var Table = {
                 findButton.value = "...";
                 td.appendChild(findButton);
                 findButton.onclick = doLookup;
-                 
+
+		        // consider the edit complete when focus is lost
+		        // JR: actually this doesn't work because it blanks the text box when focus moves to the find button
+		        //input.onblur = function() { table._onEditComplete(row, col); }
 		    }
+		    
+		    // initialize the cell value
+		    td._setCellDisplayValue(value);
+		    
+		    // initialize the cell visibility
+		    td.style.visibility = (column.getVisible ? column.getVisible(obj) : true) ? "visible" : "hidden";
     		
 		    // fire custom formatting event, which may itself set the innerHTML property to override default cell content
 		    if(this.renderCell)
 		        this.renderCell(this, { htmlCell: td, column: this._columns[col], item: obj, itemIndex: row-1, colIndex: col });
 	    },
 	    
+	    // called when 
 	    _onCellUpdate: function(row, col)
 	    {
+	        // update validation on the fly as the user types, rather than wait for the edit to complete
 	        this._validateRow(row);
-	        this._updateCellVisibility(row);
 	    },
 	    
-	    _updateCellVisibility: function(rowIndex)
+	    _onEditComplete: function(rowIndex, colIndex)
 	    {
-	        // validate each column
 	        var item = this.items[rowIndex-1];
 	        for(var c=0; c < this._columns.length; c++)
 		    {
 		        var column = this._columns[c];
+	            var cell = this._getCell(rowIndex, c);
+	            
+	            // update the cell's visibility
 		        if(column.getVisible)
 		        {
-		            var cell = this._getCell(rowIndex, c);
 		            var visible = column.getVisible(item);
-		            cell.style.visibility = visible ? "visible" : "hidden";
 		            if(visible)
 		                cell.style.visibility = "visible";
 		            else
@@ -495,6 +527,9 @@ var Table = {
 		                column.setValue(item, null);
 		            }
 		        }
+		        
+	            // update the cell's display value from the item
+	            cell._setCellDisplayValue(column.getValue(item));
 		    }
 	    }
     }
