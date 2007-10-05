@@ -29,7 +29,7 @@ namespace ClearCanvas.Samples.Google.Calendar.View.WinForms
         private void InitializeComponent()
         {
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            this._followUpDate = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._followUpDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._comment = new ClearCanvas.Controls.WinForms.TextAreaField();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this._addButton = new System.Windows.Forms.Button();
@@ -127,7 +127,7 @@ namespace ClearCanvas.Samples.Google.Calendar.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Controls.WinForms.DateTimeField _followUpDate;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _followUpDate;
         private ClearCanvas.Controls.WinForms.TextAreaField _comment;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button _addButton;

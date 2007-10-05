@@ -32,8 +32,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._givenName = new ClearCanvas.Controls.WinForms.TextField();
             this._familyName = new ClearCanvas.Controls.WinForms.TextField();
             this._sex = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._dateOfBirth = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this._dateOfDeath = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._dateOfBirth = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._dateOfDeath = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
@@ -42,7 +42,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._mrnSite = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._healthcardProvince = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._healthcardVersionCode = new ClearCanvas.Controls.WinForms.TextField();
-            this._healthcardExpiry = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._healthcardExpiry = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._mrn = new ClearCanvas.Controls.WinForms.TextField();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -302,8 +302,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Controls.WinForms.TextField _givenName;
         private ClearCanvas.Controls.WinForms.TextField _middleName;
         private ClearCanvas.Controls.WinForms.ComboBoxField _sex;
-        private ClearCanvas.Controls.WinForms.DateTimeField _dateOfBirth;
-        private ClearCanvas.Controls.WinForms.DateTimeField _dateOfDeath;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _dateOfBirth;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _dateOfDeath;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Label label1;
@@ -311,7 +311,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Controls.WinForms.TextField _healthcard;
         private ClearCanvas.Controls.WinForms.ComboBoxField _mrnSite;
         private ClearCanvas.Controls.WinForms.ComboBoxField _healthcardProvince;
-        private ClearCanvas.Controls.WinForms.DateTimeField _healthcardExpiry;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _healthcardExpiry;
         private ClearCanvas.Controls.WinForms.TextField _healthcardVersionCode;
         public System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
     }

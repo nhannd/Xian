@@ -33,8 +33,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			this._accessionNumber = new ClearCanvas.Controls.WinForms.TextField();
 			this._lastName = new ClearCanvas.Controls.WinForms.TextField();
 			this._firstName = new ClearCanvas.Controls.WinForms.TextField();
-			this._studyDateFrom = new ClearCanvas.Controls.WinForms.DateTimeField();
-			this._studyDateTo = new ClearCanvas.Controls.WinForms.DateTimeField();
+			this._studyDateFrom = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+			this._studyDateTo = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this._studyDescription = new ClearCanvas.Controls.WinForms.TextField();
 			this._searchButton = new System.Windows.Forms.Button();
 			this._searchLastWeekButton = new System.Windows.Forms.Button();
@@ -222,12 +222,12 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         #endregion
 
 		private Crownwood.DotNetMagic.Controls.TitleBar _titleBar;
-		private ClearCanvas.Controls.WinForms.DateTimeField _studyDateTo;
+		private ClearCanvas.Desktop.View.WinForms.DateTimeField _studyDateTo;
 		private System.Windows.Forms.Button _searchButton;
 		private System.Windows.Forms.Button _searchLastWeekButton;
 		private System.Windows.Forms.Button _clearButton;
 		private System.Windows.Forms.Button _searchTodayButton;
-		private ClearCanvas.Controls.WinForms.DateTimeField _studyDateFrom;
+		private ClearCanvas.Desktop.View.WinForms.DateTimeField _studyDateFrom;
 		private ClearCanvas.Controls.WinForms.TextField _patientID;
 		private ClearCanvas.Controls.WinForms.TextField _lastName;
 		private ClearCanvas.Controls.WinForms.TextField _studyDescription;

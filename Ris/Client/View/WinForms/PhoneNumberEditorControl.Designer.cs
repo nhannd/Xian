@@ -40,8 +40,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._phoneType = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
-            this._validFrom = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this._validUntil = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._validFrom = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._validUntil = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
@@ -250,8 +250,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private ClearCanvas.Controls.WinForms.TextField _areaCode;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
-        private ClearCanvas.Controls.WinForms.DateTimeField _validFrom;
-        private ClearCanvas.Controls.WinForms.DateTimeField _validUntil;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _validFrom;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _validUntil;
         private ClearCanvas.Controls.WinForms.ComboBoxField _phoneType;
         private System.Windows.Forms.ToolTip toolTip1;
         private ClearCanvas.Controls.WinForms.TextField _number;

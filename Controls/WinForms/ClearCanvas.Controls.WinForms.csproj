@@ -48,12 +48,6 @@
       <DependentUpon>ComboBoxField.cs</DependentUpon>
     </Compile>
     <Compile Include="CursorManager.cs" />
-    <Compile Include="DateTimeField.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="DateTimeField.Designer.cs">
-      <DependentUpon>DateTimeField.cs</DependentUpon>
-    </Compile>
     <Compile Include="DelayedEventDispatcher.cs" />
     <Compile Include="Delegates.cs" />
     <Compile Include="FileBrowser\Browser.cs">
@@ -161,10 +155,6 @@
     <EmbeddedResource Include="ComboBoxField.resx">
       <SubType>Designer</SubType>
       <DependentUpon>ComboBoxField.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="DateTimeField.resx">
-      <SubType>Designer</SubType>
-      <DependentUpon>DateTimeField.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="FileBrowser\Browser.resx">
       <DependentUpon>Browser.cs</DependentUpon>

@@ -1,13 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-using ClearCanvas.Desktop;
 
-namespace ClearCanvas.Controls.WinForms
+namespace ClearCanvas.Desktop.View.WinForms
 {
     public partial class DateTimeField : UserControl
     {
@@ -18,8 +12,6 @@ namespace ClearCanvas.Controls.WinForms
         public DateTimeField()
         {
             InitializeComponent();
-
-            // JR: this.DesignMode is not valid in the constructor - moved the date format stuff into DateTimeField_Load
 
             _checkBox.CheckedChanged += new EventHandler(CheckBoxCheckedChangedEventHandler);
             _dateTimePicker.ValueChanged += new EventHandler(DateTimePickerValueChangedEventHandler);

@@ -31,8 +31,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._acceptButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
             this._postalCode = new ClearCanvas.Controls.WinForms.TextField();
-            this._validFrom = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this._validUntil = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._validFrom = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._validUntil = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._type = new ClearCanvas.Controls.WinForms.ComboBoxField();
             this._city = new ClearCanvas.Controls.WinForms.TextField();
             this._street = new ClearCanvas.Controls.WinForms.TextField();
@@ -241,8 +241,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private ClearCanvas.Controls.WinForms.ComboBoxField _type;
         private System.Windows.Forms.Button _acceptButton;
         private System.Windows.Forms.Button _cancelButton;
-        private ClearCanvas.Controls.WinForms.DateTimeField _validUntil;
-        private ClearCanvas.Controls.WinForms.DateTimeField _validFrom;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _validUntil;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _validFrom;
         private ClearCanvas.Controls.WinForms.TextField _postalCode;
         private ClearCanvas.Controls.WinForms.ComboBoxField _province;
         private ClearCanvas.Controls.WinForms.ComboBoxField _country;

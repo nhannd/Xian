@@ -37,8 +37,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._acceptButton = new System.Windows.Forms.Button();
             this._password = new ClearCanvas.Controls.WinForms.TextField();
             this._confirmPassword = new ClearCanvas.Controls.WinForms.TextField();
-            this._validFrom = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this._validUntil = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._validFrom = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._validUntil = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._setStaffButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this._clearStaffButton = new System.Windows.Forms.Button();
@@ -272,8 +272,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private System.Windows.Forms.Button _acceptButton;
         private ClearCanvas.Controls.WinForms.TextField _password;
         private ClearCanvas.Controls.WinForms.TextField _confirmPassword;
-        private ClearCanvas.Controls.WinForms.DateTimeField _validUntil;
-        private ClearCanvas.Controls.WinForms.DateTimeField _validFrom;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _validUntil;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _validFrom;
         private System.Windows.Forms.Button _setStaffButton;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button _clearStaffButton;

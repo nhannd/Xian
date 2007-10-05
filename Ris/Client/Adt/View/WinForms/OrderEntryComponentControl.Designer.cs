@@ -41,7 +41,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._diagnosticServiceBreakdown = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
             this._placeOrderButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
-            this._schedulingRequestDateTime = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._schedulingRequestDateTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._scheduleOrder = new System.Windows.Forms.CheckBox();
             this._diagnosticServiceTree = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
             this._selectedDiagnosticService = new System.Windows.Forms.TextBox();
@@ -287,7 +287,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.BindingTreeView _diagnosticServiceBreakdown;
         private System.Windows.Forms.Button _placeOrderButton;
         private System.Windows.Forms.Button _cancelButton;
-        private ClearCanvas.Controls.WinForms.DateTimeField _schedulingRequestDateTime;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _schedulingRequestDateTime;
         private System.Windows.Forms.CheckBox _scheduleOrder;
         private ClearCanvas.Desktop.View.WinForms.BindingTreeView _diagnosticServiceTree;
         private System.Windows.Forms.TextBox _selectedDiagnosticService;

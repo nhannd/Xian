@@ -34,8 +34,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this._queue = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this._updatedOnStart = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this._updatedOnEnd = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._updatedOnStart = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._updatedOnEnd = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._directionChkBox = new System.Windows.Forms.CheckBox();
             this._peerChkBox = new System.Windows.Forms.CheckBox();
             this._typeChkBox = new System.Windows.Forms.CheckBox();
@@ -47,8 +47,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this._searchButton = new System.Windows.Forms.Button();
             this._showAll = new System.Windows.Forms.Button();
-            this._createdOnStart = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this._createdOnEnd = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._createdOnStart = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._createdOnEnd = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._message = new System.Windows.Forms.TextBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.splitContainer1.Panel1.SuspendLayout();
@@ -425,10 +425,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
-        private ClearCanvas.Controls.WinForms.DateTimeField _createdOnStart;
-        private ClearCanvas.Controls.WinForms.DateTimeField _createdOnEnd;
-        private ClearCanvas.Controls.WinForms.DateTimeField _updatedOnStart;
-        private ClearCanvas.Controls.WinForms.DateTimeField _updatedOnEnd;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _createdOnStart;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _createdOnEnd;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _updatedOnStart;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _updatedOnEnd;
         private System.Windows.Forms.CheckBox _directionChkBox;
         private System.Windows.Forms.CheckBox _peerChkBox;
         private System.Windows.Forms.CheckBox _typeChkBox;

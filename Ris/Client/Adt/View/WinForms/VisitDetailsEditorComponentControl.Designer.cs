@@ -30,8 +30,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         {
             this._visitNumber = new ClearCanvas.Controls.WinForms.TextField();
             this._visitNumberAssigningAuthority = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._admitDateTime = new ClearCanvas.Controls.WinForms.DateTimeField();
-            this._dischargeDateTime = new ClearCanvas.Controls.WinForms.DateTimeField();
+            this._admitDateTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
+            this._dischargeDateTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._dischargeDisposition = new ClearCanvas.Controls.WinForms.TextField();
             this._preadmitNumber = new ClearCanvas.Controls.WinForms.TextField();
             this._vip = new System.Windows.Forms.CheckBox();
@@ -269,8 +269,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private ClearCanvas.Controls.WinForms.TextField _visitNumber;
         private ClearCanvas.Controls.WinForms.ComboBoxField _visitNumberAssigningAuthority;
-        private ClearCanvas.Controls.WinForms.DateTimeField _admitDateTime;
-        private ClearCanvas.Controls.WinForms.DateTimeField _dischargeDateTime;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _admitDateTime;
+        private ClearCanvas.Desktop.View.WinForms.DateTimeField _dischargeDateTime;
         private ClearCanvas.Controls.WinForms.TextField _dischargeDisposition;
         private ClearCanvas.Controls.WinForms.TextField _preadmitNumber;
         private System.Windows.Forms.CheckBox _vip;

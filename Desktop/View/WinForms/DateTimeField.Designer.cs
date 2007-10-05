@@ -1,4 +1,4 @@
-namespace ClearCanvas.Controls.WinForms
+namespace ClearCanvas.Desktop.View.WinForms
 {
     partial class DateTimeField
     {
