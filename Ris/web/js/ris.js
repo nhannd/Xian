@@ -26,7 +26,19 @@ if(window.external)
 		
         resolveStaffName: function(query)
         {
-            return window.external.ResolveStaffName(query || "");
+            var staffSummary = JSML.parse(window.external.ResolveStaffName(query || ""));
+            if(staffSummary == null)
+                return null;
+            
+            // ris returns a StaffSummary object, but we only need a few fields from this class
+            var staff = {    staffId : staffSummary.StaffId,
+                             staffName: staffSummary.Name.FamilyName + ", " + staffSummary.Name.GivenName,
+                             staffType: staffSummary.StaffType.Value };
+            
+            // override the toString function - this just makes it work seamlessly with the Table view                 
+            staff.toString = function() { return this.staffName; }
+            
+            return staff;
         },
         
         getDateFormat: function()
@@ -88,7 +100,7 @@ if(window.external)
 		{
 			return personName ? window.external.FormatPersonName(JSML.create(personName, "PersonName")) : "";
 		},
-
+		
 		formatTelephone: function(telephone)
 		{
 			return telephone ? window.external.FormatTelephone(JSML.create(telephone, "Telephone")) : "";

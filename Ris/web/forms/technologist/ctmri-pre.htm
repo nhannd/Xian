@@ -161,27 +161,26 @@
 		             [
 		                {   label: "Patient Pregnant",
 		                    cellType: "choice",
-		                    choices: ["no", "yes - exam cancelled", "yes - consent obtained"],
+		                    choices: ["no", "yes"],
 		                    getValue: function(item) { return item.pregnancyStatus; },
 		                    setValue: function(item, value) { item.pregnancyStatus = value; },
 		                    getError: function(item) { return item.pregnancyStatus ? null : "Value required"; }
 		                },
-		                {   label: "Consent obtained by (if consent obtained)",
+		                {   label: "Exam Cancelled",
+		                    cellType: "choice",
+		                    choices: ["no", "yes"],
+		                    getValue: function(item) { return item.examCancelled; },
+		                    setValue: function(item, value) { item.examCancelled = value; },
+		                    getVisible: function(item) { return item.pregnancyStatus == "yes"; },
+		                    getError: function(item) { return item.examCancelled ? null : "Value required"; }
+		                },
+		                {   label: "Consent obtained by",
 		                    cellType: "lookup",
 		                    lookup: function(query) { return Ris.resolveStaffName(query); },
 		                    getValue: function(item) { return item.consentObtainedBy; },
 		                    setValue: function(item, value) { item.consentObtainedBy = value; },
-		                    getError: function(item)
-		                    {
-		                        if(item.pregnancyStatus == "yes - consent obtained")
-		                        {
-		                            if(!item.consentObtainedBy) return "Value required";
-		                        }
-		                        else
-		                        {
-		                            if(item.consentObtainedBy) return "Not applicable";
-		                        }
-		                    }
+		                    getVisible: function(item) { return item.examCancelled == "no"; },
+		                    getError: function(item) { return item.consentObtainedBy ? null : "Value required"; }
 		                }
 		             ]);
 		             
@@ -200,24 +199,27 @@
 		                    setValue: function(item, value) { item.sedation = value; },
 		                    getError: function(item) { return null; }
 		                },
-		                {   label: "Radiologist (if radiologist prescribed)",
-		                    cellType: "lookup",
-		                    lookup: function(query) { return Ris.resolveStaffName(query); },
-		                    getValue: function(item) { return item.radiologist; },
-		                    setValue: function(item, value) { item.radiologist = value; },
-		                    getError: function(item) { return null; }
-		                },
-		                {   label: "Type/Amount (if radiologist prescribed)",
-		                    cellType: "text",
-		                    getValue: function(item) { return item.typeAndAmount; },
-		                    setValue: function(item, value) { item.typeAndAmount = value; },
-		                    getError: function(item) { return null; }
-		                },
 		                {   label: "Who is taking patient home",
 		                    cellType: "text",
 		                    getValue: function(item) { return item.patientWillBeTakenHomeBy; },
 		                    setValue: function(item, value) { item.patientWillBeTakenHomeBy = value; },
-		                    getError: function(item) { return null; }
+		                    getError: function(item) { return null; },
+		                    getVisible: function(item) { return item.sedation && item.sedation != "None"; }
+		                },
+		                {   label: "Radiologist",
+		                    cellType: "lookup",
+		                    lookup: function(query) { return Ris.resolveStaffName(query); },
+		                    getValue: function(item) { return item.radiologist; },
+		                    setValue: function(item, value) { item.radiologist = value; },
+		                    getError: function(item) { return null; },
+		                    getVisible: function(item) { return item.sedation == "Radiologist prescribed"; }
+		                },
+		                {   label: "Type/Amount",
+		                    cellType: "text",
+		                    getValue: function(item) { return item.typeAndAmount; },
+		                    setValue: function(item, value) { item.typeAndAmount = value; },
+		                    getError: function(item) { return null; },
+		                    getVisible: function(item) { return item.sedation == "Radiologist prescribed"; }
 		                }
 		             ]);
 		             

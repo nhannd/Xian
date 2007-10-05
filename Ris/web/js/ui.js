@@ -177,7 +177,10 @@ var Table = {
 		        var column = this._columns[c];
 		        if(column.getError)
 		        {
-		            this.errorProvider.setError(this.rows[rowIndex]._errorElements[c], column.getError(obj));
+		            // first see if the column is visible - don't validate invisible columns
+		            var visible = column.getVisible ? column.getVisible(obj) : true;
+		            var error = visible ? column.getError(obj) : null;
+		            this.errorProvider.setError(this.rows[rowIndex]._errorElements[c], error);
 		        }
 		    }
 

@@ -39,19 +39,16 @@
 		    {
 		        var table = Table.createTable($("staffTable"), { editInPlace: true, flow: true, checkBoxes: true },
 		             [
-		                {   label: "Role",
-		                    cellType: "choice",
-		                    choices: [ "Technologist", "Nurse", "Radiologist", "Resident/Fellow", "Student"],
-		                    getValue: function(item) { return item.role; },
-		                    setValue: function(item, value) { item.role = value; },
-		                    getError: function(item) { return null; }
-		                },
 		                {   label: "Staff",
 		                    cellType: "lookup",
 		                    lookup: function(query) { return Ris.resolveStaffName(query); },
 		                    getValue: function(item) { return item.staffPerson; },
 		                    setValue: function(item, value) { item.staffPerson = value; },
 		                    getError: function(item) { return null; }
+		                },
+		                {   label: "Role",
+		                    cellType: "readonly",
+		                    getValue: function(item) { return item.staffPerson ? item.staffPerson.staffType : null; }
 		                }
 		             ]);
 		             
@@ -278,31 +275,31 @@
 		<p class="sectionheading">PACS</p>
 		<table id="pacsTable" width="100%">
 		  <tr>
-			<td class="tableheading">PACS</td>
+			<td class="tableheading"></td>
 		  </tr>
 		</table>
 		<p class="sectionheading">Post-Processing</p>
 		<table id="postProcessingTable" width="100%">
 		  <tr>
-			<td class="tableheading">Post-Processing</td>
+			<td class="tableheading"></td>
 		  </tr>
 		</table>
 		<p class="sectionheading">Image Quality</p>
 		<table id="imageQualityTable"  width="100%">
 		  <tr>
-			<td class="tableheading">Image Quality</td>
+			<td class="tableheading"></td>
 		  </tr>
 		</table>
 		<p class="sectionheading">Patient Notes</p>
 		<table id="patientNotesTable" width="100%">
 		  <tr>
-			<td class="tableheading">Patient Notes</td>
+			<td class="tableheading"></td>
 		  </tr>
 		</table>
 		<p class="sectionheading">Teaching Case</p>
 		<table id="teachingCaseTable" width="100%">
 		  <tr>
-			<td class="tableheading">Teaching Case</td>
+			<td class="tableheading"></td>
 		  </tr>
 		</table>
 		</form>
