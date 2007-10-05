@@ -9,6 +9,8 @@ using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Reporting;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Services.Admin;
 
 namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 {
@@ -130,11 +132,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public CompleteInterpretationForTranscriptionResponse CompleteInterpretationForTranscription(CompleteInterpretationForTranscriptionRequest request)
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
+            Staff supervisor = request.SupervisorRef == null ? null : PersistenceContext.Load<Staff>(request.SupervisorRef, EntityLoadFlags.Proxy);
 
             if (String.IsNullOrEmpty(request.ReportContent) == false)
             {
                 Operations.SaveReport saveReportOp = new Operations.SaveReport();
-                saveReportOp.Execute(interpretation, request.ReportContent, this.PersistenceContext);
+                saveReportOp.Execute(interpretation, request.ReportContent, supervisor, this.PersistenceContext);
             }
 
             Operations.CompleteInterpretationForTranscription op = new Operations.CompleteInterpretationForTranscription();
@@ -152,11 +155,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public CompleteInterpretationForVerificationResponse CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request)
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
+            Staff supervisor = request.SupervisorRef == null ? null : PersistenceContext.Load<Staff>(request.SupervisorRef, EntityLoadFlags.Proxy);
 
             if (String.IsNullOrEmpty(request.ReportContent) == false)
             {
                 Operations.SaveReport saveReportOp = new Operations.SaveReport();
-                saveReportOp.Execute(interpretation, request.ReportContent, this.PersistenceContext);
+                saveReportOp.Execute(interpretation, request.ReportContent, supervisor, this.PersistenceContext);
             }
 
             Operations.CompleteInterpretationForVerification op = new Operations.CompleteInterpretationForVerification();
@@ -174,11 +178,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public CompleteInterpretationAndVerifyResponse CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request)
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
+            Staff supervisor = request.SupervisorRef == null ? null : PersistenceContext.Load<Staff>(request.SupervisorRef, EntityLoadFlags.Proxy);
 
             if (String.IsNullOrEmpty(request.ReportContent) == false)
             {
                 Operations.SaveReport saveReportOp = new Operations.SaveReport();
-                saveReportOp.Execute(interpretation, request.ReportContent, this.PersistenceContext);
+                saveReportOp.Execute(interpretation, request.ReportContent, supervisor, this.PersistenceContext);
             }
 
             if (interpretation.ReportPart == null || String.IsNullOrEmpty(interpretation.ReportPart.Content))
@@ -281,9 +286,10 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         public SaveReportResponse SaveReport(SaveReportRequest request)
         {
             ReportingProcedureStep step = PersistenceContext.Load<ReportingProcedureStep>(request.ReportingStepRef, EntityLoadFlags.CheckVersion);
+            Staff supervisor = request.SupervisorRef == null ? null : PersistenceContext.Load<Staff>(request.SupervisorRef, EntityLoadFlags.Proxy);
 
             Operations.SaveReport op = new Operations.SaveReport();
-            op.Execute(step, request.ReportContent, this.PersistenceContext);
+            op.Execute(step, request.ReportContent, supervisor, this.PersistenceContext);
 
             PersistenceContext.SynchState();
             return new SaveReportResponse(step.GetRef());
@@ -304,6 +310,27 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
                 });
 
             return new GetPriorReportResponse(listSummary);
+        }
+
+        [ReadOperation]
+        public GetRadiologistListResponse GetRadiologistList(GetRadiologistListRequest request)
+        {
+            StaffAssembler assembler = new StaffAssembler();
+
+            StaffSearchCriteria criteria = new StaffSearchCriteria();
+            criteria.Type.EqualTo(StaffType.PRAD);
+
+            if (String.IsNullOrEmpty(request.SupervisorID) == false)
+                criteria.Id.EqualTo(request.SupervisorID);
+
+            IList<Staff> listRadiologists = PersistenceContext.GetBroker<IStaffBroker>().Find(criteria);
+
+            return new GetRadiologistListResponse(
+                CollectionUtils.Map<Staff, StaffSummary, List<StaffSummary>>(listRadiologists,
+                delegate(Staff staff)
+                    {
+                        return assembler.CreateStaffSummary(staff, this.PersistenceContext);
+                    }));
         }
 
         #endregion

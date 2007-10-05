@@ -20,15 +20,17 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
         public class SaveReport : ReportingOperation
         {
-            public void Execute(ReportingProcedureStep step, string reportContent, IPersistenceContext context)
+            public void Execute(ReportingProcedureStep step, string reportContent, Staff supervisor, IPersistenceContext context)
             {
                 if (step.ReportPart != null)
                 {
                     step.ReportPart.Content = reportContent;
+                    step.ReportPart.Report.Supervisor = supervisor;
                 }
                 else
                 {
                     Report report = new Report();
+                    report.Supervisor = supervisor;
                     report.Procedure = step.RequestedProcedure;
                     step.ReportPart = report.AddPart(reportContent);
 

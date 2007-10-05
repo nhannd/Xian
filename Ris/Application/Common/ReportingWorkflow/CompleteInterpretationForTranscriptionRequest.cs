@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -20,10 +17,21 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
             this.ReportContent = reportContent;
         }
 
+        public CompleteInterpretationForTranscriptionRequest(EntityRef interpretationStepRef, string reportContent, EntityRef supervisorRef)
+        {
+            this.InterpretationStepRef = interpretationStepRef;
+            this.ReportContent = reportContent;
+            this.SupervisorRef = supervisorRef;
+        }
+
+
         [DataMember]
         public EntityRef InterpretationStepRef;
 
         [DataMember]
         public string ReportContent;
+
+        [DataMember]
+        public EntityRef SupervisorRef;
     }
 }

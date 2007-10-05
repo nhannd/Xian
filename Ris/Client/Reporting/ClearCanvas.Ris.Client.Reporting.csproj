@@ -42,6 +42,7 @@
     <Compile Include="Folders\ReportingContainerFolders.cs" />
     <Compile Include="Folders\ReportingWorkflowFolders.cs" />
     <Compile Include="HomeTool.cs" />
+    <Compile Include="RadiologistSelectionComponent.cs" />
     <Compile Include="ReportEditorComponentSettings.cs" />
     <Compile Include="ReportEditorComponentSettings.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -70,6 +71,13 @@
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>SR.resx</DependentUpon>
+    </Compile>
+    <Compile Include="StaffSummaryTable.cs" />
+    <Compile Include="SupervisorSettings.cs" />
+    <Compile Include="SupervisorSettings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <DependentUpon>SupervisorSettings.settings</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -159,6 +167,10 @@
     <None Include="ReportingPreviewComponentSettings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>ReportingPreviewComponentSettings.Designer.cs</LastGenOutput>
+    </None>
+    <None Include="SupervisorSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>SupervisorSettings.Designer.cs</LastGenOutput>
     </None>
   </ItemGroup>
   <ItemGroup>

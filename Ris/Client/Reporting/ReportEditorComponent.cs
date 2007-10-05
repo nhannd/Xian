@@ -1,7 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Text;
 using System.Runtime.InteropServices;
 
 using ClearCanvas.Common;
@@ -11,6 +8,7 @@ using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common.Jsml;
+using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -35,7 +33,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         [ComVisible(true)]
         public class ScriptCallback
         {
-            private ReportEditorComponent _component;
+            private readonly ReportEditorComponent _component;
 
             public ScriptCallback(ReportEditorComponent component)
             {
@@ -76,6 +74,7 @@ namespace ClearCanvas.Ris.Client.Reporting
         private event EventHandler _closeComponentEvent;
 
         private string _reportContent;
+        private StaffSummary _supervisor;
 
         public ReportEditorComponent(EntityRef reportingStepRef)
         {
@@ -97,14 +96,17 @@ namespace ClearCanvas.Ris.Client.Reporting
                     LoadReportForEditResponse response = service.LoadReportForEdit(new LoadReportForEditRequest(_reportingStepRef));
                     _reportPartIndex = response.ReportPartIndex;
                     _report = response.Report;
+                    _supervisor = response.Report.Supervisor;
+
+                    // For resident, look for the default supervisor if it does not already exist
+                    if (_supervisor == null && String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID) == false)
+                    {
+                        GetRadiologistListResponse getRadListresponse = service.GetRadiologistList(new GetRadiologistListRequest());
+                        _supervisor = CollectionUtils.FirstElement<StaffSummary>(getRadListresponse.Radiologists);
+                    }
                 });
 
             base.Start();
-        }
-
-        public override void Stop()
-        {
-            base.Stop();
         }
 
         public string EditorUrl
@@ -229,6 +231,11 @@ namespace ClearCanvas.Ris.Client.Reporting
             get { return _canCompleteInterpretationForTranscription; }
         }
 
+        public string SupervisorName
+        {
+            get { return _supervisor == null ? null : PersonNameFormat.Format(_supervisor.Name);  }    
+        }
+
         public void Verify()
         {
             try
@@ -238,7 +245,11 @@ namespace ClearCanvas.Ris.Client.Reporting
                     Platform.GetService<IReportingWorkflowService>(
                         delegate(IReportingWorkflowService service)
                         {
-                            service.CompleteInterpretationAndVerify(new CompleteInterpretationAndVerifyRequest(_reportingStepRef, this.ReportContent));
+                            service.CompleteInterpretationAndVerify(
+                                new CompleteInterpretationAndVerifyRequest(
+                                _reportingStepRef, 
+                                this.ReportContent,
+                                _supervisor == null ? null : _supervisor.StaffRef));
                         });
                 }
                 else if (_canCompleteVerification)
@@ -255,8 +266,8 @@ namespace ClearCanvas.Ris.Client.Reporting
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
-                    delegate()
-                    {
+                    delegate
+                        {
                         this.ExitCode = ApplicationComponentExitCode.Error;
                         EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
                     });
@@ -270,7 +281,11 @@ namespace ClearCanvas.Ris.Client.Reporting
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {
-                        service.CompleteInterpretationForVerification(new CompleteInterpretationForVerificationRequest(_reportingStepRef, this.ReportContent));
+                        service.CompleteInterpretationForVerification(
+                            new CompleteInterpretationForVerificationRequest(
+                            _reportingStepRef, 
+                            this.ReportContent,
+                            _supervisor == null ? null : _supervisor.StaffRef));
                     });
 
                 EventsHelper.Fire(_sendToVerifyEvent, this, EventArgs.Empty);
@@ -278,7 +293,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
-                    delegate()
+                    delegate
                     {
                         this.ExitCode = ApplicationComponentExitCode.Error;
                         EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
@@ -293,7 +308,11 @@ namespace ClearCanvas.Ris.Client.Reporting
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {
-                        service.CompleteInterpretationForTranscription(new CompleteInterpretationForTranscriptionRequest(_reportingStepRef, this.ReportContent));
+                        service.CompleteInterpretationForTranscription(
+                            new CompleteInterpretationForTranscriptionRequest(
+                            _reportingStepRef, 
+                            this.ReportContent,
+                            _supervisor == null ? null : _supervisor.StaffRef));
                     });
 
                 EventsHelper.Fire(_sendToTranscriptionEvent, this, EventArgs.Empty);
@@ -301,7 +320,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, SR.ExceptionFailedToPerformOperation, this.Host.DesktopWindow,
-                    delegate()
+                    delegate
                     {
                         this.ExitCode = ApplicationComponentExitCode.Error;
                         EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
@@ -316,7 +335,11 @@ namespace ClearCanvas.Ris.Client.Reporting
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {
-                        service.SaveReport(new SaveReportRequest(_reportingStepRef, this.ReportContent));
+                        service.SaveReport(
+                            new SaveReportRequest(
+                            _reportingStepRef, 
+                            this.ReportContent,
+                            _supervisor == null ? null : _supervisor.StaffRef));
                     });
 
                 EventsHelper.Fire(_saveEvent, this, EventArgs.Empty);
@@ -324,7 +347,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             catch (Exception e)
             {
                 ExceptionHandler.Report(e, SR.ExceptionFailedToSaveReport, this.Host.DesktopWindow,
-                    delegate()
+                    delegate
                     {
                         this.ExitCode = ApplicationComponentExitCode.Error;
                         EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
@@ -336,6 +359,27 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             this.ExitCode = ApplicationComponentExitCode.Cancelled;
             EventsHelper.Fire(_closeComponentEvent, this, EventArgs.Empty);
+        }
+
+        public void ChooseRadiologist()
+        {
+            try
+            {
+                RadiologistSelectionComponent editor = new RadiologistSelectionComponent();
+                ApplicationComponentExitCode exitCode = LaunchAsDialog(
+                    this.Host.DesktopWindow, editor, SR.TitleChooseRadiologist);
+
+                if (exitCode == ApplicationComponentExitCode.Normal)
+                {
+                    _supervisor = editor.SelectedRadiologist;
+                    NotifyPropertyChanged("SupervisorName");
+                }
+            }
+            catch (Exception e)
+            {
+                // could not launch editor
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         #endregion

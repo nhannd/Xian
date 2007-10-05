@@ -49,6 +49,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._sendToTranscriptionButton = new System.Windows.Forms.Button();
             this._saveButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
+            this.panel2 = new System.Windows.Forms.Panel();
+            this._dictateFor = new ClearCanvas.Controls.WinForms.TextField();
+            this._chooseRadiologistButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
             this._browserPanel.SuspendLayout();
@@ -56,6 +59,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._browserSplitContainer.Panel2.SuspendLayout();
             this._browserSplitContainer.SuspendLayout();
             this.panel3.SuspendLayout();
+            this.panel2.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -64,13 +68,15 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.tableLayoutPanel1.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this._browserPanel, 0, 1);
-            this.tableLayoutPanel1.Controls.Add(this.panel3, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this.panel3, 0, 3);
+            this.tableLayoutPanel1.Controls.Add(this.panel2, 0, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
+            this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(661, 606);
             this.tableLayoutPanel1.TabIndex = 0;
@@ -210,7 +216,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._browserPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this._browserPanel.Location = new System.Drawing.Point(3, 153);
             this._browserPanel.Name = "_browserPanel";
-            this._browserPanel.Size = new System.Drawing.Size(655, 400);
+            this._browserPanel.Size = new System.Drawing.Size(655, 350);
             this._browserPanel.TabIndex = 1;
             // 
             // _browserSplitContainer
@@ -227,8 +233,8 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             // _browserSplitContainer.Panel2
             // 
             this._browserSplitContainer.Panel2.Controls.Add(this._previewBrowser);
-            this._browserSplitContainer.Size = new System.Drawing.Size(655, 400);
-            this._browserSplitContainer.SplitterDistance = 100;
+            this._browserSplitContainer.Size = new System.Drawing.Size(655, 350);
+            this._browserSplitContainer.SplitterDistance = 87;
             this._browserSplitContainer.TabIndex = 0;
             // 
             // _editorBrowser
@@ -237,7 +243,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._editorBrowser.Location = new System.Drawing.Point(0, 0);
             this._editorBrowser.MinimumSize = new System.Drawing.Size(20, 20);
             this._editorBrowser.Name = "_editorBrowser";
-            this._editorBrowser.Size = new System.Drawing.Size(655, 100);
+            this._editorBrowser.Size = new System.Drawing.Size(655, 87);
             this._editorBrowser.TabIndex = 0;
             // 
             // _previewBrowser
@@ -246,7 +252,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._previewBrowser.Location = new System.Drawing.Point(0, 0);
             this._previewBrowser.MinimumSize = new System.Drawing.Size(20, 20);
             this._previewBrowser.Name = "_previewBrowser";
-            this._previewBrowser.Size = new System.Drawing.Size(655, 296);
+            this._previewBrowser.Size = new System.Drawing.Size(655, 259);
             this._previewBrowser.TabIndex = 0;
             // 
             // panel3
@@ -313,6 +319,38 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._cancelButton.UseVisualStyleBackColor = true;
             this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
             // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this._dictateFor);
+            this.panel2.Controls.Add(this._chooseRadiologistButton);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel2.Location = new System.Drawing.Point(3, 509);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(655, 44);
+            this.panel2.TabIndex = 2;
+            // 
+            // _dictateFor
+            // 
+            this._dictateFor.LabelText = "Dictate for:";
+            this._dictateFor.Location = new System.Drawing.Point(3, 3);
+            this._dictateFor.Margin = new System.Windows.Forms.Padding(2);
+            this._dictateFor.Mask = "";
+            this._dictateFor.Name = "_dictateFor";
+            this._dictateFor.ReadOnly = true;
+            this._dictateFor.Size = new System.Drawing.Size(150, 41);
+            this._dictateFor.TabIndex = 3;
+            this._dictateFor.Value = null;
+            // 
+            // _chooseRadiologistButton
+            // 
+            this._chooseRadiologistButton.Location = new System.Drawing.Point(158, 18);
+            this._chooseRadiologistButton.Name = "_chooseRadiologistButton";
+            this._chooseRadiologistButton.Size = new System.Drawing.Size(75, 23);
+            this._chooseRadiologistButton.TabIndex = 2;
+            this._chooseRadiologistButton.Text = "Choose...";
+            this._chooseRadiologistButton.UseVisualStyleBackColor = true;
+            this._chooseRadiologistButton.Click += new System.EventHandler(this._chooseRadiologistButton_Click);
+            // 
             // ReportEditorComponentControl
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -329,6 +367,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._browserSplitContainer.Panel2.ResumeLayout(false);
             this._browserSplitContainer.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
+            this.panel2.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -356,6 +395,9 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private ClearCanvas.Controls.WinForms.TextField _dateOfBirth;
         private ClearCanvas.Controls.WinForms.TextField _performedDate;
         private ClearCanvas.Controls.WinForms.TextField _visitNumber;
+        private System.Windows.Forms.Panel panel2;
+        private ClearCanvas.Controls.WinForms.TextField _dictateFor;
+        private System.Windows.Forms.Button _chooseRadiologistButton;
 
     }
 }

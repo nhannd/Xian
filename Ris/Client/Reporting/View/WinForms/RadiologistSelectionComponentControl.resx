@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -117,31 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ColumnID" xml:space="preserve">
-    <value>ID</value>
-  </data>
-  <data name="ColumnName" xml:space="preserve">
-    <value>Name</value>
-  </data>
-  <data name="ExceptionFailedToPerformOperation" xml:space="preserve">
-    <value>Failed to perform operation</value>
-  </data>
-  <data name="ExceptionFailedToSaveReport" xml:space="preserve">
-    <value>Unable to save report</value>
-  </data>
-  <data name="ExceptionOperationEnablementUnknown" xml:space="preserve">
-    <value>Cannot determine enablement for operation: {0}</value>
-  </data>
-  <data name="TitleChooseRadiologist" xml:space="preserve">
-    <value>Choose Radiologist</value>
-  </data>
-  <data name="TitleCreateReport" xml:space="preserve">
-    <value>Create Report</value>
-  </data>
-  <data name="TitleEditReport" xml:space="preserve">
-    <value>Edit Report</value>
-  </data>
-  <data name="TitleRadiologistHome" xml:space="preserve">
-    <value>Radiologist Home</value>
-  </data>
 </root>

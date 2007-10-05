@@ -1,9 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
@@ -15,7 +10,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
     /// </summary>
     public partial class ReportEditorComponentControl : ApplicationComponentUserControl
     {
-        private ReportEditorComponent _component;
+        private readonly ReportEditorComponent _component;
 
         /// <summary>
         /// Constructor
@@ -41,6 +36,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             _requestedProcedure.DataBindings.Add("Value", _component, "RequestedProcedure", true, DataSourceUpdateMode.OnPropertyChanged);
             _performedLocation.DataBindings.Add("Value", _component, "PerformedLocation", true, DataSourceUpdateMode.OnPropertyChanged);
             _performedDate.DataBindings.Add("Value", _component, "PerformedDate", true, DataSourceUpdateMode.OnPropertyChanged);
+            _dictateFor.DataBindings.Add("Value", _component, "SupervisorName", true, DataSourceUpdateMode.OnPropertyChanged);
 
             _verifyButton.DataBindings.Add("Enabled", _component, "VerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
             _sendToVerifyButton.DataBindings.Add("Enabled", _component, "SendToVerifyEnabled", false, DataSourceUpdateMode.OnPropertyChanged);
@@ -79,6 +75,11 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private void _cancelButton_Click(object sender, EventArgs e)
         {
             _component.Cancel();
+        }
+
+        private void _chooseRadiologistButton_Click(object sender, EventArgs e)
+        {
+            _component.ChooseRadiologist();
         }
     }
 }

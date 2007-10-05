@@ -160,5 +160,13 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <returns><see cref="GetPriorReportResponse"/></returns>
         [OperationContract]
         GetPriorReportResponse GetPriorReport(GetPriorReportRequest request);
+
+        /// <summary>
+        /// Get a list of staff who are Radiologists
+        /// </summary>
+        /// <param name="request"><see cref="GetRadiologistListRequest"/></param>
+        /// <returns><see cref="GetRadiologistListResponse"/></returns>
+        [OperationContract]
+        GetRadiologistListResponse GetRadiologistList(GetRadiologistListRequest request);
     }
 }

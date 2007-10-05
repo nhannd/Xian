@@ -61,6 +61,24 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to ID.
+        /// </summary>
+        internal static string ColumnID {
+            get {
+                return ResourceManager.GetString("ColumnID", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Name.
+        /// </summary>
+        internal static string ColumnName {
+            get {
+                return ResourceManager.GetString("ColumnName", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Failed to perform operation.
         /// </summary>
         internal static string ExceptionFailedToPerformOperation {
@@ -84,6 +102,15 @@ namespace ClearCanvas.Ris.Client.Reporting {
         internal static string ExceptionOperationEnablementUnknown {
             get {
                 return ResourceManager.GetString("ExceptionOperationEnablementUnknown", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Choose Radiologist.
+        /// </summary>
+        internal static string TitleChooseRadiologist {
+            get {
+                return ResourceManager.GetString("TitleChooseRadiologist", resourceCulture);
             }
         }
         

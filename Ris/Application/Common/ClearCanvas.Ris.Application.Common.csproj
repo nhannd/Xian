@@ -258,6 +258,8 @@
     <Compile Include="RegistrationWorkflow\ReplaceOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\SearchRequest.cs" />
     <Compile Include="RegistrationWorkflow\SearchResponse.cs" />
+    <Compile Include="ReportingWorkflow\GetRadiologistListRequest.cs" />
+    <Compile Include="ReportingWorkflow\GetRadiologistListResponse.cs" />
     <Compile Include="ReportingWorkflow\ListWorklistsRequest.cs" />
     <Compile Include="ReportingWorkflow\ListWorklistsResponse.cs" />
     <Compile Include="Admin\WorklistAdmin\WorklistAdminSummary.cs" />

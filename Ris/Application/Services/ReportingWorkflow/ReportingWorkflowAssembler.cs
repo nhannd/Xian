@@ -75,8 +75,11 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
             if (report != null)
             {
+                StaffAssembler staffAssembler = new StaffAssembler();
+
                 summary.ReportRef = report.GetRef();
                 summary.ReportStatus = EnumUtils.GetEnumValueInfo(report.Status, context);
+                summary.Supervisor = staffAssembler.CreateStaffSummary(report.Supervisor, context);
                 summary.Parts = CollectionUtils.Map<ReportPart, ReportPartSummary, List<ReportPartSummary>>(report.Parts,
                     delegate(ReportPart part)
                     {

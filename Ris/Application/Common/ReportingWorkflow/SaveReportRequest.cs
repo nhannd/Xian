@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
@@ -9,10 +6,11 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
     [DataContract]
     public class SaveReportRequest : DataContractBase
     {
-        public SaveReportRequest(EntityRef reportingStepRef, string reportContent)
+        public SaveReportRequest(EntityRef reportingStepRef, string reportContent, EntityRef supervisorRef)
         {
             this.ReportingStepRef = reportingStepRef;
             this.ReportContent = reportContent;
+            this.SupervisorRef = supervisorRef;
         }
 
         [DataMember]
@@ -20,5 +18,8 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 
         [DataMember]
         public string ReportContent;
+
+        [DataMember]
+        public EntityRef SupervisorRef;
     }
 }

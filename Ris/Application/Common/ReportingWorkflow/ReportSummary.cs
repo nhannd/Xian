@@ -1,8 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
+using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Ris.Application.Common.Admin;
 
 namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 {
@@ -14,6 +14,9 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
 
         [DataMember]
         public EnumValueInfo ReportStatus;
+
+        [DataMember]
+        public StaffSummary Supervisor;
 
         [DataMember]
         public List<ReportPartSummary> Parts;
