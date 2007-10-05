@@ -168,7 +168,7 @@ namespace ClearCanvas.Ris.Client
                 StaffSummary staff = null;
                 if (StaffFinder.ResolveNameInteractive(search, _component.Host.DesktopWindow, out staff))
                 {
-                    return string.Format("{0} {1}", PersonNameFormat.Format(staff.Name), staff.StaffId);
+                    return JsmlSerializer.Serialize(staff, "staff");
                 }
                 return null;
             }
