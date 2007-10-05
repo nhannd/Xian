@@ -157,7 +157,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			InteropFindScpCallbackInfo info = new InteropFindScpCallbackInfo(e.CallbackInfoPointer, false);
 			if (info == null)
 				return;
-
+			
 			info.Response.DimseStatus = (ushort)GetNextQueryResult(info.QueryRetrieveOperationIdentifier, info.ResponseIdentifiers);
 		}
 
@@ -439,27 +439,39 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 
 		private int QueryDB(uint operationIdentifier, DcmDataset requestIdentifiers)
 		{
+			QueryKey key = null;
+			ReadOnlyQueryResultCollection queryResults = null;
+			ushort status = (ushort)OffisDcm.STATUS_Pending;
+
 			try
 			{
-				// Query DB for results
-				QueryKey key = BuildQueryKey(requestIdentifiers);
-				using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
+				string queryRetrieveLevel;
+				OFCondition cond = OffisDicomHelper.TryFindAndGetOFString(requestIdentifiers, Dcm.QueryRetrieveLevel, out queryRetrieveLevel);
+				if (queryRetrieveLevel == null || queryRetrieveLevel.Trim() != "STUDY")
 				{
-					ReadOnlyQueryResultCollection queryResults = reader.StudyQuery(key);
-					if (queryResults.Count == 0)
-						return OffisDcm.STATUS_Success;
-
-					// Remember the query results for this session.  The DicomServer will call back to get query results
-					lock (_querySessionLock)
+					status = (ushort) OffisDcm.STATUS_FIND_Failed_UnableToProcess;
+				}
+				else
+				{
+					// Query DB for results
+					key = BuildQueryKey(requestIdentifiers);
+					using (IDataStoreReader reader = DataAccessLayer.GetIDataStoreReader())
 					{
-						_querySessionDictionary[operationIdentifier] = new DicomQuerySession(key, queryResults);
+						queryResults = reader.StudyQuery(key);
 					}
 				}
 			}
 			catch (Exception exception)
 			{
 				Platform.Log(LogLevel.Error, exception);
-				return OffisDcm.STATUS_FIND_Failed_UnableToProcess;
+				status = (ushort)OffisDcm.STATUS_FIND_Failed_UnableToProcess;
+			}
+
+			// Remember the query results for this session.  The DicomServer will call back to get query results
+			lock (_querySessionLock)
+			{
+				_querySessionDictionary[operationIdentifier] = new DicomQuerySession(key, queryResults);
+				_querySessionDictionary[operationIdentifier].DimseStatus = status;
 			}
 
 			return OffisDcm.STATUS_Pending;
@@ -477,6 +489,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 					return OffisDcm.STATUS_Success;
 
 				DicomQuerySession querySession = _querySessionDictionary[operationIdentifier];
+				if (querySession.DimseStatus != OffisDcm.STATUS_Pending)
+				{
+					_querySessionDictionary.Remove(operationIdentifier);
+					return querySession.DimseStatus;
+				}
+				
 				if (querySession.CurrentIndex >= querySession.QueryResults.Count)
 				{
 					// If all the results have been retrieved, remove this query session from dictionary

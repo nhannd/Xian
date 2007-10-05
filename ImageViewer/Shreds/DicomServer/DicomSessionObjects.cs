@@ -15,12 +15,14 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			private QueryKey _queryKey;
 			private ReadOnlyQueryResultCollection _queryResults;
 			private int _currentIndex;
+			private ushort _dimseStatus;
 
 			public DicomQuerySession(QueryKey queryKey, ReadOnlyQueryResultCollection queryResults)
 			{
 				_queryResults = queryResults;
 				_queryKey = queryKey;
 				_currentIndex = 0;
+				_dimseStatus = (ushort)OffisDcm.STATUS_Pending;
 			}
 
 			#region Properties
@@ -39,6 +41,12 @@ namespace ClearCanvas.ImageViewer.Shreds.DicomServer
 			{
 				get { return _currentIndex; }
 				set { _currentIndex = value; }
+			}
+
+			public ushort DimseStatus
+			{
+				get { return _dimseStatus; }
+				set { _dimseStatus = value; }
 			}
 
 			#endregion
