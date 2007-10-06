@@ -204,16 +204,34 @@ namespace ClearCanvas.Common
 				PermissionSet permissions =
 					SecurityManager.ResolvePolicy(evidence);
 
-				AppDomainSetup setup = new AppDomainSetup();
+				AppDomainSetup setup = new AppDomainSetup(); 
 				setup.ApplicationBase =	AppDomain.CurrentDomain.SetupInformation.ApplicationBase;
-				domain = AppDomain.CreateDomain(
+
+                #region fix plugin loading problem in ASP.NET
+                // Apparently we need to use the same lookup paths from the original app domain
+                // if the application is launched by ASP.NET. The original app domain 
+                // has reference to the "bin" folder where all reference dll's in the webpage are kept (auto copied by
+                // VS.NET when you add references). If this is not set, calling
+                //
+                //  	domain.CreateInstanceAndUnwrap(asm.FullName, "ClearCanvas.Common.PluginFinder")
+                //
+                // will cause file-not-found exception 
+                //
+                // To be safe, it's best to copy the original PrivateBinPath instead of hardcoding "Bin"
+                //
+                
+                setup.PrivateBinPath = AppDomain.CurrentDomain.SetupInformation.PrivateBinPath;
+                
+                #endregion 
+
+                domain = AppDomain.CreateDomain(
 					"Secondary", evidence, setup,
 					permissions, new StrongName[] { }); 
 #endif			
 				Assembly asm = Assembly.GetExecutingAssembly();
 
 				// Instantiate the finder in the secondary domain
-				PluginFinder finder = domain.CreateInstanceAndUnwrap(asm.FullName, "ClearCanvas.Common.PluginFinder") as PluginFinder;
+                PluginFinder finder = domain.CreateInstanceAndUnwrap(asm.FullName, "ClearCanvas.Common.PluginFinder") as PluginFinder;
 
 				// Assign the FileProcessor's delegate to the finder
 				FileProcessor.ProcessFile del = new FileProcessor.ProcessFile(finder.FindPlugin);
@@ -227,7 +245,7 @@ namespace ClearCanvas.Common
 			catch (Exception e)
 			{
 				Platform.Log(LogLevel.Error,e);
-				throw e;
+				throw; // TH (Oct 5, 2007) replaced "throw e" with "throw".  "throw e" produces a new exception stack. We want to know where the original exception occurs instead
 			}
 			finally
 			{

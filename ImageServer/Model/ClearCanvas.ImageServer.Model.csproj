@@ -50,10 +50,12 @@
     <Compile Include="Brokers\IQueryDevice.cs" />
     <Compile Include="Brokers\IQueryDevicePreferredTransferSyntax.cs" />
     <Compile Include="Brokers\IQueryModalitiesInStudy.cs" />
+    <Compile Include="Brokers\IUpdateDevice.cs" />
     <Compile Include="Criteria\DeviceSelectCriteria.cs" />
     <Compile Include="Criteria\FilesystemSelectCriteria.cs" />
     <Compile Include="Criteria\ServerPartitionSelectCriteria.cs" />
     <Compile Include="Criteria\WorkQueueSelectCriteria.cs" />
+    <Compile Include="Parameters\DeviceUpdateParameters.cs" />
     <Compile Include="SelectBrokers\ISelectDevice.cs" />
     <Compile Include="SelectBrokers\ISelectFilesystem.cs" />
     <Compile Include="SelectBrokers\ISelectServerPartition.cs" />

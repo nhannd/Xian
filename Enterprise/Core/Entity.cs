@@ -11,6 +11,10 @@ namespace ClearCanvas.Enterprise.Core
     /// <summary>
     /// Abstract base class for all entities in the domain model.
     /// </summary>
+    /// 
+    // TH (Oct 5, 2007): All entity objects should be serializable to use in ASP.NET app
+    // All parent classes must be serializable
+    [Serializable] 
     public abstract class Entity : DomainObject
     {
         private object _oid;

@@ -1107,3 +1107,45 @@ END
 ' 
 END
 GO
+
+
+
+/****** Object:  StoredProcedure [dbo].[UpdateDevice]    Script Date: 10/05/2007 16:47:30 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+
+-- =============================================
+-- Author:		Thanh Huynh
+-- Create date: Oct 5, 2007
+-- Description:	Called to update a device entry
+-- =============================================
+CREATE PROCEDURE [dbo].[UpdateDevice] 
+		-- Add the parameters for the stored procedure here
+	@GUID uniqueidentifier,
+	@ServerPartitionGUID uniqueidentifier,
+	@AETitle varchar(16),
+	@IPAddress varchar(16),
+	@Port	int,
+	@Description	nvarchar(256),
+	@DHCP	bit,
+	@Active bit
+AS
+BEGIN
+	-- SET NOCOUNT ON added to prevent extra result sets from
+	-- interfering with SELECT statements.
+	SET NOCOUNT ON;
+
+    UPDATE [ImageServer].[dbo].[Device]
+   SET [GUID] = @GUID
+      ,[ServerPartitionGUID] = @ServerPartitionGUID
+      ,[AeTitle] = @AETitle
+      ,[IpAddress] = @IPAddress
+      ,[Port] = @Port
+      ,[Description] = @Description
+      ,[Dhcp] = @DHCP
+      ,[Active] = @Active
+ WHERE GUID = @GUID
+END
+

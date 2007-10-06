@@ -2,9 +2,11 @@ using System;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Database;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
+using System.ComponentModel;
 
 namespace ClearCanvas.ImageServer.Model
 {
+    [Serializable] // TH (Oct 5, 2007): All entity objects should be serializable to use in ASP.NET app
     public class ServerPartition : ServerEntity
     {
         #region Constructors
@@ -56,13 +58,18 @@ namespace ClearCanvas.ImageServer.Model
         }
         #endregion
 
+
         #region Static Methods
         static public ServerPartition Load(ServerEntityKey key)
         {
             IReadContext read = PersistentStoreRegistry.GetDefaultStore().OpenReadContext();
             ISelectServerPartition broker = read.GetBroker<ISelectServerPartition>();
-            return broker.Load(key);
+            ServerPartition entity = broker.Load(key);
+            read.Dispose();
+            return entity;
         }
         #endregion
+
+
     }
 }

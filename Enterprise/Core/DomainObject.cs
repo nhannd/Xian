@@ -9,6 +9,8 @@ namespace ClearCanvas.Enterprise.Core
     /// <summary>
     /// Base class for <see cref="Entity"/>, <see cref="ValueObject"/> and <see cref="EnumValue"/>.
     /// </summary>
+    /// 
+    [Serializable] // TH (Oct 5, 2007): All entity objects should be serializable to use in ASP.NET app
     public abstract class DomainObject
     {
         /// <summary>

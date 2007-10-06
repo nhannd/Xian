@@ -7,6 +7,7 @@ using ClearCanvas.Enterprise.Common;
 
 namespace ClearCanvas.ImageServer.Database
 {
+    [Serializable]
     public class ServerEntityKey
     {
         private object _key;

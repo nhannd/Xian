@@ -4,9 +4,12 @@ using System.Text;
 
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Enterprise.Common;
+using System.ComponentModel;
 
 namespace ClearCanvas.ImageServer.Database
 {
+
+    [Serializable] // TH (Oct 5, 2007): All entity objects should be serializable to use in ASP.NET app
     public abstract class ServerEntity : Entity
     {
         private ServerEntityKey _key;
@@ -18,10 +21,13 @@ namespace ClearCanvas.ImageServer.Database
             _name = name;
         }
 
+
         public String Name
         {
             get { return _name; }
         }
+
+
 
         public void SetKey(ServerEntityKey key)
         {

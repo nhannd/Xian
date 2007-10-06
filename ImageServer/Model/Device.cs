@@ -2,9 +2,11 @@ using System;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.ImageServer.Database;
 using ClearCanvas.ImageServer.Model.SelectBrokers;
+using System.ComponentModel;
 
 namespace ClearCanvas.ImageServer.Model
 {
+    [Serializable] // TH (Oct 5, 2007): All entity objects should be serializable to use in ASP.NET app
     public class Device : ServerEntity
     {
         #region Constructors
@@ -18,7 +20,7 @@ namespace ClearCanvas.ImageServer.Model
         private String _aeTitle;
         private String _description;
         private String _ipAddress;
-        private ServerEntityKey _serverPartitionKey;
+        private ServerEntityKey _serverPartitionKey;    
         private bool _active;
         private bool _dhcp;
         private int _port;
