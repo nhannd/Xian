@@ -1,11 +1,10 @@
-using System;
 using System.Drawing;
-using System.Collections;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop.Tools;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	// TODO: Move this GraphicTool stuff to another file
 	[ExtensionPoint()]
 	public class GraphicToolExtensionPoint : ExtensionPoint<ITool>
 	{

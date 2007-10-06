@@ -1,6 +1,6 @@
 ﻿using System;
-using ClearCanvas.ImageViewer.Imaging;
 using System.Drawing;
+
 namespace ClearCanvas.ImageViewer.Graphics
 {
 	/// <summary>

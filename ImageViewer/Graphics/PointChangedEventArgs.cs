@@ -1,6 +1,5 @@
 using System;
 using System.Drawing;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -10,13 +9,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 	public class PointChangedEventArgs : EventArgs
 	{
 		private PointF _point;
-
-		/// <summary>
-		/// Initializes a new instance of <see cref="PointChangedEventArgs"/>.
-		/// </summary>
-		public PointChangedEventArgs()
-		{
-		}
 
 		/// <summary>
 		/// Initializes a new instance of <see cref="PointChangedEventArgs"/>

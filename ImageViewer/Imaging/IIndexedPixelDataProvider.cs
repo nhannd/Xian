@@ -1,6 +1,9 @@
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
+	// TODO: Remove this and other related interfaces. Force user to get pixel
+	// data directly from the ImageGraphic.
+
 	/// <summary>
 	/// A provider of <see cref="IndexedPixelData"/>.
 	/// </summary>

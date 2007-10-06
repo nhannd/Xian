@@ -1,4 +1,3 @@
-
 using ClearCanvas.Common;
 using System;
 

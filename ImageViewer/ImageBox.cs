@@ -6,6 +6,8 @@ using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
+	// TODO: Seal all ExtensionPoint subclasses
+
 	/// <summary>
 	/// An extension point for views onto <see cref="ImageBox"/>.
 	/// </summary>

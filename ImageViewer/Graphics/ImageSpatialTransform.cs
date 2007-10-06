@@ -1,11 +1,7 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.Desktop;
-using ClearCanvas.Common;
 using System.Drawing.Drawing2D;
+using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {

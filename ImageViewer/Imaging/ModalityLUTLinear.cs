@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		public override void  Create()
+		protected override void Create()
 		{
 			for (int i = this.MinInputValue; i <= this.MaxInputValue; i++)
 			{

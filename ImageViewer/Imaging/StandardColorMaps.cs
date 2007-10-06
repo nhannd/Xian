@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Generates the Lut.
 		/// </summary>
-		public override void Create()
+		protected override void Create()
 		{
 			Color color;
 
@@ -87,6 +87,8 @@ namespace ClearCanvas.ImageViewer.Imaging
 	}
 
 	#endregion
+
+	// TODO: Get rid of all colormaps except grayscale
 
 	#region Red
 
@@ -144,7 +146,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Generates the Lut.
 		/// </summary>
-		public override void Create()
+		protected override void Create()
 		{
 			Color color;
 
@@ -226,7 +228,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Generates the Lut.
 		/// </summary>
-		public override void Create()
+		protected override void Create()
 		{
 			Color color;
 
@@ -309,7 +311,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 		/// <summary>
 		/// Generates the Lut.
 		/// </summary>
-		public override void Create()
+		protected override void Create()
 		{
 			Color color;
 

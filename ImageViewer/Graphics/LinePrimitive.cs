@@ -1,9 +1,8 @@
 using System;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.InteractiveGraphics;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {

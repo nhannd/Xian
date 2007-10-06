@@ -3,13 +3,13 @@ using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
-	public delegate int YbrToRgb(int y, int b, int r);
-
 	/// <summary>
 	/// Converts between colour spaces.
 	/// </summary>
 	public unsafe static class ColorSpaceConverter
 	{
+		private delegate int YbrToRgb(int y, int b, int r);
+
 		#region Public methods
 
 		/// <summary>

@@ -69,6 +69,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		{
 			PointF ptMouse = this.SpatialTransform.ConvertToSource(point);
 
+			// TODO: Should call _rectangle.HitTest instead
 			_rectangle.CoordinateSystem = CoordinateSystem.Source;
 
 			RectF srcRect = new RectF();

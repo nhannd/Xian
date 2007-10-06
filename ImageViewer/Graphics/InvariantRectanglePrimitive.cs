@@ -164,6 +164,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		public override bool HitTest(Point point)
 		{
+			// TODO: implement this
 			throw new NotImplementedException();
 		}
 	}

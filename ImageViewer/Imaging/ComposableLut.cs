@@ -11,6 +11,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 	{
 		private event EventHandler _lutChanged;
 
+		protected ComposableLut()
+		{
+				
+		}
+
 		/// <summary>
 		/// Fires the <see cref="LutChanged"/> event.
 		/// </summary>

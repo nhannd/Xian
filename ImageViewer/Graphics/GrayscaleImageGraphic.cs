@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {

@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -90,23 +87,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
-		#region IDataLut Members
-
-		/// <summary>
-		/// Inheritors must implement this method and create the Lut using their particular algorithm.
-		/// </summary>
-		public abstract void Create();
-
-		/// <summary>
-		/// Clears the data in the Lut.  The Lut can be recreated at will by calling <see cref="Create"/>.
-		/// </summary>
-		public void Clear()
-		{
-			_data = null;
-		}
-
-		#endregion
-
 		/// <summary>
 		/// Returns the length of the Lut.
 		/// </summary>
@@ -180,5 +160,22 @@ namespace ClearCanvas.ImageViewer.Imaging
 				OnLutChanged();
 			}
 		}
+
+		/// <summary>
+		/// Inheritors must implement this method and create the Lut using their particular algorithm.
+		/// </summary>
+		protected abstract void Create();
+
+		#region IDataLut Members
+
+		/// <summary>
+		/// Clears the data in the Lut.  The Lut can be recreated at will by calling <see cref="Create"/>.
+		/// </summary>
+		public void Clear()
+		{
+			_data = null;
+		}
+
+		#endregion
 	}
 }

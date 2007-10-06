@@ -1,4 +1,3 @@
-using System;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Imaging

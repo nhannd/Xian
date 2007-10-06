@@ -173,9 +173,7 @@
     <Compile Include="Imaging\IVoiLutLinear.cs" />
     <Compile Include="Imaging\IBasicVoiLutLinear.cs" />
     <Compile Include="Graphics\PointPrimitive.cs" />
-    <Compile Include="Graphics\StandardColorImageGraphic.cs" />
     <Compile Include="Graphics\IndexedImageGraphic.cs" />
-    <Compile Include="Graphics\StandardPaletteColorImageGraphic.cs" />
     <Compile Include="GrayscalePresentationImage.cs" />
     <Compile Include="Imaging\ComposedLut.cs" />
     <Compile Include="Imaging\ComposedLutPool.cs" />

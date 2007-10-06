@@ -1,10 +1,9 @@
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.InteractiveGraphics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
@@ -29,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Initializes a new instance of <see cref="InvariantPrimitive"/>.
 		/// </summary>
-		public InvariantPrimitive()
+		protected InvariantPrimitive()
 		{
 		}
 

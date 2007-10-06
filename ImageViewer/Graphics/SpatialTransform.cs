@@ -292,7 +292,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <summary>
 		/// Resets all transform parameters to their defaults.
 		/// </summary>
-		public virtual void Initialize()
+		public void Initialize()
 		{
 			this.Scale = 1.0F;
 			this.TranslationX = 0.0F;

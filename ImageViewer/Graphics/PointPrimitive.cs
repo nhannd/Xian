@@ -1,11 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
+	// TODO: Implement HitTest and Move
 	public class PointPrimitive : VectorGraphic
 	{
 		private PointF _point;

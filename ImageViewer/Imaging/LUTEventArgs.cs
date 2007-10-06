@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 	/// <summary>
 	/// Provides data for the <see cref="LutCollection"/> events.
 	/// </summary>
-	public sealed class LutEventArgs : CollectionEventArgs<IComposableLut>
+	internal sealed class LutEventArgs : CollectionEventArgs<IComposableLut>
 	{
 		/// <summary>
 		/// Default constructor.

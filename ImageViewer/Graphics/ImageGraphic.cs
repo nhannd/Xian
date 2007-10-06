@@ -1,10 +1,8 @@
 using System;
 using System.Drawing;
-using System.Collections;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {
