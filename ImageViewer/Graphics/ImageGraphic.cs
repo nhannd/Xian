@@ -13,11 +13,6 @@ namespace ClearCanvas.ImageViewer.Graphics
 	public enum InterpolationMode 
 	{ 
 		/// <summary>
-		/// Specifies nearest neighbour interpolation.
-		/// </summary>
-		//NearestNeighbour,
-
-		/// <summary>
 		/// Specifies bilinear interpolation using fixed-point arithmetic.
 		/// </summary>
 		Bilinear 

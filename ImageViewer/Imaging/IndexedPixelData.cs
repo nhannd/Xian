@@ -376,7 +376,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		private ushort GetPixelUnsigned16(int i)
 		{
-			ushort lowbyte, highbyte, pixelValue;
+			ushort lowbyte, highbyte;
 			byte[] pixelData = GetPixelData();
 
 			lowbyte = (ushort)pixelData[i];

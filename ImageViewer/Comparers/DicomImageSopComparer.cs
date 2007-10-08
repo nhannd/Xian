@@ -3,12 +3,22 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Comparers
 {
+	/// <summary>
+	/// Base class for comparers that compare some aspect of
+	/// <see cref="ImageSop"/>.
+	/// </summary>
 	public abstract class DicomImageSopComparer : PresentationImageComparer
 	{
+		/// <summary>
+		/// Initializes a new instance of <see cref="DicomImageSopComparer"/>.
+		/// </summary>
 		protected DicomImageSopComparer()
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="DicomImageSopComparer"/>.
+		/// </summary>
 		protected DicomImageSopComparer(bool reverse)
 			: base(reverse)
 		{
@@ -16,6 +26,12 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		#region IComparer<IPresentationImage> Members
 
+		/// <summary>
+		/// Compares two <see cref="IPresentationImage"/>s.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
 		public override int Compare(IPresentationImage x, IPresentationImage y)
 		{
 			IImageSopProvider image1 = x as IImageSopProvider;
@@ -60,6 +76,12 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		#endregion
 
+		/// <summary>
+		/// Compares two <see cref="ImageSop"/>s.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
 		protected abstract int Compare(ImageSop x, ImageSop y);
 	}
 }

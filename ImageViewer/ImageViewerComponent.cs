@@ -467,7 +467,7 @@ namespace ClearCanvas.ImageViewer
 		/// <summary>
 		/// Loads images with the specified file paths.
 		/// </summary>
-		/// <param name="path">The file path of the image.</param>
+		/// <param name="files">An array of file paths.</param>
 		/// <exception cref="OpenStudyException">One or more images could not be opened.</exception>
 		/// <exception cref="ArgumentNullException">A parameter is <b>null</b>.</exception>
 		public void LoadImages(string[] files)

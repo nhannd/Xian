@@ -63,7 +63,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// in a <see cref="Tile"/>.
 		/// </summary>
 		/// <remarks>
-		/// If set to <b>true</b>, the <see cref="Scale"/> property will be ignored.
+		/// If set to <b>true</b>, the <see cref="SpatialTransform.Scale"/> property will be ignored.
 		/// </remarks>
 		public bool ScaleToFit
 		{

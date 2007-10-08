@@ -23,6 +23,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// Queries for a study on a target server matching the specified query parameters.
 		/// </summary>
 		/// <param name="queryParams"></param>
+		/// <param name="targetServer"></param>
 		/// <returns></returns>
         StudyItemList Query(QueryParameters queryParams, object targetServer);
     }

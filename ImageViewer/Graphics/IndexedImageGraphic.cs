@@ -80,6 +80,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// <param name="bitsStored"></param>
 		/// <param name="highBit"></param>
 		/// <param name="isSigned"></param>
+		/// <param name="invert"></param>
 		/// <param name="pixelDataGetter"></param>
 		/// <remarks>
 		/// Creates an indexed image using existing pixel data but does so

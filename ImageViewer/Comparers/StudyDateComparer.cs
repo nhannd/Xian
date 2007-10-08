@@ -4,8 +4,14 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Comparers
 {
+	/// <summary>
+	/// Compares two <see cref="ImageSop"/>s based on study date.
+	/// </summary>
 	public class StudyDateComparer : DicomStudyComparer
 	{
+		/// <summary>
+		/// Initializes a new instance of <see cref="StudyDateComparer"/>.
+		/// </summary>
 		public StudyDateComparer()
 		{
 
@@ -13,6 +19,12 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		#region IComparer<IDisplaySet> Members
 
+		/// <summary>
+		/// Compares two <see cref="ImageSop"/>s based on study date.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
 		protected override int Compare(ImageSop x, ImageSop y)
 		{
 			DateTime studyDate1;

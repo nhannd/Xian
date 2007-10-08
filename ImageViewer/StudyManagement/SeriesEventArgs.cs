@@ -24,9 +24,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// a specified <see cref="Series"/>.
 		/// </summary>
 		/// <param name="series"></param>
-		public SeriesEventArgs(Series Series)
+		public SeriesEventArgs(Series series)
 		{
-			base.Item  = Series;
+			base.Item  = series;
 		}
 
 		/// <summary>

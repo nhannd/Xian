@@ -117,7 +117,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		/// <summary>
 		/// Gets the bounding box of the text in source or destination coordinates.  The centre of the 
-		/// bounding box should be <see cref="AnchorPoint"/>.
+		/// bounding box should be <see cref="InvariantPrimitive.AnchorPoint"/>.
 		/// </summary>
 		public RectangleF BoundingBox
 		{

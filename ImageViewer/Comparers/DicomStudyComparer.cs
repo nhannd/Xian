@@ -1,13 +1,24 @@
+using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Comparers
 {
+	/// <summary>
+	/// Base class for comparers that compare some aspect of
+	/// DICOM studies.
+	/// </summary>
 	public abstract class DicomStudyComparer : ImageSetComparer
 	{
+		/// <summary>
+		/// Initializes a new instance of <see cref="DicomStudyComparer"/>.
+		/// </summary>
 		protected DicomStudyComparer()
 		{
 		}
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="DicomStudyComparer"/>.
+		/// </summary>
 		protected DicomStudyComparer(bool reverse)
 			: base(reverse)
 		{
@@ -15,6 +26,12 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		#region IComparer<IImageSet> Members
 
+		/// <summary>
+		/// Compares two <see cref="IImageSet"/>s.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
 		public override int Compare(IImageSet x, IImageSet y)
 		{
 			if (x.DisplaySets.Count == 0 ||
@@ -49,6 +66,16 @@ namespace ClearCanvas.ImageViewer.Comparers
 
 		#endregion
 
+		/// <summary>
+		/// Compares two <see cref="ImageSop"/>s.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
+		/// <remarks>
+		/// The relevant DICOM series property to be compared
+		/// is taken from the <see cref="ImageSop"/>.
+		/// </remarks>
 		protected abstract int Compare(ImageSop x, ImageSop y);
 	}
 }

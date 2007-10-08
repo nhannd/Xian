@@ -285,7 +285,7 @@ namespace ClearCanvas.ImageViewer
 
 		/// <summary>
 		/// Implementation of the <see cref="IDisposable"/> pattern
-		/// </sumary>
+		/// </summary>
 		/// <param name="disposing">True if this object is being disposed, false if it is being finalized</param>
 		protected virtual void Dispose(bool disposing)
 		{

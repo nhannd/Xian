@@ -99,7 +99,7 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		/// <summary>
-		/// Returns the image box at a specified row & column index.
+		/// Returns the image box at a specified row and column index.
 		/// </summary>
 		/// <param name="row">the zero-based row index of the image box to retrieve</param>
 		/// <param name="column">the zero-based column index of the image box to retrieve</param>

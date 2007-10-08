@@ -19,7 +19,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// </summary>
 		/// <remarks>
 		/// A <see cref="PatientOrientation"/> is returned even when no data is available; 
-		/// it will simply have values of "" for its <see cref="PatientOrientation.Row"/> and <see cref="PatientOrientation.Column"/> properties.
+		/// it will simply have values of "" for its 
+		/// <see cref="ClearCanvas.Dicom.PatientOrientation.Row"/> and 
+		/// <see cref="ClearCanvas.Dicom.PatientOrientation.Column"/> properties.
 		/// </remarks>
 		public virtual PatientOrientation PatientOrientation
 		{

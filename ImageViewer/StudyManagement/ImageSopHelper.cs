@@ -5,6 +5,7 @@ using ClearCanvas.Codecs;
 using ClearCanvas.Dicom;
 using ClearCanvas.Common;
 using System.Threading;
+using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -34,6 +35,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Gets the pixel spacing appropriate to the modality.
 		/// </summary>
+		/// <param name="imageSop"></param>
 		/// <param name="pixelSpacingX"></param>
 		/// <param name="pixelSpacingY"></param>
 		/// <remarks>
@@ -68,6 +70,7 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 		/// <summary>
 		/// Decompresses/Decodes pixel data, if necessary.
 		/// </summary>
+		/// <param name="imageSop"></param>
 		/// <param name="compressedPixelData">The pixel data.</param>
 		/// <remarks>
 		/// This method should be called by subclasses of <see cref="ImageSop"/>'s <see cref="PixelData"/>  property.

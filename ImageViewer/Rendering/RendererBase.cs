@@ -190,7 +190,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 		/// </summary>
 		/// <remarks>
 		/// This method is called by the <see cref="PresentationImage"/> whenever
-		/// <see cref="IPresentationImage.Draw"/> is called.  If you are implementing
+		/// <see cref="IDrawable.Draw"/> is called.  If you are implementing
 		/// your own renderer, <see cref="DrawArgs"/> contains all you need to 
 		/// know to perform the rendering, such as the <see cref="IRenderingSurface"/>, etc.  
 		/// </remarks>
