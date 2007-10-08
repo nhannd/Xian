@@ -1,11 +1,9 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Net;
-using System.Net.Sockets;
-using System.Net.Security;
-using System.Threading;
 using System.IO;
+using System.Net;
+using System.Net.Security;
+using System.Net.Sockets;
+using System.Threading;
 
 namespace ClearCanvas.Dicom.Network
 {
@@ -25,7 +23,7 @@ namespace ClearCanvas.Dicom.Network
 		#endregion
 
 		#region Public Constructors
-        private DicomClient(AssociationParameters assoc, IDicomClientHandler handler) : base()
+        private DicomClient(AssociationParameters assoc, IDicomClientHandler handler)
         {
             _remoteEndPoint = assoc.RemoteEndPoint;
             _socket = null;
@@ -146,7 +144,7 @@ namespace ClearCanvas.Dicom.Network
 
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             
-            SetSocketOptions(this._assoc as ClientAssociationParameters);
+            SetSocketOptions(_assoc as ClientAssociationParameters);
 
             _socket.Connect(_remoteEndPoint);
 
@@ -187,10 +185,41 @@ namespace ClearCanvas.Dicom.Network
             return client;
 		}
 
+
+        /// <summary>
+        /// Force a shutdown of the client DICOM connection.
+        /// </summary>
+        /// <remarks>
+        /// <para>
+        /// This routine will force the network connection for the <see cref="DicomClient"/> to be closed
+        /// and the background thread for processing the association to shutdown.  The routine will block 
+        /// until the shutdown has completed.
+        /// </para>
+        /// <para>
+        /// Note, for a graceful shutdown the <see cref="NetworkBase.SendAssociateAbort"/> or 
+        /// <see cref="NetworkBase.SendReleaseRequest"/> methods should be called.  These routines
+        /// will gracefully shutdown DICOM connections.
+        /// </para>
+        /// </remarks>
+        public void Close()
+        {
+            ShutdownNetworkThread();
+        }
+
+        /// <summary>
+        /// Wait for the background thread for the client to close.
+        /// </summary>
+		public void Join() {
+			_closedEvent.WaitOne();
+		}
+		#endregion
+
+		#region NetworkBase Overrides
+
         /// <summary>
         /// Close the DICOM connection.
         /// </summary>
-        public override void Close()
+        protected override void CloseNetwork()
         {
             lock (this)
             {
@@ -210,19 +239,9 @@ namespace ClearCanvas.Dicom.Network
                     _closedEvent.Set();
                 }
             }
-            ShutdownNetwork();
-
+            ShutdownNetworkThread();
         }
 
-        /// <summary>
-        /// Wait for the background thread for the client to close.
-        /// </summary>
-		public void Join() {
-			_closedEvent.WaitOne();
-		}
-		#endregion
-
-		#region NetworkBase Overrides
         private void OnClientConnected()
         {
             DicomLogger.LogInfo("{0} SCU -> Connect: {1}", _assoc.CallingAE, InternalSocket.RemoteEndPoint.ToString());
@@ -237,7 +256,7 @@ namespace ClearCanvas.Dicom.Network
 
             // Tells the state of the connection as of the last activity on the socket
             if (!_socket.Connected)
-                Close();
+                CloseNetwork();
 
             if (_socket.Available > 0)
                 return true;
@@ -253,7 +272,7 @@ namespace ClearCanvas.Dicom.Network
             {
                 // 10035 == WSAEWOULDBLOCK
                 if (!e.NativeErrorCode.Equals(10035))
-                    Close();
+                    CloseNetwork();
             }
 
             return false;
@@ -262,7 +281,7 @@ namespace ClearCanvas.Dicom.Network
 		protected override void OnNetworkError(Exception e) {
             try
             {
-                _handler.OnNetworkError(this, this._assoc as ClientAssociationParameters, e);
+                _handler.OnNetworkError(this, _assoc as ClientAssociationParameters, e);
             }
             catch (Exception x) 
             {
@@ -270,13 +289,13 @@ namespace ClearCanvas.Dicom.Network
             }
 
 			_closedOnError = true;
-			Close();
+			CloseNetwork();
 		}
 
 		protected override void OnDimseTimeout() {
             try
             {
-                _handler.OnDimseTimeout(this, this._assoc as ClientAssociationParameters);
+                _handler.OnDimseTimeout(this, _assoc as ClientAssociationParameters);
             }
             catch (Exception e)
             {
@@ -299,36 +318,36 @@ namespace ClearCanvas.Dicom.Network
 
 		protected override void OnReceiveAssociateReject(DicomRejectResult result, DicomRejectSource source, DicomRejectReason reason) {
 
-            _handler.OnReceiveAssociateReject(this, this._assoc as ClientAssociationParameters, result, source, reason);
+            _handler.OnReceiveAssociateReject(this, _assoc as ClientAssociationParameters, result, source, reason);
 
             _closedOnError = true;
-			Close();
+			CloseNetwork();
 		}
 
 		protected override void OnReceiveAbort(DicomAbortSource source, DicomAbortReason reason) {
             try
             {
-                _handler.OnReceiveAbort(this, this._assoc as ClientAssociationParameters, source, reason);
+                _handler.OnReceiveAbort(this, _assoc as ClientAssociationParameters, source, reason);
             }
             catch (Exception e)
             {
                 OnUserException(e, "Unexpected exception on OnReceiveAbort");
             }
 			_closedOnError = true;
-			Close();
+			CloseNetwork();
 		}
 
 		protected override void OnReceiveReleaseResponse() {
             try
             {
-                _handler.OnReceiveReleaseResponse(this, this._assoc as ClientAssociationParameters);
+                _handler.OnReceiveReleaseResponse(this, _assoc as ClientAssociationParameters);
             }
             catch (Exception e)
             {
                 OnUserException(e, "Unexpected exception on OnReceiveReleaseResponse");
             }
             _closedOnError = false;
-            Close();
+            CloseNetwork();
 		}
 
 
@@ -336,7 +355,7 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
-                _handler.OnReceiveRequestMessage(this, this._assoc as ClientAssociationParameters, pcid, msg);
+                _handler.OnReceiveRequestMessage(this, _assoc as ClientAssociationParameters, pcid, msg);
             }
             catch (Exception e)
             {
@@ -349,7 +368,7 @@ namespace ClearCanvas.Dicom.Network
 
             try
             {
-                _handler.OnReceiveResponseMessage(this, this._assoc as ClientAssociationParameters, pcid, msg);
+                _handler.OnReceiveResponseMessage(this, _assoc as ClientAssociationParameters, pcid, msg);
             }
             catch (Exception e)
             {

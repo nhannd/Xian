@@ -111,8 +111,8 @@ namespace ClearCanvas.Dicom.Network
         private DcmDimseInfo _dimse;
         private Thread _thread;
         private bool _stop;
-        private int _dimseTimeout;
         private DicomAssociationState _state = DicomAssociationState.Sta1_Idle;
+        private int _timeout = 30;
 
         internal Queue<RawPDU> _pduQueue = new Queue<RawPDU>();
         #endregion
@@ -121,20 +121,8 @@ namespace ClearCanvas.Dicom.Network
         public NetworkBase()
         {
             _messageId = 1;
-            _dimseTimeout = 180;
         }
 
-        #endregion
-
-        #region Public Properties
-        /// <summary>
-        /// The DIMSE timeout when waiting for network activity.
-        /// </summary>
-        public int DimseTimeout
-        {
-            get { return _dimseTimeout; }
-            set { _dimseTimeout = value; }
-        }
         #endregion
 
         #region Protected Methods
@@ -149,9 +137,9 @@ namespace ClearCanvas.Dicom.Network
         }
 
         /// <summary>
-        /// Method for shutting down the network thread.  Should only be caled from the Close() routine.
+        /// Method for shutting down the network thread.  Should only be called from the CloseNetwork() routine.
         /// </summary>
-        protected void ShutdownNetwork()
+        protected void ShutdownNetworkThread()
         {
             _stop = true;
             if (_thread != null)
@@ -163,6 +151,11 @@ namespace ClearCanvas.Dicom.Network
                 }
             }
         }
+
+        /// <summary>
+        /// Method for closing the network connection.
+        /// </summary>
+        protected abstract void CloseNetwork();
 
         /// <summary>
         /// Internal routine for enqueueing a PDU for transfer.
@@ -335,10 +328,6 @@ namespace ClearCanvas.Dicom.Network
         #endregion
 
         #region Public Methods
-        /// <summary>
-        /// Method for closing an association.
-        /// </summary>
-        public abstract void Close();
 
         /// <summary>
         /// Returns the next message Id to be used over the association.
@@ -378,7 +367,7 @@ namespace ClearCanvas.Dicom.Network
             else
             {
                 DicomLogger.LogError("Unexpected state for association abort, closing connection from {0} to {1}", _assoc.CallingAE, _assoc.CalledAE);
-                Close();
+                CloseNetwork();
             }
         }
 
@@ -718,12 +707,16 @@ namespace ClearCanvas.Dicom.Network
         {
             try
             {
-                DateTime timeout = DateTime.Now.AddSeconds(DimseTimeout);
+                DateTime timeout = DateTime.Now.AddSeconds(_timeout);
                 while (!_stop)
                 {
                     if (NetworkHasData())
                     {
-                        timeout = DateTime.Now.AddSeconds(DimseTimeout);
+                        if (_assoc != null)
+                            timeout = DateTime.Now.AddSeconds(_assoc.ReadTimeout / 1000);
+                        else
+                            timeout = DateTime.Now.AddSeconds(_timeout);
+
                         bool success = ProcessNextPDU();
                         if (!success)
                         {
@@ -741,24 +734,27 @@ namespace ClearCanvas.Dicom.Network
                         if (_state == DicomAssociationState.Sta6_AssociationEstablished)
                         {
                             OnDimseTimeout();
-                            timeout = DateTime.Now.AddSeconds(DimseTimeout);
+                            timeout = DateTime.Now.AddSeconds(_assoc.ReadTimeout / 1000);
                         } 
                         else if (_state == DicomAssociationState.Sta2_TransportConnectionOpen)
                         {
                             DicomLogger.LogError("ARTIM timeout when waiting for AAssociate Request PDU, closing connection.");
                             _state = DicomAssociationState.Sta13_AwaitingTransportConnectionClose;
-                            Close(); // TODO
+                            CloseNetwork(); // TODO
                             
                         }
                         else if (_state == DicomAssociationState.Sta13_AwaitingTransportConnectionClose)
                         {
                             DicomLogger.LogError("Timeout when waiting for transport connection to close from {0} to {1}.  Dropping Connection.", _assoc.CallingAE, _assoc.CalledAE);
-                            Close(); // TODO
+                            CloseNetwork(); // TODO
                         }
                         else
                         {
                             OnDimseTimeout();
-                            timeout = DateTime.Now.AddSeconds(DimseTimeout);
+                            if (_assoc != null)
+                                timeout = DateTime.Now.AddSeconds(_assoc.ReadTimeout / 1000);
+                            else
+                                timeout = DateTime.Now.AddSeconds(_timeout);
                         }
                     }
                     else

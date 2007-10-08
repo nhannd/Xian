@@ -150,10 +150,14 @@ namespace ClearCanvas.Dicom.Network
         #endregion
 
         #region Public Methods
+
+        #endregion
+
+        #region NetworkBase Overrides
         /// <summary>
         /// Close the association.
         /// </summary>
-        public override void Close()
+        protected override void CloseNetwork()
         {
             lock (this)
             {
@@ -175,11 +179,9 @@ namespace ClearCanvas.Dicom.Network
                     _closedEvent = null;
                 }
             }
-            ShutdownNetwork();
+            ShutdownNetworkThread();
         }
-        #endregion
 
-        #region NetworkBase Overrides
         /// <summary>
         /// Used internally to determine if the connection has network data available.
         /// </summary>
@@ -191,7 +193,7 @@ namespace ClearCanvas.Dicom.Network
 
             // Tells the state of the connection as of the last activity on the socket
             if (!_socket.Connected)
-                Close();
+                CloseNetwork();
 
             if (_socket.Available > 0)
                 return true;
@@ -207,7 +209,7 @@ namespace ClearCanvas.Dicom.Network
             {
                 // 10035 == WSAEWOULDBLOCK
                 if (!e.NativeErrorCode.Equals(10035))
-                    Close();
+                    CloseNetwork();
             }
 
             return false;
@@ -230,7 +232,7 @@ namespace ClearCanvas.Dicom.Network
             }
 
             _closedOnError = true;
-            Close();
+            CloseNetwork();
         }
 
         /// <summary>
@@ -307,7 +309,7 @@ namespace ClearCanvas.Dicom.Network
             }
 
             _closedOnError = true;
-            Close();
+            CloseNetwork();
         }
 
         protected override void OnReceiveReleaseRequest()

@@ -34,10 +34,10 @@ namespace ClearCanvas.Dicom.Network
     /// </summary>
 	internal class DicomPresContext {
 		#region Private Members
-		private byte _pcid;
+		private readonly byte _pcid;
 		private DicomPresContextResult _result;
 		private DicomRoleSelection _roles;
-		private SopClass _abstract;
+		private readonly SopClass _abstract;
 		private List<TransferSyntax> _transfers;
 		#endregion
 
@@ -178,7 +178,6 @@ namespace ClearCanvas.Dicom.Network
         private int _receiveBufferSize = 81 * 1460;
         private int _readTimeout = 30 * 1000; // 30 seconds
         private int _writeTimeout = 30 * 1000; // 30 seconds
-        private int _artimTimeout = 30 * 1000; // 30 seconds
         private ushort _maxOperationsInvoked = 1;
         private ushort _maxOperationsPerformed = 1;
         #endregion
@@ -213,7 +212,6 @@ namespace ClearCanvas.Dicom.Network
             _remoteEndPoint = parameters._remoteEndPoint;
             _sendBufferSize = parameters._sendBufferSize;
             _writeTimeout = parameters._writeTimeout;
-            _artimTimeout = parameters._artimTimeout;
 
             foreach (byte id in parameters._presContexts.Keys)
             {
@@ -291,15 +289,6 @@ namespace ClearCanvas.Dicom.Network
         {
             get { return _writeTimeout; }
             set { _writeTimeout = value; }
-        }
-
-        /// <summary>
-        /// The DICOM ARTIM timeout in milliseconds.
-        /// </summary>
-        public int ArtimTimeout
-        {
-            get { return _artimTimeout; }
-            set { _artimTimeout = value; }
         }
 
         /// <summary>
