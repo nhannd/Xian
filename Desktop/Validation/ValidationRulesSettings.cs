@@ -42,6 +42,15 @@ namespace ClearCanvas.Desktop.Validation
             }
 
             #endregion
+
+            #region ISpecificationXmlSource Members
+
+            public string DefaultExpressionLanguage
+            {
+                get { throw new Exception("The method or operation is not implemented."); }
+            }
+
+            #endregion
         }
 
         private SettingsProvider _provider;
