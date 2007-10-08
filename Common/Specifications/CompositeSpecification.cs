@@ -8,15 +8,8 @@ namespace ClearCanvas.Common.Specifications
     {
         private List<ISpecification> _childSpecs = new List<ISpecification>();
 
-        public CompositeSpecification(string testExpression, string failureMessage)
-            : base(testExpression, failureMessage)
-        {
-
-        }
-
         public CompositeSpecification()
         {
-
         }
 
         public void Add(ISpecification spec)
@@ -29,14 +22,14 @@ namespace ClearCanvas.Common.Specifications
             _childSpecs.AddRange(specs);
         }
 
-        public override IEnumerable<ISpecification> SubSpecs
-        {
-            get { return _childSpecs; }
-        }
-
         public bool IsEmpty
         {
             get { return _childSpecs.Count == 0; }
+        }
+
+        protected IEnumerable<ISpecification> SubSpecs
+        {
+            get { return _childSpecs; }
         }
     }
 }

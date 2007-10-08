@@ -7,16 +7,11 @@ namespace ClearCanvas.Common.Specifications
 {
     public class AndSpecification : CompositeSpecification
     {
-        public AndSpecification(string testExpression, string failureMessage)
-            :base(testExpression, failureMessage)
-        {
-        }
-
         public AndSpecification()
         {
         }
 
-        protected override TestResult InnerTest(object exp)
+        protected override TestResult InnerTest(object exp, object root)
         {
             foreach (ISpecification subSpec in this.SubSpecs)
             {

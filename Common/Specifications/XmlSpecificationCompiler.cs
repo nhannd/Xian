@@ -3,48 +3,179 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Common.Scripting;
 
 namespace ClearCanvas.Common.Specifications
 {
+    [ExtensionPoint]
+    public class ExpressionFactoryExtensionPoint : ExtensionPoint<IExpressionFactory>
+    {
+        public IExpressionFactory CreateExtension(string language)
+        {
+            return (IExpressionFactory) CreateExtension(new AttributeExtensionFilter(new LanguageSupportAttribute(language)));
+        }
+    }
+
+    public interface IXmlSpecificationCompilerContext
+    {
+        IExpressionFactory DefaultExpressionFactory { get; }
+        IExpressionFactory GetExpressionFactory(string language);
+        ISpecification Compile(XmlElement containingNode);
+        ISpecification GetSpecification(string id);
+    }
+
+    [ExtensionPoint]
+    public class XmlSpecificationCompilerOperatorExtensionPoint : ExtensionPoint<IXmlSpecificationCompilerOperator>
+    {
+    }
+
+
     public class XmlSpecificationCompiler
     {
+        #region IXmlSpecificationCompilerContext implementation class
+
+        class Context : IXmlSpecificationCompilerContext
+        {
+            private XmlSpecificationCompiler _compiler;
+
+            public Context(XmlSpecificationCompiler compiler)
+            {
+                _compiler = compiler;
+            }
+
+            #region IXmlSpecificationCompilerContext Members
+
+            public IExpressionFactory DefaultExpressionFactory
+            {
+                get { return _compiler._defaultExpressionFactory; }
+            }
+
+            public IExpressionFactory GetExpressionFactory(string language)
+            {
+                return XmlSpecificationCompiler.CreateExpressionFactory(language);
+            }
+
+            public ISpecification Compile(XmlElement containingNode)
+            {
+                return _compiler.Compile(containingNode);
+            }
+
+            public ISpecification GetSpecification(string id)
+            {
+                throw new Exception("The method or operation is not implemented.");
+            }
+
+            #endregion
+        }
+
+        #endregion
+
         delegate Specification CreationDelegate(XmlElement xmlNode);
 
-        private Dictionary<string, CreationDelegate> _factoryMethodMap = new Dictionary<string, CreationDelegate>();
-        private ISpecificationProvider _resolver;
+        #region BuiltInOperator class
 
-        public XmlSpecificationCompiler(ISpecificationProvider resolver)
+        class BuiltInOperator : IXmlSpecificationCompilerOperator
+        {
+            private string _operator;
+            private CreationDelegate _factoryMethod;
+
+            public BuiltInOperator(string op, CreationDelegate factoryMethod)
+            {
+                _operator = op;
+                _factoryMethod = factoryMethod;
+            }
+
+            #region IXmlSpecificationCompilerOperator Members
+
+            public string OperatorTag
+            {
+                get { return _operator; }
+            }
+
+            public Specification Compile(XmlElement xmlNode, IXmlSpecificationCompilerContext context)
+            {
+                return _factoryMethod(xmlNode);
+            }
+
+            #endregion
+        }
+
+        #endregion
+
+        private Dictionary<string, IXmlSpecificationCompilerOperator> _operatorMap = new Dictionary<string, IXmlSpecificationCompilerOperator>();
+        private ISpecificationProvider _resolver;
+        private readonly IExpressionFactory _defaultExpressionFactory;
+        private readonly IXmlSpecificationCompilerContext _compilerContext;
+
+        public XmlSpecificationCompiler(ISpecificationProvider resolver, IExpressionFactory defaultExpressionFactory)
         {
             _resolver = resolver;
 
-            _factoryMethodMap.Add("true", CreateTrue);
-            _factoryMethodMap.Add("false", CreateFalse);
-            _factoryMethodMap.Add("and", CreateAnd);
-            _factoryMethodMap.Add("or", CreateOr);
-            _factoryMethodMap.Add("regex", CreateRegex);
-            _factoryMethodMap.Add("null", CreateIsNull);
-            _factoryMethodMap.Add("not-null", CreateNotNull);
-            _factoryMethodMap.Add("count", CreateCount);
-            _factoryMethodMap.Add("each", CreateEach);
-            _factoryMethodMap.Add("any", CreateAny);
-            _factoryMethodMap.Add("defined", CreateDefined);
+            _defaultExpressionFactory = defaultExpressionFactory;
+            _compilerContext = new Context(this);
+
+            // declare built-in operators
+            AddOperator(new BuiltInOperator("true", CreateTrue));
+            AddOperator(new BuiltInOperator("false", CreateFalse));
+            AddOperator(new BuiltInOperator("equal", CreateEqual));
+            AddOperator(new BuiltInOperator("not-equal", CreateNotEqual));
+            AddOperator(new BuiltInOperator("greater-than", CreateGreaterThan));
+            AddOperator(new BuiltInOperator("less-than", CreateLessThan));
+            AddOperator(new BuiltInOperator("and", CreateAnd));
+            AddOperator(new BuiltInOperator("or", CreateOr));
+            AddOperator(new BuiltInOperator("regex", CreateRegex));
+            AddOperator(new BuiltInOperator("null", CreateIsNull));
+            AddOperator(new BuiltInOperator("not-null", CreateNotNull));
+            AddOperator(new BuiltInOperator("count", CreateCount));
+            AddOperator(new BuiltInOperator("each", CreateEach));
+            AddOperator(new BuiltInOperator("any", CreateAny));
+            AddOperator(new BuiltInOperator("defined", CreateDefined));
+
+            // add extension operators
+            XmlSpecificationCompilerOperatorExtensionPoint xp = new XmlSpecificationCompilerOperatorExtensionPoint();
+            foreach (IXmlSpecificationCompilerOperator compilerOperator in xp.CreateExtensions())
+            {
+                AddOperator(compilerOperator);
+            }
         }
 
-        public XmlSpecificationCompiler()
-            :this(null)
+        public XmlSpecificationCompiler(ISpecificationProvider resolver, string defaultExpressionLanguage)
+            : this(resolver, CreateExpressionFactory(defaultExpressionLanguage))
         {
         }
 
-        public Specification BuildSpecification(XmlElement specificationNode)
+
+        public XmlSpecificationCompiler(IExpressionFactory defaultExpressionFactory)
+            : this(null, defaultExpressionFactory)
         {
-            return CreateImplicitAnd(GetChildElements(specificationNode));
+        }
+
+        public XmlSpecificationCompiler(string defaultExpressionLanguage)
+            : this(null, CreateExpressionFactory(defaultExpressionLanguage))
+        {
+        }
+
+        public ISpecification Compile(XmlElement containingNode)
+        {
+            return CreateImplicitAnd(GetChildElements(containingNode));
+        }
+
+        private void AddOperator(IXmlSpecificationCompilerOperator op)
+        {
+            _operatorMap.Add(op.OperatorTag, op);
         }
 
         private Specification BuildNode(XmlElement node)
         {
-            Specification spec = _factoryMethodMap[node.LocalName](node);
-            spec.TestExpression = GetAttributeOrNull(node, "test");
-            spec.IfExpression = GetAttributeOrNull(node, "if");
+            IXmlSpecificationCompilerOperator op = _operatorMap[node.Name];
+            Specification spec = op.Compile(node, _compilerContext);
+
+            string test = GetAttributeOrNull(node, "test");
+            if(test != null)
+            {
+                spec.TestExpression = CreateExpression(test, GetAttributeOrNull(node, "expressionLanguage"));
+            }
+
             spec.FailureMessage = GetAttributeOrNull(node, "failMessage");
             return spec;
         }
@@ -117,13 +248,64 @@ namespace ClearCanvas.Common.Specifications
             return new FalseSpecification();
         }
 
+        private Specification CreateEqual(XmlElement node)
+        {
+            string refValue = GetAttributeOrNull(node, "refValue");
+            if (refValue == null)
+                throw new XmlSpecificationCompilerException("Xml attribute 'refValue' is required.");
+
+            EqualSpecification s = new EqualSpecification();
+            s.RefValueExpression = CreateExpression(refValue, GetAttributeOrNull(node, "expressionLanguage"));
+            return s;
+        }
+
+        private Specification CreateNotEqual(XmlElement node)
+        {
+            string refValue = GetAttributeOrNull(node, "refValue");
+            if (refValue == null)
+                throw new XmlSpecificationCompilerException("Xml attribute 'refValue' is required.");
+
+            NotEqualSpecification s = new NotEqualSpecification();
+            s.RefValueExpression = CreateExpression(refValue, GetAttributeOrNull(node, "expressionLanguage"));
+            return s;
+        }
+
+        private Specification CreateGreaterThan(XmlElement node)
+        {
+            string refValue = GetAttributeOrNull(node, "refValue");
+            if (refValue == null)
+                throw new XmlSpecificationCompilerException("Xml attribute 'refValue' is required.");
+
+            GreaterThanSpecification s = new GreaterThanSpecification();
+            s.RefValueExpression = CreateExpression(refValue, GetAttributeOrNull(node, "expressionLanguage"));
+
+            string inclusive = GetAttributeOrNull(node, "inclusive");
+            if (inclusive != null)
+                s.Inclusive = bool.Parse(inclusive);
+            return s;
+        }
+
+        private Specification CreateLessThan(XmlElement node)
+        {
+            string refValue = GetAttributeOrNull(node, "refValue");
+            if (refValue == null)
+                throw new XmlSpecificationCompilerException("Xml attribute 'refValue' is required.");
+
+            LessThanSpecification s = new LessThanSpecification();
+            s.RefValueExpression = CreateExpression(refValue, GetAttributeOrNull(node, "expressionLanguage"));
+            string inclusive = GetAttributeOrNull(node, "inclusive");
+            if (inclusive != null)
+                s.Inclusive = bool.Parse(inclusive);
+            return s;
+        }
+
         private Specification CreateDefined(XmlElement node)
         {
-            string id = node.GetAttribute("spec");
-            if (_resolver == null)
-                throw new XmlSpecificationCompilerException(string.Format("Cannot resolve reference {0} because no resolver was provided.", id));
+            string id = GetAttributeOrNull(node, "spec");
+            if (id == null)
+                throw new XmlSpecificationCompilerException("Xml attribute 'spec' is required.");
 
-            return new DefinedSpecification(_resolver.GetSpecification(id));
+            return new DefinedSpecification(ResolveSpecification(id));
         }
 
         private Specification CreateImplicitAnd(ICollection<XmlNode> nodes)
@@ -136,7 +318,7 @@ namespace ClearCanvas.Common.Specifications
             else
             {
                 // create an "and" for the child nodes
-                AndSpecification spec = new AndSpecification(null, null);
+                AndSpecification spec = new AndSpecification();
                 foreach (XmlElement node in nodes)
                 {
                     spec.Add(BuildNode(node));
@@ -153,7 +335,28 @@ namespace ClearCanvas.Common.Specifications
         private string GetAttributeOrNull(XmlElement node, string attr)
         {
             string val = node.GetAttribute(attr);
-            return val == "" ? null : val;
+            return string.IsNullOrEmpty(val) ? null : val;
+        }
+
+        private ISpecification ResolveSpecification(string id)
+        {
+            if (_resolver == null)
+                throw new XmlSpecificationCompilerException(string.Format("Cannot resolve reference {0} because no resolver was provided.", id));
+            return _resolver.GetSpecification(id);
+        }
+
+        private Expression CreateExpression(string text, string language)
+        {
+            IExpressionFactory exprFactory = _defaultExpressionFactory;
+            if (language != null)
+                exprFactory = CreateExpressionFactory(language);
+
+            return exprFactory.CreateExpression(text);
+        }
+
+        private static IExpressionFactory CreateExpressionFactory(string language)
+        {
+            return new ExpressionFactoryExtensionPoint().CreateExtension(language);
         }
     }
 }

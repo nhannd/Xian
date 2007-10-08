@@ -9,18 +9,12 @@ namespace ClearCanvas.Common.Specifications
     {
         private string _pattern;
 
-        public RegexSpecification(string testExpression, string pattern, string failureMessage)
-            :base(testExpression, failureMessage)
-        {
-            _pattern = pattern;
-        }
-
         public RegexSpecification(string pattern)
         {
             _pattern = pattern;
         }
 
-        protected override TestResult InnerTest(object exp)
+        protected override TestResult InnerTest(object exp, object root)
         {
             // assume that null matches anything
             if (exp == null)

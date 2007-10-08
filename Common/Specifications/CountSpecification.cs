@@ -9,20 +9,13 @@ namespace ClearCanvas.Common.Specifications
         private int _min = 0;
         private int _max = Int32.MaxValue;
 
-        public CountSpecification(string testExpression, int min, int max, string failureMessage)
-            :base(testExpression, failureMessage)
-        {
-            _max = max;
-            _min = min;
-        }
-
         public CountSpecification(int min, int max)
         {
             _max = max;
             _min = min;
         }
 
-        protected override TestResult InnerTest(object exp)
+        protected override TestResult InnerTest(object exp, object root)
         {
             if (exp is Array)
             {

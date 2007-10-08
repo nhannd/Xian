@@ -7,18 +7,13 @@ namespace ClearCanvas.Common.Specifications
 {
     public class AnySpecification : EnumerableSpecification
     {
-        public AnySpecification(string testExpression, ISpecification elementSpecification, string failureMessage)
-            : base(testExpression, elementSpecification, failureMessage)
-        {
-        }
-
         public AnySpecification(ISpecification elementSpecification)
             :base(elementSpecification)
         {
 
         }
 
-        protected override TestResult InnerTest(object exp)
+        protected override TestResult InnerTest(object exp, object root)
         {
             foreach (object element in AsEnumerable(exp))
             {

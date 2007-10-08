@@ -7,17 +7,12 @@ namespace ClearCanvas.Common.Specifications
 {
     public class OrSpecification : CompositeSpecification
     {
-        public OrSpecification(string testExpression, string failureMessage)
-            :base(testExpression, failureMessage)
-        {
-        }
-
         public OrSpecification()
         {
 
         }
 
-        protected override TestResult InnerTest(object exp)
+        protected override TestResult InnerTest(object exp, object root)
         {
             TestResult r;
 

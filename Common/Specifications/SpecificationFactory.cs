@@ -29,6 +29,17 @@ namespace ClearCanvas.Common.Specifications
 
             #region ISpecificationXmlSource Members
 
+            public string DefaultExpressionLanguage
+            {
+                get
+                {
+                    string exprLang = _xmlDoc.DocumentElement.GetAttribute("expressionLanguage");
+
+                    // if not specified, assume jscript
+                    return string.IsNullOrEmpty(exprLang) ? "jscript" : exprLang;
+                }
+            }
+
             public XmlElement GetSpecificationXml(string id)
             {
                 XmlElement specNode = (XmlElement)CollectionUtils.SelectFirst(_xmlDoc.GetElementsByTagName("spec"),
@@ -73,7 +84,7 @@ namespace ClearCanvas.Common.Specifications
 
         public SpecificationFactory(ISpecificationXmlSource xmlSource)
         {
-            _builder = new XmlSpecificationCompiler(this);
+            _builder = new XmlSpecificationCompiler(this, xmlSource.DefaultExpressionLanguage);
             _cache = new Dictionary<string, ISpecification>();
             _xmlSource = xmlSource;
         }
@@ -87,7 +98,7 @@ namespace ClearCanvas.Common.Specifications
             else
             {
                 XmlElement specNode = _xmlSource.GetSpecificationXml(id);
-                return _cache[id] = _builder.BuildSpecification(specNode);
+                return _cache[id] = _builder.Compile(specNode);
             }
         }
 
@@ -96,7 +107,7 @@ namespace ClearCanvas.Common.Specifications
             Dictionary<string, ISpecification> specs = new Dictionary<string, ISpecification>();
             foreach (KeyValuePair<string, XmlElement> kvp in _xmlSource.GetAllSpecificationsXml())
             {
-                specs.Add(kvp.Key, _builder.BuildSpecification(kvp.Value));
+                specs.Add(kvp.Key, _builder.Compile(kvp.Value));
             }
             return specs;
         }

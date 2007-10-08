@@ -6,17 +6,12 @@ namespace ClearCanvas.Common.Specifications
 {
     public class TrueSpecification : PrimitiveSpecification
     {
-        public TrueSpecification(string testExpr, string failureMessage)
-            : base(testExpr, failureMessage)
-        {
-        }
-
         public TrueSpecification()
         {
 
         }
 
-        protected override TestResult InnerTest(object exp)
+        protected override TestResult InnerTest(object exp, object root)
         {
             if (exp is bool)
             {

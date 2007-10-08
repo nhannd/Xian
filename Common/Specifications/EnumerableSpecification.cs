@@ -9,12 +9,6 @@ namespace ClearCanvas.Common.Specifications
     {
         private ISpecification _elementSpecification;
 
-        public EnumerableSpecification(string testExpression, ISpecification elementSpecification, string failureMessage)
-            :base(testExpression, failureMessage)
-        {
-            _elementSpecification = elementSpecification;
-        }
-
         public EnumerableSpecification(ISpecification elementSpecification)
         {
             _elementSpecification = elementSpecification;
@@ -32,11 +26,6 @@ namespace ClearCanvas.Common.Specifications
 				throw new SpecificationException(SR.ExceptionCastExpressionEnumerable);
 
             return enumerable;
-        }
-
-        public override IEnumerable<ISpecification> SubSpecs
-        {
-            get { return new ISpecification[] { _elementSpecification }; }
         }
     }
 }
