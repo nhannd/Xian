@@ -59,10 +59,12 @@ class CollectionFieldDef < FieldDef
  
   def attributes
     attrs = super
-    case
-      when @elementNode.name == 'composite-element' : attrs << "EmbeddedValueCollection(typeof(#{elementType}))"
-      #when @elementNode.name == 'one-to-many' : attrs << "OneToMany(typeof(#{elementType}))"
-      #when @elementNode.name == 'many-to-many' : attrs << "ManyToMany(typeof(#{elementType}))"
+    if(@elementNode)
+	    case
+	      when @elementNode.name == 'composite-element' : attrs << "EmbeddedValueCollection(typeof(#{elementType}))"
+	      #when @elementNode.name == 'one-to-many' : attrs << "OneToMany(typeof(#{elementType}))"
+	      #when @elementNode.name == 'many-to-many' : attrs << "ManyToMany(typeof(#{elementType}))"
+	    end
     end
     attrs
   end
