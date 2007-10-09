@@ -13,17 +13,17 @@ namespace ClearCanvas.Desktop.Actions
     public interface IClickAction : IAction
     {
         /// <summary>
-        /// Fired when the <see cref="Checked"/> property of this action changes.
+        /// Occurs when the <see cref="Checked"/> property of this action changes.
         /// </summary>
         event EventHandler CheckedChanged;
         
         /// <summary>
-        /// Reports whether this action is a "check" action, that is, an action that behaves as a toggle.
+        /// Gets a value indicating whether this action is a "check" action, that is, an action that behaves as a toggle.
         /// </summary>
         bool IsCheckAction { get; }
 
         /// <summary>
-        /// The checked state that the action should present in the UI, if this is a "check" action.
+        /// Gets the checked state that the action should present in the UI, if this is a "check" action.
         /// </summary>
         /// <remarks>
         /// This property has no meaning if <see cref="IsCheckAction"/> returns false.
@@ -37,7 +37,7 @@ namespace ClearCanvas.Desktop.Actions
 		bool CheckParents { get; }
 
 		/// <summary>
-		/// The keystroke that the UI should attempt to intercept and invoke the action.
+		/// Gets the keystroke that the UI should attempt to intercept to invoke the action.
 		/// </summary>
 		XKeys KeyStroke { get; }
 

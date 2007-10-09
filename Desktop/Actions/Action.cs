@@ -5,7 +5,6 @@ using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Common.Specifications;
-using System.Threading;
 
 namespace ClearCanvas.Desktop.Actions
 {
@@ -15,10 +14,10 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
     public abstract class Action : IAction
     {
-        private string _actionID;
+        private readonly string _actionID;
 		
 		private ActionPath _path;
-        private IResourceResolver _resourceResolver;
+        private readonly IResourceResolver _resourceResolver;
 
 		private GroupHint _groupHint;
 
@@ -72,23 +71,40 @@ namespace ClearCanvas.Desktop.Actions
 
         #region IAction members
 
+        /// <summary>
+        /// Gets the fully-qualified logical identifier for this action.
+        /// </summary>
         public string ActionID
         {
             get { return _actionID; }
         }
 
+        /// <summary>
+        /// Gets the resource resolver associated with this action, that will be used to resolve
+        /// action path and icon resources when required.
+        /// </summary>
         public IResourceResolver ResourceResolver
         {
             get { return _resourceResolver; }
         }
 
+        /// <summary>
+        /// Gets or sets the menu or toolbar path for this action.
+        /// </summary>
         public ActionPath Path
         {
             get { return _path; }
             set { _path = value; }
         }
 
-		public GroupHint GroupHint
+        /// <summary>
+        /// Gets or sets the group hint for this action.
+        /// </summary>
+        /// <remarks>
+        /// The GroupHint for an action must not be null.  If an action has no groupHint,
+        /// the GroupHint should be "" (default).
+        /// </remarks>
+        public GroupHint GroupHint
 		{
 			get
 			{
@@ -106,12 +122,18 @@ namespace ClearCanvas.Desktop.Actions
 			}
 		}
 
+        /// <summary>
+        /// Gets the icon that the action presents in the UI.
+        /// </summary>
         public IconSet IconSet
         {
             get { return _iconSet; }
             set { _iconSet = value; }
         }
 
+        /// <summary>
+        /// Gets the label that the action presents in the UI.
+        /// </summary>
         public string Label
         {
             get { return _label; }
@@ -125,6 +147,9 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
+        /// <summary>
+        /// Gets the tooltip that the action presents in the UI.
+        /// </summary>
         public string Tooltip
         {
             get { return _tooltip; }
@@ -138,6 +163,9 @@ namespace ClearCanvas.Desktop.Actions
             }
 		}
 
+        /// <summary>
+        /// Gets the enablement state that the action presents in the UI.
+        /// </summary>
         public bool Enabled
         {
             get { return _enabled; }
@@ -151,7 +179,10 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
-		public bool Visible
+        /// <summary>
+        /// Gets the visibility state that the action presents in the UI.
+        /// </summary>
+        public bool Visible
 		{
             get
             {
@@ -167,36 +198,65 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
-		public bool Persistent
+        /// <summary>
+        /// Gets a value indicating whether or not the action is 'persistent'.
+        /// </summary>
+        /// <remarks>
+        /// Actions created via the Action Attributes are considered persistent and are
+        /// committed to the <see cref="ActionModelSettings"/>,
+        /// otherwise they are considered generated and they are not committed.
+        /// </remarks>
+        public bool Persistent
 		{
 			get { return _persistent; }
 			set { _persistent = value; }
 		}
-		
-		public event EventHandler EnabledChanged
+
+        /// <summary>
+        /// Occurs when the <see cref="IAction.Enabled"/> property of this action changes.
+        /// </summary>
+        public event EventHandler EnabledChanged
         {
             add { _enabledChanged += value; }
             remove { _enabledChanged -= value; }
         }
 
-		public event EventHandler VisibleChanged
+        /// <summary>
+        /// Occurs when the <see cref="IAction.Visible"/> property of this action changes.
+        /// </summary>
+        public event EventHandler VisibleChanged
 		{
             add { _visibleChanged += value; }
             remove { _visibleChanged -= value; }
         }
 
-		public event EventHandler LabelChanged
+        /// <summary>
+        /// Occurs when the <see cref="IAction.Label"/> property of this action changes.
+        /// </summary>
+        public event EventHandler LabelChanged
 		{
             add { _labelChanged += value; }
             remove { _labelChanged -= value; }
         }
 
-		public event EventHandler TooltipChanged
+        /// <summary>
+        /// Occurs when the <see cref="IAction.Tooltip"/> property of this action changes.
+        /// </summary>
+        public event EventHandler TooltipChanged
 		{
             add { _tooltipChanged += value; }
             remove { _tooltipChanged -= value; }
         }
 
+        /// <summary>
+        /// Gets a value indicating whether this action is permissible.
+        /// </summary>
+        /// <remarks>
+        /// In addition to the <see cref="IAction.Visible"/> and <see cref="IAction.Enabled"/> properties, the view
+        /// will use this property to control whether the action can be invoked.  Typically
+        /// this property is implemented to indicate whether the current user has permission
+        /// to execute the action.
+        /// </remarks>
         public bool Permissible
         {
             get

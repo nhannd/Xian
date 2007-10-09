@@ -9,7 +9,7 @@ using ClearCanvas.Common.Specifications;
 namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
-    /// Associates user permissions with an action.
+    /// Associates authority tokens with an action.
     /// </summary>
     /// <remarks>
     /// This attribute sets the <see cref="Action.PermissionSpecification"/> property.  If multiple authority tokens

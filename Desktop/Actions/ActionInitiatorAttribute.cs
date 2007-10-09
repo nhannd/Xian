@@ -9,6 +9,10 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
     public abstract class ActionInitiatorAttribute : ActionAttribute
     {
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="actionID"></param>
         public ActionInitiatorAttribute(string actionID)
             : base(actionID)
         {

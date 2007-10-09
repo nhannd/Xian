@@ -9,7 +9,7 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
     public class TooltipAttribute : ActionDecoratorAttribute
     {
-        private string _tooltip;
+        private readonly string _tooltip;
 
         /// <summary>
         /// Attribute constructor

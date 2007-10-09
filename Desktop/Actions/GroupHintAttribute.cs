@@ -6,12 +6,17 @@ namespace ClearCanvas.Desktop.Actions
 {
 	/// <summary>
 	/// Declares a 'group hint' for an action.  Group Hints are used to determine
-	/// as appropriate a place as possible to place an action in the <see cref="ActionModelStore"/>.
+	/// as appropriate a place as possible to place an action within an action model.
 	/// </summary>
 	public class GroupHintAttribute : ActionDecoratorAttribute
 	{
-		private string _groupHint;
+		private readonly string _groupHint;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="actionID"></param>
+        /// <param name="groupHint"></param>
 		public GroupHintAttribute(string actionID, string groupHint)
 			:base(actionID)
 		{

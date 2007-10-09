@@ -11,9 +11,15 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
     public abstract class StateObserverAttribute : ActionDecoratorAttribute
     {
-        private string _observedProperty;
-        private string _observedChangeEvent;
+        private readonly string _observedProperty;
+        private readonly string _observedChangeEvent;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="actionID"></param>
+        /// <param name="observedProperty"></param>
+        /// <param name="observedChangeEvent"></param>
         public StateObserverAttribute(string actionID, string observedProperty, string observedChangeEvent)
             : base(actionID)
         {

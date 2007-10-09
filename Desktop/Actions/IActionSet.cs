@@ -9,14 +9,14 @@ namespace ClearCanvas.Desktop.Actions
     public interface IActionSet : IEnumerable<IAction>
     {
         /// <summary>
-        /// Returns the number of actions in the set
+        /// Gets the number of actions in the set.
         /// </summary>
         int Count { get; }
 
         /// <summary>
         /// Returns a subset of this set containing only the elements for which the predicate is true.
         /// </summary>
-        /// <param name="predicate">The predicate to test</param>
+        /// <param name="predicate">The predicate to test.</param>
         /// <returns></returns>
         IActionSet Select(Predicate<IAction> predicate);
 

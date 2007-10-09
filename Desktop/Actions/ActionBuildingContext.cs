@@ -2,7 +2,6 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-using System.Reflection;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
@@ -11,14 +10,14 @@ namespace ClearCanvas.Desktop.Actions
     /// <summary>
     /// Default implementation of <see cref="IActionBuildingContext"/>.
     /// </summary>
-    public class ActionBuildingContext : IActionBuildingContext
+    internal class ActionBuildingContext : IActionBuildingContext
     {
-        private string _actionID;
-        private object _actionTarget;
+        private readonly string _actionID;
+        private readonly object _actionTarget;
+        private readonly ResourceResolver _resolver;
         private Action _action;
-        private ResourceResolver _resolver;
 
-        public ActionBuildingContext(string actionID, object actionTarget)
+        internal ActionBuildingContext(string actionID, object actionTarget)
         {
             _actionID = actionID;
             _actionTarget = actionTarget;

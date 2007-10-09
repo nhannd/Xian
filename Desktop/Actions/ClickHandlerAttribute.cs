@@ -13,7 +13,7 @@ namespace ClearCanvas.Desktop.Actions
     /// the specified method on the target class.  The method name must
     /// refer to a void method on the target class that takes no parameters.  
     /// </remarks>
-    [Obsolete("Consider binding the click-hanlder directly in the MenuAction/ButtonAction/KeyboardAction attribute.")]
+    [Obsolete("Consider binding the click-handler directly in the MenuAction/ButtonAction/KeyboardAction attribute.")]
     public class ClickHandlerAttribute : ActionDecoratorAttribute
     {
         private string _handlerMethod;

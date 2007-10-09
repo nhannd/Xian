@@ -7,9 +7,10 @@ namespace ClearCanvas.Desktop.Actions
 {
 	/// <summary>
 	/// The GroupHint is used to determine a reasonably appropriate point in the 
-	/// <see cref="ActionModelStore"/> to put an action that does not yet exist in
-	/// the store.
-	/// 
+	/// action model to put an action that does not yet exist in
+	/// the stored model.
+	/// </summary>
+	/// <remarks>
 	/// The action (call it Left-Hand Action) whose position in the store is to be 
 	/// determined is compared with each action in the store (Right-Hand Action).
 	/// The comparison of the Left-Hand Action to the Right-Hand Action is given
@@ -37,14 +38,18 @@ namespace ClearCanvas.Desktop.Actions
 	///    GroupHint.  So, the LHS cannot be considered at all similar to RHS and the 
 	///    score is automatically zero (0).
 	/// 
-	/// </summary>
+	/// </remarks>
 
 	public class GroupHint
 	{
 		private const char SEPARATOR = '.';
-		private string _hint;
+		private readonly string _hint;
 		private readonly string[] _components;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="groupHint"></param>
 		public GroupHint(string groupHint)
 		{
 			if (groupHint == null)
@@ -54,16 +59,27 @@ namespace ClearCanvas.Desktop.Actions
 			_components = _hint.Split(new char[] { SEPARATOR });
 		}
 
+        /// <summary>
+        /// Gets the hint path.
+        /// </summary>
 		public string Hint
 		{
 			get { return _hint; }
 		}
 
+        /// <summary>
+        /// Gets an array containing the components of the hint path.
+        /// </summary>
 		public string[] Components
 		{
 			get { return _components; }
 		}
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
 		public int MatchScore(GroupHint other)
 		{
 			int i = 0;

@@ -17,60 +17,77 @@ namespace ClearCanvas.Desktop.Actions
     public interface IAction
     {
         /// <summary>
-        /// Fired when the <see cref="Enabled"/> property of this action changes.
+        /// Occurs when the <see cref="Enabled"/> property of this action changes.
         /// </summary>
         event EventHandler EnabledChanged;
-		event EventHandler VisibleChanged;
+
+        /// <summary>
+        /// Occurs when the <see cref="Visible"/> property of this action changes.
+        /// </summary>
+        event EventHandler VisibleChanged;
+
+        /// <summary>
+        /// Occurs when the <see cref="Label"/> property of this action changes.
+        /// </summary>
 		event EventHandler LabelChanged;
+
+        /// <summary>
+        /// Occurs when the <see cref="Tooltip"/> property of this action changes.
+        /// </summary>
 		event EventHandler TooltipChanged; 
 
         /// <summary>
-        /// The fully-qualified logical identifier for this action.
+        /// Gets the fully-qualified logical identifier for this action.
         /// </summary>
         string ActionID { get; }
 
         /// <summary>
-        /// The menu or toolbar path for this action.
+        /// Gets or sets the menu or toolbar path for this action.
         /// </summary>
         ActionPath Path { get; set; }
 
 		/// <summary>
-		/// The group hint for this action.  The GroupHint for an
-		/// action must not be null.  If an action has no groupHint,
-		/// the GroupHint should be "" (default).
+		/// Gets or sets the group hint for this action.
 		/// </summary>
+		/// <remarks>
+        /// The GroupHint for an action must not be null.  If an action has no groupHint,
+		/// the GroupHint should be "" (default).
+		/// </remarks>
 		GroupHint GroupHint { get; set; }
 
         /// <summary>
-        /// The label that the action should present in the UI.
+        /// Gets the label that the action presents in the UI.
         /// </summary>
         string Label { get; }
 
         /// <summary>
-        /// The tooltip that the action should present in the UI.
+        /// Gets the tooltip that the action presents in the UI.
         /// </summary>
         string Tooltip { get; }
 
         /// <summary>
-        /// The icon that the action should present in the UI.
+        /// Gets the icon that the action presents in the UI.
         /// </summary>
         IconSet IconSet { get; }
 
         /// <summary>
-        /// The enablement state that the action should present in the UI.
+        /// Gets the enablement state that the action presents in the UI.
         /// </summary>
         bool Enabled { get; }
 
 		/// <summary>
-		/// The visibility state that the action should present in the UI.
+        /// Gets the visibility state that the action presents in the UI.
 		/// </summary>
 		bool Visible { get; }
 
 		/// <summary>
-		/// Indicates whether or not the action is 'persistent'.  Actions created via the
-		/// Action Attributes are considered persistent and are committed to the <see cref="ActionModelSettings"/>,
-		/// otherwise they are considered generated and they are not committed.
+		/// Gets a value indicating whether or not the action is 'persistent'.
 		/// </summary>
+        /// <remarks>
+        /// Actions created via the Action Attributes are considered persistent and are
+        /// committed to the <see cref="ActionModelSettings"/>,
+        /// otherwise they are considered generated and they are not committed.
+		/// </remarks>
 		bool Persistent { get; }
 
         /// <summary>
@@ -80,9 +97,14 @@ namespace ClearCanvas.Desktop.Actions
         IResourceResolver ResourceResolver { get; }
 
         /// <summary>
-        /// True if this action is permissible.  Typically this will be implemented to test if the current
-        /// user has sufficient privileges to access this action.
+        /// Gets a value indicating whether this action is permissible.
         /// </summary>
+        /// <remarks>
+        /// In addition to the <see cref="Visible"/> and <see cref="Enabled"/> properties, the view
+        /// will use this property to control whether the action can be invoked.  Typically
+        /// this property is implemented to indicate whether the current user has permission
+        /// to execute the action.
+        /// </remarks>
         bool Permissible { get; }
    }
 }

@@ -9,8 +9,8 @@ namespace ClearCanvas.Desktop.Actions
     /// </summary>
     public class ActionModelNode
     {
-        private PathSegment _pathSegment;
-        private ActionModelNodeList _childNodes;
+        private readonly PathSegment _pathSegment;
+        private readonly ActionModelNodeList _childNodes;
         private IAction _action; // null if this is not a leaf node
 
         /// <summary>
@@ -24,9 +24,9 @@ namespace ClearCanvas.Desktop.Actions
         }
 
         /// <summary>
-        /// Derived classes must override this method to return a new node of their own type.
+        /// Used by the <see cref="CloneTree"/> method.  Derived classes must override this method to return a new node of their own type.
         /// </summary>
-        /// <param name="pathSegment">The path segment which this node represents</param>
+        /// <param name="pathSegment">The path segment which this node represents.</param>
         /// <returns>A new node of this type.</returns>
         protected virtual ActionModelNode CreateNode(PathSegment pathSegment)
         {
@@ -34,7 +34,7 @@ namespace ClearCanvas.Desktop.Actions
         }
 
         /// <summary>
-        /// The action path segment represented by this node.
+        /// Gets the action path segment represented by this node.
         /// </summary>
         public PathSegment PathSegment
         {
@@ -42,7 +42,7 @@ namespace ClearCanvas.Desktop.Actions
         }
 
         /// <summary>
-        /// The action associated with this node, or null if this node is not a leaf node.
+        /// Gets the action associated with this node, or null if this node is not a leaf node.
         /// </summary>
         public IAction Action
         {
@@ -51,7 +51,7 @@ namespace ClearCanvas.Desktop.Actions
         }
 
         /// <summary>
-        /// Reports whether this node is a leaf node.
+        /// Gets a value indicating whether this node is a leaf node.
         /// </summary>
         public bool IsLeaf
         {
@@ -59,7 +59,7 @@ namespace ClearCanvas.Desktop.Actions
         }
 
         /// <summary>
-        /// The set of child nodes of this node.
+        /// Gets the list of child nodes of this node.
         /// </summary>
         public ActionModelNodeList ChildNodes
         {

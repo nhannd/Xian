@@ -16,6 +16,12 @@ namespace ClearCanvas.Desktop.Actions
         private ClickActionFlags _flags;
 		private XKeys _keyStroke;
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="actionID">The logical action ID.</param>
+        /// <param name="path">The action path.</param>
+        /// <param name="clickHandler">The name of the method that will be invoked when the action is clicked.</param>
         public ClickActionAttribute(string actionID, string path, string clickHandler)
             :base(actionID)
         {
@@ -24,13 +30,18 @@ namespace ClearCanvas.Desktop.Actions
             _flags = ClickActionFlags.None; // default value, will override if named parameter is specified
         }
 
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="actionID">The logical action ID.</param>
+        /// <param name="path">The action path.</param>
         public ClickActionAttribute(string actionID, string path)
             : this(actionID, path, null)
         {
         }
 
         /// <summary>
-        /// Flags that customize the behaviour of the action.
+        /// Gets or sets the flags that customize the behaviour of the action.
         /// </summary>
         public ClickActionFlags Flags
         {
@@ -38,6 +49,9 @@ namespace ClearCanvas.Desktop.Actions
             set { _flags = value; }
         }
 
+        /// <summary>
+        /// Gets or sets the key-stroke that should invoke the action from the keyboard.
+        /// </summary>
 		public XKeys KeyStroke
 		{
 			get { return _keyStroke; }
@@ -71,7 +85,7 @@ namespace ClearCanvas.Desktop.Actions
         /// </summary>
         public string Path { get { return _path; } }
 
-        private void ValidateClickHandler(object target, string methodName)
+        private static void ValidateClickHandler(object target, string methodName)
         {
             MethodInfo info = target.GetType().GetMethod(
                 methodName, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic,

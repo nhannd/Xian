@@ -6,11 +6,6 @@ using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.Actions
 {
-    [ExtensionPoint]
-    public class ButtonActionViewExtensionPoint : ExtensionPoint<IActionView>
-    {
-    }
-
     /// <summary>
     /// Models a toolbar button action.
     /// </summary>
@@ -19,10 +14,10 @@ namespace ClearCanvas.Desktop.Actions
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="actionID">The fully qualified action ID</param>
-        /// <param name="path">The action path</param>
-        /// <param name="flags">Flags that control the style of the action</param>
-        /// <param name="resourceResolver">A resource resolver that will be used to resolve text and image resources</param>
+        /// <param name="actionID">The fully qualified action ID.</param>
+        /// <param name="path">The action path.</param>
+        /// <param name="flags">Flags that control the style of the action.</param>
+        /// <param name="resourceResolver">A resource resolver that will be used to resolve text and image resources.</param>
         public ButtonAction(string actionID, ActionPath path, ClickActionFlags flags, IResourceResolver resourceResolver)
             : base(actionID, path, flags, resourceResolver)
         {

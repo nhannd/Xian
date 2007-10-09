@@ -10,7 +10,7 @@ namespace ClearCanvas.Desktop.Actions
     [AttributeUsage(AttributeTargets.Class, AllowMultiple=true)]
     public abstract class ActionAttribute : Attribute
     {
-        private string _actionID;
+        private readonly string _actionID;
 
         /// <summary>
         /// Attribute constructor.
@@ -33,7 +33,7 @@ namespace ClearCanvas.Desktop.Actions
         }
 
         /// <summary>
-        /// Applies this attribute to the specified <see cref="IActionBuilder"/>.
+        /// Applies this attribute to the specified <see cref="IActionBuildingContext"/>.
         /// </summary>
         /// <param name="builder">The builder to which this attribute should be applied</param>
         public abstract void Apply(IActionBuildingContext builder);

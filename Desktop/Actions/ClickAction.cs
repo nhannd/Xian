@@ -9,11 +9,12 @@ using System.Security;
 namespace ClearCanvas.Desktop.Actions
 {
     /// <summary>
-    /// Default implementation of <see cref="IClickAction"/>.
+    /// Default implementation of <see cref="IClickAction"/>.  Models a user-interface action that is invoked by
+    /// a click, such as a toolbar button or a menu item.
     /// </summary>
     public class ClickAction : Action, IClickAction
     {
-		private ClickActionFlags _flags;
+		private readonly ClickActionFlags _flags;
         private ClickHandlerDelegate _clickHandler;
 		private XKeys _keyStroke;
 
@@ -45,7 +46,10 @@ namespace ClearCanvas.Desktop.Actions
             _clickHandler = clickHandler;
         }
 
-
+        /// <summary>
+        /// Sets the key stroke that can be used to invoke this action from the keyboard.
+        /// </summary>
+        /// <param name="keyStroke"></param>
 		public void SetKeyStroke(XKeys keyStroke)
 		{
 			_keyStroke = keyStroke;
@@ -53,11 +57,20 @@ namespace ClearCanvas.Desktop.Actions
 
         #region IClickAction members
 
+        /// <summary>
+        /// Gets a value indicating whether this action is a "check" action, that is, an action that behaves as a toggle.
+        /// </summary>
         public bool IsCheckAction
         {
             get { return (_flags & ClickActionFlags.CheckAction) == 0 ? false : true; }
         }
 
+        /// <summary>
+        /// Gets the checked state that the action should present in the UI, if this is a "check" action.
+        /// </summary>
+        /// <remarks>
+        /// This property has no meaning if <see cref="IClickAction.IsCheckAction"/> returns false.
+        /// </remarks>
         public bool Checked
         {
             get { return _checked; }
@@ -71,19 +84,29 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
+        /// <summary>
+        /// Occurs when the <see cref="IClickAction.Checked"/> property of this action changes.
+        /// </summary>
         public event EventHandler CheckedChanged
         {
             add { _checkedChanged += value; }
             remove { _checkedChanged -= value; }
         }
 
-		public bool CheckParents
+        /// <summary>
+        /// Gets a value indicating whether parent items should be checked if this
+        /// <see cref="IClickAction"/> is checked.
+        /// </summary>
+        public bool CheckParents
 		{
 			get { return _checkParents; }
 			set { _checkParents = value; }
 		}
-		
-		public void Click()
+
+        /// <summary>
+        /// Called by the UI when the user clicks on the action.
+        /// </summary>
+        public void Click()
         {
             if (_clickHandler != null)
             {
@@ -91,7 +114,10 @@ namespace ClearCanvas.Desktop.Actions
             }
         }
 
-		public XKeys KeyStroke
+        /// <summary>
+        /// Gets the keystroke that the UI should attempt to intercept to invoke the action.
+        /// </summary>
+        public XKeys KeyStroke
 		{
 			get { return _keyStroke; }
 			set { _keyStroke = value; }
