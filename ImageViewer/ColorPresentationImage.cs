@@ -6,7 +6,7 @@ namespace ClearCanvas.ImageViewer
 	/// <summary>
 	/// A 2D colour Presentation Image.
 	/// </summary>
-	public class ColorPresentationImage : BasicPresentationImage, IColorPixelDataProvider
+	public class ColorPresentationImage : BasicPresentationImage
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="ColorPresentationImage"/>.
@@ -68,17 +68,5 @@ namespace ClearCanvas.ImageViewer
 		{
 			get { return (ColorImageGraphic)base.ImageGraphic;  }	
 		}
-
-		#region IColorPixelDataProvider Members
-
-		/// <summary>
-		/// Gets this image's <see cref="ColorPixelData"/>.
-		/// </summary>
-		public new ColorPixelData PixelData
-		{
-			get { return this.ImageGraphic.PixelData; }
-		}
-
-		#endregion
 	}
 }

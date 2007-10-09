@@ -150,8 +150,6 @@
     <Compile Include="Imaging\GeneratedDataLut.cs" />
     <Compile Include="Imaging\IDataLut.cs" />
     <Compile Include="Imaging\IInitialVoiLutProvider.cs" />
-    <Compile Include="Imaging\IColorPixelDataProvider.cs" />
-    <Compile Include="Imaging\IIndexedPixelDataProvider.cs" />
     <Compile Include="Imaging\ILut.cs" />
     <Compile Include="Imaging\IndexedPixelData.cs" />
     <Compile Include="Graphics\IImageSpatialTransform.cs" />
@@ -161,7 +159,6 @@
     <Compile Include="Imaging\IModalityLutProvider.cs" />
     <Compile Include="Imaging\IComposedLut.cs" />
     <Compile Include="Imaging\ComposableLutMemento.cs" />
-    <Compile Include="Imaging\IPixelDataProvider.cs" />
     <Compile Include="Imaging\ColorMapDescriptor.cs" />
     <Compile Include="Imaging\ColorMapFactoryBase.cs" />
     <Compile Include="Imaging\ColorMapFactoryExtensionPoint.cs" />

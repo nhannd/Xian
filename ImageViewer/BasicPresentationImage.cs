@@ -31,7 +31,6 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public abstract class BasicPresentationImage :
 		PresentationImage, 
-		IPixelDataProvider,
 		IImageGraphicProvider,
 		ISpatialTransformProvider,
 		IOverlayGraphicsProvider,
@@ -80,18 +79,6 @@ namespace ClearCanvas.ImageViewer
 		}
 
 		#region Public properties
-
-		#region IPixelDataProvider Members
-
-		/// <summary>
-		/// Gets this presentation image's <see cref="PixelData"/>.
-		/// </summary>
-		public PixelData PixelData
-		{
-			get { return _imageGraphic.PixelData; }
-		}
-
-		#endregion
 
 		#region IImageGraphicProvider
 
