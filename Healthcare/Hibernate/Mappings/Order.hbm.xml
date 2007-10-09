@@ -42,5 +42,11 @@
       <key column="OrderOID_"/>
       <one-to-many class="RequestedProcedure"/>
     </set>
+    
+    <map name="ExtendedProperties" lazy="true" table="OrderExtendedProperties_">
+      <key column="OrderOID_"/>
+      <index column="Name_" type="String"/>
+      <element column="Value_" type="String" length="4000"/>
+    </map>
   </class>
 </hibernate-mapping>

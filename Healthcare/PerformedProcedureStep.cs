@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using System.Text;
 using ClearCanvas.Workflow;
 using ClearCanvas.Common;
@@ -12,6 +12,8 @@ namespace ClearCanvas.Healthcare
     public abstract class PerformedProcedureStep : PerformedStep
     {
         private string _documentation;
+        private IDictionary _extendedProperties = new Hashtable();
+
 
         public PerformedProcedureStep(Staff performingStaff)
             : base(new ProcedureStepPerformer(performingStaff))
@@ -36,5 +38,12 @@ namespace ClearCanvas.Healthcare
             get { return _documentation; }
             set { _documentation = value; }
         }
+
+        public IDictionary ExtendedProperties
+        {
+            get { return _extendedProperties; }
+            private set { _extendedProperties = value; }
+        }
+
     }
 }
