@@ -8,14 +8,19 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.CodeDom.Compiler;
+using System.Configuration;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+
 namespace ClearCanvas.ImageViewer.Annotations.Dicom {
     
     
-    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class DicomFilteredAnnotationLayoutStoreSettings : global::System.Configuration.ApplicationSettingsBase {
+    [CompilerGenerated()]
+    [GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
+    internal sealed partial class DicomFilteredAnnotationLayoutStoreSettings : ApplicationSettingsBase {
         
-        private static DicomFilteredAnnotationLayoutStoreSettings defaultInstance = ((DicomFilteredAnnotationLayoutStoreSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new DicomFilteredAnnotationLayoutStoreSettings())));
+        private static DicomFilteredAnnotationLayoutStoreSettings defaultInstance = ((DicomFilteredAnnotationLayoutStoreSettings)(Synchronized(new DicomFilteredAnnotationLayoutStoreSettings())));
         
         public static DicomFilteredAnnotationLayoutStoreSettings Default {
             get {
@@ -23,9 +28,9 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("DicomFilteredAnnotationLayoutStoreDefaults.xml")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("DicomFilteredAnnotationLayoutStoreDefaults.xml")]
         public string FilteredLayoutSettingsXml {
             get {
                 return ((string)(this["FilteredLayoutSettingsXml"]));

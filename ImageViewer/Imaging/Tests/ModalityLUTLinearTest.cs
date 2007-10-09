@@ -3,9 +3,8 @@
 #pragma warning disable 1591,0419,1574,1587
 
 using System;
-using NUnit.Framework;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Dicom;
+using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Imaging.Tests
 {

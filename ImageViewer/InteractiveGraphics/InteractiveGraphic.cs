@@ -1,9 +1,5 @@
 using System;
-using System.Collections;
-using System.Diagnostics;
 using System.Drawing;
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.InputManagement;
 
@@ -40,7 +36,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public CursorToken StretchToken
 		{
 			get { return _stretchToken; }
-			set { _stretchToken = value; }
+			protected set { _stretchToken = value; }
 		}
 
 		protected ICursorTokenProvider StretchIndicatorProvider
@@ -118,16 +114,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		public virtual GraphicState CreateSelectedState()
 		{
 			return new SelectedGraphicState(this);
-		}
-
-		public virtual PointF CalcControlPointPosition(int controlPointIndex, PointF lastPoint, PointF currentPoint)
-		{
-			// Sample constraint: only alow first control point to move vertically.
-			// This would be placed in the derived class
-			//if (controlPointIndex == 0)
-			//	return new Point(lastPoint.X, currentPoint.Y);
-
-			return currentPoint;
 		}
 
 		protected abstract void OnControlPointChanged(object sender, ControlPointEventArgs e);

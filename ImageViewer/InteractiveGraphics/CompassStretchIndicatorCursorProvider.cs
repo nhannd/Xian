@@ -1,12 +1,10 @@
-using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.InputManagement;
-using ClearCanvas.Desktop;
 using System.Drawing;
-using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -16,9 +14,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 	/// purpose of the control points is to stretch the graphic that owns the control points (as will be
 	/// the case with most ROI graphic implementations).
 	/// </summary>
-	public class CompassStretchIndicatorCursorProvider : ICursorTokenProvider
+	internal class CompassStretchIndicatorCursorProvider : ICursorTokenProvider
 	{
-		public enum CompassPoints { NorthEast = 0, SouthEast = 1, SouthWest = 2, NorthWest = 3, North = 4, East = 5, South = 6, West = 7 };
+		private enum CompassPoints { NorthEast = 0, SouthEast = 1, SouthWest = 2, NorthWest = 3, North = 4, East = 5, South = 6, West = 7 };
 
 		private SortedList<CompassPoints, CursorToken> _stretchIndicatorTokens;
 
@@ -39,14 +37,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				InstallDefaults();
 		}
 
-		private CompassStretchIndicatorCursorProvider()
-		{
-		}
-
 		/// <summary>
 		/// Gets the bounding rectangle that contains all the points in the <see cref="ControlPointGroup"/>.
 		/// </summary>
-		protected RectangleF BoundingRectangle
+		private RectangleF BoundingRectangle
 		{
 			get
 			{
@@ -63,7 +57,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <param name="compassPoint">the compass point.</param>
 		/// <returns>the <see cref="CursorToken"/> that corresponds to the specified point on the compass, or null.</returns>
-		public CursorToken this[CompassPoints compassPoint]
+		private CursorToken this[CompassPoints compassPoint]
 		{
 			get
 			{
@@ -89,7 +83,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <summary>
 		/// Installs the default set of system cursors for the compass.
 		/// </summary>
-		protected virtual void InstallDefaults()
+		private void InstallDefaults()
 		{
 			_stretchIndicatorTokens[CompassPoints.East] =
 				_stretchIndicatorTokens[CompassPoints.West] = new CursorToken(CursorToken.SystemCursors.SizeWE);
@@ -111,7 +105,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="compassRectangle">the rectangle from which to determine the compass point position.</param>
 		/// <param name="compassPoint">the point on the compass to find the distance to.</param>
 		/// <returns></returns>
-		protected float DistanceToCompassPoint(PointF point, RectangleF compassRectangle, CompassPoints compassPoint)
+		private float DistanceToCompassPoint(PointF point, RectangleF compassRectangle, CompassPoints compassPoint)
 		{
 			PointF compassPointPosition = GetCompassPointPosition(compassPoint, compassRectangle);
 			return (float)Vector.Distance(point, compassPointPosition);
@@ -123,7 +117,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// <param name="compassPoint">the compass point whose position on the rectangle is to be determined.</param>
 		/// <param name="rectangle">the rectangle.</param>
 		/// <returns>the point on the rectangle that corresponds to the given compass point.</returns>
-		protected PointF GetCompassPointPosition(CompassPoints compassPoint, RectangleF rectangle)
+		private PointF GetCompassPointPosition(CompassPoints compassPoint, RectangleF rectangle)
 		{
 			float top = rectangle.Top;
 			float left = rectangle.Left;
@@ -166,7 +160,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		/// </summary>
 		/// <param name="point">the point (in destination coordinates).</param>
 		/// <returns>a <see cref="CursorToken"/> that is appropriate for the given point, or null.</returns>
-		public virtual CursorToken GetCursorToken(Point point)
+		public CursorToken GetCursorToken(Point point)
 		{
 			if (_stretchIndicatorTokens.Count == 0)
 				return null;

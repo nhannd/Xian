@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
-using ClearCanvas.Common;
 using System.Collections.ObjectModel;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer
@@ -200,6 +200,9 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="DisplaySet"/>.
+		/// </summary>
 		public void Dispose()
 		{
 			try
@@ -311,6 +314,9 @@ namespace ClearCanvas.ImageViewer
 				_linkedPresentationImages.Remove(e.PresentationImage);
 		}
 
+		/// <summary>
+		/// Raises the <see cref="Drawing"/> event.
+		/// </summary>
 		protected virtual void OnDrawing()
 		{
 			EventsHelper.Fire(_drawing, this, EventArgs.Empty);

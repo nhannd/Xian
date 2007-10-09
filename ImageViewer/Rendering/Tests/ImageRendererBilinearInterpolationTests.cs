@@ -1,14 +1,5 @@
 #if	UNIT_TESTS
 
-using System;
-using System.Drawing;
-using System.Drawing.Imaging;
-using System.Diagnostics;
-using ClearCanvas.ImageViewer.Rendering;
-using ClearCanvas.ImageViewer.Graphics;
-using NUnit.Framework;
-using ClearCanvas.ImageViewer.Mathematics;
-
 namespace ClearCanvas.ImageViewer.Rendering.Tests
 {
 /*	public unsafe class PublicMethodRenderer : ImageRenderer

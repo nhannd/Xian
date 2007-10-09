@@ -2,10 +2,7 @@
 
 #pragma warning disable 1591,0419,1574,1587
 
-using System;
 using NUnit.Framework;
-using System.Drawing;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Mathematics.Tests
 {

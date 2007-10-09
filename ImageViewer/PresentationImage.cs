@@ -267,6 +267,9 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="PresentationImage"/>.
+		/// </summary>
 		public void Dispose()
 		{
 			try
@@ -358,6 +361,9 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Raises the <see cref="Drawing"/> event.
+		/// </summary>
 		protected virtual void OnDrawing()
 		{
 			EventsHelper.Fire(_drawing, this, EventArgs.Empty);

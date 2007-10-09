@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -281,6 +280,10 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Overrides
 
+		/// <summary>
+		/// This method overrides <see cref="PixelData.CloneInternal"/>
+		/// </summary>
+		/// <returns></returns>
 		protected override PixelData CloneInternal()
 		{
 			return new IndexedPixelData(
@@ -293,6 +296,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 				(byte[])GetPixelData().Clone());
 		}
 
+		/// <summary>
+		/// This method overrides <see cref="PixelData.GetPixelInternal"/>
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
 		protected override int GetPixelInternal(int i)
 		{
 			if (_bytesPerPixel == 1) // 8 bit
@@ -311,6 +319,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			}
 		}
 
+		/// <summary>
+		/// This method overrides <see cref="PixelData.SetPixelInternal"/>
+		/// </summary>
+		/// <param name="i"></param>
+		/// <param name="value"></param>
 		protected override void SetPixelInternal(int i, int value)
 		{
 			if (_bytesPerPixel == 1)
@@ -332,7 +345,6 @@ namespace ClearCanvas.ImageViewer.Imaging
 		#endregion
 
 		#region Private get methods
-
 
 		private byte GetPixelUnsigned8(int i)
 		{

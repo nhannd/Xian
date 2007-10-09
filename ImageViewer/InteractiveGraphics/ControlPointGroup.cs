@@ -1,13 +1,18 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Drawing;
-using System.Diagnostics;
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	// TODO: Remove IObservableList interface; retain other convenience
+	// methods like Add, Remove, etc.
+
+	/// <summary>
+	/// A collection of 
+	/// </summary>
 	public class ControlPointGroup : CompositeGraphic, IObservableList<PointF, ControlPointEventArgs>
 	{
 		private event EventHandler<ControlPointEventArgs> _controlPointChangedEvent;
@@ -97,7 +102,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Graphics.Add(controlPoint);
 			controlPoint.Location = point;
 			controlPoint.Color = this.Color;
-			controlPoint.ControlPointChanged += new EventHandler<ControlPointEventArgs>(OnControlPointChanged);
+			controlPoint.LocationChanged += new EventHandler<ControlPointEventArgs>(OnControlPointChanged);
 		}
 
 		public void Clear()
@@ -137,7 +142,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region IEnumerable<PointF> Members
 
-		public System.Collections.Generic.IEnumerator<PointF> GetEnumerator()
+		public IEnumerator<PointF> GetEnumerator()
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}

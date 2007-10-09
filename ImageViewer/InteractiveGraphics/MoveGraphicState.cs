@@ -1,10 +1,6 @@
-using System;
 using System.Drawing;
-using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics

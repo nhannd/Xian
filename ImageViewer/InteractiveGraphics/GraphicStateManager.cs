@@ -1,10 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.InputManagement;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Common;
 using System.Diagnostics;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {

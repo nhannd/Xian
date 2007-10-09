@@ -1,10 +1,11 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Mathematics
 {
+	/// <summary>
+	/// A rectangle based
+	/// </summary>
 	public class RectF
 	{
 		private float _top;

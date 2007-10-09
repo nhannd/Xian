@@ -1,5 +1,5 @@
-using ClearCanvas.Common;
 using System;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {

@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.ImageViewer.InputManagement
 {
 	public sealed class MouseWheelMessage : IInputMessage
@@ -17,10 +13,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		public MouseWheelMessage(int wheelDelta)
 			: this(wheelDelta, false, false, false)
-		{
-		}
-
-		private MouseWheelMessage()
 		{
 		}
 

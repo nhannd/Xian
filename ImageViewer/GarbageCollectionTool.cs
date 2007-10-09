@@ -4,6 +4,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Tools;
+using Timer=System.Threading.Timer;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -17,9 +18,9 @@ namespace ClearCanvas.ImageViewer
 	// the workspace has been closed.
 
 	[ExtensionOf(typeof(DesktopToolExtensionPoint))]
-	internal class GarbageCollectionTool : Tool<ClearCanvas.Desktop.IDesktopToolContext>
+	internal class GarbageCollectionTool : Tool<IDesktopToolContext>
 	{
-		private System.Threading.Timer _timer;
+		private Timer _timer;
 		private int _gcCycles;
 
 		public GarbageCollectionTool()
@@ -38,7 +39,7 @@ namespace ClearCanvas.ImageViewer
 			TimerCallback timerCallback = new TimerCallback(OnTimer);
 
 			AutoResetEvent autoReset = new AutoResetEvent(false);
-			_timer = new System.Threading.Timer(timerCallback, autoReset, 0, 2000);
+			_timer = new Timer(timerCallback, autoReset, 0, 2000);
 		}
 
 		void OnWorkspaceClosed(object sender, ItemEventArgs<Workspace> e)

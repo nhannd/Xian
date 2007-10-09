@@ -1,26 +1,20 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Graphics;
-using System.Drawing;
 using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class FocussedSelectedROIGraphicState : FocussedSelectedGraphicState
+	public class FocussedSelectedRoiGraphicState : FocussedSelectedGraphicState
 	{
 		private StatefulCompositeGraphic _currentChildGraphic;
 
-		public FocussedSelectedROIGraphicState(ROIGraphic roiGraphic)
+		public FocussedSelectedRoiGraphicState(RoiGraphic roiGraphic)
 			: base(roiGraphic)
 		{
 			_currentChildGraphic = null;
 		}
 
-		private ROIGraphic ROIGraphic
+		protected RoiGraphic ROIGraphic
 		{
-			get { return this.StandardStatefulGraphic as ROIGraphic; }
+			get { return this.StandardStatefulGraphic as RoiGraphic; }
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)

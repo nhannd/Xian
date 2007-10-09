@@ -1,10 +1,9 @@
 using System;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -207,23 +206,23 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			Platform.CheckForNullReference(sender, "sender");
 			Platform.CheckForNullReference(e, "e");
 
-			Trace.Write(String.Format("OnControlPointChanged: index = {0}, {1}\n", e.ControlPointIndex, e.ControlPoint.ToString()));
+			Trace.Write(String.Format("OnControlPointChanged: index = {0}, {1}\n", e.ControlPointIndex, e.ControlPointLocation.ToString()));
 
 			switch (e.ControlPointIndex)
 			{
 				case _topLeft:
-					this.TopLeft = e.ControlPoint;
+					this.TopLeft = e.ControlPointLocation;
 					break;
 				case _topRight:
-					this.TopLeft = new PointF(this.TopLeft.X, e.ControlPoint.Y);
-					this.BottomRight = new PointF(e.ControlPoint.X, this.BottomRight.Y);
+					this.TopLeft = new PointF(this.TopLeft.X, e.ControlPointLocation.Y);
+					this.BottomRight = new PointF(e.ControlPointLocation.X, this.BottomRight.Y);
 				    break;
 				case _bottomLeft:
-					this.TopLeft = new PointF(e.ControlPoint.X, this.TopLeft.Y);
-					this.BottomRight = new PointF(this.BottomRight.X, e.ControlPoint.Y);
+					this.TopLeft = new PointF(e.ControlPointLocation.X, this.TopLeft.Y);
+					this.BottomRight = new PointF(this.BottomRight.X, e.ControlPointLocation.Y);
 				    break;
 				case _bottomRight:
-					this.BottomRight = e.ControlPoint;
+					this.BottomRight = e.ControlPointLocation;
 					break;
 			}
 		}

@@ -24,6 +24,10 @@ namespace ClearCanvas.ImageViewer
 		private IImageViewer _imageViewer;
 		private event EventHandler _subjectChangedEvent;
 
+		/// <summary>
+		/// Initializes a new instance of <see cref="ImageViewerToolComponent"/>.
+		/// </summary>
+		/// <param name="imageViewerToolContext"></param>
 		protected ImageViewerToolComponent(IImageViewerToolContext imageViewerToolContext)
 		{
 			_imageViewerToolContext = imageViewerToolContext;
@@ -66,6 +70,10 @@ namespace ClearCanvas.ImageViewer
 			get { return _imageViewerToolContext; }
 		}
 
+		/// <summary>
+		/// Called when the active image viewer has changed.
+		/// </summary>
+		/// <param name="e"></param>
 		protected abstract void OnActiveImageViewerChanged(ActiveImageViewerChangedEventArgs e);
 
 		/// <summary>

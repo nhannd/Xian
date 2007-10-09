@@ -1,4 +1,3 @@
-using ClearCanvas.ImageViewer;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Comparers

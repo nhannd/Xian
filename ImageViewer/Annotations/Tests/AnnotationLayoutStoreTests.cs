@@ -1,14 +1,10 @@
 #if UNIT_TESTS
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
-using System.IO;
 using System.Drawing;
-using System.Configuration;
-using System.Xml;
+using System.IO;
 using ClearCanvas.Common.Utilities;
+using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Annotations.Tests
 {

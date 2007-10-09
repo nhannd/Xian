@@ -15,4 +15,12 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		}
 	}
+
+	//public class GraphicCollection<T> : GraphicCollection
+	//    where T:IGraphic
+	//{
+		
+	//}
+
+
 }

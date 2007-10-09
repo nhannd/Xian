@@ -1,9 +1,7 @@
 using System.Reflection;
-using System.Runtime.CompilerServices;
-
 using ClearCanvas.Common;
 
-[assembly: ClearCanvas.Common.Plugin()]
+[assembly: Plugin()]
 
 //
 // General Information about an assembly is controlled through the following 

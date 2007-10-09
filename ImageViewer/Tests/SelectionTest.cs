@@ -4,10 +4,6 @@
 
 using System;
 using NUnit.Framework;
-using System.Drawing;
-using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.StudyManagement;
-using NMock2;
 
 namespace ClearCanvas.ImageViewer.Tests
 {

@@ -1,27 +1,22 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Mathematics;
 using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class CreateROIGraphicState : CreateGraphicState
+	public class CreateRoiGraphicState : CreateGraphicState
 	{
 		private StatefulCompositeGraphic _childGraphic;
 
-		public CreateROIGraphicState(ROIGraphic roiGraphic)
+		public CreateRoiGraphicState(RoiGraphic roiGraphic)
 			: base(roiGraphic)
 		{
 		}
 
-		private ROIGraphic ROIGraphic
+		protected RoiGraphic ROIGraphic
 		{
-			get { return this.StandardStatefulGraphic as ROIGraphic; }
+			get { return this.StandardStatefulGraphic as RoiGraphic; }
 		}
 
 		public override bool Start(IMouseInformation mouseInformation)

@@ -1,17 +1,16 @@
 // Code taken directly and unmodified from http://www.windojitsu.com/code/floatcomparer.html
 
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.InteropServices;
+using System.Collections;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using dbg = System.Diagnostics.Debug;
 
 namespace ClearCanvas.ImageViewer.Mathematics
 {
-	public class FloatComparer : System.Collections.IComparer
+	public class FloatComparer : IComparer
 	{
-		int System.Collections.IComparer.Compare(object x, object y)
+		int IComparer.Compare(object x, object y)
 		{
 			// Handle special cases (nulls, wrong types, etc).
 			if (x == null && y == null) return 0;

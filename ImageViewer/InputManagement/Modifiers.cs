@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InputManagement
@@ -21,10 +18,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		public Modifiers(ModifierFlags modifierFlags)
 		{
 			_modifierFlags = modifierFlags;
-		}
-
-		private Modifiers()
-		{ 
 		}
 
 		public bool Control

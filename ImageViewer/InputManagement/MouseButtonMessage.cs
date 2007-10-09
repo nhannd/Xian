@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using ClearCanvas.Desktop;
 
@@ -33,10 +30,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		public MouseButtonMessage(Point location, XMouseButtons mouseButton, ButtonActions buttonAction, uint clickCount)
 			: this(location, mouseButton, buttonAction, clickCount, false, false, false)
-		{
-		}
-
-		private MouseButtonMessage()
 		{
 		}
 

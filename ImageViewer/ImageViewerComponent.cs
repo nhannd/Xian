@@ -11,11 +11,22 @@ using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer
 {
+	/// <summary>
+	/// An <see cref="ExtensionPoint"/> for views on to the 
+	/// <see cref="ImageViewerComponent"/>.
+	/// </summary>
 	[ExtensionPoint]
 	public class ImageViewerComponentViewExtensionPoint : ExtensionPoint<IApplicationComponentView>
 	{
 	}
 
+	/// <summary>
+	/// An <see cref="ExtensionPoint"/> for image viewer tools.
+	/// </summary>
+	/// <remarks>
+	/// This <see cref="ExtensionPoint"/> is the means by which tools
+	/// are added to the <see cref="ImageViewerComponent"/>.
+	/// </remarks>
 	[ExtensionPoint]
 	public class ImageViewerToolExtensionPoint : ExtensionPoint<ITool>
 	{
@@ -75,6 +86,16 @@ namespace ClearCanvas.ImageViewer
 
 		#endregion
 
+		/// <summary>
+		/// Instantiates a new instance of <see cref="ImageViewerComponent"/>.
+		/// </summary>
+		/// This constructor creates an <see cref="ImageViewerComponent"/>
+		/// that automatically lays out images according to how many 
+		/// <see cref="DisplaySet"/>s there are.  Use this constructor in 
+		/// simple display scenarios where you don't require control over 
+		/// how images are initially laid out.
+		/// If you do require control over the initial layout, use
+		/// <see cref="ImageViewerComponent(ILayoutManager)"/> instead.
 		public ImageViewerComponent() : this(new SimpleImageLayoutManager())
 		{
 		}
@@ -390,7 +411,7 @@ namespace ClearCanvas.ImageViewer
 			Platform.CheckForNullReference(queryParameters, "queryParameters");
 			Platform.CheckForEmptyString(studyFinderName, "studyFinderName");
 
-			return ImageViewerComponent.StudyFinders[studyFinderName].Query(queryParameters, targetServer);
+			return StudyFinders[studyFinderName].Query(queryParameters, targetServer);
 		}
 
 		/// <summary>
@@ -526,6 +547,9 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="ImageViewerComponent"/>.
+		/// </summary>
 		public void Dispose()
 		{
 			try

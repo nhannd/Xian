@@ -123,6 +123,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return this.ClientRectangle.Height; }
 		}
 
+		/// <summary>
+		/// This methods overrides <see cref="SpatialTransform.CreateMemento"/>.
+		/// </summary>
+		/// <returns></returns>
 		public override IMemento CreateMemento()
 		{
 			ImageSpatialTransformMemento memento = new ImageSpatialTransformMemento();
@@ -133,6 +137,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 			return memento;
 		}
 
+		/// <summary>
+		/// This method overrides <see cref="SpatialTransform.SetMemento"/>.
+		/// </summary>
+		/// <param name="memento"></param>
 		public override void SetMemento(IMemento memento)
 		{
 			Platform.CheckForNullReference(memento, "memento");

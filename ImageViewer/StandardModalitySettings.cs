@@ -6,7 +6,7 @@ using ClearCanvas.Common.Utilities;
 namespace ClearCanvas.ImageViewer
 {
 	[SettingsGroupDescription("Defines the standard list of modalities used primarily for (but not limited to) searching Dicom servers")]
-	[SettingsProvider(typeof(ClearCanvas.Common.Configuration.StandardSettingsProvider))]
+	[SettingsProvider(typeof(StandardSettingsProvider))]
 	internal sealed partial class StandardModalitySettings
 	{
 		private StandardModalitySettings()

@@ -109,7 +109,7 @@ namespace ClearCanvas.ImageViewer.Imaging
 				{
 					if (_realLut == null)
 					{
-						LutFactory factory = LutFactory.NewInstance;
+						LutFactory factory = NewInstance;
 						_realLut = factory.GetRealColorMap(_factoryName, _minInputValue, _maxInputValue);
 						factory.Dispose();
 					}

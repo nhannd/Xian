@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.InputManagement;
 
@@ -13,6 +11,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private GraphicState _newState;
 		private IMouseInformation _mouseInformation;
 
+		// TODO: Initialize through constructor; remove setters
+		// on properties
 		public GraphicStateChangedEventArgs()
 		{
 

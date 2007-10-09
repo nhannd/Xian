@@ -1,5 +1,4 @@
-﻿using System;
-namespace ClearCanvas.ImageViewer.InteractiveGraphics
+﻿namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
 	public interface IStandardStatefulGraphic : IStatefulGraphic
 	{

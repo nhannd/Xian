@@ -1,9 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common;
-using System.Diagnostics;
 using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom

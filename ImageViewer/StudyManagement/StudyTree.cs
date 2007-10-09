@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Dicom;
-using ClearCanvas.ImageViewer.Imaging;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
@@ -269,6 +265,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="StudyTree"/>.
+		/// </summary>
 		public void Dispose()
 		{
 			try

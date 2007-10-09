@@ -326,6 +326,9 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="Tile"/>.
+		/// </summary>
 		public void Dispose()
 		{
 			try

@@ -75,14 +75,14 @@ namespace ClearCanvas.ImageViewer.Rendering
 			RectangleF srcViewableRectangle;
 			RectangleF dstViewableRectangle;
 
-			ImageRenderer.CalculateVisibleRectangles(imageGraphic, clientRectangle, out dstViewableRectangle, out srcViewableRectangle);
+			CalculateVisibleRectangles(imageGraphic, clientRectangle, out dstViewableRectangle, out srcViewableRectangle);
 
 			byte[] srcPixelData = imageGraphic.PixelData.Raw;
 
 			IndexedImageGraphic grayscaleImage = imageGraphic as IndexedImageGraphic;
 			ColorImageGraphic colorImage = imageGraphic as ColorImageGraphic;
 
-			bool swapXY = ImageRenderer.IsRotated(imageGraphic);
+			bool swapXY = IsRotated(imageGraphic);
 
 			fixed (byte* pSrcPixelData = srcPixelData)
 			{

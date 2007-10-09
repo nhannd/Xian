@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 namespace ClearCanvas.ImageViewer.InputManagement
 {
 	public interface IMouseButtonHandler
@@ -11,6 +7,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		bool Stop(IMouseInformation mouseInformation);
 		void Cancel();
 
+		// TODO: Convert these two methods into one enum
 		bool SuppressContextMenu { get; }
 		bool ConstrainToTile { get; }
 	}

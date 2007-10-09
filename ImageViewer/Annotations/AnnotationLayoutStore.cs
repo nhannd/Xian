@@ -1,13 +1,10 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
-using System.IO;
-using ClearCanvas.Common;
-using System.Drawing;
-using ClearCanvas.Common.Utilities;
-using System.Configuration;
 using System.ComponentModel;
+using System.Drawing;
+using System.IO;
+using System.Xml;
+using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Annotations
 {
@@ -23,7 +20,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 		{
 			_layoutsInMemory = new Dictionary<string, StoredAnnotationLayout>();
 			AnnotationLayoutStoreSettings.Default.PropertyChanged += 
-			delegate(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+			delegate(object sender, PropertyChangedEventArgs e)
 			{
 				this.Initialize(true);
 			};
@@ -398,7 +395,7 @@ namespace ClearCanvas.ImageViewer.Annotations
 
 			private XmlDocument Document
 			{
-				get { return AnnotationLayoutStore._instance._document; }
+				get { return _instance._document; }
 			}
 
 			public void SerializeLayout(StoredAnnotationLayout layout)

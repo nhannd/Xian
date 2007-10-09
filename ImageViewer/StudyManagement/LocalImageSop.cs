@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
 
@@ -43,6 +40,10 @@ namespace ClearCanvas.ImageViewer.StudyManagement
             get { return _dicomFile; }
         }
 		
+		/// <summary>
+		/// This method overrides <see cref="ImageSop.GetNormalizedPixelData"/>.
+		/// </summary>
+		/// <returns></returns>
 		public override byte[] GetNormalizedPixelData()
 		{
 			Load();
@@ -94,47 +95,107 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 			return _pixelData;
 		}
 
+		/// <summary>
+		/// This method overides <see cref="Sop.GetTag(uint, out ushort, out bool)"/>.
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="value"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(uint tag, out ushort value, out bool tagExists)
 		{
 			GetTag(tag, out value, 0, out tagExists);
 		}
 
+		/// <summary>
+		/// This method overrides <see cref="Sop.GetTag(uint, out ushort, uint, out bool)"/>
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="value"></param>
+		/// <param name="position"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(uint tag, out ushort value, uint position, out bool tagExists)
 		{
 			GetTag<ushort>(tag, out value, position, out tagExists, GetUint16FromAttribute);
 		}
 
+		/// <summary>
+		/// This method overrides <see cref="Sop.GetTag(uint, out int, out bool)"/>
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="value"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(uint tag, out int value, out bool tagExists)
 		{
 			GetTag(tag, out value, 0, out tagExists);
 		}
 
+		/// <summary>
+		/// This method overrides <see cref="Sop.GetTag(uint, out int, uint, out bool)"/>.
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="value"></param>
+		/// <param name="position"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(uint tag, out int value, uint position, out bool tagExists)
 		{
 			GetTag<int>(tag, out value, position, out tagExists, GetInt32FromAttribute);
 		}
 
+		/// <summary>
+		/// This method overrides <see cref="Sop.GetTag(uint, out double, out bool)"/>
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="value"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(uint tag, out double value, out bool tagExists)
 		{
 			GetTag(tag, out value, 0, out tagExists);
 		}
 
+		/// <summary>
+		/// This method overrides <see cref="Sop.GetTag(uint, out double, uint, out bool)"/>
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="value"></param>
+		/// <param name="position"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(uint tag, out double value, uint position, out bool tagExists)
 		{
 			GetTag<double>(tag, out value, position, out tagExists, GetFloat64FromAttribute);
 		}
 
+		/// <summary>
+		/// This method overrides <see cref="Sop.GetTag(uint, out string, out bool)"/>
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="value"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(uint tag, out string value, out bool tagExists)
 		{
 			GetTag(tag, out value, 0, out tagExists);
 		}
 
+		/// <summary>
+		/// This method overrides <see cref="Sop.GetTag(uint, out string, uint, out bool)"/>
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="value"></param>
+		/// <param name="position"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTag(uint tag, out string value, uint position, out bool tagExists)
 		{
 			GetTag<string>(tag, out value, position, out tagExists, GetStringFromAttribute);
 			value = value ?? "";
 		}
 
+		// TODO: Should rename since it's unclear what this tag array is.
+
+		/// <summary>
+		/// This method overrides <see cref="Sop.GetTagArray"/>
+		/// </summary>
+		/// <param name="tag"></param>
+		/// <param name="value"></param>
+		/// <param name="tagExists"></param>
 		public override void GetTagArray(uint tag, out string value, out bool tagExists)
 		{
 			GetTag<string>(tag, out value, 0, out tagExists, GetStringArrayFromAttribute);

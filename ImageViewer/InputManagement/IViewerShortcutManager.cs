@@ -1,11 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.ImageViewer.InputManagement
 {
+	// TODO: For internal use only
 	public interface IViewerShortcutManager
 	{
 		IClickAction GetKeyboardAction(KeyboardButtonShortcut shortcut);

@@ -97,7 +97,7 @@ namespace ClearCanvas.ImageViewer.Rendering
 					if (ReferenceCount > 0)
 						return;
 
-					RendererFactoryBase._proxy = null;
+					_proxy = null;
 					
 					Dispose(true);
 					GC.SuppressFinalize(this);

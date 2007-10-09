@@ -1,8 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
-using System.Collections;
 using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.StudyManagement

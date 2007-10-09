@@ -1,11 +1,7 @@
-using System;
-using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -26,7 +22,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			_controlPointIndex = controlPointIndex;
 		}
 
-		private InteractiveGraphic InteractiveGraphic
+		protected InteractiveGraphic InteractiveGraphic
 		{
 			get { return this.StandardStatefulGraphic as InteractiveGraphic; }
 		}
@@ -53,7 +49,6 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 				return false;
 
 			_currentPoint = this.InteractiveGraphic.SpatialTransform.ConvertToSource(mouseInformation.Location);
-			_currentPoint = this.InteractiveGraphic.CalcControlPointPosition(_controlPointIndex, base.LastPoint, _currentPoint);
 			this.InteractiveGraphic.CoordinateSystem = CoordinateSystem.Source;
 			this.InteractiveGraphic.ControlPoints[_controlPointIndex] = _currentPoint;
 			this.InteractiveGraphic.ResetCoordinateSystem();

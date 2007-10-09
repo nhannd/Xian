@@ -1,6 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom;
@@ -20,26 +18,58 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 	/// of <see cref="Sop"/> should simply manufacture data when none is present.
 	/// </para>
 	/// <para>
-	/// Please follow these guidelines when implementing <see cref="Sop"/>-derived classes.
+	/// Follow these guidelines when implementing <see cref="Sop"/>-derived classes:
+	/// <list>
+	/// <item>
+	/// <description>
 	/// 1) For (new) properties that represent Type 1 tags, override the <see cref="ValidateInternal"/> method (which is called by <see cref="Validate"/>),
 	///    calling the base class' <see cref="ValidateInternal"/> first, then doing further validation on those properties.  Validation on other tags can be done
 	///    at your discretion; for example, the <see cref="Sop"/> class validates that the <see cref="PatientId"/> property is non-empty, even though it is Type 2.
+	/// </description>
+	/// </item>
+	/// <item>
+	/// <description>
 	/// 2) Override and implement all of the GetTag methods, but do not throw an exception.  See #4 for an explanation.
+	/// </description>
+	/// </item>
+	/// <item>
+	/// <description>
 	/// 3) Override any properties that you wish to change the behaviour of how the values are returned.  All properties in <see cref="Sop"/> call
-	///    one of the <see cref="GetTag"/> methods to retrieve the tag value.  You may wish to retrieve certain tags differently.
-	/// 4) <see cref="GetTag"/> methods should make no assumptions about return values.  If a return value cannot be determined, the default value for the
+	///    one of the <b>GetTag</b> methods to retrieve the tag value.  You may wish to retrieve certain tags differently.
+	/// </description>
+	/// </item>
+	/// <item>
+	/// <description>
+	/// 4) <b>GetTag</b> methods should make no assumptions about return values.  If a return value cannot be determined, the default value for the
 	///    return type should be returned.  These are: "" for strings, 0 for any numeric type.  See <see cref="GetTag"/> for more details.
+	/// </description>
+	/// </item>
+	/// <item>
+	/// <description>
 	/// 5) As mentioned above, when returning values from properties for which no data is available, return the default value 
 	///    for the given type according to the following guidelines:
 	///    - "" for string types
 	///    - 0 for numeric types
 	///    - null for reference types that are not strings
 	///    - a valid default value when deemed appropriate
+	/// </description>
+	/// </item>
+	/// <item>
+	/// <description>
 	/// 6) If a particular property's value is vital to functionality and has no reasonable default, it should be included in the <see cref="ValidateInternal"/>
 	///    override and considered a fault if the value is invalid.  No attempt should be made to correct data in the properties when there is no 'reasonable default'.
+	/// </description>
+	/// </item>
+	/// <item>
+	/// <description>
 	/// 7) If a reasonable default is returned from a property, the property's documentation should reflect that.
-	/// 8) If the existence or 'true value' of a tag is important to your implementation, use one of the <see cref="GetTag"/> methods, rather than the
+	/// </description>
+	/// </item>
+	/// <item>
+	/// <description>
+	/// 8) If the existence or 'true value' of a tag is important to your implementation, use one of the <b>GetTag</b> methods, rather than the
 	///    existing property (or adding a property, for that matter).
+	/// </list>
 	/// </para>
 	/// </remarks>
 	public abstract class Sop : ICacheableSop
@@ -749,6 +779,9 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="Sop"/>.
+		/// </summary>
 		public void Dispose()
 		{
 			try

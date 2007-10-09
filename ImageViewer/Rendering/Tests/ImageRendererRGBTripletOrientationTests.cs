@@ -1,16 +1,5 @@
 #if	UNIT_TESTS
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
-using System.Drawing.Imaging;
-using NUnit.Framework;
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Rendering;
-
 namespace ClearCanvas.ImageViewer.Rendering.Tests
 {
 /*	[TestFixture]

@@ -152,6 +152,13 @@ namespace ClearCanvas.ImageViewer.Graphics
 			get { return _isSigned; }
 		}
 
+		/// <summary>
+		/// Gets or sets a value indicating whether the image should
+		/// be inverted.
+		/// </summary>
+		/// <remarks>
+		/// Inversion is equivalent to polarity.
+		/// </remarks>
 		public bool Invert
 		{
 			get { return _invert; }

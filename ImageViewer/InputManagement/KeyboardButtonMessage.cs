@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InputManagement
@@ -17,10 +13,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		{
 			_buttonAction = buttonAction;
 			_buttonShortcut = new KeyboardButtonShortcut(keyData);
-		}
-
-		private KeyboardButtonMessage()
-		{
 		}
 
 		public ButtonActions ButtonAction

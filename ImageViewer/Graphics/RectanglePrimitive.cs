@@ -214,22 +214,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 			distance = Vector.DistanceFromPointToLine(point, ptTopLeft, ptTopRight, ref ptNearest);
 
-			if (distance < VectorGraphic.HitTestDistance)
+			if (distance < HitTestDistance)
 				return true;
 
 			distance = Vector.DistanceFromPointToLine(point, ptTopRight, ptBottomRight, ref ptNearest);
 
-			if (distance < VectorGraphic.HitTestDistance)
+			if (distance < HitTestDistance)
 				return true;
 
 			distance = Vector.DistanceFromPointToLine(point, ptBottomRight, ptBottomLeft, ref ptNearest);
 
-			if (distance < VectorGraphic.HitTestDistance)
+			if (distance < HitTestDistance)
 				return true;
 
 			distance = Vector.DistanceFromPointToLine(point, ptBottomLeft, ptTopLeft, ref ptNearest);
 
-			if (distance < VectorGraphic.HitTestDistance)
+			if (distance < HitTestDistance)
 				return true;
 
 			return false;

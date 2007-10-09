@@ -1,22 +1,38 @@
 using System;
-using System.Drawing;
 using System.Diagnostics;
+using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	/// <summary>
+	/// A graphical representation of the "handles" that allow 
+	/// the user to move and resize <see cref="InteractiveGraphic"/>s.
+	/// </summary>
 	public class ControlPoint : CompositeGraphic
 	{
+		#region Private fields
+
 		private int _index;
 		private PointF _location;
 		private InvariantRectanglePrimitive _rectangle;
-		private event EventHandler<ControlPointEventArgs> _controlPointChangedEvent;
+		private event EventHandler<ControlPointEventArgs> _locationChangedEvent;
 
-		public ControlPoint(int index)
+		#endregion
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="ControlPoint"/>.
+		/// </summary>
+		/// <param name="index">The index at which a <see cref="ControlPoint"/>
+		/// is inserted into a <see cref="ControlPointGroup"/>.
+		/// </param>
+		internal ControlPoint(int index)
 		{
+			Platform.CheckNonNegative(index, "index");
+
 			_index = index;
 			_rectangle = new InvariantRectanglePrimitive();
 			_rectangle.InvariantTopLeft = new PointF(-4, -4);
@@ -24,6 +40,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			this.Graphics.Add(_rectangle);
 		}
 
+		/// <summary>
+		/// Gets or sets the location of the control point.
+		/// </summary>
 		public PointF Location
 		{
 			get
@@ -47,24 +66,34 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 					Trace.Write(String.Format("Control Point: {0}\n", _location.ToString()));
 
 					_rectangle.AnchorPoint = this.Location;
-					EventsHelper.Fire(_controlPointChangedEvent, this, new ControlPointEventArgs(_index, this.Location));
+					EventsHelper.Fire(_locationChangedEvent, this, new ControlPointEventArgs(_index, this.Location));
 				}
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the colour of the control point.
+		/// </summary>
 		public Color Color
 		{
 			get { return _rectangle.Color; }
 			set { _rectangle.Color = value; }
 		}
 	
-
-		public event EventHandler<ControlPointEventArgs> ControlPointChanged
+		/// <summary>
+		/// Occurs when the location of the control point has changed.
+		/// </summary>
+		public event EventHandler<ControlPointEventArgs> LocationChanged
 		{
-			add { _controlPointChangedEvent += value; }
-			remove { _controlPointChangedEvent -= value; }
+			add { _locationChangedEvent += value; }
+			remove { _locationChangedEvent -= value; }
 		}
 
+		/// <summary>
+		/// This method overrides <see cref="Graphic.HitTest"/>.
+		/// </summary>
+		/// <param name="point"></param>
+		/// <returns></returns>
 		public override bool HitTest(Point point)
 		{
 			PointF ptMouse = this.SpatialTransform.ConvertToSource(point);

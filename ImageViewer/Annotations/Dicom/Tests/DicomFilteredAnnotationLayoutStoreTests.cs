@@ -1,11 +1,9 @@
 #if UNIT_TESTS
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using NUnit.Framework;
 using System.IO;
 using ClearCanvas.Common.Utilities;
+using NUnit.Framework;
 
 namespace ClearCanvas.ImageViewer.Annotations.Dicom.Tests
 {

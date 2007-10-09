@@ -1,14 +1,18 @@
 using System;
-using System.Drawing;
 using System.Collections;
+using System.Collections.Generic;
+using System.Drawing;
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	// TODO: Remove IObservableList interface; retain other convenience
+	// methods like Add, Remove, etc.
+
 	public class PolyLineAnchorPointsGraphic 
 		: CompositeGraphic, IObservableList<PointF, AnchorPointEventArgs>, IMemorable
 	{
@@ -199,7 +203,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region IEnumerable<PointF> Members
 
-		public System.Collections.Generic.IEnumerator<PointF> GetEnumerator()
+		public IEnumerator<PointF> GetEnumerator()
 		{
 			throw new Exception("The method or operation is not implemented.");
 		}

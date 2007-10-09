@@ -31,10 +31,22 @@ namespace ClearCanvas.ImageViewer.Graphics
 		}
 	}
 
+	/// <summary>
+	/// Specifies the line style to use when drawing the vector.
+	/// </summary>
 	public enum LineStyle
 	{
+		/// <summary>
+		/// A solid line.
+		/// </summary>
 		Solid = 0,
+		/// <summary>
+		/// A dashed line.
+		/// </summary>
 		Dash = 1,
+		/// <summary>
+		/// A dotted line.
+		/// </summary>
 		Dot = 2
 	}
 
@@ -43,12 +55,15 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// </summary>
 	public abstract class VectorGraphic : Graphic
 	{
+		/// <summary>
+		/// The hit test distance in destination pixels.
+		/// </summary>
 		public static readonly int HitTestDistance = 10;
 		private Color _color = Color.Yellow;
 		private LineStyle _lineStyle = LineStyle.Solid;
 
 		/// <summary>
-		/// 
+		/// Initializes a new instance of <see cref="VectorGraphic"/>.
 		/// </summary>
 		protected VectorGraphic()
 		{

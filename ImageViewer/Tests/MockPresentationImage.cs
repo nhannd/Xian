@@ -2,9 +2,6 @@
 
 #pragma warning disable 1591,0419,1574,1587
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.Tests

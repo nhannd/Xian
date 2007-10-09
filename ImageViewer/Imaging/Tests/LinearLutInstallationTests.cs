@@ -2,13 +2,7 @@
 
 #pragma warning disable 1591,0419,1574,1587
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using NUnit.Framework;
-using ClearCanvas.ImageViewer.StudyManagement;
-using ClearCanvas.ImageViewer.StudyManagement.Tests;
-using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Imaging.Tests
 {

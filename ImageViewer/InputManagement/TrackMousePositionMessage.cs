@@ -1,6 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.InputManagement
@@ -12,10 +9,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		public TrackMousePositionMessage(Point location)
 		{
 			_location = location;
-		}
-
-		private TrackMousePositionMessage()
-		{ 
 		}
 
 		public Point Location

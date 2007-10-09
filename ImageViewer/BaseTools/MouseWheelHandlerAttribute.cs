@@ -1,9 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Desktop;
 using ClearCanvas.ImageViewer.InputManagement;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.BaseTools
 {

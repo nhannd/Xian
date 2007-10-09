@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InputManagement
@@ -13,10 +10,6 @@ namespace ClearCanvas.ImageViewer.InputManagement
 		public KeyboardButtonShortcut(XKeys keyData)
 		{
 			_keyData = keyData;
-		}
-
-		private KeyboardButtonShortcut()
-		{
 		}
 
 		public XKeys KeyData

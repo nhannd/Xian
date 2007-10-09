@@ -1,5 +1,5 @@
-using ClearCanvas.Dicom;
 using System.Drawing;
+using ClearCanvas.Dicom;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -281,15 +281,15 @@ namespace ClearCanvas.ImageViewer.Imaging
 			YbrToRgb converter;
 
 			if (photometricInterpretation == PhotometricInterpretation.YbrFull)
-				converter = new YbrToRgb(ColorSpaceConverter.YbrFullToRgb);
+				converter = new YbrToRgb(YbrFullToRgb);
 			else if (photometricInterpretation == PhotometricInterpretation.YbrFull422)
-				converter = new YbrToRgb(ColorSpaceConverter.YbrFull422ToRgb);
+				converter = new YbrToRgb(YbrFull422ToRgb);
 			else if (photometricInterpretation == PhotometricInterpretation.YbrIct)
-				converter = new YbrToRgb(ColorSpaceConverter.YbrIctToRgb);
+				converter = new YbrToRgb(YbrIctToRgb);
 			else if (photometricInterpretation == PhotometricInterpretation.YbrPartial422)
-				converter = new YbrToRgb(ColorSpaceConverter.YbrPartial422ToRgb);
+				converter = new YbrToRgb(YbrPartial422ToRgb);
 			else
-				converter = new YbrToRgb(ColorSpaceConverter.YbrRctToRgb);
+				converter = new YbrToRgb(YbrRctToRgb);
 
 			return converter;
 		}

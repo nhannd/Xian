@@ -1,5 +1,4 @@
 using System;
-using ClearCanvas.ImageViewer;
 
 namespace ClearCanvas.ImageViewer.Rendering
 {

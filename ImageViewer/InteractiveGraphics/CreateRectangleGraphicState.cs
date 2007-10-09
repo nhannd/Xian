@@ -1,9 +1,6 @@
-using System;
-using System.Diagnostics;
 using System.Drawing;
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {

@@ -148,6 +148,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 				graphic.Move(delta);
 		}
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="CompositeGraphic"/>.
+		/// </summary>
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)
@@ -168,4 +171,21 @@ namespace ClearCanvas.ImageViewer.Graphics
 			graphic.CoordinateSystem = this.CoordinateSystem;
 		}
 	}
+
+	//public class CompositeGraphic<T> : CompositeGraphic
+	//where T : IGraphic
+	//{
+	//    public new GraphicCollection Graphics
+	//    {
+	//        get
+	//        {
+	//            if (_graphics == null)
+	//                _graphics = new GraphicCollection<T>();
+
+	//            return _graphics;
+	//        }
+	//    }
+	//}
 }
+
+

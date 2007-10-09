@@ -145,8 +145,6 @@
     <Compile Include="Imaging\ColorPixelData.cs" />
     <Compile Include="Graphics\GraphicSelectionChangedEventArgs.cs" />
     <Compile Include="Graphics\GrayscaleImageGraphic.cs" />
-    <Compile Include="Graphics\IColorImageGraphicProvider.cs" />
-    <Compile Include="Graphics\IGrayscaleImageGraphicProvider.cs" />
     <Compile Include="Imaging\GeneratedDataLut.cs" />
     <Compile Include="Imaging\IDataLut.cs" />
     <Compile Include="Imaging\IInitialVoiLutProvider.cs" />
@@ -310,7 +308,7 @@
     <Compile Include="InteractiveGraphics\ControlPoint.cs" />
     <Compile Include="InteractiveGraphics\ControlPointEventArgs.cs" />
     <Compile Include="InteractiveGraphics\ControlPointGroup.cs" />
-    <Compile Include="InteractiveGraphics\CreateMultiLineGraphicState.cs" />
+    <Compile Include="InteractiveGraphics\CreatePolyLineGraphicState.cs" />
     <Compile Include="InteractiveGraphics\CreateRectangleGraphicState.cs" />
     <Compile Include="InteractiveGraphics\CreateROIGraphicState.cs" />
     <Compile Include="InteractiveGraphics\FocussedGraphicState.cs" />

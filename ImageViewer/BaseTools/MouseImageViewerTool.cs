@@ -1,10 +1,9 @@
 using System;
-using ClearCanvas.Common;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.InputManagement;
 using System.Drawing;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.BaseTools
 {

@@ -1,12 +1,19 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 
 namespace ClearCanvas.ImageViewer.Mathematics
 {
+	/// <summary>
+	/// A collection vector related methods.
+	/// </summary>
 	public static class Vector
 	{
+		/// <summary>
+		/// Calculates the distance between two points.
+		/// </summary>
+		/// <param name="pt1"></param>
+		/// <param name="pt2"></param>
+		/// <returns></returns>
 		public static double Distance(Point pt1, Point pt2)
 		{
 			int deltaX = pt2.X - pt1.X;
@@ -15,6 +22,12 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
 		}
 
+		/// <summary>
+		/// Calculates the distance between two points.
+		/// </summary>
+		/// <param name="pt1"></param>
+		/// <param name="pt2"></param>
+		/// <returns></returns>
 		public static double Distance(PointF pt1, PointF pt2)
 		{
 			float deltaX = pt2.X - pt1.X;
@@ -23,6 +36,12 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return Math.Sqrt(deltaX * deltaX + deltaY * deltaY);
 		}
 
+		/// <summary>
+		/// Finds the midpoint between two points.
+		/// </summary>
+		/// <param name="pt1"></param>
+		/// <param name="pt2"></param>
+		/// <returns></returns>
 		public static PointF Midpoint(PointF pt1, PointF pt2)
 		{
 			float x = (pt1.X + pt2.X) / 2;
@@ -31,6 +50,12 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return new PointF(x, y);
 		}
 
+		/// <summary>
+		/// Finds the midpoint between two points.
+		/// </summary>
+		/// <param name="pt1"></param>
+		/// <param name="pt2"></param>
+		/// <returns></returns>
 		public static Point Midpoint(Point pt1, Point pt2)
 		{
 			int x = (pt1.X + pt2.X) / 2;
@@ -39,6 +64,16 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return new Point(x, y);
 		}
 
+		/// <summary>
+		/// Calculates the shortest distance from a point to a line segment.
+		/// </summary>
+		/// <param name="ptTest">Point to be tested.</param>
+		/// <param name="pt1">Beginning of line segment.</param>
+		/// <param name="pt2">End of line segement.</param>
+		/// <param name="ptNearest">The point on line segment that is
+		/// closest to the test point.</param>
+		/// <returns>The distance from the test point to
+		/// the nearest point on the line segment.</returns>
 		static public double DistanceFromPointToLine(PointF ptTest, PointF pt1, PointF pt2, ref PointF ptNearest)
 		{
 			float distanceX;
@@ -88,13 +123,35 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return distance;
 		}
 
+		/// <summary>
+		/// Possible arrangements of two line segments.
+		/// </summary>
 		public enum LineSegments
 		{
+			/// <summary>
+			/// The line segments do not interesect.
+			/// </summary>
 			DoNotIntersect,
+			/// <summary>
+			/// The line segments intersect.
+			/// </summary>
 			Intersect,
+			/// <summary>
+			/// The line segments are colinear.
+			/// </summary>
 			Colinear
 		}
 
+		/// <summary>
+		/// Determines whether two line segments intersect, do not intersect
+		/// or are colinear.
+		/// </summary>
+		/// <param name="p1"></param>
+		/// <param name="p2"></param>
+		/// <param name="q1"></param>
+		/// <param name="q2"></param>
+		/// <param name="intersectionPoint"></param>
+		/// <returns></returns>
 		public static LineSegments LineSegmentIntersection(
 			Point p1,
 			Point p2,
@@ -194,6 +251,16 @@ namespace ClearCanvas.ImageViewer.Mathematics
 			return LineSegments.Intersect;
 		}
 
+		/// <summary>
+		/// Determines whether two line segments intersect, do not intersect
+		/// or are colinear.
+		/// </summary>
+		/// <param name="p1"></param>
+		/// <param name="p2"></param>
+		/// <param name="q1"></param>
+		/// <param name="q2"></param>
+		/// <param name="intersectionPoint"></param>
+		/// <returns></returns>
 		public static LineSegments LineSegmentIntersection(
 			PointF p1,
 			PointF p2,

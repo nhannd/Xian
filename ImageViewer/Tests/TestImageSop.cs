@@ -1,8 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.Dicom;
+using ClearCanvas.ImageViewer.StudyManagement;
 
 namespace ClearCanvas.ImageViewer.Tests
 {

@@ -1,9 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Dicom;
-using ClearCanvas.Codecs;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
@@ -552,6 +549,29 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 
 		#endregion
 
+		/// <summary>
+		/// Gets pixel data in normalized form.
+		/// </summary>
+		/// <returns></returns>
+		/// <remarks>
+		/// <i>Normalized</i> pixel data means that:
+		/// <list type="Bullet">
+		/// <item>
+		/// <description>Grayscale pixel data is unchanged.</description>
+		/// </item>
+		/// <item>
+		/// <description>Colour pixel data is always converted
+		/// into ARGB format.</description>
+		/// </item>
+		/// <item>
+		/// <description>Pixel data is always uncompressed.</description>
+		/// </item>
+		/// </list>
+		/// Ensuring that the pixel data always meets the above criteria
+		/// allows clients to easily consume pixel data without having
+		/// to worry about the the multitude of DICOM photometric interpretations
+		/// and transfer syntaxes.
+		/// </remarks>
 		public abstract byte[] GetNormalizedPixelData();
 
 		/// <summary>

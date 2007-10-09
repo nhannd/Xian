@@ -25,7 +25,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     public class RectangularROITool : MouseImageViewerTool
 	{
 		private static readonly string[] _disallowedModalities = { "CR", "DX", "MG" };
-		private ROIGraphic _createGraphic;
+		private RoiGraphic _createGraphic;
 
 		public RectangularROITool()
 			: base(SR.TooltipRectangularROI)
@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			//see it through to the end of creation.  It's just cleaner, not to mention that if this tool knows how to create it,
 			//it should also know how to (and be responsible for) cancelling it and/or deleting it appropriately.
 			RectangleInteractiveGraphic rectangleGraphic = new RectangleInteractiveGraphic(true);
-			_createGraphic = new ROIGraphic(rectangleGraphic, true);
+			_createGraphic = new RoiGraphic(rectangleGraphic, true);
 
 			_createGraphic.Callout.Text = SR.ToolsMeasurementArea;
 			image.OverlayGraphics.Add(_createGraphic);
@@ -129,7 +129,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		private void OnRoiChanged(object sender, EventArgs e)
 		{
-			ROIGraphic roiGraphic = sender as ROIGraphic;
+			RoiGraphic roiGraphic = sender as RoiGraphic;
 
 			RectangleInteractiveGraphic rectangleGraphic = roiGraphic.Roi as RectangleInteractiveGraphic;
 			IImageSopProvider image = roiGraphic.ParentPresentationImage as IImageSopProvider;

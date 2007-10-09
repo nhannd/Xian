@@ -1,8 +1,6 @@
-using System;
-using System.Drawing;
 using System.Collections;
 using System.Collections.Generic;
-using ClearCanvas.Common;
+using System.Drawing;
 using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
@@ -22,7 +20,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		#region IEnumerable<PointF> Members
 
-		public System.Collections.Generic.IEnumerator<PointF> GetEnumerator()
+		public IEnumerator<PointF> GetEnumerator()
 		{
 			return _anchorPoints.GetEnumerator();
 		}

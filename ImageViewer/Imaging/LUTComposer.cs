@@ -1,6 +1,6 @@
 using System;
-using System.Diagnostics;
 using System.Collections.Generic;
+using System.Diagnostics;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 

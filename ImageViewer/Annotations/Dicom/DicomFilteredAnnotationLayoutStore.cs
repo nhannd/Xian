@@ -1,10 +1,8 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Xml;
+using System.ComponentModel;
 using System.IO;
-using ClearCanvas.ImageViewer.Annotations;
-using ClearCanvas.ImageViewer.Imaging;
+using System.Xml;
 using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.StudyManagement;
 
@@ -19,7 +17,7 @@ namespace ClearCanvas.ImageViewer.Annotations.Dicom
 		private DicomFilteredAnnotationLayoutStore()
 		{
 			DicomFilteredAnnotationLayoutStoreSettings.Default.PropertyChanged +=
-				delegate(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+				delegate(object sender, PropertyChangedEventArgs e)
 				{
 					this.Initialize(true);
 				};

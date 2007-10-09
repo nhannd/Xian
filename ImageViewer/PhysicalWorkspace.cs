@@ -1,11 +1,8 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {
@@ -192,6 +189,9 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="PhysicalWorkspace"/>.
+		/// </summary>
 		public void Dispose()
 		{
 			try

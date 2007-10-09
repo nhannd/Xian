@@ -265,6 +265,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region Disposal
 
+
 		protected override void Dispose(bool disposing)
 		{
 			if (disposing)

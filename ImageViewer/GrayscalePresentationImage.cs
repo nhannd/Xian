@@ -1,6 +1,5 @@
 using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.Imaging;
-using ClearCanvas.Desktop;
 
 namespace ClearCanvas.ImageViewer
 {

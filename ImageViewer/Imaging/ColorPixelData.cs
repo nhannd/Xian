@@ -145,11 +145,20 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Overrides
 
+		/// <summary>
+		/// This method overrides <see cref="PixelData.CloneInternal"/>
+		/// </summary>
+		/// <returns></returns>
 		protected override PixelData CloneInternal()
 		{
 			return new ColorPixelData(_rows, _columns, (byte[])GetPixelData().Clone());
 		}
 
+		/// <summary>
+		/// This method overrides <see cref="PixelData.GetPixelInternal"/>
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
 		protected override int GetPixelInternal(int i)
 		{
 			byte[] pixelData = GetPixelData();
@@ -163,6 +172,11 @@ namespace ClearCanvas.ImageViewer.Imaging
 			return argb;
 		}
 
+		/// <summary>
+		/// This method overrides <see cref="PixelData.SetPixelInternal"/>
+		/// </summary>
+		/// <param name="i"></param>
+		/// <param name="value"></param>
 		protected override void SetPixelInternal(int i, int value)
 		{
 			byte[] pixelData = GetPixelData();

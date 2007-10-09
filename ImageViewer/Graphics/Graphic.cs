@@ -255,6 +255,9 @@ namespace ClearCanvas.ImageViewer.Graphics
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="Graphic"/>.
+		/// </summary>
 		public void Dispose()
 		{
 			try

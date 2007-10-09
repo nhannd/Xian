@@ -3,7 +3,6 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Graphics
 {

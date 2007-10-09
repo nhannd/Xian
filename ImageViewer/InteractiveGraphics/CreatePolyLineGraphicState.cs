@@ -1,19 +1,16 @@
-using System;
-using System.Diagnostics;
 using System.Drawing;
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.InputManagement;
 using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class CreateMultiLineGraphicState : CreateGraphicState
+	public class CreatePolyLineGraphicState : CreateGraphicState
 	{
 		private int _controlPointIndex;
 		private int _numberOfPointsAnchored = 0;
 
 		// Create a graphic object
-		public CreateMultiLineGraphicState(PolyLineInteractiveGraphic interactiveGraphic) 
+		public CreatePolyLineGraphicState(PolyLineInteractiveGraphic interactiveGraphic) 
 			: base(interactiveGraphic)
 		{
 			_controlPointIndex = 1;

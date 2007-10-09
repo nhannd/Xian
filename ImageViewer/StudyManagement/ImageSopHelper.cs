@@ -1,22 +1,18 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Codecs;
-using ClearCanvas.Dicom;
 using ClearCanvas.Common;
-using System.Threading;
+using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {
-	public class ImageSopHelper
+	/// <summary>
+	/// A collection of image SOP helper methods.
+	/// </summary>
+	public static class ImageSopHelper
 	{
 		private static object _imageCodecLock = new object();
 		private static ImageCodecMap _imageCodecMap;
-
-		private ImageSopHelper()
-		{ 
-		}
 
 		private static ImageCodecMap ImageCodecMap
 		{

@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     public class RulerTool : MouseImageViewerTool
 	{
 		private static readonly string[] _disallowedModalities = { "CR", "DX", "MG" };
-		private ROIGraphic _roiGraphic;
+		private RoiGraphic _roiGraphic;
 
 		public RulerTool()
 			: base(SR.TooltipRuler)
@@ -59,7 +59,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 				return _roiGraphic.Start(mouseInformation);
 
 			PolyLineInteractiveGraphic polyLineGraphic = new PolyLineInteractiveGraphic(true, 2);
-			_roiGraphic = new ROIGraphic(polyLineGraphic, true);
+			_roiGraphic = new RoiGraphic(polyLineGraphic, true);
 
 			//_roiGraphic.Callout.Text = SR.ToolsMeasurementLineROI;
 			image.OverlayGraphics.Add(_roiGraphic);
@@ -127,7 +127,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 		// Ideally, we should have domain objects that make this easier.  
 		private void OnRoiChanged(object sender, EventArgs e)
 		{
-			ROIGraphic roiGraphic = sender as ROIGraphic;
+			RoiGraphic roiGraphic = sender as RoiGraphic;
 			
 			PolyLineInteractiveGraphic multiLineGraphic = roiGraphic.Roi as PolyLineInteractiveGraphic;
 			IImageSopProvider image = roiGraphic.ParentPresentationImage as IImageSopProvider;

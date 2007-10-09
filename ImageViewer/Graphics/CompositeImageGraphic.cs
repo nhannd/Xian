@@ -81,6 +81,10 @@ namespace ClearCanvas.ImageViewer.Graphics
 			_pixelAspectRatioY = pixelAspectRatioY;
 		}
 		
+		/// <summary>
+		/// This member overrides <see cref="Graphic.CreateSpatialTransform"/>.
+		/// </summary>
+		/// <returns></returns>
 		protected override SpatialTransform CreateSpatialTransform()
 		{
 			return new ImageSpatialTransform(

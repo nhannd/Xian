@@ -1,9 +1,5 @@
 #if	UNIT_TESTS
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using NMock2;
 using ClearCanvas.ImageViewer.Rendering;
 
 namespace ClearCanvas.ImageViewer.Tests

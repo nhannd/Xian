@@ -140,7 +140,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 			distance = Vector.DistanceFromPointToLine(point, this.Pt1, this.Pt2, ref ptNearest);
 			this.ResetCoordinateSystem();
 
-			if (distance < VectorGraphic.HitTestDistance)
+			if (distance < HitTestDistance)
 				return true;
 			else
 				return false;

@@ -82,7 +82,8 @@ namespace ClearCanvas.ImageViewer.Graphics
 		/// but by the implementation of <see cref="IRenderer"/>, since the measurement of
 		/// the text size is ultimately platform dependent.  It is up to the implementor
 		/// of <see cref="IRenderer"/> to set this property.  For example, a GDI+ version of
-		/// <see cref="IRenderer"/> might use <see cref="System.Drawing.Graphics.MeasureString"/> to
+		/// <see cref="IRenderer"/> might use 
+		/// <see cref="System.Drawing.Graphics.MeasureString(String, Font)"/> to
 		/// determine the text dimensions.
 		/// </remarks>
 		public SizeF Dimensions

@@ -1,10 +1,7 @@
 using System;
-using System.Drawing;
 using System.Diagnostics;
-using ClearCanvas.Common;
+using System.Drawing;
 using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
@@ -78,7 +75,7 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		public override GraphicState CreateCreateState()
 		{
-			return new CreateMultiLineGraphicState(this);
+			return new CreatePolyLineGraphicState(this);
 		}
 
 		public override bool HitTest(Point point)
@@ -116,8 +113,8 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		protected override void OnControlPointChanged(object sender, ControlPointEventArgs e)
 		{
-			this.AnchorPoints[e.ControlPointIndex] = e.ControlPoint;
-			Trace.Write(String.Format("OnControlPointChanged: {0}, {1}\n", e.ControlPointIndex, e.ControlPoint.ToString()));
+			this.AnchorPoints[e.ControlPointIndex] = e.ControlPointLocation;
+			Trace.Write(String.Format("OnControlPointChanged: {0}, {1}\n", e.ControlPointIndex, e.ControlPointLocation.ToString()));
 		}
 
 		private void BuildGraphic()

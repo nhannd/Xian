@@ -1,5 +1,4 @@
 using System;
-using System.Diagnostics;
 using System.Drawing;
 using ClearCanvas.Common;
 using ClearCanvas.Desktop;
@@ -7,13 +6,26 @@ using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
+	// TODO: Support for undo shouldn't be coupled with the state
+
+	/// <summary>
+	/// A base class for graphic states.
+	/// </summary>
 	public abstract class GraphicState : IMouseButtonHandler
 	{
+		#region Private fields
+
 		private IStatefulGraphic _statefulGraphic;
 		private bool _supportUndo;
 		private UndoableCommand _command;
 		private PointF _lastPoint;
 
+		#endregion
+
+		/// <summary>
+		/// Initializes a new instance of <see cref="GraphicState"/>.
+		/// </summary>
+		/// <param name="statefulGraphic"></param>
 		protected GraphicState(IStatefulGraphic statefulGraphic)
 		{
 			Platform.CheckForNullReference(statefulGraphic, "statefulGraphic");
@@ -40,6 +52,10 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// The <see cref="IStatefulGraphic"/> associated with this
+		/// <see cref="GraphicState"/>.
+		/// </summary>
 		public IStatefulGraphic StatefulGraphic
 		{
 			get	{ return _statefulGraphic; }
@@ -55,6 +71,9 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 			}
 		}
 
+		/// <summary>
+		/// Gets or sets the last location of the mouse.
+		/// </summary>
 		protected PointF LastPoint
 		{
 			get { return _lastPoint; }

@@ -8,14 +8,19 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+using System.CodeDom.Compiler;
+using System.Configuration;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+
 namespace ClearCanvas.ImageViewer.Annotations {
     
     
-    [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
-    internal sealed partial class AnnotationLayoutStoreSettings : global::System.Configuration.ApplicationSettingsBase {
+    [CompilerGenerated()]
+    [GeneratedCode("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "8.0.0.0")]
+    internal sealed partial class AnnotationLayoutStoreSettings : ApplicationSettingsBase {
         
-        private static AnnotationLayoutStoreSettings defaultInstance = ((AnnotationLayoutStoreSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new AnnotationLayoutStoreSettings())));
+        private static AnnotationLayoutStoreSettings defaultInstance = ((AnnotationLayoutStoreSettings)(Synchronized(new AnnotationLayoutStoreSettings())));
         
         public static AnnotationLayoutStoreSettings Default {
             get {
@@ -23,9 +28,9 @@ namespace ClearCanvas.ImageViewer.Annotations {
             }
         }
         
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("AnnotationLayoutStoreDefaults.xml")]
+        [UserScopedSetting()]
+        [DebuggerNonUserCode()]
+        [DefaultSettingValue("AnnotationLayoutStoreDefaults.xml")]
         public string LayoutSettingsXml {
             get {
                 return ((string)(this["LayoutSettingsXml"]));

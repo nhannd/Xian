@@ -1,12 +1,13 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.ImageViewer.Mathematics
 {
-	public class RectangleUtilities
+	/// <summary>
+	/// A collection of utility methods that operation on rectangles.
+	/// </summary>
+	public static class RectangleUtilities
 	{
 		/// <summary>
 		/// Computes the intersection between two rectangles.

@@ -1,7 +1,5 @@
 using System;
-using System.Drawing;
 using System.Diagnostics;
-using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.InputManagement;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics

@@ -1,20 +1,17 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Drawing;
 using System.Diagnostics;
-using ClearCanvas.Common;
-using ClearCanvas.ImageViewer.Mathematics;
-using ClearCanvas.Desktop;
-using ClearCanvas.ImageViewer.Graphics;
+using System.Drawing;
 using ClearCanvas.Common.Utilities;
-using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Desktop.Tools;
+using ClearCanvas.ImageViewer.Graphics;
+using ClearCanvas.ImageViewer.InputManagement;
+using ClearCanvas.ImageViewer.Mathematics;
 
 namespace ClearCanvas.ImageViewer.InteractiveGraphics
 {
-	public class ROIGraphic
+	public class RoiGraphic
 		: StatefulCompositeGraphic, 
 		  IStandardStatefulGraphic, 
 		  ISelectableGraphic, 
@@ -29,12 +26,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 		private bool _selected;
 		private bool _focussed;
 
-		public ROIGraphic(InteractiveGraphic graphic, bool userCreated)
+		public RoiGraphic(InteractiveGraphic graphic, bool userCreated)
 			: this(graphic, userCreated, true)
 		{
 		}
 
-		public ROIGraphic(InteractiveGraphic graphic, bool userCreated, bool installDefaultCursors)
+		public RoiGraphic(InteractiveGraphic graphic, bool userCreated, bool installDefaultCursors)
 		{
 			_roiGraphic = graphic;
 
@@ -112,12 +109,12 @@ namespace ClearCanvas.ImageViewer.InteractiveGraphics
 
 		public GraphicState CreateCreateState()
 		{
-			return new CreateROIGraphicState(this);
+			return new CreateRoiGraphicState(this);
 		}
 
 		public GraphicState CreateFocussedSelectedState()
 		{
-			return new FocussedSelectedROIGraphicState(this);
+			return new FocussedSelectedRoiGraphicState(this);
 		}
 
 		public GraphicState CreateFocussedState()

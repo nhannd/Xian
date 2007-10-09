@@ -2,7 +2,6 @@ using System;
 using ClearCanvas.Common;
 using ClearCanvas.Dicom;
 using ClearCanvas.ImageViewer.Graphics;
-using ClearCanvas.ImageViewer.Imaging;
 
 namespace ClearCanvas.ImageViewer.Imaging
 {
@@ -296,12 +295,30 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Protected methods
 
+		/// <summary>
+		/// Returns a copy of the object, including the pixel data.
+		/// </summary>
+		/// <returns></returns>
 		protected abstract PixelData CloneInternal();
 
+		/// <summary>
+		/// Gets the pixel value at the specified index.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <returns></returns>
 		protected abstract int GetPixelInternal(int i);
 
+		/// <summary>
+		/// Sets the pixel at a specified index.
+		/// </summary>
+		/// <param name="i"></param>
+		/// <param name="value"></param>
 		protected abstract void SetPixelInternal(int i, int value);
 
+		/// <summary>
+		/// Gets the raw pixel data.
+		/// </summary>
+		/// <returns></returns>
 		protected byte[] GetPixelData()
 		{
 			if (_pixelData != null)
@@ -314,6 +331,13 @@ namespace ClearCanvas.ImageViewer.Imaging
 
 		#region Private methods
 
+		/// <summary>
+		/// Gets the index in the pixel data array given the x and y
+		/// location.
+		/// </summary>
+		/// <param name="x"></param>
+		/// <param name="y"></param>
+		/// <returns></returns>
 		protected int GetIndex(int x, int y)
 		{
 			if (x < 0 ||

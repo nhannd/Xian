@@ -1,5 +1,4 @@
-﻿using System;
-using ClearCanvas.ImageViewer.BaseTools;
+﻿using ClearCanvas.ImageViewer.BaseTools;
 
 namespace ClearCanvas.ImageViewer.StudyManagement
 {

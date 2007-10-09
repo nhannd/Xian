@@ -96,6 +96,7 @@ namespace ClearCanvas.ImageViewer
 			set { _name = value; }
 		}
 
+		// TODO: This generic string may not be a good idea
 		public string PatientInfo
 		{
 			get { return _patientInfo; }
@@ -142,6 +143,9 @@ namespace ClearCanvas.ImageViewer
 
 		#region IDisposable Members
 
+		/// <summary>
+		/// Releases all resources used by this <see cref="ImageSet"/>.
+		/// </summary>
 		public void Dispose()
 		{
 			try
