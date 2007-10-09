@@ -6,10 +6,11 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
-using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common.Jsml;
 using ClearCanvas.Ris.Application.Common.Admin;
+using ClearCanvas.Ris.Application.Common.ReportingWorkflow;
+using ClearCanvas.Ris.Client.Formatting;
+using AuthorityTokens=ClearCanvas.Ris.Application.Common.AuthorityTokens;
 
 namespace ClearCanvas.Ris.Client.Reporting
 {
@@ -234,7 +235,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public bool SupervisorSelectionVisible
         {
-            get { return Thread.CurrentPrincipal.IsInRole("SuperviseResidentAdmin") == false; }
+            get { return Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false; }
         }
 
         public string SupervisorName
@@ -284,6 +285,12 @@ namespace ClearCanvas.Ris.Client.Reporting
         {
             try
             {
+                if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && _supervisor == null)
+                {
+                    this.Host.DesktopWindow.ShowMessageBox(SR.MessageChooseRadiologist, MessageBoxActions.Ok);
+                    return;
+                }
+
                 Platform.GetService<IReportingWorkflowService>(
                     delegate(IReportingWorkflowService service)
                     {

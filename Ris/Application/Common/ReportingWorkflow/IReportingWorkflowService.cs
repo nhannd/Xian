@@ -86,6 +86,7 @@ namespace ClearCanvas.Ris.Application.Common.ReportingWorkflow
         /// <param name="request"><see cref="CompleteInterpretationForVerificationRequest"/></param>
         /// <returns><see cref="CompleteInterpretationForVerificationResponse"/></returns>
         [OperationContract]
+        [FaultContract(typeof(RequestValidationException))]
         [FaultContract(typeof(ConcurrentModificationException))]
         CompleteInterpretationForVerificationResponse CompleteInterpretationForVerification(CompleteInterpretationForVerificationRequest request);
 

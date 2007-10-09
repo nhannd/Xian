@@ -1,13 +1,6 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Workflow;
 using ClearCanvas.Enterprise.Core;
-using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Healthcare.Brokers;
-using System.Collections;
-using ClearCanvas.Common;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Healthcare.Workflow.Reporting
 {
@@ -165,11 +158,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 workflow.AddActivity(verification);
                 return verification;
             }
-
-            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
-            {
-                return base.CanExecute(step, currentUserStaff) && (currentUserStaff.Type == StaffType.PRAD);
-            }            
         }
 
         public class CancelReportingStep : ReportingOperation
@@ -258,13 +246,6 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
                 // step already completed or cancelled
                 if (step.State == ActivityStatus.CM || step.State == ActivityStatus.DC)
-                    return false;
-
-                // step is assigned to someone else
-                if (Equals(step.AssignedStaff, currentUserStaff) == false)
-                    return false;
-
-                if (currentUserStaff.Type != StaffType.PRAD)
                     return false;
 
                 return true;

@@ -156,7 +156,7 @@ namespace ClearCanvas.Ris.Client.Reporting
             this.AddFolder(new Folders.InTranscriptionFolder(this));
             this.AddFolder(new Folders.ToBeVerifiedFolder(this));
 
-            if (Thread.CurrentPrincipal.IsInRole("SuperviseResidentAdmin"))
+            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
                 this.AddFolder(new Folders.ResidentToBeVerifyFolder(this));
 
             this.AddFolder(new Folders.VerifiedFolder(this));

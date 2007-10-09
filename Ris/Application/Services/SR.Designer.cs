@@ -196,6 +196,15 @@ namespace ClearCanvas.Ris.Application.Services {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to The radiologist supervisor must be chosen to complete this step.
+        /// </summary>
+        internal static string ExceptionResidentReportMissingSupervisor {
+            get {
+                return ResourceManager.GetString("ExceptionResidentReportMissingSupervisor", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to A staff with the name {0}, {1} already exists.
         /// </summary>
         internal static string ExceptionStaffAlreadyExist {

@@ -106,6 +106,15 @@ namespace ClearCanvas.Ris.Client.Reporting {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to You must choose a radiologist to dictate for..
+        /// </summary>
+        internal static string MessageChooseRadiologist {
+            get {
+                return ResourceManager.GetString("MessageChooseRadiologist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Choose Radiologist.
         /// </summary>
         internal static string TitleChooseRadiologist {

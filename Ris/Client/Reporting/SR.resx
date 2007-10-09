@@ -132,6 +132,9 @@
   <data name="ExceptionOperationEnablementUnknown" xml:space="preserve">
     <value>Cannot determine enablement for operation: {0}</value>
   </data>
+  <data name="MessageChooseRadiologist" xml:space="preserve">
+    <value>You must choose a radiologist to dictate for.</value>
+  </data>
   <data name="TitleChooseRadiologist" xml:space="preserve">
     <value>Choose Radiologist</value>
   </data>

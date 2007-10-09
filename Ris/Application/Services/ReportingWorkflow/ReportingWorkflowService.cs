@@ -1,6 +1,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
+using System.Security.Permissions;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -156,6 +158,8 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
             Staff supervisor = request.SupervisorRef == null ? null : PersistenceContext.Load<Staff>(request.SupervisorRef, EntityLoadFlags.Proxy);
+            if (Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport) == false && supervisor == null)
+                throw new RequestValidationException(SR.ExceptionResidentReportMissingSupervisor);
 
             if (String.IsNullOrEmpty(request.ReportContent) == false)
             {
@@ -175,6 +179,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         [UpdateOperation]
         [OperationEnablement("CanCompleteInterpretationAndVerify")]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.VerifyReport)]
         public CompleteInterpretationAndVerifyResponse CompleteInterpretationAndVerify(CompleteInterpretationAndVerifyRequest request)
         {
             InterpretationStep interpretation = PersistenceContext.Load<InterpretationStep>(request.InterpretationStepRef, EntityLoadFlags.CheckVersion);
@@ -217,6 +222,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         [UpdateOperation]
         [OperationEnablement("CanStartVerification")]
+        [PrincipalPermission(SecurityAction.Demand, Role = AuthorityTokens.VerifyReport)]
         public StartVerificationResponse StartVerification(StartVerificationRequest request)
         {
             VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.VerificationStepRef, EntityLoadFlags.CheckVersion);
@@ -230,6 +236,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         [UpdateOperation]
         [OperationEnablement("CanCompleteVerification")]
+        [PrincipalPermission(SecurityAction.Demand, Role=AuthorityTokens.VerifyReport)]
         public CompleteVerificationResponse CompleteVerification(CompleteVerificationRequest request)
         {
             VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.VerificationStepRef, EntityLoadFlags.CheckVersion);
@@ -359,6 +366,9 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanCompleteInterpretationAndVerify(IWorklistItemKey itemKey)
         {
+            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
+                return false;
+
             return CanExecuteOperation(new Operations.CompleteInterpretationAndVerify(), itemKey);
         }
 
@@ -369,11 +379,17 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
 
         public bool CanStartVerification(IWorklistItemKey itemKey)
         {
+            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
+                return false;
+
             return CanExecuteOperation(new Operations.StartVerification(), itemKey);
         }
 
         public bool CanCompleteVerification(IWorklistItemKey itemKey)
         {
+            if (!Thread.CurrentPrincipal.IsInRole(AuthorityTokens.VerifyReport))
+                return false;
+
             return CanExecuteOperation(new Operations.CompleteVerification(), itemKey);
         }
 

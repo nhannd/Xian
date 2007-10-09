@@ -180,4 +180,7 @@
   <data name="ExceptionExternalPractitionerAlreadyExist" xml:space="preserve">
     <value>A practitioner with the name {0}, {1} already exists</value>
   </data>
+  <data name="ExceptionResidentReportMissingSupervisor" xml:space="preserve">
+    <value>The radiologist supervisor must be chosen to complete this step</value>
+  </data>
 </root>
