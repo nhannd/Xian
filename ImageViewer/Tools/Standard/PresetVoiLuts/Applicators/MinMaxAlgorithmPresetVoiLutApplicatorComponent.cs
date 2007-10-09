@@ -1,6 +1,6 @@
 using System;
-using ClearCanvas.Common;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Graphics;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 {
@@ -22,7 +22,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 
 		public override bool AppliesTo(IPresentationImage presentationImage)
 		{
-			return (presentationImage is IIndexedPixelDataProvider && presentationImage is IVoiLutProvider);
+			return (presentationImage is IVoiLutProvider &&
+			        presentationImage is IImageGraphicProvider &&
+			        ((IImageGraphicProvider) presentationImage).ImageGraphic.PixelData is IndexedPixelData);
 		}
 
 		public override void Apply(IPresentationImage presentationImage)
@@ -36,7 +38,13 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 			if (currentLut is MinMaxPixelCalculatedLinearLut)
 				return;
 
-			manager.InstallLut(new MinMaxPixelCalculatedLinearLut(((IIndexedPixelDataProvider)presentationImage).PixelData));
+			IndexedPixelData pixelData = (IndexedPixelData)((IImageGraphicProvider) presentationImage).ImageGraphic.PixelData;
+
+			IModalityLutProvider modalityLutProvider = presentationImage as IModalityLutProvider;
+			if (modalityLutProvider != null)
+				manager.InstallLut(new MinMaxPixelCalculatedLinearLut(pixelData, modalityLutProvider.ModalityLut));
+			else
+				manager.InstallLut(new MinMaxPixelCalculatedLinearLut(pixelData));
 		}
 	}
 }

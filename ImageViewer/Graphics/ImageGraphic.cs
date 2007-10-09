@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// 
 	/// An <see cref="ImageGraphic"/> is always a leaf in the scene graph.
 	/// </remarks>
-	public abstract class ImageGraphic : Graphic, IPixelDataProvider
+	public abstract class ImageGraphic : Graphic
 	{
 		#region Private fields
 

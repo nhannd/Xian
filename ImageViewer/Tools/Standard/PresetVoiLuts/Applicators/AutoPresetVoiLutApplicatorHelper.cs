@@ -1,5 +1,6 @@
 using System;
 using ClearCanvas.ImageViewer.Imaging;
+using ClearCanvas.ImageViewer.Graphics;
 using ClearCanvas.ImageViewer.StudyManagement;
 using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Luts;
 
@@ -16,8 +17,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 			if (sopProvider != null && sopProvider.ImageSop.WindowCenterAndWidth.Length > 0)
 				return true;
 
-			IIndexedPixelDataProvider pixelDataProvider = presentationImage as IIndexedPixelDataProvider;
-			return pixelDataProvider != null;
+			IImageGraphicProvider graphicProvider = presentationImage as IImageGraphicProvider;
+			if (graphicProvider != null)
+				return graphicProvider.ImageGraphic.PixelData is IndexedPixelData;
+
+			return false;
 		}
 
 		public static void AutoApplyLut(IPresentationImage presentationImage)
@@ -45,40 +49,34 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators
 			if (currentLut is MinMaxPixelCalculatedLinearLut)
 				return;
 
-			IIndexedPixelDataProvider pixelDataProvider = presentationImage as IIndexedPixelDataProvider;
-			if (pixelDataProvider != null)
-			{
-				IModalityLutProvider modalityLutProvider = presentationImage as IModalityLutProvider;
-				if (modalityLutProvider != null)
-					manager.InstallLut(new MinMaxPixelCalculatedLinearLut(pixelDataProvider.PixelData, modalityLutProvider.ModalityLut));
-				else
-					manager.InstallLut(new MinMaxPixelCalculatedLinearLut(pixelDataProvider.PixelData));
-			}
+			IndexedPixelData pixelData = (IndexedPixelData)((IImageGraphicProvider)presentationImage).ImageGraphic.PixelData;
+
+			IModalityLutProvider modalityLutProvider = presentationImage as IModalityLutProvider;
+			if (modalityLutProvider != null)
+				manager.InstallLut(new MinMaxPixelCalculatedLinearLut(pixelData, modalityLutProvider.ModalityLut));
+			else
+				manager.InstallLut(new MinMaxPixelCalculatedLinearLut(pixelData));
 		}
 
-		public static IComposableLut GetInitialLut(IPresentationImage image)
+		public static IComposableLut GetInitialLut(IPresentationImage presentationImage)
 		{
-			if (AppliesTo(image))
-			{
-				IImageSopProvider sopProvider = image as IImageSopProvider;
-				if (sopProvider != null)
-				{
-					if (sopProvider.ImageSop.WindowCenterAndWidth.Length > 0)
-						return new AutoVoiLutLinear(sopProvider.ImageSop);
-				}
+			if (!AppliesTo(presentationImage))
+				return null;
 
-				IIndexedPixelDataProvider pixelDataProvider = image as IIndexedPixelDataProvider;
-				if (pixelDataProvider != null)
-				{
-					IModalityLutProvider modalityLutProvider = image as IModalityLutProvider;
-					if (modalityLutProvider != null)
-						return new MinMaxPixelCalculatedLinearLut(pixelDataProvider.PixelData, modalityLutProvider.ModalityLut);
-					else
-						return new MinMaxPixelCalculatedLinearLut(pixelDataProvider.PixelData);
-				}
+			IImageSopProvider sopProvider = presentationImage as IImageSopProvider;
+			if (sopProvider != null)
+			{
+				if (sopProvider.ImageSop.WindowCenterAndWidth.Length > 0)
+					return new AutoVoiLutLinear(sopProvider.ImageSop);
 			}
 
-			return null;
+			IndexedPixelData pixelData = (IndexedPixelData)((IImageGraphicProvider)presentationImage).ImageGraphic.PixelData;
+
+			IModalityLutProvider modalityLutProvider = presentationImage as IModalityLutProvider;
+			if (modalityLutProvider != null)
+				return new MinMaxPixelCalculatedLinearLut(pixelData, modalityLutProvider.ModalityLut);
+			else
+				return new MinMaxPixelCalculatedLinearLut(pixelData);
 		}
 	}
 }

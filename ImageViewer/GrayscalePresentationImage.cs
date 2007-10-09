@@ -9,7 +9,6 @@ namespace ClearCanvas.ImageViewer
 	/// </summary>
 	public class GrayscalePresentationImage 
 		: BasicPresentationImage, 
-		IIndexedPixelDataProvider,
 		IModalityLutProvider,
 		IVoiLutProvider, 
 		IColorMapProvider
@@ -106,18 +105,6 @@ namespace ClearCanvas.ImageViewer
 
 			return null;
 		}
-
-		#region IIndexedPixelDataProvider Members
-
-		/// <summary>
-		/// Gets this image's <see cref="IndexedPixelData"/>.
-		/// </summary>
-		public new IndexedPixelData PixelData
-		{
-			get { return ImageGraphic.PixelData; }
-		}
-
-		#endregion
 
 		#region IModalityLutProvider Members
 

@@ -7,7 +7,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// <summary>
 	/// An image where pixel values are indices into a LUT.
 	/// </summary>
-	public abstract class IndexedImageGraphic : ImageGraphic, IIndexedPixelDataProvider
+	public abstract class IndexedImageGraphic : ImageGraphic
 	{
 		#region Private fields
 

@@ -12,7 +12,7 @@ namespace ClearCanvas.ImageViewer.Graphics
 	/// Note that you can control not just the colour, but also the 
 	/// opacity (i.e. alpha) of each pixel.
 	/// </remarks>
-	public class ColorImageGraphic : ImageGraphic, IColorPixelDataProvider
+	public class ColorImageGraphic : ImageGraphic
 	{
 		/// <summary>
 		/// Initializes a new instance of <see cref="ColorImageGraphic"/>
