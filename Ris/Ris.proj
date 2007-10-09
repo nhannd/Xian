@@ -1,0 +1,10 @@
+﻿<Project DefaultTargets="BuildSolution" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+  </PropertyGroup>
+  <Target Name="BuildSolution" >
+    <MSBuild Projects=".\Client\RisClient.proj" Properties="Configuration=$(Configuration)" />
+    <MSBuild Projects="..\Jscript\Build.proj" Properties="Configuration=$(Configuration)" />
+    <MSBuild Projects=".\Server\RisServer.proj" Properties="Configuration=$(Configuration)" />
+  </Target>
+</Project>
