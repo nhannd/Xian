@@ -76,7 +76,7 @@ namespace ClearCanvas.Common.Utilities
 
 		public virtual void Insert(int index, TItem item)
 		{
-			Platform.CheckArgumentRange(index, 0, this.Count - 1, "index");
+			Platform.CheckArgumentRange(index, 0, this.Count, "index");
 
 			if (_list.Contains(item))
 				return;
