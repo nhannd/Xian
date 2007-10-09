@@ -51,5 +51,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             _treeProcedurePlan.Tree = _component.ProcedurePlanTree;
             _treeProcedurePlan.ExpandAll();
         }
+
+        private void _btnSave_Click(object sender, EventArgs e)
+        {
+            _component.Save();
+        }
     }
 }

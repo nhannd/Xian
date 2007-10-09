@@ -28,9 +28,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
+            ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this._tableLayoutPanelRoot = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
+            this._btnSave = new System.Windows.Forms.Button();
             this._btnComplete = new System.Windows.Forms.Button();
             this._splitContainerRoot = new System.Windows.Forms.SplitContainer();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -42,7 +43,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._tabPageAdditionalDetails = new System.Windows.Forms.TabPage();
             this._panelAdditionalDetails = new System.Windows.Forms.Panel();
             this._browserAdditionalDetails = new System.Windows.Forms.WebBrowser();
-            this._btnSave = new System.Windows.Forms.Button();
             this._tableLayoutPanelRoot.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this._splitContainerRoot.Panel1.SuspendLayout();
@@ -86,6 +86,16 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.flowLayoutPanel1.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
             this.flowLayoutPanel1.Size = new System.Drawing.Size(1027, 29);
             this.flowLayoutPanel1.TabIndex = 0;
+            // 
+            // _btnSave
+            // 
+            this._btnSave.Location = new System.Drawing.Point(949, 3);
+            this._btnSave.Name = "_btnSave";
+            this._btnSave.Size = new System.Drawing.Size(75, 23);
+            this._btnSave.TabIndex = 1;
+            this._btnSave.Text = "Save";
+            this._btnSave.UseVisualStyleBackColor = true;
+            this._btnSave.Click += new System.EventHandler(this._btnSave_Click);
             // 
             // _btnComplete
             // 
@@ -163,7 +173,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._tabPageProcedurePlan.Controls.Add(this._treeProcedurePlan);
             this._tabPageProcedurePlan.Location = new System.Drawing.Point(4, 22);
             this._tabPageProcedurePlan.Name = "_tabPageProcedurePlan";
-            this._tabPageProcedurePlan.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
+            this._tabPageProcedurePlan.Padding = new System.Windows.Forms.Padding(3);
             this._tabPageProcedurePlan.Size = new System.Drawing.Size(254, 261);
             this._tabPageProcedurePlan.TabIndex = 0;
             this._tabPageProcedurePlan.Text = "Procedure Plan";
@@ -178,10 +188,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._treeProcedurePlan.Dock = System.Windows.Forms.DockStyle.Fill;
             this._treeProcedurePlan.ImageList = null;
             this._treeProcedurePlan.Location = new System.Drawing.Point(3, 3);
-            this._treeProcedurePlan.Margin = new System.Windows.Forms.Padding(2, 2, 2, 2);
+            this._treeProcedurePlan.Margin = new System.Windows.Forms.Padding(2);
             this._treeProcedurePlan.MenuModel = null;
             this._treeProcedurePlan.Name = "_treeProcedurePlan";
-            this._treeProcedurePlan.Selection = selection2;
+            this._treeProcedurePlan.Selection = selection1;
             this._treeProcedurePlan.SelectionDisabled = true;
             this._treeProcedurePlan.Size = new System.Drawing.Size(248, 255);
             this._treeProcedurePlan.TabIndex = 0;
@@ -195,8 +205,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._tabPageAdditionalDetails.Controls.Add(this._panelAdditionalDetails);
             this._tabPageAdditionalDetails.Location = new System.Drawing.Point(4, 22);
             this._tabPageAdditionalDetails.Name = "_tabPageAdditionalDetails";
-            this._tabPageAdditionalDetails.Padding = new System.Windows.Forms.Padding(3, 3, 3, 3);
-            this._tabPageAdditionalDetails.Size = new System.Drawing.Size(254, 260);
+            this._tabPageAdditionalDetails.Padding = new System.Windows.Forms.Padding(3);
+            this._tabPageAdditionalDetails.Size = new System.Drawing.Size(254, 261);
             this._tabPageAdditionalDetails.TabIndex = 1;
             this._tabPageAdditionalDetails.Text = "Additional Details";
             this._tabPageAdditionalDetails.UseVisualStyleBackColor = true;
@@ -208,7 +218,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._panelAdditionalDetails.Dock = System.Windows.Forms.DockStyle.Fill;
             this._panelAdditionalDetails.Location = new System.Drawing.Point(3, 3);
             this._panelAdditionalDetails.Name = "_panelAdditionalDetails";
-            this._panelAdditionalDetails.Size = new System.Drawing.Size(248, 254);
+            this._panelAdditionalDetails.Size = new System.Drawing.Size(248, 255);
             this._panelAdditionalDetails.TabIndex = 0;
             // 
             // _browserAdditionalDetails
@@ -217,17 +227,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._browserAdditionalDetails.Location = new System.Drawing.Point(0, 0);
             this._browserAdditionalDetails.MinimumSize = new System.Drawing.Size(20, 20);
             this._browserAdditionalDetails.Name = "_browserAdditionalDetails";
-            this._browserAdditionalDetails.Size = new System.Drawing.Size(244, 250);
+            this._browserAdditionalDetails.Size = new System.Drawing.Size(244, 251);
             this._browserAdditionalDetails.TabIndex = 0;
-            // 
-            // _btnSave
-            // 
-            this._btnSave.Location = new System.Drawing.Point(949, 3);
-            this._btnSave.Name = "_btnSave";
-            this._btnSave.Size = new System.Drawing.Size(75, 23);
-            this._btnSave.TabIndex = 1;
-            this._btnSave.Text = "Save";
-            this._btnSave.UseVisualStyleBackColor = true;
             // 
             // TechnologistDocumentationComponentControl
             // 

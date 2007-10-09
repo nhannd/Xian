@@ -295,5 +295,10 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         #endregion
+
+        public void Save()
+        {
+            _ppsComponent.Save();
+        }
     }
 }

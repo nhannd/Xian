@@ -4,6 +4,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 
 using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
 using ClearCanvas.Ris.Application.Common;
@@ -289,6 +290,11 @@ namespace ClearCanvas.Ris.Client
         protected void SetUrl(string url)
         {
             this.HtmlPageUrl = url == null ? null : new Uri(url);
+        }
+
+        protected virtual void SaveData()
+        {
+            EventsHelper.Fire(_dataSaving, this, EventArgs.Empty);
         }
 
     }

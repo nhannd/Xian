@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -39,12 +40,41 @@ namespace ClearCanvas.Ris.Client.Adt
 
             protected override string GetTagData(string tag)
             {
-                //return _owner._selectedMpps.Documentation;
-                return null;
+                string data = null;
+                if (string.Equals(tag, "Documentation"))
+                {
+                    try
+                    {
+                        StreamReader sr = File.OpenText(@"C:\tempdocumentation.txt");
+                        data = sr.ReadToEnd();
+                        sr.Close();
+                    }
+                    catch (FileNotFoundException)
+                    {
+                        data = null;
+                    }
+                }
+                else if (string.Equals(tag, "StartTime"))
+                {
+                    data = _owner._selectedMpps.StartTime.ToString();
+                }
+                else if (string.Equals(tag, "StopTime"))
+                {
+                    data = _owner._selectedMpps.EndTime.HasValue
+                               ? _owner._selectedMpps.EndTime.Value.ToString()
+                               : null;
+                }
+                return data;
             }
 
             protected override void SetTagData(string tag, string data)
             {
+                if(string.Equals(tag, "Documentation"))
+                {
+                    StreamWriter sw = File.CreateText(@"C:\tempdocumentation.txt");
+                    sw.Write(data);
+                    sw.Close();
+                }
                 //_owner._selectedMpps.Documtation = data;
             }
 
@@ -58,6 +88,11 @@ namespace ClearCanvas.Ris.Client.Adt
                 {
                     SetUrl(_detailsFormSelector.SelectForm(_owner._selectedMpps));
                 }
+            }
+
+            public new void SaveData()
+            {
+                base.SaveData();
             }
         }
 
@@ -132,7 +167,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public void Save()
         {
-            throw new NotImplementedException();
+            _detailsComponent.SaveData();
         }
 
         public void Validate()
@@ -181,7 +216,7 @@ namespace ClearCanvas.Ris.Client.Adt
             _orderRef = procedurePlanSummary.OrderRef;
             EventsHelper.Fire(_procedurePlanChanged, this, new ProcedurePlanChangedEventArgs(procedurePlanSummary));
         }
-        
+
         #endregion
 
         #region Tool Click Handlers
