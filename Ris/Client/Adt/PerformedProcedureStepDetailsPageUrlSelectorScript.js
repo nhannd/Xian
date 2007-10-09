@@ -9,5 +9,7 @@ if(modalityName == "CT")
 if(modalityName == "MRI")
     return "http://localhost/RIS/forms/technologist/mri-mpps.htm";
     
+if(modalityName == "PET")
+    return "http://localhost/RIS/forms/technologist/petct-mpps.htm";
     
 return "about:blank";
