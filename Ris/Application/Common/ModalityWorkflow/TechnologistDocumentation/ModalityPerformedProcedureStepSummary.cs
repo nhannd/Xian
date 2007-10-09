@@ -8,7 +8,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
     [DataContract]
     public class ModalityPerformedProcedureStepSummary : DataContractBase
     {
-        public ModalityPerformedProcedureStepSummary(EntityRef modalityPerformendProcedureStepRef, string inheritedName, EnumValueInfo state, DateTime startTime, DateTime? endTime, string performer, List<ModalityProcedureStepDetail> modalityProcedureSteps)
+        public ModalityPerformedProcedureStepSummary(EntityRef modalityPerformendProcedureStepRef, string inheritedName, EnumValueInfo state, DateTime startTime, DateTime? endTime, string performer, List<ModalityProcedureStepDetail> modalityProcedureSteps, Dictionary<string, string> extendedProperties)
         {
             ModalityPerformendProcedureStepRef = modalityPerformendProcedureStepRef;
             InheritedName = inheritedName;
@@ -17,6 +17,7 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
             EndTime = endTime;
             Performer = performer;
             this.ModalityProcedureSteps = modalityProcedureSteps;
+            this.ExtendedProperties = extendedProperties;
         }
 
         [DataMember]
@@ -42,5 +43,8 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
         /// </summary>
         [DataMember]
         public List<ModalityProcedureStepDetail> ModalityProcedureSteps;
+
+        [DataMember]
+        public Dictionary<string, string> ExtendedProperties;
     }
 }

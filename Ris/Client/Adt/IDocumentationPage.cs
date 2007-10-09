@@ -1,5 +1,6 @@
 using System;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentation;
+using ClearCanvas.Desktop;
 
 namespace ClearCanvas.Ris.Client.Adt
 {
@@ -20,8 +21,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
     public interface IDocumentationPage
     {
-        void Save();
-        void Validate();
-        event EventHandler<ProcedurePlanChangedEventArgs> ProcedurePlanChanged;
+        string Title { get; }
+        IApplicationComponent Component { get; }
     }
 }

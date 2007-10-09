@@ -1,6 +1,7 @@
 using System;
 using System.Windows.Forms;
 using ClearCanvas.Desktop.View.WinForms;
+using ClearCanvas.Controls.WinForms;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 {
@@ -54,7 +55,18 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private void _btnSave_Click(object sender, EventArgs e)
         {
-            _component.Save();
+            using(new CursorManager(Cursors.WaitCursor))
+            {
+                _component.SaveData();
+            }
+        }
+
+        private void _btnComplete_Click(object sender, EventArgs e)
+        {
+            using (new CursorManager(Cursors.WaitCursor))
+            {
+                _component.CompleteDocumentation();
+            }
         }
     }
 }

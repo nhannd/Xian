@@ -5,6 +5,7 @@ using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.Actions;
+using ClearCanvas.Desktop.Tools;
 using ClearCanvas.Desktop.Trees;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
@@ -12,6 +13,28 @@ using ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocumentat
 
 namespace ClearCanvas.Ris.Client.Adt
 {
+    public interface ITechnologistDocumentationModule
+    {
+        void Initialize(ITechnologistDocumentationContext context);
+        void SaveData();
+    }
+
+
+    [ExtensionPoint]
+    public class TechnologistDocumentationModuleExtensionPoint : ExtensionPoint<ITechnologistDocumentationModule>
+    {
+    }
+
+    public interface ITechnologistDocumentationContext : IToolContext
+    {
+        DesktopWindow DesktopWindow { get; }
+        void AddPage(IDocumentationPage page);
+        void InsertPage(IDocumentationPage page, int position);
+        ProcedurePlanSummary ProcedurePlan { get; }
+        event EventHandler ProcedurePlanChanged;
+   }
+
+
     /// <summary>
     /// Extension point for views onto <see cref="TechnologistDocumentationComponent"/>
     /// </summary>
@@ -51,13 +74,61 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #endregion
 
+        #region TechnologistDocumentationContext class
+
+        class TechnologistDocumentationContext : ToolContext, ITechnologistDocumentationContext
+        {
+            private TechnologistDocumentationComponent _owner;
+
+            public TechnologistDocumentationContext(TechnologistDocumentationComponent owner)
+            {
+                _owner = owner;
+            }
+
+            #region ITechnologistDocumentationContext Members
+
+            public DesktopWindow DesktopWindow
+            {
+                get { return _owner.Host.DesktopWindow; }
+            }
+
+            public void AddPage(IDocumentationPage page)
+            {
+                _owner.InsertDocumentationPage(page, _owner._documentationTabContainer.Pages.Count);
+            }
+
+            public void InsertPage(IDocumentationPage page, int position)
+            {
+                _owner.InsertDocumentationPage(page, position);
+            }
+
+            public ProcedurePlanSummary ProcedurePlan
+            {
+                get { return _owner._procedurePlan; }
+            }
+
+            public event EventHandler ProcedurePlanChanged
+            {
+                add { _owner._procedurePlanChanged += value; }
+                remove { _owner._procedurePlanChanged -= value; }
+            }
+
+
+            #endregion
+        }
+
+        #endregion
 
         #region Private Members
 
         private readonly ModalityWorklistItem _worklistItem;
         private EntityRef _orderRef;
+        private Dictionary<string, string> _orderExtendedProperties;
+        private ProcedurePlanSummary _procedurePlan;
+        private event EventHandler _procedurePlanChanged;
 
         private Tree<RequestedProcedureDetail> _procedurePlanTree;
+        private event EventHandler _procedurePlanTreeChanged;
         private readonly List<Checkable<ModalityProcedureStepDetail>> _allCheckableModalityProcedureSteps;
         private SimpleActionModel _procedurePlanActionHandler;
         private ClickAction _startAction;
@@ -67,13 +138,11 @@ namespace ClearCanvas.Ris.Client.Adt
         private ChildComponentHost _documentationHost;
         private TabComponentContainer _documentationTabContainer;
 
-        private DHtmlComponent _preExamComponent;
-        private DHtmlComponent _postExamComponent;
+        private List<ITechnologistDocumentationModule> _documentationModules = new List<ITechnologistDocumentationModule>();
+
+        private ExamDetailsComponent _preExamComponent;
+        private ExamDetailsComponent _postExamComponent;
         private PerformedProcedureComponent _ppsComponent;
-        
-
-
-        private event EventHandler _procedurePlanTreeChanged;
 
         #endregion
 
@@ -87,44 +156,53 @@ namespace ClearCanvas.Ris.Client.Adt
 
         public override void Start()
         {
-            ProcedurePlanSummary procedurePlanSummary = null;
-
             Platform.GetService<ITechnologistDocumentationService>(
                 delegate(ITechnologistDocumentationService service)
                 {
                     GetProcedurePlanForWorklistItemRequest procedurePlanRequest = new GetProcedurePlanForWorklistItemRequest(_worklistItem.ProcedureStepRef);
                     GetProcedurePlanForWorklistItemResponse procedurePlanResponse = service.GetProcedurePlanForWorklistItem(procedurePlanRequest);
-                    procedurePlanSummary = procedurePlanResponse.ProcedurePlanSummary;
+                    _procedurePlan = procedurePlanResponse.ProcedurePlanSummary;
+                    _orderExtendedProperties = procedurePlanResponse.OrderExtendedProperties;
                 });
 
-            RefreshProcedurePlanTree(procedurePlanSummary);
-
-            _orderSummaryComponentHost = new ChildComponentHost(this.Host, new OrderSummaryComponent(this));
-            _orderSummaryComponentHost.StartComponent();
-
-            _documentationTabContainer = new TabComponentContainer();
-            _preExamComponent = new ExamDetailsComponent(
-                TechnologistDocumentationComponentSettings.Default.PreExamDetailsPageUrlSelectorScript,
-                procedurePlanSummary);
-            _documentationTabContainer.Pages.Add(new TabPage("Pre-exam", _preExamComponent));
-
-            _ppsComponent = new PerformedProcedureComponent(_orderRef);
-            _ppsComponent.ProcedurePlanChanged += OnProcedurePlanChanged;
-            _documentationTabContainer.Pages.Add(new TabPage("Exam", _ppsComponent));
-
-            _postExamComponent = new ExamDetailsComponent(
-                TechnologistDocumentationComponentSettings.Default.PostExamDetailsPageUrlSelectorScript,
-                procedurePlanSummary);
-            _documentationTabContainer.Pages.Add(new TabPage("Post-exam", _postExamComponent));
-
-            _documentationHost = new ChildComponentHost(this.Host, _documentationTabContainer);
-            _documentationHost.StartComponent();
+            RefreshProcedurePlanTree(_procedurePlan);
 
             ResourceResolver resolver = new ResourceResolver(this.GetType().Assembly);
             _procedurePlanActionHandler = new SimpleActionModel(resolver);
             _startAction = _procedurePlanActionHandler.AddAction("start", "START", "Icons.StartToolSmall.png", "START", StartModalityProcedureSteps);
             _discontinueAction = _procedurePlanActionHandler.AddAction("discontinue", "DISCONTINUE", "Icons.DeleteToolSmall.png", "START", DiscontinueModalityProcedureSteps);
             UpdateActionEnablement();
+
+            _orderSummaryComponentHost = new ChildComponentHost(this.Host, new OrderSummaryComponent(this));
+            _orderSummaryComponentHost.StartComponent();
+
+            _documentationTabContainer = new TabComponentContainer();
+
+            _preExamComponent = new ExamDetailsComponent("Pre-exam",
+                TechnologistDocumentationComponentSettings.Default.PreExamDetailsPageUrlSelectorScript,
+                _procedurePlan, _orderExtendedProperties);
+            InsertDocumentationPage(_preExamComponent, 0);
+
+            _ppsComponent = new PerformedProcedureComponent("Exam", _orderRef);
+            _ppsComponent.ProcedurePlanChanged += ProcedurePlanChangedEventHandler;
+            InsertDocumentationPage(_ppsComponent, 1);
+
+            _postExamComponent = new ExamDetailsComponent("Post-exam",
+                TechnologistDocumentationComponentSettings.Default.PostExamDetailsPageUrlSelectorScript,
+                _procedurePlan, _orderExtendedProperties);
+            InsertDocumentationPage(_postExamComponent, 2);
+
+            // create extension modules, which may add documentation pages to the tab container
+            TechnologistDocumentationContext context = new TechnologistDocumentationContext(this);
+            foreach (ITechnologistDocumentationModule module in (new TechnologistDocumentationModuleExtensionPoint()).CreateExtensions())
+            {
+                module.Initialize(context);
+                _documentationModules.Add(module);
+            }
+
+            _documentationHost = new ChildComponentHost(this.Host, _documentationTabContainer);
+            _documentationHost.StartComponent();
+
 
             base.Start();
         }
@@ -138,7 +216,7 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #endregion
 
-        #region Presentation Layer Methods
+        #region Presentation Model Methods
 
         public ApplicationComponentHost OrderSummaryComponentHost
         {
@@ -164,6 +242,31 @@ namespace ClearCanvas.Ris.Client.Adt
         public ActionModelNode ProcedurePlanTreeActionModel
         {
             get { return _procedurePlanActionHandler; }
+        }
+
+        public void SaveData()
+        {
+            try
+            {
+                Save();
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
+        }
+
+        public void CompleteDocumentation()
+        {
+            try
+            {
+                // validate first
+                Save();
+            }
+            catch (Exception e)
+            {
+                ExceptionHandler.Report(e, this.Host.DesktopWindow);
+            }
         }
 
         #endregion
@@ -224,6 +327,29 @@ namespace ClearCanvas.Ris.Client.Adt
 
         #region Private methods
 
+        private void Save()
+        {
+            _preExamComponent.SaveData();
+            _postExamComponent.SaveData();
+
+            foreach(ITechnologistDocumentationModule module in _documentationModules)
+            {
+                module.SaveData();
+            }
+
+            SaveDataRequest request = new SaveDataRequest(_procedurePlan.OrderRef, _orderExtendedProperties);
+            Platform.GetService<ITechnologistDocumentationService>(
+                delegate(ITechnologistDocumentationService service)
+                {
+                    service.SaveData(request);
+                });
+        }
+
+        private void InsertDocumentationPage(IDocumentationPage page, int position)
+        {
+            _documentationTabContainer.Pages.Insert(position, new TabPage(page.Title, page.Component));
+        }
+
         private List<ModalityProcedureStepDetail> GetCheckedMps()
         {
             return CollectionUtils.Map<Checkable<ModalityProcedureStepDetail>, ModalityProcedureStepDetail>(
@@ -251,9 +377,10 @@ namespace ClearCanvas.Ris.Client.Adt
             }
         }
 
-        private void OnProcedurePlanChanged(object sender, ProcedurePlanChangedEventArgs e)
+        private void ProcedurePlanChangedEventHandler(object sender, ProcedurePlanChangedEventArgs e)
         {
             RefreshProcedurePlanTree(e.ProcedurePlanSummary);
+            EventsHelper.Fire(_procedurePlanChanged, this, EventArgs.Empty);
         }
 
         private void RefreshProcedurePlanTree(ProcedurePlanSummary procedurePlanSummary)
@@ -295,10 +422,5 @@ namespace ClearCanvas.Ris.Client.Adt
         }
 
         #endregion
-
-        public void Save()
-        {
-            _ppsComponent.Save();
-        }
     }
 }

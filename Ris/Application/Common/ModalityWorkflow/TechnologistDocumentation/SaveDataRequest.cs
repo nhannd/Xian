@@ -9,5 +9,16 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
     [DataContract]
     public class SaveDataRequest : DataContractBase
     {
+        public SaveDataRequest(EntityRef orderRef, Dictionary<string, string> orderExtendedProperties)
+        {
+            this.OrderRef = orderRef;
+            this.OrderExtendedProperties = orderExtendedProperties;
+        }
+
+        [DataMember]
+        public EntityRef OrderRef;
+
+        [DataMember]
+        public Dictionary<string, string> OrderExtendedProperties;
     }
 }

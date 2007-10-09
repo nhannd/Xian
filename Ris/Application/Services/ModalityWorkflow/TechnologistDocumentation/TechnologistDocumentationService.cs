@@ -70,11 +70,17 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         public GetProcedurePlanForWorklistItemResponse GetProcedurePlanForWorklistItem(GetProcedurePlanForWorklistItemRequest request)
         {
             ModalityProcedureStep mps = this.PersistenceContext.Load<ModalityProcedureStep>(request.ProcedureStepRef);
-
+            Order order = mps.RequestedProcedure.Order;
             TechnologistDocumentationAssembler assembler = new TechnologistDocumentationAssembler();
 
             GetProcedurePlanForWorklistItemResponse response = new GetProcedurePlanForWorklistItemResponse();
-            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(mps.RequestedProcedure.Order, this.PersistenceContext);
+            response.ProcedurePlanSummary = assembler.CreateProcedurePlanSummary(order, this.PersistenceContext);
+
+            response.OrderExtendedProperties = new Dictionary<string, string>();
+            foreach (string key in order.ExtendedProperties.Keys)
+            {
+                response.OrderExtendedProperties[key] = (string)order.ExtendedProperties[key];
+            }
 
             return response;
         }
@@ -186,6 +192,12 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         {
             ModalityPerformedProcedureStep mpps = this.PersistenceContext.Load<ModalityPerformedProcedureStep>(request.MppsRef);
 
+            // copy extended properties (should this be in an assembler?)
+            foreach (KeyValuePair<string, string> pair in request.ExtendedProperties)
+            {
+                mpps.ExtendedProperties[pair.Key] = pair.Value;
+            }
+
             mpps.Complete();
 
             // Drill back to order so we can refresh procedure plan
@@ -248,7 +260,13 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         [UpdateOperation]
         public SaveDataResponse SaveData(SaveDataRequest request)
         {
-            throw new NotImplementedException();
+            Order order = PersistenceContext.Load<Order>(request.OrderRef);
+            foreach (KeyValuePair<string, string> pair in request.OrderExtendedProperties)
+            {
+                order.ExtendedProperties[pair.Key] = pair.Value;
+            }
+
+            return new SaveDataResponse();
         }
 
         #endregion

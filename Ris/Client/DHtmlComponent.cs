@@ -13,6 +13,7 @@ using ClearCanvas.Ris.Application.Common.PreviewService;
 using ClearCanvas.Ris.Client.Formatting;
 using ClearCanvas.Ris.Application.Common.Jsml;
 using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Ris.Client
 {
@@ -194,6 +195,11 @@ namespace ClearCanvas.Ris.Client
             SetUrl(url);
         }
 
+        public virtual void SaveData()
+        {
+            EventsHelper.Fire(_dataSaving, this, EventArgs.Empty);
+        }
+
         public override void Start()
         {
             base.Start();
@@ -290,11 +296,6 @@ namespace ClearCanvas.Ris.Client
         protected void SetUrl(string url)
         {
             this.HtmlPageUrl = url == null ? null : new Uri(url);
-        }
-
-        protected virtual void SaveData()
-        {
-            EventsHelper.Fire(_dataSaving, this, EventArgs.Empty);
         }
 
     }

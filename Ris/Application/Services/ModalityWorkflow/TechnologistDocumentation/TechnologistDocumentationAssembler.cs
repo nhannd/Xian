@@ -159,6 +159,13 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
                 mpps.Activities,
                 delegate(ModalityProcedureStep mps) { return CreateModalityProcedureStepDetail(mps, context); });
 
+            Dictionary<string, string> extendedProperties = new Dictionary<string, string>();
+            foreach (string key in mpps.ExtendedProperties.Keys)
+            {
+                extendedProperties[key] = (string)mpps.ExtendedProperties[key];
+            }
+
+
             return new ModalityPerformedProcedureStepSummary(
                 mpps.GetRef(),
                 nameBuilder.ToString(),
@@ -166,7 +173,8 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
                 mpps.StartTime, 
                 mpps.EndTime, 
                 "Dummy Performer",
-                mpsDetails);
+                mpsDetails,
+                extendedProperties);
         }
 
         public ProcedurePlanSummary CreateProcedurePlanSummary(Order order, IPersistenceContext context)

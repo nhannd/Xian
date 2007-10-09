@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
 
@@ -8,5 +9,8 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
     {
         [DataMember] 
         public ProcedurePlanSummary ProcedurePlanSummary;
+
+        [DataMember]
+        public Dictionary<string, string> OrderExtendedProperties;
     }
 }
