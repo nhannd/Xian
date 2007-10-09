@@ -11,6 +11,7 @@ namespace ClearCanvas.Healthcare.Brokers
         IList<WorklistItem> GetDraftWorklist(Staff performingStaff);
         IList<WorklistItem> GetInTranscriptionWorklist(Staff performingStaff);
         IList<WorklistItem> GetToBeVerifiedWorklist(Staff performingStaff);
+        IList<WorklistItem> GetResidentToBeVerifiedWorklist(Staff performingStaff);
         IList<WorklistItem> GetVerifiedWorklist(Staff performingStaff);
 
         int GetToBeReportedWorklistCount();
@@ -18,6 +19,7 @@ namespace ClearCanvas.Healthcare.Brokers
         int GetDraftWorklistCount(Staff performingStaff);
         int GetInTranscriptionWorklistCount(Staff performingStaff);
         int GetToBeVerifiedWorklistCount(Staff performingStaff);
+        int GetResidentToBeVerifiedWorklistCount(Staff performingStaff);
         int GetVerifiedWorklistCount(Staff performingStaff);
 
         IList<Report> GetPriorReport(Patient patient);

@@ -48,41 +48,66 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             " join o.Patient p" +
             " join p.Profiles pp";
 
-        private const string _hqlCommunualWorklistCondition =
-            " where rps.State = :rpsState and rps.Scheduling.Performer is NULL";
+        private const string _hqlSingleStateCondition =
+            " where rps.State = :rpsState";
+
+        private const string _hqlCommunualWorklistCondition = 
+            _hqlSingleStateCondition +
+            " and rps.Scheduling.Performer is NULL";
 
         private const string _hqlMySingleStateCondition =
-            " where rps.State = :rpsState and rps.Scheduling.Performer = :performingStaff";
+            _hqlSingleStateCondition +
+            " and rps.Scheduling.Performer = :performingStaff";
 
-        private const string _hqlMyDualStateCondition =
-            " where (rps.State = :rpsState or rps.State = :rpsState2)" +
+        private const string _hqlDualStateCondition =
+            " where (rps.State = :rpsState or rps.State = :rpsState2)";
+
+        private const string _hqlMyDualStateCondition = 
+            _hqlDualStateCondition + 
             " and rps.Scheduling.Performer = :performingStaff";
 
         private const string _hqlWorklistSubQuery = 
             " and rp.Type in" +
             " (select distinct rpt from Worklist w join w.RequestedProcedureTypeGroups rptg join rptg.RequestedProcedureTypes rpt where w = :worklist)";
 
+        private const string _hqlSupervisorSubQuery = 
+            " and rp in" +
+            " (select report.Procedure from Report report where report.Supervisor = :supervisorStaff)";
 
         #region Query helpers
 
         private IList<WorklistItem> GetWorklist(string hqlQuery, IEnumerable<QueryParameter> parameters)
         {
-            List<WorklistItem> results = new List<WorklistItem>();
-
-            IList list = DoQuery(hqlQuery, parameters);
-            foreach (object[] tuple in list)
+            try
             {
-                WorklistItem item = (WorklistItem)Activator.CreateInstance(typeof(WorklistItem), tuple);
-                results.Add(item);
-            }
+                List<WorklistItem> results = new List<WorklistItem>();
 
-            return results;
+                IList list = DoQuery(hqlQuery, parameters);
+                foreach (object[] tuple in list)
+                {
+                    WorklistItem item = (WorklistItem)Activator.CreateInstance(typeof(WorklistItem), tuple);
+                    results.Add(item);
+                }
+
+                return results;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         private int GetWorklistCount(string hqlQuery, IEnumerable<QueryParameter> parameters)
         {
-            IList list = DoQuery(hqlQuery, parameters);
-            return (int)list[0];
+            try
+            {
+                IList list = DoQuery(hqlQuery, parameters);
+                return (int)list[0];
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         private IList DoQuery(string hqlQuery, IEnumerable<QueryParameter> parameters)
@@ -159,6 +184,18 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             return GetWorklist(hqlQuery, parameters);
         }
 
+        public IList<WorklistItem> GetResidentToBeVerifiedWorklist(Staff performingStaff)
+        {
+            string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, _hqlJoin, _hqlDualStateCondition, _hqlSupervisorSubQuery);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", "SC"));
+            parameters.Add(new QueryParameter("rpsState2", "IP"));
+            parameters.Add(new QueryParameter("supervisorStaff", performingStaff));
+
+            return GetWorklist(hqlQuery, parameters);
+        }
+
         public IList<WorklistItem> GetVerifiedWorklist(Staff performingStaff)
         {
             string hqlQuery = String.Concat(_hqlSelectVerificationWorklist, _hqlJoin, _hqlMySingleStateCondition);
@@ -227,6 +264,18 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
             parameters.Add(new QueryParameter("rpsState", "SC"));
             parameters.Add(new QueryParameter("rpsState2", "IP"));
             parameters.Add(new QueryParameter("performingStaff", performingStaff));
+
+            return GetWorklistCount(hqlQuery, parameters);
+        }
+
+        public int GetResidentToBeVerifiedWorklistCount(Staff performingStaff)
+        {
+            string hqlQuery = String.Concat(_hqlSelectVerificationCount, _hqlJoin, _hqlDualStateCondition, _hqlSupervisorSubQuery);
+
+            List<QueryParameter> parameters = new List<QueryParameter>();
+            parameters.Add(new QueryParameter("rpsState", "SC"));
+            parameters.Add(new QueryParameter("rpsState2", "IP"));
+            parameters.Add(new QueryParameter("supervisorStaff", performingStaff));
 
             return GetWorklistCount(hqlQuery, parameters);
         }

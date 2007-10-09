@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Threading;
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -154,6 +155,10 @@ namespace ClearCanvas.Ris.Client.Reporting
             this.AddFolder(new Folders.DraftFolder(this));
             this.AddFolder(new Folders.InTranscriptionFolder(this));
             this.AddFolder(new Folders.ToBeVerifiedFolder(this));
+
+            if (Thread.CurrentPrincipal.IsInRole("SuperviseResidentAdmin"))
+                this.AddFolder(new Folders.ResidentToBeVerifyFolder(this));
+
             this.AddFolder(new Folders.VerifiedFolder(this));
             this.AddFolder(_searchFolder = new Folders.SearchFolder(this));
 

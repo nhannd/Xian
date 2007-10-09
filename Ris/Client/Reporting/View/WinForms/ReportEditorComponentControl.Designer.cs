@@ -49,7 +49,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._sendToTranscriptionButton = new System.Windows.Forms.Button();
             this._saveButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
-            this.panel2 = new System.Windows.Forms.Panel();
+            this._residentPanel = new System.Windows.Forms.Panel();
             this._dictateFor = new ClearCanvas.Controls.WinForms.TextField();
             this._chooseRadiologistButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
@@ -59,7 +59,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._browserSplitContainer.Panel2.SuspendLayout();
             this._browserSplitContainer.SuspendLayout();
             this.panel3.SuspendLayout();
-            this.panel2.SuspendLayout();
+            this._residentPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -69,14 +69,14 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this.tableLayoutPanel1.Controls.Add(this.panel1, 0, 0);
             this.tableLayoutPanel1.Controls.Add(this._browserPanel, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.panel3, 0, 3);
-            this.tableLayoutPanel1.Controls.Add(this.panel2, 0, 2);
+            this.tableLayoutPanel1.Controls.Add(this._residentPanel, 0, 2);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 4;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 150F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 50F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(661, 606);
             this.tableLayoutPanel1.TabIndex = 0;
@@ -319,15 +319,15 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._cancelButton.UseVisualStyleBackColor = true;
             this._cancelButton.Click += new System.EventHandler(this._cancelButton_Click);
             // 
-            // panel2
+            // _residentPanel
             // 
-            this.panel2.Controls.Add(this._dictateFor);
-            this.panel2.Controls.Add(this._chooseRadiologistButton);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.panel2.Location = new System.Drawing.Point(3, 509);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(655, 44);
-            this.panel2.TabIndex = 2;
+            this._residentPanel.Controls.Add(this._dictateFor);
+            this._residentPanel.Controls.Add(this._chooseRadiologistButton);
+            this._residentPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this._residentPanel.Location = new System.Drawing.Point(3, 509);
+            this._residentPanel.Name = "_residentPanel";
+            this._residentPanel.Size = new System.Drawing.Size(655, 44);
+            this._residentPanel.TabIndex = 2;
             // 
             // _dictateFor
             // 
@@ -367,7 +367,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._browserSplitContainer.Panel2.ResumeLayout(false);
             this._browserSplitContainer.ResumeLayout(false);
             this.panel3.ResumeLayout(false);
-            this.panel2.ResumeLayout(false);
+            this._residentPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -395,7 +395,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private ClearCanvas.Controls.WinForms.TextField _dateOfBirth;
         private ClearCanvas.Controls.WinForms.TextField _performedDate;
         private ClearCanvas.Controls.WinForms.TextField _visitNumber;
-        private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.Panel _residentPanel;
         private ClearCanvas.Controls.WinForms.TextField _dictateFor;
         private System.Windows.Forms.Button _chooseRadiologistButton;
 

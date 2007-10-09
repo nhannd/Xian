@@ -92,6 +92,7 @@ namespace ClearCanvas.Ris.Application.Common
                 new AuthorityGroupDefinition(Radiologists,
                     new string[] 
                     {
+                        AuthorityTokens.SuperviseResidentAdmin
                     }),
 
                 new AuthorityGroupDefinition(RadiologyResidents,

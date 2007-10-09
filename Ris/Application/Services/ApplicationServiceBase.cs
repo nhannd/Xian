@@ -21,16 +21,13 @@ namespace ClearCanvas.Ris.Application.Services
         {
             get
             {
-                if (_currentUserStaff == null)
+                try
                 {
-                    try
-                    {
-                        _currentUserStaff = PersistenceContext.GetBroker<IStaffBroker>().FindStaffForUser(Thread.CurrentPrincipal.Identity.Name);
-                    }
-                    catch (EntityNotFoundException)
-                    {
-                        throw new RequestValidationException(SR.ExceptionNoStaffForUser);
-                    }
+                    _currentUserStaff = PersistenceContext.GetBroker<IStaffBroker>().FindStaffForUser(Thread.CurrentPrincipal.Identity.Name);
+                }
+                catch (EntityNotFoundException)
+                {
+                    throw new RequestValidationException(SR.ExceptionNoStaffForUser);
                 }
 
                 return _currentUserStaff;

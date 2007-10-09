@@ -165,6 +165,11 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
                 workflow.AddActivity(verification);
                 return verification;
             }
+
+            public override bool CanExecute(ReportingProcedureStep step, Staff currentUserStaff)
+            {
+                return base.CanExecute(step, currentUserStaff) && (currentUserStaff.Type == StaffType.PRAD);
+            }            
         }
 
         public class CancelReportingStep : ReportingOperation
@@ -257,6 +262,9 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
 
                 // step is assigned to someone else
                 if (Equals(step.AssignedStaff, currentUserStaff) == false)
+                    return false;
+
+                if (currentUserStaff.Type != StaffType.PRAD)
                     return false;
 
                 return true;

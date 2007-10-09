@@ -25,6 +25,7 @@ namespace ClearCanvas.Ris.Client.Reporting {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("")]
         public string SupervisorID {
             get {
                 return ((string)(this["SupervisorID"]));

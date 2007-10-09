@@ -69,6 +69,20 @@ namespace ClearCanvas.Healthcare.Workflow.Reporting
         }
 
         [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
+        public class ResidentToBeVerified : WorklistBase<IReportingWorklistBroker>
+        {
+            public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return (IList)GetBroker(context).GetResidentToBeVerifiedWorklist(currentUserStaff);
+            }
+
+            public override int GetWorklistCount(Staff currentUserStaff, IPersistenceContext context)
+            {
+                return GetBroker(context).GetResidentToBeVerifiedWorklistCount(currentUserStaff);
+            }
+        }
+
+        [ExtensionOf(typeof(ReportingWorklistExtensionPoint))]
         public class Verified : WorklistBase<IReportingWorklistBroker>
         {
             public override IList GetWorklist(Staff currentUserStaff, IPersistenceContext context)

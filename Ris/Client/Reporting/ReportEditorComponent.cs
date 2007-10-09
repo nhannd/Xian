@@ -1,5 +1,6 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
@@ -101,7 +102,7 @@ namespace ClearCanvas.Ris.Client.Reporting
                     // For resident, look for the default supervisor if it does not already exist
                     if (_supervisor == null && String.IsNullOrEmpty(SupervisorSettings.Default.SupervisorID) == false)
                     {
-                        GetRadiologistListResponse getRadListresponse = service.GetRadiologistList(new GetRadiologistListRequest());
+                        GetRadiologistListResponse getRadListresponse = service.GetRadiologistList(new GetRadiologistListRequest(SupervisorSettings.Default.SupervisorID));
                         _supervisor = CollectionUtils.FirstElement<StaffSummary>(getRadListresponse.Radiologists);
                     }
                 });
@@ -218,7 +219,7 @@ namespace ClearCanvas.Ris.Client.Reporting
 
         public bool VerifyEnabled
         {
-            get { return _canCompleteInterpretationAndVerify || _canCompleteVerification; }
+            get { return (_canCompleteInterpretationAndVerify || _canCompleteVerification); }
         }
 
         public bool SendToVerifyEnabled
@@ -229,6 +230,11 @@ namespace ClearCanvas.Ris.Client.Reporting
         public bool SendToTranscriptionEnabled
         {
             get { return _canCompleteInterpretationForTranscription; }
+        }
+
+        public bool SupervisorSelectionVisible
+        {
+            get { return Thread.CurrentPrincipal.IsInRole("SuperviseResidentAdmin") == false; }
         }
 
         public string SupervisorName

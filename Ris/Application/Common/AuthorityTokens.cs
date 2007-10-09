@@ -53,6 +53,9 @@ namespace ClearCanvas.Ris.Application.Common
         public const string WorklistAdmin = "WorklistAdmin";
 
         [AuthorityToken(Description = "Allow access to the Demo components")]
-        public const string DemoAdmin = "DemoAdmin";  
+        public const string DemoAdmin = "DemoAdmin";
+
+        [AuthorityToken(Description = "Allow supervision of resident radiologists")]
+        public const string SuperviseResidentAdmin = "SuperviseResidentAdmin";
     }
 }
