@@ -109,6 +109,9 @@ namespace ClearCanvas.Workflow
             if (this.State != ActivityStatus.SC)
                 throw new WorkflowException("Schedule is only allowed from Scheduled state");
 
+            if (_scheduling == null)
+                _scheduling = new ActivityScheduling();
+
             this.Scheduling.StartTime = startTime;
             this.Scheduling.EndTime = endTime;
 
@@ -119,6 +122,9 @@ namespace ClearCanvas.Workflow
         {
             if (this.State != ActivityStatus.SC)
                 throw new WorkflowException("Assignment of scheduled performer only allowed from scheduled state");
+
+            if (_scheduling == null)
+                _scheduling = new ActivityScheduling();
 
             this.Scheduling.Performer = performer;
 
