@@ -112,7 +112,6 @@ namespace ClearCanvas.ImageViewer.Tools.Standard
 			bool showPixelValue = true;
 			bool showModalityValue = true;
 			bool showVoiValue = true;
-			bool showPresentationValue = true;
 
 			string probeString = String.Format("LOC: x={0}, y={1}", SR.LabelNotApplicable, SR.LabelNotApplicable);
 			string pixelValueString = String.Format("{0}: {1}", SR.LabelPixelValue, SR.LabelNotApplicable);

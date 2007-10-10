@@ -8,6 +8,7 @@ namespace ClearCanvas.ImageViewer.InputManagement
 
 		void Stop();
 
+		//TODO: this could be a global setting for all mouse wheel activity.  Hide it in TileController for now.
 		uint StopDelayMilliseconds { get; }
 	}
 }
