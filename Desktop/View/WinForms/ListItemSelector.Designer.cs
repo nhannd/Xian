@@ -38,8 +38,8 @@ namespace ClearCanvas.Desktop.View.WinForms
             this._availableItems = new ClearCanvas.Desktop.View.WinForms.TableView();
             this._selectedItems = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this._filterColumn = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._filterValue = new ClearCanvas.Controls.WinForms.TextField();
+            this._filterColumn = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._filterValue = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._clearFilterButton = new System.Windows.Forms.Button();
             this._applyFilterButton = new System.Windows.Forms.Button();
@@ -255,8 +255,8 @@ namespace ClearCanvas.Desktop.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.TableView _availableItems;
         private ClearCanvas.Desktop.View.WinForms.TableView _selectedItems;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _filterColumn;
-        private ClearCanvas.Controls.WinForms.TextField _filterValue;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _filterColumn;
+        private ClearCanvas.Desktop.View.WinForms.TextField _filterValue;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button _clearFilterButton;
         private System.Windows.Forms.Button _applyFilterButton;

@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._browseButton = new System.Windows.Forms.Button();
             this.openFileDialog1 = new System.Windows.Forms.OpenFileDialog();
             this._startButton = new System.Windows.Forms.Button();
-            this._importer = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._importer = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._dataFile = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
@@ -113,7 +113,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private System.Windows.Forms.Button _browseButton;
         private System.Windows.Forms.OpenFileDialog openFileDialog1;
         private System.Windows.Forms.Button _startButton;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _importer;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _importer;
         private System.Windows.Forms.TextBox _dataFile;
         private System.Windows.Forms.Label label1;
     }

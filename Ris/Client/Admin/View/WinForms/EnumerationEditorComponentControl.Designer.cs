@@ -28,9 +28,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._code = new ClearCanvas.Controls.WinForms.TextField();
-            this._displayValue = new ClearCanvas.Controls.WinForms.TextField();
-            this._description = new ClearCanvas.Controls.WinForms.TextAreaField();
+            this._code = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._displayValue = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._description = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
             this._cancelButton = new System.Windows.Forms.Button();
             this._okButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -106,9 +106,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Controls.WinForms.TextField _code;
-        private ClearCanvas.Controls.WinForms.TextField _displayValue;
-        private ClearCanvas.Controls.WinForms.TextAreaField _description;
+        private ClearCanvas.Desktop.View.WinForms.TextField _code;
+        private ClearCanvas.Desktop.View.WinForms.TextField _displayValue;
+        private ClearCanvas.Desktop.View.WinForms.TextAreaField _description;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _okButton;
     }

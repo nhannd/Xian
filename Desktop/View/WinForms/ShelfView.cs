@@ -1,11 +1,5 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
 using System.Windows.Forms;
 using Crownwood.DotNetMagic.Docking;
-using System.ComponentModel;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {

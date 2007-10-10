@@ -1,7 +1,8 @@
 using System;
 using ClearCanvas.Common;
+using ClearCanvas.Desktop.View.WinForms;
 #if !MONO
-using ClearCanvas.Controls.WinForms;
+
 #endif
 
 namespace ClearCanvas.Desktop.Executable

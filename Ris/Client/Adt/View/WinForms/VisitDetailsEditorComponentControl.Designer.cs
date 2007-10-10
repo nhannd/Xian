@@ -28,18 +28,18 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._visitNumber = new ClearCanvas.Controls.WinForms.TextField();
-            this._visitNumberAssigningAuthority = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._visitNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._visitNumberAssigningAuthority = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._admitDateTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._dischargeDateTime = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
-            this._dischargeDisposition = new ClearCanvas.Controls.WinForms.TextField();
-            this._preadmitNumber = new ClearCanvas.Controls.WinForms.TextField();
+            this._dischargeDisposition = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._preadmitNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._vip = new System.Windows.Forms.CheckBox();
-            this._patientClass = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._visitStatus = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._patientType = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._ambulatoryStatus = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._admissionType = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._patientClass = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._visitStatus = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._patientType = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._ambulatoryStatus = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._admissionType = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -267,18 +267,18 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Controls.WinForms.TextField _visitNumber;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _visitNumberAssigningAuthority;
+        private ClearCanvas.Desktop.View.WinForms.TextField _visitNumber;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _visitNumberAssigningAuthority;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _admitDateTime;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _dischargeDateTime;
-        private ClearCanvas.Controls.WinForms.TextField _dischargeDisposition;
-        private ClearCanvas.Controls.WinForms.TextField _preadmitNumber;
+        private ClearCanvas.Desktop.View.WinForms.TextField _dischargeDisposition;
+        private ClearCanvas.Desktop.View.WinForms.TextField _preadmitNumber;
         private System.Windows.Forms.CheckBox _vip;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _patientClass;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _visitStatus;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _patientType;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _ambulatoryStatus;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _admissionType;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _patientClass;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _visitStatus;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _patientType;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _ambulatoryStatus;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _admissionType;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
     }
 }

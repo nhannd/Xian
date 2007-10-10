@@ -30,10 +30,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this._category = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._description = new ClearCanvas.Controls.WinForms.TextAreaField();
+            this._category = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._description = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this._comment = new ClearCanvas.Controls.WinForms.TextAreaField();
+            this._comment = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
@@ -177,9 +177,9 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _acceptButton;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _category;
-        private ClearCanvas.Controls.WinForms.TextAreaField _comment;
-        private ClearCanvas.Controls.WinForms.TextAreaField _description;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _category;
+        private ClearCanvas.Desktop.View.WinForms.TextAreaField _comment;
+        private ClearCanvas.Desktop.View.WinForms.TextAreaField _description;
 
     }
 }

@@ -29,13 +29,13 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
         private void InitializeComponent()
         {
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SearchPanelComponentControl));
-			this._patientID = new ClearCanvas.Controls.WinForms.TextField();
-			this._accessionNumber = new ClearCanvas.Controls.WinForms.TextField();
-			this._lastName = new ClearCanvas.Controls.WinForms.TextField();
-			this._firstName = new ClearCanvas.Controls.WinForms.TextField();
+			this._patientID = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._accessionNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._lastName = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._firstName = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._studyDateFrom = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
 			this._studyDateTo = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
-			this._studyDescription = new ClearCanvas.Controls.WinForms.TextField();
+			this._studyDescription = new ClearCanvas.Desktop.View.WinForms.TextField();
 			this._searchButton = new System.Windows.Forms.Button();
 			this._searchLastWeekButton = new System.Windows.Forms.Button();
 			this._clearButton = new System.Windows.Forms.Button();
@@ -228,11 +228,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 		private System.Windows.Forms.Button _clearButton;
 		private System.Windows.Forms.Button _searchTodayButton;
 		private ClearCanvas.Desktop.View.WinForms.DateTimeField _studyDateFrom;
-		private ClearCanvas.Controls.WinForms.TextField _patientID;
-		private ClearCanvas.Controls.WinForms.TextField _lastName;
-		private ClearCanvas.Controls.WinForms.TextField _studyDescription;
-		private ClearCanvas.Controls.WinForms.TextField _accessionNumber;
-		private ClearCanvas.Controls.WinForms.TextField _firstName;
+		private ClearCanvas.Desktop.View.WinForms.TextField _patientID;
+		private ClearCanvas.Desktop.View.WinForms.TextField _lastName;
+		private ClearCanvas.Desktop.View.WinForms.TextField _studyDescription;
+		private ClearCanvas.Desktop.View.WinForms.TextField _accessionNumber;
+		private ClearCanvas.Desktop.View.WinForms.TextField _firstName;
 		private ModalityPicker _modalityPicker;
     }
 }

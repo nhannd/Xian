@@ -34,7 +34,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 			this._okButton = new System.Windows.Forms.Button();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-			this._keyStrokeComboBox = new ClearCanvas.Controls.WinForms.ComboBoxField();
+			this._keyStrokeComboBox = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._tableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -107,7 +107,7 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 		private System.Windows.Forms.Button _okButton;
 		private System.Windows.Forms.Button _cancelButton;
 		private System.Windows.Forms.TableLayoutPanel _tableLayoutPanel;
-		private ClearCanvas.Controls.WinForms.ComboBoxField _keyStrokeComboBox;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _keyStrokeComboBox;
 
 	}
 }

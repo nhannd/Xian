@@ -31,8 +31,8 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe.View.WinForms
 			this._createDynamicTeButton = new System.Windows.Forms.Button();
 			this._probabilityMapVisible = new System.Windows.Forms.CheckBox();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this._thresholdControl = new ClearCanvas.Controls.WinForms.TrackBarUpDown();
-			this._opacityControl = new ClearCanvas.Controls.WinForms.TrackBarUpDown();
+			this._thresholdControl = new ClearCanvas.Desktop.View.WinForms.TrackBarUpDown();
+			this._opacityControl = new ClearCanvas.Desktop.View.WinForms.TrackBarUpDown();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
 			this.groupBox1.SuspendLayout();
@@ -158,9 +158,9 @@ namespace ClearCanvas.ImageViewer.Tools.ImageProcessing.DynamicTe.View.WinForms
 		private System.Windows.Forms.Button _createDynamicTeButton;
 		private System.Windows.Forms.CheckBox _probabilityMapVisible;
 		private System.Windows.Forms.GroupBox groupBox1;
-		private ClearCanvas.Controls.WinForms.TrackBarUpDown _thresholdControl;
+		private ClearCanvas.Desktop.View.WinForms.TrackBarUpDown _thresholdControl;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Label label1;
-		private ClearCanvas.Controls.WinForms.TrackBarUpDown _opacityControl;
+		private ClearCanvas.Desktop.View.WinForms.TrackBarUpDown _opacityControl;
     }
 }

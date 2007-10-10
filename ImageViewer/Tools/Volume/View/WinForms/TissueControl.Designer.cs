@@ -34,9 +34,9 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 			this._windowLabel = new System.Windows.Forms.Label();
 			this._levelLabel = new System.Windows.Forms.Label();
 			this._opacityLabel = new System.Windows.Forms.Label();
-			this._opacityControl = new ClearCanvas.Controls.WinForms.TrackBarUpDown();
-			this._windowControl = new ClearCanvas.Controls.WinForms.TrackBarUpDown();
-			this._levelControl = new ClearCanvas.Controls.WinForms.TrackBarUpDown();
+			this._opacityControl = new ClearCanvas.Desktop.View.WinForms.TrackBarUpDown();
+			this._windowControl = new ClearCanvas.Desktop.View.WinForms.TrackBarUpDown();
+			this._levelControl = new ClearCanvas.Desktop.View.WinForms.TrackBarUpDown();
 			this._surfaceRenderingRadio = new System.Windows.Forms.RadioButton();
 			this._volumeRenderingRadio = new System.Windows.Forms.RadioButton();
 			this.SuspendLayout();
@@ -224,9 +224,9 @@ namespace ClearCanvas.ImageViewer.Tools.Volume.View.WinForms
 		private System.Windows.Forms.Label _windowLabel;
 		private System.Windows.Forms.Label _levelLabel;
 		private System.Windows.Forms.Label _opacityLabel;
-		private ClearCanvas.Controls.WinForms.TrackBarUpDown _opacityControl;
-		private ClearCanvas.Controls.WinForms.TrackBarUpDown _windowControl;
-		private ClearCanvas.Controls.WinForms.TrackBarUpDown _levelControl;
+		private ClearCanvas.Desktop.View.WinForms.TrackBarUpDown _opacityControl;
+		private ClearCanvas.Desktop.View.WinForms.TrackBarUpDown _windowControl;
+		private ClearCanvas.Desktop.View.WinForms.TrackBarUpDown _levelControl;
 		private System.Windows.Forms.RadioButton _surfaceRenderingRadio;
 		private System.Windows.Forms.RadioButton _volumeRenderingRadio;
 

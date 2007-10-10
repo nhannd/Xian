@@ -33,8 +33,8 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this._name = new ClearCanvas.Controls.WinForms.TextField();
-            this._code = new ClearCanvas.Controls.WinForms.TextField();
+            this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._code = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
@@ -142,11 +142,11 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private ClearCanvas.Controls.WinForms.TextField _name;
+        private ClearCanvas.Desktop.View.WinForms.TextField _name;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _acceptButton;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
-        private ClearCanvas.Controls.WinForms.TextField _code;
+        private ClearCanvas.Desktop.View.WinForms.TextField _code;
     }
 }

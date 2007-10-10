@@ -33,12 +33,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this._facility = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._building = new ClearCanvas.Controls.WinForms.TextField();
-            this._floor = new ClearCanvas.Controls.WinForms.TextField();
-            this._pointOfCare = new ClearCanvas.Controls.WinForms.TextField();
-            this._room = new ClearCanvas.Controls.WinForms.TextField();
-            this._bed = new ClearCanvas.Controls.WinForms.TextField();
+            this._facility = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._building = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._floor = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._pointOfCare = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._room = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._bed = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -196,12 +196,12 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _facility;
-        private ClearCanvas.Controls.WinForms.TextField _building;
-        private ClearCanvas.Controls.WinForms.TextField _floor;
-        private ClearCanvas.Controls.WinForms.TextField _pointOfCare;
-        private ClearCanvas.Controls.WinForms.TextField _room;
-        private ClearCanvas.Controls.WinForms.TextField _bed;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _facility;
+        private ClearCanvas.Desktop.View.WinForms.TextField _building;
+        private ClearCanvas.Desktop.View.WinForms.TextField _floor;
+        private ClearCanvas.Desktop.View.WinForms.TextField _pointOfCare;
+        private ClearCanvas.Desktop.View.WinForms.TextField _room;
+        private ClearCanvas.Desktop.View.WinForms.TextField _bed;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _acceptButton;

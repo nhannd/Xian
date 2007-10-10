@@ -7,7 +7,6 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.Controls.WinForms;
 
 namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 {

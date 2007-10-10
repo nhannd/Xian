@@ -28,11 +28,11 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 		/// </summary>
 		private void InitializeComponent()
 		{
-			this._nameField = new ClearCanvas.Controls.WinForms.TextField();
-			this._windowCenter = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
+			this._nameField = new ClearCanvas.Desktop.View.WinForms.TextField();
+			this._windowCenter = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
 			this.label1 = new System.Windows.Forms.Label();
 			this.label2 = new System.Windows.Forms.Label();
-			this._windowWidth = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
+			this._windowWidth = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
 			((System.ComponentModel.ISupportInitialize)(this._windowCenter)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this._windowWidth)).BeginInit();
 			this.SuspendLayout();
@@ -138,10 +138,10 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
 
 		#endregion
 
-		private ClearCanvas.Controls.WinForms.TextField _nameField;
-		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _windowCenter;
+		private ClearCanvas.Desktop.View.WinForms.TextField _nameField;
+		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _windowCenter;
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Label label2;
-		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _windowWidth;
+		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _windowWidth;
 	}
 }

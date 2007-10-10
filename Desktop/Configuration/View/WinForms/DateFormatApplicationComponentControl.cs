@@ -1,11 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-using ClearCanvas.Common;
 using ClearCanvas.Desktop.Configuration.Standard;
 
 namespace ClearCanvas.Desktop.Configuration.View.WinForms

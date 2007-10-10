@@ -1,8 +1,6 @@
-using System;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
-
 using ClearCanvas.Desktop.Tables;
 
 namespace ClearCanvas.Desktop.View.WinForms

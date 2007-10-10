@@ -30,17 +30,17 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         {
             this._acceptButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
-            this._postalCode = new ClearCanvas.Controls.WinForms.TextField();
+            this._postalCode = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._validFrom = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._validUntil = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
-            this._type = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._city = new ClearCanvas.Controls.WinForms.TextField();
-            this._street = new ClearCanvas.Controls.WinForms.TextField();
-            this._province = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._country = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._type = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._city = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._street = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._province = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._country = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this._unit = new ClearCanvas.Controls.WinForms.TextField();
+            this._unit = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -236,18 +236,18 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Controls.WinForms.TextField _street;
-        private ClearCanvas.Controls.WinForms.TextField _city;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _type;
+        private ClearCanvas.Desktop.View.WinForms.TextField _street;
+        private ClearCanvas.Desktop.View.WinForms.TextField _city;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _type;
         private System.Windows.Forms.Button _acceptButton;
         private System.Windows.Forms.Button _cancelButton;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _validUntil;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _validFrom;
-        private ClearCanvas.Controls.WinForms.TextField _postalCode;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _province;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _country;
+        private ClearCanvas.Desktop.View.WinForms.TextField _postalCode;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _province;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _country;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private ClearCanvas.Controls.WinForms.TextField _unit;
+        private ClearCanvas.Desktop.View.WinForms.TextField _unit;
     }
 }

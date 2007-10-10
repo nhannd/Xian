@@ -1,9 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-using ClearCanvas.Common;
-using Crownwood.DotNetMagic.Controls;
 using System.Windows.Forms;
 
 namespace ClearCanvas.Desktop.View.WinForms

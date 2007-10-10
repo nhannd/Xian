@@ -66,6 +66,9 @@ namespace ClearCanvas.Desktop
 
         class PageList : ObservableList<TPage, CollectionEventArgs<TPage>>
         {
+			public PageList()
+			{
+			}
         }
 
 

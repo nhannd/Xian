@@ -29,10 +29,10 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private void InitializeComponent()
         {
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
-            this._enumerationName = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._enumerationName = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._enumerationValuesTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this._enumerationClass = new ClearCanvas.Controls.WinForms.TextField();
+            this._enumerationClass = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -114,9 +114,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Controls.WinForms.ComboBoxField _enumerationName;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _enumerationName;
         private ClearCanvas.Desktop.View.WinForms.TableView _enumerationValuesTableView;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private ClearCanvas.Controls.WinForms.TextField _enumerationClass;
+        private ClearCanvas.Desktop.View.WinForms.TextField _enumerationClass;
     }
 }

@@ -28,10 +28,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._licenseNumber = new ClearCanvas.Controls.WinForms.TextField();
-            this._middleName = new ClearCanvas.Controls.WinForms.TextField();
-            this._givenName = new ClearCanvas.Controls.WinForms.TextField();
-            this._familyName = new ClearCanvas.Controls.WinForms.TextField();
+            this._licenseNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._middleName = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._givenName = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._familyName = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.SuspendLayout();
             // 
             // _licenseNumber
@@ -95,10 +95,10 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Controls.WinForms.TextField _licenseNumber;
-        private ClearCanvas.Controls.WinForms.TextField _middleName;
-        private ClearCanvas.Controls.WinForms.TextField _givenName;
-        private ClearCanvas.Controls.WinForms.TextField _familyName;
+        private ClearCanvas.Desktop.View.WinForms.TextField _licenseNumber;
+        private ClearCanvas.Desktop.View.WinForms.TextField _middleName;
+        private ClearCanvas.Desktop.View.WinForms.TextField _givenName;
+        private ClearCanvas.Desktop.View.WinForms.TextField _familyName;
 
     }
 }

@@ -1,8 +1,4 @@
 using System;
-using System.Collections;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Windows.Forms;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
@@ -16,10 +12,10 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 		private System.Windows.Forms.Label _tileRowsLabel;
 		private System.Windows.Forms.Label _imageBoxColumnsLabel;
 		private System.Windows.Forms.Label _imageBoxRowsLabel;
-		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _imageBoxRows;
-		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _imageBoxColumns;
-		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _tileColumns;
-		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _tileRows;
+		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _imageBoxRows;
+		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _imageBoxColumns;
+		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _tileColumns;
+		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _tileRows;
 		private Button _applyTiles;
 		private Button _applyImageBoxes;
 		private Panel imageBoxPanel;
@@ -151,12 +147,12 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 			this._applyImageBoxes = new System.Windows.Forms.Button();
 			this.imageBoxPanel = new System.Windows.Forms.Panel();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
-			this._imageBoxColumns = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
-			this._imageBoxRows = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
+			this._imageBoxColumns = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
+			this._imageBoxRows = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
 			this.tilePanel = new System.Windows.Forms.Panel();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
-			this._tileRows = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
-			this._tileColumns = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
+			this._tileRows = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
+			this._tileColumns = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
 			this._buttonConfigure = new System.Windows.Forms.Button();
 			this.imageBoxPanel.SuspendLayout();
 			this.groupBox1.SuspendLayout();

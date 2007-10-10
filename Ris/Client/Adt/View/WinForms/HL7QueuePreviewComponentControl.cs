@@ -2,7 +2,7 @@ using System;
 
 using System.Windows.Forms;
 
-using ClearCanvas.Controls.WinForms;
+using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Common;
 
 namespace ClearCanvas.Ris.Client.Adt.View.WinForms

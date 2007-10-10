@@ -1,7 +1,5 @@
 using System.Drawing;
 using System.Windows.Forms;
-
-using ClearCanvas.Common;
 using ClearCanvas.Desktop;
 using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts.Applicators;

@@ -1,11 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Desktop.Configuration.Standard;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Desktop.Configuration.View.WinForms
 {

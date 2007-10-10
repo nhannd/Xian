@@ -1,10 +1,4 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Windows.Forms;
-
 using ClearCanvas.Common;
-using Crownwood.DotNetMagic.Common;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {

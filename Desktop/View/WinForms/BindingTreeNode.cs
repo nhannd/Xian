@@ -1,12 +1,8 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-using ClearCanvas.Desktop.Trees;
-using System.Drawing;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.Desktop.Trees;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {

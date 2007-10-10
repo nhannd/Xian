@@ -1,8 +1,6 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
+using System.Reflection;
 using System.Runtime.InteropServices;
 
-using ClearCanvas.Common;
 [assembly: ClearCanvas.Common.Plugin()]
 
 // General Information about an assembly is controlled through the following 
@@ -13,7 +11,7 @@ using ClearCanvas.Common;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ClearCanvas Inc.")]
 [assembly: AssemblyProduct("ClearCanvas Workstation")]
-[assembly: AssemblyCopyright("Copyright ©  2006")]
+[assembly: AssemblyCopyright("Copyright �  2006")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

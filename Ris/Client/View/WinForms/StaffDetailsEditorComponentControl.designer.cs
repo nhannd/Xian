@@ -28,11 +28,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._staffType = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._middleName = new ClearCanvas.Controls.WinForms.TextField();
-            this._givenName = new ClearCanvas.Controls.WinForms.TextField();
-            this._familyName = new ClearCanvas.Controls.WinForms.TextField();
-            this._staffId = new ClearCanvas.Controls.WinForms.TextField();
+            this._staffType = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._middleName = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._givenName = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._familyName = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._staffId = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.SuspendLayout();
             // 
             // _staffType
@@ -110,11 +110,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Controls.WinForms.ComboBoxField _staffType;
-        private ClearCanvas.Controls.WinForms.TextField _middleName;
-        private ClearCanvas.Controls.WinForms.TextField _givenName;
-        private ClearCanvas.Controls.WinForms.TextField _familyName;
-        private ClearCanvas.Controls.WinForms.TextField _staffId;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _staffType;
+        private ClearCanvas.Desktop.View.WinForms.TextField _middleName;
+        private ClearCanvas.Desktop.View.WinForms.TextField _givenName;
+        private ClearCanvas.Desktop.View.WinForms.TextField _familyName;
+        private ClearCanvas.Desktop.View.WinForms.TextField _staffId;
 
     }
 }

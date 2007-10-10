@@ -7,7 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 
 using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.Controls.WinForms;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Samples.Google.Calendar.View.WinForms
 {

@@ -35,9 +35,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this._requestedProcedureTypesSelector = new ClearCanvas.Desktop.View.WinForms.ListItemSelector();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this._name = new ClearCanvas.Controls.WinForms.TextField();
-            this._category = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._description = new ClearCanvas.Controls.WinForms.TextAreaField();
+            this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._category = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._description = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -206,9 +206,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private System.Windows.Forms.Button _acceptButton;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private ClearCanvas.Controls.WinForms.TextField _name;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _category;
-        private ClearCanvas.Controls.WinForms.TextAreaField _description;
+        private ClearCanvas.Desktop.View.WinForms.TextField _name;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _category;
+        private ClearCanvas.Desktop.View.WinForms.TextAreaField _description;
         private ClearCanvas.Desktop.View.WinForms.ListItemSelector _requestedProcedureTypesSelector;
     }
 }

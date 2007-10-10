@@ -1,5 +1,4 @@
 using System.Windows.Forms;
-using System;
 using ClearCanvas.ImageViewer.Tools.Standard.PresetVoiLuts;
 
 namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms

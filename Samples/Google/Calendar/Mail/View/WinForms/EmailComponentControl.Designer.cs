@@ -28,7 +28,7 @@ namespace ClearCanvas.Samples.Google.Calendar.Mail.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._emailAddress = new ClearCanvas.Controls.WinForms.TextField();
+            this._emailAddress = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._cancelButton = new System.Windows.Forms.Button();
             this._okButton = new System.Windows.Forms.Button();
             this.SuspendLayout();
@@ -80,7 +80,7 @@ namespace ClearCanvas.Samples.Google.Calendar.Mail.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Controls.WinForms.TextField _emailAddress;
+        private ClearCanvas.Desktop.View.WinForms.TextField _emailAddress;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _okButton;
     }

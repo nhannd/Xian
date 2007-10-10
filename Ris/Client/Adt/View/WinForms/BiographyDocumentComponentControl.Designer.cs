@@ -38,8 +38,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this.label1 = new System.Windows.Forms.Label();
             this._previewButton = new System.Windows.Forms.Button();
             this._category = new System.Windows.Forms.Label();
-            this._reason = new ClearCanvas.Controls.WinForms.TextField();
-            this._institution = new ClearCanvas.Controls.WinForms.TextField();
+            this._reason = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._institution = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this._previewImage = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._prevPageButton = new System.Windows.Forms.Button();
             this._pageIndicator = new System.Windows.Forms.TextBox();
             this._printPreviewDialog = new System.Windows.Forms.PrintPreviewDialog();
-            this._documentDate = new ClearCanvas.Controls.WinForms.TextField();
+            this._documentDate = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -307,8 +307,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.PrintPreviewDialog _printPreviewDialog;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Label _category;
-        private ClearCanvas.Controls.WinForms.TextField _reason;
-        private ClearCanvas.Controls.WinForms.TextField _institution;
+        private ClearCanvas.Desktop.View.WinForms.TextField _reason;
+        private ClearCanvas.Desktop.View.WinForms.TextField _institution;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Button _nextPageButton;
@@ -318,6 +318,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button _previewButton;
         private System.Windows.Forms.PictureBox _previewImage;
-        private ClearCanvas.Controls.WinForms.TextField _documentDate;
+        private ClearCanvas.Desktop.View.WinForms.TextField _documentDate;
     }
 }

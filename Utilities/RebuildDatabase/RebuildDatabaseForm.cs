@@ -7,7 +7,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.IO;
 using Crownwood.DotNetMagic.Forms;
-using ClearCanvas.Controls.WinForms;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Utilities.RebuildDatabase
 {

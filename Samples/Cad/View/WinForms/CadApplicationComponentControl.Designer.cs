@@ -28,9 +28,9 @@ namespace ClearCanvas.Samples.Cad.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			this._thresholdControl = new ClearCanvas.Controls.WinForms.TrackBarUpDown();
+			this._thresholdControl = new ClearCanvas.Desktop.View.WinForms.TrackBarUpDown();
 			this.label1 = new System.Windows.Forms.Label();
-			this._opacityControl = new ClearCanvas.Controls.WinForms.TrackBarUpDown();
+			this._opacityControl = new ClearCanvas.Desktop.View.WinForms.TrackBarUpDown();
 			this.label2 = new System.Windows.Forms.Label();
 			this._analyzeButton = new System.Windows.Forms.Button();
 			this.SuspendLayout();
@@ -130,9 +130,9 @@ namespace ClearCanvas.Samples.Cad.View.WinForms
 
         #endregion
 
-		private ClearCanvas.Controls.WinForms.TrackBarUpDown _thresholdControl;
+		private ClearCanvas.Desktop.View.WinForms.TrackBarUpDown _thresholdControl;
 		private System.Windows.Forms.Label label1;
-		private ClearCanvas.Controls.WinForms.TrackBarUpDown _opacityControl;
+		private ClearCanvas.Desktop.View.WinForms.TrackBarUpDown _opacityControl;
 		private System.Windows.Forms.Label label2;
 		private System.Windows.Forms.Button _analyzeButton;
     }

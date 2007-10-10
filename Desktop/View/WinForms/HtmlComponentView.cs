@@ -1,10 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Common.Utilities;
 using System.IO;
-using ClearCanvas.Common.Scripting;
 using System.Reflection;
+using ClearCanvas.Common.Scripting;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 
 namespace ClearCanvas.Desktop.View.WinForms

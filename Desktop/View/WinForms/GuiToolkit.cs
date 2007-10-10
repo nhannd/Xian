@@ -1,9 +1,5 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using System.ComponentModel;
-using System.Windows.Forms;
 using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.Desktop.View.WinForms

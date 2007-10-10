@@ -2,12 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Text;
 using System.Windows.Forms;
-using System.Collections;
-using ClearCanvas.Desktop.View.WinForms;
-using ClearCanvas.Common.Utilities;
 
 namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 {
@@ -42,7 +37,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 			_checkedModalities = new SortedList<string, string>();
 		}
 
-		[DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)] 
+		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)] 
 		[Browsable(false)]
 		public IList<string> CheckedModalities
 		{

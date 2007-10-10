@@ -30,8 +30,8 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
         {
 			this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
 			this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-			this._defaultValue = new ClearCanvas.Controls.WinForms.TextAreaField();
-			this._editableValue = new ClearCanvas.Controls.WinForms.TextAreaField();
+			this._defaultValue = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
+			this._editableValue = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
 			this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
 			this._cancelButton = new System.Windows.Forms.Button();
 			this._okButton = new System.Windows.Forms.Button();
@@ -163,8 +163,8 @@ namespace ClearCanvas.Desktop.Configuration.View.WinForms
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private ClearCanvas.Controls.WinForms.TextAreaField _defaultValue;
-        private ClearCanvas.Controls.WinForms.TextAreaField _editableValue;
+        private ClearCanvas.Desktop.View.WinForms.TextAreaField _defaultValue;
+        private ClearCanvas.Desktop.View.WinForms.TextAreaField _editableValue;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _okButton;

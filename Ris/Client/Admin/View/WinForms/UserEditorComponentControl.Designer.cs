@@ -31,18 +31,18 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             ClearCanvas.Desktop.Selection selection2 = new ClearCanvas.Desktop.Selection();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._authorityGroups = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this._userId = new ClearCanvas.Controls.WinForms.TextField();
+            this._userId = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
-            this._password = new ClearCanvas.Controls.WinForms.TextField();
-            this._confirmPassword = new ClearCanvas.Controls.WinForms.TextField();
+            this._password = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._confirmPassword = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._validFrom = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._validUntil = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._setStaffButton = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this._clearStaffButton = new System.Windows.Forms.Button();
-            this._staffName = new ClearCanvas.Controls.WinForms.TextField();
+            this._staffName = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -266,18 +266,18 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private ClearCanvas.Desktop.View.WinForms.TableView _authorityGroups;
-        private ClearCanvas.Controls.WinForms.TextField _userId;
+        private ClearCanvas.Desktop.View.WinForms.TextField _userId;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _acceptButton;
-        private ClearCanvas.Controls.WinForms.TextField _password;
-        private ClearCanvas.Controls.WinForms.TextField _confirmPassword;
+        private ClearCanvas.Desktop.View.WinForms.TextField _password;
+        private ClearCanvas.Desktop.View.WinForms.TextField _confirmPassword;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _validUntil;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _validFrom;
         private System.Windows.Forms.Button _setStaffButton;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button _clearStaffButton;
-        private ClearCanvas.Controls.WinForms.TextField _staffName;
+        private ClearCanvas.Desktop.View.WinForms.TextField _staffName;
 
     }
 }

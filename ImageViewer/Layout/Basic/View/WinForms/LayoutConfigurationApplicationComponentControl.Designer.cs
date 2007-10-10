@@ -28,17 +28,17 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-			this._comboBoxModality = new ClearCanvas.Controls.WinForms.ComboBoxField();
-			this._imageBoxColumns = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
+			this._comboBoxModality = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+			this._imageBoxColumns = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
 			this.groupBox1 = new System.Windows.Forms.GroupBox();
 			this._imageBoxLabelRows = new System.Windows.Forms.Label();
-			this._imageBoxRows = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
+			this._imageBoxRows = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
 			this._imageBoxLabelColumns = new System.Windows.Forms.Label();
 			this.groupBox2 = new System.Windows.Forms.GroupBox();
 			this._tileLabelRows = new System.Windows.Forms.Label();
-			this._tileRows = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
+			this._tileRows = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
 			this._tileLabelColumns = new System.Windows.Forms.Label();
-			this._tileColumns = new ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown();
+			this._tileColumns = new ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown();
 			((System.ComponentModel.ISupportInitialize)(this._imageBoxColumns)).BeginInit();
 			this.groupBox1.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this._imageBoxRows)).BeginInit();
@@ -179,16 +179,16 @@ namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 
         #endregion
 
-		private ClearCanvas.Controls.WinForms.ComboBoxField _comboBoxModality;
-		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _imageBoxColumns;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _comboBoxModality;
+		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _imageBoxColumns;
 		private System.Windows.Forms.GroupBox groupBox1;
 		private System.Windows.Forms.Label _imageBoxLabelColumns;
 		private System.Windows.Forms.Label _imageBoxLabelRows;
-		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _imageBoxRows;
+		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _imageBoxRows;
 		private System.Windows.Forms.GroupBox groupBox2;
 		private System.Windows.Forms.Label _tileLabelRows;
-		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _tileRows;
+		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _tileRows;
 		private System.Windows.Forms.Label _tileLabelColumns;
-		private ClearCanvas.Controls.WinForms.NonEmptyNumericUpDown _tileColumns;
+		private ClearCanvas.Desktop.View.WinForms.NonEmptyNumericUpDown _tileColumns;
     }
 }

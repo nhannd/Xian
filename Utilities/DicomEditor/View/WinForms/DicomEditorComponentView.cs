@@ -1,10 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Common;
-using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Desktop;
-using ClearCanvas.Utilities.DicomEditor;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
 {

@@ -30,9 +30,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
         {
 			ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
 			this._presetVoiLuts = new ClearCanvas.Desktop.View.WinForms.TableView();
-			this._comboModality = new ClearCanvas.Controls.WinForms.ComboBoxField();
+			this._comboModality = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-			this._comboAddPreset = new ClearCanvas.Controls.WinForms.ComboBoxField();
+			this._comboAddPreset = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
 			this._addPresetButton = new System.Windows.Forms.Button();
 			this._tableLayoutPanel.SuspendLayout();
 			this.SuspendLayout();
@@ -127,9 +127,9 @@ namespace ClearCanvas.ImageViewer.Tools.Standard.View.WinForms
         #endregion
 
 		private ClearCanvas.Desktop.View.WinForms.TableView _presetVoiLuts;
-		private ClearCanvas.Controls.WinForms.ComboBoxField _comboModality;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _comboModality;
 		private System.Windows.Forms.TableLayoutPanel _tableLayoutPanel;
-		private ClearCanvas.Controls.WinForms.ComboBoxField _comboAddPreset;
+		private ClearCanvas.Desktop.View.WinForms.ComboBoxField _comboAddPreset;
 		private System.Windows.Forms.Button _addPresetButton;
     }
 }

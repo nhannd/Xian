@@ -28,9 +28,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._name = new ClearCanvas.Controls.WinForms.TextField();
-            this._type = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._description = new ClearCanvas.Controls.WinForms.TextAreaField();
+            this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._type = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._description = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._cancelButton = new System.Windows.Forms.Button();
@@ -244,9 +244,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Controls.WinForms.TextField _name;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _type;
-        private ClearCanvas.Controls.WinForms.TextAreaField _description;
+        private ClearCanvas.Desktop.View.WinForms.TextField _name;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _type;
+        private ClearCanvas.Desktop.View.WinForms.TextAreaField _description;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button _cancelButton;

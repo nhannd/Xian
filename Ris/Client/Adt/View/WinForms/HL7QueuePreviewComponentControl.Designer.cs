@@ -40,10 +40,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._peerChkBox = new System.Windows.Forms.CheckBox();
             this._typeChkBox = new System.Windows.Forms.CheckBox();
             this._statusChkBox = new System.Windows.Forms.CheckBox();
-            this._direction = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._peer = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._type = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._status = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._direction = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._peer = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._type = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._status = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
             this._searchButton = new System.Windows.Forms.Button();
             this._showAll = new System.Windows.Forms.Button();
@@ -433,10 +433,10 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.CheckBox _peerChkBox;
         private System.Windows.Forms.CheckBox _typeChkBox;
         private System.Windows.Forms.CheckBox _statusChkBox;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _direction;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _peer;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _type;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _status;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _direction;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _peer;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _type;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _status;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Button _searchButton;
 

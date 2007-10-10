@@ -28,22 +28,22 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         /// </summary>
         private void InitializeComponent()
         {
-            this._middleName = new ClearCanvas.Controls.WinForms.TextField();
-            this._givenName = new ClearCanvas.Controls.WinForms.TextField();
-            this._familyName = new ClearCanvas.Controls.WinForms.TextField();
-            this._sex = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._middleName = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._givenName = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._familyName = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._sex = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._dateOfBirth = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this._dateOfDeath = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.label1 = new System.Windows.Forms.Label();
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
-            this._healthcard = new ClearCanvas.Controls.WinForms.TextField();
-            this._mrnSite = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._healthcardProvince = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._healthcardVersionCode = new ClearCanvas.Controls.WinForms.TextField();
+            this._healthcard = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._mrnSite = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._healthcardProvince = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._healthcardVersionCode = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._healthcardExpiry = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
-            this._mrn = new ClearCanvas.Controls.WinForms.TextField();
+            this._mrn = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.tableLayoutPanel3.SuspendLayout();
@@ -298,21 +298,21 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Controls.WinForms.TextField _familyName;
-        private ClearCanvas.Controls.WinForms.TextField _givenName;
-        private ClearCanvas.Controls.WinForms.TextField _middleName;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _sex;
+        private ClearCanvas.Desktop.View.WinForms.TextField _familyName;
+        private ClearCanvas.Desktop.View.WinForms.TextField _givenName;
+        private ClearCanvas.Desktop.View.WinForms.TextField _middleName;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _sex;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _dateOfBirth;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _dateOfDeath;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Label label1;
-        private ClearCanvas.Controls.WinForms.TextField _mrn;
-        private ClearCanvas.Controls.WinForms.TextField _healthcard;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _mrnSite;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _healthcardProvince;
+        private ClearCanvas.Desktop.View.WinForms.TextField _mrn;
+        private ClearCanvas.Desktop.View.WinForms.TextField _healthcard;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _mrnSite;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _healthcardProvince;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _healthcardExpiry;
-        private ClearCanvas.Controls.WinForms.TextField _healthcardVersionCode;
+        private ClearCanvas.Desktop.View.WinForms.TextField _healthcardVersionCode;
         public System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
     }
 }

@@ -32,8 +32,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._staffs = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
-            this._lastName = new ClearCanvas.Controls.WinForms.TextField();
-            this._firstName = new ClearCanvas.Controls.WinForms.TextField();
+            this._lastName = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._firstName = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._searchButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._cancelButton = new System.Windows.Forms.Button();
@@ -183,8 +183,8 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.TableView _staffs;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private ClearCanvas.Controls.WinForms.TextField _lastName;
-        private ClearCanvas.Controls.WinForms.TextField _firstName;
+        private ClearCanvas.Desktop.View.WinForms.TextField _lastName;
+        private ClearCanvas.Desktop.View.WinForms.TextField _firstName;
         private System.Windows.Forms.Button _searchButton;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button _cancelButton;

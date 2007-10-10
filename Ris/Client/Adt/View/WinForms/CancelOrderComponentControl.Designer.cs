@@ -32,7 +32,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._cancelButton = new System.Windows.Forms.Button();
             this._okButton = new System.Windows.Forms.Button();
             this._cancelOrderTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
-            this._cancelReason = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._cancelReason = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this.SuspendLayout();
             // 
             // _cancelButton
@@ -104,6 +104,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _okButton;
         private ClearCanvas.Desktop.View.WinForms.TableView _cancelOrderTableView;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _cancelReason;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _cancelReason;
     }
 }

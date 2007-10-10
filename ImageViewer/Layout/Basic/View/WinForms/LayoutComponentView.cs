@@ -1,13 +1,6 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-
-using ClearCanvas.Common;
-using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Desktop.Tools;
-using ClearCanvas.Desktop.View.WinForms;
 using ClearCanvas.Desktop;
+using ClearCanvas.Desktop.View.WinForms;
 
 namespace ClearCanvas.ImageViewer.Layout.Basic.View.WinForms
 {

@@ -33,9 +33,9 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this._severity = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._category = new ClearCanvas.Controls.WinForms.TextField();
-            this._description = new ClearCanvas.Controls.WinForms.TextAreaField();
+            this._severity = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._category = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._description = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel2.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
@@ -157,11 +157,11 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _severity;
-        private ClearCanvas.Controls.WinForms.TextField _category;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _severity;
+        private ClearCanvas.Desktop.View.WinForms.TextField _category;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _acceptButton;
-        private ClearCanvas.Controls.WinForms.TextAreaField _description;
+        private ClearCanvas.Desktop.View.WinForms.TextAreaField _description;
     }
 }

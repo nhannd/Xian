@@ -34,9 +34,9 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
             this._group = new System.Windows.Forms.TextBox();
             this._elementLabel = new System.Windows.Forms.Label();
             this._element = new System.Windows.Forms.TextBox();
-            this._value = new ClearCanvas.Controls.WinForms.TextField();
-            this._vr = new ClearCanvas.Controls.WinForms.TextField();
-            this._tagName = new ClearCanvas.Controls.WinForms.TextField();
+            this._value = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._vr = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._tagName = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.SuspendLayout();
             // 
             // _accept
@@ -159,8 +159,8 @@ namespace ClearCanvas.Utilities.DicomEditor.View.WinForms
         private System.Windows.Forms.TextBox _group;
         private System.Windows.Forms.Label _elementLabel;
         private System.Windows.Forms.TextBox _element;
-        private ClearCanvas.Controls.WinForms.TextField _value;
-        private ClearCanvas.Controls.WinForms.TextField _vr;
-        private ClearCanvas.Controls.WinForms.TextField _tagName;
+        private ClearCanvas.Desktop.View.WinForms.TextField _value;
+        private ClearCanvas.Desktop.View.WinForms.TextField _vr;
+        private ClearCanvas.Desktop.View.WinForms.TextField _tagName;
     }
 }

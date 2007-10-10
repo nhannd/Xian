@@ -31,8 +31,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this._feedbackTable = new ClearCanvas.Desktop.View.WinForms.DecoratedTableView();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this._comments = new ClearCanvas.Controls.WinForms.TextAreaField();
-            this._subject = new ClearCanvas.Controls.WinForms.TextField();
+            this._comments = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
+            this._subject = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
             this.splitContainer1.SuspendLayout();
@@ -117,7 +117,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
 
         private ClearCanvas.Desktop.View.WinForms.DecoratedTableView _feedbackTable;
         private System.Windows.Forms.SplitContainer splitContainer1;
-        private ClearCanvas.Controls.WinForms.TextAreaField _comments;
-        private ClearCanvas.Controls.WinForms.TextField _subject;
+        private ClearCanvas.Desktop.View.WinForms.TextAreaField _comments;
+        private ClearCanvas.Desktop.View.WinForms.TextField _subject;
     }
 }

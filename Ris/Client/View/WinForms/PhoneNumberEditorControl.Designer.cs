@@ -32,12 +32,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._acceptButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this._countryCode = new ClearCanvas.Controls.WinForms.TextField();
-            this._extension = new ClearCanvas.Controls.WinForms.TextField();
-            this._number = new ClearCanvas.Controls.WinForms.TextField();
-            this._areaCode = new ClearCanvas.Controls.WinForms.TextField();
+            this._countryCode = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._extension = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._number = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._areaCode = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.flowLayoutPanel2 = new System.Windows.Forms.FlowLayoutPanel();
-            this._phoneType = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._phoneType = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this.flowLayoutPanel3 = new System.Windows.Forms.FlowLayoutPanel();
             this._validFrom = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
@@ -245,15 +245,15 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
-        private ClearCanvas.Controls.WinForms.TextField _countryCode;
-        private ClearCanvas.Controls.WinForms.TextField _extension;
-        private ClearCanvas.Controls.WinForms.TextField _areaCode;
+        private ClearCanvas.Desktop.View.WinForms.TextField _countryCode;
+        private ClearCanvas.Desktop.View.WinForms.TextField _extension;
+        private ClearCanvas.Desktop.View.WinForms.TextField _areaCode;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel2;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel3;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _validFrom;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _validUntil;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _phoneType;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _phoneType;
         private System.Windows.Forms.ToolTip toolTip1;
-        private ClearCanvas.Controls.WinForms.TextField _number;
+        private ClearCanvas.Desktop.View.WinForms.TextField _number;
     }
 }

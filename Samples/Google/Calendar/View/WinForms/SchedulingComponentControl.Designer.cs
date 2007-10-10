@@ -30,10 +30,10 @@ namespace ClearCanvas.Samples.Google.Calendar.View.WinForms
         {
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this._followUpDate = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
-            this._comment = new ClearCanvas.Controls.WinForms.TextAreaField();
+            this._comment = new ClearCanvas.Desktop.View.WinForms.TextAreaField();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this._addButton = new System.Windows.Forms.Button();
-            this._patientInfo = new ClearCanvas.Controls.WinForms.TextField();
+            this._patientInfo = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._appointmentsTableView = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -128,10 +128,10 @@ namespace ClearCanvas.Samples.Google.Calendar.View.WinForms
         #endregion
 
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _followUpDate;
-        private ClearCanvas.Controls.WinForms.TextAreaField _comment;
+        private ClearCanvas.Desktop.View.WinForms.TextAreaField _comment;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button _addButton;
-        private ClearCanvas.Controls.WinForms.TextField _patientInfo;
+        private ClearCanvas.Desktop.View.WinForms.TextField _patientInfo;
         private ClearCanvas.Desktop.View.WinForms.TableView _appointmentsTableView;
     }
 }

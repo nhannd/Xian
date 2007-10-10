@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this._validFrom = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this._validUntil = new ClearCanvas.Desktop.View.WinForms.DateTimeField();
-            this._address = new ClearCanvas.Controls.WinForms.TextField();
+            this._address = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
@@ -151,7 +151,7 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _validFrom;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private ClearCanvas.Desktop.View.WinForms.DateTimeField _validUntil;
-        private ClearCanvas.Controls.WinForms.TextField _address;
+        private ClearCanvas.Desktop.View.WinForms.TextField _address;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _acceptButton;

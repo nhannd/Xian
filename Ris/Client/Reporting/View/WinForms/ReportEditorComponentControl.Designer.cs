@@ -30,15 +30,15 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this._visitNumber = new ClearCanvas.Controls.WinForms.TextField();
-            this._performedDate = new ClearCanvas.Controls.WinForms.TextField();
-            this._dateOfBirth = new ClearCanvas.Controls.WinForms.TextField();
-            this._accessionNumber = new ClearCanvas.Controls.WinForms.TextField();
-            this._mrn = new ClearCanvas.Controls.WinForms.TextField();
-            this._performedLocation = new ClearCanvas.Controls.WinForms.TextField();
-            this._requestedProcedure = new ClearCanvas.Controls.WinForms.TextField();
+            this._visitNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._performedDate = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._dateOfBirth = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._accessionNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._mrn = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._performedLocation = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._requestedProcedure = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._patientName = new System.Windows.Forms.Label();
-            this._diagnosticService = new ClearCanvas.Controls.WinForms.TextField();
+            this._diagnosticService = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._browserPanel = new System.Windows.Forms.Panel();
             this._browserSplitContainer = new System.Windows.Forms.SplitContainer();
             this._editorBrowser = new System.Windows.Forms.WebBrowser();
@@ -50,7 +50,7 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
             this._saveButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
             this._residentPanel = new System.Windows.Forms.Panel();
-            this._dictateFor = new ClearCanvas.Controls.WinForms.TextField();
+            this._dictateFor = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._chooseRadiologistButton = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -376,12 +376,12 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Panel panel1;
-        private ClearCanvas.Controls.WinForms.TextField _accessionNumber;
-        private ClearCanvas.Controls.WinForms.TextField _mrn;
-        private ClearCanvas.Controls.WinForms.TextField _performedLocation;
-        private ClearCanvas.Controls.WinForms.TextField _requestedProcedure;
+        private ClearCanvas.Desktop.View.WinForms.TextField _accessionNumber;
+        private ClearCanvas.Desktop.View.WinForms.TextField _mrn;
+        private ClearCanvas.Desktop.View.WinForms.TextField _performedLocation;
+        private ClearCanvas.Desktop.View.WinForms.TextField _requestedProcedure;
         private System.Windows.Forms.Label _patientName;
-        private ClearCanvas.Controls.WinForms.TextField _diagnosticService;
+        private ClearCanvas.Desktop.View.WinForms.TextField _diagnosticService;
         private System.Windows.Forms.Panel _browserPanel;
         private System.Windows.Forms.Panel panel3;
         private System.Windows.Forms.Button _verifyButton;
@@ -392,11 +392,11 @@ namespace ClearCanvas.Ris.Client.Reporting.View.WinForms
         private System.Windows.Forms.SplitContainer _browserSplitContainer;
         private System.Windows.Forms.WebBrowser _editorBrowser;
         private System.Windows.Forms.WebBrowser _previewBrowser;
-        private ClearCanvas.Controls.WinForms.TextField _dateOfBirth;
-        private ClearCanvas.Controls.WinForms.TextField _performedDate;
-        private ClearCanvas.Controls.WinForms.TextField _visitNumber;
+        private ClearCanvas.Desktop.View.WinForms.TextField _dateOfBirth;
+        private ClearCanvas.Desktop.View.WinForms.TextField _performedDate;
+        private ClearCanvas.Desktop.View.WinForms.TextField _visitNumber;
         private System.Windows.Forms.Panel _residentPanel;
-        private ClearCanvas.Controls.WinForms.TextField _dictateFor;
+        private ClearCanvas.Desktop.View.WinForms.TextField _dictateFor;
         private System.Windows.Forms.Button _chooseRadiologistButton;
 
     }

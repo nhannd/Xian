@@ -29,11 +29,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this._accessionNumber = new ClearCanvas.Controls.WinForms.TextField();
-            this._mrn = new ClearCanvas.Controls.WinForms.TextField();
-            this._healthcard = new ClearCanvas.Controls.WinForms.TextField();
-            this._familyName = new ClearCanvas.Controls.WinForms.TextField();
-            this._givenName = new ClearCanvas.Controls.WinForms.TextField();
+            this._accessionNumber = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._mrn = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._healthcard = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._familyName = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._givenName = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._searchButton = new System.Windows.Forms.Button();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._showActive = new System.Windows.Forms.CheckBox();
@@ -202,13 +202,13 @@ namespace ClearCanvas.Ris.Client.View.WinForms
 
         #endregion
 
-        private ClearCanvas.Controls.WinForms.TextField _familyName;
-        private ClearCanvas.Controls.WinForms.TextField _givenName;
+        private ClearCanvas.Desktop.View.WinForms.TextField _familyName;
+        private ClearCanvas.Desktop.View.WinForms.TextField _givenName;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private ClearCanvas.Controls.WinForms.TextField _healthcard;
-        private ClearCanvas.Controls.WinForms.TextField _mrn;
+        private ClearCanvas.Desktop.View.WinForms.TextField _healthcard;
+        private ClearCanvas.Desktop.View.WinForms.TextField _mrn;
         private System.Windows.Forms.Button _searchButton;
-        private ClearCanvas.Controls.WinForms.TextField _accessionNumber;
+        private ClearCanvas.Desktop.View.WinForms.TextField _accessionNumber;
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.CheckBox _showActive;
         private System.Windows.Forms.CheckBox _keepOpen;

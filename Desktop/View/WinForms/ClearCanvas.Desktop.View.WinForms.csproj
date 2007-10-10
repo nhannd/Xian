@@ -48,6 +48,9 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="ApplicationView.cs" />
+    <Compile Include="BitmapOverlayForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="CloseHelperComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -55,12 +58,21 @@
       <DependentUpon>CloseHelperComponentControl.cs</DependentUpon>
     </Compile>
     <Compile Include="CloseHelperComponentView.cs" />
+    <Compile Include="ComboBoxField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="ComboBoxField.Designer.cs">
+      <DependentUpon>ComboBoxField.cs</DependentUpon>
+    </Compile>
+    <Compile Include="CursorManager.cs" />
     <Compile Include="DateTimeField.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="DateTimeField.Designer.cs">
       <DependentUpon>DateTimeField.cs</DependentUpon>
     </Compile>
+    <Compile Include="DelayedEventDispatcher.cs" />
+    <Compile Include="Delegates.cs" />
     <Compile Include="DesktopMonitorComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -69,6 +81,46 @@
     </Compile>
     <Compile Include="DesktopMonitorComponentView.cs" />
     <Compile Include="DesktopObjectView.cs" />
+    <Compile Include="FileBrowser\Browser.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="FileBrowser\Browser.designer.cs">
+      <DependentUpon>Browser.cs</DependentUpon>
+    </Compile>
+    <Compile Include="FileBrowser\BrowserControls.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FileBrowser\BrowserWrappers\BrowserContextMenuWrappers.cs" />
+    <Compile Include="FileBrowser\BrowserWrappers\BrowserDragWrappers.cs" />
+    <Compile Include="FileBrowser\BrowserWrappers\BrowserDropWrappers.cs" />
+    <Compile Include="FileBrowser\BrowserWrappers\BrowserPluginWrapper.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FileBrowser\Shell\Interfaces\IAdviseSink.cs" />
+    <Compile Include="FileBrowser\Shell\Interfaces\IContextMenu.cs" />
+    <Compile Include="FileBrowser\Shell\Interfaces\IDataObject.cs" />
+    <Compile Include="FileBrowser\Shell\Interfaces\IDragSourceHelper.cs" />
+    <Compile Include="FileBrowser\Shell\Interfaces\IDropSource.cs" />
+    <Compile Include="FileBrowser\Shell\Interfaces\IDropTarget.cs" />
+    <Compile Include="FileBrowser\Shell\Interfaces\IDropTargetHelper.cs" />
+    <Compile Include="FileBrowser\Shell\Interfaces\IEnumFORMATETC.cs" />
+    <Compile Include="FileBrowser\Shell\Interfaces\IEnumIDList.cs" />
+    <Compile Include="FileBrowser\Shell\Interfaces\IEnumSTATSTG.cs" />
+    <Compile Include="FileBrowser\Shell\Interfaces\IQueryInfo.cs" />
+    <Compile Include="FileBrowser\Shell\Interfaces\IShellExtInit.cs" />
+    <Compile Include="FileBrowser\Shell\Interfaces\IShellFolder.cs" />
+    <Compile Include="FileBrowser\Shell\Interfaces\IStorage.cs" />
+    <Compile Include="FileBrowser\Shell\Interfaces\IStream.cs" />
+    <Compile Include="FileBrowser\Shell\PIDL.cs" />
+    <Compile Include="FileBrowser\Shell\ShellAPI.cs" />
+    <Compile Include="FileBrowser\Shell\ShellBrowser.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="FileBrowser\Shell\ShellBrowserUpdater.cs" />
+    <Compile Include="FileBrowser\Shell\ShellHelper.cs" />
+    <Compile Include="FileBrowser\Shell\ShellImageList.cs" />
+    <Compile Include="FileBrowser\Shell\ShellItem.cs" />
+    <Compile Include="FileBrowser\Shell\StreamStorage.cs" />
     <Compile Include="GuiToolkit.cs" />
     <Compile Include="ListItemSelector.cs">
       <SubType>UserControl</SubType>
@@ -76,7 +128,20 @@
     <Compile Include="ListItemSelector.Designer.cs">
       <DependentUpon>ListItemSelector.cs</DependentUpon>
     </Compile>
+    <Compile Include="NonEmptyNumericUpDown.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="NullableMaskedEdit.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="ShelfView.cs" />
+    <Compile Include="SplashScreen.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SplashScreen.designer.cs">
+      <DependentUpon>SplashScreen.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SplashScreenManager.cs" />
     <Compile Include="TestComponentControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -85,6 +150,24 @@
     </Compile>
     <Compile Include="TestComponentView.cs" />
     <Compile Include="OrderedSet.cs" />
+    <Compile Include="TextAreaField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TextAreaField.Designer.cs">
+      <DependentUpon>TextAreaField.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TextField.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TextField.Designer.cs">
+      <DependentUpon>TextField.cs</DependentUpon>
+    </Compile>
+    <Compile Include="TrackBarUpDown.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="TrackBarUpDown.Designer.cs">
+      <DependentUpon>TrackBarUpDown.cs</DependentUpon>
+    </Compile>
     <Compile Include="WorkspaceView.cs" />
     <Compile Include="ApplicationComponentUserControl.cs">
       <SubType>UserControl</SubType>
@@ -255,6 +338,10 @@
       <SubType>Designer</SubType>
       <DependentUpon>DialogComponentContainerControl.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="FileBrowser\Browser.resx">
+      <DependentUpon>Browser.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Include="ListItemSelector.resx">
       <DependentUpon>ListItemSelector.cs</DependentUpon>
       <SubType>Designer</SubType>
@@ -318,10 +405,6 @@
       <Project>{F6EAD428-E6CF-4DF6-B2F3-D33D532C5343}</Project>
       <Name>ClearCanvas.Common</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\Controls\WinForms\ClearCanvas.Controls.WinForms.csproj">
-      <Project>{CA91515F-D706-4D15-882B-811F3BDC4956}</Project>
-      <Name>ClearCanvas.Controls.WinForms</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\ClearCanvas.Desktop.csproj">
       <Project>{26E9A01A-64B5-42C5-8252-FBB30DF9CEC7}</Project>
       <Name>ClearCanvas.Desktop</Name>
@@ -334,6 +417,35 @@
       <LastGenOutput>DesktopViewSettings.Designer.cs</LastGenOutput>
     </None>
     <None Include="Resources\Stop.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="FileBrowser\Images\BrowseFolders.png" />
+    <Content Include="FileBrowser\Images\BrowserBack.png" />
+    <Content Include="FileBrowser\Images\BrowserForward.png" />
+    <Content Include="FileBrowser\Images\BrowserUp.png" />
+    <EmbeddedResource Include="Resources\SplashShadow.png" />
+    <EmbeddedResource Include="Resources\Splash.png" />
+    <EmbeddedResource Include="ComboBoxField.resx">
+      <DependentUpon>ComboBoxField.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Icons\folder.ico" />
+    <EmbeddedResource Include="SplashScreen.resx">
+      <DependentUpon>SplashScreen.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextAreaField.resx">
+      <DependentUpon>TextAreaField.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TextField.resx">
+      <DependentUpon>TextField.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="TrackBarUpDown.resx">
+      <DependentUpon>TrackBarUpDown.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

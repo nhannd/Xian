@@ -35,9 +35,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._visitTable = new ClearCanvas.Desktop.View.WinForms.TableView();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this._orderingPhysician = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._orderingFacility = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._priority = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._orderingPhysician = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._orderingFacility = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._priority = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this._diagnosticServiceBreakdown = new ClearCanvas.Desktop.View.WinForms.BindingTreeView();
             this._placeOrderButton = new System.Windows.Forms.Button();
             this._cancelButton = new System.Windows.Forms.Button();
@@ -47,7 +47,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
             this._selectedDiagnosticService = new System.Windows.Forms.TextBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this._reorderReason = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._reorderReason = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -281,9 +281,9 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private ClearCanvas.Desktop.View.WinForms.TableView _visitTable;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _orderingPhysician;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _orderingFacility;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _priority;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _orderingPhysician;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _orderingFacility;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _priority;
         private ClearCanvas.Desktop.View.WinForms.BindingTreeView _diagnosticServiceBreakdown;
         private System.Windows.Forms.Button _placeOrderButton;
         private System.Windows.Forms.Button _cancelButton;
@@ -293,6 +293,6 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private System.Windows.Forms.TextBox _selectedDiagnosticService;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Panel panel1;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _reorderReason;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _reorderReason;
     }
 }

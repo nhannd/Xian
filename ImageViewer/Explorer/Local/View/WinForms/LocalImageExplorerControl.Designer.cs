@@ -29,8 +29,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
-			this._fileBrowser = new ClearCanvas.Controls.WinForms.FileBrowser.Browser();
-			this._shellBrowser = new ClearCanvas.Controls.WinForms.FileBrowser.ShellDll.ShellBrowser();
+			this._fileBrowser = new ClearCanvas.Desktop.View.WinForms.FileBrowser.Browser();
+			this._shellBrowser = new ClearCanvas.Desktop.View.WinForms.FileBrowser.ShellDll.ShellBrowser();
 			this.SuspendLayout();
 			// 
 			// _fileBrowser
@@ -59,8 +59,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Local.View.WinForms
 
 		#endregion
 
-		private ClearCanvas.Controls.WinForms.FileBrowser.Browser _fileBrowser;
-		private ClearCanvas.Controls.WinForms.FileBrowser.ShellDll.ShellBrowser _shellBrowser;
+		private ClearCanvas.Desktop.View.WinForms.FileBrowser.Browser _fileBrowser;
+		private ClearCanvas.Desktop.View.WinForms.FileBrowser.ShellDll.ShellBrowser _shellBrowser;
 		private System.Windows.Forms.ContextMenuStrip _contextMenu;
 	}
 }

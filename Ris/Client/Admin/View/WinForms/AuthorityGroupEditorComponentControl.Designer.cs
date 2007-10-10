@@ -31,7 +31,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
             ClearCanvas.Desktop.Selection selection1 = new ClearCanvas.Desktop.Selection();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this._authorityGroupName = new ClearCanvas.Controls.WinForms.TextField();
+            this._authorityGroupName = new ClearCanvas.Desktop.View.WinForms.TextField();
             this._authorityTokenTable = new ClearCanvas.Desktop.View.WinForms.TableView();
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
@@ -147,7 +147,7 @@ namespace ClearCanvas.Ris.Client.Admin.View.WinForms
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _acceptButton;
-        private ClearCanvas.Controls.WinForms.TextField _authorityGroupName;
+        private ClearCanvas.Desktop.View.WinForms.TextField _authorityGroupName;
         private ClearCanvas.Desktop.View.WinForms.TableView _authorityTokenTable;
     }
 }

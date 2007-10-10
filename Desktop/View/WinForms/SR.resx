@@ -117,11 +117,26 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="ExceptionDelayedEventDelegateArgument" xml:space="preserve">
+    <value>The delegate must accept two arguments: an object and an instance of type compatible with the System.EventArgs type.</value>
+  </data>
   <data name="ExceptionHandlerInnerExceptionText" xml:space="preserve">
     <value>************** InnerException Text **************</value>
   </data>
   <data name="ExceptionHandlerMessagePrefix" xml:space="preserve">
     <value>Message: </value>
+  </data>
+  <data name="ExceptionMaximumTooSmall" xml:space="preserve">
+    <value>Maximum must be greater than minimum.</value>
+  </data>
+  <data name="ExceptionMinimumTooLarge" xml:space="preserve">
+    <value>Minimum must be less than maximum.</value>
+  </data>
+  <data name="ExceptionValueMustNotBeNegative" xml:space="preserve">
+    <value>The value must not be negative.</value>
+  </data>
+  <data name="FormatVersion" xml:space="preserve">
+    <value>Version {0}</value>
   </data>
   <data name="MenuBar" xml:space="preserve">
     <value>Main Menu</value>
@@ -139,4 +154,11 @@
   <data name="Stop" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\Stop.gif;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+    <data name="Splash" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Splash.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SplashShadow" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\SplashShadow.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+
 </root>

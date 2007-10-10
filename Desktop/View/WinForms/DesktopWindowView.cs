@@ -1,16 +1,10 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel;
 using System.Windows.Forms;
-using System.Reflection;
-
 using ClearCanvas.Common;
-using ClearCanvas.Desktop;
-using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop.Actions;
 using Crownwood.DotNetMagic.Controls;
 using Crownwood.DotNetMagic.Docking;
-using System.ComponentModel;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {

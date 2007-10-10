@@ -32,12 +32,12 @@ namespace ClearCanvas.Ris.Client.View.WinForms
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             this._cancelButton = new System.Windows.Forms.Button();
             this._acceptButton = new System.Windows.Forms.Button();
-            this._businessPhone = new ClearCanvas.Controls.WinForms.TextField();
-            this._homePhone = new ClearCanvas.Controls.WinForms.TextField();
-            this._address = new ClearCanvas.Controls.WinForms.TextField();
-            this._name = new ClearCanvas.Controls.WinForms.TextField();
-            this._type = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._relationship = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._businessPhone = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._homePhone = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._address = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._name = new ClearCanvas.Desktop.View.WinForms.TextField();
+            this._type = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._relationship = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this.tableLayoutPanel1.SuspendLayout();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
@@ -205,11 +205,11 @@ namespace ClearCanvas.Ris.Client.View.WinForms
         private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _acceptButton;
-        private ClearCanvas.Controls.WinForms.TextField _businessPhone;
-        private ClearCanvas.Controls.WinForms.TextField _homePhone;
-        private ClearCanvas.Controls.WinForms.TextField _address;
-        private ClearCanvas.Controls.WinForms.TextField _name;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _type;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _relationship;
+        private ClearCanvas.Desktop.View.WinForms.TextField _businessPhone;
+        private ClearCanvas.Desktop.View.WinForms.TextField _homePhone;
+        private ClearCanvas.Desktop.View.WinForms.TextField _address;
+        private ClearCanvas.Desktop.View.WinForms.TextField _name;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _type;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _relationship;
     }
 }

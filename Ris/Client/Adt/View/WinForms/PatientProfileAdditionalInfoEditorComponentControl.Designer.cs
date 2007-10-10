@@ -29,8 +29,8 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         private void InitializeComponent()
         {
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this._primaryLanguage = new ClearCanvas.Controls.WinForms.ComboBoxField();
-            this._religion = new ClearCanvas.Controls.WinForms.ComboBoxField();
+            this._primaryLanguage = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
+            this._religion = new ClearCanvas.Desktop.View.WinForms.ComboBoxField();
             this.tableLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -92,7 +92,7 @@ namespace ClearCanvas.Ris.Client.Adt.View.WinForms
         #endregion
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _primaryLanguage;
-        private ClearCanvas.Controls.WinForms.ComboBoxField _religion;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _primaryLanguage;
+        private ClearCanvas.Desktop.View.WinForms.ComboBoxField _religion;
     }
 }

@@ -30,7 +30,7 @@ namespace ClearCanvas.Ris.Client.Adt.Folders.View.WinForms
         {
             this._cancelButton = new System.Windows.Forms.Button();
             this._okButton = new System.Windows.Forms.Button();
-            this._refreshTime = new ClearCanvas.Controls.WinForms.TextField();
+            this._refreshTime = new ClearCanvas.Desktop.View.WinForms.TextField();
             this.SuspendLayout();
             // 
             // _cancelButton
@@ -83,6 +83,6 @@ namespace ClearCanvas.Ris.Client.Adt.Folders.View.WinForms
 
         private System.Windows.Forms.Button _cancelButton;
         private System.Windows.Forms.Button _okButton;
-        private ClearCanvas.Controls.WinForms.TextField _refreshTime;
+        private ClearCanvas.Desktop.View.WinForms.TextField _refreshTime;
     }
 }

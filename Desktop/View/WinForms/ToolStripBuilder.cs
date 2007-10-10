@@ -1,10 +1,7 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-
 using ClearCanvas.Desktop.Actions;
-using ClearCanvas.Common;
 
 namespace ClearCanvas.Desktop.View.WinForms
 {

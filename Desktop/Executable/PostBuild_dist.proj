@@ -28,7 +28,6 @@
 	<!-- Shared library files, to be placed in common directory -->
 	<ItemGroup>
 		<SharedLibraryFiles Include="$(TrunkDirectory)\Common\bin\$(Configuration)\*.*" />
-		<SharedLibraryFiles Include="$(TrunkDirectory)\Controls\WinForms\bin\$(Configuration)\ClearCanvas.Controls.WinForms.dll" />
 		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\nunit.framework.dll" /> 
 		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\log4net.dll" />
 		<SharedLibraryFiles Include="$(TrunkDirectory)\ReferencedAssemblies\DotNetMagic2005.DLL" />
