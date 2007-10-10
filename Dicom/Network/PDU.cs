@@ -588,7 +588,11 @@ namespace ClearCanvas.Dicom.Network
                         pl -= (ushort)(tl + 4);
 
                         _assoc.SetPresentationContextResult(id, (DicomPresContextResult)res);
-                        _assoc.SetAcceptedTransferSyntax(id, TransferSyntax.GetTransferSyntax(tx));
+                        TransferSyntax acceptedSyntax = TransferSyntax.GetTransferSyntax(tx);
+                        if (acceptedSyntax != null)
+                            _assoc.SetAcceptedTransferSyntax(id, acceptedSyntax);
+                        else 
+                            _assoc.GetPresentationContext(id).ClearTransfers();
                     }
                     else
 
