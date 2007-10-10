@@ -30,7 +30,8 @@ namespace ClearCanvas.ImageServer.Queue.Work
 
         ~StudyProcessItemProcessor()
         {
-            _readContext.Dispose();
+            if (_readContext != null)
+                _readContext.Dispose();
         }
 
         /// <summary>
@@ -247,7 +248,7 @@ namespace ClearCanvas.ImageServer.Queue.Work
                     parms.StatusEnum = StatusEnum.GetEnum("Pending");
                     parms.WorkQueueKey = item.GetKey();
                     parms.StudyStorageKey = item.StudyStorageKey;
-                    parms.ScheduledTime = Platform.Time.AddSeconds(60.0); // 60 second delay to recheck
+                    parms.ScheduledTime = Platform.Time.AddSeconds(90.0); // 60 second delay to recheck
                     parms.ExpirationTime = item.ExpirationTime; // Keep the same
                     parms.FailureCount = item.FailureCount;
                 }

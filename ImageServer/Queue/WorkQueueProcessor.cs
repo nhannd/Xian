@@ -1,8 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
@@ -38,8 +36,13 @@ namespace ClearCanvas.ImageServer.Queue
             foreach (object obj in factories)
             {
                 IWorkQueueProcessorFactory factory = obj as IWorkQueueProcessorFactory;
-                TypeEnum type = factory.GetWorkQueueType();
-                _extensions.Add(type, factory);
+                if (factory != null)
+                {
+                    TypeEnum type = factory.GetWorkQueueType();
+                    _extensions.Add(type, factory);
+                }
+                else 
+                    Platform.Log(LogLevel.Error,"Unexpected incorrect type loaded for extension: {0}",obj.GetType());
             }
         }
         #endregion
@@ -55,7 +58,7 @@ namespace ClearCanvas.ImageServer.Queue
             if (_theThread == null)
             {
                 _threadStop = new ManualResetEvent(false); 
-                _theThread = new Thread(new ThreadStart(Process));
+                _theThread = new Thread(Process);
                 _theThread.Name = _name;
                 _theThread.Start();
             }
@@ -110,6 +113,8 @@ namespace ClearCanvas.ImageServer.Queue
         {
             while (true)
             {
+                bool foundResult = false;
+
                 if (_threadPool.QueueCount < _threadPool.Concurrency)
                 {
                     IReadContext read = _store.OpenReadContext();
@@ -117,6 +122,9 @@ namespace ClearCanvas.ImageServer.Queue
                     WorkQueueQueryParameters parms = new WorkQueueQueryParameters();
                     IList<WorkQueue> list = select.Execute(parms);
                     read.Dispose();
+
+                    if (list.Count > 0)
+                        foundResult = true;
 
                     foreach (WorkQueue queueItem in list)
                     {
@@ -157,11 +165,12 @@ namespace ClearCanvas.ImageServer.Queue
                         }
                     }
                 }
-
-                _threadStop.WaitOne(100, false);
-                _threadStop.Reset();
-
-                if (_stop == true)
+                if (!foundResult)
+                {
+                    _threadStop.WaitOne(ImageServerQueueSettings.Default.WorkQueueQueryDelay, false);
+                    _threadStop.Reset();
+                }
+                if (_stop)
                     return;
             }
         }
