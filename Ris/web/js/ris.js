@@ -5,6 +5,15 @@
 if(window.external)
 {
     var Ris = {
+    
+        // parse filter to customize some aspects of JSML parsing with modifying the JSML.js script
+        _jsmlParserFilter: function(key, value)
+        {
+            // if it has the properties of a staff person, replace it with a Staff object
+            if(value && value.hasOwnProperty('staffId') && value.hasOwnProperty('staffName'))
+                return new Staff(value.staffId, value.staffName, value.staffType);
+            return value;
+        },
         
         // message - confirmation message to display
         // type - a string containing either "YesNo" or "OkCancel" (not case-sensitive)
@@ -30,15 +39,10 @@ if(window.external)
             if(staffSummary == null)
                 return null;
             
-            // ris returns a StaffSummary object, but we only need a few fields from this class
-            var staff = {    staffId : staffSummary.StaffId,
-                             staffName: staffSummary.Name.FamilyName + ", " + staffSummary.Name.GivenName,
-                             staffType: staffSummary.StaffType.Value };
-            
-            // override the toString function - this just makes it work seamlessly with the Table view                 
-            staff.toString = function() { return this.staffName; }
-            
-            return staff;
+            return new Staff(
+                staffSummary.StaffId,
+                staffSummary.Name.FamilyName + ", " + staffSummary.Name.GivenName,
+                staffSummary.StaffType.Value);
         },
         
         getDateFormat: function()
@@ -136,7 +140,22 @@ if(window.external)
 		}
     };
     
+    // install global JSML parser filter
+    JSML.setParseFilter(Ris._jsmlParserFilter);
+    
     // redefine some browser functions to use Ris versions
     window.confirm = Ris.confirm;
     window.alert = Ris.alert;
 }
+
+/*
+    Staff class
+*/
+function Staff(id, name, type)
+{
+    this.staffId = id;
+    this.staffName = name;
+    this.staffType = type;
+}
+// override the toString function - this just makes it work seamlessly with the Table view                 
+Staff.prototype.toString = function() { return this.staffName; }           

@@ -95,6 +95,33 @@ if(!Object.prototype.toJsml)
 
 // definition of the JSML object		    
 var JSML = {
+    // default no-op parse filter
+    _parseFilter: function(key, value)
+    {
+        return value;
+    },
+    
+    /* Sets a global parse filter callback.
+        The filter callback is a function which can filter and
+        transform the results. It receives each of the keys and values, and
+        its return value is used instead of the original value. If it
+        returns what it received, then structure is not modified. If it
+        returns undefined then the member is deleted.
+
+        Example:
+
+        // Parse the text. If a key contains the string 'date' then
+        // convert the value to a date.
+
+        function myFilter(key, value) {
+            return key.indexOf('date') >= 0 ? new Date(value) : value;
+        });
+    */
+    setParseFilter: function(filterFunc)
+    {
+        this._parseFilter = filterFunc;
+    },
+    
     parse: function(jsml)
     {
         function parseXml(xml) {
@@ -136,7 +163,14 @@ var JSML = {
                 else
                 {
                     // no - treat them as independent properties
-                    return subElements.reduce({}, function(o, n) { o[n.nodeName] = toObj(n); return o; });
+                    return subElements.reduce({},
+                        function(o, n)
+                        {
+                            var value = JSML._parseFilter(n.nodeName, toObj(n));
+                            if(value != 'undefined')
+                                o[n.nodeName] = value;
+                            return o;
+                        });
                 }
             }
             else    // node contains text
