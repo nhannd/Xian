@@ -28,7 +28,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
     public class RulerTool : MouseImageViewerTool
 	{
 		private static readonly string[] _disallowedModalities = { "CR", "DX", "MG" };
-		private RoiGraphic _roiGraphic;
+		private RoiGraphic _createGraphic;
 
 		public RulerTool()
 			: base(SR.TooltipRuler)
@@ -55,18 +55,16 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			if (image == null)
 				return false;
 
-			if (_roiGraphic != null)
-				return _roiGraphic.Start(mouseInformation);
+			if (_createGraphic != null)
+				return _createGraphic.Start(mouseInformation);
 
 			PolyLineInteractiveGraphic polyLineGraphic = new PolyLineInteractiveGraphic(true, 2);
-			_roiGraphic = new RoiGraphic(polyLineGraphic, true);
+			_createGraphic = new RoiGraphic(polyLineGraphic, true);
 
-			//_roiGraphic.Callout.Text = SR.ToolsMeasurementLineROI;
-			image.OverlayGraphics.Add(_roiGraphic);
-			_roiGraphic.RoiChanged += new EventHandler(OnRoiChanged);
-			_roiGraphic.StateChanged += new EventHandler<GraphicStateChangedEventArgs>(OnRulerStateChanged);
+			image.OverlayGraphics.Add(_createGraphic);
+			_createGraphic.RoiChanged += new EventHandler(OnRoiChanged);
 
-			if (_roiGraphic.Start(mouseInformation))
+			if (_createGraphic.Start(mouseInformation))
 				return true;
 
 			this.Cancel();
@@ -75,33 +73,34 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		public override bool Track(IMouseInformation mouseInformation)
 		{
-			if (_roiGraphic != null)
-				return _roiGraphic.Track(mouseInformation);
+			if (_createGraphic != null)
+				return _createGraphic.Track(mouseInformation);
 
 			return false;
 		}
 
 		public override bool Stop(IMouseInformation mouseInformation)
 		{
-			if (_roiGraphic != null)
+			if (_createGraphic != null)
 			{
-				if (_roiGraphic.Stop(mouseInformation))
+				if (_createGraphic.Stop(mouseInformation))
 					return true;
 			}
 
-			_roiGraphic = null;
+			_createGraphic = null;
 			return false;
 		}
 
 		public override void Cancel()
 		{
-			if (_roiGraphic != null)
-				_roiGraphic.Cancel();
+			if (_createGraphic != null)
+				_createGraphic.Cancel();
 
-			IOverlayGraphicsProvider image = _roiGraphic.ParentPresentationImage as IOverlayGraphicsProvider;
-			image.OverlayGraphics.Remove(_roiGraphic);
+			IOverlayGraphicsProvider image = _createGraphic.ParentPresentationImage as IOverlayGraphicsProvider;
+			image.OverlayGraphics.Remove(_createGraphic);
 
-			_roiGraphic = null;
+			_createGraphic.ParentPresentationImage.Draw();
+			_createGraphic = null;
 		}
 
 		public override bool SuppressContextMenu
@@ -111,17 +110,11 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 
 		public override CursorToken GetCursorToken(Point point)
 		{
-			if (_roiGraphic != null)
-				return _roiGraphic.GetCursorToken(point);
+			if (_createGraphic != null)
+				return _createGraphic.GetCursorToken(point);
 
 			return null;
 		}
-
-		private void OnRulerStateChanged(object sender, GraphicStateChangedEventArgs e)
-		{
-			
-		}
-
 
 		// This is temporary code.  Right now, the api is difficult to use.  
 		// Ideally, we should have domain objects that make this easier.  

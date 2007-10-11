@@ -100,6 +100,7 @@ namespace ClearCanvas.ImageViewer.Tools.Measurement
 			IOverlayGraphicsProvider image = _createGraphic.ParentPresentationImage as IOverlayGraphicsProvider;
 			image.OverlayGraphics.Remove(_createGraphic);
 
+			_createGraphic.ParentPresentationImage.Draw();
 			_createGraphic = null;
 		}
 
