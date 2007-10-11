@@ -18,6 +18,7 @@ namespace ClearCanvas.Ris.Server
     public class Application : IApplicationRoot
     {
         private List<ServiceHost> _serviceHosts = new List<ServiceHost>();
+        private const int OneMegaByte = 1048576;
 
         #region IApplicationRoot Members
 
@@ -56,7 +57,8 @@ namespace ClearCanvas.Ris.Server
             WSHttpBinding binding = new WSHttpBinding();
             binding.Security.Mode = SecurityMode.Message;
             binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
-            binding.MaxReceivedMessageSize = 1048576;
+            binding.MaxReceivedMessageSize = OneMegaByte;
+            binding.ReaderQuotas.MaxStringContentLength = OneMegaByte;
 
 
             IServiceFactory serviceFactory = new ServiceFactory(serviceLayer);

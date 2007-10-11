@@ -13,6 +13,8 @@ namespace ClearCanvas.Ris.Client
     [ExtensionOf(typeof(ClearCanvas.Common.ServiceProviderExtensionPoint))]
     public class RemoteServiceProvider : IServiceProvider
     {
+        private const int OneMegaByte = 1048576;
+
         #region IServiceProvider Members
 
         public object GetService(Type serviceType)
@@ -27,7 +29,11 @@ namespace ClearCanvas.Ris.Client
                 WSHttpBinding binding = new WSHttpBinding();
                 binding.Security.Mode = SecurityMode.Message;
                 binding.Security.Message.ClientCredentialType = MessageCredentialType.UserName;
-                binding.MaxReceivedMessageSize = 1048576;
+                binding.MaxReceivedMessageSize = OneMegaByte;
+                
+                // allow individual string content to be same size as entire message
+                binding.ReaderQuotas.MaxStringContentLength = OneMegaByte;
+
                 //binding.ReceiveTimeout = new TimeSpan(0, 0 , 20);
                 //binding.SendTimeout = new TimeSpan(0, 0, 10);
 
