@@ -1,3 +1,34 @@
+#region License
+
+// Copyright (c) 2006-2007, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Collections;
 using System.ComponentModel;
@@ -1379,7 +1410,7 @@ namespace ClearCanvas.Desktop.View.WinForms.FileBrowser.BrowserWrappers
         /// <param name="iContextMenu">the IContextMenu containing the item</param>
         /// <param name="cmd">the index of the command to invoke</param>
         /// <param name="parentDir">the parent directory from where to invoke</param>
-        /// <param name="ptInvoke">the point (in screen coördinates) from which to invoke</param>
+        /// <param name="ptInvoke">the point (in screen coï¿½rdinates) from which to invoke</param>
         public static void InvokeCommand(IContextMenu iContextMenu, uint cmd, string parentDir, Point ptInvoke)
         {
             ShellAPI.CMINVOKECOMMANDINFOEX invoke = new ShellAPI.CMINVOKECOMMANDINFOEX();
@@ -1404,7 +1435,7 @@ namespace ClearCanvas.Desktop.View.WinForms.FileBrowser.BrowserWrappers
         /// <param name="cmdA">the Ansi execute string to invoke</param>
         /// <param name="cmdW">the Unicode execute string to invoke</param>
         /// <param name="parentDir">the parent directory from where to invoke</param>
-        /// <param name="ptInvoke">the point (in screen coördinates) from which to invoke</param>
+        /// <param name="ptInvoke">the point (in screen coï¿½rdinates) from which to invoke</param>
         public static void InvokeCommand(IContextMenu iContextMenu, string cmd, string parentDir, Point ptInvoke)
         {
             ShellAPI.CMINVOKECOMMANDINFOEX invoke = new ShellAPI.CMINVOKECOMMANDINFOEX();
@@ -1428,7 +1459,7 @@ namespace ClearCanvas.Desktop.View.WinForms.FileBrowser.BrowserWrappers
         /// <param name="parent">the parent ShellItem which contains the pidls</param>
         /// <param name="pidls">the pidls from the items for which to invoke</param>
         /// <param name="cmd">the execute string from the command to invoke</param>
-        /// <param name="ptInvoke">the point (in screen coördinates) from which to invoke</param>
+        /// <param name="ptInvoke">the point (in screen coï¿½rdinates) from which to invoke</param>
         public static void InvokeCommand(ShellItem parent, IntPtr[] pidls, string cmd, Point ptInvoke)
         {
             IntPtr icontextMenuPtr;
