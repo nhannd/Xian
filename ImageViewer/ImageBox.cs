@@ -71,6 +71,7 @@ namespace ClearCanvas.ImageViewer
 
 		private event EventHandler _drawingEvent;
 		private event EventHandler<ImageBoxEventArgs> _selectionChangedEvent;
+		private event EventHandler<DisplaySetChangedEventArgs> _displaySetChangedEvent;
 		private event EventHandler<TileEventArgs> _tileAddedEvent;
 		private event EventHandler<TileEventArgs> _tileRemovedEvent;
 		private event EventHandler _layoutCompletedEvent;
@@ -177,6 +178,12 @@ namespace ClearCanvas.ImageViewer
 			get { return _displaySet; }
 			set
 			{
+				DisplaySetChangedEventArgs eventArgs = null;
+
+				// If the display set has changed, remember the change
+				if (_displaySet != value)
+					eventArgs = new DisplaySetChangedEventArgs(_displaySet, value);
+
 				// Break association with the old display set (should we dispose too?)
 				if (_displaySet != null)
 				{
@@ -209,6 +216,10 @@ namespace ClearCanvas.ImageViewer
 					this.TopLeftPresentationImageIndex = 0;
 					_displaySet.Selected = this.Selected;
 				}
+
+				// If the display set has changed, let subscribers know
+				if (eventArgs != null)
+					EventsHelper.Fire(_displaySetChangedEvent, this, eventArgs);
 			}
 		}
 
@@ -460,6 +471,15 @@ namespace ClearCanvas.ImageViewer
 		{
 			add { _selectionChangedEvent += value; }
 			remove { _selectionChangedEvent -= value; }
+		}
+
+		/// <summary>
+		/// Occurs when the <see cref="DisplaySet"/> property has changed.
+		/// </summary>
+		public event EventHandler<DisplaySetChangedEventArgs> DisplaySetChanged
+		{
+			add { _displaySetChangedEvent += value; }
+			remove { _displaySetChangedEvent -= value; }
 		}
 
 		/// <summary>

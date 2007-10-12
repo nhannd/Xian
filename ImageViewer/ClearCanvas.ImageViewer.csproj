@@ -135,6 +135,7 @@
     <Compile Include="Comparers\SeriesNumberComparer.cs" />
     <Compile Include="DicomColorPresentationImage.cs" />
     <Compile Include="DicomGrayscalePresentationImage.cs" />
+    <Compile Include="DisplaySetChangedEventArgs.cs" />
     <Compile Include="GarbageCollectionTool.cs" />
     <Compile Include="Graphics\ColorImageGraphic.cs" />
     <Compile Include="Imaging\AlgorithmCalculatedVoiLutLinear.cs" />
@@ -177,6 +178,7 @@
     <Compile Include="Imaging\VoiLutLinearBase.cs" />
     <Compile Include="Imaging\VoiLutManager.cs" />
     <Compile Include="InputManagement\KeyboardButtonDownPreview.cs" />
+    <Compile Include="PresentationImageChangedEventArgs.cs" />
     <Compile Include="PresentationImageFactory.cs" />
     <Compile Include="Rendering\GDIRenderer.cs" />
     <Compile Include="Rendering\IRendererFactory.cs" />

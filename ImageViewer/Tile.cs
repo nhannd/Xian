@@ -69,6 +69,7 @@ namespace ClearCanvas.ImageViewer
 		private event EventHandler _rendererChangedEvent;
 		private event EventHandler _drawingEvent;
 		private event EventHandler<TileEventArgs> _selectionChangedEvent;
+		private event EventHandler<PresentationImageChangedEventArgs> _presentationImageChangedEvent;
 
 		private event EventHandler<InformationBoxChangedEventArgs> _informationBoxChanged;
 
@@ -128,6 +129,9 @@ namespace ClearCanvas.ImageViewer
 			{
 				if (_presentationImage != value)
 				{
+					PresentationImageChangedEventArgs eventArgs = 
+						new PresentationImageChangedEventArgs(_presentationImage, value);
+
 					IRenderer oldRenderer = null;
 
 					if (_presentationImage != null)
@@ -167,6 +171,8 @@ namespace ClearCanvas.ImageViewer
 							EventsHelper.Fire(_rendererChangedEvent, this, EventArgs.Empty);
 						}
 					}
+
+					EventsHelper.Fire(_presentationImageChangedEvent, this, eventArgs);
 				}
 			}
 		}
@@ -340,6 +346,15 @@ namespace ClearCanvas.ImageViewer
 		{
 			add { _selectionChangedEvent += value; }
 			remove { _selectionChangedEvent -= value; }
+		}
+
+		/// <summary>
+		/// Occurs when the <see cref="PresentationImage"/> property has changed.
+		/// </summary>
+		public event EventHandler<PresentationImageChangedEventArgs> PresentationImageChanged
+		{
+			add { _presentationImageChangedEvent += value; }
+			remove { _presentationImageChangedEvent -= value; }
 		}
 
 		/// <summary>
