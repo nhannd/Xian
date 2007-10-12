@@ -51,7 +51,7 @@ namespace ClearCanvas.Common.Utilities
 				recursive);
 		}
 
-		public static void Process(string path, string searchPattern, FileProcessor.ProcessFileCancellable proc, bool recursive)
+		public static bool Process(string path, string searchPattern, FileProcessor.ProcessFileCancellable proc, bool recursive)
 		{
 			Platform.CheckForNullReference(path, "path");
 			Platform.CheckForEmptyString(path, "path");
@@ -71,8 +71,10 @@ namespace ClearCanvas.Common.Utilities
 			}
 			else
 			{
-				throw new DirectoryNotFoundException(String.Format(SR.ExceptionPathDoesNotExist, path));
+				throw new FileNotFoundException(String.Format(SR.ExceptionPathDoesNotExist, path));
 			}
+
+			return cancel;
 		}
 
 		// Private methods

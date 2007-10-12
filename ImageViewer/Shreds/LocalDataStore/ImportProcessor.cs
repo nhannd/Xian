@@ -73,7 +73,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					if (_parentState == ServiceState.Importing)
 						return;
 
-					lock (information.FileImportJobInformation)
+					lock (information.FileImportJobInformation.SyncRoot)
 					{
 						if (!information.FileImportJobInformation.ProgressItem.IsImportComplete() && !information.FileImportJobInformation.ProgressItem.Cancelled)
 						{
@@ -98,7 +98,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					foreach (FileImportJobInformation jobInformation in _importJobs)
 					{
-						lock (jobInformation)
+						lock (jobInformation.SyncRoot)
 						{
 							if (!jobInformation.ProgressItem.IsImportComplete() && !jobInformation.ProgressItem.Cancelled)
 							{
@@ -134,7 +134,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					foreach (FileImportJobInformation jobInformation in _importJobs)
 					{
-						lock (jobInformation)
+						lock (jobInformation.SyncRoot)
 						{
 							UpdateProgress(jobInformation.ProgressItem);
 						}
@@ -204,10 +204,18 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					throw new ArgumentNullException(SR.ExceptionNoValidFilesHaveBeenSpecifiedToImport);
 			}
 
-			protected override void NotifyNoFilesToImport(FileImportJobInformation jobInformation)
+			protected override void OnNoFilesToImport(FileImportJobInformation jobInformation)
 			{
-				jobInformation.ProgressItem.StatusMessage = SR.MessageNoFilesToImport;
-				jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+				lock (jobInformation.SyncRoot)
+				{
+					if (!jobInformation.ProgressItem.Cancelled)
+					{
+						jobInformation.ProgressItem.StatusMessage = SR.MessageNoFilesToImport;
+						jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+
+						UpdateProgress(jobInformation.ProgressItem);
+					}
+				}
 			}
 
 			protected override void UpdateProgress(ImportProgressItem progressItem)
@@ -224,7 +232,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				base.ClearJob(jobInformation);
 
-				lock (jobInformation)
+				lock (jobInformation.SyncRoot)
 				{
 					if (jobInformation.ProgressItem.Removed)
 					{

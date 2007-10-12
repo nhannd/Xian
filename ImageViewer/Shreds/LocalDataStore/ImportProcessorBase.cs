@@ -44,11 +44,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 	{
 		private abstract class ImportProcessorBase
 		{
-			protected delegate void NotifyNoFilesToImportDelegate(FileImportJobInformation jobInformation);
-
 			protected class FileImportInformation : DicomFileImporter.FileImportInformation
 			{
-				private FileImportJobInformation _fileImportJobInformation;
+				private readonly FileImportJobInformation _fileImportJobInformation;
 
 				public FileImportInformation(FileImportJobInformation jobInformation, string file, FileImportBehaviour importBehaviour, BadFileBehaviour badFileBehaviour)
 					: base(file, importBehaviour, badFileBehaviour)
@@ -64,10 +62,12 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			protected class FileImportJobInformation
 			{
-				private ImportProgressItem _progressItem;
-				private Queue<string> _filesToImport;
-				private BadFileBehaviour _badFileBehaviour;
-				private FileImportBehaviour _fileImportBehaviour;
+				public readonly object SyncRoot = new object();
+
+				private readonly ImportProgressItem _progressItem;
+				private readonly Queue<string> _filesToImport;
+				private readonly BadFileBehaviour _badFileBehaviour;
+				private readonly FileImportBehaviour _fileImportBehaviour;
 
 				public FileImportJobInformation(ImportProgressItem progressItem, FileImportBehaviour fileImportBehaviour, BadFileBehaviour badFileBehaviour)
 				{
@@ -111,9 +111,33 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 			}
 
-			protected virtual bool CanCancelJob(FileImportJobInformation jobInformation)
+			private void AddNextFileToImportQueue(FileImportJobInformation jobInformation)
 			{
-				lock (jobInformation)
+				lock (jobInformation.SyncRoot)
+				{
+					if (jobInformation.ProgressItem.Removed)
+						return;
+
+					if (jobInformation.ProgressItem.Cancelled)
+						return;
+
+					string file = jobInformation.Dequeue();
+					if (file == null)
+						return;
+
+					jobInformation.ProgressItem.StatusMessage = String.Format(SR.FormatProcessingFile, file);
+					UpdateProgress(jobInformation.ProgressItem);
+
+					FileImportInformation fileImportInformation =
+						new FileImportInformation(jobInformation, file, jobInformation.FileImportBehaviour,
+						                          jobInformation.BadFileBehaviour);
+					AddToImportQueue(fileImportInformation);
+				}
+			}
+
+			protected bool CanCancelJob(FileImportJobInformation jobInformation)
+			{
+				lock (jobInformation.SyncRoot)
 				{
 					if (!((jobInformation.ProgressItem.AllowedCancellationOperations & CancellationFlags.Cancel) == CancellationFlags.Cancel))
 						return false;
@@ -128,9 +152,9 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				return true;
 			}
 
-			protected virtual void CancelJob(FileImportJobInformation jobInformation)
+			protected void CancelJob(FileImportJobInformation jobInformation)
 			{
-				lock (jobInformation)
+				lock (jobInformation.SyncRoot)
 				{
 					if (!CanCancelJob(jobInformation))
 						return;
@@ -138,13 +162,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					jobInformation.ProgressItem.Cancelled = true;
 					jobInformation.ProgressItem.StatusMessage = SR.MessageCancelled;
 					jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+
 					UpdateProgress(jobInformation.ProgressItem);
 				}
 			}
 
-			protected virtual bool CanClearJob(FileImportJobInformation jobInformation)
+			protected bool CanClearJob(FileImportJobInformation jobInformation)
 			{ 
-				lock (jobInformation)
+				lock (jobInformation.SyncRoot)
 				{
 					if (!((jobInformation.ProgressItem.AllowedCancellationOperations & CancellationFlags.Clear) == CancellationFlags.Clear))
 						return false;
@@ -158,13 +183,14 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 			protected virtual void ClearJob(FileImportJobInformation jobInformation)
 			{
-				lock (jobInformation)
+				lock (jobInformation.SyncRoot)
 				{
 					if (!CanClearJob(jobInformation))
 						return;
 
 					jobInformation.ProgressItem.Removed = true;
 					jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.None;
+
 					UpdateProgress(jobInformation.ProgressItem);
 				}
 			}
@@ -177,7 +203,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				ImportedSopInstanceInformation importedSopInformation = null;
 
-				lock (jobInformation)
+				lock (jobInformation.SyncRoot)
 				{
 					if (jobInformation.ProgressItem.Removed)
 					{
@@ -260,33 +286,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 			}
 
-			protected abstract void UpdateProgress(ImportProgressItem progressItem);
-
-			protected void AddNextFileToImportQueue(FileImportJobInformation jobInformation)
-			{
-				lock (jobInformation)
-				{
-					if (jobInformation.ProgressItem.Removed)
-						return;
-
-					if (jobInformation.ProgressItem.Cancelled)
-						return;
-
-					string file = jobInformation.Dequeue();
-					if (file == null)
-						return;
-
-					jobInformation.ProgressItem.StatusMessage = String.Format(SR.FormatProcessingFile, file);
-
-					FileImportInformation fileImportInformation = new FileImportInformation(jobInformation, file, jobInformation.FileImportBehaviour, jobInformation.BadFileBehaviour);
-
-					this.AddToImportQueue(fileImportInformation);
-				}
-			}
-
 			protected abstract void AddToImportQueue(FileImportInformation fileImportInformation);
 
-			protected abstract void NotifyNoFilesToImport(FileImportJobInformation jobInformation);
+			protected abstract void UpdateProgress(ImportProgressItem progressItem);
+
+			protected abstract void OnNoFilesToImport(FileImportJobInformation jobInformation);
 
 			protected virtual void Import(
 				FileImportJobInformation jobInformation, 
@@ -312,9 +316,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						}
 					}
 
+					bool cancelled = false;
+
 					foreach (string path in filePaths)
 					{
-						FileProcessor.Process(path, "",
+						cancelled = FileProcessor.Process(path, "",
 							delegate(string file, out bool cancel)
 							{
 								cancel = false;
@@ -333,7 +339,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 								if (enqueue)
 								{
-									lock (jobInformation)
+									lock (jobInformation.SyncRoot)
 									{
 										if (jobInformation.ProgressItem.Cancelled)
 										{
@@ -342,32 +348,28 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 										}
 
 										jobInformation.ProgressItem.StatusMessage = String.Format(SR.FormatEnumeratingFile, file);
-
 										jobInformation.Enqueue(file);
 										++jobInformation.ProgressItem.TotalFilesToImport;
+
 										UpdateProgress(jobInformation.ProgressItem);
 									}
 								}
 
 							}, recursive);
+
+						if (cancelled)
+							break;
 					}
 
-					lock (jobInformation)
+					//it's ok to read this property unsynchronized because this is the only thread that is adding to the queue for the particular job.
+					if (jobInformation.NumberOfFilesInQueue == 0)
 					{
-						if (!jobInformation.ProgressItem.Cancelled)
-						{
-							if (jobInformation.NumberOfFilesInQueue == 0)
-							{
-								NotifyNoFilesToImport(jobInformation);
-							}
-							else
-							{
-								AddNextFileToImportQueue(jobInformation);
-							}
-						}
-
-						UpdateProgress(jobInformation.ProgressItem);
+						OnNoFilesToImport(jobInformation);
 					}
+					else
+					{
+						AddNextFileToImportQueue(jobInformation);
+					} 
 				};
 
 				ThreadPool.QueueUserWorkItem(enumerateFilesToImport);

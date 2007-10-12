@@ -642,15 +642,6 @@ namespace ClearCanvas.ImageViewer.Shreds {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Cancelling ....
-        /// </summary>
-        internal static string MessageCancelling {
-            get {
-                return ResourceManager.GetString("MessageCancelling", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Looks up a localized string similar to Clearing Database ....
         /// </summary>
         internal static string MessageClearingDatabase {

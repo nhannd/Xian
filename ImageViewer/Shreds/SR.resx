@@ -301,9 +301,6 @@ Please check the service logs for more details.</value>
   <data name="MessageCancelled" xml:space="preserve">
     <value>Cancelled.</value>
   </data>
-  <data name="MessageCancelling" xml:space="preserve">
-    <value>Cancelling ...</value>
-  </data>
   <data name="MessageClearingDatabase" xml:space="preserve">
     <value>Clearing Database ...</value>
   </data>

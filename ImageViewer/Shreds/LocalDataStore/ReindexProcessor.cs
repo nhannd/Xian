@@ -52,7 +52,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			private FileImportJobInformation _activeJobInformation;
 			private bool _active;
 			private bool _resumingImports;
-			private bool _cancelRequested;
 
 			public ReindexProcessor(LocalDataStoreService parent)
 			{
@@ -64,7 +63,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				_resumingImports = false;
 				_active = false;
-				_cancelRequested = false;
 			}
 
 			private void NewJobInformation(bool inactive)
@@ -73,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					_activeJobInformation = new FileImportJobInformation(new ReindexProgressItem(), FileImportBehaviour.Move, BadFileBehaviour.Move);
 
-					lock (_activeJobInformation)
+					lock (_activeJobInformation.SyncRoot)
 					{
 						_activeJobInformation.ProgressItem.Identifier = Guid.NewGuid();
 						_activeJobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Cancel;
@@ -94,7 +92,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			{
 				lock (_syncLock)
 				{
-					lock (_activeJobInformation)
+					lock (_activeJobInformation.SyncRoot)
 					{
 						this.UpdateProgress(_activeJobInformation.ProgressItem);
 					}
@@ -118,15 +116,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						{
 							if (_active)
 							{
-								lock (_activeJobInformation)
-								{
-									if (base.CanCancelJob(_activeJobInformation))
-									{
-										_cancelRequested = true;
-										_activeJobInformation.ProgressItem.StatusMessage = SR.MessageCancelling;
-										UpdateProgress();
-									}
-								}
+								base.CancelJob(_activeJobInformation);
+								CheckResumeImports();
 							}
 
 							break;
@@ -142,11 +133,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					if (_resumingImports)
 						return;
 
-					lock (_activeJobInformation)
+					lock (_activeJobInformation.SyncRoot)
 					{
-						if (_cancelRequested)
-							base.CancelJob(_activeJobInformation);
-
 						bool resumeImports = _active && (_activeJobInformation.ProgressItem.Cancelled || _activeJobInformation.ProgressItem.IsImportComplete());
 						if (resumeImports)
 						{
@@ -163,7 +151,6 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 								{
 									_active = false;
 									_resumingImports = false;
-									_cancelRequested = false;
 								}
 							};
 
@@ -173,10 +160,21 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				}
 			}
 
-			protected override void NotifyNoFilesToImport(FileImportJobInformation jobInformation)
+			protected override void OnNoFilesToImport(FileImportJobInformation jobInformation)
 			{
-				jobInformation.ProgressItem.StatusMessage = SR.MessageNoFilesToReindex;
-				jobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+				lock (_syncLock)
+				{
+					lock (_activeJobInformation.SyncRoot)
+					{
+						if (!jobInformation.ProgressItem.Cancelled)
+						{
+							_activeJobInformation.ProgressItem.StatusMessage = SR.MessageNoFilesToReindex;
+							_activeJobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+
+							UpdateProgress(_activeJobInformation.ProgressItem);
+						}
+					}
+				}
 
 				CheckResumeImports();
 			}
@@ -224,14 +222,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 				{
 					lock (_syncLock)
 					{
-						if (_cancelRequested)
+						lock (_activeJobInformation.SyncRoot)
 						{
-							CheckResumeImports();
-							return;
-						}
+							if (_activeJobInformation.ProgressItem.Cancelled)
+								return;
 
-						lock (_activeJobInformation)
-						{
 							_activeJobInformation.ProgressItem.StatusMessage = SR.MessagePausingActiveImportJobs;
 							UpdateProgress();
 						}
@@ -246,14 +241,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					{
 						lock (_syncLock)
 						{
-							if (_cancelRequested)
+							lock (_activeJobInformation.SyncRoot)
 							{
-								CheckResumeImports();
-								return;
-							}
+								if (_activeJobInformation.ProgressItem.Cancelled)
+									return;
 
-							lock (_activeJobInformation)
-							{
 								_activeJobInformation.ProgressItem.StatusMessage = SR.MessageClearingDatabase;
 								UpdateProgress();
 							}
@@ -271,7 +263,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 						lock (_syncLock)
 						{
-							lock (_activeJobInformation)
+							lock (_activeJobInformation.SyncRoot)
 							{
 								_activeJobInformation.ProgressItem.StatusMessage = SR.MessageFailedToClearDatabase;
 								_activeJobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
@@ -282,10 +274,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 					lock (_syncLock)
 					{
-						if (clearFailed || _cancelRequested)
+						lock (_activeJobInformation.SyncRoot)
 						{
-							CheckResumeImports();
-							return;
+							if (clearFailed || _activeJobInformation.ProgressItem.Cancelled)
+								return;
 						}
 					}
 
