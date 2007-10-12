@@ -107,7 +107,28 @@ namespace ClearCanvas.Dicom.Tests
 
             SetupMetaInfo(file);
 
+            // Little Endian Tests
+            file.TransferSyntax = TransferSyntax.ExplicitVrLittleEndian; 
+
             DicomWriteOptions writeOptions = DicomWriteOptions.Default;
+            WriteOptionsTest(file, writeOptions);
+
+            writeOptions = DicomWriteOptions.ExplicitLengthSequence;
+            WriteOptionsTest(file, writeOptions);
+
+            writeOptions = DicomWriteOptions.ExplicitLengthSequenceItem;
+            WriteOptionsTest(file, writeOptions);
+
+            writeOptions = DicomWriteOptions.ExplicitLengthSequence | DicomWriteOptions.ExplicitLengthSequenceItem;
+            WriteOptionsTest(file, writeOptions);
+
+            writeOptions = DicomWriteOptions.None;
+            WriteOptionsTest(file, writeOptions);
+
+            // Big Endian Tests
+            file.TransferSyntax = TransferSyntax.ExplicitVrBigEndian;
+
+            writeOptions = DicomWriteOptions.Default;
             WriteOptionsTest(file, writeOptions);
 
             writeOptions = DicomWriteOptions.ExplicitLengthSequence;

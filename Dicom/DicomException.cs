@@ -29,14 +29,11 @@
 
 #endregion
 
+using System;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Dicom
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Text;
-    using System.Runtime.Serialization;
-
     [Serializable]
     public class DicomException : Exception
     {

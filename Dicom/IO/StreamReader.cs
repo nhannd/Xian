@@ -85,6 +85,9 @@ namespace ClearCanvas.Dicom.IO
         private uint _need = 0;
         private long _remain = 0;
 
+        private long _endGroup2 = 0;
+        private bool _inGroup2 = false;
+
         private Stack<SequenceRecord> _sqrs = new Stack<SequenceRecord>();
 
         private DicomAttributeOB _fragment = null;
@@ -157,6 +160,16 @@ namespace ClearCanvas.Dicom.IO
 
                 while (_remain > 0)
                 {
+                    if (_inGroup2 && _read >= _endGroup2)
+                    {
+                        _inGroup2 = false;
+                        Dicom.TransferSyntax group2syntax =
+                            TransferSyntax.GetTransferSyntax(
+                                _dataset[DicomTags.TransferSyntaxUid].GetString(0, String.Empty));
+                        if (group2syntax == null)
+                            throw new DicomException("Unsupported transfer syntax in group 2 elements");
+                        this.TransferSyntax = group2syntax;
+                    }
                     uint tagValue;
                     if (_tag == null)
                     {
@@ -491,7 +504,7 @@ namespace ClearCanvas.Dicom.IO
 
                                 DicomStreamReader idsr = new DicomStreamReader(data.Stream);
                                 idsr.Dataset = ds;
-                                idsr._syntax = _syntax;
+                                idsr.TransferSyntax = _syntax;
                                 DicomReadStatus stat = idsr.Read(null, options);
                                 if (stat == DicomReadStatus.UnknownError)
                                 {
@@ -612,6 +625,16 @@ namespace ClearCanvas.Dicom.IO
 
                                     _remain -= _len;
                                     _read += _len;
+
+                                    if (elem.Tag.TagValue == DicomTags.Group2Length)
+                                    {
+                                        // Save the end of the group 2 elements, so that we can automatically 
+                                        // check and change our transfer syntax when needed.
+                                        _inGroup2 = true;
+                                        uint group2len;
+                                        elem.TryGetUInt32(0, out group2len);
+                                        _endGroup2 = _read + group2len;
+                                    }
 
                                     if (_sqrs.Count > 0)
                                     {

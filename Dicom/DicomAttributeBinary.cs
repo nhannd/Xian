@@ -31,10 +31,8 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Globalization;
-using System.Runtime.InteropServices;
-
+using System.Text;
 using ClearCanvas.Dicom.IO;
 
 namespace ClearCanvas.Dicom
@@ -69,8 +67,7 @@ namespace ClearCanvas.Dicom
             _values = new T[item.Length / tag.VR.UnitSize];
             Buffer.BlockCopy(item.ToBytes(), 0, _values, 0, _values.Length * tag.VR.UnitSize);
 
-            Count = _values.Length;
-            StreamLength = (uint)( Count * tag.VR.UnitSize);
+            SetStreamLength();
         }
 
         internal DicomAttributeBinary(DicomAttributeBinary<T> attrib)
@@ -183,10 +180,10 @@ namespace ClearCanvas.Dicom
             return null;
         }
 
-        protected void SetStreamLength()
+        protected virtual void SetStreamLength()
         {
             Count = _values.Length;
-            StreamLength = (uint)(_values.Length * Tag.VR.UnitSize);
+            StreamLength = (uint) (_values.Length*Tag.VR.UnitSize);
         }
 
         #endregion
@@ -613,7 +610,7 @@ namespace ClearCanvas.Dicom
                 return false;
             }
 
-            value = (double)_values[i];
+            value = _values[i];
             return true;
         }
 
@@ -843,7 +840,7 @@ namespace ClearCanvas.Dicom
 
         public override string ToString()
         {
-            return base.Tag + " of length " + base.StreamLength;
+            return Tag + " of length " + base.StreamLength;
         }
 
         public override Object Values
@@ -881,7 +878,7 @@ namespace ClearCanvas.Dicom
     /// <summary>
     /// <see cref="DicomAttributeBinary"/> derived class for storing OW value representation tags.
     /// </summary>
-    public class DicomAttributeOW : DicomAttributeBinary<ushort>
+    public class DicomAttributeOW : DicomAttributeBinary<byte>
     {
         public DicomAttributeOW(uint tag)
             : base(tag)
@@ -897,8 +894,16 @@ namespace ClearCanvas.Dicom
         }
 
         internal DicomAttributeOW(DicomTag tag, ByteBuffer item)
-            : base(tag, item)
+            : base(tag)
         {
+            
+            if (ByteBuffer.LocalMachineEndian != item.Endian)
+                item.Swap(tag.VR.UnitSize);
+
+            _values = new byte[item.Length];
+            Buffer.BlockCopy(item.ToBytes(), 0, _values, 0, _values.Length);
+
+            SetStreamLength();
         }
 
 
@@ -909,9 +914,15 @@ namespace ClearCanvas.Dicom
 
         #region Abstract Method Implementation
 
+        protected override void SetStreamLength()
+        {
+            Count = _values.Length;
+            StreamLength = (uint) (_values.Length);
+        }
+
         public override string ToString()
         {
-            return base.Tag + " of length " + base.StreamLength;
+            return Tag + " of length " + base.StreamLength;
         }
 
         public override Object Values
@@ -921,15 +932,16 @@ namespace ClearCanvas.Dicom
             {
                 if (value is ushort[])
                 {
-                    _values = (ushort[])value;
+                    ushort[] vals = (ushort[])value;
+
+                    _values = new byte[vals.Length * Tag.VR.UnitSize];
+                    Buffer.BlockCopy(vals, 0, _values, 0, _values.Length);
+
                     SetStreamLength();
                 }
                 else if (value is byte[])
                 {
-                    byte[] vals = (byte[])value;
-
-                    _values = new ushort[vals.Length / Tag.VR.UnitSize];
-                    Buffer.BlockCopy(vals, 0, _values, 0, vals.Length);
+                    _values = (byte[])value;
 
                     SetStreamLength();
                 }
@@ -948,6 +960,22 @@ namespace ClearCanvas.Dicom
         internal override DicomAttribute Copy(bool copyBinary)
         {
             return new DicomAttributeOW(this);
+        }
+
+        internal override ByteBuffer GetByteBuffer(TransferSyntax syntax, String specificCharacterSet)
+        {
+            int len = _values.Length;
+            byte[] byteVal = new byte[len];
+
+            Buffer.BlockCopy(_values, 0, byteVal, 0, len);
+
+            ByteBuffer bb = new ByteBuffer(byteVal, syntax.Endian);
+            if (syntax.Endian != ByteBuffer.LocalMachineEndian)
+            {
+                bb.Swap(Tag.VR.UnitSize);
+            }
+
+            return bb;
         }
 
         #endregion
@@ -1003,7 +1031,7 @@ namespace ClearCanvas.Dicom
             int[] newArray = new int[newArrayLength];
             if (oldArrayLength > 0)
                 _values.CopyTo(newArray, 0);
-            newArray[newArrayLength - 1] = (int)intValue;
+            newArray[newArrayLength - 1] = intValue;
             _values = newArray;
             SetStreamLength();
         }
@@ -1343,7 +1371,7 @@ namespace ClearCanvas.Dicom
 
         public override string ToString()
         {
-            return base.Tag.ToString(); // TODO
+            return Tag.ToString(); // TODO
         }
 
         public override bool Equals(object obj)

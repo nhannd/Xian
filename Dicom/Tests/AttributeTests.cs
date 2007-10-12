@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using ClearCanvas.Dicom.IO;
 using NUnit.Framework;
 using ClearCanvas.Dicom;
 
@@ -103,7 +104,7 @@ namespace ClearCanvas.Dicom.Tests
         }
         #endregion
 
-
+        #region DicomAttributeAT Test
         [Test]
         public void AttributeATTest()
         {
@@ -132,6 +133,7 @@ namespace ClearCanvas.Dicom.Tests
 
 
         }
+        #endregion
 
         #region DicomAttributeCS Test
         [Test]
@@ -222,6 +224,48 @@ namespace ClearCanvas.Dicom.Tests
             }
             Assert.AreEqual(testResult, true);
 
+
+        }
+        #endregion
+
+        #region DicomAttributeOW Test
+        [Test]
+        public void AttributeOWTest()
+        {
+            DicomAttributeOW attrib = new DicomAttributeOW(DicomTags.PixelData);
+
+            uint length = 256 * 256 * 2;
+            
+            byte[] pixelArray = new byte[length];
+
+            for (uint i = 0; i < length; i += 2)
+                pixelArray[i] = (byte)(i % 255);
+
+            attrib.Values = pixelArray;
+
+            // big endian test
+            ByteBuffer bb = attrib.GetByteBuffer(TransferSyntax.ExplicitVrBigEndian, null);
+
+            DicomAttributeOW bigEndAttrib = new DicomAttributeOW(DicomTagDictionary.GetDicomTag(DicomTags.PixelData), bb);
+
+            byte[] bigEndArray = (byte[])bigEndAttrib.Values;
+
+            for (uint i = 0; i < length; i++)
+            {
+                Assert.AreEqual(pixelArray[i], bigEndArray[i]);
+            }
+
+            // little endian test
+            bb = attrib.GetByteBuffer(TransferSyntax.ExplicitVrLittleEndian, null);
+
+            DicomAttributeOW littleEndAttrib = new DicomAttributeOW(DicomTagDictionary.GetDicomTag(DicomTags.PixelData), bb);
+
+            byte[] littleEndArray = (byte[])littleEndAttrib.Values;
+
+            for (uint i = 0; i < length; i++)
+            {
+                Assert.AreEqual(pixelArray[i], littleEndArray[i]);
+            }
 
         }
         #endregion
