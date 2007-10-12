@@ -1,7 +1,8 @@
-using System;
-
 namespace ClearCanvas.Desktop
 {
+	// TODO: Make sure that all implementations of CreateMemento and
+	// SetMemento are virtual, unless the class is sealed.
+
 	/// <summary>
 	/// Allows object state to be captured and restored.
 	/// </summary>
