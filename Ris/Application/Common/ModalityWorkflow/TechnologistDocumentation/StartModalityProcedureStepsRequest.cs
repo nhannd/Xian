@@ -7,12 +7,12 @@ namespace ClearCanvas.Ris.Application.Common.ModalityWorkflow.TechnologistDocume
     [DataContract]
     public class StartModalityProcedureStepsRequest : DataContractBase
     {
-        public StartModalityProcedureStepsRequest(List<ModalityProcedureStepDetail> modalityProcedureSteps)
+        public StartModalityProcedureStepsRequest(List<EntityRef> modalityProcedureSteps)
         {
             ModalityProcedureSteps = modalityProcedureSteps;
         }
 
         [DataMember]
-        public List<ModalityProcedureStepDetail> ModalityProcedureSteps;
+        public List<EntityRef> ModalityProcedureSteps;
     }
 }

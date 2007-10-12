@@ -113,10 +113,10 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         public StartModalityProcedureStepsResponse StartModalityProcedureSteps(StartModalityProcedureStepsRequest request)
         {
             // load the set of mps
-            List<ModalityProcedureStep> modalitySteps = CollectionUtils.Map<ModalityProcedureStepDetail, ModalityProcedureStep>(request.ModalityProcedureSteps,
-                delegate(ModalityProcedureStepDetail detail)
+            List<ModalityProcedureStep> modalitySteps = CollectionUtils.Map<EntityRef, ModalityProcedureStep>(request.ModalityProcedureSteps,
+                delegate(EntityRef mpsRef)
                 {
-                    return this.PersistenceContext.Load<ModalityProcedureStep>(detail.ModalityProcedureStepRef);
+                    return this.PersistenceContext.Load<ModalityProcedureStep>(mpsRef);
                 });
 
             if (modalitySteps.Count == 0)
@@ -156,9 +156,9 @@ namespace ClearCanvas.Ris.Application.Services.ModalityWorkflow.TechnologistDocu
         {
             Order order = null;
 
-            foreach (ModalityProcedureStepDetail mpsDetail in request.ModalityProcedureSteps)
+            foreach (EntityRef mpsRef in request.ModalityProcedureSteps)
             {
-                ModalityProcedureStep mps = this.PersistenceContext.Load<ModalityProcedureStep>(mpsDetail.ModalityProcedureStepRef);
+                ModalityProcedureStep mps = this.PersistenceContext.Load<ModalityProcedureStep>(mpsRef);
                 mps.Discontinue();
 
                 if (order == null) order = mps.RequestedProcedure.Order;

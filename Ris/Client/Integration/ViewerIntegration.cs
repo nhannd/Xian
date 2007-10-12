@@ -1,7 +1,4 @@
 using System;
-using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Desktop;
@@ -57,7 +54,7 @@ namespace ClearCanvas.Ris.Client.Integration
 
         #region Private Helpers
 
-        private StudyItemList FindStudies(string accessionNumber)
+        private static StudyItemList FindStudies(string accessionNumber)
         {
             LocalDataStoreStudyFinder studyFinder = new LocalDataStoreStudyFinder();
 
@@ -74,7 +71,7 @@ namespace ClearCanvas.Ris.Client.Integration
             return studyFinder.Query(queryParams, null);
         }
 
-        private void OpenStudy(StudyItem study, DesktopWindow window)
+        private static void OpenStudy(StudyItem study, IDesktopWindow window)
         {
             DiagnosticImageViewerComponent imageViewer = new DiagnosticImageViewerComponent();
 

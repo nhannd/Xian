@@ -278,13 +278,18 @@ namespace ClearCanvas.Ris.Client.Adt
             try
             {
                 List<ModalityProcedureStepDetail> checkedMps = GetCheckedMps();
+                List<EntityRef> checkedMpsRefs = CollectionUtils.Map<ModalityProcedureStepDetail, EntityRef, List<EntityRef>>(checkedMps,
+                    delegate(ModalityProcedureStepDetail detail)
+                    {
+                        return detail.ModalityProcedureStepRef;
+                    });
 
                 if (checkedMps.Count > 0)
                 {
                     Platform.GetService<ITechnologistDocumentationService>(
                         delegate(ITechnologistDocumentationService service)
                         {
-                            StartModalityProcedureStepsRequest request = new StartModalityProcedureStepsRequest(checkedMps);
+                            StartModalityProcedureStepsRequest request = new StartModalityProcedureStepsRequest(checkedMpsRefs);
                             StartModalityProcedureStepsResponse response = service.StartModalityProcedureSteps(request);
 
                             RefreshProcedurePlanTree(response.ProcedurePlanSummary);
@@ -304,13 +309,18 @@ namespace ClearCanvas.Ris.Client.Adt
             try
             {
                 List<ModalityProcedureStepDetail> checkedMps = GetCheckedMps();
+                List<EntityRef> checkedMpsRefs = CollectionUtils.Map<ModalityProcedureStepDetail, EntityRef, List<EntityRef>>(checkedMps,
+                    delegate(ModalityProcedureStepDetail detail)
+                    {
+                        return detail.ModalityProcedureStepRef;
+                    });
 
                 if (checkedMps.Count > 0)
                 {
                     Platform.GetService<ITechnologistDocumentationService>(
                         delegate(ITechnologistDocumentationService service)
                         {
-                            DiscontinueModalityProcedureStepsRequest request = new DiscontinueModalityProcedureStepsRequest(checkedMps);
+                            DiscontinueModalityProcedureStepsRequest request = new DiscontinueModalityProcedureStepsRequest(checkedMpsRefs);
                             DiscontinueModalityProcedureStepsResponse response = service.DiscontinueModalityProcedureSteps(request);
 
                             RefreshProcedurePlanTree(response.ProcedurePlanSummary);

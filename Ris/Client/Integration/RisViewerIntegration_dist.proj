@@ -1,4 +1,4 @@
-<Project DefaultTargets="CopyClientFiles;CopyDatabaseFiles;CopyImageViewerFiles" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Create App Config;CopyClientFiles;CopyDatabaseFiles;CopyImageViewerFiles" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 	<PropertyGroup>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 	</PropertyGroup>
@@ -11,6 +11,7 @@
     <DatabaseDirectory>C:\dicom_datastore</DatabaseDirectory>
     <SourceEmptyDatabaseFile>$(TrunkDirectory)\Dicom\DataStore\AuxiliaryFiles\empty_viewer.sdf</SourceEmptyDatabaseFile>
     <RisClientDirectory>$(SolutionDir)\..\..\Client</RisClientDirectory>
+    <AppConfigCreatorSourceFiles>$(SolutionDir)..\..\..\Desktop\Executable\app.config $(SolutionDir)\RisViewerIntegration_dist.config</AppConfigCreatorSourceFiles>
   </PropertyGroup>
 
   <ItemGroup>
@@ -88,6 +89,7 @@
     <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Explorer\Local\Tools\bin\$(Configuration)\ClearCanvas.ImageViewer.Explorer.Local.Tools.dll" />
     <ImageViewerPluginFiles Include="$(TrunkDirectory)\Desktop\Explorer\bin\$(Configuration)\ClearCanvas.Desktop.Explorer.dll" />
     <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Services\Tools\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.dll" />
+    <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Services\Tools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.View.WinForms.dll" />
     <!--
     <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Services\Tools\View\WinForms\bin\$(Configuration)\ClearCanvas.ImageViewer.Services.Tools.View.WinForms.dll" />
     <ImageViewerPluginFiles Include="$(TrunkDirectory)\ImageViewer\Tools\Measurement\bin\$(Configuration)\ClearCanvas.ImageViewer.Tools.Measurement.dll" />
@@ -130,4 +132,9 @@
     <Copy SourceFiles="@(ImageViewerPluginFiles)" DestinationFolder="$(PluginsDirectory)" />
   </Target>
 
+  <Target Name="Create App Config">
+    <MSBuild Projects="$(SolutionDir)\..\..\..\Utilities\AppConfigCreator\AppConfigCreator.csproj" Properties="Configuration=$(Configuration);Platform=Any CPU;OutputPath=$(SolutionDir)\..\..\..\Utilities\AppConfigCreator\bin\$(Configuration)"/>
+    <Exec Command="$(SolutionDir)\..\..\..\Utilities\AppConfigCreator\bin\$(Configuration)\AppConfigCreator.exe $(AppConfigCreatorSourceFiles)" WorkingDirectory="$(SolutionDir)\..\..\..\Utilities\AppConfigCreator\bin\$(Configuration)"  />
+    <Copy SourceFiles="$(SolutionDir)\..\..\..\Utilities\AppConfigCreator\bin\$(Configuration)\app.config" DestinationFiles="$(DistributionDirectory)\ClearCanvas.Desktop.Executable.exe.config" />
+  </Target>
 </Project>
