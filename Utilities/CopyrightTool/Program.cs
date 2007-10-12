@@ -1,3 +1,34 @@
+#region License
+
+// Copyright (c) 2006-2007, ClearCanvas Inc.
+// All rights reserved.
+//
+// Redistribution and use in source and binary forms, with or without modification, 
+// are permitted provided that the following conditions are met:
+//
+//    * Redistributions of source code must retain the above copyright notice, 
+//      this list of conditions and the following disclaimer.
+//    * Redistributions in binary form must reproduce the above copyright notice, 
+//      this list of conditions and the following disclaimer in the documentation 
+//      and/or other materials provided with the distribution.
+//    * Neither the name of ClearCanvas Inc. nor the names of its contributors 
+//      may be used to endorse or promote products derived from this software without 
+//      specific prior written permission.
+//
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" 
+// AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, 
+// THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR 
+// PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+// CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, 
+// OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE 
+// GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) 
+// HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, 
+// STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN 
+// ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY 
+// OF SUCH DAMAGE.
+
+#endregion
+
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -33,7 +64,8 @@ namespace CopyrightTool
 
 			if (isDirectory)
 			{
-				string[] csfiles = Directory.GetFiles(path, "*.cs");
+				Console.Write("Enumerating files...\n");
+				string[] csfiles = Directory.GetFiles(path, "*.cs", SearchOption.AllDirectories);
 
 				foreach (string file in csfiles)
 				{
@@ -44,7 +76,6 @@ namespace CopyrightTool
 
 		private static void ProcessFile(string file, string newDate)
 		{
-			Console.Write("{0}\n", file);
 			string cscode = File.ReadAllText(file);
 
 			// Insert the license if the license isn't already there
@@ -55,12 +86,19 @@ namespace CopyrightTool
 				cscode = builder.ToString();
 			}
 
-			cscode = UpdateLicense(cscode, newDate);
+			bool licensedChanged;
+			cscode = UpdateLicense(cscode, newDate, out licensedChanged);
 
-			File.WriteAllText(file, cscode);
+			if (licensedChanged)
+			{
+				File.WriteAllText(file, cscode);
+				Console.Write("UPDATED: {0}\n", file);
+			}
+			else 
+				Console.Write("UNCHANGED: {0}\n", file);
 		}
 
-		private static string UpdateLicense(string text, string newDate)
+		private static string UpdateLicense(string text, string newDate, out bool licensedChanged)
 		{
 			// Find the beginning of the copyright line
 			int start = text.IndexOf("/");
@@ -71,7 +109,12 @@ namespace CopyrightTool
 			string newCopyright = string.Format("// Copyright (c) {0}, ClearCanvas Inc.", newDate);
 
 			if (oldCopyright != newCopyright)
+			{
 				text = text.Replace(oldCopyright, newCopyright);
+				licensedChanged = true;
+			}
+			else
+				licensedChanged = false;
 
 			return text;
 		}
