@@ -10,7 +10,8 @@
     <RootNamespace>ClearCanvas.Server.ShredHostService</RootNamespace>
     <AssemblyName>ClearCanvas.Server.ShredHostService</AssemblyName>
     <SignAssembly>false</SignAssembly>
-    <AssemblyOriginatorKeyFile></AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>
+    </AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -81,7 +82,7 @@
 mkdir $(TargetDir)plugins
 
 rem copy ShredHost assembly
-copy $(ProjectDir)..\ShredHost\$(OutDir)ClearCanvas.Server.ShredHost.dll $(TargetDir)plugins
+copy $(ProjectDir)..\ShredHost\$(OutDir)ClearCanvas.Server.ShredHost.dll $(TargetDir)common
 
 rem copy shred assemblies
 copy $(ProjectDir)..\..\ImageViewer\Shreds\$(Outdir)ClearCanvas.ImageViewer.Shreds.dll $(TargetDir)plugins

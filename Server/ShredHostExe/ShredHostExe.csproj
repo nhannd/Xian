@@ -69,7 +69,7 @@
 mkdir $(TargetDir)plugins
 
 rem copy ShredHost assembly
-copy $(ProjectDir)..\ShredHost\$(OutDir)ClearCanvas.Server.ShredHost.dll $(TargetDir)
+copy $(ProjectDir)..\ShredHost\$(OutDir)\ClearCanvas.Server.ShredHost.dll $(TargetDir)common
 
 rem copy shred assemblies
 copy $(ProjectDir)..\..\ImageViewer\Shreds\$(Outdir)ClearCanvas.ImageViewer.Shreds.dll $(TargetDir)plugins
