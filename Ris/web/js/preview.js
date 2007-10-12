@@ -18,10 +18,12 @@ function getAlertIcon(alertItem)
 			return "Images/AlertWorld.png";
 		case "Reconciliation Alert":
 			return "Images/AlertMessenger.png";
-		case "Schedule Alert":
-			return "Images/AlertClock.png";
-		case "Incomplete demographic data alert":
+		case "Incomplete Demographic Data Alert":
 			return "Images/AlertIncompleteData.png";
+		case "Visit Date Alert":
+			return "Images/AlertClock.png";
+		case "Visit Status Alert":
+			return "Images/AlertGeneral.png";
 		default:
 			return "Images/AlertGeneral.png";
 	}
@@ -39,8 +41,10 @@ function getAlertTooltip(alertItem, patientName)
 			return patientName + " speaks: " + reasons;
 		case "Reconciliation Alert":
 			return patientName + " has unreconciled records";
-		case "Incomplete demographic data alert":
+		case "Incomplete Demographic Data Alert":
 			return patientName + " has incomplete demographic data: " + reasons;
+		case "Visit Date Alert":
+		case "Visit Status Alert":
 		default:
 			return reasons;
 	}

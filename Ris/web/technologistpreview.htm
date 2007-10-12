@@ -31,7 +31,7 @@
                         GetModalityProcedureStepRequest: { GetDiagnosticServiceBreakdown: true },
                         GetPatientProfileRequest:        {},
                         ListPatientOrdersRequest:        { QueryDetailLevel: "RequestedProcedure" },
-                        GetPatientAlertsRequest:         {}
+                        GetAlertsRequest:                {}
                     };
                     
                     var service = Ris.getService("ClearCanvas.Ris.Application.Common.PreviewService.IPreviewService, ClearCanvas.Ris.Application.Common");
@@ -57,9 +57,9 @@
 		            }
 
                     // update patient alerts
-		            if (data.GetPatientAlertsResponse && data.GetPatientAlertsResponse.AlertNotifications && data.GetPatientAlertsResponse.AlertNotifications.length > 0)
+		            if (data.GetAlertsResponse && data.GetAlertsResponse.AlertNotifications && data.GetAlertsResponse.AlertNotifications.length > 0)
 		            {
-    	                var alertNotifications = data.GetPatientAlertsResponse.AlertNotifications;
+    	                var alertNotifications = data.GetAlertsResponse.AlertNotifications;
                         var alertHtml = "";
 	                    alertNotifications.each(function(item) { alertHtml += getAlertHtml(item, patientName); });
                         $("alerts").innerHTML = alertHtml;

@@ -254,6 +254,8 @@
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\SaveDataResponse.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\StopModalityPerformedProcedureStepRequest.cs" />
     <Compile Include="ModalityWorkflow\TechnologistDocumentation\StopModalityPerformedProcedureStepResponse.cs" />
+    <Compile Include="PreviewService\GetAlertsRequest.cs" />
+    <Compile Include="PreviewService\GetAlertsResponse.cs" />
     <Compile Include="RegistrationWorkflow\ReplaceOrderRequest.cs" />
     <Compile Include="RegistrationWorkflow\ReplaceOrderResponse.cs" />
     <Compile Include="RegistrationWorkflow\SearchRequest.cs" />
@@ -346,8 +348,6 @@
     <Compile Include="PersonNameDetail.cs" />
     <Compile Include="PreviewService\GetModalityProcedureStepRequest.cs" />
     <Compile Include="PreviewService\GetModalityProcedureStepResponse.cs" />
-    <Compile Include="PreviewService\GetPatientAlertsRequest.cs" />
-    <Compile Include="PreviewService\GetPatientAlertsResponse.cs" />
     <Compile Include="PreviewService\GetReportingProcedureStepRequest.cs" />
     <Compile Include="PreviewService\GetReportingProcedureStepResponse.cs" />
     <Compile Include="PreviewService\PatientOrderData.cs" />

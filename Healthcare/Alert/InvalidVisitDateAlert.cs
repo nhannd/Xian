@@ -29,27 +29,39 @@
 
 #endregion
 
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Ris.Application.Common.PreviewService
+namespace ClearCanvas.Healthcare.Alert
 {
-    [DataContract]
-    public class GetDataResponse : DataContractBase
+    [ExtensionOf(typeof(OrderAlertExtensionPoint))]
+    public class InvalidVisitDateAlert : OrderAlertBase
     {
-        [DataMember]
-        public GetModalityProcedureStepResponse GetModalityProcedureStepResponse;
+        private class InvalidVisitDateAlertNotification : AlertNotification
+        {
+            public InvalidVisitDateAlertNotification()
+                : base("Order has invalid visit date", "High", "Visit Date Alert")
+            {
+            }
+        }
 
-        [DataMember]
-        public GetReportingProcedureStepResponse GetReportingProcedureStepResponse;
+        public override IAlertNotification Test(Order order, IPersistenceContext context)
+        {
+            if (order.Visit == null && order.Visit.AdmitDateTime == null || order.ScheduledStartTime == null)
+                return null;
 
-        [DataMember]
-        public GetPatientProfileResponse GetPatientProfileResponse;
+            if (order.Visit.AdmitDateTime.Value.Date == order.ScheduledStartTime.Value.Date)
+                return null;
 
-        [DataMember]
-        public ListPatientOrdersResponse ListPatientOrdersResponse;
+            InvalidVisitDateAlertNotification alertNotification = new InvalidVisitDateAlertNotification();
 
-        [DataMember]
-        public GetAlertsResponse GetAlertsResponse;
+            if (order.Visit.AdmitDateTime.Value.Date > order.ScheduledStartTime.Value.Date)
+                alertNotification.Reasons.Add("Visit date is in the future");
+            else if (order.Visit.AdmitDateTime.Value.Date < order.ScheduledStartTime.Value.Date)
+                alertNotification.Reasons.Add("Visit date is in the past");
+
+            return alertNotification;
+        }
     }
 }

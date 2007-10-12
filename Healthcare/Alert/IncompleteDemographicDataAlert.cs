@@ -49,7 +49,7 @@ namespace ClearCanvas.Healthcare.Alert
         private class IncompleteDemographicDataAlertNotification : AlertNotification
         {
             public IncompleteDemographicDataAlertNotification()
-                : base("Patient has incomplete demographic data", "High", "Incomplete demographic data alert")
+                : base("Patient has incomplete demographic data", "High", "Incomplete Demographic Data Alert")
             {
             }
         }

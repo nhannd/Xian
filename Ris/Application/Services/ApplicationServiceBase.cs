@@ -30,10 +30,12 @@
 #endregion
 
 using System.Threading;
+using System.Collections.Generic;
 using ClearCanvas.Enterprise.Authentication;
 using ClearCanvas.Enterprise.Authentication.Brokers;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
+using ClearCanvas.Healthcare.Alert;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 
@@ -91,6 +93,54 @@ namespace ClearCanvas.Ris.Application.Services
         protected IPersistenceContext PersistenceContext
         {
             get { return PersistenceScope.Current; }
+        }
+
+        /// <summary>
+        /// Helper method to test a Patient or Patient Profile with alerts that implement the PatientAlertExtensionPoint and PatientProfileAlertExtensionPoint
+        /// </summary>
+        /// <param name="subject"></param>
+        /// <param name="context"></param>
+        /// <returns>a list of alert notification detail if each alert test succeeds</returns>
+        protected static List<AlertNotificationDetail> GetAlertNotifications(Entity subject, IPersistenceContext context)
+        {
+            AlertAssembler assembler = new AlertAssembler();
+            List<AlertNotificationDetail> results = new List<AlertNotificationDetail>();
+
+            if (subject.Is<Patient>())
+            {
+                foreach (IPatientAlert patientAlertTests in PatientAlertHelper.Instance.GetAlertTests())
+                {
+                    IAlertNotification testResult = patientAlertTests.Test(subject.Downcast<Patient>(), context);
+                    if (testResult != null)
+                    {
+                        results.Add(assembler.CreateAlertNotification(testResult));
+                    }
+                }
+            }
+            else if (subject.Is<PatientProfile>())
+            {
+                foreach (IPatientProfileAlert profileAlertTests in PatientProfileAlertHelper.Instance.GetAlertTests())
+                {
+                    IAlertNotification testResult = profileAlertTests.Test(subject.Downcast<PatientProfile>(), context);
+                    if (testResult != null)
+                    {
+                        results.Add(assembler.CreateAlertNotification(testResult));
+                    }
+                }
+            }
+            else if (subject.Is<Order>())
+            {
+                foreach (IOrderAlert orderAlertTests in OrderAlertHelper.Instance.GetAlertTests())
+                {
+                    IAlertNotification testResult = orderAlertTests.Test(subject.Downcast<Order>(), context);
+                    if (testResult != null)
+                    {
+                        results.Add(assembler.CreateAlertNotification(testResult));
+                    }
+                }
+            }
+
+            return results;
         }
     }
 }

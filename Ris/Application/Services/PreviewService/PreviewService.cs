@@ -29,22 +29,16 @@
 
 #endregion
 
-using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-
 using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Alert;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Ris.Application.Common;
 using ClearCanvas.Ris.Application.Common.PreviewService;
 using ClearCanvas.Ris.Application.Common.ModalityWorkflow;
 using ClearCanvas.Enterprise.Common;
-using ClearCanvas.Workflow;
 
 namespace ClearCanvas.Ris.Application.Services.PreviewService
 {
@@ -67,7 +61,7 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
 
             EntityRef profileRef = request.PatientProfileRef;
             if (profileRef == null
-                && (request.GetPatientProfileRequest != null || request.ListPatientOrdersRequest != null || request.GetPatientAlertsRequest != null))
+                && (request.GetPatientProfileRequest != null || request.ListPatientOrdersRequest != null || request.GetAlertsRequest != null))
             {
                 if (request.ProcedureStepRef != null)
                 {
@@ -82,15 +76,25 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
                 }
             }
 
+            EntityRef orderRef = request.OrderRef;
+            if (orderRef == null && request.GetAlertsRequest != null)
+            {
+                if (request.ProcedureStepRef != null)
+                {
+                    ProcedureStep ps = PersistenceContext.Load<ProcedureStep>(request.ProcedureStepRef);
+                    orderRef = ps.RequestedProcedure.Order.GetRef();
+                }
+            }
+
             if (request.GetPatientProfileRequest != null)
                 response.GetPatientProfileResponse = GetPatientProfile(request.GetPatientProfileRequest, profileRef);
 
             if (request.ListPatientOrdersRequest != null)
                 response.ListPatientOrdersResponse = ListPatientOrders(request.ListPatientOrdersRequest, profileRef);
 
-            if (request.GetPatientAlertsRequest != null)
-                response.GetPatientAlertsResponse = GetPatientAlerts(request.GetPatientAlertsRequest, profileRef);
-
+            if (request.GetAlertsRequest != null)
+                response.GetAlertsResponse = GetAlerts(request.GetAlertsRequest, profileRef, orderRef);
+            
             return response;
         }
 
@@ -167,7 +171,6 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
         {
             PreviewServiceAssembler assembler = new PreviewServiceAssembler();
 
-            OrderSearchCriteria criteria = new OrderSearchCriteria();
             PatientProfile profile = PersistenceContext.Load<PatientProfile>(patientProfileRef, EntityLoadFlags.Proxy);
 
             if (request.QueryDetailLevel == PatientOrdersQueryDetailLevel.Order)
@@ -204,53 +207,24 @@ namespace ClearCanvas.Ris.Application.Services.PreviewService
             return new ListPatientOrdersResponse(new List<PatientOrderData>());            
         }
 
-        private GetPatientAlertsResponse GetPatientAlerts(GetPatientAlertsRequest request, EntityRef patientProfileRef)
+        private GetAlertsResponse GetAlerts(GetAlertsRequest request, EntityRef patientProfileRef, EntityRef orderRef)
         {
-            PatientProfile profile = PersistenceContext.Load<PatientProfile>(patientProfileRef);
-
             List<AlertNotificationDetail> alertNotifications = new List<AlertNotificationDetail>();
-            alertNotifications.AddRange(GetAlertNotifications(profile.Patient, this.PersistenceContext));
-            alertNotifications.AddRange(GetAlertNotifications(profile, this.PersistenceContext));
 
-            return new GetPatientAlertsResponse(alertNotifications);
-        }
-
-        /// <summary>
-        /// Helper method to test a Patient or Patient Profile with alerts that implement the PatientAlertExtensionPoint and PatientProfileAlertExtensionPoint
-        /// </summary>
-        /// <param name="subject"></param>
-        /// <param name="context"></param>
-        /// <returns>a list of alert notification detail if each alert test succeeds</returns>
-        private List<AlertNotificationDetail> GetAlertNotifications(Entity subject, IPersistenceContext context)
-        {
-            AlertAssembler assembler = new AlertAssembler();
-            List<AlertNotificationDetail> results = new List<AlertNotificationDetail>();
-
-            if (subject.Is<Patient>())
+            if (patientProfileRef != null)
             {
-                foreach (IPatientAlert patientAlertTests in PatientAlertHelper.Instance.GetAlertTests())
-                {
-                    IAlertNotification testResult = patientAlertTests.Test(subject.Downcast<Patient>(), context);
-                    if (testResult != null)
-                    {
-                        results.Add(assembler.CreateAlertNotification(testResult));
-                    }
-                }
-            }
-            else if (subject.Is<PatientProfile>())
-            {
-                foreach (IPatientProfileAlert profileAlertTests in PatientProfileAlertHelper.Instance.GetAlertTests())
-                {
-                    IAlertNotification testResult = profileAlertTests.Test(subject.Downcast<PatientProfile>(), context);
-                    if (testResult != null)
-                    {
-                        results.Add(assembler.CreateAlertNotification(testResult));
-                    }
-                }
+                PatientProfile profile = PersistenceContext.Load<PatientProfile>(patientProfileRef);
+                alertNotifications.AddRange(GetAlertNotifications(profile.Patient, this.PersistenceContext));
+                alertNotifications.AddRange(GetAlertNotifications(profile, this.PersistenceContext));
             }
 
-            return results;
-        }
+            if (orderRef != null)
+            {
+                Order order = PersistenceContext.Load<Order>(orderRef);
+                alertNotifications.AddRange(GetAlertNotifications(order, this.PersistenceContext));
+            }
 
+            return new GetAlertsResponse(alertNotifications);
+        }
     }
 }

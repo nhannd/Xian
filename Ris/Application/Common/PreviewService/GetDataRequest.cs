@@ -29,9 +29,6 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
 using ClearCanvas.Enterprise.Common;
 using System.Runtime.Serialization;
 
@@ -53,12 +50,17 @@ namespace ClearCanvas.Ris.Application.Common.PreviewService
         public EntityRef PatientProfileRef;
 
         [DataMember]
+        public EntityRef OrderRef;
+
+        [DataMember]
         public GetPatientProfileRequest GetPatientProfileRequest;
 
         [DataMember]
         public ListPatientOrdersRequest ListPatientOrdersRequest;
 
         [DataMember]
-        public GetPatientAlertsRequest GetPatientAlertsRequest;
+        public GetAlertsRequest GetAlertsRequest;
+
+
     }
 }

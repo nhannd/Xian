@@ -29,27 +29,63 @@
 
 #endregion
 
-using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Ris.Application.Common.PreviewService
+namespace ClearCanvas.Healthcare.Alert
 {
-    [DataContract]
-    public class GetPatientAlertsResponse : DataContractBase
+    public abstract class OrderAlertBase : IOrderAlert
     {
-        public GetPatientAlertsResponse(List<AlertNotificationDetail> alertNotifications)
-        {
-            this.AlertNotifications = alertNotifications;
-        }
-
-        public GetPatientAlertsResponse()
+        protected OrderAlertBase()
         {
         }
 
-        [DataMember]
-        public List<AlertNotificationDetail> AlertNotifications;
+        #region IOrderAlert Members
+
+        public string Name
+        {
+            get { return "OrderAlert"; }
+        }
+
+        public virtual IAlertNotification Test(Order order, IPersistenceContext context)
+        {
+            return null;
+        }
+
+        #endregion
+    }
+
+    public class OrderAlertHelper
+    {
+        private static OrderAlertHelper _instance;
+        private readonly IList<IOrderAlert> _orderAlertTests;
+
+        public static OrderAlertHelper Instance
+        {
+            get
+            {
+                if (_instance == null)
+                    _instance = new OrderAlertHelper();
+
+                return _instance;
+            }
+        }
+
+        private OrderAlertHelper()
+        {
+            OrderAlertExtensionPoint xp = new OrderAlertExtensionPoint();
+            object[] tests = xp.CreateExtensions();
+
+            _orderAlertTests = new List<IOrderAlert>();
+            foreach (object o in tests)
+            {
+                _orderAlertTests.Add((IOrderAlert)o);
+            }
+        }
+
+        public IList<IOrderAlert> GetAlertTests()
+        {
+            return _orderAlertTests;
+        }
     }
 }

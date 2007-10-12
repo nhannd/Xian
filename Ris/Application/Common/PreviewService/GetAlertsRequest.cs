@@ -29,27 +29,14 @@
 
 #endregion
 
-using System.Runtime.Serialization;
 using ClearCanvas.Enterprise.Common;
+using System.Runtime.Serialization;
 
 namespace ClearCanvas.Ris.Application.Common.PreviewService
 {
     [DataContract]
-    public class GetDataResponse : DataContractBase
+    public class GetAlertsRequest : DataContractBase
     {
-        [DataMember]
-        public GetModalityProcedureStepResponse GetModalityProcedureStepResponse;
-
-        [DataMember]
-        public GetReportingProcedureStepResponse GetReportingProcedureStepResponse;
-
-        [DataMember]
-        public GetPatientProfileResponse GetPatientProfileResponse;
-
-        [DataMember]
-        public ListPatientOrdersResponse ListPatientOrdersResponse;
-
-        [DataMember]
-        public GetAlertsResponse GetAlertsResponse;
+        // empty
     }
 }

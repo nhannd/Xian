@@ -29,17 +29,32 @@
 
 #endregion
 
-using System;
-using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.Enterprise.Common;
-using System.Runtime.Serialization;
+using ClearCanvas.Common;
+using ClearCanvas.Healthcare;
+using ClearCanvas.Enterprise.Core;
 
-namespace ClearCanvas.Ris.Application.Common.PreviewService
+namespace ClearCanvas.Healthcare.Alert
 {
-    [DataContract]
-    public class GetPatientAlertsRequest : DataContractBase
+    [ExtensionOf(typeof(OrderAlertExtensionPoint))]
+    public class InvalidVisitStatusAlert : OrderAlertBase
     {
-        // empty
+        private class InvalidVisitStatusAlertNotification : AlertNotification
+        {
+            public InvalidVisitStatusAlertNotification()
+                : base ("Order has invalid visit status", "High", "Visit Status Alert")
+            {
+            }
+        }
+
+        public override IAlertNotification Test(Order order, IPersistenceContext context)
+        {
+            if (order.Visit == null || order.Visit.VisitStatus == VisitStatus.AA)
+                return null;
+
+            InvalidVisitStatusAlertNotification alertNotification = new InvalidVisitStatusAlertNotification();
+            alertNotification.Reasons.Add("Visit Status is not active");
+
+            return alertNotification;
+        }
     }
 }

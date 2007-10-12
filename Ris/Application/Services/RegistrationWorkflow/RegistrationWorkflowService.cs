@@ -29,7 +29,6 @@
 
 #endregion
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using ClearCanvas.Common;
@@ -37,7 +36,6 @@ using ClearCanvas.Common.Utilities;
 using ClearCanvas.Enterprise.Common;
 using ClearCanvas.Enterprise.Core;
 using ClearCanvas.Healthcare;
-using ClearCanvas.Healthcare.Alert;
 using ClearCanvas.Healthcare.Brokers;
 using ClearCanvas.Healthcare.Workflow.Registration;
 using ClearCanvas.Ris.Application.Common;
@@ -121,10 +119,12 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         public LoadWorklistPreviewResponse LoadWorklistPreview(LoadWorklistPreviewRequest request)
         {
             PatientProfile profile = PersistenceContext.Load<PatientProfile>(request.WorklistItem.PatientProfileRef);
+            Order order = PersistenceContext.Load<Order>(request.WorklistItem.OrderRef);
 
             List<AlertNotificationDetail> alertNotifications = new List<AlertNotificationDetail>();            
             alertNotifications.AddRange(GetAlertNotifications(profile.Patient, this.PersistenceContext));
             alertNotifications.AddRange(GetAlertNotifications(profile, this.PersistenceContext));
+            alertNotifications.AddRange(GetAlertNotifications(order, this.PersistenceContext));
 
             RegistrationWorkflowAssembler assembler = new RegistrationWorkflowAssembler();
             return new LoadWorklistPreviewResponse(assembler.CreateRegistrationWorklistPreview(
@@ -233,7 +233,7 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
         public ReplaceOrderResponse ReplaceOrder(ReplaceOrderRequest request)
         {
             PlaceOrderResponse placeOrderResponse = Platform.GetService<IOrderEntryService>().PlaceOrder(request.PlaceOrderRequest);
-            CancelOrderResponse cancelOrderResponse = CancelOrder(request.CancelOrderRequest);
+            CancelOrder(request.CancelOrderRequest);
             return new ReplaceOrderResponse(placeOrderResponse.OrderRef);
         }
 
@@ -255,43 +255,6 @@ namespace ClearCanvas.Ris.Application.Services.RegistrationWorkflow
 
             PatientProfile profile = profileBroker.Load(((WorklistItemKey)itemKey).ProfileRef, EntityLoadFlags.Proxy);
             return broker.GetOrdersForCancelCount(profile.Patient) > 0;
-        }
-
-        /// <summary>
-        /// Helper method to test a Patient or Patient Profile with alerts that implement the PatientAlertExtensionPoint and PatientProfileAlertExtensionPoint
-        /// </summary>
-        /// <param name="subject"></param>
-        /// <param name="context"></param>
-        /// <returns>a list of alert notification detail if each alert test succeeds</returns>
-        private static List<AlertNotificationDetail> GetAlertNotifications(Entity subject, IPersistenceContext context)
-        {
-            AlertAssembler assembler = new AlertAssembler();
-            List<AlertNotificationDetail> results = new List<AlertNotificationDetail>();
-
-            if (subject.Is<Patient>())
-            {
-                foreach (IPatientAlert patientAlertTests in PatientAlertHelper.Instance.GetAlertTests())
-                {
-                    IAlertNotification testResult = patientAlertTests.Test(subject.Downcast<Patient>(), context);
-                    if (testResult != null)
-                    {
-                        results.Add(assembler.CreateAlertNotification(testResult));
-                    }
-                }
-            }
-            else if (subject.Is<PatientProfile>())
-            {
-                foreach (IPatientProfileAlert profileAlertTests in PatientProfileAlertHelper.Instance.GetAlertTests())
-                {
-                    IAlertNotification testResult = profileAlertTests.Test(subject.Downcast<PatientProfile>(), context);
-                    if (testResult != null)
-                    {
-                        results.Add(assembler.CreateAlertNotification(testResult));
-                    }
-                }
-            }
-
-            return results;
         }
     }
 }

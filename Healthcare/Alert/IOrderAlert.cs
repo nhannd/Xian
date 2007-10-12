@@ -29,27 +29,16 @@
 
 #endregion
 
-using System.Runtime.Serialization;
-using ClearCanvas.Enterprise.Common;
+using ClearCanvas.Common;
 
-namespace ClearCanvas.Ris.Application.Common.PreviewService
+namespace ClearCanvas.Healthcare.Alert
 {
-    [DataContract]
-    public class GetDataResponse : DataContractBase
+    [ExtensionPoint]
+    public class OrderAlertExtensionPoint : ExtensionPoint<IOrderAlert>
     {
-        [DataMember]
-        public GetModalityProcedureStepResponse GetModalityProcedureStepResponse;
+    }
 
-        [DataMember]
-        public GetReportingProcedureStepResponse GetReportingProcedureStepResponse;
-
-        [DataMember]
-        public GetPatientProfileResponse GetPatientProfileResponse;
-
-        [DataMember]
-        public ListPatientOrdersResponse ListPatientOrdersResponse;
-
-        [DataMember]
-        public GetAlertsResponse GetAlertsResponse;
+    public interface IOrderAlert : IAlert<Order>
+    {
     }
 }
