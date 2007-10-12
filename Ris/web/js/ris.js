@@ -6,7 +6,7 @@ if(window.external)
 {
     var Ris = {
     
-        // parse filter to customize some aspects of JSML parsing with modifying the JSML.js script
+        // parse filter to customize some aspects of JSML parsing without modifying the JSML.js script
         _jsmlParserFilter: function(key, value)
         {
             // if it has the properties of a staff person, replace it with a Staff object
