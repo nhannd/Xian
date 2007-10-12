@@ -109,36 +109,22 @@ namespace ClearCanvas.Healthcare.Hibernate.Brokers
 
         private IList<WorklistItem> GetWorklist(string hqlQuery, IEnumerable<QueryParameter> parameters)
         {
-            try
-            {
-                List<WorklistItem> results = new List<WorklistItem>();
+            List<WorklistItem> results = new List<WorklistItem>();
 
-                IList list = DoQuery(hqlQuery, parameters);
-                foreach (object[] tuple in list)
-                {
-                    WorklistItem item = (WorklistItem)Activator.CreateInstance(typeof(WorklistItem), tuple);
-                    results.Add(item);
-                }
-
-                return results;
-            }
-            catch (Exception e)
+            IList list = DoQuery(hqlQuery, parameters);
+            foreach (object[] tuple in list)
             {
-                throw e;
+                WorklistItem item = (WorklistItem)Activator.CreateInstance(typeof(WorklistItem), tuple);
+                results.Add(item);
             }
+
+            return results;
         }
 
         private int GetWorklistCount(string hqlQuery, IEnumerable<QueryParameter> parameters)
         {
-            try
-            {
-                IList list = DoQuery(hqlQuery, parameters);
-                return (int)list[0];
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
+            IList list = DoQuery(hqlQuery, parameters);
+            return (int)list[0];
         }
 
         private IList DoQuery(string hqlQuery, IEnumerable<QueryParameter> parameters)

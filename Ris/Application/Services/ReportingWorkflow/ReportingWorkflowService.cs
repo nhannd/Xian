@@ -272,6 +272,12 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
         {
             VerificationStep verification = PersistenceContext.Load<VerificationStep>(request.VerificationStepRef, EntityLoadFlags.CheckVersion);
 
+            if (String.IsNullOrEmpty(request.ReportContent) == false)
+            {
+                Operations.SaveReport saveReportOp = new Operations.SaveReport();
+                saveReportOp.Execute(verification, request.ReportContent, null, this.PersistenceContext);
+            }
+
             if (verification.ReportPart == null || String.IsNullOrEmpty(verification.ReportPart.Content))
                 throw new RequestValidationException(SR.ExceptionVerifyWithNoReport);
 
@@ -313,7 +319,7 @@ namespace ClearCanvas.Ris.Application.Services.ReportingWorkflow
             else
             {
                 response.Report = assembler.CreateReportSummary(step.RequestedProcedure, step.ReportPart.Report, this.PersistenceContext);
-                response.ReportPartIndex = int.Parse(step.ReportPart.Index);
+                response.ReportPartIndex = step.ReportPart.Index;
             }
 
             return response;

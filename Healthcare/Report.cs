@@ -69,11 +69,11 @@ namespace ClearCanvas.Healthcare {
 		#endregion
 
         /// <summary>
-        /// Adds a report part to this report, setting the report's <see cref="Report.ReportParts"/> property
-        /// to refer to this object.  Use this method rather than referring to the <see cref="Report.ReportParts"/>
+        /// Adds a report part to this report, setting the report's <see cref="Report.Parts"/> property
+        /// to refer to this object.  Use this method rather than referring to the <see cref="Report.Parts"/>
         /// collection directly.
         /// </summary>
-        /// <param name="profile"></param>
+        /// <param name="part"></param>
         public void AddPart(ReportPart part)
         {
             if (part.Report != null)
@@ -88,7 +88,7 @@ namespace ClearCanvas.Healthcare {
 
         public ReportPart AddPart(string reportPartContent)
         {
-            ReportPart part = new ReportPart(this.Parts.Count.ToString(), reportPartContent, ReportPartStatus.P, this);
+            ReportPart part = new ReportPart(this.Parts.Count, reportPartContent, ReportPartStatus.P, this);
             this.AddPart(part);
             return part;
         }
