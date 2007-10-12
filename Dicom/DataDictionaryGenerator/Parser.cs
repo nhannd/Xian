@@ -98,10 +98,10 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
         public static string CreateVariableName(string input)
         {
             // Now create the variable name
-            char[] charSeparators = new char[] {'(', ')', ',', ' ', '\'', 'ï¿½', 'ï¿½', '-', '/', '&', '[', ']', '@'};
+            char[] charSeparators = new char[] {'(', ')', ',', ' ', '\'', '’', '–', '-', '/', '&', '[', ']', '@'};
 
             // just remove apostrophes so casing is correct
-            string tempString = input.Replace("ï¿½", "");
+            string tempString = input.Replace("’", ""); 
             tempString = tempString.Replace("'", "");
             tempString = tempString.Replace("(", "");
             tempString = tempString.Replace(")", "");

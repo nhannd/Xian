@@ -182,8 +182,8 @@ namespace ClearCanvas.Dicom.DataDictionaryGenerator
                 Tag tag = iter.Current;
                 uint vmLow = 0;
                 uint vmHigh = 0;
-                char[] charSeparators = new char[] { 'ï¿½', '-' };
-
+                char[] charSeparators = new char[] { '–', '-' };
+                
                 String[] nodes = tag.vm.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries);
                 if (nodes.Length == 1)
                 {
