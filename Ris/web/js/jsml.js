@@ -166,9 +166,7 @@ var JSML = {
                     return subElements.reduce({},
                         function(o, n)
                         {
-                            var value = JSML._parseFilter(n.nodeName, toObj(n));
-                            if(value != 'undefined')
-                                o[n.nodeName] = value;
+                            o[n.nodeName] = JSML._parseFilter(n.nodeName, toObj(n));
                             return o;
                         });
                 }
