@@ -89,19 +89,11 @@ namespace ClearCanvas.ImageViewer.StudyManagement
 				// save memory.  If a memory management mechanism decides to unload the
 				// pixel data, the next time this method is called should again decompress
 				// the data as if it were doing so for the first time.
-				object pixelData = _dicomFile.DataSet[DicomTags.PixelData].Values;
-				if (pixelData is byte[])
-				{
-					_pixelData = ImageSopHelper.DecompressPixelData(this, (byte[])pixelData);
-				}
-				else
-				{
-					ushort[] originalPixelData = (ushort[])pixelData;
-					byte[] newPixelData = new byte[originalPixelData.Length * 2];
-					Buffer.BlockCopy(originalPixelData, 0, newPixelData, 0, newPixelData.Length);
-					_pixelData = ImageSopHelper.DecompressPixelData(this, newPixelData);
-				}
+				byte[] pixelData = (byte[])_dicomFile.DataSet[DicomTags.PixelData].Values;
+				_pixelData = ImageSopHelper.DecompressPixelData(this, pixelData);
 
+				// TODO: Is this necessary? Seems like _pixelData and this are
+				// referencing the same thing.
 				//To save on memory, we remove this reference.
 				_dicomFile.DataSet[DicomTags.PixelData] = null;
 
