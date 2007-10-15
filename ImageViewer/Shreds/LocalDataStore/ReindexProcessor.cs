@@ -31,14 +31,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using ClearCanvas.Common.Utilities;
-using ClearCanvas.Common;
 using System.Threading;
-using NHibernate.Cfg;
-using NHibernate;
+using ClearCanvas.Common;
+using ClearCanvas.Common.Utilities;
 using ClearCanvas.Dicom.DataStore;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
@@ -74,7 +71,7 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 					lock (_activeJobInformation.SyncRoot)
 					{
 						_activeJobInformation.ProgressItem.Identifier = Guid.NewGuid();
-						_activeJobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Cancel;
+						_activeJobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.None;
 						_activeJobInformation.ProgressItem.StartTime = Platform.Time;
 						_activeJobInformation.ProgressItem.LastActive = _activeJobInformation.ProgressItem.StartTime;
 						_activeJobInformation.ProgressItem.Cancelled = false;
@@ -110,16 +107,15 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 				lock (_syncLock)
 				{
+					if (!_active)
+						return;
+
 					foreach (Guid guid in information.ProgressItemIdentifiers)
 					{
 						if (guid.Equals(_activeJobInformation.ProgressItem.Identifier))
 						{
-							if (_active)
-							{
-								base.CancelJob(_activeJobInformation);
-								CheckResumeImports();
-							}
-
+							base.CancelJob(_activeJobInformation);
+							CheckResumeImports();
 							break;
 						}
 					}
@@ -142,13 +138,18 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 
 							//do this on a separate thread, because what we are essentially doing is stopping this thread, so if we didn't do
 							//the stop operation on another thread, we would cause a deadlock.
-							WaitCallback resumeImportsDelegate = delegate(object nothing)
+							WaitCallback resumeImportsDelegate = delegate
 							{
 								_parent.ReserveState(ServiceState.Importing);
 								_parent.ActivateState();
 								
 								lock (_syncLock)
 								{
+									lock (_activeJobInformation.SyncRoot)
+									{
+										_activeJobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Clear;
+									}
+
 									_active = false;
 									_resumingImports = false;
 								}
@@ -278,6 +279,10 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						{
 							if (clearFailed || _activeJobInformation.ProgressItem.Cancelled)
 								return;
+
+							//don't allow cancellation until after the database has been cleared, otherwise you might get
+							//some strange behaviour because the imports will be resumed while the database is being cleared.
+							_activeJobInformation.ProgressItem.AllowedCancellationOperations = CancellationFlags.Cancel;
 						}
 					}
 

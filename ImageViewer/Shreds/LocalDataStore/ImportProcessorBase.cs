@@ -31,12 +31,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using ClearCanvas.ImageViewer.Services.LocalDataStore;
-using ClearCanvas.Common;
-using System.IO;
 using System.Threading;
+using ClearCanvas.Common;
 using ClearCanvas.Common.Utilities;
+using ClearCanvas.ImageViewer.Services.LocalDataStore;
 
 namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 {
@@ -361,15 +359,18 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 							break;
 					}
 
-					//it's ok to read this property unsynchronized because this is the only thread that is adding to the queue for the particular job.
-					if (jobInformation.NumberOfFilesInQueue == 0)
+					if (!cancelled)
 					{
-						OnNoFilesToImport(jobInformation);
+						//it's ok to read this property unsynchronized because this is the only thread that is adding to the queue for the particular job.
+						if (jobInformation.NumberOfFilesInQueue == 0)
+						{
+							OnNoFilesToImport(jobInformation);
+						}
+						else
+						{
+							AddNextFileToImportQueue(jobInformation);
+						}
 					}
-					else
-					{
-						AddNextFileToImportQueue(jobInformation);
-					} 
 				};
 
 				ThreadPool.QueueUserWorkItem(enumerateFilesToImport);
