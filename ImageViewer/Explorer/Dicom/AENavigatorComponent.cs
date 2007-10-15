@@ -138,6 +138,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private bool _showTools;
 		private bool _showTitlebar;
 		private bool _showLocalDataStoreNode;
+    	private bool _isReadOnly;
 
 		public ServerTree ServerTree
         {
@@ -184,17 +185,23 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			get { return _showLocalDataStoreNode; }
 		}
 
+    	public bool IsReadOnly
+    	{
+			get { return _isReadOnly; }	
+    	}
+
         #endregion
 
-        public AENavigatorComponent() : this(true, true, true)
+        public AENavigatorComponent() : this(true, true, true, false)
         {
         }
 
-		public AENavigatorComponent(bool showTools, bool showTitlebar, bool showLocalDataStoreNode)
+		public AENavigatorComponent(bool showTools, bool showTitlebar, bool showLocalDataStoreNode, bool isReadOnly)
 		{
 			_showTools = showTools;
 			_showTitlebar = showTitlebar;
 			_showLocalDataStoreNode = showLocalDataStoreNode;
+			_isReadOnly = isReadOnly;
 
 			_selectedServers = new AEServerGroup();
 			_serverTree = new ServerTree();
@@ -233,7 +240,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public bool NodeMoved(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
         {
-            if (destinationNode.IsServer || isMovingInvalid(destinationNode as ServerGroup, movingDataNode))
+            if (destinationNode.IsServer || IsMovingInvalid(destinationNode as ServerGroup, movingDataNode))
                 return false;
 
             if (movingDataNode.IsServer)
@@ -266,8 +273,11 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
             remove { _selectedServerChanged -= value; }
         }
 
-        private bool isMovingInvalid(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
+        private bool IsMovingInvalid(IServerTreeNode destinationNode, IServerTreeNode movingDataNode)
         {
+			if (IsReadOnly)
+				return true;
+
             if (movingDataNode.Name.Equals(_serverTree.MyServersTitle) || movingDataNode.Name.Equals(_serverTree.MyDatastoreTitle) || movingDataNode.Path.Equals(destinationNode.Path))
                 return true;
 
@@ -308,6 +318,10 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
         public void NodeDoubleClick()
         {
+			//Could be something other than edit that does no harm, but we might as well just disallow unconditionally.
+			if (IsReadOnly)
+				return;
+        	
             // according to the framework architecture, the default action handler
             // for this component is set up by the ServerEditTool
             // however, since the tool is used for both Server and ServerGroup

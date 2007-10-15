@@ -55,6 +55,8 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom.View.WinForms
 
             _component = component;
 
+			_aeTreeView.AllowDrop = !_component.IsReadOnly;
+
 			ClearCanvasStyle.SetTitleBarStyle(_titleBar);
 			
 			ServerTreeUpdated += new EventHandler(OnServerTreeUpdated);
