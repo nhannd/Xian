@@ -93,6 +93,11 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 				_parent.OnInstanceDeleted(information);
 			}
 
+			public void LocalDataStoreCleared()
+			{
+				_parent.OnLocalDataStoreCleared();
+			}
+
 			#endregion
 		}
 
@@ -104,6 +109,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 		private event EventHandler<ItemEventArgs<ReindexProgressItem>> _reindexProgressUpdate;
 		private event EventHandler<ItemEventArgs<ImportedSopInstanceInformation>> _sopInstanceImported;
 		private event EventHandler<ItemEventArgs<DeletedInstanceInformation>> _instanceDeleted;
+		private event EventHandler _localDataStoreCleared;
 
 		private event EventHandler _lostConnection;
 		private event EventHandler _connected;
@@ -302,6 +308,29 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			}
 		}
 
+		public event EventHandler LocalDataStoreCleared
+		{
+			add
+			{
+				lock (_subscriptionLock)
+				{
+					_localDataStoreCleared += value;
+				}
+
+				Startup();
+			}
+			remove
+			{
+				lock (_subscriptionLock)
+				{
+					_localDataStoreCleared -= value;
+				}
+
+				if (!this.AnySubscribers)
+					ShutDown();
+			}
+		}
+
 		public event EventHandler LostConnection
 		{
 			add
@@ -466,7 +495,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			});
 		}
 
-		internal void OnInstanceDeleted(DeletedInstanceInformation information)
+		private void OnInstanceDeleted(DeletedInstanceInformation information)
 		{
 			if (!this.AnySubscribers || _marshaler == null)
 				return;
@@ -475,7 +504,17 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			{
 				EventsHelper.Fire(_instanceDeleted, this, new ItemEventArgs<DeletedInstanceInformation>(information));
 			});
+		}
 
+		private void OnLocalDataStoreCleared()
+		{
+			if (!this.AnySubscribers || _marshaler == null)
+				return;
+
+			_marshaler.QueueInvoke(delegate()
+			{
+				EventsHelper.Fire(_localDataStoreCleared, this, EventArgs.Empty);
+			});
 		}
 
 		private void OnLostConnection()

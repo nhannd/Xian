@@ -90,6 +90,11 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 			FireEvent("InstanceDeleted", information);
 		}
 
+		public void LocalDataStoreCleared()
+		{
+			FireEvent("LocalDataStoreCleared");
+		}
+
 		#endregion
 	}
 }

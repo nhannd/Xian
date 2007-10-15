@@ -55,6 +55,9 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 
 		[OperationContract(IsOneWay = true)]
 		void InstanceDeleted(DeletedInstanceInformation information);
+
+		[OperationContract(IsOneWay = true)]
+		void LocalDataStoreCleared();
 	}
 
 	[ServiceContract(	SessionMode = SessionMode.Required,

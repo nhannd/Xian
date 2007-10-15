@@ -130,6 +130,7 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 			public void ImportProgressChanged(ImportProgressItem progressItem) { }
 			public void ReindexProgressChanged(ReindexProgressItem progressItem) { }
 			public void SopInstanceImported(ImportedSopInstanceInformation information) { }
+			public void LocalDataStoreCleared() { }
 
 			public void InstanceDeleted(DeletedInstanceInformation information)
 			{

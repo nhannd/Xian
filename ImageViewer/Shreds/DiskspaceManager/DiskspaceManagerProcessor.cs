@@ -149,7 +149,7 @@ namespace ClearCanvas.ImageViewer.Shreds.DiskspaceManager
 						UpdateCurrentDriveInfo();
 						CheckConfigurationSettings();
 					}
-					catch (EndpointNotFoundException e)
+					catch (EndpointNotFoundException)
 					{
 						//there is currently no shred startup order, so we wait 
 						//5 seconds until the Local Data Store service is up and running.

@@ -256,6 +256,8 @@ namespace ClearCanvas.ImageViewer.Shreds.LocalDataStore
 						{
 							studyRemover.ClearAllStudies();
 						}
+
+						LocalDataStoreActivityPublisher.Instance.LocalDataStoreCleared();
 					}
 					catch (Exception e)
 					{

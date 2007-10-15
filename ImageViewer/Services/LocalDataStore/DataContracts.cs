@@ -507,7 +507,6 @@ namespace ClearCanvas.ImageViewer.Services.LocalDataStore
 	{
 		private string _fromAETitle;
 		private StudyInformation _studyInformation;
-		private int _numberOfFilesReceived;
 
 		public ReceiveProgressItem()
 		{

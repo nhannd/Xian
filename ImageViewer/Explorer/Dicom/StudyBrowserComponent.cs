@@ -204,6 +204,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		private ActionModelRoot _toolbarModel;
 		private ActionModelRoot _contextMenuModel;
 
+		private bool _localDataStoreCleared;
 		private Dictionary<string, string> _setStudiesArrived;
 		private Dictionary<string, string> _setStudiesDeleted;
 
@@ -212,6 +213,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 		public StudyBrowserComponent()
 		{
 			_searchResults = new Dictionary<string, SearchResult>();
+			_localDataStoreCleared = false;
 			_setStudiesArrived = new Dictionary<string, string>();
 			_setStudiesDeleted = new Dictionary<string, string>();
 		}
@@ -312,6 +314,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			LocalDataStoreActivityMonitor.Instance.SopInstanceImported += new EventHandler<ItemEventArgs<ImportedSopInstanceInformation>>(OnSopInstanceImported);
 			LocalDataStoreActivityMonitor.Instance.InstanceDeleted += new EventHandler<ItemEventArgs<DeletedInstanceInformation>>(OnInstanceDeleted);
+			LocalDataStoreActivityMonitor.Instance.LocalDataStoreCleared += new EventHandler(OnLocalDataStoreCleared);
 			DicomExplorerConfigurationSettings.Default.PropertyChanged += new PropertyChangedEventHandler(OnConfigurationSettingsChanged);
 		}
 
@@ -322,6 +325,7 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			LocalDataStoreActivityMonitor.Instance.SopInstanceImported -= new EventHandler<ItemEventArgs<ImportedSopInstanceInformation>>(OnSopInstanceImported);
 			LocalDataStoreActivityMonitor.Instance.InstanceDeleted -= new EventHandler<ItemEventArgs<DeletedInstanceInformation>>(OnInstanceDeleted);
+			LocalDataStoreActivityMonitor.Instance.LocalDataStoreCleared -= new EventHandler(OnLocalDataStoreCleared);
 			DicomExplorerConfigurationSettings.Default.PropertyChanged -= new PropertyChangedEventHandler(OnConfigurationSettingsChanged);
 
 			base.Stop();
@@ -629,16 +633,22 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 			if (_selectedServerGroup == null || !_selectedServerGroup.IsLocalDatastore)
 				return;
 
+			Table<StudyItem> studyTable = _searchResults[_selectedServerGroup.GroupID].StudyList;
+			bool refreshTitle = false;
+
+			if (_localDataStoreCleared)
+			{
+				refreshTitle = true;
+				_localDataStoreCleared = false;
+				studyTable.Items.Clear();
+			}
+
 			List<string> newStudies = new List<string>();
 			foreach (string studyUid in _setStudiesArrived.Keys)
 			{
 				if (!StudyExists(studyUid))
 					newStudies.Add(studyUid);
 			}
-
-			bool refreshTitle = false;
-
-			Table<StudyItem> studyTable = _searchResults[_selectedServerGroup.GroupID].StudyList;
 
 			if (newStudies.Count > 0)
 			{
@@ -712,6 +722,18 @@ namespace ClearCanvas.ImageViewer.Explorer.Dicom
 
 			_setStudiesDeleted[e.Item.InstanceUid] = e.Item.InstanceUid;
 			_setStudiesArrived.Remove(e.Item.InstanceUid); //can't arrive if it's deleted.
+			ProcessReceivedAndRemovedStudies();
+
+			//update the title in the view.
+			this.ResultsTitle = _searchResults[_selectedServerGroup.GroupID].ResultsTitle;
+		}
+
+		void OnLocalDataStoreCleared(object sender, EventArgs e)
+		{
+			_setStudiesArrived.Clear();
+			_setStudiesDeleted.Clear();
+			_localDataStoreCleared = true;
+
 			ProcessReceivedAndRemovedStudies();
 
 			//update the title in the view.
